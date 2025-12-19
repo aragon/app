@@ -6,18 +6,21 @@ import type {
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface IUpdatePluginMetadataFormData extends Omit<IProposalActionUpdatePluginMetadataObject, 'links'> {
+export interface IUpdatePluginMetadataFormData
+    extends Omit<IProposalActionUpdatePluginMetadataObject, 'links'> {
     /**
      * Resources of the plugin.
      */
     resources?: IResourcesInputResource[];
 }
 
-export interface IUpdatePluginMetadataAction extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
+export interface IUpdatePluginMetadataAction
+    extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
     /**
      * Metadata proposed on the action.
      */
     proposedMetadata: IUpdatePluginMetadataFormData;
 }
 
-export interface IUpdatePluginMetadataActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface IUpdatePluginMetadataActionProps
+    extends IProposalActionComponentProps<IProposalActionData> {}

@@ -13,7 +13,10 @@ export const ExploreSection: React.FC<IExploreSectionProps> = (props) => {
     const { children, title, className, ...otherProps } = props;
 
     return (
-        <section className={classNames('flex flex-col gap-4 md:gap-6', className)} {...otherProps}>
+        <section
+            className={classNames('flex flex-col gap-4 md:gap-6', className)}
+            {...otherProps}
+        >
             <Heading as="h2" size="h1">
                 {title}
             </Heading>

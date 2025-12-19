@@ -1,1 +1,4 @@
-export { type IUseSlotSingleFunctionParams, useSlotSingleFunction } from './useSlotSingleFunction';
+export {
+    type IUseSlotSingleFunctionParams,
+    useSlotSingleFunction,
+} from './useSlotSingleFunction';

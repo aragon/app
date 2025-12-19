@@ -28,7 +28,11 @@ class TokenLockUnlockDialogUtils {
             functionName: 'createLock',
             args: [amount],
         });
-        const transaction = { to: escrowContract as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: escrowContract as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -39,7 +43,11 @@ class TokenLockUnlockDialogUtils {
             functionName: 'beginWithdrawal',
             args: [tokenId],
         });
-        const transaction = { to: escrowContract as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: escrowContract as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -50,7 +58,11 @@ class TokenLockUnlockDialogUtils {
             functionName: 'withdraw',
             args: [tokenId],
         });
-        const transaction = { to: escrowContract as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: escrowContract as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

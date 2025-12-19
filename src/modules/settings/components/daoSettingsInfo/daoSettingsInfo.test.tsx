@@ -8,7 +8,9 @@ import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="dao-avatar-mock" />,
+    DaoAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="dao-avatar-mock" />
+    ),
 }));
 
 describe('<DaoSettingsInfo /> component', () => {

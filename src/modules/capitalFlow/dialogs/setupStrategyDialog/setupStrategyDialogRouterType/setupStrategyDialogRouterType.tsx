@@ -1,55 +1,91 @@
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { type ISetupStrategyForm, RouterType } from '../setupStrategyDialogDefinitions';
+import {
+    type ISetupStrategyForm,
+    RouterType,
+} from '../setupStrategyDialogDefinitions';
 
 export const SetupStrategyDialogRouterType: React.FC = () => {
     const { t } = useTranslations();
 
-    const { onChange: onRouterTypeChange, ...routerTypeField } = useFormField<ISetupStrategyForm, 'routerType'>('routerType', {
+    const { onChange: onRouterTypeChange, ...routerTypeField } = useFormField<
+        ISetupStrategyForm,
+        'routerType'
+    >('routerType', {
         label: t('app.capitalFlow.setupStrategyDialog.routerType.label'),
         defaultValue: RouterType.FIXED,
     });
 
     return (
         <RadioGroup
-            helpText={t('app.capitalFlow.setupStrategyDialog.routerType.helpText')}
+            helpText={t(
+                'app.capitalFlow.setupStrategyDialog.routerType.helpText',
+            )}
             onValueChange={onRouterTypeChange}
             {...routerTypeField}
         >
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.label`,
+                )}
                 value={RouterType.FIXED}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.label`,
+                )}
                 value={RouterType.GAUGE}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.label`,
+                )}
                 value={RouterType.STREAM}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.label`,
+                )}
                 value={RouterType.BURN}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.label`,
+                )}
                 value={RouterType.DEX_SWAP}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.label`,
+                )}
                 value={RouterType.MULTI_DISPATCH}
             />
             <RadioCard
-                description={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.description`)}
-                label={t(`app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.label`)}
+                description={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.description`,
+                )}
+                label={t(
+                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.label`,
+                )}
                 value={RouterType.UNISWAP}
             />
         </RadioGroup>

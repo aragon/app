@@ -9,7 +9,13 @@ describe('useTokenExitQueueTokenId hook', () => {
         Parameters<typeof Wagmi.useReadContract>
     > = jest.spyOn(Wagmi, 'useReadContract');
 
-    const createUseReadContractResult = ({ data, isLoading = false }: { data: unknown; isLoading?: boolean }) =>
+    const createUseReadContractResult = ({
+        data,
+        isLoading = false,
+    }: {
+        data: unknown;
+        isLoading?: boolean;
+    }) =>
         ({
             data,
             isLoading,
@@ -25,15 +31,19 @@ describe('useTokenExitQueueTokenId hook', () => {
         const mockBalance = BigInt(1);
 
         useReadContractSpy
-            .mockReturnValueOnce(createUseReadContractResult({ data: mockBalance }))
-            .mockReturnValueOnce(createUseReadContractResult({ data: mockTokenId }));
+            .mockReturnValueOnce(
+                createUseReadContractResult({ data: mockBalance }),
+            )
+            .mockReturnValueOnce(
+                createUseReadContractResult({ data: mockTokenId }),
+            );
 
         const { result } = renderHook(() =>
             useTokenVotingEscrowTokenId({
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            })
+            }),
         );
 
         await waitFor(() => {
@@ -46,15 +56,19 @@ describe('useTokenExitQueueTokenId hook', () => {
         const mockBalance = BigInt(0);
 
         useReadContractSpy
-            .mockReturnValueOnce(createUseReadContractResult({ data: mockBalance }))
-            .mockReturnValueOnce(createUseReadContractResult({ data: undefined }));
+            .mockReturnValueOnce(
+                createUseReadContractResult({ data: mockBalance }),
+            )
+            .mockReturnValueOnce(
+                createUseReadContractResult({ data: undefined }),
+            );
 
         const { result } = renderHook(() =>
             useTokenVotingEscrowTokenId({
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            })
+            }),
         );
 
         await waitFor(() => {
@@ -64,7 +78,9 @@ describe('useTokenExitQueueTokenId hook', () => {
     });
 
     it('respects enabled flag', () => {
-        useReadContractSpy.mockReturnValue(createUseReadContractResult({ data: undefined }));
+        useReadContractSpy.mockReturnValue(
+            createUseReadContractResult({ data: undefined }),
+        );
 
         renderHook(() =>
             useTokenVotingEscrowTokenId({
@@ -72,7 +88,7 @@ describe('useTokenExitQueueTokenId hook', () => {
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
                 enabled: false,
-            })
+            }),
         );
 
         const firstCallArgs = useReadContractSpy.mock.calls[0]?.[0];
@@ -81,15 +97,22 @@ describe('useTokenExitQueueTokenId hook', () => {
 
     it('handles loading state correctly', () => {
         useReadContractSpy
-            .mockReturnValueOnce(createUseReadContractResult({ data: undefined, isLoading: true }))
-            .mockReturnValueOnce(createUseReadContractResult({ data: undefined }));
+            .mockReturnValueOnce(
+                createUseReadContractResult({
+                    data: undefined,
+                    isLoading: true,
+                }),
+            )
+            .mockReturnValueOnce(
+                createUseReadContractResult({ data: undefined }),
+            );
 
         const { result } = renderHook(() =>
             useTokenVotingEscrowTokenId({
                 escrowAddress: '0x123' as Hex,
                 userAddress: '0xabc' as Hex,
                 chainId: 1,
-            })
+            }),
         );
 
         expect(result.current.isLoading).toBe(true);

@@ -12,7 +12,6 @@
         "enabled": true,
         "indentStyle": "space",
         "indentWidth": 4,
-        "lineWidth": 140,
         "includes": [
             "**",
             "!*.json",
@@ -32,7 +31,8 @@
     },
     "javascript": {
         "formatter": {
-            "quoteStyle": "single"
+            "quoteStyle": "single",
+            "trailingCommas": "all"
         },
         "globals": [
             "jest",

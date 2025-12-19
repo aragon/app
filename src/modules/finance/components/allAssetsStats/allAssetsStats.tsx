@@ -1,6 +1,11 @@
 'use client';
 
-import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -28,13 +33,27 @@ export interface IAllAssetsStatsProps {
     showOctavCta?: boolean;
 }
 
-export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({ dao, totalValueUsd, totalAssets, octavLink, showOctavCta = true }) => {
+export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({
+    dao,
+    totalValueUsd,
+    totalAssets,
+    octavLink,
+    showOctavCta = true,
+}) => {
     const { t } = useTranslations();
 
     const formattedTotalValue =
-        totalValueUsd != null ? (formatterUtils.formatNumber(totalValueUsd, { format: NumberFormat.FIAT_TOTAL_SHORT }) ?? '-') : '-';
+        totalValueUsd != null
+            ? (formatterUtils.formatNumber(totalValueUsd, {
+                  format: NumberFormat.FIAT_TOTAL_SHORT,
+              }) ?? '-')
+            : '-';
     const formattedTotalAssets =
-        totalAssets != null ? (formatterUtils.formatNumber(totalAssets, { format: NumberFormat.GENERIC_SHORT }) ?? '-') : '-';
+        totalAssets != null
+            ? (formatterUtils.formatNumber(totalAssets, {
+                  format: NumberFormat.GENERIC_SHORT,
+              }) ?? '-')
+            : '-';
 
     const stats = [
         {
@@ -47,13 +66,21 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({ dao, totalValue
         },
     ];
 
-    const resolvedOctavLink = octavLink ?? (dao?.address ? `https://pro.octav.fi/?addresses=${dao.address}` : null);
+    const resolvedOctavLink =
+        octavLink ??
+        (dao?.address
+            ? `https://pro.octav.fi/?addresses=${dao.address}`
+            : null);
 
     return (
         <div className="flex flex-col gap-6">
             <div className="grid w-full grid-cols-2 gap-3">
                 {stats.map((stat) => (
-                    <StatCard key={stat.label} label={stat.label} value={stat.value} />
+                    <StatCard
+                        key={stat.label}
+                        label={stat.label}
+                        value={stat.value}
+                    />
                 ))}
             </div>
             {showOctavCta && resolvedOctavLink && (
@@ -68,7 +95,9 @@ export const AllAssetsStats: React.FC<IAllAssetsStatsProps> = ({ dao, totalValue
                     >
                         {t('app.finance.financeDetailsList.octavLabel')}
                     </Button>
-                    <p className="text-neutral-500 text-sm">{t('app.finance.financeDetailsList.octavDescription')}</p>
+                    <p className="text-neutral-500 text-sm">
+                        {t('app.finance.financeDetailsList.octavDescription')}
+                    </p>
                 </div>
             )}
         </div>

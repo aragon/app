@@ -37,14 +37,23 @@ class SubDaoDisplayUtils {
         const { dao, plugin } = params;
         const targetAddress = this.getPluginDaoAddress(plugin);
 
-        return dao?.subDaos?.find((subDao) => subDao.address.toLowerCase() === targetAddress);
+        return dao?.subDaos?.find(
+            (subDao) => subDao.address.toLowerCase() === targetAddress,
+        );
     }
 
-    getPluginDisplayName(params: { dao?: IDao; plugin?: IDaoPlugin; groupLabel: string; fallbackLabel?: string }): string {
+    getPluginDisplayName(params: {
+        dao?: IDao;
+        plugin?: IDaoPlugin;
+        groupLabel: string;
+        fallbackLabel?: string;
+    }): string {
         const { dao, plugin, groupLabel, fallbackLabel } = params;
 
-        const safeFallback = fallbackLabel && fallbackLabel !== '' ? fallbackLabel : undefined;
-        const pluginName = plugin?.name && plugin.name !== '' ? plugin.name : undefined;
+        const safeFallback =
+            fallbackLabel && fallbackLabel !== '' ? fallbackLabel : undefined;
+        const pluginName =
+            plugin?.name && plugin.name !== '' ? plugin.name : undefined;
 
         if (this.isNoPlugin({ plugin })) {
             return safeFallback ?? groupLabel;
@@ -67,7 +76,10 @@ class SubDaoDisplayUtils {
         return params.plugin == null;
     }
 
-    private getMatchingSubDaoName(params: { dao?: IDao; plugin?: IDaoPlugin }): string | undefined {
+    private getMatchingSubDaoName(params: {
+        dao?: IDao;
+        plugin?: IDaoPlugin;
+    }): string | undefined {
         return this.getMatchingSubDao(params)?.name ?? undefined;
     }
 }

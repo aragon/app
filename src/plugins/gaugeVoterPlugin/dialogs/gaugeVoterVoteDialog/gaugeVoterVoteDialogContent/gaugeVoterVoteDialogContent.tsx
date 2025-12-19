@@ -47,8 +47,17 @@ export interface IGaugeVoterVoteDialogContentProps {
     onRemoveGauge: (gaugeAddress: string) => void;
 }
 
-export const GaugeVoterVoteDialogContent: React.FC<IGaugeVoterVoteDialogContentProps> = (props) => {
-    const { voteAllocations, totalVotingPower, tokenSymbol, hasModified, onUpdatePercentage, onRemoveGauge } = props;
+export const GaugeVoterVoteDialogContent: React.FC<
+    IGaugeVoterVoteDialogContentProps
+> = (props) => {
+    const {
+        voteAllocations,
+        totalVotingPower,
+        tokenSymbol,
+        hasModified,
+        onUpdatePercentage,
+        onRemoveGauge,
+    } = props;
 
     return (
         <div className="flex flex-col gap-4">

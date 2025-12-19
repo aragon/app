@@ -3,7 +3,10 @@ import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { AragonLogo } from '@/shared/components/aragonLogo';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IConnectWalletDialogParams {
@@ -17,9 +20,12 @@ export interface IConnectWalletDialogParams {
     onError?: () => void;
 }
 
-export interface IConnectWalletDialogProps extends IDialogComponentProps<IConnectWalletDialogParams> {}
+export interface IConnectWalletDialogProps
+    extends IDialogComponentProps<IConnectWalletDialogParams> {}
 
-export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) => {
+export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
+    props,
+) => {
     const { params, id } = props.location;
     const { onSuccess, onError } = params ?? {};
 
@@ -57,7 +63,9 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
         const preventTouchScroll = (event: Event) => event.stopPropagation();
 
         appKitModal?.addEventListener('wheel', handleWheel);
-        appKitModal?.addEventListener('touchmove', preventTouchScroll, { passive: false });
+        appKitModal?.addEventListener('touchmove', preventTouchScroll, {
+            passive: false,
+        });
 
         return () => {
             appKitModal?.removeEventListener('wheel', handleWheel);
@@ -84,17 +92,46 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
                 </div>
                 <div className="flex flex-col gap-4 font-normal text-neutral-500 text-sm leading-tight">
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.CHECKMARK} size="sm" variant="primary" />
-                        <p>{t('app.application.connectWalletDialog.feature.permissions')}</p>
+                        <AvatarIcon
+                            icon={IconType.CHECKMARK}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <p>
+                            {t(
+                                'app.application.connectWalletDialog.feature.permissions',
+                            )}
+                        </p>
                     </div>
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.APP_MEMBERS} size="sm" variant="primary" />
-                        <p>{t('app.application.connectWalletDialog.feature.stats')}</p>
+                        <AvatarIcon
+                            icon={IconType.APP_MEMBERS}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <p>
+                            {t(
+                                'app.application.connectWalletDialog.feature.stats',
+                            )}
+                        </p>
                     </div>
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.BLOCKCHAIN_SMARTCONTRACT} size="sm" variant="primary" />
-                        <Link href={t('app.application.connectWalletDialog.auditLink')} isExternal={true}>
-                            <span className="text-sm">{t('app.application.connectWalletDialog.feature.smartContracts')}</span>
+                        <AvatarIcon
+                            icon={IconType.BLOCKCHAIN_SMARTCONTRACT}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <Link
+                            href={t(
+                                'app.application.connectWalletDialog.auditLink',
+                            )}
+                            isExternal={true}
+                        >
+                            <span className="text-sm">
+                                {t(
+                                    'app.application.connectWalletDialog.feature.smartContracts',
+                                )}
+                            </span>
                         </Link>
                     </div>
                 </div>
@@ -102,11 +139,15 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
             <Dialog.Footer
                 primaryAction={{
                     iconLeft: IconType.BLOCKCHAIN_WALLET,
-                    label: t('app.application.connectWalletDialog.action.connect'),
+                    label: t(
+                        'app.application.connectWalletDialog.action.connect',
+                    ),
                     onClick: handleConnectClick,
                 }}
                 secondaryAction={{
-                    label: t('app.application.connectWalletDialog.action.cancel'),
+                    label: t(
+                        'app.application.connectWalletDialog.action.cancel',
+                    ),
                     onClick: handleDialogClose,
                 }}
             />

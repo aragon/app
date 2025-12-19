@@ -13,7 +13,9 @@ export interface IDaoProcessDetailsPageProps {
     params: Promise<IDaoProcessDetailsPageParams>;
 }
 
-export const DaoProcessDetailsPage: React.FC<IDaoProcessDetailsPageProps> = async (props) => {
+export const DaoProcessDetailsPage: React.FC<
+    IDaoProcessDetailsPageProps
+> = async (props) => {
     const { params } = props;
     const { slug, addressOrEns, network } = await params;
 
@@ -27,12 +29,22 @@ export const DaoProcessDetailsPage: React.FC<IDaoProcessDetailsPageProps> = asyn
     });
 
     if (!plugins || plugins.length === 0) {
-        const error = new AragonBackendServiceError(AragonBackendServiceError.notFoundCode, 'Process not found', 404);
+        const error = new AragonBackendServiceError(
+            AragonBackendServiceError.notFoundCode,
+            'Process not found',
+            404,
+        );
         const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
         const errorNamespace = 'app.settings.daoProcessDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/settings`;
 
-        return <Page.Error actionLink={actionLink} error={parsedError} errorNamespace={errorNamespace} />;
+        return (
+            <Page.Error
+                actionLink={actionLink}
+                error={parsedError}
+                errorNamespace={errorNamespace}
+            />
+        );
     }
 
     return (

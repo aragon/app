@@ -1,5 +1,8 @@
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestUrlBodyParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type {
+    IRequestUrlBodyParams,
+    IRequestUrlParams,
+} from '@/shared/api/httpService';
 
 export interface IGetAbiUrlParams {
     /**
@@ -40,4 +43,8 @@ export interface IDecodeTransactionBodyParams {
     from: string;
 }
 
-export interface IDecodeTransactionParams extends IRequestUrlBodyParams<IDecodeTransactionUrlParams, IDecodeTransactionBodyParams> {}
+export interface IDecodeTransactionParams
+    extends IRequestUrlBodyParams<
+        IDecodeTransactionUrlParams,
+        IDecodeTransactionBodyParams
+    > {}

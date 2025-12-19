@@ -7,7 +7,8 @@ export interface ILockToVoteSetupGovernanceMembershipSettings
     extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,
         Pick<ITokenSetupMembershipForm, 'token'> {}
 
-export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
+export interface ILockToVoteSetupGovernanceProps
+    extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
      * Membership settings of the lock to vote body.
      */
@@ -15,7 +16,13 @@ export interface ILockToVoteSetupGovernanceProps extends Omit<IPluginSetupGovern
 }
 
 export interface ILockToVoteSetupGovernanceForm
-    extends Pick<ITokenPluginSettings, 'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration'> {
+    extends Pick<
+        ITokenPluginSettings,
+        | 'supportThreshold'
+        | 'minParticipation'
+        | 'minProposerVotingPower'
+        | 'minDuration'
+    > {
     /**
      * Voting mode of the DAO.
      */

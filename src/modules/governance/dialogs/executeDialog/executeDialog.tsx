@@ -1,10 +1,19 @@
-import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    DataList,
+    invariant,
+    ProposalDataListItem,
+    type ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -27,14 +36,18 @@ export interface IExecuteDialogParams {
     status: ProposalStatus;
 }
 
-export interface IExecuteDialogProps extends IDialogComponentProps<IExecuteDialogParams> {}
+export interface IExecuteDialogProps
+    extends IDialogComponentProps<IExecuteDialogParams> {}
 
 export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { location } = props;
 
     const router = useRouter();
 
-    invariant(location.params != null, 'ExecuteDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'ExecuteDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
     invariant(address != null, 'ExecuteDialog: user must be connected.');
@@ -42,15 +55,20 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { proposal, status, daoId } = location.params;
-    const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
+    const { title, summary, creator, proposalIndex, pluginAddress, network } =
+        proposal;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const handlePrepareTransaction = () => executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
+    const handlePrepareTransaction = () =>
+        executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
 
     const slug = proposalUtils.getProposalSlug(proposal, dao);
 

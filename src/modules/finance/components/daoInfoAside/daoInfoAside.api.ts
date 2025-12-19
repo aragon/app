@@ -1,7 +1,8 @@
 import type { IDefinitionListContainerProps } from '@aragon/gov-ui-kit';
 import type { IDao, ISubDaoSummary, Network } from '@/shared/api/daoService';
 
-export interface IDaoInfoAsideProps extends Omit<IDefinitionListContainerProps, 'onCopy'> {
+export interface IDaoInfoAsideProps
+    extends Omit<IDefinitionListContainerProps, 'onCopy'> {
     /**
      * Network used to build explorer links when DAO data is missing.
      */

@@ -2,7 +2,11 @@ export const daoAbi = [
     {
         type: 'function',
         inputs: [
-            { name: 'newImplementation', internalType: 'address', type: 'address' },
+            {
+                name: 'newImplementation',
+                internalType: 'address',
+                type: 'address',
+            },
             { name: 'data', internalType: 'bytes', type: 'bytes' },
         ],
         name: 'upgradeToAndCall',

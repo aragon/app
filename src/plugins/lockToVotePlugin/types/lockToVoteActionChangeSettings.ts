@@ -3,7 +3,10 @@ import type { LockToVoteProposalActionType } from './enum';
 import type { ILockToVotePluginSettings } from './lockToVotePluginSettings';
 
 export interface ILockToVoteActionChangeSettings
-    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    extends Omit<
+        IGukProposalActionChangeSettings,
+        'type' | 'proposedSettings' | 'existingSettings'
+    > {
     /**
      * The type of the proposal action.
      */

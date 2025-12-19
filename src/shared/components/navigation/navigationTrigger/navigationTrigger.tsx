@@ -12,7 +12,7 @@ export const NavigationTrigger: React.FC<INavigationTriggerProps> = (props) => {
             className={classNames(
                 'focus-ring-primary rounded-full border border-neutral-100 bg-neutral-0 p-[3px] outline-none', // Default
                 'hover:border-neutral-200 active:border-neutral-200 active:bg-neutral-50', // Hover / Active states
-                className
+                className,
             )}
             {...otherProps}
         >

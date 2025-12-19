@@ -2,7 +2,10 @@ import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IResourcesInputProps, IResourcesInputResource } from './resourcesInput.api';
+import type {
+    IResourcesInputProps,
+    IResourcesInputResource,
+} from './resourcesInput.api';
 import { ResourcesInputItem } from './resourcesInputItem';
 
 export type ResourcesInputBaseForm = Record<string, IResourcesInputResource[]>;
@@ -13,7 +16,8 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
-    const { fields, append, remove, replace } = useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
+    const { fields, append, remove, replace } =
+        useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
 
     useEffect(() => {
         if (defaultValue) {
@@ -34,11 +38,22 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
             {fields.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
                     {fields.map((field, index) => (
-                        <ResourcesInputItem index={index} key={field.id} name={fieldName} remove={remove} />
+                        <ResourcesInputItem
+                            index={index}
+                            key={field.id}
+                            name={fieldName}
+                            remove={remove}
+                        />
                     ))}
                 </div>
             )}
-            <Button className="w-fit" iconLeft={IconType.PLUS} onClick={() => append({ name: '', url: '' })} size="md" variant="tertiary">
+            <Button
+                className="w-fit"
+                iconLeft={IconType.PLUS}
+                onClick={() => append({ name: '', url: '' })}
+                size="md"
+                variant="tertiary"
+            >
                 {t('app.shared.resourcesInput.add')}
             </Button>
         </div>

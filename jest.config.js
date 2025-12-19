@@ -2,14 +2,23 @@
 const config = {
     testEnvironment: 'jsdom',
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
-    coveragePathIgnorePatterns: ['.d.ts', '.api.ts', 'index.ts', '/src/app', '/src/test', '/src/shared/lib', '/testUtils/'],
+    coveragePathIgnorePatterns: [
+        '.d.ts',
+        '.api.ts',
+        'index.ts',
+        '/src/app',
+        '/src/test',
+        '/src/shared/lib',
+        '/testUtils/',
+    ],
     setupFilesAfterEnv: ['<rootDir>/src/test/setup.ts'],
     globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
-        '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$': '<rootDir>/src/test/fileTransform.js',
+        '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$':
+            '<rootDir>/src/test/fileTransform.js',
         '^.+\\.m?[tj]sx?$': [
             'ts-jest',
             {

@@ -23,22 +23,38 @@ export interface ILockToVoteProposalVotingBreakdownProps {
     children?: ReactNode;
 }
 
-export const LockToVoteProposalVotingBreakdown: React.FC<ILockToVoteProposalVotingBreakdownProps> = (props) => {
+export const LockToVoteProposalVotingBreakdown: React.FC<
+    ILockToVoteProposalVotingBreakdownProps
+> = (props) => {
     const { proposal, children, isVeto } = props;
 
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold } = proposal.settings;
 
-    const totalSupply = lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal);
-    const yesVotes = lockToVoteProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
-    const noVotes = lockToVoteProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
-    const abstainVotes = lockToVoteProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
+    const totalSupply =
+        lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal);
+    const yesVotes = lockToVoteProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.YES,
+    );
+    const noVotes = lockToVoteProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.NO,
+    );
+    const abstainVotes = lockToVoteProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.ABSTAIN,
+    );
 
     return (
         <ProposalVoting.BreakdownToken
             isVeto={isVeto}
-            minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
-            supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
+            minParticipation={tokenSettingsUtils.ratioToPercentage(
+                minParticipation,
+            )}
+            supportThreshold={tokenSettingsUtils.ratioToPercentage(
+                supportThreshold,
+            )}
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(BigInt(totalSupply ?? 0), decimals)}
             totalAbstain={abstainVotes}

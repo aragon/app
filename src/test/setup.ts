@@ -21,11 +21,21 @@ timeUtils.setup();
 Object.assign(global, { TextDecoder, TextEncoder });
 
 // Mock ResizeObserver functionality
-global.ResizeObserver = jest.fn().mockImplementation(() => ({ observe: jest.fn(), unobserve: jest.fn(), disconnect: jest.fn() }));
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn(),
+}));
 
 // Allow spying on library functions
-jest.mock('react-hook-form', () => ({ __esModule: true, ...jest.requireActual<object>('react-hook-form') }));
-jest.mock('viem', () => ({ __esModule: true, ...jest.requireActual<object>('viem') }));
+jest.mock('react-hook-form', () => ({
+    __esModule: true,
+    ...jest.requireActual<object>('react-hook-form'),
+}));
+jest.mock('viem', () => ({
+    __esModule: true,
+    ...jest.requireActual<object>('viem'),
+}));
 jest.mock('next/font/local', () => ({
     __esModule: true,
     default: () => ({ className: '' }),

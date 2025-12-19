@@ -1,7 +1,15 @@
-import { AddressInput, addressUtils, type IAddressInputResolvedValue } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    type IAddressInputResolvedValue,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
+import {
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+    TransactionStatus,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -17,7 +25,9 @@ export interface ISetupBodyDialogExternalAddressProps {
     daoId: string;
 }
 
-export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAddressProps> = (props) => {
+export const SetupBodyDialogExternalAddress: React.FC<
+    ISetupBodyDialogExternalAddressProps
+> = (props) => {
     const { daoId } = props;
     const { network } = daoUtils.parseDaoId(daoId);
     const { t } = useTranslations();
@@ -36,7 +46,10 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
             validate: {
                 isAddress: (value) => addressUtils.isAddress(value),
                 isSafeCheckLoading: () =>
-                    !isSafeCheckLoading || t('app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.validation'),
+                    !isSafeCheckLoading ||
+                    t(
+                        'app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.validation',
+                    ),
             },
         },
         sanitizeOnBlur: false,
@@ -62,32 +75,45 @@ export const SetupBodyDialogExternalAddress: React.FC<ISetupBodyDialogExternalAd
         setValue('name', value?.name);
     };
 
-    const addressCheckStepLabelType = isSafeCheckLoading ? 'loading' : isSafe ? 'successSafe' : 'success';
+    const addressCheckStepLabelType = isSafeCheckLoading
+        ? 'loading'
+        : isSafe
+          ? 'successSafe'
+          : 'success';
     const steps: IStepperStep<ITransactionStatusStepMeta>[] = [
         {
             id: 'safeCheck',
             order: 0,
             meta: {
-                label: t(`app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.${addressCheckStepLabelType}`),
+                label: t(
+                    `app.createDao.setupBodyDialog.externalAddress.addressTypeCheck.${addressCheckStepLabelType}`,
+                ),
                 state: isSafeCheckLoading ? 'pending' : 'success',
             },
         },
     ];
 
-    const transactionInfo: ITransactionInfo = { title: addressUtils.truncateAddress(value) };
+    const transactionInfo: ITransactionInfo = {
+        title: addressUtils.truncateAddress(value),
+    };
 
     return (
         <div className="flex w-full flex-col gap-3">
             <AddressInput
                 chainId={chainId}
-                helpText={t('app.createDao.setupBodyDialog.externalAddress.address.helpText')}
+                helpText={t(
+                    'app.createDao.setupBodyDialog.externalAddress.address.helpText',
+                )}
                 onAccept={handleAddressAccept}
                 onChange={setAddressInput}
                 value={addressInput}
                 {...addressField}
             />
             {value && (
-                <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
+                <TransactionStatus.Container
+                    steps={steps}
+                    transactionInfo={transactionInfo}
+                >
                     {steps.map((step) => (
                         <TransactionStatus.Step key={step.id} {...step} />
                     ))}

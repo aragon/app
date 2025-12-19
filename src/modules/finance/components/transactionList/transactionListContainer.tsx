@@ -29,7 +29,9 @@ export interface ITransactionListContainerProps {
 
 export const transactionListFilterParam = 'subdao';
 
-export const TransactionListContainer: React.FC<ITransactionListContainerProps> = (props) => {
+export const TransactionListContainer: React.FC<
+    ITransactionListContainerProps
+> = (props) => {
     const { initialParams, daoId, ...otherProps } = props;
 
     const { t } = useTranslations();

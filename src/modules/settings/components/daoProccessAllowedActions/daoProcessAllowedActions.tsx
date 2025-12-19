@@ -1,4 +1,8 @@
-import { DataList, type IEmptyStateObjectIllustrationProps, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
+import {
+    DataList,
+    type IEmptyStateObjectIllustrationProps,
+    SmartContractFunctionDataListItem,
+} from '@aragon/gov-ui-kit';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -16,28 +20,50 @@ export interface IDaoProcessAllowedActionsProps {
     plugin: IDaoPlugin;
 }
 
-export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> = (props) => {
+export const DaoProcessAllowedActions: React.FC<
+    IDaoProcessAllowedActionsProps
+> = (props) => {
     const { network, plugin } = props;
 
     const { t } = useTranslations();
 
-    const { data, status, fetchStatus, isLoading, isFetchingNextPage, fetchNextPage } = useAllowedActions(
-        { urlParams: { network, pluginAddress: plugin.address }, queryParams: {} },
-        { enabled: plugin.conditionAddress != null }
+    const {
+        data,
+        status,
+        fetchStatus,
+        isLoading,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useAllowedActions(
+        {
+            urlParams: { network, pluginAddress: plugin.address },
+            queryParams: {},
+        },
+        { enabled: plugin.conditionAddress != null },
     );
 
     const allowedActionsList = data?.pages.flatMap((page) => page.data);
     const hasUnrestrictedAccess = plugin.conditionAddress == null;
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
     const itemsCount = data?.pages[0].metadata.totalRecords;
     const processedState = hasUnrestrictedAccess ? 'idle' : state;
 
-    const emptyStateContext = hasUnrestrictedAccess ? 'unrestricted' : 'emptyState';
+    const emptyStateContext = hasUnrestrictedAccess
+        ? 'unrestricted'
+        : 'emptyState';
     const emptyState: IEmptyStateObjectIllustrationProps = {
         isStacked: false,
-        heading: t(`app.settings.daoProcessAllowedActions.${emptyStateContext}.heading`),
-        description: t(`app.settings.daoProcessAllowedActions.${emptyStateContext}.description`),
+        heading: t(
+            `app.settings.daoProcessAllowedActions.${emptyStateContext}.heading`,
+        ),
+        description: t(
+            `app.settings.daoProcessAllowedActions.${emptyStateContext}.description`,
+        ),
         objectIllustration: { object: 'SETTINGS' },
     };
 
@@ -49,7 +75,10 @@ export const DaoProcessAllowedActions: React.FC<IDaoProcessAllowedActionsProps> 
             pageSize={isLoading ? 3 : 12}
             state={processedState}
         >
-            <DataList.Container emptyState={emptyState} SkeletonElement={SmartContractFunctionDataListItem.Skeleton}>
+            <DataList.Container
+                emptyState={emptyState}
+                SkeletonElement={SmartContractFunctionDataListItem.Skeleton}
+            >
                 {allowedActionsList?.map((action, index) => (
                     <SmartContractFunctionDataListItem.Structure
                         chainId={networkDefinitions[network].id}

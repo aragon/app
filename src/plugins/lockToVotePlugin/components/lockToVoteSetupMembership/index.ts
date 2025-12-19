@@ -1,6 +1,10 @@
 import dynamic from 'next/dynamic';
 
-export const LockToVoteSetupMembership = dynamic(() => import('./lockToVoteSetupMembership').then((mod) => mod.LockToVoteSetupMembership));
+export const LockToVoteSetupMembership = dynamic(() =>
+    import('./lockToVoteSetupMembership').then(
+        (mod) => mod.LockToVoteSetupMembership,
+    ),
+);
 
 export type {
     ILockToVoteSetupMembershipForm,

@@ -8,17 +8,26 @@ export type PluginId = string;
 
 // Plugin component registered for a specific SlotId
 // biome-ignore lint/suspicious/noExplicitAny: any exception
-export type PluginComponent<TComponentProps = any> = ComponentType<TComponentProps>;
+export type PluginComponent<TComponentProps = any> =
+    ComponentType<TComponentProps>;
 
 // Record of slot components
-export type SlotComponents = Record<SlotId, Record<PluginId, PluginComponent | undefined> | undefined>;
+export type SlotComponents = Record<
+    SlotId,
+    Record<PluginId, PluginComponent | undefined> | undefined
+>;
 
 // Plugin function registered for a specific SlotId
 // biome-ignore lint/suspicious/noExplicitAny: any exception
-export type PluginFunction<TParams = any, TResult = any> = (params: TParams) => TResult;
+export type PluginFunction<TParams = any, TResult = any> = (
+    params: TParams,
+) => TResult;
 
 // Record of slot functions
-export type SlotFunctions = Record<SlotId, Record<PluginId, PluginFunction | undefined> | undefined>;
+export type SlotFunctions = Record<
+    SlotId,
+    Record<PluginId, PluginFunction | undefined> | undefined
+>;
 
 /**
  * Plugin definitions.

@@ -1,1 +1,5 @@
-export { type IUseDaoPluginsParams, pluginGroupFilter, useDaoPlugins } from './useDaoPlugins';
+export {
+    type IUseDaoPluginsParams,
+    pluginGroupFilter,
+    useDaoPlugins,
+} from './useDaoPlugins';

@@ -1,1 +1,4 @@
-export { GovernanceStageBodiesField, type IGovernanceStageBodiesFieldProps } from './governanceStageBodiesField';
+export {
+    GovernanceStageBodiesField,
+    type IGovernanceStageBodiesFieldProps,
+} from './governanceStageBodiesField';

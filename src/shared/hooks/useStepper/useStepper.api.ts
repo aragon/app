@@ -1,6 +1,9 @@
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
-export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {
+export interface IUseStepperParams<
+    TMeta = undefined,
+    TStepId extends string = string,
+> {
     /**
      * Initial steps used to populate the steps array.
      */
@@ -11,7 +14,10 @@ export interface IUseStepperParams<TMeta = undefined, TStepId extends string = s
     initialActiveStep?: TStepId;
 }
 
-export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = string> {
+export interface IUseStepperReturn<
+    TMeta = undefined,
+    TStepId extends string = string,
+> {
     /**
      * Array of steps ordered by order value.
      */

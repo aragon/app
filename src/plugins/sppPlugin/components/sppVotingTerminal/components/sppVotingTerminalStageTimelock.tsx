@@ -23,13 +23,17 @@ const getTimelockState = (proposal: ISppProposal, stage: ISppStage) => {
     const now = DateTime.now();
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
 
-    const isActive = stageIndex === currentStageIndex && minAdvance && now < minAdvance;
-    const isComplete = stageIndex < currentStageIndex || (minAdvance && now > minAdvance);
+    const isActive =
+        stageIndex === currentStageIndex && minAdvance && now < minAdvance;
+    const isComplete =
+        stageIndex < currentStageIndex || (minAdvance && now > minAdvance);
 
     return isComplete ? 'complete' : isActive ? 'active' : 'pending';
 };
 
-export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTimelockProps> = (props) => {
+export const SppVotingTerminalStageTimelock: React.FC<
+    ISppVotingTerminalStageTimelockProps
+> = (props) => {
     const { stage, proposal } = props;
     const { t } = useTranslations();
 
@@ -40,13 +44,21 @@ export const SppVotingTerminalStageTimelock: React.FC<ISppVotingTerminalStageTim
     });
 
     const minAdvance = sppStageUtils.getStageMinAdvance(proposal, stage);
-    const date = formatterUtils.formatDate(minAdvance, { format: DateFormat.YEAR_MONTH_DAY_TIME }) ?? '';
+    const date =
+        formatterUtils.formatDate(minAdvance, {
+            format: DateFormat.YEAR_MONTH_DAY_TIME,
+        }) ?? '';
 
     return (
         <CardEmptyState
             className="border border-neutral-100"
-            description={t(`app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.description`, { date })}
-            heading={t(`app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.heading`)}
+            description={t(
+                `app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.description`,
+                { date },
+            )}
+            heading={t(
+                `app.plugins.spp.sppVotingTerminalStageTimelock.${timelockState}.heading`,
+            )}
             isStacked={false}
             objectIllustration={{ object: 'TIMELOCK' }}
         />

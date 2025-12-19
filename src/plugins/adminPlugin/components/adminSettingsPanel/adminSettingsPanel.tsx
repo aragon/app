@@ -14,13 +14,18 @@ export interface IAdminSettingsPanelProps {
     daoId: string;
 }
 
-export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (props) => {
+export const AdminSettingsPanel: React.FC<IAdminSettingsPanelProps> = (
+    props,
+) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
 
     return (
-        <Page.MainSection icon={IconType.WARNING} title={t('app.plugins.admin.adminSettingsPanel.title')}>
+        <Page.MainSection
+            icon={IconType.WARNING}
+            title={t('app.plugins.admin.adminSettingsPanel.title')}
+        >
             <Card className="flex flex-col gap-4 p-6">
                 <AdminGovernanceInfo />
                 <div className="flex items-center justify-between">

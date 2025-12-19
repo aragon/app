@@ -14,7 +14,9 @@ export interface IUseConnectedWalletGuardParams {
     onError?: () => void;
 }
 
-export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams) => {
+export const useConnectedWalletGuard = (
+    params?: IUseConnectedWalletGuardParams,
+) => {
     const { onSuccess, onError } = params ?? {};
 
     const { isConnected } = useAccount();
@@ -31,7 +33,7 @@ export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams)
 
             open(ApplicationDialogId.CONNECT_WALLET, { params: dialogParams });
         },
-        [open, onSuccess, onError, isConnected]
+        [open, onSuccess, onError, isConnected],
     );
 
     return { check: checkWalletConnected, result: isConnected };

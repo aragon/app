@@ -7,12 +7,14 @@ import { governanceServiceKeys } from '../../governanceServiceKeys';
 
 export const canCreateProposalOptions = (
     params: IGetCanCreateProposalParams,
-    options?: QueryOptions<ICanCreateProposalResult>
+    options?: QueryOptions<ICanCreateProposalResult>,
 ): SharedQueryOptions<ICanCreateProposalResult> => ({
     queryKey: governanceServiceKeys.canCreateProposal(params),
     queryFn: () => governanceService.getCanCreateProposal(params),
     ...options,
 });
 
-export const useCanCreateProposal = (params: IGetCanCreateProposalParams, options?: QueryOptions<ICanCreateProposalResult>) =>
-    useQuery(canCreateProposalOptions(params, options));
+export const useCanCreateProposal = (
+    params: IGetCanCreateProposalParams,
+    options?: QueryOptions<ICanCreateProposalResult>,
+) => useQuery(canCreateProposalOptions(params, options));

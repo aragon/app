@@ -1,7 +1,7 @@
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 
 export const generateStepperResult = <TMeta, TStepId extends string>(
-    values?: Partial<IUseStepperReturn<TMeta, TStepId>>
+    values?: Partial<IUseStepperReturn<TMeta, TStepId>>,
 ): IUseStepperReturn<TMeta, TStepId> => ({
     steps: [],
     activeStepIndex: -1,

@@ -1,4 +1,10 @@
-import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    Card,
+    Dropdown,
+    IconType,
+    InputText,
+} from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 
@@ -19,13 +25,18 @@ export interface IResourcesInputItemProps {
 
 type ResourcesInputItemBaseForm = Record<string, string>;
 
-export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) => {
+export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
+    props,
+) => {
     const { name, index, remove } = props;
 
     const { t } = useTranslations();
 
     const nameFieldName = `${name}.${index.toString()}.name`;
-    const nameField = useFormField<ResourcesInputItemBaseForm, typeof nameFieldName>(nameFieldName, {
+    const nameField = useFormField<
+        ResourcesInputItemBaseForm,
+        typeof nameFieldName
+    >(nameFieldName, {
         label: t('app.shared.resourcesInput.item.labelInput.title'),
         rules: { required: true },
         defaultValue: '',
@@ -40,10 +51,14 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
      * - Optional query string
      * - Optional fragment identifier
      */
-    const urlRegex = /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
+    const urlRegex =
+        /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
 
     const urlFieldName = `${name}.${index.toString()}.url`;
-    const urlField = useFormField<ResourcesInputItemBaseForm, typeof urlFieldName>(urlFieldName, {
+    const urlField = useFormField<
+        ResourcesInputItemBaseForm,
+        typeof urlFieldName
+    >(urlFieldName, {
         label: t('app.shared.resourcesInput.item.linkInput.title'),
         defaultValue: '',
         rules: { required: true, pattern: urlRegex },
@@ -54,14 +69,27 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (props) =>
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
             <InputText maxLength={40} {...nameField} />
 
-            <InputText placeholder={t('app.shared.resourcesInput.item.linkInput.placeholder')} {...urlField} />
+            <InputText
+                placeholder={t(
+                    'app.shared.resourcesInput.item.linkInput.placeholder',
+                )}
+                {...urlField}
+            />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container
                     constrainContentWidth={false}
-                    customTrigger={<Button iconLeft={IconType.DOTS_VERTICAL} size="lg" variant="tertiary" />}
+                    customTrigger={
+                        <Button
+                            iconLeft={IconType.DOTS_VERTICAL}
+                            size="lg"
+                            variant="tertiary"
+                        />
+                    }
                     size="md"
                 >
-                    <Dropdown.Item onClick={() => remove(index)}>{t('app.shared.resourcesInput.item.removeResource')}</Dropdown.Item>
+                    <Dropdown.Item onClick={() => remove(index)}>
+                        {t('app.shared.resourcesInput.item.removeResource')}
+                    </Dropdown.Item>
                 </Dropdown.Container>
             </div>
         </Card>

@@ -7,12 +7,14 @@ import { transactionServiceKeys } from '../../transactionServiceKeys';
 
 export const transactionStatusOptions = (
     params: IGetTransactionStatusParams,
-    options?: QueryOptions<ITransactionStatus>
+    options?: QueryOptions<ITransactionStatus>,
 ): SharedQueryOptions<ITransactionStatus> => ({
     queryKey: transactionServiceKeys.status(params),
     queryFn: () => transactionService.getTransactionStatus(params),
     ...options,
 });
 
-export const useTransactionStatus = (params: IGetTransactionStatusParams, options?: QueryOptions<ITransactionStatus>) =>
-    useQuery(transactionStatusOptions(params, options));
+export const useTransactionStatus = (
+    params: IGetTransactionStatusParams,
+    options?: QueryOptions<ITransactionStatus>,
+) => useQuery(transactionStatusOptions(params, options));

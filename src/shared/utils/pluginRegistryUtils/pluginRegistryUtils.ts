@@ -1,4 +1,11 @@
-import type { IPlugin, IPluginRegistry, PluginComponent, PluginFunction, PluginId, SlotId } from './pluginRegistryUtils.api';
+import type {
+    IPlugin,
+    IPluginRegistry,
+    PluginComponent,
+    PluginFunction,
+    PluginId,
+    SlotId,
+} from './pluginRegistryUtils.api';
 
 export interface IRegisterSlotComponentParams {
     /**
@@ -71,7 +78,9 @@ export class PluginRegistryUtils {
     };
 
     registerPlugin = (plugin: IPlugin): this => {
-        const hasPlugin = this.pluginRegistry.plugins.some(({ id }) => id === plugin.id);
+        const hasPlugin = this.pluginRegistry.plugins.some(
+            ({ id }) => id === plugin.id,
+        );
 
         if (!hasPlugin) {
             this.pluginRegistry.plugins.push(plugin);
@@ -80,7 +89,8 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getPlugin = (pluginId: PluginId): IPlugin | undefined => this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
+    getPlugin = (pluginId: PluginId): IPlugin | undefined =>
+        this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
 
     getPlugins = (): IPlugin[] => this.pluginRegistry.plugins;
 
@@ -100,14 +110,16 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotFunctions = <TParams = unknown, TResult = unknown>(slotId: SlotId): PluginFunction<TParams, TResult>[] => {
+    getSlotFunctions = <TParams = unknown, TResult = unknown>(
+        slotId: SlotId,
+    ): PluginFunction<TParams, TResult>[] => {
         const functions = this.pluginRegistry.slotFunctions[slotId] ?? {};
 
         return Object.values(functions) as PluginFunction<TParams, TResult>[];
     };
 
     getSlotFunction = <TParams = unknown, TResult = unknown>(
-        params: IGetSlotFunctionParams
+        params: IGetSlotFunctionParams,
     ): PluginFunction<TParams, TResult> | undefined => {
         const { slotId, pluginId } = params;
         const func = this.pluginRegistry.slotFunctions[slotId]?.[pluginId];
@@ -132,19 +144,27 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotComponent = (params: IGetSlotComponentParams): PluginComponent | undefined => {
+    getSlotComponent = (
+        params: IGetSlotComponentParams,
+    ): PluginComponent | undefined => {
         const { slotId, pluginId } = params;
-        const component = this.pluginRegistry.slotComponents[slotId]?.[pluginId];
+        const component =
+            this.pluginRegistry.slotComponents[slotId]?.[pluginId];
 
         return component;
     };
 
-    getPageSlotId = (slotId: string, segments: string[]) => `${slotId}-${segments.toString()}`;
+    getPageSlotId = (slotId: string, segments: string[]) =>
+        `${slotId}-${segments.toString()}`;
 
     listContainsRegisteredPlugins = (pluginIds: string[] = []) => {
-        const registeredPluginIds = this.pluginRegistry.plugins.map((plugin) => plugin.id);
+        const registeredPluginIds = this.pluginRegistry.plugins.map(
+            (plugin) => plugin.id,
+        );
 
-        return pluginIds.some((pluginId) => registeredPluginIds.includes(pluginId));
+        return pluginIds.some((pluginId) =>
+            registeredPluginIds.includes(pluginId),
+        );
     };
 }
 

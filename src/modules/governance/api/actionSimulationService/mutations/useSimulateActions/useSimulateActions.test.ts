@@ -6,7 +6,10 @@ import { actionSimulationService } from '../../actionSimulationService';
 import { useSimulateActions } from './useSimulateActions';
 
 describe('useSimulateActions mutation', () => {
-    const simulateActionsSpy = jest.spyOn(actionSimulationService, 'simulateActions');
+    const simulateActionsSpy = jest.spyOn(
+        actionSimulationService,
+        'simulateActions',
+    );
 
     afterEach(() => {
         simulateActionsSpy.mockReset();
@@ -15,13 +18,20 @@ describe('useSimulateActions mutation', () => {
     it('simulates actions and returns the result', async () => {
         const simulationResult = generateSimulationResult();
         const params = {
-            urlParams: { network: Network.ETHEREUM_MAINNET, pluginAddress: '0x123' },
+            urlParams: {
+                network: Network.ETHEREUM_MAINNET,
+                pluginAddress: '0x123',
+            },
             body: { actions: [{ to: '0x456', data: '0x000', value: '0' }] },
         };
         simulateActionsSpy.mockResolvedValue(simulationResult);
-        const { result } = renderHook(() => useSimulateActions(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useSimulateActions(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate(params));
-        await waitFor(() => expect(result.current.data).toEqual(simulationResult));
+        await waitFor(() =>
+            expect(result.current.data).toEqual(simulationResult),
+        );
         expect(simulateActionsSpy).toHaveBeenCalledWith(params);
     });
 });

@@ -1,1 +1,4 @@
-export { type ITransferAssetActionProps, TransferAssetAction } from './transferAssetAction';
+export {
+    type ITransferAssetActionProps,
+    TransferAssetAction,
+} from './transferAssetAction';

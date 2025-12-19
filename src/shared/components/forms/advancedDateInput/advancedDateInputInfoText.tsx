@@ -3,14 +3,20 @@ import type { IUseFormFieldReturn } from '@/shared/hooks/useFormField';
 import type { IDateDuration, IDateFixed } from '@/shared/utils/dateUtils';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 
-export interface IAdvancedDateInputInfoTextProps extends Pick<IAdvancedDateInputBaseProps, 'infoText' | 'infoDisplay'> {
+export interface IAdvancedDateInputInfoTextProps
+    extends Pick<IAdvancedDateInputBaseProps, 'infoText' | 'infoDisplay'> {
     /**
      * Form field to display the info text for.
      */
-    field: IUseFormFieldReturn<Record<string, IDateFixed | IDateDuration | number>, string>;
+    field: IUseFormFieldReturn<
+        Record<string, IDateFixed | IDateDuration | number>,
+        string
+    >;
 }
 
-export const AdvancedDateInputInfoText: React.FC<IAdvancedDateInputInfoTextProps> = (props) => {
+export const AdvancedDateInputInfoText: React.FC<
+    IAdvancedDateInputInfoTextProps
+> = (props) => {
     const { field, infoText, infoDisplay = 'card' } = props;
 
     const alertDescription = field.alert?.message ?? infoText;

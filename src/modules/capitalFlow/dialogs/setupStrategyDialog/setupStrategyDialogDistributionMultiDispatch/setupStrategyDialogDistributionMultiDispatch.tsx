@@ -5,7 +5,10 @@ import { RouterAddressInput } from '@/modules/capitalFlow/components/routerAddre
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { ISetupStrategyForm, ISetupStrategyFormRouter } from '../setupStrategyDialogDefinitions';
+import type {
+    ISetupStrategyForm,
+    ISetupStrategyFormRouter,
+} from '../setupStrategyDialogDefinitions';
 
 // In PoC we limit the number of routers to 15
 const maxRouters = 15;
@@ -19,22 +22,30 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
         name: 'distributionMultiDispatch.routerAddresses',
         rules: {
             validate: (value) => {
-                const validAddresses = value.filter((router) => router.address && router.address.trim() !== '');
+                const validAddresses = value.filter(
+                    (router) => router.address && router.address.trim() !== '',
+                );
                 if (validAddresses.length === 0) {
-                    return t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.validation.atLeastOneRequired');
+                    return t(
+                        'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.validation.atLeastOneRequired',
+                    );
                 }
                 return true;
             },
         },
     });
 
-    const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({ name: 'sourceVault' });
+    const daoId = useWatch<ISetupStrategyForm, 'sourceVault'>({
+        name: 'sourceVault',
+    });
     const { network } = daoUtils.parseDaoId(daoId);
     const { id: chainId } = networkDefinitions[network];
 
     // Ensure at least one field exists initially
     useEffect(() => {
-        const currentValues = getValues('distributionMultiDispatch.routerAddresses');
+        const currentValues = getValues(
+            'distributionMultiDispatch.routerAddresses',
+        );
         if (currentValues.length === 0) {
             append({ address: '' });
         }
@@ -60,10 +71,14 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
             <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
                     <p className="font-normal text-lg text-neutral-800 leading-tight">
-                        {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.label')}
+                        {t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.label',
+                        )}
                     </p>
                     <p className="font-normal text-base text-neutral-500 leading-normal">
-                        {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.helpText')}
+                        {t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.helpText',
+                        )}
                     </p>
                 </div>
 
@@ -86,10 +101,13 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
 
                 <div className="flex items-center">
                     <p className="flex-1 font-normal text-neutral-500 text-sm leading-tight">
-                        {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.counter', {
-                            current: fields.length,
-                            max: maxRouters,
-                        })}
+                        {t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.counter',
+                            {
+                                current: fields.length,
+                                max: maxRouters,
+                            },
+                        )}
                     </p>
                 </div>
 
@@ -101,7 +119,9 @@ export const SetupStrategyDialogDistributionMultiDispatch: FC = () => {
                     size="md"
                     variant="secondary"
                 >
-                    {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.addRouter')}
+                    {t(
+                        'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.addRouter',
+                    )}
                 </Button>
             </div>
         </div>

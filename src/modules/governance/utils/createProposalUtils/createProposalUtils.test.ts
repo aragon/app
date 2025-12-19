@@ -1,6 +1,9 @@
 import { DateTime } from 'luxon';
 import { timeUtils } from '@/test/utils';
-import { generateCreateProposalEndDateFormData, generateCreateProposalStartDateFormData } from '../../testUtils';
+import {
+    generateCreateProposalEndDateFormData,
+    generateCreateProposalStartDateFormData,
+} from '../../testUtils';
 import { createProposalUtils } from './createProposalUtils';
 
 describe('createProposal utils', () => {
@@ -10,23 +13,34 @@ describe('createProposal utils', () => {
                 startTimeMode: 'fixed',
                 startTimeFixed: undefined,
             });
-            expect(() => createProposalUtils.parseStartDate(formValues)).toThrow();
+            expect(() =>
+                createProposalUtils.parseStartDate(formValues),
+            ).toThrow();
         });
 
         it('returns 0 when startTimeMode is set to now', () => {
-            const formValues = generateCreateProposalStartDateFormData({ startTimeMode: 'now' });
+            const formValues = generateCreateProposalStartDateFormData({
+                startTimeMode: 'now',
+            });
             expect(createProposalUtils.parseStartDate(formValues)).toEqual(0);
         });
 
         it('returns 0 when startTimeMode is not set', () => {
-            const formValues = generateCreateProposalStartDateFormData({ startTimeMode: undefined });
+            const formValues = generateCreateProposalStartDateFormData({
+                startTimeMode: undefined,
+            });
             expect(createProposalUtils.parseStartDate(formValues)).toEqual(0);
         });
 
         it('returns the parsed fixed start date in seconds as an integer', () => {
             const startTimeFixed = { date: '2024-08-30', time: '10:24' };
-            const formValues = generateCreateProposalStartDateFormData({ startTimeMode: 'fixed', startTimeFixed });
-            expect(createProposalUtils.parseStartDate(formValues)).toEqual(1_725_013_440);
+            const formValues = generateCreateProposalStartDateFormData({
+                startTimeMode: 'fixed',
+                startTimeFixed,
+            });
+            expect(createProposalUtils.parseStartDate(formValues)).toEqual(
+                1_725_013_440,
+            );
         });
     });
 
@@ -36,18 +50,30 @@ describe('createProposal utils', () => {
                 endTimeMode: 'duration',
                 endTimeDuration: undefined,
             });
-            expect(() => createProposalUtils.parseEndDate(formValues)).toThrow();
+            expect(() =>
+                createProposalUtils.parseEndDate(formValues),
+            ).toThrow();
         });
 
         it('throws error when endTimeMode is set to fixed and endTimeFixed is undefined', () => {
-            const formValues = generateCreateProposalEndDateFormData({ endTimeMode: 'fixed', endTimeFixed: undefined });
-            expect(() => createProposalUtils.parseEndDate(formValues)).toThrow();
+            const formValues = generateCreateProposalEndDateFormData({
+                endTimeMode: 'fixed',
+                endTimeFixed: undefined,
+            });
+            expect(() =>
+                createProposalUtils.parseEndDate(formValues),
+            ).toThrow();
         });
 
         it('returns the parsed fixed end date in seconds as an integer', () => {
             const endTimeFixed = { date: '2021-01-22', time: '11:00' };
-            const formValues = generateCreateProposalEndDateFormData({ endTimeMode: 'fixed', endTimeFixed });
-            expect(createProposalUtils.parseEndDate(formValues)).toEqual(1_611_313_200);
+            const formValues = generateCreateProposalEndDateFormData({
+                endTimeMode: 'fixed',
+                endTimeFixed,
+            });
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(
+                1_611_313_200,
+            );
         });
 
         it('returns 0 when endTimeMode is duration and minimumDuration equals endTimeDuration', () => {
@@ -63,7 +89,9 @@ describe('createProposal utils', () => {
         });
 
         it('returns 0 when endTimeMode is not set', () => {
-            const formValues = generateCreateProposalEndDateFormData({ endTimeMode: undefined });
+            const formValues = generateCreateProposalEndDateFormData({
+                endTimeMode: undefined,
+            });
             expect(createProposalUtils.parseEndDate(formValues)).toEqual(0);
         });
 
@@ -72,9 +100,15 @@ describe('createProposal utils', () => {
             const startTimeMode = 'now';
             const endTimeMode = 'duration';
             const endTimeDuration = { days: 3, hours: 0, minutes: 30 };
-            const formValues = generateCreateProposalEndDateFormData({ startTimeMode, endTimeMode, endTimeDuration });
+            const formValues = generateCreateProposalEndDateFormData({
+                startTimeMode,
+                endTimeMode,
+                endTimeDuration,
+            });
             const expectedValue = 1_608_739_200;
-            expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(
+                expectedValue,
+            );
         });
 
         it('returns the parsed end date in seconds as an integer by adding the defined duration to the fixed start time', () => {
@@ -89,7 +123,9 @@ describe('createProposal utils', () => {
                 endTimeDuration,
             });
             const expectedValue = 1_693_827_060;
-            expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(
+                expectedValue,
+            );
         });
 
         it('returns the parsed end date in seconds as an integer by adding the defined duration to the fixed startTime', () => {
@@ -104,14 +140,18 @@ describe('createProposal utils', () => {
                 endTimeDuration,
             });
             const expectedValue = 1_697_506_920; // value * 1000 in epoch is Tuesday, October 17, 2023 1:42:00 AM
-            expect(createProposalUtils.parseEndDate(formValues)).toEqual(expectedValue);
+            expect(createProposalUtils.parseEndDate(formValues)).toEqual(
+                expectedValue,
+            );
         });
     });
 
     describe('dateToSeconds', () => {
         it('parses the given DateTime object to an integer number representing its seconds', () => {
             const date = DateTime.fromISO('2016-05-25T09:08:34.123');
-            expect(createProposalUtils['dateToSeconds'](date)).toEqual(1_464_167_314);
+            expect(createProposalUtils['dateToSeconds'](date)).toEqual(
+                1_464_167_314,
+            );
         });
     });
 
@@ -119,7 +159,9 @@ describe('createProposal utils', () => {
         it('returns zero 0 if minDuration is more than 7 days', () => {
             const minDuration = 8 * 24 * 60 * 60;
 
-            expect(createProposalUtils.createDefaultEndDate(minDuration)).toEqual(0);
+            expect(
+                createProposalUtils.createDefaultEndDate(minDuration),
+            ).toEqual(0);
         });
 
         it('returns 7 days from now in seconds if minDuration is less the 7 days', () => {
@@ -127,14 +169,18 @@ describe('createProposal utils', () => {
             const minDuration = 6 * 24 * 60 * 60;
             const expectedTime = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
 
-            expect(createProposalUtils.createDefaultEndDate(minDuration)).toBe(expectedTime);
+            expect(createProposalUtils.createDefaultEndDate(minDuration)).toBe(
+                expectedTime,
+            );
         });
 
         it('returns 7 days from now in seconds if minDuration is not provided', () => {
             timeUtils.setTime('2025-04-16T09:30:00');
             const expectedTime = DateTime.now().toSeconds() + 7 * 24 * 60 * 60;
 
-            expect(createProposalUtils.createDefaultEndDate()).toBe(expectedTime);
+            expect(createProposalUtils.createDefaultEndDate()).toBe(
+                expectedTime,
+            );
         });
     });
 });

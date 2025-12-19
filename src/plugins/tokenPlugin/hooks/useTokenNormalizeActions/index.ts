@@ -1,1 +1,4 @@
-export { type IUseTokenNormalizeActionsParams, useTokenNormalizeActions } from './useTokenNormalizeActions';
+export {
+    type IUseTokenNormalizeActionsParams,
+    useTokenNormalizeActions,
+} from './useTokenNormalizeActions';

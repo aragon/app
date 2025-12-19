@@ -1,6 +1,10 @@
 'use client';
 
-import { CheckboxCard, type CheckboxState, invariant } from '@aragon/gov-ui-kit';
+import {
+    CheckboxCard,
+    type CheckboxState,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { ProposalCreationMode } from '@/modules/createDao/components/createProcessForm';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
@@ -9,21 +13,31 @@ import { BodyType } from '@/modules/createDao/types/enum';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IMultisigSetupGovernanceForm } from '../multisigSetupGovernance';
 
-export interface IMultisigProposalCreationSettingsProps extends IPluginProposalCreationSettingsParams {}
+export interface IMultisigProposalCreationSettingsProps
+    extends IPluginProposalCreationSettingsParams {}
 
-export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreationSettingsProps> = (props) => {
+export const MultisigProposalCreationSettings: React.FC<
+    IMultisigProposalCreationSettingsProps
+> = (props) => {
     const { body, formPrefix, mode, disableCheckbox } = props;
 
-    invariant(body.type !== BodyType.EXTERNAL, 'MultisigProposalCreationSettings: External body type not expected here.');
+    invariant(
+        body.type !== BodyType.EXTERNAL,
+        'MultisigProposalCreationSettings: External body type not expected here.',
+    );
 
     const { name = '', description } = body;
 
-    const { value: canCreateProposal, onChange: onCreateProposalChange } = useFormField<ISetupBodyForm, 'canCreateProposal'>(
-        'canCreateProposal',
-        { fieldPrefix: formPrefix, defaultValue: true }
-    );
+    const { value: canCreateProposal, onChange: onCreateProposalChange } =
+        useFormField<ISetupBodyForm, 'canCreateProposal'>('canCreateProposal', {
+            fieldPrefix: formPrefix,
+            defaultValue: true,
+        });
 
-    const { onChange: onOnlyListedChange } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
+    const { onChange: onOnlyListedChange } = useFormField<
+        IMultisigSetupGovernanceForm,
+        'onlyListed'
+    >('onlyListed', {
         fieldPrefix: `${formPrefix}.governance`,
         defaultValue: true,
     });
@@ -35,13 +49,20 @@ export const MultisigProposalCreationSettings: React.FC<IMultisigProposalCreatio
     };
 
     useEffect(() => {
-        const onlyListed = mode !== ProposalCreationMode.ANY_WALLET && canCreateProposal;
+        const onlyListed =
+            mode !== ProposalCreationMode.ANY_WALLET && canCreateProposal;
         onOnlyListedChange(onlyListed);
     }, [mode, canCreateProposal, onOnlyListedChange]);
 
     const checked = canCreateProposal;
 
     return (
-        <CheckboxCard checked={checked} className="w-full" description={description} label={name} onCheckedChange={handleCheckedChange} />
+        <CheckboxCard
+            checked={checked}
+            className="w-full"
+            description={description}
+            label={name}
+            onCheckedChange={handleCheckedChange}
+        />
     );
 };

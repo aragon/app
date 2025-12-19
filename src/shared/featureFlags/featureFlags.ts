@@ -11,7 +11,10 @@ import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
 import { GithubCmsFeatureFlagsProvider } from './providers/githubProvider';
 import { getEnvironment } from './utils/getEnvironment';
 
-const getStaticDefaultValue = (definition: FeatureFlagDefinition, env: FeatureFlagEnvironment): boolean => {
+const getStaticDefaultValue = (
+    definition: FeatureFlagDefinition,
+    env: FeatureFlagEnvironment,
+): boolean => {
     const envValue = definition.environments?.[env];
     if (envValue != null) {
         return envValue;
@@ -20,7 +23,11 @@ const getStaticDefaultValue = (definition: FeatureFlagDefinition, env: FeatureFl
     return definition.defaultValue;
 };
 
-const resolveFlagValue = (definition: FeatureFlagDefinition, overrides: FeatureFlagOverrides, env: FeatureFlagEnvironment): boolean => {
+const resolveFlagValue = (
+    definition: FeatureFlagDefinition,
+    overrides: FeatureFlagOverrides,
+    env: FeatureFlagEnvironment,
+): boolean => {
     if (overrides[definition.key] != null) {
         return overrides[definition.key] === true;
     }
@@ -41,7 +48,11 @@ class FeatureFlags {
      * without touching the public API. The effective environment is provided
      * explicitly by the caller.
      */
-    constructor(provider: IFeatureFlagsProvider, definitions: FeatureFlagDefinition[], environment: FeatureFlagEnvironment) {
+    constructor(
+        provider: IFeatureFlagsProvider,
+        definitions: FeatureFlagDefinition[],
+        environment: FeatureFlagEnvironment,
+    ) {
         this.provider = provider;
         this.definitions = definitions;
         this.environment = environment;
@@ -110,7 +121,9 @@ class FeatureFlags {
  * explicitly by the caller.
  */
 export const featureFlags = new FeatureFlags(
-    new GithubCmsFeatureFlagsProvider(getEnvironment(), () => headers().then((h) => h.get('cookie'))),
+    new GithubCmsFeatureFlagsProvider(getEnvironment(), () =>
+        headers().then((h) => h.get('cookie')),
+    ),
     FEATURE_FLAG_DEFINITIONS,
-    getEnvironment()
+    getEnvironment(),
 );

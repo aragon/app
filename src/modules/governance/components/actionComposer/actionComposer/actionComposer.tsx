@@ -1,6 +1,12 @@
 'use client';
 
-import { AlertInline, addressUtils, Button, IconType, Switch } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    addressUtils,
+    Button,
+    IconType,
+    Switch,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
 import type { IDaoPermission } from '@/shared/api/daoService';
@@ -13,13 +19,21 @@ import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
-import { type IExportedAction, proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
+import {
+    type IExportedAction,
+    proposalActionsImportExportUtils,
+} from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
-import { ActionComposerInput, type IActionComposerInputItem, type IActionComposerInputProps } from '../actionComposerInput';
+import {
+    ActionComposerInput,
+    type IActionComposerInputItem,
+    type IActionComposerInputProps,
+} from '../actionComposerInput';
 import { actionComposerUtils } from '../actionComposerUtils';
 import { ActionItemId } from '../actionComposerUtils.api';
 
-export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
+export interface IActionComposerProps
+    extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
      * ID of the DAO.
      */
@@ -44,7 +58,14 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions, daoPermissions } = props;
+    const {
+        daoId,
+        onAddAction,
+        excludeActionTypes,
+        hideWalletConnect = false,
+        allowedActions,
+        daoPermissions,
+    } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -52,25 +73,38 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { items, groups } = actionComposerUtils.getDaoActions({ dao, permissions: daoPermissions, t });
+    const { items, groups } = actionComposerUtils.getDaoActions({
+        dao,
+        permissions: daoPermissions,
+        t,
+    });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(allowedActions != null);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
+        allowedActions != null,
+    );
     const [uploadError, setUploadError] = useState<string | null>(null);
 
-    const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
+    const [importedContractAbis, setImportedContractAbis] = useState<
+        ISmartContractAbi[]
+    >([]);
 
     const addImportedContractAbi = useCallback(
         (abi: ISmartContractAbi) =>
             setImportedContractAbis((current) => {
-                const alreadyExists = current.some((currentAbi) => addressUtils.isAddressEqual(currentAbi.address, abi.address));
+                const alreadyExists = current.some((currentAbi) =>
+                    addressUtils.isAddressEqual(
+                        currentAbi.address,
+                        abi.address,
+                    ),
+                );
 
                 return alreadyExists ? current : [abi, ...current];
             }),
-        []
+        [],
     );
 
     const handleAddAction = () => {
@@ -93,7 +127,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        const parsedActions = actions.map((action) => ({ ...action, daoId, meta: undefined }));
+        const parsedActions = actions.map((action) => ({
+            ...action,
+            daoId,
+            meta: undefined,
+        }));
         onAddAction(parsedActions);
     };
 
@@ -122,7 +160,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction(parsedActions);
     };
 
-    const handleDirectFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDirectFileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
         const file = event.target.files?.[0];
         if (!file) {
             return;
@@ -131,8 +171,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         setUploadError(null);
 
         try {
-            const fileContent = await proposalActionsImportExportUtils.readFileAsText(file);
-            const result = proposalActionsImportExportUtils.validateAndParseActions(fileContent);
+            const fileContent =
+                await proposalActionsImportExportUtils.readFileAsText(file);
+            const result =
+                proposalActionsImportExportUtils.validateAndParseActions(
+                    fileContent,
+                );
 
             if (result.success && result.actions) {
                 handleImportActions(result.actions);
@@ -141,7 +185,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 setUploadError(t(result.errorKey));
             }
         } catch {
-            setUploadError(t('app.governance.createProposalForm.actionsImportExport.errors.invalidJSON'));
+            setUploadError(
+                t(
+                    'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
+                ),
+            );
         }
 
         event.target.value = '';
@@ -151,7 +199,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         fileUploadInputRef.current?.click();
     };
 
-    const handleItemSelected = (action: IActionComposerInputItem, inputValue: string) => {
+    const handleItemSelected = (
+        action: IActionComposerInputItem,
+        inputValue: string,
+    ) => {
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {
@@ -162,15 +213,28 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
-    const shouldRenderWalletConnect = !(hideWalletConnect || onlyShowAuthorizedActions);
+    const shouldRenderWalletConnect = !(
+        hideWalletConnect || onlyShowAuthorizedActions
+    );
 
     return (
         <>
-            <div className={classNames('flex flex-col gap-3', { hidden: displayActionComposer })}>
+            <div
+                className={classNames('flex flex-col gap-3', {
+                    hidden: displayActionComposer,
+                })}
+            >
                 <div className="flex items-center justify-between">
                     <div className="flex flex-row gap-3">
-                        <Button iconLeft={IconType.PLUS} onClick={handleAddAction} size="md" variant="primary">
-                            {t('app.governance.actionComposer.addAction.default')}
+                        <Button
+                            iconLeft={IconType.PLUS}
+                            onClick={handleAddAction}
+                            size="md"
+                            variant="primary"
+                        >
+                            {t(
+                                'app.governance.actionComposer.addAction.default',
+                            )}
                         </Button>
                         {shouldRenderWalletConnect && (
                             <Button
@@ -179,7 +243,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                 size="md"
                                 variant="secondary"
                             >
-                                {t('app.governance.actionComposer.addAction.walletConnect')}
+                                {t(
+                                    'app.governance.actionComposer.addAction.walletConnect',
+                                )}
                             </Button>
                         )}
                         <Button
@@ -188,25 +254,39 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             size="md"
                             variant={uploadError ? 'critical' : 'tertiary'}
                         >
-                            {t('app.governance.createProposalForm.actionsImportExport.importButton')}
+                            {t(
+                                'app.governance.createProposalForm.actionsImportExport.importButton',
+                            )}
                         </Button>
-                        <input accept=".json" className="hidden" onChange={handleDirectFileUpload} ref={fileUploadInputRef} type="file" />
+                        <input
+                            accept=".json"
+                            className="hidden"
+                            onChange={handleDirectFileUpload}
+                            ref={fileUploadInputRef}
+                            type="file"
+                        />
                     </div>
                     {allowedActions && (
                         // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
                         <div>
                             <Switch
                                 checked={onlyShowAuthorizedActions}
-                                inlineLabel={t('app.governance.actionComposer.authorizedSwitchLabel')}
+                                inlineLabel={t(
+                                    'app.governance.actionComposer.authorizedSwitchLabel',
+                                )}
                                 onCheckedChanged={setOnlyShowAuthorizedActions}
                             />
                         </div>
                     )}
                 </div>
-                {uploadError && <AlertInline message={uploadError} variant="critical" />}
+                {uploadError && (
+                    <AlertInline message={uploadError} variant="critical" />
+                )}
             </div>
             <ActionComposerInput
-                allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
+                allowedActions={
+                    onlyShowAuthorizedActions ? allowedActions : undefined
+                }
                 daoId={daoId}
                 excludeActionTypes={excludeActionTypes}
                 importedContractAbis={importedContractAbis}
@@ -215,7 +295,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
+                wrapperClassName={classNames('transition-none', {
+                    '!sr-only': !displayActionComposer,
+                })}
             />
         </>
     );

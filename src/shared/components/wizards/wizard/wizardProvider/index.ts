@@ -1,1 +1,6 @@
-export { type IWizardContext, type IWizardStepperStep, useWizardContext, WizardProvider } from './wizardProvider';
+export {
+    type IWizardContext,
+    type IWizardStepperStep,
+    useWizardContext,
+    WizardProvider,
+} from './wizardProvider';

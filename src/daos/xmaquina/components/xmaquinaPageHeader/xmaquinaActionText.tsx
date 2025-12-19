@@ -16,7 +16,9 @@ export interface IXmaquinaActionTextProps {
     isHovered: boolean;
 }
 
-export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) => {
+export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (
+    props,
+) => {
     const { title, description, isHovered } = props;
     const { t } = useTranslations();
 
@@ -24,7 +26,9 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) =>
         <>
             {/* Static for small screens */}
             <div className="relative z-10 flex flex-col items-start gap-1 self-start pr-4 md:hidden md:pr-0">
-                <p className="font-medium text-white text-xl leading-tight md:text-2xl">{t(title)}</p>
+                <p className="font-medium text-white text-xl leading-tight md:text-2xl">
+                    {t(title)}
+                </p>
                 <p className="text-base text-neutral-400 leading-tight transition-colors duration-500 group-hover:text-black md:text-lg">
                     {t(description)}
                 </p>
@@ -37,7 +41,9 @@ export const XmaquinaActionText: React.FC<IXmaquinaActionTextProps> = (props) =>
                 initial={{ y: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 15 }}
             >
-                <p className="font-medium text-2xl text-white leading-tight">{t(title)}</p>
+                <p className="font-medium text-2xl text-white leading-tight">
+                    {t(title)}
+                </p>
                 <p className="text-lg text-neutral-400 leading-tight transition-colors duration-500 group-hover:text-black">
                     {t(description)}
                 </p>

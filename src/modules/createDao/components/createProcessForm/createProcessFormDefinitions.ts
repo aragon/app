@@ -1,6 +1,10 @@
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type { ISetupBodyForm, ISetupBodyFormExisting, ISetupBodyFormNew } from '../../dialogs/setupBodyDialog';
+import type {
+    ISetupBodyForm,
+    ISetupBodyFormExisting,
+    ISetupBodyFormNew,
+} from '../../dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '../../dialogs/setupStageSettingsDialog';
 
 export enum ProposalCreationMode {
@@ -58,7 +62,8 @@ export interface ICreateProcessFormDataBase {
     permissionSelectors: IProposalActionData[];
 }
 
-export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase {
+export interface ICreateProcessFormDataBasic
+    extends ICreateProcessFormDataBase {
     /**
      * Basic governance type.
      */
@@ -69,7 +74,8 @@ export interface ICreateProcessFormDataBasic extends ICreateProcessFormDataBase 
     body: ISetupBodyFormNew | ISetupBodyFormExisting;
 }
 
-export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBase {
+export interface ICreateProcessFormDataAdvanced
+    extends ICreateProcessFormDataBase {
     /**
      * Advanced governance type.
      */
@@ -80,7 +86,9 @@ export interface ICreateProcessFormDataAdvanced extends ICreateProcessFormDataBa
     stages: ICreateProcessFormStage[];
 }
 
-export type ICreateProcessFormData = ICreateProcessFormDataBasic | ICreateProcessFormDataAdvanced;
+export type ICreateProcessFormData =
+    | ICreateProcessFormDataBasic
+    | ICreateProcessFormDataAdvanced;
 
 export interface ICreateProcessFormStage {
     /**

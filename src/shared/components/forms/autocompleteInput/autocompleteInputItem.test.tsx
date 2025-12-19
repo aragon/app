@@ -1,9 +1,14 @@
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { AutocompleteInputItem, type IAutocompleteInputItemProps } from './autocompleteInputItem';
+import {
+    AutocompleteInputItem,
+    type IAutocompleteInputItemProps,
+} from './autocompleteInputItem';
 
 describe('<AutocompleteInputItem /> component', () => {
-    const createTestComponent = (props?: Partial<IAutocompleteInputItemProps>) => {
+    const createTestComponent = (
+        props?: Partial<IAutocompleteInputItemProps>,
+    ) => {
         const completeProps: IAutocompleteInputItemProps = {
             item: { id: 'id', name: 'name', icon: IconType.APP_ASSETS },
             isActive: false,
@@ -25,7 +30,12 @@ describe('<AutocompleteInputItem /> component', () => {
 
     it('renders the info on the right side when provided', () => {
         const info = 'Test info';
-        const item = { id: '1', name: 'option-with-desc', icon: IconType.SETTINGS, info };
+        const item = {
+            id: '1',
+            name: 'option-with-desc',
+            icon: IconType.SETTINGS,
+            info,
+        };
         render(createTestComponent({ item }));
         expect(screen.getByText(info)).toBeInTheDocument();
     });
@@ -33,6 +43,8 @@ describe('<AutocompleteInputItem /> component', () => {
     it('sets the item option as selected when the isActive property is set to true', () => {
         const isActive = true;
         render(createTestComponent({ isActive }));
-        expect(screen.getByRole('option').getAttribute('aria-selected')).toBeTruthy();
+        expect(
+            screen.getByRole('option').getAttribute('aria-selected'),
+        ).toBeTruthy();
     });
 });

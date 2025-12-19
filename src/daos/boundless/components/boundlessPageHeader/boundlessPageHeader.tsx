@@ -17,7 +17,9 @@ export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {
     dao: IDao;
 }
 
-export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) => {
+export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
+    props,
+) => {
     const { dao, className, ...otherProps } = props;
     const { address } = useAccount();
     const { data: ensName } = useEnsName({
@@ -29,20 +31,37 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
 
     return (
         <header
-            className={classNames('relative flex h-fit flex-col gap-y-4 pt-6 pb-4 md:gap-y-12 md:pt-16 md:pb-10', className)}
+            className={classNames(
+                'relative flex h-fit flex-col gap-y-4 pt-6 pb-4 md:gap-y-12 md:pt-16 md:pb-10',
+                className,
+            )}
             {...otherProps}
         >
-            <video autoPlay={true} className="absolute inset-0 -z-30 size-full object-cover" loop={true} muted={true} playsInline={true}>
-                <source src="/static/media/boundless-header-video.mp4" type="video/mp4" />
+            <video
+                autoPlay={true}
+                className="absolute inset-0 -z-30 size-full object-cover"
+                loop={true}
+                muted={true}
+                playsInline={true}
+            >
+                <source
+                    src="/static/media/boundless-header-video.mp4"
+                    type="video/mp4"
+                />
             </video>
             <Container className="flex w-full flex-col gap-y-12">
                 <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
                     <p className="text-3xl text-[#000000] leading-tight md:text-5xl">
-                        {t('app.daos.boundless.boundlessPageHeader.welcome')} {ensName && <span className="text-[#537263]">{ensName}</span>}
+                        {t('app.daos.boundless.boundlessPageHeader.welcome')}{' '}
+                        {ensName && (
+                            <span className="text-[#537263]">{ensName}</span>
+                        )}
                         <br />
                         {t('app.daos.boundless.boundlessPageHeader.to')}
                     </p>
-                    <p className="text-[#2D2C2B] text-lg md:text-xl">{t('app.daos.boundless.boundlessPageHeader.info')}</p>
+                    <p className="text-[#2D2C2B] text-lg md:text-xl">
+                        {t('app.daos.boundless.boundlessPageHeader.info')}
+                    </p>
                 </div>
                 {/* Static row for desktop view */}
                 <div className="hidden w-full items-center justify-between gap-4 lg:flex">
@@ -60,7 +79,12 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
             </Container>
             {/* Draggable unbounded carousel for mobile view */}
             <div className="hidden md:block lg:hidden">
-                <Carousel animationDelay={2} gap={16} speed={40} speedOnHoverFactor={0.2}>
+                <Carousel
+                    animationDelay={2}
+                    gap={16}
+                    speed={40}
+                    speedOnHoverFactor={0.2}
+                >
                     {actions.map((action) => (
                         <BoundlessActionItem
                             description={action.description}
@@ -73,7 +97,13 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (props) 
                 </Carousel>
             </div>
             <div className="block md:hidden">
-                <Carousel animationDelay={2} gap={16} isDraggable={true} speed={40} speedOnHoverFactor={0.2}>
+                <Carousel
+                    animationDelay={2}
+                    gap={16}
+                    isDraggable={true}
+                    speed={40}
+                    speedOnHoverFactor={0.2}
+                >
                     {actions.map((action) => (
                         <BoundlessActionItem
                             description={action.description}

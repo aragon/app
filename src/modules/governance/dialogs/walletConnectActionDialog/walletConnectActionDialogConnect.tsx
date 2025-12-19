@@ -24,13 +24,17 @@ export interface IWalletConnectActionDialogConnectProps {
 
 const formId = 'dappConnectForm';
 
-export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDialogConnectProps> = (props) => {
+export const WalletConnectActionDialogConnect: React.FC<
+    IWalletConnectActionDialogConnectProps
+> = (props) => {
     const { onFormSubmit, status } = props;
 
     const { close } = useDialogContext();
     const { t } = useTranslations();
 
-    const { handleSubmit, control } = useForm<IWalletConnectActionFormData>({ mode: 'onTouched' });
+    const { handleSubmit, control } = useForm<IWalletConnectActionFormData>({
+        mode: 'onTouched',
+    });
 
     const uriField = useFormField<IWalletConnectActionFormData, 'uri'>('uri', {
         control,
@@ -43,25 +47,42 @@ export const WalletConnectActionDialogConnect: React.FC<IWalletConnectActionDial
     return (
         <>
             <Dialog.Header
-                description={t('app.governance.walletConnectActionDialog.connect.description')}
-                title={t('app.governance.walletConnectActionDialog.connect.title')}
+                description={t(
+                    'app.governance.walletConnectActionDialog.connect.description',
+                )}
+                title={t(
+                    'app.governance.walletConnectActionDialog.connect.title',
+                )}
             />
             <Dialog.Content>
-                <form className="py-2" id={formId} onSubmit={handleSubmit(onFormSubmit)}>
-                    <InputText placeholder={t('app.governance.walletConnectActionDialog.connect.uriField.placeholder')} {...uriField} />
+                <form
+                    className="py-2"
+                    id={formId}
+                    onSubmit={handleSubmit(onFormSubmit)}
+                >
+                    <InputText
+                        placeholder={t(
+                            'app.governance.walletConnectActionDialog.connect.uriField.placeholder',
+                        )}
+                        {...uriField}
+                    />
                 </form>
             </Dialog.Content>
             <Dialog.Footer
                 hasError={status === 'error'}
                 primaryAction={{
-                    label: t(`app.governance.walletConnectActionDialog.connect.action.${primaryActionLabel}`),
+                    label: t(
+                        `app.governance.walletConnectActionDialog.connect.action.${primaryActionLabel}`,
+                    ),
                     type: 'submit',
                     isLoading: status === 'pending',
                     iconRight: status === 'error' ? IconType.RELOAD : undefined,
                     form: formId,
                 }}
                 secondaryAction={{
-                    label: t('app.governance.walletConnectActionDialog.connect.action.cancel'),
+                    label: t(
+                        'app.governance.walletConnectActionDialog.connect.action.cancel',
+                    ),
                     onClick: () => close(),
                 }}
             />

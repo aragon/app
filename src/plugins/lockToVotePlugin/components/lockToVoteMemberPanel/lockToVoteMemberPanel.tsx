@@ -15,7 +15,9 @@ export interface ILockToVoteMemberPanelProps {
     daoId: string;
 }
 
-export const LockToVoteMemberPanel: React.FC<ILockToVoteMemberPanelProps> = (props) => {
+export const LockToVoteMemberPanel: React.FC<ILockToVoteMemberPanelProps> = (
+    props,
+) => {
     const { plugin, daoId } = props;
 
     const { token } = plugin.settings;

@@ -28,4 +28,8 @@ export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
     tokenAddress?: string;
 }
 
-export interface IGetMemberLocksParams extends IRequestUrlQueryParams<IGetMemberLocksUrlParams, IGetMemberLocksQueryParams> {}
+export interface IGetMemberLocksParams
+    extends IRequestUrlQueryParams<
+        IGetMemberLocksUrlParams,
+        IGetMemberLocksQueryParams
+    > {}

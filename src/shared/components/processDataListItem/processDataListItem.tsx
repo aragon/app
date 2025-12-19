@@ -22,32 +22,46 @@ export type IProcessDataListItemProps = IDataListItemProps & {
     dao?: IDao;
 };
 
-export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (props) => {
+export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
+    props,
+) => {
     const { process, isActive, className, dao, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const { address, description, slug } = process;
     const targetDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(process);
-    const daoPath = daoBreadcrumbsUtils.buildDaoBreadcrumbPath({ rootDao: dao, targetAddress: targetDaoAddress });
+    const daoPath = daoBreadcrumbsUtils.buildDaoBreadcrumbPath({
+        rootDao: dao,
+        targetAddress: targetDaoAddress,
+    });
 
     const processedDescription =
-        description != null && description.length > 0 ? description : t('app.shared.processDataListItem.defaultDescription');
+        description != null && description.length > 0
+            ? description
+            : t('app.shared.processDataListItem.defaultDescription');
 
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
-                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary': isActive,
+                'border-primary-400 shadow-primary hover:border-primary-400 hover:shadow-primary':
+                    isActive,
             })}
             key={address}
             {...otherProps}
         >
             <div className="flex flex-col gap-y-1">
                 <div className="flex gap-2 font-normal text-lg leading-tight">
-                    <p className="truncate text-neutral-800">{daoUtils.getPluginName(process)}</p>
-                    <p className="text-right text-neutral-500 uppercase">{slug}</p>
+                    <p className="truncate text-neutral-800">
+                        {daoUtils.getPluginName(process)}
+                    </p>
+                    <p className="text-right text-neutral-500 uppercase">
+                        {slug}
+                    </p>
                 </div>
-                <p className="line-clamp-2 font-normal text-base text-neutral-500 leading-normal">{processedDescription}</p>
+                <p className="line-clamp-2 font-normal text-base text-neutral-500 leading-normal">
+                    {processedDescription}
+                </p>
                 <DaoBreadcrumbs path={daoPath} />
             </div>
         </DataList.Item>

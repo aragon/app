@@ -1,12 +1,20 @@
 'use client';
 
-import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    invariant,
+    ProposalDataListItem,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -24,11 +32,17 @@ export interface ISppAdvanceStageDialogParams {
     daoId: string;
 }
 
-export interface ISppAdvanceStageDialogProps extends IDialogComponentProps<ISppAdvanceStageDialogParams> {}
+export interface ISppAdvanceStageDialogProps
+    extends IDialogComponentProps<ISppAdvanceStageDialogParams> {}
 
-export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (props) => {
+export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
+    props,
+) => {
     const { location } = props;
-    invariant(location.params != null, 'AdvanceStageDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'AdvanceStageDialog: required parameters must be set.',
+    );
 
     const { proposal, daoId } = location.params;
 
@@ -37,9 +51,13 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
-    const handlePrepareTransaction = () => sppAdvanceStageDialogUtils.buildTransaction(proposal);
+    const handlePrepareTransaction = () =>
+        sppAdvanceStageDialogUtils.buildTransaction(proposal);
 
     const onSuccessClick = () => router.refresh();
 
@@ -63,7 +81,10 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (pro
         >
             <ProposalDataListItem.Structure
                 id={slug}
-                publisher={{ address: creatorAddress, name: creatorEns ?? undefined }}
+                publisher={{
+                    address: creatorAddress,
+                    name: creatorEns ?? undefined,
+                }}
                 status={ProposalStatus.ACTIVE}
                 summary={proposal.summary}
                 title={proposal.title}

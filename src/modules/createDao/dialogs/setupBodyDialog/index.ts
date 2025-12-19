@@ -1,4 +1,8 @@
-export { type ISetupBodyDialogParams, type ISetupBodyDialogProps, SetupBodyDialog } from './setupBodyDialog';
+export {
+    type ISetupBodyDialogParams,
+    type ISetupBodyDialogProps,
+    SetupBodyDialog,
+} from './setupBodyDialog';
 export type {
     ISetupBodyForm,
     ISetupBodyFormBase,

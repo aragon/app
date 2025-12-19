@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
-import { generateDaoPlugin, generateFilterComponentPlugin } from '@/shared/testUtils';
-import { DaoMembersPageClient, type IDaoMembersPageClientProps } from './daoMembersPageClient';
+import {
+    generateDaoPlugin,
+    generateFilterComponentPlugin,
+} from '@/shared/testUtils';
+import {
+    DaoMembersPageClient,
+    type IDaoMembersPageClientProps,
+} from './daoMembersPageClient';
 
 jest.mock('../../components/daoMemberList', () => ({
     DaoMemberList: { Container: () => <div data-testid="member-list-mock" /> },
@@ -15,16 +21,22 @@ describe('<DaoMembersPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
     });
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoMembersPageClientProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoMembersPageClientProps>,
+    ) => {
         const completeProps: IDaoMembersPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+            },
             ...props,
         };
 
@@ -34,7 +46,9 @@ describe('<DaoMembersPageClient /> component', () => {
     it('renders the page title, members list and members page details', () => {
         render(createTestComponent());
 
-        expect(screen.getByText(/daoMembersPage.main.title/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMembersPage.main.title/),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('member-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });

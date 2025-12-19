@@ -5,5 +5,8 @@ export enum ExecuteSelectorsServiceKey {
 }
 
 export const executeSelectorsServiceKeys = {
-    allowedActions: (params: IGetAllowedActionsParams) => [ExecuteSelectorsServiceKey.ALLOWED_ACTIONS, params],
+    allowedActions: (params: IGetAllowedActionsParams) => [
+        ExecuteSelectorsServiceKey.ALLOWED_ACTIONS,
+        params,
+    ],
 };

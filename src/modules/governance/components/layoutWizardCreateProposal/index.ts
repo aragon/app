@@ -1,1 +1,4 @@
-export { type ILayoutWizardCreateProposalProps, LayoutWizardCreateProposal } from './layoutWizardCreateProposal';
+export {
+    type ILayoutWizardCreateProposalProps,
+    LayoutWizardCreateProposal,
+} from './layoutWizardCreateProposal';

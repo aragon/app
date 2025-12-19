@@ -24,7 +24,9 @@ const erc20WrapperAbi = [
 ];
 
 class TokenWrapUnwrapDialogUtils {
-    buildWrapTransaction = (params: IBuildTokenWrapTransactionParams): Promise<ITransactionRequest> => {
+    buildWrapTransaction = (
+        params: IBuildTokenWrapTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { token, address, amount } = params;
 
         const transactionData = encodeFunctionData({
@@ -33,12 +35,18 @@ class TokenWrapUnwrapDialogUtils {
             args: [address, amount],
         });
 
-        const transaction = { to: token.address as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: token.address as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
 
-    buildUnwrapTransaction = (params: IBuildTokenWrapTransactionParams): Promise<ITransactionRequest> => {
+    buildUnwrapTransaction = (
+        params: IBuildTokenWrapTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { token, address, amount } = params;
 
         const transactionData = encodeFunctionData({
@@ -47,7 +55,11 @@ class TokenWrapUnwrapDialogUtils {
             args: [address, amount],
         });
 
-        const transaction = { to: token.address as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: token.address as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

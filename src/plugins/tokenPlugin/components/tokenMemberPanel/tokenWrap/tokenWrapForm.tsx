@@ -5,7 +5,10 @@ import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IToken } from '@/modules/finance/api/financeService';
-import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import {
+    AssetInput,
+    type IAssetInputFormData,
+} from '@/modules/finance/components/assetInput';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
@@ -45,31 +48,49 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { address } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
+    const { result: isConnected, check: walletGuard } =
+        useConnectedWalletGuard();
 
     const {
         allowance,
         balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
         invalidateQueries,
-    } = useCheckTokenAllowance({ spender: token.address, token: underlyingToken });
-
-    // Read wrapped token balance directly from blockchain
-    const { balance: wrappedBalance, refetch: refetchWrappedBalance } = useWrappedTokenBalance({
-        userAddress: address,
-        token,
+    } = useCheckTokenAllowance({
+        spender: token.address,
+        token: underlyingToken,
     });
 
-    const parsedUnwrappedAmount = formatUnits(unwrappedBalance?.value ?? BigInt(0), decimals);
-    const userAsset = useMemo(() => ({ token: underlyingToken, amount: parsedUnwrappedAmount }), [underlyingToken, parsedUnwrappedAmount]);
+    // Read wrapped token balance directly from blockchain
+    const { balance: wrappedBalance, refetch: refetchWrappedBalance } =
+        useWrappedTokenBalance({
+            userAddress: address,
+            token,
+        });
 
-    const formValues = useForm<ITokenWrapFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
+    const parsedUnwrappedAmount = formatUnits(
+        unwrappedBalance?.value ?? BigInt(0),
+        decimals,
+    );
+    const userAsset = useMemo(
+        () => ({ token: underlyingToken, amount: parsedUnwrappedAmount }),
+        [underlyingToken, parsedUnwrappedAmount],
+    );
+
+    const formValues = useForm<ITokenWrapFormData>({
+        mode: 'onSubmit',
+        defaultValues: { asset: userAsset },
+    });
     const { control, setValue, handleSubmit } = formValues;
 
-    const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({ control, name: 'amount' });
+    const wrapAmount = useWatch<ITokenWrapFormData, 'amount'>({
+        control,
+        name: 'amount',
+    });
     const wrapAmountWei = parseUnits(wrapAmount ?? '0', token.decimals);
 
-    const needsApproval = isConnected && (allowance == null || allowance < wrapAmountWei);
+    const needsApproval =
+        isConnected && (allowance == null || allowance < wrapAmountWei);
 
     const handleFormSubmit = () => {
         if (needsApproval) {
@@ -81,7 +102,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const handleApproveTokens = () => {
         const { symbol } = underlyingToken;
-        const txInfoTitle = t('app.plugins.token.tokenWrapForm.approveTransactionInfoTitle', { symbol });
+        const txInfoTitle = t(
+            'app.plugins.token.tokenWrapForm.approveTransactionInfoTitle',
+            { symbol },
+        );
         const transactionInfo = { title: txInfoTitle, current: 1, total: 2 };
 
         const params: ITokenApproveTokensDialogParams = {
@@ -97,7 +121,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         open(TokenPluginDialogId.APPROVE_TOKENS, { params });
     };
 
-    const handleWrapUnwrapTokens = (action: 'wrap' | 'unwrap', amount: bigint) => {
+    const handleWrapUnwrapTokens = (
+        action: 'wrap' | 'unwrap',
+        amount: bigint,
+    ) => {
         const params: ITokenWrapUnwrapDialogParams = {
             action,
             token,
@@ -132,18 +159,26 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     // Read wrapped token balance directly from blockchain
     const parsedWrappedAmount = formatUnits(wrappedBalance, decimals);
 
-    const formattedWrappedAmount = formatterUtils.formatNumber(parsedWrappedAmount, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const formattedWrappedAmount = formatterUtils.formatNumber(
+        parsedWrappedAmount,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
 
     const submitLabel = needsApproval ? 'approve' : 'wrap';
     const disableSubmit = unwrappedBalance?.value === BigInt(0);
 
     return (
         <FormProvider {...formValues}>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit(handleFormSubmit)}
+            >
                 <p className="font-normal text-base text-neutral-500 leading-normal">
-                    {t('app.plugins.token.tokenWrapForm.info', { underlyingSymbol: underlyingToken.symbol })}
+                    {t('app.plugins.token.tokenWrapForm.info', {
+                        underlyingSymbol: underlyingToken.symbol,
+                    })}
                 </p>
                 <div className="flex flex-col gap-3">
                     <AssetInput
@@ -164,16 +199,28 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         type={isConnected ? 'submit' : undefined}
                         variant="primary"
                     >
-                        {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, {
-                            underlyingSymbol: underlyingToken.symbol,
-                        })}
+                        {t(
+                            `app.plugins.token.tokenWrapForm.submit.${submitLabel}`,
+                            {
+                                underlyingSymbol: underlyingToken.symbol,
+                            },
+                        )}
                     </Button>
                     {wrappedBalance > 0 && (
-                        <Button onClick={() => handleWrapUnwrapTokens('unwrap', wrappedBalance)} size="lg" variant="secondary">
-                            {t('app.plugins.token.tokenWrapForm.submit.unwrap', {
-                                amount: formattedWrappedAmount,
-                                symbol,
-                            })}
+                        <Button
+                            onClick={() =>
+                                handleWrapUnwrapTokens('unwrap', wrappedBalance)
+                            }
+                            size="lg"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.token.tokenWrapForm.submit.unwrap',
+                                {
+                                    amount: formattedWrappedAmount,
+                                    symbol,
+                                },
+                            )}
                         </Button>
                     )}
                     <p className="text-center font-normal text-neutral-500 text-sm leading-normal">

@@ -20,7 +20,9 @@ export interface IDaoMembersPageClientProps {
 
 export const daoMembersPageFilterParam = 'members';
 
-export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
+export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
+    props,
+) => {
     const { initialParams } = props;
     const { daoId } = initialParams.queryParams;
 
@@ -33,16 +35,27 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
         name: daoMembersPageFilterParam,
     });
 
-    invariant(activePlugin != null, 'DaoMembersPageClient: no valid plugin found.');
+    invariant(
+        activePlugin != null,
+        'DaoMembersPageClient: no valid plugin found.',
+    );
 
     return (
         <>
             <Page.Main title={t('app.governance.daoMembersPage.main.title')}>
-                <DaoMemberList.Container initialParams={initialParams} onValueChange={setActivePlugin} value={activePlugin} />
+                <DaoMemberList.Container
+                    initialParams={initialParams}
+                    onValueChange={setActivePlugin}
+                    value={activePlugin}
+                />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={activePlugin.label}>
-                    <DaoPluginInfo daoId={daoId} plugin={activePlugin.meta} type={PluginType.BODY} />
+                    <DaoPluginInfo
+                        daoId={daoId}
+                        plugin={activePlugin.meta}
+                        type={PluginType.BODY}
+                    />
                 </Page.AsideCard>
                 <PluginSingleComponent
                     daoId={daoId}

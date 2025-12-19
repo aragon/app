@@ -12,7 +12,7 @@ import type {
 } from '@tanstack/react-query';
 
 const generateReactQueryResultBase = <TData, TError>(
-    result?: Partial<QueryObserverBaseResult<TData, TError>>
+    result?: Partial<QueryObserverBaseResult<TData, TError>>,
 ): QueryObserverBaseResult<TData, TError> => ({
     data: undefined,
     promise: new Promise((resolve) => resolve({} as TData)),
@@ -44,7 +44,7 @@ const generateReactQueryResultBase = <TData, TError>(
 });
 
 export const generateReactQueryResultSuccess = <TData, TError>(
-    result?: Partial<QueryObserverSuccessResult<TData, TError>>
+    result?: Partial<QueryObserverSuccessResult<TData, TError>>,
 ): QueryObserverSuccessResult<TData, TError> => ({
     ...generateReactQueryResultBase(result),
     data: (result?.data ?? {}) as TData,
@@ -60,7 +60,7 @@ export const generateReactQueryResultSuccess = <TData, TError>(
 });
 
 export const generateReactQueryResultError = <TData, TError>(
-    result?: Partial<QueryObserverLoadingErrorResult<TData, TError>>
+    result?: Partial<QueryObserverLoadingErrorResult<TData, TError>>,
 ): QueryObserverLoadingErrorResult<TData, TError> => ({
     ...generateReactQueryResultBase(result),
     data: undefined,
@@ -76,7 +76,7 @@ export const generateReactQueryResultError = <TData, TError>(
 });
 
 export const generateReactQueryResultLoading = <TData, TError>(
-    result?: Partial<QueryObserverBaseResult<TData, TError>>
+    result?: Partial<QueryObserverBaseResult<TData, TError>>,
 ): QueryObserverBaseResult<TData, TError> => ({
     ...generateReactQueryResultBase(result),
     data: undefined,
@@ -92,7 +92,7 @@ export const generateReactQueryResultLoading = <TData, TError>(
 });
 
 const generateReactQueryInfiniteResultBase = <TData, TError>(
-    result?: Partial<InfiniteQueryObserverBaseResult<TData, TError>>
+    result?: Partial<InfiniteQueryObserverBaseResult<TData, TError>>,
 ): InfiniteQueryObserverBaseResult<TData, TError> => ({
     ...generateReactQueryResultBase(result),
     fetchNextPage: jest.fn(),
@@ -107,7 +107,7 @@ const generateReactQueryInfiniteResultBase = <TData, TError>(
 });
 
 export const generateReactQueryInfiniteResultSuccess = <TData, TError>(
-    result?: Partial<InfiniteQueryObserverSuccessResult<TData, TError>>
+    result?: Partial<InfiniteQueryObserverSuccessResult<TData, TError>>,
 ): InfiniteQueryObserverSuccessResult<TData, TError> => ({
     ...generateReactQueryInfiniteResultBase(result),
     data: (result?.data ?? {}) as TData,
@@ -125,7 +125,7 @@ export const generateReactQueryInfiniteResultSuccess = <TData, TError>(
 });
 
 export const generateReactQueryInfiniteResultError = <TData, TError>(
-    result?: Partial<InfiniteQueryObserverLoadingErrorResult<TData, TError>>
+    result?: Partial<InfiniteQueryObserverLoadingErrorResult<TData, TError>>,
 ): InfiniteQueryObserverLoadingErrorResult<TData, TError> => ({
     ...generateReactQueryInfiniteResultBase(result),
     data: undefined,
@@ -143,7 +143,7 @@ export const generateReactQueryInfiniteResultError = <TData, TError>(
 });
 
 export const generateReactQueryInfiniteResultLoading = <TData, TError>(
-    result?: Partial<InfiniteQueryObserverLoadingResult<TData, TError>>
+    result?: Partial<InfiniteQueryObserverLoadingResult<TData, TError>>,
 ): InfiniteQueryObserverLoadingResult<TData, TError> => ({
     ...generateReactQueryInfiniteResultBase(result),
     data: undefined,
@@ -161,7 +161,7 @@ export const generateReactQueryInfiniteResultLoading = <TData, TError>(
 });
 
 export const generateReactQueryMutationResultIdle = <TData, TError, TVars>(
-    result?: Partial<MutationObserverIdleResult<TData, TError, TVars>>
+    result?: Partial<MutationObserverIdleResult<TData, TError, TVars>>,
 ): UseMutationResult<TData, TError, TVars> => ({
     data: undefined,
     variables: undefined,
@@ -183,7 +183,7 @@ export const generateReactQueryMutationResultIdle = <TData, TError, TVars>(
 });
 
 export const generateReactQueryMutationResultSuccess = <TData, TError, TVars>(
-    result?: Partial<MutationObserverSuccessResult<TData, TError, TVars>>
+    result?: Partial<MutationObserverSuccessResult<TData, TError, TVars>>,
 ): UseMutationResult<TData, TError, TVars> => ({
     data: undefined as TData,
     variables: undefined as TVars,

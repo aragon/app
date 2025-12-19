@@ -1,14 +1,31 @@
-import { AddressInput, addressUtils, Dialog, type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    Dialog,
+    type ICompositeAddress,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
-import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
+import {
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+    TransactionStatus,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { type IGetAbiUrlParams, type ISmartContractAbi, useSmartContractAbi } from '../../api/smartContractService';
+import {
+    type IGetAbiUrlParams,
+    type ISmartContractAbi,
+    useSmartContractAbi,
+} from '../../api/smartContractService';
 
 export interface IVerifySmartContractDialogParams {
     /**
@@ -25,7 +42,8 @@ export interface IVerifySmartContractDialogParams {
     initialValue?: string;
 }
 
-export interface IVerifySmartContractDialogProps extends IDialogComponentProps<IVerifySmartContractDialogParams> {}
+export interface IVerifySmartContractDialogProps
+    extends IDialogComponentProps<IVerifySmartContractDialogParams> {}
 
 export interface IVerifySmartContractFormData {
     /**
@@ -40,64 +58,110 @@ export interface IVerifySmartContractFormData {
 
 const formId = 'verifySmartContactForm';
 
-export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps> = (props) => {
+export const VerifySmartContractDialog: React.FC<
+    IVerifySmartContractDialogProps
+> = (props) => {
     const { location } = props;
 
-    invariant(location.params != null, 'VerifySmartContractDialog: params must be defined.');
+    invariant(
+        location.params != null,
+        'VerifySmartContractDialog: params must be defined.',
+    );
     const { network, onSubmit, initialValue = '' } = location.params;
     const { id: chainId } = networkDefinitions[network];
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const defaultAddressValue = addressUtils.isAddress(initialValue) ? initialValue : undefined;
+    const defaultAddressValue = addressUtils.isAddress(initialValue)
+        ? initialValue
+        : undefined;
     const { handleSubmit, control } = useForm<IVerifySmartContractFormData>({
         mode: 'onTouched',
         // set default values for the form only if the initial value is provided, to avoid validation errors on load!
-        defaultValues: defaultAddressValue ? { smartContract: { address: defaultAddressValue } } : undefined,
+        defaultValues: defaultAddressValue
+            ? { smartContract: { address: defaultAddressValue } }
+            : undefined,
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(initialValue);
+    const [addressInput, setAddressInput] = useState<string | undefined>(
+        initialValue,
+    );
     const {
         label,
         value: smartContractValue,
         onChange: onSmartContractChange,
         ...smartContractField
-    } = useFormField<IVerifySmartContractFormData, 'smartContract'>('smartContract', {
-        label: t('app.governance.verifySmartContractDialog.smartContractLabel'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
-        control,
-        sanitizeOnBlur: false,
-    });
+    } = useFormField<IVerifySmartContractFormData, 'smartContract'>(
+        'smartContract',
+        {
+            label: t(
+                'app.governance.verifySmartContractDialog.smartContractLabel',
+            ),
+            rules: {
+                required: true,
+                validate: (value) => addressUtils.isAddress(value?.address),
+            },
+            control,
+            sanitizeOnBlur: false,
+        },
+    );
 
-    const { onChange: updateAbi, value: abiFieldValue } = useFormField<IVerifySmartContractFormData, 'abi'>('abi', {
+    const { onChange: updateAbi, value: abiFieldValue } = useFormField<
+        IVerifySmartContractFormData,
+        'abi'
+    >('abi', {
         control,
     });
 
     const abiParams = { network, address: smartContractValue?.address };
-    const { data: smartContractAbi, isLoading: isLoadingAbi } = useSmartContractAbi(
-        { urlParams: abiParams as IGetAbiUrlParams },
-        { enabled: smartContractValue != null }
-    );
+    const { data: smartContractAbi, isLoading: isLoadingAbi } =
+        useSmartContractAbi(
+            { urlParams: abiParams as IGetAbiUrlParams },
+            { enabled: smartContractValue != null },
+        );
 
     const isContractVerified = smartContractAbi != null;
-    const unverifiedContractName = t('app.governance.verifySmartContractDialog.unverified');
+    const unverifiedContractName = t(
+        'app.governance.verifySmartContractDialog.unverified',
+    );
 
-    const proxyState = isLoadingAbi ? 'pending' : smartContractAbi?.implementationAddress != null ? 'success' : 'idle';
-    const abiState = isLoadingAbi ? 'pending' : isContractVerified ? 'success' : 'warning';
-    const getStepLabel = (step: string, status = 'default') => t(`app.governance.verifySmartContractDialog.step.${step}.${status}`);
+    const proxyState = isLoadingAbi
+        ? 'pending'
+        : smartContractAbi?.implementationAddress != null
+          ? 'success'
+          : 'idle';
+    const abiState = isLoadingAbi
+        ? 'pending'
+        : isContractVerified
+          ? 'success'
+          : 'warning';
+    const getStepLabel = (step: string, status = 'default') =>
+        t(`app.governance.verifySmartContractDialog.step.${step}.${status}`);
 
     const verificationSteps: IStepperStep<ITransactionStatusStepMeta>[] = [
-        { id: 'proxy', order: 0, meta: { label: getStepLabel('proxy'), state: proxyState } },
+        {
+            id: 'proxy',
+            order: 0,
+            meta: { label: getStepLabel('proxy'), state: proxyState },
+        },
         {
             id: 'verify',
             order: 1,
-            meta: { label: getStepLabel('verify'), warningLabel: getStepLabel('verify', 'warning'), state: abiState },
+            meta: {
+                label: getStepLabel('verify'),
+                warningLabel: getStepLabel('verify', 'warning'),
+                state: abiState,
+            },
         },
         {
             id: 'abi',
             order: 2,
-            meta: { label: getStepLabel('abi'), warningLabel: getStepLabel('abi', 'warning'), state: abiState },
+            meta: {
+                label: getStepLabel('abi'),
+                warningLabel: getStepLabel('abi', 'warning'),
+                state: abiState,
+            },
         },
     ];
 
@@ -123,7 +187,8 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     }, [updateAbi, smartContractAbi, abiFieldValue]);
 
     const contractName = smartContractAbi?.name ?? unverifiedContractName;
-    const buttonLabel = smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
+    const buttonLabel =
+        smartContractValue?.address == null || isLoadingAbi ? 'verify' : 'add';
 
     const transactionInfo: ITransactionInfo = {
         title: contractName,
@@ -132,23 +197,37 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
     return (
         <>
             <Dialog.Header
-                description={t('app.governance.verifySmartContractDialog.description')}
+                description={t(
+                    'app.governance.verifySmartContractDialog.description',
+                )}
                 title={t('app.governance.verifySmartContractDialog.title')}
             />
             <Dialog.Content>
-                <form className="flex flex-col gap-3 py-2" id={formId} onSubmit={handleSubmit(handleFormSubmit)}>
+                <form
+                    className="flex flex-col gap-3 py-2"
+                    id={formId}
+                    onSubmit={handleSubmit(handleFormSubmit)}
+                >
                     <AddressInput
                         chainId={chainId}
                         onAccept={onSmartContractChange}
                         onChange={setAddressInput}
-                        placeholder={t('app.finance.transferAssetForm.receiver.placeholder')}
+                        placeholder={t(
+                            'app.finance.transferAssetForm.receiver.placeholder',
+                        )}
                         value={addressInput}
                         {...smartContractField}
                     />
                     {smartContractValue?.address != null && (
-                        <TransactionStatus.Container steps={verificationSteps} transactionInfo={transactionInfo}>
+                        <TransactionStatus.Container
+                            steps={verificationSteps}
+                            transactionInfo={transactionInfo}
+                        >
                             {verificationSteps.map((step) => (
-                                <TransactionStatus.Step key={step.id} {...step} />
+                                <TransactionStatus.Step
+                                    key={step.id}
+                                    {...step}
+                                />
                             ))}
                         </TransactionStatus.Container>
                     )}
@@ -156,13 +235,17 @@ export const VerifySmartContractDialog: React.FC<IVerifySmartContractDialogProps
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t(`app.governance.verifySmartContractDialog.action.${buttonLabel}`),
+                    label: t(
+                        `app.governance.verifySmartContractDialog.action.${buttonLabel}`,
+                    ),
                     type: 'submit',
                     isLoading: isLoadingAbi,
                     form: formId,
                 }}
                 secondaryAction={{
-                    label: t('app.governance.verifySmartContractDialog.action.cancel'),
+                    label: t(
+                        'app.governance.verifySmartContractDialog.action.cancel',
+                    ),
                     onClick: () => close(),
                 }}
             />

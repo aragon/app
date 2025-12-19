@@ -1,5 +1,8 @@
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestQueryParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type {
+    IRequestQueryParams,
+    IRequestUrlParams,
+} from '@/shared/api/httpService';
 import type { EventLogPluginType } from './domain';
 
 export interface IGetPluginInstallationDataQueryParams {
@@ -13,7 +16,8 @@ export interface IGetPluginInstallationDataQueryParams {
     network: Network;
 }
 
-export interface IGetPluginInstallationDataParams extends IRequestQueryParams<IGetPluginInstallationDataQueryParams> {}
+export interface IGetPluginInstallationDataParams
+    extends IRequestQueryParams<IGetPluginInstallationDataQueryParams> {}
 
 export interface IGetLastPluginEventLogUrlParams {
     /**
@@ -30,4 +34,5 @@ export interface IGetLastPluginEventLogUrlParams {
     event: EventLogPluginType;
 }
 
-export interface IGetLastPluginEventLogParams extends IRequestUrlParams<IGetLastPluginEventLogUrlParams> {}
+export interface IGetLastPluginEventLogParams
+    extends IRequestUrlParams<IGetLastPluginEventLogUrlParams> {}

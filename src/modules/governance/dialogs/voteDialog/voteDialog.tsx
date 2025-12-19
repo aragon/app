@@ -1,10 +1,18 @@
-import { invariant, type VoteIndicator, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
+import {
+    invariant,
+    type VoteIndicator,
+    VoteProposalDataListItemStructure,
+} from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -13,7 +21,8 @@ import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
 
-export interface IVoteDialogOption<TOptionValue = number> extends IBuildVoteDataOption<TOptionValue> {
+export interface IVoteDialogOption<TOptionValue = number>
+    extends IBuildVoteDataOption<TOptionValue> {
     /**
      * Label of the vote option.
      */
@@ -26,7 +35,8 @@ export interface IVoteDialogOption<TOptionValue = number> extends IBuildVoteData
 
 export interface IVoteDialogParams<
     TOptionValue = number,
-    TOption extends IVoteDialogOption<TOptionValue> = IVoteDialogOption<TOptionValue>,
+    TOption extends
+        IVoteDialogOption<TOptionValue> = IVoteDialogOption<TOptionValue>,
 > {
     /**
      * ID of the DAO to create the proposal for.
@@ -54,7 +64,8 @@ export interface IVoteDialogParams<
     plugin: IDaoPlugin;
 }
 
-export interface IVoteDialogProps extends IDialogComponentProps<IVoteDialogParams> {}
+export interface IVoteDialogProps
+    extends IDialogComponentProps<IVoteDialogParams> {}
 
 export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { location } = props;
@@ -62,7 +73,10 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { t } = useTranslations();
     const router = useRouter();
 
-    invariant(location.params != null, 'VoteDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'VoteDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
@@ -71,15 +85,22 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const handlePrepareTransaction = () => voteDialogUtils.buildTransaction({ proposal, vote, target });
+    const handlePrepareTransaction = () =>
+        voteDialogUtils.buildTransaction({ proposal, vote, target });
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
-    const slug = proposalUtils.getProposalSlug({ ...proposal, pluginAddress }, dao);
+    const slug = proposalUtils.getProposalSlug(
+        { ...proposal, pluginAddress },
+        dao,
+    );
 
     return (
         <TransactionDialog
@@ -89,7 +110,10 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.governance.voteDialog.button.submit')}
-            successLink={{ label: t('app.governance.voteDialog.button.success'), onClick: () => router.refresh() }}
+            successLink={{
+                label: t('app.governance.voteDialog.button.success'),
+                onClick: () => router.refresh(),
+            }}
             title={t('app.governance.voteDialog.title')}
             transactionType={TransactionType.PROPOSAL_VOTE}
         >

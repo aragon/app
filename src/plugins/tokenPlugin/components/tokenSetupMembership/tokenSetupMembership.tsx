@@ -8,20 +8,29 @@ import { useAccount } from 'wagmi';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenSetupMembershipCreateToken } from './components/tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './components/tokenSetupMembershipImportToken';
-import { defaultTokenAddress, defaultTokenDecimals } from './constants/tokenDefaults';
+import {
+    defaultTokenAddress,
+    defaultTokenDecimals,
+} from './constants/tokenDefaults';
 import type { ITokenSetupMembershipProps } from './tokenSetupMembership.api';
 
-export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props) => {
+export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (
+    props,
+) => {
     const { formPrefix, daoId } = props;
 
     const { t } = useTranslations();
     const { setValue, getValues } = useFormContext();
     const { address } = useAccount();
 
-    const currentTokenAddress = getValues(`${formPrefix}.token.address`) as string;
+    const currentTokenAddress = getValues(
+        `${formPrefix}.token.address`,
+    ) as string;
     // Make sure to set the right default value when coming back from the next step!
     const [tokenType, setTokenType] = useState<'imported' | 'new'>(() =>
-        currentTokenAddress && currentTokenAddress !== zeroAddress ? 'imported' : 'new'
+        currentTokenAddress && currentTokenAddress !== zeroAddress
+            ? 'imported'
+            : 'new',
     );
 
     const handleTokenTypeChange = (value: string) => {
@@ -46,20 +55,46 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (props
     return (
         <div className="flex flex-col gap-6">
             <InputContainer
-                helpText={t('app.plugins.token.tokenSetupMembership.type.helpText')}
+                helpText={t(
+                    'app.plugins.token.tokenSetupMembership.type.helpText',
+                )}
                 id="token"
                 label={t('app.plugins.token.tokenSetupMembership.type.label')}
                 useCustomWrapper={true}
             >
-                <RadioGroup className="w-full" onValueChange={handleTokenTypeChange} value={tokenType}>
+                <RadioGroup
+                    className="w-full"
+                    onValueChange={handleTokenTypeChange}
+                    value={tokenType}
+                >
                     <div className="flex w-full flex-row gap-x-2">
-                        <RadioCard label={t('app.plugins.token.tokenSetupMembership.type.option.create')} value="new" />
-                        <RadioCard label={t('app.plugins.token.tokenSetupMembership.type.option.import')} value="imported" />
+                        <RadioCard
+                            label={t(
+                                'app.plugins.token.tokenSetupMembership.type.option.create',
+                            )}
+                            value="new"
+                        />
+                        <RadioCard
+                            label={t(
+                                'app.plugins.token.tokenSetupMembership.type.option.import',
+                            )}
+                            value="imported"
+                        />
                     </div>
                 </RadioGroup>
             </InputContainer>
-            {tokenType === 'imported' && <TokenSetupMembershipImportToken daoId={daoId} formPrefix={formPrefix} />}
-            {tokenType === 'new' && <TokenSetupMembershipCreateToken daoId={daoId} formPrefix={formPrefix} />}
+            {tokenType === 'imported' && (
+                <TokenSetupMembershipImportToken
+                    daoId={daoId}
+                    formPrefix={formPrefix}
+                />
+            )}
+            {tokenType === 'new' && (
+                <TokenSetupMembershipCreateToken
+                    daoId={daoId}
+                    formPrefix={formPrefix}
+                />
+            )}
         </div>
     );
 };

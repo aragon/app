@@ -6,8 +6,12 @@ describe('DaoBreadcrumbs', () => {
         const { container } = render(<DaoBreadcrumbs path={undefined} />);
         expect(container).toBeEmptyDOMElement();
 
-        const singlePath = [{ address: '0xparent', name: 'Parent', avatar: null }];
-        const { container: singleContainer } = render(<DaoBreadcrumbs path={singlePath} />);
+        const singlePath = [
+            { address: '0xparent', name: 'Parent', avatar: null },
+        ];
+        const { container: singleContainer } = render(
+            <DaoBreadcrumbs path={singlePath} />,
+        );
         expect(singleContainer).toBeEmptyDOMElement();
     });
 

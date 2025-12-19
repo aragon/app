@@ -3,7 +3,9 @@ import { pinJsonAction } from '../../actions';
 import type { IPinResult } from '../../domain';
 import type { IPinJsonParams } from '../../ipfsService.api';
 
-export const usePinJson = (options?: MutationOptions<IPinResult, unknown, IPinJsonParams>) =>
+export const usePinJson = (
+    options?: MutationOptions<IPinResult, unknown, IPinJsonParams>,
+) =>
     useMutation({
         mutationFn: (params) => pinJsonAction(params),
         ...options,

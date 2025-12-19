@@ -1,6 +1,10 @@
 'use client';
 
-import { TransactionType as DataListTransactionType, TransactionDataListItem, TransactionStatus } from '@aragon/gov-ui-kit';
+import {
+    TransactionType as DataListTransactionType,
+    TransactionDataListItem,
+    TransactionStatus,
+} from '@aragon/gov-ui-kit';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { ITransaction, TransactionSide } from '../../api/financeService';
 
@@ -19,12 +23,17 @@ export interface ITransactionListItemProps {
     onTransactionClick?: (transaction: ITransaction) => void;
 }
 
-const transactionSideToDataListType: Record<TransactionSide, DataListTransactionType> = {
+const transactionSideToDataListType: Record<
+    TransactionSide,
+    DataListTransactionType
+> = {
     withdraw: DataListTransactionType.WITHDRAW,
     deposit: DataListTransactionType.DEPOSIT,
 };
 
-export const TransactionListItem: React.FC<ITransactionListItemProps> = (props) => {
+export const TransactionListItem: React.FC<ITransactionListItemProps> = (
+    props,
+) => {
     const { transaction, index, onTransactionClick } = props;
 
     const handleClick = onTransactionClick

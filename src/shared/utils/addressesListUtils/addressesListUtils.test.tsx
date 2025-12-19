@@ -15,8 +15,15 @@ describe('addressesList Utils', () => {
         it('returns true if address is already in the list before the current index', () => {
             isAddressEqualSpy.mockReturnValueOnce(true);
 
-            const members: ITokenSetupMembershipMember[] = [{ address: '0x123' }, { address: '0x456' }];
-            const result = addressesListUtils.checkIsAlreadyInList(members, 2, '0x123');
+            const members: ITokenSetupMembershipMember[] = [
+                { address: '0x123' },
+                { address: '0x456' },
+            ];
+            const result = addressesListUtils.checkIsAlreadyInList(
+                members,
+                2,
+                '0x123',
+            );
 
             expect(result).toBeTruthy();
             expect(isAddressEqualSpy).toHaveBeenCalledWith('0x123', '0x123');
@@ -25,8 +32,15 @@ describe('addressesList Utils', () => {
         it('returns false if address is not in the list before the current index', () => {
             isAddressEqualSpy.mockReturnValue(false);
 
-            const members: ITokenSetupMembershipMember[] = [{ address: '0xabc' }, { address: '0xdef' }];
-            const result = addressesListUtils.checkIsAlreadyInList(members, 2, '0x999');
+            const members: ITokenSetupMembershipMember[] = [
+                { address: '0xabc' },
+                { address: '0xdef' },
+            ];
+            const result = addressesListUtils.checkIsAlreadyInList(
+                members,
+                2,
+                '0x999',
+            );
 
             expect(result).toBeFalsy();
         });
@@ -38,7 +52,12 @@ describe('addressesList Utils', () => {
             const customValidator = jest.fn().mockReturnValue(true);
             const address = '0x123';
 
-            const result = addressesListUtils.validateAddress(address, [{ address }], 0, customValidator);
+            const result = addressesListUtils.validateAddress(
+                address,
+                [{ address }],
+                0,
+                customValidator,
+            );
 
             expect(result).toBeTruthy();
             expect(customValidator).toHaveBeenCalledWith({ address });
@@ -50,7 +69,11 @@ describe('addressesList Utils', () => {
             const address = '0xinvalid';
             const members: ITokenSetupMembershipMember[] = [{ address }];
 
-            const result = addressesListUtils.validateAddress(address, members, 0);
+            const result = addressesListUtils.validateAddress(
+                address,
+                members,
+                0,
+            );
 
             expect(result).toMatch(/invalid/);
             expect(isAddressSpy).toHaveBeenCalledWith(address);
@@ -61,9 +84,16 @@ describe('addressesList Utils', () => {
             isAddressEqualSpy.mockReturnValue(true);
 
             const address = '0xaaa';
-            const members: ITokenSetupMembershipMember[] = [{ address }, { address }];
+            const members: ITokenSetupMembershipMember[] = [
+                { address },
+                { address },
+            ];
 
-            const result = addressesListUtils.validateAddress(address, members, 1);
+            const result = addressesListUtils.validateAddress(
+                address,
+                members,
+                1,
+            );
 
             expect(result).toMatch(/alreadyInList/);
             expect(isAddressSpy).toHaveBeenCalledWith(address);
@@ -76,13 +106,23 @@ describe('addressesList Utils', () => {
 
             const addressOne = '0xbbb';
             const addressTwo = '0xccc';
-            const members: ITokenSetupMembershipMember[] = [{ address: addressOne }, { address: addressTwo }];
+            const members: ITokenSetupMembershipMember[] = [
+                { address: addressOne },
+                { address: addressTwo },
+            ];
 
-            const result = addressesListUtils.validateAddress(addressTwo, members, 1);
+            const result = addressesListUtils.validateAddress(
+                addressTwo,
+                members,
+                1,
+            );
 
             expect(result).toBeTruthy();
             expect(isAddressSpy).toHaveBeenCalledWith(addressTwo);
-            expect(isAddressEqualSpy).toHaveBeenCalledWith(addressOne, addressTwo);
+            expect(isAddressEqualSpy).toHaveBeenCalledWith(
+                addressOne,
+                addressTwo,
+            );
         });
     });
 });

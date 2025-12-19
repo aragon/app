@@ -20,7 +20,9 @@ export interface IQueryToDataListStateParams {
 }
 
 class DataListUtils {
-    queryToDataListState = (params: IQueryToDataListStateParams): DataListState => {
+    queryToDataListState = (
+        params: IQueryToDataListStateParams,
+    ): DataListState => {
         const { status, fetchStatus, hasFilters, isFetchingNextPage } = params;
 
         const dataListIdleState = hasFilters ? 'filtered' : 'idle';
@@ -35,7 +37,9 @@ class DataListUtils {
             case 'pending':
                 return 'initialLoading';
             case 'success':
-                return fetchStatus === 'fetching' ? 'loading' : dataListIdleState;
+                return fetchStatus === 'fetching'
+                    ? 'loading'
+                    : dataListIdleState;
             default:
                 return 'idle';
         }

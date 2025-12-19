@@ -6,7 +6,12 @@ import type { IPluginFilterComponentProps } from './pluginFilterComponent.api';
 
 export const pluginFilterComponentFilterParam = 'plugin';
 
-export const PluginFilterComponent = <TMeta extends object, TProps extends object>(props: IPluginFilterComponentProps<TMeta, TProps>) => {
+export const PluginFilterComponent = <
+    TMeta extends object,
+    TProps extends object,
+>(
+    props: IPluginFilterComponentProps<TMeta, TProps>,
+) => {
     const {
         slotId,
         plugins = [],
@@ -17,7 +22,13 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
         ...otherProps
     } = props;
 
-    const supportedPlugins = plugins.filter((plugin) => pluginRegistryUtils.getSlotComponent({ slotId, pluginId: plugin.id }) != null);
+    const supportedPlugins = plugins.filter(
+        (plugin) =>
+            pluginRegistryUtils.getSlotComponent({
+                slotId,
+                pluginId: plugin.id,
+            }) != null,
+    );
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -25,12 +36,15 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
     // The component renders a single slot component in two cases:
     // 1 - The fallback is not specified and the slot has only one supported plugin
     // 2 - The slot has one plugin and the fallback is specified
-    const isSingleComponent = (supportedPlugins.length === 1 && Fallback == null) || (plugins.length === 1 && Fallback != null);
+    const isSingleComponent =
+        (supportedPlugins.length === 1 && Fallback == null) ||
+        (plugins.length === 1 && Fallback != null);
 
     const fallbackValue = value?.uniqueId ?? plugins[0]?.uniqueId;
     const [activePlugin, setActivePlugin] = useFilterUrlParam({
         fallbackValue,
-        enableUrlUpdate: onValueChange == null && !hasNoContent && !isSingleComponent,
+        enableUrlUpdate:
+            onValueChange == null && !hasNoContent && !isSingleComponent,
         name: searchParamName,
         validValues: plugins.map((plugin) => plugin.uniqueId),
     });
@@ -49,21 +63,36 @@ export const PluginFilterComponent = <TMeta extends object, TProps extends objec
         onValueChange?.(plugin);
     };
 
-    const activePluginRecord = plugins.find((plugin) => plugin.uniqueId === activePlugin);
+    const activePluginRecord = plugins.find(
+        (plugin) => plugin.uniqueId === activePlugin,
+    );
 
     if (hasNoContent) {
         return null;
     }
 
     if (isSingleComponent) {
-        const { id, props } = supportedPlugins.length === 1 ? supportedPlugins[0] : plugins[0];
+        const { id, props } =
+            supportedPlugins.length === 1 ? supportedPlugins[0] : plugins[0];
 
-        return <PluginSingleComponent Fallback={Fallback} pluginId={id} slotId={slotId} {...props} {...otherProps} />;
+        return (
+            <PluginSingleComponent
+                Fallback={Fallback}
+                pluginId={id}
+                slotId={slotId}
+                {...props}
+                {...otherProps}
+            />
+        );
     }
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
-            <ToggleGroup isMultiSelect={false} onChange={handleChange} value={activePlugin}>
+            <ToggleGroup
+                isMultiSelect={false}
+                onChange={handleChange}
+                value={activePlugin}
+            >
                 {plugins.map(({ uniqueId, label }) => (
                     <Toggle key={uniqueId} label={label} value={uniqueId} />
                 ))}

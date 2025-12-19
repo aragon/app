@@ -19,7 +19,9 @@ export interface ICapitalDistributorClaimDialogInputsProps {
     network: Network;
 }
 
-export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorClaimDialogInputsProps> = (props) => {
+export const CapitalDistributorClaimDialogInputs: React.FC<
+    ICapitalDistributorClaimDialogInputsProps
+> = (props) => {
     const { plugin, network } = props;
 
     const { t } = useTranslations();
@@ -32,11 +34,20 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
             return false;
         }
 
-        const isSanctionedAddress = sanctionedAddresses?.[network]?.some((address) => addressUtils.isAddressEqual(address, value));
+        const isSanctionedAddress = sanctionedAddresses?.[network]?.some(
+            (address) => addressUtils.isAddressEqual(address, value),
+        );
 
         if (plugin.enableOfacCheck && isSanctionedAddress) {
-            const context = { pluginAddress: plugin.address, userAddress: address, recipient: value };
-            monitoringUtils.logMessage('Capital Distributor: Claim error (OFAC)', { level: 'warning', context });
+            const context = {
+                pluginAddress: plugin.address,
+                userAddress: address,
+                recipient: value,
+            };
+            monitoringUtils.logMessage(
+                'Capital Distributor: Claim error (OFAC)',
+                { level: 'warning', context },
+            );
 
             return 'app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.error.ofac';
         }
@@ -44,14 +55,21 @@ export const CapitalDistributorClaimDialogInputs: React.FC<ICapitalDistributorCl
         return true;
     };
 
-    const recipientField = useFormField<ICapitalDistributorClaimDialogForm, 'recipient'>('recipient', {
-        label: t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.label'),
+    const recipientField = useFormField<
+        ICapitalDistributorClaimDialogForm,
+        'recipient'
+    >('recipient', {
+        label: t(
+            'app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.label',
+        ),
         rules: { required: true, validate: validateRecipient },
     });
 
     return (
         <InputText
-            helpText={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.helpText')}
+            helpText={t(
+                'app.plugins.capitalDistributor.capitalDistributorClaimDialog.inputs.recipient.helpText',
+            )}
             {...recipientField}
         />
     );

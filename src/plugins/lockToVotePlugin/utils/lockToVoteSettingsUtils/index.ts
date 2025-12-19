@@ -1,1 +1,4 @@
-export { type IParseLockToVoteSettingsParams, lockToVoteSettingsUtils } from './lockToVoteSettingsUtils';
+export {
+    type IParseLockToVoteSettingsParams,
+    lockToVoteSettingsUtils,
+} from './lockToVoteSettingsUtils';

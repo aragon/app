@@ -15,7 +15,9 @@ export interface IGenerateDaoMetadataParams {
 }
 
 class ApplicationMetadataUtils {
-    generateDaoMetadata = async ({ params }: IGenerateDaoMetadataParams): Promise<Metadata> => {
+    generateDaoMetadata = async ({
+        params,
+    }: IGenerateDaoMetadataParams): Promise<Metadata> => {
         try {
             const daoPageParams = await params;
 
@@ -41,7 +43,12 @@ class ApplicationMetadataUtils {
             const description = dao.description;
             const siteName = `${dao.name} | Governed on Aragon`;
 
-            return metadataUtils.buildMetadata({ title, description, siteName, image });
+            return metadataUtils.buildMetadata({
+                title,
+                description,
+                siteName,
+                image,
+            });
         } catch (error: unknown) {
             monitoringUtils.logError(error);
 

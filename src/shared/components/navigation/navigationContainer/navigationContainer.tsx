@@ -9,12 +9,22 @@ export interface INavigationContainerProps extends ComponentProps<'nav'> {
     containerClasses?: string;
 }
 
-export const NavigationContainer: React.FC<INavigationContainerProps> = (props) => {
+export const NavigationContainer: React.FC<INavigationContainerProps> = (
+    props,
+) => {
     const { className, containerClasses, children, ...otherProps } = props;
 
     return (
-        <nav className={classNames('sticky top-0 z-10 flex w-full border-neutral-100 border-b bg-neutral-0', className)} {...otherProps}>
-            <Container className={classNames('w-full grow', containerClasses)}>{children}</Container>
+        <nav
+            className={classNames(
+                'sticky top-0 z-10 flex w-full border-neutral-100 border-b bg-neutral-0',
+                className,
+            )}
+            {...otherProps}
+        >
+            <Container className={classNames('w-full grow', containerClasses)}>
+                {children}
+            </Container>
         </nav>
     );
 };

@@ -3,7 +3,10 @@ import type { TokenProposalActionType } from './enum';
 import type { ITokenPluginSettings } from './tokenPluginSettings';
 
 export interface ITokenActionChangeSettings
-    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    extends Omit<
+        IGukProposalActionChangeSettings,
+        'type' | 'proposedSettings' | 'existingSettings'
+    > {
     /**
      * The type of the proposal action.
      */

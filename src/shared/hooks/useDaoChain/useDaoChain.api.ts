@@ -33,7 +33,11 @@ export interface IUseDaoChainReturn {
     /**
      * Build block explorer URLs for the chain.
      */
-    buildEntityUrl: (params: { type: ChainEntityType; id?: string; chainId?: number }) => string | undefined;
+    buildEntityUrl: (params: {
+        type: ChainEntityType;
+        id?: string;
+        chainId?: number;
+    }) => string | undefined;
     /**
      * Whether DAO data is loading.
      */

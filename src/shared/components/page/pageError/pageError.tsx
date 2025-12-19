@@ -6,7 +6,8 @@ import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { ErrorFeedback, type IErrorFeedbackProps } from '../../errorFeedback';
 import { useTranslations } from '../../translationsProvider';
 
-export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'titleKey' | 'descriptionKey'> {
+export interface IPageErrorProps
+    extends Pick<IErrorFeedbackProps, 'titleKey' | 'descriptionKey'> {
     /**
      * Error to be processed.
      */
@@ -22,7 +23,13 @@ export interface IPageErrorProps extends Pick<IErrorFeedbackProps, 'titleKey' | 
 }
 
 export const PageError: React.FC<IPageErrorProps> = (props) => {
-    const { error, actionLink, errorNamespace = '', titleKey, descriptionKey } = props;
+    const {
+        error,
+        actionLink,
+        errorNamespace = '',
+        titleKey,
+        descriptionKey,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -34,10 +41,16 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
 
     const isNotFoundError = AragonBackendServiceError.isNotFoundError(error);
 
-    const processedTitle = isNotFoundError ? `${errorNamespace}.notFound.title` : titleKey;
-    const processedDescription = isNotFoundError ? `${errorNamespace}.notFound.description` : descriptionKey;
+    const processedTitle = isNotFoundError
+        ? `${errorNamespace}.notFound.title`
+        : titleKey;
+    const processedDescription = isNotFoundError
+        ? `${errorNamespace}.notFound.description`
+        : descriptionKey;
 
-    const primaryButton = actionLink ? { label: t(`${errorNamespace}.action`), href: actionLink } : undefined;
+    const primaryButton = actionLink
+        ? { label: t(`${errorNamespace}.action`), href: actionLink }
+        : undefined;
 
     return (
         <ErrorFeedback

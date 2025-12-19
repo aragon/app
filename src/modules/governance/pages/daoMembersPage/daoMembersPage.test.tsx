@@ -7,23 +7,35 @@ import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { memberListOptions } from '../../api/governanceService';
-import { DaoMembersPage, daoMembersCount, type IDaoMembersPageProps } from './daoMembersPage';
+import {
+    DaoMembersPage,
+    daoMembersCount,
+    type IDaoMembersPageProps,
+} from './daoMembersPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
+        <div
+            data-state={JSON.stringify(props.state)}
+            data-testid="hydration-mock"
+        >
             {props.children}
         </div>
     ),
 }));
 
-jest.mock('./daoMembersPageClient', () => ({ DaoMembersPageClient: () => <div data-testid="page-client-mock" /> }));
+jest.mock('./daoMembersPageClient', () => ({
+    DaoMembersPageClient: () => <div data-testid="page-client-mock" />,
+}));
 
 describe('<DaoMembersPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
-    const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
+    const prefetchInfiniteQuerySpy = jest.spyOn(
+        QueryClient.prototype,
+        'prefetchInfiniteQuery',
+    );
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
@@ -40,9 +52,14 @@ describe('<DaoMembersPage /> component', () => {
         resolveDaoIdSpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IDaoMembersPageProps>) => {
+    const createTestComponent = async (
+        props?: Partial<IDaoMembersPageProps>,
+    ) => {
         const completeProps: IDaoMembersPageProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                addressOrEns: 'test.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
         const Component = await DaoMembersPage(completeProps);
@@ -60,11 +77,22 @@ describe('<DaoMembersPage /> component', () => {
 
         render(await createTestComponent());
 
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
-        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, { type: PluginType.BODY, includeSubPlugins: true });
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
+        expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+        });
 
-        const memberListParams = { daoId: expectedDaoId, pageSize: daoMembersCount, pluginAddress: bodyPlugin.address };
-        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(memberListOptions({ queryParams: memberListParams }).queryKey);
+        const memberListParams = {
+            daoId: expectedDaoId,
+            pageSize: daoMembersCount,
+            pluginAddress: bodyPlugin.address,
+        };
+        expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            memberListOptions({ queryParams: memberListParams }).queryKey,
+        );
     });
 
     it('renders the page client component', async () => {

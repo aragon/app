@@ -7,7 +7,10 @@ import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import {
+    type ITransactionRequest,
+    transactionUtils,
+} from '@/shared/utils/transactionUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { settingsService } from '../../api/settingsService';
 import { SettingsSlotId } from '../../constants/moduleSlots';
@@ -20,31 +23,53 @@ import type {
 } from './prepareDaoContractsUpdateDialogUtils.api';
 
 class PrepareDaoContractsUpdateDialogUtils {
-    buildPrepareUpdatePluginsTransaction = async (params: IBuildPrepareUpdatePluginsTransactionParams): Promise<ITransactionRequest> => {
+    buildPrepareUpdatePluginsTransaction = async (
+        params: IBuildPrepareUpdatePluginsTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { dao, plugins } = params;
-        const pluginUpdateDataPromises = plugins.map((plugin) => this.buildPrepareUpdateTransaction(dao, plugin));
+        const pluginUpdateDataPromises = plugins.map((plugin) =>
+            this.buildPrepareUpdateTransaction(dao, plugin),
+        );
         const pluginUpdateData = await Promise.all(pluginUpdateDataPromises);
 
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+        const { pluginSetupProcessor } =
+            networkDefinitions[dao.network].addresses;
 
-        const transactionParams = { to: pluginSetupProcessor, value: BigInt(0) };
-        const pluginUpdateTransactions = pluginUpdateData.map((data) => ({ ...transactionParams, data }));
-        const transaction = transactionUtils.encodeTransactionRequests(pluginUpdateTransactions, dao.network);
+        const transactionParams = {
+            to: pluginSetupProcessor,
+            value: BigInt(0),
+        };
+        const pluginUpdateTransactions = pluginUpdateData.map((data) => ({
+            ...transactionParams,
+            data,
+        }));
+        const transaction = transactionUtils.encodeTransactionRequests(
+            pluginUpdateTransactions,
+            dao.network,
+        );
 
         return transaction;
     };
 
-    getApplyUpdateProposal = (params: IGetApplyUpdateProposalParams): IProposalCreate => {
+    getApplyUpdateProposal = (
+        params: IGetApplyUpdateProposalParams,
+    ): IProposalCreate => {
         const actions = this.buildApplyUpdateTransactions(params);
         const metadata = this.buildApplyUpdateMetadata(params);
 
         return { ...metadata, actions, resources: [] };
     };
 
-    private buildPrepareUpdateTransaction = async (dao: IDao, plugin: IDaoPlugin) => {
-        const pluginInfo = pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo;
+    private buildPrepareUpdateTransaction = async (
+        dao: IDao,
+        plugin: IDaoPlugin,
+    ) => {
+        const pluginInfo = pluginRegistryUtils.getPlugin(
+            plugin.interfaceType,
+        ) as IPluginInfo;
 
-        const currentVersionTag = versionComparatorUtils.normaliseComparatorInput(plugin)!;
+        const currentVersionTag =
+            versionComparatorUtils.normaliseComparatorInput(plugin)!;
         const { installVersion: newVersionTag } = pluginInfo;
         const pluginSetupRepo = pluginInfo.repositoryAddresses[dao.network];
         const setupPayload = await this.buildPluginSetupPayload(dao, plugin);
@@ -52,7 +77,15 @@ class PrepareDaoContractsUpdateDialogUtils {
         const data = encodeFunctionData({
             abi: pluginSetupProcessorAbi,
             functionName: 'prepareUpdate',
-            args: [dao.address as Hex, { currentVersionTag, newVersionTag, pluginSetupRepo, setupPayload }],
+            args: [
+                dao.address as Hex,
+                {
+                    currentVersionTag,
+                    newVersionTag,
+                    pluginSetupRepo,
+                    setupPayload,
+                },
+            ],
         });
 
         return data;
@@ -61,20 +94,38 @@ class PrepareDaoContractsUpdateDialogUtils {
     private buildPluginSetupPayload = async (dao: IDao, plugin: IDaoPlugin) => {
         const { address, interfaceType } = plugin;
 
-        const setupDataParams = { pluginAddress: address, network: dao.network };
-        const { preparedSetupData } = await settingsService.getPluginInstallationData({ queryParams: setupDataParams });
-        const updateDataBuilder = pluginRegistryUtils.getSlotFunction<IBuildPreparePluginUpdateDataParams, Hex>({
+        const setupDataParams = {
+            pluginAddress: address,
+            network: dao.network,
+        };
+        const { preparedSetupData } =
+            await settingsService.getPluginInstallationData({
+                queryParams: setupDataParams,
+            });
+        const updateDataBuilder = pluginRegistryUtils.getSlotFunction<
+            IBuildPreparePluginUpdateDataParams,
+            Hex
+        >({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
             pluginId: interfaceType,
         });
 
-        invariant(updateDataBuilder != null, 'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.');
+        invariant(
+            updateDataBuilder != null,
+            'PrepareDaoContractsUpdateDialogUtils: builder function does not exist.',
+        );
         const initializeData = updateDataBuilder({ dao, plugin });
 
-        return { plugin: address as Hex, currentHelpers: preparedSetupData.helpers as Hex[], data: initializeData };
+        return {
+            plugin: address as Hex,
+            currentHelpers: preparedSetupData.helpers as Hex[],
+            data: initializeData,
+        };
     };
 
-    private buildApplyUpdateTransactions = (params: IGetApplyUpdateProposalParams): ITransactionRequest[] => {
+    private buildApplyUpdateTransactions = (
+        params: IGetApplyUpdateProposalParams,
+    ): ITransactionRequest[] => {
         const { dao, plugins, prepareUpdateReceipt, osxUpdate } = params;
         const transactions: ITransactionRequest[] = [];
 
@@ -84,8 +135,16 @@ class PrepareDaoContractsUpdateDialogUtils {
         }
 
         if (prepareUpdateReceipt) {
-            const setupData = pluginTransactionUtils.getPluginUpdateSetupData(prepareUpdateReceipt);
-            const updateActions = pluginTransactionUtils.buildApplyPluginsUpdateActions({ dao, plugins, setupData });
+            const setupData =
+                pluginTransactionUtils.getPluginUpdateSetupData(
+                    prepareUpdateReceipt,
+                );
+            const updateActions =
+                pluginTransactionUtils.buildApplyPluginsUpdateActions({
+                    dao,
+                    plugins,
+                    setupData,
+                });
             transactions.push(...updateActions);
         }
 
@@ -96,8 +155,13 @@ class PrepareDaoContractsUpdateDialogUtils {
         const { network, address, version } = dao;
         const { dao: daoBaseAddress } = networkDefinitions[network].addresses;
 
-        const { release, build, patch } = versionComparatorUtils.normaliseComparatorInput(version)!;
-        const currentVersionArray: [number, number, number] = [release, build, patch!];
+        const { release, build, patch } =
+            versionComparatorUtils.normaliseComparatorInput(version)!;
+        const currentVersionArray: [number, number, number] = [
+            release,
+            build,
+            patch!,
+        ];
 
         const initializeData = encodeFunctionData({
             abi: daoAbi,
@@ -114,7 +178,9 @@ class PrepareDaoContractsUpdateDialogUtils {
         return { to: address as Hex, data: transactionData, value: BigInt(0) };
     };
 
-    private buildApplyUpdateMetadata = (params: IGetApplyUpdateProposalParams): Pick<IProposalCreate, 'title' | 'summary' | 'body'> => {
+    private buildApplyUpdateMetadata = (
+        params: IGetApplyUpdateProposalParams,
+    ): Pick<IProposalCreate, 'title' | 'summary' | 'body'> => {
         const summary = this.getApplyUpdateSummaryMetadata();
         const body = this.getApplyUpdateBodyMetadata(params);
 
@@ -124,10 +190,14 @@ class PrepareDaoContractsUpdateDialogUtils {
     private getApplyUpdateSummaryMetadata = () =>
         'This proposal is for a smart contract upgrade. The title, summary, and description text are automatically generated by Aragon.';
 
-    private getApplyUpdateBodyMetadata = (params: IGetApplyUpdateProposalParams): string => {
+    private getApplyUpdateBodyMetadata = (
+        params: IGetApplyUpdateProposalParams,
+    ): string => {
         const { dao, plugins, osxUpdate } = params;
         const osxUpdateEntry = osxUpdate ? this.getOsxUpdateDetails(dao) : '';
-        const pluginsUpdateEntry = plugins.map((plugin) => this.getPluginUpdateDetails(plugin)).join(' ');
+        const pluginsUpdateEntry = plugins
+            .map((plugin) => this.getPluginUpdateDetails(plugin))
+            .join(' ');
 
         const body = `
             <p>This proposal contains onchain transactions that would upgrade specific smart contract components as follows:</p>
@@ -142,7 +212,8 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private getOsxUpdateDetails = (dao: IDao) => {
-        const { release, build, patch, releaseNotes, description } = networkDefinitions[dao.network].protocolVersion;
+        const { release, build, patch, releaseNotes, description } =
+            networkDefinitions[dao.network].protocolVersion;
         const updatedVersion = `${release.toString()}.${build.toString()}.${patch!.toString()}`;
         const { version: currentVersion } = dao;
 
@@ -160,8 +231,14 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 
     private getPluginUpdateDetails = (plugin: IDaoPlugin) => {
-        const { interfaceType, release: currentRelease, build: currentBuild } = plugin;
-        const { release, build, description, releaseNotes } = (pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo).installVersion;
+        const {
+            interfaceType,
+            release: currentRelease,
+            build: currentBuild,
+        } = plugin;
+        const { release, build, description, releaseNotes } = (
+            pluginRegistryUtils.getPlugin(interfaceType) as IPluginInfo
+        ).installVersion;
 
         const pluginName = daoUtils.getPluginName(plugin);
         const updatedVersion = `${pluginName} ${release.toString()}.${build.toString()}`;
@@ -180,4 +257,5 @@ class PrepareDaoContractsUpdateDialogUtils {
     };
 }
 
-export const prepareDaoContractsUpdateDialogUtils = new PrepareDaoContractsUpdateDialogUtils();
+export const prepareDaoContractsUpdateDialogUtils =
+    new PrepareDaoContractsUpdateDialogUtils();

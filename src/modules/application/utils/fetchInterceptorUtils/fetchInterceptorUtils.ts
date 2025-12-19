@@ -11,10 +11,14 @@ class FetchInterceptorUtils {
         }
     };
 
-    private mockDataInterceptor = async (...args: Parameters<typeof this.originalFetch>): Promise<Response> => {
+    private mockDataInterceptor = async (
+        ...args: Parameters<typeof this.originalFetch>
+    ): Promise<Response> => {
         const [url, request] = args;
 
-        const mock = backendApiMocks.find((mock) => mock.url.test(url as string));
+        const mock = backendApiMocks.find((mock) =>
+            mock.url.test(url as string),
+        );
 
         if (mock == null) {
             return this.originalFetch(...args);
@@ -27,10 +31,14 @@ class FetchInterceptorUtils {
 
             const parsedResult = await responseUtils.safeJsonParse(result);
             const resultJson =
-                parsedResult && typeof parsedResult === 'object' && !Array.isArray(parsedResult)
+                parsedResult &&
+                typeof parsedResult === 'object' &&
+                !Array.isArray(parsedResult)
                     ? (parsedResult as { _merged?: boolean })
                     : {};
-            mockData = resultJson._merged ? resultJson : deepmerge(resultJson, mock.data, { _merged: true });
+            mockData = resultJson._merged
+                ? resultJson
+                : deepmerge(resultJson, mock.data, { _merged: true });
         }
 
         return new Response(JSON.stringify(mockData), {

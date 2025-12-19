@@ -28,11 +28,24 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const version = useApplicationVersion();
 
     return (
-        <footer className={classNames('border-neutral-100 border-t bg-neutral-0 py-5', className)} {...otherProps}>
-            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
+        <footer
+            className={classNames(
+                'border-neutral-100 border-t bg-neutral-0 py-5',
+                className,
+            )}
+            {...otherProps}
+        >
+            <Container
+                className={classNames(
+                    'grid items-center md:gap-6',
+                    layoutClassNames,
+                )}
+            >
                 <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-neutral-800 text-sm leading-tight md:text-base">{t('app.application.footer.governed')}</p>
+                        <p className="text-neutral-800 text-sm leading-tight md:text-base">
+                            {t('app.application.footer.governed')}
+                        </p>
                         <AragonLogo size="sm" />
                     </div>
                     <Tag label={version} variant="primary" />

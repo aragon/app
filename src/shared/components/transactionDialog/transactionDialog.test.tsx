@@ -7,13 +7,22 @@ import { Network } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateReactQueryResultError, generateStepperResult } from '@/shared/testUtils';
+import {
+    generateReactQueryResultError,
+    generateStepperResult,
+} from '@/shared/testUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { TransactionDialog } from './transactionDialog';
-import { type ITransactionDialogProps, type ITransactionDialogStepMeta, TransactionDialogStep } from './transactionDialog.api';
+import {
+    type ITransactionDialogProps,
+    type ITransactionDialogStepMeta,
+    TransactionDialogStep,
+} from './transactionDialog.api';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
-jest.mock('./transactionDialogFooter', () => ({ TransactionDialogFooter: () => <div data-testid="footer-mock" /> }));
+jest.mock('./transactionDialogFooter', () => ({
+    TransactionDialogFooter: () => <div data-testid="footer-mock" />,
+}));
 
 jest.mock('@tanstack/react-query', () => ({
     __esModule: true,
@@ -23,17 +32,31 @@ jest.mock('@tanstack/react-query', () => ({
 describe('<TransactionDialog /> component', () => {
     const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
     const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
-    const useWaitForTransactionReceiptSpy = jest.spyOn(Wagmi, 'useWaitForTransactionReceipt');
+    const useWaitForTransactionReceiptSpy = jest.spyOn(
+        Wagmi,
+        'useWaitForTransactionReceipt',
+    );
     const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
     const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
-    const monitorTransactionErrorSpy = jest.spyOn(transactionDialogUtils, 'monitorTransactionError');
+    const monitorTransactionErrorSpy = jest.spyOn(
+        transactionDialogUtils,
+        'monitorTransactionError',
+    );
 
     beforeEach(() => {
-        useSendTransactionSpy.mockReturnValue({} as Wagmi.UseSendTransactionReturnType);
+        useSendTransactionSpy.mockReturnValue(
+            {} as Wagmi.UseSendTransactionReturnType,
+        );
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
-        useAccountSpy.mockReturnValue({} as unknown as Wagmi.UseAccountReturnType);
-        useWaitForTransactionReceiptSpy.mockReturnValue({} as Wagmi.UseWaitForTransactionReceiptReturnType);
-        useSwitchChainSpy.mockReturnValue({ switchChain: jest.fn() } as unknown as Wagmi.UseSwitchChainReturnType);
+        useAccountSpy.mockReturnValue(
+            {} as unknown as Wagmi.UseAccountReturnType,
+        );
+        useWaitForTransactionReceiptSpy.mockReturnValue(
+            {} as Wagmi.UseWaitForTransactionReceiptReturnType,
+        );
+        useSwitchChainSpy.mockReturnValue({
+            switchChain: jest.fn(),
+        } as unknown as Wagmi.UseSwitchChainReturnType);
     });
 
     afterEach(() => {
@@ -72,7 +95,9 @@ describe('<TransactionDialog /> component', () => {
         const description = 'test-description';
         const children = 'children';
         render(createTestComponent({ title, description, children }));
-        expect(screen.getByRole('heading', { level: 2, name: title })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { level: 2, name: title }),
+        ).toBeInTheDocument();
         expect(screen.getByText(description)).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
         expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
@@ -80,8 +105,16 @@ describe('<TransactionDialog /> component', () => {
 
     it('renders the transaction steps', () => {
         const steps = [
-            { id: TransactionDialogStep.APPROVE, order: 0, meta: { label: 'approve' } as ITransactionDialogStepMeta },
-            { id: TransactionDialogStep.CONFIRM, order: 1, meta: { label: 'confirm' } as ITransactionDialogStepMeta },
+            {
+                id: TransactionDialogStep.APPROVE,
+                order: 0,
+                meta: { label: 'approve' } as ITransactionDialogStepMeta,
+            },
+            {
+                id: TransactionDialogStep.CONFIRM,
+                order: 1,
+                meta: { label: 'confirm' } as ITransactionDialogStepMeta,
+            },
         ] as unknown as IStepperStep<ITransactionDialogStepMeta>[];
         const stepper = generateStepperResult({ steps });
         render(createTestComponent({ stepper }));
@@ -91,13 +124,16 @@ describe('<TransactionDialog /> component', () => {
 
     it('includes the indexing step when transactionType is provided', () => {
         const updateSteps = jest.fn();
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
 
         render(
             createTestComponent({
                 stepper,
                 transactionType: TransactionType.DAO_CREATE,
-            })
+            }),
         );
 
         expect(updateSteps).toHaveBeenCalledWith(
@@ -105,7 +141,7 @@ describe('<TransactionDialog /> component', () => {
                 expect.objectContaining({
                     id: TransactionDialogStep.INDEXING,
                 }),
-            ])
+            ]),
         );
     });
 
@@ -119,7 +155,7 @@ describe('<TransactionDialog /> component', () => {
                 expect.objectContaining({
                     id: TransactionDialogStep.INDEXING,
                 }),
-            ])
+            ]),
         );
     });
 
@@ -128,14 +164,27 @@ describe('<TransactionDialog /> component', () => {
         const steps = [
             {
                 id: TransactionDialogStep.PREPARE,
-                meta: { label: 'prepare', action: stepAction, auto: true, state: 'idle' },
+                meta: {
+                    label: 'prepare',
+                    action: stepAction,
+                    auto: true,
+                    state: 'idle',
+                },
             },
         ] as unknown as IStepperStep<ITransactionDialogStepMeta>[];
         const activeStep = TransactionDialogStep.PREPARE;
         const activeStepIndex = 0;
-        const stepper = generateStepperResult({ steps, activeStep, activeStepIndex });
+        const stepper = generateStepperResult({
+            steps,
+            activeStep,
+            activeStepIndex,
+        });
         render(createTestComponent({ stepper }));
-        await waitFor(() => expect(stepAction).toHaveBeenCalledWith({ onError: expect.any(Function) as unknown }));
+        await waitFor(() =>
+            expect(stepAction).toHaveBeenCalledWith({
+                onError: expect.any(Function) as unknown,
+            }),
+        );
     });
 
     it('does not trigger the step action when its auto property is set to false', async () => {
@@ -143,19 +192,38 @@ describe('<TransactionDialog /> component', () => {
         const steps = [
             {
                 id: TransactionDialogStep.PREPARE,
-                meta: { label: 'prepare', action: stepAction, auto: false, state: 'idle' },
+                meta: {
+                    label: 'prepare',
+                    action: stepAction,
+                    auto: false,
+                    state: 'idle',
+                },
             },
         ] as unknown as IStepperStep<ITransactionDialogStepMeta>[];
         const activeStep = TransactionDialogStep.PREPARE;
         const activeStepIndex = 0;
-        const stepper = generateStepperResult({ steps, activeStep, activeStepIndex });
+        const stepper = generateStepperResult({
+            steps,
+            activeStep,
+            activeStepIndex,
+        });
         render(createTestComponent({ stepper }));
         await waitFor(() => expect(stepAction).not.toHaveBeenCalled());
     });
 
     it('correctly set the transaction steps when having custom steps', () => {
-        const stepMetaOne = { label: 'pin', action: jest.fn(), auto: false, state: 'idle' as const };
-        const stepMetaTwo = { label: 'something', action: jest.fn(), auto: false, state: 'idle' as const };
+        const stepMetaOne = {
+            label: 'pin',
+            action: jest.fn(),
+            auto: false,
+            state: 'idle' as const,
+        };
+        const stepMetaTwo = {
+            label: 'something',
+            action: jest.fn(),
+            auto: false,
+            state: 'idle' as const,
+        };
         const customSteps = [
             { id: 'pin-metadata', order: 0, meta: stepMetaOne },
             { id: 'something', order: 1, meta: stepMetaTwo },
@@ -166,7 +234,9 @@ describe('<TransactionDialog /> component', () => {
                 order: 2,
                 meta: expect.objectContaining({
                     label: expect.stringMatching(/PREPARE.label/) as unknown,
-                    errorLabel: expect.stringMatching(/PREPARE.errorLabel/) as unknown,
+                    errorLabel: expect.stringMatching(
+                        /PREPARE.errorLabel/,
+                    ) as unknown,
                     auto: true,
                 }) as unknown,
             },
@@ -175,10 +245,14 @@ describe('<TransactionDialog /> component', () => {
                 order: 3,
                 meta: expect.objectContaining({
                     label: expect.stringMatching(/APPROVE.label/) as unknown,
-                    errorLabel: expect.stringMatching(/APPROVE.errorLabel/) as unknown,
+                    errorLabel: expect.stringMatching(
+                        /APPROVE.errorLabel/,
+                    ) as unknown,
                     auto: false,
                     addon: {
-                        label: expect.stringMatching(/APPROVE.addon/) as unknown,
+                        label: expect.stringMatching(
+                            /APPROVE.addon/,
+                        ) as unknown,
                         icon: IconType.BLOCKCHAIN_WALLET,
                     },
                 }) as unknown,
@@ -188,24 +262,41 @@ describe('<TransactionDialog /> component', () => {
                 order: 4,
                 meta: expect.objectContaining({
                     label: expect.stringMatching(/CONFIRM.label/) as unknown,
-                    errorLabel: expect.stringMatching(/CONFIRM.errorLabel/) as unknown,
+                    errorLabel: expect.stringMatching(
+                        /CONFIRM.errorLabel/,
+                    ) as unknown,
                     auto: false,
                 }) as unknown,
             },
         ];
         const updateSteps = jest.fn();
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ customSteps, stepper }));
-        expect(updateSteps).toHaveBeenCalledWith([...customSteps, ...expectedSteps]);
+        expect(updateSteps).toHaveBeenCalledWith([
+            ...customSteps,
+            ...expectedSteps,
+        ]);
     });
 
     it('prepare transaction step triggers the prepareTransaction callback', async () => {
         const prepareTransaction = jest.fn();
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
-        useMutationSpy.mockReturnValue({ mutate: prepareTransaction } as unknown as ReactQuery.UseMutationResult);
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        useMutationSpy.mockReturnValue({
+            mutate: prepareTransaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ prepareTransaction, stepper }));
-        const { action: prepareStepAction } = updateSteps.mock.calls[0][0][0].meta;
+        const { action: prepareStepAction } =
+            updateSteps.mock.calls[0][0][0].meta;
         act(() => prepareStepAction?.({ onError: jest.fn() }));
         await waitFor(() => expect(prepareTransaction).toHaveBeenCalled());
     });
@@ -217,14 +308,28 @@ describe('<TransactionDialog /> component', () => {
         useAccountSpy.mockReturnValue({
             chainId: networkDefinitions[network].id,
         } as unknown as Wagmi.UseAccountReturnType);
-        useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        useMutationSpy.mockReturnValue({
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        useSendTransactionSpy.mockReturnValue({
+            sendTransaction,
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ stepper, network }));
-        const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
-        expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
+        expect(sendTransaction).toHaveBeenCalledWith(
+            expect.objectContaining(transaction),
+            expect.anything(),
+        );
     });
 
     it('approve transaction step switches user network when network prop does not match current chain', () => {
@@ -233,26 +338,46 @@ describe('<TransactionDialog /> component', () => {
         useAccountSpy.mockReturnValue({
             chainId: networkDefinitions[Network.ARBITRUM_MAINNET].id,
         } as unknown as Wagmi.UseAccountReturnType);
-        useSwitchChainSpy.mockReturnValue({ switchChain } as unknown as Wagmi.UseSwitchChainReturnType);
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        useSwitchChainSpy.mockReturnValue({
+            switchChain,
+        } as unknown as Wagmi.UseSwitchChainReturnType);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ stepper, network }));
-        const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(switchChain).toHaveBeenCalledWith(
             { chainId: networkDefinitions[network].id },
-            { onSuccess: expect.any(Function) as unknown }
+            { onSuccess: expect.any(Function) as unknown },
         );
     });
 
     it('does not send the transaction when transaction is not set at approve step', () => {
         const sendTransaction = jest.fn();
-        useMutationSpy.mockReturnValue({ data: null } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        useMutationSpy.mockReturnValue({
+            data: null,
+        } as unknown as ReactQuery.UseMutationResult);
+        useSendTransactionSpy.mockReturnValue({
+            sendTransaction,
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ stepper }));
-        const { action: approveStepAction } = updateSteps.mock.calls[0][0][1].meta;
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(sendTransaction).not.toHaveBeenCalled();
     });
@@ -260,16 +385,32 @@ describe('<TransactionDialog /> component', () => {
     it('confirmation action step retries sending the transaction and updates active step', () => {
         const transaction = { from: '0x123', data: '0x000' };
         const sendTransaction = jest.fn();
-        useMutationSpy.mockReturnValue({ data: transaction } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({ sendTransaction } as unknown as Wagmi.UseSendTransactionReturnType);
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
+        useMutationSpy.mockReturnValue({
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        useSendTransactionSpy.mockReturnValue({
+            sendTransaction,
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
         const updateActiveStep = jest.fn();
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps, updateActiveStep });
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps, updateActiveStep });
         render(createTestComponent({ stepper }));
-        const { action: confirmStepAction } = updateSteps.mock.calls[0][0][2].meta;
+        const { action: confirmStepAction } =
+            updateSteps.mock.calls[0][0][2].meta;
         act(() => confirmStepAction?.({ onError: jest.fn() }));
-        expect(sendTransaction).toHaveBeenCalledWith(expect.objectContaining(transaction), expect.anything());
-        expect(updateActiveStep).toHaveBeenCalledWith(TransactionDialogStep.APPROVE);
+        expect(sendTransaction).toHaveBeenCalledWith(
+            expect.objectContaining(transaction),
+            expect.anything(),
+        );
+        expect(updateActiveStep).toHaveBeenCalledWith(
+            TransactionDialogStep.APPROVE,
+        );
     });
 
     it('displays the link to the block explorer for the confirmation step on transaction success', () => {
@@ -279,8 +420,14 @@ describe('<TransactionDialog /> component', () => {
             data: transactionHash,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         render(createTestComponent());
-        const updateSteps = jest.fn() as jest.Mock<void, IStepperStep<ITransactionDialogStepMeta>[][]>;
-        const stepper = generateStepperResult<ITransactionDialogStepMeta, string>({ updateSteps });
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
         render(createTestComponent({ stepper, network }));
         const confirmStep = updateSteps.mock.calls[0][0][2];
         expect(confirmStep.meta.addon).toEqual({
@@ -290,10 +437,17 @@ describe('<TransactionDialog /> component', () => {
     });
 
     it('logs an error to the monitoring service when CONFIRM step fails', () => {
-        const error = 'transaction-failed' as unknown as WaitForTransactionReceiptErrorType;
-        const waitTxError = { queryKey: [''], ...generateReactQueryResultError({ error }) };
+        const error =
+            'transaction-failed' as unknown as WaitForTransactionReceiptErrorType;
+        const waitTxError = {
+            queryKey: [''],
+            ...generateReactQueryResultError({ error }),
+        };
         const address = '0x123';
-        useAccountSpy.mockReturnValue({ chainId: 1, address } as unknown as Wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            chainId: 1,
+            address,
+        } as unknown as Wagmi.UseAccountReturnType);
         useWaitForTransactionReceiptSpy.mockReturnValue(waitTxError);
         render(createTestComponent());
         expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(error, {

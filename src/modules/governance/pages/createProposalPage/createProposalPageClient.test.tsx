@@ -12,10 +12,15 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import { CreateProposalPageClient, type ICreateProposalPageClientProps } from './createProposalPageClient';
+import {
+    CreateProposalPageClient,
+    type ICreateProposalPageClientProps,
+} from './createProposalPageClient';
 
 jest.mock('./createProposalPageClientSteps', () => ({
-    CreateProposalPageClientSteps: () => <button data-testid="steps-mock" type="submit" />,
+    CreateProposalPageClientSteps: () => (
+        <button data-testid="steps-mock" type="submit" />
+    ),
 }));
 
 jest.mock('next/navigation', () => ({
@@ -24,15 +29,23 @@ jest.mock('next/navigation', () => ({
 
 describe('<CreateProposalPageClient /> component', () => {
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
+    const usePermissionCheckGuardSpy = jest.spyOn(
+        usePermissionCheckGuard,
+        'usePermissionCheckGuard',
+    );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: false,
+        });
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -42,7 +55,9 @@ describe('<CreateProposalPageClient /> component', () => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<ICreateProposalPageClientProps>) => {
+    const createTestComponent = (
+        props?: Partial<ICreateProposalPageClientProps>,
+    ) => {
         const completeProps: ICreateProposalPageClientProps = {
             daoId: 'test',
             pluginAddress: '0x123',
@@ -54,8 +69,12 @@ describe('<CreateProposalPageClient /> component', () => {
 
     it('renders the create-proposal wizard steps', async () => {
         render(createTestComponent());
-        expect(await screen.findByText(/wizardPage.container.step \(number=1\)/)).toBeInTheDocument();
-        expect(screen.getByText(/wizardPage.container.total \(total=3\)/)).toBeInTheDocument();
+        expect(
+            await screen.findByText(/wizardPage.container.step \(number=1\)/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/wizardPage.container.total \(total=3\)/),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('steps-mock')).toBeInTheDocument();
     });
 
@@ -64,7 +83,12 @@ describe('<CreateProposalPageClient /> component', () => {
         const pluginAddress = '0x472839';
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        const plugins = [generateFilterComponentPlugin({ id: 'multisig', meta: generateDaoPlugin({ address: pluginAddress }) })];
+        const plugins = [
+            generateFilterComponentPlugin({
+                id: 'multisig',
+                meta: generateDaoPlugin({ address: pluginAddress }),
+            }),
+        ];
         useDaoPluginsSpy.mockReturnValue(plugins);
         render(createTestComponent({ daoId, pluginAddress }));
         // Advance the wizard three times to trigger the submit function
@@ -77,6 +101,8 @@ describe('<CreateProposalPageClient /> component', () => {
             plugin: plugins[0].meta,
             prepareActions: {},
         };
-        expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, { params: expectedParams });
+        expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, {
+            params: expectedParams,
+        });
     });
 });

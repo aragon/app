@@ -27,8 +27,14 @@ export const AdminMemberInfo: React.FC<IAdminMemberInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.admin.adminMemberInfo.admins')}>
-                <p className="text-neutral-500">{t('app.plugins.admin.adminMemberInfo.membersCount', { count: memberCount })}</p>
+            <DefinitionList.Item
+                term={t('app.plugins.admin.adminMemberInfo.admins')}
+            >
+                <p className="text-neutral-500">
+                    {t('app.plugins.admin.adminMemberInfo.membersCount', {
+                        count: memberCount,
+                    })}
+                </p>
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

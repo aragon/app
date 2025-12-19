@@ -9,9 +9,11 @@ export interface IWizardContainerStepMeta {
     name: string;
 }
 
-export interface IWizardStepperStep extends IStepperStep<IWizardContainerStepMeta> {}
+export interface IWizardStepperStep
+    extends IStepperStep<IWizardContainerStepMeta> {}
 
-export interface IWizardContext extends IUseStepperReturn<IWizardContainerStepMeta> {
+export interface IWizardContext
+    extends IUseStepperReturn<IWizardContainerStepMeta> {
     /**
      * Label of the submit button at the end of the wizard.
      */
@@ -30,7 +32,9 @@ export const useWizardContext = () => {
     const values = useContext(wizardContext);
 
     if (values == null) {
-        throw new Error('useWizardContext: hook must be used inside a WizardProvider to work properly');
+        throw new Error(
+            'useWizardContext: hook must be used inside a WizardProvider to work properly',
+        );
     }
 
     return values;

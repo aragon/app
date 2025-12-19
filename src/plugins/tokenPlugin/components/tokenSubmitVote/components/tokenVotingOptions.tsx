@@ -22,7 +22,9 @@ export interface ITokenVotingOptionsProps {
     disableOptions?: boolean;
 }
 
-export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) => {
+export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
+    props,
+) => {
     const { isVeto, value: selectedValue, onChange, disableOptions } = props;
     const { t } = useTranslations();
     const id = useRandomId();
@@ -32,7 +34,9 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) =>
             label: t('app.plugins.token.tokenSubmitVote.options.yes'),
             value: VoteOption.YES.toString(),
             variant: isVeto ? 'critical' : 'success',
-            description: t(`app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoYesDescription' : 'approveYesDescription'}`),
+            description: t(
+                `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoYesDescription' : 'approveYesDescription'}`,
+            ),
         },
         {
             label: t('app.plugins.token.tokenSubmitVote.options.abstain'),
@@ -44,7 +48,9 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) =>
             label: t('app.plugins.token.tokenSubmitVote.options.no'),
             value: VoteOption.NO.toString(),
             variant: isVeto ? 'success' : 'critical',
-            description: t(`app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`),
+            description: t(
+                `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
+            ),
         },
     ] as const;
 
@@ -54,11 +60,18 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) =>
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
                 label: isVeto
                     ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                    : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
+                    : t(
+                          'app.plugins.token.tokenSubmitVote.options.approveLabel',
+                      ),
             })}
             useCustomWrapper={true}
         >
-            <ToggleGroup isMultiSelect={false} onChange={onChange} orientation="vertical" value={selectedValue ?? ''}>
+            <ToggleGroup
+                isMultiSelect={false}
+                onChange={onChange}
+                orientation="vertical"
+                value={selectedValue ?? ''}
+            >
                 {voteOptions.map(({ label, value, variant, description }) => (
                     <TokenVotingOptionToggle
                         description={description}

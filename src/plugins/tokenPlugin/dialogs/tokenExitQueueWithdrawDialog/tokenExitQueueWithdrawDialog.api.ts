@@ -47,4 +47,5 @@ export interface ITokenExitQueueWithdrawDialogParams {
     onSuccess?: () => void;
 }
 
-export interface ITokenExitQueueWithdrawDialogProps extends IDialogComponentProps<ITokenExitQueueWithdrawDialogParams> {}
+export interface ITokenExitQueueWithdrawDialogProps
+    extends IDialogComponentProps<ITokenExitQueueWithdrawDialogParams> {}

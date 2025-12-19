@@ -49,8 +49,14 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
         }
     }, [address, daoFilter, setDaoFilter]);
 
-    const memberQueryParams = { sort: 'blockTimestamp', networks: networkUtils.getSupportedNetworks() };
-    const memberParams = daoFilter === 'member' && address != null ? { urlParams: { address }, queryParams: memberQueryParams } : undefined;
+    const memberQueryParams = {
+        sort: 'blockTimestamp',
+        networks: networkUtils.getSupportedNetworks(),
+    };
+    const memberParams =
+        daoFilter === 'member' && address != null
+            ? { urlParams: { address }, queryParams: memberQueryParams }
+            : undefined;
 
     return (
         <div className="flex grow flex-col gap-3">
@@ -61,14 +67,30 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                     onChange={handleToggleChange}
                     value={daoFilter}
                 >
-                    <Toggle label={t('app.explore.exploreDao.filter.all')} value="all" />
-                    <Toggle disabled={address == null} label={t('app.explore.exploreDao.filter.member')} value="member" />
+                    <Toggle
+                        label={t('app.explore.exploreDao.filter.all')}
+                        value="all"
+                    />
+                    <Toggle
+                        disabled={address == null}
+                        label={t('app.explore.exploreDao.filter.member')}
+                        value="member"
+                    />
                 </ToggleGroup>
-                <Button className="shrink-0" onClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)} size="md" variant="primary">
+                <Button
+                    className="shrink-0"
+                    onClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)}
+                    size="md"
+                    variant="primary"
+                >
                     {t('app.explore.exploreDao.createDao')}
                 </Button>
             </div>
-            <DaoList initialParams={initialParams} memberParams={memberParams} showSearch={true} />
+            <DaoList
+                initialParams={initialParams}
+                memberParams={memberParams}
+                showSearch={true}
+            />
         </div>
     );
 };

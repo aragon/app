@@ -1,1 +1,4 @@
-export { type INavigationWizardProps, NavigationWizard } from './navigationWizard';
+export {
+    type INavigationWizardProps,
+    NavigationWizard,
+} from './navigationWizard';

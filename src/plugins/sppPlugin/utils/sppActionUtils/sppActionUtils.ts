@@ -17,10 +17,15 @@ export interface IGetSppActionsProps {
     t: TranslationFunction;
 }
 
-export type IGetSppActionsResult = IActionComposerPluginData<IDaoPlugin<ISppPluginSettings>>;
+export type IGetSppActionsResult = IActionComposerPluginData<
+    IDaoPlugin<ISppPluginSettings>
+>;
 
 class SppActionUtils {
-    getSppActions = ({ plugin, t }: IGetSppActionsProps): IGetSppActionsResult => {
+    getSppActions = ({
+        plugin,
+        t,
+    }: IGetSppActionsProps): IGetSppActionsResult => {
         const { address } = plugin;
 
         return {
@@ -34,9 +39,15 @@ class SppActionUtils {
             ],
             items: [
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t, {
-                        stageNames: plugin.settings.stages.map((stage) => stage.name),
-                    }),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(
+                        plugin,
+                        t,
+                        {
+                            stageNames: plugin.settings.stages.map(
+                                (stage) => stage.name,
+                            ),
+                        },
+                    ),
                     meta: plugin,
                 },
             ],

@@ -19,7 +19,9 @@ const policyKeyMaxLength = 5;
 
 const descriptionMaxLength = 480;
 
-export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> = (props) => {
+export const CreatePolicyFormMetadata: React.FC<
+    ICreatePolicyFormMetadataProps
+> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
@@ -32,22 +34,34 @@ export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> 
         defaultValue: '',
     });
 
-    const { onChange: onPolicyKeyChange, ...policyKeyField } = useFormField<ICreatePolicyFormData, 'policyKey'>('policyKey', {
+    const { onChange: onPolicyKeyChange, ...policyKeyField } = useFormField<
+        ICreatePolicyFormData,
+        'policyKey'
+    >('policyKey', {
         label: t('app.capitalFlow.createPolicyForm.metadata.policyKey.label'),
         fieldPrefix,
-        rules: { required: true, pattern: /^[A-Z]+$/, maxLength: policyKeyMaxLength },
+        rules: {
+            required: true,
+            pattern: /^[A-Z]+$/,
+            maxLength: policyKeyMaxLength,
+        },
         trimOnBlur: true,
         defaultValue: '',
     });
 
-    const descriptionField = useFormField<ICreatePolicyFormData, 'description'>('description', {
-        label: t('app.capitalFlow.createPolicyForm.metadata.description.label'),
-        fieldPrefix,
-        rules: { maxLength: descriptionMaxLength },
-        trimOnBlur: true,
-        sanitizeMode: 'multiline',
-        defaultValue: '',
-    });
+    const descriptionField = useFormField<ICreatePolicyFormData, 'description'>(
+        'description',
+        {
+            label: t(
+                'app.capitalFlow.createPolicyForm.metadata.description.label',
+            ),
+            fieldPrefix,
+            rules: { maxLength: descriptionMaxLength },
+            trimOnBlur: true,
+            sanitizeMode: 'multiline',
+            defaultValue: '',
+        },
+    );
 
     const handleKeyFieldChange = (event: ChangeEvent<HTMLInputElement>) =>
         onPolicyKeyChange(sanitizePlainText(event.target.value).toUpperCase());
@@ -56,20 +70,26 @@ export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> 
         <div className="flex w-full flex-col gap-10">
             <InputText maxLength={nameMaxLength} {...nameField} />
             <InputText
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.policyKey.helpText')}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.policyKey.helpText',
+                )}
                 maxLength={policyKeyMaxLength}
                 onChange={handleKeyFieldChange}
                 {...policyKeyField}
             />
             <TextArea
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.description.helpText')}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.description.helpText',
+                )}
                 isOptional={true}
                 maxLength={descriptionMaxLength}
                 {...descriptionField}
             />
             <ResourcesInput
                 fieldPrefix={fieldPrefix}
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.resources.helpText')}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.resources.helpText',
+                )}
                 name="resources"
             />
         </div>

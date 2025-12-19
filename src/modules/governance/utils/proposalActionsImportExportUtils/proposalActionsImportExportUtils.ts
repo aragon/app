@@ -41,7 +41,10 @@ class ProposalActionsImportExportUtils {
     exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] =>
         actions.map((action) => ({
             to: action.to,
-            value: typeof action.value === 'bigint' ? Number(action.value) : Number(action.value || 0),
+            value:
+                typeof action.value === 'bigint'
+                    ? Number(action.value)
+                    : Number(action.value || 0),
             data: action.data,
         }));
 
@@ -51,7 +54,10 @@ class ProposalActionsImportExportUtils {
      * @param actions - Array of proposal actions to download
      * @param filename - Name of the file to download (default: 'actions.json')
      */
-    downloadActionsAsJSON = (actions: IProposalAction[], filename = 'actions.json'): void => {
+    downloadActionsAsJSON = (
+        actions: IProposalAction[],
+        filename = 'actions.json',
+    ): void => {
         const exportedActions = this.exportActionsToJSON(actions);
         const jsonString = JSON.stringify(exportedActions, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -79,7 +85,8 @@ class ProposalActionsImportExportUtils {
             if (!Array.isArray(parsed)) {
                 return {
                     success: false,
-                    errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat',
+                    errorKey:
+                        'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat',
                 };
             }
 
@@ -100,7 +107,8 @@ class ProposalActionsImportExportUtils {
         } catch {
             return {
                 success: false,
-                errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
+                errorKey:
+                    'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
             };
         }
     };
@@ -118,7 +126,9 @@ class ProposalActionsImportExportUtils {
 
         const actionObj = action as Record<string, unknown>;
 
-        if (!('to' in actionObj && 'value' in actionObj && 'data' in actionObj)) {
+        if (
+            !('to' in actionObj && 'value' in actionObj && 'data' in actionObj)
+        ) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat';
         }
 
@@ -126,7 +136,8 @@ class ProposalActionsImportExportUtils {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidAddress';
         }
 
-        const isNumber = typeof actionObj.value === 'number' && actionObj.value >= 0;
+        const isNumber =
+            typeof actionObj.value === 'number' && actionObj.value >= 0;
         const isStringNumber =
             typeof actionObj.value === 'string' &&
             actionObj.value.length > 0 &&
@@ -159,4 +170,5 @@ class ProposalActionsImportExportUtils {
         });
 }
 
-export const proposalActionsImportExportUtils = new ProposalActionsImportExportUtils();
+export const proposalActionsImportExportUtils =
+    new ProposalActionsImportExportUtils();

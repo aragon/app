@@ -3,7 +3,10 @@ import { useCallback, useEffect } from 'react';
 import { type Hex, keccak256, toBytes } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
@@ -31,14 +34,22 @@ export interface IExecuteCheckDialogParams {
     onError?: () => void;
 }
 
-export interface IExecuteCheckDialogProps extends IDialogComponentProps<IExecuteCheckDialogParams> {}
+export interface IExecuteCheckDialogProps
+    extends IDialogComponentProps<IExecuteCheckDialogParams> {}
 
-const executeProposalPermissionId = keccak256(toBytes('EXECUTE_PROPOSAL_PERMISSION'));
+const executeProposalPermissionId = keccak256(
+    toBytes('EXECUTE_PROPOSAL_PERMISSION'),
+);
 
-export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) => {
+export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (
+    props,
+) => {
     const { params } = props.location;
 
-    invariant(params != null, 'ExecuteCheckDialog: params not set for execute check dialog');
+    invariant(
+        params != null,
+        'ExecuteCheckDialog: params not set for execute check dialog',
+    );
     const { dao, plugin, onSuccess, onError } = params;
     const { address: pluginAddress, interfaceType } = plugin;
 
@@ -68,9 +79,16 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) =>
         abi: [daoAbi],
         address: dao.address as Hex,
         functionName: 'hasPermission',
-        args: [pluginAddress as Hex, address as Hex, executeProposalPermissionId, '0x'],
+        args: [
+            pluginAddress as Hex,
+            address as Hex,
+            executeProposalPermissionId,
+            '0x',
+        ],
         chainId,
-        query: { enabled: address != null && hasExecuteProposalPermissionGuard },
+        query: {
+            enabled: address != null && hasExecuteProposalPermissionGuard,
+        },
     });
 
     const hasPermission = data === true;
@@ -100,10 +118,19 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (props) =>
         }
     }, [address, dao.address, error, pluginAddress]);
 
-    const title = isLoading ? t('app.governance.executeCheckDialog.loading') : t('app.governance.executeCheckDialog.title');
-    const description = isLoading ? undefined : t('app.governance.executeCheckDialog.description');
+    const title = isLoading
+        ? t('app.governance.executeCheckDialog.loading')
+        : t('app.governance.executeCheckDialog.title');
+    const description = isLoading
+        ? undefined
+        : t('app.governance.executeCheckDialog.description');
 
-    const footerAction = isLoading ? undefined : { label: t('app.governance.executeCheckDialog.action'), onClick: handleDialogClose };
+    const footerAction = isLoading
+        ? undefined
+        : {
+              label: t('app.governance.executeCheckDialog.action'),
+              onClick: handleDialogClose,
+          };
 
     return (
         <>

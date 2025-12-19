@@ -11,7 +11,9 @@ import {
 } from '../../components/createProcessForm';
 import { generateSetupBodyFormNew } from './setupBodyForm';
 
-export const generateCreateProcessFormDataBase = (values?: Partial<ICreateProcessFormData>): ICreateProcessFormDataBase => ({
+export const generateCreateProcessFormDataBase = (
+    values?: Partial<ICreateProcessFormData>,
+): ICreateProcessFormDataBase => ({
     name: 'Test Process',
     processKey: 'KEY',
     description: 'Description',
@@ -24,7 +26,7 @@ export const generateCreateProcessFormDataBase = (values?: Partial<ICreateProces
 });
 
 export const generateCreateProcessFormDataAdvanced = (
-    values?: Partial<ICreateProcessFormDataAdvanced>
+    values?: Partial<ICreateProcessFormDataAdvanced>,
 ): ICreateProcessFormDataAdvanced => ({
     ...generateCreateProcessFormDataBase(values),
     governanceType: GovernanceType.ADVANCED,
@@ -32,20 +34,26 @@ export const generateCreateProcessFormDataAdvanced = (
     ...values,
 });
 
-export const generateCreateProcessFormDataBasic = (values?: Partial<ICreateProcessFormDataBasic>): ICreateProcessFormDataBasic => ({
+export const generateCreateProcessFormDataBasic = (
+    values?: Partial<ICreateProcessFormDataBasic>,
+): ICreateProcessFormDataBasic => ({
     ...generateCreateProcessFormDataBase(values),
     governanceType: GovernanceType.BASIC,
     body: generateSetupBodyFormNew(),
     ...values,
 });
 
-export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFormData>): ICreateProcessFormData =>
+export const generateCreateProcessFormData = (
+    values?: Partial<ICreateProcessFormData>,
+): ICreateProcessFormData =>
     values?.governanceType === GovernanceType.BASIC
         ? generateCreateProcessFormDataBasic(values)
-        : generateCreateProcessFormDataAdvanced(values as ICreateProcessFormDataAdvanced);
+        : generateCreateProcessFormDataAdvanced(
+              values as ICreateProcessFormDataAdvanced,
+          );
 
 export const generateCreateProcessFormStageSettings = (
-    values?: Partial<ICreateProcessFormStage['settings']>
+    values?: Partial<ICreateProcessFormStage['settings']>,
 ): ICreateProcessFormStage['settings'] => ({
     type: ProcessStageType.NORMAL,
     votingPeriod: { days: 1, hours: 0, minutes: 0 },
@@ -54,7 +62,9 @@ export const generateCreateProcessFormStageSettings = (
     ...values,
 });
 
-export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
+export const generateCreateProcessFormStage = (
+    values?: Partial<ICreateProcessFormStage>,
+): ICreateProcessFormStage => ({
     internalId: '0',
     name: 'stage',
     settings: generateCreateProcessFormStageSettings(values?.settings),

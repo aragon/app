@@ -18,14 +18,26 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
 
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            <Dialog.Content className="flex flex-col gap-4 pt-8 pb-4" noInset={true}>
+            <Dialog.Content
+                className="flex flex-col gap-4 pt-8 pb-4"
+                noInset={true}
+            >
                 {children}
                 <div className="flex flex-col gap-4 px-4">
-                    <NavigationLinks links={links} onClick={handleLinksClick} variant="column" />
+                    <NavigationLinks
+                        links={links}
+                        onClick={handleLinksClick}
+                        variant="column"
+                    />
                     <div className="w-full px-4">
                         <div className="border-neutral-100 border-t" />
                     </div>
-                    <NavigationLinksItem href="/" icon={IconType.APP_EXPLORE} iconSide="right" variant="column">
+                    <NavigationLinksItem
+                        href="/"
+                        icon={IconType.APP_EXPLORE}
+                        iconSide="right"
+                        variant="column"
+                    >
                         {t('app.application.navigationDao.dialog.explore')}
                     </NavigationLinksItem>
                 </div>

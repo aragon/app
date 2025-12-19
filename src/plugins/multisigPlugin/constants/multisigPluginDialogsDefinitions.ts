@@ -2,7 +2,10 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { MultisigRemoveMembersActionDialog } from '../dialogs/multisigRemoveMembersActionDialog';
 import { MultisigPluginDialogId } from './multisigPluginDialogId';
 
-export const multisigPluginDialogsDefinitions: Record<MultisigPluginDialogId, IDialogComponentDefinitions> = {
+export const multisigPluginDialogsDefinitions: Record<
+    MultisigPluginDialogId,
+    IDialogComponentDefinitions
+> = {
     [MultisigPluginDialogId.REMOVE_MEMBERS]: {
         Component: MultisigRemoveMembersActionDialog,
     },

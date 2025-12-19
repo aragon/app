@@ -1,16 +1,33 @@
-import { type IGetTransactionListParams, useTransactionList } from '@/modules/finance/api/financeService';
+import {
+    type IGetTransactionListParams,
+    useTransactionList,
+} from '@/modules/finance/api/financeService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 export const useTransactionListData = (params: IGetTransactionListParams) => {
     const { t } = useTranslations();
 
-    const { data: transactionListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useTransactionList(params);
+    const {
+        data: transactionListData,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useTransactionList(params);
 
-    const transactionList = transactionListData?.pages.flatMap((page) => page.data);
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const transactionList = transactionListData?.pages.flatMap(
+        (page) => page.data,
+    );
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
-    const pageSize = params.queryParams.pageSize ?? transactionListData?.pages[0].metadata.pageSize;
+    const pageSize =
+        params.queryParams.pageSize ??
+        transactionListData?.pages[0].metadata.pageSize;
     const itemsCount = transactionListData?.pages[0].metadata.totalRecords;
 
     const errorState = {

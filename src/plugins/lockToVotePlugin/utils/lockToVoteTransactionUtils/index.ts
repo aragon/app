@@ -1,1 +1,4 @@
-export { type ILockToVoteOption, lockToVoteTransactionUtils } from './lockToVoteTransactionUtils';
+export {
+    type ILockToVoteOption,
+    lockToVoteTransactionUtils,
+} from './lockToVoteTransactionUtils';

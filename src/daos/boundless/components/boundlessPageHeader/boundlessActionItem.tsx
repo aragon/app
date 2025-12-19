@@ -31,7 +31,9 @@ export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
     isExternal?: boolean;
 }
 
-export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) => {
+export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
+    props,
+) => {
     const { title, description, image, href, isExternal, className } = props;
     const [isHovered, setIsHovered] = useState(false);
 
@@ -39,19 +41,32 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) 
         <Link
             className={classNames(
                 'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
-                className
+                className,
             )}
             href={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             target={isExternal ? '_blank' : '_self'}
         >
-            <Image alt="" className="absolute inset-0 -z-20 object-cover" fill={true} src={BackgroundImage} />
+            <Image
+                alt=""
+                className="absolute inset-0 -z-20 object-cover"
+                fill={true}
+                src={BackgroundImage}
+            />
             <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
-                <BoundlessActionText description={description} isHovered={isHovered} title={title} />
+                <BoundlessActionText
+                    description={description}
+                    isHovered={isHovered}
+                    title={title}
+                />
                 <BoundlessActionAvatarIcon isHovered={isHovered} />
             </div>
-            <BoundlessActionImage alt={title} image={image} isHovered={isHovered} />
+            <BoundlessActionImage
+                alt={title}
+                image={image}
+                isHovered={isHovered}
+            />
         </Link>
     );
 };

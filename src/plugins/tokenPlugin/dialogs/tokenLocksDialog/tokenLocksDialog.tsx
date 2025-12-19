@@ -2,7 +2,10 @@
 
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenLockList } from '../../components/tokenMemberPanel/tokenLock';
 import type { ITokenPluginSettings } from '../../types';
@@ -18,11 +21,15 @@ export interface ITokenLocksDialogParams {
     plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
-export interface ITokenLocksDialogProps extends IDialogComponentProps<ITokenLocksDialogParams> {}
+export interface ITokenLocksDialogProps
+    extends IDialogComponentProps<ITokenLocksDialogParams> {}
 
 export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenLocksDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'TokenLocksDialog: required parameters must be set.',
+    );
     const { plugin, dao } = location.params;
 
     const { t } = useTranslations();
@@ -33,10 +40,16 @@ export const TokenLocksDialog: React.FC<ITokenLocksDialogProps> = (props) => {
 
     return (
         <>
-            <Dialog.Header onClose={close} title={t('app.plugins.token.tokenLocksDialog.title')} />
+            <Dialog.Header
+                onClose={close}
+                title={t('app.plugins.token.tokenLocksDialog.title')}
+            />
             <Dialog.Content
                 className="pb-4 md:pb-6"
-                description={t('app.plugins.token.tokenLocksDialog.description', { symbol: token.symbol })}
+                description={t(
+                    'app.plugins.token.tokenLocksDialog.description',
+                    { symbol: token.symbol },
+                )}
             >
                 <TokenLockList dao={dao} plugin={plugin} />
             </Dialog.Content>

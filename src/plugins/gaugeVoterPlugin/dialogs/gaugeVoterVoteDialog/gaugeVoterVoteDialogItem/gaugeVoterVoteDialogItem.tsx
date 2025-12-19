@@ -1,4 +1,13 @@
-import { Avatar, addressUtils, Button, DataList, formatterUtils, IconType, InputNumber, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    addressUtils,
+    Button,
+    DataList,
+    formatterUtils,
+    IconType,
+    InputNumber,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 
 export interface IGaugeVoterVoteDialogItemProps {
     /**
@@ -47,7 +56,9 @@ export interface IGaugeVoterVoteDialogItemProps {
     onRemove: (gaugeAddress: string) => void;
 }
 
-export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> = (props) => {
+export const GaugeVoterVoteDialogItem: React.FC<
+    IGaugeVoterVoteDialogItemProps
+> = (props) => {
     const {
         gaugeAddress,
         gaugeName,
@@ -62,7 +73,8 @@ export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> 
         onRemove,
     } = props;
 
-    const displayGaugeName = gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
+    const displayGaugeName =
+        gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
     const avatarFallback = (
         <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
             {displayGaugeName.slice(0, 2).toUpperCase()}
@@ -85,11 +97,21 @@ export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> 
         <DataList.Item className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
             <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pb-4 md:border-b-0 md:border-none md:pb-0">
                 {gaugeAvatar && (
-                    <Avatar alt={displayGaugeName} fallback={avatarFallback} responsiveSize={{ md: 'lg' }} size="md" src={gaugeAvatar} />
+                    <Avatar
+                        alt={displayGaugeName}
+                        fallback={avatarFallback}
+                        responsiveSize={{ md: 'lg' }}
+                        size="md"
+                        src={gaugeAvatar}
+                    />
                 )}
                 <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-base text-neutral-800">{displayGaugeName}</span>
-                    <span className="truncate text-neutral-500 text-sm">{addressUtils.truncateAddress(gaugeAddress)}</span>
+                    <span className="truncate text-base text-neutral-800">
+                        {displayGaugeName}
+                    </span>
+                    <span className="truncate text-neutral-500 text-sm">
+                        {addressUtils.truncateAddress(gaugeAddress)}
+                    </span>
                 </div>
                 <Button
                     className="md:hidden"
@@ -110,7 +132,9 @@ export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> 
                     className="w-full md:max-w-40 md:flex-initial"
                     max={100}
                     min={0}
-                    onChange={(value) => onUpdatePercentage(gaugeAddress, Number(value))}
+                    onChange={(value) =>
+                        onUpdatePercentage(gaugeAddress, Number(value))
+                    }
                     suffix="%"
                     value={percentage.toString()}
                 />

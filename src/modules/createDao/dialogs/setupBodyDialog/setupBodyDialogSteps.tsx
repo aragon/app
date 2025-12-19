@@ -5,7 +5,10 @@ import type { ISetupBodyForm } from './setupBodyDialogDefinitions';
 import { SetupBodyDialogGovernance } from './setupBodyDialogGovernance';
 import { SetupBodyDialogMembership } from './setupBodyDialogMembership';
 import { SetupBodyDialogMetadata } from './setupBodyDialogMetadata';
-import { externalPluginId, SetupBodyDialogSelect } from './setupBodyDialogSelect';
+import {
+    externalPluginId,
+    SetupBodyDialogSelect,
+} from './setupBodyDialogSelect';
 import { SetupBodyDialogExternalAddress } from './setupBodySialogExternalAddress';
 
 export interface ISetupBodyDialogStepsProps {
@@ -31,22 +34,38 @@ const setupBodySteps = [
     { id: 'governance', order: 4, meta: { name: '' } },
 ];
 
-export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (props) => {
+export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (
+    props,
+) => {
     const { initialValues, isSubPlugin, daoId } = props;
 
-    const selectedPlugin = useWatch<ISetupBodyForm, 'plugin'>({ name: 'plugin' });
+    const selectedPlugin = useWatch<ISetupBodyForm, 'plugin'>({
+        name: 'plugin',
+    });
     const isExternalPlugin = selectedPlugin === externalPluginId;
 
-    const [selectStep, metadataStep, externalAddress, membershipStep, governanceStep] = setupBodySteps;
+    const [
+        selectStep,
+        metadataStep,
+        externalAddress,
+        membershipStep,
+        governanceStep,
+    ] = setupBodySteps;
 
     const { network } = daoUtils.parseDaoId(daoId);
 
     return (
         <>
             <WizardDialog.Step {...selectStep} hidden={initialValues != null}>
-                <SetupBodyDialogSelect isSubPlugin={isSubPlugin} network={network} />
+                <SetupBodyDialogSelect
+                    isSubPlugin={isSubPlugin}
+                    network={network}
+                />
             </WizardDialog.Step>
-            <WizardDialog.Step {...metadataStep} hidden={!isSubPlugin || isExternalPlugin}>
+            <WizardDialog.Step
+                {...metadataStep}
+                hidden={!isSubPlugin || isExternalPlugin}
+            >
                 <SetupBodyDialogMetadata />
             </WizardDialog.Step>
             <WizardDialog.Step {...externalAddress} hidden={!isExternalPlugin}>

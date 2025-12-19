@@ -35,7 +35,8 @@ export interface IGetDaoByEnsUrlParams {
     ens: string;
 }
 
-export interface IGetDaoByEnsParams extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
+export interface IGetDaoByEnsParams
+    extends IRequestUrlParams<IGetDaoByEnsUrlParams> {}
 
 export interface IGetDaoPermissionsUrlParams {
     /**
@@ -50,7 +51,11 @@ export interface IGetDaoPermissionsUrlParams {
 
 export interface IGetDaoPermissionsQueryParams extends IPaginatedRequest {}
 
-export interface IGetDaoPermissionsParams extends IRequestUrlQueryParams<IGetDaoPermissionsUrlParams, IGetDaoPermissionsQueryParams> {}
+export interface IGetDaoPermissionsParams
+    extends IRequestUrlQueryParams<
+        IGetDaoPermissionsUrlParams,
+        IGetDaoPermissionsQueryParams
+    > {}
 
 export interface IGetDaoPoliciesUrlParams {
     /**
@@ -63,4 +68,5 @@ export interface IGetDaoPoliciesUrlParams {
     daoAddress: string;
 }
 
-export interface IGetDaoPoliciesParams extends IRequestUrlParams<IGetDaoPoliciesUrlParams> {}
+export interface IGetDaoPoliciesParams
+    extends IRequestUrlParams<IGetDaoPoliciesUrlParams> {}

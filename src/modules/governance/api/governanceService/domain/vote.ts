@@ -25,5 +25,8 @@ export interface IVote {
     /**
      * Extra information about the parent proposal of the vote if includeInfo is true on the query.
      */
-    parentProposal?: Pick<IProposal, 'id' | 'title' | 'pluginAddress' | 'incrementalId'>;
+    parentProposal?: Pick<
+        IProposal,
+        'id' | 'title' | 'pluginAddress' | 'incrementalId'
+    >;
 }

@@ -37,6 +37,8 @@ describe('<PageContainer /> component', () => {
         const queryData = { key: 'value' };
         queryClient.setQueryData(['test'], queryData);
         render(createTestComponent({ queryClient }));
-        expect(screen.getByText(new RegExp(JSON.stringify(queryData)))).toBeInTheDocument();
+        expect(
+            screen.getByText(new RegExp(JSON.stringify(queryData))),
+        ).toBeInTheDocument();
     });
 });

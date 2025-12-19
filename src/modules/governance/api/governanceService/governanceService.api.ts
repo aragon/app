@@ -1,8 +1,17 @@
-import type { IOrderedRequest, IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type {
+    IOrderedRequest,
+    IPaginatedRequest,
+} from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestQueryParams, IRequestUrlParams, IRequestUrlQueryParams } from '@/shared/api/httpService';
+import type {
+    IRequestQueryParams,
+    IRequestUrlParams,
+    IRequestUrlQueryParams,
+} from '@/shared/api/httpService';
 
-export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrderedRequest {
+export interface IGetProposalListQueryParams
+    extends IPaginatedRequest,
+        IOrderedRequest {
     /**
      * ID of the Dao to fetch the proposals from.
      */
@@ -29,7 +38,8 @@ export interface IGetProposalListQueryParams extends IPaginatedRequest, IOrdered
     onlyActive?: boolean;
 }
 
-export interface IGetProposalListParams extends IRequestQueryParams<IGetProposalListQueryParams> {}
+export interface IGetProposalListParams
+    extends IRequestQueryParams<IGetProposalListQueryParams> {}
 
 export interface IGetMemberListQueryParams extends IPaginatedRequest {
     /**
@@ -42,7 +52,8 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
     pluginAddress: string;
 }
 
-export interface IGetMemberListParams extends IRequestQueryParams<IGetMemberListQueryParams> {}
+export interface IGetMemberListParams
+    extends IRequestQueryParams<IGetMemberListQueryParams> {}
 
 export interface IGetMemberUrlParams {
     /**
@@ -62,7 +73,11 @@ export interface IGetMemberQueryParams {
     pluginAddress: string;
 }
 
-export interface IGetMemberParams extends IRequestUrlQueryParams<IGetMemberUrlParams, IGetMemberQueryParams> {}
+export interface IGetMemberParams
+    extends IRequestUrlQueryParams<
+        IGetMemberUrlParams,
+        IGetMemberQueryParams
+    > {}
 
 export interface IGetMemberExistsUrlParams {
     /**
@@ -82,7 +97,11 @@ export interface IGetMemberExistsQueryParams {
     network: Network;
 }
 
-export interface IGetMemberExistsParams extends IRequestUrlQueryParams<IGetMemberExistsUrlParams, IGetMemberExistsQueryParams> {}
+export interface IGetMemberExistsParams
+    extends IRequestUrlQueryParams<
+        IGetMemberExistsUrlParams,
+        IGetMemberExistsQueryParams
+    > {}
 
 export interface IGetProposalBySlugUrlParams {
     /**
@@ -98,7 +117,11 @@ export interface IGetProposalBySlugQueryParams {
     daoId: string;
 }
 
-export interface IGetProposalBySlugParams extends IRequestUrlQueryParams<IGetProposalBySlugUrlParams, IGetProposalBySlugQueryParams> {}
+export interface IGetProposalBySlugParams
+    extends IRequestUrlQueryParams<
+        IGetProposalBySlugUrlParams,
+        IGetProposalBySlugQueryParams
+    > {}
 
 export interface IGetCanCreateProposalQueryParams {
     /**
@@ -115,7 +138,8 @@ export interface IGetCanCreateProposalQueryParams {
     network: Network;
 }
 
-export interface IGetCanCreateProposalParams extends IRequestQueryParams<IGetCanCreateProposalQueryParams> {}
+export interface IGetCanCreateProposalParams
+    extends IRequestQueryParams<IGetCanCreateProposalQueryParams> {}
 
 export interface IGetVoteListQueryParams extends IPaginatedRequest {
     /**
@@ -148,7 +172,8 @@ export interface IGetVoteListQueryParams extends IPaginatedRequest {
     highlightUser?: string;
 }
 
-export interface IGetVoteListParams extends IRequestQueryParams<IGetVoteListQueryParams> {}
+export interface IGetVoteListParams
+    extends IRequestQueryParams<IGetVoteListQueryParams> {}
 
 export interface IGetProposalActionsUrlParams {
     /**
@@ -157,4 +182,5 @@ export interface IGetProposalActionsUrlParams {
     id: string;
 }
 
-export interface IGetProposalActionsParams extends IRequestUrlParams<IGetProposalActionsUrlParams> {}
+export interface IGetProposalActionsParams
+    extends IRequestUrlParams<IGetProposalActionsUrlParams> {}

@@ -1,13 +1,24 @@
-import { ChainEntityType, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import {
+    ChainEntityType,
+    DateFormat,
+    formatterUtils,
+} from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import { type ITokenPluginSettings, VoteOption } from '@/plugins/tokenPlugin/types';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
+import {
+    type ITokenPluginSettings,
+    VoteOption,
+} from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 
-export interface ITokenPermissionCheckVoteSubmissionParams extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
+export interface ITokenPermissionCheckVoteSubmissionParams
+    extends IPermissionCheckGuardParams<IDaoPlugin<ITokenPluginSettings>> {}
 
 const tokenVotingAbi = [
     {
@@ -23,14 +34,22 @@ const tokenVotingAbi = [
     },
 ] as const;
 
-export const useTokenPermissionCheckVoteSubmission = (params: ITokenPermissionCheckVoteSubmissionParams): IPermissionCheckGuardResult => {
+export const useTokenPermissionCheckVoteSubmission = (
+    params: ITokenPermissionCheckVoteSubmissionParams,
+): IPermissionCheckGuardResult => {
     const { plugin, proposal } = params;
 
     const { address } = useAccount();
     const { t } = useTranslations();
 
     const { symbol: tokenSymbol } = plugin.settings.token;
-    const { blockTimestamp, network, transactionHash, proposalIndex, pluginAddress } = proposal!;
+    const {
+        blockTimestamp,
+        network,
+        transactionHash,
+        proposalIndex,
+        pluginAddress,
+    } = proposal!;
 
     const { chainId, buildEntityUrl } = useDaoChain({ network });
 
@@ -45,17 +64,29 @@ export const useTokenPermissionCheckVoteSubmission = (params: ITokenPermissionCh
     });
 
     const creationDate = blockTimestamp * 1000;
-    const formattedCreationDate = formatterUtils.formatDate(creationDate, { format: DateFormat.YEAR_MONTH_DAY });
-    const proposalCreationUrl = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: transactionHash });
+    const formattedCreationDate = formatterUtils.formatDate(creationDate, {
+        format: DateFormat.YEAR_MONTH_DAY,
+    });
+    const proposalCreationUrl = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: transactionHash,
+    });
 
     const settings = [
         {
-            term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckVoteSubmission.createdAt',
+            ),
             definition: formattedCreationDate!,
-            link: { href: proposalCreationUrl, textClassName: 'first-letter:capitalize' },
+            link: {
+                href: proposalCreationUrl,
+                textClassName: 'first-letter:capitalize',
+            },
         },
         {
-            term: t('app.plugins.token.tokenPermissionCheckVoteSubmission.membership'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckVoteSubmission.membership',
+            ),
             definition: `0 ${tokenSymbol}`,
         },
     ];

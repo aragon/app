@@ -1,7 +1,10 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
-import { type ITransactionInfo, TransactionStatusInfo } from '../transactionStatusInfo';
+import {
+    type ITransactionInfo,
+    TransactionStatusInfo,
+} from '../transactionStatusInfo';
 import type { ITransactionStatusStepMeta } from '../transactionStatusStep';
 
 export interface ITransactionStatusContainerProps<
@@ -18,8 +21,11 @@ export interface ITransactionStatusContainerProps<
     transactionInfo?: ITransactionInfo;
 }
 
-export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepMeta, TStepId extends string>(
-    props: ITransactionStatusContainerProps<TMeta, TStepId>
+export const TransactionStatusContainer = <
+    TMeta extends ITransactionStatusStepMeta,
+    TStepId extends string,
+>(
+    props: ITransactionStatusContainerProps<TMeta, TStepId>,
 ) => {
     const { className, children, transactionInfo, ...otherProps } = props;
 
@@ -27,11 +33,16 @@ export const TransactionStatusContainer = <TMeta extends ITransactionStatusStepM
         <ul
             className={classNames(
                 'flex flex-col gap-2 rounded-xl border border-neutral-100 bg-neutral-0 p-4 text-sm shadow-neutral md:gap-3 md:p-6 md:text-base',
-                className
+                className,
             )}
             {...otherProps}
         >
-            {transactionInfo != null && <TransactionStatusInfo {...transactionInfo} className="mb-1 md:mb-2" />}
+            {transactionInfo != null && (
+                <TransactionStatusInfo
+                    {...transactionInfo}
+                    className="mb-1 md:mb-2"
+                />
+            )}
             {children}
         </ul>
     );

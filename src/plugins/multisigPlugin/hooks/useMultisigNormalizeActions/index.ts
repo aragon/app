@@ -1,1 +1,4 @@
-export { type IUseMultisigNormalizeActionsParams, useMultisigNormalizeActions } from './useMultisigNormalizeActions';
+export {
+    type IUseMultisigNormalizeActionsParams,
+    useMultisigNormalizeActions,
+} from './useMultisigNormalizeActions';

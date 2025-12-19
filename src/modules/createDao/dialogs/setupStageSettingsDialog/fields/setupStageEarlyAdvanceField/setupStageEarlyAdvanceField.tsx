@@ -6,7 +6,9 @@ import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefi
 
 export interface ISetupStageEarlyAdvanceFieldProps {}
 
-export const SetupStageEarlyAdvanceField: React.FC<ISetupStageEarlyAdvanceFieldProps> = () => {
+export const SetupStageEarlyAdvanceField: React.FC<
+    ISetupStageEarlyAdvanceFieldProps
+> = () => {
     const { t } = useTranslations();
     const { control } = useFormContext<ISetupStageSettingsForm>();
 
@@ -14,15 +16,24 @@ export const SetupStageEarlyAdvanceField: React.FC<ISetupStageEarlyAdvanceFieldP
         value: earlyStageAdvance,
         onChange: onEarlyStageAdvanceChange,
         ...earlyStageField
-    } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>('earlyStageAdvance', {
-        label: t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.label'),
-        control,
-    });
+    } = useFormField<ISetupStageSettingsForm, 'earlyStageAdvance'>(
+        'earlyStageAdvance',
+        {
+            label: t(
+                'app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.label',
+            ),
+            control,
+        },
+    );
     return (
         <Switch
             checked={earlyStageAdvance}
-            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.helpText')}
-            inlineLabel={t(`app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.${earlyStageAdvance ? 'yes' : 'no'}`)}
+            helpText={t(
+                'app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.helpText',
+            )}
+            inlineLabel={t(
+                `app.createDao.setupStageSettingsDialog.fields.stageEarlyAdvanceField.${earlyStageAdvance ? 'yes' : 'no'}`,
+            )}
             onCheckedChanged={(checked) => onEarlyStageAdvanceChange(checked)}
             {...earlyStageField}
         />

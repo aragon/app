@@ -50,4 +50,7 @@
  * @see {@link FeatureFlagDefinition} for the code definition structure
  * @see {@link FEATURE_FLAG_DEFINITIONS} where flags are defined in code
  */
-export type ICmsFeatureFlagsResponse = Record<string, boolean | Partial<Record<string, boolean>>>;
+export type ICmsFeatureFlagsResponse = Record<
+    string,
+    boolean | Partial<Record<string, boolean>>
+>;

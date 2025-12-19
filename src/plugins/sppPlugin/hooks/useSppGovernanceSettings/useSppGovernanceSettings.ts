@@ -4,9 +4,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ISppPluginSettings } from '../../types';
 import { sppSettingsUtils } from '../../utils/sppSettingsUtils';
 
-export interface IUseSppGovernanceSettingsParams extends IUseGovernanceSettingsParams<ISppPluginSettings> {}
+export interface IUseSppGovernanceSettingsParams
+    extends IUseGovernanceSettingsParams<ISppPluginSettings> {}
 
-export const useSppGovernanceSettings = (params: IUseSppGovernanceSettingsParams): IDefinitionSetting[] => {
+export const useSppGovernanceSettings = (
+    params: IUseSppGovernanceSettingsParams,
+): IDefinitionSetting[] => {
     const { settings } = params;
 
     const { t } = useTranslations();

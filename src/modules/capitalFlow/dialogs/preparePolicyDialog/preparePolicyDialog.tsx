@@ -1,12 +1,20 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
-import { type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
+import {
+    type Hex,
+    parseEventLogs,
+    type TransactionReceipt,
+    zeroAddress,
+} from 'viem';
 import { useAccount } from 'wagmi';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogActionParams,
     type ITransactionDialogStep,
@@ -61,12 +69,18 @@ export interface IPreparePolicyDialogParams {
     pluginAddress: string;
 }
 
-export interface IPreparePolicyDialogProps extends IDialogComponentProps<IPreparePolicyDialogParams> {}
+export interface IPreparePolicyDialogProps
+    extends IDialogComponentProps<IPreparePolicyDialogParams> {}
 
-export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) => {
+export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
+    props,
+) => {
     const { location } = props;
 
-    invariant(location.params != null, 'PreparePolicyDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'PreparePolicyDialog: required parameters must be set.',
+    );
     const { daoId, values, pluginAddress } = location.params;
 
     const { address } = useAccount();
@@ -77,23 +91,36 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const { open } = useDialogContext();
 
     const isMultiDispatch = useMemo(
-        () => values.strategy?.type === StrategyType.CAPITAL_ROUTER && values.strategy.routerType === RouterType.MULTI_DISPATCH,
-        [values.strategy]
+        () =>
+            values.strategy?.type === StrategyType.CAPITAL_ROUTER &&
+            values.strategy.routerType === RouterType.MULTI_DISPATCH,
+        [values.strategy],
     );
 
-    const [policyMetadata, setPolicyMetadata] = useState<IPreparePolicyMetadata>();
-    const [sourceAndModelContracts, setSourceAndModelContracts] = useState<IPrepareSourceAndModelContracts>();
+    const [policyMetadata, setPolicyMetadata] =
+        useState<IPreparePolicyMetadata>();
+    const [sourceAndModelContracts, setSourceAndModelContracts] =
+        useState<IPrepareSourceAndModelContracts>();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
-    invariant(!!plugin, `PreparePolicyDialog: plugin with address "${pluginAddress}" not found.`);
+    invariant(
+        !!plugin,
+        `PreparePolicyDialog: plugin with address "${pluginAddress}" not found.`,
+    );
 
     const isAdmin = plugin.meta.interfaceType === PluginInterfaceType.ADMIN;
 
-    const deploymentStepper = useStepper<ITransactionDialogStepMeta, PreparePolicyStep | TransactionDialogStep>({
+    const deploymentStepper = useStepper<
+        ITransactionDialogStepMeta,
+        PreparePolicyStep | TransactionDialogStep
+    >({
         initialActiveStep: PreparePolicyStep.PIN_METADATA,
     });
-    const installationStepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const installationStepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
     const { nextStep } = deploymentStepper;
@@ -101,90 +128,144 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
     const handleDeploySourceAndModelTransaction = async () => {
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
 
-        const transaction = await preparePolicyDialogUtils.buildDeploySourceAndModelTransaction({
-            values,
-            dao,
-        });
+        const transaction =
+            await preparePolicyDialogUtils.buildDeploySourceAndModelTransaction(
+                {
+                    values,
+                    dao,
+                },
+            );
 
         return transaction;
     };
 
-    const handleDeploySourceAndModelSuccess = (txReceipt: TransactionReceipt) => {
-        invariant(values.strategy != null, 'handleDeploySourceAndModelSuccess: strategy is not defined');
+    const handleDeploySourceAndModelSuccess = (
+        txReceipt: TransactionReceipt,
+    ) => {
+        invariant(
+            values.strategy != null,
+            'handleDeploySourceAndModelSuccess: strategy is not defined',
+        );
 
         // MULTI_DISPATCH doesn't deploy source or model contracts
         if (isMultiDispatch) {
-            setSourceAndModelContracts({ model: zeroAddress, source: zeroAddress });
+            setSourceAndModelContracts({
+                model: zeroAddress,
+                source: zeroAddress,
+            });
             return;
         }
 
-        const combinedModelAbi = [...routerModelFactoryAbi, ...omniModelFactoryAbi] as const;
+        const combinedModelAbi = [
+            ...routerModelFactoryAbi,
+            ...omniModelFactoryAbi,
+        ] as const;
         const modelLogs = parseEventLogs({
             abi: combinedModelAbi,
             logs: txReceipt.logs,
             strict: false,
         });
 
-        const hasModel = values.strategy.type === StrategyType.CAPITAL_ROUTER && withModelRouters[values.strategy.routerType];
+        const hasModel =
+            values.strategy.type === StrategyType.CAPITAL_ROUTER &&
+            withModelRouters[values.strategy.routerType];
 
         invariant(
             // BURN does not deploy model
             hasModel ? modelLogs.length > 0 : modelLogs.length === 0,
-            'PreparePolicyDialog: Unexpected state in model deployment event logs'
+            'PreparePolicyDialog: Unexpected state in model deployment event logs',
         );
-        const modelAddress = hasModel ? (modelLogs[0].args.newContract as Hex) : zeroAddress;
+        const modelAddress = hasModel
+            ? (modelLogs[0].args.newContract as Hex)
+            : zeroAddress;
 
-        const combinedSourceAbi = [...routerSourceFactoryAbi, ...omniSourceFactoryAbi] as const;
+        const combinedSourceAbi = [
+            ...routerSourceFactoryAbi,
+            ...omniSourceFactoryAbi,
+        ] as const;
         const sourceLogs = parseEventLogs({
             abi: combinedSourceAbi,
             logs: txReceipt.logs,
             strict: false,
         });
 
-        invariant(sourceLogs.length > 0, 'PreparePolicyDialog: Source deployment event not found in logs');
+        invariant(
+            sourceLogs.length > 0,
+            'PreparePolicyDialog: Source deployment event not found in logs',
+        );
         const sourceAddress = sourceLogs[0].args.newContract as Hex;
 
-        setSourceAndModelContracts({ model: modelAddress, source: sourceAddress });
+        setSourceAndModelContracts({
+            model: modelAddress,
+            source: sourceAddress,
+        });
     };
 
     const handlePrepareInstallationTransaction = async () => {
-        invariant(policyMetadata != null, 'PreparePolicyDialog: metadata not pinned');
+        invariant(
+            policyMetadata != null,
+            'PreparePolicyDialog: metadata not pinned',
+        );
         invariant(dao != null, 'PreparePolicyDialog: DAO not loaded');
-        invariant(sourceAndModelContracts != null, 'PreparePolicyDialog: source and model contracts not deployed');
+        invariant(
+            sourceAndModelContracts != null,
+            'PreparePolicyDialog: source and model contracts not deployed',
+        );
 
-        const params: IBuildTransactionParams = { values, policyMetadata, dao, sourceAndModelContracts };
-        const transaction = await preparePolicyDialogUtils.buildPolicyPrepareInstallationTransaction(params);
+        const params: IBuildTransactionParams = {
+            values,
+            policyMetadata,
+            dao,
+            sourceAndModelContracts,
+        };
+        const transaction =
+            await preparePolicyDialogUtils.buildPolicyPrepareInstallationTransaction(
+                params,
+            );
 
         return transaction;
     };
 
     const handlePinJson = useCallback(
         async (params: ITransactionDialogActionParams) => {
-            const policyMetadataBody = preparePolicyDialogUtils.preparePolicyMetadata(values);
+            const policyMetadataBody =
+                preparePolicyDialogUtils.preparePolicyMetadata(values);
 
-            const { IpfsHash: policyMetadataHash } = await pinJson({ body: policyMetadataBody }, params);
+            const { IpfsHash: policyMetadataHash } = await pinJson(
+                { body: policyMetadataBody },
+                params,
+            );
 
-            const metadata: IPreparePolicyMetadata = { plugin: policyMetadataHash };
+            const metadata: IPreparePolicyMetadata = {
+                plugin: policyMetadataHash,
+            };
 
             setPolicyMetadata(metadata);
             nextStep();
         },
-        [pinJson, nextStep, values]
+        [pinJson, nextStep, values],
     );
 
-    const handlePrepareInstallationSuccess = (txReceipt: TransactionReceipt) => {
+    const handlePrepareInstallationSuccess = (
+        txReceipt: TransactionReceipt,
+    ) => {
         invariant(dao != null, 'PreparePolicyDialog: DAO cannot be fetched');
 
-        const setupData = pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
+        const setupData =
+            pluginTransactionUtils.getPluginInstallationSetupData(txReceipt);
 
         const proposalActionParams: IBuildPolicyProposalActionsParams = {
             values,
             dao,
             setupData,
         };
-        const proposalActions = preparePolicyDialogUtils.buildPublishPolicyProposalActions(proposalActionParams);
+        const proposalActions =
+            preparePolicyDialogUtils.buildPublishPolicyProposalActions(
+                proposalActionParams,
+            );
 
-        const proposalMetadata = preparePolicyDialogUtils.preparePublishPolicyProposalMetadata();
+        const proposalMetadata =
+            preparePolicyDialogUtils.preparePublishPolicyProposalMetadata();
         const translationNamespace = `app.capitalFlow.publishPolicyDialog.${isAdmin ? 'admin' : 'default'}`;
 
         const txInfo = {
@@ -193,7 +274,11 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             total: 3,
         };
         const params: IPublishProposalDialogParams = {
-            proposal: { ...proposalMetadata, resources: [], actions: proposalActions },
+            proposal: {
+                ...proposalMetadata,
+                resources: [],
+                actions: proposalActions,
+            },
             daoId,
             plugin: plugin.meta,
             translationNamespace,
@@ -217,7 +302,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
                 },
             },
         ],
-        [status, handlePinJson, pinMetadataNamespace, t]
+        [status, handlePinJson, pinMetadataNamespace, t],
     );
 
     // We have 2 instances of TransactionDialog:
@@ -229,16 +314,22 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
         return (
             <TransactionDialog<PreparePolicyStep>
                 customSteps={customSteps}
-                description={t('app.capitalFlow.preparePolicyDialog.description')}
+                description={t(
+                    'app.capitalFlow.preparePolicyDialog.description',
+                )}
                 key="model-and-source-deploy"
                 network={dao?.network}
                 onSuccess={handleDeploySourceAndModelSuccess}
                 prepareTransaction={handleDeploySourceAndModelTransaction}
                 stepper={deploymentStepper}
-                submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
+                submitLabel={t(
+                    'app.capitalFlow.preparePolicyDialog.button.submit',
+                )}
                 title={t('app.capitalFlow.preparePolicyDialog.title')}
                 transactionInfo={{
-                    title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy'),
+                    title: t(
+                        'app.capitalFlow.preparePolicyDialog.transactionInfoTitleDeploy',
+                    ),
                     current: 1,
                     total: 3,
                 }}
@@ -257,7 +348,9 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (props) 
             submitLabel={t('app.capitalFlow.preparePolicyDialog.button.submit')}
             title={t('app.capitalFlow.preparePolicyDialog.title')}
             transactionInfo={{
-                title: t('app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall'),
+                title: t(
+                    'app.capitalFlow.preparePolicyDialog.transactionInfoTitleInstall',
+                ),
                 current: 2,
                 total: 3,
             }}

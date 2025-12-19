@@ -1,11 +1,20 @@
 'use client';
 
-import { AlertInline, CardEmptyState, IconType, type IProposalActionComponentProps, invariant } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    CardEmptyState,
+    IconType,
+    type IProposalActionComponentProps,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { type IProposalActionData, useCreateProposalFormContext } from '@/modules/governance/components/createProposalForm';
+import {
+    type IProposalActionData,
+    useCreateProposalFormContext,
+} from '@/modules/governance/components/createProposalForm';
 import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { useDao } from '@/shared/api/daoService';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
@@ -22,9 +31,13 @@ import type { IGaugeVoterActionUpdateGaugeMetadata } from '../../types/gaugeVote
 import { GaugeVoterUpdateGaugeMetadataActionCreateForm } from './gaugeVoterUpdateGaugeMetadataActionCreateForm';
 
 export interface IGaugeVoterUpdateGaugeMetadataActionCreateProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, unknown>
+    > {}
 
-export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpdateGaugeMetadataActionCreateProps> = (props) => {
+export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<
+    IGaugeVoterUpdateGaugeMetadataActionCreateProps
+> = (props) => {
     const { action, index, chainId } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -34,7 +47,8 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    const { addPrepareAction } = useCreateProposalFormContext<IGaugeVoterActionUpdateGaugeMetadata>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IGaugeVoterActionUpdateGaugeMetadata>();
 
     // We use form to keep the state, so we can prevent wizard progressing if action state is invalid.
     const actionFieldName = `actions.[${index.toString()}]`;
@@ -49,8 +63,13 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
         unregister(`${actionFieldName}.gaugeDetails`);
     };
 
-    const { value: selectedGauge, alert } = useFormField<Record<string, IGauge | undefined>, string>(selectedGaugeFieldName, {
-        label: t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading'),
+    const { value: selectedGauge, alert } = useFormField<
+        Record<string, IGauge | undefined>,
+        string
+    >(selectedGaugeFieldName, {
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading',
+        ),
         rules: {
             required: true,
         },
@@ -68,13 +87,17 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
 
     const prepareAction = useCallback(
         async (action: IGaugeVoterActionUpdateGaugeMetadata) => {
-            invariant(action.gaugeToUpdate != null, 'GaugeVoterUpdateGaugeMetadataAction: gauge to update not selected.');
+            invariant(
+                action.gaugeToUpdate != null,
+                'GaugeVoterUpdateGaugeMetadataAction: gauge to update not selected.',
+            );
             invariant(
                 action.gaugeDetails != null,
-                'GaugeVoterUpdateGaugeMetadataAction: gaugeDetails expected to be initialized by the form.'
+                'GaugeVoterUpdateGaugeMetadataAction: gaugeDetails expected to be initialized by the form.',
             );
 
-            const { name, description, resources, avatar } = action.gaugeDetails;
+            const { name, description, resources, avatar } =
+                action.gaugeDetails;
             const proposedMetadata = { name, description, links: resources };
 
             let gaugeAvatar: string | undefined;
@@ -88,10 +111,14 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
                 gaugeAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 
-            const metadata = gaugeAvatar ? { ...proposedMetadata, avatar: gaugeAvatar } : proposedMetadata;
+            const metadata = gaugeAvatar
+                ? { ...proposedMetadata, avatar: gaugeAvatar }
+                : proposedMetadata;
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
-            const ipfsHexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
+            const ipfsHexResult = transactionUtils.stringToMetadataHex(
+                ipfsResult.IpfsHash,
+            );
 
             const data = encodeFunctionData({
                 abi: [updateGaugeMetadataAbi],
@@ -101,11 +128,14 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
 
             return data;
         },
-        [pinFileAsync, pinJsonAsync]
+        [pinFileAsync, pinJsonAsync],
     );
 
     useEffect(() => {
-        addPrepareAction(GaugeVoterActionType.UPDATE_GAUGE_METADATA, prepareAction);
+        addPrepareAction(
+            GaugeVoterActionType.UPDATE_GAUGE_METADATA,
+            prepareAction,
+        );
     }, [addPrepareAction, prepareAction]);
 
     if (selectedGauge) {
@@ -123,17 +153,25 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<IGaugeVoterUpda
         <>
             <CardEmptyState
                 className="border border-neutral-100"
-                description={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.description')}
-                heading={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading')}
+                description={t(
+                    'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.description',
+                )}
+                heading={t(
+                    'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading',
+                )}
                 isStacked={false}
                 objectIllustration={{ object: 'SETTINGS' }}
                 secondaryButton={{
-                    label: t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.action'),
+                    label: t(
+                        'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.action',
+                    ),
                     onClick: handleOpenGaugeSelectDialog,
                     iconLeft: IconType.PLUS,
                 }}
             />
-            {alert && <AlertInline message={alert.message} variant={alert.variant} />}
+            {alert && (
+                <AlertInline message={alert.message} variant={alert.variant} />
+            )}
         </>
     );
 };

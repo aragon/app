@@ -1,6 +1,11 @@
 'use client';
 
-import { addressUtils, Dialog, type ICompositeAddress, invariant } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Dialog,
+    type ICompositeAddress,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import type { Hex } from 'viem';
@@ -8,7 +13,10 @@ import { useMemberList } from '@/modules/governance/api/governanceService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -25,7 +33,8 @@ export interface IAdminManageMembersDialogParams {
      */
     pluginAddress: string;
 }
-export interface IAdminManageMembersDialogProps extends IDialogComponentProps<IAdminManageMembersDialogParams> {}
+export interface IAdminManageMembersDialogProps
+    extends IDialogComponentProps<IAdminManageMembersDialogParams> {}
 
 export interface IManageMembersFormData {
     /**
@@ -36,9 +45,14 @@ export interface IManageMembersFormData {
 
 const formId = 'manageAdminsForm';
 
-export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> = (props) => {
+export const AdminManageMembersDialog: React.FC<
+    IAdminManageMembersDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'AdminManageMembersDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'AdminManageMembersDialog: required parameters must be set.',
+    );
 
     const { daoId, pluginAddress } = location.params;
 
@@ -54,10 +68,18 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     // in the future we should find a better way to handle this.
     const memberParams = { daoId, pluginAddress, pageSize: 50 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
-    const [adminPlugin] = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN }) ?? [];
+    const [adminPlugin] =
+        useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN }) ??
+        [];
 
-    const currentAdmins = useMemo(() => memberList?.pages.flatMap((page) => page.data) ?? [], [memberList]);
-    const initialMembers = useMemo(() => currentAdmins.map((member) => ({ address: member.address })), [currentAdmins]);
+    const currentAdmins = useMemo(
+        () => memberList?.pages.flatMap((page) => page.data) ?? [],
+        [memberList],
+    );
+    const initialMembers = useMemo(
+        () => currentAdmins.map((member) => ({ address: member.address })),
+        [currentAdmins],
+    );
 
     const formMethods = useForm<IManageMembersFormData>({
         defaultValues: { members: initialMembers },
@@ -77,12 +99,15 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
         }
 
         return !initialMembers.every((initialAddress) =>
-            newMembers.some((newAddress) => addressUtils.isAddressEqual(initialAddress, newAddress))
+            newMembers.some((newAddress) =>
+                addressUtils.isAddressEqual(initialAddress, newAddress),
+            ),
         );
     }, [watchMembersField, currentAdmins]);
 
     const handleSubmitAddresses = (data: IManageMembersFormData) => {
-        const proposalMetadata = adminManageMembersDialogUtils.prepareProposalMetadata();
+        const proposalMetadata =
+            adminManageMembersDialogUtils.prepareProposalMetadata();
         const actionsParams = {
             currentAdmins,
             updatedAdmins: data.members,
@@ -90,14 +115,16 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
             daoAddress: dao.address as Hex,
         };
 
-        const actions = adminManageMembersDialogUtils.buildActionsArray(actionsParams);
+        const actions =
+            adminManageMembersDialogUtils.buildActionsArray(actionsParams);
         const proposal = { ...proposalMetadata, resources: [], actions };
 
         const params: IPublishProposalDialogParams = {
             proposal,
             daoId,
             plugin: adminPlugin.meta,
-            translationNamespace: 'app.plugins.admin.adminPublishManageMembersDialog',
+            translationNamespace:
+                'app.plugins.admin.adminPublishManageMembersDialog',
         };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
@@ -110,28 +137,45 @@ export const AdminManageMembersDialog: React.FC<IAdminManageMembersDialogProps> 
     return (
         <FormProvider {...formMethods}>
             <Dialog.Header
-                description={t('app.plugins.admin.adminManageMembers.dialog.description')}
+                description={t(
+                    'app.plugins.admin.adminManageMembers.dialog.description',
+                )}
                 onClose={close}
                 title={t('app.plugins.admin.adminManageMembers.dialog.title')}
             />
             <Dialog.Content>
-                <form className="flex w-full flex-col gap-3 pb-6 md:gap-2" id={formId} onSubmit={handleSubmit(handleSubmitAddresses)}>
-                    <AddressesInput.Container allowEmptyList={true} name="members">
+                <form
+                    className="flex w-full flex-col gap-3 pb-6 md:gap-2"
+                    id={formId}
+                    onSubmit={handleSubmit(handleSubmitAddresses)}
+                >
+                    <AddressesInput.Container
+                        allowEmptyList={true}
+                        name="members"
+                    >
                         {watchMembersField.map((_field, index) => (
-                            <AddressesInput.Item chainId={chainId} index={index} key={index} />
+                            <AddressesInput.Item
+                                chainId={chainId}
+                                index={index}
+                                key={index}
+                            />
                         ))}
                     </AddressesInput.Container>
                 </form>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.plugins.admin.adminManageMembers.dialog.action.update'),
+                    label: t(
+                        'app.plugins.admin.adminManageMembers.dialog.action.update',
+                    ),
                     type: 'submit',
                     form: formId,
                     disabled: !haveMembersChanged,
                 }}
                 secondaryAction={{
-                    label: t('app.plugins.admin.adminManageMembers.dialog.action.cancel'),
+                    label: t(
+                        'app.plugins.admin.adminManageMembers.dialog.action.cancel',
+                    ),
                     onClick: () => close(),
                 }}
             />

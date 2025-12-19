@@ -12,4 +12,5 @@ export interface IGetPluginsByDaoUrlParams {
     address: string;
 }
 
-export interface IGetPluginsByDaoParams extends IRequestUrlParams<IGetPluginsByDaoUrlParams> {}
+export interface IGetPluginsByDaoParams
+    extends IRequestUrlParams<IGetPluginsByDaoUrlParams> {}

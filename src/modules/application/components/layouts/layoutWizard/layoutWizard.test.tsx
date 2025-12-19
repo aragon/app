@@ -10,7 +10,10 @@ import { type ILayoutWizardProps, LayoutWizard } from './layoutWizard';
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
+        <div
+            data-state={JSON.stringify(props.state)}
+            data-testid="hydration-mock"
+        >
             {props.children}
         </div>
     ),
@@ -48,7 +51,9 @@ describe('<LayoutWizard /> component', () => {
     it('renders the navigation wizard component and children property', async () => {
         const children = 'test-children';
         render(await createTestComponent({ children }));
-        expect(screen.getByTestId('navigation-wizard-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('navigation-wizard-mock'),
+        ).toBeInTheDocument();
         expect(screen.getByText(children)).toBeInTheDocument();
     });
 
@@ -58,7 +63,9 @@ describe('<LayoutWizard /> component', () => {
         const params = { addressOrEns: daoEns, network: daoNetwork };
         const expectedDaoId = 'test-dao-id';
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
     });
 
     it('does not prefetch the DAO data when the DAO id is not provided by params', async () => {
@@ -78,12 +85,17 @@ describe('<LayoutWizard /> component', () => {
         };
 
         render(await createTestComponent({ children: <Children /> }));
-        expect(screen.getByTestId('navigation-wizard-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('navigation-wizard-mock'),
+        ).toBeInTheDocument();
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
     });
 
     it('renders error with a link to the explore page on fetch DAO error', async () => {
-        const params = { addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET };
+        const params = {
+            addressOrEns: 'test.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        };
         fetchQuerySpy.mockRejectedValue('error');
 
         render(await createTestComponent({ params: Promise.resolve(params) }));

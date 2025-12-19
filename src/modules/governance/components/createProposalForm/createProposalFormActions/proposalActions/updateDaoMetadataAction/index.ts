@@ -1,1 +1,4 @@
-export { type IUpdateDaoMetadaActionProps, UpdateDaoMetadataAction } from './updateDaoMetadataAction';
+export {
+    type IUpdateDaoMetadaActionProps,
+    UpdateDaoMetadataAction,
+} from './updateDaoMetadataAction';

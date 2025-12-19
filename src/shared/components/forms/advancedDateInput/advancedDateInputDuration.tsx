@@ -22,7 +22,9 @@ export interface IAdvancedDateInputDurationProps
     useSecondsFormat?: boolean;
 }
 
-export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps> = (props) => {
+export const AdvancedDateInputDuration: React.FC<
+    IAdvancedDateInputDurationProps
+> = (props) => {
     const {
         minDuration,
         field,
@@ -40,18 +42,25 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
 
     const validateDuration = (value: IDateDuration | number) => {
         const isValid = dateUtils.validateDuration({ value, minDuration });
-        const durationError = 'app.shared.advancedDateInput.duration.error.minDuration';
+        const durationError =
+            'app.shared.advancedDateInput.duration.error.minDuration';
 
         return validateMinDuration && !isValid ? durationError : true;
     };
 
-    const processedDefaultValue = defaultValue ?? minDuration ?? { days: 0, hours: 0, minutes: 0 };
-    const formattedDefaultValue = useSecondsFormat ? dateUtils.durationToSeconds(processedDefaultValue) : processedDefaultValue;
+    const processedDefaultValue = defaultValue ??
+        minDuration ?? { days: 0, hours: 0, minutes: 0 };
+    const formattedDefaultValue = useSecondsFormat
+        ? dateUtils.durationToSeconds(processedDefaultValue)
+        : processedDefaultValue;
 
     const alertValue = Duration.fromObject(minDuration ?? {})
         .rescale()
         .toHuman();
-    const durationField = useFormField<Record<string, IDateDuration | number>, typeof field>(field, {
+    const durationField = useFormField<
+        Record<string, IDateDuration | number>,
+        typeof field
+    >(field, {
         rules: { validate: validateDuration },
         label,
         defaultValue: formattedDefaultValue,
@@ -59,20 +68,30 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
     });
 
     const currentDurationObject =
-        typeof durationField.value === 'object' ? durationField.value : dateUtils.secondsToDuration(durationField.value);
+        typeof durationField.value === 'object'
+            ? durationField.value
+            : dateUtils.secondsToDuration(durationField.value);
 
     const handleDurationChange = (type: string) => (value: string) => {
         const parsedValue = Number.parseInt(value, 10);
         const numericValue = Number.isNaN(parsedValue) ? 0 : parsedValue;
         const newValue = { ...currentDurationObject, [type]: numericValue };
-        const processedNewValue = useSecondsFormat ? dateUtils.durationToSeconds(newValue) : newValue;
+        const processedNewValue = useSecondsFormat
+            ? dateUtils.durationToSeconds(newValue)
+            : newValue;
         setValue(field, processedNewValue, { shouldValidate: false });
     };
 
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
+        <Card
+            className={classNames(
+                'flex flex-col gap-4 p-6 shadow-neutral-sm',
+                className,
+            )}
+            {...otherProps}
+        >
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputNumber
                     className="w-full md:w-1/3"
@@ -107,7 +126,11 @@ export const AdvancedDateInputDuration: React.FC<IAdvancedDateInputDurationProps
                     value={currentDurationObject.days}
                 />
             </div>
-            <AdvancedDateInputInfoText field={durationField} infoDisplay={infoDisplay} infoText={infoText} />
+            <AdvancedDateInputInfoText
+                field={durationField}
+                infoDisplay={infoDisplay}
+                infoText={infoText}
+            />
         </Card>
     );
 };

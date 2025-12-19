@@ -1,10 +1,16 @@
 import type { Hex } from 'viem';
 import { sppTransactionUtils } from '@/plugins/sppPlugin/utils/sppTransactionUtils';
 import { Network } from '@/shared/api/daoService';
-import { generateDao, generatePluginInstallationSetupData } from '@/shared/testUtils';
+import {
+    generateDao,
+    generatePluginInstallationSetupData,
+} from '@/shared/testUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import {
+    type ITransactionRequest,
+    transactionUtils,
+} from '@/shared/utils/transactionUtils';
 import {
     generateCreateProcessFormData,
     generateCreateProcessFormDataAdvanced,
@@ -19,8 +25,14 @@ import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
 import type { IBuildProcessProposalActionsParams } from './prepareProcessDialogUtils.api';
 
 describe('prepareProcessDialog utils', () => {
-    const stringToMetadataHexSpy = jest.spyOn(transactionUtils, 'stringToMetadataHex');
-    const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+    const stringToMetadataHexSpy = jest.spyOn(
+        transactionUtils,
+        'stringToMetadataHex',
+    );
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
 
     afterEach(() => {
         stringToMetadataHexSpy.mockReset();
@@ -28,9 +40,15 @@ describe('prepareProcessDialog utils', () => {
     });
 
     describe('preparePluginsMetadata', () => {
-        const prepareProcessorMetadataSpy = jest.spyOn(prepareProcessDialogUtils, 'prepareProcessorMetadata' as any);
+        const prepareProcessorMetadataSpy = jest.spyOn(
+            prepareProcessDialogUtils,
+            'prepareProcessorMetadata' as any,
+        );
 
-        const preparePluginMetadataSpy = jest.spyOn(prepareProcessDialogUtils, 'preparePluginMetadata' as any);
+        const preparePluginMetadataSpy = jest.spyOn(
+            prepareProcessDialogUtils,
+            'preparePluginMetadata' as any,
+        );
 
         afterEach(() => {
             prepareProcessorMetadataSpy.mockReset();
@@ -44,9 +62,13 @@ describe('prepareProcessDialog utils', () => {
 
         it('returns the processor metadata as plugins metadata for basic governance type', () => {
             const values = generateCreateProcessFormDataBasic();
-            const processorMetadata = { name: 'processor', description: 'processor-description' };
+            const processorMetadata = {
+                name: 'processor',
+                description: 'processor-description',
+            };
             prepareProcessorMetadataSpy.mockReturnValue(processorMetadata);
-            const result = prepareProcessDialogUtils.preparePluginsMetadata(values);
+            const result =
+                prepareProcessDialogUtils.preparePluginsMetadata(values);
             expect(result).toEqual({ pluginsMetadata: [processorMetadata] });
         });
 
@@ -57,36 +79,51 @@ describe('prepareProcessDialog utils', () => {
                 generateSetupBodyFormNew({ name: 'new-2' }),
             ];
             const stage = generateCreateProcessFormStage({ bodies });
-            const values = generateCreateProcessFormDataAdvanced({ stages: [stage] });
-            const processorMetadata = { name: 'processor', description: 'processor-description' };
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+            });
+            const processorMetadata = {
+                name: 'processor',
+                description: 'processor-description',
+            };
             const pluginsMetadata = [{ name: 'new-1' }, { name: 'new-2' }];
             prepareProcessorMetadataSpy.mockReturnValue(processorMetadata);
-            preparePluginMetadataSpy.mockReturnValueOnce(pluginsMetadata[0]).mockReturnValueOnce(pluginsMetadata[1]);
-            const result = prepareProcessDialogUtils.preparePluginsMetadata(values);
+            preparePluginMetadataSpy
+                .mockReturnValueOnce(pluginsMetadata[0])
+                .mockReturnValueOnce(pluginsMetadata[1]);
+            const result =
+                prepareProcessDialogUtils.preparePluginsMetadata(values);
             expect(result).toEqual({ processorMetadata, pluginsMetadata });
         });
     });
 
     describe('buildPrepareProcessTransaction', () => {
-        const encodeTransactionRequestsSpy = jest.spyOn(transactionUtils, 'encodeTransactionRequests');
+        const encodeTransactionRequestsSpy = jest.spyOn(
+            transactionUtils,
+            'encodeTransactionRequests',
+        );
         const buildDeployExecuteSelectorConditionDataSpy = jest.spyOn(
             prepareProcessDialogUtils as any,
-            'buildDeployExecuteSelectorConditionData'
+            'buildDeployExecuteSelectorConditionData',
         );
         const buildPrepareInstallProcessorActionDataSpy = jest.spyOn(
             prepareProcessDialogUtils as any,
-            'buildPrepareInstallProcessorActionData'
+            'buildPrepareInstallProcessorActionData',
         );
 
         const buildPrepareInstallPluginsActionDataSpy = jest.spyOn(
             prepareProcessDialogUtils as any,
-            'buildPrepareInstallPluginsActionData'
+            'buildPrepareInstallPluginsActionData',
         );
 
         beforeEach(() => {
             buildPrepareInstallProcessorActionDataSpy.mockReturnValue('');
             buildPrepareInstallPluginsActionDataSpy.mockReturnValue([]);
-            encodeTransactionRequestsSpy.mockReturnValue({ data: '0x1', to: '0x1', value: BigInt(0) });
+            encodeTransactionRequestsSpy.mockReturnValue({
+                data: '0x1',
+                to: '0x1',
+                value: BigInt(0),
+            });
             buildDeployExecuteSelectorConditionDataSpy.mockReturnValue('0x');
         });
 
@@ -106,15 +143,32 @@ describe('prepareProcessDialog utils', () => {
         it('builds the prepare install action of the processor when processor metadata is set', async () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao({ network: Network.ARBITRUM_MAINNET });
-            const processMetadata = { processor: 'metadataTest', plugins: [], proposal: '' };
+            const processMetadata = {
+                processor: 'metadataTest',
+                plugins: [],
+                proposal: '',
+            };
             const installProcessorActionData = '0x0000';
-            buildPrepareInstallProcessorActionDataSpy.mockReturnValue(installProcessorActionData);
+            buildPrepareInstallProcessorActionDataSpy.mockReturnValue(
+                installProcessorActionData,
+            );
 
-            await prepareProcessDialogUtils.buildPrepareProcessTransaction({ values, dao, processMetadata });
-            expect(buildPrepareInstallProcessorActionDataSpy).toHaveBeenCalledWith(processMetadata.processor, dao);
+            await prepareProcessDialogUtils.buildPrepareProcessTransaction({
+                values,
+                dao,
+                processMetadata,
+            });
+            expect(
+                buildPrepareInstallProcessorActionDataSpy,
+            ).toHaveBeenCalledWith(processMetadata.processor, dao);
             expect(encodeTransactionRequestsSpy).toHaveBeenCalledWith(
-                [expect.objectContaining({ data: installProcessorActionData, value: BigInt(0) })],
-                dao.network
+                [
+                    expect.objectContaining({
+                        data: installProcessorActionData,
+                        value: BigInt(0),
+                    }),
+                ],
+                dao.network,
             );
         });
 
@@ -122,25 +176,41 @@ describe('prepareProcessDialog utils', () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
             const processMetadata = { plugins: [], proposal: '' };
-            await prepareProcessDialogUtils.buildPrepareProcessTransaction({ values, dao, processMetadata });
-            expect(buildPrepareInstallProcessorActionDataSpy).not.toHaveBeenCalled();
+            await prepareProcessDialogUtils.buildPrepareProcessTransaction({
+                values,
+                dao,
+                processMetadata,
+            });
+            expect(
+                buildPrepareInstallProcessorActionDataSpy,
+            ).not.toHaveBeenCalled();
         });
 
         it('builds the action data for each plugin and maps it to an action', async () => {
             const values = generateCreateProcessFormData();
             const dao = generateDao();
             const processMetadata = { plugins: ['meta'], proposal: '' };
-            const encodedTransaction: ITransactionRequest = { to: '0x123', data: '0x01', value: BigInt(0) };
-            buildPrepareInstallPluginsActionDataSpy.mockReturnValue(['0x01', '0x02']);
+            const encodedTransaction: ITransactionRequest = {
+                to: '0x123',
+                data: '0x01',
+                value: BigInt(0),
+            };
+            buildPrepareInstallPluginsActionDataSpy.mockReturnValue([
+                '0x01',
+                '0x02',
+            ]);
             encodeTransactionRequestsSpy.mockReturnValue(encodedTransaction);
 
-            const result = await prepareProcessDialogUtils.buildPrepareProcessTransaction({
-                values,
-                dao,
-                processMetadata,
-            });
+            const result =
+                await prepareProcessDialogUtils.buildPrepareProcessTransaction({
+                    values,
+                    dao,
+                    processMetadata,
+                });
 
-            expect(buildPrepareInstallPluginsActionDataSpy).toHaveBeenCalledWith({
+            expect(
+                buildPrepareInstallPluginsActionDataSpy,
+            ).toHaveBeenCalledWith({
                 values,
                 dao,
                 pluginsMetadata: processMetadata.plugins,
@@ -152,9 +222,18 @@ describe('prepareProcessDialog utils', () => {
     describe('preparePluginMetadata', () => {
         it('maps the plugin form body to metadata', () => {
             const pluginResources = [{ name: 'resource', url: 'resource.com' }];
-            const plugin = generateSetupBodyFormNew({ name: '1', description: '2', resources: pluginResources });
-            const result = prepareProcessDialogUtils['preparePluginMetadata'](plugin);
-            expect(result).toEqual({ name: plugin.name, description: plugin.description, links: plugin.resources });
+            const plugin = generateSetupBodyFormNew({
+                name: '1',
+                description: '2',
+                resources: pluginResources,
+            });
+            const result =
+                prepareProcessDialogUtils['preparePluginMetadata'](plugin);
+            expect(result).toEqual({
+                name: plugin.name,
+                description: plugin.description,
+                links: plugin.resources,
+            });
         });
     });
 
@@ -170,7 +249,8 @@ describe('prepareProcessDialog utils', () => {
                 processKey: 'PPP',
                 stages: [stageOne, stageTwo],
             });
-            const result = prepareProcessDialogUtils['prepareProcessorMetadata'](values);
+            const result =
+                prepareProcessDialogUtils['prepareProcessorMetadata'](values);
             expect(result).toEqual({
                 name: values.name,
                 description: values.description,
@@ -182,7 +262,10 @@ describe('prepareProcessDialog utils', () => {
     });
 
     describe('buildPrepareInstallProcessorActionData', () => {
-        const buildPreparePluginInstallDataSpy = jest.spyOn(sppTransactionUtils, 'buildPreparePluginInstallData');
+        const buildPreparePluginInstallDataSpy = jest.spyOn(
+            sppTransactionUtils,
+            'buildPreparePluginInstallData',
+        );
 
         afterEach(() => {
             buildPreparePluginInstallDataSpy.mockReset();
@@ -195,14 +278,22 @@ describe('prepareProcessDialog utils', () => {
             const transactionData = '0xdata';
             buildPreparePluginInstallDataSpy.mockReturnValue(transactionData);
             stringToMetadataHexSpy.mockReturnValue(metadataHex);
-            const result = prepareProcessDialogUtils['buildPrepareInstallProcessorActionData'](metadata, dao);
-            expect(buildPreparePluginInstallDataSpy).toHaveBeenCalledWith(metadataHex, dao);
+            const result = prepareProcessDialogUtils[
+                'buildPrepareInstallProcessorActionData'
+            ](metadata, dao);
+            expect(buildPreparePluginInstallDataSpy).toHaveBeenCalledWith(
+                metadataHex,
+                dao,
+            );
             expect(result).toEqual(transactionData);
         });
     });
 
     describe('buildPrepareInstallPluginsActionData', () => {
-        const buildPrepareInstallPluginActionDataSpy = jest.spyOn(prepareProcessDialogUtils as any, 'buildPrepareInstallPluginActionData');
+        const buildPrepareInstallPluginActionDataSpy = jest.spyOn(
+            prepareProcessDialogUtils as any,
+            'buildPrepareInstallPluginActionData',
+        );
 
         afterEach(() => {
             buildPrepareInstallPluginActionDataSpy.mockReset();
@@ -221,38 +312,63 @@ describe('prepareProcessDialog utils', () => {
             buildPrepareInstallPluginActionDataSpy.mockReturnValue(actionData);
 
             const params = { values, dao, pluginsMetadata };
-            const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
+            const result =
+                prepareProcessDialogUtils[
+                    'buildPrepareInstallPluginsActionData'
+                ](params);
 
-            expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenCalledWith({
-                body,
-                dao,
-                metadataCid: pluginsMetadata[0],
-            });
+            expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenCalledWith(
+                {
+                    body,
+                    dao,
+                    metadataCid: pluginsMetadata[0],
+                },
+            );
 
             expect(result).toEqual([actionData]);
         });
 
         it('builds the prepare install action of all new plugins for advanced governance processes', () => {
             const votingPeriod = { days: 7, hours: 0, minutes: 0 };
-            const newBodies = [generateSetupBodyFormData({ internalId: '0x1' }), generateSetupBodyFormData({ internalId: '0x2' })];
+            const newBodies = [
+                generateSetupBodyFormData({ internalId: '0x1' }),
+                generateSetupBodyFormData({ internalId: '0x2' }),
+            ];
             const stage = generateCreateProcessFormStage({
                 bodies: [...newBodies, generateSetupBodyFormNew()],
-                settings: generateCreateProcessFormStageSettings({ votingPeriod, earlyStageAdvance: false }),
+                settings: generateCreateProcessFormStageSettings({
+                    votingPeriod,
+                    earlyStageAdvance: false,
+                }),
             });
-            const values = generateCreateProcessFormDataAdvanced({ stages: [stage] });
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+            });
             const dao = generateDao();
             const pluginsMetadata = ['metadata1', 'metadata2'];
             const actionsData = ['0x1', '0x2'];
-            buildPrepareInstallPluginActionDataSpy.mockReturnValueOnce(actionsData[0]).mockReturnValueOnce(actionsData[1]);
+            buildPrepareInstallPluginActionDataSpy
+                .mockReturnValueOnce(actionsData[0])
+                .mockReturnValueOnce(actionsData[1]);
 
             const params = { values, dao, pluginsMetadata };
-            const result = prepareProcessDialogUtils['buildPrepareInstallPluginsActionData'](params);
+            const result =
+                prepareProcessDialogUtils[
+                    'buildPrepareInstallPluginsActionData'
+                ](params);
 
             newBodies.forEach((body, index) => {
                 const metadataCid = pluginsMetadata[index];
                 const stageVotingPeriod = votingPeriod;
-                const expectedParams = { body: { ...body, stageIndex: 0 }, dao, metadataCid, stageVotingPeriod };
-                expect(buildPrepareInstallPluginActionDataSpy).toHaveBeenNthCalledWith(index + 1, expectedParams);
+                const expectedParams = {
+                    body: { ...body, stageIndex: 0 },
+                    dao,
+                    metadataCid,
+                    stageVotingPeriod,
+                };
+                expect(
+                    buildPrepareInstallPluginActionDataSpy,
+                ).toHaveBeenNthCalledWith(index + 1, expectedParams);
             });
             expect(result).toEqual(actionsData);
         });
@@ -270,25 +386,47 @@ describe('prepareProcessDialog utils', () => {
             stringToMetadataHexSpy.mockReturnValue(metadata);
 
             const params = { metadataCid, dao, body };
-            const result = prepareProcessDialogUtils['buildPrepareInstallPluginActionData'](params);
-            expect(getSlotFunctionSpy).toHaveBeenCalledWith(expect.objectContaining({ pluginId: body.plugin }));
-            expect(prepareTransactionMock).toHaveBeenCalledWith({ metadata, dao, body, stageVotingPeriod: undefined });
+            const result =
+                prepareProcessDialogUtils[
+                    'buildPrepareInstallPluginActionData'
+                ](params);
+            expect(getSlotFunctionSpy).toHaveBeenCalledWith(
+                expect.objectContaining({ pluginId: body.plugin }),
+            );
+            expect(prepareTransactionMock).toHaveBeenCalledWith({
+                metadata,
+                dao,
+                body,
+                stageVotingPeriod: undefined,
+            });
             expect(result).toEqual(transactionData);
         });
     });
 
     describe('preparePublishProcessProposalMetadata', () => {
         it('returns the metadata for the publish process proposal', () => {
-            const result = prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
-            expect(result.title).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].title);
-            expect(result.summary).toEqual(prepareProcessDialogUtils['publishProcessProposalMetadata'].summary);
+            const result =
+                prepareProcessDialogUtils.preparePublishProcessProposalMetadata();
+            expect(result.title).toEqual(
+                prepareProcessDialogUtils['publishProcessProposalMetadata']
+                    .title,
+            );
+            expect(result.summary).toEqual(
+                prepareProcessDialogUtils['publishProcessProposalMetadata']
+                    .summary,
+            );
         });
     });
 
     describe('buildPublishProcessProposalActions', () => {
-        const buildApplyPluginsInstallationActionsSpy = jest.spyOn(pluginTransactionUtils, 'buildApplyPluginsInstallationActions');
+        const buildApplyPluginsInstallationActionsSpy = jest.spyOn(
+            pluginTransactionUtils,
+            'buildApplyPluginsInstallationActions',
+        );
 
-        const createTestParams = (params?: Partial<IBuildProcessProposalActionsParams>): IBuildProcessProposalActionsParams => ({
+        const createTestParams = (
+            params?: Partial<IBuildProcessProposalActionsParams>,
+        ): IBuildProcessProposalActionsParams => ({
             values: generateCreateProcessFormData(),
             dao: generateDao(),
             setupData: [generatePluginInstallationSetupData()],
@@ -299,13 +437,22 @@ describe('prepareProcessDialog utils', () => {
             const dao = generateDao();
             const setupData = [generatePluginInstallationSetupData()];
             const values = generateCreateProcessFormDataBasic();
-            const installPluginActions = [{ to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) }];
+            const installPluginActions = [
+                { to: '0x123' as Hex, data: '0x' as Hex, value: BigInt(11) },
+            ];
 
-            buildApplyPluginsInstallationActionsSpy.mockReturnValue(installPluginActions);
+            buildApplyPluginsInstallationActionsSpy.mockReturnValue(
+                installPluginActions,
+            );
 
-            const result = prepareProcessDialogUtils.buildPublishProcessProposalActions(createTestParams({ dao, values, setupData }));
+            const result =
+                prepareProcessDialogUtils.buildPublishProcessProposalActions(
+                    createTestParams({ dao, values, setupData }),
+                );
 
-            expect(buildApplyPluginsInstallationActionsSpy).toHaveBeenCalledWith({ dao, setupData, actions: [] });
+            expect(
+                buildApplyPluginsInstallationActionsSpy,
+            ).toHaveBeenCalledWith({ dao, setupData, actions: [] });
             expect(result).toEqual(installPluginActions);
         });
     });

@@ -30,49 +30,69 @@ export interface IGaugeVoterUpdateGaugeMetadataActionCreateFormProps {
 }
 
 export interface IGaugeVoterUpdateGaugeMetadataFormData
-    extends Pick<IGaugeVoterCreateGaugeFormData, 'name' | 'description' | 'avatar' | 'resources'> {}
+    extends Pick<
+        IGaugeVoterCreateGaugeFormData,
+        'name' | 'description' | 'avatar' | 'resources'
+    > {}
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
 
-export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<IGaugeVoterUpdateGaugeMetadataActionCreateFormProps> = (props) => {
+export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<
+    IGaugeVoterUpdateGaugeMetadataActionCreateFormProps
+> = (props) => {
     const { fieldPrefix, gauge, onRemoveGauge } = props;
     const { t } = useTranslations();
 
     const { name, description, avatar, links: resources } = gauge;
     const existingAvatar = { url: ipfsUtils.cidToSrc(avatar) };
 
-    const { value: nameValue, ...nameFieldRest } = useFormField<IGaugeVoterUpdateGaugeMetadataFormData, 'name'>('name', {
-        label: t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.name.label'),
+    const { value: nameValue, ...nameFieldRest } = useFormField<
+        IGaugeVoterUpdateGaugeMetadataFormData,
+        'name'
+    >('name', {
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.name.label',
+        ),
         fieldPrefix,
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
         defaultValue: name ?? '',
     });
 
-    const { value: descriptionValue, ...descriptionFieldRest } = useFormField<IGaugeVoterUpdateGaugeMetadataFormData, 'description'>(
-        'description',
-        {
-            label: t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.description.label'),
-            fieldPrefix,
-            rules: { required: true, maxLength: descriptionMaxLength },
-            trimOnBlur: true,
-            defaultValue: description ?? '',
-        }
-    );
+    const { value: descriptionValue, ...descriptionFieldRest } = useFormField<
+        IGaugeVoterUpdateGaugeMetadataFormData,
+        'description'
+    >('description', {
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.description.label',
+        ),
+        fieldPrefix,
+        rules: { required: true, maxLength: descriptionMaxLength },
+        trimOnBlur: true,
+        defaultValue: description ?? '',
+    });
 
     return (
         <div className="flex flex-col gap-10">
             <GaugeVoterGaugeListItem gauge={gauge} onRemove={onRemoveGauge} />
             <InputText
-                helpText={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.name.helpText')}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.name.helpText',
+                )}
                 maxLength={nameMaxLength}
                 value={nameValue || ''}
                 {...nameFieldRest}
             />
-            <AvatarInput defaultValue={existingAvatar} fieldPrefix={fieldPrefix} name="avatar" />
+            <AvatarInput
+                defaultValue={existingAvatar}
+                fieldPrefix={fieldPrefix}
+                name="avatar"
+            />
             <TextArea
-                helpText={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.description.helpText')}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.description.helpText',
+                )}
                 maxLength={descriptionMaxLength}
                 value={descriptionValue || ''}
                 {...descriptionFieldRest}
@@ -80,7 +100,9 @@ export const GaugeVoterUpdateGaugeMetadataActionCreateForm: React.FC<IGaugeVoter
             <ResourcesInput
                 defaultValue={resources}
                 fieldPrefix={fieldPrefix}
-                helpText={t('app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.resources.helpText')}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreateForm.resources.helpText',
+                )}
                 name="resources"
             />
         </div>

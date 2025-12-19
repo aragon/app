@@ -14,7 +14,9 @@ describe('<AragonLogo /> component', () => {
         const logoWithText = screen.getByRole('img', { name: 'Aragon logo' });
         expect(logoWithText).toBeInTheDocument();
 
-        const iconLogo = screen.queryByRole('img', { name: 'Aragon icon logo' });
+        const iconLogo = screen.queryByRole('img', {
+            name: 'Aragon icon logo',
+        });
         expect(iconLogo).not.toBeInTheDocument();
     });
 

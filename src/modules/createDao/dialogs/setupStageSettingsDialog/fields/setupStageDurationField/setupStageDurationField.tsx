@@ -11,19 +11,30 @@ export interface ISetupStageDurationFieldProps {
 
 const minVotingPeriod = { days: 0, hours: 1, minutes: 0 };
 
-export const SetupStageDurationField: React.FC<ISetupStageDurationFieldProps> = (props) => {
+export const SetupStageDurationField: React.FC<
+    ISetupStageDurationFieldProps
+> = (props) => {
     const { bodyCount } = props;
 
     const { t } = useTranslations();
 
-    const votingPeriodInfoText = bodyCount > 0 ? t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.infoText') : undefined;
+    const votingPeriodInfoText =
+        bodyCount > 0
+            ? t(
+                  'app.createDao.setupStageSettingsDialog.fields.stageDurationField.infoText',
+              )
+            : undefined;
 
     return (
         <InputContainer
             className="flex flex-col"
-            helpText={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.helpText')}
+            helpText={t(
+                'app.createDao.setupStageSettingsDialog.fields.stageDurationField.helpText',
+            )}
             id="minDuration"
-            label={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.label')}
+            label={t(
+                'app.createDao.setupStageSettingsDialog.fields.stageDurationField.label',
+            )}
             useCustomWrapper={true}
         >
             <Card className="border border-neutral-100">
@@ -31,7 +42,9 @@ export const SetupStageDurationField: React.FC<ISetupStageDurationFieldProps> = 
                     field="votingPeriod"
                     infoDisplay="inline"
                     infoText={votingPeriodInfoText}
-                    label={t('app.createDao.setupStageSettingsDialog.fields.stageDurationField.label')}
+                    label={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageDurationField.label',
+                    )}
                     minDuration={minVotingPeriod}
                     validateMinDuration={true}
                 />

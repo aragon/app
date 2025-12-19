@@ -1,16 +1,34 @@
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { type IGetMemberListParams, type IMember, useMemberList } from '../../api/governanceService';
+import {
+    type IGetMemberListParams,
+    type IMember,
+    useMemberList,
+} from '../../api/governanceService';
 
-export const useMemberListData = <TMember extends IMember = IMember>(params: IGetMemberListParams) => {
+export const useMemberListData = <TMember extends IMember = IMember>(
+    params: IGetMemberListParams,
+) => {
     const { t } = useTranslations();
 
-    const { data: memberListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useMemberList<TMember>(params);
+    const {
+        data: memberListData,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useMemberList<TMember>(params);
 
     const memberList = memberListData?.pages.flatMap((page) => page.data);
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
-    const pageSize = params.queryParams.pageSize ?? memberListData?.pages[0].metadata.pageSize;
+    const pageSize =
+        params.queryParams.pageSize ??
+        memberListData?.pages[0].metadata.pageSize;
     const itemsCount = memberListData?.pages[0].metadata.totalRecords;
 
     const errorState = {

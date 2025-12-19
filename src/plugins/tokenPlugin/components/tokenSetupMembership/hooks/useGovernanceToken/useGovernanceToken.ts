@@ -1,16 +1,30 @@
 import { type IUseTokenResult, useToken } from '@/shared/hooks/useToken';
-import type { IUseGovernanceTokenParams, IUseGovernanceTokenResult } from './useGovernanceToken.api';
+import type {
+    IUseGovernanceTokenParams,
+    IUseGovernanceTokenResult,
+} from './useGovernanceToken.api';
 import { useGovernanceTokenDelegationCheck } from './useGovernanceTokenDelegationCheck';
 import { useGovernanceTokenErc20Check } from './useGovernanceTokenErc20Check';
 import { useGovernanceTokenVotesCheck } from './useGovernanceTokenVotesCheck';
 
 // Fallback to "unknown" token when token passes the ERC20 checks but has no valid token attributes
-const tokenFallback: IUseTokenResult['data'] = { name: 'Unknown', decimals: 18, symbol: 'UNKNOWN', totalSupply: '0' };
+const tokenFallback: IUseTokenResult['data'] = {
+    name: 'Unknown',
+    decimals: 18,
+    symbol: 'UNKNOWN',
+    totalSupply: '0',
+};
 
-export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGovernanceTokenResult => {
+export const useGovernanceToken = (
+    params: IUseGovernanceTokenParams,
+): IUseGovernanceTokenResult => {
     const { isLoading: isTokenLoading, data: tokenResult } = useToken(params);
 
-    const { data: isErc20Token, isLoading: isErc20CheckLoading, isError: isErc20CheckError } = useGovernanceTokenErc20Check(params);
+    const {
+        data: isErc20Token,
+        isLoading: isErc20CheckLoading,
+        isError: isErc20CheckError,
+    } = useGovernanceTokenErc20Check(params);
 
     const {
         data: isDelegationCompatible,
@@ -32,8 +46,13 @@ export const useGovernanceToken = (params: IUseGovernanceTokenParams): IUseGover
         token.symbol = token.symbol || tokenFallback.symbol;
     }
 
-    const isLoading = isErc20CheckLoading || isDelegationCheckLoading || isVotesCheckLoading || isTokenLoading;
-    const isError = isErc20CheckError || isDelegationCheckError || isVotesCheckError;
+    const isLoading =
+        isErc20CheckLoading ||
+        isDelegationCheckLoading ||
+        isVotesCheckLoading ||
+        isTokenLoading;
+    const isError =
+        isErc20CheckError || isDelegationCheckError || isVotesCheckError;
 
     const data = { token, isGovernanceCompatible, isDelegationCompatible };
 

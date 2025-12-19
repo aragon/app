@@ -3,7 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useFormField from '@/shared/hooks/useFormField';
 import { FormWrapper } from '@/shared/testUtils';
-import { type IResourcesInputItemProps, ResourcesInputItem } from './resourcesInputItem';
+import {
+    type IResourcesInputItemProps,
+    ResourcesInputItem,
+} from './resourcesInputItem';
 
 describe('<ResourcesInputItem /> component', () => {
     const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
@@ -42,7 +45,11 @@ describe('<ResourcesInputItem /> component', () => {
 
     it('renders the label and link input fields', () => {
         render(createTestComponent());
-        expect(screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/)).toBeInTheDocument();
+        expect(
+            screen.getByPlaceholderText(
+                /resourcesInput.item.linkInput.placeholder/,
+            ),
+        ).toBeInTheDocument();
     });
 
     it('calls remove function when remove button is clicked', async () => {
@@ -51,7 +58,9 @@ describe('<ResourcesInputItem /> component', () => {
         const dropdownTrigger = screen.getByTestId(IconType.DOTS_VERTICAL);
         await userEvent.click(dropdownTrigger);
 
-        const removeButton = screen.getByText(/resourcesInput.item.removeResource/);
+        const removeButton = screen.getByText(
+            /resourcesInput.item.removeResource/,
+        );
         await userEvent.click(removeButton);
 
         expect(remove).toHaveBeenCalledWith(0);
@@ -59,12 +68,16 @@ describe('<ResourcesInputItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(
+            /resourcesInput.item.linkInput.placeholder/,
+        );
 
         await userEvent.type(linkInput, 'https://example.com');
         await userEvent.tab();
 
-        expect(screen.queryByText(/formField.error.pattern/)).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(/formField.error.pattern/),
+        ).not.toBeInTheDocument();
     });
 
     it('validates URL format in link input', async () => {
@@ -81,12 +94,16 @@ describe('<ResourcesInputItem /> component', () => {
 
         render(createTestComponent());
 
-        const linkInput = screen.getByPlaceholderText(/resourcesInput.item.linkInput.placeholder/);
+        const linkInput = screen.getByPlaceholderText(
+            /resourcesInput.item.linkInput.placeholder/,
+        );
 
         await userEvent.type(linkInput, 'broken link');
         await userEvent.tab();
 
-        expect(await screen.findByText('Invalid URL format')).toBeInTheDocument();
+        expect(
+            await screen.findByText('Invalid URL format'),
+        ).toBeInTheDocument();
     });
 
     it('sets a max length requirement for the resource label', () => {

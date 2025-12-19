@@ -6,7 +6,9 @@ describe('network utils', () => {
     describe('getSupportedNetworks', () => {
         it('returns all supported networks from network definitions', () => {
             const result = networkUtils.getSupportedNetworks();
-            const expectedNetworks = Object.keys(networkDefinitions) as Network[];
+            const expectedNetworks = Object.keys(
+                networkDefinitions,
+            ) as Network[];
             expect(result).toEqual(expectedNetworks);
         });
     });

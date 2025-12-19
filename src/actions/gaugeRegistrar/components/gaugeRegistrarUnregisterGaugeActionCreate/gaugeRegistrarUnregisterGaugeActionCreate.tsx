@@ -1,11 +1,20 @@
 'use client';
 
-import { AlertInline, CardEmptyState, IconType, type IProposalActionComponentProps, invariant } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    CardEmptyState,
+    IconType,
+    type IProposalActionComponentProps,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, type Hex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { type IProposalActionData, useCreateProposalFormContext } from '@/modules/governance/components/createProposalForm';
+import {
+    type IProposalActionData,
+    useCreateProposalFormContext,
+} from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,9 +29,13 @@ import { GaugeRegistrarActiveVotingAlert } from '../gaugeRegistrarActiveVotingAl
 import { GaugeRegistrarGaugeListItem } from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionCreateProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, unknown>
+    > {}
 
-export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrarUnregisterGaugeActionCreateProps> = (props) => {
+export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<
+    IGaugeRegistrarUnregisterGaugeActionCreateProps
+> = (props) => {
     const { action, index } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -38,14 +51,20 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
         setValue(selectedGaugeFieldName, gauge);
     };
 
-    const { value: selectedGauge, alert } = useFormField<Record<string, IRegisteredGauge | undefined>, string>(selectedGaugeFieldName, {
-        label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading'),
+    const { value: selectedGauge, alert } = useFormField<
+        Record<string, IRegisteredGauge | undefined>,
+        string
+    >(selectedGaugeFieldName, {
+        label: t(
+            'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading',
+        ),
         rules: {
             required: true,
         },
     });
 
-    const { addPrepareAction } = useCreateProposalFormContext<IGaugeRegistrarActionUnregisterGauge>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IGaugeRegistrarActionUnregisterGauge>();
 
     const handleOpenGaugeSelectDialog = () => {
         const params: IGaugeRegistrarSelectGaugeDialogParams = {
@@ -57,26 +76,42 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
         open(GaugeRegistrarDialogId.SELECT_GAUGE, { params });
     };
 
-    const prepareAction = useCallback((action: IGaugeRegistrarActionUnregisterGauge) => {
-        invariant(action.gaugeToRemove != null, 'GaugeRegistrarUnregisterGaugeActionCreate: gauge to remove not selected.');
+    const prepareAction = useCallback(
+        (action: IGaugeRegistrarActionUnregisterGauge) => {
+            invariant(
+                action.gaugeToRemove != null,
+                'GaugeRegistrarUnregisterGaugeActionCreate: gauge to remove not selected.',
+            );
 
-        const data = encodeFunctionData({
-            abi: gaugeRegistrarAbi,
-            functionName: 'unregisterGauge',
-            args: [action.gaugeToRemove.qiToken as Hex, action.gaugeToRemove.incentive, action.gaugeToRemove.rewardController as Hex],
-        });
+            const data = encodeFunctionData({
+                abi: gaugeRegistrarAbi,
+                functionName: 'unregisterGauge',
+                args: [
+                    action.gaugeToRemove.qiToken as Hex,
+                    action.gaugeToRemove.incentive,
+                    action.gaugeToRemove.rewardController as Hex,
+                ],
+            });
 
-        return Promise.resolve(data);
-    }, []);
+            return Promise.resolve(data);
+        },
+        [],
+    );
 
     useEffect(() => {
-        addPrepareAction(GaugeRegistrarActionType.UNREGISTER_GAUGE, prepareAction);
+        addPrepareAction(
+            GaugeRegistrarActionType.UNREGISTER_GAUGE,
+            prepareAction,
+        );
     }, [addPrepareAction, prepareAction]);
 
     if (selectedGauge) {
         return (
             <>
-                <GaugeRegistrarGaugeListItem gauge={selectedGauge} onRemove={() => setSelectedGauge(undefined)} />
+                <GaugeRegistrarGaugeListItem
+                    gauge={selectedGauge}
+                    onRemove={() => setSelectedGauge(undefined)}
+                />
                 <GaugeRegistrarActiveVotingAlert />
             </>
         );
@@ -86,17 +121,25 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<IGaugeRegistrar
         <>
             <CardEmptyState
                 className="border border-neutral-100"
-                description={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.description')}
-                heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading')}
+                description={t(
+                    'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.description',
+                )}
+                heading={t(
+                    'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.heading',
+                )}
                 isStacked={false}
                 objectIllustration={{ object: 'SETTINGS' }}
                 secondaryButton={{
-                    label: t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.action'),
+                    label: t(
+                        'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionCreate.emptyCard.action',
+                    ),
                     onClick: handleOpenGaugeSelectDialog,
                     iconLeft: IconType.PLUS,
                 }}
             />
-            {alert && <AlertInline message={alert.message} variant={alert.variant} />}
+            {alert && (
+                <AlertInline message={alert.message} variant={alert.variant} />
+            )}
         </>
     );
 };

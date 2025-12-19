@@ -1,10 +1,22 @@
 import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
-import type { ITicketData, IUseTokenExitQueueFeeDataParams, IUseTokenExitQueueFeeDataReturn } from './useTokenExitQueueFeeData.api';
+import type {
+    ITicketData,
+    IUseTokenExitQueueFeeDataParams,
+    IUseTokenExitQueueFeeDataReturn,
+} from './useTokenExitQueueFeeData.api';
 
-export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams): IUseTokenExitQueueFeeDataReturn => {
-    const { tokenId, lockManagerAddress, chainId, enabled = true, refetchInterval } = params;
+export const useTokenExitQueueFeeData = (
+    params: IUseTokenExitQueueFeeDataParams,
+): IUseTokenExitQueueFeeDataReturn => {
+    const {
+        tokenId,
+        lockManagerAddress,
+        chainId,
+        enabled = true,
+        refetchInterval,
+    } = params;
 
     const { data, isLoading, refetch } = useReadContracts({
         contracts: [
@@ -105,11 +117,26 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         return {
             holder: holder as `0x${string}`,
             queuedAt,
-            minCooldown: typeof candidate.minCooldown === 'number' ? candidate.minCooldown : undefined,
-            cooldown: typeof candidate.cooldown === 'number' ? candidate.cooldown : undefined,
-            feePercent: typeof candidate.feePercent === 'number' ? candidate.feePercent : undefined,
-            minFeePercent: typeof candidate.minFeePercent === 'number' ? candidate.minFeePercent : undefined,
-            slope: typeof candidate.slope === 'bigint' ? candidate.slope : undefined,
+            minCooldown:
+                typeof candidate.minCooldown === 'number'
+                    ? candidate.minCooldown
+                    : undefined,
+            cooldown:
+                typeof candidate.cooldown === 'number'
+                    ? candidate.cooldown
+                    : undefined,
+            feePercent:
+                typeof candidate.feePercent === 'number'
+                    ? candidate.feePercent
+                    : undefined,
+            minFeePercent:
+                typeof candidate.minFeePercent === 'number'
+                    ? candidate.minFeePercent
+                    : undefined,
+            slope:
+                typeof candidate.slope === 'bigint'
+                    ? candidate.slope
+                    : undefined,
         };
     };
 
@@ -128,10 +155,18 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         ? {
               holder: parsedTicketData.holder,
               queuedAt: parsedTicketData.queuedAt,
-              minCooldown: parsedTicketData.minCooldown ?? normalizeGlobalNumber(globalMinCooldown),
-              cooldown: parsedTicketData.cooldown ?? normalizeGlobalNumber(globalCooldown),
-              feePercent: parsedTicketData.feePercent ?? normalizeGlobalNumber(globalFeePercent),
-              minFeePercent: parsedTicketData.minFeePercent ?? normalizeGlobalNumber(globalMinFeePercent),
+              minCooldown:
+                  parsedTicketData.minCooldown ??
+                  normalizeGlobalNumber(globalMinCooldown),
+              cooldown:
+                  parsedTicketData.cooldown ??
+                  normalizeGlobalNumber(globalCooldown),
+              feePercent:
+                  parsedTicketData.feePercent ??
+                  normalizeGlobalNumber(globalFeePercent),
+              minFeePercent:
+                  parsedTicketData.minFeePercent ??
+                  normalizeGlobalNumber(globalMinFeePercent),
               slope: parsedTicketData.slope ?? BigInt(0),
           }
         : undefined;

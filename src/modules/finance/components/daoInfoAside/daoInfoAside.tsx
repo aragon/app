@@ -1,6 +1,14 @@
 'use client';
 
-import { addressUtils, Button, ChainEntityType, Collapsible, DefinitionList, IconType, Link } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    ChainEntityType,
+    Collapsible,
+    DefinitionList,
+    IconType,
+    Link,
+} from '@aragon/gov-ui-kit';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -24,8 +32,13 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
     const links = subDao?.links ?? dao?.links ?? [];
 
     const { buildEntityUrl } = useDaoChain({ network: resolvedNetwork, daoId });
-    const pluginAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: resolvedAddress });
-    const resolvedOctavLink = resolvedAddress ? `https://pro.octav.fi/?addresses=${resolvedAddress}` : '';
+    const pluginAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: resolvedAddress,
+    });
+    const resolvedOctavLink = resolvedAddress
+        ? `https://pro.octav.fi/?addresses=${resolvedAddress}`
+        : '';
 
     if (isSubDaoEnabled) {
         return (
@@ -42,12 +55,18 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                 {stats.length > 0 && (
                     <div className="grid w-full grid-cols-2 gap-3">
                         {stats.map((stat) => (
-                            <StatCard key={stat.label} label={stat.label} value={stat.value} />
+                            <StatCard
+                                key={stat.label}
+                                label={stat.label}
+                                value={stat.value}
+                            />
                         ))}
                     </div>
                 )}
                 <DefinitionList.Container {...otherProps}>
-                    <DefinitionList.Item term={t('app.finance.transactionSubDaoInfo.chain')}>
+                    <DefinitionList.Item
+                        term={t('app.finance.transactionSubDaoInfo.chain')}
+                    >
                         {networkDefinitions[resolvedNetwork].name}
                     </DefinitionList.Item>
                     <DefinitionList.Item
@@ -61,7 +80,12 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
 
                 <div className="flex flex-col gap-3">
                     {links.map((link) => (
-                        <Link href={link.url} isExternal={true} key={link.url} showUrl={true}>
+                        <Link
+                            href={link.url}
+                            isExternal={true}
+                            key={link.url}
+                            showUrl={true}
+                        >
                             {link.name}
                         </Link>
                     ))}
@@ -78,7 +102,11 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                         >
                             {t('app.finance.financeDetailsList.octavLabel')}
                         </Button>
-                        <p className="text-neutral-500 text-sm">{t('app.finance.financeDetailsList.octavDescription')}</p>
+                        <p className="text-neutral-500 text-sm">
+                            {t(
+                                'app.finance.financeDetailsList.octavDescription',
+                            )}
+                        </p>
                     </div>
                 )}
             </>

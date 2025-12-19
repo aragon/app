@@ -22,7 +22,10 @@ export interface IProposalActionUpdateMetadataObject {
 }
 
 export interface IProposalActionUpdateMetadata
-    extends Omit<IGukProposalActionUpdateMetadata, 'type' | 'proposedMetadata' | 'existingMetadata'> {
+    extends Omit<
+        IGukProposalActionUpdateMetadata,
+        'type' | 'proposedMetadata' | 'existingMetadata'
+    > {
     /**
      * The type of the proposal action.
      */

@@ -20,7 +20,9 @@ describe('<PageMainSection /> component', () => {
     it('renders the title as heading 2', () => {
         const title = 'main-title';
         render(createTestComponent({ title }));
-        expect(screen.getByRole('heading', { name: title, level: 2 })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: title, level: 2 }),
+        ).toBeInTheDocument();
     });
 
     it('renders the description property when defined', () => {

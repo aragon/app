@@ -1,1 +1,4 @@
-export { type ISetupStageExpirationFieldProps, SetupStageExpirationField } from './setupStageExpirationField';
+export {
+    type ISetupStageExpirationFieldProps,
+    SetupStageExpirationField,
+} from './setupStageExpirationField';

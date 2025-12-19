@@ -1,1 +1,4 @@
-export { type IUseFilterUrlParamParams, useFilterUrlParam } from './useFilterUrlParam';
+export {
+    type IUseFilterUrlParamParams,
+    useFilterUrlParam,
+} from './useFilterUrlParam';

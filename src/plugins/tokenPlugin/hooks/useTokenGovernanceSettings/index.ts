@@ -1,1 +1,4 @@
-export { type IUseTokenGovernanceSettingsParams, useTokenGovernanceSettings } from './useTokenGovernanceSettings';
+export {
+    type IUseTokenGovernanceSettingsParams,
+    useTokenGovernanceSettings,
+} from './useTokenGovernanceSettings';

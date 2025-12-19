@@ -7,9 +7,17 @@ export const daoFactoryAbi = [
                 internalType: 'struct DAOFactory.DAOSettings',
                 type: 'tuple',
                 components: [
-                    { name: 'trustedForwarder', internalType: 'address', type: 'address' },
+                    {
+                        name: 'trustedForwarder',
+                        internalType: 'address',
+                        type: 'address',
+                    },
                     { name: 'daoURI', internalType: 'string', type: 'string' },
-                    { name: 'subdomain', internalType: 'string', type: 'string' },
+                    {
+                        name: 'subdomain',
+                        internalType: 'string',
+                        type: 'string',
+                    },
                     { name: 'metadata', internalType: 'bytes', type: 'bytes' },
                 ],
             },
@@ -28,8 +36,16 @@ export const daoFactoryAbi = [
                                 internalType: 'struct PluginRepo.Tag',
                                 type: 'tuple',
                                 components: [
-                                    { name: 'release', internalType: 'uint8', type: 'uint8' },
-                                    { name: 'build', internalType: 'uint16', type: 'uint16' },
+                                    {
+                                        name: 'release',
+                                        internalType: 'uint8',
+                                        type: 'uint8',
+                                    },
+                                    {
+                                        name: 'build',
+                                        internalType: 'uint16',
+                                        type: 'uint16',
+                                    },
                                 ],
                             },
                             {
@@ -44,7 +60,13 @@ export const daoFactoryAbi = [
             },
         ],
         name: 'createDao',
-        outputs: [{ name: 'createdDao', internalType: 'contract DAO', type: 'address' }],
+        outputs: [
+            {
+                name: 'createdDao',
+                internalType: 'contract DAO',
+                type: 'address',
+            },
+        ],
         stateMutability: 'nonpayable',
     },
 ] as const;

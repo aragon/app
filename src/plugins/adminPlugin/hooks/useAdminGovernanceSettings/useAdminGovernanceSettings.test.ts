@@ -11,12 +11,16 @@ describe('useAdminGovernanceSettings hook', () => {
     });
 
     it('returns the parsed admin governance settings', () => {
-        const mockParsedSettings = [{ term: 'mockTerm', definition: 'mockDefinition' }];
+        const mockParsedSettings = [
+            { term: 'mockTerm', definition: 'mockDefinition' },
+        ];
         parseSettingsSpy.mockReturnValue(mockParsedSettings);
 
         const { result } = renderHook(() => useAdminGovernanceSettings());
 
-        expect(parseSettingsSpy).toHaveBeenCalledWith({ t: mockTranslations.tMock });
+        expect(parseSettingsSpy).toHaveBeenCalledWith({
+            t: mockTranslations.tMock,
+        });
         expect(result.current).toEqual(mockParsedSettings);
     });
 });

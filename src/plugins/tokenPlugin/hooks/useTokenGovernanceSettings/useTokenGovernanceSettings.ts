@@ -4,9 +4,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ITokenPluginSettings } from '../../types';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
 
-export interface IUseTokenGovernanceSettingsParams extends IUseGovernanceSettingsParams<ITokenPluginSettings> {}
+export interface IUseTokenGovernanceSettingsParams
+    extends IUseGovernanceSettingsParams<ITokenPluginSettings> {}
 
-export const useTokenGovernanceSettings = (params: IUseTokenGovernanceSettingsParams): IDefinitionSetting[] => {
+export const useTokenGovernanceSettings = (
+    params: IUseTokenGovernanceSettingsParams,
+): IDefinitionSetting[] => {
     const { settings, isVeto } = params;
 
     const { t } = useTranslations();

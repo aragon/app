@@ -4,7 +4,9 @@ import type { IEpochMetrics } from '../../api/gaugeVoterService/domain';
  * Generates mock epoch metrics data for testing.
  * Note: An epoch IS the voting period, so epoch start = vote start.
  */
-export const generateEpochMetrics = (epochMetrics?: Partial<IEpochMetrics>): IEpochMetrics => {
+export const generateEpochMetrics = (
+    epochMetrics?: Partial<IEpochMetrics>,
+): IEpochMetrics => {
     const now = Math.floor(Date.now() / 1000);
     const oneDay = 86_400; // seconds in a day
     const epochStart = now - oneDay * 2; // Epoch/voting started 2 days ago

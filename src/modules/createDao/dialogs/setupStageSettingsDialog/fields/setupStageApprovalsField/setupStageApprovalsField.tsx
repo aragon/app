@@ -18,27 +18,40 @@ export interface ISetupStageApprovalsFieldProps {
 
 const requiredApprovalsDefaultValue = 1;
 
-export const SetupStageApprovalsField: React.FC<ISetupStageApprovalsFieldProps> = (props) => {
+export const SetupStageApprovalsField: React.FC<
+    ISetupStageApprovalsFieldProps
+> = (props) => {
     const { stageType, bodyCount } = props;
 
     const { t } = useTranslations();
     const { control } = useFormContext<ISetupStageSettingsForm>();
 
-    const { value: requiredApprovals } = useFormField<ISetupStageSettingsForm, 'requiredApprovals'>('requiredApprovals', { control });
+    const { value: requiredApprovals } = useFormField<
+        ISetupStageSettingsForm,
+        'requiredApprovals'
+    >('requiredApprovals', { control });
 
-    const labelContext = stageType === ProcessStageType.OPTIMISTIC ? 'veto' : 'approve';
+    const labelContext =
+        stageType === ProcessStageType.OPTIMISTIC ? 'veto' : 'approve';
 
     return (
         <NumberProgressInput
             defaultValue={requiredApprovalsDefaultValue}
             fieldName="requiredApprovals"
-            helpText={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.helpText`)}
-            label={t(`app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.label`)}
+            helpText={t(
+                `app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.helpText`,
+            )}
+            label={t(
+                `app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.label`,
+            )}
             min={0}
             total={bodyCount}
-            totalLabel={t('app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary', {
-                count: bodyCount,
-            })}
+            totalLabel={t(
+                'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',
+                {
+                    count: bodyCount,
+                },
+            )}
             valueLabel={requiredApprovals.toString()}
         />
     );

@@ -9,7 +9,9 @@ export interface ISetupStrategyDialogDistributionRecipientsProps {
     /**
      * Field name for the recipients array in the form (e.g., 'distributionFixed.recipients').
      */
-    recipientsFieldName: 'distributionFixed.recipients' | 'distributionStream.recipients';
+    recipientsFieldName:
+        | 'distributionFixed.recipients'
+        | 'distributionStream.recipients';
     /**
      * ID of the DAO for network context.
      */
@@ -18,7 +20,9 @@ export interface ISetupStrategyDialogDistributionRecipientsProps {
 
 const maxRecipients = 15;
 
-export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyDialogDistributionRecipientsProps> = (props) => {
+export const SetupStrategyDialogDistributionRecipients: React.FC<
+    ISetupStrategyDialogDistributionRecipientsProps
+> = (props) => {
     const { recipientsFieldName, daoId } = props;
 
     const { t } = useTranslations();
@@ -37,10 +41,12 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         },
     });
 
-    const recipients = useWatch<ISetupStrategyForm, typeof recipientsFieldName>({
-        name: recipientsFieldName,
-        defaultValue: [],
-    });
+    const recipients = useWatch<ISetupStrategyForm, typeof recipientsFieldName>(
+        {
+            name: recipientsFieldName,
+            defaultValue: [],
+        },
+    );
 
     useEffect(() => {
         // get fresh values
@@ -51,7 +57,10 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
         }
     }, [addRecipient, getValues, recipientsFieldName]);
 
-    const totalRatio = recipients.reduce((sum, recipient) => sum + recipient.ratio, 0);
+    const totalRatio = recipients.reduce(
+        (sum, recipient) => sum + recipient.ratio,
+        0,
+    );
 
     const handleAddRecipient = () => {
         if (recipientsField.length < maxRecipients) {
@@ -73,7 +82,10 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
 
         recipientsField.forEach((_recipient, index) => {
             const newRatio = index === 0 ? evenRatio + remainder : evenRatio;
-            updateRecipient(index, { ...recipientsValues[index], ratio: newRatio });
+            updateRecipient(index, {
+                ...recipientsValues[index],
+                ratio: newRatio,
+            });
         });
     };
 
@@ -87,14 +99,19 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                     totalRatio !== 100 && recipientsField.length > 0
                         ? {
                               message: `${totalRatio.toString()}%`,
-                              variant: totalRatio > 100 ? 'critical' : 'warning',
+                              variant:
+                                  totalRatio > 100 ? 'critical' : 'warning',
                           }
                         : undefined
                 }
                 className="gap-3 md:gap-2"
-                helpText={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText')}
+                helpText={t(
+                    'app.capitalFlow.setupStrategyDialog.distributionRecipients.helpText',
+                )}
                 id="recipients"
-                label={t('app.capitalFlow.setupStrategyDialog.distributionRecipients.label')}
+                label={t(
+                    'app.capitalFlow.setupStrategyDialog.distributionRecipients.label',
+                )}
                 useCustomWrapper={true}
             >
                 {recipientsField.map((field, index) => (
@@ -113,8 +130,15 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                     {recipientsField.length}/{maxRecipients}
                 </span>
 
-                <Button disabled={recipientsField.length === 0} onClick={handleDistributeEvenly} size="sm" variant="tertiary">
-                    {t('app.capitalFlow.setupStrategyDialog.distributionRecipients.distributeEvenly')}
+                <Button
+                    disabled={recipientsField.length === 0}
+                    onClick={handleDistributeEvenly}
+                    size="sm"
+                    variant="tertiary"
+                >
+                    {t(
+                        'app.capitalFlow.setupStrategyDialog.distributionRecipients.distributeEvenly',
+                    )}
                 </Button>
             </div>
 
@@ -126,7 +150,9 @@ export const SetupStrategyDialogDistributionRecipients: React.FC<ISetupStrategyD
                 size="md"
                 variant="tertiary"
             >
-                {t('app.capitalFlow.setupStrategyDialog.distributionRecipients.addButton')}
+                {t(
+                    'app.capitalFlow.setupStrategyDialog.distributionRecipients.addButton',
+                )}
             </Button>
         </div>
     );

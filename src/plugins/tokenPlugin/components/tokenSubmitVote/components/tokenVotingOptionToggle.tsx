@@ -5,7 +5,8 @@ import type { ComponentProps } from 'react';
 
 export type TokenVotingOptionToggleVariant = 'success' | 'neutral' | 'critical';
 
-export interface ITokenVotingOptionToggleProps extends Omit<ComponentProps<'button'>, 'ref'> {
+export interface ITokenVotingOptionToggleProps
+    extends Omit<ComponentProps<'button'>, 'ref'> {
     /**
      * Value of the toggle.
      */
@@ -50,14 +51,28 @@ const variantToIcon: Record<TokenVotingOptionToggleVariant, IconType> = {
     critical: IconType.CLOSE,
 };
 
-const variantToIconVariant: Record<TokenVotingOptionToggleVariant, 'success' | 'primary' | 'critical'> = {
+const variantToIconVariant: Record<
+    TokenVotingOptionToggleVariant,
+    'success' | 'primary' | 'critical'
+> = {
     success: 'success',
     neutral: 'primary',
     critical: 'critical',
 };
 
-export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = (props) => {
-    const { className, label, description, value, disabled, variant = 'neutral', isSelected, ...otherProps } = props;
+export const TokenVotingOptionToggle: React.FC<
+    ITokenVotingOptionToggleProps
+> = (props) => {
+    const {
+        className,
+        label,
+        description,
+        value,
+        disabled,
+        variant = 'neutral',
+        isSelected,
+        ...otherProps
+    } = props;
 
     const toggleClasses = classNames(
         'flex items-center justify-between gap-3 rounded-xl border py-2 pl-4 pr-3 h-[50px]',
@@ -67,16 +82,27 @@ export const TokenVotingOptionToggle: React.FC<ITokenVotingOptionToggleProps> = 
         'hover:border-neutral-200 hover:shadow-neutral',
         'disabled:border-neutral-100 disabled:bg-neutral-100 disabled:text-neutral-300 disabled:cursor-default',
         variantToClassNames[variant],
-        className
+        className,
     );
 
     return (
-        <RadixToggle className={toggleClasses} disabled={disabled} value={value} {...otherProps}>
+        <RadixToggle
+            className={toggleClasses}
+            disabled={disabled}
+            value={value}
+            {...otherProps}
+        >
             <p className="font-normal text-sm leading-tight md:text-base">
                 {label}
-                {description && <span className="text-neutral-500">{description}</span>}
+                {description && (
+                    <span className="text-neutral-500">{description}</span>
+                )}
             </p>
-            <AvatarIcon icon={variantToIcon[variant]} size="sm" variant={isSelected ? variantToIconVariant[variant] : 'neutral'} />
+            <AvatarIcon
+                icon={variantToIcon[variant]}
+                size="sm"
+                variant={isSelected ? variantToIconVariant[variant] : 'neutral'}
+            />
         </RadixToggle>
     );
 };

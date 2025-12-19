@@ -2,7 +2,10 @@ import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { Network } from '@/shared/api/daoService';
-import { type IDebugContextControl, useDebugContext } from '@/shared/components/debugProvider';
+import {
+    type IDebugContextControl,
+    useDebugContext,
+} from '@/shared/components/debugProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
@@ -28,7 +31,8 @@ export const CreateDaoFormDebug: React.FC = () => {
             ...daoFactoryAddressDebugControl,
             value: daoFactory,
             onChange: (value) => {
-                networkDefinitions[networkField].addresses.daoFactory = value as Hex;
+                networkDefinitions[networkField].addresses.daoFactory =
+                    value as Hex;
             },
         });
 

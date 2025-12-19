@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 
 export const GaugeVoterCreateGaugeActionCreate = dynamic(() =>
-    import('./gaugeVoterCreateGaugeActionCreate').then((mod) => mod.GaugeVoterCreateGaugeActionCreate)
+    import('./gaugeVoterCreateGaugeActionCreate').then(
+        (mod) => mod.GaugeVoterCreateGaugeActionCreate,
+    ),
 );
 
 export type { IGaugeVoterCreateGaugeActionCreateProps } from './gaugeVoterCreateGaugeActionCreate';

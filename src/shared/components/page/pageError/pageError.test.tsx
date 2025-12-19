@@ -3,7 +3,10 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { type IPageErrorProps, PageError } from './pageError';
 
 describe('<Page.Error /> component', () => {
-    const isNotFoundErrorSpy = jest.spyOn(AragonBackendServiceError, 'isNotFoundError');
+    const isNotFoundErrorSpy = jest.spyOn(
+        AragonBackendServiceError,
+        'isNotFoundError',
+    );
 
     afterEach(() => {
         isNotFoundErrorSpy.mockReset();
@@ -19,13 +22,21 @@ describe('<Page.Error /> component', () => {
         const actionLink = '/explore';
         const errorNamespace = 'app.governance.memberDetailsPage';
 
-        render(createTestComponent({ actionLink, errorNamespace, error: 'error' }));
+        render(
+            createTestComponent({ actionLink, errorNamespace, error: 'error' }),
+        );
 
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
-        expect(screen.getByText(/errorFeedback.description/)).toBeInTheDocument();
-        expect(screen.getByText(/errorFeedback.link.report/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/errorFeedback.description/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/errorFeedback.link.report/),
+        ).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
+        const customLink = screen.getByRole('link', {
+            name: `${errorNamespace}.action`,
+        });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
     });
@@ -36,14 +47,22 @@ describe('<Page.Error /> component', () => {
         isNotFoundErrorSpy.mockReturnValue(true);
 
         render(createTestComponent({ actionLink, errorNamespace }));
-        expect(screen.getByText(`${errorNamespace}.notFound.title`)).toBeInTheDocument();
-        expect(screen.getByText(`${errorNamespace}.notFound.description`)).toBeInTheDocument();
+        expect(
+            screen.getByText(`${errorNamespace}.notFound.title`),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(`${errorNamespace}.notFound.description`),
+        ).toBeInTheDocument();
 
-        const customLink = screen.getByRole('link', { name: `${errorNamespace}.action` });
+        const customLink = screen.getByRole('link', {
+            name: `${errorNamespace}.action`,
+        });
         expect(customLink).toBeInTheDocument();
         expect(customLink.getAttribute('href')).toEqual(actionLink);
 
-        expect(screen.queryByText(/errorFeedback.link.report/)).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(/errorFeedback.link.report/),
+        ).not.toBeInTheDocument();
     });
 
     it('renders the specified error title and description', () => {

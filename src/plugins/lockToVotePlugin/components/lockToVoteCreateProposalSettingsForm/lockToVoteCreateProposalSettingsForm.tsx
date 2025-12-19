@@ -16,26 +16,34 @@ export interface ILockToVoteCreateProposalSettingsFormProps {
     plugin: IDaoPlugin<ITokenPluginSettings>;
 }
 
-export const LockToVoteCreateProposalSettingsForm: React.FC<ILockToVoteCreateProposalSettingsFormProps> = (props) => {
+export const LockToVoteCreateProposalSettingsForm: React.FC<
+    ILockToVoteCreateProposalSettingsFormProps
+> = (props) => {
     const { plugin } = props;
 
     const { t } = useTranslations();
 
     const proposalDuration = plugin.settings.minDuration;
-    const parsedProposalDuration = dateUtils.secondsToDuration(proposalDuration);
+    const parsedProposalDuration =
+        dateUtils.secondsToDuration(proposalDuration);
 
     // This is the set proposal duration for Lock To Vote
     // as we don't allow users to set a specific minimum on this plugin
     // but we reuse minimumDuration naming for minimal backend changes
-    useFormField<ICreateProposalEndDateForm, 'minimumDuration'>('minimumDuration', {
-        defaultValue: parsedProposalDuration,
-    });
+    useFormField<ICreateProposalEndDateForm, 'minimumDuration'>(
+        'minimumDuration',
+        {
+            defaultValue: parsedProposalDuration,
+        },
+    );
 
     return (
         <div className="flex flex-col gap-6 md:gap-12">
             <AdvancedDateInput
                 field="startTime"
-                label={t('app.plugins.lockToVote.lockToVoteCreateProposalSettingsForm.startTime.label')}
+                label={t(
+                    'app.plugins.lockToVote.lockToVoteCreateProposalSettingsForm.startTime.label',
+                )}
                 minTime={DateTime.now()}
             />
         </div>

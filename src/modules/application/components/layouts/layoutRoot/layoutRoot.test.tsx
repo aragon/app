@@ -8,8 +8,16 @@ import { testLogger } from '@/test/utils';
 import { type ILayoutRootProps, LayoutRoot } from './layoutRoot';
 
 jest.mock('../../providers', () => ({
-    Providers: (props: { translations: unknown; wagmiInitialState: unknown; children: ReactNode }) => (
-        <div data-testid="providers-mock" data-translations={JSON.stringify(props.translations)} data-wagmistate={props.wagmiInitialState}>
+    Providers: (props: {
+        translations: unknown;
+        wagmiInitialState: unknown;
+        children: ReactNode;
+    }) => (
+        <div
+            data-testid="providers-mock"
+            data-translations={JSON.stringify(props.translations)}
+            data-wagmistate={props.wagmiInitialState}
+        >
             {props.children}
         </div>
     ),
@@ -23,7 +31,9 @@ describe('<LayoutRoot /> component', () => {
         // Suppress "<html> cannot appear as a child of <div>" warnings.
         // To be fixed by React 19 migration (see https://github.com/testing-library/react-testing-library/issues/1250)
         testLogger.suppressErrors();
-        headersSpy.mockReturnValue({ get: jest.fn() } as unknown as Promise<ReadonlyHeaders>);
+        headersSpy.mockReturnValue({
+            get: jest.fn(),
+        } as unknown as Promise<ReadonlyHeaders>);
     });
 
     afterEach(() => {

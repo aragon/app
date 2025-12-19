@@ -2,7 +2,10 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { Network } from '@/shared/api/daoService';
-import { CreateProposalPage, type ICreateProposalPageProps } from './createProposalPage';
+import {
+    CreateProposalPage,
+    type ICreateProposalPageProps,
+} from './createProposalPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -14,7 +17,9 @@ jest.mock('./createProposalPageClient', () => ({
 }));
 
 describe('<CreateProposalPage /> component', () => {
-    const createTestComponent = async (props?: Partial<ICreateProposalPageProps>) => {
+    const createTestComponent = async (
+        props?: Partial<ICreateProposalPageProps>,
+    ) => {
         const completeProps: ICreateProposalPageProps = {
             params: Promise.resolve({
                 addressOrEns: '0x987',

@@ -5,9 +5,20 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { actionComposerUtils } from '../actionComposerUtils';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
 
-export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerInputProps>((props, ref) => {
-    const { daoId, onActionSelected, nativeItems, nativeGroups, importedContractAbis, excludeActionTypes, allowedActions, ...otherProps } =
-        props;
+export const ActionComposerInput = forwardRef<
+    HTMLInputElement,
+    IActionComposerInputProps
+>((props, ref) => {
+    const {
+        daoId,
+        onActionSelected,
+        nativeItems,
+        nativeGroups,
+        importedContractAbis,
+        excludeActionTypes,
+        allowedActions,
+        ...otherProps
+    } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -16,10 +27,20 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const groups = allowedActions
         ? actionComposerUtils.getAllowedActionGroups({ t, dao, allowedActions })
-        : actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
+        : actionComposerUtils.getActionGroups({
+              t,
+              dao,
+              abis: importedContractAbis,
+              nativeGroups,
+          });
 
     const items = allowedActions
-        ? actionComposerUtils.getAllowedActionItems({ t, dao, nativeItems, allowedActions })
+        ? actionComposerUtils.getAllowedActionItems({
+              t,
+              dao,
+              nativeItems,
+              allowedActions,
+          })
         : actionComposerUtils.getActionItems({
               t,
               dao,
@@ -40,7 +61,9 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
             onChange={handleActionSelected}
             placeholder={t('app.governance.actionComposer.input.placeholder')}
             ref={ref}
-            selectItemLabel={t('app.governance.actionComposer.input.selectItem')}
+            selectItemLabel={t(
+                'app.governance.actionComposer.input.selectItem',
+            )}
             {...otherProps}
         />
     );

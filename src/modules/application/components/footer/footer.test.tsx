@@ -8,7 +8,10 @@ jest.mock('../../../../shared/components/aragonLogo', () => ({
 }));
 
 describe('<Footer /> component', () => {
-    const useApplicationVersionSpy = jest.spyOn(useApplicationVersion, 'useApplicationVersion');
+    const useApplicationVersionSpy = jest.spyOn(
+        useApplicationVersion,
+        'useApplicationVersion',
+    );
 
     const createTestComponent = (props?: Partial<IFooterProps>) => {
         const completeProps: IFooterProps = { ...props };
@@ -41,7 +44,9 @@ describe('<Footer /> component', () => {
         expect(screen.getAllByRole('link')).toHaveLength(footerLinks.length);
         footerLinks.forEach((link) => {
             const linkName = new RegExp(`footer.link.${link.label}`);
-            const linkElement = screen.getByRole<HTMLAnchorElement>('link', { name: linkName });
+            const linkElement = screen.getByRole<HTMLAnchorElement>('link', {
+                name: linkName,
+            });
             expect(linkElement).toBeInTheDocument();
             expect(linkElement.href).toMatch(link.link);
         });
@@ -50,6 +55,8 @@ describe('<Footer /> component', () => {
     it('renders the copyright info', () => {
         jest.setSystemTime(new Date(2021, 2, 1));
         render(createTestComponent());
-        expect(screen.getByText(/footer.copyright \(year=2021\)/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/footer.copyright \(year=2021\)/),
+        ).toBeInTheDocument();
     });
 });

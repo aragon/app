@@ -21,7 +21,11 @@ export interface IGetGaugeListQueryParams extends IPaginatedRequest {
     status?: 'active' | 'inactive';
 }
 
-export interface IGetGaugeListParams extends IRequestUrlQueryParams<IGetGaugeListUrlParams, IGetGaugeListQueryParams> {}
+export interface IGetGaugeListParams
+    extends IRequestUrlQueryParams<
+        IGetGaugeListUrlParams,
+        IGetGaugeListQueryParams
+    > {}
 
 export interface IGetEpochMetricsUrlParams {
     /**
@@ -41,4 +45,8 @@ export interface IGetEpochMetricsQueryParams {
     memberAddress?: Hex;
 }
 
-export interface IGetEpochMetricsParams extends IRequestUrlQueryParams<IGetEpochMetricsUrlParams, IGetEpochMetricsQueryParams> {}
+export interface IGetEpochMetricsParams
+    extends IRequestUrlQueryParams<
+        IGetEpochMetricsUrlParams,
+        IGetEpochMetricsQueryParams
+    > {}

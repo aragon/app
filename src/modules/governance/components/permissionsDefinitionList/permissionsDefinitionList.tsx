@@ -2,9 +2,12 @@ import { DefinitionList, StateSkeletonBar } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IPermissionCheckGuardResult } from '../../types';
 
-export interface IPermissionsDefinitionListProps extends Pick<IPermissionCheckGuardResult, 'isLoading' | 'settings'> {}
+export interface IPermissionsDefinitionListProps
+    extends Pick<IPermissionCheckGuardResult, 'isLoading' | 'settings'> {}
 
-export const PermissionsDefinitionList: React.FC<IPermissionsDefinitionListProps> = (props) => {
+export const PermissionsDefinitionList: React.FC<
+    IPermissionsDefinitionListProps
+> = (props) => {
     const { isLoading, settings } = props;
 
     const { t } = useTranslations();
@@ -25,16 +28,24 @@ export const PermissionsDefinitionList: React.FC<IPermissionsDefinitionListProps
             {settings.map((settingsGroup, groupIndex) => (
                 <div className="flex flex-col gap-y-1" key={groupIndex}>
                     <DefinitionList.Container>
-                        {settingsGroup.map(({ term, definition, link }, settingIndex) => (
-                            <DefinitionList.Item key={settingIndex} link={link} term={term}>
-                                {definition}
-                            </DefinitionList.Item>
-                        ))}
+                        {settingsGroup.map(
+                            ({ term, definition, link }, settingIndex) => (
+                                <DefinitionList.Item
+                                    key={settingIndex}
+                                    link={link}
+                                    term={term}
+                                >
+                                    {definition}
+                                </DefinitionList.Item>
+                            ),
+                        )}
                     </DefinitionList.Container>
                     {hasSettingsGroups && groupIndex < settings.length - 1 && (
                         <div className="my-2 flex items-center">
                             <div className="grow border-neutral-100 border-t" />
-                            <span className="mx-2 text-neutral-500">{t('app.governance.permissionCheckDialog.or')}</span>
+                            <span className="mx-2 text-neutral-500">
+                                {t('app.governance.permissionCheckDialog.or')}
+                            </span>
                             <div className="grow border-neutral-100 border-t" />
                         </div>
                     )}

@@ -18,41 +18,68 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import type { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
-import { GaugeRegistrarGaugeListItem, GaugeRegistrarGaugeListItemSkeleton } from '../gaugeRegistrarGaugeListItem';
+import {
+    GaugeRegistrarGaugeListItem,
+    GaugeRegistrarGaugeListItemSkeleton,
+} from '../gaugeRegistrarGaugeListItem';
 
 export interface IGaugeRegistrarUnregisterGaugeActionDetailsProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction>
+    > {}
 
 const parseUnregisterGaugeInputData = (
-    params: IProposalActionInputDataParameter[]
-): { qiTokenAddress: string; incentiveType: number; rewardControllerAddress: string } => {
-    const [qiTokenAddress, incentiveType, rewardControllerAddress] = params.map((param) => param.value);
+    params: IProposalActionInputDataParameter[],
+): {
+    qiTokenAddress: string;
+    incentiveType: number;
+    rewardControllerAddress: string;
+} => {
+    const [qiTokenAddress, incentiveType, rewardControllerAddress] = params.map(
+        (param) => param.value,
+    );
 
     return {
-        qiTokenAddress: typeof qiTokenAddress === 'string' ? qiTokenAddress : '',
+        qiTokenAddress:
+            typeof qiTokenAddress === 'string' ? qiTokenAddress : '',
         incentiveType: Number(incentiveType),
-        rewardControllerAddress: typeof rewardControllerAddress === 'string' ? rewardControllerAddress : '',
+        rewardControllerAddress:
+            typeof rewardControllerAddress === 'string'
+                ? rewardControllerAddress
+                : '',
     };
 };
 
-export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistrarUnregisterGaugeActionDetailsProps> = (props) => {
+export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<
+    IGaugeRegistrarUnregisterGaugeActionDetailsProps
+> = (props) => {
     const { action } = props;
     const pluginAddress = action.to;
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
-    const [gaugeVoterPlugin] = useDaoPlugins({ daoId: action.daoId, interfaceType: PluginInterfaceType.GAUGE_VOTER }) ?? [];
+    const [gaugeVoterPlugin] =
+        useDaoPlugins({
+            daoId: action.daoId,
+            interfaceType: PluginInterfaceType.GAUGE_VOTER,
+        }) ?? [];
     const { t } = useTranslations();
 
-    const { qiTokenAddress, incentiveType, rewardControllerAddress } = parseUnregisterGaugeInputData(action.inputData?.parameters ?? []);
+    const { qiTokenAddress, incentiveType, rewardControllerAddress } =
+        parseUnregisterGaugeInputData(action.inputData?.parameters ?? []);
 
     const { id: chainId } = networkDefinitions[dao!.network];
 
-    const { data: gaugeAddress, isLoading: isGetGaugeAddressLoading } = useReadContract({
-        address: pluginAddress as Address,
-        abi: gaugeRegistrarAbi,
-        functionName: 'getGaugeAddress',
-        args: [qiTokenAddress as Address, incentiveType as GaugeIncentiveType, rewardControllerAddress as Address],
-        chainId,
-    });
+    const { data: gaugeAddress, isLoading: isGetGaugeAddressLoading } =
+        useReadContract({
+            address: pluginAddress as Address,
+            abi: gaugeRegistrarAbi,
+            functionName: 'getGaugeAddress',
+            args: [
+                qiTokenAddress as Address,
+                incentiveType as GaugeIncentiveType,
+                rewardControllerAddress as Address,
+            ],
+            chainId,
+        });
 
     const { data: allGauges, isLoading: isAllGaugesLoading } = useAllGauges({
         gaugeListParams: {
@@ -68,14 +95,22 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<IGaugeRegistra
         return <GaugeRegistrarGaugeListItemSkeleton />;
     }
 
-    const gaugeToRemove = gaugeAddress ? allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeAddress)) : undefined;
+    const gaugeToRemove = gaugeAddress
+        ? allGauges.find((gauge) =>
+              addressUtils.isAddressEqual(gauge.address, gaugeAddress),
+          )
+        : undefined;
 
     if (!gaugeToRemove) {
         return (
             <DataList.Item>
                 <EmptyState
-                    description={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.description')}
-                    heading={t('app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.title')}
+                    description={t(
+                        'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.description',
+                    )}
+                    heading={t(
+                        'app.actions.gaugeRegistrar.gaugeRegistrarUnregisterGaugeActionDetails.notFound.title',
+                    )}
                     isStacked={false}
                     objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
                 />

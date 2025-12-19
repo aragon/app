@@ -1,12 +1,26 @@
 import { useMemo } from 'react';
-import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
+import {
+    type FieldPath,
+    type FieldValues,
+    type Noop,
+    useController,
+} from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security';
-import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
+import {
+    sanitizePlainText,
+    sanitizePlainTextMultiline,
+} from '@/shared/security';
+import type {
+    IUseFormFieldOptions,
+    IUseFormFieldReturn,
+} from './useFormField.api';
 
-export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
+export const useFormField = <
+    TFieldValues extends FieldValues = never,
+    TName extends FieldPath<TFieldValues> = never,
+>(
     name: TName,
-    options?: IUseFormFieldOptions<TFieldValues, TName>
+    options?: IUseFormFieldOptions<TFieldValues, TName>,
 ): IUseFormFieldReturn<TFieldValues, TName> => {
     const { t } = useTranslations();
 
@@ -29,7 +43,9 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
         ...otherOptions,
     });
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleBlur = (
+        event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
         if (!sanitizeOnBlur) {
             field.onBlur();
             return;
@@ -58,11 +74,15 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
         const alertMessageKey = `app.shared.formField.error.${error.type}`;
         const alertValue =
-            error.type === 'min' ? (rules?.min as number | undefined)?.toString() : (rules?.max as number | undefined)?.toString();
+            error.type === 'min'
+                ? (rules?.min as number | undefined)?.toString()
+                : (rules?.max as number | undefined)?.toString();
         const alertMessageParams = { name: label ?? name, value: alertValue };
 
         const alertMessage =
-            error.message != null && error.message.length > 0 ? t(error.message, alertValueProp) : t(alertMessageKey, alertMessageParams);
+            error.message != null && error.message.length > 0
+                ? t(error.message, alertValueProp)
+                : t(alertMessageKey, alertMessageParams);
 
         return { message: alertMessage, variant: 'critical' as const };
     }, [error, rules, label, alertValueProp, t, name]);

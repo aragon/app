@@ -4,7 +4,12 @@ import { useSmartContractAbi } from '@/modules/governance/api/smartContractServi
 import type { Network } from '../../api/daoService';
 import type { QueryOptions } from '../../types';
 
-const safeInterfaceIndicators = ['GnosisSafe', 'Safe', 'Gnosis Safe', 'SafeProxy'];
+const safeInterfaceIndicators = [
+    'GnosisSafe',
+    'Safe',
+    'Gnosis Safe',
+    'SafeProxy',
+];
 
 export interface IUseIsSafeContractParams {
     /**
@@ -17,7 +22,10 @@ export interface IUseIsSafeContractParams {
     network: Network;
 }
 
-export const useIsSafeContract = (params: IUseIsSafeContractParams, options?: QueryOptions<boolean>) => {
+export const useIsSafeContract = (
+    params: IUseIsSafeContractParams,
+    options?: QueryOptions<boolean>,
+) => {
     const { address, network } = params;
     const { enabled: enabledOption } = options ?? {};
 
@@ -34,12 +42,14 @@ export const useIsSafeContract = (params: IUseIsSafeContractParams, options?: Qu
         {
             enabled,
             retry: false,
-        }
+        },
     );
 
     const data = useMemo(() => {
         const contractName = smartContractAbi?.name.toLowerCase();
-        return safeInterfaceIndicators.some((indicator) => contractName?.includes(indicator.toLowerCase()));
+        return safeInterfaceIndicators.some((indicator) =>
+            contractName?.includes(indicator.toLowerCase()),
+        );
     }, [smartContractAbi]);
 
     return {

@@ -44,7 +44,9 @@ describe('<AdvancedDateInput /> component', () => {
     it('renders AdvancedDateInputFixed when mode is fixed', async () => {
         render(createTestComponent());
 
-        const fixedRadio = screen.getByRole('radio', { name: /advancedDateInput.fixed.label/ });
+        const fixedRadio = screen.getByRole('radio', {
+            name: /advancedDateInput.fixed.label/,
+        });
         await userEvent.click(fixedRadio);
 
         expect(screen.getByTestId('fixed-input-mock')).toBeInTheDocument();
@@ -53,7 +55,9 @@ describe('<AdvancedDateInput /> component', () => {
     it('renders AdvancedDateInputDuration when useDuration is true and mode is duration', async () => {
         render(createTestComponent({ useDuration: true }));
 
-        const durationRadio = screen.getByRole('radio', { name: /advancedDateInput.duration.label/ });
+        const durationRadio = screen.getByRole('radio', {
+            name: /advancedDateInput.duration.label/,
+        });
         await userEvent.click(durationRadio);
 
         expect(screen.getByTestId('duration-input-mock')).toBeInTheDocument();
@@ -62,8 +66,12 @@ describe('<AdvancedDateInput /> component', () => {
     it('switches between input modes correctly', async () => {
         render(createTestComponent({ useDuration: true }));
 
-        const durationRadio = screen.getByRole('radio', { name: /advancedDateInput.duration.label/ });
-        const fixedRadio = screen.getByRole('radio', { name: /advancedDateInput.fixed.label/ });
+        const durationRadio = screen.getByRole('radio', {
+            name: /advancedDateInput.duration.label/,
+        });
+        const fixedRadio = screen.getByRole('radio', {
+            name: /advancedDateInput.fixed.label/,
+        });
 
         await userEvent.click(fixedRadio);
         expect(screen.getByTestId('fixed-input-mock')).toBeInTheDocument();

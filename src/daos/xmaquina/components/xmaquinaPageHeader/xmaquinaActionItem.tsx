@@ -29,7 +29,9 @@ export interface IXmaquinaActionItemProps extends ComponentProps<'a'> {
     isExternal?: boolean;
 }
 
-export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (props) => {
+export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (
+    props,
+) => {
     const { title, description, icon, href, isExternal, className } = props;
     const [isHovered, setIsHovered] = useState(false);
 
@@ -42,16 +44,24 @@ export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (props) =>
                     'before:absolute before:top-[calc(50%+408px)] before:left-1/2 before:size-160 before:-translate-x-1/2 before:-translate-y-1/2',
                     'before:rounded-full before:bg-[#1ED612] before:transition-[top] before:duration-500 before:ease-out',
                     'hover:before:top-1/2',
-                    className
+                    className,
                 )}
                 href={href}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 target={isExternal ? '_blank' : '_self'}
             >
-                <XmaquinaActionText description={description} isHovered={isHovered} title={title} />
+                <XmaquinaActionText
+                    description={description}
+                    isHovered={isHovered}
+                    title={title}
+                />
 
-                <XmaquinaActionImage alt={title} icon={icon} isHovered={isHovered} />
+                <XmaquinaActionImage
+                    alt={title}
+                    icon={icon}
+                    isHovered={isHovered}
+                />
             </Link>
         </div>
     );

@@ -25,7 +25,9 @@ export interface IUseProposalExecuteGuardParams {
     onError?: () => void;
 }
 
-export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) => {
+export const useProposalExecuteGuard = (
+    params: IUseProposalExecuteGuardParams,
+) => {
     const { daoId, pluginAddress, onSuccess, onError } = params;
 
     const { open } = useDialogContext();
@@ -47,13 +49,14 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
             };
             open(GovernanceDialogId.EXECUTE_CHECK, { params: dialogParams });
         },
-        [dao, onError, onSuccess, open, plugin]
+        [dao, onError, onSuccess, open, plugin],
     );
 
-    const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
-        onError,
-        onSuccess: checkUserPermission,
-    });
+    const { check: checkWalletConnected, result: isConnected } =
+        useConnectedWalletGuard({
+            onError,
+            onSuccess: checkUserPermission,
+        });
 
     const check = useCallback(
         (functionParams?: Partial<IUseProposalExecuteGuardParams>) => {
@@ -68,7 +71,12 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
                 });
             }
         },
-        [isConnected, params.onError, checkUserPermission, checkWalletConnected]
+        [
+            isConnected,
+            params.onError,
+            checkUserPermission,
+            checkWalletConnected,
+        ],
     );
 
     return { check };

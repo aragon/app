@@ -1,27 +1,60 @@
-import { encodeAbiParameters, encodeFunctionData, type Hex, parseUnits, zeroHash } from 'viem';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    type Hex,
+    parseUnits,
+    zeroHash,
+} from 'viem';
 import type { IBuildPreparePluginInstallDataParams } from '@/modules/createDao/types';
 import type { IProposalCreate } from '@/modules/governance/dialogs/publishProposalDialog';
-import type { IBuildCreateProposalDataParams, IBuildVoteDataParams } from '@/modules/governance/types';
-import { createProposalUtils, type ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import type { IBuildPreparePluginUpdateDataParams, IGetUninstallHelpersParams } from '@/modules/settings/types';
+import type {
+    IBuildCreateProposalDataParams,
+    IBuildVoteDataParams,
+} from '@/modules/governance/types';
+import {
+    createProposalUtils,
+    type ICreateProposalEndDateForm,
+} from '@/modules/governance/utils/createProposalUtils';
+import type {
+    IBuildPreparePluginUpdateDataParams,
+    IGetUninstallHelpersParams,
+} from '@/modules/settings/types';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import type { ITokenSetupGovernanceForm } from '../../components/tokenSetupGovernance';
-import type { ITokenSetupMembershipForm, ITokenSetupMembershipMember } from '../../components/tokenSetupMembership';
+import type {
+    ITokenSetupMembershipForm,
+    ITokenSetupMembershipMember,
+} from '../../components/tokenSetupMembership';
 import { tokenPlugin } from '../../constants/tokenPlugin';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
+import {
+    tokenPluginAbi,
+    tokenPluginPrepareUpdateAbi,
+    tokenPluginSetupAbi,
+} from './tokenPluginAbi';
 
 // The end-date form values are set to "partial" because users can also create proposals without the proposal wizard
-export interface ICreateTokenProposalFormData extends IProposalCreate, Partial<ICreateProposalEndDateForm> {}
+export interface ICreateTokenProposalFormData
+    extends IProposalCreate,
+        Partial<ICreateProposalEndDateForm> {}
 
 export interface IPrepareTokenInstallDataParams
-    extends IBuildPreparePluginInstallDataParams<ITokenSetupGovernanceForm, ITokenSetupMembershipMember, ITokenSetupMembershipForm> {}
+    extends IBuildPreparePluginInstallDataParams<
+        ITokenSetupGovernanceForm,
+        ITokenSetupMembershipMember,
+        ITokenSetupMembershipForm
+    > {}
 
 class TokenTransactionUtils {
-    buildCreateProposalData = (params: IBuildCreateProposalDataParams<ICreateTokenProposalFormData, ITokenPluginSettings>): Hex => {
+    buildCreateProposalData = (
+        params: IBuildCreateProposalDataParams<
+            ICreateTokenProposalFormData,
+            ITokenPluginSettings
+        >,
+    ): Hex => {
         const { metadata, actions, proposal, plugin } = params;
         const { minDuration } = plugin.settings;
 
@@ -38,7 +71,15 @@ class TokenTransactionUtils {
         const data = encodeFunctionData({
             abi: tokenPluginAbi,
             functionName: 'createProposal',
-            args: [metadata, actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
+            args: [
+                metadata,
+                actions,
+                BigInt(0),
+                BigInt(startDate),
+                BigInt(endDate),
+                0,
+                false,
+            ],
         });
 
         return data;
@@ -62,10 +103,15 @@ class TokenTransactionUtils {
 
         const repositoryAddress = tokenPlugin.repositoryAddresses[dao.network];
 
-        const tokenSettings = this.buildInstallDataTokenSettings(body.membership.token);
+        const tokenSettings = this.buildInstallDataTokenSettings(
+            body.membership.token,
+        );
         const mintSettings = this.buildInstallDataMintSettings(members);
         const votingSettings = this.buildInstallDataVotingSettings(params);
-        const tokenTarget = pluginTransactionUtils.getPluginTargetConfig(dao, stageVotingPeriod != null);
+        const tokenTarget = pluginTransactionUtils.getPluginTargetConfig(
+            dao,
+            stageVotingPeriod != null,
+        );
 
         const pluginSettingsData = encodeAbiParameters(tokenPluginSetupAbi, [
             votingSettings,
@@ -77,50 +123,76 @@ class TokenTransactionUtils {
             [],
         ]);
 
-        const transactionData = pluginTransactionUtils.buildPrepareInstallationData(
-            repositoryAddress,
-            tokenPlugin.installVersion,
-            pluginSettingsData,
-            dao.address as Hex
+        const transactionData =
+            pluginTransactionUtils.buildPrepareInstallationData(
+                repositoryAddress,
+                tokenPlugin.installVersion,
+                pluginSettingsData,
+                dao.address as Hex,
+            );
+
+        return transactionData;
+    };
+
+    buildPrepareUpdateData = (
+        params: IBuildPreparePluginUpdateDataParams,
+    ): Hex => {
+        const { plugin, dao } = params;
+        const { isSubPlugin, metadataIpfs } = plugin;
+
+        const targetConfig = pluginTransactionUtils.getPluginTargetConfig(
+            dao,
+            isSubPlugin,
+        );
+        const metadata =
+            metadataIpfs != null
+                ? transactionUtils.stringToMetadataHex(metadataIpfs)
+                : zeroHash;
+        const transactionData = encodeAbiParameters(
+            tokenPluginPrepareUpdateAbi,
+            [BigInt(0), targetConfig, metadata],
         );
 
         return transactionData;
     };
 
-    buildPrepareUpdateData = (params: IBuildPreparePluginUpdateDataParams): Hex => {
-        const { plugin, dao } = params;
-        const { isSubPlugin, metadataIpfs } = plugin;
-
-        const targetConfig = pluginTransactionUtils.getPluginTargetConfig(dao, isSubPlugin);
-        const metadata = metadataIpfs != null ? transactionUtils.stringToMetadataHex(metadataIpfs) : zeroHash;
-        const transactionData = encodeAbiParameters(tokenPluginPrepareUpdateAbi, [BigInt(0), targetConfig, metadata]);
-
-        return transactionData;
-    };
-
-    getUninstallHelpers = (params: IGetUninstallHelpersParams<ITokenPlugin>): Hex[] => {
+    getUninstallHelpers = (
+        params: IGetUninstallHelpersParams<ITokenPlugin>,
+    ): Hex[] => {
         const { proposalCreationConditionAddress, settings } = params.plugin;
         const { address: tokenAddress } = settings.token;
 
         return [proposalCreationConditionAddress, tokenAddress] as Hex[];
     };
 
-    private buildInstallDataTokenSettings = (token: ITokenSetupMembershipForm['token']) => {
+    private buildInstallDataTokenSettings = (
+        token: ITokenSetupMembershipForm['token'],
+    ) => {
         const { address, name, symbol } = token;
 
         return { addr: address as Hex, name, symbol };
     };
 
-    private buildInstallDataMintSettings = (members: ITokenSetupMembershipMember[]) => {
-        const initialData: { receivers: Hex[]; amounts: bigint[] } = { receivers: [], amounts: [] };
+    private buildInstallDataMintSettings = (
+        members: ITokenSetupMembershipMember[],
+    ) => {
+        const initialData: { receivers: Hex[]; amounts: bigint[] } = {
+            receivers: [],
+            amounts: [],
+        };
         const governanceTokenDecimals = 18;
 
         const mintSettings = members.reduce(
             (current, { address, tokenAmount }) => ({
                 receivers: current.receivers.concat(address as Hex),
-                amounts: current.amounts.concat(parseUnits(tokenAmount?.toString() ?? '0', governanceTokenDecimals)),
+                amounts: current.amounts.concat(
+                    parseUnits(
+                        tokenAmount?.toString() ?? '0',
+                        governanceTokenDecimals,
+                    ),
+                ),
             }),
-            initialData
+            initialData,
         );
 
         return {
@@ -129,21 +201,36 @@ class TokenTransactionUtils {
         };
     };
 
-    private buildInstallDataVotingSettings = (params: IPrepareTokenInstallDataParams) => {
+    private buildInstallDataVotingSettings = (
+        params: IPrepareTokenInstallDataParams,
+    ) => {
         const { body, stageVotingPeriod } = params;
 
-        const { votingMode, supportThreshold, minParticipation, minProposerVotingPower, minDuration } = body.governance;
+        const {
+            votingMode,
+            supportThreshold,
+            minParticipation,
+            minProposerVotingPower,
+            minDuration,
+        } = body.governance;
         const { decimals } = body.membership.token;
 
-        const stageVotingPeriodSeconds = stageVotingPeriod ? dateUtils.durationToSeconds(stageVotingPeriod) : undefined;
+        const stageVotingPeriodSeconds = stageVotingPeriod
+            ? dateUtils.durationToSeconds(stageVotingPeriod)
+            : undefined;
 
         const processedVotingPeriod = stageVotingPeriodSeconds ?? minDuration;
-        const parsedProposerVotingPower = parseUnits(minProposerVotingPower, decimals);
+        const parsedProposerVotingPower = parseUnits(
+            minProposerVotingPower,
+            decimals,
+        );
 
         const votingSettings = {
             votingMode,
-            supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
+            supportThreshold:
+                tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipation:
+                tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(processedVotingPeriod),
             minProposerVotingPower: parsedProposerVotingPower,
         };

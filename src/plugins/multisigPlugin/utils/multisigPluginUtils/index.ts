@@ -1,1 +1,4 @@
-export { type IMultisigPluginHasExecutePermissionParams, multisigPluginUtils } from './multisigPluginUtils';
+export {
+    type IMultisigPluginHasExecutePermissionParams,
+    multisigPluginUtils,
+} from './multisigPluginUtils';

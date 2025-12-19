@@ -23,18 +23,25 @@ export interface IRequestUrlQueryParams<TUrlParams, TQueryParams>
     extends IRequestUrlParams<TUrlParams>,
         IRequestQueryParams<TQueryParams> {}
 
-export interface IRequestUrlBodyParams<TUrlParams, TBody> extends IRequestUrlParams<TUrlParams>, IRequestBodyParams<TBody> {}
+export interface IRequestUrlBodyParams<TUrlParams, TBody>
+    extends IRequestUrlParams<TUrlParams>,
+        IRequestBodyParams<TBody> {}
 
-export interface IRequestQueryBodyParams<TQueryParams, TBody> extends IRequestQueryParams<TQueryParams>, IRequestBodyParams<TBody> {}
+export interface IRequestQueryBodyParams<TQueryParams, TBody>
+    extends IRequestQueryParams<TQueryParams>,
+        IRequestBodyParams<TBody> {}
 
 export interface IRequestUrlQueryBodyParams<TUrlParams, TQueryParams, TBody>
     extends IRequestUrlParams<TUrlParams>,
         IRequestQueryParams<TQueryParams>,
         IRequestBodyParams<TBody> {}
 
-export type IRequestParams<TUrlParams, TQueryParams, TBody> = Partial<IRequestUrlQueryBodyParams<TUrlParams, TQueryParams, TBody>>;
+export type IRequestParams<TUrlParams, TQueryParams, TBody> = Partial<
+    IRequestUrlQueryBodyParams<TUrlParams, TQueryParams, TBody>
+>;
 
-export interface IRequestOptions extends Omit<RequestInit, 'cache' | 'body' | 'headers'> {
+export interface IRequestOptions
+    extends Omit<RequestInit, 'cache' | 'body' | 'headers'> {
     /**
      * Additional headers for the request.
      */

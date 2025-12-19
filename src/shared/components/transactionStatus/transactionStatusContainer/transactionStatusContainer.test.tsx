@@ -1,8 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { type ITransactionStatusContainerProps, TransactionStatusContainer } from './transactionStatusContainer';
+import {
+    type ITransactionStatusContainerProps,
+    TransactionStatusContainer,
+} from './transactionStatusContainer';
 
 describe('<TransactionStatusContainer /> component', () => {
-    const createTestComponent = (props?: Partial<ITransactionStatusContainerProps>) => {
+    const createTestComponent = (
+        props?: Partial<ITransactionStatusContainerProps>,
+    ) => {
         const completeProps: ITransactionStatusContainerProps = {
             steps: [],
             ...props,
@@ -18,7 +23,9 @@ describe('<TransactionStatusContainer /> component', () => {
     });
 
     it('renders a list with default state', () => {
-        const steps = [{ id: '0', order: 0, meta: { label: '0', state: 'idle' as const } }];
+        const steps = [
+            { id: '0', order: 0, meta: { label: '0', state: 'idle' as const } },
+        ];
         render(createTestComponent({ steps }));
         const list = screen.getByRole('list');
         expect(list).toBeInTheDocument();

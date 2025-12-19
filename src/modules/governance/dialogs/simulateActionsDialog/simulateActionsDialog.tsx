@@ -1,7 +1,10 @@
 import { ActionSimulation, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSimulateActions } from '../../api/actionSimulationService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
@@ -26,18 +29,30 @@ export interface ISimulateActionsDialogParams {
     formId?: string;
 }
 
-export interface ISimulateActionsDialogProps extends IDialogComponentProps<ISimulateActionsDialogParams> {}
+export interface ISimulateActionsDialogProps
+    extends IDialogComponentProps<ISimulateActionsDialogParams> {}
 
-export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (props) => {
+export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
+    props,
+) => {
     const { location } = props;
 
-    invariant(location.params != null, 'SimulateActionsDialog: params must be set for the dialog to work correctly');
+    invariant(
+        location.params != null,
+        'SimulateActionsDialog: params must be set for the dialog to work correctly',
+    );
     const { actions, network, pluginAddress, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { mutate: simulateActions, isError, isPending, status, data } = useSimulateActions();
+    const {
+        mutate: simulateActions,
+        isError,
+        isPending,
+        status,
+        data,
+    } = useSimulateActions();
 
     useEffect(() => {
         if (status !== 'idle') {
@@ -45,15 +60,24 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
         }
 
         const urlParams = { network, pluginAddress };
-        const processedActions = actions.map(({ to, data, value }) => ({ to, data, value: value.toString() }));
+        const processedActions = actions.map(({ to, data, value }) => ({
+            to,
+            data,
+            value: value.toString(),
+        }));
         simulateActions({ urlParams, body: { actions: processedActions } });
     }, [actions, network, pluginAddress, status, simulateActions]);
 
     const hasSimulationFailed = isError || data?.status === 'failed';
-    const lastSimulation = data != null ? { ...data, timestamp: data.runAt } : undefined;
+    const lastSimulation =
+        data != null ? { ...data, timestamp: data.runAt } : undefined;
 
-    const error = isError ? t('app.governance.simulateActionsDialog.error') : undefined;
-    const primaryLabel = t(`app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`);
+    const error = isError
+        ? t('app.governance.simulateActionsDialog.error')
+        : undefined;
+    const primaryLabel = t(
+        `app.governance.simulateActionsDialog.action.${hasSimulationFailed ? 'error' : 'success'}`,
+    );
 
     const handleContinue = () => {
         // If the dialog is used as part of a wizard, trigger the wizard form submit.
@@ -89,7 +113,9 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (pro
                     onClick: handleContinue,
                 }}
                 secondaryAction={{
-                    label: t('app.governance.simulateActionsDialog.action.cancel'),
+                    label: t(
+                        'app.governance.simulateActionsDialog.action.cancel',
+                    ),
                     onClick: () => close(GovernanceDialogId.SIMULATE_ACTIONS),
                 }}
             />

@@ -21,18 +21,30 @@ export interface IBuildTransactionParams {
 }
 
 class VoteDialogUtils {
-    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { proposal, vote, target } = params;
 
-        const buildDataFunction = pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
+        const buildDataFunction = pluginRegistryUtils.getSlotFunction<
+            IBuildVoteDataParams,
+            Hex
+        >({
             pluginId: proposal.pluginInterfaceType,
             slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
         })!;
 
-        const transactionData = buildDataFunction({ proposalIndex: proposal.proposalIndex, vote });
+        const transactionData = buildDataFunction({
+            proposalIndex: proposal.proposalIndex,
+            vote,
+        });
         const transactionTarget = (target ?? proposal.pluginAddress) as Hex;
 
-        const transaction = { to: transactionTarget, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: transactionTarget,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

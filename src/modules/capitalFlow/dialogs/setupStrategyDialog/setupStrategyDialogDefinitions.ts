@@ -149,4 +149,6 @@ export interface ISetupStrategyFormDeFiAdapter extends ISetupStrategyFormBase {
 /**
  * Policy/strategy setup form type.
  */
-export type ISetupStrategyForm = ISetupStrategyFormRouter | ISetupStrategyFormDeFiAdapter;
+export type ISetupStrategyForm =
+    | ISetupStrategyFormRouter
+    | ISetupStrategyFormDeFiAdapter;

@@ -1,7 +1,10 @@
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as NextNavigation from 'next/navigation';
-import { type INavigationLinksItemProps, NavigationLinksItem } from './navigationLinksItem';
+import {
+    type INavigationLinksItemProps,
+    NavigationLinksItem,
+} from './navigationLinksItem';
 
 describe('<NavigationLinksItem /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -14,7 +17,9 @@ describe('<NavigationLinksItem /> component', () => {
         usePathnameSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<INavigationLinksItemProps>) => {
+    const createTestComponent = (
+        props?: Partial<INavigationLinksItemProps>,
+    ) => {
         const completeProps: INavigationLinksItemProps = {
             icon: IconType.APP_ASSETS,
             variant: 'row',
@@ -28,7 +33,9 @@ describe('<NavigationLinksItem /> component', () => {
         const children = 'link-label';
         const href = '/test';
         render(createTestComponent({ children, href }));
-        expect(screen.getByRole('link', { name: children })).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: children }),
+        ).toBeInTheDocument();
     });
 
     it('correctly renders the link as row and active when href matches current pathname', () => {
@@ -36,7 +43,9 @@ describe('<NavigationLinksItem /> component', () => {
         const variant = 'column';
         usePathnameSpy.mockReturnValue(href);
         render(createTestComponent({ variant, href }));
-        expect(screen.getByRole('link').getAttribute('aria-current')).toEqual('page');
+        expect(screen.getByRole('link').getAttribute('aria-current')).toEqual(
+            'page',
+        );
         expect(screen.getByRole('link').className).toContain('bg-neutral-50');
     });
 

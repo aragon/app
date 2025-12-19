@@ -1,1 +1,4 @@
-export { type IPluginSingleComponentProps, PluginSingleComponent } from './pluginSingleComponent';
+export {
+    type IPluginSingleComponentProps,
+    PluginSingleComponent,
+} from './pluginSingleComponent';

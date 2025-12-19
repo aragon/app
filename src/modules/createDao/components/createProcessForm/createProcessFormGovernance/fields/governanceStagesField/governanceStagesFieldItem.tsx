@@ -1,9 +1,18 @@
-import { Button, Card, Dropdown, IconType, InputText } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    Card,
+    Dropdown,
+    IconType,
+    InputText,
+} from '@aragon/gov-ui-kit';
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { type ICreateProcessFormStage, ProcessStageType } from '../../../createProcessFormDefinitions';
+import {
+    type ICreateProcessFormStage,
+    ProcessStageType,
+} from '../../../createProcessFormDefinitions';
 import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
 import { GovernanceStageSettingsField } from '../governanceStageSettingsField';
 
@@ -37,34 +46,57 @@ export interface IGovernanceStagesFieldItemProps {
 
 const nameMaxLength = 40;
 
-export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps> = (props) => {
-    const { formPrefix, daoId, stagesCount, onDelete, index, readOnly = false } = props;
+export const GovernanceStagesFieldItem: React.FC<
+    IGovernanceStagesFieldItemProps
+> = (props) => {
+    const {
+        formPrefix,
+        daoId,
+        stagesCount,
+        onDelete,
+        index,
+        readOnly = false,
+    } = props;
 
     const { t } = useTranslations();
 
-    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(formPrefix);
+    useFormField<Record<string, ICreateProcessFormStage>, typeof formPrefix>(
+        formPrefix,
+    );
 
-    const stageType = useWatch<Record<string, ICreateProcessFormStage['settings']['type']>>({
+    const stageType = useWatch<
+        Record<string, ICreateProcessFormStage['settings']['type']>
+    >({
         name: `${formPrefix}.type`,
     });
 
     const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
 
-    const stageNameField = useFormField<ICreateProcessFormStage, 'name'>('name', {
-        label: t('app.createDao.createProcessForm.governance.stageField.name.label'),
-        trimOnBlur: true,
-        rules: { required: true, maxLength: nameMaxLength },
-        fieldPrefix: formPrefix,
-        defaultValue: '',
-    });
+    const stageNameField = useFormField<ICreateProcessFormStage, 'name'>(
+        'name',
+        {
+            label: t(
+                'app.createDao.createProcessForm.governance.stageField.name.label',
+            ),
+            trimOnBlur: true,
+            rules: { required: true, maxLength: nameMaxLength },
+            fieldPrefix: formPrefix,
+            defaultValue: '',
+        },
+    );
 
     const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
 
     const stageNameText =
-        stageNameField.value !== '' ? stageNameField.value : t('app.createDao.createProcessForm.governance.stageField.title');
-    const stageNumberText = t('app.createDao.createProcessForm.governance.stageField.number', {
-        stageNumber: index + 1,
-    });
+        stageNameField.value !== ''
+            ? stageNameField.value
+            : t('app.createDao.createProcessForm.governance.stageField.title');
+    const stageNumberText = t(
+        'app.createDao.createProcessForm.governance.stageField.number',
+        {
+            stageNumber: index + 1,
+        },
+    );
 
     return (
         <Card className="flex flex-col gap-y-10 border border-neutral-100 p-6">
@@ -75,26 +107,45 @@ export const GovernanceStagesFieldItem: React.FC<IGovernanceStagesFieldItemProps
                 </div>
                 {!readOnly && (
                     <InputText
-                        helpText={t('app.createDao.createProcessForm.governance.stageField.name.helpText')}
+                        helpText={t(
+                            'app.createDao.createProcessForm.governance.stageField.name.helpText',
+                        )}
                         maxLength={nameMaxLength}
                         {...stageNameField}
                     />
                 )}
             </div>
-            <GovernanceStageBodiesField daoId={daoId} formPrefix={formPrefix} labelContext={bodiesLabelContext} readOnly={readOnly} />
-            <GovernanceStageSettingsField formPrefix={formPrefix} readOnly={readOnly} />
+            <GovernanceStageBodiesField
+                daoId={daoId}
+                formPrefix={formPrefix}
+                labelContext={bodiesLabelContext}
+                readOnly={readOnly}
+            />
+            <GovernanceStageSettingsField
+                formPrefix={formPrefix}
+                readOnly={readOnly}
+            />
             {stagesCount > 1 && !readOnly && (
                 <Dropdown.Container
                     constrainContentWidth={false}
                     customTrigger={
-                        <Button className="self-end" iconRight={IconType.DOTS_VERTICAL} size="md" variant="tertiary">
-                            {t('app.createDao.createProcessForm.governance.stageField.action.more')}
+                        <Button
+                            className="self-end"
+                            iconRight={IconType.DOTS_VERTICAL}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.createDao.createProcessForm.governance.stageField.action.more',
+                            )}
                         </Button>
                     }
                     size="md"
                 >
                     <Dropdown.Item onClick={onDelete}>
-                        {t('app.createDao.createProcessForm.governance.stageField.action.remove')}
+                        {t(
+                            'app.createDao.createProcessForm.governance.stageField.action.remove',
+                        )}
                     </Dropdown.Item>
                 </Dropdown.Container>
             )}

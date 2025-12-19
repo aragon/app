@@ -5,7 +5,11 @@ import { useFormContext } from 'react-hook-form';
 import type { Hex } from 'viem';
 import { mainnet } from 'viem/chains';
 import type { ITokenSetupMembershipForm } from '@/plugins/tokenPlugin/components/tokenSetupMembership';
-import { type ITransactionInfo, type ITransactionStatusStepMeta, TransactionStatus } from '@/shared/components/transactionStatus';
+import {
+    type ITransactionInfo,
+    type ITransactionStatusStepMeta,
+    TransactionStatus,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -25,7 +29,9 @@ export interface ITokenSetupMembershipImportTokenProps {
     daoId: string;
 }
 
-export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImportTokenProps> = (props) => {
+export const TokenSetupMembershipImportToken: React.FC<
+    ITokenSetupMembershipImportTokenProps
+> = (props) => {
     const { formPrefix, daoId } = props;
     const { t } = useTranslations();
 
@@ -63,7 +69,9 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
 
     const { token, isDelegationCompatible, isGovernanceCompatible } = data;
 
-    const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
+    const [tokenAddressInput, setTokenAddressInput] = useState<
+        string | undefined
+    >(importTokenAddress);
 
     useEffect(() => {
         if (!token) {
@@ -86,27 +94,62 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
         }
     }, [isGovernanceCompatible, setValue, token, tokenFormPrefix]);
 
-    const getCompatibilityState = (isCompatible: boolean | undefined): StepState =>
-        isCompatible ? 'success' : isCompatible === undefined ? 'idle' : 'warning';
+    const getCompatibilityState = (
+        isCompatible: boolean | undefined,
+    ): StepState =>
+        isCompatible
+            ? 'success'
+            : isCompatible === undefined
+              ? 'idle'
+              : 'warning';
 
-    const [erc20StepState, governanceStepState, delegationStepState]: [StepState, StepState, StepState] = isLoading
+    const [erc20StepState, governanceStepState, delegationStepState]: [
+        StepState,
+        StepState,
+        StepState,
+    ] = isLoading
         ? ['pending', 'pending', 'pending']
         : isError
           ? ['error', 'error', 'error']
-          : ['success', getCompatibilityState(isGovernanceCompatible), getCompatibilityState(isDelegationCompatible)];
+          : [
+                'success',
+                getCompatibilityState(isGovernanceCompatible),
+                getCompatibilityState(isDelegationCompatible),
+            ];
 
-    const getStepLabel = (step: string) => t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
+    const getStepLabel = (step: string) =>
+        t(`app.plugins.token.tokenSetupMembership.importToken.step.${step}`);
 
     const steps: IStepperStep<ITransactionStatusStepMeta>[] = [
-        { id: 'erc20', order: 0, meta: { label: getStepLabel('erc20'), state: erc20StepState } },
-        { id: 'governance', order: 0, meta: { label: getStepLabel('governance'), state: governanceStepState } },
-        { id: 'delegation', order: 0, meta: { label: getStepLabel('delegation'), state: delegationStepState } },
+        {
+            id: 'erc20',
+            order: 0,
+            meta: { label: getStepLabel('erc20'), state: erc20StepState },
+        },
+        {
+            id: 'governance',
+            order: 0,
+            meta: {
+                label: getStepLabel('governance'),
+                state: governanceStepState,
+            },
+        },
+        {
+            id: 'delegation',
+            order: 0,
+            meta: {
+                label: getStepLabel('delegation'),
+                state: delegationStepState,
+            },
+        },
     ];
 
     const isTokenCheckCardVisible = !!importTokenAddress;
 
     const displayAlert = isError || isGovernanceCompatible === false;
-    const alertContext = isError ? 'notErc20Compatible' : 'notGovernanceCompatible';
+    const alertContext = isError
+        ? 'notErc20Compatible'
+        : 'notGovernanceCompatible';
     const alertNamespace = `app.plugins.token.tokenSetupMembership.importToken.alert.${alertContext}`;
 
     const transactionInfo: ITransactionInfo = {
@@ -120,14 +163,21 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
                     alert={alert}
                     // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
                     chainId={chainId}
-                    helpText={t('app.plugins.token.tokenSetupMembership.importToken.helpText')}
-                    onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
+                    helpText={t(
+                        'app.plugins.token.tokenSetupMembership.importToken.helpText',
+                    )}
+                    onAccept={(value) =>
+                        onImportTokenAddressChange(value?.address ?? '')
+                    }
                     onChange={setTokenAddressInput}
                     value={tokenAddressInput}
                     {...importTokenAddressField}
                 />
                 {isTokenCheckCardVisible && (
-                    <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
+                    <TransactionStatus.Container
+                        steps={steps}
+                        transactionInfo={transactionInfo}
+                    >
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
@@ -137,19 +187,27 @@ export const TokenSetupMembershipImportToken: React.FC<ITokenSetupMembershipImpo
             {displayAlert && (
                 <AlertCard
                     message={t(`${alertNamespace}.message`)}
-                    variant={alertContext === 'notErc20Compatible' ? 'critical' : 'warning'}
+                    variant={
+                        alertContext === 'notErc20Compatible'
+                            ? 'critical'
+                            : 'warning'
+                    }
                 >
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-6">
                             <p>{t(`${alertNamespace}.description1`)}</p>
-                            {alertContext === 'notGovernanceCompatible' && <p>{t(`${alertNamespace}.description2`)}</p>}
+                            {alertContext === 'notGovernanceCompatible' && (
+                                <p>{t(`${alertNamespace}.description2`)}</p>
+                            )}
                         </div>
                         <Link
                             href="https://docs.aragon.org/token-voting/1.x/importing-existent-tokens.html"
                             isExternal={true}
                             variant="neutral"
                         >
-                            {t('app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel')}
+                            {t(
+                                'app.plugins.token.tokenSetupMembership.importToken.alert.infoLabel',
+                            )}
                         </Link>
                     </div>
                 </AlertCard>

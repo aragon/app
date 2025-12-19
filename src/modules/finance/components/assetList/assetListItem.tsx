@@ -1,4 +1,7 @@
-import { AssetDataListItemStructure, ChainEntityType } from '@aragon/gov-ui-kit';
+import {
+    AssetDataListItemStructure,
+    ChainEntityType,
+} from '@aragon/gov-ui-kit';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 
@@ -19,7 +22,10 @@ export const AssetListItem: React.FC<IAssetListItemProps> = (props) => {
 
     const { buildEntityUrl } = useDaoChain({ network: token.network });
 
-    const entityUrl = buildEntityUrl({ type: ChainEntityType.TOKEN, id: token.address });
+    const entityUrl = buildEntityUrl({
+        type: ChainEntityType.TOKEN,
+        id: token.address,
+    });
 
     const processedEntityUrl = onAssetClick != null ? undefined : entityUrl;
     const processedTarget = onAssetClick != null ? undefined : '_blank';

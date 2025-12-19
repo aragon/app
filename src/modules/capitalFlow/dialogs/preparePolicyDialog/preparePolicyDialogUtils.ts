@@ -1,16 +1,30 @@
 import { invariant } from '@aragon/gov-ui-kit';
-import { encodeAbiParameters, encodeFunctionData, type Hex, zeroAddress } from 'viem';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    type Hex,
+    zeroAddress,
+} from 'viem';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { type IBuildApplyPluginsInstallationActionsParams, pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import {
+    type IBuildApplyPluginsInstallationActionsParams,
+    pluginTransactionUtils,
+} from '@/shared/utils/pluginTransactionUtils';
+import {
+    type ITransactionRequest,
+    transactionUtils,
+} from '@/shared/utils/transactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { capitalFlowAddresses } from '../../constants/capitalFlowAddresses';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
 import { StreamingEpochPeriod } from '../setupStrategyDialog/setupStrategyDialogDefinitions';
 import { omniModelFactoryAbi } from './omniModelFactoryAbi';
 import { omniSourceFactoryAbi } from './omniSourceFactoryAbi';
-import type { IBuildPolicyProposalActionsParams, IBuildTransactionParams } from './preparePolicyDialogUtils.api';
+import type {
+    IBuildPolicyProposalActionsParams,
+    IBuildTransactionParams,
+} from './preparePolicyDialogUtils.api';
 import { routerModelFactoryAbi } from './routerModelFactoryAbi';
 import {
     burnRouterPluginSetupAbi,
@@ -38,7 +52,9 @@ class PreparePolicyDialogUtils {
 
     normalizeRatios = (values: number[]): number[] => {
         const total = values.reduce((sum, value) => sum + value, 0);
-        const ratios = values.map((value) => Math.floor((value / total) * ratioBase));
+        const ratios = values.map((value) =>
+            Math.floor((value / total) * ratioBase),
+        );
         const currentSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
 
         // Distribute the remainder to ensure exact RATIO_BASE sum
@@ -61,7 +77,9 @@ class PreparePolicyDialogUtils {
         const finalSum = ratios.reduce((sum, ratio) => sum + ratio, 0);
 
         if (finalSum !== ratioBase) {
-            throw new Error(`Invalid ratios: sum is ${finalSum.toString()}, expected ${ratioBase.toString()}`);
+            throw new Error(
+                `Invalid ratios: sum is ${finalSum.toString()}, expected ${ratioBase.toString()}`,
+            );
         }
 
         return ratios;
@@ -79,19 +97,29 @@ class PreparePolicyDialogUtils {
         value: BigInt(0),
     });
 
-    buildDeploySourceAndModelTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildDeploySourceAndModelTransaction = (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { values, dao } = params;
 
-        const { routerModelFactory, routerSourceFactory, omniSourceFactory, omniModelFactory } = capitalFlowAddresses[dao.network];
+        const {
+            routerModelFactory,
+            routerSourceFactory,
+            omniSourceFactory,
+            omniModelFactory,
+        } = capitalFlowAddresses[dao.network];
         const { strategy } = values;
-        invariant(strategy != null, 'PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: strategy is not defined');
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: strategy is not defined',
+        );
 
         const { sourceVault } = strategy;
         const { address: sourceDaoAddress } = daoUtils.parseDaoId(sourceVault);
 
         invariant(
             strategy.type === StrategyType.CAPITAL_ROUTER,
-            `PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: unsupported strategy type: ${strategy.type}`
+            `PreparePolicyDialogUtils->buildDeploySourceAndModelTransaction: unsupported strategy type: ${strategy.type}`,
         );
 
         let deployModelTransaction: ITransactionRequest;
@@ -110,7 +138,10 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [
+                    sourceDaoAddress as Hex,
+                    asset?.token ? (asset.token.address as Hex) : zeroAddress,
+                ],
             });
 
             deployModelTransaction = {
@@ -134,7 +165,10 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [
+                    sourceDaoAddress as Hex,
+                    asset?.token ? (asset.token.address as Hex) : zeroAddress,
+                ],
             });
 
             deployModelTransaction = {
@@ -148,7 +182,8 @@ class PreparePolicyDialogUtils {
                 value: BigInt(0),
             };
         } else if (strategy.routerType === RouterType.STREAM) {
-            const { recipients, asset, epochPeriod } = strategy.distributionStream;
+            const { recipients, asset, epochPeriod } =
+                strategy.distributionStream;
             const recipientAddresses = recipients.map((r) => r.address as Hex);
 
             // Calculate total amount and ratios
@@ -193,7 +228,10 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [
+                    sourceDaoAddress as Hex,
+                    asset?.token ? (asset.token.address as Hex) : zeroAddress,
+                ],
             });
             const deploySourceTransaction = {
                 to: routerSourceFactory,
@@ -209,7 +247,10 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [
+                    sourceDaoAddress as Hex,
+                    asset?.token ? (asset.token.address as Hex) : zeroAddress,
+                ],
             });
             const deploySourceTransaction = {
                 to: routerSourceFactory,
@@ -225,7 +266,10 @@ class PreparePolicyDialogUtils {
             const deploySourceCallData = encodeFunctionData({
                 abi: routerSourceFactoryAbi,
                 functionName: 'deployDrainBalanceSource',
-                args: [sourceDaoAddress as Hex, asset?.token ? (asset.token.address as Hex) : zeroAddress],
+                args: [
+                    sourceDaoAddress as Hex,
+                    asset?.token ? (asset.token.address as Hex) : zeroAddress,
+                ],
             });
             const deploySourceTransaction = {
                 to: routerSourceFactory,
@@ -241,7 +285,7 @@ class PreparePolicyDialogUtils {
 
         const encodedTransaction = transactionUtils.encodeTransactionRequests(
             [deployModelTransaction, deploySourceTransaction],
-            dao.network
+            dao.network,
         );
 
         return Promise.resolve(encodedTransaction);
@@ -258,26 +302,38 @@ class PreparePolicyDialogUtils {
         };
     };
 
-    buildPolicyPrepareInstallationTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildPolicyPrepareInstallationTransaction = (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { values, sourceAndModelContracts, dao, policyMetadata } = params;
         const { strategy } = values;
 
         const pluginMetadata = policyMetadata?.plugin;
-        const pluginMetadataHex = pluginMetadata ? transactionUtils.stringToMetadataHex(pluginMetadata) : '0x';
+        const pluginMetadataHex = pluginMetadata
+            ? transactionUtils.stringToMetadataHex(pluginMetadata)
+            : '0x';
 
-        invariant(strategy != null, 'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: strategy is not defined');
+        invariant(
+            strategy != null,
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: strategy is not defined',
+        );
         invariant(
             sourceAndModelContracts != null,
-            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: source and model contracts are required'
+            'PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: source and model contracts are required',
         );
         invariant(
             strategy.type === StrategyType.CAPITAL_ROUTER,
-            `PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: unsupported strategy type: ${strategy.type}`
+            `PreparePolicyDialogUtils->buildPolicyPrepareInstallationTransaction: unsupported strategy type: ${strategy.type}`,
         );
 
         const { model, source } = sourceAndModelContracts;
-        const { routerPluginRepo, burnRouterPluginRepo, cowSwapRouterPluginRepo, multiDispatchRouterPluginRepo, uniswapRouterPluginRepo } =
-            capitalFlowAddresses[dao.network];
+        const {
+            routerPluginRepo,
+            burnRouterPluginRepo,
+            cowSwapRouterPluginRepo,
+            multiDispatchRouterPluginRepo,
+            uniswapRouterPluginRepo,
+        } = capitalFlowAddresses[dao.network];
 
         const isStreamingSource = strategy.routerType === RouterType.STREAM;
 
@@ -285,54 +341,77 @@ class PreparePolicyDialogUtils {
 
         switch (strategy.routerType) {
             case RouterType.BURN:
-                installationParams = encodeAbiParameters(burnRouterPluginSetupAbi, [source, isStreamingSource, pluginMetadataHex]);
+                installationParams = encodeAbiParameters(
+                    burnRouterPluginSetupAbi,
+                    [source, isStreamingSource, pluginMetadataHex],
+                );
                 pluginRepo = burnRouterPluginRepo;
                 break;
             case RouterType.DEX_SWAP: {
-                const { targetTokenAddress, cowSwapSettlementAddress } = strategy.distributionDexSwap;
-                installationParams = encodeAbiParameters(cowSwapRouterPluginSetupAbi, [
-                    source,
-                    isStreamingSource,
-                    targetTokenAddress as Hex,
-                    cowSwapSettlementAddress as Hex,
-                    pluginMetadataHex,
-                ]);
+                const { targetTokenAddress, cowSwapSettlementAddress } =
+                    strategy.distributionDexSwap;
+                installationParams = encodeAbiParameters(
+                    cowSwapRouterPluginSetupAbi,
+                    [
+                        source,
+                        isStreamingSource,
+                        targetTokenAddress as Hex,
+                        cowSwapSettlementAddress as Hex,
+                        pluginMetadataHex,
+                    ],
+                );
                 pluginRepo = cowSwapRouterPluginRepo;
                 break;
             }
             case RouterType.MULTI_DISPATCH: {
                 const { routerAddresses } = strategy.distributionMultiDispatch;
                 // Filter out any empty addresses to ensure only valid Hex addresses are encoded
-                const addresses = routerAddresses.filter((r) => r.address && r.address.trim() !== '').map((r) => r.address as Hex);
-                installationParams = encodeAbiParameters(multiDispatchPluginSetupAbi, [addresses, pluginMetadataHex]);
+                const addresses = routerAddresses
+                    .filter((r) => r.address && r.address.trim() !== '')
+                    .map((r) => r.address as Hex);
+                installationParams = encodeAbiParameters(
+                    multiDispatchPluginSetupAbi,
+                    [addresses, pluginMetadataHex],
+                );
                 pluginRepo = multiDispatchRouterPluginRepo;
                 break;
             }
             case RouterType.UNISWAP: {
-                const { targetTokenAddress, uniswapRouterAddress } = strategy.distributionUniswap;
-                installationParams = encodeAbiParameters(uniswapRouterPluginSetupAbi, [
-                    source,
-                    isStreamingSource,
-                    targetTokenAddress as Hex,
-                    uniswapRouterAddress as Hex,
-                    pluginMetadataHex,
-                ]);
+                const { targetTokenAddress, uniswapRouterAddress } =
+                    strategy.distributionUniswap;
+                installationParams = encodeAbiParameters(
+                    uniswapRouterPluginSetupAbi,
+                    [
+                        source,
+                        isStreamingSource,
+                        targetTokenAddress as Hex,
+                        uniswapRouterAddress as Hex,
+                        pluginMetadataHex,
+                    ],
+                );
                 pluginRepo = uniswapRouterPluginRepo;
                 break;
             }
             default:
-                installationParams = encodeAbiParameters(routerPluginSetupAbi, [source, isStreamingSource, model, pluginMetadataHex]);
+                installationParams = encodeAbiParameters(routerPluginSetupAbi, [
+                    source,
+                    isStreamingSource,
+                    model,
+                    pluginMetadataHex,
+                ]);
                 pluginRepo = routerPluginRepo;
                 break;
         }
 
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
-        const prepareInstallationData = pluginTransactionUtils.buildPrepareInstallationData(
-            pluginRepo,
-            { release: 1, build: 1 },
-            installationParams,
-            dao.address as Hex
-        );
+        const { pluginSetupProcessor } =
+            networkDefinitions[dao.network].addresses;
+        const prepareInstallationData =
+            pluginTransactionUtils.buildPrepareInstallationData(
+                pluginRepo,
+                { release: 1, build: 1 },
+                installationParams,
+                dao.address as Hex,
+            );
 
         return Promise.resolve({
             to: pluginSetupProcessor,
@@ -341,23 +420,30 @@ class PreparePolicyDialogUtils {
         });
     };
 
-    buildPublishPolicyProposalActions = (params: IBuildPolicyProposalActionsParams): ITransactionRequest[] => {
+    buildPublishPolicyProposalActions = (
+        params: IBuildPolicyProposalActionsParams,
+    ): ITransactionRequest[] => {
         const { dao, setupData } = params;
 
         const processorSetupActions: ITransactionRequest[] = [];
 
-        const buildActionsParams: IBuildApplyPluginsInstallationActionsParams = {
-            dao,
-            setupData,
-            actions: processorSetupActions,
-            executeConditionAddress: undefined,
-        };
-        const proposalActions = pluginTransactionUtils.buildApplyPluginsInstallationActions(buildActionsParams);
+        const buildActionsParams: IBuildApplyPluginsInstallationActionsParams =
+            {
+                dao,
+                setupData,
+                actions: processorSetupActions,
+                executeConditionAddress: undefined,
+            };
+        const proposalActions =
+            pluginTransactionUtils.buildApplyPluginsInstallationActions(
+                buildActionsParams,
+            );
 
         return proposalActions;
     };
 
-    preparePublishPolicyProposalMetadata = () => this.publishPolicyProposalMetadata;
+    preparePublishPolicyProposalMetadata = () =>
+        this.publishPolicyProposalMetadata;
 }
 
 export const preparePolicyDialogUtils = new PreparePolicyDialogUtils();

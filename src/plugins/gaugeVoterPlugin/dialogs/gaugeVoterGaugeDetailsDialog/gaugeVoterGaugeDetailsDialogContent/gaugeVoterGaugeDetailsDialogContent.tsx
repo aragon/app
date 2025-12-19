@@ -1,4 +1,9 @@
-import { addressUtils, ChainEntityType, DefinitionList, Tag } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ChainEntityType,
+    DefinitionList,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -19,13 +24,18 @@ export interface IGaugeVoterGaugeDetailsDialogContentProps {
     userVotes: number;
 }
 
-export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetailsDialogContentProps> = (props) => {
+export const GaugeVoterGaugeDetailsDialogContent: React.FC<
+    IGaugeVoterGaugeDetailsDialogContentProps
+> = (props) => {
     const { gauge, network, userVotes } = props;
 
     const { t } = useTranslations();
 
     const { buildEntityUrl } = useDaoChain({ network });
-    const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gauge.address });
+    const gaugeAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: gauge.address,
+    });
 
     const hasVoted = userVotes > 0;
 
@@ -35,29 +45,43 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<IGaugeVoterGaugeDetai
                 <DefinitionList.Item
                     copyValue={gauge.address}
                     link={{ href: gaugeAddressLink, isExternal: true }}
-                    term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract')}
+                    term={t(
+                        'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract',
+                    )}
                 >
                     {addressUtils.truncateAddress(gauge.address)}
                 </DefinitionList.Item>
                 {gauge.links &&
                     gauge.links.length > 0 &&
                     gauge.links.map((link) => (
-                        <DefinitionList.Item key={link.url} link={{ href: link.url, isExternal: true }} term={link.name}>
+                        <DefinitionList.Item
+                            key={link.url}
+                            link={{ href: link.url, isExternal: true }}
+                            term={link.name}
+                        >
                             {link.name}
                         </DefinitionList.Item>
                     ))}
                 {/* TODO: Implement rewards calculation when backend/blockchain data is available */}
-                <DefinitionList.Item term={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor')}>
+                <DefinitionList.Item
+                    term={t(
+                        'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.haveYouVotedFor',
+                    )}
+                >
                     {hasVoted ? (
                         <Tag
                             className="w-fit"
-                            label={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedYes')}
+                            label={t(
+                                'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedYes',
+                            )}
                             variant="success"
                         />
                     ) : (
                         <Tag
                             className="w-fit"
-                            label={t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedNo')}
+                            label={t(
+                                'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.votedNo',
+                            )}
                             variant="neutral"
                         />
                     )}

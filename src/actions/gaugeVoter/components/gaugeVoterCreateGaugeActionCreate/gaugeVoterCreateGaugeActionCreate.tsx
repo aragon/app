@@ -1,9 +1,16 @@
 'use client';
 
-import { type IProposalAction, type IProposalActionComponentProps, invariant } from '@aragon/gov-ui-kit';
+import {
+    type IProposalAction,
+    type IProposalActionComponentProps,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
-import { type IProposalActionData, useCreateProposalFormContext } from '@/modules/governance/components/createProposalForm';
+import {
+    type IProposalActionData,
+    useCreateProposalFormContext,
+} from '@/modules/governance/components/createProposalForm';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -13,14 +20,19 @@ import type { IGaugeVoterActionCreateGauge } from '../../types/gaugeVoterActionC
 import { GaugeVoterCreateGaugeActionCreateForm } from './gaugeVoterCreateGaugeActionCreateForm';
 
 export interface IGaugeVoterCreateGaugeActionCreateProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, unknown>
+    > {}
 
-export const GaugeVoterCreateGaugeActionCreate: React.FC<IGaugeVoterCreateGaugeActionCreateProps> = (props) => {
+export const GaugeVoterCreateGaugeActionCreate: React.FC<
+    IGaugeVoterCreateGaugeActionCreateProps
+> = (props) => {
     const { index, chainId } = props;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    const { addPrepareAction } = useCreateProposalFormContext<IGaugeVoterActionCreateGauge>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IGaugeVoterActionCreateGauge>();
 
     const fieldName = `actions.[${index.toString()}]`;
 
@@ -28,10 +40,11 @@ export const GaugeVoterCreateGaugeActionCreate: React.FC<IGaugeVoterCreateGaugeA
         async (action: IGaugeVoterActionCreateGauge) => {
             invariant(
                 action.gaugeDetails != null,
-                'GaugeVoterCreateGaugeAction: gaugeDetails expected to be initialized by the create gauge form.'
+                'GaugeVoterCreateGaugeAction: gaugeDetails expected to be initialized by the create gauge form.',
             );
 
-            const { name, description, resources, avatar, gaugeAddress } = action.gaugeDetails;
+            const { name, description, resources, avatar, gaugeAddress } =
+                action.gaugeDetails;
             const proposedMetadata = { name, description, links: resources };
             let gaugeAvatar: string | undefined;
 
@@ -40,12 +53,19 @@ export const GaugeVoterCreateGaugeActionCreate: React.FC<IGaugeVoterCreateGaugeA
                 gaugeAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             }
 
-            const metadata = gaugeAvatar ? { ...proposedMetadata, avatar: gaugeAvatar } : proposedMetadata;
+            const metadata = gaugeAvatar
+                ? { ...proposedMetadata, avatar: gaugeAvatar }
+                : proposedMetadata;
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
-            const ipfsHexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
+            const ipfsHexResult = transactionUtils.stringToMetadataHex(
+                ipfsResult.IpfsHash,
+            );
 
-            invariant(gaugeAddress?.address != null, 'Gauge address not properly set.');
+            invariant(
+                gaugeAddress?.address != null,
+                'Gauge address not properly set.',
+            );
 
             const data = encodeFunctionData({
                 abi: gaugeVoterAbi,
@@ -55,12 +75,17 @@ export const GaugeVoterCreateGaugeActionCreate: React.FC<IGaugeVoterCreateGaugeA
 
             return data;
         },
-        [pinFileAsync, pinJsonAsync]
+        [pinFileAsync, pinJsonAsync],
     );
 
     useEffect(() => {
         addPrepareAction(GaugeVoterActionType.CREATE_GAUGE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
-    return <GaugeVoterCreateGaugeActionCreateForm chainId={chainId} fieldPrefix={`${fieldName}.gaugeDetails`} />;
+    return (
+        <GaugeVoterCreateGaugeActionCreateForm
+            chainId={chainId}
+            fieldPrefix={`${fieldName}.gaugeDetails`}
+        />
+    );
 };

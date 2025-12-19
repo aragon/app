@@ -35,7 +35,9 @@ export interface IAddressesInputItemProps extends ComponentProps<'div'> {
     chainId?: number;
 }
 
-export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) => {
+export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
+    props,
+) => {
     const { index, disabled, customValidator, chainId } = props;
 
     const { t } = useTranslations();
@@ -57,20 +59,32 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
         onChange: onAddressChange,
         label,
         ...addressField
-    } = useFormField<Record<string, ICompositeAddress>, string>(memberFieldName, {
-        label: t('app.shared.addressesInput.item.input.label'),
-        rules: {
-            required: true,
-            validate: (member) => addressesListUtils.validateAddress(member.address, membersField, index, customValidator),
+    } = useFormField<Record<string, ICompositeAddress>, string>(
+        memberFieldName,
+        {
+            label: t('app.shared.addressesInput.item.input.label'),
+            rules: {
+                required: true,
+                validate: (member) =>
+                    addressesListUtils.validateAddress(
+                        member.address,
+                        membersField,
+                        index,
+                        customValidator,
+                    ),
+            },
+            sanitizeOnBlur: false,
         },
-        sanitizeOnBlur: false,
-    });
+    );
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(value.address);
+    const [addressInput, setAddressInput] = useState<string | undefined>(
+        value.address,
+    );
 
     const handleAddressAccept = useCallback(
-        (value?: IAddressInputResolvedValue) => onAddressChange({ address: value?.address, name: value?.name }),
-        [onAddressChange]
+        (value?: IAddressInputResolvedValue) =>
+            onAddressChange({ address: value?.address, name: value?.name }),
+        [onAddressChange],
     );
 
     // Only trigger already-in-list validation if value is a valid address to avoid displaying an error on mount.
@@ -87,18 +101,28 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (props) =>
                 disabled={disabled}
                 onAccept={handleAddressAccept}
                 onChange={setAddressInput}
-                placeholder={t('app.shared.addressesInput.item.input.placeholder')}
+                placeholder={t(
+                    'app.shared.addressesInput.item.input.placeholder',
+                )}
                 value={addressInput}
                 {...addressField}
             />
 
             <Dropdown.Container
                 constrainContentWidth={false}
-                customTrigger={<Button iconLeft={IconType.DOTS_VERTICAL} size="lg" variant="tertiary" />}
+                customTrigger={
+                    <Button
+                        iconLeft={IconType.DOTS_VERTICAL}
+                        size="lg"
+                        variant="tertiary"
+                    />
+                }
                 disabled={!canRemove}
                 size="md"
             >
-                <Dropdown.Item onClick={() => onRemoveMember(index)}>{t('app.shared.addressesInput.item.remove')}</Dropdown.Item>
+                <Dropdown.Item onClick={() => onRemoveMember(index)}>
+                    {t('app.shared.addressesInput.item.remove')}
+                </Dropdown.Item>
             </Dropdown.Container>
         </Card>
     );

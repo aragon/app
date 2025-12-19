@@ -4,19 +4,27 @@ import packageInfo from '../../../../../package.json' with { type: 'json' };
 class MiddlewareUtils {
     middleware = (request: NextRequest): NextResponse => {
         const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
-        const cspHeader = this.getContentSecurityPolicies(nonce, process.env.NEXT_PUBLIC_ENV!).join('; ');
+        const cspHeader = this.getContentSecurityPolicies(
+            nonce,
+            process.env.NEXT_PUBLIC_ENV!,
+        ).join('; ');
 
         const requestHeaders = new Headers(request.headers);
         requestHeaders.set('x-nonce', nonce);
         requestHeaders.set('Content-Security-Policy', cspHeader);
 
-        const response = NextResponse.next({ request: { headers: requestHeaders } });
+        const response = NextResponse.next({
+            request: { headers: requestHeaders },
+        });
         response.headers.set('Content-Security-Policy', cspHeader);
 
         return response;
     };
 
-    private getContentSecurityPolicies = (nonce: string, env: string): string[] => {
+    private getContentSecurityPolicies = (
+        nonce: string,
+        env: string,
+    ): string[] => {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
@@ -26,8 +34,14 @@ class MiddlewareUtils {
         const allowedInFrameHosts = ['https://app.cg'];
         const allowedInFrameHostsNonProd = ['https://vercel.live'];
 
-        const scriptSrc = isProd ? `'strict-dynamic'` : isLocal ? `'unsafe-eval'` : 'https://vercel.live';
-        const frameSrc = isProd ? allowedInFrameHosts.join(' ') : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
+        const scriptSrc = isProd
+            ? `'strict-dynamic'`
+            : isLocal
+              ? `'unsafe-eval'`
+              : 'https://vercel.live';
+        const frameSrc = isProd
+            ? allowedInFrameHosts.join(' ')
+            : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
         const policies = [
@@ -54,7 +68,7 @@ class MiddlewareUtils {
 
             if (sentryUri && sentryKey) {
                 const reportUri = `${sentryUri}?sentry_key=${encodeURIComponent(
-                    sentryKey
+                    sentryKey,
                 )}&sentry_environment=${encodeURIComponent(envName)}&sentry_release=${encodeURIComponent(release)}`;
                 policies.push(`report-uri ${reportUri}`);
             }

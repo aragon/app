@@ -2,7 +2,10 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { AssetSelectionDialog } from '../dialogs/assetSelectionDialog/assetSelectionDialog';
 import { FinanceDialogId } from './financeDialogId';
 
-export const financeDialogsDefinitions: Record<FinanceDialogId, IDialogComponentDefinitions> = {
+export const financeDialogsDefinitions: Record<
+    FinanceDialogId,
+    IDialogComponentDefinitions
+> = {
     [FinanceDialogId.ASSET_SELECTION]: {
         Component: AssetSelectionDialog,
         hiddenDescription: 'app.finance.assetSelectionDialog.a11y.description',

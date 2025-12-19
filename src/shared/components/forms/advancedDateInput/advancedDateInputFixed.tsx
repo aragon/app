@@ -12,10 +12,24 @@ import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputBaseProps } from './advancedDateInput.api';
 import { AdvancedDateInputInfoText } from './advancedDateInputInfoText';
 
-export interface IAdvancedDateInputFixedProps extends IAdvancedDateInputBaseProps, ComponentProps<'div'> {}
+export interface IAdvancedDateInputFixedProps
+    extends IAdvancedDateInputBaseProps,
+        ComponentProps<'div'> {}
 
-export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (props) => {
-    const { field, label, infoText, minDuration, minTime, validateMinDuration, className, infoDisplay, ...otherProps } = props;
+export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (
+    props,
+) => {
+    const {
+        field,
+        label,
+        infoText,
+        minDuration,
+        minTime,
+        validateMinDuration,
+        className,
+        infoDisplay,
+        ...otherProps
+    } = props;
     const { t } = useTranslations();
 
     const { setValue, trigger } = useFormContext();
@@ -24,25 +38,45 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
     const defaultValue = minTime.plus({ days, hours, minutes });
 
     const validateFixedTime = (value: IDateFixed) =>
-        dateUtils.validateFixedTime({ value, minTime, minDuration: validateMinDuration ? minDuration : undefined });
+        dateUtils.validateFixedTime({
+            value,
+            minTime,
+            minDuration: validateMinDuration ? minDuration : undefined,
+        });
 
-    const fixedDateField = useFormField<Record<string, IDateFixed>, typeof field>(field, {
+    const fixedDateField = useFormField<
+        Record<string, IDateFixed>,
+        typeof field
+    >(field, {
         rules: { validate: validateFixedTime },
         label,
         defaultValue: dateUtils.dateToFixedDate(defaultValue) ?? undefined,
     });
 
-    const handleFixedDateTimeChange = (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        const sanitizedValue = sanitizePlainText(event.target.value);
-        const normalizedValue = type === 'time' ? timeUtils.normalizeTimeValue(sanitizedValue) : sanitizedValue;
-        const newValue = { ...fixedDateField.value, [type]: normalizedValue };
-        setValue(field, newValue, { shouldValidate: false });
-    };
+    const handleFixedDateTimeChange =
+        (type: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+            const sanitizedValue = sanitizePlainText(event.target.value);
+            const normalizedValue =
+                type === 'time'
+                    ? timeUtils.normalizeTimeValue(sanitizedValue)
+                    : sanitizedValue;
+            const newValue = {
+                ...fixedDateField.value,
+                [type]: normalizedValue,
+            };
+            setValue(field, newValue, { shouldValidate: false });
+        };
 
     const handleInputBlur = () => trigger(field);
 
     return (
-        <Card className={classNames('flex flex-col gap-4 p-6 shadow-neutral-sm', className)} {...otherProps}>
+        <Card
+            className={classNames(
+                'flex flex-col gap-4 p-6 shadow-neutral-sm',
+                className,
+            )}
+            {...otherProps}
+        >
             <div className="flex flex-col justify-between gap-4 md:flex-row">
                 <InputDate
                     className="w-full md:w-1/3"
@@ -66,7 +100,11 @@ export const AdvancedDateInputFixed: React.FC<IAdvancedDateInputFixedProps> = (p
                     placeholder="UTC +2"
                 />
             </div>
-            <AdvancedDateInputInfoText field={fixedDateField} infoDisplay={infoDisplay} infoText={infoText} />
+            <AdvancedDateInputInfoText
+                field={fixedDateField}
+                infoDisplay={infoDisplay}
+                infoText={infoText}
+            />
         </Card>
     );
 };

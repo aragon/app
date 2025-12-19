@@ -12,7 +12,11 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { LockToVoteUpdateSettingsAction } from '../../components/lockToVoteActions/lockToVoteUpdateSettingsAction';
-import type { ILockToVoteActionChangeSettings, ILockToVotePluginSettings, ILockToVotePluginSettingsToken } from '../../types';
+import type {
+    ILockToVoteActionChangeSettings,
+    ILockToVotePluginSettings,
+    ILockToVotePluginSettingsToken,
+} from '../../types';
 import { LockToVoteProposalActionType } from '../../types/enum';
 import { lockToVoteSettingsUtils } from '../lockToVoteSettingsUtils';
 import { defaultUpdateSettings } from './lockToVoteActionDefinitions';
@@ -43,10 +47,15 @@ export interface INormalizeChangeSettingsParams {
     token: ILockToVotePluginSettingsToken;
 }
 
-export type IGetLockToVoteActionsResult = IActionComposerPluginData<IDaoPlugin<ILockToVotePluginSettings>>;
+export type IGetLockToVoteActionsResult = IActionComposerPluginData<
+    IDaoPlugin<ILockToVotePluginSettings>
+>;
 
 class LockToVoteActionUtils {
-    getLockToVoteActions = ({ plugin, t }: IGetLockToVoteActionProps): IGetLockToVoteActionsResult => {
+    getLockToVoteActions = ({
+        plugin,
+        t,
+    }: IGetLockToVoteActionProps): IGetLockToVoteActionsResult => {
         const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
@@ -68,35 +77,55 @@ class LockToVoteActionUtils {
             items: [
                 {
                     id: `${address}-${LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS}`,
-                    name: t(`app.plugins.lockToVote.lockToVoteActions.${LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS}`),
+                    name: t(
+                        `app.plugins.lockToVote.lockToVoteActions.${LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS}`,
+                    ),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(
+                        plugin,
+                        t,
+                    ),
                     meta: plugin,
                 },
             ],
             components: {
-                [LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS]: LockToVoteUpdateSettingsAction,
+                [LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS]:
+                    LockToVoteUpdateSettingsAction,
             },
         };
     };
 
-    isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ILockToVoteActionChangeSettings =>
+    isChangeSettingsAction = (
+        action: IProposalAction | ITokenProposalAction,
+    ): action is ILockToVoteActionChangeSettings =>
         action.type === LockToVoteProposalActionType.UPDATE_VOTE_SETTINGS;
 
-    normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
+    normalizeChangeSettingsAction = (
+        params: INormalizeChangeSettingsParams,
+    ): IGukProposalActionChangeSettings => {
         const { action, t, token } = params;
-        const { type, proposedSettings, existingSettings, ...otherValues } = action;
+        const { type, proposedSettings, existingSettings, ...otherValues } =
+            action;
 
         const completeExistingSettings = { ...existingSettings, token };
-        const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
+        const completeProposedSettings = {
+            ...completeExistingSettings,
+            ...proposedSettings,
+        };
 
-        const parsedExistingSettings = lockToVoteSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
-        const parsedProposedSettings = lockToVoteSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
+        const parsedExistingSettings = lockToVoteSettingsUtils.parseSettings({
+            settings: completeExistingSettings,
+            t,
+        });
+        const parsedProposedSettings = lockToVoteSettingsUtils.parseSettings({
+            settings: completeProposedSettings,
+            t,
+        });
 
         return {
             ...otherValues,

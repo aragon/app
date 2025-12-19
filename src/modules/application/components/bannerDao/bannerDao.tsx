@@ -25,7 +25,10 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { isAdminMember, adminPlugin } = useAdminStatus({ daoId: dao.id, network: dao.network });
+    const { isAdminMember, adminPlugin } = useAdminStatus({
+        daoId: dao.id,
+        network: dao.network,
+    });
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
@@ -38,9 +41,15 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
-    const displayAdminMemberBanner = isAdminMember && process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
+    const displayAdminMemberBanner =
+        isAdminMember &&
+        process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
 
-    const bannerType = displayAdminMemberBanner ? 'adminMember' : adminPlugin ? 'adminPlugin' : null;
+    const bannerType = displayAdminMemberBanner
+        ? 'adminMember'
+        : adminPlugin
+          ? 'adminPlugin'
+          : null;
 
     if (bannerType == null) {
         return null;
@@ -50,7 +59,12 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
         <Banner message={t(`app.application.bannerDao.${bannerType}.message`)}>
             <div className="flex gap-3">
                 {bannerType === 'adminMember' && (
-                    <Button iconLeft={IconType.PLUS} onClick={handleBannerActionClick} size="sm" variant="secondary">
+                    <Button
+                        iconLeft={IconType.PLUS}
+                        onClick={handleBannerActionClick}
+                        size="sm"
+                        variant="secondary"
+                    >
                         {t('app.application.bannerDao.adminMember.action')}
                     </Button>
                 )}
@@ -65,7 +79,11 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
                     </Button>
                 )}
                 {isAdminMember && (
-                    <Button href={`${daoUrl}/settings`} size="sm" variant="tertiary">
+                    <Button
+                        href={`${daoUrl}/settings`}
+                        size="sm"
+                        variant="tertiary"
+                    >
                         {t('app.application.bannerDao.adminMember.manage')}
                     </Button>
                 )}

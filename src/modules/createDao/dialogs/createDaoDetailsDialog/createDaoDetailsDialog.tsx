@@ -2,20 +2,26 @@ import { useRouter } from 'next/navigation';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IWizardDetailsDialogStep, WizardDetailsDialog } from '@/shared/components/wizardDetailsDialog';
+import {
+    type IWizardDetailsDialogStep,
+    WizardDetailsDialog,
+} from '@/shared/components/wizardDetailsDialog';
 
 export interface ICreateDaoDetailsDialogProps extends IDialogComponentProps {}
 
-export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = (props) => {
+export const CreateDaoDetailsDialog: React.FC<ICreateDaoDetailsDialogProps> = (
+    props,
+) => {
     const { id } = props.location;
 
     const { t } = useTranslations();
 
     const router = useRouter();
 
-    const { check: checkWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: () => router.push('/create/dao'),
-    });
+    const { check: checkWalletConnection, result: isConnected } =
+        useConnectedWalletGuard({
+            onSuccess: () => router.push('/create/dao'),
+        });
 
     const steps: IWizardDetailsDialogStep[] = [
         {

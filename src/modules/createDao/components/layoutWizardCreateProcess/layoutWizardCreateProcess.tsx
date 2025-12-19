@@ -9,7 +9,9 @@ export interface ILayoutWizardCreateProcessProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const LayoutWizardCreateProcess: React.FC<ILayoutWizardCreateProcessProps> = async (props) => {
+export const LayoutWizardCreateProcess: React.FC<
+    ILayoutWizardCreateProcessProps
+> = async (props) => {
     const { params } = props;
     const { addressOrEns, network } = await params;
 

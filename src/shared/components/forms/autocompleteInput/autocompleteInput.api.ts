@@ -62,7 +62,8 @@ export interface IAutocompleteInputItemIndex extends IAutocompleteInputItem {
     index: number;
 }
 
-export interface IAutocompleteInputProps extends Omit<IInputTextProps, 'onChange'> {
+export interface IAutocompleteInputProps
+    extends Omit<IInputTextProps, 'onChange'> {
     /**
      * Items to be rendered.
      */

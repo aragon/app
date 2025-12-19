@@ -1,8 +1,13 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { type IProposalActionWithdrawToken, ProposalActionType } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalActionWithdrawToken,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from './proposalAction';
 
-export const generateProposalActionWithdrawToken = (action?: Partial<IProposalActionWithdrawToken>): IProposalActionWithdrawToken => ({
+export const generateProposalActionWithdrawToken = (
+    action?: Partial<IProposalActionWithdrawToken>,
+): IProposalActionWithdrawToken => ({
     ...generateProposalAction(),
     type: ProposalActionType.TRANSFER,
     sender: { address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },

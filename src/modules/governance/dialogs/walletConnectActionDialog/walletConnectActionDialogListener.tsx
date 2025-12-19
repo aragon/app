@@ -1,4 +1,11 @@
-import { Avatar, Dialog, Heading, IconType, Link, Spinner } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    Dialog,
+    Heading,
+    IconType,
+    Link,
+    Spinner,
+} from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -24,7 +31,9 @@ export interface IWalletConnectActionDialogListenerProps {
     onClose: () => void;
 }
 
-export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDialogListenerProps> = (props) => {
+export const WalletConnectActionDialogListener: React.FC<
+    IWalletConnectActionDialogListenerProps
+> = (props) => {
     const { appMetadata, actions, onAddActionsClick, onClose } = props;
 
     const { t } = useTranslations();
@@ -35,14 +44,19 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
     const hasActions = actions.length > 0;
 
     const primaryActionLink = {
-        label: t('app.governance.walletConnectActionDialog.listener.action.open'),
+        label: t(
+            'app.governance.walletConnectActionDialog.listener.action.open',
+        ),
         href: url,
         iconRight: IconType.LINK_EXTERNAL,
         target: '_blank',
     };
 
     const primaryActionButton = {
-        label: t('app.governance.walletConnectActionDialog.listener.action.addActions', { count: actions.length }),
+        label: t(
+            'app.governance.walletConnectActionDialog.listener.action.addActions',
+            { count: actions.length },
+        ),
         onClick: onAddActionsClick,
     };
 
@@ -59,7 +73,9 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                     <Heading size="h3">{name}</Heading>
                     <div className="flex flex-row gap-3">
                         <p className="font-normal text-base text-primary-400 leading-tight">
-                            {t('app.governance.walletConnectActionDialog.listener.progress')}
+                            {t(
+                                'app.governance.walletConnectActionDialog.listener.progress',
+                            )}
                         </p>
                         <Spinner size="md" variant="primary" />
                     </div>
@@ -67,19 +83,37 @@ export const WalletConnectActionDialogListener: React.FC<IWalletConnectActionDia
                 <div className="h-[1px] w-full bg-neutral-100" />
                 <div className="flex flex-col gap-3 md:gap-4">
                     <p className="text-balance font-normal text-neutral-500 leading-normal">
-                        <span>{t('app.governance.walletConnectActionDialog.listener.info_1')}</span>
+                        <span>
+                            {t(
+                                'app.governance.walletConnectActionDialog.listener.info_1',
+                            )}
+                        </span>
                         <span className="text-primary-400">{name} </span>
-                        <span>{t('app.governance.walletConnectActionDialog.listener.info_2')}</span>
+                        <span>
+                            {t(
+                                'app.governance.walletConnectActionDialog.listener.info_2',
+                            )}
+                        </span>
                     </p>
-                    <Link href="https://www.aragon.org/how-to/dapp-connect" isExternal={true} variant="neutral">
-                        {t('app.governance.walletConnectActionDialog.listener.helpLink')}
+                    <Link
+                        href="https://www.aragon.org/how-to/dapp-connect"
+                        isExternal={true}
+                        variant="neutral"
+                    >
+                        {t(
+                            'app.governance.walletConnectActionDialog.listener.helpLink',
+                        )}
                     </Link>
                 </div>
             </Dialog.Content>
             <Dialog.Footer
-                primaryAction={hasActions ? primaryActionButton : primaryActionLink}
+                primaryAction={
+                    hasActions ? primaryActionButton : primaryActionLink
+                }
                 secondaryAction={{
-                    label: t('app.governance.walletConnectActionDialog.listener.action.cancel'),
+                    label: t(
+                        'app.governance.walletConnectActionDialog.listener.action.cancel',
+                    ),
                     onClick: onClose,
                 }}
             />

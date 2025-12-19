@@ -1,1 +1,4 @@
-export { type ITokenPluginHasExecutePermissionParams, tokenPluginUtils } from './tokenPluginUtils';
+export {
+    type ITokenPluginHasExecutePermissionParams,
+    tokenPluginUtils,
+} from './tokenPluginUtils';

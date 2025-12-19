@@ -27,21 +27,36 @@ export interface ISppVotingTerminalMultiBodySummaryDefaultProps {
     canVote: boolean;
 }
 
-export const SppVotingTerminalMultiBodySummaryDefault: React.FC<ISppVotingTerminalMultiBodySummaryDefaultProps> = (props) => {
+export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
+    ISppVotingTerminalMultiBodySummaryDefaultProps
+> = (props) => {
     const { proposal, body, stage, canVote } = props;
 
     const { t } = useTranslations();
-    const { data: ensName } = useEnsName({ address: body as Hex, chainId: mainnet.id });
+    const { data: ensName } = useEnsName({
+        address: body as Hex,
+        chainId: mainnet.id,
+    });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const displayName = ensName ?? addressUtils.truncateAddress(body);
     const showStatus = stageStatus !== ProposalStatus.PENDING;
-    const { label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
+    const { label, style } = sppProposalUtils.getBodyResultStatus({
+        proposal,
+        body,
+        stage,
+        canVote,
+    });
 
     return (
         <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
             {displayName}
-            {showStatus && <span className={classNames(style, 'lowercase')}> {t(label)}</span>}
+            {showStatus && (
+                <span className={classNames(style, 'lowercase')}>
+                    {' '}
+                    {t(label)}
+                </span>
+            )}
         </p>
     );
 };

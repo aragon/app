@@ -7,7 +7,7 @@ import { governanceServiceKeys } from '../../governanceServiceKeys';
 
 export const proposalBySlugOptions = <TProposal extends IProposal = IProposal>(
     params: IGetProposalBySlugParams,
-    options?: QueryOptions<TProposal>
+    options?: QueryOptions<TProposal>,
 ): SharedQueryOptions<TProposal> => ({
     queryKey: governanceServiceKeys.proposalBySlug(params),
     queryFn: () => governanceService.getProposalBySlug(params),
@@ -16,5 +16,5 @@ export const proposalBySlugOptions = <TProposal extends IProposal = IProposal>(
 
 export const useProposalBySlug = <TProposal extends IProposal = IProposal>(
     params: IGetProposalBySlugParams,
-    options?: QueryOptions<TProposal>
+    options?: QueryOptions<TProposal>,
 ) => useQuery(proposalBySlugOptions(params, options));

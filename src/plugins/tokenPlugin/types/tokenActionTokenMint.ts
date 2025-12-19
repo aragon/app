@@ -2,7 +2,8 @@ import type { IProposalActionTokenMint as IGukProposalActionTokenMint } from '@a
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { TokenProposalActionType } from './enum';
 
-export interface ITokenActionTokenMint extends Omit<IGukProposalActionTokenMint, 'type' | 'receiver'> {
+export interface ITokenActionTokenMint
+    extends Omit<IGukProposalActionTokenMint, 'type' | 'receiver'> {
     /**
      * The type of the proposal action.
      */

@@ -1,4 +1,10 @@
-import { AvatarIcon, type AvatarIconVariant, IconType, ProposalVotingTab, Tabs } from '@aragon/gov-ui-kit';
+import {
+    AvatarIcon,
+    type AvatarIconVariant,
+    IconType,
+    ProposalVotingTab,
+    Tabs,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
@@ -27,17 +33,27 @@ export interface ISppVotingTerminalBodyBreakdownDefaultProps {
     children: React.ReactNode;
 }
 
-const statusToIcon: Record<string, { icon: IconType; variant: AvatarIconVariant } | undefined> = {
+const statusToIcon: Record<
+    string,
+    { icon: IconType; variant: AvatarIconVariant } | undefined
+> = {
     success: { icon: IconType.CHECKMARK, variant: 'success' },
     failure: { icon: IconType.CLOSE, variant: 'critical' },
 };
 
-export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalBodyBreakdownDefaultProps> = (props) => {
+export const SppVotingTerminalBodyBreakdownDefault: React.FC<
+    ISppVotingTerminalBodyBreakdownDefaultProps
+> = (props) => {
     const { proposal, body, stage, canVote, children } = props;
 
     const { t } = useTranslations();
 
-    const { status, label, style } = sppProposalUtils.getBodyResultStatus({ proposal, body, stage, canVote });
+    const { status, label, style } = sppProposalUtils.getBodyResultStatus({
+        proposal,
+        body,
+        stage,
+        canVote,
+    });
     const statusIcon = statusToIcon[status];
 
     return (
@@ -46,11 +62,16 @@ export const SppVotingTerminalBodyBreakdownDefault: React.FC<ISppVotingTerminalB
                 className={classNames(
                     'rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral-sm md:px-6 md:py-5',
                     'flex w-full min-w-fit flex-row justify-between gap-2',
-                    style
+                    style,
                 )}
             >
                 {t(label)}
-                {statusIcon != null && <AvatarIcon icon={statusIcon.icon} variant={statusIcon.variant} />}
+                {statusIcon != null && (
+                    <AvatarIcon
+                        icon={statusIcon.icon}
+                        variant={statusIcon.variant}
+                    />
+                )}
             </div>
             {children}
         </Tabs.Content>

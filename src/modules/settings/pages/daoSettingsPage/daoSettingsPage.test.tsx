@@ -6,7 +6,9 @@ import { DaoSettingsPage, type IDaoSettingsPageProps } from './daoSettingsPage';
 import { DaoSettingsPageClient } from './daoSettingsPageClient';
 
 jest.mock('./daoSettingsPageClient', () => ({
-    DaoSettingsPageClient: jest.fn(() => <div data-testid="page-client-mock" />),
+    DaoSettingsPageClient: jest.fn(() => (
+        <div data-testid="page-client-mock" />
+    )),
 }));
 
 describe('<DaoSettingsPage /> component', () => {
@@ -20,9 +22,14 @@ describe('<DaoSettingsPage /> component', () => {
         resolveDaoIdSpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IDaoSettingsPageProps>) => {
+    const createTestComponent = async (
+        props?: Partial<IDaoSettingsPageProps>,
+    ) => {
         const completeProps: IDaoSettingsPageProps = {
-            params: Promise.resolve({ addressOrEns: '0x123', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                addressOrEns: '0x123',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
         const Component = await DaoSettingsPage(completeProps);
@@ -37,6 +44,9 @@ describe('<DaoSettingsPage /> component', () => {
         render(await createTestComponent());
 
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
-        expect(DaoSettingsPageClient).toHaveBeenCalledWith(expect.objectContaining({ daoId }), undefined);
+        expect(DaoSettingsPageClient).toHaveBeenCalledWith(
+            expect.objectContaining({ daoId }),
+            undefined,
+        );
     });
 });

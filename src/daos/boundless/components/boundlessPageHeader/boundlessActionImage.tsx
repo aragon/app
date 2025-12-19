@@ -18,13 +18,19 @@ export interface IBoundlessActionImageProps {
 
 const MotionImage = motion.create(Image);
 
-export const BoundlessActionImage: React.FC<IBoundlessActionImageProps> = (props) => {
+export const BoundlessActionImage: React.FC<IBoundlessActionImageProps> = (
+    props,
+) => {
     const { image, alt, isHovered } = props;
 
     return (
         <MotionImage
             alt={alt}
-            animate={isHovered ? { scale: 2.25, x: 8, y: 32 } : { scale: 1, x: 0, y: 0 }}
+            animate={
+                isHovered
+                    ? { scale: 2.25, x: 8, y: 32 }
+                    : { scale: 1, x: 0, y: 0 }
+            }
             className="-z-10"
             height={144}
             initial={{ scale: 1, x: 0, y: 0 }}

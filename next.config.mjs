@@ -2,7 +2,9 @@ import BundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
 
-const withBundleAnalyzer = BundleAnalyzer({ enabled: process.env.ANALYZE === 'true' });
+const withBundleAnalyzer = BundleAnalyzer({
+    enabled: process.env.ANALYZE === 'true',
+});
 
 const webFunctionalities = [
     'accelerometer=()',
@@ -47,9 +49,12 @@ const sentryConfig = {
     // Aragon organisation on Sentry
     org: process.env.SENTRY_ORG ?? process.env.NEXT_PUBLIC_SENTRY_ORG,
     // Sentry project
-    project: process.env.SENTRY_PROJECT ?? process.env.NEXT_PUBLIC_SENTRY_PROJECT,
+    project:
+        process.env.SENTRY_PROJECT ?? process.env.NEXT_PUBLIC_SENTRY_PROJECT,
     // Auth token needed for uploading source maps
-    authToken: process.env.SENTRY_AUTH_TOKEN ?? process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
+    authToken:
+        process.env.SENTRY_AUTH_TOKEN ??
+        process.env.NEXT_SECRET_SENTRY_AUTH_TOKEN,
     // Make sure to upload all files and source maps
     widenClientFileUpload: true,
     // Use tunneling to forward events to Sentry and circumvent ad blockers
@@ -60,7 +65,9 @@ const sentryConfig = {
     release: { name: packageInfo.version },
     // Delete sourcemaps from NextJs build after upload
     // Disable source map upload for preview environments
-    sourcemaps: disableSourcemaps ? { disable: true } : { deleteSourcemapsAfterUpload: true },
+    sourcemaps: disableSourcemaps
+        ? { disable: true }
+        : { deleteSourcemapsAfterUpload: true },
     // Disable sending data to Sentry
     telemetry: false,
     // Options to optimise the bundle size
@@ -90,9 +97,15 @@ const nextConfig = {
                     // Do not allow usage of application inside iframes
                     { key: 'X-Frame-Options', value: 'DENY' },
                     // Enforce HTTPS access
-                    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+                    {
+                        key: 'Strict-Transport-Security',
+                        value: 'max-age=63072000; includeSubDomains; preload',
+                    },
                     // Explicitly disable all web functionalities
-                    { key: 'Permissions-Policy', value: webFunctionalities.join(', ') },
+                    {
+                        key: 'Permissions-Policy',
+                        value: webFunctionalities.join(', '),
+                    },
                     // Prevents the browser from guessing the content type when related header is not set
                     { key: 'X-Content-Type-Options', value: 'nosniff' },
                     // Allow browsers to proactively perform domain name resolution on extenal resources (links, CSS, ..)
@@ -103,9 +116,15 @@ const nextConfig = {
             {
                 source: '/api/:path*',
                 headers: [
-                    { key: 'Access-Control-Allow-Origin', value: process.env.NEXT_PUBLIC_API_ALLOWED_DOMAIN },
+                    {
+                        key: 'Access-Control-Allow-Origin',
+                        value: process.env.NEXT_PUBLIC_API_ALLOWED_DOMAIN,
+                    },
                     { key: 'Access-Control-Allow-Methods', value: 'POST' },
-                    { key: 'Access-Control-Allow-Headers', value: 'Content-Type' },
+                    {
+                        key: 'Access-Control-Allow-Headers',
+                        value: 'Content-Type',
+                    },
                 ],
             },
         ];

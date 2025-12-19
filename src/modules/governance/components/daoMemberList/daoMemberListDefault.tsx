@@ -1,12 +1,26 @@
-import { DataListContainer, DataListPagination, DataListRoot, MemberDataListItem } from '@aragon/gov-ui-kit';
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    MemberDataListItem,
+} from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import type { IGetMemberListParams, IMember } from '@/modules/governance/api/governanceService';
+import type {
+    IGetMemberListParams,
+    IMember,
+} from '@/modules/governance/api/governanceService';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
-import { type IDaoPlugin, type IPluginSettings, useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    type IPluginSettings,
+    useDao,
+} from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
-export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
+export interface IDaoMemberListDefaultProps<
+    TSettings extends IPluginSettings = IPluginSettings,
+> {
     /**
      * Initial parameters to use for fetching the member list.
      */
@@ -33,18 +47,38 @@ export interface IDaoMemberListDefaultProps<TSettings extends IPluginSettings = 
     children?: ReactNode;
 }
 
-export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (props) => {
-    const { initialParams, hidePagination, children, onMemberClick, layoutClassNames } = props;
+export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
+    props,
+) => {
+    const {
+        initialParams,
+        hidePagination,
+        children,
+        onMemberClick,
+        layoutClassNames,
+    } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
 
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, memberList } = useMemberListData(initialParams);
+    const {
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        memberList,
+    } = useMemberListData(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const processedLayoutClassNames = layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
+    const processedLayoutClassNames =
+        layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
-    const getMemberLink = (member: IMember) => (onMemberClick != null ? undefined : daoUtils.getDaoUrl(dao, `members/${member.address}`));
+    const getMemberLink = (member: IMember) =>
+        onMemberClick != null
+            ? undefined
+            : daoUtils.getDaoUrl(dao, `members/${member.address}`);
 
     return (
         <DataListRoot

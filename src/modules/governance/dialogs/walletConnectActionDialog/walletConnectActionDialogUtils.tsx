@@ -2,7 +2,10 @@ import { fromHex, isHex } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
 import type { useDecodeTransaction } from '../../api/smartContractService';
-import type { ISessionRequest, ISessionRequestParams } from '../../api/walletConnectService';
+import type {
+    ISessionRequest,
+    ISessionRequestParams,
+} from '../../api/walletConnectService';
 
 export interface ISessionRequestToActionParams {
     /**
@@ -20,10 +23,13 @@ export interface ISessionRequestToActionParams {
     /**
      * Async function to decode the transaction.
      */
-    decodeTransactionAsync: ReturnType<typeof useDecodeTransaction>['mutateAsync'];
+    decodeTransactionAsync: ReturnType<
+        typeof useDecodeTransaction
+    >['mutateAsync'];
 }
 
-export interface IDecodeRawActionParams extends Omit<ISessionRequestToActionParams, 'sessionRequest'> {
+export interface IDecodeRawActionParams
+    extends Omit<ISessionRequestToActionParams, 'sessionRequest'> {
     /**
      * Raw action to be decoded.
      */
@@ -31,7 +37,9 @@ export interface IDecodeRawActionParams extends Omit<ISessionRequestToActionPara
 }
 
 class WalletConnectActionDialogUtils {
-    sessionRequestToAction = async (params: ISessionRequestToActionParams): Promise<IProposalAction | undefined> => {
+    sessionRequestToAction = async (
+        params: ISessionRequestToActionParams,
+    ): Promise<IProposalAction | undefined> => {
         const { request } = params.sessionRequest.params;
 
         // Only sendTransaction session requests are currently supported
@@ -39,10 +47,15 @@ class WalletConnectActionDialogUtils {
             return;
         }
 
-        const rawAction = this.requestParamsToRawAction(request.params as ISessionRequestParams[typeof request.method]);
+        const rawAction = this.requestParamsToRawAction(
+            request.params as ISessionRequestParams[typeof request.method],
+        );
 
         try {
-            const decodedAction = await this.decodeRawAction({ ...params, rawAction });
+            const decodedAction = await this.decodeRawAction({
+                ...params,
+                rawAction,
+            });
             return decodedAction;
         } catch {
             // Silently ignore eventual errors and just return the raw action when decode function fails.
@@ -50,15 +63,25 @@ class WalletConnectActionDialogUtils {
         }
     };
 
-    private requestParamsToRawAction = (params: ISessionRequestParams['eth_sendTransaction']): IProposalAction => {
+    private requestParamsToRawAction = (
+        params: ISessionRequestParams['eth_sendTransaction'],
+    ): IProposalAction => {
         const { from, to, data, value } = params[0];
         const parsedValue = this.parseRequestValue(value);
 
-        return { from, to, data, value: parsedValue, type: 'unknown', inputData: null };
+        return {
+            from,
+            to,
+            data,
+            value: parsedValue,
+            type: 'unknown',
+            inputData: null,
+        };
     };
 
     // Request value might be set as hex instead of number
-    private parseRequestValue = (value = '0') => (isHex(value) ? fromHex(value, 'bigint').toString() : value);
+    private parseRequestValue = (value = '0') =>
+        isHex(value) ? fromHex(value, 'bigint').toString() : value;
 
     private decodeRawAction = async (params: IDecodeRawActionParams) => {
         const { daoNetwork, decodeTransactionAsync, rawAction } = params;
@@ -71,4 +94,5 @@ class WalletConnectActionDialogUtils {
     };
 }
 
-export const walletConnectActionDialogUtils = new WalletConnectActionDialogUtils();
+export const walletConnectActionDialogUtils =
+    new WalletConnectActionDialogUtils();

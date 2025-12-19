@@ -32,11 +32,19 @@ export const voteListFilterParam = 'vote';
 export const VoteList: React.FC<IVoteListProps> = (props) => {
     const { initialParams, daoId, pluginAddress, isVeto } = props;
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.BODY, pluginAddress, includeSubPlugins: true });
+    const processPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.BODY,
+        pluginAddress,
+        includeSubPlugins: true,
+    });
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, pluginAddress: plugin.meta.address },
+            queryParams: {
+                ...initialParams.queryParams,
+                pluginAddress: plugin.meta.address,
+            },
         };
         return { ...plugin, props: { initialParams: pluginInitialParams } };
     });

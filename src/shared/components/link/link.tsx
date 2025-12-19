@@ -7,17 +7,29 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 export interface ILinkProps extends ComponentProps<'a'> {}
 
 export const Link: React.FC<ILinkProps> = (props) => {
-    const { href = {}, rel = '', target, onClick, className, ...otherProps } = props;
+    const {
+        href = {},
+        rel = '',
+        target,
+        onClick,
+        className,
+        ...otherProps
+    } = props;
 
     const { isBlocked } = useBlockNavigationContext();
     const { t } = useTranslations();
 
-    const processedRel = target === '_blank' ? `noopener noreferrer ${rel}` : rel;
+    const processedRel =
+        target === '_blank' ? `noopener noreferrer ${rel}` : rel;
 
     // Run the "are you sure?" guard in capture phase to ensure Next.js doesn't start a navigation
     // (and thus top-loader) before we can cancel it.
     const handleClickCapture = (e: React.MouseEvent<HTMLAnchorElement>) => {
-        if (isBlocked && !target && !window.confirm(t('app.shared.confirmWizardExit.message'))) {
+        if (
+            isBlocked &&
+            !target &&
+            !window.confirm(t('app.shared.confirmWizardExit.message'))
+        ) {
             e.preventDefault();
             e.stopPropagation();
         }
@@ -33,7 +45,9 @@ export const Link: React.FC<ILinkProps> = (props) => {
 
     return (
         <NextLink
-            className={classNames(className, { 'pointer-events-none': isDisabled })}
+            className={classNames(className, {
+                'pointer-events-none': isDisabled,
+            })}
             href={href}
             onClick={handleClick}
             onClickCapture={handleClickCapture}

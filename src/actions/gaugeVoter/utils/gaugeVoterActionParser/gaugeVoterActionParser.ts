@@ -1,11 +1,20 @@
-import { addressUtils, type IProposalActionInputDataParameter } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    type IProposalActionInputDataParameter,
+} from '@aragon/gov-ui-kit';
 
 class GaugeVoterActionParser {
-    parseInputData = (params: IProposalActionInputDataParameter[]): { gaugeAddress: string } => {
+    parseInputData = (
+        params: IProposalActionInputDataParameter[],
+    ): { gaugeAddress: string } => {
         const [gaugeAddress] = params.map((param) => param.value);
 
         return {
-            gaugeAddress: typeof gaugeAddress === 'string' && addressUtils.isAddress(gaugeAddress) ? gaugeAddress : '',
+            gaugeAddress:
+                typeof gaugeAddress === 'string' &&
+                addressUtils.isAddress(gaugeAddress)
+                    ? gaugeAddress
+                    : '',
         };
     };
 }

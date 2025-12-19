@@ -5,10 +5,16 @@ import type { IGetDaoByEnsParams } from '../../daoService.api';
 import { daoServiceKeys } from '../../daoServiceKeys';
 import type { IDao } from '../../domain';
 
-export const daoByEnsOptions = (params: IGetDaoByEnsParams, options?: QueryOptions<IDao>): SharedQueryOptions<IDao> => ({
+export const daoByEnsOptions = (
+    params: IGetDaoByEnsParams,
+    options?: QueryOptions<IDao>,
+): SharedQueryOptions<IDao> => ({
     queryKey: daoServiceKeys.daoByEns(params),
     queryFn: () => daoService.getDaoByEns(params),
     ...options,
 });
 
-export const useDaoByEns = (params: IGetDaoByEnsParams, options?: QueryOptions<IDao>) => useQuery(daoByEnsOptions(params, options));
+export const useDaoByEns = (
+    params: IGetDaoByEnsParams,
+    options?: QueryOptions<IDao>,
+) => useQuery(daoByEnsOptions(params, options));

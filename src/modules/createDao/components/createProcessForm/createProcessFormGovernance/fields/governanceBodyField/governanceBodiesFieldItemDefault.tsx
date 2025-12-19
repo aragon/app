@@ -1,4 +1,8 @@
-import { addressUtils, ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ChainEntityType,
+    DefinitionList,
+} from '@aragon/gov-ui-kit';
 import type { Hash } from 'viem';
 import { useEnsName } from 'wagmi';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
@@ -19,7 +23,9 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
     daoId: string;
 }
 
-export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldItemDefaultProps> = (props) => {
+export const GovernanceBodiesFieldItemDefault: React.FC<
+    IGovernanceBodiesFieldItemDefaultProps
+> = (props) => {
     const { body, daoId } = props;
 
     const { t } = useTranslations();
@@ -27,34 +33,48 @@ export const GovernanceBodiesFieldItemDefault: React.FC<IGovernanceBodiesFieldIt
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
     const { data: ensName } = useEnsName({
-        address: body.type !== BodyType.NEW ? (body.address as Hash) : undefined,
+        address:
+            body.type !== BodyType.NEW ? (body.address as Hash) : undefined,
     });
 
     if (body.type !== BodyType.EXTERNAL && body.type !== BodyType.EXISTING) {
         return null;
     }
 
-    const bodyAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: body.address });
+    const bodyAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: body.address,
+    });
 
     return (
         <DefinitionList.Container>
             {ensName != null && (
                 <DefinitionList.Item
                     link={{ href: bodyAddressLink }}
-                    term={t('app.createDao.createProcessForm.governance.bodyField.default.ens')}
+                    term={t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.ens',
+                    )}
                 >
                     {ensName}
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
                 link={{ href: bodyAddressLink }}
-                term={t('app.createDao.createProcessForm.governance.bodyField.default.address')}
+                term={t(
+                    'app.createDao.createProcessForm.governance.bodyField.default.address',
+                )}
             >
                 {addressUtils.truncateAddress(body.address)}
             </DefinitionList.Item>
             {createProcessFormUtils.isBodySafe(body) && (
-                <DefinitionList.Item term={t('app.createDao.createProcessForm.governance.bodyField.default.type')}>
-                    {t('app.createDao.createProcessForm.governance.bodyField.default.safe')}
+                <DefinitionList.Item
+                    term={t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.type',
+                    )}
+                >
+                    {t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.safe',
+                    )}
                 </DefinitionList.Item>
             )}
         </DefinitionList.Container>

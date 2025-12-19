@@ -2,10 +2,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { DateTime } from 'luxon';
 import { FormWrapper } from '@/shared/testUtils';
-import { AdvancedDateInputFixed, type IAdvancedDateInputFixedProps } from './advancedDateInputFixed';
+import {
+    AdvancedDateInputFixed,
+    type IAdvancedDateInputFixedProps,
+} from './advancedDateInputFixed';
 
 describe('<AdvancedDateInputFixed /> component', () => {
-    const createTestComponent = (props?: Partial<IAdvancedDateInputFixedProps>) => {
+    const createTestComponent = (
+        props?: Partial<IAdvancedDateInputFixedProps>,
+    ) => {
         const completeProps: IAdvancedDateInputFixedProps = {
             field: 'startTime',
             label: 'Test Label',
@@ -24,8 +29,12 @@ describe('<AdvancedDateInputFixed /> component', () => {
     it('renders the fixed date-time inputs', () => {
         render(createTestComponent());
 
-        expect(screen.getByLabelText(/advancedDateInput.fixed.date/)).toBeInTheDocument();
-        expect(screen.getByLabelText(/advancedDateInput.fixed.time/)).toBeInTheDocument();
+        expect(
+            screen.getByLabelText(/advancedDateInput.fixed.date/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByLabelText(/advancedDateInput.fixed.time/),
+        ).toBeInTheDocument();
     });
 
     it('validates fixed date-time input', async () => {
@@ -35,7 +44,15 @@ describe('<AdvancedDateInputFixed /> component', () => {
         const label = 'End Time';
         const validateMinDuration = true;
 
-        render(createTestComponent({ label, infoText, minDuration, minTime, validateMinDuration }));
+        render(
+            createTestComponent({
+                label,
+                infoText,
+                minDuration,
+                minTime,
+                validateMinDuration,
+            }),
+        );
 
         const dateInput = screen.getByLabelText(/advancedDateInput.fixed.date/);
         const timeInput = screen.getByLabelText(/advancedDateInput.fixed.time/);
@@ -50,7 +67,11 @@ describe('<AdvancedDateInputFixed /> component', () => {
         await userEvent.type(timeInput, '12:30');
         await userEvent.tab();
 
-        await waitFor(() => expect(alert).toHaveTextContent(/formField.error.validate \(name=End Time/));
+        await waitFor(() =>
+            expect(alert).toHaveTextContent(
+                /formField.error.validate \(name=End Time/,
+            ),
+        );
 
         // Set a valid date-time
         await userEvent.clear(timeInput);

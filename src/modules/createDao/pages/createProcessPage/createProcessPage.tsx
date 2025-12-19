@@ -10,14 +10,19 @@ export interface ICreateProcessPageProps {
     params: Promise<ICreateProcessPageParams>;
 }
 
-export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (props) => {
+export const CreateProcessPage: React.FC<ICreateProcessPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const { addressOrEns, network, pluginAddress } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     return (
         <Page.Container>
-            <CreateProcessPageClient daoId={daoId} pluginAddress={pluginAddress} />
+            <CreateProcessPageClient
+                daoId={daoId}
+                pluginAddress={pluginAddress}
+            />
         </Page.Container>
     );
 };

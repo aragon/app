@@ -14,7 +14,9 @@ export const useConfirmWizardExit = (isFormDirty: boolean) => {
         };
 
         const handlePopState = () => {
-            const confirmLeave = window.confirm(t('app.shared.confirmWizardExit.message'));
+            const confirmLeave = window.confirm(
+                t('app.shared.confirmWizardExit.message'),
+            );
 
             if (confirmLeave) {
                 window.removeEventListener('popstate', handlePopState);

@@ -1,4 +1,7 @@
-import type { ApiVersion, IBuildVersionedUrlOptions } from './apiVersionUtils.api';
+import type {
+    ApiVersion,
+    IBuildVersionedUrlOptions,
+} from './apiVersionUtils.api';
 
 class ApiVersionUtils {
     /**
@@ -21,8 +24,12 @@ class ApiVersionUtils {
      * buildVersionedUrl('/daos/:id') // '/v3/daos/:id' (dev/staging)
      * buildVersionedUrl('/v2/permissions/:address', { forceVersion: 'v2' }) // '/v2/permissions/:address'
      */
-    buildVersionedUrl = (path: string, options?: IBuildVersionedUrlOptions): string => {
-        const version = options?.forceVersion ?? options?.version ?? this.getApiVersion();
+    buildVersionedUrl = (
+        path: string,
+        options?: IBuildVersionedUrlOptions,
+    ): string => {
+        const version =
+            options?.forceVersion ?? options?.version ?? this.getApiVersion();
 
         // Replace existing version prefix or prepend new one
         if (/^\/v\d+\//.test(path)) {

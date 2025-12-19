@@ -1,10 +1,20 @@
-import { AlertInline, Card, InputContainer, InputNumber, invariant, Progress, Tag } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    Card,
+    InputContainer,
+    InputNumber,
+    invariant,
+    Progress,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useId } from 'react';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { INumberProgressInputProps } from './numberProgressInput.api';
 
-export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) => {
+export const NumberProgressInput: React.FC<INumberProgressInputProps> = (
+    props,
+) => {
     const {
         label,
         helpText,
@@ -22,7 +32,10 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         ...otherProps
     } = props;
 
-    invariant(total > 0, 'NumberProgressInput: total property must be greater than 0');
+    invariant(
+        total > 0,
+        'NumberProgressInput: total property must be greater than 0',
+    );
 
     const containerId = useId();
 
@@ -32,22 +45,37 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
         onChange,
         alert,
         ...numberField
-    } = useFormField<Record<string, number | undefined>, typeof fieldName>(fieldName, {
-        label,
-        rules: { required: true, max: total },
-        defaultValue,
-    });
+    } = useFormField<Record<string, number | undefined>, typeof fieldName>(
+        fieldName,
+        {
+            label,
+            rules: { required: true, max: total },
+            defaultValue,
+        },
+    );
 
     const progressValue = (value * 100) / total;
 
     const valueLabelLength = valueLabel?.length ?? 0;
-    const valueLabelLeft = Math.min(100 - valueLabelLength, Math.max(progressValue, valueLabelLength));
-    const valueLabelStyle = { left: `${valueLabelLeft.toString()}%`, transform: 'translateX(-50%)' };
+    const valueLabelLeft = Math.min(
+        100 - valueLabelLength,
+        Math.max(progressValue, valueLabelLength),
+    );
+    const valueLabelStyle = {
+        left: `${valueLabelLeft.toString()}%`,
+        transform: 'translateX(-50%)',
+    };
 
     const processedAlert = alertProp ?? alert;
 
     return (
-        <InputContainer className={className} helpText={helpText} id={containerId} label={label} useCustomWrapper={true}>
+        <InputContainer
+            className={className}
+            helpText={helpText}
+            id={containerId}
+            label={label}
+            useCustomWrapper={true}
+        >
             <Card className="flex w-full flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:gap-6 md:p-6">
                 <div className="flex flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
                     <InputNumber
@@ -61,9 +89,12 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                         {...otherProps}
                     />
                     <div
-                        className={classNames('mt-4 flex w-full grow flex-col gap-2 md:mt-0', {
-                            'self-end': totalLabel,
-                        })}
+                        className={classNames(
+                            'mt-4 flex w-full grow flex-col gap-2 md:mt-0',
+                            {
+                                'self-end': totalLabel,
+                            },
+                        )}
                     >
                         <div className="flex items-center gap-3">
                             {tags && <Tag {...tags[0]} />}
@@ -76,16 +107,27 @@ export const NumberProgressInput: React.FC<INumberProgressInputProps> = (props) 
                                         {valueLabel}
                                     </p>
                                 )}
-                                <Progress thresholdIndicator={thresholdIndicator} value={progressValue} />
+                                <Progress
+                                    thresholdIndicator={thresholdIndicator}
+                                    value={progressValue}
+                                />
                             </div>
                             {tags && <Tag {...tags[1]} />}
                         </div>
 
-                        {totalLabel && <p className="self-end font-normal text-neutral-500 text-xs leading-tight">{totalLabel}</p>}
+                        {totalLabel && (
+                            <p className="self-end font-normal text-neutral-500 text-xs leading-tight">
+                                {totalLabel}
+                            </p>
+                        )}
                     </div>
                 </div>
                 {processedAlert && (
-                    <AlertInline className="self-center md:self-auto" message={processedAlert.message} variant={processedAlert.variant} />
+                    <AlertInline
+                        className="self-center md:self-auto"
+                        message={processedAlert.message}
+                        variant={processedAlert.variant}
+                    />
                 )}
             </Card>
         </InputContainer>

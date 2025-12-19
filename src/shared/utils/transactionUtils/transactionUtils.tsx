@@ -7,15 +7,25 @@ import type { ITransactionRequest } from './transactionUtils.api';
 
 class TransactionUtils {
     stringToMetadataHex = (value: string): Hex => {
-        const ipfsUri = ipfsUtils.isUri(value) ? value : ipfsUtils.cidToUri(value)!;
+        const ipfsUri = ipfsUtils.isUri(value)
+            ? value
+            : ipfsUtils.cidToUri(value)!;
 
         return toHex(ipfsUri);
     };
 
-    encodeTransactionRequests = (transactions: ITransactionRequest[], network: Network): ITransactionRequest =>
-        transactions.length === 1 ? transactions[0] : this.buildExecutorTransaction(transactions, network);
+    encodeTransactionRequests = (
+        transactions: ITransactionRequest[],
+        network: Network,
+    ): ITransactionRequest =>
+        transactions.length === 1
+            ? transactions[0]
+            : this.buildExecutorTransaction(transactions, network);
 
-    private buildExecutorTransaction = (transactions: ITransactionRequest[], network: Network): ITransactionRequest => {
+    private buildExecutorTransaction = (
+        transactions: ITransactionRequest[],
+        network: Network,
+    ): ITransactionRequest => {
         const { globalExecutor } = networkDefinitions[network].addresses;
 
         const transactionData = encodeFunctionData({
@@ -24,7 +34,11 @@ class TransactionUtils {
             args: [zeroHash, transactions, BigInt(0)],
         });
 
-        const transaction = { to: globalExecutor, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: globalExecutor,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return transaction;
     };

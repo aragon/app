@@ -14,7 +14,9 @@ describe('useDao query', () => {
         const params = { id: 'test' };
         const dao = generateDao();
         getDaoSpy.mockResolvedValue(dao);
-        const { result } = renderHook(() => useDao({ urlParams: params }), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useDao({ urlParams: params }), {
+            wrapper: ReactQueryWrapper,
+        });
         await waitFor(() => expect(result.current.data).toEqual(dao));
     });
 });

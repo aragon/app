@@ -1,1 +1,4 @@
-export { type IMinParticipationFieldProps, MinParticipationField } from './minParticipationField';
+export {
+    type IMinParticipationFieldProps,
+    MinParticipationField,
+} from './minParticipationField';

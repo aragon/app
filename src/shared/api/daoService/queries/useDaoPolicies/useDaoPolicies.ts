@@ -7,12 +7,14 @@ import type { IDaoPolicy } from '../../domain';
 
 export const daoPoliciesOptions = (
     params: IGetDaoPoliciesParams,
-    options?: QueryOptions<IDaoPolicy[]>
+    options?: QueryOptions<IDaoPolicy[]>,
 ): SharedQueryOptions<IDaoPolicy[]> => ({
     queryKey: daoServiceKeys.daoPolicies(params),
     queryFn: () => daoService.getDaoPolicies(params),
     ...options,
 });
 
-export const useDaoPolicies = (params: IGetDaoPoliciesParams, options?: QueryOptions<IDaoPolicy[]>) =>
-    useQuery(daoPoliciesOptions(params, options));
+export const useDaoPolicies = (
+    params: IGetDaoPoliciesParams,
+    options?: QueryOptions<IDaoPolicy[]>,
+) => useQuery(daoPoliciesOptions(params, options));

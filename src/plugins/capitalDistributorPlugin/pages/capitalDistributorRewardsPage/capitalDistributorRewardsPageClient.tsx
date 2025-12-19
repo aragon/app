@@ -24,43 +24,74 @@ export interface ICapitalDistributorRewardsPageClientProps {
     initialParams: IGetCampaignListParams;
 }
 
-export const CapitalDistributorRewardsPageClient: React.FC<ICapitalDistributorRewardsPageClientProps> = (props) => {
+export const CapitalDistributorRewardsPageClient: React.FC<
+    ICapitalDistributorRewardsPageClientProps
+> = (props) => {
     const { dao, initialParams } = props;
 
     const { address } = useAccount();
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const plugin = useDaoPlugins({ daoId: dao.id, interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR })![0];
+    const plugin = useDaoPlugins({
+        daoId: dao.id,
+        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+    })![0];
 
     const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;
 
     const connectAction = {
-        label: t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.action'),
+        label: t(
+            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.action',
+        ),
         onClick: () => open(ApplicationDialogId.CONNECT_WALLET),
         iconLeft: IconType.BLOCKCHAIN_WALLET,
     };
 
     return (
         <Page.Content>
-            <Page.Main title={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title')}>
+            <Page.Main
+                title={t(
+                    'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.title',
+                )}
+            >
                 {!address && (
                     <CardEmptyState
-                        description={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.description')}
-                        heading={t('app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.heading')}
+                        description={t(
+                            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.description',
+                        )}
+                        heading={t(
+                            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.main.connect.heading',
+                        )}
                         objectIllustration={{ object: 'WALLET' }}
                         primaryButton={connectAction}
                     />
                 )}
-                {address && <CapitalDistributorCampaignList dao={dao} initialParams={initialParams} />}
+                {address && (
+                    <CapitalDistributorCampaignList
+                        dao={dao}
+                        initialParams={initialParams}
+                    />
+                )}
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={pluginName}>
-                    {description && <p className="text-base text-gray-500">{description}</p>}
-                    {address && <CapitalDistributorRewardsStats initialParams={initialParams} />}
+                    {description && (
+                        <p className="text-base text-gray-500">{description}</p>
+                    )}
+                    {address && (
+                        <CapitalDistributorRewardsStats
+                            initialParams={initialParams}
+                        />
+                    )}
                     {links?.map(({ url, name }) => (
-                        <Link href={url} isExternal={true} key={url} showUrl={true}>
+                        <Link
+                            href={url}
+                            isExternal={true}
+                            key={url}
+                            showUrl={true}
+                        >
                             {name}
                         </Link>
                     ))}

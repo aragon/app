@@ -7,7 +7,9 @@ import { type IWizardPageStepProps, WizardPageStep } from './wizardPageStep';
 jest.mock('../../wizard', () => ({
     useWizardContext: jest.fn(),
     useWizardFooter: jest.fn(),
-    Wizard: { Step: (props: Wizard.IWizardStepProps) => <div>{props.children}</div> },
+    Wizard: {
+        Step: (props: Wizard.IWizardStepProps) => <div>{props.children}</div>,
+    },
 }));
 
 describe('<WizardPageStep /> component', () => {
@@ -41,7 +43,9 @@ describe('<WizardPageStep /> component', () => {
         const title = 'Step title';
         const description = 'Step description';
         render(createTestComponent({ title, description }));
-        expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { level: 1, name: title }),
+        ).toBeInTheDocument();
         expect(screen.getByText(description)).toBeInTheDocument();
     });
 
@@ -52,17 +56,27 @@ describe('<WizardPageStep /> component', () => {
         } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         expect(screen.getByRole('alert')).toBeInTheDocument();
-        expect(screen.getByText(/wizardPage.step.error.required.title/)).toBeInTheDocument();
-        expect(screen.getByText(/wizardPage.step.error.required.description/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/wizardPage.step.error.required.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/wizardPage.step.error.required.description/),
+        ).toBeInTheDocument();
     });
 
     it('renders a back button to go to the previous step when current step is not the first', async () => {
         const hasPrevious = true;
         const onPreviousClick = jest.fn();
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
-        useWizardFooterSpy.mockReturnValue({ onPreviousClick } as unknown as Wizard.IUseWizardFooterReturn);
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasPrevious }),
+        );
+        useWizardFooterSpy.mockReturnValue({
+            onPreviousClick,
+        } as unknown as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
-        const button = screen.getByRole('button', { name: /wizardPage.step.back/ });
+        const button = screen.getByRole('button', {
+            name: /wizardPage.step.back/,
+        });
         expect(button).toBeInTheDocument();
         expect(button.classList).not.toContain('invisible');
         await userEvent.click(button);
@@ -71,23 +85,34 @@ describe('<WizardPageStep /> component', () => {
 
     it('hides the back button when step is the first step', () => {
         const hasPrevious = false;
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasPrevious }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasPrevious }),
+        );
         render(createTestComponent());
-        expect(screen.getByRole('button', { name: /wizardPage.step.back/ }).classList).toContain('invisible');
+        expect(
+            screen.getByRole('button', { name: /wizardPage.step.back/ })
+                .classList,
+        ).toContain('invisible');
     });
 
     it('renders a submit button to submit the values of the current step', () => {
         const submitLabel = 'Save';
-        useWizardFooterSpy.mockReturnValue({ submitLabel } as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            submitLabel,
+        } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
-        const button = screen.getByRole<HTMLButtonElement>('button', { name: submitLabel });
+        const button = screen.getByRole<HTMLButtonElement>('button', {
+            name: submitLabel,
+        });
         expect(button).toBeInTheDocument();
         expect(button.type).toEqual('submit');
     });
 
     it('renders a submit help text when provided', () => {
         const submitHelpText = 'Some useful help text';
-        useWizardFooterSpy.mockReturnValue({ submitHelpText } as Wizard.IUseWizardFooterReturn);
+        useWizardFooterSpy.mockReturnValue({
+            submitHelpText,
+        } as Wizard.IUseWizardFooterReturn);
         render(createTestComponent());
         expect(screen.getByText(submitHelpText)).toBeInTheDocument();
     });

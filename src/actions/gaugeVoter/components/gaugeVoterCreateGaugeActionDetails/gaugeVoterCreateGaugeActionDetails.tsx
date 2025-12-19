@@ -17,13 +17,21 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { IGaugeVoterActionCreateGauge } from '../../types/gaugeVoterActionCreateGauge';
 import { gaugeVoterActionParser } from '../../utils/gaugeVoterActionParser';
 
-export interface IGaugeVoterCreateGaugeActionDetailsProps extends IProposalActionComponentProps<IProposalActionData<IProposalAction>> {}
+export interface IGaugeVoterCreateGaugeActionDetailsProps
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction>
+    > {}
 
-export const GaugeVoterCreateGaugeActionDetails: React.FC<IGaugeVoterCreateGaugeActionDetailsProps> = (props) => {
+export const GaugeVoterCreateGaugeActionDetails: React.FC<
+    IGaugeVoterCreateGaugeActionDetailsProps
+> = (props) => {
     const { action } = props;
 
-    const { gaugeMetadata, daoId } = action as unknown as IGaugeVoterActionCreateGauge;
-    const { gaugeAddress } = gaugeVoterActionParser.parseInputData(action.inputData?.parameters ?? []);
+    const { gaugeMetadata, daoId } =
+        action as unknown as IGaugeVoterActionCreateGauge;
+    const { gaugeAddress } = gaugeVoterActionParser.parseInputData(
+        action.inputData?.parameters ?? [],
+    );
     const { name, description, avatar, links } = gaugeMetadata ?? {};
     const avatarSrc = ipfsUtils.cidToSrc(avatar);
 
@@ -31,29 +39,57 @@ export const GaugeVoterCreateGaugeActionDetails: React.FC<IGaugeVoterCreateGauge
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
-    const gaugeAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: gaugeAddress });
+    const gaugeAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: gaugeAddress,
+    });
 
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
                 copyValue={gaugeAddress}
                 link={{ href: gaugeAddressLink }}
-                term={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.gaugeAddressTerm')}
+                term={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.gaugeAddressTerm',
+                )}
             >
                 {addressUtils.truncateAddress(gaugeAddress)}
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.nameTerm')}>{name}</DefinitionList.Item>
-            <DefinitionList.Item term={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.avatarTerm')}>
+            <DefinitionList.Item
+                term={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.nameTerm',
+                )}
+            >
+                {name}
+            </DefinitionList.Item>
+            <DefinitionList.Item
+                term={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.avatarTerm',
+                )}
+            >
                 <Avatar size="md" src={avatarSrc} />
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.descriptionTerm')}>
+            <DefinitionList.Item
+                term={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.descriptionTerm',
+                )}
+            >
                 {description}
             </DefinitionList.Item>
             {links && links.length > 0 && (
-                <DefinitionList.Item term={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.resourcesTerm')}>
+                <DefinitionList.Item
+                    term={t(
+                        'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.resourcesTerm',
+                    )}
+                >
                     <div className="flex flex-col gap-3">
                         {links.map((link) => (
-                            <Link href={link.url} isExternal={true} key={link.url} showUrl={true}>
+                            <Link
+                                href={link.url}
+                                isExternal={true}
+                                key={link.url}
+                                showUrl={true}
+                            >
                                 {link.name}
                             </Link>
                         ))}

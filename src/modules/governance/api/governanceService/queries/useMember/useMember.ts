@@ -7,12 +7,14 @@ import { governanceServiceKeys } from '../../governanceServiceKeys';
 
 export const memberOptions = <TMember extends IMember = IMember>(
     params: IGetMemberParams,
-    options?: QueryOptions<TMember>
+    options?: QueryOptions<TMember>,
 ): SharedQueryOptions<TMember> => ({
     queryKey: governanceServiceKeys.member(params),
     queryFn: () => governanceService.getMember(params),
     ...options,
 });
 
-export const useMember = <TMember extends IMember = IMember>(params: IGetMemberParams, options?: QueryOptions<TMember>) =>
-    useQuery(memberOptions(params, options));
+export const useMember = <TMember extends IMember = IMember>(
+    params: IGetMemberParams,
+    options?: QueryOptions<TMember>,
+) => useQuery(memberOptions(params, options));

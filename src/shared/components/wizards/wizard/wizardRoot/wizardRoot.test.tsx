@@ -1,9 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
-import { generateFormContext, generateFormContextState } from '@/shared/testUtils';
+import {
+    generateFormContext,
+    generateFormContextState,
+} from '@/shared/testUtils';
 import { type IWizardRootProps, WizardRoot } from './wizardRoot';
 
-jest.mock('next/dynamic', () => ({ __esModule: true, default: () => () => <div data-testid="dev-tool" /> }));
+jest.mock('next/dynamic', () => ({
+    __esModule: true,
+    default: () => () => <div data-testid="dev-tool" />,
+}));
 
 describe('<WizardRoot /> component', () => {
     const useFormSpy = jest.spyOn(ReactHookForm, 'useForm');
@@ -28,7 +34,10 @@ describe('<WizardRoot /> component', () => {
     it('initializes the form with the default value and correct mode', () => {
         const defaultValues = { key: 'value' };
         render(createTestComponent({ defaultValues }));
-        expect(useFormSpy).toHaveBeenCalledWith({ mode: 'onTouched', defaultValues });
+        expect(useFormSpy).toHaveBeenCalledWith({
+            mode: 'onTouched',
+            defaultValues,
+        });
     });
 
     it('renders the dev-tools for the form manager when useDevTool is set to true', () => {
@@ -39,9 +48,14 @@ describe('<WizardRoot /> component', () => {
 
     it('resets the form submit state on submit success', () => {
         const reset = jest.fn();
-        const formState = generateFormContextState({ isSubmitSuccessful: true });
+        const formState = generateFormContextState({
+            isSubmitSuccessful: true,
+        });
         useFormSpy.mockReturnValue(generateFormContext({ formState, reset }));
         render(createTestComponent());
-        expect(reset).toHaveBeenCalledWith(undefined, { keepDirty: true, keepValues: true });
+        expect(reset).toHaveBeenCalledWith(undefined, {
+            keepDirty: true,
+            keepValues: true,
+        });
     });
 });

@@ -1,1 +1,4 @@
-export { DaoTransactionsPage, type IDaoTransactionsPageProps } from './daoTransactionsPage';
+export {
+    DaoTransactionsPage,
+    type IDaoTransactionsPageProps,
+} from './daoTransactionsPage';

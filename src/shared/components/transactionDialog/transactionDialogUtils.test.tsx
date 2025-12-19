@@ -5,40 +5,61 @@ import { transactionDialogUtils } from './transactionDialogUtils';
 describe('transactionDialog utils', () => {
     describe('queryToStepState', () => {
         it('returns pending when query status is pending and fetch status is fetching', () => {
-            expect(transactionDialogUtils.queryToStepState('pending', 'fetching')).toEqual('pending');
+            expect(
+                transactionDialogUtils.queryToStepState('pending', 'fetching'),
+            ).toEqual('pending');
         });
 
         it('returns idle when query status is pending but fetch status is idle', () => {
-            expect(transactionDialogUtils.queryToStepState('pending', 'idle')).toEqual('idle');
+            expect(
+                transactionDialogUtils.queryToStepState('pending', 'idle'),
+            ).toEqual('idle');
         });
 
-        it.each([{ queryStatus: 'success' }, { queryStatus: 'error' }])('returns $queryStatus when query status is $queryStatus', ({
+        it.each([
+            { queryStatus: 'success' },
+            { queryStatus: 'error' },
+        ])('returns $queryStatus when query status is $queryStatus', ({
             queryStatus,
         }) => {
-            const result = transactionDialogUtils.queryToStepState(queryStatus as UseQueryReturnType['status'], 'idle');
+            const result = transactionDialogUtils.queryToStepState(
+                queryStatus as UseQueryReturnType['status'],
+                'idle',
+            );
             expect(result).toEqual(queryStatus);
         });
     });
 
     describe('shouldIgnoreError', () => {
         it('returns false when error is not an instance of Error class', () => {
-            expect(transactionDialogUtils['shouldIgnoreError']('test')).toBeFalsy();
+            expect(
+                transactionDialogUtils['shouldIgnoreError']('test'),
+            ).toBeFalsy();
         });
 
         it('returns false when error does not match any of the ignore error list', () => {
-            expect(transactionDialogUtils['shouldIgnoreError']('unknown-error')).toBeFalsy();
+            expect(
+                transactionDialogUtils['shouldIgnoreError']('unknown-error'),
+            ).toBeFalsy();
         });
 
         it('returns true when error matches one of the ignore error list', () => {
-            const error = new Error('User rejected the request. stack: "Error: [...]');
-            expect(transactionDialogUtils['shouldIgnoreError'](error)).toBeTruthy();
+            const error = new Error(
+                'User rejected the request. stack: "Error: [...]',
+            );
+            expect(
+                transactionDialogUtils['shouldIgnoreError'](error),
+            ).toBeTruthy();
         });
     });
 
     describe('monitorTransactionError', () => {
         const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 
-        const shouldIgnoreErrorSpy = jest.spyOn(transactionDialogUtils as any, 'shouldIgnoreError');
+        const shouldIgnoreErrorSpy = jest.spyOn(
+            transactionDialogUtils as any,
+            'shouldIgnoreError',
+        );
 
         afterEach(() => {
             logErrorSpy.mockReset();

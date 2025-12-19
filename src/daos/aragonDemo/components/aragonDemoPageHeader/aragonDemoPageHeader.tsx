@@ -1,6 +1,11 @@
 'use client';
 
-import { Button, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -22,7 +27,9 @@ export interface IAragonDemoPageHeaderProps extends ComponentProps<'header'> {
     dao: IDao;
 }
 
-export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props) => {
+export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (
+    props,
+) => {
     const { dao, className, ...otherProps } = props;
 
     const router = useRouter();
@@ -30,46 +37,86 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (props
 
     const { name: title, description, id: daoId, metrics } = dao;
 
-    const proposalsCreated = formatterUtils.formatNumber(metrics.proposalsCreated, {
-        format: NumberFormat.GENERIC_SHORT,
+    const proposalsCreated = formatterUtils.formatNumber(
+        metrics.proposalsCreated,
+        {
+            format: NumberFormat.GENERIC_SHORT,
+        },
+    );
+
+    const daoTvl = formatterUtils.formatNumber(metrics.tvlUSD, {
+        format: NumberFormat.FIAT_TOTAL_SHORT,
     });
 
-    const daoTvl = formatterUtils.formatNumber(metrics.tvlUSD, { format: NumberFormat.FIAT_TOTAL_SHORT });
-
     const stats = [
-        { value: proposalsCreated, label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.proposals') },
-        { value: daoTvl, label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.treasury'), suffix: 'USD' },
+        {
+            value: proposalsCreated,
+            label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.proposals'),
+        },
+        {
+            value: daoTvl,
+            label: t('app.daos.aragonDemo.aragonDemoPageHeader.stat.treasury'),
+            suffix: 'USD',
+        },
     ];
 
     const plugin = useDaoPlugins({ daoId })![0];
 
-    const createProposalUrl = daoUtils.getDaoUrl(dao, `create/${plugin.meta.address}/proposal`)!;
+    const createProposalUrl = daoUtils.getDaoUrl(
+        dao,
+        `create/${plugin.meta.address}/proposal`,
+    )!;
 
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        permissionNamespace: 'proposal',
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onSuccess: () => router.push(createProposalUrl),
-        plugin: plugin.meta,
-        daoId,
-    });
+    const { check: createProposalGuard, result: canCreateProposal } =
+        usePermissionCheckGuard({
+            permissionNamespace: 'proposal',
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            onSuccess: () => router.push(createProposalUrl),
+            plugin: plugin.meta,
+            daoId,
+        });
 
-    const handleCtaClick = () => (canCreateProposal ? router.push(createProposalUrl) : createProposalGuard());
+    const handleCtaClick = () =>
+        canCreateProposal
+            ? router.push(createProposalUrl)
+            : createProposalGuard();
 
     return (
-        <header className={classNames('relative flex h-fit flex-col items-center justify-center md:h-[400px]', className)} {...otherProps}>
-            <Image alt="Aragon Demo Header" className="absolute top-0 left-0 -z-10 size-full object-cover" src={AragonDemoHeader} />
+        <header
+            className={classNames(
+                'relative flex h-fit flex-col items-center justify-center md:h-[400px]',
+                className,
+            )}
+            {...otherProps}
+        >
+            <Image
+                alt="Aragon Demo Header"
+                className="absolute top-0 left-0 -z-10 size-full object-cover"
+                src={AragonDemoHeader}
+            />
             <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
                 <div className="flex flex-col gap-y-2 md:gap-y-3">
-                    <h1 className="font-normal text-3xl text-neutral-0 leading-tight md:text-5xl">{title}</h1>
-                    <p className="max-w-screen-md font-normal text-base text-neutral-0 leading-normal md:text-xl">{description}</p>
+                    <h1 className="font-normal text-3xl text-neutral-0 leading-tight md:text-5xl">
+                        {title}
+                    </h1>
+                    <p className="max-w-screen-md font-normal text-base text-neutral-0 leading-normal md:text-xl">
+                        {description}
+                    </p>
                 </div>
                 <div className="flex w-full flex-col-reverse gap-6 md:flex-row md:items-center md:justify-between">
-                    <Button className="w-full md:max-w-fit" iconLeft={IconType.PLUS} onClick={handleCtaClick}>
+                    <Button
+                        className="w-full md:max-w-fit"
+                        iconLeft={IconType.PLUS}
+                        onClick={handleCtaClick}
+                    >
                         {t('app.daos.aragonDemo.aragonDemoPageHeader.cta')}
                     </Button>
                     <div className="flex flex-row gap-10 md:gap-12">
                         {stats.map((stat) => (
-                            <AragonDemoPageHeaderStat key={stat.label} {...stat} />
+                            <AragonDemoPageHeaderStat
+                                key={stat.label}
+                                {...stat}
+                            />
                         ))}
                     </div>
                 </div>

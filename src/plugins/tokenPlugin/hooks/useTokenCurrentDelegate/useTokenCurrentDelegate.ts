@@ -2,9 +2,14 @@ import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { erc20DelegatesAbi } from './erc20DelegatesAbi';
-import type { IUseTokenCurrentDelegateParams, IUseTokenCurrentDelegateResult } from './useTokenCurrentDelegate.api';
+import type {
+    IUseTokenCurrentDelegateParams,
+    IUseTokenCurrentDelegateResult,
+} from './useTokenCurrentDelegate.api';
 
-export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams): IUseTokenCurrentDelegateResult => {
+export const useTokenCurrentDelegate = (
+    params: IUseTokenCurrentDelegateParams,
+): IUseTokenCurrentDelegateResult => {
     const { tokenAddress, userAddress, network, enabled } = params;
 
     const { id: chainId } = networkDefinitions[network];
@@ -15,7 +20,10 @@ export const useTokenCurrentDelegate = (params: IUseTokenCurrentDelegateParams):
         functionName: 'delegates',
         args: [userAddress as Hex],
         query: {
-            enabled: enabled !== false && tokenAddress != null && userAddress != null,
+            enabled:
+                enabled !== false &&
+                tokenAddress != null &&
+                userAddress != null,
         },
         chainId,
     });

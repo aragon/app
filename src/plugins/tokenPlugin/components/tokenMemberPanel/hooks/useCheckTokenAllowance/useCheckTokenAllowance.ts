@@ -15,7 +15,9 @@ export interface IUseCheckTokenAllowanceParams {
     token: IToken;
 }
 
-export const useCheckTokenAllowance = (props: IUseCheckTokenAllowanceParams) => {
+export const useCheckTokenAllowance = (
+    props: IUseCheckTokenAllowanceParams,
+) => {
     const { spender, token } = props;
 
     const queryClient = useQueryClient();

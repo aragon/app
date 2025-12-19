@@ -1,5 +1,9 @@
 import { GovernanceType } from '@/modules/createDao/components/createProcessForm';
-import { generateSppPluginSettings, generateSppStage, generateSppStagePlugin } from '@/plugins/sppPlugin/testUtils';
+import {
+    generateSppPluginSettings,
+    generateSppStage,
+    generateSppStagePlugin,
+} from '@/plugins/sppPlugin/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils/generators/tokenPluginSettingsToken';
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
@@ -15,11 +19,17 @@ describe('daoProcessDetailsClient Utils', () => {
                     isBody: true,
                     isProcess: true,
                     settings: generateTokenPluginSettings({
-                        token: generateTokenPluginSettingsToken({ address: '0xToken' }),
+                        token: generateTokenPluginSettingsToken({
+                            address: '0xToken',
+                        }),
                     }),
                 });
 
-                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        plugin,
+                        [],
+                    );
 
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
@@ -41,7 +51,11 @@ describe('daoProcessDetailsClient Utils', () => {
                     settings: generatePluginSettings(), // no token
                 });
 
-                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        plugin,
+                        [],
+                    );
 
                 expect(result.governanceType).toBe(GovernanceType.BASIC);
                 expect('body' in result).toBe(true);
@@ -60,7 +74,11 @@ describe('daoProcessDetailsClient Utils', () => {
                     isProcess: true,
                 });
 
-                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        plugin,
+                        [],
+                    );
                 if ('body' in result) {
                     expect(result.body.name).toBe('Token Voting');
                 }
@@ -79,15 +97,23 @@ describe('daoProcessDetailsClient Utils', () => {
                     settings,
                 });
 
-                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(plugin, []);
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        plugin,
+                        [],
+                    );
                 expect(result.governanceType).toBe(GovernanceType.ADVANCED);
                 expect('stages' in result).toBe(true);
 
                 if ('stages' in result) {
                     expect(result.stages).toHaveLength(1);
                     expect(result.stages[0].settings.votingPeriod.days).toBe(0);
-                    expect(result.stages[0].settings.votingPeriod.hours).toBe(1);
-                    expect(result.stages[0].settings.votingPeriod.minutes).toBe(0);
+                    expect(result.stages[0].settings.votingPeriod.hours).toBe(
+                        1,
+                    );
+                    expect(result.stages[0].settings.votingPeriod.minutes).toBe(
+                        0,
+                    );
                 }
             });
 
@@ -97,7 +123,9 @@ describe('daoProcessDetailsClient Utils', () => {
                     name: 'Hydrated',
                     subdomain: 'token-voting',
                     settings: generateTokenPluginSettings({
-                        token: generateTokenPluginSettingsToken({ address: '0xHydratedToken' }),
+                        token: generateTokenPluginSettingsToken({
+                            address: '0xHydratedToken',
+                        }),
                     }),
                 });
 
@@ -121,7 +149,11 @@ describe('daoProcessDetailsClient Utils', () => {
                     settings,
                 });
 
-                const result = daoProcessDetailsClientUtils.pluginToProcessFormData(mainPlugin, [hydratedPlugin]);
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        mainPlugin,
+                        [hydratedPlugin],
+                    );
 
                 if ('stages' in result) {
                     const body = result.stages[0].bodies[0];
@@ -129,7 +161,11 @@ describe('daoProcessDetailsClient Utils', () => {
                     if ('subdomain' in body) {
                         expect(body.subdomain).toBe('token-voting');
                     }
-                    if ('governance' in body && typeof body.governance === 'object' && body.governance !== null) {
+                    if (
+                        'governance' in body &&
+                        typeof body.governance === 'object' &&
+                        body.governance !== null
+                    ) {
                         expect('token' in body.governance).toBe(true);
                     }
                 }

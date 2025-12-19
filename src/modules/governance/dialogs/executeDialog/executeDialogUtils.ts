@@ -15,7 +15,9 @@ export interface IBuildTransactionParams {
 const executeAbi = [
     {
         type: 'function',
-        inputs: [{ name: '_proposalId', internalType: 'uint256', type: 'uint256' }],
+        inputs: [
+            { name: '_proposalId', internalType: 'uint256', type: 'uint256' },
+        ],
         name: 'execute',
         outputs: [],
         stateMutability: 'nonpayable',
@@ -23,11 +25,21 @@ const executeAbi = [
 ];
 
 class ExecuteDialogUtils {
-    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { proposalIndex, pluginAddress } = params;
 
-        const data = encodeFunctionData({ abi: executeAbi, functionName: 'execute', args: [proposalIndex] });
-        const transaction = { to: pluginAddress as Hex, data, value: BigInt(0) };
+        const data = encodeFunctionData({
+            abi: executeAbi,
+            functionName: 'execute',
+            args: [proposalIndex],
+        });
+        const transaction = {
+            to: pluginAddress as Hex,
+            data,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

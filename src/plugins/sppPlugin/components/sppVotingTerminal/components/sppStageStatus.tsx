@@ -1,4 +1,9 @@
-import { Button, ChainEntityType, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    ChainEntityType,
+    IconType,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
@@ -38,14 +43,18 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         open(SppPluginDialogId.ADVANCE_STAGE, { params });
     };
 
-    const { check: promptWalletConnection, result: isConnected } = useConnectedWalletGuard({
-        onSuccess: openAdvanceStageDialog,
-    });
+    const { check: promptWalletConnection, result: isConnected } =
+        useConnectedWalletGuard({
+            onSuccess: openAdvanceStageDialog,
+        });
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
-    const isStageAdvanced = stage.stageIndex < proposal.stageIndex || proposal.executed.status;
+    const isStageAdvanced =
+        stage.stageIndex < proposal.stageIndex || proposal.executed.status;
 
-    const execution = proposal.stageExecutions.find((execution) => execution.stageIndex === stage.stageIndex);
+    const execution = proposal.stageExecutions.find(
+        (execution) => execution.stageIndex === stage.stageIndex,
+    );
     const advanceTransactionHref = buildEntityUrl({
         type: ChainEntityType.TRANSACTION,
         id: execution?.transactionHash,
@@ -54,7 +63,8 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
     const isLastStage = sppStageUtils.isLastStage(proposal, stage);
 
     // Display button when status is advanceable except for the last stage.
-    const displayAdvanceButton = stageStatus === ProposalStatus.ADVANCEABLE && !isLastStage;
+    const displayAdvanceButton =
+        stageStatus === ProposalStatus.ADVANCEABLE && !isLastStage;
 
     const minAdvanceTime = sppStageUtils.getStageMinAdvance(proposal, stage);
 
@@ -73,7 +83,10 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
           }
         : {
               label: 'advance',
-              onClick: () => (isConnected ? openAdvanceStageDialog() : promptWalletConnection()),
+              onClick: () =>
+                  isConnected
+                      ? openAdvanceStageDialog()
+                      : promptWalletConnection(),
               variant: 'primary' as const,
               disabled: !canAdvance,
           };
@@ -82,7 +95,13 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
 
     // Stage cannot be advanced anymore, display expired info text.
     if (stageStatus === ProposalStatus.EXPIRED) {
-        return <span className="text-right text-neutral-500">{t(`app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`)}</span>;
+        return (
+            <span className="text-right text-neutral-500">
+                {t(
+                    `app.plugins.spp.sppStageStatus.expired${advanceTimeContext}`,
+                )}
+            </span>
+        );
     }
 
     if (!displayAdvanceButton) {

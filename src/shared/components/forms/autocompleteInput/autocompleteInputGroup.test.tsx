@@ -1,8 +1,13 @@
 import { render, screen } from '@testing-library/react';
-import { AutocompleteInputGroup, type IAutocompleteInputGroupProps } from './autocompleteInputGroup';
+import {
+    AutocompleteInputGroup,
+    type IAutocompleteInputGroupProps,
+} from './autocompleteInputGroup';
 
 describe('<AutocompleteInputGroup /> component', () => {
-    const createTestComponent = (props?: Partial<IAutocompleteInputGroupProps>) => {
+    const createTestComponent = (
+        props?: Partial<IAutocompleteInputGroupProps>,
+    ) => {
         const completeProps: IAutocompleteInputGroupProps = {
             ...props,
         };

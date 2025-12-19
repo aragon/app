@@ -1,4 +1,11 @@
-import { addressUtils, clipboardUtils, DateFormat, formatterUtils, GukModulesProvider, IconType } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    clipboardUtils,
+    DateFormat,
+    formatterUtils,
+    GukModulesProvider,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -7,16 +14,26 @@ import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
-import { generateDao, generateDaoPlugin, generateReactQueryResultError, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultError,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
 import { generateMember, generateMemberMetrics } from '../../testUtils';
-import { DaoMemberDetailsPageClient, type IDaoMemberDetailsPageClientProps } from './daoMemberDetailsPageClient';
+import {
+    DaoMemberDetailsPageClient,
+    type IDaoMemberDetailsPageClientProps,
+} from './daoMemberDetailsPageClient';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof ReactQuery>('@aragon/gov-ui-kit'),
-    MemberAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="avatar-mock" />,
+    MemberAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="avatar-mock" />
+    ),
 }));
 
 jest.mock('@/modules/explore/components/daoList', () => ({
@@ -35,9 +52,19 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useBlockSpy = jest.spyOn(wagmi, 'useBlock');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao({ plugins: [generateDaoPlugin()] }) }));
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember() }));
-        useEfpStatsSpy.mockReturnValue(generateReactQueryResultSuccess({ data: { followers_count: 1, following_count: 2 } }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ plugins: [generateDaoPlugin()] }),
+            }),
+        );
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateMember() }),
+        );
+        useEfpStatsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { followers_count: 1, following_count: 2 },
+            }),
+        );
         useBlockSpy.mockReturnValue({} as wagmi.UseBlockReturnType);
     });
 
@@ -50,7 +77,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         (DaoList as jest.Mock).mockClear();
     });
 
-    const createTestComponent = (props?: Partial<IDaoMemberDetailsPageClientProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoMemberDetailsPageClientProps>,
+    ) => {
         const completeProps: IDaoMemberDetailsPageClientProps = {
             daoId: 'dao-id',
             address: '0x1234567890123456789012345678901234567890',
@@ -67,19 +96,29 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     };
 
     it('fetches and renders the member ens and avatar', () => {
-        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
+        const dao = generateDao({
+            address: 'dao-id',
+            plugins: [generateDaoPlugin({ address: 'plugin-address' })],
+        });
         const address = '0x1234567890123456789012345678901234567890';
         const ens = 'member.eth';
         const member = generateMember({ ens, address });
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: member }),
+        );
 
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
 
         render(createTestComponent({ address, daoId: dao.id }));
 
         expect(useMemberSpy).toHaveBeenCalledWith({
             urlParams: { address },
-            queryParams: { daoId: dao.id, pluginAddress: dao.plugins[0].address },
+            queryParams: {
+                daoId: dao.id,
+                pluginAddress: dao.plugins[0].address,
+            },
         });
         const ensHeading = screen.getByRole('heading', { level: 1, name: ens });
         expect(ensHeading).toBeInTheDocument();
@@ -89,7 +128,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('returns empty container on member fetch error', () => {
-        useMemberSpy.mockReturnValue(generateReactQueryResultError({ error: new Error() }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultError({ error: new Error() }),
+        );
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
@@ -98,7 +139,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ ens, address });
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: member }),
+        );
         render(createTestComponent({ address }));
         const clipboards = screen.getAllByTestId(IconType.COPY);
         expect(clipboards.length).toBe(2);
@@ -112,39 +155,68 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ ens, address });
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: member }),
+        );
         render(createTestComponent({ address }));
 
-        expect(screen.getByText(/daoMemberDetailsPage.aside.details.title/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.aside.details.title/),
+        ).toBeInTheDocument();
 
-        expect(screen.getByText(/daoMemberDetailsPage.aside.details.address/)).toBeInTheDocument();
-        const memberAddressLink = screen.getByRole('link', { name: addressUtils.truncateAddress(member.address) });
+        expect(
+            screen.getByText(/daoMemberDetailsPage.aside.details.address/),
+        ).toBeInTheDocument();
+        const memberAddressLink = screen.getByRole('link', {
+            name: addressUtils.truncateAddress(member.address),
+        });
 
         expect(memberAddressLink).toBeInTheDocument();
-        expect(memberAddressLink).toHaveAttribute('href', expect.stringMatching(member.address));
+        expect(memberAddressLink).toHaveAttribute(
+            'href',
+            expect.stringMatching(member.address),
+        );
 
-        expect(screen.getByText(/daoMemberDetailsPage.aside.details.ens/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.aside.details.ens/),
+        ).toBeInTheDocument();
         const memberEnsLink = screen.getByRole('link', { name: ens });
         expect(memberEnsLink).toBeInTheDocument();
-        expect(memberEnsLink).toHaveAttribute('href', expect.stringMatching(member.address));
+        expect(memberEnsLink).toHaveAttribute(
+            'href',
+            expect.stringMatching(member.address),
+        );
 
-        expect(screen.getByText(/daoMemberDetailsPage.aside.details.firstActivity/)).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                /daoMemberDetailsPage.aside.details.firstActivity/,
+            ),
+        ).toBeInTheDocument();
     });
 
     it('renders the formatted member stats', () => {
         render(createTestComponent());
-        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/),
+        ).toBeInTheDocument();
     });
 
     it('passes the correct params to the DaoList component', () => {
-        const dao = generateDao({ address: 'dao-id', plugins: [generateDaoPlugin({ address: 'plugin-address' })] });
+        const dao = generateDao({
+            address: 'dao-id',
+            plugins: [generateDaoPlugin({ address: 'plugin-address' })],
+        });
         const address = '0x1234567890123456789012345678901234567890';
         const member = generateMember({ ens: 'member.eth', address });
         const pageSize = 3;
         const excludeDaoId = dao.id;
 
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: member }));
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: member }),
+        );
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
 
         render(createTestComponent({ address, daoId: dao.id }));
         const expectedParams = {
@@ -156,11 +228,17 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 networks: networkUtils.getSupportedNetworks(),
             },
         };
-        expect(DaoList).toHaveBeenCalledWith(expect.objectContaining({ memberParams: expectedParams }), undefined);
+        expect(DaoList).toHaveBeenCalledWith(
+            expect.objectContaining({ memberParams: expectedParams }),
+            undefined,
+        );
     });
 
     it('renders fallback of `-` when lastActivity is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877, lastActivity: null });
+        const metrics = generateMemberMetrics({
+            firstActivity: 1_723_472_877,
+            lastActivity: null,
+        });
         useBlockSpy
             .mockReturnValueOnce({
                 data: { timestamp: 3_204_230_420 },
@@ -168,7 +246,11 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             .mockReturnValueOnce({
                 data: { timestamp: null },
             } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            }),
+        );
 
         render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
@@ -180,16 +262,27 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useBlockSpy.mockReturnValue({
             data: { timestamp: metrics.lastActivity },
         } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            }),
+        );
 
         render(createTestComponent());
 
         expect(screen.getByText('3')).toBeInTheDocument();
-        expect(screen.getByText(/daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/)).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                /daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/,
+            ),
+        ).toBeInTheDocument();
     });
 
     it('renders fallback of `-` when firstActivity is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: null, lastActivity: 1_723_472_877 });
+        const metrics = generateMemberMetrics({
+            firstActivity: null,
+            lastActivity: 1_723_472_877,
+        });
         useBlockSpy
             .mockReturnValueOnce({
                 data: { timestamp: null },
@@ -197,7 +290,11 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             .mockReturnValueOnce({
                 data: { timestamp: metrics.lastActivity },
             } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            }),
+        );
 
         render(createTestComponent());
         expect(screen.getByText('-')).toBeInTheDocument();
@@ -208,13 +305,20 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useBlockSpy.mockReturnValue({
             data: { timestamp: metrics.firstActivity },
         } as unknown as wagmi.UseBlockReturnType);
-        useMemberSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateMember({ metrics }) }));
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ metrics }),
+            }),
+        );
 
         render(createTestComponent());
 
-        const firstActivityDate = formatterUtils.formatDate(metrics.firstActivity! * 1000, {
-            format: DateFormat.YEAR_MONTH_DAY,
-        });
+        const firstActivityDate = formatterUtils.formatDate(
+            metrics.firstActivity! * 1000,
+            {
+                format: DateFormat.YEAR_MONTH_DAY,
+            },
+        );
         expect(screen.getByText(firstActivityDate!)).toBeInTheDocument();
     });
 });

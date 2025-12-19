@@ -10,7 +10,10 @@ import { type ILayoutDaoProps, LayoutDao } from './layoutDao';
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
+        <div
+            data-state={JSON.stringify(props.state)}
+            data-testid="hydration-mock"
+        >
             {props.children}
         </div>
     ),
@@ -20,7 +23,9 @@ jest.mock('../../navigations/navigationDao', () => ({
     NavigationDao: () => <div data-testid="navigation-dao-mock" />,
 }));
 
-jest.mock('../../bannerDao', () => ({ BannerDao: () => <div data-testid="banner-mock" /> }));
+jest.mock('../../bannerDao', () => ({
+    BannerDao: () => <div data-testid="banner-mock" />,
+}));
 
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
@@ -41,7 +46,10 @@ describe('<LayoutDao /> component', () => {
 
     const createTestComponent = async (props?: Partial<ILayoutDaoProps>) => {
         const completeProps: ILayoutDaoProps = {
-            params: Promise.resolve({ network: Network.ETHEREUM_SEPOLIA, addressOrEns: '0x12345' }),
+            params: Promise.resolve({
+                network: Network.ETHEREUM_SEPOLIA,
+                addressOrEns: '0x12345',
+            }),
             ...props,
         };
 
@@ -61,7 +69,9 @@ describe('<LayoutDao /> component', () => {
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
         render(await createTestComponent());
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
     });
 
     it('dehydrates the query client state', async () => {

@@ -1,10 +1,23 @@
-import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    type IProposalActionComponentProps,
+} from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { encodeFunctionData, erc20Abi, formatUnits, type Hex, parseUnits, zeroAddress } from 'viem';
+import {
+    encodeFunctionData,
+    erc20Abi,
+    formatUnits,
+    type Hex,
+    parseUnits,
+    zeroAddress,
+} from 'viem';
 import { useReadContract } from 'wagmi';
 import type { IAsset } from '@/modules/finance/api/financeService';
-import { type ITransferAssetFormData, TransferAssetForm } from '@/modules/finance/components/transferAssetForm';
+import {
+    type ITransferAssetFormData,
+    TransferAssetForm,
+} from '@/modules/finance/components/transferAssetForm';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -12,7 +25,8 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
-export interface ITransferAssetActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface ITransferAssetActionProps
+    extends IProposalActionComponentProps<IProposalActionData> {}
 
 const erc20TransferAbi = {
     type: 'function',
@@ -25,20 +39,29 @@ const erc20TransferAbi = {
     stateMutability: 'nonpayable',
 };
 
-export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) => {
+export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
+    props,
+) => {
     const { action, index } = props;
 
     const { setValue, getValues } = useFormContext();
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
 
     const fieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
+    useFormField<Record<string, IProposalActionData>, typeof fieldName>(
+        fieldName,
+    );
 
     // Fetch the token info and the balance of the DAO using the "to" attribute set on the action when the action type
     // is transferActionLocked to correctly initialize the form data and disable the token selection.
-    const disableTokenSelection = action.type === actionComposerUtils.transferActionLocked;
+    const disableTokenSelection =
+        action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
-    const { data: token } = useToken({ address: action.to as Hex, chainId, enabled: disableTokenSelection });
+    const { data: token } = useToken({
+        address: action.to as Hex,
+        chainId,
+        enabled: disableTokenSelection,
+    });
     const { data: balance } = useReadContract({
         abi: erc20Abi,
         address: action.to as Hex,
@@ -47,7 +70,9 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
         chainId,
     });
 
-    const receiver = useWatch<Record<string, ITransferAssetFormData['receiver']>>({
+    const receiver = useWatch<
+        Record<string, ITransferAssetFormData['receiver']>
+    >({
         name: `${fieldName}.receiver`,
         defaultValue: undefined,
     });
@@ -65,7 +90,9 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
     const tokenName = asset?.token.name ?? 'Ether';
 
     const isNativeToken = tokenAddress === zeroAddress;
-    const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
+    const receiverAddress = addressUtils.isAddress(receiver?.address)
+        ? receiver?.address
+        : zeroAddress;
 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
 
@@ -74,7 +101,13 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
             return;
         }
 
-        const tokenAsset = { ...token, address: tokenAddress, network: dao!.network, logo: '', priceUsd: '0' };
+        const tokenAsset = {
+            ...token,
+            address: tokenAddress,
+            network: dao!.network,
+            logo: '',
+            priceUsd: '0',
+        };
         const tokenBalance = formatUnits(balance, tokenDecimals);
         const asset: IAsset = { token: tokenAsset, amount: tokenBalance };
 
@@ -83,7 +116,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
-        const newData = isNativeToken ? '0x' : encodeFunctionData({ abi: [erc20TransferAbi], args: transferParams });
+        const newData = isNativeToken
+            ? '0x'
+            : encodeFunctionData({
+                  abi: [erc20TransferAbi],
+                  args: transferParams,
+              });
 
         setValue(`${fieldName}.data`, newData);
     }, [isNativeToken, receiverAddress, weiAmount, fieldName, setValue]);
@@ -108,7 +146,9 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
 
     useEffect(() => {
         // Get current inputData to preserve function and stateMutability
-        const currentAction = getValues(`actions.${index.toString()}`) as IProposalActionData | undefined;
+        const currentAction = getValues(`actions.${index.toString()}`) as
+            | IProposalActionData
+            | undefined;
         const currentInputData = currentAction?.inputData ?? {};
 
         const newContractParameters = [
@@ -123,7 +163,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (props) 
             contract: tokenName,
             parameters: processedParameters,
         });
-    }, [isNativeToken, receiverAddress, weiAmount, setValue, fieldName, tokenName, index, getValues]);
+    }, [
+        isNativeToken,
+        receiverAddress,
+        weiAmount,
+        setValue,
+        fieldName,
+        tokenName,
+        index,
+        getValues,
+    ]);
 
     return (
         <TransferAssetForm

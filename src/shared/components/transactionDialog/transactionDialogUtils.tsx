@@ -7,10 +7,20 @@ export class TransactionDialogUtils {
         'User rejected the request', // Error caused by user rejecting the transaction on their wallet
     ];
 
-    queryToStepState = (status: UseQueryReturnType['status'], fetchStatus: UseQueryReturnType['fetchStatus']): TransactionStatusState =>
-        status === 'pending' ? (fetchStatus === 'fetching' ? 'pending' : 'idle') : status;
+    queryToStepState = (
+        status: UseQueryReturnType['status'],
+        fetchStatus: UseQueryReturnType['fetchStatus'],
+    ): TransactionStatusState =>
+        status === 'pending'
+            ? fetchStatus === 'fetching'
+                ? 'pending'
+                : 'idle'
+            : status;
 
-    monitorTransactionError = (error: unknown, context?: Record<string, unknown>) => {
+    monitorTransactionError = (
+        error: unknown,
+        context?: Record<string, unknown>,
+    ) => {
         if (this.shouldIgnoreError(error)) {
             return;
         }
@@ -19,7 +29,10 @@ export class TransactionDialogUtils {
     };
 
     private shouldIgnoreError = (error: unknown) =>
-        error instanceof Error && this.ignoreErrors.some((ignoreError) => error.message.includes(ignoreError));
+        error instanceof Error &&
+        this.ignoreErrors.some((ignoreError) =>
+            error.message.includes(ignoreError),
+        );
 }
 
 export const transactionDialogUtils = new TransactionDialogUtils();

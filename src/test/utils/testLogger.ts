@@ -13,7 +13,10 @@ class TestLogger {
                 // (See https://github.com/facebook/react/issues/27233)
                 return;
             }
-            if (typeof params[0] === 'string' && params[0].includes('`DialogContent` requires a `DialogTitle`')) {
+            if (
+                typeof params[0] === 'string' &&
+                params[0].includes('`DialogContent` requires a `DialogTitle`')
+            ) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }
@@ -24,7 +27,10 @@ class TestLogger {
 
     private testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
-            if (typeof params[0] === 'string' && params[0].includes('Missing `Description`')) {
+            if (
+                typeof params[0] === 'string' &&
+                params[0].includes('Missing `Description`')
+            ) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }

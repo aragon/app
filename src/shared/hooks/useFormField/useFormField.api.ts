@@ -1,8 +1,17 @@
 import type { IInputContainerProps } from '@aragon/gov-ui-kit';
-import type { FieldPath, FieldPathValue, FieldValues, UseControllerProps, UseControllerReturn } from 'react-hook-form';
+import type {
+    FieldPath,
+    FieldPathValue,
+    FieldValues,
+    UseControllerProps,
+    UseControllerReturn,
+} from 'react-hook-form';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
-export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> {
+export interface IUseFormFieldOptions<
+    TFieldValues extends FieldValues,
+    TName extends FieldPath<TFieldValues>,
+> {
     /**
      * Disables the field when set to true.
      */
@@ -50,10 +59,10 @@ export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName ex
     sanitizeOnBlur?: boolean;
 }
 
-export type IUseFormFieldReturn<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> = UseControllerReturn<
-    TFieldValues,
-    TName
->['field'] & {
+export type IUseFormFieldReturn<
+    TFieldValues extends FieldValues,
+    TName extends FieldPath<TFieldValues>,
+> = UseControllerReturn<TFieldValues, TName>['field'] & {
     /**
      * Variant of the input field.
      */

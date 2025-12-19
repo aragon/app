@@ -30,12 +30,16 @@ export interface IPublishDaoDialogParams {
     values: ICreateDaoFormData;
 }
 
-export interface IPublishDaoDialogProps extends IDialogComponentProps<IPublishDaoDialogParams> {}
+export interface IPublishDaoDialogProps
+    extends IDialogComponentProps<IPublishDaoDialogParams> {}
 
 export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     const { location } = props;
 
-    invariant(location.params != null, 'PublishDaoDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'PublishDaoDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
     invariant(address != null, 'PublishDaoDialog: user must be connected.');
@@ -46,20 +50,30 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const stepper = useStepper<ITransactionDialogStepMeta, PublishDaoStep | TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        PublishDaoStep | TransactionDialogStep
+    >({
         initialActiveStep: PublishDaoStep.PIN_METADATA,
     });
 
-    const { data: pinJsonData, status: pinJsonStatus, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const {
+        data: pinJsonData,
+        status: pinJsonStatus,
+        mutate: pinJson,
+    } = usePinJson({ onSuccess: stepper.nextStep });
 
     const { mutate: pinFile, status: pinFileStatus } = usePinFile();
 
     const handlePinData = useCallback(
         (params: ITransactionDialogActionParams, avatarCid?: string) => {
-            const daoMetadata = publishDaoDialogUtils.prepareMetadata(values, avatarCid);
+            const daoMetadata = publishDaoDialogUtils.prepareMetadata(
+                values,
+                avatarCid,
+            );
             pinJson({ body: daoMetadata }, params);
         },
-        [pinJson, values]
+        [pinJson, values],
     );
 
     const handlePinFileSuccess = useCallback(
@@ -67,15 +81,25 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             const avatarCid = fileResult.IpfsHash;
             handlePinData(params, avatarCid);
         },
-        [handlePinData]
+        [handlePinData],
     );
 
     const handlePinFile = useCallback(
         (params: ITransactionDialogActionParams) => {
-            invariant(values.avatar?.file != null, 'PublishDaoDialog: avatar.file must be defined.');
-            pinFile({ body: values.avatar.file }, { onSuccess: (fileResult) => handlePinFileSuccess(params, fileResult), ...params });
+            invariant(
+                values.avatar?.file != null,
+                'PublishDaoDialog: avatar.file must be defined.',
+            );
+            pinFile(
+                { body: values.avatar.file },
+                {
+                    onSuccess: (fileResult) =>
+                        handlePinFileSuccess(params, fileResult),
+                    ...params,
+                },
+            );
         },
-        [pinFile, values, handlePinFileSuccess]
+        [pinFile, values, handlePinFileSuccess],
     );
 
     const pinningStatus = useMemo(() => {
@@ -97,20 +121,31 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
     }, [values.avatar, pinFileStatus, pinJsonStatus]);
 
     const handlePrepareTransaction = () => {
-        invariant(pinJsonData != null, 'PublishDaoDialog: metadata not pinned for prepare transaction step.');
+        invariant(
+            pinJsonData != null,
+            'PublishDaoDialog: metadata not pinned for prepare transaction step.',
+        );
         const { IpfsHash: metadataCid } = pinJsonData;
 
-        return publishDaoDialogUtils.buildTransaction({ values, metadataCid, connectedAddress: address });
+        return publishDaoDialogUtils.buildTransaction({
+            values,
+            metadataCid,
+            connectedAddress: address,
+        });
     };
 
-    const getDaoLink = ({ receipt }: IBuildTransactionDialogSuccessLinkHref) => {
+    const getDaoLink = ({
+        receipt,
+    }: IBuildTransactionDialogSuccessLinkHref) => {
         const daoAddress = publishDaoDialogUtils.getDaoAddress(receipt)!;
         const daoEnsName = ens !== '' ? `${ens}.dao.eth` : undefined;
 
         return `/dao/${network}/${daoEnsName ?? daoAddress}`;
     };
 
-    const metadataPinAction = values.avatar?.file ? handlePinFile : handlePinData;
+    const metadataPinAction = values.avatar?.file
+        ? handlePinFile
+        : handlePinData;
 
     const customSteps: ITransactionDialogStep<PublishDaoStep>[] = useMemo(
         () => [
@@ -118,15 +153,19 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
                 id: PublishDaoStep.PIN_METADATA,
                 order: 0,
                 meta: {
-                    label: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.label`),
-                    errorLabel: t(`app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.errorLabel`),
+                    label: t(
+                        `app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.label`,
+                    ),
+                    errorLabel: t(
+                        `app.createDao.publishDaoDialog.step.${PublishDaoStep.PIN_METADATA}.errorLabel`,
+                    ),
                     state: pinningStatus,
                     action: metadataPinAction,
                     auto: true,
                 },
             },
         ],
-        [t, metadataPinAction, pinningStatus]
+        [t, metadataPinAction, pinningStatus],
     );
 
     return (
@@ -137,11 +176,19 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.createDao.publishDaoDialog.button.submit')}
-            successLink={{ label: t('app.createDao.publishDaoDialog.button.success'), href: getDaoLink }}
+            successLink={{
+                label: t('app.createDao.publishDaoDialog.button.success'),
+                href: getDaoLink,
+            }}
             title={t('app.createDao.publishDaoDialog.title')}
             transactionType={TransactionType.PLUGIN_CREATE}
         >
-            <DaoDataListItem.Structure description={description} logoSrc={avatar?.url} name={name} network={networkName} />
+            <DaoDataListItem.Structure
+                description={description}
+                logoSrc={avatar?.url}
+                name={name}
+                network={networkName}
+            />
         </TransactionDialog>
     );
 };

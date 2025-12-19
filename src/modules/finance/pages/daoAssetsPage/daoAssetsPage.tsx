@@ -29,7 +29,9 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const useDaoParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
+    const dao = await queryClient.fetchQuery(
+        daoOptions({ urlParams: useDaoParams }),
+    );
 
     // Pass parent DAO's daoId - AssetListContainer will override it based on selected tab
     // When "All" tab: uses parent daoId (returns parent + all SubDAOs)

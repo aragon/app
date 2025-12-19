@@ -5,17 +5,27 @@ import type { INormalizeActionsParams } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { multisigActionUtils } from '../../utils/multisigActionUtils';
 
-export interface IUseMultisigNormalizeActionsParams extends INormalizeActionsParams {}
+export interface IUseMultisigNormalizeActionsParams
+    extends INormalizeActionsParams {}
 
-export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActionsParams) => {
+export const useMultisigNormalizeActions = (
+    params: IUseMultisigNormalizeActionsParams,
+) => {
     const { actions, daoId } = params;
 
     const { t } = useTranslations();
 
-    const changeSettingsAction = actions.find((action) => multisigActionUtils.isChangeSettingsAction(action));
+    const changeSettingsAction = actions.find((action) =>
+        multisigActionUtils.isChangeSettingsAction(action),
+    );
     const { data: memberList } = useMemberList(
-        { queryParams: { daoId, pluginAddress: changeSettingsAction?.to as string } },
-        { enabled: changeSettingsAction != null }
+        {
+            queryParams: {
+                daoId,
+                pluginAddress: changeSettingsAction?.to as string,
+            },
+        },
+        { enabled: changeSettingsAction != null },
     );
     const membersCount = memberList?.pages[0].metadata.totalRecords ?? 0;
 
@@ -24,7 +34,11 @@ export const useMultisigNormalizeActions = (params: IUseMultisigNormalizeActions
             return multisigActionUtils.normalizeChangeMembersAction(action);
         }
         if (multisigActionUtils.isChangeSettingsAction(action)) {
-            return multisigActionUtils.normalizeChangeSettingsAction({ action, t, membersCount });
+            return multisigActionUtils.normalizeChangeSettingsAction({
+                action,
+                t,
+                membersCount,
+            });
         }
 
         return action;

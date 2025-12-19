@@ -4,9 +4,15 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 
 class ProposalUtils {
-    getProposalSlug = (proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>, dao?: IDao): string => {
+    getProposalSlug = (
+        proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,
+        dao?: IDao,
+    ): string => {
         const { incrementalId, pluginAddress } = proposal;
-        const plugin = daoUtils.getDaoPlugins(dao, { pluginAddress, includeSubPlugins: true })?.[0];
+        const plugin = daoUtils.getDaoPlugins(dao, {
+            pluginAddress,
+            includeSubPlugins: true,
+        })?.[0];
 
         invariant(plugin != null, 'getProposalSlug: proposal plugin not found');
 

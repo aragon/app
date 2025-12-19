@@ -1,8 +1,18 @@
-import { encodeAbiParameters, encodeFunctionData, type Hex, parseEventLogs, type TransactionReceipt, zeroAddress } from 'viem';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    type Hex,
+    parseEventLogs,
+    type TransactionReceipt,
+    zeroAddress,
+} from 'viem';
 import { adminPlugin } from '@/plugins/adminPlugin/constants/adminPlugin';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { type ITransactionRequest, transactionUtils } from '@/shared/utils/transactionUtils';
+import {
+    type ITransactionRequest,
+    transactionUtils,
+} from '@/shared/utils/transactionUtils';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { adminPluginSetupAbi } from './adminPluginSetupAbi';
 import { daoFactoryAbi } from './daoFactoryAbi';
@@ -36,7 +46,9 @@ class PublishDaoDialogUtils {
         };
     };
 
-    buildTransaction = (params: IBuildTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        params: IBuildTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { values, metadataCid, connectedAddress } = params;
         const { network, ens } = values;
 
@@ -44,7 +56,10 @@ class PublishDaoDialogUtils {
         const adminPluginRepo = adminPlugin.repositoryAddresses[network];
 
         const daoSettings = this.buildDaoSettingsParams(metadataCid, ens);
-        const pluginSettings = this.buildPluginSettingsParams(adminPluginRepo, connectedAddress);
+        const pluginSettings = this.buildPluginSettingsParams(
+            adminPluginRepo,
+            connectedAddress,
+        );
 
         const transactionData = encodeFunctionData({
             abi: daoFactoryAbi,
@@ -52,7 +67,11 @@ class PublishDaoDialogUtils {
             args: [daoSettings, pluginSettings],
         });
 
-        const transaction = { to: daoFactory, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: daoFactory,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -83,7 +102,10 @@ class PublishDaoDialogUtils {
         return createDaoParams;
     };
 
-    private buildPluginSettingsParams = (adminPluginRepo: Hex, connectedAddress: string) => {
+    private buildPluginSettingsParams = (
+        adminPluginRepo: Hex,
+        connectedAddress: string,
+    ) => {
         const pluginSettingsData = encodeAbiParameters(adminPluginSetupAbi, [
             connectedAddress as Hex,
             { target: zeroAddress, operation: 0 },

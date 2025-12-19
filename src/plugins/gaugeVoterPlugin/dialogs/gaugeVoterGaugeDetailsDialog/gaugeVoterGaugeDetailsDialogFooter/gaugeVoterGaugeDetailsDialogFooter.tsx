@@ -28,21 +28,44 @@ export interface IGaugeVoterGaugeDetailsDialogFooterProps {
     totalGauges: number;
 }
 
-export const GaugeVoterGaugeDetailsDialogFooter: React.FC<IGaugeVoterGaugeDetailsDialogFooterProps> = (props) => {
-    const { onPrevious, onNext, disablePrevious = false, disableNext = false, currentGaugeNumber, totalGauges } = props;
+export const GaugeVoterGaugeDetailsDialogFooter: React.FC<
+    IGaugeVoterGaugeDetailsDialogFooterProps
+> = (props) => {
+    const {
+        onPrevious,
+        onNext,
+        disablePrevious = false,
+        disableNext = false,
+        currentGaugeNumber,
+        totalGauges,
+    } = props;
 
     const { t } = useTranslations();
 
     return (
         <div className="flex w-full grow items-center justify-between px-4 pb-4 md:px-6 md:pb-6">
-            <Button disabled={disablePrevious} onClick={onPrevious} size="md" variant="tertiary">
-                {t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.previous')}
+            <Button
+                disabled={disablePrevious}
+                onClick={onPrevious}
+                size="md"
+                variant="tertiary"
+            >
+                {t(
+                    'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.previous',
+                )}
             </Button>
             <span className="text-neutral-500 text-sm">
                 {currentGaugeNumber} / {totalGauges}
             </span>
-            <Button disabled={disableNext} onClick={onNext} size="md" variant="secondary">
-                {t('app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.next')}
+            <Button
+                disabled={disableNext}
+                onClick={onNext}
+                size="md"
+                variant="secondary"
+            >
+                {t(
+                    'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.footer.next',
+                )}
             </Button>
         </div>
     );

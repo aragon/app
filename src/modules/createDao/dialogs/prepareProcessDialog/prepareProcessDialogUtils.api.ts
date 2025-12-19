@@ -46,7 +46,8 @@ export interface IBuildPrepareInstallPluginsActionParams {
     pluginsMetadata: string[];
 }
 
-export interface IBuildPrepareInstallPluginActionParams extends Omit<IBuildPreparePluginInstallDataParams, 'metadata'> {
+export interface IBuildPrepareInstallPluginActionParams
+    extends Omit<IBuildPreparePluginInstallDataParams, 'metadata'> {
     /**
      * Metadata CID of the plugin.
      */

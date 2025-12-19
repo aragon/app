@@ -17,7 +17,9 @@ export interface IUpdateDaoContractsProps {
     dao: IDao;
 }
 
-export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) => {
+export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (
+    props,
+) => {
     const { dao } = props;
 
     const { t } = useTranslations();
@@ -35,31 +37,55 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (props) =>
         if (dao.plugins.length === 1) {
             onPluginSelected(dao.plugins[0]);
         } else {
-            const params: ISelectPluginDialogParams = { daoId: dao.id, onPluginSelected };
+            const params: ISelectPluginDialogParams = {
+                daoId: dao.id,
+                onPluginSelected,
+            };
             open(GovernanceDialogId.SELECT_PLUGIN, { params });
         }
     };
 
-    const onPluginSelected = (plugin: IDaoPlugin) => createProposalGuard({ plugin, onSuccess: () => handlePermissionCheckSuccess(plugin) });
+    const onPluginSelected = (plugin: IDaoPlugin) =>
+        createProposalGuard({
+            plugin,
+            onSuccess: () => handlePermissionCheckSuccess(plugin),
+        });
 
     const handlePermissionCheckSuccess = (plugin: IDaoPlugin) => {
-        const params: IUpdateDaoContractsListDialogParams = { plugin, daoId: dao.id };
+        const params: IUpdateDaoContractsListDialogParams = {
+            plugin,
+            daoId: dao.id,
+        };
         open(SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST, { params });
     };
 
     const availableUpdates = daoUtils.hasAvailableUpdates(dao);
-    const isFeatureEnabled = process.env.NEXT_PUBLIC_FEATURE_OSX_UPDATES === 'true';
+    const isFeatureEnabled =
+        process.env.NEXT_PUBLIC_FEATURE_OSX_UPDATES === 'true';
 
-    if (!(isFeatureEnabled && (availableUpdates.osx || availableUpdates.plugins)) || dao.plugins.length === 0) {
+    if (
+        !(
+            isFeatureEnabled &&
+            (availableUpdates.osx || availableUpdates.plugins)
+        ) ||
+        dao.plugins.length === 0
+    ) {
         return null;
     }
 
     return (
         <div className="flex flex-col space-y-3">
-            <Button iconLeft={IconType.RELOAD} onClick={handleUpgradeClick} size="md" variant="secondary">
+            <Button
+                iconLeft={IconType.RELOAD}
+                onClick={handleUpgradeClick}
+                size="md"
+                variant="secondary"
+            >
                 {t('app.settings.updateDaoContracts.button')}
             </Button>
-            <p className="text-neutral-500 text-sm">{t('app.settings.updateDaoContracts.description')}</p>
+            <p className="text-neutral-500 text-sm">
+                {t('app.settings.updateDaoContracts.description')}
+            </p>
         </div>
     );
 };

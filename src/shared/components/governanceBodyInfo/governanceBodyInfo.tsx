@@ -29,10 +29,15 @@ export interface IGovernanceBodyInfoProps {
     logoSrc?: string;
 }
 
-export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) => {
+export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
+    props,
+) => {
     const { name, subdomain, address, release, build, logoSrc } = props;
 
-    invariant(address != null || subdomain != null, 'GovernanceBodyInfo: address or subdomain must be set.');
+    invariant(
+        address != null || subdomain != null,
+        'GovernanceBodyInfo: address or subdomain must be set.',
+    );
 
     const { t } = useTranslations();
 
@@ -54,10 +59,14 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (props) =>
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
                 </p>
                 {address && name != null && name !== '' && (
-                    <p className="text-base text-neutral-500 leading-tight md:text-lg">{truncatedAddress}</p>
+                    <p className="text-base text-neutral-500 leading-tight md:text-lg">
+                        {truncatedAddress}
+                    </p>
                 )}
             </div>
-            <p className="text-neutral-500 text-sm leading-tight md:text-base">{subtitle}</p>
+            <p className="text-neutral-500 text-sm leading-tight md:text-base">
+                {subtitle}
+            </p>
         </div>
     );
 };

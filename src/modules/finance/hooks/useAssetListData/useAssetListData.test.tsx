@@ -18,14 +18,23 @@ describe('useAssetListData hook', () => {
     });
 
     it('fetches and returns the data needed to display the asset list', () => {
-        const balances = [generateAsset({ token: generateToken(), amount: '1000' })];
+        const balances = [
+            generateAsset({ token: generateToken(), amount: '1000' }),
+        ];
         const balancesMetadata = generatePaginatedResponseMetadata({
             pageSize: 20,
             totalRecords: balances.length,
         });
-        const assetsResponse = generatePaginatedResponse({ data: balances, metadata: balancesMetadata });
+        const assetsResponse = generatePaginatedResponse({
+            data: balances,
+            metadata: balancesMetadata,
+        });
         const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
-        useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultSuccess({ data: { pages: [assetsResponse], pageParams: [] } }));
+        useAssetListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [assetsResponse], pageParams: [] },
+            }),
+        );
         const { result } = renderHook(() => useAssetListData(params));
 
         expect(useAssetListSpy).toHaveBeenCalledWith(params);
@@ -39,15 +48,25 @@ describe('useAssetListData hook', () => {
     });
 
     it('returns error state if fetching assets fails', () => {
-        useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useAssetListData({ queryParams: { daoId: 'test-dao' } }));
+        useAssetListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultError({
+                error: new Error('error'),
+            }),
+        );
+        const { result } = renderHook(() =>
+            useAssetListData({ queryParams: { daoId: 'test-dao' } }),
+        );
         expect(result.current.state).toEqual('error');
     });
 
     it('returns the pageSize set as hook parameter when data is loading', () => {
-        useAssetListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
+        useAssetListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultLoading(),
+        );
         const pageSize = 2;
-        const { result } = renderHook(() => useAssetListData({ queryParams: { pageSize, daoId: 'test-dao' } }));
+        const { result } = renderHook(() =>
+            useAssetListData({ queryParams: { pageSize, daoId: 'test-dao' } }),
+        );
 
         expect(result.current.pageSize).toEqual(pageSize);
     });

@@ -6,12 +6,19 @@ import type { IUseDaoChainParams, IUseDaoChainReturn } from './useDaoChain.api';
 export const useDaoChain = (params: IUseDaoChainParams): IUseDaoChainReturn => {
     const { daoId, network, chainId: providedChainId } = params;
 
-    const shouldFetchDao = daoId != null && providedChainId == null && network == null;
+    const shouldFetchDao =
+        daoId != null && providedChainId == null && network == null;
 
-    const { data: dao, isLoading } = useDao({ urlParams: { id: daoId ?? '' } }, { enabled: shouldFetchDao });
+    const { data: dao, isLoading } = useDao(
+        { urlParams: { id: daoId ?? '' } },
+        { enabled: shouldFetchDao },
+    );
 
     const resolvedNetwork = network ?? dao?.network;
-    const networkDefinition = resolvedNetwork != null ? networkDefinitions[resolvedNetwork] : undefined;
+    const networkDefinition =
+        resolvedNetwork != null
+            ? networkDefinitions[resolvedNetwork]
+            : undefined;
     const chainId = providedChainId ?? networkDefinition?.id;
 
     const { buildEntityUrl } = useBlockExplorer({ chainId });

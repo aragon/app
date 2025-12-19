@@ -14,7 +14,9 @@ describe('preparePolicyDialogUtils', () => {
             const result = preparePolicyDialogUtils.normalizeRatios(values);
 
             expect(result).toEqual([500_000, 300_000, 200_000]);
-            expect(result.reduce((sum, value) => sum + value, 0)).toBe(1_000_000);
+            expect(result.reduce((sum, value) => sum + value, 0)).toBe(
+                1_000_000,
+            );
         });
 
         it('handles single value', () => {
@@ -29,7 +31,9 @@ describe('preparePolicyDialogUtils', () => {
             const result = preparePolicyDialogUtils.normalizeRatios(values);
 
             expect(result).toEqual([166_667, 333_333, 500_000]);
-            expect(result.reduce((sum, value) => sum + value, 0)).toBe(1_000_000);
+            expect(result.reduce((sum, value) => sum + value, 0)).toBe(
+                1_000_000,
+            );
         });
 
         it('handles large values proportionally', () => {
@@ -37,7 +41,9 @@ describe('preparePolicyDialogUtils', () => {
             const result = preparePolicyDialogUtils.normalizeRatios(values);
 
             expect(result).toEqual([166_667, 333_333, 500_000]);
-            expect(result.reduce((sum, value) => sum + value, 0)).toBe(1_000_000);
+            expect(result.reduce((sum, value) => sum + value, 0)).toBe(
+                1_000_000,
+            );
         });
 
         it('handles percentage-like values correctly', () => {
@@ -45,7 +51,9 @@ describe('preparePolicyDialogUtils', () => {
             const result = preparePolicyDialogUtils.normalizeRatios(values);
 
             expect(result).toEqual([450_000, 300_000, 250_000]);
-            expect(result.reduce((sum, value) => sum + value, 0)).toBe(1_000_000);
+            expect(result.reduce((sum, value) => sum + value, 0)).toBe(
+                1_000_000,
+            );
         });
 
         it('distributes remainder to maintain exact sum', () => {
@@ -55,7 +63,9 @@ describe('preparePolicyDialogUtils', () => {
             expect(result[0]).toBe(333_334);
             expect(result[1]).toBe(333_333);
             expect(result[2]).toBe(333_333);
-            expect(result.reduce((sum, value) => sum + value, 0)).toBe(1_000_000);
+            expect(result.reduce((sum, value) => sum + value, 0)).toBe(
+                1_000_000,
+            );
         });
     });
 });

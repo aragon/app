@@ -11,7 +11,10 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import type { IPluginInfo } from '@/shared/types';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { BodyType } from '../../../../../types/enum';
-import { GovernanceType, type ICreateProcessFormData } from '../../../createProcessFormDefinitions';
+import {
+    GovernanceType,
+    type ICreateProcessFormData,
+} from '../../../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../../../createProcessFormUtils';
 import { GovernanceBodiesFieldItemDefault } from './governanceBodiesFieldItemDefault';
 
@@ -43,33 +46,65 @@ export interface IGovernanceBodyFieldProps {
     readOnly?: boolean;
 }
 
-export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) => {
-    const { fieldName, daoId, body, onEdit, onDelete, readOnly = false } = props;
+export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
+    props,
+) => {
+    const {
+        fieldName,
+        daoId,
+        body,
+        onEdit,
+        onDelete,
+        readOnly = false,
+    } = props;
 
     const { t } = useTranslations();
 
     useFormField<Record<string, ISetupBodyForm>, typeof fieldName>(fieldName);
 
-    const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({ name: 'governanceType' });
+    const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({
+        name: 'governanceType',
+    });
 
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
 
-    const plugin = pluginRegistryUtils.getPlugin(body.plugin) as IPluginInfo | undefined;
+    const plugin = pluginRegistryUtils.getPlugin(body.plugin) as
+        | IPluginInfo
+        | undefined;
 
     const isNew = body.type === BodyType.NEW;
     const isExternal = body.type === BodyType.EXTERNAL;
     const isEditAllowed = onEdit != null;
 
     return (
-        <Accordion.Container defaultValue={readOnly ? [body.internalId] : undefined} isMulti={true}>
+        <Accordion.Container
+            defaultValue={readOnly ? [body.internalId] : undefined}
+            isMulti={true}
+        >
             <Accordion.Item value={body.internalId}>
                 <Accordion.ItemHeader>
                     <GovernanceBodyInfo
                         address={isNew ? undefined : body.address}
-                        build={isNew ? plugin?.installVersion.build.toString() : isExternal ? undefined : body.build}
-                        logoSrc={createProcessFormUtils.isBodySafe(body) ? safeWallet.src : undefined}
+                        build={
+                            isNew
+                                ? plugin?.installVersion.build.toString()
+                                : isExternal
+                                  ? undefined
+                                  : body.build
+                        }
+                        logoSrc={
+                            createProcessFormUtils.isBodySafe(body)
+                                ? safeWallet.src
+                                : undefined
+                        }
                         name={isExternal ? undefined : body.name}
-                        release={isNew ? plugin?.installVersion.release.toString() : isExternal ? undefined : body.release}
+                        release={
+                            isNew
+                                ? plugin?.installVersion.release.toString()
+                                : isExternal
+                                  ? undefined
+                                  : body.release
+                        }
                         subdomain={isNew ? plugin?.id : body.plugin}
                     />
                 </Accordion.ItemHeader>
@@ -80,26 +115,50 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (props) 
                         Fallback={GovernanceBodiesFieldItemDefault}
                         isAdvancedGovernance={isAdvancedGovernance}
                         pluginId={body.plugin}
-                        slotId={CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD}
+                        slotId={
+                            CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD
+                        }
                     />
                     {!readOnly && (
-                        <div className={classNames('flex w-full grow', isEditAllowed ? 'justify-between' : 'justify-end')}>
+                        <div
+                            className={classNames(
+                                'flex w-full grow',
+                                isEditAllowed
+                                    ? 'justify-between'
+                                    : 'justify-end',
+                            )}
+                        >
                             {isEditAllowed && (
-                                <Button onClick={onEdit} size="md" variant="secondary">
-                                    {t('app.createDao.createProcessForm.governance.bodyField.action.edit')}
+                                <Button
+                                    onClick={onEdit}
+                                    size="md"
+                                    variant="secondary"
+                                >
+                                    {t(
+                                        'app.createDao.createProcessForm.governance.bodyField.action.edit',
+                                    )}
                                 </Button>
                             )}
                             <Dropdown.Container
                                 constrainContentWidth={false}
                                 customTrigger={
-                                    <Button className="w-fit" iconRight={IconType.DOTS_VERTICAL} size="md" variant="tertiary">
-                                        {t('app.createDao.createProcessForm.governance.bodyField.action.more')}
+                                    <Button
+                                        className="w-fit"
+                                        iconRight={IconType.DOTS_VERTICAL}
+                                        size="md"
+                                        variant="tertiary"
+                                    >
+                                        {t(
+                                            'app.createDao.createProcessForm.governance.bodyField.action.more',
+                                        )}
                                     </Button>
                                 }
                                 size="md"
                             >
                                 <Dropdown.Item onClick={onDelete}>
-                                    {t('app.createDao.createProcessForm.governance.bodyField.action.remove')}
+                                    {t(
+                                        'app.createDao.createProcessForm.governance.bodyField.action.remove',
+                                    )}
                                 </Dropdown.Item>
                             </Dropdown.Container>
                         </div>

@@ -9,7 +9,9 @@ export interface ILayoutWizardCreatePolicyProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const LayoutWizardCreatePolicy: React.FC<ILayoutWizardCreatePolicyProps> = async (props) => {
+export const LayoutWizardCreatePolicy: React.FC<
+    ILayoutWizardCreatePolicyProps
+> = async (props) => {
     const { params } = props;
     const { addressOrEns, network } = await params;
 

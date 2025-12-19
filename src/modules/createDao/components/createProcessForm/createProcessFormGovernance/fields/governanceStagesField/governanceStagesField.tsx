@@ -17,7 +17,9 @@ export interface IGovernanceStagesFieldProps {
     readOnly?: boolean;
 }
 
-export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (props) => {
+export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
+    props,
+) => {
     const { daoId, readOnly = false } = props;
 
     const { t } = useTranslations();
@@ -28,7 +30,8 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (pro
         remove: removeStage,
     } = useFieldArray<ICreateProcessFormData, 'stages'>({ name: 'stages' });
 
-    const handleAddStage = () => appendStage(createProcessFormUtils.buildDefaultStage());
+    const handleAddStage = () =>
+        appendStage(createProcessFormUtils.buildDefaultStage());
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
@@ -46,8 +49,16 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (pro
                 ))}
             </div>
             {!readOnly && (
-                <Button className="self-start" iconLeft={IconType.PLUS} onClick={handleAddStage} size="md" variant="tertiary">
-                    {t('app.createDao.createProcessForm.governance.stageField.action.add')}
+                <Button
+                    className="self-start"
+                    iconLeft={IconType.PLUS}
+                    onClick={handleAddStage}
+                    size="md"
+                    variant="tertiary"
+                >
+                    {t(
+                        'app.createDao.createProcessForm.governance.stageField.action.add',
+                    )}
                 </Button>
             )}
         </div>

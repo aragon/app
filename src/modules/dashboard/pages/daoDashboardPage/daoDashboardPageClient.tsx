@@ -1,6 +1,15 @@
 'use client';
 
-import { addressUtils, Button, ChainEntityType, DateFormat, DefinitionList, formatterUtils, IconType, Link } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    ChainEntityType,
+    DateFormat,
+    DefinitionList,
+    formatterUtils,
+    IconType,
+    Link,
+} from '@aragon/gov-ui-kit';
 import { AssetList } from '@/modules/finance/components/assetList';
 import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
@@ -31,7 +40,9 @@ const dashboardAssetsCount = 3;
 export const daoDashboardPageMembersFilterParam = 'members';
 export const daoDashboardPageProposalsFilterParam = 'proposals';
 
-export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (props) => {
+export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
+    props,
+) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
@@ -39,19 +50,25 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const useDaoParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: useDaoParams });
 
-    const { buildEntityUrl, networkDefinition } = useDaoChain({ network: dao?.network });
+    const { buildEntityUrl, networkDefinition } = useDaoChain({
+        network: dao?.network,
+    });
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao?.address);
 
-    const { activePlugin: membersPlugin, setActivePlugin: setMembersPlugin } = useDaoPluginFilterUrlParam({
-        daoId,
-        type: PluginType.BODY,
-        includeSubPlugins: true,
-        name: daoDashboardPageMembersFilterParam,
-    });
+    const { activePlugin: membersPlugin, setActivePlugin: setMembersPlugin } =
+        useDaoPluginFilterUrlParam({
+            daoId,
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+            name: daoDashboardPageMembersFilterParam,
+        });
 
-    const { activePlugin: proposalsPlugin, setActivePlugin: setProposalsPlugin } = useDaoPluginFilterUrlParam({
+    const {
+        activePlugin: proposalsPlugin,
+        setActivePlugin: setProposalsPlugin,
+    } = useDaoPluginFilterUrlParam({
         daoId,
         type: PluginType.PROCESS,
         includeGroupFilter: true,
@@ -65,10 +82,17 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
     const proposalListParams = {
-        queryParams: { daoId, pageSize: dashboardProposalsCount, sort: 'blockTimestamp', isSubProposal: false },
+        queryParams: {
+            daoId,
+            pageSize: dashboardProposalsCount,
+            sort: 'blockTimestamp',
+            isSubProposal: false,
+        },
     };
 
-    const memberListParams = { queryParams: { daoId, pageSize: dashboardMembersCount } };
+    const memberListParams = {
+        queryParams: { daoId, pageSize: dashboardMembersCount },
+    };
     const assetListParams = {
         queryParams: { daoId: dao.id, pageSize: dashboardAssetsCount },
     };
@@ -79,8 +103,14 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
         format: DateFormat.YEAR_MONTH,
     });
 
-    const daoAddressLink = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address });
-    const daoCreationLink = buildEntityUrl({ type: ChainEntityType.TRANSACTION, id: dao.transactionHash });
+    const daoAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: dao.address,
+    });
+    const daoCreationLink = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: dao.transactionHash,
+    });
 
     const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.uniqueId ?? ''}`;
     const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.uniqueId ?? ''}`;
@@ -96,7 +126,11 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
             <Page.Content>
                 <Page.Main>
                     {hasSupportedPlugins && (
-                        <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.proposals.title')}>
+                        <Page.MainSection
+                            title={t(
+                                'app.dashboard.daoDashboardPage.main.proposals.title',
+                            )}
+                        >
                             <DaoProposalList
                                 hidePagination={true}
                                 initialParams={proposalListParams}
@@ -110,13 +144,19 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     size="md"
                                     variant="tertiary"
                                 >
-                                    {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                                    {t(
+                                        'app.dashboard.daoDashboardPage.main.viewAll',
+                                    )}
                                 </Button>
                             </DaoProposalList>
                         </Page.MainSection>
                     )}
                     {hasSupportedPlugins && (
-                        <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.members.title')}>
+                        <Page.MainSection
+                            title={t(
+                                'app.dashboard.daoDashboardPage.main.members.title',
+                            )}
+                        >
                             <DaoMemberList.Container
                                 hidePagination={true}
                                 initialParams={memberListParams}
@@ -130,13 +170,22 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                     size="md"
                                     variant="tertiary"
                                 >
-                                    {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                                    {t(
+                                        'app.dashboard.daoDashboardPage.main.viewAll',
+                                    )}
                                 </Button>
                             </DaoMemberList.Container>
                         </Page.MainSection>
                     )}
-                    <Page.MainSection title={t('app.dashboard.daoDashboardPage.main.assets.title')}>
-                        <AssetList.Default hidePagination={true} initialParams={assetListParams}>
+                    <Page.MainSection
+                        title={t(
+                            'app.dashboard.daoDashboardPage.main.assets.title',
+                        )}
+                    >
+                        <AssetList.Default
+                            hidePagination={true}
+                            initialParams={assetListParams}
+                        >
                             <Button
                                 className="self-start"
                                 href={`${daoUrl}/assets`}
@@ -144,21 +193,35 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 size="md"
                                 variant="tertiary"
                             >
-                                {t('app.dashboard.daoDashboardPage.main.viewAll')}
+                                {t(
+                                    'app.dashboard.daoDashboardPage.main.viewAll',
+                                )}
                             </Button>
                         </AssetList.Default>
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
-                    <Page.AsideCard title={t('app.dashboard.daoDashboardPage.aside.details.title')}>
+                    <Page.AsideCard
+                        title={t(
+                            'app.dashboard.daoDashboardPage.aside.details.title',
+                        )}
+                    >
                         <DefinitionList.Container>
-                            <DefinitionList.Item term={t('app.dashboard.daoDashboardPage.aside.details.chain')}>
-                                <p className="text-neutral-500">{networkDefinition?.name}</p>
+                            <DefinitionList.Item
+                                term={t(
+                                    'app.dashboard.daoDashboardPage.aside.details.chain',
+                                )}
+                            >
+                                <p className="text-neutral-500">
+                                    {networkDefinition?.name}
+                                </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 copyValue={dao.address}
                                 link={{ href: daoAddressLink }}
-                                term={t('app.dashboard.daoDashboardPage.aside.details.address')}
+                                term={t(
+                                    'app.dashboard.daoDashboardPage.aside.details.address',
+                                )}
                             >
                                 {truncatedAddress}
                             </DefinitionList.Item>
@@ -166,23 +229,37 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (p
                                 <DefinitionList.Item
                                     copyValue={daoEns}
                                     link={{ href: daoAddressLink }}
-                                    term={t('app.dashboard.daoDashboardPage.aside.details.ens')}
+                                    term={t(
+                                        'app.dashboard.daoDashboardPage.aside.details.ens',
+                                    )}
                                 >
                                     {daoEns}
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item
                                 link={{ href: daoCreationLink }}
-                                term={t('app.dashboard.daoDashboardPage.aside.details.launched')}
+                                term={t(
+                                    'app.dashboard.daoDashboardPage.aside.details.launched',
+                                )}
                             >
                                 {daoLaunchedAt}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
                     {dao.links.length > 0 && (
-                        <Page.AsideCard className="flex flex-col gap-4" title={t('app.dashboard.daoDashboardPage.aside.links')}>
+                        <Page.AsideCard
+                            className="flex flex-col gap-4"
+                            title={t(
+                                'app.dashboard.daoDashboardPage.aside.links',
+                            )}
+                        >
                             {dao.links.map(({ url, name }) => (
-                                <Link href={url} isExternal={true} key={url} showUrl={true}>
+                                <Link
+                                    href={url}
+                                    isExternal={true}
+                                    key={url}
+                                    showUrl={true}
+                                >
                                     {name}
                                 </Link>
                             ))}

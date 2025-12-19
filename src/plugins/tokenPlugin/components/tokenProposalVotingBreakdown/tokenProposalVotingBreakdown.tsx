@@ -23,23 +23,42 @@ export interface ITokenProposalVotingBreakdownProps {
     children?: ReactNode;
 }
 
-export const TokenProposalVotingBreakdown: React.FC<ITokenProposalVotingBreakdownProps> = (props) => {
+export const TokenProposalVotingBreakdown: React.FC<
+    ITokenProposalVotingBreakdownProps
+> = (props) => {
     const { proposal, children, isVeto } = props;
 
     const { symbol, decimals } = proposal.settings.token;
-    const { minParticipation, supportThreshold, historicalTotalSupply } = proposal.settings;
+    const { minParticipation, supportThreshold, historicalTotalSupply } =
+        proposal.settings;
 
-    const yesVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES);
-    const noVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO);
-    const abstainVotes = tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN);
+    const yesVotes = tokenProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.YES,
+    );
+    const noVotes = tokenProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.NO,
+    );
+    const abstainVotes = tokenProposalUtils.getOptionVotingPower(
+        proposal,
+        VoteOption.ABSTAIN,
+    );
 
     return (
         <ProposalVoting.BreakdownToken
             isVeto={isVeto}
-            minParticipation={tokenSettingsUtils.ratioToPercentage(minParticipation)}
-            supportThreshold={tokenSettingsUtils.ratioToPercentage(supportThreshold)}
+            minParticipation={tokenSettingsUtils.ratioToPercentage(
+                minParticipation,
+            )}
+            supportThreshold={tokenSettingsUtils.ratioToPercentage(
+                supportThreshold,
+            )}
             tokenSymbol={symbol}
-            tokenTotalSupply={formatUnits(BigInt(historicalTotalSupply!), decimals)}
+            tokenTotalSupply={formatUnits(
+                BigInt(historicalTotalSupply!),
+                decimals,
+            )}
             totalAbstain={abstainVotes}
             totalNo={noVotes}
             totalYes={yesVotes}

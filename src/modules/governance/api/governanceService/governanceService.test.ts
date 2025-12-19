@@ -1,5 +1,9 @@
 import { Network } from '@/shared/api/daoService';
-import { generateMember, generateProposal, generateVote } from '../../testUtils';
+import {
+    generateMember,
+    generateProposal,
+    generateVote,
+} from '../../testUtils';
 import { governanceService } from './governanceService';
 
 describe('governance service', () => {
@@ -10,13 +14,21 @@ describe('governance service', () => {
     });
 
     it('getMemberList fetches the members of the specified DAO', async () => {
-        const members = [generateMember({ address: '0x123' }), generateMember({ address: '0x456' })];
-        const params = { queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' } };
+        const members = [
+            generateMember({ address: '0x123' }),
+            generateMember({ address: '0x456' }),
+        ];
+        const params = {
+            queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' },
+        };
 
         requestSpy.mockResolvedValue(members);
         const result = await governanceService.getMemberList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].members, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].members,
+            params,
+        );
         expect(result).toEqual(members);
     });
 
@@ -24,24 +36,38 @@ describe('governance service', () => {
         const member = generateMember({ address: '0x123' });
         const params = {
             urlParams: { address: member.address },
-            queryParams: { daoId: 'dao-id-test', pluginAddress: 'test-plugin-address' },
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: 'test-plugin-address',
+            },
         };
 
         requestSpy.mockResolvedValue(member);
         const result = await governanceService.getMember(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].member, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].member,
+            params,
+        );
         expect(result).toEqual(member);
     });
 
     it('getProposalList fetches proposals of the specified DAO', async () => {
-        const proposals = [generateProposal({ id: '0' }), generateProposal({ id: '1' })];
-        const params = { queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' } };
+        const proposals = [
+            generateProposal({ id: '0' }),
+            generateProposal({ id: '1' }),
+        ];
+        const params = {
+            queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' },
+        };
 
         requestSpy.mockResolvedValue(proposals);
         const result = await governanceService.getProposalList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposals, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].proposals,
+            params,
+        );
         expect(result).toEqual(proposals);
     });
 
@@ -53,35 +79,56 @@ describe('governance service', () => {
         };
 
         requestSpy.mockResolvedValue(proposal);
-        const result = await governanceService.getProposalBySlug(proposalParams);
+        const result =
+            await governanceService.getProposalBySlug(proposalParams);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].proposalBySlug, proposalParams);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].proposalBySlug,
+            proposalParams,
+        );
         expect(result).toEqual(proposal);
     });
 
     it('getCanCreateProposal fetches if the member can create a proposal on the specified plugin', async () => {
         const canCreateProposal = true;
         const params = {
-            queryParams: { memberAddress: '0x123', pluginAddress: '0x456', network: Network.BASE_MAINNET },
+            queryParams: {
+                memberAddress: '0x123',
+                pluginAddress: '0x456',
+                network: Network.BASE_MAINNET,
+            },
         };
 
         requestSpy.mockResolvedValue(canCreateProposal);
         const result = await governanceService.getCanCreateProposal(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].canCreateProposal, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].canCreateProposal,
+            params,
+        );
         expect(result).toEqual(canCreateProposal);
     });
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
-        const votes = [generateVote({ transactionHash: '0' }), generateVote({ transactionHash: '1' })];
+        const votes = [
+            generateVote({ transactionHash: '0' }),
+            generateVote({ transactionHash: '1' }),
+        ];
         const params = {
-            queryParams: { proposalId: 'proposal-id', pluginAddress: '0x123', network: Network.BASE_MAINNET },
+            queryParams: {
+                proposalId: 'proposal-id',
+                pluginAddress: '0x123',
+                network: Network.BASE_MAINNET,
+            },
         };
 
         requestSpy.mockResolvedValue(votes);
         const result = await governanceService.getVoteList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(governanceService['urls'].votes, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].votes,
+            params,
+        );
         expect(result).toEqual(votes);
     });
 });

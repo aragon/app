@@ -1,7 +1,10 @@
 import { addressUtils, DataList, Link } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IContractVersionInfo } from '@/shared/types';
-import { type IVersion, versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
+import {
+    type IVersion,
+    versionComparatorUtils,
+} from '@/shared/utils/versionComparatorUtils';
 
 export interface IUpdateDaoContractsCardProps {
     /**
@@ -26,13 +29,18 @@ export interface IUpdateDaoContractsCardProps {
     newVersion: IContractVersionInfo;
 }
 
-export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (props) => {
-    const { name, smartContractName, address, currentVersion, newVersion } = props;
+export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (
+    props,
+) => {
+    const { name, smartContractName, address, currentVersion, newVersion } =
+        props;
 
     const { t } = useTranslations();
 
-    const processedCurrentVersion = versionComparatorUtils.normaliseComparatorInput(currentVersion)!;
-    const { release: currentRelease, build: currentBuild } = processedCurrentVersion;
+    const processedCurrentVersion =
+        versionComparatorUtils.normaliseComparatorInput(currentVersion)!;
+    const { release: currentRelease, build: currentBuild } =
+        processedCurrentVersion;
     const { release: newRelease, build: newBuild } = newVersion;
 
     const fromVersion = `${smartContractName} v${currentRelease.toString()}.${currentBuild.toString()}`;
@@ -42,11 +50,18 @@ export const UpdateDaoContractsCard: React.FC<IUpdateDaoContractsCardProps> = (p
         <DataList.Item className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
             <div className="flex flex-col gap-1 md:gap-1.5">
                 <div className="flex items-center justify-between">
-                    <p className="text-base text-neutral-800 md:text-lg">{name}</p>
-                    <p className="text-base text-neutral-500 md:text-lg">{addressUtils.truncateAddress(address)}</p>
+                    <p className="text-base text-neutral-800 md:text-lg">
+                        {name}
+                    </p>
+                    <p className="text-base text-neutral-500 md:text-lg">
+                        {addressUtils.truncateAddress(address)}
+                    </p>
                 </div>
                 <p className="text-neutral-500 text-sm md:text-base">
-                    {t('app.settings.updateDaoContractsCard.versionUpdate', { from: fromVersion, to: toVersion })}
+                    {t('app.settings.updateDaoContractsCard.versionUpdate', {
+                        from: fromVersion,
+                        to: toVersion,
+                    })}
                 </p>
             </div>
             <Link href={newVersion.releaseNotes} isExternal={true}>

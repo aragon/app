@@ -5,17 +5,28 @@ import { useWatch } from 'react-hook-form';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import type { IMultisigSetupGovernanceForm, IMultisigSetupGovernanceProps } from './multisigSetupGovernance.api';
+import type {
+    IMultisigSetupGovernanceForm,
+    IMultisigSetupGovernanceProps,
+} from './multisigSetupGovernance.api';
 
-export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = (props) => {
-    const { formPrefix, membershipSettings, showProposalCreationSettings = false } = props;
+export const MultisigSetupGovernance: React.FC<
+    IMultisigSetupGovernanceProps
+> = (props) => {
+    const {
+        formPrefix,
+        membershipSettings,
+        showProposalCreationSettings = false,
+    } = props;
 
     const { t } = useTranslations();
 
     // Set default values to minApprovals and onlyListed values as values are reset when deleting an item from the
     // useArrayField causing the useWatch / useFormField to return undefined before unmounting the component
     const minApprovalsFieldName = `${formPrefix}.minApprovals`;
-    const minApprovalsFieldValue = useWatch<Record<string, IMultisigSetupGovernanceForm['minApprovals']>>({
+    const minApprovalsFieldValue = useWatch<
+        Record<string, IMultisigSetupGovernanceForm['minApprovals']>
+    >({
         name: minApprovalsFieldName,
         defaultValue: 0,
     });
@@ -26,19 +37,27 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
         ...onlyListedField
     } = useFormField<IMultisigSetupGovernanceForm, 'onlyListed'>('onlyListed', {
         fieldPrefix: formPrefix,
-        label: t('app.plugins.multisig.multisigSetupGovernance.onlyListed.label'),
+        label: t(
+            'app.plugins.multisig.multisigSetupGovernance.onlyListed.label',
+        ),
         defaultValue: false,
     });
 
-    const handleRadioChange = (value: string) => onOnlyListedFieldChange(value === 'members');
+    const handleRadioChange = (value: string) =>
+        onOnlyListedFieldChange(value === 'members');
 
-    const membersCount = membershipSettings.members?.length ?? membershipSettings.membersCount ?? 0;
+    const membersCount =
+        membershipSettings.members?.length ??
+        membershipSettings.membersCount ??
+        0;
     const majorityThreshold = Math.floor(membersCount / 2);
     const isMinApprovalsMajority = minApprovalsFieldValue > majorityThreshold;
 
     const minApprovalContext = isMinApprovalsMajority ? 'majority' : 'minority';
     const minApprovalAlert = {
-        message: t(`app.plugins.multisig.multisigSetupGovernance.minimumApproval.alert.${minApprovalContext}`),
+        message: t(
+            `app.plugins.multisig.multisigSetupGovernance.minimumApproval.alert.${minApprovalContext}`,
+        ),
         variant: isMinApprovalsMajority ? 'success' : 'warning',
     } as const;
 
@@ -47,32 +66,49 @@ export const MultisigSetupGovernance: React.FC<IMultisigSetupGovernanceProps> = 
             <NumberProgressInput
                 alert={minApprovalAlert}
                 fieldName={minApprovalsFieldName}
-                helpText={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText')}
-                label={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.label')}
+                helpText={t(
+                    'app.plugins.multisig.multisigSetupGovernance.minimumApproval.helpText',
+                )}
+                label={t(
+                    'app.plugins.multisig.multisigSetupGovernance.minimumApproval.label',
+                )}
                 min={1}
                 total={membersCount}
-                totalLabel={t('app.plugins.multisig.multisigSetupGovernance.minimumApproval.total', {
-                    total: membersCount,
-                })}
+                totalLabel={t(
+                    'app.plugins.multisig.multisigSetupGovernance.minimumApproval.total',
+                    {
+                        total: membersCount,
+                    },
+                )}
                 valueLabel={minApprovalsFieldValue.toString()}
             />
             {showProposalCreationSettings && (
                 <RadioGroup
                     alert={onlyListedField.alert}
                     className="w-full"
-                    helpText={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.helpText')}
+                    helpText={t(
+                        'app.plugins.multisig.multisigSetupGovernance.onlyListed.helpText',
+                    )}
                     label={onlyListedField.label}
                     onValueChange={handleRadioChange}
                     value={onlyListedFieldValue ? 'members' : 'any'}
                 >
                     <RadioCard
-                        description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.description')}
-                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label')}
+                        description={t(
+                            'app.plugins.multisig.multisigSetupGovernance.onlyListed.members.description',
+                        )}
+                        label={t(
+                            'app.plugins.multisig.multisigSetupGovernance.onlyListed.members.label',
+                        )}
                         value="members"
                     />
                     <RadioCard
-                        description={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.description')}
-                        label={t('app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.label')}
+                        description={t(
+                            'app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.description',
+                        )}
+                        label={t(
+                            'app.plugins.multisig.multisigSetupGovernance.onlyListed.anyWallet.label',
+                        )}
                         value="any"
                     />
                 </RadioGroup>

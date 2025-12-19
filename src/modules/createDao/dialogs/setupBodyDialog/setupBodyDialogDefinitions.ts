@@ -25,7 +25,8 @@ export interface ISetupBodyFormBase {
 export interface ISetupBodyFormNew<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
-    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+    TMembership extends
+        ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > extends ISetupBodyFormBase {
     /**
      * NEW body type.
@@ -53,7 +54,9 @@ export interface ISetupBodyFormNew<
     membership: TMembership;
 }
 
-export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAddress {
+export interface ISetupBodyFormExternal
+    extends ISetupBodyFormBase,
+        ICompositeAddress {
     /**
      * EXTERNAL body type.
      */
@@ -67,9 +70,13 @@ export interface ISetupBodyFormExternal extends ISetupBodyFormBase, ICompositeAd
 export interface ISetupBodyFormExisting<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
-    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+    TMembership extends
+        ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > extends ISetupBodyFormBase,
-        Pick<ISetupBodyFormNew<TGovernance, TMember, TMembership>, 'description' | 'resources' | 'governance' | 'membership'> {
+        Pick<
+            ISetupBodyFormNew<TGovernance, TMember, TMembership>,
+            'description' | 'resources' | 'governance' | 'membership'
+        > {
     /**
      * EXISTING body type.
      */
@@ -99,13 +106,16 @@ export interface ISetupBodyFormExisting<
 export type ISetupBodyForm<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
-    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+    TMembership extends
+        ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > =
     | ISetupBodyFormNew<TGovernance, TMember, TMembership>
     | ISetupBodyFormExisting<TGovernance, TMember, TMembership>
     | ISetupBodyFormExternal;
 
-export interface ISetupBodyFormMembership<TMember extends ICompositeAddress = ICompositeAddress> {
+export interface ISetupBodyFormMembership<
+    TMember extends ICompositeAddress = ICompositeAddress,
+> {
     /**
      * Members of the plugin.
      */

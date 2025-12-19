@@ -1,5 +1,10 @@
 import dynamic from 'next/dynamic';
 
-export type { ITokenLockUnlockDialogParams, ITokenLockUnlockDialogProps } from './tokenLockUnlockDialog';
+export type {
+    ITokenLockUnlockDialogParams,
+    ITokenLockUnlockDialogProps,
+} from './tokenLockUnlockDialog';
 
-export const TokenLockUnlockDialog = dynamic(() => import('./tokenLockUnlockDialog').then((mod) => mod.TokenLockUnlockDialog));
+export const TokenLockUnlockDialog = dynamic(() =>
+    import('./tokenLockUnlockDialog').then((mod) => mod.TokenLockUnlockDialog),
+);

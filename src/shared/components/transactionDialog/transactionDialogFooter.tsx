@@ -15,7 +15,9 @@ import {
     type TransactionDialogSuccessLinkHref,
 } from './transactionDialog.api';
 
-export interface ITransactionDialogFooterProps<TCustomStepId extends string = string> {
+export interface ITransactionDialogFooterProps<
+    TCustomStepId extends string = string,
+> {
     /**
      * Label to be used by default for the submit button.
      */
@@ -54,7 +56,12 @@ export interface ITransactionDialogFooterProps<TCustomStepId extends string = st
     indexingFallbackUrl?: ITransactionDialogProps['indexingFallbackUrl'];
 }
 
-const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record<TransactionStatusState, string>>>> = {
+const stepStateSubmitLabel: Partial<
+    Record<
+        TransactionDialogStep,
+        Partial<Record<TransactionStatusState, string>>
+    >
+> = {
     [TransactionDialogStep.APPROVE]: {
         idle: 'app.shared.transactionDialog.footer.approve.idle',
         pending: 'app.shared.transactionDialog.footer.approve.pending',
@@ -64,7 +71,7 @@ const stepStateSubmitLabel: Partial<Record<TransactionDialogStep, Partial<Record
 
 const buildSuccessLink = (
     successHref: TransactionDialogSuccessLinkHref,
-    params: IBuildTransactionDialogSuccessLinkHref
+    params: IBuildTransactionDialogSuccessLinkHref,
 ): string | undefined => {
     if (typeof successHref === 'string') {
         return successHref;
@@ -75,13 +82,28 @@ const buildSuccessLink = (
 
 const indexingStepTimeout = 14_000;
 
-export const TransactionDialogFooter = <TCustomStepId extends string = string>(props: ITransactionDialogFooterProps<TCustomStepId>) => {
-    const { submitLabel, successLink, txReceipt, activeStep, onError, onCancelClick, transactionType, indexingFallbackUrl, proposalSlug } =
-        props;
+export const TransactionDialogFooter = <TCustomStepId extends string = string>(
+    props: ITransactionDialogFooterProps<TCustomStepId>,
+) => {
+    const {
+        submitLabel,
+        successLink,
+        txReceipt,
+        activeStep,
+        onError,
+        onCancelClick,
+        transactionType,
+        indexingFallbackUrl,
+        proposalSlug,
+    } = props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
     // we will not have a success link and just use the default label to satisfy the interface.
-    const { label: successLabel, href: successHref, onClick: successOnClick } = successLink ?? { label: '' };
+    const {
+        label: successLabel,
+        href: successHref,
+        onClick: successOnClick,
+    } = successLink ?? { label: '' };
 
     const { id: stepId, meta } = activeStep ?? {};
     const { state, action } = meta ?? {};
@@ -98,7 +120,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(p
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (isIndexing && state === 'pending') {
-            timer = setTimeout(() => setShowProceedAnyway(true), indexingStepTimeout);
+            timer = setTimeout(
+                () => setShowProceedAnyway(true),
+                indexingStepTimeout,
+            );
         }
 
         return () => {
@@ -110,7 +135,9 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(p
     const isSuccessState = state === 'success';
     const isPendingState = state === 'pending';
 
-    const successStep = transactionType ? TransactionDialogStep.INDEXING : TransactionDialogStep.CONFIRM;
+    const successStep = transactionType
+        ? TransactionDialogStep.INDEXING
+        : TransactionDialogStep.CONFIRM;
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
 
@@ -124,16 +151,22 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(p
     }, [displaySuccessLink, showProceedAnyway, setIsBlocked]);
 
     const isCancelDisabled =
-        (stepId === TransactionDialogStep.CONFIRM || stepId === TransactionDialogStep.INDEXING) && (isSuccessState || isPendingState);
+        (stepId === TransactionDialogStep.CONFIRM ||
+            stepId === TransactionDialogStep.INDEXING) &&
+        (isSuccessState || isPendingState);
 
-    const customSubmitLabel = stepId != null && state != null ? stepStateSubmitLabel[stepId]?.[state] : undefined;
+    const customSubmitLabel =
+        stepId != null && state != null
+            ? stepStateSubmitLabel[stepId]?.[state]
+            : undefined;
     const defaultSubmitLabel = isErrorState
         ? t('app.shared.transactionDialog.footer.retry')
         : displaySuccessLink
           ? successLabel
           : submitLabel;
 
-    const processedSubmitLabel = customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
+    const processedSubmitLabel =
+        customSubmitLabel != null ? t(customSubmitLabel) : defaultSubmitLabel;
 
     const handlePrimaryActionClick = () => {
         if (displaySuccessLink) {
@@ -157,7 +190,12 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(p
     };
 
     const processedSuccessLink =
-        displaySuccessLink && successHref ? buildSuccessLink(successHref, { receipt: txReceipt!, slug: proposalSlug }) : undefined;
+        displaySuccessLink && successHref
+            ? buildSuccessLink(successHref, {
+                  receipt: txReceipt!,
+                  slug: proposalSlug,
+              })
+            : undefined;
 
     // The cancel button becomes "Proceed anyway" during indexing after 8 seconds
     // and navigates the user to a different page based on transaction type

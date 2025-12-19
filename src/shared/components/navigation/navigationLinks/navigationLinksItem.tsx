@@ -27,8 +27,18 @@ export interface INavigationLinksItemProps extends ILinkProps {
     iconSide?: 'left' | 'right';
 }
 
-export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) => {
-    const { href, variant, icon, iconSide = 'left', children, className, ...otherProps } = props;
+export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
+    props,
+) => {
+    const {
+        href,
+        variant,
+        icon,
+        iconSide = 'left',
+        children,
+        className,
+        ...otherProps
+    } = props;
 
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href) && href !== '/';
@@ -41,16 +51,25 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) 
         { 'text-neutral-800': isActive },
         { 'gap-2': iconSide === 'left' },
         { 'justify-between flex-row-reverse': iconSide === 'right' },
-        className
+        className,
     );
 
     const iconClassNames = classNames(
-        isActive ? (variant === 'row' ? 'text-primary-400' : 'text-neutral-800') : 'text-neutral-300',
-        'group-active:text-neutral-500'
+        isActive
+            ? variant === 'row'
+                ? 'text-primary-400'
+                : 'text-neutral-800'
+            : 'text-neutral-300',
+        'group-active:text-neutral-500',
     );
 
     return (
-        <Link aria-current={isActive ? 'page' : undefined} className={linkClassNames} href={href} {...otherProps}>
+        <Link
+            aria-current={isActive ? 'page' : undefined}
+            className={linkClassNames}
+            href={href}
+            {...otherProps}
+        >
             <Icon className={iconClassNames} icon={icon} />
             {children}
         </Link>

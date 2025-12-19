@@ -31,21 +31,39 @@ export interface IMultisigSetupMembershipItemProps {
     customValidator?: (member: ICompositeAddress) => string | boolean;
 }
 
-export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemProps> = (props) => {
+export const MultisigSetupMembershipItem: React.FC<
+    IMultisigSetupMembershipItemProps
+> = (props) => {
     const { disabled, index, pluginAddress, member, network } = props;
     const { chainId } = useDaoChain({ network });
 
     const memberExistsParams = {
-        urlParams: { memberAddress: member.address, pluginAddress: pluginAddress! },
+        urlParams: {
+            memberAddress: member.address,
+            pluginAddress: pluginAddress!,
+        },
         queryParams: { network: network! },
     };
     const { data } = useMemberExists(memberExistsParams, {
-        enabled: network != null && pluginAddress != null && addressUtils.isAddress(member.address),
+        enabled:
+            network != null &&
+            pluginAddress != null &&
+            addressUtils.isAddress(member.address),
     });
 
     const isMember = data?.status === true;
 
-    const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
+    const customValidator = () =>
+        isMember
+            ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember'
+            : true;
 
-    return <AddressesInput.Item chainId={chainId} customValidator={customValidator} disabled={disabled} index={index} />;
+    return (
+        <AddressesInput.Item
+            chainId={chainId}
+            customValidator={customValidator}
+            disabled={disabled}
+            index={index}
+        />
+    );
 };

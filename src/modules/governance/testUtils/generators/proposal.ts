@@ -1,5 +1,8 @@
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
-import { generateAddressInfo, generatePluginSettings } from '@/shared/testUtils';
+import {
+    generateAddressInfo,
+    generatePluginSettings,
+} from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({

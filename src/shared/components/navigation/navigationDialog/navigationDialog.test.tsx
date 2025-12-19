@@ -6,7 +6,10 @@ import * as NextNavigation from 'next/navigation';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { testLogger } from '@/test/utils';
-import { type INavigationDialogProps, NavigationDialog } from './navigationDialog';
+import {
+    type INavigationDialogProps,
+    NavigationDialog,
+} from './navigationDialog';
 
 describe('<Navigation.Dialog /> component', () => {
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
@@ -48,17 +51,33 @@ describe('<Navigation.Dialog /> component', () => {
     });
 
     it('renders the defined links', () => {
-        const links = [{ link: '/test' as Route, label: 'testLink', icon: IconType.APP_ASSETS }];
+        const links = [
+            {
+                link: '/test' as Route,
+                label: 'testLink',
+                icon: IconType.APP_ASSETS,
+            },
+        ];
         render(createTestComponent({ links, open: true }));
-        expect(screen.getByRole('link', { name: links[0].label })).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: links[0].label }),
+        ).toBeInTheDocument();
     });
 
     it('closes the dialog on link click', async () => {
         testLogger.suppressErrors(); // suppress navigation not implemented error
         const onOpenChange = jest.fn();
-        const links = [{ link: '/link' as Route, label: 'link', icon: IconType.APP_ASSETS }];
+        const links = [
+            {
+                link: '/link' as Route,
+                label: 'link',
+                icon: IconType.APP_ASSETS,
+            },
+        ];
         render(createTestComponent({ links, open: true, onOpenChange }));
-        await userEvent.click(screen.getByRole('link', { name: links[0].label }));
+        await userEvent.click(
+            screen.getByRole('link', { name: links[0].label }),
+        );
         expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
@@ -66,16 +85,30 @@ describe('<Navigation.Dialog /> component', () => {
         render(createTestComponent({ open: true }));
         const dialog = screen.getByRole('dialog');
         const withinDialog = within(dialog);
-        const explore = withinDialog.getByRole('link', { name: /navigationDao.dialog.explore/ });
+        const explore = withinDialog.getByRole('link', {
+            name: /navigationDao.dialog.explore/,
+        });
         expect(explore).toHaveAttribute('href', '/');
-        expect(withinDialog.getByTestId(IconType.APP_EXPLORE)).toBeInTheDocument();
+        expect(
+            withinDialog.getByTestId(IconType.APP_EXPLORE),
+        ).toBeInTheDocument();
     });
 
     it('does not crash when onOpenChange property is not defined', async () => {
         testLogger.suppressErrors(); // suppress navigation not implemented error
-        const links = [{ link: '/link' as Route, label: 'link', icon: IconType.APP_ASSETS }];
-        render(createTestComponent({ links, open: true, onOpenChange: undefined }));
-        await userEvent.click(screen.getByRole('link', { name: links[0].label }));
+        const links = [
+            {
+                link: '/link' as Route,
+                label: 'link',
+                icon: IconType.APP_ASSETS,
+            },
+        ];
+        render(
+            createTestComponent({ links, open: true, onOpenChange: undefined }),
+        );
+        await userEvent.click(
+            screen.getByRole('link', { name: links[0].label }),
+        );
         expect(screen.getByTestId(IconType.APP_EXPLORE)).toBeInTheDocument();
     });
 });

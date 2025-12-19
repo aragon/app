@@ -9,12 +9,15 @@ export interface IAdminPluginHasExecutePermissionParams {
 }
 
 class AdminPluginUtils {
-    hasExecuteProposalPermissionModifier = (params: IAdminPluginHasExecutePermissionParams): boolean => {
+    hasExecuteProposalPermissionModifier = (
+        params: IAdminPluginHasExecutePermissionParams,
+    ): boolean => {
         const { plugin } = params;
-        const hasExecuteProposalPermissionGuard = pluginMetaUtils.isVersionGreaterOrEqualTo(plugin, {
-            release: 1,
-            build: 2,
-        });
+        const hasExecuteProposalPermissionGuard =
+            pluginMetaUtils.isVersionGreaterOrEqualTo(plugin, {
+                release: 1,
+                build: 2,
+            });
 
         return hasExecuteProposalPermissionGuard;
     };

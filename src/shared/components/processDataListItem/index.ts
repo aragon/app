@@ -1,1 +1,4 @@
-export { type IProcessDataListItemProps, ProcessDataListItem } from './processDataListItem';
+export {
+    type IProcessDataListItemProps,
+    ProcessDataListItem,
+} from './processDataListItem';

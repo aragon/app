@@ -18,7 +18,9 @@ export const adminPluginAbi = [
             { name: '_data', internalType: 'bytes', type: 'bytes' },
         ],
         name: 'createProposal',
-        outputs: [{ name: 'proposalId', internalType: 'uint256', type: 'uint256' }],
+        outputs: [
+            { name: 'proposalId', internalType: 'uint256', type: 'uint256' },
+        ],
         stateMutability: 'nonpayable',
     },
 ];

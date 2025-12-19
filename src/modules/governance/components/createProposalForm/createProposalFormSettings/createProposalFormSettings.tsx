@@ -13,7 +13,9 @@ export interface ICreateProposalFormSettingsProps {
     pluginAddress: string;
 }
 
-export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = (props) => {
+export const CreateProposalFormSettings: React.FC<
+    ICreateProposalFormSettingsProps
+> = (props) => {
     const { daoId, pluginAddress } = props;
 
     const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];

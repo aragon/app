@@ -1,4 +1,7 @@
-import { addressUtils, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    type IProposalActionComponentProps,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
@@ -12,42 +15,66 @@ import type { IMultisigSetupMembershipForm } from '../../multisigSetupMembership
 import { MultisigSetupMembership } from '../../multisigSetupMembership';
 
 export interface IMultisigAddMembersActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<IMultisigPluginSettings>>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<
+            IProposalAction,
+            IDaoPlugin<IMultisigPluginSettings>
+        >
+    > {}
 
 const addMembersAbi = {
     type: 'function',
-    inputs: [{ name: '_members', internalType: 'address[]', type: 'address[]' }],
+    inputs: [
+        { name: '_members', internalType: 'address[]', type: 'address[]' },
+    ],
     name: 'addAddresses',
     outputs: [],
     stateMutability: 'nonpayable',
 };
 
-export const MultisigAddMembersAction: React.FC<IMultisigAddMembersActionProps> = (props) => {
+export const MultisigAddMembersAction: React.FC<
+    IMultisigAddMembersActionProps
+> = (props) => {
     const { index, action } = props;
 
     const { setValue } = useFormContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
+    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(
+        actionFieldName,
+    );
 
     const membersFieldName: `${string}.members` = `${actionFieldName}.members`;
 
-    const watchMembersField = useWatch<Record<string, IMultisigSetupMembershipForm['members']>>({
+    const watchMembersField = useWatch<
+        Record<string, IMultisigSetupMembershipForm['members']>
+    >({
         name: membersFieldName,
         defaultValue: [],
     });
     const controlledMembersField = useMemo(
-        () => watchMembersField.map((field, index) => ({ ...field, ...watchMembersField[index] })),
-        [watchMembersField]
+        () =>
+            watchMembersField.map((field, index) => ({
+                ...field,
+                ...watchMembersField[index],
+            })),
+        [watchMembersField],
     );
 
     useEffect(() => {
-        if (controlledMembersField.some((field) => !addressUtils.isAddress(field.address))) {
+        if (
+            controlledMembersField.some(
+                (field) => !addressUtils.isAddress(field.address),
+            )
+        ) {
             return;
         }
 
         const addresses = controlledMembersField.map((field) => field.address);
-        const newData = encodeFunctionData({ abi: [addMembersAbi], args: [addresses] });
+        const newData = encodeFunctionData({
+            abi: [addMembersAbi],
+            args: [addresses],
+        });
         setValue(`${actionFieldName}.data`, newData);
         setValue(`${actionFieldName}.inputData.parameters[0].value`, addresses);
     }, [actionFieldName, controlledMembersField, setValue]);

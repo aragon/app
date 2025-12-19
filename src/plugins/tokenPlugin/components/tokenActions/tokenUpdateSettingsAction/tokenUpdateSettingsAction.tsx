@@ -8,10 +8,15 @@ import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { type ITokenSetupGovernanceForm, TokenSetupGovernance } from '../../tokenSetupGovernance';
+import {
+    type ITokenSetupGovernanceForm,
+    TokenSetupGovernance,
+} from '../../tokenSetupGovernance';
 
 export interface ITokenUpdateSettingsActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>
+    > {}
 
 const updateTokenSettingsAbi = {
     type: 'function',
@@ -26,8 +31,16 @@ const updateTokenSettingsAbi = {
                     internalType: 'enum MajorityVotingBase.VotingMode',
                     type: 'uint8',
                 },
-                { name: 'supportThreshold', internalType: 'uint32', type: 'uint32' },
-                { name: 'minParticipation', internalType: 'uint32', type: 'uint32' },
+                {
+                    name: 'supportThreshold',
+                    internalType: 'uint32',
+                    type: 'uint32',
+                },
+                {
+                    name: 'minParticipation',
+                    internalType: 'uint32',
+                    type: 'uint32',
+                },
                 { name: 'minDuration', internalType: 'uint64', type: 'uint64' },
                 {
                     name: 'minProposerVotingPower',
@@ -42,40 +55,54 @@ const updateTokenSettingsAbi = {
     stateMutability: 'nonpayable',
 } as const;
 
-export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps> = (props) => {
+export const TokenUpdateSettingsAction: React.FC<
+    ITokenUpdateSettingsActionProps
+> = (props) => {
     const { index, action } = props;
     const { decimals } = action.meta.settings.token;
 
     const { setValue } = useFormContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
+    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(
+        actionFieldName,
+    );
 
     const formPrefix = `${actionFieldName}.proposedSettings`;
 
     // Set default values to form values as the values are reset when deleting an item from the useArrayField causing
     // the useWatch to return undefined before unmounting the component
-    const supportThreshold = useWatch<Record<string, ITokenSetupGovernanceForm['supportThreshold']>>({
+    const supportThreshold = useWatch<
+        Record<string, ITokenSetupGovernanceForm['supportThreshold']>
+    >({
         name: `${formPrefix}.supportThreshold`,
         defaultValue: 0,
     });
 
-    const minParticipation = useWatch<Record<string, ITokenSetupGovernanceForm['minParticipation']>>({
+    const minParticipation = useWatch<
+        Record<string, ITokenSetupGovernanceForm['minParticipation']>
+    >({
         name: `${formPrefix}.minParticipation`,
         defaultValue: 0,
     });
 
-    const minVotingPowerValue = useWatch<Record<string, ITokenSetupGovernanceForm['minProposerVotingPower']>>({
+    const minVotingPowerValue = useWatch<
+        Record<string, ITokenSetupGovernanceForm['minProposerVotingPower']>
+    >({
         name: `${formPrefix}.minProposerVotingPower`,
         defaultValue: '0',
     });
 
-    const minDuration = useWatch<Record<string, ITokenSetupGovernanceForm['minDuration']>>({
+    const minDuration = useWatch<
+        Record<string, ITokenSetupGovernanceForm['minDuration']>
+    >({
         name: `${formPrefix}.minDuration`,
         defaultValue: 3600,
     });
 
-    const votingMode = useWatch<Record<string, ITokenSetupGovernanceForm['votingMode']>>({
+    const votingMode = useWatch<
+        Record<string, ITokenSetupGovernanceForm['votingMode']>
+    >({
         name: `${formPrefix}.votingMode`,
         defaultValue: 0,
     });
@@ -83,18 +110,37 @@ export const TokenUpdateSettingsAction: React.FC<ITokenUpdateSettingsActionProps
     useEffect(() => {
         const updateSettingsParams = {
             votingMode,
-            supportThreshold: tokenSettingsUtils.percentageToRatio(supportThreshold),
-            minParticipation: tokenSettingsUtils.percentageToRatio(minParticipation),
+            supportThreshold:
+                tokenSettingsUtils.percentageToRatio(supportThreshold),
+            minParticipation:
+                tokenSettingsUtils.percentageToRatio(minParticipation),
             minDuration: BigInt(minDuration),
             minProposerVotingPower: parseUnits(minVotingPowerValue, decimals),
         };
 
-        const newData = encodeFunctionData({ abi: [updateTokenSettingsAbi], args: [updateSettingsParams] });
-        const paramValues = Object.values(updateSettingsParams).map((value) => value.toString());
+        const newData = encodeFunctionData({
+            abi: [updateTokenSettingsAbi],
+            args: [updateSettingsParams],
+        });
+        const paramValues = Object.values(updateSettingsParams).map((value) =>
+            value.toString(),
+        );
 
         setValue(`${actionFieldName}.data`, newData);
-        setValue(`${actionFieldName}.inputData.parameters[0].value`, paramValues);
-    }, [actionFieldName, minParticipation, minVotingPowerValue, setValue, supportThreshold, votingMode, decimals, minDuration]);
+        setValue(
+            `${actionFieldName}.inputData.parameters[0].value`,
+            paramValues,
+        );
+    }, [
+        actionFieldName,
+        minParticipation,
+        minVotingPowerValue,
+        setValue,
+        supportThreshold,
+        votingMode,
+        decimals,
+        minDuration,
+    ]);
 
     const membershipSettings = { token: action.meta.settings.token };
 

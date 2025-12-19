@@ -23,7 +23,10 @@ import {
 } from '../../types';
 import type { ITokenProposalAction } from '../../types/tokenProposalAction';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
-import { defaultMintAction, defaultUpdateSettings } from './tokenActionDefinitions';
+import {
+    defaultMintAction,
+    defaultUpdateSettings,
+} from './tokenActionDefinitions';
 
 export interface IGetTokenActionsProps {
     /**
@@ -51,16 +54,22 @@ export interface INormalizeChangeSettingsParams {
     token: ITokenPluginSettings['token'];
 }
 
-export type IGetTokenActionsResult = IActionComposerPluginData<IDaoPlugin<ITokenPluginSettings>>;
+export type IGetTokenActionsResult = IActionComposerPluginData<
+    IDaoPlugin<ITokenPluginSettings>
+>;
 
 class TokenActionUtils {
-    getTokenActions = ({ plugin, t }: IGetTokenActionsProps): IGetTokenActionsResult => {
+    getTokenActions = ({
+        plugin,
+        t,
+    }: IGetTokenActionsProps): IGetTokenActionsResult => {
         const { address, settings } = plugin;
         const { address: tokenAddress, name } = settings.token;
 
         // The setMetadata function on the TokenVoting plugin is only supported from version 1.3 onwards
         const minVersion = { release: 1, build: 3 };
-        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
+        const includePluginMetadataAction =
+            versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -80,7 +89,9 @@ class TokenActionUtils {
             items: [
                 {
                     id: `${tokenAddress}-${TokenProposalActionType.MINT}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`),
+                    name: t(
+                        `app.plugins.token.tokenActions.${TokenProposalActionType.MINT}`,
+                    ),
                     icon: IconType.SETTINGS,
                     groupId: tokenAddress,
                     meta: plugin,
@@ -88,34 +99,47 @@ class TokenActionUtils {
                 },
                 {
                     id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
-                    name: t(`app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`),
+                    name: t(
+                        `app.plugins.token.tokenActions.${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
+                    ),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(
+                        plugin,
+                        t,
+                    ),
                     meta: plugin,
                     hidden: !includePluginMetadataAction,
                 },
             ],
             components: {
-                [TokenProposalActionType.UPDATE_VOTE_SETTINGS]: TokenUpdateSettingsAction,
+                [TokenProposalActionType.UPDATE_VOTE_SETTINGS]:
+                    TokenUpdateSettingsAction,
                 [TokenProposalActionType.MINT]: TokenMintTokensAction,
             },
         };
     };
 
-    isChangeSettingsAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionChangeSettings =>
+    isChangeSettingsAction = (
+        action: IProposalAction | ITokenProposalAction,
+    ): action is ITokenActionChangeSettings =>
         action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS;
 
-    isTokenMintAction = (action: IProposalAction | ITokenProposalAction): action is ITokenActionTokenMint =>
+    isTokenMintAction = (
+        action: IProposalAction | ITokenProposalAction,
+    ): action is ITokenActionTokenMint =>
         action.type === TokenProposalActionType.MINT;
 
-    normalizeTokenMintAction = (action: ITokenActionTokenMint): IGukProposalActionTokenMint => {
+    normalizeTokenMintAction = (
+        action: ITokenActionTokenMint,
+    ): IGukProposalActionTokenMint => {
         const { token, receivers, ...otherValues } = action;
-        const { currentBalance, newBalance, ...otherReceiverValues } = receivers;
+        const { currentBalance, newBalance, ...otherReceiverValues } =
+            receivers;
 
         return {
             ...otherValues,
@@ -123,21 +147,36 @@ class TokenActionUtils {
             tokenSymbol: token.symbol,
             receiver: {
                 ...otherReceiverValues,
-                currentBalance: formatUnits(BigInt(currentBalance), token.decimals),
+                currentBalance: formatUnits(
+                    BigInt(currentBalance),
+                    token.decimals,
+                ),
                 newBalance: formatUnits(BigInt(newBalance), token.decimals),
             },
         };
     };
 
-    normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
+    normalizeChangeSettingsAction = (
+        params: INormalizeChangeSettingsParams,
+    ): IGukProposalActionChangeSettings => {
         const { action, t, token } = params;
-        const { type, proposedSettings, existingSettings, ...otherValues } = action;
+        const { type, proposedSettings, existingSettings, ...otherValues } =
+            action;
 
         const completeExistingSettings = { ...existingSettings, token };
-        const completeProposedSettings = { ...completeExistingSettings, ...proposedSettings };
+        const completeProposedSettings = {
+            ...completeExistingSettings,
+            ...proposedSettings,
+        };
 
-        const parsedExistingSettings = tokenSettingsUtils.parseSettings({ settings: completeExistingSettings, t });
-        const parsedProposedSettings = tokenSettingsUtils.parseSettings({ settings: completeProposedSettings, t });
+        const parsedExistingSettings = tokenSettingsUtils.parseSettings({
+            settings: completeExistingSettings,
+            t,
+        });
+        const parsedProposedSettings = tokenSettingsUtils.parseSettings({
+            settings: completeProposedSettings,
+            t,
+        });
 
         return {
             ...otherValues,

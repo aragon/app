@@ -3,7 +3,12 @@ import type { ComponentProps } from 'react';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
-export type TransactionStatusState = 'pending' | 'error' | 'warning' | 'idle' | 'success';
+export type TransactionStatusState =
+    | 'pending'
+    | 'error'
+    | 'warning'
+    | 'idle'
+    | 'success';
 
 export interface ITransactionStatusStepMetaAddon {
     /**

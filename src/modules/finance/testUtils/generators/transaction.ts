@@ -4,7 +4,9 @@ import type { ITransaction } from '@/modules/finance/api/financeService/domain/t
 import { Network } from '@/shared/api/daoService';
 import { generateToken } from './token';
 
-export const generateTransaction = (transaction?: Partial<ITransaction>): ITransaction => ({
+export const generateTransaction = (
+    transaction?: Partial<ITransaction>,
+): ITransaction => ({
     network: Network.ETHEREUM_MAINNET,
     blockNumber: 0,
     blockTimestamp: DateTime.now().toMillis(),

@@ -3,15 +3,16 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import type { IProposal, IProposalAction } from '../../api/governanceService';
 
-export type PrepareProposalActionFunction<TAction extends IProposalCreateAction = IProposalCreateAction> = (
-    action: TAction
-) => Promise<string>;
+export type PrepareProposalActionFunction<
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+> = (action: TAction) => Promise<string>;
 
-export type PrepareProposalActionMap<TAction extends IProposalCreateAction = IProposalCreateAction> = Partial<
-    Record<string, PrepareProposalActionFunction<TAction>>
->;
+export type PrepareProposalActionMap<
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+> = Partial<Record<string, PrepareProposalActionFunction<TAction>>>;
 
-export interface IProposalCreateAction extends Pick<IProposalAction, 'to' | 'data'> {
+export interface IProposalCreateAction
+    extends Pick<IProposalAction, 'to' | 'data'> {
     /**
      * Value of the transaction.
      */
@@ -22,8 +23,9 @@ export interface IProposalCreateAction extends Pick<IProposalAction, 'to' | 'dat
     type?: string;
 }
 
-export interface IProposalCreate<TAction extends IProposalCreateAction = IProposalCreateAction>
-    extends Pick<IProposal, 'title' | 'summary' | 'resources'> {
+export interface IProposalCreate<
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+> extends Pick<IProposal, 'title' | 'summary' | 'resources'> {
     /**
      * Long description of the proposal supporting HTML tags.
      */
@@ -34,7 +36,9 @@ export interface IProposalCreate<TAction extends IProposalCreateAction = IPropos
     actions: TAction[];
 }
 
-export interface IPublishProposalDialogParams<TAction extends IProposalCreateAction = IProposalCreateAction> {
+export interface IPublishProposalDialogParams<
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+> {
     /**
      * data for creating the proposal.
      */
@@ -61,4 +65,5 @@ export interface IPublishProposalDialogParams<TAction extends IProposalCreateAct
     transactionInfo?: ITransactionInfo;
 }
 
-export interface IPublishProposalDialogProps extends IDialogComponentProps<IPublishProposalDialogParams> {}
+export interface IPublishProposalDialogProps
+    extends IDialogComponentProps<IPublishProposalDialogParams> {}

@@ -1,8 +1,16 @@
 import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { AragonBackendService, type IPaginatedResponse } from '../aragonBackendService';
+import {
+    AragonBackendService,
+    type IPaginatedResponse,
+} from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
-import type { IGetDaoByEnsParams, IGetDaoParams, IGetDaoPermissionsParams, IGetDaoPoliciesParams } from './daoService.api';
+import type {
+    IGetDaoByEnsParams,
+    IGetDaoParams,
+    IGetDaoPermissionsParams,
+    IGetDaoPoliciesParams,
+} from './daoService.api';
 import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 
 /**
@@ -26,10 +34,18 @@ class DaoService extends AragonBackendService {
         return {
             // Use environment version (v3 in dev/staging, v2 in production)
             dao: apiVersionUtils.buildVersionedUrl(this.basePaths.dao),
-            daoByEns: apiVersionUtils.buildVersionedUrl(this.basePaths.daoByEns),
+            daoByEns: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.daoByEns,
+            ),
             // Force v2 for permissions (not available in v3 yet)
-            daoPermissions: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPermissions, { forceVersion: 'v2' }),
-            daoPolicies: apiVersionUtils.buildVersionedUrl(this.basePaths.daoPolicies, { forceVersion: 'v2' }),
+            daoPermissions: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.daoPermissions,
+                { forceVersion: 'v2' },
+            ),
+            daoPolicies: apiVersionUtils.buildVersionedUrl(
+                this.basePaths.daoPolicies,
+                { forceVersion: 'v2' },
+            ),
         };
     }
 
@@ -38,7 +54,9 @@ class DaoService extends AragonBackendService {
      * This is a local helper to avoid importing daoUtils and creating cycles.
      * Refactor this in https://linear.app/aragon/issue/APP-364
      */
-    private parseDaoId = (daoId: string): { network: Network; address: string } => {
+    private parseDaoId = (
+        daoId: string,
+    ): { network: Network; address: string } => {
         const lastDash = daoId.lastIndexOf('-');
         const network = daoId.substring(0, lastDash) as Network;
         const address = daoId.substring(lastDash + 1);
@@ -58,7 +76,9 @@ class DaoService extends AragonBackendService {
 
         try {
             const { network, address } = this.parseDaoId(dao.id);
-            const plugins = await pluginsService.getPluginsByDao({ urlParams: { network, address } });
+            const plugins = await pluginsService.getPluginsByDao({
+                urlParams: { network, address },
+            });
 
             return { ...dao, plugins };
         } catch (error) {
@@ -68,25 +88,41 @@ class DaoService extends AragonBackendService {
     };
 
     getDao = async (params: IGetDaoParams): Promise<IDao> => {
-        const result = await this.request<IDaoApiResponse>(this.urls.dao, params);
+        const result = await this.request<IDaoApiResponse>(
+            this.urls.dao,
+            params,
+        );
 
         return this.withPlugins(result);
     };
 
     getDaoByEns = async (params: IGetDaoByEnsParams): Promise<IDao> => {
-        const result = await this.request<IDaoApiResponse>(this.urls.daoByEns, params);
+        const result = await this.request<IDaoApiResponse>(
+            this.urls.daoByEns,
+            params,
+        );
 
         return this.withPlugins(result);
     };
 
-    getDaoPermissions = async (params: IGetDaoPermissionsParams): Promise<IPaginatedResponse<IDaoPermission>> => {
-        const result = await this.request<IPaginatedResponse<IDaoPermission>>(this.urls.daoPermissions, params);
+    getDaoPermissions = async (
+        params: IGetDaoPermissionsParams,
+    ): Promise<IPaginatedResponse<IDaoPermission>> => {
+        const result = await this.request<IPaginatedResponse<IDaoPermission>>(
+            this.urls.daoPermissions,
+            params,
+        );
 
         return result;
     };
 
-    getDaoPolicies = async (params: IGetDaoPoliciesParams): Promise<IDaoPolicy[]> => {
-        const result = await this.request<IDaoPolicy[]>(this.urls.daoPolicies, params);
+    getDaoPolicies = async (
+        params: IGetDaoPoliciesParams,
+    ): Promise<IDaoPolicy[]> => {
+        const result = await this.request<IDaoPolicy[]>(
+            this.urls.daoPolicies,
+            params,
+        );
         return result;
     };
 }

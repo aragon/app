@@ -6,12 +6,19 @@ import { transactionListOptions } from '@/modules/finance/api/financeService/que
 import { daoOptions, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DaoTransactionsPage, daoTransactionsCount, type IDaoTransactionsPageProps } from './daoTransactionsPage';
+import {
+    DaoTransactionsPage,
+    daoTransactionsCount,
+    type IDaoTransactionsPageProps,
+} from './daoTransactionsPage';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-state={JSON.stringify(props.state)} data-testid="hydration-mock">
+        <div
+            data-state={JSON.stringify(props.state)}
+            data-testid="hydration-mock"
+        >
             {props.children}
         </div>
     ),
@@ -22,7 +29,10 @@ jest.mock('./daoTransactionsPageClient', () => ({
 }));
 
 describe('<DaoTransactionsPage /> component', () => {
-    const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
+    const prefetchInfiniteQuerySpy = jest.spyOn(
+        QueryClient.prototype,
+        'prefetchInfiniteQuery',
+    );
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
@@ -38,9 +48,14 @@ describe('<DaoTransactionsPage /> component', () => {
         resolveDaoIdSpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IDaoTransactionsPageProps>) => {
+    const createTestComponent = async (
+        props?: Partial<IDaoTransactionsPageProps>,
+    ) => {
         const completeProps: IDaoTransactionsPageProps = {
-            params: Promise.resolve({ addressOrEns: 'test.dao.eth', network: Network.ETHEREUM_MAINNET }),
+            params: Promise.resolve({
+                addressOrEns: 'test.dao.eth',
+                network: Network.ETHEREUM_MAINNET,
+            }),
             ...props,
         };
 
@@ -61,11 +76,16 @@ describe('<DaoTransactionsPage /> component', () => {
         resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
         render(await createTestComponent());
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(daoOptions({ urlParams: { id: expectedDaoId } }).queryKey);
+        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            daoOptions({ urlParams: { id: expectedDaoId } }).queryKey,
+        );
 
-        const expectedParams = { daoId: dao.id, pageSize: daoTransactionsCount };
+        const expectedParams = {
+            daoId: dao.id,
+            pageSize: daoTransactionsCount,
+        };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            transactionListOptions({ queryParams: expectedParams }).queryKey
+            transactionListOptions({ queryParams: expectedParams }).queryKey,
         );
     });
 });

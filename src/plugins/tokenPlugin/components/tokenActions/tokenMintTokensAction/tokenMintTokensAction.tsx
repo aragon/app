@@ -1,4 +1,10 @@
-import { AddressInput, addressUtils, type ICompositeAddress, InputNumber, type IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    type ICompositeAddress,
+    InputNumber,
+    type IProposalActionComponentProps,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeFunctionData, parseUnits, zeroAddress } from 'viem';
@@ -10,7 +16,9 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface ITokenMintTokensActionProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, IDaoPlugin<ITokenPluginSettings>>
+    > {}
 
 export interface ITokenMintTokensFormData {
     /**
@@ -34,7 +42,9 @@ const mintTokensAbi = {
     stateMutability: 'nonpayable',
 };
 
-export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (props) => {
+export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (
+    props,
+) => {
     const { index, action, chainId } = props;
 
     const { t } = useTranslations();
@@ -42,7 +52,9 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
     const { setValue } = useFormContext();
 
     const fieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
+    useFormField<Record<string, IProposalActionData>, typeof fieldName>(
+        fieldName,
+    );
 
     const {
         onChange: onReceiverChange,
@@ -50,39 +62,59 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
         ...receiverField
     } = useFormField<ITokenMintTokensFormData, 'receiver'>('receiver', {
         label: t('app.plugins.token.tokenMintTokensAction.address.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
+        rules: {
+            required: true,
+            validate: (value) => addressUtils.isAddress(value?.address),
+        },
         fieldPrefix: fieldName,
         sanitizeOnBlur: false,
     });
 
-    const [receiverInput, setReceiverInput] = useState<string | undefined>(receiver?.address);
+    const [receiverInput, setReceiverInput] = useState<string | undefined>(
+        receiver?.address,
+    );
 
-    const amountField = useFormField<ITokenMintTokensFormData, 'amount'>('amount', {
-        label: t('app.plugins.token.tokenMintTokensAction.amount.label'),
-        rules: {
-            required: true,
-            validate: (value) => Number.parseFloat(value ?? '') > 0,
+    const amountField = useFormField<ITokenMintTokensFormData, 'amount'>(
+        'amount',
+        {
+            label: t('app.plugins.token.tokenMintTokensAction.amount.label'),
+            rules: {
+                required: true,
+                validate: (value) => Number.parseFloat(value ?? '') > 0,
+            },
+            fieldPrefix: fieldName,
         },
-        fieldPrefix: fieldName,
-    });
+    );
 
-    const { symbol: tokenSymbol, decimals: tokenDecimals } = action.meta.settings.token;
+    const { symbol: tokenSymbol, decimals: tokenDecimals } =
+        action.meta.settings.token;
     const parsedAmount = parseUnits(amountField.value ?? '0', tokenDecimals);
 
     useEffect(() => {
-        const receiverAddress = addressUtils.isAddress(receiver?.address) ? receiver?.address : zeroAddress;
+        const receiverAddress = addressUtils.isAddress(receiver?.address)
+            ? receiver?.address
+            : zeroAddress;
         const mintParams = [receiverAddress, parsedAmount];
-        const newData = encodeFunctionData({ abi: [mintTokensAbi], args: mintParams });
+        const newData = encodeFunctionData({
+            abi: [mintTokensAbi],
+            args: mintParams,
+        });
 
         setValue(`${fieldName}.data`, newData);
     }, [setValue, fieldName, parsedAmount, receiver?.address]);
 
     useEffect(() => {
-        setValue(`${fieldName}.inputData.parameters[0].value`, receiver?.address);
+        setValue(
+            `${fieldName}.inputData.parameters[0].value`,
+            receiver?.address,
+        );
     }, [receiver, fieldName, setValue]);
 
     useEffect(() => {
-        setValue(`${fieldName}.inputData.parameters[1].value`, parsedAmount.toString());
+        setValue(
+            `${fieldName}.inputData.parameters[1].value`,
+            parsedAmount.toString(),
+        );
     }, [parsedAmount, fieldName, setValue]);
 
     return (
@@ -91,13 +123,18 @@ export const TokenMintTokensAction: React.FC<ITokenMintTokensActionProps> = (pro
                 chainId={chainId}
                 onAccept={onReceiverChange}
                 onChange={setReceiverInput}
-                placeholder={t('app.plugins.token.tokenMintTokensAction.address.placeholder')}
+                placeholder={t(
+                    'app.plugins.token.tokenMintTokensAction.address.placeholder',
+                )}
                 value={receiverInput}
                 {...receiverField}
             />
             <InputNumber
                 min={0}
-                placeholder={t('app.plugins.token.tokenMintTokensAction.amount.placeholder', { symbol: tokenSymbol })}
+                placeholder={t(
+                    'app.plugins.token.tokenMintTokensAction.amount.placeholder',
+                    { symbol: tokenSymbol },
+                )}
                 suffix={tokenSymbol}
                 {...amountField}
             />

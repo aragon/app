@@ -12,7 +12,10 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DaoProposalsPageClient, type IDaoProposalsPageClientProps } from './daoProposalsPageClient';
+import {
+    DaoProposalsPageClient,
+    type IDaoProposalsPageClientProps,
+} from './daoProposalsPageClient';
 
 jest.mock('../../components/daoProposalList', () => ({
     DaoProposalList: () => <div data-testid="proposal-list-mock" />,
@@ -29,16 +32,29 @@ jest.mock('next/navigation', () => ({
 
 describe('<DaoProposalsPageClient /> component', () => {
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
-    const usePermissionCheckGuardSpy = jest.spyOn(usePermissionCheckGuard, 'usePermissionCheckGuard');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
+    const usePermissionCheckGuardSpy = jest.spyOn(
+        usePermissionCheckGuard,
+        'usePermissionCheckGuard',
+    );
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: false });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: false,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -49,9 +65,13 @@ describe('<DaoProposalsPageClient /> component', () => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoProposalsPageClientProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoProposalsPageClientProps>,
+    ) => {
         const completeProps: IDaoProposalsPageClientProps = {
-            initialParams: { queryParams: { daoId: 'test-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
+            },
             ...props,
         };
 
@@ -64,27 +84,44 @@ describe('<DaoProposalsPageClient /> component', () => {
 
     it('renders the page title, proposals list and proposals page details', () => {
         render(createTestComponent());
-        expect(screen.getByText(/daoProposalsPage.main.title/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoProposalsPage.main.title/),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
     });
 
     it('renders the create proposal button with the correct link and label', () => {
         const pluginAddress = '0x082729';
-        const initialParams = { queryParams: { daoId: 'test-dao-id', pluginAddress } };
+        const initialParams = {
+            queryParams: { daoId: 'test-dao-id', pluginAddress },
+        };
         const testCreateProposalUrl = '/dao/ethereum-sepolia/test-proposal-url';
         getDaoUrlSpy.mockReturnValue(testCreateProposalUrl);
         const plugin = generateDaoPlugin({ address: pluginAddress });
 
-        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: plugin })]);
-        usePermissionCheckGuardSpy.mockReturnValue({ check: jest.fn(), result: true });
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: plugin }),
+        ]);
+        usePermissionCheckGuardSpy.mockReturnValue({
+            check: jest.fn(),
+            result: true,
+        });
 
         render(createTestComponent({ initialParams }));
-        const createProposalButton = screen.getByRole<HTMLAnchorElement>('link', {
-            name: /daoProposalsPage.main.action/,
-        });
+        const createProposalButton = screen.getByRole<HTMLAnchorElement>(
+            'link',
+            {
+                name: /daoProposalsPage.main.action/,
+            },
+        );
         expect(createProposalButton).toBeInTheDocument();
-        expect(createProposalButton).toHaveAttribute('href', testCreateProposalUrl);
-        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`create/${pluginAddress}/proposal`);
+        expect(createProposalButton).toHaveAttribute(
+            'href',
+            testCreateProposalUrl,
+        );
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(
+            `create/${pluginAddress}/proposal`,
+        );
     });
 });

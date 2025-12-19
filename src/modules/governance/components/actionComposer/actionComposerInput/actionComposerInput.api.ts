@@ -1,9 +1,14 @@
-import type { IAutocompleteInputGroup, IAutocompleteInputItem, IAutocompleteInputProps } from '@/shared/components/forms/autocompleteInput';
+import type {
+    IAutocompleteInputGroup,
+    IAutocompleteInputItem,
+    IAutocompleteInputProps,
+} from '@/shared/components/forms/autocompleteInput';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import type { IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 
-export interface IActionComposerInputItem<TMeta = undefined> extends IAutocompleteInputItem<TMeta> {
+export interface IActionComposerInputItem<TMeta = undefined>
+    extends IAutocompleteInputItem<TMeta> {
     /**
      * Default value for the action.
      */
@@ -11,11 +16,17 @@ export interface IActionComposerInputItem<TMeta = undefined> extends IAutocomple
 }
 
 export interface IActionComposerInputProps<TMeta = undefined>
-    extends Omit<IAutocompleteInputProps, 'items' | 'groups' | 'selectItemLabel' | 'onChange'> {
+    extends Omit<
+        IAutocompleteInputProps,
+        'items' | 'groups' | 'selectItemLabel' | 'onChange'
+    > {
     /**
      * Callback called on action selected.
      */
-    onActionSelected: (item: IActionComposerInputItem<TMeta>, inputValue: string) => void;
+    onActionSelected: (
+        item: IActionComposerInputItem<TMeta>,
+        inputValue: string,
+    ) => void;
     /**
      * ID of the DAO.
      */

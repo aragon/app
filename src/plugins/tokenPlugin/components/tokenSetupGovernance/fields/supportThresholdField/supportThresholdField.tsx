@@ -16,13 +16,17 @@ export interface ISupportThresholdFieldProps {
 
 const defaultSupportThreshold = 50;
 
-export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (props) => {
+export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (
+    props,
+) => {
     const { formPrefix } = props;
 
     const { t } = useTranslations();
 
     const fieldName = `${formPrefix}.supportThreshold`;
-    const value = useWatch<Record<string, ITokenSetupGovernanceForm['supportThreshold']>>({
+    const value = useWatch<
+        Record<string, ITokenSetupGovernanceForm['supportThreshold']>
+    >({
         name: fieldName,
         defaultValue: defaultSupportThreshold,
     });
@@ -30,7 +34,9 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
     const context = value >= 50 ? 'majority' : 'minority';
 
     const alert = {
-        message: t(`app.plugins.token.tokenSetupGovernance.supportThreshold.alert.${context}`),
+        message: t(
+            `app.plugins.token.tokenSetupGovernance.supportThreshold.alert.${context}`,
+        ),
         variant: context === 'majority' ? 'success' : 'warning',
     } as const;
 
@@ -39,14 +45,28 @@ export const SupportThresholdField: React.FC<ISupportThresholdFieldProps> = (pro
             alert={alert}
             defaultValue={defaultSupportThreshold}
             fieldName={fieldName}
-            helpText={t('app.plugins.token.tokenSetupGovernance.supportThreshold.helpText')}
-            label={t('app.plugins.token.tokenSetupGovernance.supportThreshold.label')}
+            helpText={t(
+                'app.plugins.token.tokenSetupGovernance.supportThreshold.helpText',
+            )}
+            label={t(
+                'app.plugins.token.tokenSetupGovernance.supportThreshold.label',
+            )}
             min={1}
             prefix=">"
             suffix="%"
             tags={[
-                { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.yes'), variant: 'primary' },
-                { label: t('app.plugins.token.tokenSetupGovernance.supportThreshold.tag.no'), variant: 'neutral' },
+                {
+                    label: t(
+                        'app.plugins.token.tokenSetupGovernance.supportThreshold.tag.yes',
+                    ),
+                    variant: 'primary',
+                },
+                {
+                    label: t(
+                        'app.plugins.token.tokenSetupGovernance.supportThreshold.tag.no',
+                    ),
+                    variant: 'neutral',
+                },
             ]}
             total={99}
             valueLabel={`> ${value.toString()} %`}

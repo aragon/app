@@ -4,10 +4,16 @@ import { userEvent } from '@testing-library/user-event';
 import * as Wagmi from 'wagmi';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
-import { ConnectWalletDialog, type IConnectWalletDialogProps } from './connectWalletDialog';
+import {
+    ConnectWalletDialog,
+    type IConnectWalletDialogProps,
+} from './connectWalletDialog';
 
 describe('<ConnectWalletDialog /> component', () => {
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
     const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
     const useAppKitStateSpy = jest.spyOn(AppKit, 'useAppKitState');
     const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
@@ -15,7 +21,11 @@ describe('<ConnectWalletDialog /> component', () => {
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useAppKitSpy.mockReturnValue({ open: jest.fn(), close: jest.fn() });
-        useAppKitStateSpy.mockReturnValue({ open: false, loading: false, initialized: true });
+        useAppKitStateSpy.mockReturnValue({
+            open: false,
+            loading: false,
+            initialized: true,
+        });
         useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
     });
 
@@ -26,7 +36,9 @@ describe('<ConnectWalletDialog /> component', () => {
         useAccountSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IConnectWalletDialogProps>) => {
+    const createTestComponent = (
+        props?: Partial<IConnectWalletDialogProps>,
+    ) => {
         const completeProps: IConnectWalletDialogProps = {
             location: { id: 'test' },
             ...props,
@@ -37,20 +49,34 @@ describe('<ConnectWalletDialog /> component', () => {
 
     it('renders some information about Aragon app', () => {
         render(createTestComponent());
-        expect(screen.getByRole('img', { name: 'Aragon logo' })).toBeInTheDocument();
-        expect(screen.getByText(/connectWalletDialog.connect/)).toBeInTheDocument();
-        expect(screen.getByText(/connectWalletDialog.feature.permissions/)).toBeInTheDocument();
-        expect(screen.getByText(/connectWalletDialog.feature.stats/)).toBeInTheDocument();
+        expect(
+            screen.getByRole('img', { name: 'Aragon logo' }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/connectWalletDialog.connect/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/connectWalletDialog.feature.permissions/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/connectWalletDialog.feature.stats/),
+        ).toBeInTheDocument();
 
-        const auditLink = screen.getByRole('link', { name: /connectWalletDialog.feature.smartContracts/ });
-        expect(auditLink.getAttribute('href')).toMatch(/connectWalletDialog.auditLink/);
+        const auditLink = screen.getByRole('link', {
+            name: /connectWalletDialog.feature.smartContracts/,
+        });
+        expect(auditLink.getAttribute('href')).toMatch(
+            /connectWalletDialog.auditLink/,
+        );
     });
 
     it('renders a cancel button to close the dialog', async () => {
         const close = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
-        const cancelButton = screen.getByRole('button', { name: /connectWalletDialog.action.cancel/ });
+        const cancelButton = screen.getByRole('button', {
+            name: /connectWalletDialog.action.cancel/,
+        });
         expect(cancelButton).toBeInTheDocument();
 
         await userEvent.click(cancelButton);
@@ -62,7 +88,9 @@ describe('<ConnectWalletDialog /> component', () => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useAppKitSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
         render(createTestComponent());
-        const connectButton = screen.getByRole('button', { name: /connectWalletDialog.action.connect/ });
+        const connectButton = screen.getByRole('button', {
+            name: /connectWalletDialog.action.connect/,
+        });
         expect(connectButton).toBeInTheDocument();
 
         await userEvent.click(connectButton);

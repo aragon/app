@@ -1,17 +1,28 @@
 'use client';
 
-import { DateFormat, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    DateFormat,
+    formatterUtils,
+    invariant,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AllAssetsStats } from '../allAssetsStats';
 import { DaoInfoAside } from '../daoInfoAside';
 import type { IDaoFilterAsideCardProps } from './daoFilterAsideCard.api';
 
-export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) => {
-    const { dao, activeOption, selectedMetadata, allMetadata, statsType } = props;
+export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (
+    props,
+) => {
+    const { dao, activeOption, selectedMetadata, allMetadata, statsType } =
+        props;
     const { t } = useTranslations();
 
-    invariant(activeOption != null, 'DaoFilterAsideCard: no valid DAO filter option found.');
+    invariant(
+        activeOption != null,
+        'DaoFilterAsideCard: no valid DAO filter option found.',
+    );
 
     const isAllSelected = activeOption.isAll;
     const asideCardTitle = activeOption.isAll
@@ -22,7 +33,9 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
 
     // Get selected DAO (parent or SubDAO)
     const selectedDaoId = activeOption.daoId ?? dao.id;
-    const matchingSubDao = dao.subDaos?.find((subDao) => subDao.id === selectedDaoId);
+    const matchingSubDao = dao.subDaos?.find(
+        (subDao) => subDao.id === selectedDaoId,
+    );
     const selectedDao = activeOption.isParent ? dao : (matchingSubDao ?? dao);
 
     // Build stats for specific DAO view
@@ -31,25 +44,35 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
             if (!selectedMetadata) {
                 return [
                     {
-                        label: t('app.finance.transactionSubDaoInfo.transactions'),
+                        label: t(
+                            'app.finance.transactionSubDaoInfo.transactions',
+                        ),
                         value: '-',
                     },
                     {
-                        label: t('app.finance.transactionListStats.lastActivity'),
+                        label: t(
+                            'app.finance.transactionListStats.lastActivity',
+                        ),
                         value: '-',
                     },
                 ];
             }
 
             const totalTransactions = selectedMetadata.metadata.totalRecords;
-            const mostRecentTransaction = selectedMetadata.data[0] as { blockTimestamp?: number } | undefined;
+            const mostRecentTransaction = selectedMetadata.data[0] as
+                | { blockTimestamp?: number }
+                | undefined;
             const lastActivityTimestamp = mostRecentTransaction?.blockTimestamp;
 
             const formattedTransactionsCount =
-                formatterUtils.formatNumber(totalTransactions, { format: NumberFormat.GENERIC_SHORT }) ?? '-';
+                formatterUtils.formatNumber(totalTransactions, {
+                    format: NumberFormat.GENERIC_SHORT,
+                }) ?? '-';
             const formattedLastActivity =
                 lastActivityTimestamp != null
-                    ? (formatterUtils.formatDate(lastActivityTimestamp * 1000, { format: DateFormat.RELATIVE }) ?? '-')
+                    ? (formatterUtils.formatDate(lastActivityTimestamp * 1000, {
+                          format: DateFormat.RELATIVE,
+                      }) ?? '-')
                     : '-';
 
             return [
@@ -92,9 +115,21 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (props) =>
 
     return (
         <Page.AsideCard title={asideCardTitle}>
-            {isAllSelected && <AllAssetsStats dao={dao} totalAssets={totalAssets} totalValueUsd={dao.metrics.tvlUSD} />}
+            {isAllSelected && (
+                <AllAssetsStats
+                    dao={dao}
+                    totalAssets={totalAssets}
+                    totalValueUsd={dao.metrics.tvlUSD}
+                />
+            )}
             {!isAllSelected && (
-                <DaoInfoAside dao={dao} daoId={selectedDaoId} network={dao.network} stats={specificStats} subDao={matchingSubDao} />
+                <DaoInfoAside
+                    dao={dao}
+                    daoId={selectedDaoId}
+                    network={dao.network}
+                    stats={specificStats}
+                    subDao={matchingSubDao}
+                />
             )}
         </Page.AsideCard>
     );

@@ -1,11 +1,22 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import type { IProposalAction } from '../../api/governanceService';
 import { useDecodeTransaction } from '../../api/smartContractService';
-import { type ISessionRequest, useConnectApp, useDisconnectApp, walletConnectService } from '../../api/walletConnectService';
-import { type IWalletConnectActionFormData, WalletConnectActionDialogConnect } from './walletConnectActionDialogConnect';
+import {
+    type ISessionRequest,
+    useConnectApp,
+    useDisconnectApp,
+    walletConnectService,
+} from '../../api/walletConnectService';
+import {
+    type IWalletConnectActionFormData,
+    WalletConnectActionDialogConnect,
+} from './walletConnectActionDialogConnect';
 import { WalletConnectActionDialogListener } from './walletConnectActionDialogListener';
 import { walletConnectActionDialogUtils } from './walletConnectActionDialogUtils';
 
@@ -24,35 +35,47 @@ export interface IWalletConnectActionDialogParams {
     onAddActionsClick: (actions: IProposalAction[]) => void;
 }
 
-export interface IWalletConnectActionDialog extends IDialogComponentProps<IWalletConnectActionDialogParams> {}
+export interface IWalletConnectActionDialog
+    extends IDialogComponentProps<IWalletConnectActionDialogParams> {}
 
-export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (props) => {
+export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
+    props,
+) => {
     const { location } = props;
 
-    invariant(location.params != null, 'WalletConnectActionDialog: params must be defined');
+    invariant(
+        location.params != null,
+        'WalletConnectActionDialog: params must be defined',
+    );
     const { daoAddress, daoNetwork, onAddActionsClick } = location.params;
 
     const { close } = useDialogContext();
     const [actions, setActions] = useState<IProposalAction[]>([]);
 
-    const { data: appSession, mutate: connectApp, status: connectionStatus, reset: resetAppSession } = useConnectApp();
+    const {
+        data: appSession,
+        mutate: connectApp,
+        status: connectionStatus,
+        reset: resetAppSession,
+    } = useConnectApp();
     const { mutate: disconnectApp } = useDisconnectApp();
     const { mutateAsync: decodeTransactionAsync } = useDecodeTransaction();
 
     const handleSessionRequest = useCallback(
         async (sessionRequest: ISessionRequest) => {
-            const proposalAction = await walletConnectActionDialogUtils.sessionRequestToAction({
-                sessionRequest,
-                daoAddress,
-                daoNetwork,
-                decodeTransactionAsync,
-            });
+            const proposalAction =
+                await walletConnectActionDialogUtils.sessionRequestToAction({
+                    sessionRequest,
+                    daoAddress,
+                    daoNetwork,
+                    decodeTransactionAsync,
+                });
 
             if (proposalAction) {
                 setActions((current) => [...current, proposalAction]);
             }
         },
-        [decodeTransactionAsync, daoAddress, daoNetwork]
+        [decodeTransactionAsync, daoAddress, daoNetwork],
     );
 
     const handleCloseDialog = useCallback(() => {
@@ -71,13 +94,25 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
 
     useEffect(() => {
         if (appSession) {
-            walletConnectService.attachListener({ event: 'session_request', callback: handleSessionRequest });
-            walletConnectService.attachListener({ event: 'session_delete', callback: resetAppSession });
+            walletConnectService.attachListener({
+                event: 'session_request',
+                callback: handleSessionRequest,
+            });
+            walletConnectService.attachListener({
+                event: 'session_delete',
+                callback: resetAppSession,
+            });
         }
 
         return () => {
-            walletConnectService.removeListener({ event: 'session_request', callback: handleSessionRequest });
-            walletConnectService.removeListener({ event: 'session_delete', callback: resetAppSession });
+            walletConnectService.removeListener({
+                event: 'session_request',
+                callback: handleSessionRequest,
+            });
+            walletConnectService.removeListener({
+                event: 'session_delete',
+                callback: resetAppSession,
+            });
         };
     }, [appSession, handleSessionRequest, resetAppSession]);
 
@@ -88,7 +123,12 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     };
 
     if (appSession == null) {
-        return <WalletConnectActionDialogConnect onFormSubmit={handleFormSubmit} status={connectionStatus} />;
+        return (
+            <WalletConnectActionDialogConnect
+                onFormSubmit={handleFormSubmit}
+                status={connectionStatus}
+            />
+        );
     }
 
     return (

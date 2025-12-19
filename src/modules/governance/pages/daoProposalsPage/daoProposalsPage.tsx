@@ -17,7 +17,9 @@ export interface IDaoProposalsPageProps {
 export const daoProposalsCount = 10;
 export const daoProposalsSort = 'blockTimestamp';
 
-export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) => {
+export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const daoPageParams = await params;
 
@@ -35,8 +37,11 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
 
     // Set pluginAddress parameter to undefined when DAO has more than one plugin as the UI will display an "All proposals"
     // tab that is selected by default
-    const processPlugins = daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS })!;
-    const pluginAddress = processPlugins.length > 1 ? undefined : processPlugins[0].address;
+    const processPlugins = daoUtils.getDaoPlugins(dao, {
+        type: PluginType.PROCESS,
+    })!;
+    const pluginAddress =
+        processPlugins.length > 1 ? undefined : processPlugins[0].address;
 
     const proposalListQueryParams = {
         daoId,
@@ -48,7 +53,9 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (props) 
     };
     const proposalListParams = { queryParams: proposalListQueryParams };
 
-    await queryClient.prefetchInfiniteQuery(proposalListOptions({ queryParams: proposalListQueryParams }));
+    await queryClient.prefetchInfiniteQuery(
+        proposalListOptions({ queryParams: proposalListQueryParams }),
+    );
 
     return (
         <Page.Container queryClient={queryClient}>

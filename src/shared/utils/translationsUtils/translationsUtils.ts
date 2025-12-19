@@ -12,13 +12,27 @@ class TranslationsUtils {
                 return key;
             }
 
-            const value = key.split('.').reduce<string | object | undefined>((acc: string | object | undefined, key: string) => {
-                if (acc != null && typeof acc === 'object' && key in acc) {
-                    return (acc as Record<string, string | object | undefined>)[key];
-                }
+            const value = key
+                .split('.')
+                .reduce<string | object | undefined>(
+                    (acc: string | object | undefined, key: string) => {
+                        if (
+                            acc != null &&
+                            typeof acc === 'object' &&
+                            key in acc
+                        ) {
+                            return (
+                                acc as Record<
+                                    string,
+                                    string | object | undefined
+                                >
+                            )[key];
+                        }
 
-                return;
-            }, translations);
+                        return;
+                    },
+                    translations,
+                );
 
             if (typeof value === 'object' || value == null) {
                 return key;
@@ -27,8 +41,12 @@ class TranslationsUtils {
             const valueKeys = Object.keys(options);
 
             return valueKeys.reduce<string>(
-                (acc: string, current: string) => acc.replace(new RegExp(`{{${current}}}`, 'g'), options[current] as string),
-                value
+                (acc: string, current: string) =>
+                    acc.replace(
+                        new RegExp(`{{${current}}}`, 'g'),
+                        options[current] as string,
+                    ),
+                value,
             );
         };
 }

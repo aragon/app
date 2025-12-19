@@ -18,7 +18,9 @@ export interface IMultisigMemberInfoProps {
     plugin: IDaoPlugin<IMultisigPluginSettings>;
 }
 
-export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) => {
+export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (
+    props,
+) => {
     const { daoId, plugin } = props;
     const { t } = useTranslations();
 
@@ -32,18 +34,32 @@ export const MultisigMemberInfo: React.FC<IMultisigMemberInfoProps> = (props) =>
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.multisig.multisigMembersInfo.eligibleVoters')}>
-                <p className="text-neutral-500">{t('app.plugins.multisig.multisigMembersInfo.multisigMembers')}</p>
+            <DefinitionList.Item
+                term={t(
+                    'app.plugins.multisig.multisigMembersInfo.eligibleVoters',
+                )}
+            >
+                <p className="text-neutral-500">
+                    {t(
+                        'app.plugins.multisig.multisigMembersInfo.multisigMembers',
+                    )}
+                </p>
             </DefinitionList.Item>
             <DefinitionList.Item
-                description={t('app.plugins.multisig.multisigMembersInfo.linkDescription')}
+                description={t(
+                    'app.plugins.multisig.multisigMembersInfo.linkDescription',
+                )}
                 link={{
                     href: membersLink,
                     isExternal: false,
                 }}
-                term={t('app.plugins.multisig.multisigMembersInfo.membersLabel')}
+                term={t(
+                    'app.plugins.multisig.multisigMembersInfo.membersLabel',
+                )}
             >
-                {t('app.plugins.multisig.multisigMembersInfo.membersCount', { count: memberCount })}
+                {t('app.plugins.multisig.multisigMembersInfo.membersCount', {
+                    count: memberCount,
+                })}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

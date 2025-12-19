@@ -29,7 +29,9 @@ export interface IAssetListContainerProps {
 
 export const assetListFilterParam = 'subdao';
 
-export const AssetListContainer: React.FC<IAssetListContainerProps> = (props) => {
+export const AssetListContainer: React.FC<IAssetListContainerProps> = (
+    props,
+) => {
     const { initialParams, daoId, ...otherProps } = props;
 
     const { t } = useTranslations();

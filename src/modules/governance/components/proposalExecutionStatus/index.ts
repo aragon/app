@@ -1,1 +1,4 @@
-export { type IProposalExecutionStatusProps, ProposalExecutionStatus } from './proposalExecutionStatus';
+export {
+    type IProposalExecutionStatusProps,
+    ProposalExecutionStatus,
+} from './proposalExecutionStatus';

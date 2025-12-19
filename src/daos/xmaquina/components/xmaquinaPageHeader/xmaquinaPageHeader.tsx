@@ -21,7 +21,9 @@ export interface IXmaquinaPageHeaderProps extends ComponentProps<'header'> {
     dao: IDao;
 }
 
-export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) => {
+export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
+    props,
+) => {
     const { dao, className, ...otherProps } = props;
     const { address } = useAccount();
     const { data: ensName } = useEnsName({
@@ -33,19 +35,34 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
 
     return (
         <header
-            className={classNames('relative flex flex-col justify-between overflow-hidden md:h-114', twkEverett.className, className)}
+            className={classNames(
+                'relative flex flex-col justify-between overflow-hidden md:h-114',
+                twkEverett.className,
+                className,
+            )}
             {...otherProps}
         >
-            <Image alt="" className="absolute inset-0 -z-30 object-cover" fill={true} priority={true} src={BackgroundImage} />
+            <Image
+                alt=""
+                className="absolute inset-0 -z-30 object-cover"
+                fill={true}
+                priority={true}
+                src={BackgroundImage}
+            />
 
             <Container className="relative flex w-full grow flex-col">
                 <div className="top-6 flex w-fit max-w-180 flex-col gap-1.5 pt-6 pb-6 md:absolute md:top-8 md:w-180 md:gap-3">
                     <p className="text-3xl text-neutral-0 leading-tight md:text-5xl">
-                        {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')} {ensName && <span className="text-[#1ED612]">{ensName}</span>}
+                        {t('app.daos.xmaquina.xmaquinaPageHeader.welcome')}{' '}
+                        {ensName && (
+                            <span className="text-[#1ED612]">{ensName}</span>
+                        )}
                         <br />
                         {t('app.daos.xmaquina.xmaquinaPageHeader.to')}
                     </p>
-                    <p className="text-base text-neutral-300 md:text-2xl">{t('app.daos.xmaquina.xmaquinaPageHeader.info')}</p>
+                    <p className="text-base text-neutral-300 md:text-2xl">
+                        {t('app.daos.xmaquina.xmaquinaPageHeader.info')}
+                    </p>
                 </div>
                 <Image
                     alt="XMAQUINA Robot"
@@ -53,7 +70,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                     height={421}
                     priority={true}
                     src={DroidImage}
-                    style={{ objectFit: 'contain', objectPosition: 'top right' }}
+                    style={{
+                        objectFit: 'contain',
+                        objectPosition: 'top right',
+                    }}
                     width={435}
                 />
 
@@ -69,7 +89,12 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <Carousel animationDelay={2} gap={1} speed={40} speedOnHoverFactor={0.2}>
+                <Carousel
+                    animationDelay={2}
+                    gap={1}
+                    speed={40}
+                    speedOnHoverFactor={0.2}
+                >
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
@@ -80,7 +105,13 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (props) =>
                 <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
-                <Carousel animationDelay={2} gap={1} isDraggable={true} speed={40} speedOnHoverFactor={0.2}>
+                <Carousel
+                    animationDelay={2}
+                    gap={1}
+                    isDraggable={true}
+                    speed={40}
+                    speedOnHoverFactor={0.2}
+                >
                     {actions.map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}

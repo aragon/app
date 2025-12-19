@@ -25,7 +25,9 @@ describe('<Link /> component', () => {
         const href = 'https://google.com';
         const rel = 'search';
         render(createTestComponent({ target, href, rel }));
-        expect(screen.getByRole<HTMLAnchorElement>('link').rel).toEqual(`noopener noreferrer ${rel}`);
+        expect(screen.getByRole<HTMLAnchorElement>('link').rel).toEqual(
+            `noopener noreferrer ${rel}`,
+        );
     });
 
     it('does not change rel property when target is not blank', () => {

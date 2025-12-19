@@ -7,7 +7,8 @@ type DocumentParserProps = ComponentProps<typeof DocumentParser>;
 export const SafeDocumentParser: FC<DocumentParserProps> = (props) => {
     const { document, ...rest } = props;
 
-    const sanitized = typeof document === 'string' ? sanitizeHtmlRich(document) : document;
+    const sanitized =
+        typeof document === 'string' ? sanitizeHtmlRich(document) : document;
 
     return <DocumentParser {...rest} document={sanitized} />;
 };

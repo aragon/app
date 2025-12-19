@@ -1,7 +1,11 @@
 'use client';
 
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { type DehydratedState, HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
+import {
+    type DehydratedState,
+    HydrationBoundary,
+    QueryClientProvider,
+} from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import type { ReactNode } from 'react';
 import type { State } from 'wagmi';
@@ -48,7 +52,13 @@ export interface IProvidersProps {
 const coreProviderValues = { Link, Img: Image };
 
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, wagmiInitialState, dehydratedState, children, featureFlagsSnapshot } = props;
+    const {
+        translations,
+        wagmiInitialState,
+        dehydratedState,
+        children,
+        featureFlagsSnapshot,
+    } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
 
@@ -69,10 +79,14 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 wagmiConfig={wagmiConfig}
                                 wagmiInitialState={wagmiInitialState}
                             >
-                                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                                <FeatureFlagsProvider
+                                    initialSnapshot={featureFlagsSnapshot}
+                                >
                                     <DialogProvider>
                                         {children}
-                                        <DialogRoot dialogs={providersDialogs} />
+                                        <DialogRoot
+                                            dialogs={providersDialogs}
+                                        />
                                         <ReactQueryDevtools />
                                     </DialogProvider>
                                 </FeatureFlagsProvider>

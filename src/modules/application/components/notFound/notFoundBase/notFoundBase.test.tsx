@@ -11,7 +11,9 @@ describe('<NotFoundBase /> component', () => {
     it('renders a generic page not found feedback', () => {
         render(createTestComponent());
         expect(screen.getByText(/notFoundBase.title/)).toBeInTheDocument();
-        expect(screen.getByText(/notFoundBase.description/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/notFoundBase.description/),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('MAGNIFYING_GLASS')).toBeInTheDocument();
 
         const link = screen.getByRole('link', { name: /notFoundBase.action/ });

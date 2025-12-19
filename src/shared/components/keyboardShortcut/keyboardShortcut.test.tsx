@@ -1,5 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { type IKeyboardShortcutProps, KeyboardShortcut } from './keyboardShortcut';
+import {
+    type IKeyboardShortcutProps,
+    KeyboardShortcut,
+} from './keyboardShortcut';
 
 describe('<KeyboardShortcut /> component', () => {
     const createTestComponent = (props?: Partial<IKeyboardShortcutProps>) => {

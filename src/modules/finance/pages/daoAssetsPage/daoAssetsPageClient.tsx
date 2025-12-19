@@ -20,7 +20,9 @@ export interface IDaoAssetsPageClientProps {
     initialParams: IGetAssetListParams;
 }
 
-export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) => {
+export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (
+    props,
+) => {
     const { id, initialParams } = props;
     const { t } = useTranslations();
 
@@ -47,7 +49,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 daoId: id,
             },
         },
-        { enabled: allAssetsSelected }
+        { enabled: allAssetsSelected },
     );
 
     // Fetch assets for selected DAO view
@@ -59,7 +61,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (props) 
                 onlyParent: activeOption?.onlyParent,
             },
         },
-        { enabled: !(allAssetsSelected && hasSubDaos) }
+        { enabled: !(allAssetsSelected && hasSubDaos) },
     );
 
     if (dao == null) {

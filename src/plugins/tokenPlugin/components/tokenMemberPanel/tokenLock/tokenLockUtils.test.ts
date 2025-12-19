@@ -152,7 +152,11 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token (18 decimals)
             const time = 86_400; // 1 day
 
-            const votingPower = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
+            const votingPower = tokenLockUtils.calculateVotingPower(
+                amount,
+                time,
+                mockSettings,
+            );
 
             // Formula: (amount * slope * time + amount * bias) / 1e18
             // (1e18 * 1e15 * 86400 + 1e18 * 0) / 1e18 = 86400
@@ -163,8 +167,16 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token
             const time = mockSettings.votingEscrow!.maxTime + 10_000; // Exceeds maxTime
 
-            const votingPower1 = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
-            const votingPower2 = tokenLockUtils.calculateVotingPower(amount, mockSettings.votingEscrow!.maxTime, mockSettings);
+            const votingPower1 = tokenLockUtils.calculateVotingPower(
+                amount,
+                time,
+                mockSettings,
+            );
+            const votingPower2 = tokenLockUtils.calculateVotingPower(
+                amount,
+                mockSettings.votingEscrow!.maxTime,
+                mockSettings,
+            );
 
             // Should be capped at maxTime
             expect(votingPower1).toBe(votingPower2);
@@ -174,7 +186,11 @@ describe('TokenLockUtils', () => {
             const amount = '0';
             const time = 86_400;
 
-            const votingPower = tokenLockUtils.calculateVotingPower(amount, time, mockSettings);
+            const votingPower = tokenLockUtils.calculateVotingPower(
+                amount,
+                time,
+                mockSettings,
+            );
 
             expect(votingPower).toBe('0');
         });
@@ -191,7 +207,11 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token
             const time = 86_400; // 1 day
 
-            const votingPower = tokenLockUtils.calculateVotingPower(amount, time, settingsWithBias);
+            const votingPower = tokenLockUtils.calculateVotingPower(
+                amount,
+                time,
+                settingsWithBias,
+            );
 
             // Formula: (1e18 * 1e15 * 86400 + 1e18 * 1e17) / 1e18
             // = (86400e15 + 100e15) / 1e18 = (86500e15) / 1e18 = 0.0865
@@ -218,7 +238,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(lock, mockSettings);
+            const votingPower = tokenLockUtils.getLockVotingPower(
+                lock,
+                mockSettings,
+            );
 
             expect(Number.parseFloat(votingPower)).toBeGreaterThan(0);
         });
@@ -243,7 +266,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(lock, mockSettings);
+            const votingPower = tokenLockUtils.getLockVotingPower(
+                lock,
+                mockSettings,
+            );
 
             expect(votingPower).toBe('0');
         });
@@ -268,7 +294,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(lock, mockSettings);
+            const votingPower = tokenLockUtils.getLockVotingPower(
+                lock,
+                mockSettings,
+            );
 
             expect(votingPower).toBe('0');
         });
@@ -347,8 +376,14 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 604_800, // 7 days
             };
 
-            const multiplier1Day = tokenLockUtils.getMultiplier(lock1Day, mockSettings);
-            const multiplier7Days = tokenLockUtils.getMultiplier(lock7Days, mockSettings);
+            const multiplier1Day = tokenLockUtils.getMultiplier(
+                lock1Day,
+                mockSettings,
+            );
+            const multiplier7Days = tokenLockUtils.getMultiplier(
+                lock7Days,
+                mockSettings,
+            );
 
             expect(multiplier7Days).toBeGreaterThan(multiplier1Day);
         });
@@ -373,7 +408,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const minLockTime = tokenLockUtils.getMinLockTime(lock, mockSettings.votingEscrow!);
+            const minLockTime = tokenLockUtils.getMinLockTime(
+                lock,
+                mockSettings.votingEscrow!,
+            );
 
             // minLockTime = epochStartAt + minLockTime from settings
             // 1000 + 86400 = 87400

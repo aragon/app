@@ -6,25 +6,54 @@ import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
+    const {
+        useDuration = false,
+        label,
+        helpText,
+        minDuration,
+        field,
+        infoText,
+        minTime,
+        validateMinDuration,
+    } = props;
     const { t } = useTranslations();
 
     const dateModeFieldName = `${field}Mode`;
     const dateFixedFieldName = `${field}Fixed`;
     const dateDurationFieldName = `${field}Duration`;
 
-    const inputModeField = useFormField<Record<string, 'duration' | 'now' | 'fixed'>, typeof dateModeFieldName>(dateModeFieldName, {
+    const inputModeField = useFormField<
+        Record<string, 'duration' | 'now' | 'fixed'>,
+        typeof dateModeFieldName
+    >(dateModeFieldName, {
         label,
         defaultValue: useDuration ? 'duration' : 'now',
     });
 
-    const radioLabel = useDuration ? t('app.shared.advancedDateInput.duration.label') : t('app.shared.advancedDateInput.now');
+    const radioLabel = useDuration
+        ? t('app.shared.advancedDateInput.duration.label')
+        : t('app.shared.advancedDateInput.now');
 
     return (
         <div className="flex flex-col gap-2">
-            <RadioGroup className="flex gap-4 md:flex-row!" helpText={helpText} onValueChange={inputModeField.onChange} {...inputModeField}>
-                <RadioCard className="w-full" description="" label={radioLabel} value={useDuration ? 'duration' : 'now'} />
-                <RadioCard className="w-full" description="" label={t('app.shared.advancedDateInput.fixed.label')} value="fixed" />
+            <RadioGroup
+                className="flex gap-4 md:flex-row!"
+                helpText={helpText}
+                onValueChange={inputModeField.onChange}
+                {...inputModeField}
+            >
+                <RadioCard
+                    className="w-full"
+                    description=""
+                    label={radioLabel}
+                    value={useDuration ? 'duration' : 'now'}
+                />
+                <RadioCard
+                    className="w-full"
+                    description=""
+                    label={t('app.shared.advancedDateInput.fixed.label')}
+                    value="fixed"
+                />
             </RadioGroup>
             {inputModeField.value === 'fixed' && (
                 <AdvancedDateInputFixed

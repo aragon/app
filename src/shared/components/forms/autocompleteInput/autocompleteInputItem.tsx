@@ -15,7 +15,10 @@ export interface IAutocompleteInputItemProps extends ComponentProps<'div'> {
     isActive: boolean;
 }
 
-export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInputItemProps>((props, ref) => {
+export const AutocompleteInputItem = forwardRef<
+    HTMLDivElement,
+    IAutocompleteInputItemProps
+>((props, ref) => {
     const { isActive, item, className, ...otherProps } = props;
     const { id, icon, name, info } = item;
 
@@ -24,17 +27,33 @@ export const AutocompleteInputItem = forwardRef<HTMLDivElement, IAutocompleteInp
         'leading-tight font-normal',
         { 'bg-neutral-50 text-neutral-800': isActive },
         { 'text-neutral-500': !isActive },
-        className
+        className,
     );
 
     return (
-        <div aria-selected={isActive} className={itemClassName} id={id} ref={ref} role="option" {...otherProps}>
+        <div
+            aria-selected={isActive}
+            className={itemClassName}
+            id={id}
+            ref={ref}
+            role="option"
+            {...otherProps}
+        >
             <span className="flex min-w-0 flex-row items-center gap-4">
-                <Icon className={classNames({ 'text-neutral-300': !isActive })} icon={icon} />
+                <Icon
+                    className={classNames({ 'text-neutral-300': !isActive })}
+                    icon={icon}
+                />
                 <p className="text-base">{name}</p>
             </span>
             <span className="flex items-center gap-2">
-                {info && <span className={classNames('text-sm', { 'mr-7': !isActive })}>{info}</span>}
+                {info && (
+                    <span
+                        className={classNames('text-sm', { 'mr-7': !isActive })}
+                    >
+                        {info}
+                    </span>
+                )}
                 {isActive && <KeyboardShortcut>↵</KeyboardShortcut>}
             </span>
         </div>

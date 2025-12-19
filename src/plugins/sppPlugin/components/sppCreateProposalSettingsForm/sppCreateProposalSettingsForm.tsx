@@ -6,14 +6,20 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ISppCreateProposalSettingsFormProps {}
 
-export const SppCreateProposalSettingsForm: React.FC<ISppCreateProposalSettingsFormProps> = () => {
+export const SppCreateProposalSettingsForm: React.FC<
+    ISppCreateProposalSettingsFormProps
+> = () => {
     const { t } = useTranslations();
 
     return (
         <AdvancedDateInput
             field="startTime"
-            helpText={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.helpText')}
-            label={t('app.plugins.spp.sppCreateProposalSettingsForm.startTime.label')}
+            helpText={t(
+                'app.plugins.spp.sppCreateProposalSettingsForm.startTime.helpText',
+            )}
+            label={t(
+                'app.plugins.spp.sppCreateProposalSettingsForm.startTime.label',
+            )}
             minTime={DateTime.now()}
         />
     );

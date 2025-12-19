@@ -46,10 +46,15 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     const { initialParams, memberParams, layoutClassNames, showSearch } = props;
     const { t } = useTranslations();
 
-    invariant(initialParams != null || memberParams != null, 'DaoList: either initialParams or memberParams must be provided');
+    invariant(
+        initialParams != null || memberParams != null,
+        'DaoList: either initialParams or memberParams must be provided',
+    );
 
     const [searchValue, setSearchValue] = useState<string>();
-    const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
+    const [searchValueDebounced] = useDebouncedValue(searchValue, {
+        delay: 500,
+    });
 
     const defaultResult = useDaoList(
         {
@@ -60,21 +65,35 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                 search: searchValueDebounced,
             },
         },
-        { enabled: initialParams != null && memberParams == null }
+        { enabled: initialParams != null && memberParams == null },
     );
 
     const memberResult = useDaoListByMemberAddress(
-        { ...memberParams!, queryParams: { ...memberParams?.queryParams, search: searchValueDebounced } },
-        { enabled: memberParams != null }
+        {
+            ...memberParams!,
+            queryParams: {
+                ...memberParams?.queryParams,
+                search: searchValueDebounced,
+            },
+        },
+        { enabled: memberParams != null },
     );
 
-    const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } = memberParams != null ? memberResult : defaultResult;
+    const { data, fetchNextPage, status, fetchStatus, isFetchingNextPage } =
+        memberParams != null ? memberResult : defaultResult;
 
     const daoList = data?.pages.flatMap((page) => page.data);
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
-    const pageSize = initialParams?.queryParams.pageSize ?? memberParams?.queryParams.pageSize ?? data?.pages[0]?.metadata?.pageSize;
+    const pageSize =
+        initialParams?.queryParams.pageSize ??
+        memberParams?.queryParams.pageSize ??
+        data?.pages[0]?.metadata?.pageSize;
 
     const itemsCount = data?.pages[0]?.metadata?.totalRecords;
 
@@ -106,7 +125,9 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}
-                layoutClassName={layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'}
+                layoutClassName={
+                    layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'
+                }
                 SkeletonElement={DaoDataListItem.Skeleton}
             >
                 {daoList?.map((dao) => (

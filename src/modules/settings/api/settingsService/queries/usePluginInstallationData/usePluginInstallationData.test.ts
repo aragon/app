@@ -5,17 +5,29 @@ import { settingsService } from '../../settingsService';
 import { usePluginInstallationData } from './usePluginInstallationData';
 
 describe('usePluginInstallationData query', () => {
-    const getPluginInstallationDataSpy = jest.spyOn(settingsService, 'getPluginInstallationData');
+    const getPluginInstallationDataSpy = jest.spyOn(
+        settingsService,
+        'getPluginInstallationData',
+    );
 
     afterEach(() => {
         getPluginInstallationDataSpy.mockReset();
     });
 
     it('fetches the installation data of the specified plugin', async () => {
-        const params = { queryParams: { pluginAddress: '0x123', network: Network.ZKSYNC_MAINNET } };
+        const params = {
+            queryParams: {
+                pluginAddress: '0x123',
+                network: Network.ZKSYNC_MAINNET,
+            },
+        };
         const installationData = { preparedSetupData: { helpers: ['0x456'] } };
         getPluginInstallationDataSpy.mockResolvedValue(installationData);
-        const { result } = renderHook(() => usePluginInstallationData(params), { wrapper: ReactQueryWrapper });
-        await waitFor(() => expect(result.current.data).toEqual(installationData));
+        const { result } = renderHook(() => usePluginInstallationData(params), {
+            wrapper: ReactQueryWrapper,
+        });
+        await waitFor(() =>
+            expect(result.current.data).toEqual(installationData),
+        );
     });
 });

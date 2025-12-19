@@ -2,7 +2,9 @@ import type { ISubDaoSummary } from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { generateDaoMetrics } from './daoMetrics';
 
-export const generateSubDao = (subDao?: Partial<ISubDaoSummary>): ISubDaoSummary => ({
+export const generateSubDao = (
+    subDao?: Partial<ISubDaoSummary>,
+): ISubDaoSummary => ({
     id: 'polygon-mainnet-0x123',
     address: '0x123',
     network: Network.POLYGON_MAINNET,

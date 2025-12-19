@@ -1,7 +1,10 @@
 import { QueryClient } from '@tanstack/react-query';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { proposalActionsOptions, proposalBySlugOptions } from '../../api/governanceService';
+import {
+    proposalActionsOptions,
+    proposalBySlugOptions,
+} from '../../api/governanceService';
 import type { IDaoProposalPageParams } from '../../types';
 import { DaoProposalDetailsPageClient } from './daoProposalDetailsPageClient';
 
@@ -12,7 +15,9 @@ export interface IDaoProposalDetailsPageProps {
     params: Promise<IDaoProposalPageParams>;
 }
 
-export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = async (props) => {
+export const DaoProposalDetailsPage: React.FC<
+    IDaoProposalDetailsPageProps
+> = async (props) => {
     const { params } = props;
     const { addressOrEns, network, proposalSlug } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
@@ -25,19 +30,32 @@ export const DaoProposalDetailsPage: React.FC<IDaoProposalDetailsPageProps> = as
     };
 
     try {
-        const proposal = await queryClient.fetchQuery(proposalBySlugOptions(proposalParams));
-        await queryClient.fetchQuery(proposalActionsOptions({ urlParams: { id: proposal.id } }));
+        const proposal = await queryClient.fetchQuery(
+            proposalBySlugOptions(proposalParams),
+        );
+        await queryClient.fetchQuery(
+            proposalActionsOptions({ urlParams: { id: proposal.id } }),
+        );
     } catch (error: unknown) {
         const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
         const errorNamespace = 'app.governance.daoProposalDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/proposals`;
 
-        return <Page.Error actionLink={actionLink} error={parsedError} errorNamespace={errorNamespace} />;
+        return (
+            <Page.Error
+                actionLink={actionLink}
+                error={parsedError}
+                errorNamespace={errorNamespace}
+            />
+        );
     }
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoProposalDetailsPageClient daoId={daoId} proposalSlug={proposalSlug} />
+            <DaoProposalDetailsPageClient
+                daoId={daoId}
+                proposalSlug={proposalSlug}
+            />
         </Page.Container>
     );
 };

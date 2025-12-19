@@ -1,1 +1,4 @@
-export { type ISetupBodyDialogMetadataProps, SetupBodyDialogMetadata } from './setupBodyDialogMetadata';
+export {
+    type ISetupBodyDialogMetadataProps,
+    SetupBodyDialogMetadata,
+} from './setupBodyDialogMetadata';

@@ -9,24 +9,44 @@ import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IGetUninstallHelpersParams } from '../../types';
 
 class PreparePluginUninstallationDialogUtils {
-    buildPrepareUninstallationTransaction = (dao: IDao, plugin: IDaoPlugin): Promise<ITransactionRequest> => {
-        const { pluginSetupProcessor } = networkDefinitions[dao.network].addresses;
+    buildPrepareUninstallationTransaction = (
+        dao: IDao,
+        plugin: IDaoPlugin,
+    ): Promise<ITransactionRequest> => {
+        const { pluginSetupProcessor } =
+            networkDefinitions[dao.network].addresses;
 
         // Retrieve the plugin-specific helper addresses required to build the prepare-uninstallation transaction. The
         // returned array must exactly match the helper addresses that were defined during installation preparation of
         // the plugin.
-        const getHelpersFunction = pluginRegistryUtils.getSlotFunction<IGetUninstallHelpersParams, Hex[]>({
+        const getHelpersFunction = pluginRegistryUtils.getSlotFunction<
+            IGetUninstallHelpersParams,
+            Hex[]
+        >({
             slotId: SettingsSlotId.SETTINGS_GET_UNINSTALL_HELPERS,
             pluginId: plugin.interfaceType,
         });
 
         const helpers = getHelpersFunction?.({ plugin }) ?? [];
-        const prepareUninstallData = pluginTransactionUtils.buildPrepareUninstallData(dao, plugin, helpers, '0x');
+        const prepareUninstallData =
+            pluginTransactionUtils.buildPrepareUninstallData(
+                dao,
+                plugin,
+                helpers,
+                '0x',
+            );
 
-        return Promise.resolve({ data: prepareUninstallData, value: BigInt(0), to: pluginSetupProcessor });
+        return Promise.resolve({
+            data: prepareUninstallData,
+            value: BigInt(0),
+            to: pluginSetupProcessor,
+        });
     };
 
-    prepareApplyUninstallationProposalMetadata = (uninstallPlugin: IDaoPlugin, proposalPlugin: IDaoPlugin) => {
+    prepareApplyUninstallationProposalMetadata = (
+        uninstallPlugin: IDaoPlugin,
+        proposalPlugin: IDaoPlugin,
+    ) => {
         const uninstallPluginInfo = `${daoUtils.getPluginName(uninstallPlugin)} (${uninstallPlugin.slug.toUpperCase()})`;
         const proposalPluginInfo = `${daoUtils.getPluginName(proposalPlugin)} (${proposalPlugin.slug.toUpperCase()})`;
 
@@ -42,4 +62,5 @@ class PreparePluginUninstallationDialogUtils {
     };
 }
 
-export const preparePluginUninstallationDialogUtils = new PreparePluginUninstallationDialogUtils();
+export const preparePluginUninstallationDialogUtils =
+    new PreparePluginUninstallationDialogUtils();

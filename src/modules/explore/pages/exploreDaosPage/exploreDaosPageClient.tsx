@@ -28,7 +28,9 @@ export interface IExploreDaosPageClientProps {
     initialParams: IGetDaoListParams;
 }
 
-export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (props) => {
+export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
+    props,
+) => {
     const { initialParams } = props;
 
     const { t } = useTranslations();
@@ -64,14 +66,23 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
             </div>
 
             {featuredDaos && (
-                <section className={classNames('flex flex-col gap-4 pt-10 md:gap-6 md:pt-16')}>
+                <section
+                    className={classNames(
+                        'flex flex-col gap-4 pt-10 md:gap-6 md:pt-16',
+                    )}
+                >
                     <Container className="w-full">
                         <Heading as="h2" className="self-stretch" size="h1">
                             {t('app.explore.exploreDaosPage.section.featured')}
                         </Heading>
                     </Container>
                     <div className="w-full">
-                        <Carousel animationDelay={2} gap={16} speed={40} speedOnHoverFactor={0.2}>
+                        <Carousel
+                            animationDelay={2}
+                            gap={16}
+                            speed={40}
+                            speedOnHoverFactor={0.2}
+                        >
                             {featuredDaos.map((dao, index) => (
                                 <DaoCarouselCard key={index} {...dao} />
                             ))}
@@ -82,36 +93,60 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (pro
 
             <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-10 md:gap-20">
-                    <ExploreSection title={t('app.explore.exploreDaosPage.section.daos')}>
+                    <ExploreSection
+                        title={t('app.explore.exploreDaosPage.section.daos')}
+                    >
                         <Suspense fallback={null}>
                             <ExploreDaos initialParams={initialParams} />
                         </Suspense>
                     </ExploreSection>
-                    <ExploreSection title={t('app.explore.exploreDaosPage.section.cta')}>
+                    <ExploreSection
+                        title={t('app.explore.exploreDaosPage.section.cta')}
+                    >
                         <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
                             <CtaCard
-                                actionLabel={t('app.explore.exploreDaosPage.noCodeSetup.actionLabel')}
-                                actionOnClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)}
+                                actionLabel={t(
+                                    'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
+                                )}
+                                actionOnClick={() =>
+                                    open(CreateDaoDialogId.CREATE_DAO_DETAILS)
+                                }
                                 imgSrc={noCodeSetupIcon as string}
                                 isPrimary={true}
-                                subtitle={t('app.explore.exploreDaosPage.noCodeSetup.subtitle')}
-                                title={t('app.explore.exploreDaosPage.noCodeSetup.title')}
+                                subtitle={t(
+                                    'app.explore.exploreDaosPage.noCodeSetup.subtitle',
+                                )}
+                                title={t(
+                                    'app.explore.exploreDaosPage.noCodeSetup.title',
+                                )}
                             />
                             <CtaCard
                                 actionHref="https://www.aragon.org/get-assistance-form"
-                                actionLabel={t('app.explore.exploreDaosPage.enterpriseService.actionLabel')}
+                                actionLabel={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.actionLabel',
+                                )}
                                 imgSrc={enterpriseServiceIcon as string}
                                 isPrimary={false}
-                                subtitle={t('app.explore.exploreDaosPage.enterpriseService.subtitle')}
-                                title={t('app.explore.exploreDaosPage.enterpriseService.title')}
+                                subtitle={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.subtitle',
+                                )}
+                                title={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.title',
+                                )}
                             />
                             <CtaCard
                                 actionHref="https://docs.aragon.org/"
-                                actionLabel={t('app.explore.exploreDaosPage.doItYourself.actionLabel')}
+                                actionLabel={t(
+                                    'app.explore.exploreDaosPage.doItYourself.actionLabel',
+                                )}
                                 imgSrc={doItYourselfIcon as string}
                                 isPrimary={false}
-                                subtitle={t('app.explore.exploreDaosPage.doItYourself.subtitle')}
-                                title={t('app.explore.exploreDaosPage.doItYourself.title')}
+                                subtitle={t(
+                                    'app.explore.exploreDaosPage.doItYourself.subtitle',
+                                )}
+                                title={t(
+                                    'app.explore.exploreDaosPage.doItYourself.title',
+                                )}
                             />
                         </div>
                     </ExploreSection>

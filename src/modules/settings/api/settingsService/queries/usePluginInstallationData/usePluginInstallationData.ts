@@ -7,12 +7,14 @@ import { settingsServiceKeys } from '../../settingsServiceKeys';
 
 export const pluginInstallationDataOptions = (
     params: IGetPluginInstallationDataParams,
-    options?: QueryOptions<IPluginInstallationData>
+    options?: QueryOptions<IPluginInstallationData>,
 ): SharedQueryOptions<IPluginInstallationData> => ({
     queryKey: settingsServiceKeys.pluginInstallationData(params),
     queryFn: () => settingsService.getPluginInstallationData(params),
     ...options,
 });
 
-export const usePluginInstallationData = (params: IGetPluginInstallationDataParams, options?: QueryOptions<IPluginInstallationData>) =>
-    useQuery(pluginInstallationDataOptions(params, options));
+export const usePluginInstallationData = (
+    params: IGetPluginInstallationDataParams,
+    options?: QueryOptions<IPluginInstallationData>,
+) => useQuery(pluginInstallationDataOptions(params, options));

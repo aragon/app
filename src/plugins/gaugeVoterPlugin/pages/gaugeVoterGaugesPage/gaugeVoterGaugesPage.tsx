@@ -13,7 +13,9 @@ import { GaugeVoterGaugesPageClient } from './gaugeVoterGaugesPageClient';
 
 export interface IGaugeVoterGaugesPageProps extends IDaoPluginPageProps {}
 
-export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async (props) => {
+export const GaugeVoterGaugesPage: React.FC<
+    IGaugeVoterGaugesPageProps
+> = async (props) => {
     const { dao } = props;
 
     const queryClient = new QueryClient();
@@ -40,7 +42,10 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
 
     return (
         <Page.Container queryClient={queryClient}>
-            <GaugeVoterGaugesPageClient dao={dao} initialParams={initialParams} />
+            <GaugeVoterGaugesPageClient
+                dao={dao}
+                initialParams={initialParams}
+            />
         </Page.Container>
     );
 };

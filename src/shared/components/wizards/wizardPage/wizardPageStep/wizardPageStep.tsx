@@ -1,7 +1,18 @@
-import { AlertCard, Button, Dropdown, Heading, IconType } from '@aragon/gov-ui-kit';
+import {
+    AlertCard,
+    Button,
+    Dropdown,
+    Heading,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IWizardStepProps, useWizardContext, useWizardFooter, Wizard } from '../../wizard';
+import {
+    type IWizardStepProps,
+    useWizardContext,
+    useWizardFooter,
+    Wizard,
+} from '../../wizard';
 
 export interface IWizardPageStepDropdownItem {
     /**
@@ -34,26 +45,55 @@ export interface IWizardPageStepProps extends IWizardStepProps {
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
-    const { title, description, children, className, nextDropdownItems, ...otherProps } = props;
+    const {
+        title,
+        description,
+        children,
+        className,
+        nextDropdownItems,
+        ...otherProps
+    } = props;
 
     const { t } = useTranslations();
 
     const { hasPrevious } = useWizardContext();
-    const { displayValidationError, validationStatus, submitLabel, submitVariant, onPreviousClick, submitHelpText } = useWizardFooter();
+    const {
+        displayValidationError,
+        validationStatus,
+        submitLabel,
+        submitVariant,
+        onPreviousClick,
+        submitHelpText,
+    } = useWizardFooter();
 
     return (
-        <Wizard.Step className={classNames('flex h-full flex-col justify-between gap-10 md:gap-20', className)} {...otherProps}>
+        <Wizard.Step
+            className={classNames(
+                'flex h-full flex-col justify-between gap-10 md:gap-20',
+                className,
+            )}
+            {...otherProps}
+        >
             <div className="flex flex-col gap-6 md:gap-12">
                 <div className="flex flex-col gap-2">
                     <Heading size="h1">{title}</Heading>
-                    <p className="font-normal text-base text-neutral-500 leading-normal md:text-lg">{description}</p>
+                    <p className="font-normal text-base text-neutral-500 leading-normal md:text-lg">
+                        {description}
+                    </p>
                 </div>
                 {children}
             </div>
             <div className="flex flex-col gap-6">
                 {displayValidationError && (
-                    <AlertCard message={t(`app.shared.wizardPage.step.error.${validationStatus}.title`)} variant="critical">
-                        {t(`app.shared.wizardPage.step.error.${validationStatus}.description`)}
+                    <AlertCard
+                        message={t(
+                            `app.shared.wizardPage.step.error.${validationStatus}.title`,
+                        )}
+                        variant="critical"
+                    >
+                        {t(
+                            `app.shared.wizardPage.step.error.${validationStatus}.description`,
+                        )}
                     </AlertCard>
                 )}
                 <div className="flex flex-col gap-3">
@@ -67,21 +107,41 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         >
                             {t('app.shared.wizardPage.step.back')}
                         </Button>
-                        {nextDropdownItems != null && nextDropdownItems.length > 0 ? (
-                            <Dropdown.Container label={submitLabel} size="lg" variant={submitVariant}>
-                                {nextDropdownItems.map(({ label, onClick, formId }) => (
-                                    <Dropdown.Item formId={formId} key={label} onClick={onClick}>
-                                        {label}
-                                    </Dropdown.Item>
-                                ))}
+                        {nextDropdownItems != null &&
+                        nextDropdownItems.length > 0 ? (
+                            <Dropdown.Container
+                                label={submitLabel}
+                                size="lg"
+                                variant={submitVariant}
+                            >
+                                {nextDropdownItems.map(
+                                    ({ label, onClick, formId }) => (
+                                        <Dropdown.Item
+                                            formId={formId}
+                                            key={label}
+                                            onClick={onClick}
+                                        >
+                                            {label}
+                                        </Dropdown.Item>
+                                    ),
+                                )}
                             </Dropdown.Container>
                         ) : (
-                            <Button iconRight={IconType.CHEVRON_RIGHT} size="lg" type="submit" variant={submitVariant}>
+                            <Button
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                size="lg"
+                                type="submit"
+                                variant={submitVariant}
+                            >
                                 {submitLabel}
                             </Button>
                         )}
                     </div>
-                    {submitHelpText && <p className="text-right font-normal text-neutral-500 text-sm leading-tight">{submitHelpText}</p>}
+                    {submitHelpText && (
+                        <p className="text-right font-normal text-neutral-500 text-sm leading-tight">
+                            {submitHelpText}
+                        </p>
+                    )}
                 </div>
             </div>
         </Wizard.Step>

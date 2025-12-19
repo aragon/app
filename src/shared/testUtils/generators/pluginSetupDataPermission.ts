@@ -1,7 +1,9 @@
 import type { Hex } from 'viem';
 import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUtils';
 
-export const generatePluginSetupDataPermission = (pluginSetupDataPermission?: Partial<IPluginSetupPermission>): IPluginSetupPermission => ({
+export const generatePluginSetupDataPermission = (
+    pluginSetupDataPermission?: Partial<IPluginSetupPermission>,
+): IPluginSetupPermission => ({
     operation: 0,
     where: '0xWhere' as Hex,
     who: '0xWho' as Hex,

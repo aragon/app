@@ -5,4 +5,7 @@ export {
     SetupStrategyDialog,
     StrategyType,
 } from './dialogs/setupStrategyDialog';
-export { CreatePolicyPage, type ICreatePolicyPageProps } from './pages/createPolicyPage';
+export {
+    CreatePolicyPage,
+    type ICreatePolicyPageProps,
+} from './pages/createPolicyPage';

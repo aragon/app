@@ -22,7 +22,9 @@ export interface ISetupBodyDialogSelectProps {
 
 export const externalPluginId = 'external';
 
-export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (props) => {
+export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (
+    props,
+) => {
     const { isSubPlugin, network } = props;
 
     const { t } = useTranslations();
@@ -36,19 +38,28 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
             return plugin.repositoryAddresses[network] !== zeroAddress;
         });
 
-    const { enabledPlugins, disabledPlugins } = useWhitelistValidation({ plugins: availablePlugins });
+    const { enabledPlugins, disabledPlugins } = useWhitelistValidation({
+        plugins: availablePlugins,
+    });
 
-    const { onChange: onPluginChange, ...governanceTypeField } = useFormField<ISetupBodyForm, 'plugin'>('plugin', {
+    const { onChange: onPluginChange, ...governanceTypeField } = useFormField<
+        ISetupBodyForm,
+        'plugin'
+    >('plugin', {
         label: t('app.createDao.setupBodyDialog.select.plugin.label'),
         defaultValue: enabledPlugins[0]?.id,
     });
 
-    const { onChange: onTypeChange } = useFormField<ISetupBodyForm, 'type'>('type', {
-        defaultValue: BodyType.NEW,
-    });
+    const { onChange: onTypeChange } = useFormField<ISetupBodyForm, 'type'>(
+        'type',
+        {
+            defaultValue: BodyType.NEW,
+        },
+    );
 
     const handlePluginChange = (value: string) => {
-        const bodyType = value === externalPluginId ? BodyType.EXTERNAL : BodyType.NEW;
+        const bodyType =
+            value === externalPluginId ? BodyType.EXTERNAL : BodyType.NEW;
         onTypeChange(bodyType);
         onPluginChange(value);
     };
@@ -69,8 +80,12 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
             ))}
             {isSubPlugin && (
                 <RadioCard
-                    description={t('app.createDao.setupBodyDialog.select.external.description')}
-                    label={t('app.createDao.setupBodyDialog.select.external.label')}
+                    description={t(
+                        'app.createDao.setupBodyDialog.select.external.description',
+                    )}
+                    label={t(
+                        'app.createDao.setupBodyDialog.select.external.label',
+                    )}
                     value={externalPluginId}
                 />
             )}
@@ -80,7 +95,12 @@ export const SetupBodyDialogSelect: React.FC<ISetupBodyDialogSelectProps> = (pro
                     disabled={true}
                     key={plugin.id}
                     label={t(plugin.setup!.nameKey)}
-                    tag={{ variant: 'info', label: t('app.createDao.setupBodyDialog.select.disabled.label') }}
+                    tag={{
+                        variant: 'info',
+                        label: t(
+                            'app.createDao.setupBodyDialog.select.disabled.label',
+                        ),
+                    }}
                     value={plugin.id}
                 />
             ))}

@@ -9,7 +9,9 @@ export interface IAutocompleteInputGroupProps extends ComponentProps<'div'> {
     group?: IAutocompleteInputGroup;
 }
 
-export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (props) => {
+export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (
+    props,
+) => {
     const { group, className, children, ...otherProps } = props;
 
     return (
@@ -18,7 +20,9 @@ export const AutocompleteInputGroup: React.FC<IAutocompleteInputGroupProps> = (p
                 <div className="flex flex-row items-center gap-3 px-3 py-2 font-normal text-base leading-tight">
                     <p className="shrink-0 text-neutral-800">{group.name}</p>
                     <hr className="h-[1px] w-full text-neutral-100" />
-                    <p className="shrink-0 text-neutral-500 text-sm">{group.info}</p>
+                    <p className="shrink-0 text-neutral-500 text-sm">
+                        {group.info}
+                    </p>
                     <hr className="h-[1px] w-5 text-neutral-100" />
                 </div>
             )}

@@ -9,7 +9,8 @@ const stripControlChars = (value: string, allowMultiline: boolean): string => {
     let result = '';
     for (let i = 0; i < value.length; i++) {
         const code = value.charCodeAt(i);
-        const isAllowedWhitespace = allowMultiline && (code === 9 || code === 10 || code === 13);
+        const isAllowedWhitespace =
+            allowMultiline && (code === 9 || code === 10 || code === 13);
         const isControl = (code < 32 && !isAllowedWhitespace) || code === 127;
         if (!isControl) {
             result += value[i];
@@ -76,7 +77,11 @@ try {
             }
             if (node.getAttribute('target') === '_blank') {
                 const existingRel = node.getAttribute('rel') ?? '';
-                const rel = new Set<string>([...existingRel.split(/\s+/).filter(Boolean), 'noopener', 'noreferrer']);
+                const rel = new Set<string>([
+                    ...existingRel.split(/\s+/).filter(Boolean),
+                    'noopener',
+                    'noreferrer',
+                ]);
                 node.setAttribute('rel', Array.from(rel).join(' '));
             }
         }
@@ -93,11 +98,36 @@ try {
     // ignore hook errors in non-DOM environments
 }
 
-const RICH_ALLOWED_TAGS = ['p', 'b', 'strong', 'em', 'i', 'ul', 'ol', 'li', 'a', 'code', 'pre', 'blockquote', 'br', 'hr', 'span'];
+const RICH_ALLOWED_TAGS = [
+    'p',
+    'b',
+    'strong',
+    'em',
+    'i',
+    'ul',
+    'ol',
+    'li',
+    'a',
+    'code',
+    'pre',
+    'blockquote',
+    'br',
+    'hr',
+    'span',
+];
 
-const RICH_ALLOWED_ATTR = ['href', 'rel', 'class', 'title', 'target', 'src', 'alt'];
+const RICH_ALLOWED_ATTR = [
+    'href',
+    'rel',
+    'class',
+    'title',
+    'target',
+    'src',
+    'alt',
+];
 
-export const sanitizeHtmlStrict = (html: string): string => DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+export const sanitizeHtmlStrict = (html: string): string =>
+    DOMPurify.sanitize(html, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
 
 export const sanitizeHtmlRich = (html: string): string =>
     DOMPurify.sanitize(html, {

@@ -3,8 +3,13 @@ import { CapitalDistributorClaimDialog } from '../dialogs/capitalDistributorClai
 import { CapitalDistributorClaimTransactionDialog } from '../dialogs/capitalDistributorClaimTransactionDialog';
 import { CapitalDistributorPluginDialogId } from './capitalDistributorPluginDialogId';
 
-export const capitalDistributorPluginDialogsDefinitions: Record<CapitalDistributorPluginDialogId, IDialogComponentDefinitions> = {
-    [CapitalDistributorPluginDialogId.CLAIM]: { Component: CapitalDistributorClaimDialog },
+export const capitalDistributorPluginDialogsDefinitions: Record<
+    CapitalDistributorPluginDialogId,
+    IDialogComponentDefinitions
+> = {
+    [CapitalDistributorPluginDialogId.CLAIM]: {
+        Component: CapitalDistributorClaimDialog,
+    },
     [CapitalDistributorPluginDialogId.CLAIM_TRANSACTION]: {
         Component: CapitalDistributorClaimTransactionDialog,
     },

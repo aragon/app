@@ -1,6 +1,9 @@
 import { useAccount } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -10,7 +13,7 @@ export interface IUseMultisigPermissionCheckProposalCreationParams
     extends IPermissionCheckGuardParams<IDaoPlugin<IMultisigPluginSettings>> {}
 
 export const useMultisigPermissionCheckProposalCreation = (
-    params: IUseMultisigPermissionCheckProposalCreationParams
+    params: IUseMultisigPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId } = params;
 
@@ -22,22 +25,34 @@ export const useMultisigPermissionCheckProposalCreation = (
     const { network } = daoUtils.parseDaoId(daoId);
 
     const memberExistsParams = {
-        urlParams: { memberAddress: address as string, pluginAddress: plugin.address },
+        urlParams: {
+            memberAddress: address as string,
+            pluginAddress: plugin.address,
+        },
         queryParams: { network },
     };
 
-    const { data: memberExists, isLoading } = useMemberExists(memberExistsParams, { enabled: address != null });
+    const { data: memberExists, isLoading } = useMemberExists(
+        memberExistsParams,
+        { enabled: address != null },
+    );
 
     const hasPermission = memberExists?.status === true || !onlyListed;
 
     const settings = [
         {
-            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName'),
+            term: t(
+                'app.plugins.multisig.multisigPermissionCheckProposalCreation.pluginLabelName',
+            ),
             definition: pluginName,
         },
         {
-            term: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.function'),
-            definition: t('app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement'),
+            term: t(
+                'app.plugins.multisig.multisigPermissionCheckProposalCreation.function',
+            ),
+            definition: t(
+                'app.plugins.multisig.multisigPermissionCheckProposalCreation.requirement',
+            ),
         },
     ];
 

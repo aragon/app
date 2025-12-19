@@ -2,25 +2,39 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as useProposalListData from '@/modules/governance/hooks/useProposalListData';
 import * as useDao from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 import { generateProposal } from '../../testUtils';
 import { proposalUtils } from '../../utils/proposalUtils';
-import { DaoProposalListDefault, type IDaoProposalListDefaultProps } from './daoProposalListDefault';
+import {
+    DaoProposalListDefault,
+    type IDaoProposalListDefaultProps,
+} from './daoProposalListDefault';
 
 jest.mock('./daoProposalListDefaultItem', () => ({
     DaoProposalListDefaultItem: ({ proposal }: { proposal: IProposal }) => (
-        <div data-testid="dao-proposal-default-list-item-mock">{proposal.title}</div>
+        <div data-testid="dao-proposal-default-list-item-mock">
+            {proposal.title}
+        </div>
     ),
 }));
 
 describe('<DaoProposalListDefault /> component', () => {
-    const useProposalListDataSpy = jest.spyOn(useProposalListData, 'useProposalListData');
+    const useProposalListDataSpy = jest.spyOn(
+        useProposalListData,
+        'useProposalListData',
+    );
     const useDaoSpy = jest.spyOn(useDao, 'useDao');
     const getProposalSlugSpy = jest.spyOn(proposalUtils, 'getProposalSlug');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         useProposalListDataSpy.mockReturnValue({
             proposalList: [],
             onLoadMore: jest.fn(),
@@ -39,9 +53,13 @@ describe('<DaoProposalListDefault /> component', () => {
         getProposalSlugSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoProposalListDefaultProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoProposalListDefaultProps>,
+    ) => {
         const completeProps: IDaoProposalListDefaultProps = {
-            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
+            },
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -54,8 +72,13 @@ describe('<DaoProposalListDefault /> component', () => {
     };
 
     it('fetches and renders the token proposal list', () => {
-        const initialParams = { queryParams: { daoId: 'dao-test', pluginAddress: '0x123' } };
-        const proposals = [generateProposal({ title: 'First', id: '1' }), generateProposal({ title: 'Second', id: '2' })];
+        const initialParams = {
+            queryParams: { daoId: 'dao-test', pluginAddress: '0x123' },
+        };
+        const proposals = [
+            generateProposal({ title: 'First', id: '1' }),
+            generateProposal({ title: 'Second', id: '2' }),
+        ];
         useProposalListDataSpy.mockReturnValue({
             proposalList: proposals,
             onLoadMore: jest.fn(),

@@ -3,7 +3,8 @@ import type { IResource } from '@/shared/api/daoService';
 import type { IGaugeVoterCreateGaugeFormData } from '../components/gaugeVoterCreateGaugeActionCreate';
 import type { GaugeVoterActionType } from './enum/gaugeVoterActionType';
 
-export interface IGaugeVoterActionCreateGauge extends Omit<IProposalAction, 'type'> {
+export interface IGaugeVoterActionCreateGauge
+    extends Omit<IProposalAction, 'type'> {
     /**
      * The type of the proposal action.
      */

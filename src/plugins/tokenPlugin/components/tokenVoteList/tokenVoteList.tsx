@@ -36,7 +36,15 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } = useVoteListData<ITokenVote>(initialParams);
+    const {
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        voteList,
+    } = useVoteListData<ITokenVote>(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
@@ -51,21 +59,34 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
                 SkeletonElement={
-                    initialParams.queryParams.includeInfo === true ? VoteProposalDataListItem.Skeleton : VoteDataListItem.Skeleton
+                    initialParams.queryParams.includeInfo === true
+                        ? VoteProposalDataListItem.Skeleton
+                        : VoteDataListItem.Skeleton
                 }
             >
                 {voteList?.map((vote) => {
-                    const voteIndicator = voteOptionToIndicator[vote.voteOption];
+                    const voteIndicator =
+                        voteOptionToIndicator[vote.voteOption];
                     const voteIndicatorDescription =
                         voteIndicator !== 'abstain'
-                            ? t(`app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`)
+                            ? t(
+                                  `app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`,
+                              )
                             : undefined;
 
                     return initialParams.queryParams.includeInfo === true ? (
-                        <VoteProposalListItem daoId={daoId} key={vote.transactionHash} vote={vote} voteIndicator={voteIndicator} />
+                        <VoteProposalListItem
+                            daoId={daoId}
+                            key={vote.transactionHash}
+                            vote={vote}
+                            voteIndicator={voteIndicator}
+                        />
                     ) : (
                         <VoteDataListItem.Structure
-                            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
+                            href={daoUtils.getDaoUrl(
+                                dao,
+                                `members/${vote.member.address}`,
+                            )}
                             isVeto={isVeto}
                             key={vote.transactionHash}
                             tokenSymbol={vote.token.symbol}
@@ -76,7 +97,10 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                                 avatarSrc: vote.member.avatar ?? undefined,
                                 name: vote.member.ens ?? undefined,
                             }}
-                            votingPower={formatUnits(BigInt(vote.votingPower), vote.token.decimals)}
+                            votingPower={formatUnits(
+                                BigInt(vote.votingPower),
+                                vote.token.decimals,
+                            )}
                         />
                     );
                 })}

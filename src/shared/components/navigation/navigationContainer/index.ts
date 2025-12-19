@@ -1,1 +1,4 @@
-export { type INavigationContainerProps, NavigationContainer } from './navigationContainer';
+export {
+    type INavigationContainerProps,
+    NavigationContainer,
+} from './navigationContainer';

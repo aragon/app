@@ -6,7 +6,10 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { CreateProposalForm, type ICreateProposalFormData } from '../../components/createProposalForm';
+import {
+    CreateProposalForm,
+    type ICreateProposalFormData,
+} from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type {
     IPublishProposalDialogParams,
@@ -15,7 +18,10 @@ import type {
 } from '../../dialogs/publishProposalDialog';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
-import { createProposalWizardId, createProposalWizardSteps } from './createProposalPageDefinitions';
+import {
+    createProposalWizardId,
+    createProposalWizardSteps,
+} from './createProposalPageDefinitions';
 
 export interface ICreateProposalPageClientProps {
     /**
@@ -28,7 +34,9 @@ export interface ICreateProposalPageClientProps {
     pluginAddress: string;
 }
 
-export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> = (props) => {
+export const CreateProposalPageClient: React.FC<
+    ICreateProposalPageClientProps
+> = (props) => {
     const { daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
@@ -36,23 +44,39 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
 
     const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
 
-    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'proposals' });
+    useProposalPermissionCheckGuard({
+        daoId,
+        pluginAddress,
+        redirectTab: 'proposals',
+    });
 
-    const [prepareActions, setPrepareActions] = useState<PrepareProposalActionMap>({});
+    const [prepareActions, setPrepareActions] =
+        useState<PrepareProposalActionMap>({});
 
     const addPrepareAction = useCallback(
         (type: string, prepareAction: PrepareProposalActionFunction) =>
-            setPrepareActions((current) => ({ ...current, [type]: prepareAction })),
-        []
+            setPrepareActions((current) => ({
+                ...current,
+                [type]: prepareAction,
+            })),
+        [],
     );
 
-    const contextValues = useMemo(() => ({ prepareActions, addPrepareAction }), [prepareActions, addPrepareAction]);
+    const contextValues = useMemo(
+        () => ({ prepareActions, addPrepareAction }),
+        [prepareActions, addPrepareAction],
+    );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {
         // We are always saving actions on the form so that user doesn't lose them if they navigate around the form.
         const { actions, addActions } = values;
         const proposal = { ...values, actions: addActions ? actions : [] };
-        const params: IPublishProposalDialogParams = { proposal, daoId, plugin, prepareActions };
+        const params: IPublishProposalDialogParams = {
+            proposal,
+            daoId,
+            plugin,
+            prepareActions,
+        };
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
@@ -62,7 +86,7 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 ...step,
                 meta: { ...step.meta, name: t(step.meta.name) },
             })),
-        [t]
+        [t],
     );
 
     return (
@@ -76,7 +100,11 @@ export const CreateProposalPageClient: React.FC<ICreateProposalPageClientProps> 
                 submitLabel={t('app.governance.createProposalPage.submitLabel')}
             >
                 <CreateProposalForm.Provider value={contextValues}>
-                    <CreateProposalPageClientSteps daoId={daoId} pluginAddress={pluginAddress} steps={processedSteps} />
+                    <CreateProposalPageClientSteps
+                        daoId={daoId}
+                        pluginAddress={pluginAddress}
+                        steps={processedSteps}
+                    />
                 </CreateProposalForm.Provider>
             </WizardPage.Container>
         </Page.Main>

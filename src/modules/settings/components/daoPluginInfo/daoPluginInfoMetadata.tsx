@@ -12,7 +12,9 @@ export interface IDaoPluginInfoMetadataProps {
     links?: IResource[];
 }
 
-export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (props) => {
+export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (
+    props,
+) => {
     const { description, links } = props;
 
     return (

@@ -1,4 +1,12 @@
-import { AddressInput, addressUtils, Button, Card, type IAddressInputResolvedValue, IconType, InputNumber } from '@aragon/gov-ui-kit';
+import {
+    AddressInput,
+    addressUtils,
+    Button,
+    Card,
+    type IAddressInputResolvedValue,
+    IconType,
+    InputNumber,
+} from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useTranslations } from '../../../../../shared/components/translationsProvider';
 import { networkDefinitions } from '../../../../../shared/constants/networkDefinitions';
@@ -25,7 +33,9 @@ export interface ISetupStrategyDialogDistributionRecipientItemProps {
     fieldPrefix: string;
 }
 
-export const SetupStrategyDialogDistributionRecipientItem: React.FC<ISetupStrategyDialogDistributionRecipientItemProps> = (props) => {
+export const SetupStrategyDialogDistributionRecipientItem: React.FC<
+    ISetupStrategyDialogDistributionRecipientItemProps
+> = (props) => {
     const { onRemove, daoId, fieldPrefix, canRemove } = props;
 
     const { t } = useTranslations();
@@ -57,7 +67,9 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<ISetupStrate
         fieldPrefix,
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(addressValue);
+    const [addressInput, setAddressInput] = useState<string | undefined>(
+        addressValue,
+    );
 
     const handleAddressAccept = (value?: IAddressInputResolvedValue) => {
         onAddressChange(value?.address ?? '');
@@ -70,7 +82,9 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<ISetupStrate
                     chainId={chainId}
                     onAccept={handleAddressAccept}
                     onChange={setAddressInput}
-                    placeholder={t('app.shared.addressesInput.item.input.placeholder')}
+                    placeholder={t(
+                        'app.shared.addressesInput.item.input.placeholder',
+                    )}
                     value={addressInput}
                     {...addressField}
                 />
@@ -88,7 +102,13 @@ export const SetupStrategyDialogDistributionRecipientItem: React.FC<ISetupStrate
             </div>
 
             <div className="flex h-full items-start pt-1">
-                <Button disabled={!canRemove} iconLeft={IconType.CLOSE} onClick={onRemove} size="md" variant="tertiary" />
+                <Button
+                    disabled={!canRemove}
+                    iconLeft={IconType.CLOSE}
+                    onClick={onRemove}
+                    size="md"
+                    variant="tertiary"
+                />
             </div>
         </Card>
     );

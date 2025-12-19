@@ -1,7 +1,14 @@
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+import {
+    Area,
+    AreaChart,
+    ReferenceDot,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+} from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { parseUnits } from 'viem';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
@@ -33,7 +40,9 @@ export interface ITokenLockFormChartProps {
 const chartPoints = 6;
 const maxAmount = 1_000_000_000_000;
 
-export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) => {
+export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (
+    props,
+) => {
     const { amount = '0', settings } = props;
     const { maxTime } = settings.votingEscrow!;
 
@@ -41,7 +50,8 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
 
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    const processedAmount = Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
+    const processedAmount =
+        Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
@@ -49,16 +59,27 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const secondsStep = chartTimeframe / (chartPoints - 1);
     const nowLabel = t('app.plugins.token.tokenLockForm.chart.now');
 
-    const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, index) => {
-        const lockDuration = index * secondsStep;
-        const futureDate = DateTime.now().plus({ seconds: lockDuration });
-        const dateLabel = index === 0 ? nowLabel : futureDate.toFormat('LLL d');
-        const votingPower = tokenLockUtils.calculateVotingPower(processedAmountWei, lockDuration, settings);
+    const points: IChartPoint[] = Array.from(
+        { length: chartPoints },
+        (_, index) => {
+            const lockDuration = index * secondsStep;
+            const futureDate = DateTime.now().plus({ seconds: lockDuration });
+            const dateLabel =
+                index === 0 ? nowLabel : futureDate.toFormat('LLL d');
+            const votingPower = tokenLockUtils.calculateVotingPower(
+                processedAmountWei,
+                lockDuration,
+                settings,
+            );
 
-        return { x: dateLabel, y: Number.parseFloat(votingPower) };
-    });
+            return { x: dateLabel, y: Number.parseFloat(votingPower) };
+        },
+    );
 
-    const formatVotingPower = (value: number) => formatterUtils.formatNumber(value, { format: NumberFormat.GENERIC_SHORT }) ?? '';
+    const formatVotingPower = (value: number) =>
+        formatterUtils.formatNumber(value, {
+            format: NumberFormat.GENERIC_SHORT,
+        }) ?? '';
 
     const handleMouseMove = (data: MouseHandlerDataParam) => {
         const { activeIndex } = data;
@@ -127,19 +148,35 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
     const trillion = 1_000_000_000_000;
     const billion = 1_000_000_000;
     const million = 1_000_000;
-    const tickCount = domainRange >= trillion ? 6 : domainRange >= billion ? 5 : domainRange >= million ? 5 : 4;
+    const tickCount =
+        domainRange >= trillion
+            ? 6
+            : domainRange >= billion
+              ? 5
+              : domainRange >= million
+                ? 5
+                : 4;
 
     // Generate evenly-spaced ticks for visual consistency
-    const yAxisTicks = Array.from({ length: tickCount }, (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i);
+    const yAxisTicks = Array.from(
+        { length: tickCount },
+        (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i,
+    );
 
     return (
         <div className="w-full py-2">
             <div className="mb-3">
                 <p className="font-semibold!">
-                    {formatterUtils.formatNumber(activePoint.y, { format: NumberFormat.TOKEN_AMOUNT_SHORT })}{' '}
-                    <span className="font-normal">{t('app.plugins.token.tokenLockForm.chart.votingPower')}</span>
+                    {formatterUtils.formatNumber(activePoint.y, {
+                        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                    })}{' '}
+                    <span className="font-normal">
+                        {t('app.plugins.token.tokenLockForm.chart.votingPower')}
+                    </span>
                 </p>
-                <span className="text-neutral-500 text-sm md:text-base">{activePoint.x}</span>
+                <span className="text-neutral-500 text-sm md:text-base">
+                    {activePoint.x}
+                </span>
             </div>
             <ResponsiveContainer height={200} width="100%">
                 <AreaChart
@@ -150,8 +187,16 @@ export const TokenLockFormChart: React.FC<ITokenLockFormChartProps> = (props) =>
                 >
                     <defs>
                         <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
-                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
+                            <stop
+                                offset="5%"
+                                stopColor="var(--color-primary-400)"
+                                stopOpacity={0.4}
+                            />
+                            <stop
+                                offset="95%"
+                                stopColor="var(--color-primary-400)"
+                                stopOpacity={0}
+                            />
                         </linearGradient>
                     </defs>
                     <XAxis

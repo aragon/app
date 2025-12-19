@@ -16,7 +16,9 @@ export interface IDaoTransactionsPageProps {
 
 export const daoTransactionsCount = 20;
 
-export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (props) => {
+export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const daoPageParams = await params;
 
@@ -29,16 +31,26 @@ export const DaoTransactionsPage: React.FC<IDaoTransactionsPageProps> = async (p
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const useDaoParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
+    const dao = await queryClient.fetchQuery(
+        daoOptions({ urlParams: useDaoParams }),
+    );
 
-    const transactionsQueryParams = { daoId: dao.id, pageSize: daoTransactionsCount };
+    const transactionsQueryParams = {
+        daoId: dao.id,
+        pageSize: daoTransactionsCount,
+    };
     const transactionsParams = { queryParams: transactionsQueryParams };
 
-    await queryClient.prefetchInfiniteQuery(transactionListOptions(transactionsParams));
+    await queryClient.prefetchInfiniteQuery(
+        transactionListOptions(transactionsParams),
+    );
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoTransactionsPageClient id={daoId} initialParams={transactionsParams} />
+            <DaoTransactionsPageClient
+                id={daoId}
+                initialParams={transactionsParams}
+            />
         </Page.Container>
     );
 };

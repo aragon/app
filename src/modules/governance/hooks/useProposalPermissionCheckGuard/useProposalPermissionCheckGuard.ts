@@ -22,7 +22,9 @@ export interface IUseProposalPermissionCheckGuardParams {
     redirectTab?: 'dashboard' | 'proposals' | 'settings';
 }
 
-export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCheckGuardParams) => {
+export const useProposalPermissionCheckGuard = (
+    params: IUseProposalPermissionCheckGuardParams,
+) => {
     const { daoId, pluginAddress, redirectTab = 'dashboard' } = params;
 
     const router = useRouter();
@@ -31,15 +33,19 @@ export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCh
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const handlePermissionCheckError = useCallback(() => router.push(daoUtils.getDaoUrl(dao, redirectTab)!), [router, dao, redirectTab]);
+    const handlePermissionCheckError = useCallback(
+        () => router.push(daoUtils.getDaoUrl(dao, redirectTab)!),
+        [router, dao, redirectTab],
+    );
 
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        permissionNamespace: 'proposal',
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onError: handlePermissionCheckError,
-        plugin,
-        daoId,
-    });
+    const { check: createProposalGuard, result: canCreateProposal } =
+        usePermissionCheckGuard({
+            permissionNamespace: 'proposal',
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            onError: handlePermissionCheckError,
+            plugin,
+            daoId,
+        });
 
     useEffect(() => {
         if (!canCreateProposal) {

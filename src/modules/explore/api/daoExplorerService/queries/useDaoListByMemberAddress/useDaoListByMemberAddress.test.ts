@@ -1,24 +1,46 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { generateDao, generatePaginatedResponse, ReactQueryWrapper } from '@/shared/testUtils';
+import {
+    generateDao,
+    generatePaginatedResponse,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { daoExplorerService } from '../../daoExplorerService';
 import { useDaoListByMemberAddress } from './useDaoListByMemberAddress';
 
 describe('useDaoListByMemberAddress query', () => {
-    const getDaoListByMemberSpy = jest.spyOn(daoExplorerService, 'getDaoListByMemberAddress');
+    const getDaoListByMemberSpy = jest.spyOn(
+        daoExplorerService,
+        'getDaoListByMemberAddress',
+    );
 
     afterEach(() => {
         getDaoListByMemberSpy.mockReset();
     });
 
     it('fetches the DAO list for a given member address', async () => {
-        const params = { urlParams: { address: 'testAddress' }, queryParams: { pageSize: 3 } };
-        const daoList = [generateDao({ id: '0x1' }), generateDao({ id: '0x2' }), generateDao({ id: '0x3' })];
-        const daoListByMemberResponse = generatePaginatedResponse({ data: daoList });
+        const params = {
+            urlParams: { address: 'testAddress' },
+            queryParams: { pageSize: 3 },
+        };
+        const daoList = [
+            generateDao({ id: '0x1' }),
+            generateDao({ id: '0x2' }),
+            generateDao({ id: '0x3' }),
+        ];
+        const daoListByMemberResponse = generatePaginatedResponse({
+            data: daoList,
+        });
 
         getDaoListByMemberSpy.mockResolvedValue(daoListByMemberResponse);
 
-        const { result } = renderHook(() => useDaoListByMemberAddress(params), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useDaoListByMemberAddress(params), {
+            wrapper: ReactQueryWrapper,
+        });
 
-        await waitFor(() => expect(result.current.data?.pages[0]).toEqual(daoListByMemberResponse));
+        await waitFor(() =>
+            expect(result.current.data?.pages[0]).toEqual(
+                daoListByMemberResponse,
+            ),
+        );
     });
 });

@@ -2,10 +2,16 @@ import { render, renderHook, screen } from '@testing-library/react';
 import type { ProviderProps } from 'react';
 import { generateStepperResult } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
-import { type IWizardContext, useWizardContext, WizardProvider } from './wizardProvider';
+import {
+    type IWizardContext,
+    useWizardContext,
+    WizardProvider,
+} from './wizardProvider';
 
 describe('<WizardProvider /> component', () => {
-    const createTestComponent = (props?: Partial<ProviderProps<IWizardContext>>) => {
+    const createTestComponent = (
+        props?: Partial<ProviderProps<IWizardContext>>,
+    ) => {
         const completeProps: ProviderProps<IWizardContext> = {
             value: {
                 submitLabel: 'submit',
@@ -30,7 +36,9 @@ describe('<WizardProvider /> component', () => {
         });
 
         it('returns the dialog context values', () => {
-            const { result } = renderHook(() => useWizardContext(), { wrapper: createTestComponent });
+            const { result } = renderHook(() => useWizardContext(), {
+                wrapper: createTestComponent,
+            });
             expect(result.current.activeStepIndex).toBeDefined();
             expect(result.current.hasNext).toBeDefined();
             expect(result.current.hasPrevious).toBeDefined();

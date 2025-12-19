@@ -2,7 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { type IUseFilterUrlParamParams, useFilterUrlParam } from '../useFilterUrlParam';
+import {
+    type IUseFilterUrlParamParams,
+    useFilterUrlParam,
+} from '../useFilterUrlParam';
 
 export interface IDaoFilterOption {
     /**
@@ -32,7 +35,8 @@ export interface IDaoFilterOption {
     onlyParent?: boolean;
 }
 
-export interface IUseDaoFilterUrlParamParams extends Omit<IUseFilterUrlParamParams, 'validValues'> {
+export interface IUseDaoFilterUrlParamParams
+    extends Omit<IUseFilterUrlParamParams, 'validValues'> {
     /**
      * Parent DAO ID.
      */
@@ -58,8 +62,16 @@ export interface IUseDaoFilterUrlParamReturn {
     options?: IDaoFilterOption[];
 }
 
-export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseDaoFilterUrlParamReturn => {
-    const { daoId, includeAllOption = true, name, fallbackValue: fallbackValueProp, enableUrlUpdate = true } = params;
+export const useDaoFilterUrlParam = (
+    params: IUseDaoFilterUrlParamParams,
+): IUseDaoFilterUrlParamReturn => {
+    const {
+        daoId,
+        includeAllOption = true,
+        name,
+        fallbackValue: fallbackValueProp,
+        enableUrlUpdate = true,
+    } = params;
 
     const { t } = useTranslations();
 
@@ -89,7 +101,9 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
         // Add parent DAO
         result.push({
             id: dao.id,
-            label: isSubDaoEnabled ? dao.name : t('app.finance.financeDetailsList.title'),
+            label: isSubDaoEnabled
+                ? dao.name
+                : t('app.finance.financeDetailsList.title'),
             daoId: dao.id,
             isAll: false,
             isParent: true,
@@ -114,11 +128,24 @@ export const useDaoFilterUrlParam = (params: IUseDaoFilterUrlParamParams): IUseD
 
     const fallbackValue = fallbackValueProp ?? options?.[0]?.id;
     const validValues = options?.map((option) => option.id);
-    const [activeFilter, setActiveFilter] = useFilterUrlParam({ name, fallbackValue, enableUrlUpdate, validValues });
+    const [activeFilter, setActiveFilter] = useFilterUrlParam({
+        name,
+        fallbackValue,
+        enableUrlUpdate,
+        validValues,
+    });
 
-    const activeOption = useMemo(() => options?.find((option) => option.id === activeFilter) ?? options?.[0], [options, activeFilter]);
+    const activeOption = useMemo(
+        () =>
+            options?.find((option) => option.id === activeFilter) ??
+            options?.[0],
+        [options, activeFilter],
+    );
 
-    const setActiveOption = useCallback((option: IDaoFilterOption) => setActiveFilter(option.id), [setActiveFilter]);
+    const setActiveOption = useCallback(
+        (option: IDaoFilterOption) => setActiveFilter(option.id),
+        [setActiveFilter],
+    );
 
     return { activeOption, setActiveOption, options };
 };

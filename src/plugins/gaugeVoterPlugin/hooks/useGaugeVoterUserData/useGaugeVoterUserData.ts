@@ -2,7 +2,11 @@ import type { Hex } from 'viem';
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeVoterAbi } from '../../utils/gaugeVoterContractUtils/abi/gaugeVoterAbi';
-import type { IGaugeUserVote, IUseGaugeVoterUserDataParams, IUseGaugeVoterUserDataResult } from './useGaugeVoterUserData.api';
+import type {
+    IGaugeUserVote,
+    IUseGaugeVoterUserDataParams,
+    IUseGaugeVoterUserDataResult,
+} from './useGaugeVoterUserData.api';
 
 const erc20VotesAbi = [
     {
@@ -14,8 +18,17 @@ const erc20VotesAbi = [
     },
 ] as const;
 
-export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUseGaugeVoterUserDataResult => {
-    const { pluginAddress, network, gaugeAddresses, enabled = true, backendVotingPower, backendUsedVotingPower } = params;
+export const useGaugeVoterUserData = (
+    params: IUseGaugeVoterUserDataParams,
+): IUseGaugeVoterUserDataResult => {
+    const {
+        pluginAddress,
+        network,
+        gaugeAddresses,
+        enabled = true,
+        backendVotingPower,
+        backendUsedVotingPower,
+    } = params;
 
     const { address: userAddress } = useAccount();
     const { id: chainId } = networkDefinitions[network];
@@ -46,7 +59,10 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         address: ivotesAdapterAddress as Hex,
         args: [userAddress as Hex],
         chainId,
-        query: { enabled: isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower },
+        query: {
+            enabled:
+                isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower,
+        },
     });
 
     // Read user's used voting power from the gauge voter (only if backend data not available)
@@ -82,10 +98,12 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     });
 
     // Transform gauge votes data
-    const gaugeVotes: IGaugeUserVote[] = gaugeAddresses.map((gaugeAddress, index) => ({
-        gaugeAddress,
-        userVotes: gaugeVotesData?.[index]?.result ?? BigInt(0),
-    }));
+    const gaugeVotes: IGaugeUserVote[] = gaugeAddresses.map(
+        (gaugeAddress, index) => ({
+            gaugeAddress,
+            userVotes: gaugeVotesData?.[index]?.result ?? BigInt(0),
+        }),
+    );
 
     const refetch = () => {
         void refetchTotalVotingPower();
@@ -94,8 +112,12 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     };
 
     // Use backend data if available, otherwise use RPC data
-    const totalVotingPower = hasBackendVotingPower ? BigInt(backendVotingPower) : (rpcTotalVotingPowerData ?? BigInt(0));
-    const usedVotingPower = hasBackendUsedVotingPower ? BigInt(backendUsedVotingPower) : (rpcUsedVotingPowerData ?? BigInt(0));
+    const totalVotingPower = hasBackendVotingPower
+        ? BigInt(backendVotingPower)
+        : (rpcTotalVotingPowerData ?? BigInt(0));
+    const usedVotingPower = hasBackendUsedVotingPower
+        ? BigInt(backendUsedVotingPower)
+        : (rpcUsedVotingPowerData ?? BigInt(0));
 
     // Show loading if we're waiting for any RPC data
     const isLoading =

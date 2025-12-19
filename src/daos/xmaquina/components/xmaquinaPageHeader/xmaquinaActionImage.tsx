@@ -15,7 +15,9 @@ export interface IXmaquinaActionImageProps {
     isHovered?: boolean;
 }
 
-export const XmaquinaActionImage: React.FC<IXmaquinaActionImageProps> = (props) => {
+export const XmaquinaActionImage: React.FC<IXmaquinaActionImageProps> = (
+    props,
+) => {
     const { icon, alt } = props;
 
     return (

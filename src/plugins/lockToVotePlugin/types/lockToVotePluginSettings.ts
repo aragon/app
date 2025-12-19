@@ -2,7 +2,11 @@ import type { ITokenPluginSettings } from '../../tokenPlugin/types';
 import type { DaoLockToVoteVotingMode } from './enum';
 import type { ILockToVotePluginSettingsToken } from './lockToVotePluginSettingsToken';
 
-export interface ILockToVotePluginSettings extends Omit<ITokenPluginSettings, 'votingMode' | 'token' | 'votingEscrow'> {
+export interface ILockToVotePluginSettings
+    extends Omit<
+        ITokenPluginSettings,
+        'votingMode' | 'token' | 'votingEscrow'
+    > {
     /**
      * Voting mode of the DAO.
      */

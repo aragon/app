@@ -1,7 +1,15 @@
-import { Button, CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    CardEmptyState,
+    IconType,
+    InputContainer,
+} from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
-import type { ISetupBodyDialogParams, ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import type {
+    ISetupBodyDialogParams,
+    ISetupBodyForm,
+} from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { BodyType } from '../../../../../types/enum';
@@ -28,8 +36,15 @@ export interface IGovernanceStageBodiesFieldProps {
     readOnly?: boolean;
 }
 
-export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldProps> = (props) => {
-    const { daoId, formPrefix, labelContext = 'normal', readOnly = false } = props;
+export const GovernanceStageBodiesField: React.FC<
+    IGovernanceStageBodiesFieldProps
+> = (props) => {
+    const {
+        daoId,
+        formPrefix,
+        labelContext = 'normal',
+        readOnly = false,
+    } = props;
 
     const { t } = useTranslations();
     const { getFieldState } = useFormContext();
@@ -38,10 +53,17 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
 
     const fieldName = `${formPrefix}.bodies`;
 
-    const { fields, remove, update, append } = useFieldArray<Record<string, ISetupBodyForm[]>>({ name: fieldName });
+    const { fields, remove, update, append } = useFieldArray<
+        Record<string, ISetupBodyForm[]>
+    >({ name: fieldName });
 
-    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({ name: fieldName });
-    const bodies = fields.map((field, index) => ({ ...field, ...bodiesWatch[index] }));
+    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({
+        name: fieldName,
+    });
+    const bodies = fields.map((field, index) => ({
+        ...field,
+        ...bodiesWatch[index],
+    }));
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {
         if (index == null) {
@@ -56,34 +78,52 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
     const openSetupBodyDialog = (index?: number) => {
         const initialValues = index != null ? bodies[index] : undefined;
         const onSubmit = handleBodySubmit(index);
-        const params: ISetupBodyDialogParams = { onSubmit, initialValues, isSubPlugin: true, daoId };
+        const params: ISetupBodyDialogParams = {
+            onSubmit,
+            initialValues,
+            isSubPlugin: true,
+            daoId,
+        };
         open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
-    const { message: fieldErrorMessage } = getFieldState(fieldName).error?.root ?? {};
-    const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
+    const { message: fieldErrorMessage } =
+        getFieldState(fieldName).error?.root ?? {};
+    const fieldAlert = fieldErrorMessage
+        ? { message: t(fieldErrorMessage), variant: 'critical' as const }
+        : undefined;
 
     return (
         <InputContainer
             alert={fieldAlert}
             className="flex flex-col gap-2"
-            helpText={t('app.createDao.createProcessForm.governance.stageBodiesField.helpText')}
+            helpText={t(
+                'app.createDao.createProcessForm.governance.stageBodiesField.helpText',
+            )}
             id="bodies"
-            label={t(`app.createDao.createProcessForm.governance.stageBodiesField.label.${labelContext}`)}
+            label={t(
+                `app.createDao.createProcessForm.governance.stageBodiesField.label.${labelContext}`,
+            )}
             useCustomWrapper={true}
         >
             {bodies.length === 0 && (
                 <CardEmptyState
                     className="border border-neutral-100"
-                    description={t('app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description')}
-                    heading={t('app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.heading')}
+                    description={t(
+                        'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.description',
+                    )}
+                    heading={t(
+                        'app.createDao.createProcessForm.governance.stageBodiesField.timelockStage.heading',
+                    )}
                     isStacked={false}
                     objectIllustration={{ object: 'TIMELOCK' }}
                     secondaryButton={
                         readOnly
                             ? undefined
                             : {
-                                  label: t('app.createDao.createProcessForm.governance.stageBodiesField.action.add'),
+                                  label: t(
+                                      'app.createDao.createProcessForm.governance.stageBodiesField.action.add',
+                                  ),
                                   onClick: () => openSetupBodyDialog(),
                                   iconLeft: IconType.PLUS,
                               }
@@ -99,7 +139,11 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                             fieldName={`${formPrefix}.bodies.${index.toString()}`}
                             key={body.id}
                             onDelete={() => remove(index)}
-                            onEdit={body.type !== BodyType.EXISTING ? () => openSetupBodyDialog(index) : undefined}
+                            onEdit={
+                                body.type !== BodyType.EXISTING
+                                    ? () => openSetupBodyDialog(index)
+                                    : undefined
+                            }
                             readOnly={readOnly}
                         />
                     ))}
@@ -111,7 +155,9 @@ export const GovernanceStageBodiesField: React.FC<IGovernanceStageBodiesFieldPro
                             size="md"
                             variant="tertiary"
                         >
-                            {t('app.createDao.createProcessForm.governance.stageBodiesField.action.add')}
+                            {t(
+                                'app.createDao.createProcessForm.governance.stageBodiesField.action.add',
+                            )}
                         </Button>
                     )}
                 </div>

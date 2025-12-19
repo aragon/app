@@ -1,1 +1,4 @@
-export { type ICreateTokenProposalFormData, tokenTransactionUtils } from './tokenTransactionUtils';
+export {
+    type ICreateTokenProposalFormData,
+    tokenTransactionUtils,
+} from './tokenTransactionUtils';

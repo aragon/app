@@ -1,10 +1,23 @@
-import { Button, type ICompositeAddress, IconType, type IInputComponentProps, InputContainer } from '@aragon/gov-ui-kit';
-import { Children, type ComponentProps, cloneElement, isValidElement } from 'react';
+import {
+    Button,
+    type ICompositeAddress,
+    IconType,
+    type IInputComponentProps,
+    InputContainer,
+} from '@aragon/gov-ui-kit';
+import {
+    Children,
+    type ComponentProps,
+    cloneElement,
+    isValidElement,
+} from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
-export interface IAddressesInputContainerProps extends ComponentProps<'div'>, Pick<IInputComponentProps, 'label' | 'helpText'> {
+export interface IAddressesInputContainerProps
+    extends ComponentProps<'div'>,
+        Pick<IInputComponentProps, 'label' | 'helpText'> {
     /**
      * The prefix of the field in the form.
      */
@@ -25,8 +38,18 @@ export interface IAddressesInputContainerProps extends ComponentProps<'div'>, Pi
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
-export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, allowEmptyList, onAddClick, label, helpText } = props;
+export const AddressesInputContainer: React.FC<
+    IAddressesInputContainerProps
+> = (props) => {
+    const {
+        children,
+        fieldPrefix,
+        name,
+        allowEmptyList,
+        onAddClick,
+        label,
+        helpText,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -79,10 +102,22 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
     return (
         <AddressesInputContextProvider value={contextValue}>
             <div className="flex w-full grow flex-col gap-6">
-                <InputContainer className="gap-3 md:gap-2" helpText={helpText} id="addresses" label={label} useCustomWrapper={true}>
+                <InputContainer
+                    className="gap-3 md:gap-2"
+                    helpText={helpText}
+                    id="addresses"
+                    label={label}
+                    useCustomWrapper={true}
+                >
                     {childrenWithKeys}
                 </InputContainer>
-                <Button className="w-fit" iconLeft={IconType.PLUS} onClick={handleAddMember} size="md" variant="tertiary">
+                <Button
+                    className="w-fit"
+                    iconLeft={IconType.PLUS}
+                    onClick={handleAddMember}
+                    size="md"
+                    variant="tertiary"
+                >
                     {t('app.shared.addressesInput.container.add')}
                 </Button>
             </div>

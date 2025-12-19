@@ -14,7 +14,10 @@ export const NotFoundBase: React.FC<INotFoundBaseProps> = () => {
                 description={t('app.application.notFoundBase.description')}
                 heading={t('app.application.notFoundBase.title')}
                 objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
-                primaryButton={{ label: t('app.application.notFoundBase.action'), href: '/' }}
+                primaryButton={{
+                    label: t('app.application.notFoundBase.action'),
+                    href: '/',
+                }}
             />
         </div>
     );

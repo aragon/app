@@ -2,7 +2,10 @@ import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { GovernanceType, type ICreateProcessFormData } from '../createProcessFormDefinitions';
+import {
+    GovernanceType,
+    type ICreateProcessFormData,
+} from '../createProcessFormDefinitions';
 import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
 import { GovernanceStagesField } from './fields/governanceStagesField';
@@ -14,7 +17,9 @@ export interface ICreateProcessFormGovernanceProps {
     daoId: string;
 }
 
-export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceProps> = (props) => {
+export const CreateProcessFormGovernance: React.FC<
+    ICreateProcessFormGovernanceProps
+> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
@@ -24,11 +29,14 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         value: governanceType,
         onChange: onGovernanceTypeChange,
         ...governanceTypeField
-    } = useFormField<ICreateProcessFormData, 'governanceType'>('governanceType', {
-        label: t('app.createDao.createProcessForm.governance.type.label'),
-        defaultValue: GovernanceType.BASIC,
-        rules: { required: true },
-    });
+    } = useFormField<ICreateProcessFormData, 'governanceType'>(
+        'governanceType',
+        {
+            label: t('app.createDao.createProcessForm.governance.type.label'),
+            defaultValue: GovernanceType.BASIC,
+            rules: { required: true },
+        },
+    );
 
     const handleGovernanceTypeChange = (value: string) => {
         if (value === GovernanceType.ADVANCED) {
@@ -46,21 +54,29 @@ export const CreateProcessFormGovernance: React.FC<ICreateProcessFormGovernanceP
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
                 className="w-full gap-4 md:flex-row"
-                helpText={t('app.createDao.createProcessForm.governance.type.helpText')}
+                helpText={t(
+                    'app.createDao.createProcessForm.governance.type.helpText',
+                )}
                 onValueChange={handleGovernanceTypeChange}
                 value={governanceType}
                 {...governanceTypeField}
             >
                 {Object.values(GovernanceType).map((type) => (
                     <RadioCard
-                        description={t(`app.createDao.createProcessForm.governance.type.${type}.description`)}
+                        description={t(
+                            `app.createDao.createProcessForm.governance.type.${type}.description`,
+                        )}
                         key={type}
-                        label={t(`app.createDao.createProcessForm.governance.type.${type}.label`)}
+                        label={t(
+                            `app.createDao.createProcessForm.governance.type.${type}.label`,
+                        )}
                         value={type}
                     />
                 ))}
             </RadioGroup>
-            {!isAdvancedGovernance && <GovernanceBasicBodyField daoId={daoId} />}
+            {!isAdvancedGovernance && (
+                <GovernanceBasicBodyField daoId={daoId} />
+            )}
             {isAdvancedGovernance && <GovernanceStagesField daoId={daoId} />}
         </div>
     );

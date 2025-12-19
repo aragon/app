@@ -1,7 +1,12 @@
-import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../types';
+import type {
+    ITokenPluginSettings,
+    ITokenPluginSettingsEscrowSettings,
+} from '../../types';
 import { generateTokenPluginSettings } from './tokenPluginSettings';
 
-const createEscrowSettings = (overrides?: Partial<ITokenPluginSettingsEscrowSettings>): ITokenPluginSettingsEscrowSettings => ({
+const createEscrowSettings = (
+    overrides?: Partial<ITokenPluginSettingsEscrowSettings>,
+): ITokenPluginSettingsEscrowSettings => ({
     minDeposit: '0',
     minLockTime: 0,
     cooldown: 0,
@@ -16,7 +21,7 @@ const createEscrowSettings = (overrides?: Partial<ITokenPluginSettingsEscrowSett
 
 const mergeSettings = (
     base: Partial<ITokenPluginSettings> | undefined,
-    escrow: ITokenPluginSettingsEscrowSettings
+    escrow: ITokenPluginSettingsEscrowSettings,
 ): Partial<ITokenPluginSettings> => {
     if (base == null) {
         return { votingEscrow: escrow };
@@ -32,7 +37,9 @@ const mergeSettings = (
     };
 };
 
-export const generateTokenPluginSettingsWithDynamicFees = (settings?: Partial<ITokenPluginSettings>): ITokenPluginSettings => {
+export const generateTokenPluginSettingsWithDynamicFees = (
+    settings?: Partial<ITokenPluginSettings>,
+): ITokenPluginSettings => {
     const baseEscrow = createEscrowSettings({
         feePercent: 500,
         minFeePercent: 100,
@@ -43,7 +50,9 @@ export const generateTokenPluginSettingsWithDynamicFees = (settings?: Partial<IT
     return generateTokenPluginSettings(mergeSettings(settings, baseEscrow));
 };
 
-export const generateTokenPluginSettingsWithTieredFees = (settings?: Partial<ITokenPluginSettings>): ITokenPluginSettings => {
+export const generateTokenPluginSettingsWithTieredFees = (
+    settings?: Partial<ITokenPluginSettings>,
+): ITokenPluginSettings => {
     const baseEscrow = createEscrowSettings({
         feePercent: 300,
         minFeePercent: 100,
@@ -54,7 +63,9 @@ export const generateTokenPluginSettingsWithTieredFees = (settings?: Partial<ITo
     return generateTokenPluginSettings(mergeSettings(settings, baseEscrow));
 };
 
-export const generateTokenPluginSettingsWithFixedFee = (settings?: Partial<ITokenPluginSettings>): ITokenPluginSettings => {
+export const generateTokenPluginSettingsWithFixedFee = (
+    settings?: Partial<ITokenPluginSettings>,
+): ITokenPluginSettings => {
     const fiveDaysInSeconds = 5 * 24 * 60 * 60;
     const baseEscrow = createEscrowSettings({
         feePercent: 200,

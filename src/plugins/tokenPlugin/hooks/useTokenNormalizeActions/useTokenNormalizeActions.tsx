@@ -8,9 +8,12 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import type { ITokenPluginSettings } from '../../types';
 import { tokenActionUtils } from '../../utils/tokenActionUtils';
 
-export interface IUseTokenNormalizeActionsParams extends INormalizeActionsParams {}
+export interface IUseTokenNormalizeActionsParams
+    extends INormalizeActionsParams {}
 
-export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams) => {
+export const useTokenNormalizeActions = (
+    params: IUseTokenNormalizeActionsParams,
+) => {
     const { actions, daoId } = params;
 
     const { t } = useTranslations();
@@ -21,10 +24,17 @@ export const useTokenNormalizeActions = (params: IUseTokenNormalizeActionsParams
             return tokenActionUtils.normalizeTokenMintAction(action);
         }
         if (tokenActionUtils.isChangeSettingsAction(action)) {
-            const plugin = daoPlugins.find(({ meta }) => addressUtils.isAddressEqual(action.to, meta.address));
-            const { token } = (plugin?.meta as IDaoPlugin<ITokenPluginSettings>).settings;
+            const plugin = daoPlugins.find(({ meta }) =>
+                addressUtils.isAddressEqual(action.to, meta.address),
+            );
+            const { token } = (plugin?.meta as IDaoPlugin<ITokenPluginSettings>)
+                .settings;
 
-            return tokenActionUtils.normalizeChangeSettingsAction({ action, token, t });
+            return tokenActionUtils.normalizeChangeSettingsAction({
+                action,
+                token,
+                t,
+            });
         }
 
         return action;

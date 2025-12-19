@@ -3,7 +3,10 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import type { ICampaign } from '../../api/capitalDistributorService';
@@ -29,11 +32,17 @@ export interface ICapitalDistributorClaimDialogParams {
     network: Network;
 }
 
-export interface ICapitalDistributorClaimDialogProps extends IDialogComponentProps<ICapitalDistributorClaimDialogParams> {}
+export interface ICapitalDistributorClaimDialogProps
+    extends IDialogComponentProps<ICapitalDistributorClaimDialogParams> {}
 
-export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDialogProps> = (props) => {
+export const CapitalDistributorClaimDialog: React.FC<
+    ICapitalDistributorClaimDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'CapitalDistributorClaimDialog: params must be defined');
+    invariant(
+        location.params != null,
+        'CapitalDistributorClaimDialog: params must be defined',
+    );
     const { campaign, plugin, network } = location.params;
 
     const { address } = useAccount();
@@ -57,14 +66,27 @@ export const CapitalDistributorClaimDialog: React.FC<ICapitalDistributorClaimDia
             description={campaign.description}
             formId="capitalDistributorClaim"
             onSubmit={handleSubmit}
-            submitLabel={t('app.plugins.capitalDistributor.capitalDistributorClaimDialog.submit')}
+            submitLabel={t(
+                'app.plugins.capitalDistributor.capitalDistributorClaimDialog.submit',
+            )}
             title={campaign.title}
         >
             <WizardDialog.Step id="overview" meta={{ name: '' }} order={1}>
-                <CapitalDistributorClaimDialogDetails campaign={campaign} plugin={plugin} />
+                <CapitalDistributorClaimDialogDetails
+                    campaign={campaign}
+                    plugin={plugin}
+                />
             </WizardDialog.Step>
-            <WizardDialog.Step className="flex grow flex-col gap-6" id="claim" meta={{ name: '' }} order={2}>
-                <CapitalDistributorClaimDialogInputs network={network} plugin={plugin} />
+            <WizardDialog.Step
+                className="flex grow flex-col gap-6"
+                id="claim"
+                meta={{ name: '' }}
+                order={2}
+            >
+                <CapitalDistributorClaimDialogInputs
+                    network={network}
+                    plugin={plugin}
+                />
             </WizardDialog.Step>
         </WizardDialog.Container>
     );

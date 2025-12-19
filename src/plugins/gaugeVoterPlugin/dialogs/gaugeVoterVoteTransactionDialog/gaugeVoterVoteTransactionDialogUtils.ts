@@ -4,7 +4,9 @@ import { gaugeVoterAbi } from './gaugeVoterAbi';
 import type { IBuildVoteTransactionParams } from './gaugeVoterVoteTransactionDialogUtils.api';
 
 class GaugeVoterVoteTransactionDialogUtils {
-    buildTransaction = (params: IBuildVoteTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        params: IBuildVoteTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { votes, pluginAddress } = params;
 
         const data = encodeFunctionData({
@@ -13,10 +15,15 @@ class GaugeVoterVoteTransactionDialogUtils {
             args: [votes],
         });
 
-        const transaction = { to: pluginAddress as Hex, data, value: BigInt(0) };
+        const transaction = {
+            to: pluginAddress as Hex,
+            data,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
 }
 
-export const gaugeVoterVoteTransactionDialogUtils = new GaugeVoterVoteTransactionDialogUtils();
+export const gaugeVoterVoteTransactionDialogUtils =
+    new GaugeVoterVoteTransactionDialogUtils();

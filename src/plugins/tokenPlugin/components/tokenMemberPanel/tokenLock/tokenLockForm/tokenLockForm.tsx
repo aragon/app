@@ -4,7 +4,10 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
 import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { AssetInput, type IAssetInputFormData } from '@/modules/finance/components/assetInput';
+import {
+    AssetInput,
+    type IAssetInputFormData,
+} from '@/modules/finance/components/assetInput';
 import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
@@ -42,7 +45,10 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
     const { votingEscrow, token } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
 
-    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockForm: escrow settings are required');
+    invariant(
+        votingEscrow != null && votingEscrowAddresses != null,
+        'TokenLockForm: escrow settings are required',
+    );
 
     const { escrowAddress } = votingEscrowAddresses;
     const { decimals } = token;
@@ -53,32 +59,56 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const memberLocksQueryParams = { network: dao!.network, escrowAddress, onlyActive: true };
+    const memberLocksQueryParams = {
+        network: dao!.network,
+        escrowAddress,
+        onlyActive: true,
+    };
     const { data: memberLocks, refetch: refetchMemberLocks } = useMemberLocks(
-        { urlParams: { address: address! }, queryParams: memberLocksQueryParams },
-        { enabled: address != null }
+        {
+            urlParams: { address: address! },
+            queryParams: memberLocksQueryParams,
+        },
+        { enabled: address != null },
     );
     const locksCount = memberLocks?.pages[0]?.metadata.totalRecords ?? 0;
 
-    const { result: isConnected, check: walletGuard } = useConnectedWalletGuard();
+    const { result: isConnected, check: walletGuard } =
+        useConnectedWalletGuard();
 
     const {
         allowance,
         balance: unlockedBalance,
         status: unlockedBalanceStatus,
         invalidateQueries,
-    } = useCheckTokenAllowance({ spender: escrowAddress, token: { ...token, address: token.underlying! } });
+    } = useCheckTokenAllowance({
+        spender: escrowAddress,
+        token: { ...token, address: token.underlying! },
+    });
 
-    const parsedUnlockedAmount = formatUnits(unlockedBalance?.value ?? BigInt(0), decimals);
-    const userAsset = useMemo(() => ({ token, amount: parsedUnlockedAmount }), [token, parsedUnlockedAmount]);
+    const parsedUnlockedAmount = formatUnits(
+        unlockedBalance?.value ?? BigInt(0),
+        decimals,
+    );
+    const userAsset = useMemo(
+        () => ({ token, amount: parsedUnlockedAmount }),
+        [token, parsedUnlockedAmount],
+    );
 
-    const formValues = useForm<ITokenLockFormData>({ mode: 'onSubmit', defaultValues: { asset: userAsset } });
+    const formValues = useForm<ITokenLockFormData>({
+        mode: 'onSubmit',
+        defaultValues: { asset: userAsset },
+    });
     const { control, setValue, handleSubmit } = formValues;
 
-    const lockAmount = useWatch<ITokenLockFormData, 'amount'>({ control, name: 'amount' });
+    const lockAmount = useWatch<ITokenLockFormData, 'amount'>({
+        control,
+        name: 'amount',
+    });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
-    const needsApproval = isConnected && (allowance == null || allowance < lockAmountWei);
+    const needsApproval =
+        isConnected && (allowance == null || allowance < lockAmountWei);
 
     const handleFormSubmit = () => {
         if (needsApproval) {
@@ -90,8 +120,15 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     const handleApproveTokens = () => {
         const { symbol } = token;
-        const transactionInfoTitle = t('app.plugins.token.tokenLockForm.approveTransactionInfoTitle', { symbol });
-        const transactionInfo = { title: transactionInfoTitle, current: 1, total: 2 };
+        const transactionInfoTitle = t(
+            'app.plugins.token.tokenLockForm.approveTransactionInfoTitle',
+            { symbol },
+        );
+        const transactionInfo = {
+            title: transactionInfoTitle,
+            current: 1,
+            total: 2,
+        };
 
         const params: ITokenApproveTokensDialogParams = {
             token: { ...token, address: token.underlying! },
@@ -150,9 +187,15 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
 
     return (
         <FormProvider {...formValues}>
-            <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit(handleFormSubmit)}
+            >
                 <div className="flex flex-col gap-3">
-                    <TokenLockFormChart amount={lockAmount} settings={plugin.settings} />
+                    <TokenLockFormChart
+                        amount={lockAmount}
+                        settings={plugin.settings}
+                    />
                     <AssetInput
                         disableAssetField={true}
                         hideAmountLabel={true}
@@ -172,13 +215,22 @@ export const TokenLockForm: React.FC<ITokenLockFormProps> = (props) => {
                         type={isConnected ? 'submit' : undefined}
                         variant="primary"
                     >
-                        {t(`app.plugins.token.tokenLockForm.submit.${submitLabel}`, {
-                            symbol: token.symbol,
-                        })}
+                        {t(
+                            `app.plugins.token.tokenLockForm.submit.${submitLabel}`,
+                            {
+                                symbol: token.symbol,
+                            },
+                        )}
                     </Button>
                     {locksCount > 0 && (
-                        <Button onClick={handleViewLocks} size="lg" variant="secondary">
-                            {t('app.plugins.token.tokenLockForm.locks', { count: locksCount })}
+                        <Button
+                            onClick={handleViewLocks}
+                            size="lg"
+                            variant="secondary"
+                        >
+                            {t('app.plugins.token.tokenLockForm.locks', {
+                                count: locksCount,
+                            })}
                         </Button>
                     )}
                     <p className="text-center font-normal text-neutral-500 text-sm leading-normal">

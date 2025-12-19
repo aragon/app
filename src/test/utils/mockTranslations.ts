@@ -10,17 +10,23 @@ class MockTranslations {
             return key;
         }
 
-        const values = Object.keys(options).map((key) => `${key}=${options[key]?.toString() ?? 'undefined'}`);
+        const values = Object.keys(options).map(
+            (key) => `${key}=${options[key]?.toString() ?? 'undefined'}`,
+        );
 
         return `${key} (${values.toString()})`;
     };
 
     setup = () => {
-        let useTranslationsSpy: jest.SpyInstance<ITranslationContext> | undefined;
+        let useTranslationsSpy:
+            | jest.SpyInstance<ITranslationContext>
+            | undefined;
 
         beforeEach(() => {
             if (this.shouldMockTranslations) {
-                useTranslationsSpy = jest.spyOn(TranslationsProvider, 'useTranslations').mockReturnValue({ t: this.tMock });
+                useTranslationsSpy = jest
+                    .spyOn(TranslationsProvider, 'useTranslations')
+                    .mockReturnValue({ t: this.tMock });
             }
         });
 

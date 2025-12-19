@@ -1,7 +1,7 @@
 import type { Control, FormState, UseFormReturn } from 'react-hook-form';
 
 export const generateFormContextState = <TFormValues extends object = object>(
-    state?: Partial<FormState<TFormValues>>
+    state?: Partial<FormState<TFormValues>>,
 ): FormState<TFormValues> => ({
     isDirty: false,
     isLoading: false,
@@ -20,7 +20,9 @@ export const generateFormContextState = <TFormValues extends object = object>(
     ...state,
 });
 
-export const generateFormContext = (values?: Partial<UseFormReturn>): UseFormReturn => ({
+export const generateFormContext = (
+    values?: Partial<UseFormReturn>,
+): UseFormReturn => ({
     watch: jest.fn(),
     getValues: jest.fn(),
     getFieldState: jest.fn(),

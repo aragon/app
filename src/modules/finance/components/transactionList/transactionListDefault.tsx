@@ -1,14 +1,24 @@
 'use client';
 
-import { DataListContainer, DataListPagination, DataListRoot, TransactionDataListItem } from '@aragon/gov-ui-kit';
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    TransactionDataListItem,
+} from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import type { IGetTransactionListParams, ITransaction } from '@/modules/finance/api/financeService';
+import type {
+    IGetTransactionListParams,
+    ITransaction,
+} from '@/modules/finance/api/financeService';
 import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TransactionListItem } from './transactionListItem';
 
-export interface ITransactionListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
+export interface ITransactionListDefaultProps<
+    TSettings extends IPluginSettings = IPluginSettings,
+> {
     /**
      * Initial parameters to use for fetching the transaction list.
      */
@@ -31,12 +41,23 @@ export interface ITransactionListDefaultProps<TSettings extends IPluginSettings 
     children?: ReactNode;
 }
 
-export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (props) => {
-    const { initialParams, hidePagination, children, onTransactionClick } = props;
+export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
+    props,
+) => {
+    const { initialParams, hidePagination, children, onTransactionClick } =
+        props;
 
     const { t } = useTranslations();
 
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, transactionList } = useTransactionListData(initialParams);
+    const {
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        transactionList,
+    } = useTransactionListData(initialParams);
 
     return (
         <DataListRoot
@@ -46,7 +67,11 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (p
             pageSize={pageSize}
             state={state}
         >
-            <DataListContainer emptyState={emptyState} errorState={errorState} SkeletonElement={TransactionDataListItem.Skeleton}>
+            <DataListContainer
+                emptyState={emptyState}
+                errorState={errorState}
+                SkeletonElement={TransactionDataListItem.Skeleton}
+            >
                 {transactionList?.map((transaction, index) => (
                     <TransactionListItem
                         index={index}

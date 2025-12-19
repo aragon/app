@@ -13,7 +13,10 @@ import { SppProposalType } from '../../types';
 import { sppStageUtils } from './sppStageUtils';
 
 describe('SppStageUtils', () => {
-    const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
@@ -21,7 +24,9 @@ describe('SppStageUtils', () => {
 
     describe('getStageStartDate', () => {
         it('returns main-proposal startDate for the first stage', () => {
-            const startDate = DateTime.fromISO('2022-02-10T07:55:55.868Z').toSeconds();
+            const startDate = DateTime.fromISO(
+                '2022-02-10T07:55:55.868Z',
+            ).toSeconds();
             const proposal = generateSppProposal({ startDate, stageIndex: 1 });
             const stage = generateSppStage({ stageIndex: 0 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
@@ -29,18 +34,30 @@ describe('SppStageUtils', () => {
         });
 
         it('returns lastStageTransition for current stage', () => {
-            const lastStageTransition = DateTime.fromISO('2022-02-10T07:55:55.868Z').toSeconds();
-            const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
+            const lastStageTransition = DateTime.fromISO(
+                '2022-02-10T07:55:55.868Z',
+            ).toSeconds();
+            const proposal = generateSppProposal({
+                lastStageTransition,
+                stageIndex: 1,
+            });
             const stage = generateSppStage({ stageIndex: 1 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
             expect(result?.toSeconds()).toBe(lastStageTransition);
         });
 
         it('returns the linked subProposal startDate for previous stages', () => {
-            const subProposalStartDate = DateTime.fromISO('2016-05-25T09:08:34.123').toSeconds();
+            const subProposalStartDate = DateTime.fromISO(
+                '2016-05-25T09:08:34.123',
+            ).toSeconds();
             const proposal = generateSppProposal({
                 stageIndex: 2,
-                subProposals: [generateSppSubProposal({ stageIndex: 1, startDate: subProposalStartDate })],
+                subProposals: [
+                    generateSppSubProposal({
+                        stageIndex: 1,
+                        startDate: subProposalStartDate,
+                    }),
+                ],
             });
             const stage = generateSppStage({ stageIndex: 1 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
@@ -49,8 +66,13 @@ describe('SppStageUtils', () => {
 
         it('returns undefined for other stages', () => {
             const now = '2022-02-10T07:55:55.868Z';
-            const lastStageTransition = DateTime.fromISO(now).minus({ hours: 2 }).toSeconds();
-            const proposal = generateSppProposal({ lastStageTransition, stageIndex: 1 });
+            const lastStageTransition = DateTime.fromISO(now)
+                .minus({ hours: 2 })
+                .toSeconds();
+            const proposal = generateSppProposal({
+                lastStageTransition,
+                stageIndex: 1,
+            });
             const stage = generateSppStage({ stageIndex: 2 });
             const result = sppStageUtils.getStageStartDate(proposal, stage);
             expect(result).toBe(undefined);
@@ -69,7 +91,10 @@ describe('SppStageUtils', () => {
     });
 
     describe('getStageMaxAdvance', () => {
-        const getStartStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
+        const getStartStartDateSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageStartDate',
+        );
 
         afterEach(() => {
             getStartStartDateSpy.mockReset();
@@ -81,12 +106,17 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ maxAdvance: 300 });
             const expectedValue = startDate.plus({ seconds: stage.maxAdvance });
             getStartStartDateSpy.mockReturnValue(startDate);
-            expect(sppStageUtils.getStageMaxAdvance(proposal, stage)).toEqual(expectedValue);
+            expect(sppStageUtils.getStageMaxAdvance(proposal, stage)).toEqual(
+                expectedValue,
+            );
         });
     });
 
     describe('getStageMinAdvance', () => {
-        const getStartStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
+        const getStartStartDateSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageStartDate',
+        );
 
         afterEach(() => {
             getStartStartDateSpy.mockReset();
@@ -98,12 +128,17 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ minAdvance: 300 });
             const expectedValue = startDate.plus({ seconds: stage.minAdvance });
             getStartStartDateSpy.mockReturnValue(startDate);
-            expect(sppStageUtils.getStageMinAdvance(proposal, stage)).toEqual(expectedValue);
+            expect(sppStageUtils.getStageMinAdvance(proposal, stage)).toEqual(
+                expectedValue,
+            );
         });
     });
 
     describe('isVetoReached', () => {
-        const getSuccessThresholdSpy = jest.spyOn(sppStageUtils, 'getSuccessThreshold');
+        const getSuccessThresholdSpy = jest.spyOn(
+            sppStageUtils,
+            'getSuccessThreshold',
+        );
 
         afterEach(() => {
             getSuccessThresholdSpy.mockReset();
@@ -114,7 +149,9 @@ describe('SppStageUtils', () => {
             getSuccessThresholdSpy.mockReturnValue(successCount);
 
             const stage = generateSppStage({ vetoThreshold: 1 });
-            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
@@ -124,7 +161,9 @@ describe('SppStageUtils', () => {
             getSuccessThresholdSpy.mockReturnValue(successCount);
 
             const stage = generateSppStage({ vetoThreshold: 2 });
-            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
@@ -134,14 +173,19 @@ describe('SppStageUtils', () => {
             getSuccessThresholdSpy.mockReturnValue(successCount);
 
             const stage = generateSppStage({ vetoThreshold: 0 });
-            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
     });
 
     describe('isApprovalReached', () => {
-        const getSuccessThresholdSpy = jest.spyOn(sppStageUtils, 'getSuccessThreshold');
+        const getSuccessThresholdSpy = jest.spyOn(
+            sppStageUtils,
+            'getSuccessThreshold',
+        );
 
         afterEach(() => {
             getSuccessThresholdSpy.mockReset();
@@ -156,7 +200,9 @@ describe('SppStageUtils', () => {
             getSuccessThresholdSpy.mockReturnValue(successCount);
 
             const stage = generateSppStage({ approvalThreshold: 1 });
-            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
         });
@@ -166,7 +212,9 @@ describe('SppStageUtils', () => {
             getSuccessThresholdSpy.mockReturnValue(successCount);
 
             const stage = generateSppStage({ approvalThreshold: 1 });
-            const proposal = generateSppProposal({ settings: generateSppPluginSettings({ stages: [stage] }) });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
 
             expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
         });
@@ -174,9 +222,17 @@ describe('SppStageUtils', () => {
 
     describe('getSuccessThreshold', () => {
         it('returns correct success threshold when body is external and reported the results', () => {
-            const body = generateSppStagePlugin({ address: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6' });
+            const body = generateSppStagePlugin({
+                address: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6',
+            });
             const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
-            const results = [{ pluginAddress: body.address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL }];
+            const results = [
+                {
+                    pluginAddress: body.address,
+                    stage: stage.stageIndex,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ];
             const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
@@ -185,9 +241,17 @@ describe('SppStageUtils', () => {
         });
 
         it('returns correct success threshold when body is external and did not report the results', () => {
-            const body = generateSppStagePlugin({ address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346' });
+            const body = generateSppStagePlugin({
+                address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346',
+            });
             const stage = generateSppStage({ stageIndex: 1, plugins: [body] });
-            const results = [{ pluginAddress: body.address, stage: 0, resultType: SppProposalType.APPROVAL }];
+            const results = [
+                {
+                    pluginAddress: body.address,
+                    stage: 0,
+                    resultType: SppProposalType.APPROVAL,
+                },
+            ];
             const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
@@ -196,10 +260,17 @@ describe('SppStageUtils', () => {
         });
 
         it('returns correct success threshold when body is internal and its sub-proposal passed', () => {
-            const body = generateSppStagePlugin({ address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346' });
+            const body = generateSppStagePlugin({
+                address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346',
+            });
             const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
             const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ pluginAddress: body.address, stageIndex: stage.stageIndex })],
+                subProposals: [
+                    generateSppSubProposal({
+                        pluginAddress: body.address,
+                        stageIndex: stage.stageIndex,
+                    }),
+                ],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);
@@ -209,13 +280,28 @@ describe('SppStageUtils', () => {
 
         it('returns correct success threshold with mixed bodies', () => {
             const bodies = [
-                generateSppStagePlugin({ address: '0x08B2072d388Fa354A4B61c25341707E4Fcd56267' }),
-                generateSppStagePlugin({ address: '0x00E84A0B678CD4584A9A377D334c810025970873' }),
+                generateSppStagePlugin({
+                    address: '0x08B2072d388Fa354A4B61c25341707E4Fcd56267',
+                }),
+                generateSppStagePlugin({
+                    address: '0x00E84A0B678CD4584A9A377D334c810025970873',
+                }),
             ];
             const stage = generateSppStage({ stageIndex: 0, plugins: bodies });
             const proposal = generateSppProposal({
-                subProposals: [generateSppSubProposal({ stageIndex: 0, pluginAddress: bodies[0].address })],
-                results: [{ pluginAddress: bodies[1].address, stage: stage.stageIndex, resultType: SppProposalType.APPROVAL }],
+                subProposals: [
+                    generateSppSubProposal({
+                        stageIndex: 0,
+                        pluginAddress: bodies[0].address,
+                    }),
+                ],
+                results: [
+                    {
+                        pluginAddress: bodies[1].address,
+                        stage: stage.stageIndex,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);
@@ -226,12 +312,27 @@ describe('SppStageUtils', () => {
 
     describe('getStageStatus', () => {
         const isVetoReachedSpy = jest.spyOn(sppStageUtils, 'isVetoReached');
-        const isStageUnreachedSpy = jest.spyOn(sppStageUtils, 'isStageUnreached');
-        const getStageStartDateSpy = jest.spyOn(sppStageUtils, 'getStageStartDate');
+        const isStageUnreachedSpy = jest.spyOn(
+            sppStageUtils,
+            'isStageUnreached',
+        );
+        const getStageStartDateSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageStartDate',
+        );
         const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
-        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
-        const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
-        const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
+        const getStageMinAdvanceSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageMinAdvance',
+        );
+        const getStageMaxAdvanceSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageMaxAdvance',
+        );
+        const isApprovalReachedSpy = jest.spyOn(
+            sppStageUtils,
+            'isApprovalReached',
+        );
 
         afterEach(() => {
             isVetoReachedSpy.mockReset();
@@ -247,14 +348,18 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal();
             isVetoReachedSpy.mockReturnValue(true);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(ProposalStatus.VETOED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(
+                ProposalStatus.VETOED,
+            );
         });
 
         it('returns unreached is current stage cannot be reached', () => {
             const stage = generateSppStage();
             const proposal = generateSppProposal();
             isStageUnreachedSpy.mockReturnValue(true);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(ProposalStatus.UNREACHED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toEqual(
+                ProposalStatus.UNREACHED,
+            );
         });
 
         it('returns pending when stage start date is in the future', () => {
@@ -264,14 +369,18 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal();
             getStageStartDateSpy.mockReturnValue(startDate);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.PENDING,
+            );
         });
 
         it('returns pending when stage index is greater than current stage index and start-date cannot be processed', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({ stageIndex: 0 });
             getStageStartDateSpy.mockReturnValue(undefined);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.PENDING);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.PENDING,
+            );
         });
 
         it('returns active when stage has not ended yet', () => {
@@ -281,7 +390,9 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal();
             getStageEndDateSpy.mockReturnValue(endDate);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACTIVE,
+            );
         });
 
         it('returns active when stage has not ended yet, approval has been reached and proposal has no actions', () => {
@@ -289,11 +400,16 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).plus({ days: 7 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ settings, hasActions: false });
+            const proposal = generateSppProposal({
+                settings,
+                hasActions: false,
+            });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACTIVE,
+            );
         });
 
         it('returns advanceable when stage has not ended yet, approval has been reached, proposal has actions and can be advanced', () => {
@@ -321,7 +437,9 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
-            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ADVANCEABLE);
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ADVANCEABLE,
+            );
         });
 
         it('returns advanceable when stage is active, approval is reached, but minAdvanceDate has not yet passed', () => {
@@ -349,7 +467,9 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
-            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ADVANCEABLE);
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ADVANCEABLE,
+            );
         });
 
         it('returns active when stage has not ended yet, approval has been reached, proposal has actions and stage is optimistic', () => {
@@ -377,7 +497,9 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
 
-            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ACTIVE);
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ACTIVE,
+            );
         });
 
         it('returns advanceable for optimistic stage once voting period is over and not vetoed', () => {
@@ -406,7 +528,9 @@ describe('SppStageUtils', () => {
             isVetoReachedSpy.mockReturnValue(false);
             timeUtils.setTime(now);
 
-            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(ProposalStatus.ADVANCEABLE);
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ADVANCEABLE,
+            );
         });
 
         it('returns expired when stage has ended, approval is reached, max advance date has passed and proposal has actions', () => {
@@ -418,7 +542,9 @@ describe('SppStageUtils', () => {
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.EXPIRED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.EXPIRED,
+            );
         });
 
         it('returns accepted when stage has ended, approval is reached, max advance date has passed and stage has already been advanced', () => {
@@ -432,7 +558,9 @@ describe('SppStageUtils', () => {
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACCEPTED,
+            );
         });
 
         it('returns accepted when stage has ended, approval is reached, max advance date has passed but proposal has no actions and stage is last stage', () => {
@@ -441,12 +569,17 @@ describe('SppStageUtils', () => {
             const maxAdvance = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ settings, hasActions: false });
+            const proposal = generateSppProposal({
+                settings,
+                hasActions: false,
+            });
             getStageEndDateSpy.mockReturnValue(endDate);
             getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACCEPTED,
+            );
         });
 
         it('returns rejected when stage has ended and approval is not reached', () => {
@@ -457,7 +590,9 @@ describe('SppStageUtils', () => {
             isApprovalReachedSpy.mockReturnValue(false);
             getStageEndDateSpy.mockReturnValue(endDate);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.REJECTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.REJECTED,
+            );
         });
 
         it('returns accepted for when stage has ended and its a signalling proposal', () => {
@@ -465,22 +600,32 @@ describe('SppStageUtils', () => {
             const endDate = DateTime.fromISO(now).minus({ hours: 1 });
             const stage = generateSppStage();
             const settings = generateSppPluginSettings({ stages: [stage] });
-            const proposal = generateSppProposal({ settings, hasActions: false });
+            const proposal = generateSppProposal({
+                settings,
+                hasActions: false,
+            });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACCEPTED,
+            );
         });
 
         it('returns accepted when the stage has already been advanced and has actions', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const endDate = DateTime.fromISO(now).minus({ days: 1 });
             const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({ stageIndex: 1, hasActions: true });
+            const proposal = generateSppProposal({
+                stageIndex: 1,
+                hasActions: true,
+            });
             getStageEndDateSpy.mockReturnValue(endDate);
             isApprovalReachedSpy.mockReturnValue(true);
             timeUtils.setTime(now);
-            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(ProposalStatus.ACCEPTED);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACCEPTED,
+            );
         });
     });
 
@@ -501,7 +646,11 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        generateSppStage({ stageIndex: 1 }),
+                        stage,
+                    ],
                 }),
             });
 
@@ -512,7 +661,11 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        stage,
+                        generateSppStage({ stageIndex: 2 }),
+                    ],
                 }),
             });
 
@@ -525,11 +678,17 @@ describe('SppStageUtils', () => {
             const stage = generateSppStage({ stageIndex: 2 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        generateSppStage({ stageIndex: 1 }),
+                        stage,
+                    ],
                 }),
             });
 
-            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeTruthy();
+            expect(
+                sppStageUtils.isSignalingProposal(proposal, stage),
+            ).toBeTruthy();
         });
 
         it('returns false when the proposal has actions', () => {
@@ -537,22 +696,34 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 hasActions: true,
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), generateSppStage({ stageIndex: 1 }), stage],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        generateSppStage({ stageIndex: 1 }),
+                        stage,
+                    ],
                 }),
             });
 
-            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.isSignalingProposal(proposal, stage),
+            ).toBeFalsy();
         });
 
         it('returns false when the stage is not the last stage', () => {
             const stage = generateSppStage({ stageIndex: 1 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        stage,
+                        generateSppStage({ stageIndex: 2 }),
+                    ],
                 }),
             });
 
-            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.isSignalingProposal(proposal, stage),
+            ).toBeFalsy();
         });
 
         it('returns false when the proposal has actions and the stage is not the last stage', () => {
@@ -560,19 +731,37 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({
                 hasActions: true,
                 settings: generateSppPluginSettings({
-                    stages: [generateSppStage({ stageIndex: 0 }), stage, generateSppStage({ stageIndex: 2 })],
+                    stages: [
+                        generateSppStage({ stageIndex: 0 }),
+                        stage,
+                        generateSppStage({ stageIndex: 2 }),
+                    ],
                 }),
             });
 
-            expect(sppStageUtils.isSignalingProposal(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.isSignalingProposal(proposal, stage),
+            ).toBeFalsy();
         });
     });
 
     describe('canStageAdvance', () => {
-        const isApprovalReachedSpy = jest.spyOn(sppStageUtils, 'isApprovalReached');
-        const getStageMinAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMinAdvance');
-        const getStageMaxAdvanceSpy = jest.spyOn(sppStageUtils, 'getStageMaxAdvance');
-        const isSignalingProposalSpy = jest.spyOn(sppStageUtils, 'isSignalingProposal');
+        const isApprovalReachedSpy = jest.spyOn(
+            sppStageUtils,
+            'isApprovalReached',
+        );
+        const getStageMinAdvanceSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageMinAdvance',
+        );
+        const getStageMaxAdvanceSpy = jest.spyOn(
+            sppStageUtils,
+            'getStageMaxAdvance',
+        );
+        const isSignalingProposalSpy = jest.spyOn(
+            sppStageUtils,
+            'isSignalingProposal',
+        );
 
         afterEach(() => {
             isApprovalReachedSpy.mockReset();
@@ -666,7 +855,10 @@ describe('SppStageUtils', () => {
             const minAdvanceDate = DateTime.fromISO(now).minus({ minutes: 5 });
             const maxAdvanceDate = DateTime.fromISO(now).plus({ minutes: 10 });
             const stage = generateSppStage({ stageIndex: 0 });
-            const proposal = generateSppProposal({ hasActions: true, stageIndex: 1 });
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 1,
+            });
 
             timeUtils.setTime(now);
             isApprovalReachedSpy.mockReturnValue(true);
@@ -682,48 +874,89 @@ describe('SppStageUtils', () => {
         it('returns the sub-proposal for the given body address and stage index', () => {
             const bodyAddress = '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
-            const subProposal = generateSppSubProposal({ pluginAddress: bodyAddress, stageIndex: stage });
-            const proposal = generateSppProposal({ subProposals: [subProposal] });
-            const externalBodySubProposal = sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage);
+            const subProposal = generateSppSubProposal({
+                pluginAddress: bodyAddress,
+                stageIndex: stage,
+            });
+            const proposal = generateSppProposal({
+                subProposals: [subProposal],
+            });
+            const externalBodySubProposal = sppStageUtils.getBodySubProposal(
+                proposal,
+                bodyAddress,
+                stage,
+            );
             expect(externalBodySubProposal).toEqual(subProposal);
         });
 
         it('returns undefined when SPP proposal has no sub-proposals for the given body address and stage index', () => {
             const bodyAddress = '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
-            const subProposal = generateSppSubProposal({ pluginAddress: bodyAddress, stageIndex: 2 });
-            const proposal = generateSppProposal({ subProposals: [subProposal] });
-            expect(sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage)).toBeUndefined();
+            const subProposal = generateSppSubProposal({
+                pluginAddress: bodyAddress,
+                stageIndex: 2,
+            });
+            const proposal = generateSppProposal({
+                subProposals: [subProposal],
+            });
+            expect(
+                sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage),
+            ).toBeUndefined();
         });
     });
 
     describe('getBodyResult', () => {
         it('returns the result for the given address and stage index if present', () => {
-            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const externalAddress =
+                '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
-            const result = { pluginAddress: externalAddress, stage, resultType: SppProposalType.APPROVAL };
+            const result = {
+                pluginAddress: externalAddress,
+                stage,
+                resultType: SppProposalType.APPROVAL,
+            };
             const proposal = generateSppProposal({ results: [result] });
-            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            const externalBodyResult = sppStageUtils.getBodyResult(
+                proposal,
+                externalAddress,
+                stage,
+            );
             expect(externalBodyResult).toEqual(result);
         });
 
         it('returns undefined if the result for the correct external address but on a different stage index', () => {
-            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const externalAddress =
+                '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
             const proposal = generateSppProposal({
-                results: [{ pluginAddress: externalAddress, stage: 2, resultType: SppProposalType.APPROVAL }],
+                results: [
+                    {
+                        pluginAddress: externalAddress,
+                        stage: 2,
+                        resultType: SppProposalType.APPROVAL,
+                    },
+                ],
             });
 
-            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            const externalBodyResult = sppStageUtils.getBodyResult(
+                proposal,
+                externalAddress,
+                stage,
+            );
             expect(externalBodyResult).toBeUndefined();
         });
 
         it('returns undefined if the result is undefined', () => {
-            const externalAddress = '0x1234567890abcdef1234567890abcdef12345678';
+            const externalAddress =
+                '0x1234567890abcdef1234567890abcdef12345678';
             const stage = 1;
             const proposal = generateSppProposal();
 
-            const externalBodyResult = sppStageUtils.getBodyResult(proposal, externalAddress, stage);
+            const externalBodyResult = sppStageUtils.getBodyResult(
+                proposal,
+                externalAddress,
+                stage,
+            );
             expect(externalBodyResult).toBeUndefined();
         });
     });

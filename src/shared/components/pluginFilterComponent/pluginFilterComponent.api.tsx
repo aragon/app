@@ -1,7 +1,10 @@
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
 import type { IPluginSingleComponentProps } from '../pluginSingleComponent';
 
-export interface IFilterComponentPlugin<TMeta extends object = object, TProps extends object = object> {
+export interface IFilterComponentPlugin<
+    TMeta extends object = object,
+    TProps extends object = object,
+> {
     /**
      * ID of the plugin.
      */
@@ -24,7 +27,10 @@ export interface IFilterComponentPlugin<TMeta extends object = object, TProps ex
     props: TProps;
 }
 
-export interface IPluginFilterComponentProps<TMeta extends object = object, TProps extends object = object> {
+export interface IPluginFilterComponentProps<
+    TMeta extends object = object,
+    TProps extends object = object,
+> {
     /**
      * Id of the slot component to load.
      */

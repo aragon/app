@@ -1,6 +1,9 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import type { IGetProposalStatusParams, IHasEndedParams } from './proposalStatusUtils.api';
+import type {
+    IGetProposalStatusParams,
+    IHasEndedParams,
+} from './proposalStatusUtils.api';
 
 class ProposalStatusUtils {
     getProposalStatus = (params: IGetProposalStatusParams) => {
@@ -20,7 +23,9 @@ class ProposalStatusUtils {
         const now = DateTime.now();
         const startsInTheFuture = now < DateTime.fromSeconds(startDate);
         const endsInTheFuture = this.endsInTheFuture(endDate);
-        const isExecutionExpired = executionExpiryDate != null && now > DateTime.fromSeconds(executionExpiryDate);
+        const isExecutionExpired =
+            executionExpiryDate != null &&
+            now > DateTime.fromSeconds(executionExpiryDate);
 
         if (isExecuted) {
             return ProposalStatus.EXECUTED;
@@ -45,7 +50,9 @@ class ProposalStatusUtils {
         if (endsInTheFuture) {
             const isExecutable = paramsMet && hasActions && canExecuteEarly;
 
-            return isExecutable ? ProposalStatus.EXECUTABLE : ProposalStatus.ACTIVE;
+            return isExecutable
+                ? ProposalStatus.EXECUTABLE
+                : ProposalStatus.ACTIVE;
         }
 
         if (!paramsMet) {
@@ -56,7 +63,9 @@ class ProposalStatusUtils {
             return ProposalStatus.ACCEPTED;
         }
 
-        return isExecutionExpired ? ProposalStatus.EXPIRED : ProposalStatus.EXECUTABLE;
+        return isExecutionExpired
+            ? ProposalStatus.EXPIRED
+            : ProposalStatus.EXECUTABLE;
     };
 
     endsInTheFuture = (endDate?: number) => {

@@ -8,9 +8,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { sppSettingsUtils } from '../../utils/sppSettingsUtils';
 
-export interface IUseSppGovernanceSettingsDefaultParams extends IUseGovernanceSettingsParams {}
+export interface IUseSppGovernanceSettingsDefaultParams
+    extends IUseGovernanceSettingsParams {}
 
-export const useSppGovernanceSettingsDefault = (params: IUseSppGovernanceSettingsDefaultParams) => {
+export const useSppGovernanceSettingsDefault = (
+    params: IUseSppGovernanceSettingsDefaultParams,
+) => {
     const { pluginAddress, daoId } = params;
 
     const { t } = useTranslations();
@@ -18,8 +21,19 @@ export const useSppGovernanceSettingsDefault = (params: IUseSppGovernanceSetting
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
-    const { data: bodyName } = useEnsName({ address: pluginAddress as Hex, chainId: mainnet.id });
-    const url = buildEntityUrl({ type: ChainEntityType.ADDRESS, id: pluginAddress })!;
+    const { data: bodyName } = useEnsName({
+        address: pluginAddress as Hex,
+        chainId: mainnet.id,
+    });
+    const url = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: pluginAddress,
+    })!;
 
-    return sppSettingsUtils.parseDefaultSettings({ t, address: pluginAddress, name: bodyName ?? undefined, url });
+    return sppSettingsUtils.parseDefaultSettings({
+        t,
+        address: pluginAddress,
+        name: bodyName ?? undefined,
+        url,
+    });
 };

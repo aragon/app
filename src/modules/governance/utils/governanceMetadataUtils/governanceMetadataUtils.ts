@@ -15,7 +15,9 @@ export interface IGenerateProposalMetadataParams {
 }
 
 class GovernanceMetadataUtils {
-    generateProposalMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
+    generateProposalMetadata = async ({
+        params,
+    }: IGenerateProposalMetadataParams): Promise<Metadata> => {
         try {
             const { proposalSlug, addressOrEns, network } = await params;
             const daoId = await daoUtils.resolveDaoId({

@@ -1,1 +1,4 @@
-export { type IUseConnectedWalletGuardParams, useConnectedWalletGuard } from './useConnectedWalletGuard';
+export {
+    type IUseConnectedWalletGuardParams,
+    useConnectedWalletGuard,
+} from './useConnectedWalletGuard';

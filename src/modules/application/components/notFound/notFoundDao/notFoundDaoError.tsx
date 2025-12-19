@@ -20,7 +20,10 @@ export const NotFoundDaoError: React.FC<INotFoundDaoErrorProps> = (props) => {
             description={t('app.application.notFoundDao.description')}
             heading={t('app.application.notFoundDao.title')}
             objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
-            primaryButton={{ label: t('app.application.notFoundDao.action'), href: url }}
+            primaryButton={{
+                label: t('app.application.notFoundDao.action'),
+                href: url,
+            }}
         />
     );
 };

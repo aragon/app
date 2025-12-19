@@ -1,6 +1,9 @@
 import { useWatch } from 'react-hook-form';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
-import { type ISetupStrategyForm, RouterType } from './setupStrategyDialogDefinitions';
+import {
+    type ISetupStrategyForm,
+    RouterType,
+} from './setupStrategyDialogDefinitions';
 import { SetupStrategyDialogDistributionBurn } from './setupStrategyDialogDistributionBurn';
 import { SetupStrategyDialogDistributionDexSwap } from './setupStrategyDialogDistributionDexSwap';
 import { SetupStrategyDialogDistributionFixed } from './setupStrategyDialogDistributionFixed';
@@ -36,9 +39,13 @@ const setupStrategySteps = [
     { id: 'distributionUniswap', order: 4, meta: { name: '' } },
 ];
 
-export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> = (props) => {
+export const SetupStrategyDialogSteps: React.FC<
+    ISetupStrategyDialogStepsProps
+> = (props) => {
     const { initialValues, daoId } = props;
-    const selectedRouterType = useWatch<ISetupStrategyForm, 'routerType'>({ name: 'routerType' });
+    const selectedRouterType = useWatch<ISetupStrategyForm, 'routerType'>({
+        name: 'routerType',
+    });
 
     const [
         selectStep,
@@ -64,25 +71,46 @@ export const SetupStrategyDialogSteps: React.FC<ISetupStrategyDialogStepsProps> 
             <WizardDialog.Step {...routerTypeStep}>
                 <SetupStrategyDialogRouterType />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionFixedStep} hidden={selectedRouterType !== RouterType.FIXED}>
+            <WizardDialog.Step
+                {...distributionFixedStep}
+                hidden={selectedRouterType !== RouterType.FIXED}
+            >
                 <SetupStrategyDialogDistributionFixed />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionStreamStep} hidden={selectedRouterType !== RouterType.STREAM}>
+            <WizardDialog.Step
+                {...distributionStreamStep}
+                hidden={selectedRouterType !== RouterType.STREAM}
+            >
                 <SetupStrategyDialogDistributionStream />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionGauge} hidden={selectedRouterType !== RouterType.GAUGE}>
+            <WizardDialog.Step
+                {...distributionGauge}
+                hidden={selectedRouterType !== RouterType.GAUGE}
+            >
                 <SetupStrategyDialogDistributionGauge />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionBurn} hidden={selectedRouterType !== RouterType.BURN}>
+            <WizardDialog.Step
+                {...distributionBurn}
+                hidden={selectedRouterType !== RouterType.BURN}
+            >
                 <SetupStrategyDialogDistributionBurn />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionDexSwap} hidden={selectedRouterType !== RouterType.DEX_SWAP}>
+            <WizardDialog.Step
+                {...distributionDexSwap}
+                hidden={selectedRouterType !== RouterType.DEX_SWAP}
+            >
                 <SetupStrategyDialogDistributionDexSwap />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionMultiDispatch} hidden={selectedRouterType !== RouterType.MULTI_DISPATCH}>
+            <WizardDialog.Step
+                {...distributionMultiDispatch}
+                hidden={selectedRouterType !== RouterType.MULTI_DISPATCH}
+            >
                 <SetupStrategyDialogDistributionMultiDispatch />
             </WizardDialog.Step>
-            <WizardDialog.Step {...distributionUniswap} hidden={selectedRouterType !== RouterType.UNISWAP}>
+            <WizardDialog.Step
+                {...distributionUniswap}
+                hidden={selectedRouterType !== RouterType.UNISWAP}
+            >
                 <SetupStrategyDialogDistributionUniswap />
             </WizardDialog.Step>
         </>

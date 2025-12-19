@@ -1,4 +1,12 @@
-import { Avatar, addressUtils, Button, DataList, formatterUtils, IconType, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    addressUtils,
+    Button,
+    DataList,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -59,7 +67,9 @@ export interface IGaugeVoterGaugeListItemStructureProps {
     isUserVotesLoading: boolean;
 }
 
-export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItemStructureProps> = (props) => {
+export const GaugeVoterGaugeListItemStructure: React.FC<
+    IGaugeVoterGaugeListItemStructureProps
+> = (props) => {
     const {
         gauge,
         totalEpochVotingPower,
@@ -87,10 +97,15 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
 
     // Calculate percentage of total epoch voting power
     const totalEpochPower = totalEpochVotingPower ?? 0;
-    const percentage = totalEpochPower > 0 ? totalVotesValue / totalEpochPower : 0;
+    const percentage =
+        totalEpochPower > 0 ? totalVotesValue / totalEpochPower : 0;
     const formattedPercentage =
-        totalEpochPower > 0 && !Number.isNaN(percentage) && Number.isFinite(percentage)
-            ? formatterUtils.formatNumber(percentage, { format: NumberFormat.PERCENTAGE_SHORT })
+        totalEpochPower > 0 &&
+        !Number.isNaN(percentage) &&
+        Number.isFinite(percentage)
+            ? formatterUtils.formatNumber(percentage, {
+                  format: NumberFormat.PERCENTAGE_SHORT,
+              })
             : null;
 
     const truncatedAddress = addressUtils.truncateAddress(gauge.address);
@@ -111,24 +126,46 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
         </span>
     );
 
-    const actionButtonTranslationKey = isVoted ? 'voted' : isSelected ? 'selected' : 'select';
+    const actionButtonTranslationKey = isVoted
+        ? 'voted'
+        : isSelected
+          ? 'selected'
+          : 'select';
 
-    const itemClassName = classNames('flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6', {
-        'border-primary-300 hover:border-primary-300': isSelected,
-    });
+    const itemClassName = classNames(
+        'flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6',
+        {
+            'border-primary-300 hover:border-primary-300': isSelected,
+        },
+    );
     // Avatar created through the app should always be in ipfs://cid format, but there might be a case where avatar is set
     // as a regular URL.
     const { avatar } = gauge;
-    const avatarSrc = avatar?.startsWith('http') ? avatar : ipfsUtils.cidToSrc(avatar);
+    const avatarSrc = avatar?.startsWith('http')
+        ? avatar
+        : ipfsUtils.cidToSrc(avatar);
 
     return (
-        <DataList.Item className={itemClassName} onClick={() => onViewDetails?.(gauge)}>
+        <DataList.Item
+            className={itemClassName}
+            onClick={() => onViewDetails?.(gauge)}
+        >
             {/* Top section on mobile - Gauge info with border bottom */}
             <div className="flex min-w-0 grow items-center gap-3 border-neutral-100 border-b pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
-                <Avatar alt="Gauge icon" fallback={avatarFallback} responsiveSize={{ md: 'lg' }} size="md" src={avatarSrc} />
+                <Avatar
+                    alt="Gauge icon"
+                    fallback={avatarFallback}
+                    responsiveSize={{ md: 'lg' }}
+                    size="md"
+                    src={avatarSrc}
+                />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="truncate text-base text-neutral-800 md:text-lg">{gaugeName}</p>
-                    <p className="truncate text-neutral-500 text-sm">{truncatedAddress}</p>
+                    <p className="truncate text-base text-neutral-800 md:text-lg">
+                        {gaugeName}
+                    </p>
+                    <p className="truncate text-neutral-500 text-sm">
+                        {truncatedAddress}
+                    </p>
                 </div>
             </div>
 
@@ -136,27 +173,47 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
             <div className="flex items-start justify-between gap-4 md:contents">
                 <div className="flex flex-col gap-1 md:grow md:basis-0 md:text-right">
                     <p className="font-semibold text-neutral-500 text-xs uppercase tracking-wider md:hidden">
-                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes')}
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.totalVotes',
+                        )}
                     </p>
                     <p className="text-base text-neutral-800 md:text-lg">
-                        {formattedTotalVotes} {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes')}
+                        {formattedTotalVotes}{' '}
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.votes',
+                        )}
                     </p>
-                    <p className="text-neutral-500 text-sm">{formattedPercentage ? `${formattedPercentage} of total` : '-- of total'}</p>
+                    <p className="text-neutral-500 text-sm">
+                        {formattedPercentage
+                            ? `${formattedPercentage} of total`
+                            : '-- of total'}
+                    </p>
                 </div>
 
                 <div className="flex flex-col gap-1 text-right md:grow md:basis-0">
                     <p className="font-semibold text-neutral-500 text-xs uppercase tracking-wider md:hidden">
-                        {t('app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes')}
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterGaugeList.heading.yourVotes',
+                        )}
                     </p>
                     <div className="flex min-h-11 flex-col items-end md:justify-center">
                         <div className="flex items-baseline justify-end gap-1">
                             {displayUserVotes === '-' ||
-                            displayUserVotes === t('app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes') ? (
-                                <p className="text-right text-base text-neutral-500 md:text-lg">{displayUserVotes}</p>
+                            displayUserVotes ===
+                                t(
+                                    'app.plugins.gaugeVoter.gaugeVoterGaugeList.item.noVotes',
+                                ) ? (
+                                <p className="text-right text-base text-neutral-500 md:text-lg">
+                                    {displayUserVotes}
+                                </p>
                             ) : (
                                 <>
-                                    <span className="text-base text-neutral-800 md:text-lg">{displayUserVotes}</span>
-                                    <span className="text-neutral-500 text-sm md:text-base">{tokenSymbol}</span>
+                                    <span className="text-base text-neutral-800 md:text-lg">
+                                        {displayUserVotes}
+                                    </span>
+                                    <span className="text-neutral-500 text-sm md:text-base">
+                                        {tokenSymbol}
+                                    </span>
                                 </>
                             )}
                         </div>
@@ -169,12 +226,20 @@ export const GaugeVoterGaugeListItemStructure: React.FC<IGaugeVoterGaugeListItem
                 <Button
                     className="w-full md:w-auto"
                     disabled={!isVotingPeriod || isUserVotesLoading}
-                    iconLeft={isVoted ? IconType.CHECKMARK : isSelected ? IconType.CHECKMARK : undefined}
+                    iconLeft={
+                        isVoted
+                            ? IconType.CHECKMARK
+                            : isSelected
+                              ? IconType.CHECKMARK
+                              : undefined
+                    }
                     onClick={handleActionClick}
                     size="sm"
                     variant="secondary"
                 >
-                    {t(`app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`)}
+                    {t(
+                        `app.plugins.gaugeVoter.gaugeVoterGaugeList.item.${actionButtonTranslationKey}`,
+                    )}
                 </Button>
             </div>
         </DataList.Item>

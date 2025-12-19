@@ -9,11 +9,16 @@ import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import { type INavigationWizardProps, NavigationWizard } from './navigationWizard';
+import {
+    type INavigationWizardProps,
+    NavigationWizard,
+} from './navigationWizard';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-src={props.src} data-testid="dao-avatar-mock" />,
+    DaoAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="dao-avatar-mock" />
+    ),
     Wallet: (props: { user?: { address: string }; onClick: () => void }) => (
         <button onClick={props.onClick} type="button">
             {props.user ? props.user.address : 'connect-mock'}
@@ -28,7 +33,10 @@ jest.mock('next/navigation', () => ({
 describe('<NavigationWizard /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
     const confirmSpy = jest.spyOn(window, 'confirm');
 
@@ -38,7 +46,10 @@ describe('<NavigationWizard /> component', () => {
             push: jest.fn(),
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
-        useAccountSpy.mockReturnValue({ address: '0x123', isConnected: true } as unknown as wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            address: '0x123',
+            isConnected: true,
+        } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         confirmSpy.mockReset();
     });
@@ -65,13 +76,18 @@ describe('<NavigationWizard /> component', () => {
     };
 
     it('renders the DAO avatar and name when data is fetched', () => {
-        const dao = generateDao({ avatar: 'ipfs://avatar-cid', name: 'Test DAO' });
+        const dao = generateDao({
+            avatar: 'ipfs://avatar-cid',
+            name: 'Test DAO',
+        });
 
         render(createTestComponent({ dao }));
 
         const daoAvatar = screen.getByTestId('dao-avatar-mock');
         expect(daoAvatar).toBeInTheDocument();
-        expect(daoAvatar.getAttribute('data-src')).toEqual(ipfsUtils.cidToSrc(dao.avatar));
+        expect(daoAvatar.getAttribute('data-src')).toEqual(
+            ipfsUtils.cidToSrc(dao.avatar),
+        );
         expect(screen.getByText('Test DAO')).toBeInTheDocument();
     });
 
@@ -82,15 +98,23 @@ describe('<NavigationWizard /> component', () => {
     });
 
     it('supports params as wizard name', () => {
-        const name: INavigationWizardProps['name'] = ['app.wizardParams', { key: 'value' }];
+        const name: INavigationWizardProps['name'] = [
+            'app.wizardParams',
+            { key: 'value' },
+        ];
         render(createTestComponent({ name }));
-        expect(screen.getByText('app.wizardParams (key=value)')).toBeInTheDocument();
+        expect(
+            screen.getByText('app.wizardParams (key=value)'),
+        ).toBeInTheDocument();
     });
 
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
         const address = '0xUser123';
         const open = jest.fn();
-        useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            address,
+            isConnected: true,
+        } as unknown as wagmi.UseAccountReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
         render(createTestComponent());
@@ -105,7 +129,10 @@ describe('<NavigationWizard /> component', () => {
     it('renders connect wallet button when user is not connected', async () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        useAccountSpy.mockReturnValue({ address: null, isConnected: false } as unknown as wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            address: null,
+            isConnected: false,
+        } as unknown as wagmi.UseAccountReturnType);
 
         render(createTestComponent());
 

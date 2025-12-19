@@ -9,7 +9,10 @@ import { governanceMetadataUtils } from './governanceMetadataUtils';
 describe('governanceMetadata utils', () => {
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
-    const getProposalBySlugSpy = jest.spyOn(governanceService, 'getProposalBySlug');
+    const getProposalBySlugSpy = jest.spyOn(
+        governanceService,
+        'getProposalBySlug',
+    );
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     afterEach(() => {
@@ -35,20 +38,23 @@ describe('governanceMetadata utils', () => {
             cidToSrcSpy.mockReturnValue(ipfsUrl);
             resolveDaoIdSpy.mockResolvedValue(expectedDaoId);
 
-            const metadata = await governanceMetadataUtils.generateProposalMetadata({
-                params: Promise.resolve({
-                    addressOrEns: 'test.dao.eth',
-                    network: Network.ETHEREUM_MAINNET,
-                    proposalSlug,
-                }),
-            });
+            const metadata =
+                await governanceMetadataUtils.generateProposalMetadata({
+                    params: Promise.resolve({
+                        addressOrEns: 'test.dao.eth',
+                        network: Network.ETHEREUM_MAINNET,
+                        proposalSlug,
+                    }),
+                });
 
             expect(getProposalBySlugSpy).toHaveBeenCalledWith({
                 urlParams: { slug: proposalSlug },
                 queryParams: { daoId: expectedDaoId },
             });
 
-            expect(getDaoSpy).toHaveBeenCalledWith({ urlParams: { id: expectedDaoId } });
+            expect(getDaoSpy).toHaveBeenCalledWith({
+                urlParams: { id: expectedDaoId },
+            });
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
 
             const expectedTitle = `${proposalSlug}: ${proposal.title}`;

@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { testLogger } from '@/test/utils';
-import { ErrorBoundaryClass, type IErrorBoundaryClassProps } from './errorBoundaryClass';
+import {
+    ErrorBoundaryClass,
+    type IErrorBoundaryClassProps,
+} from './errorBoundaryClass';
 
 describe('<ErrorBoundary /> component', () => {
     const createTestComponent = (props?: Partial<IErrorBoundaryClassProps>) => {
@@ -33,7 +36,12 @@ describe('<ErrorBoundary /> component', () => {
             throw new Error('Test error');
         };
 
-        const { rerender } = render(createTestComponent({ pathname: initialPathname, children: <ChildrenError /> }));
+        const { rerender } = render(
+            createTestComponent({
+                pathname: initialPathname,
+                children: <ChildrenError />,
+            }),
+        );
         expect(screen.getByText(/errorFeedback.title/)).toBeInTheDocument();
 
         const newPathname = '/create';

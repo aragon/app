@@ -3,9 +3,13 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardDialog } from '@/shared/components/wizards/wizardDialog';
 import type { ISetupStrategyForm } from './setupStrategyDialogDefinitions';
-import { type ISetupStrategyDialogStepsProps, SetupStrategyDialogSteps } from './setupStrategyDialogSteps';
+import {
+    type ISetupStrategyDialogStepsProps,
+    SetupStrategyDialogSteps,
+} from './setupStrategyDialogSteps';
 
-export interface ISetupStrategyDialogParams extends ISetupStrategyDialogStepsProps {
+export interface ISetupStrategyDialogParams
+    extends ISetupStrategyDialogStepsProps {
     /**
      * Callback called on submit.
      */
@@ -16,12 +20,18 @@ export interface ISetupStrategyDialogParams extends ISetupStrategyDialogStepsPro
     daoId: string;
 }
 
-export interface ISetupStrategyDialogProps extends IDialogComponentProps<ISetupStrategyDialogParams> {}
+export interface ISetupStrategyDialogProps
+    extends IDialogComponentProps<ISetupStrategyDialogParams> {}
 
-export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) => {
+export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (
+    props,
+) => {
     const { location } = props;
 
-    invariant(location.params != null, 'SetupStrategyDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'SetupStrategyDialog: required parameters must be set.',
+    );
     const { onSubmit, initialValues, daoId } = location.params;
 
     const { t } = useTranslations();
@@ -34,7 +44,10 @@ export const SetupStrategyDialog: React.FC<ISetupStrategyDialogProps> = (props) 
             submitLabel={t('app.capitalFlow.setupStrategyDialog.submit')}
             title={t('app.capitalFlow.setupStrategyDialog.title')}
         >
-            <SetupStrategyDialogSteps daoId={daoId} initialValues={initialValues} />
+            <SetupStrategyDialogSteps
+                daoId={daoId}
+                initialValues={initialValues}
+            />
         </WizardDialog.Container>
     );
 };

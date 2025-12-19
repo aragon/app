@@ -6,7 +6,10 @@ import { GaugeRegistrarRegisterGaugeActionCreate } from './components/gaugeRegis
 import { GaugeRegistrarRegisterGaugeActionDetails } from './components/gaugeRegistrarRegisterGaugeActionDetails';
 import { GaugeRegistrarUnregisterGaugeActionCreate } from './components/gaugeRegistrarUnregisterGaugeActionCreate';
 import { GaugeRegistrarUnregisterGaugeActionDetails } from './components/gaugeRegistrarUnregisterGaugeActionDetails';
-import { registerGaugeAbi, unregisterGaugeAbi } from './constants/gaugeRegistrarAbi';
+import {
+    registerGaugeAbi,
+    unregisterGaugeAbi,
+} from './constants/gaugeRegistrarAbi';
 import { GaugeRegistrarActionType } from './types/enum/gaugeRegistrarActionType';
 
 const gaugeRegistrarPermissionId = keccak256(toBytes('GAUGE_REGISTRAR_ROLE'));
@@ -30,7 +33,9 @@ export const initGaugeRegistrarActionViews = () => {
             componentDetails: GaugeRegistrarRegisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.REGISTER_GAUGE}`,
-                name: t('app.actions.gaugeRegistrar.composer.registerActionName'),
+                name: t(
+                    'app.actions.gaugeRegistrar.composer.registerActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -42,7 +47,10 @@ export const initGaugeRegistrarActionViews = () => {
                     inputData: {
                         function: registerGaugeAbi.name,
                         contract: PluginContractName.GAUGE_REGISTRAR,
-                        parameters: registerGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: registerGaugeAbi.inputs.map((param) => ({
+                            ...param,
+                            value: '',
+                        })),
                     },
                 },
             }),
@@ -55,7 +63,9 @@ export const initGaugeRegistrarActionViews = () => {
             componentDetails: GaugeRegistrarUnregisterGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeRegistrarActionType.UNREGISTER_GAUGE}`,
-                name: t('app.actions.gaugeRegistrar.composer.unregisterActionName'),
+                name: t(
+                    'app.actions.gaugeRegistrar.composer.unregisterActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -67,7 +77,10 @@ export const initGaugeRegistrarActionViews = () => {
                     inputData: {
                         function: unregisterGaugeAbi.name,
                         contract: PluginContractName.GAUGE_REGISTRAR,
-                        parameters: unregisterGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: unregisterGaugeAbi.inputs.map((param) => ({
+                            ...param,
+                            value: '',
+                        })),
                     },
                 },
             }),

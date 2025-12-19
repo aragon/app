@@ -22,7 +22,11 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     const togglePanel = () => setIsOpen((current) => !current);
 
     useEffect(() => {
-        registerControl({ name: 'highlightSlots', type: 'boolean', label: 'Highlight slot components' });
+        registerControl({
+            name: 'highlightSlots',
+            type: 'boolean',
+            label: 'Highlight slot components',
+        });
         registerControl({
             name: 'enableAllPlugins',
             type: 'boolean',
@@ -54,8 +58,12 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
 
     useEffect(() => {
         const handleMouseDown = (event: MouseEvent) => {
-            const isOutsideClick = !panelRef.current?.contains(event.target as Node);
-            setIsOpen((current) => (current && isOutsideClick ? false : current));
+            const isOutsideClick = !panelRef.current?.contains(
+                event.target as Node,
+            );
+            setIsOpen((current) =>
+                current && isOutsideClick ? false : current,
+            );
         };
 
         document.addEventListener('mousedown', handleMouseDown);
@@ -63,7 +71,10 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
         return () => document.removeEventListener('mousedown', handleMouseDown);
     }, []);
 
-    const groupedControls = Object.groupBy(controls, ({ group }) => group ?? 'Global');
+    const groupedControls = Object.groupBy(
+        controls,
+        ({ group }) => group ?? 'Global',
+    );
 
     return (
         <>
@@ -71,7 +82,7 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
                 className={classNames(
                     'fixed right-4.5',
                     { 'bottom-4.5': process.env.NEXT_PUBLIC_ENV !== 'local' },
-                    { 'bottom-18': process.env.NEXT_PUBLIC_ENV === 'local' }
+                    { 'bottom-18': process.env.NEXT_PUBLIC_ENV === 'local' },
                 )}
                 iconLeft={IconType.SETTINGS}
                 onClick={togglePanel}
@@ -81,13 +92,20 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
             <div
                 className={classNames(
                     'fixed right-0 z-50 flex h-full w-[480px] flex-col gap-4 border-neutral-100 border-l bg-neutral-0 px-4 py-2',
-                    { hidden: !isOpen }
+                    { hidden: !isOpen },
                 )}
                 ref={panelRef}
             >
                 <div className="flex flex-row justify-between">
-                    <Heading size="h2">{t('app.application.debugPanel.title')}</Heading>
-                    <Button iconLeft={IconType.CLOSE} onClick={togglePanel} size="md" variant="ghost" />
+                    <Heading size="h2">
+                        {t('app.application.debugPanel.title')}
+                    </Heading>
+                    <Button
+                        iconLeft={IconType.CLOSE}
+                        onClick={togglePanel}
+                        size="md"
+                        variant="ghost"
+                    />
                 </div>
                 <div className="flex flex-col gap-4">
                     {Object.keys(groupedControls).map((group) => (
@@ -95,7 +113,10 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
                             <Heading size="h3">{group}</Heading>
                             <div className="flex flex-col gap-2">
                                 {groupedControls[group]?.map((control) => (
-                                    <DebugPanelControl control={control} key={control.name} />
+                                    <DebugPanelControl
+                                        control={control}
+                                        key={control.name}
+                                    />
                                 ))}
                             </div>
                         </div>

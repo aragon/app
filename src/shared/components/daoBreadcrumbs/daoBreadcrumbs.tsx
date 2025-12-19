@@ -29,13 +29,26 @@ export const DaoBreadcrumbs: React.FC<IDaoBreadcrumbsProps> = ({ path }) => {
 
                 return (
                     <div className="flex items-center gap-2" key={node.address}>
-                        {index > 0 && <Icon className="text-neutral-500" icon={IconType.CHEVRON_RIGHT} size="sm" />}
+                        {index > 0 && (
+                            <Icon
+                                className="text-neutral-500"
+                                icon={IconType.CHEVRON_RIGHT}
+                                size="sm"
+                            />
+                        )}
                         <div
-                            className={classNames('flex items-center gap-2 bg-neutral-0 py-1', {
-                                'text-neutral-800': isLast,
-                            })}
+                            className={classNames(
+                                'flex items-center gap-2 bg-neutral-0 py-1',
+                                {
+                                    'text-neutral-800': isLast,
+                                },
+                            )}
                         >
-                            <DaoAvatar name={node.name} size="sm" src={avatarSrc} />
+                            <DaoAvatar
+                                name={node.name}
+                                size="sm"
+                                src={avatarSrc}
+                            />
                             <p>{node.name}</p>
                         </div>
                     </div>

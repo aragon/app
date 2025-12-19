@@ -15,22 +15,40 @@ export interface IAdminUninstallPluginProps {
     daoId: string;
 }
 
-export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (props) => {
+export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (
+    props,
+) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true })!;
-    const adminPlugin = useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN })![0]?.meta;
+    const processPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        hasExecute: true,
+    })!;
+    const adminPlugin = useDaoPlugins({
+        daoId,
+        interfaceType: PluginInterfaceType.ADMIN,
+    })![0]?.meta;
 
     const handleOpenDialog = () => {
         if (processPlugins.length > 1) {
-            const params: IUninstallPluginAlertDialogParams = { daoId, uninstallPlugin: adminPlugin };
+            const params: IUninstallPluginAlertDialogParams = {
+                daoId,
+                uninstallPlugin: adminPlugin,
+            };
             open(SettingsDialogId.UNINSTALL_PLUGIN_ALERT, { params });
         } else {
-            const dialogTitle = t('app.plugins.admin.adminUninstallPlugin.fallbackDialogTitle');
-            const params: IGovernanceProcessRequiredDialogParams = { daoId, plugin: adminPlugin, title: dialogTitle };
+            const dialogTitle = t(
+                'app.plugins.admin.adminUninstallPlugin.fallbackDialogTitle',
+            );
+            const params: IGovernanceProcessRequiredDialogParams = {
+                daoId,
+                plugin: adminPlugin,
+                title: dialogTitle,
+            };
             open(SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED, { params });
         }
     };

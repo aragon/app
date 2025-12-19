@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, type ReactNode, useContext, useMemo, useState } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useContext,
+    useMemo,
+    useState,
+} from 'react';
 
 export interface IBlockNavigationContext {
     /**
@@ -20,16 +26,28 @@ export interface IBlockNavigationContextProviderProps {
     children: ReactNode;
 }
 
-const blockNavigationContext = createContext<IBlockNavigationContext>({ isBlocked: false, setIsBlocked: () => null });
+const blockNavigationContext = createContext<IBlockNavigationContext>({
+    isBlocked: false,
+    setIsBlocked: () => null,
+});
 
-export const BlockNavigationContextProvider: React.FC<IBlockNavigationContextProviderProps> = (props) => {
+export const BlockNavigationContextProvider: React.FC<
+    IBlockNavigationContextProviderProps
+> = (props) => {
     const { children } = props;
 
     const [isBlocked, setIsBlocked] = useState(false);
 
-    const contextValue = useMemo(() => ({ isBlocked, setIsBlocked }), [isBlocked]);
+    const contextValue = useMemo(
+        () => ({ isBlocked, setIsBlocked }),
+        [isBlocked],
+    );
 
-    return <blockNavigationContext.Provider value={contextValue}>{children}</blockNavigationContext.Provider>;
+    return (
+        <blockNavigationContext.Provider value={contextValue}>
+            {children}
+        </blockNavigationContext.Provider>
+    );
 };
 
 export const useBlockNavigationContext = (): IBlockNavigationContext => {

@@ -6,7 +6,9 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useUserVote } from '../../hooks/useUserVote';
 
-export interface IDaoProposalListDefaultItemProps<TProposal extends IProposal = IProposal> {
+export interface IDaoProposalListDefaultItemProps<
+    TProposal extends IProposal = IProposal,
+> {
     /**
      * DAO related to the proposal
      */
@@ -21,15 +23,29 @@ export interface IDaoProposalListDefaultItemProps<TProposal extends IProposal = 
     proposalSlug: string;
 }
 
-export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemProps> = (props) => {
+export const DaoProposalListDefaultItem: React.FC<
+    IDaoProposalListDefaultItemProps
+> = (props) => {
     const { proposal, dao, proposalSlug } = props;
 
-    const { id, title, summary, executed, endDate, creator, pluginInterfaceType: pluginId } = proposal;
+    const {
+        id,
+        title,
+        summary,
+        executed,
+        endDate,
+        creator,
+        pluginInterfaceType: pluginId,
+    } = proposal;
 
     const userVote = useUserVote({ proposal, network: dao.network });
 
     const slotId = GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS;
-    const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({ params: proposal, slotId, pluginId })!;
+    const proposalStatus = useSlotSingleFunction<IProposal, ProposalStatus>({
+        params: proposal,
+        slotId,
+        pluginId,
+    })!;
 
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
@@ -45,7 +61,11 @@ export const DaoProposalListDefaultItem: React.FC<IDaoProposalListDefaultItemPro
             href={proposalHref}
             id={proposalSlug}
             key={id}
-            publisher={{ address: creator.address, link: publisherHref, name: publisherName }}
+            publisher={{
+                address: creator.address,
+                link: publisherHref,
+                name: publisherName,
+            }}
             status={proposalStatus}
             summary={summary}
             title={title}

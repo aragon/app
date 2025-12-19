@@ -5,14 +5,22 @@ import { useTranslations } from '../../translationsProvider';
 import { useWizardContext } from './wizardProvider';
 
 const getValidationStatus = (errors: FieldErrors) => {
-    const requiredErrors = Object.keys(errors).filter((key) => errors[key]?.type === 'required');
-    const invalidErrors = Object.keys(errors).filter((key) => errors[key]?.type !== 'required');
+    const requiredErrors = Object.keys(errors).filter(
+        (key) => errors[key]?.type === 'required',
+    );
+    const invalidErrors = Object.keys(errors).filter(
+        (key) => errors[key]?.type !== 'required',
+    );
 
     if (!(requiredErrors.length || invalidErrors.length)) {
         return 'valid';
     }
 
-    return requiredErrors.length > 0 && invalidErrors.length > 0 ? 'invalid-required' : requiredErrors.length > 0 ? 'required' : 'invalid';
+    return requiredErrors.length > 0 && invalidErrors.length > 0
+        ? 'invalid-required'
+        : requiredErrors.length > 0
+          ? 'required'
+          : 'invalid';
 };
 
 export interface IUseWizardFooterReturn {
@@ -44,7 +52,8 @@ export interface IUseWizardFooterReturn {
 
 export const useWizardFooter = (): IUseWizardFooterReturn => {
     const { t } = useTranslations();
-    const { submitLabel, hasNext, previousStep, submitHelpText } = useWizardContext();
+    const { submitLabel, hasNext, previousStep, submitHelpText } =
+        useWizardContext();
 
     const { formState, clearErrors } = useFormContext();
     const { isSubmitted, errors } = formState;
@@ -52,8 +61,14 @@ export const useWizardFooter = (): IUseWizardFooterReturn => {
     const validationStatus = getValidationStatus(errors);
     const displayValidationError = isSubmitted && validationStatus !== 'valid';
 
-    const submitVariant = displayValidationError ? 'critical' : hasNext ? 'secondary' : 'primary';
-    const processedSubmitLabel = hasNext ? t('app.shared.wizard.footer.next') : submitLabel;
+    const submitVariant = displayValidationError
+        ? 'critical'
+        : hasNext
+          ? 'secondary'
+          : 'primary';
+    const processedSubmitLabel = hasNext
+        ? t('app.shared.wizard.footer.next')
+        : submitLabel;
     const processedSubmitHelpText = hasNext ? undefined : submitHelpText;
 
     const onPreviousClick = useCallback(() => {

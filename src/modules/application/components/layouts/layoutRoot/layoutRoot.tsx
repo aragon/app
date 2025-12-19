@@ -35,7 +35,10 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const translationAssets = await translations.en();
 
     const requestHeaders = await headers();
-    const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
+    const wagmiInitialState = cookieToInitialState(
+        wagmiConfig,
+        requestHeaders.get('cookie'),
+    );
 
     const featureFlagsSnapshot = await featureFlags.getSnapshot();
     const isDebugPanelEnabled = await featureFlags.isEnabled('debugPanel');

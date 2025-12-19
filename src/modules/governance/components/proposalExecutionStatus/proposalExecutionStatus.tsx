@@ -1,4 +1,10 @@
-import { Button, ChainEntityType, type IButtonProps, IconType, ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    ChainEntityType,
+    type IButtonProps,
+    IconType,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import type { IExecuteDialogParams } from '@/modules/governance/dialogs/executeDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,7 +26,9 @@ export interface IProposalExecutionStatusProps {
     proposal: IProposal;
 }
 
-export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = (props) => {
+export const ProposalExecutionStatus: React.FC<
+    IProposalExecutionStatusProps
+> = (props) => {
     const { daoId, proposal } = props;
 
     const { t } = useTranslations();
@@ -41,7 +49,11 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     });
 
     const openTransactionDialog = () => {
-        const params: IExecuteDialogParams = { daoId, proposal, status: proposalStatus };
+        const params: IExecuteDialogParams = {
+            daoId,
+            proposal,
+            status: proposalStatus,
+        };
         open(GovernanceDialogId.EXECUTE, { params });
     };
 
@@ -53,14 +65,18 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
 
     const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
         [ProposalStatus.EXECUTED]: {
-            children: t('app.governance.proposalExecutionStatus.buttons.executed'),
+            children: t(
+                'app.governance.proposalExecutionStatus.buttons.executed',
+            ),
             variant: 'success',
             iconRight: IconType.LINK_EXTERNAL,
             href: executedBlockLink,
             target: '_blank',
         },
         [ProposalStatus.EXECUTABLE]: {
-            children: t('app.governance.proposalExecutionStatus.buttons.execute'),
+            children: t(
+                'app.governance.proposalExecutionStatus.buttons.execute',
+            ),
             variant: 'primary',
             onClick: () => checkProposalExecutePermission(),
         },
@@ -69,7 +85,11 @@ export const ProposalExecutionStatus: React.FC<IProposalExecutionStatusProps> = 
     const buttonConfig = buttonConfigs[proposalStatus];
 
     if (!buttonConfig) {
-        return <p className="text-neutral-500 text-sm leading-normal">{t('app.governance.proposalExecutionStatus.notExecutable')}</p>;
+        return (
+            <p className="text-neutral-500 text-sm leading-normal">
+                {t('app.governance.proposalExecutionStatus.notExecutable')}
+            </p>
+        );
     }
 
     return <Button className="w-full md:w-fit" size="md" {...buttonConfig} />;

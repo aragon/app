@@ -1,11 +1,24 @@
-import { encodeAbiParameters, encodeFunctionData, type Hex, zeroHash } from 'viem';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    type Hex,
+    zeroHash,
+} from 'viem';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import type { ICampaign, ICampaignUserDataMerkle } from '../../api/capitalDistributorService';
+import type {
+    ICampaign,
+    ICampaignUserDataMerkle,
+} from '../../api/capitalDistributorService';
 import type { IBuildClaimTransactionParams } from './capitalDistributorClaimTransactionDialogUtils.api';
-import { capitalDistributorAbi, merkleClaimDataAbi } from './capitalDistributorPluginAbi';
+import {
+    capitalDistributorAbi,
+    merkleClaimDataAbi,
+} from './capitalDistributorPluginAbi';
 
 class CapitalDistributorClaimTransactionDialogUtils {
-    buildTransaction = (params: IBuildClaimTransactionParams): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        params: IBuildClaimTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { campaign, recipient, pluginAddress } = params;
         const campaignId = BigInt(campaign.campaignId);
 
@@ -16,7 +29,11 @@ class CapitalDistributorClaimTransactionDialogUtils {
             args: [campaignId, recipient as Hex, auxData, zeroHash],
         });
 
-        const transaction = { to: pluginAddress as Hex, data, value: BigInt(0) };
+        const transaction = {
+            to: pluginAddress as Hex,
+            data,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
@@ -28,15 +45,25 @@ class CapitalDistributorClaimTransactionDialogUtils {
         throw new Error('buildClaimAuxData: campaign strategy not supported.');
     };
 
-    private isMerkleTreeCampaign = (campaign: ICampaign): campaign is ICampaign<ICampaignUserDataMerkle> =>
-        campaign.strategy != null && typeof campaign.strategy === 'object' && 'root' in campaign.strategy;
+    private isMerkleTreeCampaign = (
+        campaign: ICampaign,
+    ): campaign is ICampaign<ICampaignUserDataMerkle> =>
+        campaign.strategy != null &&
+        typeof campaign.strategy === 'object' &&
+        'root' in campaign.strategy;
 
-    private buildMerkleTreeAuxData = (campaign: ICampaign<ICampaignUserDataMerkle>): Hex => {
+    private buildMerkleTreeAuxData = (
+        campaign: ICampaign<ICampaignUserDataMerkle>,
+    ): Hex => {
         const { totalAmount, proofs } = campaign.userData;
-        const auxData = encodeAbiParameters(merkleClaimDataAbi, [proofs as Hex[], BigInt(totalAmount)]);
+        const auxData = encodeAbiParameters(merkleClaimDataAbi, [
+            proofs as Hex[],
+            BigInt(totalAmount),
+        ]);
 
         return auxData;
     };
 }
 
-export const capitalDistributorClaimTransactionDialogUtils = new CapitalDistributorClaimTransactionDialogUtils();
+export const capitalDistributorClaimTransactionDialogUtils =
+    new CapitalDistributorClaimTransactionDialogUtils();

@@ -4,9 +4,19 @@ export const routerSourceFactoryAbi = [
         name: 'deployDrainBalanceSource',
         inputs: [
             { name: '_vault', type: 'address', internalType: 'address' },
-            { name: '_vaultToken', type: 'address', internalType: 'contract IERC20' },
+            {
+                name: '_vaultToken',
+                type: 'address',
+                internalType: 'contract IERC20',
+            },
         ],
-        outputs: [{ name: 'result', type: 'address', internalType: 'contract DrainBalanceSource' }],
+        outputs: [
+            {
+                name: 'result',
+                type: 'address',
+                internalType: 'contract DrainBalanceSource',
+            },
+        ],
         stateMutability: 'nonpayable',
     },
     {
@@ -14,22 +24,50 @@ export const routerSourceFactoryAbi = [
         name: 'deployRequiredBalanceSource',
         inputs: [
             { name: '_vault', type: 'address', internalType: 'address' },
-            { name: '_vaultToken', type: 'address', internalType: 'contract IERC20' },
-            { name: '_requiredBalance', type: 'uint256', internalType: 'uint256' },
+            {
+                name: '_vaultToken',
+                type: 'address',
+                internalType: 'contract IERC20',
+            },
+            {
+                name: '_requiredBalance',
+                type: 'uint256',
+                internalType: 'uint256',
+            },
         ],
-        outputs: [{ name: 'result', type: 'address', internalType: 'contract RequiredBalanceSource' }],
+        outputs: [
+            {
+                name: 'result',
+                type: 'address',
+                internalType: 'contract RequiredBalanceSource',
+            },
+        ],
         stateMutability: 'nonpayable',
     },
     {
         type: 'event',
         name: 'DrainBalanceSourceDeployed',
-        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract DrainBalanceSource' }],
+        inputs: [
+            {
+                name: 'newContract',
+                type: 'address',
+                indexed: false,
+                internalType: 'contract DrainBalanceSource',
+            },
+        ],
         anonymous: false,
     },
     {
         type: 'event',
         name: 'RequiredBalanceSourceDeployed',
-        inputs: [{ name: 'newContract', type: 'address', indexed: false, internalType: 'contract RequiredBalanceSource' }],
+        inputs: [
+            {
+                name: 'newContract',
+                type: 'address',
+                indexed: false,
+                internalType: 'contract RequiredBalanceSource',
+            },
+        ],
         anonymous: false,
     },
 ] as const;

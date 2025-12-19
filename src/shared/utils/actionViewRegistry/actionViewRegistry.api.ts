@@ -14,7 +14,8 @@ export type ActionViewCreateComponent = ActionComposerPluginComponent<unknown>;
 /**
  * Custom action component type for action views in create/edit mode.
  */
-export type ActionViewDetailsComponent = ProposalActionComponent<IProposalActionData>;
+export type ActionViewDetailsComponent =
+    ProposalActionComponent<IProposalActionData>;
 
 /**
  * Descriptor for registering a custom action view. Each view has 3 key components:
@@ -49,7 +50,10 @@ export interface IActionViewDescriptor {
     /**
      *  Action composer item.
      */
-    getItem: (params: { contractAddress: string; t: TranslationFunction }) => IActionComposerInputItem;
+    getItem: (params: {
+        contractAddress: string;
+        t: TranslationFunction;
+    }) => IActionComposerInputItem;
 }
 
 export interface IActionGroupDescriptor {
@@ -60,5 +64,8 @@ export interface IActionGroupDescriptor {
     /**
      *  Action composer item.
      */
-    getGroup: (params: { contractAddress: string; t: TranslationFunction }) => IAutocompleteInputGroup;
+    getGroup: (params: {
+        contractAddress: string;
+        t: TranslationFunction;
+    }) => IAutocompleteInputGroup;
 }

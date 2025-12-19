@@ -16,8 +16,14 @@ describe('useSmartContractAbi query', () => {
         const abi = generateSmartContractAbi();
         getAbiSpy.mockResolvedValue(abi);
 
-        const urlParams = { network: Network.ETHEREUM_MAINNET, address: '0x123' };
-        const { result } = renderHook(() => useSmartContractAbi({ urlParams }), { wrapper: ReactQueryWrapper });
+        const urlParams = {
+            network: Network.ETHEREUM_MAINNET,
+            address: '0x123',
+        };
+        const { result } = renderHook(
+            () => useSmartContractAbi({ urlParams }),
+            { wrapper: ReactQueryWrapper },
+        );
 
         await waitFor(() => expect(result.current.data).toEqual(abi));
     });

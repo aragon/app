@@ -1,5 +1,8 @@
 import { InputText, Switch } from '@aragon/gov-ui-kit';
-import { type IDebugContextControl, useDebugContext } from '@/shared/components/debugProvider';
+import {
+    type IDebugContextControl,
+    useDebugContext,
+} from '@/shared/components/debugProvider';
 import { sanitizePlainText } from '@/shared/security';
 
 export interface IDebugPanelControlProps {
@@ -16,7 +19,11 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
 
     const { values, updateValue } = useDebugContext();
 
-    const handleValueChange = (name: string, value: unknown, onChange?: IDebugContextControl['onChange']) => {
+    const handleValueChange = (
+        name: string,
+        value: unknown,
+        onChange?: IDebugContextControl['onChange'],
+    ) => {
         updateValue(name, value);
         onChange?.(value);
     };
@@ -26,7 +33,9 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
             <Switch
                 checked={values[name] as boolean}
                 inlineLabel={label}
-                onCheckedChanged={(event) => handleValueChange(name, event, onChange)}
+                onCheckedChanged={(event) =>
+                    handleValueChange(name, event, onChange)
+                }
             />
         );
     }
@@ -34,7 +43,13 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     return (
         <InputText
             label={label}
-            onChange={({ target }) => handleValueChange(name, sanitizePlainText(target.value), onChange)}
+            onChange={({ target }) =>
+                handleValueChange(
+                    name,
+                    sanitizePlainText(target.value),
+                    onChange,
+                )
+            }
             value={(values[name] as string | undefined) ?? ''}
         />
     );

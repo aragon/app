@@ -1,4 +1,7 @@
-import type { IGetEpochMetricsParams, IGetGaugeListParams } from './gaugeVoterService.api';
+import type {
+    IGetEpochMetricsParams,
+    IGetGaugeListParams,
+} from './gaugeVoterService.api';
 
 export enum GaugeVoterServiceKey {
     GAUGES = 'GAUGES',
@@ -6,6 +9,12 @@ export enum GaugeVoterServiceKey {
 }
 
 export const gaugeVoterServiceKeys = {
-    gauges: (params: IGetGaugeListParams) => [GaugeVoterServiceKey.GAUGES, params],
-    epochMetrics: (params: IGetEpochMetricsParams) => [GaugeVoterServiceKey.EPOCH_METRICS, params],
+    gauges: (params: IGetGaugeListParams) => [
+        GaugeVoterServiceKey.GAUGES,
+        params,
+    ],
+    epochMetrics: (params: IGetEpochMetricsParams) => [
+        GaugeVoterServiceKey.EPOCH_METRICS,
+        params,
+    ],
 };

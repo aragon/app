@@ -1,4 +1,8 @@
-import { addressUtils, ProposalVoting, ProposalVotingTab } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ProposalVoting,
+    ProposalVotingTab,
+} from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useEnsName } from 'wagmi';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
@@ -30,7 +34,9 @@ export interface ISppVotingTerminalStageBodyContentProps {
     displayStatus: boolean;
 }
 
-export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStageBodyContentProps> = (props) => {
+export const SppVotingTerminalStageBodyContent: React.FC<
+    ISppVotingTerminalStageBodyContentProps
+> = (props) => {
     const { plugin, stage, proposal, daoId, displayStatus } = props;
 
     const { data: pluginEns } = useEnsName({ address: plugin.address as Hex });
@@ -38,12 +44,16 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
     const status = sppStageUtils.getStageStatus(proposal, stage);
 
     const isExternalPlugin = plugin.interfaceType == null;
-    const defaultName = pluginEns ?? addressUtils.truncateAddress(plugin.address);
-    const pluginName = !isExternalPlugin && plugin.name != null ? plugin.name : defaultName;
+    const defaultName =
+        pluginEns ?? addressUtils.truncateAddress(plugin.address);
+    const pluginName =
+        !isExternalPlugin && plugin.name != null ? plugin.name : defaultName;
 
     return (
         <ProposalVoting.BodyContent
-            bodyBrand={isExternalPlugin ? brandedExternals[plugin.brandId] : undefined}
+            bodyBrand={
+                isExternalPlugin ? brandedExternals[plugin.brandId] : undefined
+            }
             bodyId={plugin.address}
             hideTabs={isExternalPlugin ? [ProposalVotingTab.VOTES] : undefined}
             key={plugin.address}
@@ -55,9 +65,19 @@ export const SppVotingTerminalStageBodyContent: React.FC<ISppVotingTerminalStage
                 plugin={plugin}
                 proposal={proposal}
                 stage={stage}
-                subProposal={sppStageUtils.getBodySubProposal(proposal, plugin.address, stage.stageIndex)}
+                subProposal={sppStageUtils.getBodySubProposal(
+                    proposal,
+                    plugin.address,
+                    stage.stageIndex,
+                )}
             >
-                {displayStatus && <SppStageStatus daoId={daoId} proposal={proposal} stage={stage} />}
+                {displayStatus && (
+                    <SppStageStatus
+                        daoId={daoId}
+                        proposal={proposal}
+                        stage={stage}
+                    />
+                )}
             </SppVotingTerminalBodyContent>
         </ProposalVoting.BodyContent>
     );

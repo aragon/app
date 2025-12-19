@@ -28,7 +28,9 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
     stage: ISppStage;
 }
 
-export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVoteDefaultProps> = (props) => {
+export const SppVotingTerminalBodyVoteDefault: React.FC<
+    ISppVotingTerminalBodyVoteDefaultProps
+> = (props) => {
     const { daoId, proposal, externalAddress, stage } = props;
 
     const { t } = useTranslations();
@@ -45,24 +47,42 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const isVeto = sppStageUtils.isVeto(stage);
-    const voted = sppStageUtils.getBodyResult(proposal, externalAddress, stage.stageIndex) != null;
+    const voted =
+        sppStageUtils.getBodyResult(
+            proposal,
+            externalAddress,
+            stage.stageIndex,
+        ) != null;
 
     const openTransactionDialog = () => {
-        const params: ISppReportProposalResultDialogParams = { daoId, proposal, isVeto };
+        const params: ISppReportProposalResultDialogParams = {
+            daoId,
+            proposal,
+            isVeto,
+        };
         open(SppPluginDialogId.REPORT_PROPOSAL_RESULT, { params });
     };
 
     const checkPermissions = () => {
-        if (!addressUtils.isAddressEqual(latestAddress.current, externalAddress)) {
+        if (
+            !addressUtils.isAddressEqual(latestAddress.current, externalAddress)
+        ) {
             open(SppPluginDialogId.INVALID_ADDRESS_CONNECTED);
             return;
         }
         openTransactionDialog();
     };
 
-    const voteLabel = voted ? (isVeto ? 'vetoed' : 'approved') : isVeto ? 'veto' : 'approve';
+    const voteLabel = voted
+        ? isVeto
+            ? 'vetoed'
+            : 'approved'
+        : isVeto
+          ? 'veto'
+          : 'approve';
 
-    const handleVoteClick = () => checkWalletConnection({ onSuccess: checkPermissions });
+    const handleVoteClick = () =>
+        checkWalletConnection({ onSuccess: checkPermissions });
 
     return (
         <div className="flex w-full flex-col gap-3">
@@ -73,11 +93,15 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<ISppVotingTerminalBodyVo
                 size="md"
                 variant={voted ? 'secondary' : 'primary'}
             >
-                {t(`app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`)}
+                {t(
+                    `app.plugins.spp.sppVotingTerminalBodyVoteDefault.${voteLabel}`,
+                )}
             </Button>
             {!voted && (
                 <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                    {t('app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText')}
+                    {t(
+                        'app.plugins.spp.sppVotingTerminalBodyVoteDefault.helpText',
+                    )}
                 </p>
             )}
         </div>

@@ -1,14 +1,25 @@
 'use client';
 
-import { AssetDataListItem, DataListContainer, DataListFilter, DataListPagination, DataListRoot } from '@aragon/gov-ui-kit';
+import {
+    AssetDataListItem,
+    DataListContainer,
+    DataListFilter,
+    DataListPagination,
+    DataListRoot,
+} from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo, useState } from 'react';
-import type { IAsset, IGetAssetListParams } from '@/modules/finance/api/financeService';
+import type {
+    IAsset,
+    IGetAssetListParams,
+} from '@/modules/finance/api/financeService';
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetListItem } from './assetListItem';
 
-export interface IAssetListDefaultProps<TSettings extends IPluginSettings = IPluginSettings> {
+export interface IAssetListDefaultProps<
+    TSettings extends IPluginSettings = IPluginSettings,
+> {
     /**
      * Initial parameters to use for fetching the asset list.
      */
@@ -36,12 +47,21 @@ export interface IAssetListDefaultProps<TSettings extends IPluginSettings = IPlu
 }
 
 export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
-    const { initialParams, hidePagination, hasSearch, children, onAssetClick } = props;
+    const { initialParams, hidePagination, hasSearch, children, onAssetClick } =
+        props;
     const [searchValue, setSearchValue] = useState<string>();
 
     const { t } = useTranslations();
 
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, assetList } = useAssetListData(initialParams);
+    const {
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        assetList,
+    } = useAssetListData(initialParams);
 
     const filteredAssets = useMemo(() => {
         if (!(hasSearch && searchValue)) {
@@ -71,9 +91,17 @@ export const AssetListDefault: React.FC<IAssetListDefaultProps> = (props) => {
                     searchValue={searchValue}
                 />
             ) : null}
-            <DataListContainer emptyState={emptyState} errorState={errorState} SkeletonElement={AssetDataListItem.Skeleton}>
+            <DataListContainer
+                emptyState={emptyState}
+                errorState={errorState}
+                SkeletonElement={AssetDataListItem.Skeleton}
+            >
                 {filteredAssets.map((asset, index) => (
-                    <AssetListItem asset={asset} key={`${asset.token.address}-${index.toString()}`} onAssetClick={onAssetClick} />
+                    <AssetListItem
+                        asset={asset}
+                        key={`${asset.token.address}-${index.toString()}`}
+                        onAssetClick={onAssetClick}
+                    />
                 ))}
             </DataListContainer>
             {!(hidePagination || searchValue) && <DataListPagination />}

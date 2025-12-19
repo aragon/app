@@ -29,7 +29,9 @@ export interface IUseWrappedTokenBalanceReturn {
     refetch: () => Promise<QueryObserverResult<bigint, ReadContractErrorType>>;
 }
 
-export const useWrappedTokenBalance = (params: IUseWrappedTokenBalanceParams): IUseWrappedTokenBalanceReturn => {
+export const useWrappedTokenBalance = (
+    params: IUseWrappedTokenBalanceParams,
+): IUseWrappedTokenBalanceReturn => {
     const { userAddress, token } = params;
 
     const { id: chainId } = networkDefinitions[token.network];

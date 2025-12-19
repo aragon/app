@@ -25,7 +25,9 @@ export interface IUseGaugeRegistrarGaugesParams {
 /**
  * Returns merged data from GaugeRegistrar contract and GaugeVoter contract (over backend API).
  */
-export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) => {
+export const useGaugeRegistrarGauges = (
+    params: IUseGaugeRegistrarGaugesParams,
+) => {
     const { pluginAddress, gaugeVoterAddress, network } = params;
     const { id: chainId } = networkDefinitions[network];
 
@@ -60,7 +62,12 @@ export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) 
     const mergedData =
         allGauges.length && gaugesFromRegistrar
             ? gaugesFromRegistrar.map((gaugeFromRegistrar) => {
-                  const gauge = allGauges.find((gauge) => addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress));
+                  const gauge = allGauges.find((gauge) =>
+                      addressUtils.isAddressEqual(
+                          gauge.address,
+                          gaugeFromRegistrar.gaugeAddress,
+                      ),
+                  );
                   return { ...gauge, ...gaugeFromRegistrar };
               })
             : undefined;

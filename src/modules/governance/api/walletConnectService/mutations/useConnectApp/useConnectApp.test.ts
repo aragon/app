@@ -16,7 +16,9 @@ describe('useConnectApp mutation', () => {
         const uri = 'wc:xxx';
         const address = '0x123';
         connectAppSpy.mockResolvedValue(session);
-        const { result } = renderHook(() => useConnectApp(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useConnectApp(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate({ uri, address }));
         await waitFor(() => expect(result.current.data).toEqual(session));
         expect(connectAppSpy).toHaveBeenCalledWith({ uri, address });

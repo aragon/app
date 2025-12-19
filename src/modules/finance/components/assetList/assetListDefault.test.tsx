@@ -1,11 +1,17 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { AssetList, type IAssetListDefaultProps } from '@/modules/finance/components/assetList';
+import {
+    AssetList,
+    type IAssetListDefaultProps,
+} from '@/modules/finance/components/assetList';
 import * as useAssetListData from '@/modules/finance/hooks/useAssetListData/useAssetListData';
 import { generateAsset, generateToken } from '@/modules/finance/testUtils';
 
 describe('<AssetListDefault /> component', () => {
-    const useAssetListDataSpy = jest.spyOn(useAssetListData, 'useAssetListData');
+    const useAssetListDataSpy = jest.spyOn(
+        useAssetListData,
+        'useAssetListData',
+    );
 
     beforeEach(() => {
         useAssetListDataSpy.mockReturnValue({

@@ -1,6 +1,10 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
-import type { IMultisigActionChangeMembers, IMultisigActionChangeSettings, IMultisigPluginSettings } from '../../types';
+import type {
+    IMultisigActionChangeMembers,
+    IMultisigActionChangeSettings,
+    IMultisigPluginSettings,
+} from '../../types';
 import { MultisigProposalActionType } from '../../types/enum';
 
 export const defaultAddMembers: IMultisigActionChangeMembers = {
@@ -47,7 +51,10 @@ export const defaultRemoveMembers: IMultisigActionChangeMembers = {
     },
 };
 
-export const defaultUpdateSettings = ({ address, settings }: IDaoPlugin<IMultisigPluginSettings>): IMultisigActionChangeSettings => ({
+export const defaultUpdateSettings = ({
+    address,
+    settings,
+}: IDaoPlugin<IMultisigPluginSettings>): IMultisigActionChangeSettings => ({
     type: MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
     from: '',
     to: address,

@@ -25,19 +25,32 @@ export interface IGaugeVoterVotingStatsProps {
     isUserConnected: boolean;
 }
 
-export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { daysLeftToVote, formattedEpochVotingPower, formattedUserVotingPower, usagePercentage, isUserConnected } = props;
+export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (
+    props,
+) => {
+    const {
+        daysLeftToVote,
+        formattedEpochVotingPower,
+        formattedUserVotingPower,
+        usagePercentage,
+        isUserConnected,
+    } = props;
 
     const { t } = useTranslations();
 
-    const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
-        format: NumberFormat.PERCENTAGE_SHORT,
-    });
+    const formattedUsagePercentage = formatterUtils.formatNumber(
+        usagePercentage,
+        {
+            format: NumberFormat.PERCENTAGE_SHORT,
+        },
+    );
 
     const stats = [
         {
             value: (daysLeftToVote || 0).toString(),
-            suffix: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.daysLeftSuffix'),
+            suffix: t(
+                'app.plugins.gaugeVoter.gaugeVoterVotingStats.daysLeftSuffix',
+            ),
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.toVote'),
         },
         {
@@ -57,7 +70,12 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
     return (
         <div className="grid w-full grid-cols-2 gap-3">
             {stats.map(({ label, value, suffix }) => (
-                <StatCard key={label} label={label} suffix={suffix} value={value} />
+                <StatCard
+                    key={label}
+                    label={label}
+                    suffix={suffix}
+                    value={value}
+                />
             ))}
         </div>
     );

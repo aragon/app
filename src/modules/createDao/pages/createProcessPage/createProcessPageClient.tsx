@@ -24,35 +24,56 @@ export interface ICreateProcessPageClientProps {
     pluginAddress: string;
 }
 
-export const CreateProcessPageClient: React.FC<ICreateProcessPageClientProps> = (props) => {
+export const CreateProcessPageClient: React.FC<
+    ICreateProcessPageClientProps
+> = (props) => {
     const { daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    useProposalPermissionCheckGuard({ daoId, pluginAddress, redirectTab: 'settings' });
+    useProposalPermissionCheckGuard({
+        daoId,
+        pluginAddress,
+        redirectTab: 'settings',
+    });
 
     const handleFormSubmit = (values: ICreateProcessFormData) => {
-        const dialogParams: IPrepareProcessDialogParams = { daoId, values, pluginAddress };
+        const dialogParams: IPrepareProcessDialogParams = {
+            daoId,
+            values,
+            pluginAddress,
+        };
         open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams });
     };
 
     const processedSteps = useMemo(
-        () => createProcessWizardSteps.map(({ meta, ...step }) => ({ ...step, meta: { ...meta, name: t(meta.name) } })),
-        [t]
+        () =>
+            createProcessWizardSteps.map(({ meta, ...step }) => ({
+                ...step,
+                meta: { ...meta, name: t(meta.name) },
+            })),
+        [t],
     );
 
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
-                defaultValues={{ stages: [createProcessFormUtils.buildDefaultStage()] }}
+                defaultValues={{
+                    stages: [createProcessFormUtils.buildDefaultStage()],
+                }}
                 finalStep={t('app.createDao.createProcessPage.finalStep')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
-                submitHelpText={t('app.createDao.createProcessPage.submitHelpText')}
+                submitHelpText={t(
+                    'app.createDao.createProcessPage.submitHelpText',
+                )}
                 submitLabel={t('app.createDao.createProcessPage.submitLabel')}
             >
-                <CreateProcessPageClientSteps daoId={daoId} steps={processedSteps} />
+                <CreateProcessPageClientSteps
+                    daoId={daoId}
+                    steps={processedSteps}
+                />
             </WizardPage.Container>
         </Page.Main>
     );

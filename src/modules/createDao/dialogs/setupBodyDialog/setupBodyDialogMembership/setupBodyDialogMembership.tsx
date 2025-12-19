@@ -10,8 +10,12 @@ export interface ISetupBodyDialogMembershipProps {
     daoId: string;
 }
 
-export const SetupBodyDialogMembership: React.FC<ISetupBodyDialogMembershipProps> = (props) => {
-    const selectedPlugin = useWatch<Record<string, ISetupBodyForm['plugin']>>({ name: 'plugin' });
+export const SetupBodyDialogMembership: React.FC<
+    ISetupBodyDialogMembershipProps
+> = (props) => {
+    const selectedPlugin = useWatch<Record<string, ISetupBodyForm['plugin']>>({
+        name: 'plugin',
+    });
     const { daoId } = props;
 
     return (

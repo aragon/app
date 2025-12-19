@@ -42,7 +42,16 @@ export interface ICtaCardProps {
  * Might be promoted to a shared component in the future!
  */
 export const CtaCard: React.FC<ICtaCardProps> = (props) => {
-    const { imgSrc, title, subtitle, isPrimary, actionHref, actionLabel, actionOnClick, className } = props;
+    const {
+        imgSrc,
+        title,
+        subtitle,
+        isPrimary,
+        actionHref,
+        actionLabel,
+        actionOnClick,
+        className,
+    } = props;
 
     return (
         <div
@@ -50,17 +59,25 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 'flex flex-1 shrink-0 flex-col items-start self-stretch',
                 'rounded-xl bg-neutral-0 shadow-neutral',
                 'gap-4 p-4 md:gap-6 md:p-6',
-                className
+                className,
             )}
         >
-            <div className={classNames('flex items-center justify-center', 'rounded-full bg-neutral-50', 'size-16 md:size-24')}>
+            <div
+                className={classNames(
+                    'flex items-center justify-center',
+                    'rounded-full bg-neutral-50',
+                    'size-16 md:size-24',
+                )}
+            >
                 {/* decorative icon, so empty alt*/}
                 <Image alt="" src={imgSrc} />
             </div>
 
             <div className="flex flex-1 flex-col items-start gap-2 self-stretch md:gap-3">
                 <Heading size="h2">{title}</Heading>
-                <p className="font-normal text-base text-neutral-500 leading-normal">{subtitle}</p>
+                <p className="font-normal text-base text-neutral-500 leading-normal">
+                    {subtitle}
+                </p>
             </div>
             <Button
                 className="self-stretch md:self-start"

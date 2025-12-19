@@ -28,7 +28,9 @@ export interface IDaoProposalsPageClientProps {
 
 export const daoProposalsPageFilterParam = 'proposals';
 
-export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (props) => {
+export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
+    props,
+) => {
     const { initialParams } = props;
     const { daoId } = initialParams.queryParams;
 
@@ -37,44 +39,65 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
     const router = useRouter();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const { activePlugin, setActivePlugin, plugins } = useDaoPluginFilterUrlParam({
-        daoId,
-        type: PluginType.PROCESS,
-        includeGroupFilter: true,
-        name: daoProposalsPageFilterParam,
-    });
+    const { activePlugin, setActivePlugin, plugins } =
+        useDaoPluginFilterUrlParam({
+            daoId,
+            type: PluginType.PROCESS,
+            includeGroupFilter: true,
+            name: daoProposalsPageFilterParam,
+        });
 
-    invariant(activePlugin != null, 'DaoProposalsPageClient: no valid plugin found.');
+    invariant(
+        activePlugin != null,
+        'DaoProposalsPageClient: no valid plugin found.',
+    );
 
-    const buildProposalUrl = (plugin: IDaoPlugin) => daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
+    const buildProposalUrl = (plugin: IDaoPlugin) =>
+        daoUtils.getDaoUrl(dao, `create/${plugin.address}/proposal`)!;
 
-    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) => router.push(buildProposalUrl(plugin ?? activePlugin.meta));
+    const handlePermissionGuardSuccess = (plugin?: IDaoPlugin) =>
+        router.push(buildProposalUrl(plugin ?? activePlugin.meta));
 
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        permissionNamespace: 'proposal',
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onSuccess: handlePermissionGuardSuccess,
-        plugin: activePlugin.meta,
-        daoId,
-    });
+    const { check: createProposalGuard, result: canCreateProposal } =
+        usePermissionCheckGuard({
+            permissionNamespace: 'proposal',
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            onSuccess: handlePermissionGuardSuccess,
+            plugin: activePlugin.meta,
+            daoId,
+        });
 
     const handlePluginSelected = (plugin: IDaoPlugin) =>
-        createProposalGuard({ plugin, onSuccess: () => handlePermissionGuardSuccess(plugin) });
+        createProposalGuard({
+            plugin,
+            onSuccess: () => handlePermissionGuardSuccess(plugin),
+        });
 
     const openSelectPluginDialog = () => {
-        const initialPlugin = activePlugin.id === pluginGroupFilter.id ? undefined : activePlugin;
-        const params: ISelectPluginDialogParams = { daoId, initialPlugin, onPluginSelected: handlePluginSelected };
+        const initialPlugin =
+            activePlugin.id === pluginGroupFilter.id ? undefined : activePlugin;
+        const params: ISelectPluginDialogParams = {
+            daoId,
+            initialPlugin,
+            onPluginSelected: handlePluginSelected,
+        };
         open(GovernanceDialogId.SELECT_PLUGIN, { params });
     };
 
     const defaultActionProps = {
         onClick: canCreateProposal ? undefined : createProposalGuard,
-        href: canCreateProposal ? buildProposalUrl(activePlugin.meta) : undefined,
+        href: canCreateProposal
+            ? buildProposalUrl(activePlugin.meta)
+            : undefined,
     };
 
-    const actionProps = plugins && plugins.length > 1 ? { onClick: openSelectPluginDialog } : defaultActionProps;
+    const actionProps =
+        plugins && plugins.length > 1
+            ? { onClick: openSelectPluginDialog }
+            : defaultActionProps;
 
-    const allProposalsSelected = activePlugin.uniqueId === pluginGroupFilter.uniqueId;
+    const allProposalsSelected =
+        activePlugin.uniqueId === pluginGroupFilter.uniqueId;
     const asideCardTitle = allProposalsSelected
         ? t('app.governance.daoProposalsPage.aside.stats')
         : `${activePlugin.label} (${activePlugin.meta.slug.toUpperCase()})`;
@@ -88,12 +111,27 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (p
                 }}
                 title={t('app.governance.daoProposalsPage.main.title')}
             >
-                <DaoProposalList initialParams={initialParams} onValueChange={setActivePlugin} value={activePlugin} />
+                <DaoProposalList
+                    initialParams={initialParams}
+                    onValueChange={setActivePlugin}
+                    value={activePlugin}
+                />
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={asideCardTitle}>
-                    {allProposalsSelected && <ProposalListStats dao={dao!} initialParams={initialParams} />}
-                    {!allProposalsSelected && <DaoPluginInfo daoId={daoId} plugin={activePlugin.meta} type={PluginType.PROCESS} />}
+                    {allProposalsSelected && (
+                        <ProposalListStats
+                            dao={dao!}
+                            initialParams={initialParams}
+                        />
+                    )}
+                    {!allProposalsSelected && (
+                        <DaoPluginInfo
+                            daoId={daoId}
+                            plugin={activePlugin.meta}
+                            type={PluginType.PROCESS}
+                        />
+                    )}
                 </Page.AsideCard>
             </Page.Aside>
         </>

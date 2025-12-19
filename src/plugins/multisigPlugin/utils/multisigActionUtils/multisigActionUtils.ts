@@ -22,8 +22,15 @@ import {
     type IMultisigProposalAction,
     MultisigProposalActionType,
 } from '../../types';
-import { type IMultisigSettingsParseParams, multisigSettingsUtils } from '../multisigSettingsUtils';
-import { defaultAddMembers, defaultRemoveMembers, defaultUpdateSettings } from './multisigActionDefinitions';
+import {
+    type IMultisigSettingsParseParams,
+    multisigSettingsUtils,
+} from '../multisigSettingsUtils';
+import {
+    defaultAddMembers,
+    defaultRemoveMembers,
+    defaultUpdateSettings,
+} from './multisigActionDefinitions';
 
 export interface IGetMultisigActionsProps {
     /**
@@ -36,22 +43,29 @@ export interface IGetMultisigActionsProps {
     t: TranslationFunction;
 }
 
-export interface INormalizeChangeSettingsParams extends Omit<IMultisigSettingsParseParams, 'settings'> {
+export interface INormalizeChangeSettingsParams
+    extends Omit<IMultisigSettingsParseParams, 'settings'> {
     /**
      * Action to be normalised.
      */
     action: IMultisigActionChangeSettings;
 }
 
-export type IGetMultisigActionsResult = IActionComposerPluginData<IDaoPlugin<IMultisigPluginSettings>>;
+export type IGetMultisigActionsResult = IActionComposerPluginData<
+    IDaoPlugin<IMultisigPluginSettings>
+>;
 
 class MultisigActionUtils {
-    getMultisigActions = ({ plugin, t }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
+    getMultisigActions = ({
+        plugin,
+        t,
+    }: IGetMultisigActionsProps): IGetMultisigActionsResult => {
         const { address } = plugin;
 
         // The setMetadata function on the Multisig plugin is only supported from version 1.3 onwards
         const minVersion = { release: 1, build: 3 };
-        const includePluginMetadataAction = versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
+        const includePluginMetadataAction =
+            versionComparatorUtils.isGreaterOrEqualTo(plugin, minVersion);
 
         return {
             groups: [
@@ -65,58 +79,82 @@ class MultisigActionUtils {
             items: [
                 {
                     id: `${address}-${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`,
-                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`),
+                    name: t(
+                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_ADD_MEMBERS}`,
+                    ),
                     icon: IconType.PLUS,
                     groupId: address,
                     defaultValue: { ...defaultAddMembers, to: address },
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
-                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`),
+                    name: t(
+                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
+                    ),
                     icon: IconType.MINUS,
                     groupId: address,
                     defaultValue: { ...defaultRemoveMembers, to: address },
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
-                    name: t(`app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`),
+                    name: t(
+                        `app.plugins.multisig.multisigActions.${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
+                    ),
                     icon: IconType.SETTINGS,
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
                 },
                 {
-                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(plugin, t),
+                    ...actionComposerUtils.getDefaultActionPluginMetadataItem(
+                        plugin,
+                        t,
+                    ),
                     meta: plugin,
                     hidden: !includePluginMetadataAction,
                 },
             ],
             components: {
-                [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]: MultisigAddMembersAction,
-                [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]: MultisigRemoveMembersAction,
-                [MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS]: MultisigUpdateSettingsAction,
+                [MultisigProposalActionType.MULTISIG_ADD_MEMBERS]:
+                    MultisigAddMembersAction,
+                [MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS]:
+                    MultisigRemoveMembersAction,
+                [MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS]:
+                    MultisigUpdateSettingsAction,
             },
         };
     };
 
-    isChangeMembersAction = (action: IProposalAction | IMultisigProposalAction): action is IMultisigActionChangeMembers =>
+    isChangeMembersAction = (
+        action: IProposalAction | IMultisigProposalAction,
+    ): action is IMultisigActionChangeMembers =>
         action.type === MultisigProposalActionType.MULTISIG_ADD_MEMBERS ||
         action.type === MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS;
 
-    isChangeSettingsAction = (action: IProposalAction | IMultisigProposalAction): action is IMultisigActionChangeSettings =>
+    isChangeSettingsAction = (
+        action: IProposalAction | IMultisigProposalAction,
+    ): action is IMultisigActionChangeSettings =>
         action.type === MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS;
 
-    normalizeChangeMembersAction = (action: IMultisigActionChangeMembers): IGukProposalActionChangeMembers => {
+    normalizeChangeMembersAction = (
+        action: IMultisigActionChangeMembers,
+    ): IGukProposalActionChangeMembers => {
         const { type, ...otherValues } = action;
 
         return { ...otherValues, type: GukProposalActionType.ADD_MEMBERS };
     };
 
-    normalizeChangeSettingsAction = (params: INormalizeChangeSettingsParams): IGukProposalActionChangeSettings => {
+    normalizeChangeSettingsAction = (
+        params: INormalizeChangeSettingsParams,
+    ): IGukProposalActionChangeSettings => {
         const { action, membersCount, t } = params;
-        const { type, existingSettings, proposedSettings, ...otherValues } = action;
+        const { type, existingSettings, proposedSettings, ...otherValues } =
+            action;
 
-        const completeProposedSettings = { ...existingSettings, ...proposedSettings };
+        const completeProposedSettings = {
+            ...existingSettings,
+            ...proposedSettings,
+        };
 
         const parsedExistingSettings = multisigSettingsUtils.parseSettings({
             membersCount,

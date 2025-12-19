@@ -7,7 +7,11 @@ import { useAccount } from 'wagmi';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { lockToVoteLockUnlockDialogUtils } from './lockToVoteLockUnlockDialogUtils';
@@ -44,35 +48,63 @@ export interface ILockToVoteLockUnlockDialogParams {
     showTransactionInfo: boolean;
 }
 
-export interface ILockToVoteLockUnlockDialogProps extends IDialogComponentProps<ILockToVoteLockUnlockDialogParams> {}
+export interface ILockToVoteLockUnlockDialogProps
+    extends IDialogComponentProps<ILockToVoteLockUnlockDialogParams> {}
 
-export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogProps> = (props) => {
+export const LockToVoteLockUnlockDialog: React.FC<
+    ILockToVoteLockUnlockDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'LockToVoteLockUnlockDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'LockToVoteLockUnlockDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'LockToVoteLockUnlockDialog: user must be connected to perform the action');
+    invariant(
+        address != null,
+        'LockToVoteLockUnlockDialog: user must be connected to perform the action',
+    );
 
-    const { action, token, lockManagerAddress, amount, network, onSuccess, showTransactionInfo } = location.params;
+    const {
+        action,
+        token,
+        lockManagerAddress,
+        amount,
+        network,
+        onSuccess,
+        showTransactionInfo,
+    } = location.params;
 
     const { t } = useTranslations();
     const router = useRouter();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
     const handlePrepareTransaction = () =>
         action === 'lock'
-            ? lockToVoteLockUnlockDialogUtils.buildLockTransaction(amount, lockManagerAddress)
-            : lockToVoteLockUnlockDialogUtils.buildUnlockTransaction(lockManagerAddress);
+            ? lockToVoteLockUnlockDialogUtils.buildLockTransaction(
+                  amount,
+                  lockManagerAddress,
+              )
+            : lockToVoteLockUnlockDialogUtils.buildUnlockTransaction(
+                  lockManagerAddress,
+              );
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
     const transactionInfo = showTransactionInfo
         ? {
-              title: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.transactionInfoTitle`, {
-                  symbol: token.symbol,
-              }),
+              title: t(
+                  `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.transactionInfoTitle`,
+                  {
+                      symbol: token.symbol,
+                  },
+              ),
               current: 2,
               total: 2,
           }
@@ -80,17 +112,25 @@ export const LockToVoteLockUnlockDialog: React.FC<ILockToVoteLockUnlockDialogPro
 
     return (
         <TransactionDialog
-            description={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.description`)}
+            description={t(
+                `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.description`,
+            )}
             network={network}
             onSuccess={onSuccess}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
-            submitLabel={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.submit`)}
+            submitLabel={t(
+                `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.submit`,
+            )}
             successLink={{
-                label: t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.success`),
+                label: t(
+                    `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.success`,
+                ),
                 onClick: () => router.refresh(),
             }}
-            title={t(`app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.title`)}
+            title={t(
+                `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.title`,
+            )}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure

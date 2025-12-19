@@ -23,20 +23,39 @@ export interface IUseFilterUrlParamParams {
     validValues?: string[];
 }
 
-export type IUseFilterUrlParamResult = [string | undefined, (tab: string) => void];
+export type IUseFilterUrlParamResult = [
+    string | undefined,
+    (tab: string) => void,
+];
 
 export const defaultFilterParam = 'filter';
 
 // Using Next.js native history API to update the browser history without reloading the page
 // (See https://nextjs.org/docs/app/getting-started/linking-and-navigating#native-history-api)
-const updateSearchParams = (params: Record<string, string>, remove?: boolean) => {
+const updateSearchParams = (
+    params: Record<string, string>,
+    remove?: boolean,
+) => {
     const newParams = new URLSearchParams(window.location.search);
-    Object.keys(params).forEach((key) => (remove ? newParams.delete(key) : newParams.set(key, params[key])));
-    window.history.replaceState(null, '', `${window.location.pathname}?${newParams}`);
+    Object.keys(params).forEach((key) =>
+        remove ? newParams.delete(key) : newParams.set(key, params[key]),
+    );
+    window.history.replaceState(
+        null,
+        '',
+        `${window.location.pathname}?${newParams}`,
+    );
 };
 
-export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterUrlParamResult => {
-    const { name = defaultFilterParam, fallbackValue, validValues, enableUrlUpdate = true } = params;
+export const useFilterUrlParam = (
+    params: IUseFilterUrlParamParams,
+): IUseFilterUrlParamResult => {
+    const {
+        name = defaultFilterParam,
+        fallbackValue,
+        validValues,
+        enableUrlUpdate = true,
+    } = params;
 
     const searchParams = useSearchParams();
 
@@ -57,11 +76,14 @@ export const useFilterUrlParam = (params: IUseFilterUrlParamParams): IUseFilterU
 
             setActiveFilter(tabId);
         },
-        [name, enableUrlUpdate]
+        [name, enableUrlUpdate],
     );
 
     // Update active tab on URL on fallbackValue change
-    useEffect(() => updateActiveFilter(initialValue), [initialValue, updateActiveFilter]);
+    useEffect(
+        () => updateActiveFilter(initialValue),
+        [initialValue, updateActiveFilter],
+    );
 
     // Remove tab parameter on URL when hook is unmounted
     useEffect(() => () => updateActiveFilter('', true), [updateActiveFilter]);

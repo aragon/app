@@ -17,7 +17,9 @@ export interface ICreateProcessPageClientStepsProps {
     daoId: string;
 }
 
-export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStepsProps> = (props) => {
+export const CreateProcessPageClientSteps: React.FC<
+    ICreateProcessPageClientStepsProps
+> = (props) => {
     const { steps, daoId } = props;
 
     const { t } = useTranslations();
@@ -26,29 +28,45 @@ export const CreateProcessPageClientSteps: React.FC<ICreateProcessPageClientStep
     return (
         <>
             <WizardPage.Step
-                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.description`)}
-                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.title`)}
+                description={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.description`,
+                )}
+                title={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.METADATA}.title`,
+                )}
                 {...metadataStep}
             >
                 <CreateProcessForm.Metadata />
             </WizardPage.Step>
             <WizardPage.Step
-                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`)}
-                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.title`)}
+                description={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`,
+                )}
+                title={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.title`,
+                )}
                 {...processesStep}
             >
                 <CreateProcessForm.Governance daoId={daoId} />
             </WizardPage.Step>
             <WizardPage.Step
-                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.description`)}
-                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.title`)}
+                description={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.description`,
+                )}
+                title={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PROPOSAL_CREATION}.title`,
+                )}
                 {...creationStep}
             >
                 <CreateProcessForm.ProposalCreation />
             </WizardPage.Step>
             <WizardPage.Step
-                description={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.description`)}
-                title={t(`app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`)}
+                description={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.description`,
+                )}
+                title={t(
+                    `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.PERMISSIONS}.title`,
+                )}
                 {...permissionsStep}
             >
                 <CreateProcessForm.Permissions daoId={daoId} />

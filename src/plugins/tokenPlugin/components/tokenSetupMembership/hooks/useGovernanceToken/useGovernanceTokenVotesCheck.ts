@@ -35,16 +35,36 @@ export interface IUseGovernanceTokenVotesCheckParams extends IUseTokenParams {}
  * Checks the governance compatibility of the token by following the logic implemented at smart-contract level
  * (See https://github.com/aragon/token-voting-plugin/blob/develop/packages/contracts/src/TokenVotingSetup.sol)
  */
-export const useGovernanceTokenVotesCheck = (params: IUseGovernanceTokenVotesCheckParams) => {
+export const useGovernanceTokenVotesCheck = (
+    params: IUseGovernanceTokenVotesCheckParams,
+) => {
     const { address, chainId, enabled = true } = params;
 
     const { data, isError, isLoading } = useReadContracts({
         allowFailure: true,
         query: { enabled },
         contracts: [
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getPastTotalSupply', args: [BigInt(0)] },
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getVotes', args: [testAddress] },
-            { chainId, address, abi: erc20VotesAbi, functionName: 'getPastVotes', args: [testAddress, BigInt(0)] },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getPastTotalSupply',
+                args: [BigInt(0)],
+            },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getVotes',
+                args: [testAddress],
+            },
+            {
+                chainId,
+                address,
+                abi: erc20VotesAbi,
+                functionName: 'getPastVotes',
+                args: [testAddress, BigInt(0)],
+            },
         ],
     });
 

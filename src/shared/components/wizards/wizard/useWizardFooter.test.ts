@@ -1,6 +1,10 @@
 import { renderHook } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
-import { generateFormContext, generateFormContextState, generateWizardContext } from '@/shared/testUtils';
+import {
+    generateFormContext,
+    generateFormContextState,
+    generateWizardContext,
+} from '@/shared/testUtils';
 import { useWizardFooter } from './useWizardFooter';
 import * as WizardProvider from './wizardProvider';
 
@@ -26,7 +30,10 @@ describe('useWizardFooter hook', () => {
     });
 
     it('returns required validation status when form has required errors', () => {
-        const errors = { fieldOne: { type: 'required' }, fieldTwo: { type: 'required' } };
+        const errors = {
+            fieldOne: { type: 'required' },
+            fieldTwo: { type: 'required' },
+        };
         const formState = generateFormContextState({ errors });
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());
@@ -42,7 +49,10 @@ describe('useWizardFooter hook', () => {
     });
 
     it('returns required-invalid validation status when form has both required and invalid errors', () => {
-        const errors = { fieldOne: { type: 'invalid' }, fieldTwo: { type: 'required' } };
+        const errors = {
+            fieldOne: { type: 'invalid' },
+            fieldTwo: { type: 'required' },
+        };
         const formState = generateFormContextState({ errors });
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());
@@ -78,7 +88,9 @@ describe('useWizardFooter hook', () => {
 
     it('returns a primary submit variant when form has no errors and no next step', () => {
         const formState = generateFormContextState({ errors: {} });
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: false }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: false }),
+        );
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());
         expect(result.current.submitVariant).toEqual('primary');
@@ -86,7 +98,9 @@ describe('useWizardFooter hook', () => {
 
     it('returns a secondary submit variant when form has no errors but has next step', () => {
         const formState = generateFormContextState({ errors: {} });
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: true }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: true }),
+        );
         useFormContextSpy.mockReturnValue(generateFormContext({ formState }));
         const { result } = renderHook(() => useWizardFooter());
         expect(result.current.submitVariant).toEqual('secondary');
@@ -94,13 +108,17 @@ describe('useWizardFooter hook', () => {
 
     it('returns the submit label set on the wizard context when current step is last step', () => {
         const submitLabel = 'save';
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ submitLabel, hasNext: false }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ submitLabel, hasNext: false }),
+        );
         const { result } = renderHook(() => useWizardFooter());
         expect(result.current.submitLabel).toEqual(submitLabel);
     });
 
     it('returns a default submit label when current step is not last step', () => {
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: true }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: true }),
+        );
         const { result } = renderHook(() => useWizardFooter());
         expect(result.current.submitLabel).toMatch(/wizard.footer.next/);
     });
@@ -109,7 +127,9 @@ describe('useWizardFooter hook', () => {
         const clearErrors = jest.fn();
         const previousStep = jest.fn();
         useFormContextSpy.mockReturnValue(generateFormContext({ clearErrors }));
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ previousStep }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ previousStep }),
+        );
         const { result } = renderHook(() => useWizardFooter());
 
         result.current.onPreviousClick();

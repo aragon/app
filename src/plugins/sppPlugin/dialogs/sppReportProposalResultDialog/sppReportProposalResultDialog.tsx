@@ -1,13 +1,20 @@
 'use client';
 
-import { invariant, VoteProposalDataListItemStructure } from '@aragon/gov-ui-kit';
+import {
+    invariant,
+    VoteProposalDataListItemStructure,
+} from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useAccount } from 'wagmi';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -29,31 +36,48 @@ export interface ISppReportProposalResultDialogParams {
     isVeto?: boolean;
 }
 
-export interface ISppReportProposalResultDialogProps extends IDialogComponentProps<ISppReportProposalResultDialogParams> {}
+export interface ISppReportProposalResultDialogProps
+    extends IDialogComponentProps<ISppReportProposalResultDialogParams> {}
 
-export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDialogProps> = (props) => {
+export const SppReportProposalResultDialog: React.FC<
+    ISppReportProposalResultDialogProps
+> = (props) => {
     const { location } = props;
 
     const { t } = useTranslations();
     const router = useRouter();
 
-    invariant(location.params != null, 'SppReportProposalResultDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'SppReportProposalResultDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'SppReportProposalResultDialog: external wallet must be connected.');
+    invariant(
+        address != null,
+        'SppReportProposalResultDialog: external wallet must be connected.',
+    );
 
     const { proposal, isVeto, daoId } = location.params;
 
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const handlePrepareTransaction = () => {
-        const resultType = isVeto ? SppProposalType.VETO : SppProposalType.APPROVAL;
+        const resultType = isVeto
+            ? SppProposalType.VETO
+            : SppProposalType.APPROVAL;
 
-        return sppReportProposalResultDialogUtils.buildTransaction({ proposal, resultType });
+        return sppReportProposalResultDialogUtils.buildTransaction({
+            proposal,
+            resultType,
+        });
     };
 
     const slug = proposalUtils.getProposalSlug(proposal, dao);
@@ -61,14 +85,20 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
 
     return (
         <TransactionDialog
-            description={t('app.plugins.spp.sppReportProposalResultDialog.description')}
+            description={t(
+                'app.plugins.spp.sppReportProposalResultDialog.description',
+            )}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             network={proposal.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
-            submitLabel={t('app.plugins.spp.sppReportProposalResultDialog.button.submit')}
+            submitLabel={t(
+                'app.plugins.spp.sppReportProposalResultDialog.button.submit',
+            )}
             successLink={{
-                label: t('app.plugins.spp.sppReportProposalResultDialog.button.success'),
+                label: t(
+                    'app.plugins.spp.sppReportProposalResultDialog.button.success',
+                ),
                 onClick: () => router.refresh(),
             }}
             title={t('app.plugins.spp.sppReportProposalResultDialog.title')}
@@ -78,7 +108,9 @@ export const SppReportProposalResultDialog: React.FC<ISppReportProposalResultDia
                 proposalId={slug}
                 proposalTitle={proposal.title}
                 voteIndicator="yes"
-                voteIndicatorDescription={t(`app.plugins.spp.sppReportProposalResultDialog.voteDescription.${confirmationContext}`)}
+                voteIndicatorDescription={t(
+                    `app.plugins.spp.sppReportProposalResultDialog.voteDescription.${confirmationContext}`,
+                )}
             />
         </TransactionDialog>
     );

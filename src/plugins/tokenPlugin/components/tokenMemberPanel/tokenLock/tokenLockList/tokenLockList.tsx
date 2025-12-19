@@ -1,4 +1,10 @@
-import { DataListContainer, DataListPagination, DataListRoot, invariant, ProposalDataListItem } from '@aragon/gov-ui-kit';
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    invariant,
+    ProposalDataListItem,
+} from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import type { IDao } from '@/shared/api/daoService';
@@ -27,11 +33,18 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
     const { votingEscrow } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
 
-    invariant(votingEscrow != null && votingEscrowAddresses != null, 'TokenLockList: escrow settings are required');
+    invariant(
+        votingEscrow != null && votingEscrowAddresses != null,
+        'TokenLockList: escrow settings are required',
+    );
 
     const { escrowAddress } = votingEscrowAddresses;
 
-    const memberLocksQueryParams = { network: dao.network, escrowAddress, onlyActive: true };
+    const memberLocksQueryParams = {
+        network: dao.network,
+        escrowAddress,
+        onlyActive: true,
+    };
     const {
         data,
         status,
@@ -39,9 +52,19 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
         isFetchingNextPage,
         fetchNextPage,
         refetch: refetchMemberLocks,
-    } = useMemberLocks({ urlParams: { address: address! }, queryParams: memberLocksQueryParams }, { enabled: address != null });
+    } = useMemberLocks(
+        {
+            urlParams: { address: address! },
+            queryParams: memberLocksQueryParams,
+        },
+        { enabled: address != null },
+    );
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
     const locksList = data?.pages.flatMap((page) => page.data);
 
     const pageSize = data?.pages[0].metadata.pageSize;
@@ -65,7 +88,11 @@ export const TokenLockList: React.FC<ITokenLockListProps> = (props) => {
             pageSize={pageSize}
             state={state}
         >
-            <DataListContainer emptyState={emptyState} errorState={errorState} SkeletonElement={ProposalDataListItem.Skeleton}>
+            <DataListContainer
+                emptyState={emptyState}
+                errorState={errorState}
+                SkeletonElement={ProposalDataListItem.Skeleton}
+            >
                 {locksList?.map((lock) => (
                     <TokenLockListItem
                         dao={dao}

@@ -5,7 +5,10 @@ import { governanceService } from '../../governanceService';
 import { useCanCreateProposal } from './useCanCreateProposal';
 
 describe('useCanCreateProposal query', () => {
-    const getCanCreateProposalSpy = jest.spyOn(governanceService, 'getCanCreateProposal');
+    const getCanCreateProposalSpy = jest.spyOn(
+        governanceService,
+        'getCanCreateProposal',
+    );
 
     afterEach(() => {
         getCanCreateProposalSpy.mockReset();
@@ -15,9 +18,18 @@ describe('useCanCreateProposal query', () => {
         const canCreateProposal = { status: true };
         getCanCreateProposalSpy.mockResolvedValue(canCreateProposal);
 
-        const queryParams = { memberAddress: '0x123', pluginAddress: '0x456', network: Network.ARBITRUM_MAINNET };
-        const { result } = renderHook(() => useCanCreateProposal({ queryParams }), { wrapper: ReactQueryWrapper });
+        const queryParams = {
+            memberAddress: '0x123',
+            pluginAddress: '0x456',
+            network: Network.ARBITRUM_MAINNET,
+        };
+        const { result } = renderHook(
+            () => useCanCreateProposal({ queryParams }),
+            { wrapper: ReactQueryWrapper },
+        );
 
-        await waitFor(() => expect(result.current.data).toEqual(canCreateProposal));
+        await waitFor(() =>
+            expect(result.current.data).toEqual(canCreateProposal),
+        );
     });
 });

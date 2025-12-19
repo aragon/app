@@ -6,7 +6,11 @@ import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { tokenDelegationDialogUtils } from './tokenDelegationDialogUtils';
@@ -26,14 +30,23 @@ export interface ITokenDelegationDialogParams {
     network: Network;
 }
 
-export interface ITokenDelegationDialogProps extends IDialogComponentProps<ITokenDelegationDialogParams> {}
+export interface ITokenDelegationDialogProps
+    extends IDialogComponentProps<ITokenDelegationDialogParams> {}
 
-export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (props) => {
+export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
+    props,
+) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenDelegationDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'TokenDelegationDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenDelegationDialog: user must be connected.');
+    invariant(
+        address != null,
+        'TokenDelegationDialog: user must be connected.',
+    );
 
     const { token, delegate = zeroAddress, network } = location.params;
 
@@ -41,9 +54,13 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (pro
     const router = useRouter();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
-    const handlePrepareTransaction = () => tokenDelegationDialogUtils.buildTransaction(token, delegate);
+    const handlePrepareTransaction = () =>
+        tokenDelegationDialogUtils.buildTransaction(token, delegate);
 
     const onSuccessClick = () => {
         router.refresh();
@@ -51,18 +68,27 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (pro
 
     return (
         <TransactionDialog
-            description={t('app.plugins.token.tokenDelegationForm.dialog.description')}
+            description={t(
+                'app.plugins.token.tokenDelegationForm.dialog.description',
+            )}
             network={network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
-            submitLabel={t('app.plugins.token.tokenDelegationForm.dialog.button.submit')}
+            submitLabel={t(
+                'app.plugins.token.tokenDelegationForm.dialog.button.submit',
+            )}
             successLink={{
-                label: t('app.plugins.token.tokenDelegationForm.dialog.button.success'),
+                label: t(
+                    'app.plugins.token.tokenDelegationForm.dialog.button.success',
+                ),
                 onClick: onSuccessClick,
             }}
             title={t('app.plugins.token.tokenDelegationForm.dialog.title')}
         >
-            <MemberDataListItem.Structure address={delegate} isDelegate={true} />
+            <MemberDataListItem.Structure
+                address={delegate}
+                isDelegate={true}
+            />
         </TransactionDialog>
     );
 };

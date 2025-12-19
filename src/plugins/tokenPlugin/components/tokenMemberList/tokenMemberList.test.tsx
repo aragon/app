@@ -2,17 +2,26 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
 import * as daoService from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { generateTokenMember } from '../../testUtils';
 import type { ITokenMember } from '../../types';
 import { type ITokenMemberListProps, TokenMemberList } from './tokenMemberList';
 
 jest.mock('./components/tokenMemberListItem', () => ({
-    TokenMemberListItem: (props: { member: ITokenMember }) => <div data-testid="member-mock">{props.member.address}</div>,
+    TokenMemberListItem: (props: { member: ITokenMember }) => (
+        <div data-testid="member-mock">{props.member.address}</div>
+    ),
 }));
 
 describe('<TokenMemberList /> component', () => {
-    const useMemberListDataSpy = jest.spyOn(useMemberListData, 'useMemberListData');
+    const useMemberListDataSpy = jest.spyOn(
+        useMemberListData,
+        'useMemberListData',
+    );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
@@ -25,7 +34,9 @@ describe('<TokenMemberList /> component', () => {
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -35,7 +46,9 @@ describe('<TokenMemberList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenMemberListProps>) => {
         const completeProps: ITokenMemberListProps = {
-            initialParams: { queryParams: { daoId: 'dao-id', pluginAddress: '0x123' } },
+            initialParams: {
+                queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
+            },
             plugin: generateDaoPlugin(),
             ...props,
         };
@@ -48,7 +61,10 @@ describe('<TokenMemberList /> component', () => {
     };
 
     it('fetches and renders the token member list', () => {
-        const members = [generateTokenMember({ address: '0x123' }), generateTokenMember({ address: '0x456' })];
+        const members = [
+            generateTokenMember({ address: '0x123' }),
+            generateTokenMember({ address: '0x456' }),
+        ];
         useMemberListDataSpy.mockReturnValue({
             memberList: members,
             onLoadMore: jest.fn(),

@@ -19,15 +19,28 @@ export interface ISppVotingTerminalProps {
 export const SppVotingTerminal: React.FC<ISppVotingTerminalProps> = (props) => {
     const { daoId, proposal } = props;
 
-    const [activeStage, setActiveStage] = useState<string | undefined>(proposal.stageIndex.toString());
+    const [activeStage, setActiveStage] = useState<string | undefined>(
+        proposal.stageIndex.toString(),
+    );
 
     // Update active stage when refetching the proposal (e.g. after advancing a stage)
-    useEffect(() => setActiveStage(proposal.stageIndex.toString()), [proposal.stageIndex]);
+    useEffect(
+        () => setActiveStage(proposal.stageIndex.toString()),
+        [proposal.stageIndex],
+    );
 
     return (
-        <ProposalVoting.StageContainer activeStage={activeStage} onStageClick={setActiveStage}>
+        <ProposalVoting.StageContainer
+            activeStage={activeStage}
+            onStageClick={setActiveStage}
+        >
             {proposal.settings.stages.map((stage) => (
-                <SppVotingTerminalStage daoId={daoId} key={stage.stageIndex} proposal={proposal} stage={stage} />
+                <SppVotingTerminalStage
+                    daoId={daoId}
+                    key={stage.stageIndex}
+                    proposal={proposal}
+                    stage={stage}
+                />
             ))}
         </ProposalVoting.StageContainer>
     );

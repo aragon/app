@@ -9,13 +9,19 @@ import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { CampaignStatus, campaignListOptions } from '../../api/capitalDistributorService';
+import {
+    CampaignStatus,
+    campaignListOptions,
+} from '../../api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '../../types';
 import { CapitalDistributorRewardsPageClient } from './capitalDistributorRewardsPageClient';
 
-export interface ICapitalDistributorRewardsPageProps extends IDaoPluginPageProps {}
+export interface ICapitalDistributorRewardsPageProps
+    extends IDaoPluginPageProps {}
 
-const getConnectedAccount = (cookieHeader: string | null): string | undefined => {
+const getConnectedAccount = (
+    cookieHeader: string | null,
+): string | undefined => {
     const wagmiState = cookieToInitialState(wagmiConfig, cookieHeader);
     const { connections, current } = wagmiState ?? {};
 
@@ -28,7 +34,9 @@ const getConnectedAccount = (cookieHeader: string | null): string | undefined =>
 
 const campaignsPerPage = 5;
 
-export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsPageProps> = async (props) => {
+export const CapitalDistributorRewardsPage: React.FC<
+    ICapitalDistributorRewardsPageProps
+> = async (props) => {
     const { dao } = props;
 
     const queryClient = new QueryClient();
@@ -40,7 +48,9 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
     const userAddress = getConnectedAccount(cookieHeader);
 
     const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
-    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, { interfaceType })![0];
+    const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, {
+        interfaceType,
+    })![0];
 
     const defaultQueryParams = {
         pluginAddress: plugin.address,
@@ -50,25 +60,51 @@ export const CapitalDistributorRewardsPage: React.FC<ICapitalDistributorRewardsP
         sort: 'campaignId',
         status: CampaignStatus.CLAIMABLE,
     };
-    const initialParams = { queryParams: { ...defaultQueryParams, userAddress: userAddress as string } };
+    const initialParams = {
+        queryParams: {
+            ...defaultQueryParams,
+            userAddress: userAddress as string,
+        },
+    };
 
-    queryClient.setQueryData(daoOptions({ urlParams: { id: dao.id } }).queryKey, dao);
+    queryClient.setQueryData(
+        daoOptions({ urlParams: { id: dao.id } }).queryKey,
+        dao,
+    );
 
     if (countryCode != null && plugin.blockedCountries?.includes(countryCode)) {
-        const context = { pluginAddress: plugin.address, userAddress, country: countryCode };
-        const errorNamespace = 'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
-        monitoringUtils.logMessage('Capital Distributor: Claim error (geolocation)', { level: 'warning', context });
+        const context = {
+            pluginAddress: plugin.address,
+            userAddress,
+            country: countryCode,
+        };
+        const errorNamespace =
+            'app.plugins.capitalDistributor.capitalDistributorRewardsPage.error.restricted';
+        monitoringUtils.logMessage(
+            'Capital Distributor: Claim error (geolocation)',
+            { level: 'warning', context },
+        );
 
-        return <Page.Error descriptionKey={`${errorNamespace}.description`} titleKey={`${errorNamespace}.title`} />;
+        return (
+            <Page.Error
+                descriptionKey={`${errorNamespace}.description`}
+                titleKey={`${errorNamespace}.title`}
+            />
+        );
     }
 
     if (userAddress) {
-        await queryClient.prefetchInfiniteQuery(campaignListOptions(initialParams));
+        await queryClient.prefetchInfiniteQuery(
+            campaignListOptions(initialParams),
+        );
     }
 
     return (
         <Page.Container queryClient={queryClient}>
-            <CapitalDistributorRewardsPageClient dao={dao} initialParams={initialParams} />
+            <CapitalDistributorRewardsPageClient
+                dao={dao}
+                initialParams={initialParams}
+            />
         </Page.Container>
     );
 };

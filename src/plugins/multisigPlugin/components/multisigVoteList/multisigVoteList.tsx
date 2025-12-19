@@ -1,8 +1,17 @@
 'use client';
 
-import { DataListContainer, DataListPagination, DataListRoot, VoteDataListItem, VoteProposalDataListItem } from '@aragon/gov-ui-kit';
+import {
+    DataListContainer,
+    DataListPagination,
+    DataListRoot,
+    VoteDataListItem,
+    VoteProposalDataListItem,
+} from '@aragon/gov-ui-kit';
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
-import { type IVoteListProps, VoteProposalListItem } from '@/modules/governance/components/voteList';
+import {
+    type IVoteListProps,
+    VoteProposalListItem,
+} from '@/modules/governance/components/voteList';
 import { useVoteListData } from '@/modules/governance/hooks/useVoteListData';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -21,7 +30,15 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { onLoadMore, state, pageSize, itemsCount, errorState, emptyState, voteList } = useVoteListData<IMultisigVote>(initialParams);
+    const {
+        onLoadMore,
+        state,
+        pageSize,
+        itemsCount,
+        errorState,
+        emptyState,
+        voteList,
+    } = useVoteListData<IMultisigVote>(initialParams);
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     return (
@@ -36,17 +53,27 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                 emptyState={emptyState}
                 errorState={errorState}
                 SkeletonElement={
-                    initialParams.queryParams.includeInfo === true ? VoteProposalDataListItem.Skeleton : VoteDataListItem.Skeleton
+                    initialParams.queryParams.includeInfo === true
+                        ? VoteProposalDataListItem.Skeleton
+                        : VoteDataListItem.Skeleton
                 }
             >
                 {voteList?.map((vote) => {
                     const votingIndicator = isVeto ? 'veto' : 'approve';
 
                     return initialParams.queryParams.includeInfo === true ? (
-                        <VoteProposalListItem daoId={daoId} key={vote.transactionHash} vote={vote} voteIndicator={votingIndicator} />
+                        <VoteProposalListItem
+                            daoId={daoId}
+                            key={vote.transactionHash}
+                            vote={vote}
+                            voteIndicator={votingIndicator}
+                        />
                     ) : (
                         <VoteDataListItem.Structure
-                            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
+                            href={daoUtils.getDaoUrl(
+                                dao,
+                                `members/${vote.member.address}`,
+                            )}
                             key={vote.transactionHash}
                             voteIndicator={votingIndicator}
                             voter={{

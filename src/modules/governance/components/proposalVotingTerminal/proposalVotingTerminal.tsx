@@ -1,4 +1,9 @@
-import { addressUtils, type IDefinitionSetting, ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    type IDefinitionSetting,
+    ProposalStatus,
+    ProposalVoting,
+} from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useAccount, useEnsName } from 'wagmi';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
@@ -28,11 +33,15 @@ export interface IProposalVotingTerminalProps {
 
 const votesPerPage = 6;
 
-export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (props) => {
+export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
+    props,
+) => {
     const { proposal, status, daoId } = props;
 
     const { address } = useAccount();
-    const { data: pluginEnsName } = useEnsName({ address: proposal.pluginAddress as Hex });
+    const { data: pluginEnsName } = useEnsName({
+        address: proposal.pluginAddress as Hex,
+    });
 
     const { network } = daoUtils.parseDaoId(daoId);
     const voteListParams = {
@@ -45,22 +54,39 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
         },
     };
 
-    const pluginSettings = useSlotSingleFunction<IUseGovernanceSettingsParams, IDefinitionSetting[]>({
-        params: { daoId, settings: proposal.settings, pluginAddress: proposal.pluginAddress },
+    const pluginSettings = useSlotSingleFunction<
+        IUseGovernanceSettingsParams,
+        IDefinitionSetting[]
+    >({
+        params: {
+            daoId,
+            settings: proposal.settings,
+            pluginAddress: proposal.pluginAddress,
+        },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginInterfaceType,
     });
 
-    const proposalSettings = useDaoPluginInfo({ daoId, address: proposal.pluginAddress, settings: pluginSettings });
-    const pluginName = pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
+    const proposalSettings = useDaoPluginInfo({
+        daoId,
+        address: proposal.pluginAddress,
+        settings: pluginSettings,
+    });
+    const pluginName =
+        pluginEnsName ?? addressUtils.truncateAddress(proposal.pluginAddress);
 
     return (
-        <ProposalVoting.Container endDate={proposal.endDate * 1000} status={status}>
+        <ProposalVoting.Container
+            endDate={proposal.endDate * 1000}
+            status={status}
+        >
             <ProposalVoting.BodyContent name={pluginName} status={status}>
                 <PluginSingleComponent
                     pluginId={proposal.pluginInterfaceType}
                     proposal={proposal}
-                    slotId={GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN}
+                    slotId={
+                        GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN
+                    }
                 >
                     {status === ProposalStatus.ACTIVE && (
                         <div className="pt-6 md:pt-8">
@@ -74,7 +100,11 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (p
                     )}
                 </PluginSingleComponent>
                 <ProposalVoting.Votes>
-                    <VoteList daoId={daoId} initialParams={voteListParams} pluginAddress={proposal.pluginAddress} />
+                    <VoteList
+                        daoId={daoId}
+                        initialParams={voteListParams}
+                        pluginAddress={proposal.pluginAddress}
+                    />
                 </ProposalVoting.Votes>
                 <ProposalVoting.Details settings={proposalSettings} />
             </ProposalVoting.BodyContent>

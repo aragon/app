@@ -14,8 +14,12 @@ describe('useDisconnectApp mutation', () => {
     it('disconnects to the app using the specified session', async () => {
         const session = {} as ISession;
         disconnectAppSpy.mockResolvedValue();
-        const { result } = renderHook(() => useDisconnectApp(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useDisconnectApp(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate({ session }));
-        await waitFor(() => expect(disconnectAppSpy).toHaveBeenCalledWith({ session }));
+        await waitFor(() =>
+            expect(disconnectAppSpy).toHaveBeenCalledWith({ session }),
+        );
     });
 });

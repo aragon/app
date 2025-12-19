@@ -1,10 +1,19 @@
 import { render, screen } from '@testing-library/react';
 import type { IAdvancedDateInputProps } from '@/shared/components/forms/advancedDateInput';
 import { FormWrapper } from '@/shared/testUtils';
-import { type IMultisigCreateProposalSettingsFormProps, MultisigCreateProposalSettingsForm } from './multisigCreateProposalSettingsForm';
+import {
+    type IMultisigCreateProposalSettingsFormProps,
+    MultisigCreateProposalSettingsForm,
+} from './multisigCreateProposalSettingsForm';
 
 jest.mock('@/shared/components/forms/advancedDateInput', () => ({
-    AdvancedDateInput: ({ label, helpText, field, infoText, useDuration }: IAdvancedDateInputProps) => (
+    AdvancedDateInput: ({
+        label,
+        helpText,
+        field,
+        infoText,
+        useDuration,
+    }: IAdvancedDateInputProps) => (
         <div data-testid="advanced-date-input">
             <div>Label: {label}</div>
             <div>Help Text: {helpText}</div>
@@ -16,7 +25,9 @@ jest.mock('@/shared/components/forms/advancedDateInput', () => ({
 }));
 
 describe('<MultisigCreateProposalSettingsForm /> component', () => {
-    const createTestComponent = (props?: Partial<IMultisigCreateProposalSettingsFormProps>) => {
+    const createTestComponent = (
+        props?: Partial<IMultisigCreateProposalSettingsFormProps>,
+    ) => {
         const completeProps: IMultisigCreateProposalSettingsFormProps = {
             ...props,
         };
@@ -36,18 +47,28 @@ describe('<MultisigCreateProposalSettingsForm /> component', () => {
     it('passes correct props to start time AdvancedDateInput', () => {
         render(createTestComponent());
         const startTimeInput = screen.getAllByTestId('advanced-date-input')[0];
-        expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.label/);
-        expect(startTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.startTime.helpText/);
+        expect(startTimeInput).toHaveTextContent(
+            /multisigCreateProposalSettingsForm.startTime.label/,
+        );
+        expect(startTimeInput).toHaveTextContent(
+            /multisigCreateProposalSettingsForm.startTime.helpText/,
+        );
         expect(startTimeInput).toHaveTextContent('startTime');
     });
 
     it('passes correct props to end time AdvancedDateInput', () => {
         render(createTestComponent());
         const endTimeInput = screen.getAllByTestId('advanced-date-input')[1];
-        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.label/);
-        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.helpText/);
+        expect(endTimeInput).toHaveTextContent(
+            /multisigCreateProposalSettingsForm.endTime.label/,
+        );
+        expect(endTimeInput).toHaveTextContent(
+            /multisigCreateProposalSettingsForm.endTime.helpText/,
+        );
         expect(endTimeInput).toHaveTextContent('endTime');
-        expect(endTimeInput).toHaveTextContent(/multisigCreateProposalSettingsForm.endTime.infoText/);
+        expect(endTimeInput).toHaveTextContent(
+            /multisigCreateProposalSettingsForm.endTime.infoText/,
+        );
         expect(endTimeInput).toHaveTextContent('Use Duration: true');
     });
 });

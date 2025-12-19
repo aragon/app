@@ -4,7 +4,11 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
-import { type ITransactionDialogStepMeta, TransactionDialog, TransactionDialogStep } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { gaugeVoterVoteTransactionDialogUtils } from './gaugeVoterVoteTransactionDialogUtils';
@@ -29,21 +33,39 @@ export interface IGaugeVoterVoteTransactionDialogParams {
     onSuccess?: () => void;
 }
 
-export interface IGaugeVoterVoteTransactionDialogProps extends IDialogComponentProps<IGaugeVoterVoteTransactionDialogParams> {}
+export interface IGaugeVoterVoteTransactionDialogProps
+    extends IDialogComponentProps<IGaugeVoterVoteTransactionDialogParams> {}
 
-export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactionDialogProps> = (props) => {
+export const GaugeVoterVoteTransactionDialog: React.FC<
+    IGaugeVoterVoteTransactionDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'GaugeVoterVoteTransactionDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'GaugeVoterVoteTransactionDialog: required parameters must be set.',
+    );
 
-    const { votes, pluginAddress, network, onSuccess: onSuccessCallback } = location.params;
+    const {
+        votes,
+        pluginAddress,
+        network,
+        onSuccess: onSuccessCallback,
+    } = location.params;
 
     const { t } = useTranslations();
     const queryClient = useQueryClient();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
-    const prepareTransaction = () => gaugeVoterVoteTransactionDialogUtils.buildTransaction({ votes, pluginAddress });
+    const prepareTransaction = () =>
+        gaugeVoterVoteTransactionDialogUtils.buildTransaction({
+            votes,
+            pluginAddress,
+        });
 
     const handleSuccess = async () => {
         // Refetch all active queries to get fresh data after vote submission
@@ -60,17 +82,25 @@ export const GaugeVoterVoteTransactionDialog: React.FC<IGaugeVoterVoteTransactio
 
     return (
         <TransactionDialog
-            description={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.description')}
+            description={t(
+                'app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.description',
+            )}
             network={network}
             onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}
             stepper={stepper}
-            submitLabel={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.submit')}
+            submitLabel={t(
+                'app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.submit',
+            )}
             successLink={{
                 onClick: handleSuccess,
-                label: t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.successLinkLabel'),
+                label: t(
+                    'app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.successLinkLabel',
+                ),
             }}
-            title={t('app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.title')}
+            title={t(
+                'app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.title',
+            )}
         />
     );
 };

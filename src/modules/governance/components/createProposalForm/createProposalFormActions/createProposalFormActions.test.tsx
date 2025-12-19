@@ -13,21 +13,32 @@ import {
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import * as CreateProposalProvider from '../createProposalFormProvider';
-import { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
+import {
+    CreateProposalFormActions,
+    type ICreateProposalFormActionsProps,
+} from './createProposalFormActions';
 
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoPermissionsSpy = jest.spyOn(daoService, 'useDaoPermissions');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useCreateProposalFormContextSpy = jest.spyOn(CreateProposalProvider, 'useCreateProposalFormContext');
+    const useCreateProposalFormContextSpy = jest.spyOn(
+        CreateProposalProvider,
+        'useCreateProposalFormContext',
+    );
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         useDaoPermissionsSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({
-                data: { pages: [generatePaginatedResponse({ data: [] })], pageParams: [] },
-            })
+                data: {
+                    pages: [generatePaginatedResponse({ data: [] })],
+                    pageParams: [],
+                },
+            }),
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
@@ -45,7 +56,9 @@ describe('<CreateProposalFormActions /> component', () => {
         getDaoPluginsSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<ICreateProposalFormActionsProps>) => {
+    const createTestComponent = (
+        props?: Partial<ICreateProposalFormActionsProps>,
+    ) => {
         const completeProps: ICreateProposalFormActionsProps = {
             daoId: 'test',
             pluginAddress: '0x123',
@@ -72,7 +85,9 @@ describe('<CreateProposalFormActions /> component', () => {
 
     it('renders a button to add an action', () => {
         render(createTestComponent());
-        const actionButton = screen.getByRole('button', { name: /governance.actionComposer.addAction.default/ });
+        const actionButton = screen.getByRole('button', {
+            name: /governance.actionComposer.addAction.default/,
+        });
         expect(actionButton).toBeInTheDocument();
     });
 });

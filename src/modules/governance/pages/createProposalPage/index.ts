@@ -1,1 +1,4 @@
-export { CreateProposalPage, type ICreateProposalPageProps } from './createProposalPage';
+export {
+    CreateProposalPage,
+    type ICreateProposalPageProps,
+} from './createProposalPage';
