@@ -114,7 +114,7 @@ importers:
         version: 2.19.5(@tanstack/query-core@5.90.11)(@tanstack/react-query@5.90.11(react@19.2.1))(@types/react@19.2.7)(@vercel/blob@1.0.2)(bufferutil@4.0.9)(immer@11.0.1)(react@19.2.1)(typescript@5.9.3)(utf-8-validate@5.0.10)(viem@2.38.3(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76)
     devDependencies:
       '@biomejs/biome':
-        specifier: 2.3.10
+        specifier: ^2.3.10
         version: 2.3.10
       '@changesets/changelog-github':
         specifier: ^0.5.2
