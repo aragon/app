@@ -1240,10 +1240,12 @@
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
         },
+        "downloadAllActions": "Download all actions",
         "input": {
           "placeholder": "Search by action, contract name, or address",
           "selectItem": "Add action"
         },
+        "moreActions": "More",
         "nativeGroup": {
           "DAO": "DAO"
         },
@@ -1252,7 +1254,8 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "rawCalldataFunction": "Unknown"
+        "rawCalldataFunction": "Unknown",
+        "removeAllActions": "Remove all actions"
       },
       "createProposalForm": {
         "actions": {
