@@ -1,6 +1,7 @@
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
-import type { IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/gaugeVoterService.api';
-import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+'use client';
+
+import type { IGauge, IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries/useGaugeList';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { InfiniteQueryOptions } from '@/shared/types/queryOptions';
 import { useEffect, useMemo } from 'react';
@@ -22,8 +23,8 @@ export interface IUseAllGaugesParams {
  *
  * @example
  * ```tsx
- * const { gauges, totalCount, isLoading } = useAllGauges({
- *   params: {
+ * const { data, isLoading } = useAllGauges({
+ *   gaugeListParams: {
  *     urlParams: { pluginAddress: '0x...', network: 'polygon' },
  *     queryParams: { pageSize: 50 }
  *   }
