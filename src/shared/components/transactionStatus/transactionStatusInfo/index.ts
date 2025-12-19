@@ -1,5 +1,5 @@
 export {
-    TransactionStatusInfo,
     type ITransactionInfo,
     type ITransactionStatusInfoProps,
+    TransactionStatusInfo,
 } from './transactionStatusInfo';

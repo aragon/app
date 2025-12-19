@@ -1,4 +1,4 @@
-import { zeroAddress, type Hex } from 'viem';
+import { type Hex, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
 import { votingEscrowAbi } from '../../utils/tokenExitQueueTransactionUtils/votingEscrowAbi';
 import type {

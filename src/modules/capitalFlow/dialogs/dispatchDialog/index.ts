@@ -1,4 +1,8 @@
-export { DispatchDialog, type IDispatchDialogParams, type IDispatchDialogProps } from './dispatchDialog';
+export {
+    DispatchDialog,
+    type IDispatchDialogParams,
+    type IDispatchDialogProps,
+} from './dispatchDialog';
 export {
     DispatchTransactionDialog,
     type IDispatchTransactionDialogParams,

@@ -3,7 +3,9 @@ import type { NextURL } from 'next/dist/server/web/next-url';
 import type { NextRequest } from 'next/server';
 import { generateRequest } from './request';
 
-export const generateNextRequestCookies = (cookies?: Partial<RequestCookies>): RequestCookies => ({
+export const generateNextRequestCookies = (
+    cookies?: Partial<RequestCookies>,
+): RequestCookies => ({
     [Symbol.iterator]: jest.fn(),
     size: 0,
     get: jest.fn(),
@@ -17,7 +19,9 @@ export const generateNextRequestCookies = (cookies?: Partial<RequestCookies>): R
     ...cookies,
 });
 
-export const generateNextRequest = (request?: Partial<NextRequest>): NextRequest =>
+export const generateNextRequest = (
+    request?: Partial<NextRequest>,
+): NextRequest =>
     ({
         // eslint-disable-next-line @typescript-eslint/no-misused-spread
         ...generateRequest(),

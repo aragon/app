@@ -43,10 +43,14 @@ export const generateCreateProcessFormDataBasic = (
     ...values,
 });
 
-export const generateCreateProcessFormData = (values?: Partial<ICreateProcessFormData>): ICreateProcessFormData =>
+export const generateCreateProcessFormData = (
+    values?: Partial<ICreateProcessFormData>,
+): ICreateProcessFormData =>
     values?.governanceType === GovernanceType.BASIC
         ? generateCreateProcessFormDataBasic(values)
-        : generateCreateProcessFormDataAdvanced(values as ICreateProcessFormDataAdvanced);
+        : generateCreateProcessFormDataAdvanced(
+              values as ICreateProcessFormDataAdvanced,
+          );
 
 export const generateCreateProcessFormStageSettings = (
     values?: Partial<ICreateProcessFormStage['settings']>,
@@ -58,7 +62,9 @@ export const generateCreateProcessFormStageSettings = (
     ...values,
 });
 
-export const generateCreateProcessFormStage = (values?: Partial<ICreateProcessFormStage>): ICreateProcessFormStage => ({
+export const generateCreateProcessFormStage = (
+    values?: Partial<ICreateProcessFormStage>,
+): ICreateProcessFormStage => ({
     internalId: '0',
     name: 'stage',
     settings: generateCreateProcessFormStageSettings(values?.settings),

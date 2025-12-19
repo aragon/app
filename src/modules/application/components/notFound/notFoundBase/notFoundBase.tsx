@@ -1,7 +1,7 @@
 'use client';
 
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { EmptyState } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface INotFoundBaseProps {}
 
@@ -11,10 +11,13 @@ export const NotFoundBase: React.FC<INotFoundBaseProps> = () => {
     return (
         <div className="flex grow items-center justify-center">
             <EmptyState
-                heading={t('app.application.notFoundBase.title')}
                 description={t('app.application.notFoundBase.description')}
+                heading={t('app.application.notFoundBase.title')}
                 objectIllustration={{ object: 'MAGNIFYING_GLASS' }}
-                primaryButton={{ label: t('app.application.notFoundBase.action'), href: '/' }}
+                primaryButton={{
+                    label: t('app.application.notFoundBase.action'),
+                    href: '/',
+                }}
             />
         </div>
     );

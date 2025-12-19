@@ -1,5 +1,5 @@
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 
 export interface IAdminSettingsParseParams {
     /**
@@ -9,16 +9,24 @@ export interface IAdminSettingsParseParams {
 }
 
 class AdminSettingsUtils {
-    parseSettings = (params: IAdminSettingsParseParams): IDefinitionSetting[] => {
+    parseSettings = (
+        params: IAdminSettingsParseParams,
+    ): IDefinitionSetting[] => {
         const { t } = params;
 
         return [
             {
-                term: t('app.plugins.admin.adminGovernanceSettings.proposalCreation'),
-                definition: t('app.plugins.admin.adminGovernanceSettings.members'),
+                term: t(
+                    'app.plugins.admin.adminGovernanceSettings.proposalCreation',
+                ),
+                definition: t(
+                    'app.plugins.admin.adminGovernanceSettings.members',
+                ),
             },
             {
-                term: t('app.plugins.admin.adminGovernanceSettings.proposalExecution'),
+                term: t(
+                    'app.plugins.admin.adminGovernanceSettings.proposalExecution',
+                ),
                 definition: t('app.plugins.admin.adminGovernanceSettings.auto'),
             },
         ];

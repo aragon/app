@@ -12,10 +12,16 @@ describe('usePinJson action', () => {
         const body = { key: 'value' };
         const expectedBody = { pinataContent: body };
         const expectedOptions = {
-            headers: { Authorization: expect.stringContaining('Bearer') as unknown },
+            headers: {
+                Authorization: expect.stringContaining('Bearer') as unknown,
+            },
             method: 'POST',
         };
         await pinJsonAction({ body });
-        expect(requestSpy).toHaveBeenCalledWith(ipfsService.urls.pinJson, { body: expectedBody }, expectedOptions);
+        expect(requestSpy).toHaveBeenCalledWith(
+            ipfsService.urls.pinJson,
+            { body: expectedBody },
+            expectedOptions,
+        );
     });
 });

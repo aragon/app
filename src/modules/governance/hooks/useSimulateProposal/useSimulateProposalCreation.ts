@@ -1,6 +1,6 @@
+import { useAccount, useCall } from 'wagmi';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useAccount, useCall } from 'wagmi';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 
 export interface IUseSimulateProposalCreationParams {
@@ -29,7 +29,9 @@ const dummyCid = 'QmVZjGBGNmkgTsch6E8Eu1EzYJRqZZKQZoc2xRaySanWvs';
 /**
  * Simulates a proposal creation transaction to check if the user has permission to create a proposal.
  */
-export const useSimulateProposalCreation = (params: IUseSimulateProposalCreationParams) => {
+export const useSimulateProposalCreation = (
+    params: IUseSimulateProposalCreationParams,
+) => {
     const { plugin, network } = params;
     const { address: userAddress } = useAccount();
     const { id: chainId } = networkDefinitions[network];

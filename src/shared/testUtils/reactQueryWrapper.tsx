@@ -15,5 +15,7 @@ export interface IReactQueryWrapperProps {
 export const ReactQueryWrapper: React.FC<IReactQueryWrapperProps> = (props) => {
     const { children, client = new QueryClient() } = props;
 
-    return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+    return (
+        <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
 };

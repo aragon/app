@@ -1,15 +1,23 @@
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { render, screen } from '@testing-library/react';
-import { PluginSingleComponent, type IPluginSingleComponentProps } from './pluginSingleComponent';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import {
+    type IPluginSingleComponentProps,
+    PluginSingleComponent,
+} from './pluginSingleComponent';
 
 describe('<PluginSingleComponent /> component', () => {
-    const getSlotComponentSpy = jest.spyOn(pluginRegistryUtils, 'getSlotComponent');
+    const getSlotComponentSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotComponent',
+    );
 
     afterEach(() => {
         getSlotComponentSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IPluginSingleComponentProps>) => {
+    const createTestComponent = (
+        props?: Partial<IPluginSingleComponentProps>,
+    ) => {
         const completeProps: IPluginSingleComponentProps = {
             slotId: 'slot-test',
             pluginId: 'plugin-test',
@@ -41,7 +49,9 @@ describe('<PluginSingleComponent /> component', () => {
         getSlotComponentSpy.mockReturnValue(undefined);
         const Fallback = () => <div data-testid="fallback-component-test" />;
         render(createTestComponent({ Fallback }));
-        expect(screen.getByTestId('fallback-component-test')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('fallback-component-test'),
+        ).toBeInTheDocument();
     });
 
     it('does not render the fallback component when the plugin component is found', () => {
@@ -49,11 +59,21 @@ describe('<PluginSingleComponent /> component', () => {
         const slotId = 'slot-id';
         const slotComponent = () => <div data-testid="slot-component-test" />;
         getSlotComponentSpy.mockReturnValue(slotComponent);
-        const FallbackComponent = () => <div data-testid="fallback-component-test" />;
+        const FallbackComponent = () => (
+            <div data-testid="fallback-component-test" />
+        );
 
-        render(createTestComponent({ pluginId, slotId, children: <FallbackComponent /> }));
+        render(
+            createTestComponent({
+                pluginId,
+                slotId,
+                children: <FallbackComponent />,
+            }),
+        );
 
         expect(screen.getByTestId('slot-component-test')).toBeInTheDocument();
-        expect(screen.queryByTestId('fallback-component-test')).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('fallback-component-test'),
+        ).not.toBeInTheDocument();
     });
 });

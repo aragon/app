@@ -1,9 +1,9 @@
-import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
-import type { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useReadContract } from 'wagmi';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
 import type { IRegisteredGauge } from '../../types/gaugeRegistrar';
 
@@ -25,7 +25,9 @@ export interface IUseGaugeRegistrarGaugesParams {
 /**
  * Returns merged data from GaugeRegistrar contract and GaugeVoter contract (over backend API).
  */
-export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) => {
+export const useGaugeRegistrarGauges = (
+    params: IUseGaugeRegistrarGaugesParams,
+) => {
     const { pluginAddress, gaugeVoterAddress, network } = params;
     const { id: chainId } = networkDefinitions[network];
 
@@ -61,7 +63,10 @@ export const useGaugeRegistrarGauges = (params: IUseGaugeRegistrarGaugesParams) 
         allGauges.length && gaugesFromRegistrar
             ? gaugesFromRegistrar.map((gaugeFromRegistrar) => {
                   const gauge = allGauges.find((gauge) =>
-                      addressUtils.isAddressEqual(gauge.address, gaugeFromRegistrar.gaugeAddress),
+                      addressUtils.isAddressEqual(
+                          gauge.address,
+                          gaugeFromRegistrar.gaugeAddress,
+                      ),
                   );
                   return { ...gauge, ...gaugeFromRegistrar };
               })

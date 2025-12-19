@@ -1,7 +1,10 @@
 import { IconType } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { NavigationTrigger, type INavigationTriggerProps } from './navigationTrigger';
+import {
+    type INavigationTriggerProps,
+    NavigationTrigger,
+} from './navigationTrigger';
 
 describe('<Navigation.Trigger /> component', () => {
     const createTestComponent = (props?: Partial<INavigationTriggerProps>) => {

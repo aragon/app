@@ -1,1 +1,4 @@
-export { SetupBodyDialogGovernance, type ISetupBodyDialogGovernanceProps } from './setupBodyDialogGovernance';
+export {
+    type ISetupBodyDialogGovernanceProps,
+    SetupBodyDialogGovernance,
+} from './setupBodyDialogGovernance';

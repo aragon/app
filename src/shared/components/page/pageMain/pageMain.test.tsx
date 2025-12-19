@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { PageMain, type IPageMainProps } from './pageMain';
+import { type IPageMainProps, PageMain } from './pageMain';
 
 describe('<Page.Main /> component', () => {
     const createTestComponent = (props?: Partial<IPageMainProps>) => {
@@ -18,7 +18,9 @@ describe('<Page.Main /> component', () => {
     it('renders the title when defined', () => {
         const title = 'page title';
         render(createTestComponent({ title }));
-        expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: title }),
+        ).toBeInTheDocument();
     });
 
     it('renders the action when title and action properties are defined', async () => {
@@ -33,8 +35,14 @@ describe('<Page.Main /> component', () => {
     });
 
     it('does not render the action when hidden property is set to true', () => {
-        const action = { label: 'hidden-action', onClick: jest.fn(), hidden: true };
+        const action = {
+            label: 'hidden-action',
+            onClick: jest.fn(),
+            hidden: true,
+        };
         render(createTestComponent({ action }));
-        expect(screen.queryByRole('button', { name: action.label })).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: action.label }),
+        ).not.toBeInTheDocument();
     });
 });

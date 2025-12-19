@@ -1,15 +1,17 @@
-import { type IDaoPlugin } from '@/shared/api/daoService';
-import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { formatUnits } from 'viem';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import {
-    TokenProposalActionType,
     type ITokenActionChangeSettings,
     type ITokenPluginSettings,
     type ITokenProposalAction,
+    TokenProposalActionType,
 } from '../../types';
 import { tokenSettingsUtils } from '../tokenSettingsUtils';
 
-export const defaultMintAction = (settings: ITokenPluginSettings): ITokenProposalAction => ({
+export const defaultMintAction = (
+    settings: ITokenPluginSettings,
+): ITokenProposalAction => ({
     type: TokenProposalActionType.MINT,
     from: '',
     to: settings.token.address,
@@ -46,15 +48,29 @@ export const defaultUpdateSettings = ({
     value: '0',
     proposedSettings: {
         ...settings,
-        minParticipation: tokenSettingsUtils.ratioToPercentage(settings.minParticipation),
-        supportThreshold: tokenSettingsUtils.ratioToPercentage(settings.supportThreshold),
-        minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
+        minParticipation: tokenSettingsUtils.ratioToPercentage(
+            settings.minParticipation,
+        ),
+        supportThreshold: tokenSettingsUtils.ratioToPercentage(
+            settings.supportThreshold,
+        ),
+        minProposerVotingPower: formatUnits(
+            BigInt(settings.minProposerVotingPower),
+            settings.token.decimals,
+        ),
     },
     existingSettings: {
         ...settings,
-        minParticipation: tokenSettingsUtils.ratioToPercentage(settings.minParticipation),
-        supportThreshold: tokenSettingsUtils.ratioToPercentage(settings.supportThreshold),
-        minProposerVotingPower: formatUnits(BigInt(settings.minProposerVotingPower), settings.token.decimals),
+        minParticipation: tokenSettingsUtils.ratioToPercentage(
+            settings.minParticipation,
+        ),
+        supportThreshold: tokenSettingsUtils.ratioToPercentage(
+            settings.supportThreshold,
+        ),
+        minProposerVotingPower: formatUnits(
+            BigInt(settings.minProposerVotingPower),
+            settings.token.decimals,
+        ),
     },
     inputData: {
         function: 'updateVotingSettings',

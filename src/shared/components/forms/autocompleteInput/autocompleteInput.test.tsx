@@ -45,11 +45,31 @@ describe('<AutocompleteInput /> component', () => {
 
     it('correctly render grouped items', async () => {
         const items = [
-            { id: '0', name: 'item-0-group-0', icon: IconType.APP_ASSETS, groupId: 'group-0' },
-            { id: '2', name: 'item-2-group-1', icon: IconType.APP_ASSETS, groupId: 'group-1' },
+            {
+                id: '0',
+                name: 'item-0-group-0',
+                icon: IconType.APP_ASSETS,
+                groupId: 'group-0',
+            },
+            {
+                id: '2',
+                name: 'item-2-group-1',
+                icon: IconType.APP_ASSETS,
+                groupId: 'group-1',
+            },
             { id: '5', name: 'item-5', icon: IconType.APP_ASSETS },
-            { id: '1', name: 'item-1-group-0', icon: IconType.APP_ASSETS, groupId: 'group-0' },
-            { id: '3', name: 'item-3-group-1', icon: IconType.APP_ASSETS, groupId: 'group-1' },
+            {
+                id: '1',
+                name: 'item-1-group-0',
+                icon: IconType.APP_ASSETS,
+                groupId: 'group-0',
+            },
+            {
+                id: '3',
+                name: 'item-3-group-1',
+                icon: IconType.APP_ASSETS,
+                groupId: 'group-1',
+            },
             { id: '4', name: 'item-4', icon: IconType.APP_ASSETS },
         ];
         const groups = [
@@ -77,14 +97,44 @@ describe('<AutocompleteInput /> component', () => {
 
     it('filters the items based on the item name, groupName, groupInfo and group index data on search input value change', async () => {
         const items = [
-            { id: '0', name: 'item-0', icon: IconType.APP_ASSETS, groupId: 'g-0' },
-            { id: '1', name: 'item-1', icon: IconType.APP_ASSETS, groupId: 'g-0' },
-            { id: '2', name: 'item-2', icon: IconType.APP_ASSETS, groupId: 'g-1' },
-            { id: '3', name: 'item-3', icon: IconType.APP_ASSETS, groupId: 'g-2' },
+            {
+                id: '0',
+                name: 'item-0',
+                icon: IconType.APP_ASSETS,
+                groupId: 'g-0',
+            },
+            {
+                id: '1',
+                name: 'item-1',
+                icon: IconType.APP_ASSETS,
+                groupId: 'g-0',
+            },
+            {
+                id: '2',
+                name: 'item-2',
+                icon: IconType.APP_ASSETS,
+                groupId: 'g-1',
+            },
+            {
+                id: '3',
+                name: 'item-3',
+                icon: IconType.APP_ASSETS,
+                groupId: 'g-2',
+            },
         ];
         const groups = [
-            { id: 'g-0', name: 'group-0', info: 'group-info-0', indexData: ['index-0-0', 'index-0-1'] },
-            { id: 'g-1', name: 'group-1', info: 'group-info-1', indexData: ['index-1-0'] },
+            {
+                id: 'g-0',
+                name: 'group-0',
+                info: 'group-info-0',
+                indexData: ['index-0-0', 'index-0-1'],
+            },
+            {
+                id: 'g-1',
+                name: 'group-1',
+                info: 'group-info-1',
+                indexData: ['index-1-0'],
+            },
             { id: 'g-2', name: 'group-2', info: 'group-info-2' },
         ];
 
@@ -207,7 +257,14 @@ describe('<AutocompleteInput /> component', () => {
     });
 
     it('always renders items regardless of search value when alwaysVisible property is set to true', async () => {
-        const items = [{ id: '1', name: 'one', icon: IconType.APP_ASSETS, alwaysVisible: true }];
+        const items = [
+            {
+                id: '1',
+                name: 'one',
+                icon: IconType.APP_ASSETS,
+                alwaysVisible: true,
+            },
+        ];
         render(createTestComponent({ items }));
         await userEvent.type(screen.getByRole('combobox'), 'two');
         const optionElement = screen.getByRole('option');
@@ -216,7 +273,14 @@ describe('<AutocompleteInput /> component', () => {
 
     it('sanitizes the input value before passing it to onChange on selection', async () => {
         const onChange = jest.fn();
-        const items = [{ id: '1', name: 'one', icon: IconType.APP_ASSETS, alwaysVisible: true }];
+        const items = [
+            {
+                id: '1',
+                name: 'one',
+                icon: IconType.APP_ASSETS,
+                alwaysVisible: true,
+            },
+        ];
         render(createTestComponent({ items, onChange }));
         const input = screen.getByRole('combobox');
         // includes control char and potential html - use paste to input all at once

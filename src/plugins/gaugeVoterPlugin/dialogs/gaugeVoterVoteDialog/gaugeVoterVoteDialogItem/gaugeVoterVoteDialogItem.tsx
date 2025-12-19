@@ -1,6 +1,6 @@
 import {
-    addressUtils,
     Avatar,
+    addressUtils,
     Button,
     DataList,
     formatterUtils,
@@ -56,7 +56,9 @@ export interface IGaugeVoterVoteDialogItemProps {
     onRemove: (gaugeAddress: string) => void;
 }
 
-export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> = (props) => {
+export const GaugeVoterVoteDialogItem: React.FC<
+    IGaugeVoterVoteDialogItemProps
+> = (props) => {
     const {
         gaugeAddress,
         gaugeName,
@@ -71,49 +73,52 @@ export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> 
         onRemove,
     } = props;
 
-    const displayGaugeName = gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
+    const displayGaugeName =
+        gaugeName ?? addressUtils.truncateAddress(gaugeAddress);
     const avatarFallback = (
-        <span className="bg-primary-400 text-neutral-0 flex size-full items-center justify-center">
+        <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
             {displayGaugeName.slice(0, 2).toUpperCase()}
         </span>
     );
 
     // Calculate display votes based on whether user has modified allocations
     const calculatedVotes = (percentage / 100) * totalVotingPower;
-    const displayVotes = !hasModified
-        ? formattedExistingVotes
-        : formatterUtils.formatNumber(calculatedVotes, {
+    const displayVotes = hasModified
+        ? formatterUtils.formatNumber(calculatedVotes, {
               format: NumberFormat.TOKEN_AMOUNT_SHORT,
-          });
+          })
+        : formattedExistingVotes;
 
     // Only show token amount if there are votes (either existing or newly allocated)
-    const hasVotes = !hasModified ? existingVotes > 0 : calculatedVotes > 0;
+    const hasVotes = hasModified ? calculatedVotes > 0 : existingVotes > 0;
     const showTokenAmount = hasVotes && displayVotes && displayVotes !== '0';
 
     return (
-        <DataList.Item className="bg-neutral-0 flex flex-col gap-4 rounded-xl border border-neutral-100 p-4 md:flex-row md:items-center md:justify-between">
-            <div className="b-0 flex flex-1 items-center gap-3 border-b border-neutral-100 pb-4 md:border-b-0 md:border-none md:pb-0">
+        <DataList.Item className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
+            <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pb-4 md:border-b-0 md:border-none md:pb-0">
                 {gaugeAvatar && (
                     <Avatar
-                        src={gaugeAvatar}
-                        size="md"
-                        responsiveSize={{ md: 'lg' }}
                         alt={displayGaugeName}
                         fallback={avatarFallback}
+                        responsiveSize={{ md: 'lg' }}
+                        size="md"
+                        src={gaugeAvatar}
                     />
                 )}
                 <div className="flex min-w-0 flex-1 flex-col">
-                    <span className="truncate text-base text-neutral-800">{displayGaugeName}</span>
-                    <span className="truncate text-sm text-neutral-500">
+                    <span className="truncate text-base text-neutral-800">
+                        {displayGaugeName}
+                    </span>
+                    <span className="truncate text-neutral-500 text-sm">
                         {addressUtils.truncateAddress(gaugeAddress)}
                     </span>
                 </div>
                 <Button
+                    className="md:hidden"
                     iconLeft={IconType.CLOSE}
                     onClick={() => onRemove(gaugeAddress)}
-                    variant="tertiary"
                     size="sm"
-                    className="md:hidden"
+                    variant="tertiary"
                 />
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
@@ -124,20 +129,22 @@ export const GaugeVoterVoteDialogItem: React.FC<IGaugeVoterVoteDialogItemProps> 
                 )}
 
                 <InputNumber
-                    min={0}
+                    className="w-full md:max-w-40 md:flex-initial"
                     max={100}
+                    min={0}
+                    onChange={(value) =>
+                        onUpdatePercentage(gaugeAddress, Number(value))
+                    }
                     suffix="%"
                     value={percentage.toString()}
-                    className="w-full md:max-w-40 md:flex-initial"
-                    onChange={(value) => onUpdatePercentage(gaugeAddress, Number(value))}
                 />
 
                 <Button
+                    className="hidden md:inline-flex"
                     iconLeft={IconType.CLOSE}
                     onClick={() => onRemove(gaugeAddress)}
-                    variant="tertiary"
                     size="sm"
-                    className="hidden md:inline-flex"
+                    variant="tertiary"
                 />
             </div>
         </DataList.Item>

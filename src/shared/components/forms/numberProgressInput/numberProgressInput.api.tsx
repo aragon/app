@@ -1,6 +1,11 @@
-import type { IAlertInlineProps, IInputNumberProps, ITagProps } from '@aragon/gov-ui-kit';
+import type {
+    IAlertInlineProps,
+    IInputNumberProps,
+    ITagProps,
+} from '@aragon/gov-ui-kit';
 
-export interface INumberProgressInputProps extends Omit<IInputNumberProps, 'value' | 'alert'> {
+export interface INumberProgressInputProps
+    extends Omit<IInputNumberProps, 'value' | 'alert'> {
     /**
      * Name of the form field.
      */

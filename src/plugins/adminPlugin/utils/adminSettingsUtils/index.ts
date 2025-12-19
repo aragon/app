@@ -1,1 +1,4 @@
-export { adminSettingsUtils, type IAdminSettingsParseParams } from './adminSettingsUtils';
+export {
+    adminSettingsUtils,
+    type IAdminSettingsParseParams,
+} from './adminSettingsUtils';

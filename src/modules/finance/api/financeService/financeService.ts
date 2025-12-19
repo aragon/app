@@ -1,7 +1,13 @@
-import { type ITransaction } from '@/modules/finance/api/financeService/';
-import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import type { ITransaction } from '@/modules/finance/api/financeService/';
+import {
+    AragonBackendService,
+    type IPaginatedResponse,
+} from '@/shared/api/aragonBackendService';
 import type { IAsset } from './domain';
-import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
+import type {
+    IGetAssetListParams,
+    IGetTransactionListParams,
+} from './financeService.api';
 
 class FinanceService extends AragonBackendService {
     private urls = {
@@ -9,14 +15,24 @@ class FinanceService extends AragonBackendService {
         transactions: '/v2/transactions',
     };
 
-    getAssetList = async (params: IGetAssetListParams): Promise<IPaginatedResponse<IAsset>> => {
-        const result = await this.request<IPaginatedResponse<IAsset>>(this.urls.assets, params);
+    getAssetList = async (
+        params: IGetAssetListParams,
+    ): Promise<IPaginatedResponse<IAsset>> => {
+        const result = await this.request<IPaginatedResponse<IAsset>>(
+            this.urls.assets,
+            params,
+        );
 
         return result;
     };
 
-    getTransactionList = async (params: IGetTransactionListParams): Promise<IPaginatedResponse<ITransaction>> => {
-        const result = await this.request<IPaginatedResponse<ITransaction>>(this.urls.transactions, params);
+    getTransactionList = async (
+        params: IGetTransactionListParams,
+    ): Promise<IPaginatedResponse<ITransaction>> => {
+        const result = await this.request<IPaginatedResponse<ITransaction>>(
+            this.urls.transactions,
+            params,
+        );
 
         return result;
     };

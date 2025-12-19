@@ -1,1 +1,4 @@
-export { CreateDaoDetailsDialog, type ICreateDaoDetailsDialogProps } from './createDaoDetailsDialog';
+export {
+    CreateDaoDetailsDialog,
+    type ICreateDaoDetailsDialogProps,
+} from './createDaoDetailsDialog';

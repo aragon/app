@@ -1,14 +1,4 @@
 import {
-    type ICreateProcessFormData,
-    ProcessPermission,
-} from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { ActionComposer, ActionItemId } from '@/modules/governance/components/actionComposer';
-import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
-import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
-import {
     CardEmptyState,
     InputContainer,
     invariant,
@@ -17,6 +7,19 @@ import {
     SmartContractFunctionDataListItem,
 } from '@aragon/gov-ui-kit';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import {
+    type ICreateProcessFormData,
+    ProcessPermission,
+} from '@/modules/createDao/components/createProcessForm/createProcessFormDefinitions';
+import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import {
+    ActionComposer,
+    ActionItemId,
+} from '@/modules/governance/components/actionComposer';
+import type { IProposalActionData } from '@/modules/governance/components/createProposalForm/createProposalFormDefinitions';
+import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface ICreateProcessFormPermissionsProps {
     /**
@@ -25,14 +28,19 @@ export interface ICreateProcessFormPermissionsProps {
     daoId: string;
 }
 
-const compareActionSelectors = (actionOne: IProposalActionData, actionTwo: IProposalActionData) => {
+const compareActionSelectors = (
+    actionOne: IProposalActionData,
+    actionTwo: IProposalActionData,
+) => {
     const selectorOne = proposalActionUtils.actionToFunctionSelector(actionOne);
     const selectorTwo = proposalActionUtils.actionToFunctionSelector(actionTwo);
 
     return actionOne.to === actionTwo.to && selectorOne === selectorTwo;
 };
 
-export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermissionsProps> = (props) => {
+export const CreateProcessFormPermissions: React.FC<
+    ICreateProcessFormPermissionsProps
+> = (props) => {
     const { daoId } = props;
 
     const { t } = useTranslations();
@@ -45,16 +53,26 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         value: processPermission,
         ...processPermissionField
     } = useFormField<ICreateProcessFormData, 'permissions'>('permissions', {
-        label: t('app.createDao.createProcessForm.permissions.permissionField.label'),
+        label: t(
+            'app.createDao.createProcessForm.permissions.permissionField.label',
+        ),
         defaultValue: ANY,
     });
 
     const validateActions = (actions: IProposalActionData[]) => {
-        const hasInvalidActions = actions.some(({ inputData }) => inputData == null);
-        invariant(!hasInvalidActions, 'CreateProcessFormPermissions: actions with invalid inputData found in list.');
+        const hasInvalidActions = actions.some(
+            ({ inputData }) => inputData == null,
+        );
+        invariant(
+            !hasInvalidActions,
+            'CreateProcessFormPermissions: actions with invalid inputData found in list.',
+        );
 
         const hasDuplicateActions = actions.some(
-            (action, index) => actions.findIndex((current) => compareActionSelectors(action, current)) !== index,
+            (action, index) =>
+                actions.findIndex((current) =>
+                    compareActionSelectors(action, current),
+                ) !== index,
         );
 
         if (hasDuplicateActions) {
@@ -73,68 +91,100 @@ export const CreateProcessFormPermissions: React.FC<ICreateProcessFormPermission
         rules: { validate: validateActions },
     });
 
-    const addPermissionSelector = (actions: IProposalActionData[]) => appendPermissionSelector(actions);
+    const addPermissionSelector = (actions: IProposalActionData[]) =>
+        appendPermissionSelector(actions);
 
-    const { message: fieldErrorMessage } = getFieldState('permissionSelectors').error?.root ?? {};
-    const fieldAlert = fieldErrorMessage ? { message: t(fieldErrorMessage), variant: 'critical' as const } : undefined;
+    const { message: fieldErrorMessage } =
+        getFieldState('permissionSelectors').error?.root ?? {};
+    const fieldAlert = fieldErrorMessage
+        ? { message: t(fieldErrorMessage), variant: 'critical' as const }
+        : undefined;
 
     return (
         <div className="flex flex-col gap-6">
             <RadioGroup
-                className="flex gap-4 md:!flex-row"
+                className="md:!flex-row flex gap-4"
+                helpText={t(
+                    'app.createDao.createProcessForm.permissions.permissionField.helpText',
+                )}
                 onValueChange={onProcessPermissionChange}
                 value={processPermission}
-                helpText={t('app.createDao.createProcessForm.permissions.permissionField.helpText')}
                 {...processPermissionField}
             >
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.permissionField.anyLabel')}
-                    description={t('app.createDao.createProcessForm.permissions.permissionField.anyDescription')}
+                    description={t(
+                        'app.createDao.createProcessForm.permissions.permissionField.anyDescription',
+                    )}
+                    label={t(
+                        'app.createDao.createProcessForm.permissions.permissionField.anyLabel',
+                    )}
                     value={ANY}
                 />
                 <RadioCard
                     className="min-w-0"
-                    label={t('app.createDao.createProcessForm.permissions.permissionField.specificLabel')}
-                    description={t('app.createDao.createProcessForm.permissions.permissionField.specificDescription')}
+                    description={t(
+                        'app.createDao.createProcessForm.permissions.permissionField.specificDescription',
+                    )}
+                    label={t(
+                        'app.createDao.createProcessForm.permissions.permissionField.specificLabel',
+                    )}
                     value={SELECTED}
                 />
             </RadioGroup>
             {processPermission === ANY && (
                 <CardEmptyState
-                    heading={t('app.createDao.createProcessForm.permissions.anyEmptyState.heading')}
-                    description={t('app.createDao.createProcessForm.permissions.anyEmptyState.description')}
-                    objectIllustration={{ object: 'SETTINGS' }}
+                    description={t(
+                        'app.createDao.createProcessForm.permissions.anyEmptyState.description',
+                    )}
+                    heading={t(
+                        'app.createDao.createProcessForm.permissions.anyEmptyState.heading',
+                    )}
                     isStacked={false}
+                    objectIllustration={{ object: 'SETTINGS' }}
                 />
             )}
             {processPermission === SELECTED && (
                 <>
                     {permissionSelectors.length === 0 ? (
                         <CardEmptyState
-                            heading={t('app.createDao.createProcessForm.permissions.specificEmptyState.heading')}
-                            objectIllustration={{ object: 'SETTINGS' }}
+                            heading={t(
+                                'app.createDao.createProcessForm.permissions.specificEmptyState.heading',
+                            )}
                             isStacked={false}
+                            objectIllustration={{ object: 'SETTINGS' }}
                         />
                     ) : (
-                        <InputContainer alert={fieldAlert} useCustomWrapper={true} className="w-full" id="selectors">
+                        <InputContainer
+                            alert={fieldAlert}
+                            className="w-full"
+                            id="selectors"
+                            useCustomWrapper={true}
+                        >
                             {permissionSelectors.map((action, index) => (
                                 <SmartContractFunctionDataListItem.Structure
-                                    key={action.id}
                                     contractAddress={action.to}
-                                    onRemove={() => removePermissionSelector(index)}
-                                    functionName={action.inputData?.function}
                                     contractName={action.inputData?.contract}
-                                    functionSelector={proposalActionUtils.actionToFunctionSelector(action)}
+                                    functionName={action.inputData?.function}
+                                    functionSelector={proposalActionUtils.actionToFunctionSelector(
+                                        action,
+                                    )}
+                                    key={action.id}
+                                    onRemove={() =>
+                                        removePermissionSelector(index)
+                                    }
                                 />
                             ))}
                         </InputContainer>
                     )}
                     <ActionComposer
                         daoId={daoId}
-                        onAddAction={addPermissionSelector}
+                        excludeActionTypes={[
+                            ProposalActionType.TRANSFER,
+                            ActionItemId.RAW_CALLDATA,
+                        ]}
                         hideWalletConnect={true}
-                        excludeActionTypes={[ProposalActionType.TRANSFER, ActionItemId.RAW_CALLDATA]}
+                        onAddAction={addPermissionSelector}
                     />
                 </>
             )}

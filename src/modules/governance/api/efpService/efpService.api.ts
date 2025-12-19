@@ -7,4 +7,5 @@ export interface IGetEfpStatsUrlParams {
     address: string;
 }
 
-export interface IGetEfpStatsParams extends IRequestUrlParams<IGetEfpStatsUrlParams> {}
+export interface IGetEfpStatsParams
+    extends IRequestUrlParams<IGetEfpStatsUrlParams> {}

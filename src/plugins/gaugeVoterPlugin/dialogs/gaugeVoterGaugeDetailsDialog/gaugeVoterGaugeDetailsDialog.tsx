@@ -1,9 +1,12 @@
 'use client';
 
-import type { Network } from '@/shared/api/daoService';
-import { type IDialogComponentProps, useDialogContext } from '@/shared/components/dialogProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterGaugeDetailsDialogContent } from './gaugeVoterGaugeDetailsDialogContent';
 import { GaugeVoterGaugeDetailsDialogFooter } from './gaugeVoterGaugeDetailsDialogFooter';
@@ -43,10 +46,15 @@ export interface IGaugeVoterGaugeDetailsDialogParams {
 export interface IGaugeVoterGaugeDetailsDialogProps
     extends IDialogComponentProps<IGaugeVoterGaugeDetailsDialogParams> {}
 
-export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialogProps> = (props) => {
+export const GaugeVoterGaugeDetailsDialog: React.FC<
+    IGaugeVoterGaugeDetailsDialogProps
+> = (props) => {
     const { location } = props;
 
-    invariant(location.params != null, 'GaugeVoterGaugeDetailsDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'GaugeVoterGaugeDetailsDialog: required parameters must be set.',
+    );
 
     const { gauges, selectedIndex, network, gaugeVotes } = location.params;
 
@@ -55,7 +63,9 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
     const [currentIndex, setCurrentIndex] = useState(selectedIndex);
 
     const gauge = gauges[currentIndex];
-    const userVotes = gaugeVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ?? 0;
+    const userVotes =
+        gaugeVotes.find((v) => v.gaugeAddress === gauge.address)?.userVotes ??
+        0;
 
     const isFirstGauge = currentIndex === 0;
     const isLastGauge = currentIndex === gauges.length - 1;
@@ -74,16 +84,24 @@ export const GaugeVoterGaugeDetailsDialog: React.FC<IGaugeVoterGaugeDetailsDialo
 
     return (
         <>
-            <Dialog.Header title={gauge.name ?? 'Gauge'} onClose={close} description={gauge.description ?? undefined} />
+            <Dialog.Header
+                description={gauge.description ?? undefined}
+                onClose={close}
+                title={gauge.name ?? 'Gauge'}
+            />
             <Dialog.Content className="pb-3">
-                <GaugeVoterGaugeDetailsDialogContent gauge={gauge} network={network} userVotes={userVotes} />
+                <GaugeVoterGaugeDetailsDialogContent
+                    gauge={gauge}
+                    network={network}
+                    userVotes={userVotes}
+                />
             </Dialog.Content>
             <GaugeVoterGaugeDetailsDialogFooter
-                onPrevious={handlePrevious}
-                onNext={handleNext}
-                disablePrevious={isFirstGauge}
-                disableNext={isLastGauge}
                 currentGaugeNumber={currentIndex + 1}
+                disableNext={isLastGauge}
+                disablePrevious={isFirstGauge}
+                onNext={handleNext}
+                onPrevious={handlePrevious}
                 totalGauges={gauges.length}
             />
         </>

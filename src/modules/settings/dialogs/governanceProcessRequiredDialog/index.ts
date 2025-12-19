@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 
 export const GovernanceProcessRequiredDialog = dynamic(() =>
-    import('./governanceProcessRequiredDialog').then((mod) => mod.GovernanceProcessRequiredDialog),
+    import('./governanceProcessRequiredDialog').then(
+        (mod) => mod.GovernanceProcessRequiredDialog,
+    ),
 );
 export type {
     IGovernanceProcessRequiredDialogParams,

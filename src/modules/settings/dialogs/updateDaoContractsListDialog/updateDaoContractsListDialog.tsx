@@ -1,11 +1,14 @@
-import { useDao, type IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPrepareDaoContractsUpdateDialogParams } from '../prepareDaoContractsUpdateDialog';
 import { UpdateDaoContractsCard } from './updateDaoContractsCard';
@@ -24,69 +27,93 @@ export interface IUpdateDaoContractsListDialogParams {
 export interface IUpdateDaoContractsListDialogProps
     extends IDialogComponentProps<IUpdateDaoContractsListDialogParams> {}
 
-export const UpdateDaoContractsListDialog: React.FC<IUpdateDaoContractsListDialogProps> = (props) => {
+export const UpdateDaoContractsListDialog: React.FC<
+    IUpdateDaoContractsListDialogProps
+> = (props) => {
     const { location } = props;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
-    invariant(location.params != null, 'UpdateDaoContractsListDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'UpdateDaoContractsListDialog: required parameters must be set.',
+    );
     const { plugin, daoId } = location.params;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    invariant(dao != null, 'UpdateDaoContractsListDialog: DAO must be defined.');
+    invariant(
+        dao != null,
+        'UpdateDaoContractsListDialog: DAO must be defined.',
+    );
 
     const hasOsxUpdate = daoUtils.hasAvailableOsxUpdate(dao);
-    const { protocolVersion: newProtocolVersion } = networkDefinitions[dao.network];
+    const { protocolVersion: newProtocolVersion } =
+        networkDefinitions[dao.network];
     const pluginUpdates = daoUtils.getAvailablePluginUpdates(dao);
 
     const handleConfimClick = () => {
-        const params: IPrepareDaoContractsUpdateDialogParams = { daoId, plugin };
+        const params: IPrepareDaoContractsUpdateDialogParams = {
+            daoId,
+            plugin,
+        };
         open(SettingsDialogId.PREPARE_DAO_CONTRACTS_UPDATE, { params });
     };
 
     return (
         <>
             <Dialog.Header
+                description={t(
+                    'app.settings.updateDaoContractsListDialog.description',
+                )}
                 onClose={close}
                 title={t('app.settings.updateDaoContractsListDialog.title')}
-                description={t('app.settings.updateDaoContractsListDialog.description')}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-3 pb-6">
                     {hasOsxUpdate && (
                         <UpdateDaoContractsCard
+                            address={dao.address}
+                            currentVersion={dao.version}
                             key="osx"
-                            name={t('app.settings.updateDaoContractsListDialog.osxUpdate.name')}
+                            name={t(
+                                'app.settings.updateDaoContractsListDialog.osxUpdate.name',
+                            )}
+                            newVersion={newProtocolVersion}
                             smartContractName={t(
                                 'app.settings.updateDaoContractsListDialog.osxUpdate.smartContractName',
                             )}
-                            address={dao.address}
-                            currentVersion={dao.version}
-                            newVersion={newProtocolVersion}
                         />
                     )}
                     {pluginUpdates.map((plugin) => (
                         <UpdateDaoContractsCard
-                            key={plugin.address}
-                            name={daoUtils.getPluginName(plugin)}
-                            smartContractName={daoUtils.getPluginName(plugin)}
                             address={plugin.address}
                             currentVersion={plugin}
+                            key={plugin.address}
+                            name={daoUtils.getPluginName(plugin)}
                             newVersion={
-                                (pluginRegistryUtils.getPlugin(plugin.interfaceType) as IPluginInfo).installVersion
+                                (
+                                    pluginRegistryUtils.getPlugin(
+                                        plugin.interfaceType,
+                                    ) as IPluginInfo
+                                ).installVersion
                             }
+                            smartContractName={daoUtils.getPluginName(plugin)}
                         />
                     ))}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.settings.updateDaoContractsListDialog.action.confirm'),
+                    label: t(
+                        'app.settings.updateDaoContractsListDialog.action.confirm',
+                    ),
                     onClick: handleConfimClick,
                 }}
                 secondaryAction={{
-                    label: t('app.settings.updateDaoContractsListDialog.action.cancel'),
+                    label: t(
+                        'app.settings.updateDaoContractsListDialog.action.cancel',
+                    ),
                     onClick: () => close(),
                 }}
             />

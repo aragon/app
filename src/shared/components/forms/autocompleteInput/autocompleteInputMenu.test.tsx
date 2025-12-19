@@ -1,7 +1,10 @@
 import type * as FloatingUi from '@floating-ui/react';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { AutocompleteInputMenu, type IAutocompleteInputMenuProps } from './autocompleteInputMenu';
+import {
+    AutocompleteInputMenu,
+    type IAutocompleteInputMenuProps,
+} from './autocompleteInputMenu';
 
 jest.mock('@floating-ui/react', () => ({
     ...jest.requireActual<typeof FloatingUi>('@floating-ui/react'),
@@ -9,7 +12,9 @@ jest.mock('@floating-ui/react', () => ({
 }));
 
 describe('<AutocompleteInputMenu /> component', () => {
-    const createTestComponent = (props?: Partial<IAutocompleteInputMenuProps>) => {
+    const createTestComponent = (
+        props?: Partial<IAutocompleteInputMenuProps>,
+    ) => {
         const completeProps: IAutocompleteInputMenuProps = {
             isOpen: false,
             context: {} as IAutocompleteInputMenuProps['context'],
@@ -32,7 +37,9 @@ describe('<AutocompleteInputMenu /> component', () => {
         const selectItemLabel = 'select-item';
         render(createTestComponent({ isOpen, children, selectItemLabel }));
         expect(screen.getByText(children)).toBeInTheDocument();
-        expect(screen.getByText(/autocompleteInput.menu.select/)).toBeInTheDocument();
+        expect(
+            screen.getByText(/autocompleteInput.menu.select/),
+        ).toBeInTheDocument();
         expect(screen.getByText(selectItemLabel)).toBeInTheDocument();
     });
 });

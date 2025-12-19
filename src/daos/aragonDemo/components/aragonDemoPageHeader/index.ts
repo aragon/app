@@ -1,1 +1,4 @@
-export { AragonDemoPageHeader, type IAragonDemoPageHeaderProps } from './aragonDemoPageHeader';
+export {
+    AragonDemoPageHeader,
+    type IAragonDemoPageHeaderProps,
+} from './aragonDemoPageHeader';

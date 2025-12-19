@@ -21,8 +21,18 @@ export const proposalAbi = [
                 type: 'uint64',
                 indexed: false,
             },
-            { name: 'endDate', internalType: 'uint64', type: 'uint64', indexed: false },
-            { name: 'metadata', internalType: 'bytes', type: 'bytes', indexed: false },
+            {
+                name: 'endDate',
+                internalType: 'uint64',
+                type: 'uint64',
+                indexed: false,
+            },
+            {
+                name: 'metadata',
+                internalType: 'bytes',
+                type: 'bytes',
+                indexed: false,
+            },
             {
                 name: 'actions',
                 internalType: 'struct IDAO.Action[]',

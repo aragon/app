@@ -1,4 +1,4 @@
 export {
-    ProposalCreationEligibilityField,
     type IProposalCreationEligibilityFieldProps,
+    ProposalCreationEligibilityField,
 } from './proposalCreationEligibilityField';

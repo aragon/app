@@ -1,5 +1,10 @@
 import type { ClientOptions, ScopeContext } from '@sentry/core';
-import { captureException, captureMessage, captureRequestError, withServerActionInstrumentation } from '@sentry/nextjs';
+import {
+    captureException,
+    captureMessage,
+    captureRequestError,
+    withServerActionInstrumentation,
+} from '@sentry/nextjs';
 
 export interface ILogErrorParams {
     /**
@@ -21,7 +26,10 @@ export interface ILogMessageParams {
 }
 
 class MonitoringUtils {
-    getBaseConfig = (): Pick<ClientOptions, 'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'> => ({
+    getBaseConfig = (): Pick<
+        ClientOptions,
+        'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'
+    > => ({
         enabled: this.isEnabled(),
         dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
         tracesSampleRate: 1.0,
@@ -44,7 +52,10 @@ class MonitoringUtils {
     serverActionWrapper = withServerActionInstrumentation;
 
     // Only enable error tracking for development, staging and production environments
-    private isEnabled = () => ['development', 'staging', 'production'].includes(process.env.NEXT_PUBLIC_ENV!);
+    private isEnabled = () =>
+        ['development', 'staging', 'production'].includes(
+            process.env.NEXT_PUBLIC_ENV!,
+        );
 }
 
 export const monitoringUtils = new MonitoringUtils();

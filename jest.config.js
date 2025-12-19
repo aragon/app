@@ -17,7 +17,8 @@ const config = {
         '^@/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
-        '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$': '<rootDir>/src/test/fileTransform.js',
+        '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$':
+            '<rootDir>/src/test/fileTransform.js',
         '^.+\\.m?[tj]sx?$': [
             'ts-jest',
             {

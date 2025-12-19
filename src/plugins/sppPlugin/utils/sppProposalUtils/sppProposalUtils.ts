@@ -1,6 +1,10 @@
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import { ProposalStatus } from '@aragon/gov-ui-kit';
-import { type ISppProposal, type ISppStage, SppProposalType } from '../../types';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import {
+    type ISppProposal,
+    type ISppStage,
+    SppProposalType,
+} from '../../types';
 import { sppStageUtils } from '../sppStageUtils';
 
 interface IGetBodyStatusLabelDataParams {
@@ -27,24 +31,42 @@ class SppProposalUtils {
         const { executed, settings, startDate, hasActions } = proposal;
         const { stages } = settings;
 
-        const lastStage = stages[stages.length - 1];
+        const lastStage = stages.at(-1);
 
         const isExecuted = executed.status;
-        const isVetoed = this.hasAnyStageStatus(proposal, ProposalStatus.VETOED);
+        const isVetoed = this.hasAnyStageStatus(
+            proposal,
+            ProposalStatus.VETOED,
+        );
 
-        const hasUnreachedStages = this.hasAnyStageStatus(proposal, ProposalStatus.UNREACHED);
-        const hasExpiredStages = this.hasAnyStageStatus(proposal, ProposalStatus.EXPIRED);
+        const hasUnreachedStages = this.hasAnyStageStatus(
+            proposal,
+            ProposalStatus.UNREACHED,
+        );
+        const hasExpiredStages = this.hasAnyStageStatus(
+            proposal,
+            ProposalStatus.EXPIRED,
+        );
 
         // Set end date to 0 to mark SPP proposals as "ended" when one or more stages are unreached
-        const endDate = !hasUnreachedStages ? sppStageUtils.getStageEndDate(proposal, lastStage)?.toSeconds() : 0;
-        const executionExpiryDate = sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds();
+        const endDate =
+            hasUnreachedStages || !lastStage
+                ? 0
+                : sppStageUtils
+                      .getStageEndDate(proposal, lastStage)
+                      ?.toSeconds();
+        const executionExpiryDate = lastStage
+            ? sppStageUtils.getStageMaxAdvance(proposal, lastStage)?.toSeconds()
+            : undefined;
 
         const hasAdvanceableStages = stages.some(
-            (stage) => !sppStageUtils.isLastStage(proposal, stage) && sppStageUtils.canStageAdvance(proposal, stage),
+            (stage) =>
+                !sppStageUtils.isLastStage(proposal, stage) &&
+                sppStageUtils.canStageAdvance(proposal, stage),
         );
 
         const paramsMet = this.areAllStagesAccepted(proposal);
-        const canExecuteEarly = lastStage.minAdvance === 0;
+        const canExecuteEarly = lastStage?.minAdvance === 0;
 
         return proposalStatusUtils.getProposalStatus({
             isExecuted,
@@ -60,31 +82,48 @@ class SppProposalUtils {
         });
     };
 
-    hasAnyStageStatus = (proposal: ISppProposal, status: ProposalStatus): boolean =>
-        proposal.settings.stages.some((stage) => sppStageUtils.getStageStatus(proposal, stage) === status);
+    hasAnyStageStatus = (
+        proposal: ISppProposal,
+        status: ProposalStatus,
+    ): boolean =>
+        proposal.settings.stages.some(
+            (stage) => sppStageUtils.getStageStatus(proposal, stage) === status,
+        );
 
-    getCurrentStage = (proposal: ISppProposal): ISppStage => proposal.settings.stages[proposal.stageIndex];
+    getCurrentStage = (proposal: ISppProposal): ISppStage =>
+        proposal.settings.stages[proposal.stageIndex];
 
     areAllStagesAccepted = (proposal: ISppProposal): boolean =>
         proposal.settings.stages.every(
-            (stage) => sppStageUtils.getStageStatus(proposal, stage) === ProposalStatus.ACCEPTED,
+            (stage) =>
+                sppStageUtils.getStageStatus(proposal, stage) ===
+                ProposalStatus.ACCEPTED,
         );
 
     getBodyResultStatus = (params: IGetBodyStatusLabelDataParams) => {
         const { proposal, body, stage, canVote } = params;
-        const { resultType } = sppStageUtils.getBodyResult(proposal, body, stage.stageIndex) ?? {};
+        const { resultType } =
+            sppStageUtils.getBodyResult(proposal, body, stage.stageIndex) ?? {};
 
         const voted = resultType != null;
         const isVeto = sppStageUtils.isVeto(stage);
 
-        const status = voted ? (resultType === SppProposalType.VETO ? 'failure' : 'success') : 'neutral';
+        const status = voted
+            ? resultType === SppProposalType.VETO
+                ? 'failure'
+                : 'success'
+            : 'neutral';
 
         const labelContext = voted ? 'voted' : canVote ? 'vote' : 'expired';
         const labelSuffix = `${labelContext}.${isVeto ? 'veto' : 'approve'}`;
 
         const label = `app.plugins.spp.sppVotingTerminalBodyBreakdownDefault.${labelSuffix}`;
         const style =
-            status === 'neutral' ? 'text-neutral-500' : status === 'success' ? 'text-success-800' : 'text-critical-800';
+            status === 'neutral'
+                ? 'text-neutral-500'
+                : status === 'success'
+                  ? 'text-success-800'
+                  : 'text-critical-800';
 
         return { status, label, style };
     };

@@ -1,12 +1,19 @@
-import type { IUseTokenParams, IUseTokenResult } from '@/shared/hooks/useToken';
 import { useMemo } from 'react';
 import { erc20Abi } from 'viem';
 import { useReadContracts } from 'wagmi';
+import type { IUseTokenParams, IUseTokenResult } from '@/shared/hooks/useToken';
 
 // Fallback to "unknown" token when token passes the ERC20 checks but has no valid token attributes
-const tokenFallback: IUseTokenResult['data'] = { name: 'Unknown', decimals: 18, symbol: 'UNKNOWN', totalSupply: '0' };
+const tokenFallback: IUseTokenResult['data'] = {
+    name: 'Unknown',
+    decimals: 18,
+    symbol: 'UNKNOWN',
+    totalSupply: '0',
+};
 
-export const useLockToVoteErc20Token = (params: IUseTokenParams): IUseTokenResult => {
+export const useLockToVoteErc20Token = (
+    params: IUseTokenParams,
+): IUseTokenResult => {
     const { address, chainId, enabled = true } = params;
 
     const { data, isLoading, isError } = useReadContracts({

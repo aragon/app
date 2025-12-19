@@ -1,2 +1,6 @@
 export { versionComparatorUtils } from './versionComparatorUtils';
-export type { ComparatorArgs, ComparatorInput, IVersion } from './versionComparatorUtils.api';
+export type {
+    ComparatorArgs,
+    ComparatorInput,
+    IVersion,
+} from './versionComparatorUtils.api';

@@ -1,7 +1,12 @@
-import { type ICreateProposalFormData } from '../../components/createProposalForm';
-import type { ICreateProposalEndDateForm, ICreateProposalStartDateForm } from '../../utils/createProposalUtils';
+import type { ICreateProposalFormData } from '../../components/createProposalForm';
+import type {
+    ICreateProposalEndDateForm,
+    ICreateProposalStartDateForm,
+} from '../../utils/createProposalUtils';
 
-export const generateCreateProposalFormData = (values?: Partial<ICreateProposalFormData>): ICreateProposalFormData => ({
+export const generateCreateProposalFormData = (
+    values?: Partial<ICreateProposalFormData>,
+): ICreateProposalFormData => ({
     title: 'title',
     summary: 'summary',
     addActions: false,

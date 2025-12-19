@@ -1,10 +1,14 @@
 'use client';
 
-import { pluginRegistryUtils, type PluginId, type SlotId } from '@/shared/utils/pluginRegistryUtils';
 import classNames from 'classnames';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+    type SlotId,
+} from '@/shared/utils/pluginRegistryUtils';
 import { useDebugContext } from '../debugProvider';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: any exception
 export type FallbackComponent = React.FC<any>;
 
 export interface IPluginSingleComponentProps {
@@ -26,26 +30,37 @@ export interface IPluginSingleComponentProps {
     [key: string]: unknown;
 }
 
-export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (props) => {
+export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (
+    props,
+) => {
     const { slotId, pluginId, Fallback, ...otherProps } = props;
 
     const { values } = useDebugContext<{ highlightSlots: boolean }>();
     const { highlightSlots } = values;
 
-    const LoadedComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId });
+    const LoadedComponent = pluginRegistryUtils.getSlotComponent({
+        slotId,
+        pluginId,
+    });
 
     if (LoadedComponent == null && Fallback == null) {
         return null;
     }
 
     return (
-        <div className={classNames('w-full', { 'border-primary-400 relative rounded-md border': highlightSlots })}>
+        <div
+            className={classNames('w-full', {
+                'relative rounded-md border border-primary-400': highlightSlots,
+            })}
+        >
             {highlightSlots && (
-                <p className="absolute -top-6 right-0 z-50 text-neutral-500">
+                <p className="-top-6 absolute right-0 z-50 text-neutral-500">
                     {slotId} ({pluginId})
                 </p>
             )}
-            {LoadedComponent == null && Fallback != null && <Fallback {...otherProps} />}
+            {LoadedComponent == null && Fallback != null && (
+                <Fallback {...otherProps} />
+            )}
             {LoadedComponent != null && <LoadedComponent {...otherProps} />}
         </div>
     );

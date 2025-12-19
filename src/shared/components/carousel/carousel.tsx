@@ -1,5 +1,10 @@
 import classNames from 'classnames';
-import { animate, motion, type MotionStyle, useMotionValue } from 'framer-motion';
+import {
+    animate,
+    type MotionStyle,
+    motion,
+    useMotionValue,
+} from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import useMeasure from 'react-use-measure';
 
@@ -68,7 +73,9 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     const contentSize = width + gap - initialOffset;
     const finalPosition = -contentSize / 2;
 
-    const animationControlsRef = useRef<ReturnType<typeof animate> | null>(null);
+    const animationControlsRef = useRef<ReturnType<typeof animate> | null>(
+        null,
+    );
 
     const updateAnimationSpeed = (value: number) => {
         if (animationControlsRef.current) {
@@ -77,7 +84,10 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     };
 
     useEffect(() => {
-        const timeoutHandle = setTimeout(() => setHasAnimationStarted(true), animationDelay * 1000);
+        const timeoutHandle = setTimeout(
+            () => setHasAnimationStarted(true),
+            animationDelay * 1000,
+        );
 
         return () => clearTimeout(timeoutHandle);
     }, [animationDelay]);
@@ -100,13 +110,17 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
 
         // speed is mutated directly on hover, but all other properties will trigger a new animation, causing position to reset!
         animationControlsRef.current?.stop();
-        animationControlsRef.current = animate(translation, [0, finalPosition], {
-            ease: 'linear',
-            duration: duration,
-            repeat: Infinity,
-            repeatType: 'loop',
-            repeatDelay: 0,
-        });
+        animationControlsRef.current = animate(
+            translation,
+            [0, finalPosition],
+            {
+                ease: 'linear',
+                duration,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: 'loop',
+                repeatDelay: 0,
+            },
+        );
     }, [hasAnimationStarted, finalPosition, speed, translation, isDraggable]);
 
     // handles infinite drag wrap when isDraggable is true
@@ -138,11 +152,15 @@ export const Carousel: React.FC<ICarouselProps> = (props) => {
     return (
         <div className={classNames('overflow-hidden', className)}>
             <motion.div
-                className={classNames('flex w-max will-change-transform', isDraggable && 'cursor-grab')}
-                style={containerStyle}
+                className={classNames(
+                    'flex w-max will-change-transform',
+                    isDraggable && 'cursor-grab',
+                )}
                 ref={ref}
+                style={containerStyle}
                 {...(!isDraggable && {
-                    onHoverStart: () => updateAnimationSpeed(speedOnHoverFactor),
+                    onHoverStart: () =>
+                        updateAnimationSpeed(speedOnHoverFactor),
                     onHoverEnd: () => updateAnimationSpeed(1),
                 })}
                 {...(isDraggable && {

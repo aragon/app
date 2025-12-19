@@ -1,1 +1,4 @@
-export { CreateProposalFormActions, type ICreateProposalFormActionsProps } from './createProposalFormActions';
+export {
+    CreateProposalFormActions,
+    type ICreateProposalFormActionsProps,
+} from './createProposalFormActions';

@@ -1,9 +1,5 @@
 'use client';
 
-import { AvatarInput } from '@/shared/components/forms/avatarInput';
-import { type IResourcesInputResource, ResourcesInput } from '@/shared/components/forms/resourcesInput';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AddressInput,
     addressUtils,
@@ -13,6 +9,13 @@ import {
     TextArea,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { AvatarInput } from '@/shared/components/forms/avatarInput';
+import {
+    type IResourcesInputResource,
+    ResourcesInput,
+} from '@/shared/components/forms/resourcesInput';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface IGaugeVoterCreateGaugeActionCreateFormProps {
     /**
@@ -51,7 +54,9 @@ export interface IGaugeVoterCreateGaugeFormData {
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
 
-export const GaugeVoterCreateGaugeActionCreateForm: React.FC<IGaugeVoterCreateGaugeActionCreateFormProps> = (props) => {
+export const GaugeVoterCreateGaugeActionCreateForm: React.FC<
+    IGaugeVoterCreateGaugeActionCreateFormProps
+> = (props) => {
     const { fieldPrefix, chainId } = props;
     const { t } = useTranslations();
 
@@ -59,16 +64,31 @@ export const GaugeVoterCreateGaugeActionCreateForm: React.FC<IGaugeVoterCreateGa
         onChange: onGaugeAddressChange,
         value: gaugeAddress,
         ...gaugeAddressField
-    } = useFormField<IGaugeVoterCreateGaugeFormData, 'gaugeAddress'>('gaugeAddress', {
-        label: t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.label'),
-        rules: { required: true, validate: (value) => addressUtils.isAddress(value?.address) },
-        fieldPrefix,
-    });
+    } = useFormField<IGaugeVoterCreateGaugeFormData, 'gaugeAddress'>(
+        'gaugeAddress',
+        {
+            label: t(
+                'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.label',
+            ),
+            rules: {
+                required: true,
+                validate: (value) => addressUtils.isAddress(value?.address),
+            },
+            fieldPrefix,
+        },
+    );
 
-    const [gaugeAddressInput, setGaugeAddressInput] = useState<string | undefined>(gaugeAddress?.address);
+    const [gaugeAddressInput, setGaugeAddressInput] = useState<
+        string | undefined
+    >(gaugeAddress?.address);
 
-    const { value: nameValue, ...nameFieldRest } = useFormField<IGaugeVoterCreateGaugeFormData, 'name'>('name', {
-        label: t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.name.label'),
+    const { value: nameValue, ...nameFieldRest } = useFormField<
+        IGaugeVoterCreateGaugeFormData,
+        'name'
+    >('name', {
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.name.label',
+        ),
         fieldPrefix,
         rules: { required: true, maxLength: nameMaxLength },
         trimOnBlur: true,
@@ -78,7 +98,9 @@ export const GaugeVoterCreateGaugeActionCreateForm: React.FC<IGaugeVoterCreateGa
         IGaugeVoterCreateGaugeFormData,
         'description'
     >('description', {
-        label: t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.description.label'),
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.description.label',
+        ),
         fieldPrefix,
         rules: { required: true, maxLength: descriptionMaxLength },
         trimOnBlur: true,
@@ -87,31 +109,41 @@ export const GaugeVoterCreateGaugeActionCreateForm: React.FC<IGaugeVoterCreateGa
     return (
         <div className="flex flex-col gap-10">
             <AddressInput
-                placeholder={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.placeholder')}
-                helpText={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.helpText')}
-                value={gaugeAddressInput}
-                onChange={setGaugeAddressInput}
-                onAccept={onGaugeAddressChange}
                 chainId={chainId}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.helpText',
+                )}
+                onAccept={onGaugeAddressChange}
+                onChange={setGaugeAddressInput}
+                placeholder={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.gaugeAddress.placeholder',
+                )}
+                value={gaugeAddressInput}
                 {...gaugeAddressField}
             />
             <InputText
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.name.helpText',
+                )}
                 maxLength={nameMaxLength}
                 value={nameValue || ''}
-                helpText={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.name.helpText')}
                 {...nameFieldRest}
             />
-            <AvatarInput name="avatar" fieldPrefix={fieldPrefix} />
+            <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <TextArea
-                helpText={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.description.helpText')}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.description.helpText',
+                )}
                 maxLength={descriptionMaxLength}
                 value={descriptionValue || ''}
                 {...descriptionFieldRest}
             />
             <ResourcesInput
-                name="resources"
                 fieldPrefix={fieldPrefix}
-                helpText={t('app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.resources.helpText')}
+                helpText={t(
+                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionCreateForm.resources.helpText',
+                )}
+                name="resources"
             />
         </div>
     );

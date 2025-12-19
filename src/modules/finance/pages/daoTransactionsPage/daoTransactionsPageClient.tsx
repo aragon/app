@@ -1,7 +1,10 @@
 'use client';
 
 import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel';
-import { useAssetList, useTransactionList } from '@/modules/finance/api/financeService';
+import {
+    useAssetList,
+    useTransactionList,
+} from '@/modules/finance/api/financeService';
 import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -9,7 +12,10 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetTransactionListParams } from '../../api/financeService';
-import { TransactionList, transactionListFilterParam } from '../../components/transactionList';
+import {
+    TransactionList,
+    transactionListFilterParam,
+} from '../../components/transactionList';
 
 export interface IDaoTransactionsPageClientProps {
     /**
@@ -22,7 +28,9 @@ export interface IDaoTransactionsPageClientProps {
     initialParams: NestedOmit<IGetTransactionListParams, 'queryParams.address'>;
 }
 
-export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps> = (props) => {
+export const DaoTransactionsPageClient: React.FC<
+    IDaoTransactionsPageClientProps
+> = (props) => {
     const { id, initialParams } = props;
     const { t } = useTranslations();
 
@@ -69,14 +77,17 @@ export const DaoTransactionsPageClient: React.FC<IDaoTransactionsPageClientProps
     return (
         <Page.Content>
             <Page.Main title={t('app.finance.daoTransactionsPage.main.title')}>
-                <TransactionList.Container initialParams={initialParams} daoId={id} />
+                <TransactionList.Container
+                    daoId={id}
+                    initialParams={initialParams}
+                />
             </Page.Main>
             <Page.Aside>
                 <DaoFilterAsideCard
-                    dao={dao}
                     activeOption={activeOption}
-                    selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     allMetadata={allAssetsMetadata?.pages[0]}
+                    dao={dao}
+                    selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     statsType="transactions"
                 />
                 <DispatchPanel daoAddress={dao.address} network={dao.network} />

@@ -1,11 +1,18 @@
 import { render, screen } from '@testing-library/react';
 import type { IWizardFormProps, IWizardRootProps } from '../../wizard';
-import { type IWizardPageContainerProps, WizardPageContainer } from './wizardPageContainer';
+import {
+    type IWizardPageContainerProps,
+    WizardPageContainer,
+} from './wizardPageContainer';
 
 jest.mock('../../wizard', () => ({
     Wizard: {
-        Root: (props: IWizardRootProps) => <div data-testid="wizard-root">{props.children}</div>,
-        Form: (props: IWizardFormProps) => <div data-testid="wizard-form">{props.children}</div>,
+        Root: (props: IWizardRootProps) => (
+            <div data-testid="wizard-root">{props.children}</div>
+        ),
+        Form: (props: IWizardFormProps) => (
+            <div data-testid="wizard-form">{props.children}</div>
+        ),
     },
 }));
 
@@ -14,7 +21,9 @@ jest.mock('./wizardPageContainerProgress', () => ({
 }));
 
 describe('<WizardPageContainer /> component', () => {
-    const createTestComponent = (props?: Partial<IWizardPageContainerProps>) => {
+    const createTestComponent = (
+        props?: Partial<IWizardPageContainerProps>,
+    ) => {
         const completeProps: IWizardPageContainerProps = {
             submitLabel: 'submit',
             ...props,

@@ -1,5 +1,8 @@
 import type { Network } from '@/shared/api/daoService';
-import type { IRequestUrlBodyParams, IRequestUrlParams } from '@/shared/api/httpService';
+import type {
+    IRequestUrlBodyParams,
+    IRequestUrlParams,
+} from '@/shared/api/httpService';
 
 export interface ISimulateActionsUrlParams {
     /**
@@ -35,7 +38,10 @@ export interface ISimulateActionsBody {
 }
 
 export interface ISimulateActionsParams
-    extends IRequestUrlBodyParams<ISimulateActionsUrlParams, ISimulateActionsBody> {}
+    extends IRequestUrlBodyParams<
+        ISimulateActionsUrlParams,
+        ISimulateActionsBody
+    > {}
 
 export interface ISimulateProposalUrlParams {
     /**
@@ -44,7 +50,8 @@ export interface ISimulateProposalUrlParams {
     proposalId: string;
 }
 
-export interface ISimulateProposalParams extends IRequestUrlParams<ISimulateProposalUrlParams> {}
+export interface ISimulateProposalParams
+    extends IRequestUrlParams<ISimulateProposalUrlParams> {}
 
 export interface IGetLastSimulationUrlParams {
     /**
@@ -53,4 +60,5 @@ export interface IGetLastSimulationUrlParams {
     proposalId: string;
 }
 
-export interface IGetLastSimulationParams extends IRequestUrlParams<IGetLastSimulationUrlParams> {}
+export interface IGetLastSimulationParams
+    extends IRequestUrlParams<IGetLastSimulationUrlParams> {}

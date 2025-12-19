@@ -1,4 +1,8 @@
-import { type PluginId, type SlotId, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+    type SlotId,
+} from '@/shared/utils/pluginRegistryUtils';
 
 export interface IUseSlotSingleFunctionParams<TParams, TResult> {
     /**
@@ -24,7 +28,10 @@ export const useSlotSingleFunction = <TParams = unknown, TResult = unknown>(
 ) => {
     const { params: functionParams, slotId, pluginId, fallback } = params;
 
-    const slotFunction = pluginRegistryUtils.getSlotFunction<TParams, TResult>({ slotId, pluginId });
+    const slotFunction = pluginRegistryUtils.getSlotFunction<TParams, TResult>({
+        slotId,
+        pluginId,
+    });
 
     const processedFunction = slotFunction ?? fallback;
     const result = processedFunction?.(functionParams);

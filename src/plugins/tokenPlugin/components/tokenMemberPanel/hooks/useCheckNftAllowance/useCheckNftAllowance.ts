@@ -1,7 +1,7 @@
-import type { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { erc721Abi, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface IUseCheckNftAllowance {
     /**

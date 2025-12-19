@@ -12,7 +12,11 @@ export const globalExecutorAbi = [
                 name: '_actions',
                 type: 'tuple[]',
             },
-            { name: 'allowFailureMap', internalType: 'uint256', type: 'uint256' },
+            {
+                name: 'allowFailureMap',
+                internalType: 'uint256',
+                type: 'uint256',
+            },
         ],
         outputs: [],
         name: 'execute',

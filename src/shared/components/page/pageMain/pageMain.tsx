@@ -1,6 +1,6 @@
 import { Button, Heading, IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ComponentProps } from 'react';
+import type { ComponentProps } from 'react';
 
 export interface IPageMainAction {
     /**
@@ -37,14 +37,18 @@ export interface IPageMainProps extends ComponentProps<'main'> {
 }
 
 export const PageMain: React.FC<IPageMainProps> = (props) => {
-    const { className, children, title, action, fullWidth, ...otherProps } = props;
+    const { className, children, title, action, fullWidth, ...otherProps } =
+        props;
 
     return (
         <main
             className={classNames(
                 'flex min-w-0 flex-col',
                 { 'w-full': !fullWidth },
-                { 'm-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28': fullWidth },
+                {
+                    'm-auto h-full max-w-[1024px] px-4 pt-6 pb-10 md:px-6 md:pb-20 lg:px-28':
+                        fullWidth,
+                },
                 { 'gap-12': title == null },
                 { 'gap-6': title != null },
                 className,
@@ -56,11 +60,11 @@ export const PageMain: React.FC<IPageMainProps> = (props) => {
                     <Heading size="h1">{title}</Heading>
                     {action && !action.hidden && (
                         <Button
-                            variant="primary"
-                            size="md"
-                            onClick={action.onClick}
                             href={action.href}
                             iconLeft={IconType.PLUS}
+                            onClick={action.onClick}
+                            size="md"
+                            variant="primary"
                         >
                             {action.label}
                         </Button>

@@ -1,6 +1,7 @@
 import type { FeatureFlagDefinition } from './featureFlags.api';
 
-export const FEATURE_FLAGS_OVERRIDES_COOKIE_NAME = 'aragon.featureFlags.overrides';
+export const FEATURE_FLAGS_OVERRIDES_COOKIE_NAME =
+    'aragon.featureFlags.overrides';
 
 /**
  * Feature flags definitions.

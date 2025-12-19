@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export type DebugContextValues = Record<string, unknown>;
 
@@ -29,7 +29,9 @@ export interface IDebugContextControl {
     onChange?: (value: unknown) => void;
 }
 
-export interface IDebugContext<TValues extends DebugContextValues = DebugContextValues> {
+export interface IDebugContext<
+    TValues extends DebugContextValues = DebugContextValues,
+> {
     /**
      * Debug controls of the app.
      */

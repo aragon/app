@@ -1,5 +1,5 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 
 const delegateTokensAbi = [
     {
@@ -11,7 +11,10 @@ const delegateTokensAbi = [
 ];
 
 class TokenDelegationDialogUtils {
-    buildTransaction = (tokenAddress: string, delegatee: string): Promise<ITransactionRequest> => {
+    buildTransaction = (
+        tokenAddress: string,
+        delegatee: string,
+    ): Promise<ITransactionRequest> => {
         const functionArgs = [delegatee];
         const transactionData = encodeFunctionData({
             abi: delegateTokensAbi,
@@ -19,7 +22,11 @@ class TokenDelegationDialogUtils {
             args: functionArgs,
         });
 
-        const transaction = { to: tokenAddress as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: tokenAddress as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };

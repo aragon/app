@@ -1,4 +1,4 @@
 export {
-    TokenSetupMembershipImportToken,
     type ITokenSetupMembershipImportTokenProps,
+    TokenSetupMembershipImportToken,
 } from './tokenSetupMembershipImportToken';

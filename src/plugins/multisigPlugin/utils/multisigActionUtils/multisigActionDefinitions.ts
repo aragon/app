@@ -1,6 +1,10 @@
-import { type IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
-import type { IMultisigActionChangeMembers, IMultisigActionChangeSettings, IMultisigPluginSettings } from '../../types';
+import type {
+    IMultisigActionChangeMembers,
+    IMultisigActionChangeSettings,
+    IMultisigPluginSettings,
+} from '../../types';
 import { MultisigProposalActionType } from '../../types/enum';
 
 export const defaultAddMembers: IMultisigActionChangeMembers = {

@@ -5,16 +5,30 @@
     "incremental": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "module": "esnext",
     "moduleResolution": "bundler",
     "noEmit": true,
     "paths": {
-      "@/*": ["./src/*"],
-      "@aragon/gov-ui-kit": ["./src/shared/lib/@aragon/gov-ui-kit"],
-      "@aragon/gov-ui-kit-original": ["./node_modules/@aragon/gov-ui-kit"],
-      "next/navigation": ["./src/shared/lib/nextNavigation"],
-      "next/navigation-original": ["./node_modules/next/navigation"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@aragon/gov-ui-kit": [
+        "./src/shared/lib/@aragon/gov-ui-kit"
+      ],
+      "@aragon/gov-ui-kit-original": [
+        "./node_modules/@aragon/gov-ui-kit"
+      ],
+      "next/navigation": [
+        "./src/shared/lib/nextNavigation"
+      ],
+      "next/navigation-original": [
+        "./node_modules/next/navigation"
+      ]
     },
     "plugins": [
       {
@@ -27,6 +41,22 @@
     "strictNullChecks": true,
     "target": "ES2017"
   },
-  "exclude": ["node_modules", ".next/**/*", ".vercel/**/*", "coverage", "public/web-workers/**/*"],
-  "include": ["*.config.js", "*.config.ts", "*.config.mjs", ".eslintrc.js", "next-env.d.ts", "src", ".next/types/**/*.ts", "./src/shared/types/media.d.ts", "instrumentation-client.ts"]
+  "exclude": [
+    "node_modules",
+    ".next/**/*",
+    ".vercel/**/*",
+    "coverage",
+    "public/web-workers/**/*"
+  ],
+  "include": [
+    "*.config.js",
+    "*.config.ts",
+    "*.config.mjs",
+    ".eslintrc.js",
+    "next-env.d.ts",
+    "src",
+    ".next/types/**/*.ts",
+    "./src/shared/types/media.d.ts",
+    "instrumentation-client.ts"
+  ]
 }

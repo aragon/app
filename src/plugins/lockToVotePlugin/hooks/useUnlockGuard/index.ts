@@ -1,1 +1,1 @@
-export { useUnlockGuard, type IUseUnlockGuardParams } from './useUnlockGuard';
+export { type IUseUnlockGuardParams, useUnlockGuard } from './useUnlockGuard';

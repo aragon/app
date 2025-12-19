@@ -4,4 +4,7 @@ export const GaugeVoterVoteDialog = dynamic(() =>
     import('./gaugeVoterVoteDialog').then((mod) => mod.GaugeVoterVoteDialog),
 );
 
-export type { IGaugeVoterVoteDialogParams, IGaugeVoterVoteDialogProps } from './gaugeVoterVoteDialog';
+export type {
+    IGaugeVoterVoteDialogParams,
+    IGaugeVoterVoteDialogProps,
+} from './gaugeVoterVoteDialog';

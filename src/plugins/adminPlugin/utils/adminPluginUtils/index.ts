@@ -1,1 +1,4 @@
-export { adminPluginUtils, type IAdminPluginHasExecutePermissionParams } from './adminPluginUtils';
+export {
+    adminPluginUtils,
+    type IAdminPluginHasExecutePermissionParams,
+} from './adminPluginUtils';

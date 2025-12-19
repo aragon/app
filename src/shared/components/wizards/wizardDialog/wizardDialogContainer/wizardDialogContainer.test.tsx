@@ -1,9 +1,12 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import { generateDialogContext } from '@/shared/testUtils';
 import { Dialog } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDialogContext } from '@/shared/testUtils';
 import type { IWizardFormProps, IWizardRootProps } from '../../wizard';
-import { type IWizardDialogContainerProps, WizardDialogContainer } from './wizardDialogContainer';
+import {
+    type IWizardDialogContainerProps,
+    WizardDialogContainer,
+} from './wizardDialogContainer';
 
 jest.mock('../../wizard', () => ({
     Wizard: {
@@ -12,10 +15,15 @@ jest.mock('../../wizard', () => ({
     },
 }));
 
-jest.mock('./wizardDialogContainerFooter', () => ({ WizardDialogContainerFooter: () => <div data-testid="footer" /> }));
+jest.mock('./wizardDialogContainerFooter', () => ({
+    WizardDialogContainerFooter: () => <div data-testid="footer" />,
+}));
 
 describe('<WizardDialogContainer /> component', () => {
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
@@ -25,7 +33,9 @@ describe('<WizardDialogContainer /> component', () => {
         useDialogContextSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IWizardDialogContainerProps>) => {
+    const createTestComponent = (
+        props?: Partial<IWizardDialogContainerProps>,
+    ) => {
         const completeProps: IWizardDialogContainerProps = {
             title: 'title',
             formId: 'formId',

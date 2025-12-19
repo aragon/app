@@ -1,7 +1,7 @@
-import { PluginContractName } from '@/shared/api/daoService/domain/enum';
-import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { keccak256, toBytes, toFunctionSelector } from 'viem';
+import { PluginContractName } from '@/shared/api/daoService/domain/enum';
+import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { GaugeVoterActivateGaugeActionCreate } from './components/gaugeVoterActivateGaugeActionCreate';
 import { GaugeVoterActivateGaugeActionDetails } from './components/gaugeVoterActivateGaugeActionDetails';
 import { GaugeVoterCreateGaugeActionCreate } from './components/gaugeVoterCreateGaugeActionCreate';
@@ -39,7 +39,9 @@ export const initGaugeVoterActionViews = () => {
             componentDetails: GaugeVoterCreateGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeVoterActionType.CREATE_GAUGE}`,
-                name: t('app.actions.gaugeVoter.composer.createGaugeActionName'),
+                name: t(
+                    'app.actions.gaugeVoter.composer.createGaugeActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -51,7 +53,10 @@ export const initGaugeVoterActionViews = () => {
                     inputData: {
                         function: createGaugeAbi.name,
                         contract: PluginContractName.GAUGE_VOTER,
-                        parameters: createGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: createGaugeAbi.inputs.map((param) => ({
+                            ...param,
+                            value: '',
+                        })),
                     },
                 },
             }),
@@ -64,7 +69,9 @@ export const initGaugeVoterActionViews = () => {
             componentDetails: GaugeVoterDeactivateGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeVoterActionType.DEACTIVATE_GAUGE}`,
-                name: t('app.actions.gaugeVoter.composer.deactivateGaugeActionName'),
+                name: t(
+                    'app.actions.gaugeVoter.composer.deactivateGaugeActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -76,7 +83,10 @@ export const initGaugeVoterActionViews = () => {
                     inputData: {
                         function: deactivateGaugeAbi.name,
                         contract: PluginContractName.GAUGE_VOTER,
-                        parameters: deactivateGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: deactivateGaugeAbi.inputs.map((param) => ({
+                            ...param,
+                            value: '',
+                        })),
                     },
                 },
             }),
@@ -89,7 +99,9 @@ export const initGaugeVoterActionViews = () => {
             componentDetails: GaugeVoterActivateGaugeActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeVoterActionType.ACTIVATE_GAUGE}`,
-                name: t('app.actions.gaugeVoter.composer.activateGaugeActionName'),
+                name: t(
+                    'app.actions.gaugeVoter.composer.activateGaugeActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -101,7 +113,10 @@ export const initGaugeVoterActionViews = () => {
                     inputData: {
                         function: activateGaugeAbi.name,
                         contract: PluginContractName.GAUGE_VOTER,
-                        parameters: activateGaugeAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: activateGaugeAbi.inputs.map((param) => ({
+                            ...param,
+                            value: '',
+                        })),
                     },
                 },
             }),
@@ -114,7 +129,9 @@ export const initGaugeVoterActionViews = () => {
             componentDetails: GaugeVoterUpdateGaugeMetadataActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${GaugeVoterActionType.UPDATE_GAUGE_METADATA}`,
-                name: t('app.actions.gaugeVoter.composer.updateGaugeMetadataActionName'),
+                name: t(
+                    'app.actions.gaugeVoter.composer.updateGaugeMetadataActionName',
+                ),
                 icon: IconType.SETTINGS,
                 groupId: contractAddress,
                 defaultValue: {
@@ -126,7 +143,9 @@ export const initGaugeVoterActionViews = () => {
                     inputData: {
                         function: updateGaugeMetadataAbi.name,
                         contract: PluginContractName.GAUGE_VOTER,
-                        parameters: updateGaugeMetadataAbi.inputs.map((param) => ({ ...param, value: '' })),
+                        parameters: updateGaugeMetadataAbi.inputs.map(
+                            (param) => ({ ...param, value: '' }),
+                        ),
                     },
                 },
             }),

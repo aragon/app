@@ -4,4 +4,7 @@ export const TokenApproveNftDialog = dynamic(() =>
     import('./tokenApproveNftDialog').then((mod) => mod.TokenApproveNftDialog),
 );
 
-export type { ITokenApproveNftDialogParams, ITokenApproveNftDialogProps } from './tokenApproveNftDialog';
+export type {
+    ITokenApproveNftDialogParams,
+    ITokenApproveNftDialogProps,
+} from './tokenApproveNftDialog';

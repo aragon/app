@@ -1,7 +1,7 @@
-import { type ISppProposal, type ISppStage } from '@/plugins/sppPlugin/types';
+import { ProposalStatus } from '@aragon/gov-ui-kit';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { SppStageStatus } from './sppStageStatus';
 
 export interface ISppVotingTerminalBodySummaryFooterProps {
@@ -19,7 +19,9 @@ export interface ISppVotingTerminalBodySummaryFooterProps {
     daoId: string;
 }
 
-export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBodySummaryFooterProps> = (props) => {
+export const SppVotingTerminalBodySummaryFooter: React.FC<
+    ISppVotingTerminalBodySummaryFooterProps
+> = (props) => {
     const { stage, proposal, daoId } = props;
 
     const { t } = useTranslations();
@@ -37,18 +39,26 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<ISppVotingTerminalBody
     // Display stage status component if approval is reached and it is not an optimistic stage
     // or if it is an optimistic stage that is accepted
     if ((isApprovalReached && !isVeto) || (isVeto && isAccepted)) {
-        return <SppStageStatus proposal={proposal} stage={stage} daoId={daoId} />;
+        return (
+            <SppStageStatus daoId={daoId} proposal={proposal} stage={stage} />
+        );
     }
 
     return (
         <p className="text-center text-neutral-500 md:text-right">
             <span className="text-neutral-800">
-                {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel', {
-                    count: threshold,
-                    entityType,
-                })}
+                {t(
+                    'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel',
+                    {
+                        count: threshold,
+                        entityType,
+                    },
+                )}
             </span>{' '}
-            {t('app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired', { action: actionType })}
+            {t(
+                'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired',
+                { action: actionType },
+            )}
         </p>
     );
 };

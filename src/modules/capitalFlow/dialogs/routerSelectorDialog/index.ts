@@ -1,5 +1,5 @@
 export {
-    RouterSelectorDialog,
     type IRouterSelectorDialogParams,
     type IRouterSelectorDialogProps,
+    RouterSelectorDialog,
 } from './routerSelectorDialog';

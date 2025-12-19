@@ -1,11 +1,16 @@
-import type { IDialogAlertRootProps, IDialogRootProps } from '@aragon/gov-ui-kit';
+import type {
+    IDialogAlertRootProps,
+    IDialogRootProps,
+} from '@aragon/gov-ui-kit';
 import type { ComponentType } from 'react';
 
 // Default properties type for dialog components.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+//biome-ignore lint/suspicious/noExplicitAny: any is used to allow any type of props to be passed to the dialog components.
 export type DialogComponentProps = any;
 
-export interface IDialogLocationOptions<TParams extends DialogComponentProps = DialogComponentProps> {
+export interface IDialogLocationOptions<
+    TParams extends DialogComponentProps = DialogComponentProps,
+> {
     /**
      * Parameters to be passed to the dialog to open.
      */
@@ -27,8 +32,9 @@ export interface IDialogLocationOptions<TParams extends DialogComponentProps = D
     stack?: boolean;
 }
 
-export interface IDialogLocation<TParams extends DialogComponentProps = DialogComponentProps>
-    extends IDialogLocationOptions<TParams> {
+export interface IDialogLocation<
+    TParams extends DialogComponentProps = DialogComponentProps,
+> extends IDialogLocationOptions<TParams> {
     /**
      * ID of the dialog.
      */
@@ -73,15 +79,21 @@ export interface IDialogContext {
     updateOptions: (options: Partial<IDialogLocationOptions>) => void;
 }
 
-export interface IDialogComponentProps<TParams extends DialogComponentProps = DialogComponentProps> {
+export interface IDialogComponentProps<
+    TParams extends DialogComponentProps = DialogComponentProps,
+> {
     /**
      * Definitions specific to the dialog.
      */
     location: IDialogLocation<TParams>;
 }
 
-export interface IDialogComponentDefinitions<TParams extends DialogComponentProps = DialogComponentProps>
-    extends Pick<IDialogRootProps, 'hiddenTitle' | 'hiddenDescription' | 'useFocusTrap' | 'size'>,
+export interface IDialogComponentDefinitions<
+    TParams extends DialogComponentProps = DialogComponentProps,
+> extends Pick<
+            IDialogRootProps,
+            'hiddenTitle' | 'hiddenDescription' | 'useFocusTrap' | 'size'
+        >,
         Pick<IDialogAlertRootProps, 'variant'> {
     /**
      * Component to be rendered.

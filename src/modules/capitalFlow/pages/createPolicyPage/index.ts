@@ -1,1 +1,4 @@
-export { CreatePolicyPage, type ICreatePolicyPageProps } from './createPolicyPage';
+export {
+    CreatePolicyPage,
+    type ICreatePolicyPageProps,
+} from './createPolicyPage';

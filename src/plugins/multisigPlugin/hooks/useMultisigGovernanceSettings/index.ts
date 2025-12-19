@@ -1,4 +1,4 @@
 export {
-    useMultisigGovernanceSettings,
     type IUseMultisigGovernanceSettingsParams,
+    useMultisigGovernanceSettings,
 } from './useMultisigGovernanceSettings';

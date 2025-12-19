@@ -13,12 +13,17 @@ describe('proposalUtils', () => {
     describe('getProposalSlug', () => {
         it('throws an error when plugin is not found', () => {
             getDaoPluginsSpy.mockReturnValue(undefined);
-            expect(() => proposalUtils.getProposalSlug(generateProposal())).toThrow();
+            expect(() =>
+                proposalUtils.getProposalSlug(generateProposal()),
+            ).toThrow();
         });
 
         it('returns the correct proposal slug', () => {
             const dao = generateDao();
-            const proposal = generateProposal({ incrementalId: 1, pluginAddress: '0x123' });
+            const proposal = generateProposal({
+                incrementalId: 1,
+                pluginAddress: '0x123',
+            });
             const plugin = generateDaoPlugin({ slug: 'plugin-slug' });
             getDaoPluginsSpy.mockReturnValue([plugin]);
             const result = proposalUtils.getProposalSlug(proposal, dao);

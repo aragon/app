@@ -1,1 +1,4 @@
-export { GovernanceBasicBodyField, type IGovernanceBasicBodyFieldProps } from './governanceBasicBodyField';
+export {
+    GovernanceBasicBodyField,
+    type IGovernanceBasicBodyFieldProps,
+} from './governanceBasicBodyField';

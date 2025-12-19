@@ -39,9 +39,20 @@ const logoSizeClassNames: Record<LogoSize, string> = {
 };
 
 export const AragonLogo: React.FC<IAragonLogoProps> = (props) => {
-    const { variant = 'primary', size = 'md', iconOnly, className, responsiveIconOnly, ...otherProps } = props;
+    const {
+        variant = 'primary',
+        size = 'md',
+        iconOnly,
+        className,
+        responsiveIconOnly,
+        ...otherProps
+    } = props;
 
-    const containerClasses = classNames(logoVariantClassNames[variant], logoSizeClassNames[size], className);
+    const containerClasses = classNames(
+        logoVariantClassNames[variant],
+        logoSizeClassNames[size],
+        className,
+    );
 
     if (!responsiveIconOnly) {
         return (

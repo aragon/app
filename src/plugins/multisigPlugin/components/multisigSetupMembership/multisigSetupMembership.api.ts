@@ -2,7 +2,8 @@ import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setup
 import type { IPluginSetupMembershipParams } from '@/modules/createDao/types';
 import type { Network } from '@/shared/api/daoService';
 
-export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipParams {
+export interface IMultisigSetupMembershipProps
+    extends IPluginSetupMembershipParams {
     /**
      * When true show a read only mode of the address field.
      */
@@ -29,4 +30,5 @@ export interface IMultisigSetupMembershipProps extends IPluginSetupMembershipPar
     hideLabel?: boolean;
 }
 
-export interface IMultisigSetupMembershipForm extends ISetupBodyFormMembership {}
+export interface IMultisigSetupMembershipForm
+    extends ISetupBodyFormMembership {}

@@ -11,7 +11,8 @@ export interface ICreateProposalStartDateForm {
     startTimeFixed?: IDateFixed;
 }
 
-export interface ICreateProposalEndDateForm extends ICreateProposalStartDateForm {
+export interface ICreateProposalEndDateForm
+    extends ICreateProposalStartDateForm {
     /**
      * Defines if the end time of the proposal is with duration or fixed format.
      */

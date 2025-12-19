@@ -1,1 +1,1 @@
-export { PageHeader, type IPageHeaderProps } from './pageHeader';
+export { type IPageHeaderProps, PageHeader } from './pageHeader';

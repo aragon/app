@@ -1,3 +1,4 @@
+import { renderHook } from '@testing-library/react';
 import { generateTransaction } from '@/modules/finance/testUtils';
 import {
     generatePaginatedResponse,
@@ -6,12 +7,14 @@ import {
     generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import { renderHook } from '@testing-library/react';
 import * as financeService from '../../api/financeService';
 import { useTransactionListData } from './useTransactionListData';
 
 describe('useTransactionListData hook', () => {
-    const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
+    const useTransactionListSpy = jest.spyOn(
+        financeService,
+        'useTransactionList',
+    );
 
     afterEach(() => {
         useTransactionListSpy.mockReset();
@@ -23,10 +26,15 @@ describe('useTransactionListData hook', () => {
             pageSize: 20,
             totalRecords: transactions.length,
         });
-        const transactionsResponse = generatePaginatedResponse({ data: transactions, metadata: transactionsMetadata });
+        const transactionsResponse = generatePaginatedResponse({
+            data: transactions,
+            metadata: transactionsMetadata,
+        });
         const params = { queryParams: { daoId: 'polygon-mainnet-0xdao' } };
         useTransactionListSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({ data: { pages: [transactionsResponse], pageParams: [] } }),
+            generateReactQueryInfiniteResultSuccess({
+                data: { pages: [transactionsResponse], pageParams: [] },
+            }),
         );
         const { result } = renderHook(() => useTransactionListData(params));
 
@@ -41,15 +49,27 @@ describe('useTransactionListData hook', () => {
     });
 
     it('returns error state of fetch transactions error', () => {
-        useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultError({ error: new Error('error') }));
-        const { result } = renderHook(() => useTransactionListData({ queryParams: { daoId: 'polygon-mainnet-0x0' } }));
+        useTransactionListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultError({
+                error: new Error('error'),
+            }),
+        );
+        const { result } = renderHook(() =>
+            useTransactionListData({
+                queryParams: { daoId: 'polygon-mainnet-0x0' },
+            }),
+        );
         expect(result.current.state).toEqual('error');
     });
 
     it('returns the pageSize set as hook parameter when data is loading', () => {
-        useTransactionListSpy.mockReturnValue(generateReactQueryInfiniteResultLoading());
+        useTransactionListSpy.mockReturnValue(
+            generateReactQueryInfiniteResultLoading(),
+        );
         const pageSize = 2;
-        const { result } = renderHook(() => useTransactionListData({ queryParams: { pageSize } }));
+        const { result } = renderHook(() =>
+            useTransactionListData({ queryParams: { pageSize } }),
+        );
         expect(result.current.pageSize).toEqual(pageSize);
     });
 });

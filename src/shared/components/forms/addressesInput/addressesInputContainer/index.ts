@@ -1,1 +1,4 @@
-export { AddressesInputContainer, type IAddressesInputContainerProps } from './addressesInputContainer';
+export {
+    AddressesInputContainer,
+    type IAddressesInputContainerProps,
+} from './addressesInputContainer';

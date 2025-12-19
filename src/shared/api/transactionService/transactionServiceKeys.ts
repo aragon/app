@@ -5,5 +5,8 @@ export enum TransactionServiceKey {
 }
 
 export const transactionServiceKeys = {
-    status: (params: IGetTransactionStatusParams) => [TransactionServiceKey.STATUS, params],
+    status: (params: IGetTransactionStatusParams) => [
+        TransactionServiceKey.STATUS,
+        params,
+    ],
 };

@@ -1,4 +1,4 @@
 export {
-    SetupStrategyDialogSourceVault,
     type ISetupStrategyDialogSourceVaultProps,
+    SetupStrategyDialogSourceVault,
 } from './setupStrategyDialogSourceVault';

@@ -1,10 +1,11 @@
+import type { IProposalAction } from '@aragon/gov-ui-kit';
 import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IResource } from '@/shared/api/daoService';
-import type { IProposalAction } from '@aragon/gov-ui-kit';
 import type { IGaugeVoterCreateGaugeFormData } from '../components/gaugeVoterCreateGaugeActionCreate';
 import type { GaugeVoterActionType } from './enum/gaugeVoterActionType';
 
-export interface IGaugeVoterActionUpdateGaugeMetadata extends Omit<IProposalAction, 'type'> {
+export interface IGaugeVoterActionUpdateGaugeMetadata
+    extends Omit<IProposalAction, 'type'> {
     /**
      * The type of the proposal action.
      */

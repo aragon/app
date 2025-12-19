@@ -7,8 +7,13 @@ class PluginsService extends AragonBackendService {
         pluginsByDao: '/v2/plugins/by-dao/:network/:address/details',
     };
 
-    getPluginsByDao = async (params: IGetPluginsByDaoParams): Promise<IDaoPlugin[]> => {
-        const result = await this.request<IDaoPlugin[]>(this.urls.pluginsByDao, params);
+    getPluginsByDao = async (
+        params: IGetPluginsByDaoParams,
+    ): Promise<IDaoPlugin[]> => {
+        const result = await this.request<IDaoPlugin[]>(
+            this.urls.pluginsByDao,
+            params,
+        );
 
         return result;
     };

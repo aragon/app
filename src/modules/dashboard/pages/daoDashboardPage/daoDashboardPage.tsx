@@ -11,7 +11,9 @@ export interface IDaoDashboardPageProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = async (props) => {
+export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const daoPageParams = await params;
 

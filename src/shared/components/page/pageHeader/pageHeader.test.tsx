@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PageHeader, type IPageHeaderProps } from './pageHeader';
+import { type IPageHeaderProps, PageHeader } from './pageHeader';
 
 describe('<Page.Header /> component', () => {
     const createTestComponent = (props?: Partial<IPageHeaderProps>) => {
@@ -11,7 +11,9 @@ describe('<Page.Header /> component', () => {
     it('renders the title as heading 1', () => {
         const title = 'Page title';
         render(createTestComponent({ title }));
-        expect(screen.getByRole('heading', { name: title, level: 1 })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: title, level: 1 }),
+        ).toBeInTheDocument();
     });
 
     it('renders breadcrumbs when provided', () => {

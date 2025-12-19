@@ -8,7 +8,8 @@ import {
 
 describe('htmlSanitizer', () => {
     test('sanitizeHtmlStrict strips all tags and scripts', () => {
-        const input = '<img src=x onerror=alert(1)><script>alert(1)</script><p>text</p>';
+        const input =
+            '<img src=x onerror=alert(1)><script>alert(1)</script><p>text</p>';
         const out = sanitizeHtmlStrict(input);
         expect(out).toContain('text');
         expect(out).not.toContain('<img');
@@ -17,7 +18,8 @@ describe('htmlSanitizer', () => {
     });
 
     test('sanitizeHtmlRich keeps allowed tags and drops dangerous attributes', () => {
-        const input = '<p>hello <strong>world</strong><img src="https://example.com/img.jpg" onerror=alert(1)></p>';
+        const input =
+            '<p>hello <strong>world</strong><img src="https://example.com/img.jpg" onerror=alert(1)></p>';
         const out = sanitizeHtmlRich(input);
         expect(out).toContain('<p>');
         expect(out).toContain('<strong>world</strong>');
@@ -26,7 +28,8 @@ describe('htmlSanitizer', () => {
     });
 
     test('sanitizeHtmlRich removes script tags', () => {
-        const input = '<p>text</p><script>alert(1)</script><img src="https://example.com/img.jpg">';
+        const input =
+            '<p>text</p><script>alert(1)</script><img src="https://example.com/img.jpg">';
         const out = sanitizeHtmlRich(input);
         expect(out).toContain('<p>text</p>');
         expect(out).not.toContain('<script');

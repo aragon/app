@@ -12,7 +12,9 @@ export const AdminGovernanceInfo: React.FC<IAdminGovernanceInfoProps> = () => {
         <DefinitionList.Container>
             {settings.map((governanceSetting, index) => (
                 <DefinitionList.Item key={index} term={governanceSetting.term}>
-                    <p className="text-neutral-500">{governanceSetting.definition}</p>
+                    <p className="text-neutral-500">
+                        {governanceSetting.definition}
+                    </p>
                 </DefinitionList.Item>
             ))}
         </DefinitionList.Container>

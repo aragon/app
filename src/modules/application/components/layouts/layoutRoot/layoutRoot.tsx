@@ -1,3 +1,8 @@
+import { dehydrate, QueryClient } from '@tanstack/react-query';
+import { headers } from 'next/headers';
+import NextTopLoader from 'nextjs-toploader';
+import type { ReactNode } from 'react';
+import { cookieToInitialState } from 'wagmi';
 import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
@@ -6,11 +11,6 @@ import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
-import { dehydrate, QueryClient } from '@tanstack/react-query';
-import { headers } from 'next/headers';
-import NextTopLoader from 'nextjs-toploader';
-import type { ReactNode } from 'react';
-import { cookieToInitialState } from 'wagmi';
 import { DebugPanel } from '../../debugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
@@ -35,7 +35,10 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const translationAssets = await translations.en();
 
     const requestHeaders = await headers();
-    const wagmiInitialState = cookieToInitialState(wagmiConfig, requestHeaders.get('cookie'));
+    const wagmiInitialState = cookieToInitialState(
+        wagmiConfig,
+        requestHeaders.get('cookie'),
+    );
 
     const featureFlagsSnapshot = await featureFlags.getSnapshot();
     const isDebugPanelEnabled = await featureFlags.isEnabled('debugPanel');
@@ -46,20 +49,20 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const dehydratedState = dehydrate(queryClient);
 
     return (
-        <html lang="en" className="h-full">
+        <html className="h-full" lang="en">
             <body className="flex h-full flex-col bg-neutral-50">
                 <NextTopLoader
                     color="var(--color-primary-400)"
-                    height={4}
-                    showSpinner={false}
                     easing="ease-in-out"
+                    height={4}
                     shadow="0 1px 3px 0 #003BF510, 0 1px 2px -1px #003BF510"
+                    showSpinner={false}
                 />
                 <Providers
-                    translations={translationAssets}
-                    wagmiInitialState={wagmiInitialState}
                     dehydratedState={dehydratedState}
                     featureFlagsSnapshot={featureFlagsSnapshot}
+                    translations={translationAssets}
+                    wagmiInitialState={wagmiInitialState}
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>

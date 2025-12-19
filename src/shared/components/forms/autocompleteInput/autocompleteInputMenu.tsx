@@ -1,4 +1,8 @@
-import { FloatingFocusManager, FloatingPortal, type UseFloatingReturn } from '@floating-ui/react';
+import {
+    FloatingFocusManager,
+    FloatingPortal,
+    type UseFloatingReturn,
+} from '@floating-ui/react';
 import classNames from 'classnames';
 import { type ComponentProps, forwardRef } from 'react';
 import { KeyboardShortcut } from '../../keyboardShortcut';
@@ -19,8 +23,18 @@ export interface IAutocompleteInputMenuProps extends ComponentProps<'div'> {
     selectItemLabel: string;
 }
 
-export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInputMenuProps>((props, ref) => {
-    const { isOpen, context, selectItemLabel, children, className, ...otherProps } = props;
+export const AutocompleteInputMenu = forwardRef<
+    HTMLDivElement,
+    IAutocompleteInputMenuProps
+>((props, ref) => {
+    const {
+        isOpen,
+        context,
+        selectItemLabel,
+        children,
+        className,
+        ...otherProps
+    } = props;
 
     const { t } = useTranslations();
 
@@ -45,19 +59,27 @@ export const AutocompleteInputMenu = forwardRef<HTMLDivElement, IAutocompleteInp
                 <FloatingFocusManager
                     context={context}
                     initialFocus={-1}
-                    visuallyHiddenDismiss={true}
                     returnFocus={false}
+                    visuallyHiddenDismiss={true}
                 >
                     <div className={menuClassName} ref={ref} {...otherProps}>
-                        <div className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3">{children}</div>
+                        <div className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3">
+                            {children}
+                        </div>
                         <div className={footerClassName}>
                             <div className="flex flex-row items-center gap-1">
                                 <KeyboardShortcut>↑</KeyboardShortcut>
                                 <KeyboardShortcut>↓</KeyboardShortcut>
-                                <p className="text-neutral-500">{t('app.shared.autocompleteInput.menu.select')}</p>
+                                <p className="text-neutral-500">
+                                    {t(
+                                        'app.shared.autocompleteInput.menu.select',
+                                    )}
+                                </p>
                             </div>
                             <div className="flex flex-row items-center gap-1">
-                                <p className="text-neutral-500">{selectItemLabel}</p>
+                                <p className="text-neutral-500">
+                                    {selectItemLabel}
+                                </p>
                                 <KeyboardShortcut>↵</KeyboardShortcut>
                             </div>
                         </div>

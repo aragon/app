@@ -5,7 +5,9 @@ import type { ITokenExitQueueTicket } from '../../types';
  * @param ticket - Optional partial ticket to override defaults.
  * @returns A complete ITokenExitQueueTicket object.
  */
-export const generateTokenExitQueueTicket = (ticket?: Partial<ITokenExitQueueTicket>): ITokenExitQueueTicket => {
+export const generateTokenExitQueueTicket = (
+    ticket?: Partial<ITokenExitQueueTicket>,
+): ITokenExitQueueTicket => {
     const thirtyDaysInSeconds = 30 * 24 * 60 * 60;
     const twoDaysInSeconds = 2 * 24 * 60 * 60;
     const now = Math.floor(Date.now() / 1000);

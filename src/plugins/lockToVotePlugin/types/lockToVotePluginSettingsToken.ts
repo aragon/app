@@ -1,3 +1,3 @@
-import { type IToken } from '@/modules/finance/api/financeService';
+import type { IToken } from '@/modules/finance/api/financeService';
 
 export interface ILockToVotePluginSettingsToken extends IToken {}

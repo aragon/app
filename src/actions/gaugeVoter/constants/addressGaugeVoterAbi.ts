@@ -36,4 +36,9 @@ export const updateGaugeMetadataAbi = {
     stateMutability: 'nonpayable',
 } as const;
 
-export const gaugeVoterAbi = [createGaugeAbi, deactivateGaugeAbi, activateGaugeAbi, updateGaugeMetadataAbi] as const;
+export const gaugeVoterAbi = [
+    createGaugeAbi,
+    deactivateGaugeAbi,
+    activateGaugeAbi,
+    updateGaugeMetadataAbi,
+] as const;

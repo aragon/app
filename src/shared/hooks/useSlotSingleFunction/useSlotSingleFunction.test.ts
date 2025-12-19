@@ -1,9 +1,15 @@
-import { type PluginFunction, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { renderHook } from '@testing-library/react';
+import {
+    type PluginFunction,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import { useSlotSingleFunction } from './useSlotSingleFunction';
 
 describe('useSlotSingleFunction hook', () => {
-    const getSlotFunctionSpy = jest.spyOn(pluginRegistryUtils, 'getSlotFunction');
+    const getSlotFunctionSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getSlotFunction',
+    );
 
     afterEach(() => {
         getSlotFunctionSpy.mockReset();
@@ -15,7 +21,9 @@ describe('useSlotSingleFunction hook', () => {
         const slotId = 'slot-id';
         const slotFunction: PluginFunction = (value: number) => value * 2;
         getSlotFunctionSpy.mockReturnValue(slotFunction);
-        const { result } = renderHook(() => useSlotSingleFunction({ params, slotId, pluginId }));
+        const { result } = renderHook(() =>
+            useSlotSingleFunction({ params, slotId, pluginId }),
+        );
 
         expect(getSlotFunctionSpy).toHaveBeenCalledWith({ slotId, pluginId });
         expect(result.current).toEqual(slotFunction(params));
@@ -25,7 +33,9 @@ describe('useSlotSingleFunction hook', () => {
         const pluginId = 'plugin-id';
         const slotId = 'slot-id';
         getSlotFunctionSpy.mockReturnValue(undefined);
-        const { result } = renderHook(() => useSlotSingleFunction({ slotId, pluginId, params: {} }));
+        const { result } = renderHook(() =>
+            useSlotSingleFunction({ slotId, pluginId, params: {} }),
+        );
         expect(result.current).toBeUndefined();
     });
 
@@ -37,7 +47,12 @@ describe('useSlotSingleFunction hook', () => {
         getSlotFunctionSpy.mockReturnValue(undefined);
 
         const { result } = renderHook(() =>
-            useSlotSingleFunction({ slotId, pluginId, params, fallback: fallbackFunction }),
+            useSlotSingleFunction({
+                slotId,
+                pluginId,
+                params,
+                fallback: fallbackFunction,
+            }),
         );
 
         expect(result.current).toEqual(fallbackFunction(params));

@@ -8,7 +8,6 @@ describe('monitoring utils', () => {
     });
 
     describe('getBaseConfig', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const isEnabledSpy = jest.spyOn(monitoringUtils as any, 'isEnabled');
 
         afterEach(() => {

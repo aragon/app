@@ -7,10 +7,19 @@ import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
 import { SetupStageSettingsDialog } from '../dialogs/setupStageSettingsDialog';
 import { CreateDaoDialogId } from './createDaoDialogId';
 
-export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogComponentDefinitions> = {
+export const createDaoDialogsDefinitions: Record<
+    CreateDaoDialogId,
+    IDialogComponentDefinitions
+> = {
     [CreateDaoDialogId.PUBLISH_DAO]: { Component: PublishDaoDialog },
-    [CreateDaoDialogId.CREATE_DAO_DETAILS]: { Component: CreateDaoDetailsDialog, size: 'lg' },
-    [CreateDaoDialogId.CREATE_PROCESS_DETAILS]: { Component: CreateProcessDetailsDialog, size: 'lg' },
+    [CreateDaoDialogId.CREATE_DAO_DETAILS]: {
+        Component: CreateDaoDetailsDialog,
+        size: 'lg',
+    },
+    [CreateDaoDialogId.CREATE_PROCESS_DETAILS]: {
+        Component: CreateProcessDetailsDialog,
+        size: 'lg',
+    },
     [CreateDaoDialogId.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
     [CreateDaoDialogId.SETUP_BODY]: {
         Component: SetupBodyDialog,
@@ -20,6 +29,7 @@ export const createDaoDialogsDefinitions: Record<CreateDaoDialogId, IDialogCompo
     [CreateDaoDialogId.SETUP_STAGE_SETTINGS]: {
         Component: SetupStageSettingsDialog,
         size: 'lg',
-        hiddenDescription: 'app.createDao.setupStageSettingsDialog.a11y.description',
+        hiddenDescription:
+            'app.createDao.setupStageSettingsDialog.a11y.description',
     },
 };

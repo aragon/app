@@ -11,16 +11,29 @@ describe('capitalDistributor service', () => {
     });
 
     it('getCampaignList fetches a paginated list of campaigns for the given member address', async () => {
-        const campaignsList = [generateCampaign({ campaignId: '1' }), generateCampaign({ campaignId: '2' })];
-        const campaignsListResponse = generatePaginatedResponse({ data: campaignsList });
+        const campaignsList = [
+            generateCampaign({ campaignId: '1' }),
+            generateCampaign({ campaignId: '2' }),
+        ];
+        const campaignsListResponse = generatePaginatedResponse({
+            data: campaignsList,
+        });
         const params = {
-            queryParams: { pluginAddress: '0x123', network: Network.BASE_MAINNET, userAddress: '0x456', pageSize: 2 },
+            queryParams: {
+                pluginAddress: '0x123',
+                network: Network.BASE_MAINNET,
+                userAddress: '0x456',
+                pageSize: 2,
+            },
         };
 
         requestSpy.mockResolvedValue(campaignsListResponse);
         const result = await capitalDistributorService.getCampaignList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(capitalDistributorService['urls'].campaigns, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            capitalDistributorService['urls'].campaigns,
+            params,
+        );
         expect(result).toEqual(campaignsListResponse);
     });
 });

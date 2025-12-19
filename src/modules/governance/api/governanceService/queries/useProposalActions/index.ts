@@ -1,1 +1,4 @@
-export { proposalActionsOptions, useProposalActions } from './useProposalActions';
+export {
+    proposalActionsOptions,
+    useProposalActions,
+} from './useProposalActions';

@@ -1,6 +1,16 @@
 'use client';
 
-import { type IProposalAction } from '@/modules/governance/api/governanceService';
+import {
+    AlertInline,
+    CardEmptyState,
+    IconType,
+    type IProposalActionComponentProps,
+    invariant,
+} from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { encodeFunctionData } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
@@ -10,16 +20,6 @@ import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    AlertInline,
-    CardEmptyState,
-    IconType,
-    invariant,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { encodeFunctionData } from 'viem';
 import { gaugeVoterAbi } from '../../constants/addressGaugeVoterAbi';
 import { GaugeVoterDialogId } from '../../constants/gaugeVoterDialogId';
 import type { IGaugeVoterSelectGaugeDialogParams } from '../../dialogs/gaugeVoterSelectGaugeDialog';
@@ -28,9 +28,13 @@ import type { IGaugeVoterActionDeactivateGauge } from '../../types/gaugeVoterAct
 import { GaugeVoterGaugeListItem } from '../gaugeVoterGaugeListItem';
 
 export interface IGaugeVoterDeactivateGaugeActionCreateProps
-    extends IProposalActionComponentProps<IProposalActionData<IProposalAction, unknown>> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData<IProposalAction, unknown>
+    > {}
 
-export const GaugeVoterDeactivateGaugeActionCreate: React.FC<IGaugeVoterDeactivateGaugeActionCreateProps> = (props) => {
+export const GaugeVoterDeactivateGaugeActionCreate: React.FC<
+    IGaugeVoterDeactivateGaugeActionCreateProps
+> = (props) => {
     const { action, index } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -46,17 +50,20 @@ export const GaugeVoterDeactivateGaugeActionCreate: React.FC<IGaugeVoterDeactiva
         setValue(selectedGaugeFieldName, gauge);
     };
 
-    const { value: selectedGauge, alert } = useFormField<Record<string, IGauge | undefined>, string>(
-        selectedGaugeFieldName,
-        {
-            label: t('app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.heading'),
-            rules: {
-                required: true,
-            },
+    const { value: selectedGauge, alert } = useFormField<
+        Record<string, IGauge | undefined>,
+        string
+    >(selectedGaugeFieldName, {
+        label: t(
+            'app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.heading',
+        ),
+        rules: {
+            required: true,
         },
-    );
+    });
 
-    const { addPrepareAction } = useCreateProposalFormContext<IGaugeVoterActionDeactivateGauge>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IGaugeVoterActionDeactivateGauge>();
 
     const handleOpenGaugeSelectDialog = () => {
         const params: IGaugeVoterSelectGaugeDialogParams = {
@@ -69,44 +76,60 @@ export const GaugeVoterDeactivateGaugeActionCreate: React.FC<IGaugeVoterDeactiva
         open(GaugeVoterDialogId.SELECT_GAUGE, { params });
     };
 
-    const prepareAction = useCallback((action: IGaugeVoterActionDeactivateGauge) => {
-        invariant(
-            action.gaugeToDeactivate != null,
-            'GaugeVoterDeactivateGaugeActionCreate: gauge to deactivate not selected.',
-        );
+    const prepareAction = useCallback(
+        (action: IGaugeVoterActionDeactivateGauge) => {
+            invariant(
+                action.gaugeToDeactivate != null,
+                'GaugeVoterDeactivateGaugeActionCreate: gauge to deactivate not selected.',
+            );
 
-        const data = encodeFunctionData({
-            abi: gaugeVoterAbi,
-            functionName: 'deactivateGauge',
-            args: [action.gaugeToDeactivate.address],
-        });
+            const data = encodeFunctionData({
+                abi: gaugeVoterAbi,
+                functionName: 'deactivateGauge',
+                args: [action.gaugeToDeactivate.address],
+            });
 
-        return Promise.resolve(data);
-    }, []);
+            return Promise.resolve(data);
+        },
+        [],
+    );
 
     useEffect(() => {
         addPrepareAction(GaugeVoterActionType.DEACTIVATE_GAUGE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
     if (selectedGauge) {
-        return <GaugeVoterGaugeListItem gauge={selectedGauge} onRemove={() => setSelectedGauge(undefined)} />;
+        return (
+            <GaugeVoterGaugeListItem
+                gauge={selectedGauge}
+                onRemove={() => setSelectedGauge(undefined)}
+            />
+        );
     }
 
     return (
         <>
             <CardEmptyState
-                heading={t('app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.heading')}
-                description={t('app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.description')}
+                className="border border-neutral-100"
+                description={t(
+                    'app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.description',
+                )}
+                heading={t(
+                    'app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.heading',
+                )}
+                isStacked={false}
                 objectIllustration={{ object: 'SETTINGS' }}
                 secondaryButton={{
-                    label: t('app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.action'),
+                    label: t(
+                        'app.actions.gaugeVoter.gaugeVoterDeactivateGaugeActionCreate.emptyCard.action',
+                    ),
                     onClick: handleOpenGaugeSelectDialog,
                     iconLeft: IconType.PLUS,
                 }}
-                isStacked={false}
-                className="border border-neutral-100"
             />
-            {alert && <AlertInline message={alert.message} variant={alert.variant} />}
+            {alert && (
+                <AlertInline message={alert.message} variant={alert.variant} />
+            )}
         </>
     );
 };

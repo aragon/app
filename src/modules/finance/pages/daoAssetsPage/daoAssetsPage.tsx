@@ -1,9 +1,9 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import { type IDaoPageParams } from '@/shared/types';
+import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { assetListOptions } from '../../api/financeService';
 import { DaoAssetsPageClient } from './daoAssetsPageClient';
 
@@ -29,7 +29,9 @@ export const DaoAssetsPage: React.FC<IDaoAssetsPageProps> = async (props) => {
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const useDaoParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: useDaoParams }));
+    const dao = await queryClient.fetchQuery(
+        daoOptions({ urlParams: useDaoParams }),
+    );
 
     // Pass parent DAO's daoId - AssetListContainer will override it based on selected tab
     // When "All" tab: uses parent daoId (returns parent + all SubDAOs)

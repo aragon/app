@@ -1,11 +1,5 @@
 'use client';
 
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     DaoDataListItem,
     DataListContainer,
@@ -16,11 +10,17 @@ import {
     useDebouncedValue,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { dataListUtils } from '@/shared/utils/dataListUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 import {
-    useDaoList,
-    useDaoListByMemberAddress,
     type IGetDaoListByMemberAddressParams,
     type IGetDaoListParams,
+    useDaoList,
+    useDaoListByMemberAddress,
 } from '../../api/daoExplorerService';
 
 export interface IDaoListProps {
@@ -52,7 +52,9 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     );
 
     const [searchValue, setSearchValue] = useState<string>();
-    const [searchValueDebounced] = useDebouncedValue(searchValue, { delay: 500 });
+    const [searchValueDebounced] = useDebouncedValue(searchValue, {
+        delay: 500,
+    });
 
     const defaultResult = useDaoList(
         {
@@ -67,7 +69,13 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     );
 
     const memberResult = useDaoListByMemberAddress(
-        { ...memberParams!, queryParams: { ...memberParams?.queryParams, search: searchValueDebounced } },
+        {
+            ...memberParams!,
+            queryParams: {
+                ...memberParams?.queryParams,
+                search: searchValueDebounced,
+            },
+        },
         { enabled: memberParams != null },
     );
 
@@ -76,10 +84,16 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
 
     const daoList = data?.pages.flatMap((page) => page.data);
 
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
     const pageSize =
-        initialParams?.queryParams.pageSize ?? memberParams?.queryParams.pageSize ?? data?.pages[0]?.metadata?.pageSize;
+        initialParams?.queryParams.pageSize ??
+        memberParams?.queryParams.pageSize ??
+        data?.pages[0]?.metadata?.pageSize;
 
     const itemsCount = data?.pages[0]?.metadata?.totalRecords;
 
@@ -96,34 +110,36 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
     return (
         <DataListRoot
             entityLabel={t('app.explore.daoList.entity')}
-            onLoadMore={fetchNextPage}
-            state={state}
-            pageSize={pageSize}
             itemsCount={itemsCount}
+            onLoadMore={fetchNextPage}
+            pageSize={pageSize}
+            state={state}
         >
             {showSearch && (
                 <DataListFilter
                     onSearchValueChange={setSearchValue}
-                    searchValue={searchValue}
                     placeholder={t('app.explore.daoList.searchPlaceholder')}
+                    searchValue={searchValue}
                 />
             )}
             <DataListContainer
-                errorState={errorState}
                 emptyState={emptyState}
+                errorState={errorState}
+                layoutClassName={
+                    layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'
+                }
                 SkeletonElement={DaoDataListItem.Skeleton}
-                layoutClassName={layoutClassNames ?? 'grid grid-cols-1 lg:grid-cols-2'}
             >
                 {daoList?.map((dao) => (
                     <DaoDataListItem.Structure
-                        key={dao.id}
-                        href={daoUtils.getDaoUrl(dao, 'dashboard')}
-                        ens={daoUtils.getDaoEns(dao)}
                         address={dao.address}
-                        name={dao.name}
                         description={dao.description}
-                        network={networkDefinitions[dao.network].name}
+                        ens={daoUtils.getDaoEns(dao)}
+                        href={daoUtils.getDaoUrl(dao, 'dashboard')}
+                        key={dao.id}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
+                        name={dao.name}
+                        network={networkDefinitions[dao.network].name}
                     />
                 ))}
             </DataListContainer>

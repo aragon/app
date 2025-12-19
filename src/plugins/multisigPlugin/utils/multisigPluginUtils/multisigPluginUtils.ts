@@ -9,12 +9,15 @@ export interface IMultisigPluginHasExecutePermissionParams {
 }
 
 class MultisigPluginUtils {
-    hasExecuteProposalPermissionModifier = (params: IMultisigPluginHasExecutePermissionParams): boolean => {
+    hasExecuteProposalPermissionModifier = (
+        params: IMultisigPluginHasExecutePermissionParams,
+    ): boolean => {
         const { plugin } = params;
-        const hasExecuteProposalPermissionGuard = pluginMetaUtils.isVersionGreaterOrEqualTo(plugin, {
-            release: 1,
-            build: 3,
-        });
+        const hasExecuteProposalPermissionGuard =
+            pluginMetaUtils.isVersionGreaterOrEqualTo(plugin, {
+                release: 1,
+                build: 3,
+            });
 
         return hasExecuteProposalPermissionGuard;
     };

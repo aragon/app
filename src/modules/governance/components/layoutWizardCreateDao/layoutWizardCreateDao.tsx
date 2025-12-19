@@ -2,6 +2,12 @@ import { LayoutWizard } from '@/modules/application/components/layouts/layoutWiz
 
 export interface ILayoutWizardCreateDaoProps {}
 
-export const LayoutWizardCreateDao: React.FC<ILayoutWizardCreateDaoProps> = (props) => {
-    return <LayoutWizard name="app.governance.layoutWizardCreateDao.name" exitPath="/" {...props} />;
-};
+export const LayoutWizardCreateDao: React.FC<ILayoutWizardCreateDaoProps> = (
+    props,
+) => (
+    <LayoutWizard
+        exitPath="/"
+        name="app.governance.layoutWizardCreateDao.name"
+        {...props}
+    />
+);

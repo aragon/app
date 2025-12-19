@@ -6,7 +6,11 @@ describe('AragonBackendServiceError class', () => {
         const code = 'test-code';
         const description = 'test-description';
         const status = 500;
-        const aragonError = new AragonBackendServiceError(code, description, status);
+        const aragonError = new AragonBackendServiceError(
+            code,
+            description,
+            status,
+        );
         expect(aragonError.code).toEqual(code);
         expect(aragonError.description).toEqual(description);
         expect(aragonError.status).toEqual(status);
@@ -21,7 +25,8 @@ describe('AragonBackendServiceError class', () => {
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: () => Promise.resolve(error),
             });
-            const aragonError = await AragonBackendServiceError.fromResponse(response);
+            const aragonError =
+                await AragonBackendServiceError.fromResponse(response);
             expect(aragonError.code).toEqual(error.code);
             expect(aragonError.description).toEqual(error.description);
             expect(aragonError.status).toEqual(response.status);
@@ -34,35 +39,56 @@ describe('AragonBackendServiceError class', () => {
                 headers: new Headers({ 'content-type': 'application/json' }),
                 json: () => Promise.reject(new Error('Invalid JSON')),
             });
-            const aragonError = await AragonBackendServiceError.fromResponse(response);
-            expect(aragonError.code).toEqual(AragonBackendServiceError.parseErrorCode);
-            expect(aragonError.description).toEqual('Error parsing response (status=500, url=http://test.com)');
+            const aragonError =
+                await AragonBackendServiceError.fromResponse(response);
+            expect(aragonError.code).toEqual(
+                AragonBackendServiceError.parseErrorCode,
+            );
+            expect(aragonError.description).toEqual(
+                'Error parsing response (status=500, url=http://test.com)',
+            );
         });
     });
 
     describe('isNotFoundError', () => {
         it('returns true when error is not-found error', () => {
-            const error = new AragonBackendServiceError(AragonBackendServiceError.notFoundCode, '', 404);
-            expect(AragonBackendServiceError.isNotFoundError(error)).toBeTruthy();
+            const error = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                '',
+                404,
+            );
+            expect(
+                AragonBackendServiceError.isNotFoundError(error),
+            ).toBeTruthy();
         });
 
         it('returns false when error is null or undefined', () => {
             expect(AragonBackendServiceError.isNotFoundError(null)).toBeFalsy();
-            expect(AragonBackendServiceError.isNotFoundError(undefined)).toBeFalsy();
+            expect(
+                AragonBackendServiceError.isNotFoundError(undefined),
+            ).toBeFalsy();
         });
 
         it('returns false when error is not an object', () => {
-            expect(AragonBackendServiceError.isNotFoundError('error')).toBeFalsy();
+            expect(
+                AragonBackendServiceError.isNotFoundError('error'),
+            ).toBeFalsy();
             expect(AragonBackendServiceError.isNotFoundError(0)).toBeFalsy();
         });
 
         it('returns false when error has no code attribute', () => {
             expect(AragonBackendServiceError.isNotFoundError({})).toBeFalsy();
-            expect(AragonBackendServiceError.isNotFoundError({ status: 400 })).toBeFalsy();
+            expect(
+                AragonBackendServiceError.isNotFoundError({ status: 400 }),
+            ).toBeFalsy();
         });
 
         it('returns false when error code is not not-found code', () => {
-            expect(AragonBackendServiceError.isNotFoundError({ code: 'errorCode' })).toBeFalsy();
+            expect(
+                AragonBackendServiceError.isNotFoundError({
+                    code: 'errorCode',
+                }),
+            ).toBeFalsy();
         });
     });
 });

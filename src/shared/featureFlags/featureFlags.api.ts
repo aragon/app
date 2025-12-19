@@ -1,4 +1,10 @@
-export const FEATURE_FLAG_ENVIRONMENTS = ['local', 'preview', 'development', 'staging', 'production'] as const;
+export const FEATURE_FLAG_ENVIRONMENTS = [
+    'local',
+    'preview',
+    'development',
+    'staging',
+    'production',
+] as const;
 
 export type FeatureFlagEnvironment = (typeof FEATURE_FLAG_ENVIRONMENTS)[number];
 

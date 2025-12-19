@@ -1,13 +1,13 @@
 'use client';
 
+import { Tag } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import type { ComponentProps } from 'react';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Container } from '@/shared/components/container';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
-import { Tag } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
-import type { ComponentProps } from 'react';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
@@ -28,30 +28,41 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const version = useApplicationVersion();
 
     return (
-        <footer className={classNames('bg-neutral-0 border-t border-neutral-100 py-5', className)} {...otherProps}>
-            <Container className={classNames('grid items-center md:gap-6', layoutClassNames)}>
+        <footer
+            className={classNames(
+                'border-neutral-100 border-t bg-neutral-0 py-5',
+                className,
+            )}
+            {...otherProps}
+        >
+            <Container
+                className={classNames(
+                    'grid items-center md:gap-6',
+                    layoutClassNames,
+                )}
+            >
                 <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-sm leading-tight text-neutral-800 md:text-base">
+                        <p className="text-neutral-800 text-sm leading-tight md:text-base">
                             {t('app.application.footer.governed')}
                         </p>
                         <AragonLogo size="sm" />
                     </div>
-                    <Tag variant="primary" label={version} />
+                    <Tag label={version} variant="primary" />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
-                            className="truncate border-b border-neutral-100 py-4 text-base leading-tight font-normal text-neutral-500 last:border-none md:border-none md:py-0"
-                            key={label}
+                            className="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0"
                             href={link}
+                            key={label}
                             target={target}
                         >
                             {t(`app.application.footer.link.${label}`)}
                         </Link>
                     ))}
                 </div>
-                <p className="truncate pt-6 pb-3 text-base leading-tight font-normal text-neutral-500 [grid-area:copyright] md:py-0 lg:justify-self-end">
+                <p className="truncate pt-6 pb-3 font-normal text-base text-neutral-500 leading-tight [grid-area:copyright] md:py-0 lg:justify-self-end">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>

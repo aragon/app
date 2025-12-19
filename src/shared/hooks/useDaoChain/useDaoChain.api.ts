@@ -1,6 +1,6 @@
+import type { ChainEntityType } from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
 import type { INetworkDefinition } from '@/shared/constants/networkDefinitions';
-import type { ChainEntityType } from '@aragon/gov-ui-kit';
 
 export interface IUseDaoChainParams {
     /**
@@ -33,7 +33,11 @@ export interface IUseDaoChainReturn {
     /**
      * Build block explorer URLs for the chain.
      */
-    buildEntityUrl: (params: { type: ChainEntityType; id?: string; chainId?: number }) => string | undefined;
+    buildEntityUrl: (params: {
+        type: ChainEntityType;
+        id?: string;
+        chainId?: number;
+    }) => string | undefined;
     /**
      * Whether DAO data is loading.
      */

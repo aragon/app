@@ -1,9 +1,9 @@
+import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, DefinitionList } from '@aragon/gov-ui-kit';
-import { type IDaoPlugInfoProps } from './daoPluginInfo.api';
+import type { IDaoPlugInfoProps } from './daoPluginInfo.api';
 import { DaoPluginInfoMetadata } from './daoPluginInfoMetadata';
 
 export const daoPluginInfoFilterParam = 'plugin';
@@ -32,7 +32,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 ))}
             </DefinitionList.Container>
             {!plugin.isSubPlugin && plugin.isProcess && (
-                <Button variant="tertiary" href={processLink}>
+                <Button href={processLink} variant="tertiary">
                     {t('app.settings.daoPluginInfo.viewProcess')}
                 </Button>
             )}

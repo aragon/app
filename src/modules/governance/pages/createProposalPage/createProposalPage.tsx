@@ -10,14 +10,19 @@ export interface ICreateProposalPageProps {
     params: Promise<ICreateProposalPageParams>;
 }
 
-export const CreateProposalPage: React.FC<ICreateProposalPageProps> = async (props) => {
+export const CreateProposalPage: React.FC<ICreateProposalPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const { addressOrEns, network, pluginAddress } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     return (
         <Page.Container>
-            <CreateProposalPageClient daoId={daoId} pluginAddress={pluginAddress} />
+            <CreateProposalPageClient
+                daoId={daoId}
+                pluginAddress={pluginAddress}
+            />
         </Page.Container>
     );
 };

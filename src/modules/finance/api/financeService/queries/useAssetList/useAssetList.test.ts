@@ -1,6 +1,9 @@
-import { generateAsset } from '@/modules/finance/testUtils';
-import { ReactQueryWrapper, generatePaginatedResponse } from '@/shared/testUtils';
 import { renderHook, waitFor } from '@testing-library/react';
+import { generateAsset } from '@/modules/finance/testUtils';
+import {
+    generatePaginatedResponse,
+    ReactQueryWrapper,
+} from '@/shared/testUtils';
 import { financeService } from '../../financeService';
 import { useAssetList } from './useAssetList';
 
@@ -13,11 +16,18 @@ describe('useAssetList query', () => {
 
     it('fetches the assets for the specified DAO', async () => {
         const params = { daoId: 'eth-sepolia-0xdao' };
-        const assetsResult = generatePaginatedResponse({ data: [generateAsset()] });
-        financeServiceSpy.mockResolvedValue(assetsResult);
-        const { result } = renderHook(() => useAssetList({ queryParams: params }), {
-            wrapper: ReactQueryWrapper,
+        const assetsResult = generatePaginatedResponse({
+            data: [generateAsset()],
         });
-        await waitFor(() => expect(result.current.data?.pages[0]).toEqual(assetsResult));
+        financeServiceSpy.mockResolvedValue(assetsResult);
+        const { result } = renderHook(
+            () => useAssetList({ queryParams: params }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
+        await waitFor(() =>
+            expect(result.current.data?.pages[0]).toEqual(assetsResult),
+        );
     });
 });

@@ -1,6 +1,8 @@
 import type { IDialogContext } from '@/shared/components/dialogProvider';
 
-export const generateDialogContext = (values?: Partial<IDialogContext>): IDialogContext => {
+export const generateDialogContext = (
+    values?: Partial<IDialogContext>,
+): IDialogContext => {
     const { locations, ...rest } = values ?? {};
 
     return {

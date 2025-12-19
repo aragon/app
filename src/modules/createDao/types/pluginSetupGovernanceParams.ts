@@ -1,6 +1,8 @@
 import type { ISetupBodyFormMembership } from '../dialogs/setupBodyDialog';
 
-export interface IPluginSetupGovernanceParams<TMembership extends ISetupBodyFormMembership = ISetupBodyFormMembership> {
+export interface IPluginSetupGovernanceParams<
+    TMembership extends ISetupBodyFormMembership = ISetupBodyFormMembership,
+> {
     /**
      * Prefix to be appended to all form fields.
      */

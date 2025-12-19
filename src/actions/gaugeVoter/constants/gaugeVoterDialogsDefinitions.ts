@@ -2,6 +2,11 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { GaugeVoterSelectGaugeDialog } from '../dialogs/gaugeVoterSelectGaugeDialog';
 import { GaugeVoterDialogId } from './gaugeVoterDialogId';
 
-export const gaugeVoterDialogsDefinitions: Record<GaugeVoterDialogId, IDialogComponentDefinitions> = {
-    [GaugeVoterDialogId.SELECT_GAUGE]: { Component: GaugeVoterSelectGaugeDialog },
+export const gaugeVoterDialogsDefinitions: Record<
+    GaugeVoterDialogId,
+    IDialogComponentDefinitions
+> = {
+    [GaugeVoterDialogId.SELECT_GAUGE]: {
+        Component: GaugeVoterSelectGaugeDialog,
+    },
 };

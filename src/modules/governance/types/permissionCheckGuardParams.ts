@@ -1,7 +1,9 @@
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 
-export interface IPermissionCheckGuardParams<TPlugin extends IDaoPlugin = IDaoPlugin> {
+export interface IPermissionCheckGuardParams<
+    TPlugin extends IDaoPlugin = IDaoPlugin,
+> {
     /**
      * Plugin to check permissions for.
      */

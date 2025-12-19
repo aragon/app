@@ -1,7 +1,7 @@
 import {
-    TokenExitQueueFeeMode,
     type ITokenExitQueueTicket,
     type ITokenPluginSettingsEscrowSettings,
+    TokenExitQueueFeeMode,
 } from '../../types';
 import type {
     ICalculateFeeAtTimeParams,
@@ -29,7 +29,9 @@ class TokenExitQueueFeeUtils {
      * @param ticket - The ticket containing fee parameters.
      * @returns The fee mode (FIXED, DYNAMIC, or TIERED).
      */
-    determineFeeMode = (ticket: ITokenExitQueueTicket): TokenExitQueueFeeMode => {
+    determineFeeMode = (
+        ticket: ITokenExitQueueTicket,
+    ): TokenExitQueueFeeMode => {
         // Fixed: minFeePercent === feePercent
         if (ticket.minFeePercent === ticket.feePercent) {
             return TokenExitQueueFeeMode.FIXED;
@@ -53,8 +55,12 @@ class TokenExitQueueFeeUtils {
     calculateFeeAtTime = (params: ICalculateFeeAtTimeParams): number => {
         const { timeElapsed, ticket } = params;
 
-        const scaledMaxFee = (BigInt(ticket.feePercent) * this.INTERNAL_PRECISION) / BigInt(this.MAX_FEE_PERCENT);
-        const scaledMinFee = (BigInt(ticket.minFeePercent) * this.INTERNAL_PRECISION) / BigInt(this.MAX_FEE_PERCENT);
+        const scaledMaxFee =
+            (BigInt(ticket.feePercent) * this.INTERNAL_PRECISION) /
+            BigInt(this.MAX_FEE_PERCENT);
+        const scaledMinFee =
+            (BigInt(ticket.minFeePercent) * this.INTERNAL_PRECISION) /
+            BigInt(this.MAX_FEE_PERCENT);
 
         // Fixed fee system (no decay, no tiers)
         if (ticket.minFeePercent === ticket.feePercent) {
@@ -65,7 +71,8 @@ class TokenExitQueueFeeUtils {
         // minCooldown <= timeElapsed < cooldown: max fee
         // timeElapsed >= cooldown: min fee
         if (ticket.slope === BigInt(0)) {
-            const fee = timeElapsed >= ticket.cooldown ? scaledMinFee : scaledMaxFee;
+            const fee =
+                timeElapsed >= ticket.cooldown ? scaledMinFee : scaledMaxFee;
             return this.scaledFeeToPercent(fee);
         }
 
@@ -82,7 +89,9 @@ class TokenExitQueueFeeUtils {
         }
 
         // Calculate fee reduction using high-precision slope
-        const timeInDecay = BigInt(Math.floor(timeElapsed - ticket.minCooldown));
+        const timeInDecay = BigInt(
+            Math.floor(timeElapsed - ticket.minCooldown),
+        );
         const feeReduction = ticket.slope * timeInDecay;
 
         // Ensure we don't go below minimum fee
@@ -100,7 +109,9 @@ class TokenExitQueueFeeUtils {
      * @returns Fee as percentage (0-100).
      */
     private scaledFeeToPercent = (scaledFee: bigint): number => {
-        const roundedScaledFee = scaledFee * BigInt(this.MAX_FEE_PERCENT) + this.INTERNAL_PRECISION / BigInt(2);
+        const roundedScaledFee =
+            scaledFee * BigInt(this.MAX_FEE_PERCENT) +
+            this.INTERNAL_PRECISION / BigInt(2);
         const basisPoints = Number(roundedScaledFee / this.INTERNAL_PRECISION);
         return basisPoints / 100;
     };
@@ -113,7 +124,10 @@ class TokenExitQueueFeeUtils {
      */
     shouldShowFeeDialog = (
         config:
-            | Pick<ITokenPluginSettingsEscrowSettings, 'feePercent' | 'minFeePercent'>
+            | Pick<
+                  ITokenPluginSettingsEscrowSettings,
+                  'feePercent' | 'minFeePercent'
+              >
             | {
                   feePercent?: number | null;
                   minFeePercent?: number | null;
@@ -130,7 +144,9 @@ class TokenExitQueueFeeUtils {
      * @param params - Parameters containing ticket and current time.
      * @returns Array of chart data points.
      */
-    getChartDataPoints = (params: IGetChartDataPointsParams): IChartDataPoint[] => {
+    getChartDataPoints = (
+        params: IGetChartDataPointsParams,
+    ): IChartDataPoint[] => {
         const { ticket, pointCount = 6 } = params;
 
         const mode = this.determineFeeMode(ticket);
@@ -143,7 +159,10 @@ class TokenExitQueueFeeUtils {
         // Tiered fees only have two states (early vs normal exit). Ensure we include minCooldown breakpoint.
         if (mode === TokenExitQueueFeeMode.TIERED) {
             const times = new Set<number>();
-            const baseStep = pointCount > 1 ? ticket.cooldown / (pointCount - 1) : ticket.cooldown;
+            const baseStep =
+                pointCount > 1
+                    ? ticket.cooldown / (pointCount - 1)
+                    : ticket.cooldown;
 
             for (let i = 0; i < pointCount; i++) {
                 const raw = i * baseStep;
@@ -159,7 +178,10 @@ class TokenExitQueueFeeUtils {
 
             return sortedTimes.map((elapsedSeconds) => ({
                 elapsedSeconds,
-                feePercent: this.calculateFeeAtTime({ timeElapsed: elapsedSeconds, ticket }),
+                feePercent: this.calculateFeeAtTime({
+                    timeElapsed: elapsedSeconds,
+                    ticket,
+                }),
             }));
         }
 
@@ -169,8 +191,12 @@ class TokenExitQueueFeeUtils {
 
         for (let i = 0; i < pointCount; i++) {
             const pointSeconds = i * secondsStep;
-            const normalizedPointSeconds = i === pointCount - 1 ? ticket.cooldown : pointSeconds;
-            const feePercent = this.calculateFeeAtTime({ timeElapsed: normalizedPointSeconds, ticket });
+            const normalizedPointSeconds =
+                i === pointCount - 1 ? ticket.cooldown : pointSeconds;
+            const feePercent = this.calculateFeeAtTime({
+                timeElapsed: normalizedPointSeconds,
+                ticket,
+            });
 
             points.push({
                 elapsedSeconds: normalizedPointSeconds,
@@ -186,14 +212,20 @@ class TokenExitQueueFeeUtils {
      * @param params - Parameters containing locked amount and fee percentage.
      * @returns Net receive amount (in wei).
      */
-    calculateReceiveAmount = (params: ICalculateReceiveAmountParams): bigint => {
+    calculateReceiveAmount = (
+        params: ICalculateReceiveAmountParams,
+    ): bigint => {
         const { lockedAmount, feePercentage } = params;
 
         // Convert fee percentage to basis points
-        const feeBasisPoints = Math.round((feePercentage * this.MAX_FEE_PERCENT) / 100);
+        const feeBasisPoints = Math.round(
+            (feePercentage * this.MAX_FEE_PERCENT) / 100,
+        );
 
         // Calculate fee amount
-        const feeAmount = (lockedAmount * BigInt(feeBasisPoints)) / BigInt(this.MAX_FEE_PERCENT);
+        const feeAmount =
+            (lockedAmount * BigInt(feeBasisPoints)) /
+            BigInt(this.MAX_FEE_PERCENT);
 
         // Return net amount
         return lockedAmount - feeAmount;

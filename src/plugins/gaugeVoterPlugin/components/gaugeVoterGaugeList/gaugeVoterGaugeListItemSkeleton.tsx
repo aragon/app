@@ -4,7 +4,7 @@ export const GaugeVoterGaugeListItemSkeleton: React.FC = () => {
     return (
         <DataList.Item className="flex flex-col gap-3 px-4 py-3 md:min-h-20 md:flex-row md:items-center md:gap-4 md:px-6">
             {/* Top section on mobile - Gauge info with border bottom */}
-            <div className="flex min-w-0 grow items-center gap-3 border-b border-neutral-100 pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
+            <div className="flex min-w-0 grow items-center gap-3 border-neutral-100 border-b pb-3 md:basis-0 md:gap-4 md:border-b-0 md:pb-0">
                 <div className="size-8 shrink-0 animate-pulse rounded-full bg-neutral-200 md:size-10" />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <div className="h-5 w-3/4 animate-pulse rounded bg-neutral-200 md:h-6" />

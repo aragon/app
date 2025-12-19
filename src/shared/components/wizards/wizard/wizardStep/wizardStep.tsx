@@ -1,8 +1,10 @@
 import classNames from 'classnames';
-import { useEffect, type ComponentProps } from 'react';
-import { useWizardContext, type IWizardStepperStep } from '../wizardProvider';
+import { type ComponentProps, useEffect } from 'react';
+import { type IWizardStepperStep, useWizardContext } from '../wizardProvider';
 
-export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProps<'div'>, 'id'> {
+export interface IWizardStepProps
+    extends IWizardStepperStep,
+        Omit<ComponentProps<'div'>, 'id'> {
     /**
      * Hides the step when set to true.
      */
@@ -14,7 +16,16 @@ export interface IWizardStepProps extends IWizardStepperStep, Omit<ComponentProp
 }
 
 export const WizardStep: React.FC<IWizardStepProps> = (props) => {
-    const { id, hidden, meta, order, children, className, disableScrollToTop, ...otherProps } = props;
+    const {
+        id,
+        hidden,
+        meta,
+        order,
+        children,
+        className,
+        disableScrollToTop,
+        ...otherProps
+    } = props;
 
     const { activeStep, registerStep, unregisterStep } = useWizardContext();
 

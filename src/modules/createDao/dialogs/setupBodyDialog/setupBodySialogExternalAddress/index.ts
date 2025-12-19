@@ -1,4 +1,4 @@
 export {
-    SetupBodyDialogExternalAddress,
     type ISetupBodyDialogExternalAddressProps,
+    SetupBodyDialogExternalAddress,
 } from './setupBodyDialogExternalAddress';

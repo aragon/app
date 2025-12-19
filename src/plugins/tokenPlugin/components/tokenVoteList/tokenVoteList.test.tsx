@@ -1,11 +1,19 @@
+import {
+    addressUtils,
+    GukModulesProvider,
+    type VoteIndicator,
+} from '@aragon/gov-ui-kit';
+import { render, screen, within } from '@testing-library/react';
 import { generateToken } from '@/modules/finance/testUtils';
-import { type IVote } from '@/modules/governance/api/governanceService';
+import type { IVote } from '@/modules/governance/api/governanceService';
 import * as useVoteListData from '@/modules/governance/hooks/useVoteListData';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import { generateAddressInfo, generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { addressUtils, GukModulesProvider, type VoteIndicator } from '@aragon/gov-ui-kit';
-import { render, screen, within } from '@testing-library/react';
+import {
+    generateAddressInfo,
+    generateDao,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { generateTokenVote } from '../../testUtils';
 import { VoteOption } from '../../types';
@@ -25,9 +33,11 @@ jest.mock('../../../../modules/governance/components/voteList', () => ({
         const href = `/test/${daoId}/proposals/${slug}`;
 
         return (
-            <a href={href} data-testid="vote-proposal-list-item-mock">
+            <a data-testid="vote-proposal-list-item-mock" href={href}>
                 <span data-testid="proposal-title">{vote.proposal!.title}</span>
-                <span data-testid="vote-indicator">{voteIndicator.toLowerCase()}</span>
+                <span data-testid="vote-indicator">
+                    {voteIndicator.toLowerCase()}
+                </span>
             </a>
         );
     },
@@ -39,7 +49,9 @@ describe('<TokenVoteList /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -50,7 +62,12 @@ describe('<TokenVoteList /> component', () => {
 
     const createTestComponent = (props?: Partial<ITokenVoteListProps>) => {
         const completeProps: ITokenVoteListProps = {
-            initialParams: { queryParams: { pluginAddress: '0x123', network: daoService.Network.ETHEREUM_SEPOLIA } },
+            initialParams: {
+                queryParams: {
+                    pluginAddress: '0x123',
+                    network: daoService.Network.ETHEREUM_SEPOLIA,
+                },
+            },
             daoId: 'test-id',
             ...props,
         };
@@ -68,14 +85,18 @@ describe('<TokenVoteList /> component', () => {
             generateTokenVote({
                 transactionHash: '0x123',
                 voteOption: VoteOption.ABSTAIN,
-                member: generateAddressInfo({ address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05' }),
+                member: generateAddressInfo({
+                    address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                }),
                 votingPower: '997846578645312000000000',
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.YES,
-                member: generateAddressInfo({ address: '0x00C51Fad10462780e488B54D413aD92B28b88204' }),
+                member: generateAddressInfo({
+                    address: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                }),
                 votingPower: '465319846528946000000',
                 token,
             }),
@@ -96,19 +117,31 @@ describe('<TokenVoteList /> component', () => {
 
         render(createTestComponent());
 
-        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(`members/${votes[0].member.address}`);
-        expect(getDaoUrlSpy.mock.calls[1][1]).toEqual(`members/${votes[1].member.address}`);
+        expect(getDaoUrlSpy.mock.calls[0][1]).toEqual(
+            `members/${votes[0].member.address}`,
+        );
+        expect(getDaoUrlSpy.mock.calls[1][1]).toEqual(
+            `members/${votes[1].member.address}`,
+        );
 
         const links = screen.getAllByRole('link');
         expect(links).toHaveLength(2);
         expect(links[0].getAttribute('href')).toBe(memberLink);
         expect(links[1].getAttribute('href')).toBe(memberLink);
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[0].member.address))).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                addressUtils.truncateAddress(votes[0].member.address),
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByText('997.85K ABC')).toBeInTheDocument();
         expect(screen.getByText('abstain')).toBeInTheDocument();
 
-        expect(screen.getByText(addressUtils.truncateAddress(votes[1].member.address))).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                addressUtils.truncateAddress(votes[1].member.address),
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByText('465.32 ABC')).toBeInTheDocument();
         expect(screen.getByText('yes')).toBeInTheDocument();
     });
@@ -120,15 +153,21 @@ describe('<TokenVoteList /> component', () => {
             generateTokenVote({
                 transactionHash: '0x123',
                 voteOption: VoteOption.YES,
-                proposal: generateProposal({ title: 'Test Proposal 1', incrementalId: 2 }),
-                blockTimestamp: 1234567890,
+                proposal: generateProposal({
+                    title: 'Test Proposal 1',
+                    incrementalId: 2,
+                }),
+                blockTimestamp: 1_234_567_890,
                 token,
             }),
             generateTokenVote({
                 transactionHash: '0x456',
                 voteOption: VoteOption.NO,
-                proposal: generateProposal({ title: 'Test Proposal 2', incrementalId: 3 }),
-                blockTimestamp: 1234567890,
+                proposal: generateProposal({
+                    title: 'Test Proposal 2',
+                    incrementalId: 3,
+                }),
+                blockTimestamp: 1_234_567_890,
                 token,
             }),
         ];
@@ -159,13 +198,27 @@ describe('<TokenVoteList /> component', () => {
         const links = screen.getAllByTestId('vote-proposal-list-item-mock');
         expect(links).toHaveLength(2);
 
-        expect(links[0]).toHaveAttribute('href', `/test/${daoId}/proposals/TOKENVOTING-2`);
-        expect(links[1]).toHaveAttribute('href', `/test/${daoId}/proposals/TOKENVOTING-3`);
+        expect(links[0]).toHaveAttribute(
+            'href',
+            `/test/${daoId}/proposals/TOKENVOTING-2`,
+        );
+        expect(links[1]).toHaveAttribute(
+            'href',
+            `/test/${daoId}/proposals/TOKENVOTING-3`,
+        );
 
-        expect(within(links[0]).getByTestId('proposal-title')).toHaveTextContent(votes[0].proposal!.title);
-        expect(within(links[1]).getByTestId('proposal-title')).toHaveTextContent(votes[1].proposal!.title);
-        expect(within(links[0]).getByTestId('vote-indicator')).toHaveTextContent('yes');
-        expect(within(links[1]).getByTestId('vote-indicator')).toHaveTextContent('no');
+        expect(
+            within(links[0]).getByTestId('proposal-title'),
+        ).toHaveTextContent(votes[0].proposal!.title);
+        expect(
+            within(links[1]).getByTestId('proposal-title'),
+        ).toHaveTextContent(votes[1].proposal!.title);
+        expect(
+            within(links[0]).getByTestId('vote-indicator'),
+        ).toHaveTextContent('yes');
+        expect(
+            within(links[1]).getByTestId('vote-indicator'),
+        ).toHaveTextContent('no');
     });
 
     it('calls useVoteListData with the correct query initialParams', () => {

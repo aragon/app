@@ -1,6 +1,9 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { GovernanceBodyInfo, type IGovernanceBodyInfoProps } from './governanceBodyInfo';
+import {
+    GovernanceBodyInfo,
+    type IGovernanceBodyInfoProps,
+} from './governanceBodyInfo';
 
 describe('<GovernanceBodyInfo /> component', () => {
     const createTestComponent = (props?: Partial<IGovernanceBodyInfoProps>) => {
@@ -30,7 +33,11 @@ describe('<GovernanceBodyInfo /> component', () => {
         render(createTestComponent({ name, address }));
 
         expect(screen.getByText(name)).toBeInTheDocument();
-        expect(screen.getByText(addressUtils.truncateAddress(address))).toBeInTheDocument();
-        expect(screen.getByText(/governanceBodyInfo.external/)).toBeInTheDocument();
+        expect(
+            screen.getByText(addressUtils.truncateAddress(address)),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/governanceBodyInfo.external/),
+        ).toBeInTheDocument();
     });
 });
