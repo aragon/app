@@ -1,5 +1,7 @@
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { isAddress, isHex } from 'viem';
+import { Network } from '../../../../shared/api/daoService';
+import { smartContractService } from '../../api/smartContractService';
 
 export interface IExportedAction {
     /**
@@ -104,6 +106,39 @@ class ProposalActionsImportExportUtils {
                 errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
             };
         }
+    };
+
+    /**
+     * Decodes imported actions using the smart contract service
+     *
+     * @param actions - Array of exported actions to decode
+     * @param network - Network where the contracts exist
+     * @param daoAddress - DAO address
+     * @returns Promise resolving to array of decoded proposal actions
+     */
+    decodeActions = async (
+        actions: IExportedAction[],
+        network: Network,
+        daoAddress: string,
+    ): Promise<IProposalAction[]> => {
+        const decodedActions = await Promise.all(
+            actions.map(async (action) => {
+                const decodedAction = await smartContractService.decodeTransaction({
+                    urlParams: {
+                        network,
+                        address: action.to,
+                    },
+                    body: {
+                        data: action.data,
+                        value: action.value.toString(),
+                        from: daoAddress,
+                    },
+                });
+                return decodedAction;
+            }),
+        );
+
+        return decodedActions;
     };
 
     /**

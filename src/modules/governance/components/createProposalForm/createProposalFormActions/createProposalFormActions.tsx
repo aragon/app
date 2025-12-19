@@ -150,7 +150,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
 
     const expandedActions = actions.map((action) => action.id);
     const noOpActionsChange = useCallback(() => undefined, []);
-
+    console.log('actions', actions);
     return (
         <div className="flex flex-col gap-y-10">
             <ProposalActions.Root
