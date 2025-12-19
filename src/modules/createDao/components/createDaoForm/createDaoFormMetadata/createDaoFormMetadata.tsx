@@ -1,9 +1,10 @@
-import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
+import { InputText, TextArea } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
 import { getEnsAddress } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { Network } from '@/shared/api/daoService';
+import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -19,8 +20,6 @@ export interface ICreateDaoFormMetadataProps {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
-const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
-const maxAvatarDimension = 1024;
 const ensMaxLength = 18;
 const validSubdomain = /^[a-z0-9-]+$/;
 
@@ -47,7 +46,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     const validateEnsField = async (value?: string) => {
         if (!value) {
-            return;
+            return undefined;
         }
 
         // Check if the value matches the valid pattern from the smart contract
@@ -78,21 +77,6 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { maxLength: ensMaxLength, validate: validateEnsField },
     });
 
-    const { value, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
-        label: t('app.createDao.createDaoForm.metadata.avatar.label'),
-        fieldPrefix,
-        rules: {
-            validate: (value) => (value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined),
-        },
-    });
-
-    // Watch the avatar field to properly update the InputFileAvatar component when its value changes
-    const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
-    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({
-        name: avatarFieldName,
-        defaultValue: undefined,
-    });
-
     const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
         label: t('app.createDao.createDaoForm.metadata.description.label'),
         fieldPrefix,
@@ -120,14 +104,7 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
                     {...ensField}
                 />
             )}
-            <InputFileAvatar
-                helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
-                isOptional={true}
-                maxDimension={maxAvatarDimension}
-                maxFileSize={maxAvatarFileSize}
-                value={avatarValue}
-                {...avatarField}
-            />
+            <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <TextArea
                 helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
                 isOptional={true}

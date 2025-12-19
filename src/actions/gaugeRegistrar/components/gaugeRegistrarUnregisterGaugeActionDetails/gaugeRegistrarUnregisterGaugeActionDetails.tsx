@@ -11,12 +11,12 @@ import {
 import type { Address, Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { useAllGauges } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { gaugeRegistrarAbi } from '../../constants/gaugeRegistrarAbi';
-import { useAllGauges } from '../../hooks';
 import type { GaugeIncentiveType } from '../../types/enum/gaugeIncentiveType';
 import { GaugeRegistrarGaugeListItem, GaugeRegistrarGaugeListItemSkeleton } from '../gaugeRegistrarGaugeListItem';
 
