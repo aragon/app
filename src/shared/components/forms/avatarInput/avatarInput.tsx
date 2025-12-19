@@ -30,7 +30,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
 
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
-    const { value, ...avatarField } = useFormField<
+    const { ...avatarField } = useFormField<
         AvatarInputBaseForm,
         typeof fieldName
     >(fieldName, {
@@ -45,7 +45,7 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
     });
 
     // Watch the avatar field to properly update the InputFileAvatar component when its value changes
-    const avatarValue = useWatch<AvatarInputBaseForm>({
+    const _avatarValue = useWatch<AvatarInputBaseForm>({
         name: fieldName,
         defaultValue: undefined,
     });
@@ -58,7 +58,6 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
             isOptional={isOptional}
             maxDimension={maxDimension}
             maxFileSize={maxFileSize}
-            value={avatarValue}
             {...avatarField}
         />
     );

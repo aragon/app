@@ -64,7 +64,7 @@ describe('pluginTransaction utils', () => {
                 logs: transaction.logs,
             });
 
-            const { plugin, ...expectedResult } = parsedLog.args;
+            const { ...expectedResult } = parsedLog.args;
             expect(result).toEqual([
                 { pluginAddress: parsedLog.args.plugin, ...expectedResult },
             ]);
@@ -131,7 +131,7 @@ describe('pluginTransaction utils', () => {
                 logs: transaction.logs,
             });
 
-            const { setupPayload: payload, ...expectedResult } = parsedLog.args;
+            const { ...expectedResult } = parsedLog.args;
             expect(result).toEqual({
                 ...expectedResult,
                 pluginAddress: parsedLog.args.setupPayload.plugin,

@@ -139,7 +139,7 @@ class MultisigActionUtils {
     normalizeChangeMembersAction = (
         action: IMultisigActionChangeMembers,
     ): IGukProposalActionChangeMembers => {
-        const { type, ...otherValues } = action;
+        const { ...otherValues } = action;
 
         return { ...otherValues, type: GukProposalActionType.ADD_MEMBERS };
     };
@@ -148,8 +148,7 @@ class MultisigActionUtils {
         params: INormalizeChangeSettingsParams,
     ): IGukProposalActionChangeSettings => {
         const { action, membersCount, t } = params;
-        const { type, existingSettings, proposedSettings, ...otherValues } =
-            action;
+        const { existingSettings, proposedSettings, ...otherValues } = action;
 
         const completeProposedSettings = {
             ...existingSettings,

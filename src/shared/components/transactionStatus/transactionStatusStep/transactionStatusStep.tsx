@@ -20,7 +20,7 @@ export const TransactionStatusStep = <
 >(
     props: ITransactionStatusStepProps<TMeta, TStepId>,
 ) => {
-    const { id, order, meta, className, ...otherProps } = props;
+    const { meta, className, ...otherProps } = props;
     const { addon, state, errorLabel, warningLabel, label } = meta;
 
     const stateLabel =

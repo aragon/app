@@ -36,20 +36,19 @@ export const CreateProposalFormMetadata: React.FC<
         },
     );
 
-    const { ref: bodyRef, ...bodyField } = useFormField<
-        ICreateProposalFormData,
-        'body'
-    >('body', {
+    const bodyField = useFormField<ICreateProposalFormData, 'body'>('body', {
         label: t('app.governance.createProposalForm.metadata.body.title'),
     });
 
-    const { ref: addActionsRef, ...addActionsField } = useFormField<
-        ICreateProposalFormData,
-        'addActions'
-    >('addActions', {
-        label: t('app.governance.createProposalForm.metadata.actions.title'),
-        defaultValue: true,
-    });
+    const addActionsField = useFormField<ICreateProposalFormData, 'addActions'>(
+        'addActions',
+        {
+            label: t(
+                'app.governance.createProposalForm.metadata.actions.title',
+            ),
+            defaultValue: true,
+        },
+    );
 
     return (
         <div className="flex flex-col gap-10">

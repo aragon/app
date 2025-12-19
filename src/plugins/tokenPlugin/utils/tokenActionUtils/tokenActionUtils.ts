@@ -160,8 +160,7 @@ class TokenActionUtils {
         params: INormalizeChangeSettingsParams,
     ): IGukProposalActionChangeSettings => {
         const { action, t, token } = params;
-        const { type, proposedSettings, existingSettings, ...otherValues } =
-            action;
+        const { proposedSettings, existingSettings, ...otherValues } = action;
 
         const completeExistingSettings = { ...existingSettings, token };
         const completeProposedSettings = {

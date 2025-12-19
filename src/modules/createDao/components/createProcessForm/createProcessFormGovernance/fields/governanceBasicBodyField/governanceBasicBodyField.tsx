@@ -37,7 +37,6 @@ export const GovernanceBasicBodyField: React.FC<
     const {
         value: body,
         onChange: onBodyChange,
-        onBlur: onBodyBlur,
         ...bodyField
     } = useFormField<Record<string, ISetupBodyForm | undefined>, 'body'>(
         'body',

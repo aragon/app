@@ -25,7 +25,7 @@ export type IProcessDataListItemProps = IDataListItemProps & {
 export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     props,
 ) => {
-    const { process, isActive, className, dao, ...otherProps } = props;
+    const { process, isActive, dao, ...otherProps } = props;
 
     const { t } = useTranslations();
 

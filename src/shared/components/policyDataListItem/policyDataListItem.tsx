@@ -19,7 +19,7 @@ const strategyTypeToNameMap: Record<PolicyStrategyType, string> = {
 export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
     props,
 ) => {
-    const { policy, className, ...otherProps } = props;
+    const { policy, ...otherProps } = props;
 
     const { t } = useTranslations();
 

@@ -17,6 +17,7 @@ export const generatePluginInstallationSetupData = (
     data?: Partial<IPluginInstallationSetupData>,
 ): IPluginInstallationSetupData => ({
     ...generatePluginSetupData(),
+    plugin: '0x',
     pluginAddress: '0x',
     preparedSetupData: { permissions: [], helpers: [] },
     ...data,
@@ -36,6 +37,7 @@ export const generatePluginUninstallSetupData = (
 ): IPluginUninstallSetupData => ({
     ...generatePluginSetupData(),
     pluginAddress: '0x',
+    setupPayload: { plugin: '0x' },
     permissions: [],
     ...data,
 });

@@ -30,7 +30,6 @@ export const AutocompleteInput = forwardRef<
     const {
         items,
         groups,
-        value,
         onChange,
         wrapperClassName,
         onFocus,

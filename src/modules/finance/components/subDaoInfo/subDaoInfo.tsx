@@ -11,7 +11,7 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import type { ISubDaoInfoProps } from './subDaoInfo.api';
 
 export const SubDaoInfo: React.FC<ISubDaoInfoProps> = (props) => {
-    const { plugin, network, daoId, ...otherProps } = props;
+    const { plugin, network, ...otherProps } = props;
 
     const { t } = useTranslations();
     const { buildEntityUrl } = useDaoChain({ network });

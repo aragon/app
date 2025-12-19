@@ -147,10 +147,12 @@ export const PreparePluginUninstallationDialog: React.FC<
                 build,
                 release,
             } = uninstallationPreparedEventLog;
+            const setupPayload = { plugin: pluginAddress };
             const setupData: IPluginUninstallSetupData = {
                 pluginSetupRepo,
                 pluginAddress,
                 permissions,
+                setupPayload,
                 versionTag: {
                     build: Number(build),
                     release: Number(release),

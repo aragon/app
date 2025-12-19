@@ -44,10 +44,8 @@ class PluginTransactionUtils {
         });
 
         return installationPreparedLogs.map(({ args }) => ({
+            ...args,
             pluginAddress: args.plugin,
-            pluginSetupRepo: args.pluginSetupRepo,
-            versionTag: args.versionTag,
-            preparedSetupData: args.preparedSetupData,
         }));
     };
 
@@ -84,10 +82,11 @@ class PluginTransactionUtils {
             uninstallationPreparedLog.args;
 
         return {
-            pluginAddress: setupPayload.plugin,
             pluginSetupRepo,
             versionTag,
             permissions,
+            setupPayload,
+            pluginAddress: setupPayload.plugin,
         };
     };
 

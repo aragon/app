@@ -3,24 +3,18 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useAccount, useEnsName } from 'wagmi';
-import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { actions } from '../../constants/actions';
 import { BoundlessActionItem } from './boundlessActionItem';
 
-export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {
-    /**
-     * DAO to display in the header.
-     */
-    dao: IDao;
-}
+export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {}
 
 export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     props,
 ) => {
-    const { dao, className, ...otherProps } = props;
+    const { className, ...otherProps } = props;
     const { address } = useAccount();
     const { data: ensName } = useEnsName({
         address,
@@ -39,7 +33,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
         >
             <video
                 autoPlay={true}
-                className="absolute inset-0 -z-30 size-full object-cover"
+                className="-z-30 absolute inset-0 size-full object-cover"
                 loop={true}
                 muted={true}
                 playsInline={true}

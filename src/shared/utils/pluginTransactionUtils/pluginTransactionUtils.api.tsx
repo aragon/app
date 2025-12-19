@@ -64,6 +64,10 @@ export interface IPluginInstallationSetupData extends IPluginSetupData {
      */
     pluginAddress: Hex;
     /**
+     * Raw plugin address emitted by the setup event.
+     */
+    plugin: Hex;
+    /**
      * Helpers and permissions for the plugin setup.
      */
     preparedSetupData: IPluginSetupPreparedSetupData;
@@ -85,6 +89,14 @@ export interface IPluginUninstallSetupData extends IPluginSetupData {
      * The address of the plugin contract to be uninstalled.
      */
     pluginAddress: Hex;
+    /**
+     * Uninstallation payload as emitted in the event.
+     */
+    setupPayload: {
+        plugin: Hex;
+        currentHelpers?: readonly Hex[];
+        data?: Hex;
+    };
     /**
      * Permissions to be revoked for uninstalling the plugin.
      */

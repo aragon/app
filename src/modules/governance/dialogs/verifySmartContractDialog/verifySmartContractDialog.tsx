@@ -88,7 +88,6 @@ export const VerifySmartContractDialog: React.FC<
         initialValue,
     );
     const {
-        label,
         value: smartContractValue,
         onChange: onSmartContractChange,
         ...smartContractField

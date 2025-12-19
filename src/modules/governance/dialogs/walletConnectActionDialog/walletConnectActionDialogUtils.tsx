@@ -86,7 +86,7 @@ class WalletConnectActionDialogUtils {
     private decodeRawAction = async (params: IDecodeRawActionParams) => {
         const { daoNetwork, decodeTransactionAsync, rawAction } = params;
 
-        const { type, inputData, to, ...body } = rawAction;
+        const { to, ...body } = rawAction;
         const urlParams = { network: daoNetwork, address: to };
         const decodedAction = await decodeTransactionAsync({ urlParams, body });
 

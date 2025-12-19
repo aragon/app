@@ -56,7 +56,7 @@ export const TokenSetupMembershipCreateTokenMember: React.FC<
 
     const {
         onChange: onMemberChange,
-        value: memberValue,
+        value: _memberValue,
         ...memberField
     } = useFormField<ITokenSetupMembershipMember, 'address'>('address', {
         label: t(
