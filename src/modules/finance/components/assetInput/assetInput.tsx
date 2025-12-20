@@ -44,7 +44,7 @@ export interface IAssetInputFormData {
      */
     amount?: string;
     /**
-     * The token to be transfered.
+     * The token to be transferred.
      */
     asset?: IAsset;
 }
