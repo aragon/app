@@ -41,7 +41,7 @@
     "framer-motion": "^12.23.25",
     "import-in-the-middle": "2.0.0",
     "isomorphic-dompurify": "2.33.0",
-    "jsdom": "^27.1.0",
+    "jsdom": "^27.3.0",
     "luxon": "^3.7.2",
     "next": "^15.5.9",
     "nextjs-toploader": "^3.9.17",
@@ -111,7 +111,7 @@
     "overrides": {
       "@reown/appkit": "^1.8.14",
       "@wagmi/connectors": "^6.2.0",
-      "jsdom": "26.1.0",
+      "jsdom": "27.3.0",
       "parse5": "7.1.2"
     },
     "packageExtensions": {
