@@ -4,6 +4,7 @@ import {
     AlertInline,
     addressUtils,
     Button,
+    Dropdown,
     IconType,
     Switch,
 } from '@aragon/gov-ui-kit';
@@ -52,9 +53,21 @@ export interface IActionComposerProps
      */
     allowedActions?: IAllowedAction[];
     /**
+     * Whether there are actions to manage (for download/remove dropdown visibility).
+     */
+    hasActions?: boolean;
+    /**
+     * Callback triggered when the user downloads all actions.
+     */
+    onDownloadActions?: () => void;
+    /**
      * Granted permissions for DAO.
      */
     daoPermissions?: IDaoPermission[];
+    /**
+     * Callback called when all actions should be removed.
+     */
+    onRemoveAllActions?: () => void;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -64,7 +77,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         excludeActionTypes,
         hideWalletConnect = false,
         allowedActions,
+        hasActions = false,
+        onDownloadActions,
         daoPermissions,
+        onRemoveAllActions,
     } = props;
 
     const daoUrlParams = { id: daoId };
@@ -213,6 +229,25 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
+    const handleDownloadActions = () => {
+        if (!onDownloadActions) {
+            return;
+        }
+
+        onDownloadActions();
+    };
+
+    const handleRemoveAllActions = () => {
+        if (!onRemoveAllActions) {
+            return;
+        }
+
+        onRemoveAllActions();
+    };
+
+    const shouldRenderDropdown =
+        onDownloadActions != null && onRemoveAllActions != null;
+
     const shouldRenderWalletConnect = !(
         hideWalletConnect || onlyShowAuthorizedActions
     );
@@ -266,18 +301,51 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             type="file"
                         />
                     </div>
-                    {allowedActions && (
-                        // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
-                        <div>
-                            <Switch
-                                checked={onlyShowAuthorizedActions}
-                                inlineLabel={t(
-                                    'app.governance.actionComposer.authorizedSwitchLabel',
-                                )}
-                                onCheckedChanged={setOnlyShowAuthorizedActions}
-                            />
-                        </div>
-                    )}
+                    <div className="flex flex-row items-center gap-3">
+                        {shouldRenderDropdown && hasActions && (
+                            <Dropdown.Container
+                                constrainContentWidth={false}
+                                customTrigger={
+                                    <Button
+                                        className="w-fit"
+                                        iconRight={IconType.DOTS_VERTICAL}
+                                        size="md"
+                                        variant="tertiary"
+                                    >
+                                        {t(
+                                            'app.governance.actionComposer.moreActions',
+                                        )}
+                                    </Button>
+                                }
+                                size="md"
+                            >
+                                <Dropdown.Item onClick={handleDownloadActions}>
+                                    {t(
+                                        'app.governance.actionComposer.downloadAllActions',
+                                    )}
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={handleRemoveAllActions}>
+                                    {t(
+                                        'app.governance.actionComposer.removeAllActions',
+                                    )}
+                                </Dropdown.Item>
+                            </Dropdown.Container>
+                        )}
+                        {allowedActions && (
+                            // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
+                            <div>
+                                <Switch
+                                    checked={onlyShowAuthorizedActions}
+                                    inlineLabel={t(
+                                        'app.governance.actionComposer.authorizedSwitchLabel',
+                                    )}
+                                    onCheckedChanged={
+                                        setOnlyShowAuthorizedActions
+                                    }
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
                 {uploadError && (
                     <AlertInline message={uploadError} variant="critical" />

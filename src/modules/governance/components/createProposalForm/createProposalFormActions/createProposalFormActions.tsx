@@ -11,6 +11,7 @@ import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type {
@@ -134,6 +135,18 @@ export const CreateProposalFormActions: React.FC<
         append(newActions);
     };
 
+    const handleRemoveAllActions = useCallback(() => {
+        remove();
+    }, [remove]);
+
+    const handleDownloadActions = useCallback(() => {
+        const currentActions = getValues('actions') ?? [];
+        proposalActionsImportExportUtils.downloadActionsAsJSON(
+            currentActions,
+            `dao-${daoId}-actions.json`,
+        );
+    }, [daoId, getValues]);
+
     const getArrayControls = (
         index: number,
     ): IProposalActionsArrayControls<IProposalActionData> => ({
@@ -176,6 +189,7 @@ export const CreateProposalFormActions: React.FC<
 
     const showActionComposer =
         !hasConditionalPermissions || allowedActions != null;
+    const hasActions = actions.length > 0;
 
     const expandedActions = actions.map((action) => action.id);
     const noOpActionsChange = useCallback(() => undefined, []);
@@ -213,7 +227,10 @@ export const CreateProposalFormActions: React.FC<
                     allowedActions={allowedActions}
                     daoId={daoId}
                     daoPermissions={daoPermissions}
+                    hasActions={hasActions}
                     onAddAction={handleAddAction}
+                    onDownloadActions={handleDownloadActions}
+                    onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (
                 <p className="text-primary-400">
