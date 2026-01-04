@@ -1,13 +1,16 @@
+import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
+import { useState } from 'react';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import type { IDaoPlugin } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
 import type { IPluginEventLog } from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
@@ -28,13 +31,20 @@ export interface IUninstallPluginAlertDialogParams {
     uninstallationPreparedEventLog?: IPluginEventLog;
 }
 
-export interface IUninstallPluginAlertDialogProps extends IDialogComponentProps<IUninstallPluginAlertDialogParams> {}
+export interface IUninstallPluginAlertDialogProps
+    extends IDialogComponentProps<IUninstallPluginAlertDialogParams> {}
 
-export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogProps> = (props) => {
+export const UninstallPluginAlertDialog: React.FC<
+    IUninstallPluginAlertDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'UninstallPluginAlertDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'UninstallPluginAlertDialog: required parameters must be set.',
+    );
 
-    const { daoId, uninstallPlugin, uninstallationPreparedEventLog } = location.params;
+    const { daoId, uninstallPlugin, uninstallationPreparedEventLog } =
+        location.params;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -53,7 +63,10 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
 
     const handlePluginSelected = (proposalPlugin: IDaoPlugin) => {
         setSelectedPlugin(proposalPlugin);
-        createProposalGuard({ plugin: proposalPlugin, onSuccess: () => handleGuardSuccess(proposalPlugin) });
+        createProposalGuard({
+            plugin: proposalPlugin,
+            onSuccess: () => handleGuardSuccess(proposalPlugin),
+        });
     };
 
     const handleSelectPluginClick = () => {
@@ -82,18 +95,30 @@ export const UninstallPluginAlertDialog: React.FC<IUninstallPluginAlertDialogPro
                 })}
             />
             <DialogAlert.Content>
-                <div className="flex flex-col gap-y-4 pb-4 text-base leading-normal font-normal text-neutral-500">
-                    <p>{t('app.settings.uninstallPluginAlertDialog.description.1')}</p>
-                    <p>{t('app.settings.uninstallPluginAlertDialog.description.2')}</p>
+                <div className="flex flex-col gap-y-4 pb-4 font-normal text-base text-neutral-500 leading-normal">
+                    <p>
+                        {t(
+                            'app.settings.uninstallPluginAlertDialog.description.1',
+                        )}
+                    </p>
+                    <p>
+                        {t(
+                            'app.settings.uninstallPluginAlertDialog.description.2',
+                        )}
+                    </p>
                 </div>
             </DialogAlert.Content>
             <DialogAlertFooter
                 actionButton={{
-                    label: t('app.settings.uninstallPluginAlertDialog.action.select'),
+                    label: t(
+                        'app.settings.uninstallPluginAlertDialog.action.select',
+                    ),
                     onClick: handleSelectPluginClick,
                 }}
                 cancelButton={{
-                    label: t('app.settings.uninstallPluginAlertDialog.action.cancel'),
+                    label: t(
+                        'app.settings.uninstallPluginAlertDialog.action.cancel',
+                    ),
                     onClick: () => close(),
                 }}
             />

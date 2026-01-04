@@ -4,7 +4,9 @@ import { adminProposalUtils } from './adminProposalUtils';
 describe('adminProposal utils', () => {
     describe('getProposalStatus', () => {
         it('returns EXECUTED status', () => {
-            expect(adminProposalUtils.getProposalStatus()).toEqual(ProposalStatus.EXECUTED);
+            expect(adminProposalUtils.getProposalStatus()).toEqual(
+                ProposalStatus.EXECUTED,
+            );
         });
     });
 });

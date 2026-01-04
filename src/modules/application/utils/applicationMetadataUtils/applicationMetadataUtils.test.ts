@@ -14,14 +14,24 @@ describe('applicationMetadata utils', () => {
 
     describe('generateDaoMetadata', () => {
         it('fetches the DAO with the given id and returns the relative title and description metadata', async () => {
-            const dao = generateDao({ name: 'My DAO', description: 'Description' });
+            const dao = generateDao({
+                name: 'My DAO',
+                description: 'Description',
+            });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-address', network: Network.ETHEREUM_SEPOLIA }),
-            });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata(
+                {
+                    params: Promise.resolve({
+                        addressOrEns: 'test-dao-address',
+                        network: Network.ETHEREUM_SEPOLIA,
+                    }),
+                },
+            );
             expect(metadata.title).toEqual(dao.name);
-            expect(metadata.openGraph?.siteName).toEqual(`${dao.name} | Governed on Aragon`);
+            expect(metadata.openGraph?.siteName).toEqual(
+                `${dao.name} | Governed on Aragon`,
+            );
             expect(metadata.description).toEqual(dao.description);
         });
 
@@ -31,9 +41,14 @@ describe('applicationMetadata utils', () => {
             getDaoSpy.mockResolvedValue(dao);
             cidToSrcSpy.mockReturnValue(ipfsUrl);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
-            });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata(
+                {
+                    params: Promise.resolve({
+                        addressOrEns: 'test-dao-id',
+                        network: Network.ETHEREUM_SEPOLIA,
+                    }),
+                },
+            );
             expect(cidToSrcSpy).toHaveBeenCalledWith(dao.avatar);
             expect(metadata.openGraph?.images).toEqual([ipfsUrl]);
         });
@@ -42,9 +57,14 @@ describe('applicationMetadata utils', () => {
             const dao = generateDao({ avatar: undefined });
             getDaoSpy.mockResolvedValue(dao);
 
-            const metadata = await applicationMetadataUtils.generateDaoMetadata({
-                params: Promise.resolve({ addressOrEns: 'test-dao-id', network: Network.ETHEREUM_SEPOLIA }),
-            });
+            const metadata = await applicationMetadataUtils.generateDaoMetadata(
+                {
+                    params: Promise.resolve({
+                        addressOrEns: 'test-dao-id',
+                        network: Network.ETHEREUM_SEPOLIA,
+                    }),
+                },
+            );
             expect(metadata.openGraph?.images).toBeUndefined();
         });
     });

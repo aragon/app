@@ -1,13 +1,19 @@
-import { useMember } from '@/modules/governance/api/governanceService';
-import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
-import type { ITokenMember, ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useAccount } from 'wagmi';
+import { useMember } from '@/modules/governance/api/governanceService';
+import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
+import type {
+    ITokenMember,
+    ITokenPluginSettings,
+} from '@/plugins/tokenPlugin/types';
+import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
 export interface ITokenPermissionCheckProposalCreationParams
@@ -27,10 +33,16 @@ export const useTokenPermissionCheckProposalCreation = (
     const { minProposerVotingPower, token } = plugin.settings;
     const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
 
-    const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), tokenDecimals);
-    const formattedMinVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const parsedMinVotingPower = formatUnits(
+        BigInt(minProposerVotingPower),
+        tokenDecimals,
+    );
+    const formattedMinVotingPower = formatterUtils.formatNumber(
+        parsedMinVotingPower,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
 
     const minTokenRequired = `${formattedMinVotingPower ?? '0'} ${tokenSymbol}`;
 
@@ -54,43 +66,62 @@ export const useTokenPermissionCheckProposalCreation = (
     );
 
     // Read wrapped token balance directly from blockchain
-    const { balance: userBalance } = useWrappedTokenBalance({ userAddress: address, token });
+    const { balance: userBalance } = useWrappedTokenBalance({
+        userAddress: address,
+        token,
+    });
 
     const userVotingPower = BigInt(member?.votingPower ?? '0');
 
     const parsedMemberVotingPower = formatUnits(userVotingPower, tokenDecimals);
-    const formattedMemberVotingPower = formatterUtils.formatNumber(parsedMemberVotingPower, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const formattedMemberVotingPower = formatterUtils.formatNumber(
+        parsedMemberVotingPower,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
 
     const parsedMemberBalance = formatUnits(userBalance, tokenDecimals);
-    const formattedMemberBalance = formatterUtils.formatNumber(parsedMemberBalance, {
-        format: NumberFormat.TOKEN_AMOUNT_SHORT,
-    });
+    const formattedMemberBalance = formatterUtils.formatNumber(
+        parsedMemberBalance,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
 
     const defaultSettings = [
         {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckProposalCreation.pluginNameLabel',
+            ),
             definition: pluginName,
         },
         {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.function'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckProposalCreation.function',
+            ),
             definition: `≥${minTokenRequired}`,
         },
     ];
 
     const connectedUserSettings = [
         {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckProposalCreation.userVotingPower',
+            ),
             definition: `${formattedMemberVotingPower ?? '0'} ${tokenSymbol}`,
         },
         {
-            term: t('app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance'),
+            term: t(
+                'app.plugins.token.tokenPermissionCheckProposalCreation.userTokenBalance',
+            ),
             definition: `${formattedMemberBalance ?? '0'} ${tokenSymbol}`,
         },
     ];
 
-    const processedSettings = useConnectedUserInfo ? defaultSettings.concat(connectedUserSettings) : defaultSettings;
+    const processedSettings = useConnectedUserInfo
+        ? defaultSettings.concat(connectedUserSettings)
+        : defaultSettings;
 
     const isRestricted = BigInt(minProposerVotingPower) > 0;
 

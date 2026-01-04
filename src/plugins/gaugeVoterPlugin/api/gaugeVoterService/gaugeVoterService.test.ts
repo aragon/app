@@ -1,6 +1,6 @@
+import type { Hex } from 'viem';
 import { Network } from '@/shared/api/daoService';
 import { generatePaginatedResponse } from '@/shared/testUtils';
-import type { Hex } from 'viem';
 import { generateGauge } from '../../testUtils/generators';
 import { gaugeVoterService } from './gaugeVoterService';
 
@@ -13,15 +13,20 @@ describe('gaugeVoter service', () => {
 
     it('getGaugeList fetches a paginated list of gauges for the provided plugin', async () => {
         const gaugesList = [
-            generateGauge({ address: '0x1234567890123456789012345678901234567890' }),
-            generateGauge({ address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' }),
+            generateGauge({
+                address: '0x1234567890123456789012345678901234567890',
+            }),
+            generateGauge({
+                address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+            }),
         ];
         const gaugesListResponse = generatePaginatedResponse({
             data: gaugesList,
         });
         const params = {
             urlParams: {
-                pluginAddress: '0x1234567890123456789012345678901234567890' as Hex,
+                pluginAddress:
+                    '0x1234567890123456789012345678901234567890' as Hex,
                 network: Network.BASE_MAINNET,
             },
             queryParams: {
@@ -33,7 +38,10 @@ describe('gaugeVoter service', () => {
 
         const result = await gaugeVoterService.getGaugeList(params);
 
-        expect(requestSpy).toHaveBeenCalledWith('/v2/gauge/:pluginAddress/:network', params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            '/v2/gauge/:pluginAddress/:network',
+            params,
+        );
         expect(result).toEqual(gaugesListResponse);
     });
 });

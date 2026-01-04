@@ -1,16 +1,26 @@
-import type { ComparatorArgs, ComparatorInput, IVersion } from './versionComparatorUtils.api';
+import type {
+    ComparatorArgs,
+    ComparatorInput,
+    IVersion,
+} from './versionComparatorUtils.api';
 
 class VersionComparatorUtils {
-    isLessThan = (...args: ComparatorArgs): boolean => this.compareVersions(...args, (diff) => diff < 0);
+    isLessThan = (...args: ComparatorArgs): boolean =>
+        this.compareVersions(...args, (diff) => diff < 0);
 
-    isGreaterThan = (...args: ComparatorArgs): boolean => this.compareVersions(...args, (diff) => diff > 0);
+    isGreaterThan = (...args: ComparatorArgs): boolean =>
+        this.compareVersions(...args, (diff) => diff > 0);
 
-    isGreaterOrEqualTo = (...args: ComparatorArgs) => this.compareVersions(...args, (diff) => diff >= 0);
+    isGreaterOrEqualTo = (...args: ComparatorArgs) =>
+        this.compareVersions(...args, (diff) => diff >= 0);
 
-    normaliseComparatorInput = (input: ComparatorInput): IVersion | undefined => {
+    normaliseComparatorInput = (
+        input: ComparatorInput,
+    ): IVersion | undefined => {
         if (input == null) {
-            return undefined;
-        } else if (typeof input === 'string') {
+            return;
+        }
+        if (typeof input === 'string') {
             return this.normaliseStringVersion(input);
         }
 
@@ -43,7 +53,8 @@ class VersionComparatorUtils {
 
             if (firstValue > secondValue) {
                 return 1;
-            } else if (firstValue < secondValue) {
+            }
+            if (firstValue < secondValue) {
                 return -1;
             }
         }
@@ -57,9 +68,14 @@ class VersionComparatorUtils {
         return this.normaliseVersion({ release, build, patch });
     };
 
-    private normaliseVersion = (version: IVersion<string> | IVersion): IVersion => {
+    private normaliseVersion = (
+        version: IVersion<string> | IVersion,
+    ): IVersion => {
         const { release, build, patch } = version;
-        const normalizedVersion: IVersion = { release: Number(release), build: Number(build) };
+        const normalizedVersion: IVersion = {
+            release: Number(release),
+            build: Number(build),
+        };
 
         if (patch) {
             normalizedVersion.patch = Number(patch);

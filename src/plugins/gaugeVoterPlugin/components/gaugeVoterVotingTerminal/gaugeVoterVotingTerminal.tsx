@@ -1,6 +1,12 @@
-import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { Avatar, Button, formatterUtils, NumberFormat, Tag } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    Button,
+    formatterUtils,
+    NumberFormat,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 
 export interface IGaugeVoterVotingTerminalProps {
     /**
@@ -50,7 +56,9 @@ export interface IGaugeVoterVotingTerminalProps {
     isLoading?: boolean;
 }
 
-export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> = (props) => {
+export const GaugeVoterVotingTerminal: React.FC<
+    IGaugeVoterVotingTerminalProps
+> = (props) => {
     const {
         hasVoted,
         daysLeftToVote,
@@ -89,58 +97,90 @@ export const GaugeVoterVotingTerminal: React.FC<IGaugeVoterVotingTerminalProps> 
     return (
         <div className={wrapperClassName}>
             <div className="flex flex-col gap-0 md:flex-row md:items-center md:gap-6">
-                <p className="text-xs font-semibold text-neutral-800 uppercase md:text-sm">
-                    {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes')}
+                <p className="font-semibold text-neutral-800 text-xs uppercase md:text-sm">
+                    {t(
+                        'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.yourVotes',
+                    )}
                 </p>
                 <div className="flex items-center gap-8 md:gap-3">
                     <div className="flex items-center gap-2">
                         {tokenLogo && <Avatar size="sm" src={tokenLogo} />}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-sm text-neutral-800 md:text-lg">{displayVotingPower}</span>
-                            <span className="text-xs text-neutral-500 md:text-base">{tokenSymbol}</span>
+                            <span className="text-neutral-800 text-sm md:text-lg">
+                                {displayVotingPower}
+                            </span>
+                            <span className="text-neutral-500 text-xs md:text-base">
+                                {tokenSymbol}
+                            </span>
                         </div>
                     </div>
                     <div className="flex items-baseline gap-0.5">
-                        <span className="text-sm text-neutral-800 md:text-lg">{formattedUsagePercentage}</span>
-                        <span className="text-xs text-neutral-500 md:text-base">
-                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.used')}
+                        <span className="text-neutral-800 text-sm md:text-lg">
+                            {formattedUsagePercentage}
+                        </span>
+                        <span className="text-neutral-500 text-xs md:text-base">
+                            {t(
+                                'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.used',
+                            )}
                         </span>
                     </div>
                 </div>
             </div>
             <div className="flex w-full items-center justify-between gap-3 md:w-auto md:gap-4">
                 {!isVotingPeriod && (
-                    <Button size="sm" variant="primary" disabled={true} className="w-full md:w-auto">
-                        {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn', { count: daysToNextVoting })}
+                    <Button
+                        className="w-full md:w-auto"
+                        disabled={true}
+                        size="sm"
+                        variant="primary"
+                    >
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.nextVotingIn',
+                            { count: daysToNextVoting },
+                        )}
                     </Button>
                 )}
                 {showVoteButton && (
                     <>
                         <Tag
-                            label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected', {
-                                count: selectedCount,
-                            })}
+                            label={t(
+                                'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.selected',
+                                {
+                                    count: selectedCount,
+                                },
+                            )}
                             variant="primary"
                         />
                         <Button
+                            className="flex-1 md:w-auto md:flex-initial"
+                            disabled={selectedCount === 0 || isLoading}
+                            onClick={onVote}
                             size="sm"
                             variant="primary"
-                            onClick={onVote}
-                            disabled={selectedCount === 0 || isLoading}
-                            className="flex-1 md:w-auto md:flex-initial"
                         >
                             {hasVoted
-                                ? t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.updateVote')
-                                : t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected')}
+                                ? t(
+                                      'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.updateVote',
+                                  )
+                                : t(
+                                      'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.voteOnSelected',
+                                  )}
                         </Button>
                     </>
                 )}
                 {!showVoteButton && isVotingPeriod && (
                     <>
-                        <span className="text-sm text-neutral-500">
-                            {t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft', { count: daysLeftToVote })}
+                        <span className="text-neutral-500 text-sm">
+                            {t(
+                                'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.daysLeft',
+                                { count: daysLeftToVote },
+                            )}
                         </span>
-                        <Tag label={t('app.plugins.gaugeVoter.gaugeVoterVotingTerminal.notVoted')} />
+                        <Tag
+                            label={t(
+                                'app.plugins.gaugeVoter.gaugeVoterVotingTerminal.notVoted',
+                            )}
+                        />
                     </>
                 )}
             </div>

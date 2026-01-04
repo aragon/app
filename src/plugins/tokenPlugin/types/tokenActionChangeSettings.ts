@@ -1,9 +1,12 @@
-import { type IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
+import type { IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
 import type { TokenProposalActionType } from './enum';
 import type { ITokenPluginSettings } from './tokenPluginSettings';
 
 export interface ITokenActionChangeSettings
-    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    extends Omit<
+        IGukProposalActionChangeSettings,
+        'type' | 'proposedSettings' | 'existingSettings'
+    > {
     /**
      * The type of the proposal action.
      */

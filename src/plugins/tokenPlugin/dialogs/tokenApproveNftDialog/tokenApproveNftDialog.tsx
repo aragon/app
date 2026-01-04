@@ -1,18 +1,18 @@
 'use client';
 
+import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
+import type { Hex } from 'viem';
+import { useAccount } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
+    type ITransactionDialogStepMeta,
     TransactionDialog,
     TransactionDialogStep,
-    type ITransactionDialogStepMeta,
 } from '@/shared/components/transactionDialog';
 import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { type Hex } from 'viem';
-import { useAccount } from 'wagmi';
 import { tokenApproveNftDialogUtils } from './tokenApproveNftDialogUtils';
 
 export interface ITokenApproveNftDialogParams {
@@ -54,14 +54,23 @@ export interface ITokenApproveNftDialogParams {
     transactionInfo: ITransactionInfo;
 }
 
-export interface ITokenApproveNftDialogProps extends IDialogComponentProps<ITokenApproveNftDialogParams> {}
+export interface ITokenApproveNftDialogProps
+    extends IDialogComponentProps<ITokenApproveNftDialogParams> {}
 
-export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (props) => {
+export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (
+    props,
+) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenApproveNftDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'TokenApproveNftDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenApproveNftDialog: user must be connected.');
+    invariant(
+        address != null,
+        'TokenApproveNftDialog: user must be connected.',
+    );
 
     const {
         tokenAddress,
@@ -78,28 +87,46 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (pro
     const { t } = useTranslations();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
     const handlePrepareTransaction = () =>
-        tokenApproveNftDialogUtils.buildApproveTransaction({ tokenAddress, tokenId, spender });
+        tokenApproveNftDialogUtils.buildApproveTransaction({
+            tokenAddress,
+            tokenId,
+            spender,
+        });
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.title`)}
-            description={t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.description`)}
-            submitLabel={t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.submit`)}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
+            description={t(
+                `app.plugins.token.tokenApproveNftDialog.${translationNamespace}.description`,
+            )}
             network={network}
-            onSuccess={onSuccess}
             onCancelClick={onClose}
+            onSuccess={onSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t(
+                `app.plugins.token.tokenApproveNftDialog.${translationNamespace}.submit`,
+            )}
+            title={t(
+                `app.plugins.token.tokenApproveNftDialog.${translationNamespace}.title`,
+            )}
             transactionInfo={transactionInfo}
         >
             <AssetDataListItem.Structure
-                name={tokenName ?? t(`app.plugins.token.tokenApproveNftDialog.${translationNamespace}.nftName`)}
                 amount={1}
-                symbol={`#${tokenId.toString()}`}
                 hideValue={true}
+                name={
+                    tokenName ??
+                    t(
+                        `app.plugins.token.tokenApproveNftDialog.${translationNamespace}.nftName`,
+                    )
+                }
+                symbol={`#${tokenId.toString()}`}
             />
         </TransactionDialog>
     );

@@ -31,9 +31,8 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
-                [Error, { context: Record<string, unknown> }]
-            >;
+            const calls = (monitoringUtils.logError as jest.Mock).mock
+                .calls as [Error, { context: Record<string, unknown> }][];
             expect(calls[0][0].name).toBe('SyntaxError');
             expect(calls[0][1]).toEqual({
                 context: {
@@ -120,9 +119,8 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
-                [Error, { context: Record<string, unknown> }]
-            >;
+            const calls = (monitoringUtils.logError as jest.Mock).mock
+                .calls as [Error, { context: Record<string, unknown> }][];
             expect(calls[0][0].name).toBe('SyntaxError');
             expect(calls[0][1]).toEqual({
                 context: {
@@ -145,9 +143,8 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
-                [Error, { context: Record<string, unknown> }]
-            >;
+            const calls = (monitoringUtils.logError as jest.Mock).mock
+                .calls as [Error, { context: Record<string, unknown> }][];
             expect(calls[0][0].name).toBe('SyntaxError');
             expect(calls[0][1]).toEqual({
                 context: {
@@ -208,9 +205,8 @@ describe('responseUtils.safeJsonParse', () => {
 
             expect(result).toBeNull();
             expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const calls = (monitoringUtils.logError as jest.Mock).mock.calls as Array<
-                [Error, { context: Record<string, unknown> }]
-            >;
+            const calls = (monitoringUtils.logError as jest.Mock).mock
+                .calls as [Error, { context: Record<string, unknown> }][];
             expect(calls[0][0].name).toBe('SyntaxError');
             expect(calls[0][1]).toEqual({
                 context: {

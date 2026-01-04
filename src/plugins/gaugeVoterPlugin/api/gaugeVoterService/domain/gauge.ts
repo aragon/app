@@ -1,5 +1,5 @@
-import type { IResource } from '@/shared/api/daoService';
 import type { Hex } from 'viem';
+import type { IResource } from '@/shared/api/daoService';
 
 /**
  * Gauge data from the backend /v2/gauge/:pluginAddress/:network endpoint.

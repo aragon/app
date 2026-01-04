@@ -1,6 +1,6 @@
+import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { generateDao } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { ProposalActionType } from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
@@ -12,7 +12,9 @@ describe('actionComposerUtils', () => {
         const truncateAddressSpy = jest.spyOn(addressUtils, 'truncateAddress');
 
         beforeEach(() => {
-            truncateAddressSpy.mockImplementation((address) => `truncated-${String(address)}`);
+            truncateAddressSpy.mockImplementation(
+                (address) => `truncated-${String(address)}`,
+            );
         });
 
         afterEach(() => {
@@ -58,9 +60,15 @@ describe('actionComposerUtils', () => {
                 { id: '0xN2', name: 'Native2', info: 'info2' },
             ];
             const abisWithOverlap = [
-                generateSmartContractAbi({ address: '0xN1', name: 'CustomOverlap' }),
+                generateSmartContractAbi({
+                    address: '0xN1',
+                    name: 'CustomOverlap',
+                }),
                 generateSmartContractAbi({ address: '0xC3', name: 'Custom3' }),
-                generateSmartContractAbi({ address: '0xDAO', name: 'CustomDao' }),
+                generateSmartContractAbi({
+                    address: '0xDAO',
+                    name: 'CustomDao',
+                }),
             ];
             const result = actionComposerUtils.getActionGroups({
                 t: mockTranslations.tMock,
@@ -69,7 +77,12 @@ describe('actionComposerUtils', () => {
                 nativeGroups,
             });
             // Should filter out 0xN1 and 0xDAO from custom, keep 0xC3
-            expect(result.map((g) => g.id)).toEqual(['0xC3', '0xDAO', '0xN1', '0xN2']);
+            expect(result.map((g) => g.id)).toEqual([
+                '0xC3',
+                '0xDAO',
+                '0xN1',
+                '0xN2',
+            ]);
         });
     });
 
@@ -194,7 +207,11 @@ describe('actionComposerUtils', () => {
                     icon: IconType.SETTINGS,
                     groupId: '0xN1',
                     defaultValue: {
-                        inputData: { function: 'native-1', contract: 'Test', parameters: [] },
+                        inputData: {
+                            function: 'native-1',
+                            contract: 'Test',
+                            parameters: [],
+                        },
                     },
                 },
                 {
@@ -203,7 +220,11 @@ describe('actionComposerUtils', () => {
                     icon: IconType.HOME,
                     groupId: '0xN1',
                     defaultValue: {
-                        inputData: { function: 'native-2', contract: 'Test', parameters: [] },
+                        inputData: {
+                            function: 'native-2',
+                            contract: 'Test',
+                            parameters: [],
+                        },
                     },
                 },
             ] as unknown as IActionComposerInputItem[];
@@ -215,7 +236,9 @@ describe('actionComposerUtils', () => {
                 nativeItems: nativeItemsWithOverlap,
             });
 
-            const n1GroupItems = result.filter((item) => item.groupId === '0xN1');
+            const n1GroupItems = result.filter(
+                (item) => item.groupId === '0xN1',
+            );
             expect(n1GroupItems.length).toBe(4); // 1 new custom + 2 native + 1 RAW_CALLDATA
 
             const [custom1, native1, native2, rawCallData] = n1GroupItems;
@@ -231,8 +254,13 @@ describe('actionComposerUtils', () => {
 
         it('can filter action items by type', () => {
             const dao = generateDao({ address: '0xDAO' });
-            const abis = [generateSmartContractAbi({ address: '0xC1', name: 'Custom1' })];
-            const excludeActionTypes = [ActionItemId.RAW_CALLDATA, ProposalActionType.TRANSFER];
+            const abis = [
+                generateSmartContractAbi({ address: '0xC1', name: 'Custom1' }),
+            ];
+            const excludeActionTypes = [
+                ActionItemId.RAW_CALLDATA,
+                ProposalActionType.TRANSFER,
+            ];
 
             const result = actionComposerUtils.getActionItems({
                 t: mockTranslations.tMock,
@@ -242,8 +270,18 @@ describe('actionComposerUtils', () => {
                 excludeActionTypes,
             });
 
-            expect(result.find((item) => item.defaultValue?.type === ProposalActionType.TRANSFER)).toBeUndefined();
-            expect(result.find((item) => item.defaultValue?.type === ActionItemId.RAW_CALLDATA)).toBeUndefined();
+            expect(
+                result.find(
+                    (item) =>
+                        item.defaultValue?.type === ProposalActionType.TRANSFER,
+                ),
+            ).toBeUndefined();
+            expect(
+                result.find(
+                    (item) =>
+                        item.defaultValue?.type === ActionItemId.RAW_CALLDATA,
+                ),
+            ).toBeUndefined();
         });
     });
 });

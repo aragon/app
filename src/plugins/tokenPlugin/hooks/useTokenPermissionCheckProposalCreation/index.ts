@@ -1,4 +1,4 @@
 export {
-    useTokenPermissionCheckProposalCreation,
     type ITokenPermissionCheckProposalCreationParams,
+    useTokenPermissionCheckProposalCreation,
 } from './useTokenPermissionCheckProposalCreation';

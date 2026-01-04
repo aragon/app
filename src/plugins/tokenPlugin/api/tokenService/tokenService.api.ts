@@ -29,4 +29,7 @@ export interface IGetMemberLocksQueryParams extends IPaginatedRequest {
 }
 
 export interface IGetMemberLocksParams
-    extends IRequestUrlQueryParams<IGetMemberLocksUrlParams, IGetMemberLocksQueryParams> {}
+    extends IRequestUrlQueryParams<
+        IGetMemberLocksUrlParams,
+        IGetMemberLocksQueryParams
+    > {}

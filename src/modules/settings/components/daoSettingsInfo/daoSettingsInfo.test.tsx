@@ -1,14 +1,16 @@
-import { Network } from '@/shared/api/daoService';
-import { generateDao } from '@/shared/testUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { Network } from '@/shared/api/daoService';
+import { generateDao } from '@/shared/testUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    DaoAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="dao-avatar-mock" />
+    ),
 }));
 
 describe('<DaoSettingsInfo /> component', () => {
@@ -28,7 +30,7 @@ describe('<DaoSettingsInfo /> component', () => {
     it('renders the dao avatar and name', () => {
         const daoAvatarCid = 'ipfs://avatar-cid';
         const dao = generateDao({ avatar: daoAvatarCid, name: 'MyDao' });
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
         const daoAvatar = screen.getByTestId('dao-avatar-mock');
         expect(daoAvatar).toBeInTheDocument();
         expect(daoAvatar.dataset.src).toEqual(ipfsUtils.cidToSrc(dao.avatar));
@@ -44,7 +46,7 @@ describe('<DaoSettingsInfo /> component', () => {
 
     it('renders the ens term and value if present', () => {
         const dao = generateDao({ ens: 'mydaoname.dao.eth' });
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
 
         expect(screen.getByText(/daoSettingsInfo.ens/)).toBeInTheDocument();
         expect(screen.getByText('mydaoname.dao.eth')).toBeInTheDocument();
@@ -52,7 +54,7 @@ describe('<DaoSettingsInfo /> component', () => {
 
     it('renders the links term if links are present', () => {
         const dao = generateDao({ links: [{ name: 'link', url: 'link' }] });
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
         expect(screen.getByText(/daoSettingsInfo.links/)).toBeInTheDocument();
     });
 
@@ -65,7 +67,7 @@ describe('<DaoSettingsInfo /> component', () => {
             description: 'This is a test DAO.',
             links: [{ name: 'Test Link', url: 'https://testlink.com' }],
         });
-        render(createTestComponent({ dao: dao }));
+        render(createTestComponent({ dao }));
 
         expect(screen.getByText('Some DAO')).toBeInTheDocument();
         expect(screen.getByText('Ethereum')).toBeInTheDocument();

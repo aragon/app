@@ -7,7 +7,9 @@ export const registerGaugeAbi = {
         { name: '_rewardController', type: 'address' },
         { name: '_metadataURI', type: 'string' },
     ],
-    outputs: [{ internalType: 'address', name: 'gaugeAddress', type: 'address' }],
+    outputs: [
+        { internalType: 'address', name: 'gaugeAddress', type: 'address' },
+    ],
     stateMutability: 'nonpayable',
 } as const;
 
@@ -42,10 +44,22 @@ export const getAllRegisteredGaugeDetailsAbi = {
     outputs: [
         {
             components: [
-                { internalType: 'address', name: 'gaugeAddress', type: 'address' },
+                {
+                    internalType: 'address',
+                    name: 'gaugeAddress',
+                    type: 'address',
+                },
                 { internalType: 'address', name: 'qiToken', type: 'address' },
-                { internalType: 'enum IGaugeRegistrar.Incentive', name: 'incentive', type: 'uint8' },
-                { internalType: 'address', name: 'rewardController', type: 'address' },
+                {
+                    internalType: 'enum IGaugeRegistrar.Incentive',
+                    name: 'incentive',
+                    type: 'uint8',
+                },
+                {
+                    internalType: 'address',
+                    name: 'rewardController',
+                    type: 'address',
+                },
             ],
             internalType: 'struct IGaugeRegistrar.RegisteredGauge[]',
             name: '',

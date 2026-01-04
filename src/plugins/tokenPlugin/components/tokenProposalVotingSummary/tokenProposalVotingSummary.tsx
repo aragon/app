@@ -1,8 +1,14 @@
 'use client';
 
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { formatterUtils, invariant, NumberFormat, Progress, ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    formatterUtils,
+    invariant,
+    NumberFormat,
+    Progress,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
@@ -26,13 +32,19 @@ export interface ITokenProposalVotingSummaryProps {
     isExecuted?: boolean;
 }
 
-export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryProps> = (props) => {
+export const TokenProposalVotingSummary: React.FC<
+    ITokenProposalVotingSummaryProps
+> = (props) => {
     const { proposal, name, isVeto, isExecuted } = props;
 
     const { t } = useTranslations();
 
     if (!proposal) {
-        return <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">{name}</p>;
+        return (
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                {name}
+            </p>
+        );
     }
 
     const { supportThreshold, historicalTotalSupply } = proposal.settings;
@@ -40,24 +52,43 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
 
     const status = tokenProposalUtils.getProposalStatus(proposal);
 
-    const yesVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES));
-    const noVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO));
-    const abstainVotes = Number(tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN));
+    const yesVotes = Number(
+        tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES),
+    );
+    const noVotes = Number(
+        tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO),
+    );
+    const abstainVotes = Number(
+        tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.ABSTAIN),
+    );
 
-    const tokenTotalSupply = formatUnits(BigInt(historicalTotalSupply!), decimals);
+    const tokenTotalSupply = formatUnits(
+        BigInt(historicalTotalSupply!),
+        decimals,
+    );
     const totalSupplyNumber = Number(tokenTotalSupply);
 
-    invariant(totalSupplyNumber > 0, 'TokenProposalVotingSummary: tokenTotalSupply must be a positive number');
+    invariant(
+        totalSupplyNumber > 0,
+        'TokenProposalVotingSummary: tokenTotalSupply must be a positive number',
+    );
 
     const totalVotes = yesVotes + noVotes + abstainVotes;
-    const formattedTotalVotes = formatterUtils.formatNumber(totalVotes, { format: NumberFormat.GENERIC_SHORT })!;
+    const formattedTotalVotes = formatterUtils.formatNumber(totalVotes, {
+        format: NumberFormat.GENERIC_SHORT,
+    })!;
 
     const winningOption = Math.max(yesVotes, noVotes, abstainVotes);
-    const winningOptionPercentage = totalVotes > 0 ? (winningOption / totalVotes) * 100 : 0;
-    const formattedWinningOption = formatterUtils.formatNumber(winningOption, { format: NumberFormat.GENERIC_SHORT });
+    const winningOptionPercentage =
+        totalVotes > 0 ? (winningOption / totalVotes) * 100 : 0;
+    const formattedWinningOption = formatterUtils.formatNumber(winningOption, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
 
-    const supportThresholdPercentage = tokenSettingsUtils.ratioToPercentage(supportThreshold);
-    const supportReached = winningOptionPercentage >= supportThresholdPercentage;
+    const supportThresholdPercentage =
+        tokenSettingsUtils.ratioToPercentage(supportThreshold);
+    const supportReached =
+        winningOptionPercentage >= supportThresholdPercentage;
 
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
 
@@ -74,34 +105,45 @@ export const TokenProposalVotingSummary: React.FC<ITokenProposalVotingSummaryPro
                   : 'text-neutral-500';
 
         return (
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
                 {name}{' '}
-                <span className={statusClass}>{t(`app.plugins.token.tokenProposalVotingSummary.${statusText}`)}</span>
+                <span className={statusClass}>
+                    {t(
+                        `app.plugins.token.tokenProposalVotingSummary.${statusText}`,
+                    )}
+                </span>
             </p>
         );
     }
 
     return (
         <div className="flex w-full flex-col gap-3">
-            <p className="text-base leading-tight font-normal text-neutral-800 md:text-lg">
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
                 {name}{' '}
                 <span className="text-neutral-500">
                     {isVeto
-                        ? t('app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel')
-                        : t('app.plugins.token.tokenProposalVotingSummary.supportLabel')}
+                        ? t(
+                              'app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel',
+                          )
+                        : t(
+                              'app.plugins.token.tokenProposalVotingSummary.supportLabel',
+                          )}
                 </span>
             </p>
             <Progress
-                variant={supportReached ? 'primary' : 'neutral'}
                 thresholdIndicator={supportThresholdPercentage}
                 value={winningOptionPercentage}
+                variant={supportReached ? 'primary' : 'neutral'}
             />
-            <p className="text-sm leading-tight font-normal text-neutral-800 md:text-base">
+            <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
                 {formattedWinningOption}{' '}
                 <span className="text-neutral-500">
-                    {t('app.plugins.token.tokenProposalVotingSummary.votesDescription', {
-                        details: `${formattedTotalVotes} ${symbol}`,
-                    })}
+                    {t(
+                        'app.plugins.token.tokenProposalVotingSummary.votesDescription',
+                        {
+                            details: `${formattedTotalVotes} ${symbol}`,
+                        },
+                    )}
                 </span>
             </p>
         </div>

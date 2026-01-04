@@ -11,8 +11,8 @@ class TimeUtils {
         }
 
         const [, hourRaw, minuteRaw, periodRaw] = timeMatch;
-        let hours = parseInt(hourRaw, 10);
-        let minutes = parseInt(minuteRaw, 10);
+        let hours = Number.parseInt(hourRaw, 10);
+        let minutes = Number.parseInt(minuteRaw, 10);
         const period = periodRaw ? periodRaw.toLowerCase() : undefined;
 
         if (period === 'p' && hours < 12) {

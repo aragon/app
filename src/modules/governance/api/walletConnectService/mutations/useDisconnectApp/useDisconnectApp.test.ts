@@ -1,5 +1,5 @@
-import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import type { ISession } from '../../domain';
 import { walletConnectService } from '../../walletConnectService';
 import { useDisconnectApp } from './useDisconnectApp';
@@ -14,8 +14,12 @@ describe('useDisconnectApp mutation', () => {
     it('disconnects to the app using the specified session', async () => {
         const session = {} as ISession;
         disconnectAppSpy.mockResolvedValue();
-        const { result } = renderHook(() => useDisconnectApp(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useDisconnectApp(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate({ session }));
-        await waitFor(() => expect(disconnectAppSpy).toHaveBeenCalledWith({ session }));
+        await waitFor(() =>
+            expect(disconnectAppSpy).toHaveBeenCalledWith({ session }),
+        );
     });
 });

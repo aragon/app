@@ -1,1 +1,1 @@
-export { NotFoundDao, type INotFoundDaoProps } from './notFoundDao';
+export { type INotFoundDaoProps, NotFoundDao } from './notFoundDao';

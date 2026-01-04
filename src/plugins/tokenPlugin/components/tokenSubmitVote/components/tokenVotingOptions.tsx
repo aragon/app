@@ -1,5 +1,5 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { InputContainer, ToggleGroup, useRandomId } from '@aragon/gov-ui-kit';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { VoteOption } from '../../../types';
 import { TokenVotingOptionToggle } from './tokenVotingOptionToggle';
 
@@ -22,7 +22,9 @@ export interface ITokenVotingOptionsProps {
     disableOptions?: boolean;
 }
 
-export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) => {
+export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
+    props,
+) => {
     const { isVeto, value: selectedValue, onChange, disableOptions } = props;
     const { t } = useTranslations();
     const id = useRandomId();
@@ -55,23 +57,30 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (props) =>
     return (
         <InputContainer
             id={id}
-            useCustomWrapper={true}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
                 label: isVeto
                     ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                    : t('app.plugins.token.tokenSubmitVote.options.approveLabel'),
+                    : t(
+                          'app.plugins.token.tokenSubmitVote.options.approveLabel',
+                      ),
             })}
+            useCustomWrapper={true}
         >
-            <ToggleGroup isMultiSelect={false} orientation="vertical" value={selectedValue ?? ''} onChange={onChange}>
+            <ToggleGroup
+                isMultiSelect={false}
+                onChange={onChange}
+                orientation="vertical"
+                value={selectedValue ?? ''}
+            >
                 {voteOptions.map(({ label, value, variant, description }) => (
                     <TokenVotingOptionToggle
+                        description={description}
+                        disabled={disableOptions}
+                        isSelected={value === selectedValue}
                         key={value}
                         label={label}
                         value={value}
-                        isSelected={value === selectedValue}
                         variant={variant}
-                        description={description}
-                        disabled={disableOptions}
                     />
                 ))}
             </ToggleGroup>

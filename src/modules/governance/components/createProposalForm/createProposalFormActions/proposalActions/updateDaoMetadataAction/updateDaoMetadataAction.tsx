@@ -1,24 +1,32 @@
-import { CreateDaoForm, type ICreateDaoFormMetadataData } from '@/modules/createDao/components/createDaoForm';
-import { ProposalActionType, type IProposalActionUpdateMetadata } from '@/modules/governance/api/governanceService';
+import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData } from 'viem';
+import {
+    CreateDaoForm,
+    type ICreateDaoFormMetadataData,
+} from '@/modules/createDao/components/createDaoForm';
+import {
+    type IProposalActionUpdateMetadata,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
-import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 
-export interface IUpdateDaoMetadataAction extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
+export interface IUpdateDaoMetadataAction
+    extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
     /**
      * Metadata proposed on the action.
      */
     proposedMetadata: ICreateDaoFormMetadataData;
 }
 
-export interface IUpdateDaoMetadaActionProps extends IProposalActionComponentProps<IProposalActionData> {}
+export interface IUpdateDaoMetadaActionProps
+    extends IProposalActionComponentProps<IProposalActionData> {}
 
 const setMetadataAbi = {
     type: 'function',
@@ -28,19 +36,25 @@ const setMetadataAbi = {
     stateMutability: 'nonpayable',
 };
 
-export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (props) => {
+export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
+    props,
+) => {
     const { index } = props;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    const { addPrepareAction } = useCreateProposalFormContext<IUpdateDaoMetadataAction>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IUpdateDaoMetadataAction>();
 
     const fieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof fieldName>(fieldName);
+    useFormField<Record<string, IProposalActionData>, typeof fieldName>(
+        fieldName,
+    );
 
     const prepareAction = useCallback(
         async (action: IUpdateDaoMetadataAction) => {
-            const { name, description, resources, avatar } = action.proposedMetadata;
+            const { name, description, resources, avatar } =
+                action.proposedMetadata;
             const proposedMetadata = { name, description, links: resources };
 
             let daoAvatar: string | undefined;
@@ -54,11 +68,18 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
                 daoAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 
-            const metadata = daoAvatar ? { ...proposedMetadata, avatar: daoAvatar } : proposedMetadata;
+            const metadata = daoAvatar
+                ? { ...proposedMetadata, avatar: daoAvatar }
+                : proposedMetadata;
 
             const ipfsResult = await pinJsonAsync({ body: metadata });
-            const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
-            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
+            const hexResult = transactionUtils.stringToMetadataHex(
+                ipfsResult.IpfsHash,
+            );
+            const data = encodeFunctionData({
+                abi: [setMetadataAbi],
+                args: [hexResult],
+            });
 
             return data;
         },
@@ -69,5 +90,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (p
         addPrepareAction(ProposalActionType.METADATA_UPDATE, prepareAction);
     }, [addPrepareAction, prepareAction]);
 
-    return <CreateDaoForm.Metadata fieldPrefix={`${fieldName}.proposedMetadata`} />;
+    return (
+        <CreateDaoForm.Metadata fieldPrefix={`${fieldName}.proposedMetadata`} />
+    );
 };

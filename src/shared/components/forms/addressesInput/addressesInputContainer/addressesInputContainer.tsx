@@ -1,4 +1,3 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     Button,
     type ICompositeAddress,
@@ -6,8 +5,14 @@ import {
     type IInputComponentProps,
     InputContainer,
 } from '@aragon/gov-ui-kit';
-import { Children, cloneElement, type ComponentProps, isValidElement } from 'react';
+import {
+    Children,
+    type ComponentProps,
+    cloneElement,
+    isValidElement,
+} from 'react';
 import { useFieldArray } from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
 export interface IAddressesInputContainerProps
@@ -33,8 +38,18 @@ export interface IAddressesInputContainerProps
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
-export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = (props) => {
-    const { children, fieldPrefix, name, allowEmptyList, onAddClick, label, helpText } = props;
+export const AddressesInputContainer: React.FC<
+    IAddressesInputContainerProps
+> = (props) => {
+    const {
+        children,
+        fieldPrefix,
+        name,
+        allowEmptyList,
+        onAddClick,
+        label,
+        helpText,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -88,20 +103,20 @@ export const AddressesInputContainer: React.FC<IAddressesInputContainerProps> = 
         <AddressesInputContextProvider value={contextValue}>
             <div className="flex w-full grow flex-col gap-6">
                 <InputContainer
+                    className="gap-3 md:gap-2"
+                    helpText={helpText}
                     id="addresses"
                     label={label}
-                    helpText={helpText}
                     useCustomWrapper={true}
-                    className="gap-3 md:gap-2"
                 >
                     {childrenWithKeys}
                 </InputContainer>
                 <Button
-                    size="md"
-                    variant="tertiary"
                     className="w-fit"
                     iconLeft={IconType.PLUS}
                     onClick={handleAddMember}
+                    size="md"
+                    variant="tertiary"
                 >
                     {t('app.shared.addressesInput.container.add')}
                 </Button>

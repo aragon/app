@@ -1,5 +1,5 @@
 import type { ComponentProps, FormEvent } from 'react';
-import { useFormContext, type FieldValues } from 'react-hook-form';
+import { type FieldValues, useFormContext } from 'react-hook-form';
 import { useWizardContext } from '../wizardProvider';
 
 export interface IWizardFormProps<TFormData extends FieldValues = FieldValues>
@@ -10,7 +10,9 @@ export interface IWizardFormProps<TFormData extends FieldValues = FieldValues>
     onSubmit?: (data: TFormData) => void;
 }
 
-export const WizardForm = <TFormData extends FieldValues = FieldValues>(props: IWizardFormProps<TFormData>) => {
+export const WizardForm = <TFormData extends FieldValues = FieldValues>(
+    props: IWizardFormProps<TFormData>,
+) => {
     const { children, onSubmit = () => null, ...otherProps } = props;
 
     const { hasNext, nextStep } = useWizardContext();

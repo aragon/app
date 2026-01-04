@@ -2,7 +2,9 @@ import type { PluginInterfaceType } from './enum';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
-export interface IDaoPlugin<TSettings extends IPluginSettings = IPluginSettings> {
+export interface IDaoPlugin<
+    TSettings extends IPluginSettings = IPluginSettings,
+> {
     /**
      * Name of the plugin.
      */

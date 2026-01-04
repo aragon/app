@@ -1,1 +1,1 @@
-export { LayoutDao, type ILayoutDaoProps } from './layoutDao';
+export { type ILayoutDaoProps, LayoutDao } from './layoutDao';

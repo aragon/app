@@ -1,1 +1,1 @@
-export { useAdminStatus, type IUseAdminStatusParams } from './useAdminStatus';
+export { type IUseAdminStatusParams, useAdminStatus } from './useAdminStatus';

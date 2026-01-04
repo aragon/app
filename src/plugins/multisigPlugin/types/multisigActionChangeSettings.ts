@@ -1,9 +1,12 @@
-import { type IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
+import type { IProposalActionChangeSettings as IGukProposalActionChangeSettings } from '@aragon/gov-ui-kit';
 import type { MultisigProposalActionType } from './enum';
 import type { IMultisigPluginSettings } from './multisigPluginSettings';
 
 export interface IMultisigActionChangeSettings
-    extends Omit<IGukProposalActionChangeSettings, 'type' | 'proposedSettings' | 'existingSettings'> {
+    extends Omit<
+        IGukProposalActionChangeSettings,
+        'type' | 'proposedSettings' | 'existingSettings'
+    > {
     /**
      * The type of the proposal action.
      */

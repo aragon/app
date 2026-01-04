@@ -1,28 +1,44 @@
+import * as Viem from 'viem';
+import { zeroAddress } from 'viem';
 import type { ISetupBodyFormMembership } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { generateSetupBodyFormData } from '@/modules/createDao/testUtils';
 import { generateToken } from '@/modules/finance/testUtils';
-import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
+import {
+    generateCreateProposalEndDateFormData,
+    generateProposalCreate,
+} from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { tokenPlugin } from '@/plugins/tokenPlugin/constants/tokenPlugin';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
-import { zeroAddress } from 'viem';
 import { generateTokenPluginSettings } from '../../testUtils';
 import { DaoTokenVotingMode } from '../../types';
-import { tokenPluginAbi, tokenPluginPrepareUpdateAbi, tokenPluginSetupAbi } from './tokenPluginAbi';
+import {
+    tokenPluginAbi,
+    tokenPluginPrepareUpdateAbi,
+    tokenPluginSetupAbi,
+} from './tokenPluginAbi';
 import { tokenTransactionUtils } from './tokenTransactionUtils';
 
 describe('tokenTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
-    const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
+    const createDefaultEndDateSpy = jest.spyOn(
+        createProposalUtils,
+        'createDefaultEndDate',
+    );
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
-    const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
-    const getPluginTargetConfigSpy = jest.spyOn(pluginTransactionUtils, 'getPluginTargetConfig');
+    const buildPrepareInstallationDataSpy = jest.spyOn(
+        pluginTransactionUtils,
+        'buildPrepareInstallationData',
+    );
+    const getPluginTargetConfigSpy = jest.spyOn(
+        pluginTransactionUtils,
+        'getPluginTargetConfig',
+    );
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
@@ -37,24 +53,37 @@ describe('tokenTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
-            const endDate = 1728660603;
-            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
+            const endDate = 1_728_660_603;
+            const proposal = {
+                ...generateProposalCreate(),
+                ...generateCreateProposalEndDateFormData(),
+            };
             const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
+                {
+                    to: '0xD740fd724D616795120BC363316580dAFf41129A',
+                    data: '0x000',
+                    value: BigInt(0),
+                },
             ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 settings: generateTokenPluginSettings(),
             });
 
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+            const params = {
+                metadata: '0xipfs-cid' as const,
+                actions,
+                proposal,
+                plugin,
+            };
             const transactionData = '0xdata';
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
             createDefaultEndDateSpy.mockReturnValue(-1);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
 
-            const result = tokenTransactionUtils.buildCreateProposalData(params);
+            const result =
+                tokenTransactionUtils.buildCreateProposalData(params);
 
             expect(parseStartDateSpy).toHaveBeenCalledWith(proposal);
             expect(createDefaultEndDateSpy).not.toHaveBeenCalled();
@@ -62,7 +91,15 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
+                args: [
+                    params.metadata,
+                    params.actions,
+                    BigInt(0),
+                    BigInt(startDate),
+                    BigInt(endDate),
+                    0,
+                    false,
+                ],
             });
             expect(result).toEqual(transactionData);
         });
@@ -73,7 +110,11 @@ describe('tokenTransaction utils', () => {
             const minDuration = 10 * 24 * 60 * 60;
             const proposal = generateProposalCreate();
             const actions: ITransactionRequest[] = [
-                { to: '0xD740fd724D616795120BC363316580dAFf41129A', data: '0x000', value: BigInt(0) },
+                {
+                    to: '0xD740fd724D616795120BC363316580dAFf41129A',
+                    data: '0x000',
+                    value: BigInt(0),
+                },
             ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.TOKEN_VOTING,
@@ -82,7 +123,12 @@ describe('tokenTransaction utils', () => {
                 }),
             });
 
-            const params = { metadata: '0xipfs-cid' as const, actions, proposal, plugin };
+            const params = {
+                metadata: '0xipfs-cid' as const,
+                actions,
+                proposal,
+                plugin,
+            };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(-1);
             createDefaultEndDateSpy.mockReturnValue(endDate);
@@ -95,7 +141,15 @@ describe('tokenTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: tokenPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), BigInt(startDate), BigInt(endDate), 0, false],
+                args: [
+                    params.metadata,
+                    params.actions,
+                    BigInt(0),
+                    BigInt(startDate),
+                    BigInt(endDate),
+                    0,
+                    false,
+                ],
             });
         });
     });
@@ -114,14 +168,24 @@ describe('tokenTransaction utils', () => {
     });
 
     describe('buildPrepareInstallData', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const tokenSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataTokenSettings');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const votingSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataVotingSettings');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mintSettingsSpy = jest.spyOn(tokenTransactionUtils as any, 'buildInstallDataMintSettings');
+        const tokenSettingsSpy = jest.spyOn(
+            tokenTransactionUtils as any,
+            'buildInstallDataTokenSettings',
+        );
 
-        type BuildDataParams = Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
+        const votingSettingsSpy = jest.spyOn(
+            tokenTransactionUtils as any,
+            'buildInstallDataVotingSettings',
+        );
+
+        const mintSettingsSpy = jest.spyOn(
+            tokenTransactionUtils as any,
+            'buildInstallDataMintSettings',
+        );
+
+        type BuildDataParams = Parameters<
+            typeof tokenTransactionUtils.buildPrepareInstallData
+        >;
 
         beforeEach(() => {
             encodeAbiParametersSpy.mockReturnValue('0x');
@@ -145,7 +209,11 @@ describe('tokenTransaction utils', () => {
             const token = { address: zeroAddress, name: '', symbol: '' };
             const body = generateSetupBodyFormData({
                 membership: { members: [], token } as ISetupBodyFormMembership,
-                governance: { supportThreshold: 2, minParticipation: 2, minDuration: 1000000 },
+                governance: {
+                    supportThreshold: 2,
+                    minParticipation: 2,
+                    minDuration: 1_000_000,
+                },
             });
 
             const target = { operation: 0, target: dao.address as Viem.Hex };
@@ -157,18 +225,23 @@ describe('tokenTransaction utils', () => {
             tokenSettingsSpy.mockReturnValue(tokenSettingsMock);
             getPluginTargetConfigSpy.mockReturnValue(target);
 
-            const params = [{ metadata, dao, body }] as unknown as BuildDataParams;
+            const params = [
+                { metadata, dao, body },
+            ] as unknown as BuildDataParams;
             tokenTransactionUtils.buildPrepareInstallData(...params);
 
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginSetupAbi, [
-                votingSettingsMock,
-                tokenSettingsMock,
-                minSettingsMock,
-                target,
-                BigInt(0),
-                metadata,
-                [],
-            ]);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                tokenPluginSetupAbi,
+                [
+                    votingSettingsMock,
+                    tokenSettingsMock,
+                    minSettingsMock,
+                    target,
+                    BigInt(0),
+                    metadata,
+                    [],
+                ],
+            );
         });
 
         it('correctly builds the data of the prepare install plugin transaction', () => {
@@ -177,14 +250,21 @@ describe('tokenTransaction utils', () => {
             const metadata = '0xSomeMetadataCID';
             const dao = generateDao({ address: '0x001' });
             const body = generateSetupBodyFormData({
-                membership: { members: [], token: {} } as ISetupBodyFormMembership,
+                membership: {
+                    members: [],
+                    token: {},
+                } as ISetupBodyFormMembership,
             });
 
             encodeAbiParametersSpy.mockReturnValue(encodedPluginData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const params = [{ metadata, dao, body }] as unknown as BuildDataParams;
-            const result = tokenTransactionUtils.buildPrepareInstallData(...params);
+            const params = [
+                { metadata, dao, body },
+            ] as unknown as BuildDataParams;
+            const result = tokenTransactionUtils.buildPrepareInstallData(
+                ...params,
+            );
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 tokenPlugin.repositoryAddresses[dao.network],
@@ -200,7 +280,9 @@ describe('tokenTransaction utils', () => {
             const stageVotingPeriod = { days: 0, hours: 4, minutes: 0 };
             const dao = generateDao();
             const body = generateSetupBodyFormData();
-            const params = [{ metadata: '', dao, body, stageVotingPeriod }] as unknown as BuildDataParams;
+            const params = [
+                { metadata: '', dao, body, stageVotingPeriod },
+            ] as unknown as BuildDataParams;
             tokenTransactionUtils.buildPrepareInstallData(...params);
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
         });
@@ -209,27 +291,49 @@ describe('tokenTransaction utils', () => {
     describe('buildPrepareUpdateData', () => {
         it('encodes the correct data for sub plugins', () => {
             const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
-            const plugin = generateDaoPlugin({ isSubPlugin: true, metadataIpfs: 'ipfs://test' });
-            const expectedParams = [BigInt(0), undefined, '0x697066733a2f2f74657374'];
+            const plugin = generateDaoPlugin({
+                isSubPlugin: true,
+                metadataIpfs: 'ipfs://test',
+            });
+            const expectedParams = [
+                BigInt(0),
+                undefined,
+                '0x697066733a2f2f74657374',
+            ];
             tokenTransactionUtils.buildPrepareUpdateData({ dao, plugin });
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginPrepareUpdateAbi, expectedParams);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                tokenPluginPrepareUpdateAbi,
+                expectedParams,
+            );
         });
 
         it('encodes the correct data for legacy plugins', () => {
             const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
-            const plugin = generateDaoPlugin({ isSubPlugin: false, metadataIpfs: undefined });
+            const plugin = generateDaoPlugin({
+                isSubPlugin: false,
+                metadataIpfs: undefined,
+            });
             const expectedParams = [BigInt(0), undefined, Viem.zeroHash];
             tokenTransactionUtils.buildPrepareUpdateData({ dao, plugin });
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, false);
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(tokenPluginPrepareUpdateAbi, expectedParams);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                tokenPluginPrepareUpdateAbi,
+                expectedParams,
+            );
         });
     });
 
     describe('buildInstallDataTokenSettings', () => {
         it('returns the token settings for the plugin installation', () => {
-            const token = generateToken({ address: '0x123', symbol: 'MTT', name: 'My Token' });
-            expect(tokenTransactionUtils['buildInstallDataTokenSettings'](token)).toEqual({
+            const token = generateToken({
+                address: '0x123',
+                symbol: 'MTT',
+                name: 'My Token',
+            });
+            expect(
+                tokenTransactionUtils['buildInstallDataTokenSettings'](token),
+            ).toEqual({
                 addr: token.address,
                 name: token.name,
                 symbol: token.symbol,
@@ -244,10 +348,14 @@ describe('tokenTransaction utils', () => {
                 { address: '0x456', tokenAmount: 1.5 },
             ];
 
-            const result = tokenTransactionUtils['buildInstallDataMintSettings'](members);
+            const result =
+                tokenTransactionUtils['buildInstallDataMintSettings'](members);
             expect(result).toEqual({
                 receivers: ['0x123', '0x456'],
-                amounts: [BigInt('10000000000000000'), BigInt('1500000000000000000')],
+                amounts: [
+                    BigInt('10000000000000000'),
+                    BigInt('1500000000000000000'),
+                ],
                 ensureDelegationOnMint: true,
             });
         });
@@ -268,15 +376,19 @@ describe('tokenTransaction utils', () => {
                 membership: { members: [], token } as ISetupBodyFormMembership,
             });
 
-            const params = [{ body }] as Parameters<typeof tokenTransactionUtils.buildPrepareInstallData>;
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
+            const params = [{ body }] as Parameters<
+                typeof tokenTransactionUtils.buildPrepareInstallData
+            >;
+            const result = tokenTransactionUtils[
+                'buildInstallDataVotingSettings'
+            ](...params);
 
             expect(result).toEqual({
                 votingMode: settings.votingMode,
-                supportThreshold: 30000,
-                minParticipation: 40000,
+                supportThreshold: 30_000,
+                minParticipation: 40_000,
                 minDuration: BigInt(settings.minDuration),
-                minProposerVotingPower: BigInt(100000000000000000000),
+                minProposerVotingPower: BigInt(100_000_000_000_000_000_000),
             });
         });
 
@@ -292,8 +404,10 @@ describe('tokenTransaction utils', () => {
             const params = [{ body, stageVotingPeriod }] as Parameters<
                 typeof tokenTransactionUtils.buildPrepareInstallData
             >;
-            const result = tokenTransactionUtils['buildInstallDataVotingSettings'](...params);
-            expect(result.minDuration).toEqual(BigInt(86400));
+            const result = tokenTransactionUtils[
+                'buildInstallDataVotingSettings'
+            ](...params);
+            expect(result.minDuration).toEqual(BigInt(86_400));
         });
     });
 });

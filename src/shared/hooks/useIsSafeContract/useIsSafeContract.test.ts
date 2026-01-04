@@ -1,8 +1,8 @@
+import { renderHook, waitFor } from '@testing-library/react';
 import { smartContractService } from '@/modules/governance/api/smartContractService';
 import { generateSmartContractAbi } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
-import { renderHook, waitFor } from '@testing-library/react';
 import { useIsSafeContract } from '.';
 
 describe('useIsSafeContract hook', () => {
@@ -16,9 +16,12 @@ describe('useIsSafeContract hook', () => {
     const network = Network.ETHEREUM_MAINNET;
 
     it('returns false immediately for invalid addresses', () => {
-        const { result } = renderHook(() => useIsSafeContract({ address: 'invalid', network }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(
+            () => useIsSafeContract({ address: 'invalid', network }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
 
         expect(result.current.data).toBe(false);
         expect(result.current.isLoading).toBe(false);
@@ -26,9 +29,12 @@ describe('useIsSafeContract hook', () => {
     });
 
     it('returns false immediately when address is undefined', () => {
-        const { result } = renderHook(() => useIsSafeContract({ address: undefined, network }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(
+            () => useIsSafeContract({ address: undefined, network }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
 
         expect(result.current.data).toBe(false);
         expect(result.current.isLoading).toBe(false);
@@ -47,9 +53,12 @@ describe('useIsSafeContract hook', () => {
                 }),
             );
 
-            const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
-                wrapper: ReactQueryWrapper,
-            });
+            const { result } = renderHook(
+                () => useIsSafeContract({ address: validAddress, network }),
+                {
+                    wrapper: ReactQueryWrapper,
+                },
+            );
 
             await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -66,9 +75,12 @@ describe('useIsSafeContract hook', () => {
             }),
         );
 
-        const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(
+            () => useIsSafeContract({ address: validAddress, network }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -84,9 +96,12 @@ describe('useIsSafeContract hook', () => {
             }),
         );
 
-        const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(
+            () => useIsSafeContract({ address: validAddress, network }),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
 
         await waitFor(() => expect(result.current.isLoading).toBe(false));
 
@@ -94,9 +109,16 @@ describe('useIsSafeContract hook', () => {
     });
 
     it('respects enabled option when set to false', () => {
-        const { result } = renderHook(() => useIsSafeContract({ address: validAddress, network }, { enabled: false }), {
-            wrapper: ReactQueryWrapper,
-        });
+        const { result } = renderHook(
+            () =>
+                useIsSafeContract(
+                    { address: validAddress, network },
+                    { enabled: false },
+                ),
+            {
+                wrapper: ReactQueryWrapper,
+            },
+        );
 
         expect(result.current.isLoading).toBe(false);
         expect(result.current.data).toBeFalsy();

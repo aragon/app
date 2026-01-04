@@ -1,4 +1,9 @@
-import type { ISession, ISessionEvent, ISessionEventArguments, ISessionProposal } from './domain';
+import type {
+    ISession,
+    ISessionEvent,
+    ISessionEventArguments,
+    ISessionProposal,
+} from './domain';
 
 export interface IConnectAppParams {
     /**

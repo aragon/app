@@ -40,7 +40,8 @@ export type IRequestParams<TUrlParams, TQueryParams, TBody> = Partial<
     IRequestUrlQueryBodyParams<TUrlParams, TQueryParams, TBody>
 >;
 
-export interface IRequestOptions extends Omit<RequestInit, 'cache' | 'body' | 'headers'> {
+export interface IRequestOptions
+    extends Omit<RequestInit, 'cache' | 'body' | 'headers'> {
     /**
      * Additional headers for the request.
      */

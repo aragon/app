@@ -1,11 +1,11 @@
 'use server';
 
+import { QueryClient } from '@tanstack/react-query';
+import type { Address } from 'viem';
 import type { IDaoPluginPageProps } from '@/modules/application/types';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { QueryClient } from '@tanstack/react-query';
-import type { Address } from 'viem';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { gaugeListOptions } from '../../api/gaugeVoterService/queries';
 import type { IGaugeVoterPlugin } from '../../types';
@@ -13,7 +13,9 @@ import { GaugeVoterGaugesPageClient } from './gaugeVoterGaugesPageClient';
 
 export interface IGaugeVoterGaugesPageProps extends IDaoPluginPageProps {}
 
-export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async (props) => {
+export const GaugeVoterGaugesPage: React.FC<
+    IGaugeVoterGaugesPageProps
+> = async (props) => {
     const { dao } = props;
 
     const queryClient = new QueryClient();
@@ -40,7 +42,10 @@ export const GaugeVoterGaugesPage: React.FC<IGaugeVoterGaugesPageProps> = async 
 
     return (
         <Page.Container queryClient={queryClient}>
-            <GaugeVoterGaugesPageClient dao={dao} initialParams={initialParams} />
+            <GaugeVoterGaugesPageClient
+                dao={dao}
+                initialParams={initialParams}
+            />
         </Page.Container>
     );
 };

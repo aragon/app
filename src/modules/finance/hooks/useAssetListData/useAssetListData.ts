@@ -1,4 +1,7 @@
-import { type IGetAssetListParams, useAssetList } from '@/modules/finance/api/financeService';
+import {
+    type IGetAssetListParams,
+    useAssetList,
+} from '@/modules/finance/api/financeService';
 
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
@@ -6,9 +9,17 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
 export const useAssetListData = (params: IGetAssetListParams) => {
     const { t } = useTranslations();
 
-    const { data: assetListData, status, fetchStatus, isFetchingNextPage, fetchNextPage } = useAssetList(params);
+    const {
+        data: assetListData,
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+        fetchNextPage,
+    } = useAssetList(params);
 
-    type Asset = NonNullable<typeof assetListData>['pages'][number]['data'][number];
+    type Asset = NonNullable<
+        typeof assetListData
+    >['pages'][number]['data'][number];
     const assetList: Asset[] = [];
 
     if (assetListData?.pages) {
@@ -23,7 +34,10 @@ export const useAssetListData = (params: IGetAssetListParams) => {
                 if (finalPrice === 0 && amount > 0 && amountUsd > 0) {
                     finalPrice = amountUsd / amount;
                 }
-                const priceUsd = finalPrice !== price ? String(finalPrice) : originalPriceUsd;
+                const priceUsd =
+                    finalPrice !== price
+                        ? String(finalPrice)
+                        : originalPriceUsd;
 
                 assetList.push({
                     ...asset,
@@ -38,9 +52,15 @@ export const useAssetListData = (params: IGetAssetListParams) => {
             }
         }
     }
-    const state = dataListUtils.queryToDataListState({ status, fetchStatus, isFetchingNextPage });
+    const state = dataListUtils.queryToDataListState({
+        status,
+        fetchStatus,
+        isFetchingNextPage,
+    });
 
-    const pageSize = params.queryParams.pageSize ?? assetListData?.pages[0].metadata.pageSize;
+    const pageSize =
+        params.queryParams.pageSize ??
+        assetListData?.pages[0].metadata.pageSize;
     const itemsCount = assetListData?.pages[0].metadata.totalRecords;
 
     const errorState = {

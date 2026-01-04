@@ -1,12 +1,12 @@
 'use client';
 
+import { invariant } from '@aragon/gov-ui-kit';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
 import { PluginType } from '@/shared/types';
-import { invariant } from '@aragon/gov-ui-kit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { DaoMemberList } from '../../components/daoMemberList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -20,7 +20,9 @@ export interface IDaoMembersPageClientProps {
 
 export const daoMembersPageFilterParam = 'members';
 
-export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props) => {
+export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
+    props,
+) => {
     const { initialParams } = props;
     const { daoId } = initialParams.queryParams;
 
@@ -33,7 +35,10 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
         name: daoMembersPageFilterParam,
     });
 
-    invariant(activePlugin != null, 'DaoMembersPageClient: no valid plugin found.');
+    invariant(
+        activePlugin != null,
+        'DaoMembersPageClient: no valid plugin found.',
+    );
 
     return (
         <>
@@ -46,13 +51,17 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (props
             </Page.Main>
             <Page.Aside>
                 <Page.AsideCard title={activePlugin.label}>
-                    <DaoPluginInfo plugin={activePlugin.meta} daoId={daoId} type={PluginType.BODY} />
+                    <DaoPluginInfo
+                        daoId={daoId}
+                        plugin={activePlugin.meta}
+                        type={PluginType.BODY}
+                    />
                 </Page.AsideCard>
                 <PluginSingleComponent
+                    daoId={daoId}
+                    plugin={activePlugin.meta}
                     pluginId={activePlugin.id}
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
-                    plugin={activePlugin.meta}
-                    daoId={daoId}
                 />
             </Page.Aside>
         </>

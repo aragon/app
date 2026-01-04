@@ -1,11 +1,14 @@
+import { forwardRef } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { AutocompleteInput } from '@/shared/components/forms/autocompleteInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { forwardRef } from 'react';
 import { actionComposerUtils } from '../actionComposerUtils';
 import type { IActionComposerInputProps } from './actionComposerInput.api';
 
-export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerInputProps>((props, ref) => {
+export const ActionComposerInput = forwardRef<
+    HTMLInputElement,
+    IActionComposerInputProps
+>((props, ref) => {
     const {
         daoId,
         onActionSelected,
@@ -24,10 +27,20 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     const groups = allowedActions
         ? actionComposerUtils.getAllowedActionGroups({ t, dao, allowedActions })
-        : actionComposerUtils.getActionGroups({ t, dao, abis: importedContractAbis, nativeGroups });
+        : actionComposerUtils.getActionGroups({
+              t,
+              dao,
+              abis: importedContractAbis,
+              nativeGroups,
+          });
 
     const items = allowedActions
-        ? actionComposerUtils.getAllowedActionItems({ t, dao, nativeItems, allowedActions })
+        ? actionComposerUtils.getAllowedActionItems({
+              t,
+              dao,
+              nativeItems,
+              allowedActions,
+          })
         : actionComposerUtils.getActionItems({
               t,
               dao,
@@ -43,12 +56,14 @@ export const ActionComposerInput = forwardRef<HTMLInputElement, IActionComposerI
 
     return (
         <AutocompleteInput
-            items={items}
             groups={groups}
-            selectItemLabel={t('app.governance.actionComposer.input.selectItem')}
+            items={items}
+            onChange={handleActionSelected}
             placeholder={t('app.governance.actionComposer.input.placeholder')}
             ref={ref}
-            onChange={handleActionSelected}
+            selectItemLabel={t(
+                'app.governance.actionComposer.input.selectItem',
+            )}
             {...otherProps}
         />
     );

@@ -17,7 +17,9 @@ export interface IUseDynamicValueParams<TResult> {
     enabled?: boolean;
 }
 
-export const useDynamicValue = <TResult,>(params: IUseDynamicValueParams<TResult>): TResult => {
+export const useDynamicValue = <TResult,>(
+    params: IUseDynamicValueParams<TResult>,
+): TResult => {
     const { callback, delay = 1000, enabled = true } = params;
 
     const [value, setValue] = useState<TResult>(callback());

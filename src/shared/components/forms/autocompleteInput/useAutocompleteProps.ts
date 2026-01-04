@@ -10,7 +10,12 @@ import {
     useListNavigation,
     useRole,
 } from '@floating-ui/react';
-import { type ComponentProps, type ForwardedRef, type HTMLProps, useRef } from 'react';
+import {
+    type ComponentProps,
+    type ForwardedRef,
+    type HTMLProps,
+    useRef,
+} from 'react';
 
 export interface IUseAutocompletePropsParams {
     /**
@@ -39,13 +44,15 @@ export interface IUseAutocompletePropsParams {
 const menuVirtualPadding = 10;
 
 export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
-    const { isOpen, onOpenChange, activeIndex, setActiveIndex, inputRef } = params;
+    const { isOpen, onOpenChange, activeIndex, setActiveIndex, inputRef } =
+        params;
 
     const listRef = useRef<Array<HTMLElement | null>>([]);
 
     const updateFloatingStyle = (params: MiddlewareState) => {
         const { reference, floating } = params.elements;
-        const inputWrapperWidth = (reference as Element).parentElement?.offsetWidth.toString() ?? '0';
+        const inputWrapperWidth =
+            (reference as Element).parentElement?.offsetWidth.toString() ?? '0';
         Object.assign(floating.style, { width: `${inputWrapperWidth}px` });
     };
 
@@ -62,17 +69,32 @@ export const useAutocompleteProps = (params: IUseAutocompletePropsParams) => {
     const role = useRole(context, { role: 'listbox' });
     const dismiss = useDismiss(context);
 
-    const listNavParams = { listRef, activeIndex, onNavigate: setActiveIndex, virtual: true, loop: true };
+    const listNavParams = {
+        listRef,
+        activeIndex,
+        onNavigate: setActiveIndex,
+        virtual: true,
+        loop: true,
+    };
     const listNav = useListNavigation(context, listNavParams);
 
-    const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([role, dismiss, listNav]);
+    const { getReferenceProps, getFloatingProps, getItemProps } =
+        useInteractions([role, dismiss, listNav]);
 
-    const floatingMenuProps = getFloatingProps({ ref: refs.setFloating, style: floatingStyles });
+    const floatingMenuProps = getFloatingProps({
+        ref: refs.setFloating,
+        style: floatingStyles,
+    });
 
     const combinedInputRefs = mergeRefs([refs.setReference, inputRef]);
-    const inputProps: ComponentProps<'input'> = getReferenceProps({ ref: combinedInputRefs });
+    const inputProps: ComponentProps<'input'> = getReferenceProps({
+        ref: combinedInputRefs,
+    });
 
-    const getMenuItemProps = (itemIndex: number, props: HTMLProps<HTMLElement>) => {
+    const getMenuItemProps = (
+        itemIndex: number,
+        props: HTMLProps<HTMLElement>,
+    ) => {
         const updateListRef = (node: HTMLElement | null) => {
             listRef.current[itemIndex] = node;
         };

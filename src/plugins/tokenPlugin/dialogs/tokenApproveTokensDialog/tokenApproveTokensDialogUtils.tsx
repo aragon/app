@@ -1,5 +1,5 @@
-import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { encodeFunctionData, erc20Abi, type Hex } from 'viem';
+import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 
 export interface IBuildApproveTransactionParams {
     /**
@@ -17,7 +17,9 @@ export interface IBuildApproveTransactionParams {
 }
 
 class TokenApproveTokensDialogUtils {
-    buildApproveTransaction = (params: IBuildApproveTransactionParams): Promise<ITransactionRequest> => {
+    buildApproveTransaction = (
+        params: IBuildApproveTransactionParams,
+    ): Promise<ITransactionRequest> => {
         const { token, amount, spender } = params;
 
         const transactionData = encodeFunctionData({
@@ -26,10 +28,15 @@ class TokenApproveTokensDialogUtils {
             args: [spender as Hex, amount],
         });
 
-        const transaction = { to: token as Hex, data: transactionData, value: BigInt(0) };
+        const transaction = {
+            to: token as Hex,
+            data: transactionData,
+            value: BigInt(0),
+        };
 
         return Promise.resolve(transaction);
     };
 }
 
-export const tokenApproveTokensDialogUtils = new TokenApproveTokensDialogUtils();
+export const tokenApproveTokensDialogUtils =
+    new TokenApproveTokensDialogUtils();

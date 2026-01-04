@@ -20,7 +20,9 @@ export const generateFormContextState = <TFormValues extends object = object>(
     ...state,
 });
 
-export const generateFormContext = (values?: Partial<UseFormReturn>): UseFormReturn => ({
+export const generateFormContext = (
+    values?: Partial<UseFormReturn>,
+): UseFormReturn => ({
     watch: jest.fn(),
     getValues: jest.fn(),
     getFieldState: jest.fn(),

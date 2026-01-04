@@ -1,1 +1,4 @@
-export { CreateDaoFormMetadata, type ICreateDaoFormMetadataProps } from './createDaoFormMetadata';
+export {
+    CreateDaoFormMetadata,
+    type ICreateDaoFormMetadataProps,
+} from './createDaoFormMetadata';

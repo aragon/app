@@ -1,8 +1,8 @@
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect } from 'react';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { usePermissionCheckGuard } from '../usePermissionCheckGuard';
 
@@ -22,7 +22,9 @@ export interface IUseProposalPermissionCheckGuardParams {
     redirectTab?: 'dashboard' | 'proposals' | 'settings';
 }
 
-export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCheckGuardParams) => {
+export const useProposalPermissionCheckGuard = (
+    params: IUseProposalPermissionCheckGuardParams,
+) => {
     const { daoId, pluginAddress, redirectTab = 'dashboard' } = params;
 
     const router = useRouter();
@@ -36,13 +38,14 @@ export const useProposalPermissionCheckGuard = (params: IUseProposalPermissionCh
         [router, dao, redirectTab],
     );
 
-    const { check: createProposalGuard, result: canCreateProposal } = usePermissionCheckGuard({
-        permissionNamespace: 'proposal',
-        slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
-        onError: handlePermissionCheckError,
-        plugin,
-        daoId,
-    });
+    const { check: createProposalGuard, result: canCreateProposal } =
+        usePermissionCheckGuard({
+            permissionNamespace: 'proposal',
+            slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
+            onError: handlePermissionCheckError,
+            plugin,
+            daoId,
+        });
 
     useEffect(() => {
         if (!canCreateProposal) {

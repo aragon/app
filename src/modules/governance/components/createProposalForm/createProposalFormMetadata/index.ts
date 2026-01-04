@@ -1,1 +1,4 @@
-export { CreateProposalFormMetadata, type ICreateProposalFormMetadataProps } from './createProposalFormMetadata';
+export {
+    CreateProposalFormMetadata,
+    type ICreateProposalFormMetadataProps,
+} from './createProposalFormMetadata';

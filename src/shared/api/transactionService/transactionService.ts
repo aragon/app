@@ -7,8 +7,13 @@ class TransactionService extends AragonBackendService {
         status: '/v2/transactions/:network/:transactionHash/status',
     };
 
-    getTransactionStatus = async (params: IGetTransactionStatusParams): Promise<ITransactionStatus> => {
-        const result = await this.request<ITransactionStatus>(this.urls.status, params);
+    getTransactionStatus = async (
+        params: IGetTransactionStatusParams,
+    ): Promise<ITransactionStatus> => {
+        const result = await this.request<ITransactionStatus>(
+            this.urls.status,
+            params,
+        );
 
         return result;
     };

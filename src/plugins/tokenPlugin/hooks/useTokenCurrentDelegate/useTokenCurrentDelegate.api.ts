@@ -1,5 +1,5 @@
-import type { Network } from '@/shared/api/daoService';
 import type { Address } from 'viem';
+import type { Network } from '@/shared/api/daoService';
 
 export interface IUseTokenCurrentDelegateResult {
     /**

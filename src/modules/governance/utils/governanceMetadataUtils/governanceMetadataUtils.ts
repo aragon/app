@@ -1,12 +1,11 @@
+import type { Metadata } from 'next';
 import { governanceService } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalPageParams } from '@/modules/governance/types';
 import { daoService } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { metadataUtils } from '@/shared/utils/metadataUtils';
-
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import type { Metadata } from 'next';
 
 export interface IGenerateProposalMetadataParams {
     /**
@@ -16,7 +15,9 @@ export interface IGenerateProposalMetadataParams {
 }
 
 class GovernanceMetadataUtils {
-    generateProposalMetadata = async ({ params }: IGenerateProposalMetadataParams): Promise<Metadata> => {
+    generateProposalMetadata = async ({
+        params,
+    }: IGenerateProposalMetadataParams): Promise<Metadata> => {
         try {
             const { proposalSlug, addressOrEns, network } = await params;
             const daoId = await daoUtils.resolveDaoId({

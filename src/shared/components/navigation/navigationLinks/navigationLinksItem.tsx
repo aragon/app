@@ -1,10 +1,10 @@
 'use client';
 
-import { Link, type ILinkProps } from '@/shared/components/link';
 import { Icon, type IconType } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+import { type ILinkProps, Link } from '@/shared/components/link';
 import type { NavigationLinksVariant } from './navigationLinks.api';
 
 export interface INavigationLinksItemProps extends ILinkProps {
@@ -27,8 +27,18 @@ export interface INavigationLinksItemProps extends ILinkProps {
     iconSide?: 'left' | 'right';
 }
 
-export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) => {
-    const { href, variant, icon, iconSide = 'left', children, className, ...otherProps } = props;
+export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (
+    props,
+) => {
+    const {
+        href,
+        variant,
+        icon,
+        iconSide = 'left',
+        children,
+        className,
+        ...otherProps
+    } = props;
 
     const pathname = usePathname();
     const isActive = href != null && pathname.includes(href) && href !== '/';
@@ -45,13 +55,22 @@ export const NavigationLinksItem: React.FC<INavigationLinksItemProps> = (props) 
     );
 
     const iconClassNames = classNames(
-        !isActive ? 'text-neutral-300' : variant === 'row' ? 'text-primary-400' : 'text-neutral-800',
+        isActive
+            ? variant === 'row'
+                ? 'text-primary-400'
+                : 'text-neutral-800'
+            : 'text-neutral-300',
         'group-active:text-neutral-500',
     );
 
     return (
-        <Link href={href} aria-current={isActive ? 'page' : undefined} className={linkClassNames} {...otherProps}>
-            <Icon icon={icon} className={iconClassNames} />
+        <Link
+            aria-current={isActive ? 'page' : undefined}
+            className={linkClassNames}
+            href={href}
+            {...otherProps}
+        >
+            <Icon className={iconClassNames} icon={icon} />
             {children}
         </Link>
     );

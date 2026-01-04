@@ -1,6 +1,10 @@
+import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
+import { act, type ReactNode } from 'react';
+import * as Wagmi from 'wagmi';
 import * as DaoService from '@/shared/api/daoService';
 import * as usePinJson from '@/shared/api/ipfsService/mutations';
-import { type IDialogLocation } from '@/shared/components/dialogProvider';
+import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import {
     type ITransactionDialogProps,
     type ITransactionDialogStep,
@@ -16,13 +20,15 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { testLogger, timeUtils } from '@/test/utils';
-import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import { act, type ReactNode } from 'react';
-import * as Wagmi from 'wagmi';
 import { generateProposalCreate } from '../../testUtils';
-import { PublishProposalDialog, type PublishProposalStep } from './publishProposalDialog';
-import type { IPublishProposalDialogParams, IPublishProposalDialogProps } from './publishProposalDialog.api';
+import {
+    PublishProposalDialog,
+    type PublishProposalStep,
+} from './publishProposalDialog';
+import type {
+    IPublishProposalDialogParams,
+    IPublishProposalDialogProps,
+} from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
 jest.mock('@/shared/components/transactionDialog', () => ({
@@ -36,15 +42,29 @@ describe('<PublishProposalDialog /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const usePinJsonSpy = jest.spyOn(usePinJson, 'usePinJson');
-    const prepareMetadataSpy = jest.spyOn(publishProposalDialogUtils, 'prepareMetadata');
-    const buildTransactionSpy = jest.spyOn(publishProposalDialogUtils, 'buildTransaction');
+    const prepareMetadataSpy = jest.spyOn(
+        publishProposalDialogUtils,
+        'prepareMetadata',
+    );
+    const buildTransactionSpy = jest.spyOn(
+        publishProposalDialogUtils,
+        'buildTransaction',
+    );
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({ address: '0x123' } as unknown as Wagmi.UseAccountReturnType);
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useAccountSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as Wagmi.UseAccountReturnType);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
         usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
-        buildTransactionSpy.mockReturnValue({ to: '0x123', data: '0x123', value: BigInt(0) });
+        buildTransactionSpy.mockReturnValue({
+            to: '0x123',
+            data: '0x123',
+            value: BigInt(0),
+        });
     });
 
     afterEach(() => {
@@ -68,7 +88,9 @@ describe('<PublishProposalDialog /> component', () => {
         },
     });
 
-    const createTestComponent = (props?: Partial<IPublishProposalDialogProps>) => {
+    const createTestComponent = (
+        props?: Partial<IPublishProposalDialogProps>,
+    ) => {
         const completeProps: IPublishProposalDialogProps = {
             location: { id: 'test' },
             ...props,
@@ -90,7 +112,9 @@ describe('<PublishProposalDialog /> component', () => {
     it('throws error when user is not connected', () => {
         testLogger.suppressErrors();
         const location = generateDialogLocation();
-        useAccountSpy.mockReturnValue({ address: undefined } as Wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            address: undefined,
+        } as Wagmi.UseAccountReturnType);
         expect(() => render(createTestComponent({ location }))).toThrow();
     });
 
@@ -99,21 +123,32 @@ describe('<PublishProposalDialog /> component', () => {
         render(createTestComponent({ location }));
         expect(TransactionDialog).toHaveBeenCalledWith(
             expect.objectContaining({
-                title: expect.stringMatching(/publishProposalDialog.title/) as unknown,
-                description: expect.stringMatching(/publishProposalDialog.description/) as unknown,
+                title: expect.stringMatching(
+                    /publishProposalDialog.title/,
+                ) as unknown,
+                description: expect.stringMatching(
+                    /publishProposalDialog.description/,
+                ) as unknown,
             }),
             undefined,
         );
     });
 
     it('renders a draft version of the proposal being created', () => {
-        const proposal = generateProposalCreate({ title: 'Proposal title', summary: 'Proposal summary' });
+        const proposal = generateProposalCreate({
+            title: 'Proposal title',
+            summary: 'Proposal summary',
+        });
         const location = generateDialogLocation({ proposal });
         useAccountSpy.mockReturnValue({
             address: '0xD740fd724D616795120BC363316580dAFf41129A',
         } as unknown as Wagmi.UseAccountReturnType);
         render(createTestComponent({ location }));
-        expect(screen.getByText(modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT)).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
+            ),
+        ).toBeInTheDocument();
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();
         expect(screen.getByText('0xD740…129A')).toBeInTheDocument();
@@ -129,7 +164,9 @@ describe('<PublishProposalDialog /> component', () => {
         prepareMetadataSpy.mockReturnValue(parsedMetadata);
 
         const pinJson = jest.fn();
-        usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle({ mutate: pinJson }));
+        usePinJsonSpy.mockReturnValue(
+            generateReactQueryMutationResultIdle({ mutate: pinJson }),
+        );
         const errorHandler = jest.fn();
 
         const proposal = generateProposalCreate({
@@ -142,16 +179,27 @@ describe('<PublishProposalDialog /> component', () => {
         render(createTestComponent({ location }));
 
         const { customSteps } = (
-            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
+            TransactionDialog as jest.Mock<
+                ReactNode,
+                ITransactionDialogProps<PublishProposalStep>[]
+            >
         ).mock.calls[0][0];
-        const pinMetadataStep: ITransactionDialogStep<PublishProposalStep> = customSteps![0];
-        expect(pinMetadataStep.meta.label).toMatch(/publishProposalDialog.step.PIN_METADATA.label/);
-        expect(pinMetadataStep.meta.errorLabel).toMatch(/publishProposalDialog.step.PIN_METADATA.errorLabel/);
+        const pinMetadataStep: ITransactionDialogStep<PublishProposalStep> =
+            customSteps![0];
+        expect(pinMetadataStep.meta.label).toMatch(
+            /publishProposalDialog.step.PIN_METADATA.label/,
+        );
+        expect(pinMetadataStep.meta.errorLabel).toMatch(
+            /publishProposalDialog.step.PIN_METADATA.errorLabel/,
+        );
         expect(pinMetadataStep.meta.state).toEqual('idle');
 
         act(() => pinMetadataStep.meta.action?.({ onError: errorHandler }));
         expect(prepareMetadataSpy).toHaveBeenCalledWith(proposal);
-        expect(pinJson).toHaveBeenCalledWith({ body: parsedMetadata }, { onError: errorHandler });
+        expect(pinJson).toHaveBeenCalledWith(
+            { body: parsedMetadata },
+            { onError: errorHandler },
+        );
     });
 
     it('prepares the transaction using the buildTransaction functionality and the hash of the pinned data', async () => {
@@ -159,13 +207,20 @@ describe('<PublishProposalDialog /> component', () => {
         const daoPlugin = generateDaoPlugin();
         const ipfsResult = { IpfsHash: 'test' };
         const proposal = generateProposalCreate();
-        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: daoPlugin })]);
-        usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultSuccess({ data: ipfsResult }));
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: daoPlugin }),
+        ]);
+        usePinJsonSpy.mockReturnValue(
+            generateReactQueryMutationResultSuccess({ data: ipfsResult }),
+        );
         const location = generateDialogLocation({ proposal });
 
         render(createTestComponent({ location }));
         const { prepareTransaction } = (
-            TransactionDialog as jest.Mock<ReactNode, Array<ITransactionDialogProps<PublishProposalStep>>>
+            TransactionDialog as jest.Mock<
+                ReactNode,
+                ITransactionDialogProps<PublishProposalStep>[]
+            >
         ).mock.calls[0][0];
         await act(() => prepareTransaction());
 

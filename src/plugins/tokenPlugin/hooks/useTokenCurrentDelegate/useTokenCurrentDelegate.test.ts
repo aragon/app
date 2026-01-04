@@ -1,6 +1,6 @@
-import { Network } from '@/shared/api/daoService';
 import { renderHook } from '@testing-library/react';
 import * as wagmi from 'wagmi';
+import { Network } from '@/shared/api/daoService';
 import { useTokenCurrentDelegate } from './useTokenCurrentDelegate';
 
 describe('useTokenCurrentDelegate hook', () => {

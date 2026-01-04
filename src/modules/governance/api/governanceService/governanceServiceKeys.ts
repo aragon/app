@@ -21,12 +21,33 @@ export enum GovernanceServiceKey {
 }
 
 export const governanceServiceKeys = {
-    proposalList: (params: IGetProposalListParams) => [GovernanceServiceKey.PROPOSAL_LIST, params],
-    proposalBySlug: (params: IGetProposalBySlugParams) => [GovernanceServiceKey.PROPOSAL_BY_SLUG, params],
-    proposalActions: (params: IGetProposalActionsParams) => [GovernanceServiceKey.PROPOSAL_ACTIONS, params],
-    canCreateProposal: (params: IGetCanCreateProposalParams) => [GovernanceServiceKey.CAN_CREATE_PROPOSAL, params],
-    memberList: (params: IGetMemberListParams) => [GovernanceServiceKey.MEMBER_LIST, params],
+    proposalList: (params: IGetProposalListParams) => [
+        GovernanceServiceKey.PROPOSAL_LIST,
+        params,
+    ],
+    proposalBySlug: (params: IGetProposalBySlugParams) => [
+        GovernanceServiceKey.PROPOSAL_BY_SLUG,
+        params,
+    ],
+    proposalActions: (params: IGetProposalActionsParams) => [
+        GovernanceServiceKey.PROPOSAL_ACTIONS,
+        params,
+    ],
+    canCreateProposal: (params: IGetCanCreateProposalParams) => [
+        GovernanceServiceKey.CAN_CREATE_PROPOSAL,
+        params,
+    ],
+    memberList: (params: IGetMemberListParams) => [
+        GovernanceServiceKey.MEMBER_LIST,
+        params,
+    ],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],
-    memberExists: (params: IGetMemberExistsParams) => [GovernanceServiceKey.MEMBER_EXISTS, params],
-    voteList: (params: IGetVoteListParams) => [GovernanceServiceKey.VOTE_LIST, params],
+    memberExists: (params: IGetMemberExistsParams) => [
+        GovernanceServiceKey.MEMBER_EXISTS,
+        params,
+    ],
+    voteList: (params: IGetVoteListParams) => [
+        GovernanceServiceKey.VOTE_LIST,
+        params,
+    ],
 };

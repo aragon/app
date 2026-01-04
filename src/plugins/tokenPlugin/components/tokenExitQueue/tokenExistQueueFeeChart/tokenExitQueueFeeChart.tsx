@@ -1,19 +1,33 @@
 'use client';
 
+import { useMemo, useState } from 'react';
+import {
+    Area,
+    AreaChart,
+    ReferenceDot,
+    ResponsiveContainer,
+    XAxis,
+    YAxis,
+} from 'recharts';
+import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { TokenExitQueueFeeMode } from '@/plugins/tokenPlugin/types';
 import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useMemo, useState } from 'react';
-import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
-import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
-import { CHART_POINT_COUNT, type ITokenExitQueueFeeChartProps } from './tokenExitQueueFeeChart.api';
+import {
+    CHART_POINT_COUNT,
+    type ITokenExitQueueFeeChartProps,
+} from './tokenExitQueueFeeChart.api';
 
-export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (props) => {
+export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
+    props,
+) => {
     const { ticket, currentTime, className } = props;
 
     const { t } = useTranslations();
 
-    const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(undefined);
+    const [hoveredIndex, setHoveredIndex] = useState<number | undefined>(
+        undefined,
+    );
 
     const mode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
     const isFixedMode = mode === TokenExitQueueFeeMode.FIXED;
@@ -23,11 +37,17 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
     const decayDuration = Math.max(ticket.cooldown - ticket.minCooldown, 0);
     const fallbackDuration = Math.max(secondsPerDay, 1);
     // Extend x-axis to 1.5x decay duration so slope line hits at 2/3 of chart (e.g., 10 min decay → 15 min x-axis)
-    const domainDuration = decayDuration > 0 ? decayDuration * 1.5 : fallbackDuration;
+    const domainDuration =
+        decayDuration > 0 ? decayDuration * 1.5 : fallbackDuration;
 
-    const minFeePercent = useMemo(() => {
-        return tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.cooldown, ticket });
-    }, [ticket]);
+    const minFeePercent = useMemo(
+        () =>
+            tokenExitQueueFeeUtils.calculateFeeAtTime({
+                timeElapsed: ticket.cooldown,
+                ticket,
+            }),
+        [ticket],
+    );
 
     const points = useMemo(() => {
         if (isFixedMode) {
@@ -35,39 +55,54 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         }
 
         if (decayDuration <= 0) {
-            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed: ticket.minCooldown, ticket });
+            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({
+                timeElapsed: ticket.minCooldown,
+                ticket,
+            });
             return [
                 { elapsedSeconds: 0, feePercent: startFee },
                 { elapsedSeconds: domainDuration, feePercent: startFee },
             ];
         }
 
-        const firstPhasePoints = Array.from({ length: CHART_POINT_COUNT }, (_, index) => {
-            const ratio = index / (CHART_POINT_COUNT - 1);
-            const xPosition = ratio * decayDuration;
-            const timeElapsed = ticket.minCooldown + xPosition;
-            const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({ timeElapsed, ticket });
+        const firstPhasePoints = Array.from(
+            { length: CHART_POINT_COUNT },
+            (_, index) => {
+                const ratio = index / (CHART_POINT_COUNT - 1);
+                const xPosition = ratio * decayDuration;
+                const timeElapsed = ticket.minCooldown + xPosition;
+                const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed,
+                    ticket,
+                });
 
-            return {
-                elapsedSeconds: xPosition,
-                feePercent,
-            };
-        });
+                return {
+                    elapsedSeconds: xPosition,
+                    feePercent,
+                };
+            },
+        );
 
-        if (firstPhasePoints[firstPhasePoints.length - 1]?.elapsedSeconds !== decayDuration) {
-            firstPhasePoints.push({ elapsedSeconds: decayDuration, feePercent: minFeePercent });
+        if (firstPhasePoints.at(-1)?.elapsedSeconds !== decayDuration) {
+            firstPhasePoints.push({
+                elapsedSeconds: decayDuration,
+                feePercent: minFeePercent,
+            });
         }
 
         // Plateau extends from end of decay to domainDuration (1.5x cooldown)
         const plateauDuration = domainDuration - decayDuration;
-        const plateauPoints = Array.from({ length: CHART_POINT_COUNT }, (_, index) => {
-            const ratio = index / (CHART_POINT_COUNT - 1);
-            const xPosition = decayDuration + ratio * plateauDuration;
-            return {
-                elapsedSeconds: xPosition,
-                feePercent: minFeePercent,
-            };
-        });
+        const plateauPoints = Array.from(
+            { length: CHART_POINT_COUNT },
+            (_, index) => {
+                const ratio = index / (CHART_POINT_COUNT - 1);
+                const xPosition = decayDuration + ratio * plateauDuration;
+                return {
+                    elapsedSeconds: xPosition,
+                    feePercent: minFeePercent,
+                };
+            },
+        );
 
         return [...firstPhasePoints, ...plateauPoints];
     }, [decayDuration, domainDuration, isFixedMode, minFeePercent, ticket]);
@@ -77,8 +112,14 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
     }
 
     const timeElapsedNow = currentTime - ticket.queuedAt;
-    const elapsedSinceMinCooldown = Math.max(0, timeElapsedNow - ticket.minCooldown);
-    const nowX = decayDuration > 0 ? Math.min(elapsedSinceMinCooldown, domainDuration) : 0;
+    const elapsedSinceMinCooldown = Math.max(
+        0,
+        timeElapsedNow - ticket.minCooldown,
+    );
+    const nowX =
+        decayDuration > 0
+            ? Math.min(elapsedSinceMinCooldown, domainDuration)
+            : 0;
 
     const boundedTimeElapsed = Math.max(
         ticket.minCooldown,
@@ -138,7 +179,10 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
 
     const xAxisTicks = generateTicks();
 
-    const dataMaxFeePercent = points.reduce((max, point) => Math.max(max, point.feePercent), currentFeePercent);
+    const dataMaxFeePercent = points.reduce(
+        (max, point) => Math.max(max, point.feePercent),
+        currentFeePercent,
+    );
     const configuredMaxFeePercent = Math.max(ticket.feePercent / 100, 0);
     const yDomainMax = Math.max(configuredMaxFeePercent, dataMaxFeePercent, 1);
 
@@ -162,13 +206,22 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         const secondsPerYear = secondsPerDay * 365;
 
         if (elapsedSeconds >= secondsPerYear) {
-            const years = Math.max(1, Math.round(elapsedSeconds / secondsPerYear));
+            const years = Math.max(
+                1,
+                Math.round(elapsedSeconds / secondsPerYear),
+            );
             formatted = `${String(years)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.year')}`;
         } else if (elapsedSeconds >= secondsPerDay) {
-            const days = Math.max(1, Math.round(elapsedSeconds / secondsPerDay));
+            const days = Math.max(
+                1,
+                Math.round(elapsedSeconds / secondsPerDay),
+            );
             formatted = `${String(days)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.day')}`;
         } else if (elapsedSeconds >= secondsPerHour) {
-            const hours = Math.max(1, Math.round(elapsedSeconds / secondsPerHour));
+            const hours = Math.max(
+                1,
+                Math.round(elapsedSeconds / secondsPerHour),
+            );
             formatted = `${String(hours)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.hour')}`;
         } else {
             const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
@@ -189,7 +242,10 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
             isTooltipActive?: boolean;
         };
 
-        if (extendedState.isTooltipActive && extendedState.activeTooltipIndex != null) {
+        if (
+            extendedState.isTooltipActive &&
+            extendedState.activeTooltipIndex != null
+        ) {
             const nextIndex = Number(extendedState.activeTooltipIndex);
             setHoveredIndex(Number.isFinite(nextIndex) ? nextIndex : undefined);
             return;
@@ -203,37 +259,56 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
         setHoveredIndex(undefined);
     };
 
-    const hoveredPoint = hoveredIndex != null ? points[hoveredIndex] : undefined;
-    const activeLabel = hoveredPoint && hoveredIndex != null ? formatElapsed(hoveredPoint.elapsedSeconds) : nowLabel;
-    const activeFeePercent = hoveredPoint ? hoveredPoint.feePercent : currentFeePercent;
+    const hoveredPoint =
+        hoveredIndex != null ? points[hoveredIndex] : undefined;
+    const activeLabel =
+        hoveredPoint && hoveredIndex != null
+            ? formatElapsed(hoveredPoint.elapsedSeconds)
+            : nowLabel;
+    const activeFeePercent = hoveredPoint
+        ? hoveredPoint.feePercent
+        : currentFeePercent;
     const activeFeeDisplay = formatFeePercent(activeFeePercent);
     const indicatorX = hoveredPoint ? hoveredPoint.elapsedSeconds : nowX;
-    const indicatorY = hoveredPoint ? hoveredPoint.feePercent : currentFeePercent;
+    const indicatorY = hoveredPoint
+        ? hoveredPoint.feePercent
+        : currentFeePercent;
 
     return (
         <div className={className}>
             <div className="relative">
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer height={200} width="100%">
                     <AreaChart
                         data={points}
-                        onMouseMove={handleMouseMove}
-                        onMouseLeave={() => setHoveredIndex(undefined)}
                         margin={{ top: 12, right: 28, left: 8, bottom: 0 }}
+                        onMouseLeave={() => setHoveredIndex(undefined)}
+                        onMouseMove={handleMouseMove}
                     >
                         <defs>
-                            <linearGradient id="colorFee" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
-                                <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
+                            <linearGradient
+                                id="colorFee"
+                                x1="0"
+                                x2="0"
+                                y1="0"
+                                y2="1"
+                            >
+                                <stop
+                                    offset="5%"
+                                    stopColor="var(--color-primary-400)"
+                                    stopOpacity={0.4}
+                                />
+                                <stop
+                                    offset="95%"
+                                    stopColor="var(--color-primary-400)"
+                                    stopOpacity={0}
+                                />
                             </linearGradient>
                         </defs>
                         <XAxis
-                            dataKey="elapsedSeconds"
-                            className="text-xs"
-                            tickLine={false}
                             axisLine={false}
-                            type="number"
+                            className="text-xs"
+                            dataKey="elapsedSeconds"
                             domain={[0, domainDuration]}
-                            ticks={xAxisTicks}
                             tickFormatter={(value) => {
                                 const numValue = Number(value);
                                 const isFirstTick = numValue === 0;
@@ -243,42 +318,53 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (p
                                 }
                                 return formatElapsed(numValue, isLastTick);
                             }}
+                            tickLine={false}
                             tickMargin={8}
+                            ticks={xAxisTicks}
+                            type="number"
                         />
                         <YAxis
-                            tickFormatter={formatFeePercent}
-                            className="text-xs"
-                            width={40}
-                            tickLine={false}
                             axisLine={false}
-                            type="number"
-                            tickCount={6}
-                            orientation="left"
+                            className="text-xs"
                             dataKey="feePercent"
                             domain={[0, yDomainMax]}
+                            orientation="left"
+                            tickCount={6}
+                            tickFormatter={formatFeePercent}
+                            tickLine={false}
+                            type="number"
+                            width={40}
                         />
                         <Area
-                            type={mode === TokenExitQueueFeeMode.TIERED ? 'stepAfter' : 'linear'}
-                            dataKey="feePercent"
                             activeDot={false}
+                            dataKey="feePercent"
+                            fill="url(#colorFee)"
+                            fillOpacity={1}
                             stroke="var(--color-primary-400)"
                             strokeWidth={1}
-                            fillOpacity={1}
-                            fill="url(#colorFee)"
+                            type={
+                                mode === TokenExitQueueFeeMode.TIERED
+                                    ? 'stepAfter'
+                                    : 'linear'
+                            }
                         />
                         <ReferenceDot
-                            x={indicatorX}
-                            y={indicatorY}
-                            r={4}
                             fill="var(--color-primary-400)"
+                            r={4}
                             stroke="var(--color-neutral-0)"
                             strokeWidth={1}
+                            x={indicatorX}
+                            y={indicatorY}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
                 <div className="pointer-events-none absolute top-3 right-3 text-right">
-                    <span className="block text-lg font-semibold text-neutral-800">{activeFeeDisplay}</span>
-                    <span className="block text-sm text-neutral-500">{activeLabel}</span>
+                    <span className="block font-semibold text-lg text-neutral-800">
+                        {activeFeeDisplay}
+                    </span>
+                    <span className="block text-neutral-500 text-sm">
+                        {activeLabel}
+                    </span>
                 </div>
             </div>
         </div>

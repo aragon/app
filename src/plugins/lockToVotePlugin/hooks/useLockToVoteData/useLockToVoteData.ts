@@ -1,12 +1,12 @@
+import { useEffect } from 'react';
+import type { Hex } from 'viem';
+import { useAccount, useReadContract } from 'wagmi';
 import { useCheckTokenAllowance } from '@/plugins/tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useEffect } from 'react';
-import { type Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
 import { networkDefinitions } from '../../../../shared/constants/networkDefinitions';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockUnlockDialogParams } from '../../dialogs/lockToVoteLockUnlockDialog';
@@ -74,7 +74,9 @@ const lockManagerAbi = [
     },
 ] as const;
 
-export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToVoteDataResult => {
+export const useLockToVoteData = (
+    params: IUseLockToVoteDataParams,
+): IUseLockToVoteDataResult => {
     const { plugin, daoId, onBalanceUpdated } = params;
     const { token } = plugin.settings;
     const { lockManagerAddress } = plugin;
@@ -111,10 +113,14 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     // Call onBalanceUpdated when balance changes.
     useEffect(() => {
-        if (onBalanceUpdated && balanceStatus === 'success' && balance?.value != null) {
+        if (
+            onBalanceUpdated &&
+            balanceStatus === 'success' &&
+            balance?.value != null
+        ) {
             onBalanceUpdated(balance.value);
         }
-    }, [balanceStatus, balance?.value, token, onBalanceUpdated]);
+    }, [balanceStatus, balance?.value, onBalanceUpdated]);
 
     const refetchData = () => {
         invalidateQueries();
@@ -123,7 +129,10 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const approveTokens = (amount: bigint, onSuccess: () => void) => {
         const { symbol } = token;
-        const txInfoTitle = t('app.plugins.lockToVote.lockToVoteLockForm.approveTransactionInfoTitle', { symbol });
+        const txInfoTitle = t(
+            'app.plugins.lockToVote.lockToVoteLockForm.approveTransactionInfoTitle',
+            { symbol },
+        );
         const transactionInfo = { title: txInfoTitle, current: 1, total: 2 };
 
         const params: ITokenApproveTokensDialogParams = {
@@ -139,7 +148,11 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
         open(TokenPluginDialogId.APPROVE_TOKENS, { params });
     };
 
-    const handleLockUnlockTokens = (action: 'lock' | 'unlock', amount: bigint, showTransactionInfo = false) => {
+    const handleLockUnlockTokens = (
+        action: 'lock' | 'unlock',
+        amount: bigint,
+        showTransactionInfo = false,
+    ) => {
         const params: ILockToVoteLockUnlockDialogParams = {
             action,
             token,
@@ -175,7 +188,10 @@ export const useLockToVoteData = (params: IUseLockToVoteDataParams): IUseLockToV
 
     const unlockTokens = () => unlockGuard.check();
 
-    const isLoading = isLockedBalanceLoading || isAllowanceCheckLoading || unlockGuard.isLoading;
+    const isLoading =
+        isLockedBalanceLoading ||
+        isAllowanceCheckLoading ||
+        unlockGuard.isLoading;
 
     return {
         allowance,

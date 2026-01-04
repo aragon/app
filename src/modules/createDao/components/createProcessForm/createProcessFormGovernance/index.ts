@@ -1,2 +1,5 @@
-export { CreateProcessFormGovernance, type ICreateProcessFormGovernanceProps } from './createProcessFormGovernance';
+export {
+    CreateProcessFormGovernance,
+    type ICreateProcessFormGovernanceProps,
+} from './createProcessFormGovernance';
 export * from './fields';

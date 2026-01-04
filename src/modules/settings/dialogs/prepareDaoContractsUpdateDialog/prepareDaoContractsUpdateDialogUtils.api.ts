@@ -1,5 +1,5 @@
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { TransactionReceipt } from 'viem';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 
 export interface IBuildPrepareUpdatePluginsTransactionParams {
     /**
@@ -12,7 +12,8 @@ export interface IBuildPrepareUpdatePluginsTransactionParams {
     plugins: IDaoPlugin[];
 }
 
-export interface IGetApplyUpdateProposalParams extends IBuildPrepareUpdatePluginsTransactionParams {
+export interface IGetApplyUpdateProposalParams
+    extends IBuildPrepareUpdatePluginsTransactionParams {
     /**
      * Defines if the DAO has a protocol update available or not.
      */

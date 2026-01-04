@@ -1,2 +1,6 @@
-export { TokenLockForm, type ITokenLockFormData, type ITokenLockFormProps } from './tokenLockForm';
-export { TokenLockList, type ITokenLockListProps } from './tokenLockList';
+export {
+    type ITokenLockFormData,
+    type ITokenLockFormProps,
+    TokenLockForm,
+} from './tokenLockForm';
+export { type ITokenLockListProps, TokenLockList } from './tokenLockList';

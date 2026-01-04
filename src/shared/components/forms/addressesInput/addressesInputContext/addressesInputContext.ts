@@ -12,14 +12,19 @@ export interface IAddressesInputContext {
     onRemoveMember: (index: number) => void;
 }
 
-const addressesInputContext = createContext<IAddressesInputContext | null>(null);
+const addressesInputContext = createContext<IAddressesInputContext | null>(
+    null,
+);
 
 export const AddressesInputContextProvider = addressesInputContext.Provider;
 
 export const useAddressesInputContext = (): IAddressesInputContext => {
     const values = useContext(addressesInputContext);
 
-    invariant(values !== null, 'useAddressesInputContext: the hook must be used within AddressesInputContextProvider');
+    invariant(
+        values !== null,
+        'useAddressesInputContext: the hook must be used within AddressesInputContextProvider',
+    );
 
     return values;
 };

@@ -1,1 +1,4 @@
-export { lastPluginEventLogOptions, useLastPluginEventLog } from './useLastPluginEventLog';
+export {
+    lastPluginEventLogOptions,
+    useLastPluginEventLog,
+} from './useLastPluginEventLog';

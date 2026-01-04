@@ -1,5 +1,5 @@
 export {
     CreateProposalFormProvider,
-    useCreateProposalFormContext,
     type ICreateProposalFormContext,
+    useCreateProposalFormContext,
 } from './createProposalFormProvider';

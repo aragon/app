@@ -1,5 +1,5 @@
-import { generateStepperResult } from '@/shared/testUtils';
 import { render, screen } from '@testing-library/react';
+import { generateStepperResult } from '@/shared/testUtils';
 import { type IWizardContext, WizardProvider } from '../wizardProvider';
 import { type IWizardStepProps, WizardStep } from './wizardStep';
 
@@ -10,7 +10,10 @@ describe('<WizardStep /> component', () => {
         scrollToSpy.mockReset();
     });
 
-    const createTestComponent = (values?: { props?: Partial<IWizardStepProps>; context?: Partial<IWizardContext> }) => {
+    const createTestComponent = (values?: {
+        props?: Partial<IWizardStepProps>;
+        context?: Partial<IWizardContext>;
+    }) => {
         const completeProps: IWizardStepProps = {
             title: 'step-title',
             id: '001',

@@ -1,6 +1,6 @@
+import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 
 export interface IGaugeVoterVotingStatsProps {
     /**
@@ -25,20 +25,32 @@ export interface IGaugeVoterVotingStatsProps {
     isUserConnected: boolean;
 }
 
-export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (props) => {
-    const { daysLeftToVote, formattedEpochVotingPower, formattedUserVotingPower, usagePercentage, isUserConnected } =
-        props;
+export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (
+    props,
+) => {
+    const {
+        daysLeftToVote,
+        formattedEpochVotingPower,
+        formattedUserVotingPower,
+        usagePercentage,
+        isUserConnected,
+    } = props;
 
     const { t } = useTranslations();
 
-    const formattedUsagePercentage = formatterUtils.formatNumber(usagePercentage, {
-        format: NumberFormat.PERCENTAGE_SHORT,
-    });
+    const formattedUsagePercentage = formatterUtils.formatNumber(
+        usagePercentage,
+        {
+            format: NumberFormat.PERCENTAGE_SHORT,
+        },
+    );
 
     const stats = [
         {
             value: (daysLeftToVote || 0).toString(),
-            suffix: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.daysLeftSuffix'),
+            suffix: t(
+                'app.plugins.gaugeVoter.gaugeVoterVotingStats.daysLeftSuffix',
+            ),
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.toVote'),
         },
         {
@@ -46,11 +58,11 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.totalVotes'),
         },
         {
-            value: !isUserConnected ? '-' : formattedUserVotingPower,
+            value: isUserConnected ? formattedUserVotingPower : '-',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.yourVotes'),
         },
         {
-            value: !isUserConnected ? '-' : (formattedUsagePercentage ?? '0%'),
+            value: isUserConnected ? (formattedUsagePercentage ?? '0%') : '-',
             label: t('app.plugins.gaugeVoter.gaugeVoterVotingStats.usedVotes'),
         },
     ];
@@ -58,7 +70,12 @@ export const GaugeVoterVotingStats: React.FC<IGaugeVoterVotingStatsProps> = (pro
     return (
         <div className="grid w-full grid-cols-2 gap-3">
             {stats.map(({ label, value, suffix }) => (
-                <StatCard key={label} value={value} suffix={suffix} label={label} />
+                <StatCard
+                    key={label}
+                    label={label}
+                    suffix={suffix}
+                    value={value}
+                />
             ))}
         </div>
     );

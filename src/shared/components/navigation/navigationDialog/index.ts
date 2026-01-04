@@ -1,1 +1,4 @@
-export { NavigationDialog, type INavigationDialogProps } from './navigationDialog';
+export {
+    type INavigationDialogProps,
+    NavigationDialog,
+} from './navigationDialog';

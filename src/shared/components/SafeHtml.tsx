@@ -1,5 +1,5 @@
-import { sanitizeHtmlRich, sanitizeHtmlStrict } from '@/shared/security';
 import type { FC, HTMLAttributes } from 'react';
+import { sanitizeHtmlRich, sanitizeHtmlStrict } from '@/shared/security';
 
 export interface ISafeHtmlProps extends HTMLAttributes<HTMLDivElement> {
     /**
@@ -21,7 +21,8 @@ export interface ISafeHtmlProps extends HTMLAttributes<HTMLDivElement> {
  */
 export const SafeHtml: FC<ISafeHtmlProps> = (props) => {
     const { html, variant = 'strict', ...rest } = props;
-    const sanitized = variant === 'rich' ? sanitizeHtmlRich(html) : sanitizeHtmlStrict(html);
+    const sanitized =
+        variant === 'rich' ? sanitizeHtmlRich(html) : sanitizeHtmlStrict(html);
 
     // eslint-disable-next-line react/no-danger, no-restricted-syntax
     return <div {...rest} dangerouslySetInnerHTML={{ __html: sanitized }} />;

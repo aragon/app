@@ -7,9 +7,9 @@ export class AragonBackendServiceError extends Error {
     static parseErrorCode = 'parseError';
     static parseErrorDescription = 'Error parsing response';
 
-    public readonly code: string;
-    public readonly description: string;
-    public readonly status: number;
+    readonly code: string;
+    readonly description: string;
+    readonly status: number;
 
     constructor(code: string, description: string, status: number) {
         super(description);
@@ -19,7 +19,9 @@ export class AragonBackendServiceError extends Error {
         this.status = status;
     }
 
-    static fromResponse = async (response: Response): Promise<AragonBackendServiceError> => {
+    static fromResponse = async (
+        response: Response,
+    ): Promise<AragonBackendServiceError> => {
         const parsedData = await responseUtils.safeJsonParse(response);
 
         const isIErrorResponse = (value: unknown): value is IErrorResponse =>
@@ -31,7 +33,11 @@ export class AragonBackendServiceError extends Error {
             typeof (value as Record<string, unknown>).description === 'string';
 
         if (isIErrorResponse(parsedData)) {
-            return new AragonBackendServiceError(parsedData.code, parsedData.description, response.status);
+            return new AragonBackendServiceError(
+                parsedData.code,
+                parsedData.description,
+                response.status,
+            );
         }
 
         return new AragonBackendServiceError(
@@ -42,5 +48,8 @@ export class AragonBackendServiceError extends Error {
     };
 
     static isNotFoundError = (error: unknown) =>
-        error != null && typeof error === 'object' && 'code' in error && error.code === this.notFoundCode;
+        error != null &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === this.notFoundCode;
 }

@@ -1,10 +1,10 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
-import { PluginType, type IDaoPageParams } from '@/shared/types';
+import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { QueryClient } from '@tanstack/react-query';
 import { memberListOptions } from '../../api/governanceService';
 import { DaoMembersPageClient } from './daoMembersPageClient';
 
@@ -30,7 +30,9 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const daoUrlParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams }));
+    const dao = await queryClient.fetchQuery(
+        daoOptions({ urlParams: daoUrlParams }),
+    );
 
     const plugins = daoUtils.getDaoPlugins(dao, {
         type: PluginType.BODY,
@@ -43,9 +45,15 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     }
 
     const bodyPluginAddress = plugins[0].address;
-    const memberListQueryParams = { daoId, pluginAddress: bodyPluginAddress, pageSize: daoMembersCount };
+    const memberListQueryParams = {
+        daoId,
+        pluginAddress: bodyPluginAddress,
+        pageSize: daoMembersCount,
+    };
     const memberListParams = { queryParams: memberListQueryParams };
-    await queryClient.prefetchInfiniteQuery(memberListOptions({ queryParams: memberListQueryParams }));
+    await queryClient.prefetchInfiniteQuery(
+        memberListOptions({ queryParams: memberListQueryParams }),
+    );
 
     return (
         <Page.Container queryClient={queryClient}>

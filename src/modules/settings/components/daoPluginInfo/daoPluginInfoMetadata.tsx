@@ -1,5 +1,5 @@
-import type { IResource } from '@/shared/api/daoService';
 import { Link } from '@aragon/gov-ui-kit';
+import type { IResource } from '@/shared/api/daoService';
 
 export interface IDaoPluginInfoMetadataProps {
     /**
@@ -12,7 +12,9 @@ export interface IDaoPluginInfoMetadataProps {
     links?: IResource[];
 }
 
-export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (props) => {
+export const DaoPluginInfoMetadata: React.FC<IDaoPluginInfoMetadataProps> = (
+    props,
+) => {
     const { description, links } = props;
 
     return (

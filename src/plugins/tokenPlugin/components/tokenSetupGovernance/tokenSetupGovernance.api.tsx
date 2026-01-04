@@ -6,7 +6,8 @@ export interface ITokenSetupGovernanceMembershipSettings
     extends Partial<Pick<ITokenSetupMembershipForm, 'members'>>,
         Pick<ITokenSetupMembershipForm, 'token'> {}
 
-export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
+export interface ITokenSetupGovernanceProps
+    extends Omit<IPluginSetupGovernanceParams, 'membershipSettings'> {
     /**
      * Membership settings of the token voting body.
      */
@@ -16,5 +17,9 @@ export interface ITokenSetupGovernanceProps extends Omit<IPluginSetupGovernanceP
 export interface ITokenSetupGovernanceForm
     extends Pick<
         ITokenPluginSettings,
-        'supportThreshold' | 'minParticipation' | 'minProposerVotingPower' | 'minDuration' | 'votingMode'
+        | 'supportThreshold'
+        | 'minParticipation'
+        | 'minProposerVotingPower'
+        | 'minDuration'
+        | 'votingMode'
     > {}

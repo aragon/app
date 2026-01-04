@@ -1,6 +1,6 @@
-import { type IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { IMultisigPluginSettings } from '@/plugins/multisigPlugin/types';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 
 export interface IMultisigSettingsParseParams {
     /**
@@ -22,7 +22,9 @@ export interface IMultisigSettingsParseParams {
 }
 
 class MultisigSettingsUtils {
-    parseSettings = (params: IMultisigSettingsParseParams): IDefinitionSetting[] => {
+    parseSettings = (
+        params: IMultisigSettingsParseParams,
+    ): IDefinitionSetting[] => {
         const { settings, membersCount, isVeto, t } = params;
         const { minApprovals, onlyListed, historicalMembersCount } = settings;
 
@@ -33,16 +35,25 @@ class MultisigSettingsUtils {
                 term: t(
                     `app.plugins.multisig.multisigGovernanceSettings.${isVeto ? 'minimumVeto' : 'minimumApproval'}`,
                 ),
-                definition: t('app.plugins.multisig.multisigGovernanceSettings.approvals', {
-                    min: minApprovals,
-                    max: processedMembersCount,
-                }),
+                definition: t(
+                    'app.plugins.multisig.multisigGovernanceSettings.approvals',
+                    {
+                        min: minApprovals,
+                        max: processedMembersCount,
+                    },
+                ),
             },
             {
-                term: t('app.plugins.multisig.multisigGovernanceSettings.proposalCreation'),
+                term: t(
+                    'app.plugins.multisig.multisigGovernanceSettings.proposalCreation',
+                ),
                 definition: onlyListed
-                    ? t('app.plugins.multisig.multisigGovernanceSettings.members')
-                    : t('app.plugins.multisig.multisigGovernanceSettings.anyWallet'),
+                    ? t(
+                          'app.plugins.multisig.multisigGovernanceSettings.members',
+                      )
+                    : t(
+                          'app.plugins.multisig.multisigGovernanceSettings.anyWallet',
+                      ),
             },
         ];
     };

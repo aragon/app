@@ -13,13 +13,19 @@ describe('token service', () => {
         const locks = [generateTokenLock()];
         const params = {
             urlParams: { address: '0x123' },
-            queryParams: { network: Network.ETHEREUM_SEPOLIA, escrowAddress: '0x456' },
+            queryParams: {
+                network: Network.ETHEREUM_SEPOLIA,
+                escrowAddress: '0x456',
+            },
         };
 
         requestSpy.mockResolvedValue(locks);
         const result = await tokenService.getMemberLocks(params);
 
-        expect(requestSpy).toHaveBeenCalledWith(tokenService['urls'].memberLocks, params);
+        expect(requestSpy).toHaveBeenCalledWith(
+            tokenService['urls'].memberLocks,
+            params,
+        );
         expect(result).toEqual(locks);
     });
 });

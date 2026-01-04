@@ -16,4 +16,7 @@ export interface IGetAllowedActionsUrlParams {
 }
 
 export interface IGetAllowedActionsParams
-    extends IRequestUrlQueryParams<IGetAllowedActionsUrlParams, IGetAllowedActionsQueryParams> {}
+    extends IRequestUrlQueryParams<
+        IGetAllowedActionsUrlParams,
+        IGetAllowedActionsQueryParams
+    > {}

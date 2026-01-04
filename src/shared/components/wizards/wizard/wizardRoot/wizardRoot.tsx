@@ -1,14 +1,22 @@
+import dynamic from 'next/dynamic';
+import { type ElementType, type ReactNode, useEffect, useMemo } from 'react';
+import {
+    type FieldValues,
+    FormProvider,
+    type UseFormProps,
+    useForm,
+} from 'react-hook-form';
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
-import dynamic from 'next/dynamic';
-import { useEffect, useMemo, type ElementType, type ReactNode } from 'react';
-import { FormProvider, useForm, type FieldValues, type UseFormProps } from 'react-hook-form';
-import { WizardProvider, type IWizardStepperStep } from '../wizardProvider';
+import { type IWizardStepperStep, WizardProvider } from '../wizardProvider';
 
 // Dynamically import react-hook-form dev-tools to avoid NextJs hydration errors
-const DevTool: ElementType = dynamic(() => import('@hookform/devtools').then((module) => module.DevTool), {
-    ssr: false,
-});
+const DevTool: ElementType = dynamic(
+    () => import('@hookform/devtools').then((module) => module.DevTool),
+    {
+        ssr: false,
+    },
+);
 
 export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
     /**
@@ -37,10 +45,22 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
     children?: ReactNode;
 }
 
-export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: IWizardRootProps<TFormData>) => {
-    const { initialSteps, children, submitLabel, defaultValues, useDevTool, submitHelpText } = props;
+export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
+    props: IWizardRootProps<TFormData>,
+) => {
+    const {
+        initialSteps,
+        children,
+        submitLabel,
+        defaultValues,
+        useDevTool,
+        submitHelpText,
+    } = props;
 
-    const formMethods = useForm<TFormData>({ mode: 'onTouched', defaultValues });
+    const formMethods = useForm<TFormData>({
+        mode: 'onTouched',
+        defaultValues,
+    });
     const { formState, reset, control } = formMethods;
 
     const wizardStepper = useStepper({ initialSteps });
@@ -61,7 +81,9 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(props: I
 
     return (
         <FormProvider {...formMethods}>
-            <WizardProvider value={wizardContextValues}>{children}</WizardProvider>
+            <WizardProvider value={wizardContextValues}>
+                {children}
+            </WizardProvider>
             {useDevTool && <DevTool control={control} />}
         </FormProvider>
     );

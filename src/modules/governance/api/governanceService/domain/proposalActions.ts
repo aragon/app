@@ -1,6 +1,8 @@
 import type { IProposalAction } from './proposalAction';
 
-export interface IProposalActionsResult<TAction extends IProposalAction = IProposalAction> {
+export interface IProposalActionsResult<
+    TAction extends IProposalAction = IProposalAction,
+> {
     /**
      * Flag indicating if the actions are being decoded.
      */
@@ -12,5 +14,5 @@ export interface IProposalActionsResult<TAction extends IProposalAction = IPropo
     /**
      * The raw actions.
      */
-    rawActions?: Array<Pick<IProposalAction, 'to' | 'value' | 'data'>>;
+    rawActions?: Pick<IProposalAction, 'to' | 'value' | 'data'>[];
 }

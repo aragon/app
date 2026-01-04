@@ -1,13 +1,16 @@
+import { useCallback, useEffect } from 'react';
+import { encodeFunctionData } from 'viem';
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import { useCallback, useEffect } from 'react';
-import { encodeFunctionData } from 'viem';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
-import type { IUpdatePluginMetadataAction, IUpdatePluginMetadataActionProps } from './updatePluginMetadataAction.api';
+import type {
+    IUpdatePluginMetadataAction,
+    IUpdatePluginMetadataActionProps,
+} from './updatePluginMetadataAction.api';
 
 const setMetadataAbi = {
     type: 'function',
@@ -17,35 +20,53 @@ const setMetadataAbi = {
     stateMutability: 'nonpayable',
 };
 
-export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionProps> = (props) => {
+export const UpdatePluginMetadataAction: React.FC<
+    IUpdatePluginMetadataActionProps
+> = (props) => {
     const { index, action } = props;
 
-    const meta = action.meta as { isProcess?: boolean; isSubPlugin?: boolean } | undefined;
+    const meta = action.meta as
+        | { isProcess?: boolean; isSubPlugin?: boolean }
+        | undefined;
     const isProcess = meta?.isProcess ?? false;
     const isSubPlugin = meta?.isSubPlugin ?? false;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    const { addPrepareAction } = useCreateProposalFormContext<IUpdatePluginMetadataAction>();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IUpdatePluginMetadataAction>();
 
     const actionFieldName = `actions.[${index.toString()}]`;
-    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(actionFieldName);
+    useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(
+        actionFieldName,
+    );
 
     const displayProcessKey = isProcess && !isSubPlugin;
 
     const prepareAction = useCallback(
         async (action: IUpdatePluginMetadataAction) => {
             const { proposedMetadata, existingMetadata } = action;
-            const { name, description, resources, processKey } = proposedMetadata;
+            const { name, description, resources, processKey } =
+                proposedMetadata;
 
-            const pluginMetadata = { ...existingMetadata, name, description, links: resources };
+            const pluginMetadata = {
+                ...existingMetadata,
+                name,
+                description,
+                links: resources,
+            };
 
             if (displayProcessKey) {
                 pluginMetadata.processKey = processKey;
             }
 
             const ipfsResult = await pinJsonAsync({ body: pluginMetadata });
-            const hexResult = transactionUtils.stringToMetadataHex(ipfsResult.IpfsHash);
-            const data = encodeFunctionData({ abi: [setMetadataAbi], args: [hexResult] });
+            const hexResult = transactionUtils.stringToMetadataHex(
+                ipfsResult.IpfsHash,
+            );
+            const data = encodeFunctionData({
+                abi: [setMetadataAbi],
+                args: [hexResult],
+            });
 
             return data;
         },
@@ -53,7 +74,10 @@ export const UpdatePluginMetadataAction: React.FC<IUpdatePluginMetadataActionPro
     );
 
     useEffect(() => {
-        addPrepareAction(ProposalActionType.METADATA_PLUGIN_UPDATE, prepareAction);
+        addPrepareAction(
+            ProposalActionType.METADATA_PLUGIN_UPDATE,
+            prepareAction,
+        );
     }, [addPrepareAction, prepareAction]);
 
     return (

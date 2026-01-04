@@ -1,5 +1,8 @@
 import { generateToken } from '@/modules/finance/testUtils';
-import { ProposalActionType, type IProposalActionWithdrawToken } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalActionWithdrawToken,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from './proposalAction';
 
 export const generateProposalActionWithdrawToken = (

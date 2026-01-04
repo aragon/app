@@ -78,7 +78,9 @@ export class PluginRegistryUtils {
     };
 
     registerPlugin = (plugin: IPlugin): this => {
-        const hasPlugin = this.pluginRegistry.plugins.some(({ id }) => id === plugin.id);
+        const hasPlugin = this.pluginRegistry.plugins.some(
+            ({ id }) => id === plugin.id,
+        );
 
         if (!hasPlugin) {
             this.pluginRegistry.plugins.push(plugin);
@@ -110,10 +112,10 @@ export class PluginRegistryUtils {
 
     getSlotFunctions = <TParams = unknown, TResult = unknown>(
         slotId: SlotId,
-    ): Array<PluginFunction<TParams, TResult>> => {
+    ): PluginFunction<TParams, TResult>[] => {
         const functions = this.pluginRegistry.slotFunctions[slotId] ?? {};
 
-        return Object.values(functions) as Array<PluginFunction<TParams, TResult>>;
+        return Object.values(functions) as PluginFunction<TParams, TResult>[];
     };
 
     getSlotFunction = <TParams = unknown, TResult = unknown>(
@@ -142,19 +144,27 @@ export class PluginRegistryUtils {
         return this;
     };
 
-    getSlotComponent = (params: IGetSlotComponentParams): PluginComponent | undefined => {
+    getSlotComponent = (
+        params: IGetSlotComponentParams,
+    ): PluginComponent | undefined => {
         const { slotId, pluginId } = params;
-        const component = this.pluginRegistry.slotComponents[slotId]?.[pluginId];
+        const component =
+            this.pluginRegistry.slotComponents[slotId]?.[pluginId];
 
         return component;
     };
 
-    getPageSlotId = (slotId: string, segments: string[]) => `${slotId}-${segments.toString()}`;
+    getPageSlotId = (slotId: string, segments: string[]) =>
+        `${slotId}-${segments.toString()}`;
 
     listContainsRegisteredPlugins = (pluginIds: string[] = []) => {
-        const registeredPluginIds = this.pluginRegistry.plugins.map((plugin) => plugin.id);
+        const registeredPluginIds = this.pluginRegistry.plugins.map(
+            (plugin) => plugin.id,
+        );
 
-        return pluginIds.some((pluginId) => registeredPluginIds.includes(pluginId));
+        return pluginIds.some((pluginId) =>
+            registeredPluginIds.includes(pluginId),
+        );
     };
 }
 

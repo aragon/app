@@ -2,7 +2,10 @@ import type { IToken } from '@/modules/finance/api/financeService';
 import type { IResource } from '@/shared/api/daoService';
 import type { ICampaignUserData } from './campaignUserData';
 
-export interface ICampaign<TUserData extends ICampaignUserData = ICampaignUserData, TStrategy = unknown> {
+export interface ICampaign<
+    TUserData extends ICampaignUserData = ICampaignUserData,
+    TStrategy = unknown,
+> {
     /**
      * Unique identifier for the campaign.
      */

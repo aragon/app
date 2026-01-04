@@ -1,1 +1,1 @@
-export { LayoutRoot, type ILayoutRootProps } from './layoutRoot';
+export { type ILayoutRootProps, LayoutRoot } from './layoutRoot';

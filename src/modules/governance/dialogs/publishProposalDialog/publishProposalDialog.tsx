@@ -1,3 +1,10 @@
+import {
+    invariant,
+    ProposalDataListItem,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
+import { useCallback, useMemo } from 'react';
+import { useAccount } from 'wagmi';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -12,9 +19,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { invariant, ProposalDataListItem, ProposalStatus } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -22,15 +26,30 @@ export enum PublishProposalStep {
     PIN_METADATA = 'PIN_METADATA',
 }
 
-export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (props) => {
+export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
+    props,
+) => {
     const { location } = props;
 
-    invariant(location.params != null, 'PublishProposalDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'PublishProposalDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'PublishProposalDialog: user must be connected.');
+    invariant(
+        address != null,
+        'PublishProposalDialog: user must be connected.',
+    );
 
-    const { daoId, plugin, proposal, prepareActions, translationNamespace, transactionInfo } = location.params;
+    const {
+        daoId,
+        plugin,
+        proposal,
+        prepareActions,
+        translationNamespace,
+        transactionInfo,
+    } = location.params;
 
     const { title, summary } = proposal;
 
@@ -38,27 +57,42 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const stepper = useStepper<ITransactionDialogStepMeta, PublishProposalStep | TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        PublishProposalStep | TransactionDialogStep
+    >({
         initialActiveStep: PublishProposalStep.PIN_METADATA,
     });
 
-    const { data: pinJsonData, status, mutate: pinJson } = usePinJson({ onSuccess: stepper.nextStep });
+    const {
+        data: pinJsonData,
+        status,
+        mutate: pinJson,
+    } = usePinJson({ onSuccess: stepper.nextStep });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
-            const proposalMetadata = publishProposalDialogUtils.prepareMetadata(proposal);
+            const proposalMetadata =
+                publishProposalDialogUtils.prepareMetadata(proposal);
             pinJson({ body: proposalMetadata }, params);
         },
         [pinJson, proposal],
     );
 
     const handlePrepareTransaction = async () => {
-        invariant(pinJsonData != null, 'PublishProposalDialog: metadata not pinned for prepare transaction step.');
+        invariant(
+            pinJsonData != null,
+            'PublishProposalDialog: metadata not pinned for prepare transaction step.',
+        );
         const { IpfsHash: metadataCid } = pinJsonData;
 
         const { actions } = proposal;
 
-        const processedActions = await publishProposalDialogUtils.prepareActions({ actions, prepareActions });
+        const processedActions =
+            await publishProposalDialogUtils.prepareActions({
+                actions,
+                prepareActions,
+            });
         const processedProposal = { ...proposal, actions: processedActions };
 
         return publishProposalDialogUtils.buildTransaction({
@@ -70,17 +104,20 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
 
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog
-    const getProposalsLink = ({ slug }: IBuildTransactionDialogSuccessLinkHref) => {
-        return daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
-    };
+    const getProposalsLink = ({
+        slug,
+    }: IBuildTransactionDialogSuccessLinkHref) =>
+        daoUtils.getDaoUrl(dao, `proposals/${slug!.toUpperCase()}`)!;
 
-    const customSteps: Array<ITransactionDialogStep<PublishProposalStep>> = useMemo(
+    const customSteps: ITransactionDialogStep<PublishProposalStep>[] = useMemo(
         () => [
             {
                 id: PublishProposalStep.PIN_METADATA,
                 order: 0,
                 meta: {
-                    label: t(`app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.label`),
+                    label: t(
+                        `app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.label`,
+                    ),
                     errorLabel: t(
                         `app.governance.publishProposalDialog.step.${PublishProposalStep.PIN_METADATA}.errorLabel`,
                     ),
@@ -93,28 +130,32 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (pro
         [status, handlePinJson, t],
     );
 
-    const namespace = translationNamespace ?? 'app.governance.publishProposalDialog';
+    const namespace =
+        translationNamespace ?? 'app.governance.publishProposalDialog';
 
     return (
         <TransactionDialog<PublishProposalStep>
-            title={t(`${namespace}.title`)}
-            description={t(`${namespace}.description`)}
-            submitLabel={t(`${namespace}.button.submit`)}
-            successLink={{ label: t('app.governance.publishProposalDialog.button.success'), href: getProposalsLink }}
-            stepper={stepper}
             customSteps={customSteps}
-            prepareTransaction={handlePrepareTransaction}
-            network={dao?.network}
-            transactionType={TransactionType.PROPOSAL_CREATE}
+            description={t(`${namespace}.description`)}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
+            network={dao?.network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t(`${namespace}.button.submit`)}
+            successLink={{
+                label: t('app.governance.publishProposalDialog.button.success'),
+                href: getProposalsLink,
+            }}
+            title={t(`${namespace}.title`)}
             transactionInfo={transactionInfo}
+            transactionType={TransactionType.PROPOSAL_CREATE}
         >
             {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
                 <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
                     publisher={{ address }}
                     status={ProposalStatus.DRAFT}
+                    summary={summary}
+                    title={title}
                 />
             )}
         </TransactionDialog>

@@ -1,15 +1,23 @@
 import type { FeatureFlagKey, FeatureFlagOverrides } from '../featureFlags.api';
 import { FEATURE_FLAGS_OVERRIDES_COOKIE_NAME } from '../featureFlags.constants';
-import { parseFeatureFlagOverridesFromCookie, serializeFeatureFlagOverridesToCookie } from './cookieOverrides';
+import {
+    parseFeatureFlagOverridesFromCookie,
+    serializeFeatureFlagOverridesToCookie,
+} from './cookieOverrides';
 
 describe('feature flags cookies utils', () => {
     describe('serializeFeatureFlagOverridesToCookie', () => {
         it('serializes overrides object to cookie string', () => {
-            const overrides: FeatureFlagOverrides = { debugPanel: true, subDao: false };
+            const overrides: FeatureFlagOverrides = {
+                debugPanel: true,
+                subDao: false,
+            };
 
             const result = serializeFeatureFlagOverridesToCookie(overrides);
 
-            expect(result.startsWith(`${FEATURE_FLAGS_OVERRIDES_COOKIE_NAME}=`)).toBe(true);
+            expect(
+                result.startsWith(`${FEATURE_FLAGS_OVERRIDES_COOKIE_NAME}=`),
+            ).toBe(true);
             const [, rawValue] = result.split('=', 2);
             const [encodedJson] = rawValue.split(';', 1);
 

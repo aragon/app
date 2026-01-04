@@ -14,18 +14,22 @@ export interface IStepperStep<TMeta = undefined, TStepId = string> {
 }
 
 export class StepperUtils<TMeta = undefined, TStepId = string> {
-    private steps: Array<IStepperStep<TMeta, TStepId>>;
+    private steps: IStepperStep<TMeta, TStepId>[];
 
     private activeStep?: TStepId;
 
-    constructor(steps: Array<IStepperStep<TMeta, TStepId>> = [], activeStep?: TStepId) {
+    constructor(
+        steps: IStepperStep<TMeta, TStepId>[] = [],
+        activeStep?: TStepId,
+    ) {
         this.steps = StepperUtils.sortSteps(steps);
         this.activeStep = activeStep ?? this.steps[0]?.id;
     }
 
     static sortSteps = <TMeta = undefined, TStepId = string>(
-        steps: Array<IStepperStep<TMeta, TStepId>>,
-    ): Array<IStepperStep<TMeta, TStepId>> => [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
+        steps: IStepperStep<TMeta, TStepId>[],
+    ): IStepperStep<TMeta, TStepId>[] =>
+        [...steps].sort((stepA, stepB) => stepA.order - stepB.order);
 
     getActiveStep = () => this.activeStep;
 
@@ -37,13 +41,14 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
 
     getSteps = () => this.steps;
 
-    setSteps = (steps: Array<IStepperStep<TMeta, TStepId>>) => {
+    setSteps = (steps: IStepperStep<TMeta, TStepId>[]) => {
         this.steps = steps;
 
         return this.steps;
     };
 
-    findStepIndex = (stepId?: TStepId) => this.steps.findIndex((step) => step.id === stepId);
+    findStepIndex = (stepId?: TStepId) =>
+        this.steps.findIndex((step) => step.id === stepId);
 
     hasPrevious = () => this.findStepIndex(this.activeStep) > 0;
 
@@ -62,27 +67,35 @@ export class StepperUtils<TMeta = undefined, TStepId = string> {
     };
 
     removeStep = (stepId: TStepId) => {
-        this.steps = this.findStepIndex(stepId) < 0 ? this.steps : this.steps.filter((step) => step.id !== stepId);
+        this.steps =
+            this.findStepIndex(stepId) < 0
+                ? this.steps
+                : this.steps.filter((step) => step.id !== stepId);
 
         return this.steps;
     };
 
     next = () => {
         const activeStepIndex = this.findStepIndex(this.activeStep);
-        this.activeStep = this.hasNext() ? this.steps[activeStepIndex + 1].id : this.activeStep;
+        this.activeStep = this.hasNext()
+            ? this.steps[activeStepIndex + 1].id
+            : this.activeStep;
 
         return this.activeStep;
     };
 
     previous = () => {
         const activeStepIndex = this.findStepIndex(this.activeStep);
-        this.activeStep = this.hasPrevious() ? this.steps[activeStepIndex - 1].id : this.activeStep;
+        this.activeStep = this.hasPrevious()
+            ? this.steps[activeStepIndex - 1].id
+            : this.activeStep;
 
         return this.activeStep;
     };
 
     syncActiveStep = () => {
-        const shouldUpdateActiveStep = this.activeStep == undefined && this.steps.length > 0;
+        const shouldUpdateActiveStep =
+            this.activeStep === undefined && this.steps.length > 0;
 
         if (shouldUpdateActiveStep) {
             this.setActiveStep(this.steps[0].id);

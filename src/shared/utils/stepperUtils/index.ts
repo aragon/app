@@ -1,1 +1,1 @@
-export { StepperUtils, stepperUtils, type IStepperStep } from './stepperUtils';
+export { type IStepperStep, StepperUtils, stepperUtils } from './stepperUtils';

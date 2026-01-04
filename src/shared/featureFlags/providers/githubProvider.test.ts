@@ -16,9 +16,10 @@ jest.mock('../utils/cookieOverrides', () => ({
 
 describe('GithubCmsFeatureFlagsProvider', () => {
     const mockedCmsService = cmsService as jest.Mocked<typeof cmsService>;
-    const parseOverridesMock = parseFeatureFlagOverridesFromCookie as jest.MockedFunction<
-        typeof parseFeatureFlagOverridesFromCookie
-    >;
+    const parseOverridesMock =
+        parseFeatureFlagOverridesFromCookie as jest.MockedFunction<
+            typeof parseFeatureFlagOverridesFromCookie
+        >;
 
     afterEach(() => {
         jest.resetAllMocks();
@@ -35,7 +36,10 @@ describe('GithubCmsFeatureFlagsProvider', () => {
         mockedCmsService.getFeatureFlags.mockResolvedValueOnce(cmsResponse);
         parseOverridesMock.mockReturnValueOnce({ debugPanel: true });
 
-        const provider = new GithubCmsFeatureFlagsProvider('local', () => 'cookie');
+        const provider = new GithubCmsFeatureFlagsProvider(
+            'local',
+            () => 'cookie',
+        );
 
         const result = await provider.loadOverrides();
 
@@ -47,10 +51,15 @@ describe('GithubCmsFeatureFlagsProvider', () => {
     });
 
     it('returns only cookie overrides when CMS call fails', async () => {
-        mockedCmsService.getFeatureFlags.mockRejectedValueOnce(new Error('network error'));
+        mockedCmsService.getFeatureFlags.mockRejectedValueOnce(
+            new Error('network error'),
+        );
         parseOverridesMock.mockReturnValueOnce({ subDao: true });
 
-        const provider = new GithubCmsFeatureFlagsProvider('local', () => 'cookie');
+        const provider = new GithubCmsFeatureFlagsProvider(
+            'local',
+            () => 'cookie',
+        );
 
         const result = await provider.loadOverrides();
 

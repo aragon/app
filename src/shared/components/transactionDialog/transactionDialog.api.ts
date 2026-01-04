@@ -1,11 +1,14 @@
+import type { ReactNode } from 'react';
+import type { TransactionReceipt } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { TransactionType } from '@/shared/api/transactionService';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import type { ReactNode } from 'react';
-import type { TransactionReceipt } from 'viem';
-import type { ITransactionInfo, ITransactionStatusStepMeta } from '../transactionStatus';
+import type {
+    ITransactionInfo,
+    ITransactionStatusStepMeta,
+} from '../transactionStatus';
 
 export interface IBuildTransactionDialogSuccessLinkHref {
     /**
@@ -19,7 +22,9 @@ export interface IBuildTransactionDialogSuccessLinkHref {
 }
 
 // Static or dynamic link based displayed as success transaction link.
-export type TransactionDialogSuccessLinkHref = string | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
+export type TransactionDialogSuccessLinkHref =
+    | string
+    | ((params: IBuildTransactionDialogSuccessLinkHref) => string);
 
 export interface ITransactionDialogActionParams {
     /**
@@ -65,7 +70,9 @@ export interface ITransactionDialogSuccessLink {
     onClick?: (receipt: TransactionReceipt) => void;
 }
 
-export interface ITransactionDialogProps<TCustomStepId extends string = string> {
+export interface ITransactionDialogProps<
+    TCustomStepId extends string = string,
+> {
     /**
      * Title of the dialog.
      */
@@ -85,7 +92,7 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Custom steps needed for the transaction.
      */
-    customSteps?: Array<ITransactionDialogStep<TCustomStepId>>;
+    customSteps?: ITransactionDialogStep<TCustomStepId>[];
     /**
      * Information about the stepper in the current transaction dialog.
      */
@@ -93,7 +100,10 @@ export interface ITransactionDialogProps<TCustomStepId extends string = string> 
     /**
      * Stepper utilities for the transaction state.
      */
-    stepper: IUseStepperReturn<ITransactionDialogStepMeta, TCustomStepId | TransactionDialogStep>;
+    stepper: IUseStepperReturn<
+        ITransactionDialogStepMeta,
+        TCustomStepId | TransactionDialogStep
+    >;
     /**
      * Callback to be used for preparing the transaction to send to the wallet.
      */

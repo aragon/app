@@ -1,5 +1,5 @@
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { isAddress, isHex } from 'viem';
+import type { IProposalAction } from '@/modules/governance/api/governanceService';
 
 export interface IExportedAction {
     /**
@@ -38,13 +38,15 @@ class ProposalActionsImportExportUtils {
      * @param actions - Array of proposal actions to export
      * @returns Array of exported actions with normalized values
      */
-    exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] => {
-        return actions.map((action) => ({
+    exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] =>
+        actions.map((action) => ({
             to: action.to,
-            value: typeof action.value === 'bigint' ? Number(action.value) : Number(action.value || 0),
+            value:
+                typeof action.value === 'bigint'
+                    ? Number(action.value)
+                    : Number(action.value || 0),
             data: action.data,
         }));
-    };
 
     /**
      * Downloads actions as a JSON file
@@ -52,7 +54,10 @@ class ProposalActionsImportExportUtils {
      * @param actions - Array of proposal actions to download
      * @param filename - Name of the file to download (default: 'actions.json')
      */
-    downloadActionsAsJSON = (actions: IProposalAction[], filename = 'actions.json'): void => {
+    downloadActionsAsJSON = (
+        actions: IProposalAction[],
+        filename = 'actions.json',
+    ): void => {
         const exportedActions = this.exportActionsToJSON(actions);
         const jsonString = JSON.stringify(exportedActions, null, 2);
         const blob = new Blob([jsonString], { type: 'application/json' });
@@ -80,7 +85,8 @@ class ProposalActionsImportExportUtils {
             if (!Array.isArray(parsed)) {
                 return {
                     success: false,
-                    errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat',
+                    errorKey:
+                        'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat',
                 };
             }
 
@@ -101,7 +107,8 @@ class ProposalActionsImportExportUtils {
         } catch {
             return {
                 success: false,
-                errorKey: 'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
+                errorKey:
+                    'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
             };
         }
     };
@@ -119,7 +126,9 @@ class ProposalActionsImportExportUtils {
 
         const actionObj = action as Record<string, unknown>;
 
-        if (!('to' in actionObj) || !('value' in actionObj) || !('data' in actionObj)) {
+        if (
+            !('to' in actionObj && 'value' in actionObj && 'data' in actionObj)
+        ) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat';
         }
 
@@ -127,14 +136,15 @@ class ProposalActionsImportExportUtils {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidAddress';
         }
 
-        const isNumber = typeof actionObj.value === 'number' && actionObj.value >= 0;
+        const isNumber =
+            typeof actionObj.value === 'number' && actionObj.value >= 0;
         const isStringNumber =
             typeof actionObj.value === 'string' &&
             actionObj.value.length > 0 &&
             // allow decimal or 0x-prefixed hex since BigInt supports both
             /^(\d+|0x[0-9a-fA-F]+)$/.test(actionObj.value);
 
-        if (!isNumber && !isStringNumber) {
+        if (!(isNumber || isStringNumber)) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidValue';
         }
 
@@ -151,14 +161,14 @@ class ProposalActionsImportExportUtils {
      * @param file - File to read
      * @returns Promise resolving to file content as string
      */
-    readFileAsText = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
+    readFileAsText = (file: File): Promise<string> =>
+        new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = (e) => resolve(e.target?.result as string);
             reader.onerror = () => reject(new Error('Failed to read file'));
             reader.readAsText(file);
         });
-    };
 }
 
-export const proposalActionsImportExportUtils = new ProposalActionsImportExportUtils();
+export const proposalActionsImportExportUtils =
+    new ProposalActionsImportExportUtils();

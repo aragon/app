@@ -1,4 +1,4 @@
 export {
-    useLockToVotePermissionCheckVoteSubmission,
     type IUseLockToVotePermissionCheckVoteSubmissionParams,
+    useLockToVotePermissionCheckVoteSubmission,
 } from './useLockToVotePermissionCheckVoteSubmission';

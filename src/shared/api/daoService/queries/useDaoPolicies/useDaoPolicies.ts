@@ -1,5 +1,5 @@
-import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { daoService } from '../../daoService';
 import type { IGetDaoPoliciesParams } from '../../daoService.api';
 import { daoServiceKeys } from '../../daoServiceKeys';
@@ -14,6 +14,7 @@ export const daoPoliciesOptions = (
     ...options,
 });
 
-export const useDaoPolicies = (params: IGetDaoPoliciesParams, options?: QueryOptions<IDaoPolicy[]>) => {
-    return useQuery(daoPoliciesOptions(params, options));
-};
+export const useDaoPolicies = (
+    params: IGetDaoPoliciesParams,
+    options?: QueryOptions<IDaoPolicy[]>,
+) => useQuery(daoPoliciesOptions(params, options));

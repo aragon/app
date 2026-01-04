@@ -55,14 +55,18 @@ describe('stepper utils', () => {
     describe('activeStep getter/setter', () => {
         it('getActiveStep returns the active step', () => {
             const activeStep = 'step';
-            expect(new StepperUtils(undefined, activeStep).getActiveStep()).toEqual(activeStep);
+            expect(
+                new StepperUtils(undefined, activeStep).getActiveStep(),
+            ).toEqual(activeStep);
         });
 
         it('setActiveStep updates the current active step and returns it', () => {
             const activeStep = '001';
             const newActiveStep = '002';
             const instance = new StepperUtils(undefined, activeStep);
-            expect(instance.setActiveStep(newActiveStep)).toEqual(newActiveStep);
+            expect(instance.setActiveStep(newActiveStep)).toEqual(
+                newActiveStep,
+            );
             expect(instance['activeStep']).toEqual(newActiveStep);
         });
     });
@@ -112,13 +116,17 @@ describe('stepper utils', () => {
                 { id: '2', order: 2, meta: null },
             ];
             const activeStep = steps[1].id;
-            expect(new StepperUtils(steps, activeStep).hasPrevious()).toBeTruthy();
+            expect(
+                new StepperUtils(steps, activeStep).hasPrevious(),
+            ).toBeTruthy();
         });
 
         it('returns false if current active step does not have a previous step', () => {
             const steps = [{ id: '1', order: 1, meta: null }];
             const activeStep = steps[0].id;
-            expect(new StepperUtils(steps, activeStep).hasPrevious()).toBeFalsy();
+            expect(
+                new StepperUtils(steps, activeStep).hasPrevious(),
+            ).toBeFalsy();
         });
     });
 

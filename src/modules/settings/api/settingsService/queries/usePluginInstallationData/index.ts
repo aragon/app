@@ -1,1 +1,4 @@
-export { pluginInstallationDataOptions, usePluginInstallationData } from './usePluginInstallationData';
+export {
+    pluginInstallationDataOptions,
+    usePluginInstallationData,
+} from './usePluginInstallationData';

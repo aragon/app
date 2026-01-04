@@ -1,1 +1,1 @@
-export { NotFoundBase, type INotFoundBaseProps } from './notFoundBase';
+export { type INotFoundBaseProps, NotFoundBase } from './notFoundBase';

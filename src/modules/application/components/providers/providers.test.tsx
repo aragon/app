@@ -1,22 +1,32 @@
-import { type Translations } from '@/shared/utils/translationsUtils';
 import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { Providers, type IProvidersProps } from './providers';
+import type { Translations } from '@/shared/utils/translationsUtils';
+import { type IProvidersProps, Providers } from './providers';
 
 jest.mock('@/shared/components/translationsProvider', () => ({
-    TranslationsProvider: (props: { translations: Translations; children: ReactNode }) => (
-        <div data-testid="translations-context" data-translations={JSON.stringify(props.translations)}>
+    TranslationsProvider: (props: {
+        translations: Translations;
+        children: ReactNode;
+    }) => (
+        <div
+            data-testid="translations-context"
+            data-translations={JSON.stringify(props.translations)}
+        >
             {props.children}
         </div>
     ),
 }));
 
 jest.mock('@/shared/components/dialogProvider', () => ({
-    DialogProvider: (props: { children: ReactNode }) => <div data-testid="dialog-provider-mock">{props.children}</div>,
+    DialogProvider: (props: { children: ReactNode }) => (
+        <div data-testid="dialog-provider-mock">{props.children}</div>
+    ),
 }));
 
-jest.mock('@/shared/components/dialogRoot', () => ({ DialogRoot: () => <div data-testid="dialog-root-mock" /> }));
+jest.mock('@/shared/components/dialogRoot', () => ({
+    DialogRoot: () => <div data-testid="dialog-root-mock" />,
+}));
 
 jest.mock('@/shared/components/featureFlagsProvider', () => ({
     FeatureFlagsProvider: (props: { children: ReactNode }) => (
@@ -53,7 +63,9 @@ describe('<Providers /> component', () => {
         render(createTestComponent({ translations }));
         const contextElement = screen.getByTestId('translations-context');
         expect(contextElement).toBeInTheDocument();
-        expect(contextElement.dataset.translations).toEqual(JSON.stringify(translations));
+        expect(contextElement.dataset.translations).toEqual(
+            JSON.stringify(translations),
+        );
     });
 
     it('renders the GukModules provider', () => {
@@ -75,6 +87,8 @@ describe('<Providers /> component', () => {
 
     it('renders the FeatureFlagsProvider with children', () => {
         render(createTestComponent());
-        expect(screen.getByTestId('feature-flags-provider-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('feature-flags-provider-mock'),
+        ).toBeInTheDocument();
     });
 });

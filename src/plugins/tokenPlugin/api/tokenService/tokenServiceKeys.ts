@@ -5,5 +5,8 @@ export enum TokenServiceKey {
 }
 
 export const tokenServiceKeys = {
-    memberLocks: (params: IGetMemberLocksParams) => [TokenServiceKey.MEMBER_LOCKS, params],
+    memberLocks: (params: IGetMemberLocksParams) => [
+        TokenServiceKey.MEMBER_LOCKS,
+        params,
+    ],
 };

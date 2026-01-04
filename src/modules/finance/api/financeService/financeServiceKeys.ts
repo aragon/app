@@ -1,4 +1,7 @@
-import type { IGetAssetListParams, IGetTransactionListParams } from './financeService.api';
+import type {
+    IGetAssetListParams,
+    IGetTransactionListParams,
+} from './financeService.api';
 
 export enum FinanceServiceKey {
     ASSET_LIST = 'ASSET_LIST',
@@ -6,6 +9,12 @@ export enum FinanceServiceKey {
 }
 
 export const financeServiceKeys = {
-    assetList: (params: IGetAssetListParams) => [FinanceServiceKey.ASSET_LIST, params],
-    transactionList: (params: IGetTransactionListParams) => [FinanceServiceKey.TRANSACTION_LIST, params],
+    assetList: (params: IGetAssetListParams) => [
+        FinanceServiceKey.ASSET_LIST,
+        params,
+    ],
+    transactionList: (params: IGetTransactionListParams) => [
+        FinanceServiceKey.TRANSACTION_LIST,
+        params,
+    ],
 };

@@ -1,12 +1,19 @@
 import type { ICmsFeatureFlagsResponse } from '@/modules/explore/api/cmsService';
 import { cmsService } from '@/modules/explore/api/cmsService';
-import type { FeatureFlagEnvironment, FeatureFlagOverrides, IFeatureFlagsProvider } from '../featureFlags.api';
+import type {
+    FeatureFlagEnvironment,
+    FeatureFlagOverrides,
+    IFeatureFlagsProvider,
+} from '../featureFlags.api';
 import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
     value != null && typeof value === 'object' && !Array.isArray(value);
 
-const getEnvironmentValue = (value: unknown, env: FeatureFlagEnvironment): boolean | undefined => {
+const getEnvironmentValue = (
+    value: unknown,
+    env: FeatureFlagEnvironment,
+): boolean | undefined => {
     if (typeof value === 'boolean') {
         // Same value across all environments.
         return value;
@@ -18,10 +25,12 @@ const getEnvironmentValue = (value: unknown, env: FeatureFlagEnvironment): boole
         return typeof envValue === 'boolean' ? envValue : undefined;
     }
 
-    return undefined;
+    return;
 };
 
-const loadCmsOverrides = async (environment: FeatureFlagEnvironment): Promise<FeatureFlagOverrides> => {
+const loadCmsOverrides = async (
+    environment: FeatureFlagEnvironment,
+): Promise<FeatureFlagOverrides> => {
     let response: ICmsFeatureFlagsResponse;
 
     try {
@@ -31,20 +40,27 @@ const loadCmsOverrides = async (environment: FeatureFlagEnvironment): Promise<Fe
         return {};
     }
 
-    const entries = Object.entries(response).reduce<Array<[string, boolean]>>((accumulator, [key, value]) => {
-        const envValue = getEnvironmentValue(value, environment);
+    const entries = Object.entries(response).reduce<[string, boolean][]>(
+        (accumulator, [key, value]) => {
+            const envValue = getEnvironmentValue(value, environment);
 
-        if (envValue == null) {
-            return accumulator;
-        }
+            if (envValue == null) {
+                return accumulator;
+            }
 
-        return accumulator.concat([[key, envValue]]);
-    }, []);
+            return accumulator.concat([[key, envValue]]);
+        },
+        [],
+    );
 
     return Object.fromEntries(entries) as FeatureFlagOverrides;
 };
 
-export type GithubCmsCookieSourceGetter = () => string | null | undefined | Promise<string | null | undefined>;
+export type GithubCmsCookieSourceGetter = () =>
+    | string
+    | null
+    | undefined
+    | Promise<string | null | undefined>;
 
 /**
  * Single provider implementation that merges:
@@ -55,10 +71,13 @@ export type GithubCmsCookieSourceGetter = () => string | null | undefined | Prom
  * cookie source getter; the provider itself stays agnostic of Next.js / DOM.
  */
 export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
-    private readonly environment: FeatureFlagEnvironment;
-    private readonly getCookieSource?: GithubCmsCookieSourceGetter;
+    private environment: FeatureFlagEnvironment;
+    private getCookieSource?: GithubCmsCookieSourceGetter;
 
-    constructor(environment: FeatureFlagEnvironment, getCookieSource?: GithubCmsCookieSourceGetter) {
+    constructor(
+        environment: FeatureFlagEnvironment,
+        getCookieSource?: GithubCmsCookieSourceGetter,
+    ) {
         this.environment = environment;
         this.getCookieSource = getCookieSource;
     }
@@ -66,10 +85,13 @@ export class GithubCmsFeatureFlagsProvider implements IFeatureFlagsProvider {
     loadOverrides = async (): Promise<FeatureFlagOverrides> => {
         const [cmsOverrides, cookieSource] = await Promise.all([
             loadCmsOverrides(this.environment),
-            this.getCookieSource ? this.getCookieSource() : Promise.resolve<string | null | undefined>(undefined),
+            this.getCookieSource
+                ? this.getCookieSource()
+                : Promise.resolve<string | null | undefined>(undefined),
         ]);
 
-        const localOverrides = parseFeatureFlagOverridesFromCookie(cookieSource);
+        const localOverrides =
+            parseFeatureFlagOverridesFromCookie(cookieSource);
 
         return { ...cmsOverrides, ...localOverrides };
     };

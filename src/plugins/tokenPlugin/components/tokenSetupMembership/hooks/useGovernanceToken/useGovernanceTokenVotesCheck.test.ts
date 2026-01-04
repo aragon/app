@@ -22,7 +22,9 @@ describe('useGovernanceTokenVotesCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useGovernanceTokenVotesCheck({ address: '0x123', chainId: 123 }));
+        const { result } = renderHook(() =>
+            useGovernanceTokenVotesCheck({ address: '0x123', chainId: 123 }),
+        );
 
         expect(result.current.data).toBeTruthy();
         expect(result.current.isError).toBeFalsy();
@@ -42,7 +44,9 @@ describe('useGovernanceTokenVotesCheck hook', () => {
             isLoading: false,
         } as unknown as wagmi.UseReadContractsReturnType);
 
-        const { result } = renderHook(() => useGovernanceTokenVotesCheck({ address: '0x123', chainId: 123 }));
+        const { result } = renderHook(() =>
+            useGovernanceTokenVotesCheck({ address: '0x123', chainId: 123 }),
+        );
 
         expect(result.current.data).toBeFalsy();
         expect(result.current.isError).toBe(false);

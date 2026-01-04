@@ -3,10 +3,8 @@ import { CreateDaoPageClient } from './createDaoPageClient';
 
 export interface ICreateDaoPageProps {}
 
-export const CreateDaoPage: React.FC<ICreateDaoPageProps> = () => {
-    return (
-        <Page.Container>
-            <CreateDaoPageClient />
-        </Page.Container>
-    );
-};
+export const CreateDaoPage: React.FC<ICreateDaoPageProps> = () => (
+    <Page.Container>
+        <CreateDaoPageClient />
+    </Page.Container>
+);

@@ -1,3 +1,5 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import {
     generateTokenMember,
     generateTokenPluginSettings,
@@ -5,27 +7,38 @@ import {
 } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin, generateReactQueryResultSuccess } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import { TokenMemberListItem, type ITokenMemberListItemProps } from './tokenMemberListItem';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
+import {
+    type ITokenMemberListItemProps,
+    TokenMemberListItem,
+} from './tokenMemberListItem';
 
 describe('<TokenMemberListItem /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<ITokenMemberListItemProps>) => {
+    const createTestComponent = (
+        props?: Partial<ITokenMemberListItemProps>,
+    ) => {
         const completeProps: ITokenMemberListItemProps = {
             member: generateTokenMember(),
             daoId: 'test-dao-id',
-            plugin: generateDaoPlugin({ settings: generateTokenPluginSettings() }),
+            plugin: generateDaoPlugin({
+                settings: generateTokenPluginSettings(),
+            }),
             ...props,
         };
 
@@ -37,7 +50,10 @@ describe('<TokenMemberListItem /> component', () => {
     };
 
     it('renders the token member', () => {
-        const member = generateTokenMember({ ens: 'tttt.eth', address: '0x123' });
+        const member = generateTokenMember({
+            ens: 'tttt.eth',
+            address: '0x123',
+        });
         render(createTestComponent({ member }));
         expect(screen.getByText(member.ens!)).toBeInTheDocument();
     });
@@ -50,10 +66,14 @@ describe('<TokenMemberListItem /> component', () => {
         const daoAddress = '0x123';
         const daoNetwork = Network.ETHEREUM_SEPOLIA;
         const dao = generateDao({ address: daoAddress, network: daoNetwork });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
 
         render(createTestComponent({ member, plugin }));
-        expect(screen.getByRole('heading', { name: /47.93M Voting Power/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: /47.93M Voting Power/ }),
+        ).toBeInTheDocument();
         expect(screen.getByRole('link').getAttribute('href')).toEqual(
             `/dao/${daoNetwork}/${daoAddress}/members/${member.address}`,
         );

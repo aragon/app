@@ -17,14 +17,19 @@ export interface ICreatePolicyPageProps {
     params: Promise<ICreatePolicyPageParams>;
 }
 
-export const CreatePolicyPage: React.FC<ICreatePolicyPageProps> = async (props) => {
+export const CreatePolicyPage: React.FC<ICreatePolicyPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const { addressOrEns, network, pluginAddress } = await params;
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
 
     return (
         <Page.Container>
-            <CreatePolicyPageClient daoId={daoId} pluginAddress={pluginAddress} />
+            <CreatePolicyPageClient
+                daoId={daoId}
+                pluginAddress={pluginAddress}
+            />
         </Page.Container>
     );
 };

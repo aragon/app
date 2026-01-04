@@ -1,9 +1,9 @@
-import type { Network } from '@/shared/api/daoService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
@@ -11,7 +11,10 @@ import { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
     HydrationBoundary: (props: { children: ReactNode; state?: unknown }) => (
-        <div data-testid="hydration-mock" data-state={JSON.stringify(props.state)}>
+        <div
+            data-state={JSON.stringify(props.state)}
+            data-testid="hydration-mock"
+        >
             {props.children}
         </div>
     ),
@@ -22,7 +25,10 @@ jest.mock('./exploreDaosPageClient', () => ({
 }));
 
 describe('<ExploreDaosPage /> component', () => {
-    const prefetchInfiniteQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchInfiniteQuery');
+    const prefetchInfiniteQuerySpy = jest.spyOn(
+        QueryClient.prototype,
+        'prefetchInfiniteQuery',
+    );
     const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
 
     beforeEach(() => {
@@ -35,7 +41,9 @@ describe('<ExploreDaosPage /> component', () => {
         prefetchQuerySpy.mockReset();
     });
 
-    const createTestComponent = async (props?: Partial<IExploreDaosPageProps>) => {
+    const createTestComponent = async (
+        props?: Partial<IExploreDaosPageProps>,
+    ) => {
         const completeProps: IExploreDaosPageProps = { ...props };
         const Component = await ExploreDaosPage(completeProps);
 
@@ -43,16 +51,27 @@ describe('<ExploreDaosPage /> component', () => {
     };
 
     it('prefetches the list of DAOs on mainnet networks', async () => {
-        const networks = (Object.keys(networkDefinitions) as Network[]).filter((n) => !networkDefinitions[n].testnet);
+        const networks = (Object.keys(networkDefinitions) as Network[]).filter(
+            (n) => !networkDefinitions[n].testnet,
+        );
         render(await createTestComponent());
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
-            daoListOptions({ queryParams: { pageSize: 10, page: 1, sort: 'metrics.tvlUSD', networks } }).queryKey,
+            daoListOptions({
+                queryParams: {
+                    pageSize: 10,
+                    page: 1,
+                    sort: 'metrics.tvlUSD',
+                    networks,
+                },
+            }).queryKey,
         );
     });
 
     it('prefetches the featured DAOs', async () => {
         render(await createTestComponent());
-        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(featuredDaosOptions().queryKey);
+        expect(prefetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+            featuredDaosOptions().queryKey,
+        );
     });
 
     it('renders the page client component', async () => {

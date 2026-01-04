@@ -1,9 +1,9 @@
-import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
-import { governanceService } from '../../governanceService';
-import { type IGetMemberExistsParams } from '../../governanceService.api';
-import { governanceServiceKeys } from '../../governanceServiceKeys';
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import type { IMemberExistsResult } from './../../../../types';
+import { governanceService } from '../../governanceService';
+import type { IGetMemberExistsParams } from '../../governanceService.api';
+import { governanceServiceKeys } from '../../governanceServiceKeys';
 
 export const memberExistsOptions = (
     params: IGetMemberExistsParams,
@@ -14,6 +14,7 @@ export const memberExistsOptions = (
     ...options,
 });
 
-export const useMemberExists = (params: IGetMemberExistsParams, options?: QueryOptions<IMemberExistsResult>) => {
-    return useQuery(memberExistsOptions(params, options));
-};
+export const useMemberExists = (
+    params: IGetMemberExistsParams,
+    options?: QueryOptions<IMemberExistsResult>,
+) => useQuery(memberExistsOptions(params, options));

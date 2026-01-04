@@ -1,8 +1,8 @@
+import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type { Network } from '@/shared/api/daoService';
 import { AddressesInput } from '@/shared/components/forms/addressesInput';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { addressUtils, type ICompositeAddress } from '@aragon/gov-ui-kit';
 
 export interface IMultisigSetupMembershipItemProps {
     /**
@@ -31,23 +31,39 @@ export interface IMultisigSetupMembershipItemProps {
     customValidator?: (member: ICompositeAddress) => string | boolean;
 }
 
-export const MultisigSetupMembershipItem: React.FC<IMultisigSetupMembershipItemProps> = (props) => {
+export const MultisigSetupMembershipItem: React.FC<
+    IMultisigSetupMembershipItemProps
+> = (props) => {
     const { disabled, index, pluginAddress, member, network } = props;
     const { chainId } = useDaoChain({ network });
 
     const memberExistsParams = {
-        urlParams: { memberAddress: member.address, pluginAddress: pluginAddress! },
+        urlParams: {
+            memberAddress: member.address,
+            pluginAddress: pluginAddress!,
+        },
         queryParams: { network: network! },
     };
     const { data } = useMemberExists(memberExistsParams, {
-        enabled: network != null && pluginAddress != null && addressUtils.isAddress(member.address),
+        enabled:
+            network != null &&
+            pluginAddress != null &&
+            addressUtils.isAddress(member.address),
     });
 
     const isMember = data?.status === true;
 
-    const customValidator = () => (isMember ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember' : true);
+    const customValidator = () =>
+        isMember
+            ? 'app.plugins.multisig.multisigSetupMembership.item.alreadyMember'
+            : true;
 
     return (
-        <AddressesInput.Item index={index} disabled={disabled} customValidator={customValidator} chainId={chainId} />
+        <AddressesInput.Item
+            chainId={chainId}
+            customValidator={customValidator}
+            disabled={disabled}
+            index={index}
+        />
     );
 };
