@@ -1,0 +1,6 @@
+
+
+> @aragon/app@1.17.0 lint /Users/kd-m2air/Local/app-next
+> biome check --write --no-errors-on-unmatched --files-ignore-unknown=true
+
+[0m[34mChecked [0m[0m[34m1964[0m[0m[34m [0m[0m[34mfiles[0m[0m[34m in [0m[0m[34m1503[0m[0m[2m[34mms[0m[0m[34m.[0m[0m[34m No fixes applied.[0m

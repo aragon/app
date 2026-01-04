@@ -45,13 +45,17 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
      */
     allowedActions?: IAllowedAction[];
     /**
+     * Whether there are actions to manage (for download/remove dropdown visibility).
+     */
+    hasActions?: boolean;
+    /**
+     * Callback triggered when the user downloads all actions.
+     */
+    onDownloadActions?: () => void;
+    /**
      * Granted permissions for DAO.
      */
     daoPermissions?: IDaoPermission[];
-    /**
-     * Callback to get current actions for download/remove functionality.
-     */
-    getCurrentActions?: () => IProposalActionData[];
     /**
      * Callback called when all actions should be removed.
      */
@@ -65,8 +69,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         excludeActionTypes,
         hideWalletConnect = false,
         allowedActions,
+        hasActions = false,
+        onDownloadActions,
         daoPermissions,
-        getCurrentActions,
         onRemoveAllActions,
     } = props;
 
@@ -197,12 +202,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleDownloadActions = () => {
-        if (!getCurrentActions) {
+        if (!onDownloadActions) {
             return;
         }
 
-        const actions = getCurrentActions();
-        proposalActionsImportExportUtils.downloadActionsAsJSON(actions, `dao-${daoId}-actions.json`);
+        onDownloadActions();
     };
 
     const handleRemoveAllActions = () => {
@@ -213,9 +217,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onRemoveAllActions();
     };
 
-    const currentActions = getCurrentActions?.() ?? [];
-    const hasActions = currentActions.length > 0;
-    const shouldRenderDropdown = getCurrentActions != null && onRemoveAllActions != null;
+    const shouldRenderDropdown = onDownloadActions != null && onRemoveAllActions != null;
 
     const shouldRenderWalletConnect = !(hideWalletConnect || onlyShowAuthorizedActions);
 
@@ -257,7 +259,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             className="hidden"
                         />
                     </div>
-                    <div className="flex flex-row gap-3">
+                    <div className="flex flex-row gap-3 items-center">
                         {shouldRenderDropdown && hasActions && (
                             <Dropdown.Container
                                 constrainContentWidth={false}

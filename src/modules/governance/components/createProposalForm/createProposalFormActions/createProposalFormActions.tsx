@@ -8,6 +8,7 @@ import { type IProposalActionsArrayControls, type ProposalActionComponent, Propo
 import { useCallback, useEffect } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
+import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
 import type { ICreateProposalFormData, IProposalActionData } from '../createProposalFormDefinitions';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
@@ -117,13 +118,14 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
         append(newActions);
     };
 
-    const handleGetCurrentActions = useCallback(() => {
-        return getValues('actions');
-    }, [getValues]);
-
     const handleRemoveAllActions = useCallback(() => {
         remove();
     }, [remove]);
+
+    const handleDownloadActions = useCallback(() => {
+        const currentActions = getValues('actions') ?? [];
+        proposalActionsImportExportUtils.downloadActionsAsJSON(currentActions, `dao-${daoId}-actions.json`);
+    }, [daoId, getValues]);
 
     const getArrayControls = (index: number): IProposalActionsArrayControls<IProposalActionData> => {
         return {
@@ -158,6 +160,7 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
     };
 
     const showActionComposer = !hasConditionalPermissions || allowedActions != null;
+    const hasActions = actions.length > 0;
 
     const expandedActions = actions.map((action) => action.id);
     const noOpActionsChange = useCallback(() => undefined, []);
@@ -194,7 +197,8 @@ export const CreateProposalFormActions: React.FC<ICreateProposalFormActionsProps
                     onAddAction={handleAddAction}
                     allowedActions={allowedActions}
                     daoPermissions={daoPermissions}
-                    getCurrentActions={handleGetCurrentActions}
+                    hasActions={hasActions}
+                    onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (
