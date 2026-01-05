@@ -44,20 +44,26 @@ pnpm install
 
 **Note**: pnpm will automatically use the correct Node.js version as configured in the project.
 
-3. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
+3. (Optional) Configure Git to ignore certain commits in `git blame` for better readability:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
+4. Create a `.env` file in the root of the project and populate it with the required environment variables. Use the
    `.env.example` file as a template:
 
 ```bash
 cp .env.example .env
 ```
 
-4. Start the development server with:
+5. Start the development server with:
 
 ```bash
 pnpm dev
 ```
 
-5. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
+6. Access the Aragon App by navigating to [http://localhost:3000](http://localhost:3000) in your browser.
 
 Other available commands include:
 
