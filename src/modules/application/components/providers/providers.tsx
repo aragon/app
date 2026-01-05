@@ -64,7 +64,10 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
 
     // Initialise plugin registry and intercept fetch requests (if enabled) for client-side components
     initPluginRegistry();
-    fetchInterceptorUtils.intercept();
+    const useMocks =
+        featureFlagsSnapshot?.find((f) => f.key === 'useMocks')?.enabled ??
+        false;
+    fetchInterceptorUtils.intercept(useMocks);
     initActionViewRegistry();
 
     return (

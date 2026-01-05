@@ -6,6 +6,7 @@ import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissio
 import { SettingsDialogId } from '@/modules/settings/constants/settingsDialogId';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IUpdateDaoContractsListDialogParams } from '../../dialogs/updateDaoContractsListDialog';
@@ -24,6 +25,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
 
     const { check: createProposalGuard } = usePermissionCheckGuard({
         permissionNamespace: 'proposal',
@@ -60,8 +62,7 @@ export const UpdateDaoContracts: React.FC<IUpdateDaoContractsProps> = (
     };
 
     const availableUpdates = daoUtils.hasAvailableUpdates(dao);
-    const isFeatureEnabled =
-        process.env.NEXT_PUBLIC_FEATURE_OSX_UPDATES === 'true';
+    const isFeatureEnabled = isEnabled('osxUpdates');
 
     if (
         !(

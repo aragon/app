@@ -1,7 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { useWhitelistedAddresses } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
-import { useDebugContext } from '@/shared/components/debugProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type {
     IWhitelistValidationParams,
     IWhitelistValidationResult,
@@ -14,9 +14,9 @@ export const useWhitelistValidation = (
 
     const { address } = useAccount();
     const { data } = useWhitelistedAddresses();
-    const { values } = useDebugContext<{ enableAllPlugins: boolean }>();
+    const { isEnabled } = useFeatureFlags();
 
-    if (values.enableAllPlugins || data == null) {
+    if (isEnabled('enableAllPlugins') || data == null) {
         return { enabledPlugins: plugins, disabledPlugins: [] };
     }
 

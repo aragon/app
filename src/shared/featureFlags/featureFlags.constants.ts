@@ -52,4 +52,45 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             production: false,
         },
     },
+    {
+        key: 'governanceDesigner',
+        name: 'Governance designer',
+        description: 'Enables governance designer and admin member features',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
+    {
+        key: 'osxUpdates',
+        name: 'OSX updates',
+        description: 'Enables DAO contract upgrade functionality',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
+    {
+        key: 'useMocks',
+        name: 'Use mocks',
+        description:
+            'Enables API mocking via fetch interceptor for development',
+        defaultValue: false,
+        environments: {
+            local: true,
+        },
+    },
+    {
+        key: 'enableAllPlugins',
+        name: 'Enable all plugins',
+        description:
+            'Enables all plugins for DAO creation flows, bypassing whitelist validation',
+        defaultValue: false,
+        environments: {
+            local: true,
+            preview: true,
+        },
+    },
 ];
