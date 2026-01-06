@@ -27,8 +27,6 @@ export const UpdatePluginMetadataAction: React.FC<
     const isSubPlugin = meta?.isSubPlugin ?? false;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    // Type assertion needed because IUpdatePluginMetadataAction has optional data (before pinning)
-    // but prepareAction callback will populate it, satisfying IProposalCreateAction requirements
     const { addPrepareAction } = useCreateProposalFormContext<
         IUpdatePluginMetadataAction & { data: string }
     >();
@@ -40,7 +38,6 @@ export const UpdatePluginMetadataAction: React.FC<
 
     const displayProcessKey = isProcess && !isSubPlugin;
 
-    // Auto-pin metadata in background with debouncing
     const { pinError, triggerPin, clearError } = useMetadataActionPin({
         actionIndex: index,
         actionType: ProposalActionType.METADATA_PLUGIN_UPDATE,
@@ -49,7 +46,6 @@ export const UpdatePluginMetadataAction: React.FC<
 
     const prepareAction = useCallback(
         async (action: IUpdatePluginMetadataAction) => {
-            // If background pinning already populated the data field, use it instead of re-pinning
             if (
                 action.data &&
                 action.data !== '0x' &&
@@ -58,7 +54,6 @@ export const UpdatePluginMetadataAction: React.FC<
                 return action.ipfsMetadata.pinnedData;
             }
 
-            // Otherwise, perform fresh IPFS pinning (fallback for edge cases or if background pinning failed)
             const { proposedMetadata, existingMetadata } = action;
             const { name, description, resources, processKey } =
                 proposedMetadata;

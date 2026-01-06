@@ -53,8 +53,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    // Type assertion needed because IUpdateDaoMetadataAction has optional data (before pinning)
-    // but prepareAction callback will populate it, satisfying IProposalCreateAction requirements
     const { addPrepareAction } = useCreateProposalFormContext<
         IUpdateDaoMetadataAction & { data: string }
     >();
@@ -64,7 +62,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
         fieldName,
     );
 
-    // Auto-pin metadata in background with debouncing
     const { pinError, triggerPin, clearError } = useMetadataActionPin({
         actionIndex: index,
         actionType: ProposalActionType.METADATA_UPDATE,
@@ -73,7 +70,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
 
     const prepareAction = useCallback(
         async (action: IUpdateDaoMetadataAction) => {
-            // If background pinning already populated the data field, use it instead of re-pinning
             if (
                 action.data &&
                 action.data !== '0x' &&
@@ -82,7 +78,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
                 return action.ipfsMetadata.pinnedData;
             }
 
-            // Otherwise, perform fresh IPFS pinning (fallback for edge cases or if background pinning failed)
             const { name, description, resources, avatar } =
                 action.proposedMetadata;
             const proposedMetadata = { name, description, links: resources };
@@ -90,11 +85,9 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
             let daoAvatar: string | undefined;
 
             if (avatar?.file != null) {
-                // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             } else if (avatar?.url) {
-                // Set previous avatar URL if user did not change the DAO avatar and DAO already has an avatar
                 daoAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 

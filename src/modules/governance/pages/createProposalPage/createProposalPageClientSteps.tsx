@@ -56,7 +56,6 @@ export const CreateProposalPageClientSteps: React.FC<
 
     const [metadataStep, actionsStep, settingsStep] = steps;
 
-    // Check if any metadata actions are currently pinning or unprepared
     const watchedActions = useWatch({
         name: 'actions',
     }) as ICreateProposalFormData['actions'] | undefined;
@@ -75,7 +74,6 @@ export const CreateProposalPageClientSteps: React.FC<
           })
         : false;
 
-    // Hide settings step if plugin has no custom settings for create-proposal flow
     const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
     const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
     const hideSettingsStep =

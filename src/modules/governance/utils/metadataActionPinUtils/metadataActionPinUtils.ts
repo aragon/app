@@ -89,27 +89,22 @@ export interface IPinMetadataActionResult {
 class MetadataActionPinUtils {
     /**
      * Creates a hash of the action data for change detection.
-     * This hash is used to determine if the action needs to be re-pinned.
      */
     hashActionData = <
         TProposedMetadata extends IMetadataFields = IMetadataFields,
     >(
         action: IMetadataAction<TProposedMetadata>,
     ): string => {
-        // Create a hash from the relevant fields
         const dataToHash = {
             type: action.type,
             proposedMetadata: action.proposedMetadata,
         };
 
-        // Simple hash using JSON.stringify
-        // For production, consider using a proper hashing library
         return JSON.stringify(dataToHash);
     };
 
     /**
      * Determines if an action needs to be re-pinned to IPFS.
-     * Compares the current hash with the stored hash in ipfsMetadata.
      */
     needsRepinning = <
         TProposedMetadata extends IMetadataFields = IMetadataFields,
@@ -117,18 +112,15 @@ class MetadataActionPinUtils {
         action: IMetadataAction<TProposedMetadata>,
         currentHash: string,
     ): boolean => {
-        // If no ipfsMetadata exists, it needs pinning
         if (!action.ipfsMetadata) {
             return true;
         }
 
-        // If the hash has changed, it needs re-pinning
         return action.ipfsMetadata.sourceHash !== currentHash;
     };
 
     /**
      * Pins DAO metadata to IPFS and encodes the transaction data.
-     * This mirrors the logic in updateDaoMetadataAction.tsx prepareAction (lines 34-77).
      */
     pinDaoMetadataAction = async <
         TProposedMetadata extends IMetadataFields = IMetadataFields,
@@ -143,45 +135,36 @@ class MetadataActionPinUtils {
         const proposedMetadata = {
             name,
             description,
-            links: resources, // Transform resources → links
+            links: resources,
         };
 
-        // Handle avatar pinning
         let daoAvatar: string | undefined;
         let avatarCid: string | undefined;
 
         if (typeof avatar === 'object' && avatar?.file != null) {
-            // Avatar changed by user - pin new file to IPFS
             const avatarResult = await pinFile({ body: avatar.file });
             avatarCid = avatarResult.IpfsHash;
             daoAvatar = ipfsUtils.cidToUri(avatarCid);
         } else if (typeof avatar === 'object' && avatar?.url) {
-            // Avatar unchanged - convert existing URL to URI
             daoAvatar = ipfsUtils.srcToUri(avatar.url);
         } else if (typeof avatar === 'string') {
-            // Avatar is already a string URL (from API types)
             daoAvatar = ipfsUtils.srcToUri(avatar);
         }
 
-        // Compose final metadata object
         const metadata = daoAvatar
             ? { ...proposedMetadata, avatar: daoAvatar }
             : proposedMetadata;
 
-        // Pin metadata JSON to IPFS
         const ipfsResult = await pinJson({ body: metadata });
         const metadataCid = ipfsResult.IpfsHash;
 
-        // Convert CID to hex-encoded URI
         const hexResult = transactionUtils.stringToMetadataHex(metadataCid);
 
-        // Encode as contract function call
         const encodedData = encodeFunctionData({
             abi: [setMetadataAbi],
             args: [hexResult],
         });
 
-        // Create hash of source data for change detection
         const sourceHash = this.hashActionData(action);
 
         return {
@@ -194,7 +177,6 @@ class MetadataActionPinUtils {
 
     /**
      * Pins plugin metadata to IPFS and encodes the transaction data.
-     * This mirrors the logic in updatePluginMetadataAction.tsx prepareAction.
      */
     pinPluginMetadataAction = async <
         TProposedMetadata extends IMetadataFields = IMetadataFields,
@@ -206,7 +188,6 @@ class MetadataActionPinUtils {
         const { proposedMetadata, existingMetadata } = action;
         const { name, description, resources } = proposedMetadata;
 
-        // Compose plugin metadata object
         const pluginMetadata = {
             ...(existingMetadata as Record<string, unknown>),
             name,
@@ -214,20 +195,16 @@ class MetadataActionPinUtils {
             links: resources,
         };
 
-        // Pin metadata JSON to IPFS
         const ipfsResult = await pinJson({ body: pluginMetadata });
         const metadataCid = ipfsResult.IpfsHash;
 
-        // Convert CID to hex-encoded URI
         const hexResult = transactionUtils.stringToMetadataHex(metadataCid);
 
-        // Encode as contract function call
         const encodedData = encodeFunctionData({
             abi: [setMetadataAbi],
             args: [hexResult],
         });
 
-        // Create hash of source data for change detection
         const sourceHash = this.hashActionData(action);
 
         return {

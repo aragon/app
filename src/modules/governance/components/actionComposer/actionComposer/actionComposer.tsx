@@ -345,7 +345,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             </Dropdown.Container>
                         )}
                         {allowedActions && (
-                            // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
                             <div>
                                 <Switch
                                     checked={onlyShowAuthorizedActions}

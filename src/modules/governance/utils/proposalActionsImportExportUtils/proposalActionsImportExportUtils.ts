@@ -36,17 +36,11 @@ class ProposalActionsImportExportUtils {
     /**
      * Exports actions to a JSON-serializable format.
      * Prefers pinned IPFS data over action.data when available for metadata actions.
-     *
-     * @param actions - Array of proposal actions to export. Can include form actions with ipfsMetadata.
-     * @returns Array of exported actions with normalized values
      */
     exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] =>
         actions.map((action) => {
             let exportData = action.data;
 
-            // Check if this action has ipfsMetadata (from form state) with pinned data
-            // Note: ipfsMetadata is only present on IProposalActionData (form-extended type).
-            // We use 'any' here to avoid circular dependency since createProposalFormActions imports this util.
             const actionWithMetadata = action as IProposalActionData;
             if (
                 actionWithMetadata.ipfsMetadata?.pinnedData &&
@@ -66,10 +60,7 @@ class ProposalActionsImportExportUtils {
         });
 
     /**
-     * Downloads actions as a JSON file
-     *
-     * @param actions - Array of proposal actions to download. Can include form actions with ipfsMetadata.
-     * @param filename - Name of the file to download (default: 'actions.json')
+     * Downloads actions as a JSON file.
      */
     downloadActionsAsJSON = (
         actions: IProposalAction[],
@@ -90,10 +81,7 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Validates and parses imported JSON actions
-     *
-     * @param jsonString - JSON string containing actions array
-     * @returns Result object with success status, parsed actions, or error key
+     * Validates and parses imported JSON actions.
      */
     validateAndParseActions = (jsonString: string): IImportActionsResult => {
         try {
@@ -131,10 +119,7 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Validates a single action structure
-     *
-     * @param action - Action object to validate
-     * @returns Error translation key if invalid, null if valid
+     * Validates a single action structure.
      */
     private validateActionStructure = (action: unknown): string | null => {
         if (typeof action !== 'object' || action === null) {
@@ -158,7 +143,6 @@ class ProposalActionsImportExportUtils {
         const isStringNumber =
             typeof actionObj.value === 'string' &&
             actionObj.value.length > 0 &&
-            // allow decimal or 0x-prefixed hex since BigInt supports both
             /^(\d+|0x[0-9a-fA-F]+)$/.test(actionObj.value);
 
         if (!(isNumber || isStringNumber)) {
@@ -173,10 +157,7 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Reads a file and returns its content as a string
-     *
-     * @param file - File to read
-     * @returns Promise resolving to file content as string
+     * Reads a file and returns its content as a string.
      */
     readFileAsText = (file: File): Promise<string> =>
         new Promise((resolve, reject) => {

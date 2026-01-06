@@ -1,5 +1,5 @@
 import { useDebouncedValue } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ProposalActionType } from '../../api/governanceService';
@@ -21,11 +21,8 @@ export const useMetadataActionPin = (
     const { setValue } = useFormContext<ICreateProposalFormData>();
     const fieldName = `actions.${actionIndex}` as const;
 
-    // Watch the action for changes
-    // The action from the form matches IMetadataAction with flexible metadata fields
     const action = useWatch({ name: fieldName }) as IMetadataAction | undefined;
 
-    // Debounce the action value by 3 seconds
     const [debouncedAction] = useDebouncedValue(action, { delay: 3000 });
 
     const [pinStatus, setPinStatus] = useState<PinStatus>('idle');
@@ -34,13 +31,45 @@ export const useMetadataActionPin = (
     const { mutateAsync: pinJson } = usePinJson();
     const { mutateAsync: pinFile } = usePinFile();
 
-    // Pin execution logic
+    const metadataHash = useMemo(() => {
+        if (!action) {
+            return null;
+        }
+        return metadataActionPinUtils.hashActionData(action);
+    }, [action]);
+
+    const lastProcessedHashRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        if (!(enabled && action && metadataHash)) {
+            return;
+        }
+
+        if (
+            lastProcessedHashRef.current === metadataHash ||
+            action.ipfsMetadata?.isPinning === true
+        ) {
+            return;
+        }
+
+        const needsPinning = metadataActionPinUtils.needsRepinning(
+            action,
+            metadataHash,
+        );
+
+        if (needsPinning) {
+            lastProcessedHashRef.current = metadataHash;
+            setValue(`${fieldName}.ipfsMetadata.isPinning`, true, {
+                shouldValidate: false,
+            });
+        }
+    }, [metadataHash, action, enabled, setValue, fieldName]);
+
     const executePinning = useCallback(async () => {
         if (!(enabled && debouncedAction)) {
             return;
         }
 
-        // Check if repinning is needed
         const currentHash =
             metadataActionPinUtils.hashActionData(debouncedAction);
         if (
@@ -51,11 +80,6 @@ export const useMetadataActionPin = (
 
         setPinStatus('pending');
         setPinError(null);
-
-        // Set isPinning flag in form state for gating
-        setValue(`${fieldName}.ipfsMetadata.isPinning`, true, {
-            shouldValidate: false,
-        });
 
         try {
             const pinFunction =
@@ -69,7 +93,6 @@ export const useMetadataActionPin = (
                 pinFile,
             });
 
-            // Update form with pinned data and metadata
             setValue(`${fieldName}.data`, result.encodedData, {
                 shouldValidate: false,
             });
@@ -91,7 +114,6 @@ export const useMetadataActionPin = (
             setPinError(error as Error);
             setPinStatus('error');
 
-            // Clear isPinning flag on error
             setValue(`${fieldName}.ipfsMetadata.isPinning`, false, {
                 shouldValidate: false,
             });
@@ -106,12 +128,10 @@ export const useMetadataActionPin = (
         fieldName,
     ]);
 
-    // Auto-trigger on debounced value change
     useEffect(() => {
         void executePinning();
     }, [executePinning]);
 
-    // Clear error handler
     const clearError = useCallback(() => {
         setPinError(null);
         if (pinStatus === 'error') {
