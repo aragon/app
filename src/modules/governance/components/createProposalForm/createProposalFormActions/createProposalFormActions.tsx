@@ -3,8 +3,8 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
@@ -139,6 +139,28 @@ export const CreateProposalFormActions: React.FC<
         remove();
     }, [remove]);
 
+    // Watch actions for metadata pinning state
+    const watchedActions = useWatch({ control, name: 'actions' }) ?? [];
+
+    // Check if any metadata actions are currently pinning or unprepared
+    const hasUnpreparedMetadata = useMemo(() => {
+        return watchedActions.some((action) => {
+            const isMetadata =
+                action.type === ProposalActionType.METADATA_UPDATE ||
+                action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+
+            if (!isMetadata) {
+                return false;
+            }
+
+            // Check if pinning in progress or data empty
+            const isPinning = action.ipfsMetadata?.isPinning === true;
+            const hasNoData = !action.data || action.data === '0x';
+
+            return isPinning || hasNoData;
+        });
+    }, [watchedActions]);
+
     const handleDownloadActions = useCallback(() => {
         const currentActions = getValues('actions') ?? [];
         proposalActionsImportExportUtils.downloadActionsAsJSON(
@@ -228,6 +250,7 @@ export const CreateProposalFormActions: React.FC<
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
+                    hasUnpreparedMetadata={hasUnpreparedMetadata}
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}

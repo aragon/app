@@ -1,7 +1,10 @@
+import { AlertInline, Button } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
+import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
+import { useMetadataActionPin } from '@/modules/governance/hooks/useMetadataActionPin';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -11,14 +14,6 @@ import type {
     IUpdatePluginMetadataAction,
     IUpdatePluginMetadataActionProps,
 } from './updatePluginMetadataAction.api';
-
-const setMetadataAbi = {
-    type: 'function',
-    inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
-    name: 'setMetadata',
-    outputs: [],
-    stateMutability: 'nonpayable',
-};
 
 export const UpdatePluginMetadataAction: React.FC<
     IUpdatePluginMetadataActionProps
@@ -32,8 +27,11 @@ export const UpdatePluginMetadataAction: React.FC<
     const isSubPlugin = meta?.isSubPlugin ?? false;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    const { addPrepareAction } =
-        useCreateProposalFormContext<IUpdatePluginMetadataAction>();
+    // Type assertion needed because IUpdatePluginMetadataAction has optional data (before pinning)
+    // but prepareAction callback will populate it, satisfying IProposalCreateAction requirements
+    const { addPrepareAction } = useCreateProposalFormContext<
+        IUpdatePluginMetadataAction & { data: string }
+    >();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(
@@ -42,8 +40,25 @@ export const UpdatePluginMetadataAction: React.FC<
 
     const displayProcessKey = isProcess && !isSubPlugin;
 
+    // Auto-pin metadata in background with debouncing
+    const { pinError, triggerPin, clearError } = useMetadataActionPin({
+        actionIndex: index,
+        actionType: ProposalActionType.METADATA_PLUGIN_UPDATE,
+        enabled: true,
+    });
+
     const prepareAction = useCallback(
         async (action: IUpdatePluginMetadataAction) => {
+            // If background pinning already populated the data field, use it instead of re-pinning
+            if (
+                action.data &&
+                action.data !== '0x' &&
+                action.ipfsMetadata?.pinnedData
+            ) {
+                return action.ipfsMetadata.pinnedData;
+            }
+
+            // Otherwise, perform fresh IPFS pinning (fallback for edge cases or if background pinning failed)
             const { proposedMetadata, existingMetadata } = action;
             const { name, description, resources, processKey } =
                 proposedMetadata;
@@ -81,10 +96,26 @@ export const UpdatePluginMetadataAction: React.FC<
     }, [addPrepareAction, prepareAction]);
 
     return (
-        <CreateProcessForm.Metadata
-            displayProcessKey={displayProcessKey}
-            fieldPrefix={`${actionFieldName}.proposedMetadata`}
-            pluginType={displayProcessKey ? 'process' : 'plugin'}
-        />
+        <div className="flex flex-col gap-4">
+            {pinError && (
+                <AlertInline
+                    message={`Failed to prepare action: ${pinError.message}`}
+                    variant="critical"
+                >
+                    <Button onClick={triggerPin} size="sm" variant="tertiary">
+                        Retry
+                    </Button>
+                    <Button onClick={clearError} size="sm" variant="tertiary">
+                        Dismiss
+                    </Button>
+                </AlertInline>
+            )}
+
+            <CreateProcessForm.Metadata
+                displayProcessKey={displayProcessKey}
+                fieldPrefix={`${actionFieldName}.proposedMetadata`}
+                pluginType={displayProcessKey ? 'process' : 'plugin'}
+            />
+        </div>
     );
 };

@@ -68,6 +68,11 @@ export interface IActionComposerProps
      * Callback called when all actions should be removed.
      */
     onRemoveAllActions?: () => void;
+    /**
+     * Whether any metadata actions are currently being prepared or are unprepared.
+     * When true, the download button will be disabled.
+     */
+    hasUnpreparedMetadata?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -81,6 +86,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions,
         daoPermissions,
         onRemoveAllActions,
+        hasUnpreparedMetadata = false,
     } = props;
 
     const daoUrlParams = { id: daoId };
@@ -319,10 +325,17 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                 }
                                 size="md"
                             >
-                                <Dropdown.Item onClick={handleDownloadActions}>
-                                    {t(
-                                        'app.governance.actionComposer.downloadAllActions',
-                                    )}
+                                <Dropdown.Item
+                                    disabled={hasUnpreparedMetadata}
+                                    onClick={handleDownloadActions}
+                                >
+                                    {hasUnpreparedMetadata
+                                        ? t(
+                                              'app.governance.actionComposer.downloadWait',
+                                          )
+                                        : t(
+                                              'app.governance.actionComposer.downloadAllActions',
+                                          )}
                                 </Dropdown.Item>
                                 <Dropdown.Item onClick={handleRemoveAllActions}>
                                     {t(

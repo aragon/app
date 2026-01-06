@@ -1,6 +1,37 @@
 import type { IProposalAction } from '../../api/governanceService';
 import type { IProposalCreate } from '../../dialogs/publishProposalDialog';
 
+/**
+ * IPFS metadata for actions that have been pinned to IPFS.
+ * Used for setMetadata actions to track IPFS pinning state.
+ */
+export interface IIpfsMetadata {
+    /**
+     * IPFS CID of the pinned metadata JSON.
+     */
+    metadataCid: string;
+    /**
+     * IPFS CID of the pinned avatar file (if applicable).
+     */
+    avatarCid?: string;
+    /**
+     * Encoded hex transaction data ready for Ethereum.
+     */
+    pinnedData: string;
+    /**
+     * Timestamp when the metadata was pinned.
+     */
+    pinnedAt: number;
+    /**
+     * Hash of the source data to detect changes.
+     */
+    sourceHash: string;
+    /**
+     * Whether the action is currently being pinned.
+     */
+    isPinning?: boolean;
+}
+
 export type IProposalActionData<
     TAction extends IProposalAction = IProposalAction,
     TMeta = undefined,
@@ -17,6 +48,11 @@ export type IProposalActionData<
      * Additional metadata for the action.
      */
     meta: TMeta;
+    /**
+     * IPFS metadata for setMetadata actions (optional).
+     * Contains pinning state and encoded transaction data.
+     */
+    ipfsMetadata?: IIpfsMetadata;
 };
 
 export interface ICreateProposalFormData<TMeta = undefined>

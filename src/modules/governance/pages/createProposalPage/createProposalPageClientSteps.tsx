@@ -9,6 +9,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { ProposalActionType } from '../../api/governanceService';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -54,6 +55,25 @@ export const CreateProposalPageClientSteps: React.FC<
     const { prepareActions } = useCreateProposalFormContext();
 
     const [metadataStep, actionsStep, settingsStep] = steps;
+
+    // Check if any metadata actions are currently pinning or unprepared
+    const watchedActions = useWatch({
+        name: 'actions',
+    }) as ICreateProposalFormData['actions'] | undefined;
+
+    const hasUnpreparedMetadata = Array.isArray(watchedActions)
+        ? watchedActions.some((action) => {
+              const isMetadata =
+                  action.type === ProposalActionType.METADATA_UPDATE ||
+                  action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+              if (!isMetadata) {
+                  return false;
+              }
+              const isPinning = action.ipfsMetadata?.isPinning === true;
+              const hasNoData = !action.data || action.data === '0x';
+              return isPinning || hasNoData;
+          })
+        : false;
 
     // Hide settings step if plugin has no custom settings for create-proposal flow
     const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
@@ -133,6 +153,7 @@ export const CreateProposalPageClientSteps: React.FC<
                 description={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
                 )}
+                disableNext={hasUnpreparedMetadata}
                 hidden={addActions === false}
                 nextDropdownItems={getActionStepDropdownItems()}
                 title={t(
