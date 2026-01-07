@@ -37,8 +37,8 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
             preview: true,
-            production: false,
         },
     },
     {
@@ -48,8 +48,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
-            preview: false,
-            production: false,
         },
     },
     {
@@ -59,7 +57,10 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
             preview: true,
+            staging: true,
+            production: true,
         },
     },
     {
@@ -69,7 +70,10 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
             preview: true,
+            staging: true,
+            production: true,
         },
     },
     {
@@ -80,6 +84,8 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
+            preview: true,
         },
     },
     {
@@ -90,6 +96,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
             preview: true,
         },
     },
