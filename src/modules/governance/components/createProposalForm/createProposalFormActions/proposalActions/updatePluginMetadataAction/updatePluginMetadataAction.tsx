@@ -1,10 +1,8 @@
-import { AlertInline, Button } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import { CreateProcessForm } from '@/modules/createDao/components/createProcessForm';
 import { ProposalActionType } from '@/modules/governance/api/governanceService/domain';
 import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
-import { useMetadataActionPin } from '@/modules/governance/hooks/useMetadataActionPin';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
@@ -37,12 +35,6 @@ export const UpdatePluginMetadataAction: React.FC<
     );
 
     const displayProcessKey = isProcess && !isSubPlugin;
-
-    const { pinError, triggerPin, clearError } = useMetadataActionPin({
-        actionIndex: index,
-        actionType: ProposalActionType.METADATA_PLUGIN_UPDATE,
-        enabled: true,
-    });
 
     const prepareAction = useCallback(
         async (action: IUpdatePluginMetadataAction) => {
@@ -91,26 +83,10 @@ export const UpdatePluginMetadataAction: React.FC<
     }, [addPrepareAction, prepareAction]);
 
     return (
-        <div className="flex flex-col gap-4">
-            {pinError && (
-                <AlertInline
-                    message={`Failed to prepare action: ${pinError.message}`}
-                    variant="critical"
-                >
-                    <Button onClick={triggerPin} size="sm" variant="tertiary">
-                        Retry
-                    </Button>
-                    <Button onClick={clearError} size="sm" variant="tertiary">
-                        Dismiss
-                    </Button>
-                </AlertInline>
-            )}
-
-            <CreateProcessForm.Metadata
-                displayProcessKey={displayProcessKey}
-                fieldPrefix={`${actionFieldName}.proposedMetadata`}
-                pluginType={displayProcessKey ? 'process' : 'plugin'}
-            />
-        </div>
+        <CreateProcessForm.Metadata
+            displayProcessKey={displayProcessKey}
+            fieldPrefix={`${actionFieldName}.proposedMetadata`}
+            pluginType={displayProcessKey ? 'process' : 'plugin'}
+        />
     );
 };

@@ -1,5 +1,6 @@
 export { useMetadataActionPin } from './useMetadataActionPin';
 export type {
-    IUseMetadataActionPinParams,
+    IMetadataActionWithIndex,
+    IPinResult,
     IUseMetadataActionPinReturn,
 } from './useMetadataActionPin.api';

@@ -1,16 +1,23 @@
 import {
+    AlertInline,
     type IProposalActionsArrayControls,
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useMemo } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { useCallback, useEffect } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import { ProposalActionType } from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { IMetadataActionWithIndex } from '../../../hooks/useMetadataActionPin';
+import { useMetadataActionPin } from '../../../hooks/useMetadataActionPin';
+import {
+    type IMetadataAction,
+    metadataActionPinUtils,
+} from '../../../utils/metadataActionPinUtils';
 import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -99,6 +106,33 @@ export const CreateProposalFormActions: React.FC<
         (page) => page.data,
     );
 
+    const { pinMetadataActions, isPinning, pinErrors } = useMetadataActionPin();
+
+    const getMetadataActionsToPin = useCallback(() => {
+        const currentActions = getValues('actions') ?? [];
+        const metadataActions: IMetadataActionWithIndex[] = [];
+
+        currentActions.forEach((action, index) => {
+            if (action.type === ProposalActionType.METADATA_UPDATE) {
+                metadataActions.push({
+                    action: action as unknown as IMetadataAction,
+                    actionIndex: index,
+                    actionType: ProposalActionType.METADATA_UPDATE,
+                });
+            } else if (
+                action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
+            ) {
+                metadataActions.push({
+                    action: action as unknown as IMetadataAction,
+                    actionIndex: index,
+                    actionType: ProposalActionType.METADATA_PLUGIN_UPDATE,
+                });
+            }
+        });
+
+        return metadataActions;
+    }, [getValues]);
+
     /**
      * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
      * when dealing with complex nested objects, causing data loss and crashes. Instead,
@@ -139,34 +173,85 @@ export const CreateProposalFormActions: React.FC<
         remove();
     }, [remove]);
 
-    const watchedActions = useWatch({ control, name: 'actions' }) ?? [];
+    const handleDownloadActions = useCallback(
+        async (skipPinning = false) => {
+            const metadataActions = getMetadataActionsToPin();
 
-    const hasUnpreparedMetadata = useMemo(
-        () =>
-            watchedActions.some((action) => {
-                const isMetadata =
-                    action.type === ProposalActionType.METADATA_UPDATE ||
-                    action.type === ProposalActionType.METADATA_PLUGIN_UPDATE;
+            const needsPinning = metadataActions.some(({ action }) => {
+                const hash = metadataActionPinUtils.hashActionData(action);
+                return metadataActionPinUtils.needsRepinning(action, hash);
+            });
 
-                if (!isMetadata) {
-                    return false;
+            if (metadataActions.length === 0 || !needsPinning || skipPinning) {
+                const currentActions = getValues('actions') ?? [];
+                proposalActionsImportExportUtils.downloadActionsAsJSON(
+                    currentActions,
+                    `dao-${daoId}-actions.json`,
+                );
+                return;
+            }
+
+            const results = await pinMetadataActions(metadataActions);
+
+            const hasErrors = results.some((result) => !result.success);
+
+            if (hasErrors) {
+                return;
+            }
+
+            const currentActions = getValues('actions') ?? [];
+            const dataChanged = results.some((result) => {
+                const currentAction = currentActions[
+                    result.actionIndex
+                ] as unknown as IMetadataAction;
+                const currentHash =
+                    metadataActionPinUtils.hashActionData(currentAction);
+                return currentHash !== result.sourceHash;
+            });
+
+            if (dataChanged) {
+                return;
+            }
+
+            results.forEach((result) => {
+                if (result.success && result.encodedData) {
+                    setValue(
+                        `actions.${result.actionIndex}.data`,
+                        result.encodedData,
+                        {
+                            shouldValidate: false,
+                        },
+                    );
+                    setValue(
+                        `actions.${result.actionIndex}.ipfsMetadata`,
+                        {
+                            metadataCid: result.metadataCid!,
+                            avatarCid: result.avatarCid,
+                            pinnedData: result.encodedData,
+                            pinnedAt: Date.now(),
+                            sourceHash: result.sourceHash!,
+                        },
+                        {
+                            shouldValidate: false,
+                        },
+                    );
                 }
+            });
 
-                const isPinning = action.ipfsMetadata?.isPinning === true;
-                const hasNoData = !action.data || action.data === '0x';
-
-                return isPinning || hasNoData;
-            }),
-        [watchedActions],
+            const updatedActions = getValues('actions') ?? [];
+            proposalActionsImportExportUtils.downloadActionsAsJSON(
+                updatedActions,
+                `dao-${daoId}-actions.json`,
+            );
+        },
+        [
+            daoId,
+            getValues,
+            setValue,
+            pinMetadataActions,
+            getMetadataActionsToPin,
+        ],
     );
-
-    const handleDownloadActions = useCallback(() => {
-        const currentActions = getValues('actions') ?? [];
-        proposalActionsImportExportUtils.downloadActionsAsJSON(
-            currentActions,
-            `dao-${daoId}-actions.json`,
-        );
-    }, [daoId, getValues]);
 
     const getArrayControls = (
         index: number,
@@ -243,13 +328,20 @@ export const CreateProposalFormActions: React.FC<
                     ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
+            {pinErrors.size > 0 && (
+                <AlertInline
+                    message={`Failed to prepare ${pinErrors.size} metadata action${pinErrors.size > 1 ? 's' : ''}. Use the download dropdown to retry or proceed anyway.`}
+                    variant="critical"
+                />
+            )}
             {showActionComposer ? (
                 <ActionComposer
                     allowedActions={allowedActions}
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
-                    hasUnpreparedMetadata={hasUnpreparedMetadata}
+                    hasPinErrors={pinErrors.size > 0}
+                    isPinning={isPinning}
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}

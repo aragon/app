@@ -1,8 +1,4 @@
-import {
-    AlertInline,
-    Button,
-    type IProposalActionComponentProps,
-} from '@aragon/gov-ui-kit';
+import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { encodeFunctionData } from 'viem';
 import {
@@ -14,7 +10,6 @@ import {
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
-import { useMetadataActionPin } from '@/modules/governance/hooks/useMetadataActionPin';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -62,12 +57,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
         fieldName,
     );
 
-    const { pinError, triggerPin, clearError } = useMetadataActionPin({
-        actionIndex: index,
-        actionType: ProposalActionType.METADATA_UPDATE,
-        enabled: true,
-    });
-
     const prepareAction = useCallback(
         async (action: IUpdateDaoMetadataAction) => {
             if (
@@ -114,24 +103,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
     }, [addPrepareAction, prepareAction]);
 
     return (
-        <div className="flex flex-col gap-4">
-            {pinError && (
-                <AlertInline
-                    message={`Failed to prepare action: ${pinError.message}`}
-                    variant="critical"
-                >
-                    <Button onClick={triggerPin} size="sm" variant="tertiary">
-                        Retry
-                    </Button>
-                    <Button onClick={clearError} size="sm" variant="tertiary">
-                        Dismiss
-                    </Button>
-                </AlertInline>
-            )}
-
-            <CreateDaoForm.Metadata
-                fieldPrefix={`${fieldName}.proposedMetadata`}
-            />
-        </div>
+        <CreateDaoForm.Metadata fieldPrefix={`${fieldName}.proposedMetadata`} />
     );
 };

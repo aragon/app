@@ -1,149 +1,122 @@
-import { useDebouncedValue } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useCallback, useState } from 'react';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { ProposalActionType } from '../../api/governanceService';
-import type { ICreateProposalFormData } from '../../components/createProposalForm/createProposalFormDefinitions';
-import type { IMetadataAction } from '../../utils/metadataActionPinUtils';
 import { metadataActionPinUtils } from '../../utils/metadataActionPinUtils';
 import type {
-    IUseMetadataActionPinParams,
+    IMetadataActionWithIndex,
+    IPinResult,
     IUseMetadataActionPinReturn,
 } from './useMetadataActionPin.api';
 
-type PinStatus = 'idle' | 'pending' | 'success' | 'error';
-
-export const useMetadataActionPin = (
-    params: IUseMetadataActionPinParams,
-): IUseMetadataActionPinReturn => {
-    const { actionIndex, actionType, enabled = true } = params;
-
-    const { setValue } = useFormContext<ICreateProposalFormData>();
-    const fieldName = `actions.${actionIndex}` as const;
-
-    const action = useWatch({ name: fieldName }) as IMetadataAction | undefined;
-
-    const [debouncedAction] = useDebouncedValue(action, { delay: 3000 });
-
-    const [pinStatus, setPinStatus] = useState<PinStatus>('idle');
-    const [pinError, setPinError] = useState<Error | null>(null);
+export const useMetadataActionPin = (): IUseMetadataActionPinReturn => {
+    const [isPinning, setIsPinning] = useState(false);
+    const [pinErrors, setPinErrors] = useState<Map<number, Error>>(new Map());
 
     const { mutateAsync: pinJson } = usePinJson();
     const { mutateAsync: pinFile } = usePinFile();
 
-    const metadataHash = useMemo(() => {
-        if (!action) {
-            return null;
-        }
-        return metadataActionPinUtils.hashActionData(action);
-    }, [action]);
+    const clearError = useCallback((actionIndex: number) => {
+        setPinErrors((prev) => {
+            const next = new Map(prev);
+            next.delete(actionIndex);
+            return next;
+        });
+    }, []);
 
-    const lastProcessedHashRef = useRef<string | null>(null);
+    const clearAllErrors = useCallback(() => {
+        setPinErrors(new Map());
+    }, []);
 
-    useEffect(() => {
-        if (!(enabled && action && metadataHash)) {
-            return;
-        }
+    const pinMetadataActions = useCallback(
+        async (actions: IMetadataActionWithIndex[]): Promise<IPinResult[]> => {
+            setIsPinning(true);
+            clearAllErrors();
 
-        if (
-            lastProcessedHashRef.current === metadataHash ||
-            action.ipfsMetadata?.isPinning === true
-        ) {
-            return;
-        }
+            const pinPromises = actions.map(
+                async ({ action, actionIndex, actionType }) => {
+                    try {
+                        const currentHash =
+                            metadataActionPinUtils.hashActionData(action);
 
-        const needsPinning = metadataActionPinUtils.needsRepinning(
-            action,
-            metadataHash,
-        );
+                        if (
+                            !metadataActionPinUtils.needsRepinning(
+                                action,
+                                currentHash,
+                            )
+                        ) {
+                            return {
+                                actionIndex,
+                                success: true,
+                                metadataCid: action.ipfsMetadata!.metadataCid,
+                                avatarCid: action.ipfsMetadata?.avatarCid,
+                                encodedData: action.ipfsMetadata!.pinnedData,
+                                sourceHash: action.ipfsMetadata!.sourceHash,
+                            };
+                        }
 
-        if (needsPinning) {
-            lastProcessedHashRef.current = metadataHash;
-            setValue(`${fieldName}.ipfsMetadata.isPinning`, true, {
-                shouldValidate: false,
-            });
-        }
-    }, [metadataHash, action, enabled, setValue, fieldName]);
+                        const pinFunction =
+                            actionType === ProposalActionType.METADATA_UPDATE
+                                ? metadataActionPinUtils.pinDaoMetadataAction
+                                : metadataActionPinUtils.pinPluginMetadataAction;
 
-    const executePinning = useCallback(async () => {
-        if (!(enabled && debouncedAction)) {
-            return;
-        }
+                        const result = await pinFunction({
+                            action,
+                            pinJson,
+                            pinFile,
+                        });
 
-        const currentHash =
-            metadataActionPinUtils.hashActionData(debouncedAction);
-        if (
-            !metadataActionPinUtils.needsRepinning(debouncedAction, currentHash)
-        ) {
-            return;
-        }
-
-        setPinStatus('pending');
-        setPinError(null);
-
-        try {
-            const pinFunction =
-                actionType === ProposalActionType.METADATA_UPDATE
-                    ? metadataActionPinUtils.pinDaoMetadataAction
-                    : metadataActionPinUtils.pinPluginMetadataAction;
-
-            const result = await pinFunction({
-                action: debouncedAction,
-                pinJson,
-                pinFile,
-            });
-
-            setValue(`${fieldName}.data`, result.encodedData, {
-                shouldValidate: false,
-            });
-            setValue(
-                `${fieldName}.ipfsMetadata`,
-                {
-                    metadataCid: result.metadataCid,
-                    avatarCid: result.avatarCid,
-                    pinnedData: result.encodedData,
-                    pinnedAt: Date.now(),
-                    sourceHash: result.sourceHash,
-                    isPinning: false,
+                        return {
+                            actionIndex,
+                            success: true,
+                            ...result,
+                        };
+                    } catch (error) {
+                        return {
+                            actionIndex,
+                            success: false,
+                            error: error as Error,
+                        };
+                    }
                 },
-                { shouldValidate: false },
             );
 
-            setPinStatus('success');
-        } catch (error) {
-            setPinError(error as Error);
-            setPinStatus('error');
+            const results = await Promise.allSettled(pinPromises);
 
-            setValue(`${fieldName}.ipfsMetadata.isPinning`, false, {
-                shouldValidate: false,
+            const pinResults: IPinResult[] = [];
+            const newErrors = new Map<number, Error>();
+
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    const pinResult = result.value;
+                    pinResults.push(pinResult);
+
+                    if (!pinResult.success && pinResult.error) {
+                        newErrors.set(pinResult.actionIndex, pinResult.error);
+                    }
+                } else {
+                    const actionIndex = actions[index].actionIndex;
+                    newErrors.set(actionIndex, result.reason as Error);
+                    pinResults.push({
+                        actionIndex,
+                        success: false,
+                        error: result.reason as Error,
+                    });
+                }
             });
-        }
-    }, [
-        debouncedAction,
-        enabled,
-        actionType,
-        pinJson,
-        pinFile,
-        setValue,
-        fieldName,
-    ]);
 
-    useEffect(() => {
-        void executePinning();
-    }, [executePinning]);
+            setPinErrors(newErrors);
+            setIsPinning(false);
 
-    const clearError = useCallback(() => {
-        setPinError(null);
-        if (pinStatus === 'error') {
-            setPinStatus('idle');
-        }
-    }, [pinStatus]);
+            return pinResults;
+        },
+        [pinJson, pinFile, clearAllErrors],
+    );
 
     return {
-        isPinning: pinStatus === 'pending',
-        pinError,
-        pinStatus,
-        triggerPin: executePinning,
+        pinMetadataActions,
+        isPinning,
+        pinErrors,
         clearError,
+        clearAllErrors,
     };
 };

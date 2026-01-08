@@ -58,8 +58,9 @@ export interface IActionComposerProps
     hasActions?: boolean;
     /**
      * Callback triggered when the user downloads all actions.
+     * Can accept optional skipPinning parameter for "proceed anyway" functionality.
      */
-    onDownloadActions?: () => void;
+    onDownloadActions?: (skipPinning?: boolean) => void;
     /**
      * Granted permissions for DAO.
      */
@@ -69,10 +70,15 @@ export interface IActionComposerProps
      */
     onRemoveAllActions?: () => void;
     /**
-     * Whether any metadata actions are currently being prepared or are unprepared.
-     * When true, the download button will be disabled.
+     * Whether metadata actions are currently being pinned.
+     * When true, the download button will show loading state.
      */
-    hasUnpreparedMetadata?: boolean;
+    isPinning?: boolean;
+    /**
+     * Whether there are pinning errors.
+     * When true, shows retry and proceed anyway options in dropdown.
+     */
+    hasPinErrors?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -86,7 +92,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions,
         daoPermissions,
         onRemoveAllActions,
-        hasUnpreparedMetadata = false,
+        isPinning = false,
+        hasPinErrors = false,
     } = props;
 
     const daoUrlParams = { id: daoId };
@@ -235,12 +242,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
-    const handleDownloadActions = () => {
+    const handleDownloadActions = (skipPinning = false) => {
         if (!onDownloadActions) {
             return;
         }
 
-        onDownloadActions();
+        onDownloadActions(skipPinning);
     };
 
     const handleRemoveAllActions = () => {
@@ -325,23 +332,64 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                 }
                                 size="md"
                             >
-                                <Dropdown.Item
-                                    disabled={hasUnpreparedMetadata}
-                                    onClick={handleDownloadActions}
-                                >
-                                    {hasUnpreparedMetadata
-                                        ? t(
-                                              'app.governance.actionComposer.downloadWait',
-                                          )
-                                        : t(
-                                              'app.governance.actionComposer.downloadAllActions',
-                                          )}
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={handleRemoveAllActions}>
-                                    {t(
-                                        'app.governance.actionComposer.removeAllActions',
-                                    )}
-                                </Dropdown.Item>
+                                {hasPinErrors ? (
+                                    <>
+                                        <Dropdown.Item
+                                            disabled={isPinning}
+                                            onClick={() =>
+                                                handleDownloadActions(false)
+                                            }
+                                        >
+                                            {isPinning
+                                                ? t(
+                                                      'app.governance.actionComposer.downloadPinning',
+                                                  )
+                                                : t(
+                                                      'app.governance.actionComposer.retry',
+                                                  )}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={() =>
+                                                handleDownloadActions(true)
+                                            }
+                                        >
+                                            {t(
+                                                'app.governance.actionComposer.proceedAnyway',
+                                            )}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={handleRemoveAllActions}
+                                        >
+                                            {t(
+                                                'app.governance.actionComposer.removeAllActions',
+                                            )}
+                                        </Dropdown.Item>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Dropdown.Item
+                                            disabled={isPinning}
+                                            onClick={() =>
+                                                handleDownloadActions(false)
+                                            }
+                                        >
+                                            {isPinning
+                                                ? t(
+                                                      'app.governance.actionComposer.downloadPinning',
+                                                  )
+                                                : t(
+                                                      'app.governance.actionComposer.downloadAllActions',
+                                                  )}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={handleRemoveAllActions}
+                                        >
+                                            {t(
+                                                'app.governance.actionComposer.removeAllActions',
+                                            )}
+                                        </Dropdown.Item>
+                                    </>
+                                )}
                             </Dropdown.Container>
                         )}
                         {allowedActions && (

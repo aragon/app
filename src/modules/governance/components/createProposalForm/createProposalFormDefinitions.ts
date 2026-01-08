@@ -1,3 +1,4 @@
+import type { Hex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type { IProposalCreate } from '../../dialogs/publishProposalDialog';
 
@@ -17,7 +18,7 @@ export interface IIpfsMetadata {
     /**
      * Encoded hex transaction data ready for Ethereum.
      */
-    pinnedData: string;
+    pinnedData: Hex;
     /**
      * Timestamp when the metadata was pinned.
      */
@@ -26,10 +27,6 @@ export interface IIpfsMetadata {
      * Hash of the source data to detect changes.
      */
     sourceHash: string;
-    /**
-     * Whether the action is currently being pinned.
-     */
-    isPinning?: boolean;
 }
 
 export type IProposalActionData<
