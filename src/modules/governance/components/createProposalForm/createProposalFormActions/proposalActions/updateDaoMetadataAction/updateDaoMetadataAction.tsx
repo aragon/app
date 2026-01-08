@@ -74,6 +74,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
             let daoAvatar: string | undefined;
 
             if (avatar?.file != null) {
+                // Pin the avatar set on the form when the file property is set, meaning that the user changed the gauge avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             } else if (avatar?.url) {
