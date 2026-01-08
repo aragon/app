@@ -1,5 +1,8 @@
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
-import { generateAddressInfo, generatePluginSettings } from '@/shared/testUtils';
+import {
+    generateAddressInfo,
+    generatePluginSettings,
+} from '@/shared/testUtils';
 import type { IProposal } from '../../api/governanceService';
 
 export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
@@ -7,7 +10,7 @@ export const generateProposal = (proposal?: Partial<IProposal>): IProposal => ({
     proposalIndex: '0',
     title: 'title',
     startDate: 0,
-    endDate: 1234567890,
+    endDate: 1_234_567_890,
     summary: 'summary',
     creator: generateAddressInfo(),
     blockTimestamp: 0,

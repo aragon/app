@@ -1,5 +1,9 @@
 'use client';
 
+import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { formatUnits } from 'viem';
+import { useAccount } from 'wagmi';
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import type { IDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -12,10 +16,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
-import { formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
 import { tokenLockUnlockDialogUtils } from './tokenLockUnlockDialogUtils';
 
 type ActionType = 'lock' | 'unlock' | 'withdraw';
@@ -67,7 +67,8 @@ export interface ITokenLockUnlockDialogParams {
     showTransactionInfo: boolean;
 }
 
-export interface ITokenLockUnlockDialogProps extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
+export interface ITokenLockUnlockDialogProps
+    extends IDialogComponentProps<ITokenLockUnlockDialogParams> {}
 
 const actionToTransactionType: Record<ActionType, TransactionType> = {
     lock: TransactionType.LOCK_CREATE,
@@ -75,12 +76,20 @@ const actionToTransactionType: Record<ActionType, TransactionType> = {
     withdraw: TransactionType.WITHDRAW_CREATE,
 };
 
-export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (props) => {
+export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (
+    props,
+) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenLockUnlockDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'TokenLockUnlockDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
-    invariant(address != null, 'TokenLockUnlockDialog: user must be connected to perform the action');
+    invariant(
+        address != null,
+        'TokenLockUnlockDialog: user must be connected to perform the action',
+    );
 
     const {
         action,
@@ -100,19 +109,40 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     const router = useRouter();
 
     const initialActiveStep = TransactionDialogStep.PREPARE;
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({ initialActiveStep });
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({ initialActiveStep });
 
     const handlePrepareTransaction = () => {
         if (action === 'lock') {
-            invariant(amount != null, 'TokenLockUnlockDialog: amount is required for lock action');
-            return tokenLockUnlockDialogUtils.buildLockTransaction(amount, escrowContract);
-        } else if (action === 'unlock') {
-            invariant(tokenId != null, 'TokenLockUnlockDialog: tokenId is required for unlock action');
-            return tokenLockUnlockDialogUtils.buildUnlockTransaction(tokenId, escrowContract);
-        } else {
-            invariant(tokenId != null, 'TokenLockUnlockDialog: tokenId is required for withdraw action');
-            return tokenLockUnlockDialogUtils.buildWithdrawTransaction(tokenId, escrowContract);
+            invariant(
+                amount != null,
+                'TokenLockUnlockDialog: amount is required for lock action',
+            );
+            return tokenLockUnlockDialogUtils.buildLockTransaction(
+                amount,
+                escrowContract,
+            );
         }
+        if (action === 'unlock') {
+            invariant(
+                tokenId != null,
+                'TokenLockUnlockDialog: tokenId is required for unlock action',
+            );
+            return tokenLockUnlockDialogUtils.buildUnlockTransaction(
+                tokenId,
+                escrowContract,
+            );
+        }
+        invariant(
+            tokenId != null,
+            'TokenLockUnlockDialog: tokenId is required for withdraw action',
+        );
+        return tokenLockUnlockDialogUtils.buildWithdrawTransaction(
+            tokenId,
+            escrowContract,
+        );
     };
 
     const handleSuccessClick = () => {
@@ -121,37 +151,55 @@ export const TokenLockUnlockDialog: React.FC<ITokenLockUnlockDialogProps> = (pro
     };
 
     const { symbol } = token;
-    const txInfoTitle = t(`app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`, { symbol });
-    const transactionInfo = showTransactionInfo ? { title: txInfoTitle, current: 2, total: 2 } : undefined;
+    const txInfoTitle = t(
+        `app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`,
+        { symbol },
+    );
+    const transactionInfo = showTransactionInfo
+        ? { title: txInfoTitle, current: 2, total: 2 }
+        : undefined;
 
     const displayAmount = action === 'lock' ? amount : lockAmount;
-    const parsedAmount = displayAmount != null ? formatUnits(displayAmount, token.decimals) : undefined;
+    const parsedAmount =
+        displayAmount != null
+            ? formatUnits(displayAmount, token.decimals)
+            : undefined;
 
     return (
         <TransactionDialog
-            title={t(`app.plugins.token.tokenLockUnlockDialog.${action}.title`, { symbol })}
-            description={t(`app.plugins.token.tokenLockUnlockDialog.${action}.description`, { symbol })}
-            submitLabel={t(`app.plugins.token.tokenLockUnlockDialog.${action}.submit`)}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
+            description={t(
+                `app.plugins.token.tokenLockUnlockDialog.${action}.description`,
+                { symbol },
+            )}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
             network={dao.network}
+            onCancelClick={onClose}
             onSuccess={onSuccess}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t(
+                `app.plugins.token.tokenLockUnlockDialog.${action}.submit`,
+            )}
             successLink={{
-                label: t(`app.plugins.token.tokenLockUnlockDialog.${action}.success`),
+                label: t(
+                    `app.plugins.token.tokenLockUnlockDialog.${action}.success`,
+                ),
                 onClick: handleSuccessClick,
             }}
-            onCancelClick={onClose}
+            title={t(
+                `app.plugins.token.tokenLockUnlockDialog.${action}.title`,
+                { symbol },
+            )}
             transactionInfo={transactionInfo}
             transactionType={actionToTransactionType[action]}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
         >
             {parsedAmount != null && (
                 <AssetDataListItem.Structure
+                    amount={parsedAmount}
+                    hideValue={true}
                     logoSrc={token.logo}
                     name={token.name}
-                    amount={parsedAmount}
                     symbol={token.symbol}
-                    hideValue={true}
                 />
             )}
         </TransactionDialog>

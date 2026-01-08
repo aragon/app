@@ -1,11 +1,21 @@
+import {
+    DateFormat,
+    formatterUtils,
+    GukModulesProvider,
+} from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import { generateProposal, generateVote } from '@/modules/governance/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import { generateDao, generateReactQueryResultSuccess } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DateFormat, formatterUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { proposalUtils } from '../../utils/proposalUtils';
-import { type IVoteProposalListItemProps, VoteProposalListItem } from './voteProposalListItem';
+import {
+    type IVoteProposalListItemProps,
+    VoteProposalListItem,
+} from './voteProposalListItem';
 
 describe('<VoteProposalListItem /> component', () => {
     const getDaoUrlSpy = jest.spyOn(daoUtils, 'getDaoUrl');
@@ -14,7 +24,9 @@ describe('<VoteProposalListItem /> component', () => {
 
     beforeEach(() => {
         getProposalSlugSpy.mockReturnValue('admin-1');
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -23,7 +35,9 @@ describe('<VoteProposalListItem /> component', () => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IVoteProposalListItemProps>) => {
+    const createTestComponent = (
+        props?: Partial<IVoteProposalListItemProps>,
+    ) => {
         const completeProps = {
             vote: generateVote(),
             daoId: 'dao-test',
@@ -40,9 +54,14 @@ describe('<VoteProposalListItem /> component', () => {
 
     it('renders the parent proposal info when parent proposal is defined', () => {
         const parentProposal = generateProposal({ title: 'Parent Proposal' });
-        const vote = generateVote({ parentProposal, proposal: generateProposal() });
+        const vote = generateVote({
+            parentProposal,
+            proposal: generateProposal(),
+        });
         const dao = generateDao();
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
         render(createTestComponent({ vote }));
         expect(getProposalSlugSpy).toHaveBeenCalledWith(parentProposal, dao);
         expect(screen.getByText(parentProposal.title)).toBeInTheDocument();
@@ -52,17 +71,24 @@ describe('<VoteProposalListItem /> component', () => {
         const proposal = generateProposal({ title: 'Proposal' });
         const vote = generateVote({ proposal, parentProposal: undefined });
         const dao = generateDao();
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
         render(createTestComponent({ vote }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(getProposalSlugSpy).toHaveBeenCalledWith(proposal, dao);
     });
 
     it('correctly renders the vote timestamp', () => {
-        const blockTimestamp = 1672531200;
-        const vote = generateVote({ blockTimestamp, proposal: generateProposal() });
+        const blockTimestamp = 1_672_531_200;
+        const vote = generateVote({
+            blockTimestamp,
+            proposal: generateProposal(),
+        });
         render(createTestComponent({ vote }));
-        const expectedDate = formatterUtils.formatDate(blockTimestamp * 1000, { format: DateFormat.DURATION });
+        const expectedDate = formatterUtils.formatDate(blockTimestamp * 1000, {
+            format: DateFormat.DURATION,
+        });
         expect(screen.getByText(`${expectedDate!} ago`)).toBeInTheDocument();
     });
 

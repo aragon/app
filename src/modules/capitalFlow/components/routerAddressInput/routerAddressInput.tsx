@@ -1,15 +1,15 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import {
     AddressInput,
     addressUtils,
     Button,
     Card,
-    IconType,
     type IAddressInputResolvedValue,
     type ICompositeAddress,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 
 interface IRouterAddressInputProps {
     /**
@@ -50,8 +50,20 @@ interface IRouterAddressInputProps {
     canMoveDown: boolean;
 }
 
-export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (props) => {
-    const { index, total, chainId, onRemove, canRemove, onMoveUp, onMoveDown, canMoveUp, canMoveDown } = props;
+export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (
+    props,
+) => {
+    const {
+        index,
+        total,
+        chainId,
+        onRemove,
+        canRemove,
+        onMoveUp,
+        onMoveDown,
+        canMoveUp,
+        canMoveDown,
+    } = props;
     const { t } = useTranslations();
 
     const fieldPrefix = `distributionMultiDispatch.routerAddresses[${index.toString()}]`;
@@ -67,7 +79,9 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (props) =>
         fieldPrefix,
     });
 
-    const [addressInput, setAddressInput] = useState<string | undefined>(addressValue);
+    const [addressInput, setAddressInput] = useState<string | undefined>(
+        addressValue,
+    );
 
     const handleAddressAccept = (value?: IAddressInputResolvedValue) => {
         onAddressChange(value?.address ?? '');
@@ -77,17 +91,21 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (props) =>
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-sm">
             {/* Header row: Label + Remove button */}
             <div className="flex items-center justify-between">
-                <label className="text-lg leading-tight font-normal text-neutral-800">
-                    {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.addressLabel')}
+                <label className="font-normal text-lg text-neutral-800 leading-tight">
+                    {t(
+                        'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.addressLabel',
+                    )}
                 </label>
                 <Button
-                    variant="tertiary"
-                    size="sm"
+                    aria-label={t(
+                        'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.remove',
+                    )}
+                    className={canRemove ? '' : 'invisible'}
+                    disabled={!canRemove}
                     iconLeft={IconType.CLOSE}
                     onClick={onRemove}
-                    disabled={!canRemove}
-                    className={canRemove ? '' : 'invisible'}
-                    aria-label={t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.remove')}
+                    size="sm"
+                    variant="tertiary"
                 />
             </div>
 
@@ -95,37 +113,46 @@ export const RouterAddressInput: React.FC<IRouterAddressInputProps> = (props) =>
             <div className="flex items-center gap-4">
                 <div className="flex-1">
                     <AddressInput
-                        value={addressInput}
-                        onChange={setAddressInput}
-                        onAccept={handleAddressAccept}
                         chainId={chainId}
-                        placeholder={t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.placeholder')}
+                        onAccept={handleAddressAccept}
+                        onChange={setAddressInput}
+                        placeholder={t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.placeholder',
+                        )}
+                        value={addressInput}
                         {...addressField}
                     />
                 </div>
 
                 <div className="flex items-center gap-3">
                     <Button
-                        variant="tertiary"
-                        size="sm"
+                        aria-label={t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.moveUp',
+                        )}
+                        disabled={!canMoveUp}
                         iconLeft={IconType.CHEVRON_UP}
                         onClick={onMoveUp}
-                        disabled={!canMoveUp}
-                        aria-label={t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.moveUp')}
+                        size="sm"
+                        variant="tertiary"
                     />
-                    <span className="text-sm leading-tight font-normal text-neutral-500">
-                        {t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.positionCounter', {
-                            current: index + 1,
-                            total,
-                        })}
+                    <span className="font-normal text-neutral-500 text-sm leading-tight">
+                        {t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.positionCounter',
+                            {
+                                current: index + 1,
+                                total,
+                            },
+                        )}
                     </span>
                     <Button
-                        variant="tertiary"
-                        size="sm"
+                        aria-label={t(
+                            'app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.moveDown',
+                        )}
+                        disabled={!canMoveDown}
                         iconLeft={IconType.CHEVRON_DOWN}
                         onClick={onMoveDown}
-                        disabled={!canMoveDown}
-                        aria-label={t('app.capitalFlow.setupStrategyDialog.distributionMultiDispatch.moveDown')}
+                        size="sm"
+                        variant="tertiary"
                     />
                 </div>
             </div>

@@ -1,18 +1,23 @@
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import { AssetList } from '@/modules/finance/components/assetList';
 import * as daoService from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import { generateDao } from '@/shared/testUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 
 jest.mock('@/modules/finance/components/assetList/assetListDefault', () => ({
-    AssetListDefault: () => <div data-testid="asset-list-default">AssetListDefault Mock</div>,
+    AssetListDefault: () => (
+        <div data-testid="asset-list-default">AssetListDefault Mock</div>
+    ),
 }));
 
 jest.mock('@/shared/components/pluginFilterComponent', () => ({
-    PluginFilterComponent: (props: { plugins?: unknown[]; children?: React.ReactNode }) => (
+    PluginFilterComponent: (props: {
+        plugins?: unknown[];
+        children?: React.ReactNode;
+    }) => (
         <div data-testid="plugin-filter-component">
             Plugins: {props.plugins?.length ?? 0}
             {props.children}
@@ -22,7 +27,10 @@ jest.mock('@/shared/components/pluginFilterComponent', () => ({
 
 describe('<AssetList.Container /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
+    const useDaoFilterUrlParamSpy = jest.spyOn(
+        useDaoFilterUrlParam,
+        'useDaoFilterUrlParam',
+    );
 
     const featureFlagSnapshot: FeatureFlagSnapshot[] = [
         {
@@ -41,7 +49,11 @@ describe('<AssetList.Container /> component', () => {
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue({
-            data: generateDao({ id: 'test-dao', address: '0x123', subDaos: [] }),
+            data: generateDao({
+                id: 'test-dao',
+                address: '0x123',
+                subDaos: [],
+            }),
             isLoading: false,
             error: null,
         } as ReturnType<typeof daoService.useDao>);
@@ -80,12 +92,15 @@ describe('<AssetList.Container /> component', () => {
         useDaoFilterUrlParamSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<React.ComponentProps<typeof AssetList.Container>>) => {
-        const completeProps: React.ComponentProps<typeof AssetList.Container> = {
-            initialParams: { queryParams: { daoId: 'test-dao' } },
-            daoId: 'test-dao',
-            ...props,
-        };
+    const createTestComponent = (
+        props?: Partial<React.ComponentProps<typeof AssetList.Container>>,
+    ) => {
+        const completeProps: React.ComponentProps<typeof AssetList.Container> =
+            {
+                initialParams: { queryParams: { daoId: 'test-dao' } },
+                daoId: 'test-dao',
+                ...props,
+            };
 
         return (
             <GukModulesProvider>
@@ -98,7 +113,9 @@ describe('<AssetList.Container /> component', () => {
 
     it('renders the PluginFilterComponent with processed plugins', () => {
         render(createTestComponent());
-        expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('plugin-filter-component'),
+        ).toBeInTheDocument();
         expect(screen.getByText(/Plugins: 2/)).toBeInTheDocument();
     });
 
@@ -165,13 +182,17 @@ describe('<AssetList.Container /> component', () => {
         });
 
         render(createTestComponent());
-        expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('plugin-filter-component'),
+        ).toBeInTheDocument();
     });
 
     it('passes correct query params for group tab (all SubDAOs)', () => {
         render(createTestComponent());
         // Group tab should use the parent daoId without onlyParent flag
-        expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('plugin-filter-component'),
+        ).toBeInTheDocument();
     });
 
     it('passes correct query params for individual SubDAO tabs', () => {
@@ -214,6 +235,8 @@ describe('<AssetList.Container /> component', () => {
 
     it('renders with default props', () => {
         render(createTestComponent());
-        expect(screen.getByTestId('plugin-filter-component')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('plugin-filter-component'),
+        ).toBeInTheDocument();
     });
 });

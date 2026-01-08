@@ -1,43 +1,68 @@
+import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
-import { StrategyType, type ISetupStrategyForm } from '../setupStrategyDialogDefinitions';
+import {
+    type ISetupStrategyForm,
+    StrategyType,
+} from '../setupStrategyDialogDefinitions';
 
 export const SetupStrategyDialogSelect: React.FC = () => {
     const { t } = useTranslations();
 
-    const { onChange: onStrategyTypeFieldChange, ...strategyTypeField } = useFormField<ISetupStrategyForm, 'type'>(
-        'type',
-        {
+    const { onChange: onStrategyTypeFieldChange, ...strategyTypeField } =
+        useFormField<ISetupStrategyForm, 'type'>('type', {
             label: t('app.capitalFlow.setupStrategyDialog.select.type.label'),
             defaultValue: StrategyType.CAPITAL_ROUTER,
-        },
-    );
+        });
 
     return (
         <RadioGroup
+            helpText={t(
+                'app.capitalFlow.setupStrategyDialog.select.type.helpText',
+            )}
             onValueChange={onStrategyTypeFieldChange}
-            helpText={t('app.capitalFlow.setupStrategyDialog.select.type.helpText')}
             {...strategyTypeField}
         >
             <RadioCard
-                label={t('app.capitalFlow.setupStrategyDialog.select.capitalRouter.label')}
-                description={t('app.capitalFlow.setupStrategyDialog.select.capitalRouter.description')}
+                description={t(
+                    'app.capitalFlow.setupStrategyDialog.select.capitalRouter.description',
+                )}
+                label={t(
+                    'app.capitalFlow.setupStrategyDialog.select.capitalRouter.label',
+                )}
                 value={StrategyType.CAPITAL_ROUTER}
             />
             <RadioCard
-                label={t('app.capitalFlow.setupStrategyDialog.select.capitalDistributor.label')}
-                description={t('app.capitalFlow.setupStrategyDialog.select.capitalDistributor.description')}
-                value={StrategyType.CAPITAL_DISTRIBUTOR}
+                description={t(
+                    'app.capitalFlow.setupStrategyDialog.select.capitalDistributor.description',
+                )}
                 disabled={true}
-                tag={{ variant: 'info', label: t('app.capitalFlow.setupStrategyDialog.select.disabled.onRequest') }}
+                label={t(
+                    'app.capitalFlow.setupStrategyDialog.select.capitalDistributor.label',
+                )}
+                tag={{
+                    variant: 'info',
+                    label: t(
+                        'app.capitalFlow.setupStrategyDialog.select.disabled.onRequest',
+                    ),
+                }}
+                value={StrategyType.CAPITAL_DISTRIBUTOR}
             />
             <RadioCard
-                label={t('app.capitalFlow.setupStrategyDialog.select.defiAdapter.label')}
-                description={t('app.capitalFlow.setupStrategyDialog.select.defiAdapter.description')}
-                value={StrategyType.DEFI_ADAPTER}
+                description={t(
+                    'app.capitalFlow.setupStrategyDialog.select.defiAdapter.description',
+                )}
                 disabled={true}
-                tag={{ variant: 'info', label: t('app.capitalFlow.setupStrategyDialog.select.disabled.soon') }}
+                label={t(
+                    'app.capitalFlow.setupStrategyDialog.select.defiAdapter.label',
+                )}
+                tag={{
+                    variant: 'info',
+                    label: t(
+                        'app.capitalFlow.setupStrategyDialog.select.disabled.soon',
+                    ),
+                }}
+                value={StrategyType.DEFI_ADAPTER}
             />
         </RadioGroup>
     );

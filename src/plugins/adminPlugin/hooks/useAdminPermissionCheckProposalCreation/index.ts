@@ -1,4 +1,4 @@
 export {
-    useAdminPermissionCheckProposalCreation,
     type IUseAdminPermissionCheckProposalCreationParams,
+    useAdminPermissionCheckProposalCreation,
 } from './useAdminPermissionCheckProposalCreation';

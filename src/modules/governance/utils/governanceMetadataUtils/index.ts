@@ -1,1 +1,4 @@
-export { governanceMetadataUtils, type IGenerateProposalMetadataParams } from './governanceMetadataUtils';
+export {
+    governanceMetadataUtils,
+    type IGenerateProposalMetadataParams,
+} from './governanceMetadataUtils';

@@ -1,22 +1,34 @@
-import { useFormField } from '@/shared/hooks/useFormField';
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { useTranslations } from '../../translationsProvider';
 import type { IAdvancedDateInputProps } from './advancedDateInput.api';
 import { AdvancedDateInputDuration } from './advancedDateInputDuration';
 import { AdvancedDateInputFixed } from './advancedDateInputFixed';
 
 export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
-    const { useDuration = false, label, helpText, minDuration, field, infoText, minTime, validateMinDuration } = props;
+    const {
+        useDuration = false,
+        label,
+        helpText,
+        minDuration,
+        field,
+        infoText,
+        minTime,
+        validateMinDuration,
+    } = props;
     const { t } = useTranslations();
 
     const dateModeFieldName = `${field}Mode`;
     const dateFixedFieldName = `${field}Fixed`;
     const dateDurationFieldName = `${field}Duration`;
 
-    const inputModeField = useFormField<Record<string, 'duration' | 'now' | 'fixed'>, typeof dateModeFieldName>(
-        dateModeFieldName,
-        { label, defaultValue: useDuration ? 'duration' : 'now' },
-    );
+    const inputModeField = useFormField<
+        Record<string, 'duration' | 'now' | 'fixed'>,
+        typeof dateModeFieldName
+    >(dateModeFieldName, {
+        label,
+        defaultValue: useDuration ? 'duration' : 'now',
+    });
 
     const radioLabel = useDuration
         ? t('app.shared.advancedDateInput.duration.label')
@@ -32,22 +44,22 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             >
                 <RadioCard
                     className="w-full"
-                    label={radioLabel}
                     description=""
+                    label={radioLabel}
                     value={useDuration ? 'duration' : 'now'}
                 />
                 <RadioCard
                     className="w-full"
-                    label={t('app.shared.advancedDateInput.fixed.label')}
                     description=""
+                    label={t('app.shared.advancedDateInput.fixed.label')}
                     value="fixed"
                 />
             </RadioGroup>
             {inputModeField.value === 'fixed' && (
                 <AdvancedDateInputFixed
                     field={dateFixedFieldName}
-                    label={label}
                     infoText={infoText}
+                    label={label}
                     minDuration={minDuration}
                     minTime={minTime}
                     validateMinDuration={validateMinDuration}
@@ -56,8 +68,8 @@ export const AdvancedDateInput: React.FC<IAdvancedDateInputProps> = (props) => {
             {inputModeField.value === 'duration' && (
                 <AdvancedDateInputDuration
                     field={dateDurationFieldName}
-                    label={label}
                     infoText={infoText}
+                    label={label}
                     minDuration={minDuration}
                     validateMinDuration={validateMinDuration}
                 />

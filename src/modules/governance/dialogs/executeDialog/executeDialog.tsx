@@ -1,3 +1,11 @@
+import {
+    DataList,
+    invariant,
+    ProposalDataListItem,
+    type ProposalStatus,
+} from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { useAccount } from 'wagmi';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -9,9 +17,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { DataList, invariant, ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
-import { useRouter } from 'next/navigation';
-import { useAccount } from 'wagmi';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
@@ -31,14 +36,18 @@ export interface IExecuteDialogParams {
     status: ProposalStatus;
 }
 
-export interface IExecuteDialogProps extends IDialogComponentProps<IExecuteDialogParams> {}
+export interface IExecuteDialogProps
+    extends IDialogComponentProps<IExecuteDialogParams> {}
 
 export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { location } = props;
 
     const router = useRouter();
 
-    invariant(location.params != null, 'ExecuteDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'ExecuteDialog: required parameters must be set.',
+    );
 
     const { address } = useAccount();
     invariant(address != null, 'ExecuteDialog: user must be connected.');
@@ -46,40 +55,45 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { proposal, status, daoId } = location.params;
-    const { title, summary, creator, proposalIndex, pluginAddress, network } = proposal;
+    const { title, summary, creator, proposalIndex, pluginAddress, network } =
+        proposal;
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const stepper = useStepper<ITransactionDialogStepMeta, TransactionDialogStep>({
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const handlePrepareTransaction = () => executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
+    const handlePrepareTransaction = () =>
+        executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
 
     const slug = proposalUtils.getProposalSlug(proposal, dao);
 
     return (
         <TransactionDialog
-            title={t('app.governance.executeDialog.title')}
             description={t('app.governance.executeDialog.description')}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            network={network}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
             successLink={{
                 label: t('app.governance.executeDialog.buttons.success'),
                 onClick: () => router.refresh(),
             }}
-            stepper={stepper}
-            prepareTransaction={handlePrepareTransaction}
-            network={network}
+            title={t('app.governance.executeDialog.title')}
             transactionType={TransactionType.PROPOSAL_EXECUTE}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
         >
             <DataList.Root entityLabel="">
                 <ProposalDataListItem.Structure
-                    title={title}
-                    summary={summary}
+                    id={slug}
                     publisher={{ address: creator.address }}
                     status={status}
-                    id={slug}
+                    summary={summary}
+                    title={title}
                 />
             </DataList.Root>
         </TransactionDialog>

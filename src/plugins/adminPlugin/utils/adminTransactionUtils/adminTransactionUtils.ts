@@ -1,5 +1,5 @@
-import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { encodeFunctionData, type Hex } from 'viem';
+import type { IBuildCreateProposalDataParams } from '@/modules/governance/types';
 import { adminPluginAbi } from './adminPluginAbi';
 
 class AdminTransactionUtils {

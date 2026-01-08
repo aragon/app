@@ -1,9 +1,9 @@
+import { InputText, TextArea } from '@aragon/gov-ui-kit';
+import type { ChangeEvent } from 'react';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
-import { InputText, TextArea } from '@aragon/gov-ui-kit';
-import type { ChangeEvent } from 'react';
 import type { ICreatePolicyFormData } from '../createPolicyFormDefinitions';
 
 export interface ICreatePolicyFormMetadataProps {
@@ -19,7 +19,9 @@ const policyKeyMaxLength = 5;
 
 const descriptionMaxLength = 480;
 
-export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> = (props) => {
+export const CreatePolicyFormMetadata: React.FC<
+    ICreatePolicyFormMetadataProps
+> = (props) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
@@ -32,25 +34,34 @@ export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> 
         defaultValue: '',
     });
 
-    const { onChange: onPolicyKeyChange, ...policyKeyField } = useFormField<ICreatePolicyFormData, 'policyKey'>(
-        'policyKey',
+    const { onChange: onPolicyKeyChange, ...policyKeyField } = useFormField<
+        ICreatePolicyFormData,
+        'policyKey'
+    >('policyKey', {
+        label: t('app.capitalFlow.createPolicyForm.metadata.policyKey.label'),
+        fieldPrefix,
+        rules: {
+            required: true,
+            pattern: /^[A-Z]+$/,
+            maxLength: policyKeyMaxLength,
+        },
+        trimOnBlur: true,
+        defaultValue: '',
+    });
+
+    const descriptionField = useFormField<ICreatePolicyFormData, 'description'>(
+        'description',
         {
-            label: t('app.capitalFlow.createPolicyForm.metadata.policyKey.label'),
+            label: t(
+                'app.capitalFlow.createPolicyForm.metadata.description.label',
+            ),
             fieldPrefix,
-            rules: { required: true, pattern: /^[A-Z]+$/, maxLength: policyKeyMaxLength },
+            rules: { maxLength: descriptionMaxLength },
             trimOnBlur: true,
+            sanitizeMode: 'multiline',
             defaultValue: '',
         },
     );
-
-    const descriptionField = useFormField<ICreatePolicyFormData, 'description'>('description', {
-        label: t('app.capitalFlow.createPolicyForm.metadata.description.label'),
-        fieldPrefix,
-        rules: { maxLength: descriptionMaxLength },
-        trimOnBlur: true,
-        sanitizeMode: 'multiline',
-        defaultValue: '',
-    });
 
     const handleKeyFieldChange = (event: ChangeEvent<HTMLInputElement>) =>
         onPolicyKeyChange(sanitizePlainText(event.target.value).toUpperCase());
@@ -59,21 +70,27 @@ export const CreatePolicyFormMetadata: React.FC<ICreatePolicyFormMetadataProps> 
         <div className="flex w-full flex-col gap-10">
             <InputText maxLength={nameMaxLength} {...nameField} />
             <InputText
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.policyKey.helpText')}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.policyKey.helpText',
+                )}
                 maxLength={policyKeyMaxLength}
                 onChange={handleKeyFieldChange}
                 {...policyKeyField}
             />
             <TextArea
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.description.helpText')}
-                maxLength={descriptionMaxLength}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.description.helpText',
+                )}
                 isOptional={true}
+                maxLength={descriptionMaxLength}
                 {...descriptionField}
             />
             <ResourcesInput
-                name="resources"
-                helpText={t('app.capitalFlow.createPolicyForm.metadata.resources.helpText')}
                 fieldPrefix={fieldPrefix}
+                helpText={t(
+                    'app.capitalFlow.createPolicyForm.metadata.resources.helpText',
+                )}
+                name="resources"
             />
         </div>
     );

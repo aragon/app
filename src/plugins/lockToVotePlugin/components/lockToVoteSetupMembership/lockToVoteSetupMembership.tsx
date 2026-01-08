@@ -1,5 +1,10 @@
 'use client';
 
+import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
+import { useEffect, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
+import type { Hex } from 'viem';
+import { mainnet } from 'viem/chains';
 import {
     type ITransactionInfo,
     type ITransactionStatusStepMeta,
@@ -9,15 +14,15 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
-import { AddressInput, addressUtils } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
-import type { Hex } from 'viem';
-import { mainnet } from 'viem/chains';
 import { useLockToVoteErc20Token } from './hooks/useLockToVoteErc20Token';
-import type { ILockToVoteSetupMembershipForm, ILockToVoteSetupMembershipProps } from './lockToVoteSetupMembership.api';
+import type {
+    ILockToVoteSetupMembershipForm,
+    ILockToVoteSetupMembershipProps,
+} from './lockToVoteSetupMembership.api';
 
-export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps> = (props) => {
+export const LockToVoteSetupMembership: React.FC<
+    ILockToVoteSetupMembershipProps
+> = (props) => {
     const { formPrefix, daoId } = props;
     const { t } = useTranslations();
 
@@ -37,16 +42,21 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         value: importTokenAddress,
         alert,
         ...importTokenAddressField
-    } = useFormField<ILockToVoteSetupMembershipForm['token'], 'address'>('address', {
-        label: t('app.plugins.lockToVote.lockToVoteSetupMembership.importToken.label'),
-        defaultValue: '',
-        fieldPrefix: tokenFormPrefix,
-        rules: {
-            required: true,
-            validate: (value) => addressUtils.isAddress(value),
+    } = useFormField<ILockToVoteSetupMembershipForm['token'], 'address'>(
+        'address',
+        {
+            label: t(
+                'app.plugins.lockToVote.lockToVoteSetupMembership.importToken.label',
+            ),
+            defaultValue: '',
+            fieldPrefix: tokenFormPrefix,
+            rules: {
+                required: true,
+                validate: (value) => addressUtils.isAddress(value),
+            },
+            sanitizeOnBlur: false,
         },
-        sanitizeOnBlur: false,
-    });
+    );
 
     const {
         isError,
@@ -57,7 +67,9 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         chainId: chainId ?? mainnet.id,
     });
 
-    const [tokenAddressInput, setTokenAddressInput] = useState<string | undefined>(importTokenAddress);
+    const [tokenAddressInput, setTokenAddressInput] = useState<
+        string | undefined
+    >(importTokenAddress);
 
     useEffect(() => {
         if (!token) {
@@ -74,13 +86,23 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         setValue(`${tokenFormPrefix}.totalSupply`, totalSupply);
     }, [setValue, token, tokenFormPrefix]);
 
-    const erc20StepState = isLoading ? 'pending' : isError ? 'error' : 'success';
+    const erc20StepState = isLoading
+        ? 'pending'
+        : isError
+          ? 'error'
+          : 'success';
 
     const getStepLabel = (step: string) =>
-        t(`app.plugins.lockToVote.lockToVoteSetupMembership.importToken.step.${step}`);
+        t(
+            `app.plugins.lockToVote.lockToVoteSetupMembership.importToken.step.${step}`,
+        );
 
-    const steps: Array<IStepperStep<ITransactionStatusStepMeta>> = [
-        { id: 'erc20', order: 0, meta: { label: getStepLabel('erc20'), state: erc20StepState } },
+    const steps: IStepperStep<ITransactionStatusStepMeta>[] = [
+        {
+            id: 'erc20',
+            order: 0,
+            meta: { label: getStepLabel('erc20'), state: erc20StepState },
+        },
     ];
 
     const isTokenCheckCardVisible = !!importTokenAddress;
@@ -93,17 +115,24 @@ export const LockToVoteSetupMembership: React.FC<ILockToVoteSetupMembershipProps
         <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2 md:gap-3">
                 <AddressInput
-                    helpText={t('app.plugins.lockToVote.lockToVoteSetupMembership.importToken.helpText')}
-                    // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
-                    onAccept={(value) => onImportTokenAddressChange(value?.address ?? '')}
-                    value={tokenAddressInput}
-                    chainId={chainId}
-                    onChange={setTokenAddressInput}
                     alert={alert}
+                    // Setting address to undefined could trigger some bug from the library in certain cases, so we use an empty string instead!
+                    chainId={chainId}
+                    helpText={t(
+                        'app.plugins.lockToVote.lockToVoteSetupMembership.importToken.helpText',
+                    )}
+                    onAccept={(value) =>
+                        onImportTokenAddressChange(value?.address ?? '')
+                    }
+                    onChange={setTokenAddressInput}
+                    value={tokenAddressInput}
                     {...importTokenAddressField}
                 />
                 {isTokenCheckCardVisible && (
-                    <TransactionStatus.Container steps={steps} transactionInfo={transactionInfo}>
+                    <TransactionStatus.Container
+                        steps={steps}
+                        transactionInfo={transactionInfo}
+                    >
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}

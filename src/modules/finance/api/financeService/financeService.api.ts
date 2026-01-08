@@ -15,7 +15,8 @@ export interface IGetAssetListQueryParams extends IPaginatedRequest {
     onlyParent?: boolean;
 }
 
-export interface IGetAssetListParams extends IRequestQueryParams<IGetAssetListQueryParams> {}
+export interface IGetAssetListParams
+    extends IRequestQueryParams<IGetAssetListQueryParams> {}
 
 export interface IGetTransactionListQueryParams extends IPaginatedRequest {
     /**
@@ -36,4 +37,5 @@ export interface IGetTransactionListQueryParams extends IPaginatedRequest {
     onlyParent?: boolean;
 }
 
-export interface IGetTransactionListParams extends IRequestQueryParams<IGetTransactionListQueryParams> {}
+export interface IGetTransactionListParams
+    extends IRequestQueryParams<IGetTransactionListQueryParams> {}

@@ -1,7 +1,3 @@
-import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import {
     Accordion,
     addressUtils,
@@ -15,6 +11,10 @@ import {
     Tag,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoHierarchyProps {
     /**
@@ -59,63 +59,90 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, isMainDao }) => {
                     />
                 </div>
             </DefinitionList.Item>
-            <DefinitionList.Item term={t('app.settings.daoSettingsInfo.blockchain')}>
+            <DefinitionList.Item
+                term={t('app.settings.daoSettingsInfo.blockchain')}
+            >
                 <div className="flex flex-col gap-1">
-                    <p className="text-neutral-500">{networkDefinitions[dao.network].name}</p>
-                    <p className="text-sm leading-tight font-normal text-neutral-400">
+                    <p className="text-neutral-500">
+                        {networkDefinitions[dao.network].name}
+                    </p>
+                    <p className="font-normal text-neutral-400 text-sm leading-tight">
                         {t('app.settings.daoSettingsInfo.notChangeable')}
                     </p>
                 </div>
             </DefinitionList.Item>
             {hasEns ? (
-                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.ens')}>
+                <DefinitionList.Item
+                    term={t('app.settings.daoSettingsInfo.ens')}
+                >
                     <div className="flex flex-col gap-1">
                         <Clipboard copyValue={dao.address}>
                             <Link
-                                href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
+                                href={buildEntityUrl({
+                                    type: ChainEntityType.ADDRESS,
+                                    id: dao.address,
+                                })}
                                 isExternal={true}
                             >
                                 {dao.ens}
                             </Link>
                         </Clipboard>
-                        <p className="text-sm leading-tight font-normal text-neutral-400">
+                        <p className="font-normal text-neutral-400 text-sm leading-tight">
                             {t('app.settings.daoSettingsInfo.notChangeable')}
                         </p>
                     </div>
                 </DefinitionList.Item>
             ) : (
-                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.address')}>
+                <DefinitionList.Item
+                    term={t('app.settings.daoSettingsInfo.address')}
+                >
                     <div className="flex flex-col gap-1">
                         <Clipboard copyValue={dao.address}>
                             <Link
-                                href={buildEntityUrl({ type: ChainEntityType.ADDRESS, id: dao.address })}
+                                href={buildEntityUrl({
+                                    type: ChainEntityType.ADDRESS,
+                                    id: dao.address,
+                                })}
                                 isExternal={true}
                             >
                                 {addressUtils.truncateAddress(dao.address)}
                             </Link>
                         </Clipboard>
-                        <p className="text-sm leading-tight font-normal text-neutral-400">
+                        <p className="font-normal text-neutral-400 text-sm leading-tight">
                             {t('app.settings.daoSettingsInfo.notChangeable')}
                         </p>
                     </div>
                 </DefinitionList.Item>
             )}
             {dao.description && (
-                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.summary')}>
+                <DefinitionList.Item
+                    term={t('app.settings.daoSettingsInfo.summary')}
+                >
                     <Collapsible
+                        buttonLabelClosed={t(
+                            'app.settings.daoSettingsInfo.readMore',
+                        )}
+                        buttonLabelOpened={t(
+                            'app.settings.daoSettingsInfo.readLess',
+                        )}
                         collapsedLines={4}
-                        buttonLabelClosed={t('app.settings.daoSettingsInfo.readMore')}
-                        buttonLabelOpened={t('app.settings.daoSettingsInfo.readLess')}
                     >
                         <p className="text-neutral-500">{dao.description}</p>
                     </Collapsible>
                 </DefinitionList.Item>
             )}
             {dao.links.length > 0 && (
-                <DefinitionList.Item term={t('app.settings.daoSettingsInfo.links')}>
+                <DefinitionList.Item
+                    term={t('app.settings.daoSettingsInfo.links')}
+                >
                     <div className="flex flex-col gap-3">
                         {dao.links.map((link) => (
-                            <Link key={link.url} href={link.url} isExternal={true} showUrl={true}>
+                            <Link
+                                href={link.url}
+                                isExternal={true}
+                                key={link.url}
+                                showUrl={true}
+                            >
                                 {link.name}
                             </Link>
                         ))}
@@ -133,20 +160,27 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const isViewingMainDao = dao.id === currentDaoId;
     const hasSubDaos = dao.subDaos != null && dao.subDaos.length > 0;
 
-    const getDaoAvatar = (d: IDao | ISubDaoSummary) => ipfsUtils.cidToSrc(d.avatar);
+    const getDaoAvatar = (d: IDao | ISubDaoSummary) =>
+        ipfsUtils.cidToSrc(d.avatar);
 
     // If viewing main DAO with SubDAOs, show accordion structure
     if (isViewingMainDao && hasSubDaos) {
         return (
-            <Accordion.Container isMulti={true} defaultValue={[dao.id]}>
+            <Accordion.Container defaultValue={[dao.id]} isMulti={true}>
                 <Accordion.Item value={dao.id}>
                     <Accordion.ItemHeader className="items-center">
                         <div className="flex w-full items-center gap-3">
                             <div className="flex min-w-0 flex-1 items-center gap-3">
-                                <DaoAvatar src={getDaoAvatar(dao)} name={dao.name} size="md" />
-                                <p className="truncate text-lg leading-tight text-neutral-800">{dao.name}</p>
+                                <DaoAvatar
+                                    name={dao.name}
+                                    size="md"
+                                    src={getDaoAvatar(dao)}
+                                />
+                                <p className="truncate text-lg text-neutral-800 leading-tight">
+                                    {dao.name}
+                                </p>
                             </div>
-                            <p className="text-lg leading-tight text-neutral-500">
+                            <p className="text-lg text-neutral-500 leading-tight">
                                 {t('app.settings.daoHierarchy.mainDaoLabel')}
                             </p>
                         </div>
@@ -160,10 +194,16 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                         <Accordion.ItemHeader className="items-center">
                             <div className="flex w-full items-center gap-3">
                                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                                    <DaoAvatar src={getDaoAvatar(subDao)} name={subDao.name} size="md" />
-                                    <p className="truncate text-lg leading-tight text-neutral-800">{subDao.name}</p>
+                                    <DaoAvatar
+                                        name={subDao.name}
+                                        size="md"
+                                        src={getDaoAvatar(subDao)}
+                                    />
+                                    <p className="truncate text-lg text-neutral-800 leading-tight">
+                                        {subDao.name}
+                                    </p>
                                 </div>
-                                <p className="text-lg leading-tight text-neutral-500">
+                                <p className="text-lg text-neutral-500 leading-tight">
                                     {t('app.settings.daoHierarchy.subDaoLabel')}
                                 </p>
                             </div>

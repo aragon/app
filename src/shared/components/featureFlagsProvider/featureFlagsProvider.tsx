@@ -1,8 +1,20 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 
-import type { FeatureFlagKey, FeatureFlagOverrides, FeatureFlagSnapshot } from '@/shared/featureFlags';
+import type {
+    FeatureFlagKey,
+    FeatureFlagOverrides,
+    FeatureFlagSnapshot,
+} from '@/shared/featureFlags';
 import {
     parseFeatureFlagOverridesFromCookie,
     serializeFeatureFlagOverridesToCookie,
@@ -46,9 +58,13 @@ export interface IFeatureFlagsProviderProps {
     children?: ReactNode;
 }
 
-const featureFlagsContext = createContext<IFeatureFlagsContextValue | null>(null);
+const featureFlagsContext = createContext<IFeatureFlagsContextValue | null>(
+    null,
+);
 
-export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props) => {
+export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (
+    props,
+) => {
     const { initialSnapshot = [], children } = props;
 
     /**
@@ -56,21 +72,28 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
      * revert to the original server-resolved value when clearing overrides.
      */
     const baseSnapshotRef = useRef<FeatureFlagSnapshot[]>(initialSnapshot);
-    const [snapshot, setSnapshot] = useState<FeatureFlagSnapshot[]>(initialSnapshot);
+    const [snapshot, setSnapshot] =
+        useState<FeatureFlagSnapshot[]>(initialSnapshot);
 
     const isEnabled = useCallback(
-        (key: FeatureFlagKey): boolean => snapshot.some((flag) => flag.key === key && flag.enabled),
+        (key: FeatureFlagKey): boolean =>
+            snapshot.some((flag) => flag.key === key && flag.enabled),
         [snapshot],
     );
 
-    const setOverride = (key: FeatureFlagKey, value: boolean | undefined): void => {
+    const setOverride = (
+        key: FeatureFlagKey,
+        value: boolean | undefined,
+    ): void => {
         if (typeof document === 'undefined') {
             // Best-effort only on client; ignore when running in non-DOM environments.
             return;
         }
 
         try {
-            const currentOverrides = parseFeatureFlagOverridesFromCookie(document.cookie);
+            const currentOverrides = parseFeatureFlagOverridesFromCookie(
+                document.cookie,
+            );
 
             let updatedOverrides: FeatureFlagOverrides;
             if (value == null) {
@@ -80,7 +103,8 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
                 updatedOverrides = { ...currentOverrides, [key]: value };
             }
 
-            document.cookie = serializeFeatureFlagOverridesToCookie(updatedOverrides);
+            document.cookie =
+                serializeFeatureFlagOverridesToCookie(updatedOverrides);
         } catch {
             // Cookie persistence is best-effort; swallow errors.
         }
@@ -91,7 +115,9 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
                     return flag;
                 }
 
-                const baseFlag = baseSnapshotRef.current.find((item) => item.key === key);
+                const baseFlag = baseSnapshotRef.current.find(
+                    (item) => item.key === key,
+                );
                 const baseEnabled = baseFlag?.enabled ?? flag.enabled;
 
                 return {
@@ -108,17 +134,24 @@ export const FeatureFlagsProvider: React.FC<IFeatureFlagsProviderProps> = (props
             isEnabled,
             setOverride,
         }),
-        [snapshot, isEnabled],
+        // biome-ignore lint/correctness/useExhaustiveDependencies: working fine as dependency
+        [snapshot, isEnabled, setOverride],
     );
 
-    return <featureFlagsContext.Provider value={contextValue}>{children}</featureFlagsContext.Provider>;
+    return (
+        <featureFlagsContext.Provider value={contextValue}>
+            {children}
+        </featureFlagsContext.Provider>
+    );
 };
 
 export const useFeatureFlags = (): IFeatureFlagsContextValue => {
     const context = useContext(featureFlagsContext);
 
     if (context == null) {
-        throw new Error('useFeatureFlags: hook must be used within a FeatureFlagsProvider to work properly.');
+        throw new Error(
+            'useFeatureFlags: hook must be used within a FeatureFlagsProvider to work properly.',
+        );
     }
 
     return context;

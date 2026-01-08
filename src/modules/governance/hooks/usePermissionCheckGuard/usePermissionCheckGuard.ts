@@ -1,13 +1,17 @@
+import { useCallback, useRef } from 'react';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { useCallback, useRef } from 'react';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
 
-export interface IUsePermissionCheckGuardParams extends Omit<IPermissionCheckDialogParams, 'plugin'> {
+export interface IUsePermissionCheckGuardParams
+    extends Omit<IPermissionCheckDialogParams, 'plugin'> {
     /**
      * Plugin to check permissions for.
      * Possibly undefined if all plugins have been uninstalled.
@@ -15,8 +19,18 @@ export interface IUsePermissionCheckGuardParams extends Omit<IPermissionCheckDia
     plugin?: IDaoPlugin;
 }
 
-export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) => {
-    const { onSuccess, onError, slotId, permissionNamespace, plugin: pluginProp, daoId, proposal } = params;
+export const usePermissionCheckGuard = (
+    params: IUsePermissionCheckGuardParams,
+) => {
+    const {
+        onSuccess,
+        onError,
+        slotId,
+        permissionNamespace,
+        plugin: pluginProp,
+        daoId,
+        proposal,
+    } = params;
 
     const { open } = useDialogContext();
 
@@ -24,7 +38,10 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
     // the property is not stable we break the rules of hooks (see https://react.dev/warnings/invalid-hook-call-warning)
     const plugin = useRef(pluginProp).current;
 
-    const { hasPermission } = useSlotSingleFunction<IPermissionCheckGuardParams, IPermissionCheckGuardResult>({
+    const { hasPermission } = useSlotSingleFunction<
+        IPermissionCheckGuardParams,
+        IPermissionCheckGuardResult
+    >({
         slotId,
         pluginId: plugin?.interfaceType ?? '',
         params: { plugin: plugin as IDaoPlugin, daoId, proposal },
@@ -44,13 +61,23 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
             };
             open(GovernanceDialogId.PERMISSION_CHECK, { params: dialogParams });
         },
-        [slotId, onError, onSuccess, permissionNamespace, daoId, proposal, plugin, open],
+        [
+            slotId,
+            onError,
+            onSuccess,
+            permissionNamespace,
+            daoId,
+            proposal,
+            plugin,
+            open,
+        ],
     );
 
-    const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
-        onError,
-        onSuccess: checkUserPermission,
-    });
+    const { check: checkWalletConnected, result: isConnected } =
+        useConnectedWalletGuard({
+            onError,
+            onSuccess: checkUserPermission,
+        });
 
     const checkFunction = useCallback(
         (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
@@ -65,7 +92,12 @@ export const usePermissionCheckGuard = (params: IUsePermissionCheckGuardParams) 
                 });
             }
         },
-        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+        [
+            isConnected,
+            params.onError,
+            checkUserPermission,
+            checkWalletConnected,
+        ],
     );
 
     return { check: checkFunction, result: isConnected && hasPermission };

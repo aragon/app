@@ -1,13 +1,18 @@
-import type { IDao } from '@/shared/api/daoService';
-import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import type { ISetupBodyFormExisting, ISetupBodyFormMembership, ISetupBodyFormNew } from '../dialogs/setupBodyDialog';
+import type { IDao } from '@/shared/api/daoService';
+import type { IDateDuration } from '@/shared/utils/dateUtils';
+import type {
+    ISetupBodyFormExisting,
+    ISetupBodyFormMembership,
+    ISetupBodyFormNew,
+} from '../dialogs/setupBodyDialog';
 
 export interface IBuildPreparePluginInstallDataParams<
     TGovernance = unknown,
     TMember extends ICompositeAddress = ICompositeAddress,
-    TMembership extends ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
+    TMembership extends
+        ISetupBodyFormMembership<TMember> = ISetupBodyFormMembership<TMember>,
 > {
     /**
      * The required form data for a body to be installed with a process.

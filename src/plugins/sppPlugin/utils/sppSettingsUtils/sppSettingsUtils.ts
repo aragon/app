@@ -1,5 +1,5 @@
-import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { addressUtils, type IDefinitionSetting } from '@aragon/gov-ui-kit';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { ISppPluginSettings } from '../../types';
 
 export interface ISppSettingsParseParams {
@@ -38,22 +38,37 @@ class SppSettingsUtils {
         const { stages } = settings;
 
         return [
-            { term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'), definition: stages.length.toString() },
+            {
+                term: t('app.plugins.spp.sppGovernanceSettings.numberOfStages'),
+                definition: stages.length.toString(),
+            },
         ];
     };
 
-    parseDefaultSettings = (params: ISppSettingsParseDefaultParams): IDefinitionSetting[] => {
+    parseDefaultSettings = (
+        params: ISppSettingsParseDefaultParams,
+    ): IDefinitionSetting[] => {
         const { address, name, url, t } = params;
 
         const link = { href: url };
         const truncatedAddress = addressUtils.truncateAddress(address);
 
         const settings: IDefinitionSetting[] = [
-            { term: t('app.plugins.spp.sppGovernanceSettings.default.address'), definition: truncatedAddress, link },
+            {
+                term: t(
+                    'app.plugins.spp.sppGovernanceSettings.default.address',
+                ),
+                definition: truncatedAddress,
+                link,
+            },
         ];
 
         if (name != null) {
-            settings.unshift({ term: t('app.plugins.spp.sppGovernanceSettings.default.name'), definition: name, link });
+            settings.unshift({
+                term: t('app.plugins.spp.sppGovernanceSettings.default.name'),
+                definition: name,
+                link,
+            });
         }
 
         return settings;

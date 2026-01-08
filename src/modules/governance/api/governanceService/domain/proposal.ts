@@ -1,8 +1,14 @@
-import type { IAddressInfo, IPluginSettings, Network } from '@/shared/api/daoService';
+import type {
+    IAddressInfo,
+    IPluginSettings,
+    Network,
+} from '@/shared/api/daoService';
 import type { IResource } from '@/shared/api/daoService/domain/resource';
 import type { IProposalExecution } from './proposalExecution';
 
-export interface IProposal<TSettings extends IPluginSettings = IPluginSettings> {
+export interface IProposal<
+    TSettings extends IPluginSettings = IPluginSettings,
+> {
     /**
      * Id of the proposal in DaoAddress-PluginAddress-ProposalId format.
      */

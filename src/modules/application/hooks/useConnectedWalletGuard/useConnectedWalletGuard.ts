@@ -1,6 +1,6 @@
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useCallback } from 'react';
 import { useAccount } from 'wagmi';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
 export interface IUseConnectedWalletGuardParams {
@@ -14,7 +14,9 @@ export interface IUseConnectedWalletGuardParams {
     onError?: () => void;
 }
 
-export const useConnectedWalletGuard = (params?: IUseConnectedWalletGuardParams) => {
+export const useConnectedWalletGuard = (
+    params?: IUseConnectedWalletGuardParams,
+) => {
     const { onSuccess, onError } = params ?? {};
 
     const { isConnected } = useAccount();

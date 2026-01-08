@@ -1,1 +1,4 @@
-export { GaugeVoterVoteDialogFooter, type IGaugeVoterVoteDialogFooterProps } from './gaugeVoterVoteDialogFooter';
+export {
+    GaugeVoterVoteDialogFooter,
+    type IGaugeVoterVoteDialogFooterProps,
+} from './gaugeVoterVoteDialogFooter';

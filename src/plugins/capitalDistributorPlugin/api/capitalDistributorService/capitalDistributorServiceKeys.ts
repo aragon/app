@@ -5,5 +5,8 @@ export enum CapitalDistributorServiceKey {
 }
 
 export const capitalDistributorServiceKeys = {
-    campaigns: (params: IGetCampaignListParams) => [CapitalDistributorServiceKey.CAMPAIGN_LIST, params],
+    campaigns: (params: IGetCampaignListParams) => [
+        CapitalDistributorServiceKey.CAMPAIGN_LIST,
+        params,
+    ],
 };

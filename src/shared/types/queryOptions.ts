@@ -1,15 +1,27 @@
-import type { InfiniteData, QueryKey, UseInfiniteQueryOptions, UseQueryOptions } from '@tanstack/react-query';
-
-export type SharedInfiniteQueryOptions<TData, TParams> = UseInfiniteQueryOptions<
-    TData,
-    unknown,
-    InfiniteData<TData>,
+import type {
+    InfiniteData,
     QueryKey,
-    TParams
->;
+    UseInfiniteQueryOptions,
+    UseQueryOptions,
+} from '@tanstack/react-query';
+
+export type SharedInfiniteQueryOptions<TData, TParams> =
+    UseInfiniteQueryOptions<
+        TData,
+        unknown,
+        InfiniteData<TData>,
+        QueryKey,
+        TParams
+    >;
 
 export type InfiniteQueryOptions<TData, TParams> = Omit<
-    UseInfiniteQueryOptions<TData, unknown, InfiniteData<TData>, QueryKey, TParams>,
+    UseInfiniteQueryOptions<
+        TData,
+        unknown,
+        InfiniteData<TData>,
+        QueryKey,
+        TParams
+    >,
     'queryKey' | 'getNextPageParam' | 'initialPageParam'
 >;
 

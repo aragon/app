@@ -1,1 +1,4 @@
-export { DashboardDefaultHeader, type IDashboardDefaultHeaderProps } from './dashboardDefaultHeader';
+export {
+    DashboardDefaultHeader,
+    type IDashboardDefaultHeaderProps,
+} from './dashboardDefaultHeader';

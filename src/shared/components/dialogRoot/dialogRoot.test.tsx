@@ -1,12 +1,15 @@
-import { generateDialogContext } from '@/shared/testUtils';
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { generateDialogContext } from '@/shared/testUtils';
+import { testLogger } from '@/test/utils';
 import * as useDialogContext from '../dialogProvider';
 import { DialogRoot, type IDialogRootProps } from './dialogRoot';
 
 describe('<DialogRoot /> component', () => {
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
@@ -27,7 +30,9 @@ describe('<DialogRoot /> component', () => {
 
     it('renders empty container when no dialog is active', () => {
         const locations = undefined;
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ locations }));
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations }),
+        );
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
@@ -37,7 +42,9 @@ describe('<DialogRoot /> component', () => {
         const dialogContent = 'connect-wallet-content';
         const dialogs = { [dialogId]: { Component: () => dialogContent } };
         const locations = [{ id: dialogId }];
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ locations }));
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations }),
+        );
         render(createTestComponent({ dialogs }));
         expect(screen.getByRole('dialog')).toBeInTheDocument();
         expect(screen.getByText(dialogContent)).toBeInTheDocument();
@@ -47,9 +54,17 @@ describe('<DialogRoot /> component', () => {
         const dialogId = 'connect-wallet';
         const hiddenTitle = 'test-title';
         const hiddenDescription = 'test-description';
-        const dialogs = { [dialogId]: { Component: () => 'test', hiddenTitle, hiddenDescription } };
+        const dialogs = {
+            [dialogId]: {
+                Component: () => 'test',
+                hiddenTitle,
+                hiddenDescription,
+            },
+        };
         const locations = [{ id: dialogId }];
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ locations }));
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations }),
+        );
         render(createTestComponent({ dialogs }));
         expect(screen.getByText(hiddenTitle)).toBeInTheDocument();
         expect(screen.getByText(hiddenDescription)).toBeInTheDocument();
@@ -60,7 +75,9 @@ describe('<DialogRoot /> component', () => {
         const dialogs = { [dialogId]: { Component: () => null } };
         const locations = [{ id: dialogId }];
         const close = jest.fn();
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ locations, close }));
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
         render(createTestComponent({ dialogs }));
         await userEvent.keyboard('{Escape}');
         expect(close).toHaveBeenCalled();
@@ -72,7 +89,9 @@ describe('<DialogRoot /> component', () => {
         const variant = 'critical' as const;
         const dialogs = { [dialogId]: { Component: () => 'test', variant } };
         const locations = [{ id: dialogId }];
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ locations }));
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations }),
+        );
         render(createTestComponent({ dialogs }));
         expect(screen.getByRole('alertdialog')).toBeInTheDocument();
     });

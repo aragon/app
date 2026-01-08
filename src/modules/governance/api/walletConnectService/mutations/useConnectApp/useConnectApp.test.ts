@@ -1,5 +1,5 @@
-import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import type { ISession } from '../../domain';
 import { walletConnectService } from '../../walletConnectService';
 import { useConnectApp } from './useConnectApp';
@@ -16,7 +16,9 @@ describe('useConnectApp mutation', () => {
         const uri = 'wc:xxx';
         const address = '0x123';
         connectAppSpy.mockResolvedValue(session);
-        const { result } = renderHook(() => useConnectApp(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => useConnectApp(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate({ uri, address }));
         await waitFor(() => expect(result.current.data).toEqual(session));
         expect(connectAppSpy).toHaveBeenCalledWith({ uri, address });

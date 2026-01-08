@@ -1,14 +1,25 @@
 import {
-    ProposalActionType,
     type IProposalActionUpdateMetadata,
     type IProposalActionUpdatePluginMetadata,
+    ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import { generateProposalAction } from './proposalAction';
 
-const generateProposalActionUpdateMetadataBase = (): Omit<IProposalActionUpdateMetadata, 'type'> => ({
+const generateProposalActionUpdateMetadataBase = (): Omit<
+    IProposalActionUpdateMetadata,
+    'type'
+> => ({
     ...generateProposalAction(),
-    existingMetadata: { name: 'dao-name', description: 'dao-description', links: [] },
-    proposedMetadata: { name: 'dao-name', description: 'dao-description', links: [] },
+    existingMetadata: {
+        name: 'dao-name',
+        description: 'dao-description',
+        links: [],
+    },
+    proposedMetadata: {
+        name: 'dao-name',
+        description: 'dao-description',
+        links: [],
+    },
 });
 
 export const generateProposalActionUpdateMetadata = (

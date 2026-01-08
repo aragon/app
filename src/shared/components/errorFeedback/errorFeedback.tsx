@@ -1,5 +1,10 @@
+import {
+    EmptyState,
+    IconType,
+    type IEmptyStateBaseProps,
+    type IllustrationObjectType,
+} from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { EmptyState, IconType, type IEmptyStateBaseProps, type IllustrationObjectType } from '@aragon/gov-ui-kit';
 
 export interface IErrorFeedbackProps {
     /**
@@ -29,7 +34,13 @@ export interface IErrorFeedbackProps {
 }
 
 export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
-    const { titleKey, descriptionKey, illustration = 'WARNING', primaryButton, hideReportButton } = props;
+    const {
+        titleKey,
+        descriptionKey,
+        illustration = 'WARNING',
+        primaryButton,
+        hideReportButton,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -41,16 +52,23 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
     };
 
     const processedTitle = t(titleKey ?? 'app.shared.errorFeedback.title');
-    const processedDescription = t(descriptionKey ?? 'app.shared.errorFeedback.description');
+    const processedDescription = t(
+        descriptionKey ?? 'app.shared.errorFeedback.description',
+    );
 
-    const processedPrimaryButton = primaryButton ?? { label: t('app.shared.errorFeedback.link.explore'), href: '/' };
-    const processedSecondaryButton = hideReportButton ? undefined : reportIssueButton;
+    const processedPrimaryButton = primaryButton ?? {
+        label: t('app.shared.errorFeedback.link.explore'),
+        href: '/',
+    };
+    const processedSecondaryButton = hideReportButton
+        ? undefined
+        : reportIssueButton;
 
     return (
         <div className="flex grow items-center justify-center">
             <EmptyState
-                heading={processedTitle}
                 description={processedDescription}
+                heading={processedTitle}
                 objectIllustration={{ object: illustration }}
                 primaryButton={processedPrimaryButton}
                 secondaryButton={processedSecondaryButton}

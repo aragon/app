@@ -4,15 +4,15 @@
 @source "../../../../../../node_modules/@aragon/gov-ui-kit";
 
 :root {
-  --guk-avatar-container-position: relative;
+    --guk-avatar-container-position: relative;
 
-  --guk-text-area-rich-text-expanded-z-index: 10;
+    --guk-text-area-rich-text-expanded-z-index: 10;
 
-  --guk-dialog-overlay-z-index: 20;
-  --guk-dialog-alert-overlay-z-index: 20;
+    --guk-dialog-overlay-z-index: 20;
+    --guk-dialog-alert-overlay-z-index: 20;
 
-  --guk-dialog-content-z-index: 30;
-  --guk-dialog-alert-content-z-index: 30;
+    --guk-dialog-content-z-index: 30;
+    --guk-dialog-alert-content-z-index: 30;
 
-  --guk-dropdown-container-content-z-index: 40;
+    --guk-dropdown-container-content-z-index: 40;
 }

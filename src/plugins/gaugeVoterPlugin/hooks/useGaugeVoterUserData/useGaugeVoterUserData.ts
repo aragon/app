@@ -1,6 +1,6 @@
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract, useReadContracts } from 'wagmi';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeVoterAbi } from '../../utils/gaugeVoterContractUtils/abi/gaugeVoterAbi';
 import type {
     IGaugeUserVote,
@@ -18,7 +18,9 @@ const erc20VotesAbi = [
     },
 ] as const;
 
-export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUseGaugeVoterUserDataResult => {
+export const useGaugeVoterUserData = (
+    params: IUseGaugeVoterUserDataParams,
+): IUseGaugeVoterUserDataResult => {
     const {
         pluginAddress,
         network,
@@ -57,7 +59,10 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
         address: ivotesAdapterAddress as Hex,
         args: [userAddress as Hex],
         chainId,
-        query: { enabled: isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower },
+        query: {
+            enabled:
+                isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower,
+        },
     });
 
     // Read user's used voting power from the gauge voter (only if backend data not available)
@@ -93,10 +98,12 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
     });
 
     // Transform gauge votes data
-    const gaugeVotes: IGaugeUserVote[] = gaugeAddresses.map((gaugeAddress, index) => ({
-        gaugeAddress,
-        userVotes: gaugeVotesData?.[index]?.result ?? BigInt(0),
-    }));
+    const gaugeVotes: IGaugeUserVote[] = gaugeAddresses.map(
+        (gaugeAddress, index) => ({
+            gaugeAddress,
+            userVotes: gaugeVotesData?.[index]?.result ?? BigInt(0),
+        }),
+    );
 
     const refetch = () => {
         void refetchTotalVotingPower();
@@ -120,7 +127,7 @@ export const useGaugeVoterUserData = (params: IUseGaugeVoterUserDataParams): IUs
 
     return {
         votingPower: totalVotingPower,
-        usedVotingPower: usedVotingPower,
+        usedVotingPower,
         gaugeVotes,
         isLoading,
         refetch,

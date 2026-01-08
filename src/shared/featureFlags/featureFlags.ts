@@ -11,7 +11,10 @@ import { FEATURE_FLAG_DEFINITIONS } from './featureFlags.constants';
 import { GithubCmsFeatureFlagsProvider } from './providers/githubProvider';
 import { getEnvironment } from './utils/getEnvironment';
 
-const getStaticDefaultValue = (definition: FeatureFlagDefinition, env: FeatureFlagEnvironment): boolean => {
+const getStaticDefaultValue = (
+    definition: FeatureFlagDefinition,
+    env: FeatureFlagEnvironment,
+): boolean => {
     const envValue = definition.environments?.[env];
     if (envValue != null) {
         return envValue;
@@ -33,9 +36,9 @@ const resolveFlagValue = (
 };
 
 class FeatureFlags {
-    private readonly provider: IFeatureFlagsProvider;
-    private readonly definitions: FeatureFlagDefinition[];
-    private readonly environment: FeatureFlagEnvironment;
+    private provider: IFeatureFlagsProvider;
+    private definitions: FeatureFlagDefinition[];
+    private environment: FeatureFlagEnvironment;
 
     /**
      * Stateless feature flags service.
@@ -75,7 +78,7 @@ class FeatureFlags {
      *
      * @param key - Feature flag key
      */
-    public isEnabled = async (key: FeatureFlagKey): Promise<boolean> => {
+    isEnabled = async (key: FeatureFlagKey): Promise<boolean> => {
         try {
             const snapshot = await this.getSnapshotInternal();
             const flag = snapshot.find((item) => item.key === key);
@@ -94,7 +97,7 @@ class FeatureFlags {
     /**
      * Get a snapshot of all feature flags.
      */
-    public getSnapshot = async (): Promise<FeatureFlagSnapshot[]> => {
+    getSnapshot = async (): Promise<FeatureFlagSnapshot[]> => {
         try {
             return await this.getSnapshotInternal();
         } catch {
@@ -118,7 +121,9 @@ class FeatureFlags {
  * explicitly by the caller.
  */
 export const featureFlags = new FeatureFlags(
-    new GithubCmsFeatureFlagsProvider(getEnvironment(), () => headers().then((h) => h.get('cookie'))),
+    new GithubCmsFeatureFlagsProvider(getEnvironment(), () =>
+        headers().then((h) => h.get('cookie')),
+    ),
     FEATURE_FLAG_DEFINITIONS,
     getEnvironment(),
 );

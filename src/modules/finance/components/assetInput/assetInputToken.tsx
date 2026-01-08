@@ -1,7 +1,7 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Avatar } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IToken } from '../../api/financeService';
 
 export interface IAssetInputTokenProps extends ComponentProps<'div'> {
@@ -17,8 +17,11 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
     const { t } = useTranslations();
 
     return (
-        <div className={classNames('flex items-center gap-x-1.5', className)} {...otherProps}>
-            {token && <Avatar src={token.logo} size="xs" />}
+        <div
+            className={classNames('flex items-center gap-x-1.5', className)}
+            {...otherProps}
+        >
+            {token && <Avatar size="xs" src={token.logo} />}
             {token ? token.symbol : t('app.finance.assetInput.token.trigger')}
         </div>
     );

@@ -5,5 +5,8 @@ export enum ActionSimulationServiceKey {
 }
 
 export const actionSimulationServiceKeys = {
-    lastSimulation: (params: IGetLastSimulationParams) => [ActionSimulationServiceKey.LAST_SIMULATION, params],
+    lastSimulation: (params: IGetLastSimulationParams) => [
+        ActionSimulationServiceKey.LAST_SIMULATION,
+        params,
+    ],
 };

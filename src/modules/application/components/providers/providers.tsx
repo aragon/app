@@ -1,5 +1,14 @@
 'use client';
 
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    type DehydratedState,
+    HydrationBoundary,
+    QueryClientProvider,
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import type { ReactNode } from 'react';
+import type { State } from 'wagmi';
 import { initActionViewRegistry } from '@/actions';
 import { initPluginRegistry } from '@/initPluginRegistry';
 import { BlockNavigationContextProvider } from '@/shared/components/blockNavigationContext';
@@ -12,11 +21,6 @@ import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { type DehydratedState, HydrationBoundary, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { type ReactNode } from 'react';
-import { type State } from 'wagmi';
 import { wagmiConfig } from '../../constants/wagmi';
 import { fetchInterceptorUtils } from '../../utils/fetchInterceptorUtils';
 import { queryClientUtils } from '../../utils/queryClientUtils';
@@ -45,10 +49,16 @@ export interface IProvidersProps {
     featureFlagsSnapshot?: FeatureFlagSnapshot[];
 }
 
-const coreProviderValues = { Link: Link, Img: Image };
+const coreProviderValues = { Link, Img: Image };
 
 export const Providers: React.FC<IProvidersProps> = (props) => {
-    const { translations, wagmiInitialState, dehydratedState, children, featureFlagsSnapshot } = props;
+    const {
+        translations,
+        wagmiInitialState,
+        dehydratedState,
+        children,
+        featureFlagsSnapshot,
+    } = props;
 
     const queryClient = queryClientUtils.getQueryClient();
 
@@ -64,15 +74,19 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                     <TranslationsProvider translations={translations}>
                         <BlockNavigationContextProvider>
                             <GukModulesProvider
+                                coreProviderValues={coreProviderValues}
+                                queryClient={queryClient}
                                 wagmiConfig={wagmiConfig}
                                 wagmiInitialState={wagmiInitialState}
-                                queryClient={queryClient}
-                                coreProviderValues={coreProviderValues}
                             >
-                                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                                <FeatureFlagsProvider
+                                    initialSnapshot={featureFlagsSnapshot}
+                                >
                                     <DialogProvider>
                                         {children}
-                                        <DialogRoot dialogs={providersDialogs} />
+                                        <DialogRoot
+                                            dialogs={providersDialogs}
+                                        />
                                         <ReactQueryDevtools />
                                     </DialogProvider>
                                 </FeatureFlagsProvider>

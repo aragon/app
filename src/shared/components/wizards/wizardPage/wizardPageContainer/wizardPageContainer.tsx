@@ -1,10 +1,15 @@
 import classNames from 'classnames';
 import type { FieldValues } from 'react-hook-form';
-import { type IWizardFormProps, type IWizardRootProps, Wizard } from '../../wizard';
+import {
+    type IWizardFormProps,
+    type IWizardRootProps,
+    Wizard,
+} from '../../wizard';
 import { WizardPageContainerProgress } from './wizardPageContainerProgress';
 
-export interface IWizardPageContainerProps<TFormData extends FieldValues = FieldValues>
-    extends IWizardRootProps<TFormData>,
+export interface IWizardPageContainerProps<
+    TFormData extends FieldValues = FieldValues,
+> extends IWizardRootProps<TFormData>,
         IWizardFormProps<TFormData> {
     /**
      * Name of the final step. The "next" label is hidden when not set.
@@ -12,7 +17,9 @@ export interface IWizardPageContainerProps<TFormData extends FieldValues = Field
     finalStep?: string;
 }
 
-export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>(
+export const WizardPageContainer = <
+    TFormData extends FieldValues = FieldValues,
+>(
     props: IWizardPageContainerProps<TFormData>,
 ) => {
     const {
@@ -28,13 +35,19 @@ export const WizardPageContainer = <TFormData extends FieldValues = FieldValues>
 
     return (
         <Wizard.Root
-            submitLabel={submitLabel}
-            submitHelpText={submitHelpText}
-            initialSteps={initialSteps}
             defaultValues={defaultValues}
+            initialSteps={initialSteps}
+            submitHelpText={submitHelpText}
+            submitLabel={submitLabel}
             useDevTool={true}
         >
-            <Wizard.Form className={classNames('flex h-full flex-col gap-4 md:gap-6', className)} {...wizardFormProps}>
+            <Wizard.Form
+                className={classNames(
+                    'flex h-full flex-col gap-4 md:gap-6',
+                    className,
+                )}
+                {...wizardFormProps}
+            >
                 <WizardPageContainerProgress finalStep={finalStep} />
                 {children}
             </Wizard.Form>

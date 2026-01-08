@@ -3,7 +3,10 @@ import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocomp
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IAllowedAction } from '../../api/executeSelectorsService';
 import type { ISmartContractAbi } from '../../api/smartContractService';
-import type { IActionComposerInputItem, IActionComposerInputProps } from './actionComposerInput';
+import type {
+    IActionComposerInputItem,
+    IActionComposerInputProps,
+} from './actionComposerInput';
 
 export enum ActionItemId {
     CUSTOM_ACTION = 'CUSTOM_ACTION',

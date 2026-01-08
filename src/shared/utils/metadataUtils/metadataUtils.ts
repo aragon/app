@@ -26,7 +26,7 @@ export interface IBuildMetadataParams {
 }
 
 class MetadataUtils {
-    public baseUrl = 'https://app.aragon.org';
+    baseUrl = 'https://app.aragon.org';
 
     private defaultTitle = 'Governed on Aragon';
     private defaultDescription =
@@ -47,7 +47,14 @@ class MetadataUtils {
             title: this.defaultTitle,
             description: this.defaultDescription,
             siteName: this.defaultSiteName,
-            images: [{ url: this.defaultImage, width: 1200, height: 630, alt: 'Aragon Logo' }],
+            images: [
+                {
+                    url: this.defaultImage,
+                    width: 1200,
+                    height: 630,
+                    alt: 'Aragon Logo',
+                },
+            ],
         },
         twitter: {
             card: 'summary_large_image',
@@ -59,14 +66,32 @@ class MetadataUtils {
     });
 
     buildMetadata = (params: IBuildMetadataParams): Metadata => {
-        const { title, description, siteName = this.defaultSiteName, image, type = 'website' } = params;
+        const {
+            title,
+            description,
+            siteName = this.defaultSiteName,
+            image,
+            type = 'website',
+        } = params;
         const imageArray = image ? [image] : undefined;
 
         return {
             title,
             description,
-            openGraph: { title, description, siteName, type, images: imageArray },
-            twitter: { card: 'summary', site: '@aragonproject', title, description, images: imageArray },
+            openGraph: {
+                title,
+                description,
+                siteName,
+                type,
+                images: imageArray,
+            },
+            twitter: {
+                card: 'summary',
+                site: '@aragonproject',
+                title,
+                description,
+                images: imageArray,
+            },
         };
     };
 }

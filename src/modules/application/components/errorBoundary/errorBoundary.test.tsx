@@ -4,7 +4,9 @@ import { ErrorBoundary, type IErrorBoundaryProps } from './errorBoundary';
 import type { IErrorBoundaryClassProps } from './errorBoundaryClass';
 
 jest.mock('./errorBoundaryClass', () => ({
-    ErrorBoundaryClass: (props: IErrorBoundaryClassProps) => <div data-pathname={props.pathname}>{props.children}</div>,
+    ErrorBoundaryClass: (props: IErrorBoundaryClassProps) => (
+        <div data-pathname={props.pathname}>{props.children}</div>
+    ),
 }));
 
 describe('<ErrorBoundary /> component', () => {

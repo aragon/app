@@ -1,1 +1,4 @@
-export { AdminUninstallPlugin, type IAdminUninstallPluginProps } from './adminUninstallPlugin';
+export {
+    AdminUninstallPlugin,
+    type IAdminUninstallPluginProps,
+} from './adminUninstallPlugin';

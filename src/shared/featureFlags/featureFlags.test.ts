@@ -14,7 +14,9 @@ interface FeatureFlagsService {
 }
 
 class TestProvider implements IFeatureFlagsProvider {
-    constructor(private readonly implementation: () => Promise<FeatureFlagOverrides>) {}
+    constructor(
+        private readonly implementation: () => Promise<FeatureFlagOverrides>,
+    ) {}
 
     loadOverrides = jest.fn(() => this.implementation());
 }
@@ -24,7 +26,11 @@ const createService = (params: {
     environment?: FeatureFlagEnvironment;
     definitions?: FeatureFlagDefinition[];
 }) => {
-    const { overrides, environment = 'local', definitions = defaultDefinitions } = params;
+    const {
+        overrides,
+        environment = 'local',
+        definitions = defaultDefinitions,
+    } = params;
 
     const FeatureFlagsClass = singletonFeatureFlags.constructor as new (
         provider: IFeatureFlagsProvider,
@@ -99,7 +105,9 @@ describe('FeatureFlags service', () => {
         });
 
         // Cast to bypass the strict key type; runtime behaviour should be safe.
-        const result = await service.isEnabled('nonExistingFlag' as FeatureFlagKey);
+        const result = await service.isEnabled(
+            'nonExistingFlag' as FeatureFlagKey,
+        );
 
         expect(result).toBe(false);
     });

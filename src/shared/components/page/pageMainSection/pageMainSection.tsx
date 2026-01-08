@@ -1,10 +1,17 @@
 'use client';
 
-import { Button, Heading, type IButtonProps, Icon, type IconType } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    Heading,
+    type IButtonProps,
+    Icon,
+    type IconType,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface IPageMainSectionActionProps extends Omit<IButtonProps, 'variant' | 'size' | 'children'> {
+export interface IPageMainSectionActionProps
+    extends Omit<IButtonProps, 'variant' | 'size' | 'children'> {
     /**
      * Label of the section action.
      */
@@ -36,25 +43,55 @@ export interface IPageMainSectionProps extends ComponentProps<'div'> {
 }
 
 export const PageMainSection: React.FC<IPageMainSectionProps> = (props) => {
-    const { children, className, inset = true, title, description, icon, action, ...otherProps } = props;
+    const {
+        children,
+        className,
+        inset = true,
+        title,
+        description,
+        icon,
+        action,
+        ...otherProps
+    } = props;
 
     const { label: actionLabel, ...actionProps } = action ?? {};
 
     return (
-        <div className={classNames('flex flex-col', { 'gap-4': inset }, className)} {...otherProps}>
+        <div
+            className={classNames(
+                'flex flex-col',
+                { 'gap-4': inset },
+                className,
+            )}
+            {...otherProps}
+        >
             <div className="flex flex-col gap-2">
                 <div className="flex flex-row justify-between gap-1">
                     <div className="flex items-center gap-2">
                         <Heading size="h2">{title}</Heading>
-                        {icon && <Icon icon={icon} size="md" className="text-warning-500" />}
+                        {icon && (
+                            <Icon
+                                className="text-warning-500"
+                                icon={icon}
+                                size="md"
+                            />
+                        )}
                     </div>
                     {action && (
-                        <Button variant="primary" size="md" {...(actionProps as IButtonProps)}>
+                        <Button
+                            size="md"
+                            variant="primary"
+                            {...(actionProps as IButtonProps)}
+                        >
                             {actionLabel}
                         </Button>
                     )}
                 </div>
-                {description && <p className="text-base leading-normal font-normal text-neutral-500">{description}</p>}
+                {description && (
+                    <p className="font-normal text-base text-neutral-500 leading-normal">
+                        {description}
+                    </p>
+                )}
             </div>
             {children}
         </div>

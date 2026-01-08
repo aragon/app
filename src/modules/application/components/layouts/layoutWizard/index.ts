@@ -1,1 +1,1 @@
-export { LayoutWizard, type ILayoutWizardProps } from './layoutWizard';
+export { type ILayoutWizardProps, LayoutWizard } from './layoutWizard';

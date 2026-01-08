@@ -1,3 +1,5 @@
+import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -7,19 +9,27 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
 import { generateProposal } from '../../testUtils';
-import { DaoProposalListDefaultItem, type IDaoProposalListDefaultItemProps } from './daoProposalListDefaultItem';
+import {
+    DaoProposalListDefaultItem,
+    type IDaoProposalListDefaultItemProps,
+} from './daoProposalListDefaultItem';
 
 describe('<DaoProposalListDefaultItem /> component', () => {
-    const useSlotSingleFunctionSpy = jest.spyOn(useSlotSingleFunction, 'useSlotSingleFunction');
+    const useSlotSingleFunctionSpy = jest.spyOn(
+        useSlotSingleFunction,
+        'useSlotSingleFunction',
+    );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
 
     beforeEach(() => {
-        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin({ meta: generateDaoPlugin() })]);
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
     });
 
     afterEach(() => {
@@ -28,7 +38,9 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         useDaoSpy.mockReset();
     });
 
-    const createTestComponent = (props?: Partial<IDaoProposalListDefaultItemProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoProposalListDefaultItemProps>,
+    ) => {
         const completeProps: IDaoProposalListDefaultItemProps = {
             proposal: generateProposal(),
             dao: generateDao(),
@@ -44,7 +56,10 @@ describe('<DaoProposalListDefaultItem /> component', () => {
     };
 
     it('renders the proposal info', () => {
-        const proposal = generateProposal({ title: 'my-proposal', summary: 'proposal-summary' });
+        const proposal = generateProposal({
+            title: 'my-proposal',
+            summary: 'proposal-summary',
+        });
         render(createTestComponent({ proposal }));
         expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();

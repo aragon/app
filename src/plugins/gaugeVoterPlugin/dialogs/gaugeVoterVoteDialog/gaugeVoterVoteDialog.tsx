@@ -1,14 +1,28 @@
 'use client';
 
-import type { Network } from '@/shared/api/daoService';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog, formatterUtils, invariant, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Dialog,
+    formatterUtils,
+    invariant,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
+import type { Network } from '@/shared/api/daoService';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IGauge } from '../../api/gaugeVoterService/domain';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
-import type { IGaugeVote, IGaugeVoterVoteTransactionDialogParams } from '../gaugeVoterVoteTransactionDialog';
-import { GaugeVoterVoteDialogContent, type IGaugeVoteAllocation } from './gaugeVoterVoteDialogContent';
+import type {
+    IGaugeVote,
+    IGaugeVoterVoteTransactionDialogParams,
+} from '../gaugeVoterVoteTransactionDialog';
+import {
+    GaugeVoterVoteDialogContent,
+    type IGaugeVoteAllocation,
+} from './gaugeVoterVoteDialogContent';
 import { GaugeVoterVoteDialogFooter } from './gaugeVoterVoteDialogFooter';
 
 export interface IGaugeVoterVoteDialogParams {
@@ -59,23 +73,41 @@ export interface IGaugeVoterVoteDialogParams {
     onSuccess?: () => void;
 }
 
-export interface IGaugeVoterVoteDialogProps extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
+export interface IGaugeVoterVoteDialogProps
+    extends IDialogComponentProps<IGaugeVoterVoteDialogParams> {}
 
-export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props) => {
+export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
+    props,
+) => {
     const { location } = props;
     const { t } = useTranslations();
 
-    invariant(location.params != null, 'GaugeVoterVoteDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'GaugeVoterVoteDialog: required parameters must be set.',
+    );
 
-    const { gauges, totalVotingPower, tokenSymbol, onRemoveGauge, onSuccess, pluginAddress, network, gaugeVotes } =
-        location.params;
+    const {
+        gauges,
+        totalVotingPower,
+        tokenSymbol,
+        onRemoveGauge,
+        onSuccess,
+        pluginAddress,
+        network,
+        gaugeVotes,
+    } = location.params;
 
     const { open, close } = useDialogContext();
 
-    const [voteAllocations, setVoteAllocations] = useState<IGaugeVoteAllocation[]>(
+    const [voteAllocations, setVoteAllocations] = useState<
+        IGaugeVoteAllocation[]
+    >(
         gauges.map((gauge) => {
             // Find existing votes for this gauge
-            const existingVote = gaugeVotes.find((gv) => gv.gaugeAddress === gauge.address);
+            const existingVote = gaugeVotes.find(
+                (gv) => gv.gaugeAddress === gauge.address,
+            );
             const existingVotesValue = existingVote?.votes ?? BigInt(0);
 
             // Calculate percentage from existing votes
@@ -94,25 +126,39 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     );
 
     const totalPercentageUsed = useMemo(
-        () => voteAllocations.reduce((sum, allocation) => sum + allocation.percentage, 0),
+        () =>
+            voteAllocations.reduce(
+                (sum, allocation) => sum + allocation.percentage,
+                0,
+            ),
         [voteAllocations],
     );
 
     const [hasModified, setHasModified] = useState(false);
 
-    const handleUpdateVotePercentage = (gaugeAddress: string, newPercentage: number) => {
+    const handleUpdateVotePercentage = (
+        gaugeAddress: string,
+        newPercentage: number,
+    ) => {
         setHasModified(true);
         setVoteAllocations((prev) =>
             prev.map((allocation) =>
                 allocation.gauge.address === gaugeAddress
-                    ? { ...allocation, percentage: Math.max(0, Math.min(100, newPercentage)) }
+                    ? {
+                          ...allocation,
+                          percentage: Math.max(0, Math.min(100, newPercentage)),
+                      }
                     : allocation,
             ),
         );
     };
 
     const handleRemoveGauge = (gaugeAddress: string) => {
-        setVoteAllocations((prev) => prev.filter((allocation) => allocation.gauge.address !== gaugeAddress));
+        setVoteAllocations((prev) =>
+            prev.filter(
+                (allocation) => allocation.gauge.address !== gaugeAddress,
+            ),
+        );
         onRemoveGauge?.(gaugeAddress);
     };
 
@@ -131,21 +177,27 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
         setVoteAllocations((prev) =>
             prev.map((allocation, index) => ({
                 ...allocation,
-                percentage: index === 0 ? evenPercentage + remainder : evenPercentage,
+                percentage:
+                    index === 0 ? evenPercentage + remainder : evenPercentage,
             })),
         );
     };
 
     const resetAllocation = () => {
         setHasModified(true);
-        setVoteAllocations((prev) => prev.map((allocation) => ({ ...allocation, percentage: 0 })));
+        setVoteAllocations((prev) =>
+            prev.map((allocation) => ({ ...allocation, percentage: 0 })),
+        );
     };
 
-    const canSubmit = useMemo(() => {
-        return (
-            totalPercentageUsed > 0 && totalPercentageUsed === 100 && voteAllocations.length > 0 && totalVotingPower > 0
-        );
-    }, [totalPercentageUsed, voteAllocations.length, totalVotingPower]);
+    const canSubmit = useMemo(
+        () =>
+            totalPercentageUsed > 0 &&
+            totalPercentageUsed === 100 &&
+            voteAllocations.length > 0 &&
+            totalVotingPower > 0,
+        [totalPercentageUsed, voteAllocations.length, totalVotingPower],
+    );
 
     const handleSubmit = () => {
         const votes: IGaugeVote[] = voteAllocations
@@ -170,44 +222,53 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (props
     };
 
     const formattedTotalVotingPower = useMemo(
-        () => formatterUtils.formatNumber(totalVotingPower, { format: NumberFormat.TOKEN_AMOUNT_SHORT }) ?? '0',
+        () =>
+            formatterUtils.formatNumber(totalVotingPower, {
+                format: NumberFormat.TOKEN_AMOUNT_SHORT,
+            }) ?? '0',
         [totalVotingPower],
     );
 
     return (
         <>
             <Dialog.Header
-                title={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.title')}
+                description={t(
+                    'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.description',
+                )}
                 onClose={close}
-                description={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.description')}
+                title={t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 py-6">
                 <GaugeVoterVoteDialogContent
-                    voteAllocations={voteAllocations}
-                    totalVotingPower={totalVotingPower}
-                    tokenSymbol={tokenSymbol}
                     hasModified={hasModified}
-                    onUpdatePercentage={handleUpdateVotePercentage}
                     onRemoveGauge={handleRemoveGauge}
+                    onUpdatePercentage={handleUpdateVotePercentage}
+                    tokenSymbol={tokenSymbol}
+                    totalVotingPower={totalVotingPower}
+                    voteAllocations={voteAllocations}
                 />
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
                     onClick: handleSubmit,
-                    label: t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.submit'),
+                    label: t(
+                        'app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.submit',
+                    ),
                     disabled: !canSubmit,
                 }}
                 secondaryAction={{
                     onClick: () => close(),
-                    label: t('app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.cancel'),
+                    label: t(
+                        'app.plugins.gaugeVoter.gaugeVoterVoteDialog.action.cancel',
+                    ),
                 }}
             >
                 <GaugeVoterVoteDialogFooter
-                    totalVotingPower={formattedTotalVotingPower}
-                    tokenSymbol={tokenSymbol}
-                    totalPercentageUsed={totalPercentageUsed}
                     onEqualize={handleEqualize}
                     onReset={resetAllocation}
+                    tokenSymbol={tokenSymbol}
+                    totalPercentageUsed={totalPercentageUsed}
+                    totalVotingPower={formattedTotalVotingPower}
                 />
             </Dialog.Footer>
         </>

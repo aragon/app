@@ -1,3 +1,4 @@
+import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -5,7 +6,6 @@ import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import {
     EventLogPluginType,
     type IGetLastPluginEventLogUrlParams,
@@ -26,14 +26,19 @@ export interface IDaoProcessDetailsInfoProps {
     dao: IDao;
 }
 
-export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (props) => {
+export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
+    props,
+) => {
     const { plugin, dao } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const pluginInfoSettings = [
-        { term: t('app.settings.daoProcessDetailsInfo.pluginName'), definition: daoUtils.getPluginName(plugin) },
+        {
+            term: t('app.settings.daoProcessDetailsInfo.pluginName'),
+            definition: daoUtils.getPluginName(plugin),
+        },
         {
             term: t('app.settings.daoProcessDetailsInfo.processKey'),
             definition: plugin.slug.toUpperCase(),
@@ -45,14 +50,27 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
         network: dao.network,
         event: EventLogPluginType.UNINSTALLATION_PREPARED,
     };
-    const { data: uninstallationPreparedEventLog } = useLastPluginEventLog({ urlParams: eventLogParams });
+    const { data: uninstallationPreparedEventLog } = useLastPluginEventLog({
+        urlParams: eventLogParams,
+    });
 
     const { id: daoId } = dao;
-    const settings = useDaoPluginInfo({ daoId, address: plugin.address, settings: pluginInfoSettings });
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ?? [];
+    const settings = useDaoPluginInfo({
+        daoId,
+        address: plugin.address,
+        settings: pluginInfoSettings,
+    });
+    const processPlugins =
+        useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ??
+        [];
 
-    const [pluginDefinition, launchedAtDefinition, ...customSettings] = settings;
-    const orderedSettings = [...customSettings, pluginDefinition, launchedAtDefinition];
+    const [pluginDefinition, launchedAtDefinition, ...customSettings] =
+        settings;
+    const orderedSettings = [
+        ...customSettings,
+        pluginDefinition,
+        launchedAtDefinition,
+    ];
 
     const handleUninstallProcess = () => {
         if (processPlugins.length > 1) {
@@ -63,8 +81,14 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
             };
             open(SettingsDialogId.UNINSTALL_PLUGIN_ALERT, { params });
         } else {
-            const dialogTitle = t('app.settings.daoProcessDetailsInfo.fallbackDialogTitle');
-            const params: IGovernanceProcessRequiredDialogParams = { daoId, plugin, title: dialogTitle };
+            const dialogTitle = t(
+                'app.settings.daoProcessDetailsInfo.fallbackDialogTitle',
+            );
+            const params: IGovernanceProcessRequiredDialogParams = {
+                daoId,
+                plugin,
+                title: dialogTitle,
+            };
             open(SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED, { params });
         }
     };
@@ -78,10 +102,14 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (pro
                 ))}
             </DefinitionList.Container>
             <div className="flex flex-col gap-3">
-                <Button variant="tertiary" size="md" onClick={handleUninstallProcess}>
+                <Button
+                    onClick={handleUninstallProcess}
+                    size="md"
+                    variant="tertiary"
+                >
                     {t('app.settings.daoProcessDetailsInfo.uninstall.action')}
                 </Button>
-                <p className="text-center text-sm leading-normal font-normal text-neutral-500">
+                <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
                     {t('app.settings.daoProcessDetailsInfo.uninstall.info')}
                 </p>
             </div>

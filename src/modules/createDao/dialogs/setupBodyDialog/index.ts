@@ -1,9 +1,13 @@
-export { SetupBodyDialog, type ISetupBodyDialogParams, type ISetupBodyDialogProps } from './setupBodyDialog';
 export {
-    type ISetupBodyForm,
-    type ISetupBodyFormBase,
-    type ISetupBodyFormExisting,
-    type ISetupBodyFormExternal,
-    type ISetupBodyFormMembership,
-    type ISetupBodyFormNew,
+    type ISetupBodyDialogParams,
+    type ISetupBodyDialogProps,
+    SetupBodyDialog,
+} from './setupBodyDialog';
+export type {
+    ISetupBodyForm,
+    ISetupBodyFormBase,
+    ISetupBodyFormExisting,
+    ISetupBodyFormExternal,
+    ISetupBodyFormMembership,
+    ISetupBodyFormNew,
 } from './setupBodyDialogDefinitions';

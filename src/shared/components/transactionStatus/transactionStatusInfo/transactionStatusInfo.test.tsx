@@ -1,9 +1,14 @@
-import { testLogger } from '@/test/utils';
 import { render, screen } from '@testing-library/react';
-import { TransactionStatusInfo, type ITransactionStatusInfoProps } from './transactionStatusInfo';
+import { testLogger } from '@/test/utils';
+import {
+    type ITransactionStatusInfoProps,
+    TransactionStatusInfo,
+} from './transactionStatusInfo';
 
 describe('<TransactionStatusInfo /> component', () => {
-    const createTestComponent = (props?: Partial<ITransactionStatusInfoProps>) => {
+    const createTestComponent = (
+        props?: Partial<ITransactionStatusInfoProps>,
+    ) => {
         const completeProps: ITransactionStatusInfoProps = {
             title: 'Default Title',
             ...props,
@@ -17,9 +22,15 @@ describe('<TransactionStatusInfo /> component', () => {
 
         render(createTestComponent({ title }));
 
-        expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
-        expect(screen.queryByText('app.shared.transactionStatus.info.current')).not.toBeInTheDocument();
-        expect(screen.queryByText('app.shared.transactionStatus.info.total')).not.toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: title }),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText('app.shared.transactionStatus.info.current'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText('app.shared.transactionStatus.info.total'),
+        ).not.toBeInTheDocument();
     });
 
     it('renders title, current and total if all transaction info is provided', () => {
@@ -29,9 +40,15 @@ describe('<TransactionStatusInfo /> component', () => {
 
         render(createTestComponent({ title, current, total }));
 
-        expect(screen.getByRole('heading', { name: title })).toBeInTheDocument();
-        expect(screen.getByText(/transactionStatus\.info\.current \(current=1\)/)).toBeInTheDocument();
-        expect(screen.getByText(/transactionStatus\.info\.total \(total=3\)/)).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: title }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/transactionStatus\.info\.current \(current=1\)/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/transactionStatus\.info\.total \(total=3\)/),
+        ).toBeInTheDocument();
     });
 
     it('throws an error if current is provided without total', () => {

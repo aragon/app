@@ -1,6 +1,18 @@
-import { AragonBackendService, type IPaginatedResponse } from '@/shared/api/aragonBackendService';
-import type { ICanCreateProposalResult, IMemberExistsResult } from './../../types';
-import type { IMember, IProposal, IProposalAction, IProposalActionsResult, IVote } from './domain';
+import {
+    AragonBackendService,
+    type IPaginatedResponse,
+} from '@/shared/api/aragonBackendService';
+import type {
+    ICanCreateProposalResult,
+    IMemberExistsResult,
+} from './../../types';
+import type {
+    IMember,
+    IProposal,
+    IProposalAction,
+    IProposalActionsResult,
+    IVote,
+} from './domain';
 import type {
     IGetCanCreateProposalParams,
     IGetMemberExistsParams,
@@ -27,19 +39,29 @@ class GovernanceService extends AragonBackendService {
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
-        const result = await this.request<IPaginatedResponse<TMember>>(this.urls.members, params);
+        const result = await this.request<IPaginatedResponse<TMember>>(
+            this.urls.members,
+            params,
+        );
 
         return result;
     };
 
-    getMember = async <TMember extends IMember = IMember>(params: IGetMemberParams): Promise<TMember> => {
+    getMember = async <TMember extends IMember = IMember>(
+        params: IGetMemberParams,
+    ): Promise<TMember> => {
         const result = await this.request<TMember>(this.urls.member, params);
 
         return result;
     };
 
-    getMemberExists = async (params: IGetMemberExistsParams): Promise<IMemberExistsResult> => {
-        const result = await this.request<IMemberExistsResult>(this.urls.memberExists, params);
+    getMemberExists = async (
+        params: IGetMemberExistsParams,
+    ): Promise<IMemberExistsResult> => {
+        const result = await this.request<IMemberExistsResult>(
+            this.urls.memberExists,
+            params,
+        );
 
         return result;
     };
@@ -47,7 +69,10 @@ class GovernanceService extends AragonBackendService {
     getProposalList = async <TProposal extends IProposal = IProposal>(
         params: IGetProposalListParams,
     ): Promise<IPaginatedResponse<TProposal>> => {
-        const result = await this.request<IPaginatedResponse<TProposal>>(this.urls.proposals, params);
+        const result = await this.request<IPaginatedResponse<TProposal>>(
+            this.urls.proposals,
+            params,
+        );
 
         return result;
     };
@@ -55,21 +80,34 @@ class GovernanceService extends AragonBackendService {
     getProposalBySlug = async <TProposal extends IProposal = IProposal>(
         params: IGetProposalBySlugParams,
     ): Promise<TProposal> => {
-        const result = await this.request<TProposal>(this.urls.proposalBySlug, params);
+        const result = await this.request<TProposal>(
+            this.urls.proposalBySlug,
+            params,
+        );
 
         return result;
     };
 
-    getProposalActions = async <TAction extends IProposalAction = IProposalAction>(
+    getProposalActions = async <
+        TAction extends IProposalAction = IProposalAction,
+    >(
         params: IGetProposalActionsParams,
     ): Promise<IProposalActionsResult<TAction>> => {
-        const result = await this.request<IProposalActionsResult<TAction>>(this.urls.proposalActions, params);
+        const result = await this.request<IProposalActionsResult<TAction>>(
+            this.urls.proposalActions,
+            params,
+        );
 
         return result;
     };
 
-    getCanCreateProposal = async (params: IGetCanCreateProposalParams): Promise<ICanCreateProposalResult> => {
-        const result = await this.request<ICanCreateProposalResult>(this.urls.canCreateProposal, params);
+    getCanCreateProposal = async (
+        params: IGetCanCreateProposalParams,
+    ): Promise<ICanCreateProposalResult> => {
+        const result = await this.request<ICanCreateProposalResult>(
+            this.urls.canCreateProposal,
+            params,
+        );
 
         return result;
     };
@@ -77,7 +115,10 @@ class GovernanceService extends AragonBackendService {
     getVoteList = async <TVote extends IVote = IVote>(
         params: IGetVoteListParams,
     ): Promise<IPaginatedResponse<TVote>> => {
-        const result = await this.request<IPaginatedResponse<TVote>>(this.urls.votes, params);
+        const result = await this.request<IPaginatedResponse<TVote>>(
+            this.urls.votes,
+            params,
+        );
 
         return result;
     };

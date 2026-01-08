@@ -1,13 +1,14 @@
+import { InputText, TextArea } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
+import { mainnet } from 'viem/chains';
+import { getEnsAddress } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { Network } from '@/shared/api/daoService';
+import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { ResourcesInput } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { sanitizePlainText } from '@/shared/security';
-import { InputFileAvatar, InputText, TextArea } from '@aragon/gov-ui-kit';
-import { useWatch } from 'react-hook-form';
-import { mainnet } from 'viem/chains';
-import { getEnsAddress } from 'wagmi/actions';
 import type { ICreateDaoFormData } from '../createDaoFormDefinitions';
 
 export interface ICreateDaoFormMetadataProps {
@@ -19,12 +20,12 @@ export interface ICreateDaoFormMetadataProps {
 
 const nameMaxLength = 128;
 const descriptionMaxLength = 480;
-const maxAvatarFileSize = 1 * 1024 * 1024; // 1 MB in bytes
-const maxAvatarDimension = 1024;
 const ensMaxLength = 18;
 const validSubdomain = /^[a-z0-9-]+$/;
 
-export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (props) => {
+export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (
+    props,
+) => {
     const { fieldPrefix } = props;
 
     const { t } = useTranslations();
@@ -39,7 +40,9 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
     // Watch network field to decide whether or not to show ENS field
     const networkFieldName = fieldPrefix ? `${fieldPrefix}.network` : 'network';
-    const networkValue = useWatch<Record<string, ICreateDaoFormData['network']>>({
+    const networkValue = useWatch<
+        Record<string, ICreateDaoFormData['network']>
+    >({
         name: networkFieldName,
         defaultValue: undefined,
     });
@@ -58,9 +61,14 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
 
         try {
             const ensName = `${value}.dao.eth`;
-            const ensAddress = await getEnsAddress(wagmiConfig, { name: ensName, chainId: mainnet.id });
+            const ensAddress = await getEnsAddress(wagmiConfig, {
+                name: ensName,
+                chainId: mainnet.id,
+            });
 
-            return ensAddress ? 'app.createDao.createDaoForm.metadata.ens.error.taken' : undefined;
+            return ensAddress
+                ? 'app.createDao.createDaoForm.metadata.ens.error.taken'
+                : undefined;
         } catch {
             return 'app.createDao.createDaoForm.metadata.ens.error.invalid';
         }
@@ -78,68 +86,58 @@ export const CreateDaoFormMetadata: React.FC<ICreateDaoFormMetadataProps> = (pro
         rules: { maxLength: ensMaxLength, validate: validateEnsField },
     });
 
-    const { value, ...avatarField } = useFormField<ICreateDaoFormData, 'avatar'>('avatar', {
-        label: t('app.createDao.createDaoForm.metadata.avatar.label'),
-        fieldPrefix,
-        rules: {
-            validate: (value) =>
-                value?.error ? `app.createDao.createDaoForm.metadata.avatar.error.${value.error}` : undefined,
+    const descriptionField = useFormField<ICreateDaoFormData, 'description'>(
+        'description',
+        {
+            label: t('app.createDao.createDaoForm.metadata.description.label'),
+            fieldPrefix,
+            rules: { maxLength: descriptionMaxLength },
+            trimOnBlur: true,
+            sanitizeMode: 'multiline',
+            defaultValue: '',
         },
-    });
-
-    // Watch the avatar field to properly update the InputFileAvatar component when its value changes
-    const avatarFieldName = fieldPrefix ? `${fieldPrefix}.avatar` : 'avatar';
-    const avatarValue = useWatch<Record<string, ICreateDaoFormData['avatar']>>({
-        name: avatarFieldName,
-        defaultValue: undefined,
-    });
-
-    const descriptionField = useFormField<ICreateDaoFormData, 'description'>('description', {
-        label: t('app.createDao.createDaoForm.metadata.description.label'),
-        fieldPrefix,
-        rules: { maxLength: descriptionMaxLength },
-        trimOnBlur: true,
-        sanitizeMode: 'multiline',
-        defaultValue: '',
-    });
+    );
 
     return (
         <div className="flex flex-col gap-10">
             <InputText maxLength={nameMaxLength} {...nameField} />
             {isEthMainnet && (
                 <InputText
-                    value={ensValue}
-                    onChange={(e) => {
-                        onChangeEnsField(sanitizePlainText(e.target.value).toLowerCase());
-                    }}
-                    helpText={t('app.createDao.createDaoForm.metadata.ens.helpText')}
                     addon=".dao.eth"
                     addonPosition="right"
-                    maxLength={ensMaxLength}
-                    wrapperClassName="w-full md:w-1/2"
+                    helpText={t(
+                        'app.createDao.createDaoForm.metadata.ens.helpText',
+                    )}
                     isOptional={true}
+                    maxLength={ensMaxLength}
+                    onChange={(e) => {
+                        onChangeEnsField(
+                            sanitizePlainText(e.target.value).toLowerCase(),
+                        );
+                    }}
+                    value={ensValue}
+                    wrapperClassName="w-full md:w-1/2"
                     {...ensField}
                 />
             )}
-            <InputFileAvatar
-                value={avatarValue}
-                helpText={t('app.createDao.createDaoForm.metadata.avatar.helpText')}
-                maxDimension={maxAvatarDimension}
-                maxFileSize={maxAvatarFileSize}
-                isOptional={true}
-                {...avatarField}
-            />
+            <AvatarInput fieldPrefix={fieldPrefix} name="avatar" />
             <TextArea
-                helpText={t('app.createDao.createDaoForm.metadata.description.helpText')}
-                maxLength={descriptionMaxLength}
+                helpText={t(
+                    'app.createDao.createDaoForm.metadata.description.helpText',
+                )}
                 isOptional={true}
+                maxLength={descriptionMaxLength}
                 {...descriptionField}
-                value={(descriptionField.value as string | null | undefined) ?? ''}
+                value={
+                    (descriptionField.value as string | null | undefined) ?? ''
+                }
             />
             <ResourcesInput
-                name="resources"
                 fieldPrefix={fieldPrefix}
-                helpText={t('app.createDao.createDaoForm.metadata.resources.helpText')}
+                helpText={t(
+                    'app.createDao.createDaoForm.metadata.resources.helpText',
+                )}
+                name="resources"
             />
         </div>
     );

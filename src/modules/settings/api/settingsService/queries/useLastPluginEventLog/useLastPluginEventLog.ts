@@ -1,5 +1,5 @@
-import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import type { IPluginEventLog } from '../../domain';
 import { settingsService } from '../../settingsService';
 import type { IGetLastPluginEventLogParams } from '../../settingsService.api';
@@ -17,6 +17,4 @@ export const lastPluginEventLogOptions = (
 export const useLastPluginEventLog = (
     params: IGetLastPluginEventLogParams,
     options?: QueryOptions<IPluginEventLog>,
-) => {
-    return useQuery(lastPluginEventLogOptions(params, options));
-};
+) => useQuery(lastPluginEventLogOptions(params, options));

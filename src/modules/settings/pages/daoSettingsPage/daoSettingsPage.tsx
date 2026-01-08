@@ -12,7 +12,9 @@ export interface IDaoSettingsPageProps {
     params: Promise<IDaoPageParams>;
 }
 
-export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (props) => {
+export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (
+    props,
+) => {
     const { params } = props;
     const daoPageParams = await params;
 
@@ -27,7 +29,10 @@ export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (props) =>
     return (
         <Page.Container>
             <Page.Content>
-                <DaoSettingsPageClient daoId={daoId} isSubDaoEnabled={isSubDaoEnabled} />
+                <DaoSettingsPageClient
+                    daoId={daoId}
+                    isSubDaoEnabled={isSubDaoEnabled}
+                />
             </Page.Content>
         </Page.Container>
     );

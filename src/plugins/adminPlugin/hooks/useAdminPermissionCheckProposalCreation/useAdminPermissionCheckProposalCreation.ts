@@ -1,10 +1,14 @@
+import { useAccount } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
-import type { IPermissionCheckGuardParams, IPermissionCheckGuardResult } from '@/modules/governance/types';
+import type {
+    IPermissionCheckGuardParams,
+    IPermissionCheckGuardResult,
+} from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { useAccount } from 'wagmi';
 
-export interface IUseAdminPermissionCheckProposalCreationParams extends IPermissionCheckGuardParams {}
+export interface IUseAdminPermissionCheckProposalCreationParams
+    extends IPermissionCheckGuardParams {}
 
 export const useAdminPermissionCheckProposalCreation = (
     params: IUseAdminPermissionCheckProposalCreationParams,
@@ -17,22 +21,34 @@ export const useAdminPermissionCheckProposalCreation = (
     const { network } = daoUtils.parseDaoId(daoId);
 
     const memberExistsParams = {
-        urlParams: { memberAddress: address as string, pluginAddress: plugin.address, network },
+        urlParams: {
+            memberAddress: address as string,
+            pluginAddress: plugin.address,
+            network,
+        },
         queryParams: { network },
     };
-    const { data, isLoading } = useMemberExists(memberExistsParams, { enabled: address != null });
+    const { data, isLoading } = useMemberExists(memberExistsParams, {
+        enabled: address != null,
+    });
     const hasPermission = data?.status === true;
 
     const pluginName = daoUtils.getPluginName(plugin);
 
     const settings = [
         {
-            term: t('app.plugins.admin.adminPermissionCheckProposalCreation.pluginLabelName'),
+            term: t(
+                'app.plugins.admin.adminPermissionCheckProposalCreation.pluginLabelName',
+            ),
             definition: pluginName,
         },
         {
-            term: t('app.plugins.admin.adminPermissionCheckProposalCreation.function'),
-            definition: t('app.plugins.admin.adminPermissionCheckProposalCreation.requirement'),
+            term: t(
+                'app.plugins.admin.adminPermissionCheckProposalCreation.function',
+            ),
+            definition: t(
+                'app.plugins.admin.adminPermissionCheckProposalCreation.requirement',
+            ),
         },
     ];
 

@@ -1,6 +1,6 @@
-const path = require('path');
+const path = require('node:path');
 
-const transform = (src, filePath) => {
+const transform = (_src, filePath) => {
     const fileName = path.basename(filePath);
 
     // Simply exports unsupported Jest assets as a string containining their file name.

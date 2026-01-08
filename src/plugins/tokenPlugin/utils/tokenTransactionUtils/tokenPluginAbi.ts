@@ -69,7 +69,11 @@ export const tokenPluginAbi = [
                     { name: 'data', internalType: 'bytes', type: 'bytes' },
                 ],
             },
-            { name: '_allowFailureMap', internalType: 'uint256', type: 'uint256' },
+            {
+                name: '_allowFailureMap',
+                internalType: 'uint256',
+                type: 'uint256',
+            },
             { name: '_startDate', internalType: 'uint64', type: 'uint64' },
             { name: '_endDate', internalType: 'uint64', type: 'uint64' },
             {
@@ -80,7 +84,9 @@ export const tokenPluginAbi = [
             { name: '_tryEarlyExecution', internalType: 'bool', type: 'bool' },
         ],
         name: 'createProposal',
-        outputs: [{ name: 'proposalId', internalType: 'uint256', type: 'uint256' }],
+        outputs: [
+            { name: 'proposalId', internalType: 'uint256', type: 'uint256' },
+        ],
         stateMutability: 'nonpayable',
     },
     {

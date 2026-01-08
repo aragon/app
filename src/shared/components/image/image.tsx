@@ -1,7 +1,8 @@
 import NextImage from 'next/image';
 import type { ComponentProps } from 'react';
 
-export interface IImageProps extends Omit<ComponentProps<'img'>, 'width' | 'height' | 'src'> {
+export interface IImageProps
+    extends Omit<ComponentProps<'img'>, 'width' | 'height' | 'src'> {
     /**
      * Source of the image.
      */
@@ -33,5 +34,13 @@ export const Image: React.FC<IImageProps> = (props) => {
         return null;
     }
 
-    return <NextImage src={src} fill={fill} alt={alt} sizes={processedSizes} {...otherProps} />;
+    return (
+        <NextImage
+            alt={alt}
+            fill={fill}
+            sizes={processedSizes}
+            src={src}
+            {...otherProps}
+        />
+    );
 };

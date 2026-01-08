@@ -5,10 +5,26 @@ import { sppSettingsUtils } from './sppSettingsUtils';
 describe('sppSettings utils', () => {
     describe('parseSettings', () => {
         it('returns the correct settings for the SPP plugin', () => {
-            const stages = [generateSppStage(), generateSppStage(), generateSppStage()];
-            const settings = { pluginAddress: '0x12345678', pluginName: 'My Plugin A', stages };
-            const result = sppSettingsUtils.parseSettings({ settings, t: mockTranslations.tMock });
-            expect(result).toEqual([{ term: 'app.plugins.spp.sppGovernanceSettings.numberOfStages', definition: '3' }]);
+            const stages = [
+                generateSppStage(),
+                generateSppStage(),
+                generateSppStage(),
+            ];
+            const settings = {
+                pluginAddress: '0x12345678',
+                pluginName: 'My Plugin A',
+                stages,
+            };
+            const result = sppSettingsUtils.parseSettings({
+                settings,
+                t: mockTranslations.tMock,
+            });
+            expect(result).toEqual([
+                {
+                    term: 'app.plugins.spp.sppGovernanceSettings.numberOfStages',
+                    definition: '3',
+                },
+            ]);
         });
     });
 
@@ -18,11 +34,24 @@ describe('sppSettings utils', () => {
             const name = 'My Plugin A';
             const url = 'https://etherscan.io/address/0x123';
             const link = { href: url };
-            const result = sppSettingsUtils.parseDefaultSettings({ address, name, url, t: mockTranslations.tMock });
+            const result = sppSettingsUtils.parseDefaultSettings({
+                address,
+                name,
+                url,
+                t: mockTranslations.tMock,
+            });
 
             expect(result).toEqual([
-                { term: 'app.plugins.spp.sppGovernanceSettings.default.name', definition: name, link },
-                { term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address, link },
+                {
+                    term: 'app.plugins.spp.sppGovernanceSettings.default.name',
+                    definition: name,
+                    link,
+                },
+                {
+                    term: 'app.plugins.spp.sppGovernanceSettings.default.address',
+                    definition: address,
+                    link,
+                },
             ]);
         });
 
@@ -31,10 +60,19 @@ describe('sppSettings utils', () => {
             const name = undefined;
             const url = 'https://polygonscan.com/address/0x456';
             const link = { href: url };
-            const result = sppSettingsUtils.parseDefaultSettings({ address, name, url, t: mockTranslations.tMock });
+            const result = sppSettingsUtils.parseDefaultSettings({
+                address,
+                name,
+                url,
+                t: mockTranslations.tMock,
+            });
 
             expect(result).toEqual([
-                { term: 'app.plugins.spp.sppGovernanceSettings.default.address', definition: address, link },
+                {
+                    term: 'app.plugins.spp.sppGovernanceSettings.default.address',
+                    definition: address,
+                    link,
+                },
             ]);
         });
     });

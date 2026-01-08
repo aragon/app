@@ -1,1 +1,4 @@
-export { CreatePolicyFormConfigure, type ICreatePolicyFormConfigureProps } from './createPolicyFormConfigure';
+export {
+    CreatePolicyFormConfigure,
+    type ICreatePolicyFormConfigureProps,
+} from './createPolicyFormConfigure';

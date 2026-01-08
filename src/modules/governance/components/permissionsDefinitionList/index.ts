@@ -1,1 +1,4 @@
-export { PermissionsDefinitionList, type IPermissionsDefinitionListProps } from './permissionsDefinitionList';
+export {
+    type IPermissionsDefinitionListProps,
+    PermissionsDefinitionList,
+} from './permissionsDefinitionList';

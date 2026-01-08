@@ -1,5 +1,5 @@
-import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { useQuery } from '@tanstack/react-query';
+import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import type { IProposal } from '../../domain';
 import { governanceService } from '../../governanceService';
 import type { IGetProposalBySlugParams } from '../../governanceService.api';
@@ -17,6 +17,4 @@ export const proposalBySlugOptions = <TProposal extends IProposal = IProposal>(
 export const useProposalBySlug = <TProposal extends IProposal = IProposal>(
     params: IGetProposalBySlugParams,
     options?: QueryOptions<TProposal>,
-) => {
-    return useQuery(proposalBySlugOptions(params, options));
-};
+) => useQuery(proposalBySlugOptions(params, options));

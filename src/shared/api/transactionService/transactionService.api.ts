@@ -21,4 +21,7 @@ export interface IGetTransactionStatusQueryParams {
 }
 
 export interface IGetTransactionStatusParams
-    extends IRequestUrlQueryParams<IGetTransactionStatusUrlParams, IGetTransactionStatusQueryParams> {}
+    extends IRequestUrlQueryParams<
+        IGetTransactionStatusUrlParams,
+        IGetTransactionStatusQueryParams
+    > {}

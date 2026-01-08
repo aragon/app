@@ -1,0 +1,62 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "globalPassThroughEnv": [
+        "ANALYZE",
+        "ARAGON_BACKEND_URL",
+        "CI",
+        "JEST_WORKER_ID",
+        "NEXT_PUBLIC_ENV",
+        "NEXT_PUBLIC_SENTRY_DSN",
+        "NEXT_PUBLIC_SENTRY_ORG",
+        "NEXT_PUBLIC_SENTRY_PROJECT",
+        "NEXT_RUNTIME",
+        "NEXT_SECRET_ANKR_RPC_KEY",
+        "NEXT_SECRET_ARAGON_BACKEND_API_KEY",
+        "NEXT_SECRET_DRPC_RPC_KEY",
+        "NEXT_SECRET_IPFS_JWT",
+        "NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY",
+        "NEXT_SECRET_RPC_KEY",
+        "NEXT_SECRET_SENTRY_AUTH_TOKEN",
+        "SENTRY_AUTH_TOKEN",
+        "SENTRY_DSN",
+        "SENTRY_ORG",
+        "SENTRY_PROJECT",
+        "SENTRY_REPORT_KEY",
+        "SENTRY_REPORT_URI",
+        "version"
+    ],
+    "tasks": {
+        "lint": {
+            "cache": true,
+            "inputs": [
+                "src/**/*.{ts,tsx,js,jsx}",
+                "*.config.{js,ts,mjs}",
+                "biome.json"
+            ],
+            "outputs": []
+        },
+        "type-check": {
+            "cache": true,
+            "inputs": [
+                "src/**/*.{ts,tsx}",
+                "tsconfig.json",
+                "next-env.d.ts"
+            ],
+            "outputs": []
+        },
+        "test": {
+            "cache": true,
+            "inputs": [
+                "src/**/*.{ts,tsx}",
+                "jest.config.js",
+                "tsconfig.json"
+            ],
+            "outputs": [
+                "coverage/**"
+            ],
+            "dependsOn": [
+                "type-check"
+            ]
+        }
+    }
+}

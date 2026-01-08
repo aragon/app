@@ -1,10 +1,13 @@
-import { AragonLogo } from '@/shared/components/aragonLogo';
-import { useDialogContext, type IDialogComponentProps } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { useAccount } from 'wagmi';
+import { AragonLogo } from '@/shared/components/aragonLogo';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface IConnectWalletDialogParams {
     /**
@@ -17,9 +20,12 @@ export interface IConnectWalletDialogParams {
     onError?: () => void;
 }
 
-export interface IConnectWalletDialogProps extends IDialogComponentProps<IConnectWalletDialogParams> {}
+export interface IConnectWalletDialogProps
+    extends IDialogComponentProps<IConnectWalletDialogParams> {}
 
-export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) => {
+export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
+    props,
+) => {
     const { params, id } = props.location;
     const { onSuccess, onError } = params ?? {};
 
@@ -27,7 +33,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
     const { close, updateOptions } = useDialogContext();
     const { open: openWeb3Modal } = useAppKit();
     const { open: isAppKitModalOpen } = useAppKitState();
-    const { isConnected, chainId } = useAccount();
+    const { isConnected } = useAccount();
     const { t } = useTranslations();
 
     const handleConnectClick = () => openWeb3Modal();
@@ -43,7 +49,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
             onSuccess?.();
             close(id);
         }
-    }, [isConnected, onSuccess, close, chainId, id]);
+    }, [isConnected, onSuccess, close, id]);
 
     // Disable closing the dialog on outside click when web3Modal is open to keep the connect-wallet dialog open
     // and track the wallet-connection status
@@ -57,7 +63,9 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
         const preventTouchScroll = (event: Event) => event.stopPropagation();
 
         appKitModal?.addEventListener('wheel', handleWheel);
-        appKitModal?.addEventListener('touchmove', preventTouchScroll, { passive: false });
+        appKitModal?.addEventListener('touchmove', preventTouchScroll, {
+            passive: false,
+        });
 
         return () => {
             appKitModal?.removeEventListener('wheel', handleWheel);
@@ -78,24 +86,51 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
             <Dialog.Content className="flex flex-col gap-6 p-6 md:p-8">
                 <div className="flex flex-col gap-3 md:gap-4">
                     <AragonLogo size="lg" />
-                    <p className="text-lg leading-tight font-normal text-neutral-500 md:text-xl">
+                    <p className="font-normal text-lg text-neutral-500 leading-tight md:text-xl">
                         {t('app.application.connectWalletDialog.connect')}
                     </p>
                 </div>
-                <div className="flex flex-col gap-4 text-sm leading-tight font-normal text-neutral-500">
+                <div className="flex flex-col gap-4 font-normal text-neutral-500 text-sm leading-tight">
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.CHECKMARK} variant="primary" size="sm" />
-                        <p>{t('app.application.connectWalletDialog.feature.permissions')}</p>
+                        <AvatarIcon
+                            icon={IconType.CHECKMARK}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <p>
+                            {t(
+                                'app.application.connectWalletDialog.feature.permissions',
+                            )}
+                        </p>
                     </div>
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.APP_MEMBERS} variant="primary" size="sm" />
-                        <p>{t('app.application.connectWalletDialog.feature.stats')}</p>
+                        <AvatarIcon
+                            icon={IconType.APP_MEMBERS}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <p>
+                            {t(
+                                'app.application.connectWalletDialog.feature.stats',
+                            )}
+                        </p>
                     </div>
                     <div className="flex flex-row items-center gap-3">
-                        <AvatarIcon icon={IconType.BLOCKCHAIN_SMARTCONTRACT} variant="primary" size="sm" />
-                        <Link href={t('app.application.connectWalletDialog.auditLink')} isExternal={true}>
+                        <AvatarIcon
+                            icon={IconType.BLOCKCHAIN_SMARTCONTRACT}
+                            size="sm"
+                            variant="primary"
+                        />
+                        <Link
+                            href={t(
+                                'app.application.connectWalletDialog.auditLink',
+                            )}
+                            isExternal={true}
+                        >
                             <span className="text-sm">
-                                {t('app.application.connectWalletDialog.feature.smartContracts')}
+                                {t(
+                                    'app.application.connectWalletDialog.feature.smartContracts',
+                                )}
                             </span>
                         </Link>
                     </div>
@@ -104,11 +139,15 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (props) 
             <Dialog.Footer
                 primaryAction={{
                     iconLeft: IconType.BLOCKCHAIN_WALLET,
-                    label: t('app.application.connectWalletDialog.action.connect'),
+                    label: t(
+                        'app.application.connectWalletDialog.action.connect',
+                    ),
                     onClick: handleConnectClick,
                 }}
                 secondaryAction={{
-                    label: t('app.application.connectWalletDialog.action.cancel'),
+                    label: t(
+                        'app.application.connectWalletDialog.action.cancel',
+                    ),
                     onClick: handleDialogClose,
                 }}
             />

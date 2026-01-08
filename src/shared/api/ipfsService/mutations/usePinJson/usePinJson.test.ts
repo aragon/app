@@ -1,5 +1,5 @@
-import { ReactQueryWrapper } from '@/shared/testUtils';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { ReactQueryWrapper } from '@/shared/testUtils';
 import * as pinJsonAction from '../../actions';
 import { usePinJson } from './usePinJson';
 
@@ -15,7 +15,9 @@ describe('usePinJson mutation', () => {
         const ipfsHash = 'qwao42347uroif78';
         const ipfsResult = { IpfsHash: ipfsHash };
         pinJsonActionSpy.mockResolvedValue(ipfsResult);
-        const { result } = renderHook(() => usePinJson(), { wrapper: ReactQueryWrapper });
+        const { result } = renderHook(() => usePinJson(), {
+            wrapper: ReactQueryWrapper,
+        });
         act(() => result.current.mutate({ body: data }));
         await waitFor(() => expect(result.current.data).toEqual(ipfsResult));
     });

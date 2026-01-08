@@ -1,1 +1,4 @@
-export { CreateProposalFormSettings, type ICreateProposalFormSettingsProps } from './createProposalFormSettings';
+export {
+    CreateProposalFormSettings,
+    type ICreateProposalFormSettingsProps,
+} from './createProposalFormSettings';

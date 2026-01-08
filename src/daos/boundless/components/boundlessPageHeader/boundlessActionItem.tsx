@@ -31,27 +31,42 @@ export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
     isExternal?: boolean;
 }
 
-export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (props) => {
+export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
+    props,
+) => {
     const { title, description, image, href, isExternal, className } = props;
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Link
-            href={href}
-            target={isExternal ? '_blank' : '_self'}
             className={classNames(
                 'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
                 className,
             )}
+            href={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            target={isExternal ? '_blank' : '_self'}
         >
-            <Image src={BackgroundImage} alt="" fill={true} className="absolute inset-0 -z-20 object-cover" />
+            <Image
+                alt=""
+                className="-z-20 absolute inset-0 object-cover"
+                fill={true}
+                src={BackgroundImage}
+            />
             <div className="relative z-10 flex size-full flex-col justify-between transition-all duration-300 md:justify-center md:group-hover:justify-between">
-                <BoundlessActionText title={title} description={description} isHovered={isHovered} />
+                <BoundlessActionText
+                    description={description}
+                    isHovered={isHovered}
+                    title={title}
+                />
                 <BoundlessActionAvatarIcon isHovered={isHovered} />
             </div>
-            <BoundlessActionImage image={image} alt={title} isHovered={isHovered} />
+            <BoundlessActionImage
+                alt={title}
+                image={image}
+                isHovered={isHovered}
+            />
         </Link>
     );
 };

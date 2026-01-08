@@ -19,15 +19,17 @@ export interface IMultisigProposalVotingBreakdownProps {
     children?: ReactNode;
 }
 
-export const MultisigProposalVotingBreakdown: React.FC<IMultisigProposalVotingBreakdownProps> = (props) => {
+export const MultisigProposalVotingBreakdown: React.FC<
+    IMultisigProposalVotingBreakdownProps
+> = (props) => {
     const { proposal, isVeto, children } = props;
 
     return (
         <ProposalVoting.BreakdownMultisig
-            isVeto={isVeto}
             approvalsAmount={proposal.metrics.totalVotes}
-            minApprovals={proposal.settings.minApprovals}
+            isVeto={isVeto}
             membersCount={Number(proposal.settings.historicalMembersCount)}
+            minApprovals={proposal.settings.minApprovals}
         >
             {children}
         </ProposalVoting.BreakdownMultisig>

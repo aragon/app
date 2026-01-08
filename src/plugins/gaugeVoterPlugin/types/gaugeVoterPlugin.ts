@@ -61,7 +61,8 @@ export interface IGaugeVoterPluginSettings extends IPluginSettings {
     stages?: unknown[];
 }
 
-export interface IGaugeVoterPlugin extends IDaoPlugin<IGaugeVoterPluginSettings> {
+export interface IGaugeVoterPlugin
+    extends IDaoPlugin<IGaugeVoterPluginSettings> {
     /**
      * List of supported gauge types for voting.
      */

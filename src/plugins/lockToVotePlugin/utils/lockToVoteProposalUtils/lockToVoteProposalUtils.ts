@@ -1,8 +1,11 @@
-import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
-import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { type ITokenProposalOptionVotes, VoteOption } from '../../../tokenPlugin/types';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
+import {
+    type ITokenProposalOptionVotes,
+    VoteOption,
+} from '../../../tokenPlugin/types';
 import type { ILockToVoteProposal } from '../../types';
 
 class LockToVoteProposalUtils {
@@ -24,7 +27,8 @@ class LockToVoteProposalUtils {
     };
 
     isApprovalReached = (proposal: ILockToVoteProposal): boolean => {
-        const isMinParticipationReached = this.isMinParticipationReached(proposal);
+        const isMinParticipationReached =
+            this.isMinParticipationReached(proposal);
         const isSupportReached = this.isSupportReached(proposal);
 
         return isMinParticipationReached && isSupportReached;
@@ -52,7 +56,9 @@ class LockToVoteProposalUtils {
         // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
         // the BigInt constructor does not support such values.
         const parsedMinParticipation = BigInt(minParticipation);
-        const parsedTotalSupply = BigInt(this.getProposalTokenTotalSupply(proposal) ?? 0);
+        const parsedTotalSupply = BigInt(
+            this.getProposalTokenTotalSupply(proposal) ?? 0,
+        );
 
         if (parsedTotalSupply === BigInt(0)) {
             return false;
@@ -60,7 +66,8 @@ class LockToVoteProposalUtils {
 
         const totalVotes = this.getTotalVotes(proposal);
         const minVotingPower =
-            (parsedTotalSupply * parsedMinParticipation) / BigInt(tokenSettingsUtils.percentageToRatio(100));
+            (parsedTotalSupply * parsedMinParticipation) /
+            BigInt(tokenSettingsUtils.percentageToRatio(100));
 
         return totalVotes >= minVotingPower;
     };
@@ -76,12 +83,16 @@ class LockToVoteProposalUtils {
         const noVotesComparator = noVotesCurrent;
 
         return (
-            (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) * yesVotes >
+            (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) *
+                yesVotes >
             BigInt(supportThreshold) * noVotesComparator
         );
     };
 
-    getTotalVotes = (proposal: ILockToVoteProposal, excludeAbstain?: boolean): bigint => {
+    getTotalVotes = (
+        proposal: ILockToVoteProposal,
+        excludeAbstain?: boolean,
+    ): bigint => {
         const { votesByOption } = proposal.metrics;
 
         const totalVotes = votesByOption.reduce((accumulator, current) => {
@@ -95,15 +106,26 @@ class LockToVoteProposalUtils {
         return totalVotes;
     };
 
-    getVoteByType = (votes: ITokenProposalOptionVotes[], type: VoteOption): bigint => {
+    getVoteByType = (
+        votes: ITokenProposalOptionVotes[],
+        type: VoteOption,
+    ): bigint => {
         const optionVotes = votes.find((option) => option.type === type);
 
         return BigInt(optionVotes?.totalVotingPower ?? 0);
     };
 
-    getOptionVotingPower = (proposal: ILockToVoteProposal, option: VoteOption) => {
-        const votes = proposal.metrics.votesByOption.find((vote) => vote.type === option);
-        const parsedVotingPower = formatUnits(BigInt(votes?.totalVotingPower ?? 0), proposal.settings.token.decimals);
+    getOptionVotingPower = (
+        proposal: ILockToVoteProposal,
+        option: VoteOption,
+    ) => {
+        const votes = proposal.metrics.votesByOption.find(
+            (vote) => vote.type === option,
+        );
+        const parsedVotingPower = formatUnits(
+            BigInt(votes?.totalVotingPower ?? 0),
+            proposal.settings.token.decimals,
+        );
 
         return parsedVotingPower;
     };

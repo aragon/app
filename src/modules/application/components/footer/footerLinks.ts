@@ -22,6 +22,14 @@ export const footerLinks: IFooterLink[] = [
         link: 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3',
         target: '_blank',
     },
-    { label: 'privacy', link: 'https://aragon.org/privacy-policy', target: '_blank' },
-    { label: 'termsOfService', link: 'https://aragon.org/terms-and-conditions', target: '_blank' },
+    {
+        label: 'privacy',
+        link: 'https://aragon.org/privacy-policy',
+        target: '_blank',
+    },
+    {
+        label: 'termsOfService',
+        link: 'https://aragon.org/terms-and-conditions',
+        target: '_blank',
+    },
 ];

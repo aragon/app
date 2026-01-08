@@ -7,7 +7,8 @@ export interface IBuildVoteDataOption<TOptionValue = number> {
 
 export interface IBuildVoteDataParams<
     TOptionValue = number,
-    TOption extends IBuildVoteDataOption<TOptionValue> = IBuildVoteDataOption<TOptionValue>,
+    TOption extends
+        IBuildVoteDataOption<TOptionValue> = IBuildVoteDataOption<TOptionValue>,
 > {
     /**
      * The incremental ID of the proposal.

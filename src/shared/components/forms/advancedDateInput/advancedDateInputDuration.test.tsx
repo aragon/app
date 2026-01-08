@@ -1,10 +1,15 @@
-import { FormWrapper } from '@/shared/testUtils';
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { AdvancedDateInputDuration, type IAdvancedDateInputDurationProps } from './advancedDateInputDuration';
+import { FormWrapper } from '@/shared/testUtils';
+import {
+    AdvancedDateInputDuration,
+    type IAdvancedDateInputDurationProps,
+} from './advancedDateInputDuration';
 
 describe('<AdvancedDateInputDuration /> component', () => {
-    const createTestComponent = (props?: Partial<IAdvancedDateInputDurationProps>) => {
+    const createTestComponent = (
+        props?: Partial<IAdvancedDateInputDurationProps>,
+    ) => {
         const completeProps: IAdvancedDateInputDurationProps = {
             field: 'startTime',
             label: 'Test Label',
@@ -24,11 +29,24 @@ describe('<AdvancedDateInputDuration /> component', () => {
         const minDuration = { days: 0, hours: 1, minutes: 0 };
         const validateMinDuration = true;
 
-        render(createTestComponent({ label, infoText, minDuration, validateMinDuration }));
+        render(
+            createTestComponent({
+                label,
+                infoText,
+                minDuration,
+                validateMinDuration,
+            }),
+        );
 
-        const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
-        const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);
-        const daysInput = screen.getByLabelText(/shared.advancedDateInput.duration.days/);
+        const minutesInput = screen.getByLabelText(
+            /shared.advancedDateInput.duration.minutes/,
+        );
+        const hoursInput = screen.getByLabelText(
+            /shared.advancedDateInput.duration.hours/,
+        );
+        const daysInput = screen.getByLabelText(
+            /shared.advancedDateInput.duration.days/,
+        );
         const alert = screen.getByRole('alert');
 
         expect(alert).toHaveTextContent(infoText);
@@ -41,7 +59,9 @@ describe('<AdvancedDateInputDuration /> component', () => {
         await userEvent.tab();
 
         await waitFor(() =>
-            expect(alert).toHaveTextContent(/advancedDateInput.duration.error.minDuration \(value=1 hour\)/),
+            expect(alert).toHaveTextContent(
+                /advancedDateInput.duration.error.minDuration \(value=1 hour\)/,
+            ),
         );
 
         // Set a valid duration
@@ -55,8 +75,12 @@ describe('<AdvancedDateInputDuration /> component', () => {
     it('does not allow invalid values on inputs', async () => {
         render(createTestComponent());
 
-        const minutesInput = screen.getByLabelText(/shared.advancedDateInput.duration.minutes/);
-        const hoursInput = screen.getByLabelText(/shared.advancedDateInput.duration.hours/);
+        const minutesInput = screen.getByLabelText(
+            /shared.advancedDateInput.duration.minutes/,
+        );
+        const hoursInput = screen.getByLabelText(
+            /shared.advancedDateInput.duration.hours/,
+        );
 
         // Try to set minutes to 60. Only the 6 should be accepted
         await userEvent.clear(minutesInput);

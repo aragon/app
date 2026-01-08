@@ -1,1 +1,1 @@
-export { NavigationDao, type INavigationDaoProps } from './navigationDao';
+export { type INavigationDaoProps, NavigationDao } from './navigationDao';

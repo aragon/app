@@ -1,16 +1,22 @@
-import { generateMember } from '@/modules/governance/testUtils';
-import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import * as Viem from 'viem';
+import { generateMember } from '@/modules/governance/testUtils';
+import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
+import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { adminTransactionUtils } from '../../utils/adminTransactionUtils';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
 describe('adminManageMembersDialog utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
-    const stringToMetadataHexSpy = jest.spyOn(transactionUtils, 'stringToMetadataHex');
-    const buildCreateProposalDataSpy = jest.spyOn(adminTransactionUtils, 'buildCreateProposalData');
+    const stringToMetadataHexSpy = jest.spyOn(
+        transactionUtils,
+        'stringToMetadataHex',
+    );
+    const buildCreateProposalDataSpy = jest.spyOn(
+        adminTransactionUtils,
+        'buildCreateProposalData',
+    );
     const isAddressEqualSpy = jest.spyOn(addressUtils, 'isAddressEqual');
 
     afterEach(() => {
@@ -22,8 +28,11 @@ describe('adminManageMembersDialog utils', () => {
 
     describe('prepareProposalMetadata', () => {
         it('returns metadata for the prepare-process proposal', () => {
-            const result = adminManageMembersDialogUtils.prepareProposalMetadata();
-            expect(result).toEqual(adminManageMembersDialogUtils['proposalMetadata']);
+            const result =
+                adminManageMembersDialogUtils.prepareProposalMetadata();
+            expect(result).toEqual(
+                adminManageMembersDialogUtils['proposalMetadata'],
+            );
         });
     });
 
@@ -32,8 +41,14 @@ describe('adminManageMembersDialog utils', () => {
             const EXECUTE_PROPOSAL_PERMISSION_ID =
                 '0xf281525e53675515a6ba7cc7bea8a81e649b3608423ee2d73be1752cea887889' as Hex;
 
-            const currentAdmins = [generateMember({ address: '0x1' }), generateMember({ address: '0x2' })];
-            const updatedAdmins = [generateMember({ address: '0x1' }), generateMember({ address: '0x3' })];
+            const currentAdmins = [
+                generateMember({ address: '0x1' }),
+                generateMember({ address: '0x2' }),
+            ];
+            const updatedAdmins = [
+                generateMember({ address: '0x1' }),
+                generateMember({ address: '0x3' }),
+            ];
 
             const pluginAddress = '0xPlugin';
             const daoAddress = '0xDao';
@@ -48,7 +63,9 @@ describe('adminManageMembersDialog utils', () => {
             const encodedRevokeData = '0xrevokeData';
             const encodedGrantData = '0xgrantData';
 
-            encodeFunctionDataSpy.mockReturnValueOnce(encodedGrantData).mockReturnValueOnce(encodedRevokeData);
+            encodeFunctionDataSpy
+                .mockReturnValueOnce(encodedGrantData)
+                .mockReturnValueOnce(encodedRevokeData);
 
             const result = adminManageMembersDialogUtils.buildActionsArray({
                 currentAdmins,

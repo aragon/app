@@ -1,9 +1,13 @@
-import type { IGauge } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/domain';
-import type { IGetGaugeListParams } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/gaugeVoterService.api';
-import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries';
+'use client';
+
+import { useEffect, useMemo } from 'react';
+import type {
+    IGauge,
+    IGetGaugeListParams,
+} from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import { useGaugeList } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService/queries/useGaugeList';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type { InfiniteQueryOptions } from '@/shared/types/queryOptions';
-import { useEffect, useMemo } from 'react';
 
 export interface IUseAllGaugesParams {
     /**
@@ -13,7 +17,10 @@ export interface IUseAllGaugesParams {
     /**
      * Optional query options.
      */
-    options?: InfiniteQueryOptions<IPaginatedResponse<IGauge>, IGetGaugeListParams>;
+    options?: InfiniteQueryOptions<
+        IPaginatedResponse<IGauge>,
+        IGetGaugeListParams
+    >;
 }
 
 /**
@@ -22,8 +29,8 @@ export interface IUseAllGaugesParams {
  *
  * @example
  * ```tsx
- * const { gauges, totalCount, isLoading } = useAllGauges({
- *   params: {
+ * const { data, isLoading } = useAllGauges({
+ *   gaugeListParams: {
  *     urlParams: { pluginAddress: '0x...', network: 'polygon' },
  *     queryParams: { pageSize: 50 }
  *   }
@@ -33,8 +40,19 @@ export interface IUseAllGaugesParams {
 export const useAllGauges = (params: IUseAllGaugesParams) => {
     const { gaugeListParams, options } = params;
 
-    const { data, isLoading, error, hasNextPage, fetchNextPage, isFetchingNextPage, refetch } = useGaugeList(
-        { ...gaugeListParams, queryParams: { ...gaugeListParams.queryParams, pageSize: 50 } },
+    const {
+        data,
+        isLoading,
+        error,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+        refetch,
+    } = useGaugeList(
+        {
+            ...gaugeListParams,
+            queryParams: { ...gaugeListParams.queryParams, pageSize: 50 },
+        },
         options,
     );
 
@@ -46,7 +64,10 @@ export const useAllGauges = (params: IUseAllGaugesParams) => {
     }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
     // Flatten all pages into a single array
-    const allGauges = useMemo(() => data?.pages.flatMap((page) => page.data) ?? [], [data]);
+    const allGauges = useMemo(
+        () => data?.pages.flatMap((page) => page.data) ?? [],
+        [data],
+    );
 
     return {
         data: allGauges,

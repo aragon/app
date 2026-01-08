@@ -1,21 +1,27 @@
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
-export interface IUseStepperParams<TMeta = undefined, TStepId extends string = string> {
+export interface IUseStepperParams<
+    TMeta = undefined,
+    TStepId extends string = string,
+> {
     /**
      * Initial steps used to populate the steps array.
      */
-    initialSteps?: Array<IStepperStep<TMeta, TStepId>>;
+    initialSteps?: IStepperStep<TMeta, TStepId>[];
     /**
      * Initial active step, defaults to the first element on the initialSteps array.
      */
     initialActiveStep?: TStepId;
 }
 
-export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = string> {
+export interface IUseStepperReturn<
+    TMeta = undefined,
+    TStepId extends string = string,
+> {
     /**
      * Array of steps ordered by order value.
      */
-    steps: Array<IStepperStep<TMeta, TStepId>>;
+    steps: IStepperStep<TMeta, TStepId>[];
     /**
      * Current active step id.
      */
@@ -55,5 +61,5 @@ export interface IUseStepperReturn<TMeta = undefined, TStepId extends string = s
     /**
      * Updates all stepper steps.
      */
-    updateSteps: (steps: Array<IStepperStep<TMeta, TStepId>>) => void;
+    updateSteps: (steps: IStepperStep<TMeta, TStepId>[]) => void;
 }

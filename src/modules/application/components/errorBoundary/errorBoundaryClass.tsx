@@ -1,6 +1,6 @@
+import { Component, type ReactNode } from 'react';
 import { ErrorFeedback } from '@/shared/components/errorFeedback';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { Component, type ReactNode } from 'react';
 
 export interface IErrorBoundaryClassState {
     /**
@@ -24,7 +24,10 @@ export interface IErrorBoundaryClassProps {
     children?: ReactNode;
 }
 
-export class ErrorBoundaryClass extends Component<IErrorBoundaryClassProps, IErrorBoundaryClassState> {
+export class ErrorBoundaryClass extends Component<
+    IErrorBoundaryClassProps,
+    IErrorBoundaryClassState
+> {
     constructor(props: IErrorBoundaryClassProps) {
         super(props);
         this.state = { hasError: false };

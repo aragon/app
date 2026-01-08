@@ -1,10 +1,24 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { sanitizePlainText, sanitizePlainTextMultiline } from '@/shared/security';
 import { useMemo } from 'react';
-import { type FieldPath, type FieldValues, type Noop, useController } from 'react-hook-form';
-import type { IUseFormFieldOptions, IUseFormFieldReturn } from './useFormField.api';
+import {
+    type FieldPath,
+    type FieldValues,
+    type Noop,
+    useController,
+} from 'react-hook-form';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import {
+    sanitizePlainText,
+    sanitizePlainTextMultiline,
+} from '@/shared/security';
+import type {
+    IUseFormFieldOptions,
+    IUseFormFieldReturn,
+} from './useFormField.api';
 
-export const useFormField = <TFieldValues extends FieldValues = never, TName extends FieldPath<TFieldValues> = never>(
+export const useFormField = <
+    TFieldValues extends FieldValues = never,
+    TName extends FieldPath<TFieldValues> = never,
+>(
     name: TName,
     options?: IUseFormFieldOptions<TFieldValues, TName>,
 ): IUseFormFieldReturn<TFieldValues, TName> => {
@@ -25,11 +39,13 @@ export const useFormField = <TFieldValues extends FieldValues = never, TName ext
 
     const { field, fieldState } = useController<TFieldValues, TName>({
         name: processedFieldName as TName,
-        rules: rules,
+        rules,
         ...otherOptions,
     });
 
-    const handleBlur = (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleBlur = (
+        event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
         if (!sanitizeOnBlur) {
             field.onBlur();
             return;

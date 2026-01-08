@@ -1,1 +1,4 @@
-export { smartContractAbiOptions, useSmartContractAbi } from './useSmartContractAbi';
+export {
+    smartContractAbiOptions,
+    useSmartContractAbi,
+} from './useSmartContractAbi';

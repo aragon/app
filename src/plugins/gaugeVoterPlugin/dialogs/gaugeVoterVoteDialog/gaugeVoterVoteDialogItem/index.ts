@@ -1,1 +1,4 @@
-export { GaugeVoterVoteDialogItem, type IGaugeVoterVoteDialogItemProps } from './gaugeVoterVoteDialogItem';
+export {
+    GaugeVoterVoteDialogItem,
+    type IGaugeVoterVoteDialogItemProps,
+} from './gaugeVoterVoteDialogItem';

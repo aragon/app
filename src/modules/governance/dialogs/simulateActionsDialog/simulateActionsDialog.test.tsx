@@ -1,7 +1,7 @@
-import * as dialogProvider from '@/shared/components/dialogProvider';
-import { type IDialogLocation } from '@/shared/components/dialogProvider';
-import * as translationsProvider from '@/shared/components/translationsProvider';
 import { fireEvent, render, screen } from '@testing-library/react';
+import type { IDialogLocation } from '@/shared/components/dialogProvider';
+import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as translationsProvider from '@/shared/components/translationsProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISimulateActionsDialogParams } from './simulateActionsDialog';
 import { SimulateActionsDialog } from './simulateActionsDialog';
@@ -16,14 +16,18 @@ jest.mock('@aragon/gov-ui-kit', () => {
         Header: (props: { title: string; onClose?: () => void }) => (
             <div>
                 <div>{props.title}</div>
-                <button type="button" onClick={props.onClose}>
+                <button onClick={props.onClose} type="button">
                     close
                 </button>
             </div>
         ),
-        Content: (props: { children: React.ReactNode }) => <div>{props.children}</div>,
-        Footer: (props: { primaryAction: { label: string; onClick?: () => void } }) => (
-            <button type="button" onClick={props.primaryAction.onClick}>
+        Content: (props: { children: React.ReactNode }) => (
+            <div>{props.children}</div>
+        ),
+        Footer: (props: {
+            primaryAction: { label: string; onClick?: () => void };
+        }) => (
+            <button onClick={props.primaryAction.onClick} type="button">
                 {props.primaryAction.label}
             </button>
         ),
@@ -51,13 +55,19 @@ jest.mock('../../api/actionSimulationService', () => ({
         isError: false,
         isPending: false,
         status: 'success',
-        data: { status: 'success', runAt: 123, url: 'https://tenderly.co/simulation/123' },
+        data: {
+            status: 'success',
+            runAt: 123,
+            url: 'https://tenderly.co/simulation/123',
+        },
     }),
 }));
 
 describe('<SimulateActionsDialog /> component', () => {
-    const useDialogContextMock = dialogProvider.useDialogContext as unknown as jest.Mock;
-    const useTranslationsMock = translationsProvider.useTranslations as unknown as jest.Mock;
+    const useDialogContextMock =
+        dialogProvider.useDialogContext as unknown as jest.Mock;
+    const useTranslationsMock =
+        translationsProvider.useTranslations as unknown as jest.Mock;
 
     beforeEach(() => {
         useTranslationsMock.mockReturnValue({ t: (key: string) => key });
@@ -74,16 +84,17 @@ describe('<SimulateActionsDialog /> component', () => {
         ({
             id: 'SIMULATE_ACTIONS_TEST',
             params: {
-                network: 'ethereum' as unknown as ISimulateActionsDialogParams['network'],
+                network:
+                    'ethereum' as unknown as ISimulateActionsDialogParams['network'],
                 pluginAddress: '0xplugin',
                 actions: [{ to: '0xto', data: '0xdata', value: BigInt(0) }],
                 ...params,
             },
         }) as IDialogLocation<ISimulateActionsDialogParams>;
 
-    const renderComponent = (location: IDialogLocation<ISimulateActionsDialogParams>) => {
-        return render(<SimulateActionsDialog location={location} />);
-    };
+    const renderComponent = (
+        location: IDialogLocation<ISimulateActionsDialogParams>,
+    ) => render(<SimulateActionsDialog location={location} />);
 
     it('closes only itself after requesting wizard form submit (does not call close() without id)', () => {
         const close = jest.fn();
@@ -99,7 +110,11 @@ describe('<SimulateActionsDialog /> component', () => {
         const location = createLocation({ formId });
         renderComponent(location);
 
-        fireEvent.click(screen.getByText('app.governance.simulateActionsDialog.action.success'));
+        fireEvent.click(
+            screen.getByText(
+                'app.governance.simulateActionsDialog.action.success',
+            ),
+        );
 
         expect(requestSubmitMock).toHaveBeenCalledTimes(1);
         expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
@@ -113,7 +128,11 @@ describe('<SimulateActionsDialog /> component', () => {
         const location = createLocation({ formId: undefined });
         renderComponent(location);
 
-        fireEvent.click(screen.getByText('app.governance.simulateActionsDialog.action.success'));
+        fireEvent.click(
+            screen.getByText(
+                'app.governance.simulateActionsDialog.action.success',
+            ),
+        );
 
         expect(close).toHaveBeenCalledWith(GovernanceDialogId.SIMULATE_ACTIONS);
         expect(close).not.toHaveBeenCalledWith();

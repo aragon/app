@@ -1,4 +1,4 @@
-import { type Hex } from 'viem';
+import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
 import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
 import type {
@@ -7,8 +7,16 @@ import type {
     IUseTokenExitQueueFeeDataReturn,
 } from './useTokenExitQueueFeeData.api';
 
-export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams): IUseTokenExitQueueFeeDataReturn => {
-    const { tokenId, lockManagerAddress, chainId, enabled = true, refetchInterval } = params;
+export const useTokenExitQueueFeeData = (
+    params: IUseTokenExitQueueFeeDataParams,
+): IUseTokenExitQueueFeeDataReturn => {
+    const {
+        tokenId,
+        lockManagerAddress,
+        chainId,
+        enabled = true,
+        refetchInterval,
+    } = params;
 
     const { data, isLoading, refetch } = useReadContracts({
         contracts: [
@@ -90,7 +98,7 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
 
     const parseTicketData = (result: unknown): ITicketData | undefined => {
         if (typeof result !== 'object' || result == null) {
-            return undefined;
+            return;
         }
 
         const candidate = result as Record<string, unknown>;
@@ -99,21 +107,36 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         const queuedAt = candidate.queuedAt;
 
         if (typeof holder !== 'string' || !holder.startsWith('0x')) {
-            return undefined;
+            return;
         }
 
         if (typeof queuedAt !== 'number') {
-            return undefined;
+            return;
         }
 
         return {
             holder: holder as `0x${string}`,
             queuedAt,
-            minCooldown: typeof candidate.minCooldown === 'number' ? candidate.minCooldown : undefined,
-            cooldown: typeof candidate.cooldown === 'number' ? candidate.cooldown : undefined,
-            feePercent: typeof candidate.feePercent === 'number' ? candidate.feePercent : undefined,
-            minFeePercent: typeof candidate.minFeePercent === 'number' ? candidate.minFeePercent : undefined,
-            slope: typeof candidate.slope === 'bigint' ? candidate.slope : undefined,
+            minCooldown:
+                typeof candidate.minCooldown === 'number'
+                    ? candidate.minCooldown
+                    : undefined,
+            cooldown:
+                typeof candidate.cooldown === 'number'
+                    ? candidate.cooldown
+                    : undefined,
+            feePercent:
+                typeof candidate.feePercent === 'number'
+                    ? candidate.feePercent
+                    : undefined,
+            minFeePercent:
+                typeof candidate.minFeePercent === 'number'
+                    ? candidate.minFeePercent
+                    : undefined,
+            slope:
+                typeof candidate.slope === 'bigint'
+                    ? candidate.slope
+                    : undefined,
         };
     };
 
@@ -132,10 +155,18 @@ export const useTokenExitQueueFeeData = (params: IUseTokenExitQueueFeeDataParams
         ? {
               holder: parsedTicketData.holder,
               queuedAt: parsedTicketData.queuedAt,
-              minCooldown: parsedTicketData.minCooldown ?? normalizeGlobalNumber(globalMinCooldown),
-              cooldown: parsedTicketData.cooldown ?? normalizeGlobalNumber(globalCooldown),
-              feePercent: parsedTicketData.feePercent ?? normalizeGlobalNumber(globalFeePercent),
-              minFeePercent: parsedTicketData.minFeePercent ?? normalizeGlobalNumber(globalMinFeePercent),
+              minCooldown:
+                  parsedTicketData.minCooldown ??
+                  normalizeGlobalNumber(globalMinCooldown),
+              cooldown:
+                  parsedTicketData.cooldown ??
+                  normalizeGlobalNumber(globalCooldown),
+              feePercent:
+                  parsedTicketData.feePercent ??
+                  normalizeGlobalNumber(globalFeePercent),
+              minFeePercent:
+                  parsedTicketData.minFeePercent ??
+                  normalizeGlobalNumber(globalMinFeePercent),
               slope: parsedTicketData.slope ?? BigInt(0),
           }
         : undefined;

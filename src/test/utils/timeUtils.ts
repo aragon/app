@@ -5,7 +5,8 @@ class TimeUtils {
     private customTime: string | undefined = undefined;
 
     private customNow = () => {
-        const now = this.customTime != null ? new Date(this.customTime) : new Date();
+        const now =
+            this.customTime != null ? new Date(this.customTime) : new Date();
 
         return now.valueOf();
     };

@@ -22,4 +22,5 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
     status?: CampaignStatus;
 }
 
-export interface IGetCampaignListParams extends IRequestQueryParams<IGetCampaignListQueryParams> {}
+export interface IGetCampaignListParams
+    extends IRequestQueryParams<IGetCampaignListQueryParams> {}

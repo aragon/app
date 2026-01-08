@@ -1,6 +1,6 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, IconType, type IDialogRootProps } from '@aragon/gov-ui-kit';
-import { NavigationLinks, type INavigationLink } from '../navigationLinks';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { type INavigationLink, NavigationLinks } from '../navigationLinks';
 import { NavigationLinksItem } from '../navigationLinks/navigationLinksItem';
 
 export interface INavigationDialogProps extends IDialogRootProps {
@@ -18,14 +18,26 @@ export const NavigationDialog: React.FC<INavigationDialogProps> = (props) => {
 
     return (
         <Dialog.Root onOpenChange={onOpenChange} {...otherProps}>
-            <Dialog.Content noInset={true} className="flex flex-col gap-4 pt-8 pb-4">
+            <Dialog.Content
+                className="flex flex-col gap-4 pt-8 pb-4"
+                noInset={true}
+            >
                 {children}
                 <div className="flex flex-col gap-4 px-4">
-                    <NavigationLinks variant="column" links={links} onClick={handleLinksClick} />
+                    <NavigationLinks
+                        links={links}
+                        onClick={handleLinksClick}
+                        variant="column"
+                    />
                     <div className="w-full px-4">
-                        <div className="border-t border-neutral-100" />
+                        <div className="border-neutral-100 border-t" />
                     </div>
-                    <NavigationLinksItem href="/" variant="column" icon={IconType.APP_EXPLORE} iconSide="right">
+                    <NavigationLinksItem
+                        href="/"
+                        icon={IconType.APP_EXPLORE}
+                        iconSide="right"
+                        variant="column"
+                    >
                         {t('app.application.navigationDao.dialog.explore')}
                     </NavigationLinksItem>
                 </div>

@@ -24,7 +24,7 @@ class PermissionTransactionUtils {
     };
 
     // List of generic permission IDs
-    public permissionIds = {
+    permissionIds = {
         rootPermission: 'ROOT_PERMISSION',
         createProposalPermission: 'CREATE_PROPOSAL_PERMISSION',
         executePermission: 'EXECUTE_PERMISSION',
@@ -32,7 +32,9 @@ class PermissionTransactionUtils {
         manageSelectorsPermission: 'MANAGE_SELECTORS_PERMISSION',
     };
 
-    buildGrantPermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
+    buildGrantPermissionTransaction = (
+        params: IUpdatePermissionParams,
+    ): ITransactionRequest => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
             abi: permissionManagerAbi,
@@ -43,7 +45,9 @@ class PermissionTransactionUtils {
         return { to, data: transactionData, value: BigInt(0) };
     };
 
-    buildRevokePermissionTransaction = (params: IUpdatePermissionParams): ITransactionRequest => {
+    buildRevokePermissionTransaction = (
+        params: IUpdatePermissionParams,
+    ): ITransactionRequest => {
         const { where, who, what, to } = params;
         const transactionData = encodeFunctionData({
             abi: permissionManagerAbi,
@@ -54,7 +58,9 @@ class PermissionTransactionUtils {
         return { to, data: transactionData, value: BigInt(0) };
     };
 
-    buildGrantWithConditionTransaction = (params: IBuildGrantWithConditionTransactionParams): ITransactionRequest => {
+    buildGrantWithConditionTransaction = (
+        params: IBuildGrantWithConditionTransactionParams,
+    ): ITransactionRequest => {
         const { where, who, what, to, condition } = params;
         const transactionData = encodeFunctionData({
             abi: permissionManagerAbi,
@@ -76,22 +82,30 @@ class PermissionTransactionUtils {
             to: dao,
         });
 
-        const grantExecuteTransaction = this.buildGrantWithConditionTransaction({
-            where: dao,
-            who: plugin,
-            what: permissionTransactionUtils.permissionIds.executePermission,
-            to: dao,
-            condition: executeCondition,
-        });
+        const grantExecuteTransaction = this.buildGrantWithConditionTransaction(
+            {
+                where: dao,
+                who: plugin,
+                what: permissionTransactionUtils.permissionIds
+                    .executePermission,
+                to: dao,
+                condition: executeCondition,
+            },
+        );
 
         const grantTransaction = this.buildGrantPermissionTransaction({
             where: executeCondition,
             who: dao,
-            what: permissionTransactionUtils.permissionIds.manageSelectorsPermission,
+            what: permissionTransactionUtils.permissionIds
+                .manageSelectorsPermission,
             to: dao,
         });
 
-        return [revokeExecuteTransaction, grantExecuteTransaction, grantTransaction];
+        return [
+            revokeExecuteTransaction,
+            grantExecuteTransaction,
+            grantTransaction,
+        ];
     };
 
     buildGrantRevokePermissionTransactions = (
@@ -103,13 +117,19 @@ class PermissionTransactionUtils {
         return [grantTransaction, revokeTransaction];
     };
 
-    buildRuleConditions = (conditionAddresses: string[], conditionRules: IRuledCondition[]): IRuledCondition[] => {
+    buildRuleConditions = (
+        conditionAddresses: string[],
+        conditionRules: IRuledCondition[],
+    ): IRuledCondition[] => {
         if (!conditionAddresses.length) {
             return conditionRules;
         }
 
         if (conditionAddresses.length === 1) {
-            return [...conditionRules, this.addressToCondition(conditionAddresses[0])];
+            return [
+                ...conditionRules,
+                this.addressToCondition(conditionAddresses[0]),
+            ];
         }
 
         const conditionAddress = conditionAddresses.pop()!;
@@ -118,10 +138,18 @@ class PermissionTransactionUtils {
 
         const baseIndex = conditionRules.length * 2;
         const value = this.encodeLogicalOperator(baseIndex + 1, baseIndex + 2);
-        const newCondition = { id: logicOperation, op: or, value, permissionId: zeroHash };
+        const newCondition = {
+            id: logicOperation,
+            op: or,
+            value,
+            permissionId: zeroHash,
+        };
 
         return [
-            ...this.buildRuleConditions(conditionAddresses, [...conditionRules, newCondition]),
+            ...this.buildRuleConditions(conditionAddresses, [
+                ...conditionRules,
+                newCondition,
+            ]),
             this.addressToCondition(conditionAddress),
         ];
     };

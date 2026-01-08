@@ -1,7 +1,7 @@
+import { useCallback } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useCallback } from 'react';
 import { useConnectedWalletGuard } from '../../../application/hooks/useConnectedWalletGuard';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IExecuteCheckDialogParams } from '../../dialogs/executeCheckDialog';
@@ -25,7 +25,9 @@ export interface IUseProposalExecuteGuardParams {
     onError?: () => void;
 }
 
-export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) => {
+export const useProposalExecuteGuard = (
+    params: IUseProposalExecuteGuardParams,
+) => {
     const { daoId, pluginAddress, onSuccess, onError } = params;
 
     const { open } = useDialogContext();
@@ -50,10 +52,11 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
         [dao, onError, onSuccess, open, plugin],
     );
 
-    const { check: checkWalletConnected, result: isConnected } = useConnectedWalletGuard({
-        onError,
-        onSuccess: checkUserPermission,
-    });
+    const { check: checkWalletConnected, result: isConnected } =
+        useConnectedWalletGuard({
+            onError,
+            onSuccess: checkUserPermission,
+        });
 
     const check = useCallback(
         (functionParams?: Partial<IUseProposalExecuteGuardParams>) => {
@@ -68,7 +71,12 @@ export const useProposalExecuteGuard = (params: IUseProposalExecuteGuardParams) 
                 });
             }
         },
-        [isConnected, params.onError, checkUserPermission, checkWalletConnected],
+        [
+            isConnected,
+            params.onError,
+            checkUserPermission,
+            checkWalletConnected,
+        ],
     );
 
     return { check };

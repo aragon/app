@@ -15,15 +15,17 @@ export interface IXmaquinaActionImageProps {
     isHovered?: boolean;
 }
 
-export const XmaquinaActionImage: React.FC<IXmaquinaActionImageProps> = (props) => {
+export const XmaquinaActionImage: React.FC<IXmaquinaActionImageProps> = (
+    props,
+) => {
     const { icon, alt } = props;
 
     return (
         <Image
-            src={icon}
             alt={alt}
-            sizes="(min-width: 768px) 96px, 72px"
             className="relative z-10 size-20 shrink-0 transition-[filter] duration-500 group-hover:brightness-0 md:size-24"
+            sizes="(min-width: 768px) 96px, 72px"
+            src={icon}
         />
     );
 };

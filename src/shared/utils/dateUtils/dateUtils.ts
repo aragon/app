@@ -29,13 +29,18 @@ export interface IValidateFixedTimeParams {
 
 class DateUtils {
     secondsToDuration = (seconds: number) => {
-        const duration = Duration.fromObject({ seconds }).shiftTo('days', 'hours', 'minutes');
+        const duration = Duration.fromObject({ seconds }).shiftTo(
+            'days',
+            'hours',
+            'minutes',
+        );
         const { days, hours, minutes } = duration;
 
         return { days, hours, minutes };
     };
 
-    durationToSeconds = (duration: IDateDuration) => Duration.fromObject(duration).as('seconds');
+    durationToSeconds = (duration: IDateDuration) =>
+        Duration.fromObject(duration).as('seconds');
 
     parseFixedDate = ({ date, time }: IDateFixed): DateTime => {
         const parsedTime = DateTime.fromISO(time);
@@ -66,13 +71,20 @@ class DateUtils {
             return true;
         }
 
-        const valueObject = typeof value === 'number' ? { seconds: value } : value;
-        const isValid = Duration.fromObject(valueObject) >= Duration.fromObject(minDuration);
+        const valueObject =
+            typeof value === 'number' ? { seconds: value } : value;
+        const isValid =
+            Duration.fromObject(valueObject) >=
+            Duration.fromObject(minDuration);
 
         return isValid;
     };
 
-    validateFixedTime = ({ value, minTime, minDuration }: IValidateFixedTimeParams) => {
+    validateFixedTime = ({
+        value,
+        minTime,
+        minDuration,
+    }: IValidateFixedTimeParams) => {
         const { date, time } = value;
 
         const isDateValid = date.length > 0 && time.length > 0;
@@ -83,13 +95,16 @@ class DateUtils {
 
         const parsedValue = this.parseFixedDate(value);
         const isMinTimeValid = parsedValue >= minTime;
-        const isMinDurationValid = minDuration == null || parsedValue >= minTime.plus(minDuration);
+        const isMinDurationValid =
+            minDuration == null || parsedValue >= minTime.plus(minDuration);
 
         return isMinTimeValid && isMinDurationValid;
     };
 
     compareDuration = (first?: IDateDuration, second?: IDateDuration) =>
-        Duration.fromObject(first ?? {}).equals(Duration.fromObject(second ?? {}));
+        Duration.fromObject(first ?? {}).equals(
+            Duration.fromObject(second ?? {}),
+        );
 }
 
 export const dateUtils = new DateUtils();

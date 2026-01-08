@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 class TestLogger {
     private shouldSuppressErrors = false;
+    // biome-ignore lint/suspicious/noConsole: console allowed
     private originalConsoleError = console.error;
+    // biome-ignore lint/suspicious/noConsole: console allowed
     private originalConsoleWarn = console.warn;
 
     private testErrorLogger = jest.fn((...params) => {
@@ -10,7 +12,8 @@ class TestLogger {
                 // Suppress "fetchPriority" React error until fixed on stable version
                 // (See https://github.com/facebook/react/issues/27233)
                 return;
-            } else if (
+            }
+            if (
                 typeof params[0] === 'string' &&
                 params[0].includes('`DialogContent` requires a `DialogTitle`')
             ) {
@@ -24,7 +27,10 @@ class TestLogger {
 
     private testWarnLogger = jest.fn((...params) => {
         if (!this.shouldSuppressErrors) {
-            if (typeof params[0] === 'string' && params[0].includes('Missing `Description`')) {
+            if (
+                typeof params[0] === 'string' &&
+                params[0].includes('Missing `Description`')
+            ) {
                 // Suppress radix-ui error about title missing on Dialog component
                 return;
             }

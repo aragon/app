@@ -1,5 +1,15 @@
 'use client';
 
+import {
+    AlertInline,
+    addressUtils,
+    Button,
+    Dropdown,
+    IconType,
+    Switch,
+} from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import { useCallback, useRef, useState } from 'react';
 import type { IDaoPermission } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -8,14 +18,14 @@ import { addressUtils, AlertInline, Button, IconType, invariant, Switch } from '
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
-import { type IProposalAction } from '../../../api/governanceService';
+import type { IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
 import {
-    proposalActionsImportExportUtils,
     type IExportedAction,
+    proposalActionsImportExportUtils,
 } from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import {
@@ -26,7 +36,8 @@ import {
 import { actionComposerUtils } from '../actionComposerUtils';
 import { ActionItemId } from '../actionComposerUtils.api';
 
-export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
+export interface IActionComposerProps
+    extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
      * ID of the DAO.
      */
@@ -45,13 +56,35 @@ export interface IActionComposerProps extends Pick<IActionComposerInputProps, 'e
      */
     allowedActions?: IAllowedAction[];
     /**
+     * Whether there are actions to manage (for download/remove dropdown visibility).
+     */
+    hasActions?: boolean;
+    /**
+     * Callback triggered when the user downloads all actions.
+     */
+    onDownloadActions?: () => void;
+    /**
      * Granted permissions for DAO.
      */
     daoPermissions?: IDaoPermission[];
+    /**
+     * Callback called when all actions should be removed.
+     */
+    onRemoveAllActions?: () => void;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
-    const { daoId, onAddAction, excludeActionTypes, hideWalletConnect = false, allowedActions, daoPermissions } = props;
+    const {
+        daoId,
+        onAddAction,
+        excludeActionTypes,
+        hideWalletConnect = false,
+        allowedActions,
+        hasActions = false,
+        onDownloadActions,
+        daoPermissions,
+        onRemoveAllActions,
+    } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -59,22 +92,33 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { items, groups } = actionComposerUtils.getDaoActions({ dao, permissions: daoPermissions, t });
+    const { items, groups } = actionComposerUtils.getDaoActions({
+        dao,
+        permissions: daoPermissions,
+        t,
+    });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(allowedActions != null);
+    const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
+        allowedActions != null,
+    );
     const [uploadError, setUploadError] = useState<string | null>(null);
 
-    const [importedContractAbis, setImportedContractAbis] = useState<ISmartContractAbi[]>([]);
+    const [importedContractAbis, setImportedContractAbis] = useState<
+        ISmartContractAbi[]
+    >([]);
 
     const addImportedContractAbi = useCallback(
         (abi: ISmartContractAbi) =>
             setImportedContractAbis((current) => {
                 const alreadyExists = current.some((currentAbi) =>
-                    addressUtils.isAddressEqual(currentAbi.address, abi.address),
+                    addressUtils.isAddressEqual(
+                        currentAbi.address,
+                        abi.address,
+                    ),
                 );
 
                 return alreadyExists ? current : [abi, ...current];
@@ -102,7 +146,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
-        const parsedActions = actions.map((action) => ({ ...action, daoId, meta: undefined }));
+        const parsedActions = actions.map((action) => ({
+            ...action,
+            daoId,
+            meta: undefined,
+        }));
         onAddAction(parsedActions);
     };
 
@@ -131,7 +179,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onAddAction(parsedActions);
     };
 
-    const handleDirectFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDirectFileUpload = async (
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
         invariant(dao != null, 'DAO must be defined to import actions from file');
 
         const file = event.target.files?.[0];
@@ -142,8 +192,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         setUploadError(null);
 
         try {
-            const fileContent = await proposalActionsImportExportUtils.readFileAsText(file);
-            const result = proposalActionsImportExportUtils.validateAndParseActions(fileContent);
+            const fileContent =
+                await proposalActionsImportExportUtils.readFileAsText(file);
+            const result =
+                proposalActionsImportExportUtils.validateAndParseActions(
+                    fileContent,
+                );
 
             if (result.success && result.actions) {
                 const decodedActions = await proposalActionsImportExportUtils.decodeActions(
@@ -157,7 +211,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 setUploadError(t(result.errorKey));
             }
         } catch {
-            setUploadError(t('app.governance.createProposalForm.actionsImportExport.errors.invalidJSON'));
+            setUploadError(
+                t(
+                    'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
+                ),
+            );
         }
 
         event.target.value = '';
@@ -167,7 +225,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         fileUploadInputRef.current?.click();
     };
 
-    const handleItemSelected = (action: IActionComposerInputItem, inputValue: string) => {
+    const handleItemSelected = (
+        action: IActionComposerInputItem,
+        inputValue: string,
+    ) => {
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {
@@ -178,66 +239,143 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
-    const shouldRenderWalletConnect = !(hideWalletConnect || onlyShowAuthorizedActions);
+    const handleDownloadActions = () => {
+        if (!onDownloadActions) {
+            return;
+        }
+
+        onDownloadActions();
+    };
+
+    const handleRemoveAllActions = () => {
+        if (!onRemoveAllActions) {
+            return;
+        }
+
+        onRemoveAllActions();
+    };
+
+    const shouldRenderDropdown =
+        onDownloadActions != null && onRemoveAllActions != null;
+
+    const shouldRenderWalletConnect = !(
+        hideWalletConnect || onlyShowAuthorizedActions
+    );
 
     return (
         <>
-            <div className={classNames('flex flex-col gap-3', { hidden: displayActionComposer })}>
+            <div
+                className={classNames('flex flex-col gap-3', {
+                    hidden: displayActionComposer,
+                })}
+            >
                 <div className="flex items-center justify-between">
                     <div className="flex flex-row gap-3">
-                        <Button variant="primary" size="md" iconLeft={IconType.PLUS} onClick={handleAddAction}>
-                            {t('app.governance.actionComposer.addAction.default')}
+                        <Button
+                            iconLeft={IconType.PLUS}
+                            onClick={handleAddAction}
+                            size="md"
+                            variant="primary"
+                        >
+                            {t(
+                                'app.governance.actionComposer.addAction.default',
+                            )}
                         </Button>
                         {shouldRenderWalletConnect && (
                             <Button
-                                variant="secondary"
-                                size="md"
                                 iconRight={IconType.BLOCKCHAIN_WALLETCONNECT}
                                 onClick={displayWalletConnectDialog}
+                                size="md"
+                                variant="secondary"
                             >
-                                {t('app.governance.actionComposer.addAction.walletConnect')}
+                                {t(
+                                    'app.governance.actionComposer.addAction.walletConnect',
+                                )}
                             </Button>
                         )}
                         <Button
-                            variant={uploadError ? 'critical' : 'tertiary'}
-                            size="md"
                             iconLeft={IconType.WITHDRAW}
                             onClick={triggerFileUpload}
+                            size="md"
+                            variant={uploadError ? 'critical' : 'tertiary'}
                         >
-                            {t('app.governance.createProposalForm.actionsImportExport.importButton')}
+                            {t(
+                                'app.governance.createProposalForm.actionsImportExport.importButton',
+                            )}
                         </Button>
                         <input
+                            accept=".json"
+                            className="hidden"
+                            onChange={handleDirectFileUpload}
                             ref={fileUploadInputRef}
                             type="file"
-                            accept=".json"
-                            onChange={handleDirectFileUpload}
-                            className="hidden"
                         />
                     </div>
-                    {allowedActions && (
-                        // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
-                        <div>
-                            <Switch
-                                checked={onlyShowAuthorizedActions}
-                                onCheckedChanged={setOnlyShowAuthorizedActions}
-                                inlineLabel={t('app.governance.actionComposer.authorizedSwitchLabel')}
-                            />
-                        </div>
-                    )}
+                    <div className="flex flex-row items-center gap-3">
+                        {shouldRenderDropdown && hasActions && (
+                            <Dropdown.Container
+                                constrainContentWidth={false}
+                                customTrigger={
+                                    <Button
+                                        className="w-fit"
+                                        iconRight={IconType.DOTS_VERTICAL}
+                                        size="md"
+                                        variant="tertiary"
+                                    >
+                                        {t(
+                                            'app.governance.actionComposer.moreActions',
+                                        )}
+                                    </Button>
+                                }
+                                size="md"
+                            >
+                                <Dropdown.Item onClick={handleDownloadActions}>
+                                    {t(
+                                        'app.governance.actionComposer.downloadAllActions',
+                                    )}
+                                </Dropdown.Item>
+                                <Dropdown.Item onClick={handleRemoveAllActions}>
+                                    {t(
+                                        'app.governance.actionComposer.removeAllActions',
+                                    )}
+                                </Dropdown.Item>
+                            </Dropdown.Container>
+                        )}
+                        {allowedActions && (
+                            // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
+                            <div>
+                                <Switch
+                                    checked={onlyShowAuthorizedActions}
+                                    inlineLabel={t(
+                                        'app.governance.actionComposer.authorizedSwitchLabel',
+                                    )}
+                                    onCheckedChanged={
+                                        setOnlyShowAuthorizedActions
+                                    }
+                                />
+                            </div>
+                        )}
+                    </div>
                 </div>
-                {uploadError && <AlertInline variant="critical" message={uploadError} />}
+                {uploadError && (
+                    <AlertInline message={uploadError} variant="critical" />
+                )}
             </div>
             <ActionComposerInput
-                wrapperClassName={classNames('transition-none', { '!sr-only': !displayActionComposer })}
+                allowedActions={
+                    onlyShowAuthorizedActions ? allowedActions : undefined
+                }
+                daoId={daoId}
+                excludeActionTypes={excludeActionTypes}
+                importedContractAbis={importedContractAbis}
+                nativeGroups={groups}
+                nativeItems={items}
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
-                nativeItems={items}
-                nativeGroups={groups}
-                allowedActions={onlyShowAuthorizedActions ? allowedActions : undefined}
-                daoId={daoId}
-                importedContractAbis={importedContractAbis}
-                excludeActionTypes={excludeActionTypes}
+                wrapperClassName={classNames('transition-none', {
+                    '!sr-only': !displayActionComposer,
+                })}
             />
         </>
     );

@@ -2,6 +2,11 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { GaugeRegistrarSelectGaugeDialog } from '../dialogs/gaugeRegistrarSelectGaugeDialog';
 import { GaugeRegistrarDialogId } from './gaugeRegistrarDialogId';
 
-export const gaugeRegistrarDialogsDefinitions: Record<GaugeRegistrarDialogId, IDialogComponentDefinitions> = {
-    [GaugeRegistrarDialogId.SELECT_GAUGE]: { Component: GaugeRegistrarSelectGaugeDialog },
+export const gaugeRegistrarDialogsDefinitions: Record<
+    GaugeRegistrarDialogId,
+    IDialogComponentDefinitions
+> = {
+    [GaugeRegistrarDialogId.SELECT_GAUGE]: {
+        Component: GaugeRegistrarSelectGaugeDialog,
+    },
 };

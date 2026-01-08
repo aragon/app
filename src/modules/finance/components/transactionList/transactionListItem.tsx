@@ -1,11 +1,11 @@
 'use client';
 
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     TransactionType as DataListTransactionType,
     TransactionDataListItem,
     TransactionStatus,
 } from '@aragon/gov-ui-kit';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { ITransaction, TransactionSide } from '../../api/financeService';
 
 export interface ITransactionListItemProps {
@@ -23,12 +23,17 @@ export interface ITransactionListItemProps {
     onTransactionClick?: (transaction: ITransaction) => void;
 }
 
-const transactionSideToDataListType: Record<TransactionSide, DataListTransactionType> = {
+const transactionSideToDataListType: Record<
+    TransactionSide,
+    DataListTransactionType
+> = {
     withdraw: DataListTransactionType.WITHDRAW,
     deposit: DataListTransactionType.DEPOSIT,
 };
 
-export const TransactionListItem: React.FC<ITransactionListItemProps> = (props) => {
+export const TransactionListItem: React.FC<ITransactionListItemProps> = (
+    props,
+) => {
     const { transaction, index, onTransactionClick } = props;
 
     const handleClick = onTransactionClick
@@ -42,17 +47,17 @@ export const TransactionListItem: React.FC<ITransactionListItemProps> = (props) 
         <TransactionDataListItem.Structure
             // Multiple transactions can have the same transaction hash
             // (e.g. one deposit and one withdraw on the same proposal)
-            key={`${transaction.transactionHash}-${index.toString()}`}
             chainId={networkDefinitions[transaction.network].id}
-            hash={transaction.transactionHash}
-            target={onTransactionClick ? undefined : '_blank'}
             date={transaction.blockTimestamp * 1000}
-            type={transactionSideToDataListType[transaction.side]}
-            status={TransactionStatus.SUCCESS}
-            tokenSymbol={transaction.token.symbol}
-            tokenAmount={transaction.value}
+            hash={transaction.transactionHash}
             hideValue={true}
+            key={`${transaction.transactionHash}-${index.toString()}`}
             onClick={handleClick}
+            status={TransactionStatus.SUCCESS}
+            target={onTransactionClick ? undefined : '_blank'}
+            tokenAmount={transaction.value}
+            tokenSymbol={transaction.token.symbol}
+            type={transactionSideToDataListType[transaction.side]}
         />
     );
 };

@@ -13,16 +13,18 @@ export interface ICreateProposalFormSettingsProps {
     pluginAddress: string;
 }
 
-export const CreateProposalFormSettings: React.FC<ICreateProposalFormSettingsProps> = (props) => {
+export const CreateProposalFormSettings: React.FC<
+    ICreateProposalFormSettingsProps
+> = (props) => {
     const { daoId, pluginAddress } = props;
 
     const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
 
     return (
         <PluginSingleComponent
-            slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
-            pluginId={daoPlugin.id}
             plugin={daoPlugin.meta}
+            pluginId={daoPlugin.id}
+            slotId={GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM}
         />
     );
 };

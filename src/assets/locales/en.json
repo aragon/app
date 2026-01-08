@@ -12,18 +12,6 @@
           "title": "Execution will revert while gauge voting is active"
         },
         "gaugeRegistrarRegisterGaugeActionCreateForm": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
-          },
           "description": {
             "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
             "label": "Description"
@@ -82,6 +70,107 @@
             "description": "We couldn't find this gauge.",
             "title": "Not found"
           }
+        }
+      },
+      "gaugeVoter": {
+        "composer": {
+          "activateGaugeActionName": "Activate gauge",
+          "contractName": "Gauge Voter",
+          "createGaugeActionName": "Create gauge",
+          "deactivateGaugeActionName": "Deactivate gauge",
+          "updateGaugeMetadataActionName": "Update gauge metadata"
+        },
+        "gaugeVoterActivateGaugeActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select an inactive gauge to activate.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterActivateGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        },
+        "gaugeVoterCreateGaugeActionCreateForm": {
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "gaugeAddress": {
+            "helpText": "The address of the gauge contract to create.",
+            "label": "Gauge address",
+            "placeholder": "ENS or 0x…"
+          },
+          "name": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Name"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          }
+        },
+        "gaugeVoterCreateGaugeActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "gaugeAddressTerm": "Address",
+          "nameTerm": "Name",
+          "resourcesTerm": "Links"
+        },
+        "gaugeVoterDeactivateGaugeActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select an active gauge to deactivate.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterDeactivateGaugeActionDetails": {
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          }
+        },
+        "gaugeVoterSelectGaugeDialog": {
+          "cancel": "Cancel",
+          "description": "Select a gauge from the list.",
+          "emptyState": "No gauges available",
+          "entityLabel": "Gauge",
+          "submit": "Select gauge",
+          "title": "Select gauge"
+        },
+        "gaugeVoterUpdateGaugeMetadataActionCreate": {
+          "emptyCard": {
+            "action": "Select gauge",
+            "description": "Select a gauge to update its metadata.",
+            "heading": "Select gauge"
+          }
+        },
+        "gaugeVoterUpdateGaugeMetadataActionCreateForm": {
+          "description": {
+            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "label": "Description"
+          },
+          "name": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Name"
+          },
+          "resources": {
+            "helpText": "Links to the gauge website, social media profiles, or further external resources.",
+            "label": "Links"
+          }
+        },
+        "gaugeVoterUpdateGaugeMetadataActionDetails": {
+          "avatarTerm": "Logo",
+          "descriptionTerm": "Description",
+          "gaugeAddressTerm": "Address",
+          "nameTerm": "Name",
+          "notFound": {
+            "description": "We couldn't find this gauge.",
+            "title": "Not found"
+          },
+          "resourcesTerm": "Links"
         }
       }
     },
@@ -509,18 +598,6 @@
       },
       "createDaoForm": {
         "metadata": {
-          "avatar": {
-            "error": {
-              "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
-              "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
-              "square-only": "The image must be square. Upload a square image.",
-              "too-many-files": "Only one file can be uploaded at a time.",
-              "unknown-file-error": "Unable to upload image",
-              "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
-            },
-            "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
-            "label": "Logo"
-          },
           "description": {
             "helpText": "This is shown on the DAO's dashboard and the Explore page so visitors can easily find you.",
             "label": "Description"
@@ -1163,10 +1240,12 @@
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
         },
+        "downloadAllActions": "Download all actions",
         "input": {
           "placeholder": "Search by action, contract name, or address",
           "selectItem": "Add action"
         },
+        "moreActions": "More",
         "nativeGroup": {
           "DAO": "DAO"
         },
@@ -1175,7 +1254,8 @@
           "MetadataUpdate": "Set metadata",
           "Transfer": "Transfer"
         },
-        "rawCalldataFunction": "Unknown"
+        "rawCalldataFunction": "Unknown",
+        "removeAllActions": "Remove all actions"
       },
       "createProposalForm": {
         "actions": {
@@ -2818,6 +2898,18 @@
         "menu": {
           "select": "Select"
         }
+      },
+      "avatarInput": {
+        "error": {
+          "file-invalid-type": "The selected file type is not supported. Upload a valid image file (e.g., PNG, JPG, or GIF).",
+          "file-too-large": "The file size exceeds the maximum allowed limit of 1 MB.",
+          "square-only": "The image must be square. Upload a square image.",
+          "too-many-files": "Only one file can be uploaded at a time.",
+          "unknown-file-error": "Unable to upload image",
+          "wrong-dimension": "The image dimensions exceed the maximum allowed size of 1024x1024 pixels."
+        },
+        "helpText": "JPG, PNG, or GIF of no more than 1 MB and less than 1024x1024px.",
+        "label": "Logo"
       },
       "confirmWizardExit": {
         "message": "If you leave this process, you'll lose all the information you've entered so far."

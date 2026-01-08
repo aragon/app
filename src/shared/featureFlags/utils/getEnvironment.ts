@@ -1,7 +1,15 @@
-import { FEATURE_FLAG_ENVIRONMENTS, type FeatureFlagEnvironment } from '../featureFlags.api';
+import {
+    FEATURE_FLAG_ENVIRONMENTS,
+    type FeatureFlagEnvironment,
+} from '../featureFlags.api';
 
-const resolveEnvironment = (rawEnv: string | undefined): FeatureFlagEnvironment => {
-    if (rawEnv != null && FEATURE_FLAG_ENVIRONMENTS.includes(rawEnv as FeatureFlagEnvironment)) {
+const resolveEnvironment = (
+    rawEnv: string | undefined,
+): FeatureFlagEnvironment => {
+    if (
+        rawEnv != null &&
+        FEATURE_FLAG_ENVIRONMENTS.includes(rawEnv as FeatureFlagEnvironment)
+    ) {
         return rawEnv as FeatureFlagEnvironment;
     }
 
@@ -10,4 +18,5 @@ const resolveEnvironment = (rawEnv: string | undefined): FeatureFlagEnvironment 
     return 'production';
 };
 
-export const getEnvironment = (): FeatureFlagEnvironment => resolveEnvironment(process.env.NEXT_PUBLIC_ENV);
+export const getEnvironment = (): FeatureFlagEnvironment =>
+    resolveEnvironment(process.env.NEXT_PUBLIC_ENV);

@@ -1,1 +1,4 @@
-export { useDaoPluginFilterUrlParam, type IUseDaoPluginFilterUrlParamParams } from './useDaoPluginFilterUrlParam';
+export {
+    type IUseDaoPluginFilterUrlParamParams,
+    useDaoPluginFilterUrlParam,
+} from './useDaoPluginFilterUrlParam';

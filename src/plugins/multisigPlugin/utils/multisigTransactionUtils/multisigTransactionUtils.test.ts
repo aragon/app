@@ -1,14 +1,24 @@
-import { generateSetupBodyFormData, generateSetupBodyFormNew } from '@/modules/createDao/testUtils';
-import { generateCreateProposalEndDateFormData, generateProposalCreate } from '@/modules/governance/testUtils';
+import * as Viem from 'viem';
+import {
+    generateSetupBodyFormData,
+    generateSetupBodyFormNew,
+} from '@/modules/createDao/testUtils';
+import {
+    generateCreateProposalEndDateFormData,
+    generateProposalCreate,
+} from '@/modules/governance/testUtils';
 import { createProposalUtils } from '@/modules/governance/utils/createProposalUtils';
 import { multisigPlugin } from '@/plugins/multisigPlugin/constants/multisigPlugin';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import * as Viem from 'viem';
 import { generateMultisigPluginSettings } from '../../testUtils';
-import { multisigPluginAbi, multisigPluginPrepareUpdateAbi, multisigPluginSetupAbi } from './multisigPluginAbi';
+import {
+    multisigPluginAbi,
+    multisigPluginPrepareUpdateAbi,
+    multisigPluginSetupAbi,
+} from './multisigPluginAbi';
 import { multisigTransactionUtils } from './multisigTransactionUtils';
 
 describe('multisigTransaction utils', () => {
@@ -16,8 +26,14 @@ describe('multisigTransaction utils', () => {
     const encodeAbiParametersSpy = jest.spyOn(Viem, 'encodeAbiParameters');
     const parseStartDateSpy = jest.spyOn(createProposalUtils, 'parseStartDate');
     const parseEndDateSpy = jest.spyOn(createProposalUtils, 'parseEndDate');
-    const createDefaultEndDateSpy = jest.spyOn(createProposalUtils, 'createDefaultEndDate');
-    const getPluginTargetConfigSpy = jest.spyOn(pluginTransactionUtils, 'getPluginTargetConfig');
+    const createDefaultEndDateSpy = jest.spyOn(
+        createProposalUtils,
+        'createDefaultEndDate',
+    );
+    const getPluginTargetConfigSpy = jest.spyOn(
+        pluginTransactionUtils,
+        'getPluginTargetConfig',
+    );
 
     beforeEach(() => {
         encodeFunctionDataSpy.mockReturnValue('0x');
@@ -35,14 +51,24 @@ describe('multisigTransaction utils', () => {
     describe('buildCreateProposalData', () => {
         it('correctly encodes the create-proposal data from the given parameters', () => {
             const startDate = 0;
-            const endDate = 1728660603;
-            const proposal = { ...generateProposalCreate(), ...generateCreateProposalEndDateFormData() };
-            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
+            const endDate = 1_728_660_603;
+            const proposal = {
+                ...generateProposalCreate(),
+                ...generateCreateProposalEndDateFormData(),
+            };
+            const actions: ITransactionRequest[] = [
+                { to: '0x123', data: '0x0', value: BigInt(0) },
+            ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.MULTISIG,
                 settings: generateMultisigPluginSettings(),
             });
-            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+            const params = {
+                metadata: '0x' as const,
+                actions,
+                proposal,
+                plugin,
+            };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(endDate);
             createDefaultEndDateSpy.mockReturnValue(-1);
@@ -55,7 +81,15 @@ describe('multisigTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: multisigPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), false, false, startDate, endDate],
+                args: [
+                    params.metadata,
+                    params.actions,
+                    BigInt(0),
+                    false,
+                    false,
+                    startDate,
+                    endDate,
+                ],
             });
         });
 
@@ -63,12 +97,19 @@ describe('multisigTransaction utils', () => {
             const startDate = 0;
             const endDate = 0;
             const proposal = generateProposalCreate();
-            const actions: ITransactionRequest[] = [{ to: '0x123', data: '0x0', value: BigInt(0) }];
+            const actions: ITransactionRequest[] = [
+                { to: '0x123', data: '0x0', value: BigInt(0) },
+            ];
             const plugin = generateDaoPlugin({
                 interfaceType: PluginInterfaceType.MULTISIG,
                 settings: generateMultisigPluginSettings(),
             });
-            const params = { metadata: '0x' as const, actions: actions, proposal, plugin };
+            const params = {
+                metadata: '0x' as const,
+                actions,
+                proposal,
+                plugin,
+            };
             parseStartDateSpy.mockReturnValue(startDate);
             parseEndDateSpy.mockReturnValue(-1);
             createDefaultEndDateSpy.mockReturnValue(endDate);
@@ -81,7 +122,15 @@ describe('multisigTransaction utils', () => {
             expect(encodeFunctionDataSpy).toHaveBeenCalledWith({
                 abi: multisigPluginAbi,
                 functionName: 'createProposal',
-                args: [params.metadata, params.actions, BigInt(0), false, false, startDate, endDate],
+                args: [
+                    params.metadata,
+                    params.actions,
+                    BigInt(0),
+                    false,
+                    false,
+                    startDate,
+                    endDate,
+                ],
             });
         });
     });
@@ -100,27 +149,40 @@ describe('multisigTransaction utils', () => {
     });
 
     describe('buildPrepareInstallData', () => {
-        const buildPrepareInstallationDataSpy = jest.spyOn(pluginTransactionUtils, 'buildPrepareInstallationData');
+        const buildPrepareInstallationDataSpy = jest.spyOn(
+            pluginTransactionUtils,
+            'buildPrepareInstallationData',
+        );
 
-        type BuildDataParams = Parameters<typeof multisigTransactionUtils.buildPrepareInstallData>;
+        type BuildDataParams = Parameters<
+            typeof multisigTransactionUtils.buildPrepareInstallData
+        >;
 
         it('encodes the plugin settings correctly using encodeAbiParameters', () => {
             const metadata = 'test-metadata';
             const members = [{ address: '0x1' }, { address: '0x2' }];
             const governance = { minApprovals: 3, onlyListed: true };
-            const body = generateSetupBodyFormNew({ membership: { members }, governance });
+            const body = generateSetupBodyFormNew({
+                membership: { members },
+                governance,
+            });
             const dao = generateDao();
 
-            const params = [{ metadata, body, dao }] as unknown as BuildDataParams;
+            const params = [
+                { metadata, body, dao },
+            ] as unknown as BuildDataParams;
             encodeAbiParametersSpy.mockReturnValue('0x');
             multisigTransactionUtils.buildPrepareInstallData(...params);
 
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginSetupAbi, [
-                members.map((member) => member.address),
-                body.governance,
-                undefined,
-                metadata,
-            ]);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                multisigPluginSetupAbi,
+                [
+                    members.map((member) => member.address),
+                    body.governance,
+                    undefined,
+                    metadata,
+                ],
+            );
         });
 
         it('builds prepare installation data correctly using buildPrepareInstallationData', () => {
@@ -132,11 +194,15 @@ describe('multisigTransaction utils', () => {
             encodeAbiParametersSpy.mockReturnValue(pluginSettingsData);
             buildPrepareInstallationDataSpy.mockReturnValue(transactionData);
 
-            const params = [{ metadata: '', body, dao }] as unknown as Parameters<
+            const params = [
+                { metadata: '', body, dao },
+            ] as unknown as Parameters<
                 typeof multisigTransactionUtils.buildPrepareInstallData
             >;
 
-            const result = multisigTransactionUtils.buildPrepareInstallData(...params);
+            const result = multisigTransactionUtils.buildPrepareInstallData(
+                ...params,
+            );
 
             expect(buildPrepareInstallationDataSpy).toHaveBeenCalledWith(
                 multisigPlugin.repositoryAddresses[dao.network],
@@ -152,7 +218,9 @@ describe('multisigTransaction utils', () => {
             const stageVotingPeriod = { days: 1, hours: 4, minutes: 0 };
             const dao = generateDao();
             const body = generateSetupBodyFormData();
-            const params = [{ metadata: '', dao, body, stageVotingPeriod }] as unknown as BuildDataParams;
+            const params = [
+                { metadata: '', dao, body, stageVotingPeriod },
+            ] as unknown as BuildDataParams;
             multisigTransactionUtils.buildPrepareInstallData(...params);
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
         });
@@ -161,20 +229,32 @@ describe('multisigTransaction utils', () => {
     describe('buildPrepareUpdateData', () => {
         it('encodes the correct data for sub plugins', () => {
             const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
-            const plugin = generateDaoPlugin({ isSubPlugin: true, metadataIpfs: 'ipfs://test' });
+            const plugin = generateDaoPlugin({
+                isSubPlugin: true,
+                metadataIpfs: 'ipfs://test',
+            });
             const expectedParams = [undefined, '0x697066733a2f2f74657374'];
             multisigTransactionUtils.buildPrepareUpdateData({ dao, plugin });
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, true);
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginPrepareUpdateAbi, expectedParams);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                multisigPluginPrepareUpdateAbi,
+                expectedParams,
+            );
         });
 
         it('encodes the correct data for legacy plugins', () => {
             const dao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
-            const plugin = generateDaoPlugin({ isSubPlugin: false, metadataIpfs: undefined });
+            const plugin = generateDaoPlugin({
+                isSubPlugin: false,
+                metadataIpfs: undefined,
+            });
             const expectedParams = [undefined, Viem.zeroHash];
             multisigTransactionUtils.buildPrepareUpdateData({ dao, plugin });
             expect(getPluginTargetConfigSpy).toHaveBeenCalledWith(dao, false);
-            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(multisigPluginPrepareUpdateAbi, expectedParams);
+            expect(encodeAbiParametersSpy).toHaveBeenCalledWith(
+                multisigPluginPrepareUpdateAbi,
+                expectedParams,
+            );
         });
     });
 });

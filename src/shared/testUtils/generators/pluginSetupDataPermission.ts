@@ -1,5 +1,5 @@
-import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUtils';
 import type { Hex } from 'viem';
+import type { IPluginSetupPermission } from '@/shared/utils/pluginTransactionUtils';
 
 export const generatePluginSetupDataPermission = (
     pluginSetupDataPermission?: Partial<IPluginSetupPermission>,

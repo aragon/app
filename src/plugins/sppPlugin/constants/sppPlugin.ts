@@ -8,19 +8,24 @@ export const sppPlugin: IPluginInfo = {
     installVersion: {
         release: 1,
         build: 1,
-        releaseNotes: 'https://github.com/aragon/staged-proposal-processor-plugin/releases/tag/v1.1.0',
+        releaseNotes:
+            'https://github.com/aragon/staged-proposal-processor-plugin/releases/tag/v1.1.0',
         description: '',
     },
     repositoryAddresses: {
-        [Network.ARBITRUM_MAINNET]: '0xe3B00403Cd8cBee7af01961c25220289a4Cc5753',
+        [Network.ARBITRUM_MAINNET]:
+            '0xe3B00403Cd8cBee7af01961c25220289a4Cc5753',
         [Network.BASE_MAINNET]: '0x3C13098D4e2FE9aCb2fCEb3EE4fBBe33405eD39D',
-        [Network.ETHEREUM_MAINNET]: '0x421FF506E4DC17356965565688D62b55Bf2bf0a5',
-        [Network.ETHEREUM_SEPOLIA]: '0xda62D32C14E8CA78958d6fdC0142A575b0cd6Ad4',
+        [Network.ETHEREUM_MAINNET]:
+            '0x421FF506E4DC17356965565688D62b55Bf2bf0a5',
+        [Network.ETHEREUM_SEPOLIA]:
+            '0xda62D32C14E8CA78958d6fdC0142A575b0cd6Ad4',
         [Network.POLYGON_MAINNET]: '0xc36fE143bd829a80df458Bd9ab52299Df985DC6F',
         [Network.ZKSYNC_MAINNET]: '0xE294451cB4B7aA4a8136dA6474b8b4C6C5a69973',
         [Network.ZKSYNC_SEPOLIA]: '0xf5aF03C238F1f6803F783125e33C763057C7781D',
         [Network.PEAQ_MAINNET]: '0x2784e9500f8f60C1267e819f216682a88A37d56D',
-        [Network.OPTIMISM_MAINNET]: '0x766aC7e501693e6B0B3FD0806dAf333bD2B01544',
+        [Network.OPTIMISM_MAINNET]:
+            '0x766aC7e501693e6B0B3FD0806dAf333bD2B01544',
         [Network.CHILIZ_MAINNET]: '0x48CEBbc661FafCFC274Ce2034a04d459ba774E3D',
         [Network.AVAX_MAINNET]: '0xBC029618BcEEfde830F845F7f03d79fc132cDD60',
         [Network.KATANA_MAINNET]: '0x90fA4993849f2b0063BEc161e28f1183E6a3d054',

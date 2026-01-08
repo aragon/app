@@ -1,15 +1,24 @@
+import { render, screen } from '@testing-library/react';
 import * as financeService from '@/modules/finance/api/financeService';
 import * as daoService from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
-import { generateDao, generateReactQueryResultSuccess, generateSubDao } from '@/shared/testUtils';
-import { render, screen } from '@testing-library/react';
-import { DaoTransactionsPageClient, type IDaoTransactionsPageClientProps } from './daoTransactionsPageClient';
+import {
+    generateDao,
+    generateReactQueryResultSuccess,
+    generateSubDao,
+} from '@/shared/testUtils';
+import {
+    DaoTransactionsPageClient,
+    type IDaoTransactionsPageClientProps,
+} from './daoTransactionsPageClient';
 
 jest.mock('@/modules/finance/components/transactionList', () => ({
     TransactionList: {
-        Container: jest.fn(() => <div data-testid="transaction-list-container" />),
+        Container: jest.fn(() => (
+            <div data-testid="transaction-list-container" />
+        )),
         Default: jest.fn(() => null),
     },
     transactionListFilterParam: 'subdao',
@@ -23,14 +32,23 @@ jest.mock('@/modules/finance/components/daoInfoAside', () => ({
     DaoInfoAside: jest.fn(() => <div data-testid="transaction-subdao-info" />),
 }));
 
-jest.mock('@/modules/capitalFlow/components/dispatchPanel/dispatchPanel', () => ({
-    DispatchPanel: jest.fn(() => null),
-}));
+jest.mock(
+    '@/modules/capitalFlow/components/dispatchPanel/dispatchPanel',
+    () => ({
+        DispatchPanel: jest.fn(() => null),
+    }),
+);
 
 describe('<DaoTransactionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoFilterUrlParamSpy = jest.spyOn(useDaoFilterUrlParam, 'useDaoFilterUrlParam');
-    const useTransactionListSpy = jest.spyOn(financeService, 'useTransactionList');
+    const useDaoFilterUrlParamSpy = jest.spyOn(
+        useDaoFilterUrlParam,
+        'useDaoFilterUrlParam',
+    );
+    const useTransactionListSpy = jest.spyOn(
+        financeService,
+        'useTransactionList',
+    );
     const useAssetListSpy = jest.spyOn(financeService, 'useAssetList');
 
     const featureFlagSnapshot: FeatureFlagSnapshot[] = [
@@ -49,7 +67,9 @@ describe('<DaoTransactionsPageClient /> component', () => {
     ];
 
     beforeEach(() => {
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: generateDao() }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         useDaoFilterUrlParamSpy.mockReturnValue({
             activeOption: {
                 id: 'all',
@@ -106,7 +126,9 @@ describe('<DaoTransactionsPageClient /> component', () => {
         jest.clearAllMocks();
     });
 
-    const createTestComponent = (props?: Partial<IDaoTransactionsPageClientProps>) => {
+    const createTestComponent = (
+        props?: Partial<IDaoTransactionsPageClientProps>,
+    ) => {
         const completeProps: IDaoTransactionsPageClientProps = {
             id: 'test-id',
             initialParams: { queryParams: {} },
@@ -123,22 +145,32 @@ describe('<DaoTransactionsPageClient /> component', () => {
     it('fetches the DAO with the provided id prop', () => {
         const id = 'new-test-id';
         render(createTestComponent({ id }));
-        expect(useDaoSpy).toHaveBeenCalledWith(expect.objectContaining({ urlParams: { id } }));
+        expect(useDaoSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ urlParams: { id } }),
+        );
     });
 
     it('renders the page title, Transactions list tabs and stats for all transactions', () => {
         render(createTestComponent());
 
-        expect(screen.getByText(/daoTransactionsPage.main.title/)).toBeInTheDocument();
-        expect(screen.getByTestId('transaction-list-container')).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoTransactionsPage.main.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId('transaction-list-container'),
+        ).toBeInTheDocument();
         expect(screen.getByTestId('all-assets-stats')).toBeInTheDocument();
-        expect(screen.queryByTestId('transaction-subdao-info')).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('transaction-subdao-info'),
+        ).not.toBeInTheDocument();
     });
 
     it('renders SubDAO info when a specific SubDAO is selected', () => {
         const subDao = generateSubDao({ address: '0xplug1' });
         const dao = generateDao({ subDaos: [subDao] });
-        useDaoSpy.mockReturnValue(generateReactQueryResultSuccess({ data: dao }));
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
 
         const option = {
             id: subDao.id,
@@ -164,8 +196,14 @@ describe('<DaoTransactionsPageClient /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByTestId('transaction-list-container')).toBeInTheDocument();
-        expect(screen.getByTestId('transaction-subdao-info')).toBeInTheDocument();
-        expect(screen.queryByTestId('all-assets-stats')).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId('transaction-list-container'),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId('transaction-subdao-info'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('all-assets-stats'),
+        ).not.toBeInTheDocument();
     });
 });

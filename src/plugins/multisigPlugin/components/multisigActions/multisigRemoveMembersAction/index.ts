@@ -1,7 +1,9 @@
 import dynamic from 'next/dynamic';
 
 export const MultisigRemoveMembersAction = dynamic(() =>
-    import('./multisigRemoveMembersAction').then((mod) => mod.MultisigRemoveMembersAction),
+    import('./multisigRemoveMembersAction').then(
+        (mod) => mod.MultisigRemoveMembersAction,
+    ),
 );
 
 export type { IMultisigRemoveMembersActionProps } from './multisigRemoveMembersAction';

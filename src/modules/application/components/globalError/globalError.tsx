@@ -1,8 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { ErrorFeedback } from '@/shared/components/errorFeedback';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { useEffect } from 'react';
 
 export interface IGlobalErrorProps {
     /**

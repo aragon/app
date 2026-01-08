@@ -1,6 +1,6 @@
+import type { IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata } from '@aragon/gov-ui-kit';
 import type { ProposalActionType } from '@/modules/governance/api/governanceService';
 import type { IResource } from '@/shared/api/daoService';
-import { type IProposalActionUpdateMetadata as IGukProposalActionUpdateMetadata } from '@aragon/gov-ui-kit';
 
 export interface IProposalActionUpdatePluginMetadataObject {
     /**
@@ -22,7 +22,10 @@ export interface IProposalActionUpdatePluginMetadataObject {
 }
 
 export interface IProposalActionUpdatePluginMetadata
-    extends Omit<IGukProposalActionUpdateMetadata, 'type' | 'proposedMetadata' | 'existingMetadata'> {
+    extends Omit<
+        IGukProposalActionUpdateMetadata,
+        'type' | 'proposedMetadata' | 'existingMetadata'
+    > {
     /**
      * The type of the proposal action.
      */

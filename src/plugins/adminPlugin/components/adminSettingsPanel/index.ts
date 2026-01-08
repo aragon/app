@@ -1,1 +1,4 @@
-export { AdminSettingsPanel, type IAdminSettingsPanelProps } from './adminSettingsPanel';
+export {
+    AdminSettingsPanel,
+    type IAdminSettingsPanelProps,
+} from './adminSettingsPanel';

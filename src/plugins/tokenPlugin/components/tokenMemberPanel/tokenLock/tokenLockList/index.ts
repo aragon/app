@@ -1,1 +1,1 @@
-export { TokenLockList, type ITokenLockListProps } from './tokenLockList';
+export { type ITokenLockListProps, TokenLockList } from './tokenLockList';

@@ -1,9 +1,12 @@
+import { QueryClient } from '@tanstack/react-query';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import { type PluginComponent, pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { QueryClient } from '@tanstack/react-query';
+import {
+    type PluginComponent,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import { NotFoundDao } from '../../components/notFound/notFoundDao';
 import { ApplicationSlotId } from '../../constants/moduleSlots';
 
@@ -25,13 +28,26 @@ export interface IDaoPluginPageProps {
 // slot. During local development, an update to the server-side slot component or any of its sub-components will reset
 // the plugin registry causing the page to fall back to the "not found" state. Adding a short delay and retrying allows
 // the module system to properly reload the component.
-const getPagePluginComponent = async (dao: IDao, segments: string[], retry?: boolean) => {
-    const slotId = pluginRegistryUtils.getPageSlotId(ApplicationSlotId.APPLICATION_PLUGIN_PAGE, segments);
-    const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>((current, { interfaceType }) => {
-        const pluginComponent = pluginRegistryUtils.getSlotComponent({ slotId, pluginId: interfaceType });
+const getPagePluginComponent = async (
+    dao: IDao,
+    segments: string[],
+    retry?: boolean,
+) => {
+    const slotId = pluginRegistryUtils.getPageSlotId(
+        ApplicationSlotId.APPLICATION_PLUGIN_PAGE,
+        segments,
+    );
+    const [Component] = dao.plugins.reduce<Array<PluginComponent | undefined>>(
+        (current, { interfaceType }) => {
+            const pluginComponent = pluginRegistryUtils.getSlotComponent({
+                slotId,
+                pluginId: interfaceType,
+            });
 
-        return current.concat(pluginComponent ?? []);
-    }, []);
+            return current.concat(pluginComponent ?? []);
+        },
+        [],
+    );
 
     if (Component == null && retry) {
         await new Promise((resolve) => setTimeout(resolve, 100));
@@ -53,12 +69,18 @@ export const DaoPluginPage: React.FC<IDaoPluginPageProps> = async (props) => {
     const queryClient = new QueryClient();
 
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
-    const dao = await queryClient.fetchQuery(daoOptions({ urlParams: { id: daoId } }));
+    const dao = await queryClient.fetchQuery(
+        daoOptions({ urlParams: { id: daoId } }),
+    );
 
-    const Component = await getPagePluginComponent(dao, segments, process.env.NEXT_PUBLIC_ENV === 'local');
+    const Component = await getPagePluginComponent(
+        dao,
+        segments,
+        process.env.NEXT_PUBLIC_ENV === 'local',
+    );
 
     if (Component != null) {
-        return <Component params={params} dao={dao} />;
+        return <Component dao={dao} params={params} />;
     }
 
     return <NotFoundDao params={params} />;

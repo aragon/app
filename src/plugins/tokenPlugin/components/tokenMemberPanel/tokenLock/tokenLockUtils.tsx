@@ -1,7 +1,10 @@
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
 import type { IMemberLock } from '../../../api/tokenService';
-import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../../types';
+import type {
+    ITokenPluginSettings,
+    ITokenPluginSettingsEscrowSettings,
+} from '../../../types';
 
 /**
  * Status of a voting escrow lock.
@@ -30,7 +33,10 @@ class TokenLockUtils {
             return 'active';
         }
 
-        const unlockAt = queuedAt != null && minCooldown != null ? queuedAt + minCooldown : null;
+        const unlockAt =
+            queuedAt != null && minCooldown != null
+                ? queuedAt + minCooldown
+                : null;
 
         if (unlockAt == null) {
             return 'cooldown';
@@ -45,12 +51,21 @@ class TokenLockUtils {
      * @param settings - Token plugin settings containing voting escrow parameters.
      * @returns Formatted voting power as a string.
      */
-    getLockVotingPower = (lock: IMemberLock, settings: ITokenPluginSettings) => {
+    getLockVotingPower = (
+        lock: IMemberLock,
+        settings: ITokenPluginSettings,
+    ) => {
         const { amount, epochStartAt } = lock;
         const status = this.getLockStatus(lock);
 
-        const activeTime = Math.round(DateTime.now().toSeconds() - epochStartAt);
-        const votingPower = this.calculateVotingPower(amount, activeTime, settings);
+        const activeTime = Math.round(
+            DateTime.now().toSeconds() - epochStartAt,
+        );
+        const votingPower = this.calculateVotingPower(
+            amount,
+            activeTime,
+            settings,
+        );
 
         return status === 'active' ? votingPower : '0';
     };
@@ -63,7 +78,11 @@ class TokenLockUtils {
      * @param settings - Token plugin settings containing slope, bias, and maxTime.
      * @returns Formatted voting power as a string.
      */
-    calculateVotingPower = (amount: string, time: number, settings: ITokenPluginSettings) => {
+    calculateVotingPower = (
+        amount: string,
+        time: number,
+        settings: ITokenPluginSettings,
+    ) => {
         const { token, votingEscrow } = settings;
         const { slope, maxTime, bias } = votingEscrow!;
 
@@ -72,7 +91,8 @@ class TokenLockUtils {
         const slopeAmount = BigInt(amount) * BigInt(slope);
         const biasAmount = BigInt(amount) * BigInt(bias);
 
-        const votingPower = (slopeAmount * BigInt(processedTime) + biasAmount) / BigInt(1e18);
+        const votingPower =
+            (slopeAmount * BigInt(processedTime) + biasAmount) / BigInt(1e18);
 
         return formatUnits(votingPower, token.decimals);
     };
@@ -88,7 +108,10 @@ class TokenLockUtils {
         const { amount } = lock;
 
         const votingPower = this.getLockVotingPower(lock, settings);
-        const parsedAmount = formatUnits(BigInt(amount), settings.token.decimals);
+        const parsedAmount = formatUnits(
+            BigInt(amount),
+            settings.token.decimals,
+        );
 
         return Number(votingPower) / Number(parsedAmount);
     };
@@ -99,7 +122,10 @@ class TokenLockUtils {
      * @param settings - Escrow settings containing minLockTime.
      * @returns Unix timestamp when minimum lock time is reached.
      */
-    getMinLockTime = (lock: IMemberLock, settings: ITokenPluginSettingsEscrowSettings): number => {
+    getMinLockTime = (
+        lock: IMemberLock,
+        settings: ITokenPluginSettingsEscrowSettings,
+    ): number => {
         const { minLockTime } = settings;
         const { epochStartAt } = lock;
         const minLockTimeAt = epochStartAt + minLockTime;

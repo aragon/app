@@ -1,6 +1,6 @@
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Heading, invariant } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ITransactionInfo {
     /**
@@ -24,24 +24,42 @@ export interface ITransactionStatusInfoProps extends ITransactionInfo {
     className?: string;
 }
 
-export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (props) => {
+export const TransactionStatusInfo: React.FC<ITransactionStatusInfoProps> = (
+    props,
+) => {
     const { title, current, total, className } = props;
 
-    invariant((current == null) === (total == null), 'TransactionStatusInfo: current and total must be set together');
+    invariant(
+        (current == null) === (total == null),
+        'TransactionStatusInfo: current and total must be set together',
+    );
 
     const { t } = useTranslations();
 
     const isMultiphase = current != null && total != null;
 
     return (
-        <div className={classNames('flex items-center justify-between', className)}>
-            <Heading size="h4" className="truncate">
+        <div
+            className={classNames(
+                'flex items-center justify-between',
+                className,
+            )}
+        >
+            <Heading className="truncate" size="h4">
                 {title}
             </Heading>
             {isMultiphase && (
-                <div className="flex flex-row gap-1 text-sm leading-tight font-normal text-neutral-800 md:text-base">
-                    <span>{t('app.shared.transactionStatus.info.current', { current })}</span>
-                    <span className="text-neutral-500">{t('app.shared.transactionStatus.info.total', { total })}</span>
+                <div className="flex flex-row gap-1 font-normal text-neutral-800 text-sm leading-tight md:text-base">
+                    <span>
+                        {t('app.shared.transactionStatus.info.current', {
+                            current,
+                        })}
+                    </span>
+                    <span className="text-neutral-500">
+                        {t('app.shared.transactionStatus.info.total', {
+                            total,
+                        })}
+                    </span>
                 </div>
             )}
         </div>

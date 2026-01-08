@@ -1,1 +1,4 @@
-export { DaoProcessAllowedActions, type IDaoProcessAllowedActionsProps } from './daoProcessAllowedActions';
+export {
+    DaoProcessAllowedActions,
+    type IDaoProcessAllowedActionsProps,
+} from './daoProcessAllowedActions';

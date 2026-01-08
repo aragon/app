@@ -1,7 +1,7 @@
+import type { Hex } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IDao } from '@/shared/api/daoService';
 import type { IPluginInstallationSetupData } from '@/shared/utils/pluginTransactionUtils';
-import type { Hex } from 'viem';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import type { IBuildPreparePluginInstallDataParams } from '../../types';
 
@@ -46,7 +46,8 @@ export interface IBuildPrepareInstallPluginsActionParams {
     pluginsMetadata: string[];
 }
 
-export interface IBuildPrepareInstallPluginActionParams extends Omit<IBuildPreparePluginInstallDataParams, 'metadata'> {
+export interface IBuildPrepareInstallPluginActionParams
+    extends Omit<IBuildPreparePluginInstallDataParams, 'metadata'> {
     /**
      * Metadata CID of the plugin.
      */

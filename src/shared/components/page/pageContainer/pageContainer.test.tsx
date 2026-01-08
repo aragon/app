@@ -2,7 +2,7 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { PageContainer, type IPageContainerProps } from './pageContainer';
+import { type IPageContainerProps, PageContainer } from './pageContainer';
 
 jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
@@ -37,6 +37,8 @@ describe('<PageContainer /> component', () => {
         const queryData = { key: 'value' };
         queryClient.setQueryData(['test'], queryData);
         render(createTestComponent({ queryClient }));
-        expect(screen.getByText(new RegExp(JSON.stringify(queryData)))).toBeInTheDocument();
+        expect(
+            screen.getByText(new RegExp(JSON.stringify(queryData))),
+        ).toBeInTheDocument();
     });
 });

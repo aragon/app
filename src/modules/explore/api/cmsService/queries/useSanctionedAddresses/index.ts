@@ -1,1 +1,4 @@
-export { sanctionedAddressesOptions, useSanctionedAddresses } from './useSanctionedAddresses';
+export {
+    sanctionedAddressesOptions,
+    useSanctionedAddresses,
+} from './useSanctionedAddresses';

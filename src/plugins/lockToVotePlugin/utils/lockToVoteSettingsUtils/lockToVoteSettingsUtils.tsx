@@ -1,9 +1,16 @@
-import { type TranslationFunction } from '@/shared/components/translationsProvider';
-import { dateUtils } from '@/shared/utils/dateUtils';
-import { formatterUtils, type IDefinitionSetting, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    formatterUtils,
+    type IDefinitionSetting,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { dateUtils } from '@/shared/utils/dateUtils';
 import { tokenSettingsUtils } from '../../../tokenPlugin/utils/tokenSettingsUtils';
-import { DaoLockToVoteVotingMode, type ILockToVotePluginSettings } from '../../types';
+import {
+    DaoLockToVoteVotingMode,
+    type ILockToVotePluginSettings,
+} from '../../types';
 
 export interface IParseLockToVoteSettingsParams {
     /**
@@ -21,11 +28,15 @@ export interface IParseLockToVoteSettingsParams {
 }
 
 class LockToVoteSettingsUtils {
-    ratioToPercentage = (percentage: number) => tokenSettingsUtils.ratioToPercentage(percentage);
+    ratioToPercentage = (percentage: number) =>
+        tokenSettingsUtils.ratioToPercentage(percentage);
 
-    percentageToRatio = (percentage: number) => tokenSettingsUtils.percentageToRatio(percentage);
+    percentageToRatio = (percentage: number) =>
+        tokenSettingsUtils.percentageToRatio(percentage);
 
-    parseSettings = (params: IParseLockToVoteSettingsParams): IDefinitionSetting[] => {
+    parseSettings = (
+        params: IParseLockToVoteSettingsParams,
+    ): IDefinitionSetting[] => {
         const { settings, isVeto, t } = params;
         const {
             supportThreshold,
@@ -42,67 +53,111 @@ class LockToVoteSettingsUtils {
         const processedTotalSupply = historicalTotalSupply ?? totalSupply;
 
         const parsedSupportThreshold = this.ratioToPercentage(supportThreshold);
-        const formattedApproveThreshold = formatterUtils.formatNumber(parsedSupportThreshold / 100, {
-            format: NumberFormat.PERCENTAGE_SHORT,
-        });
+        const formattedApproveThreshold = formatterUtils.formatNumber(
+            parsedSupportThreshold / 100,
+            {
+                format: NumberFormat.PERCENTAGE_SHORT,
+            },
+        );
 
         const parsedMinParticipation = this.ratioToPercentage(minParticipation);
-        const formattedMinParticipation = formatterUtils.formatNumber(parsedMinParticipation / 100, {
-            format: NumberFormat.PERCENTAGE_LONG,
-        });
+        const formattedMinParticipation = formatterUtils.formatNumber(
+            parsedMinParticipation / 100,
+            {
+                format: NumberFormat.PERCENTAGE_LONG,
+            },
+        );
 
-        const minParticipationToken = Math.round((Number(processedTotalSupply) * parsedMinParticipation) / 100);
-        const parsedMinParticipationToken = formatUnits(BigInt(minParticipationToken), decimals);
-        const formattedMinParticipationToken = formatterUtils.formatNumber(parsedMinParticipationToken, {
-            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-        });
+        const minParticipationToken = Math.round(
+            (Number(processedTotalSupply) * parsedMinParticipation) / 100,
+        );
+        const parsedMinParticipationToken = formatUnits(
+            BigInt(minParticipationToken),
+            decimals,
+        );
+        const formattedMinParticipationToken = formatterUtils.formatNumber(
+            parsedMinParticipationToken,
+            {
+                format: NumberFormat.TOKEN_AMOUNT_SHORT,
+            },
+        );
 
         const duration = dateUtils.secondsToDuration(minDuration);
-        const formattedDuration = t('app.plugins.lockToVote.lockToVoteGovernanceSettings.duration', {
-            days: duration.days,
-            hours: duration.hours,
-            minutes: duration.minutes,
-        });
+        const formattedDuration = t(
+            'app.plugins.lockToVote.lockToVoteGovernanceSettings.duration',
+            {
+                days: duration.days,
+                hours: duration.hours,
+                minutes: duration.minutes,
+            },
+        );
 
-        const parsedMinVotingPower = formatUnits(BigInt(minProposerVotingPower), decimals);
-        const formattedProposerVotingPower = formatterUtils.formatNumber(parsedMinVotingPower, {
-            format: NumberFormat.TOKEN_AMOUNT_LONG,
-        });
+        const parsedMinVotingPower = formatUnits(
+            BigInt(minProposerVotingPower),
+            decimals,
+        );
+        const formattedProposerVotingPower = formatterUtils.formatNumber(
+            parsedMinVotingPower,
+            {
+                format: NumberFormat.TOKEN_AMOUNT_LONG,
+            },
+        );
 
         return [
             {
                 term: t(
                     `app.plugins.lockToVote.lockToVoteGovernanceSettings.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`,
                 ),
-                definition: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.threshold', {
-                    threshold: formattedApproveThreshold,
-                }),
+                definition: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.threshold',
+                    {
+                        threshold: formattedApproveThreshold,
+                    },
+                ),
             },
             {
-                term: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.minimumParticipation'),
-                definition: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.participation', {
-                    participation: formattedMinParticipation,
-                    tokenValue: formattedMinParticipationToken,
-                    tokenSymbol,
-                }),
+                term: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.minimumParticipation',
+                ),
+                definition: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.participation',
+                    {
+                        participation: formattedMinParticipation,
+                        tokenValue: formattedMinParticipationToken,
+                        tokenSymbol,
+                    },
+                ),
             },
             {
-                term: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalDuration'),
+                term: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalDuration',
+                ),
                 definition: formattedDuration,
             },
             {
-                term: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.voteChange'),
+                term: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.voteChange',
+                ),
                 definition:
                     votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT
-                        ? t('app.plugins.lockToVote.lockToVoteGovernanceSettings.yes')
-                        : t('app.plugins.lockToVote.lockToVoteGovernanceSettings.no'),
+                        ? t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.yes',
+                          )
+                        : t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.no',
+                          ),
             },
             {
-                term: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalThreshold'),
-                definition: t('app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalAccess', {
-                    balance: formattedProposerVotingPower,
-                    symbol: tokenSymbol,
-                }),
+                term: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalThreshold',
+                ),
+                definition: t(
+                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.proposalAccess',
+                    {
+                        balance: formattedProposerVotingPower,
+                        symbol: tokenSymbol,
+                    },
+                ),
             },
         ];
     };

@@ -1,7 +1,10 @@
-import { type IVote } from '@/modules/governance/api/governanceService';
+import {
+    type VoteIndicator,
+    VoteProposalDataListItem,
+} from '@aragon/gov-ui-kit';
+import type { IVote } from '@/modules/governance/api/governanceService';
 import { useDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { VoteProposalDataListItem, type VoteIndicator } from '@aragon/gov-ui-kit';
 import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IVoteProposalListItemProps {
@@ -19,7 +22,9 @@ export interface IVoteProposalListItemProps {
     daoId: string;
 }
 
-export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props) => {
+export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (
+    props,
+) => {
     const { vote, daoId, voteIndicator } = props;
 
     const proposal = vote.parentProposal ?? vote.proposal!;
@@ -29,12 +34,12 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (props
 
     return (
         <VoteProposalDataListItem.Structure
-            key={vote.transactionHash}
+            date={vote.blockTimestamp * 1000}
             href={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
-            voteIndicator={voteIndicator}
+            key={vote.transactionHash}
             proposalId={slug}
             proposalTitle={proposal.title}
-            date={vote.blockTimestamp * 1000}
+            voteIndicator={voteIndicator}
         />
     );
 };

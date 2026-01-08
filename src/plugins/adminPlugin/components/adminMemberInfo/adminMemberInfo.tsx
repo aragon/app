@@ -1,8 +1,8 @@
 'use client';
 
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { DefinitionList } from '@aragon/gov-ui-kit';
 import { useMemberList } from '../../../../modules/governance/api/governanceService';
 
 export interface IAdminMemberInfoProps {
@@ -27,9 +27,13 @@ export const AdminMemberInfo: React.FC<IAdminMemberInfoProps> = (props) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.plugins.admin.adminMemberInfo.admins')}>
+            <DefinitionList.Item
+                term={t('app.plugins.admin.adminMemberInfo.admins')}
+            >
                 <p className="text-neutral-500">
-                    {t('app.plugins.admin.adminMemberInfo.membersCount', { count: memberCount })}
+                    {t('app.plugins.admin.adminMemberInfo.membersCount', {
+                        count: memberCount,
+                    })}
                 </p>
             </DefinitionList.Item>
         </DefinitionList.Container>

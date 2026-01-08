@@ -1,4 +1,7 @@
-import type { ITokenPluginSettings, ITokenPluginSettingsEscrowSettings } from '../../types';
+import type {
+    ITokenPluginSettings,
+    ITokenPluginSettingsEscrowSettings,
+} from '../../types';
 import { generateTokenPluginSettings } from './tokenPluginSettings';
 
 const createEscrowSettings = (

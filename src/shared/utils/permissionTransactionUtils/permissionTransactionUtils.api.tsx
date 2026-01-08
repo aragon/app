@@ -42,7 +42,8 @@ export interface IUpdatePermissionParams {
     to: Hex;
 }
 
-export interface IBuildGrantWithConditionTransactionParams extends IUpdatePermissionParams {
+export interface IBuildGrantWithConditionTransactionParams
+    extends IUpdatePermissionParams {
     /**
      * The address of the condition contract that must be satisfied for the permission to be granted or revoked.
      */

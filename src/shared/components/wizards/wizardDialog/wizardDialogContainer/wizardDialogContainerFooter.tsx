@@ -1,6 +1,6 @@
+import { Dialog } from '@aragon/gov-ui-kit';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { Dialog } from '@aragon/gov-ui-kit';
 import { useWizardContext, useWizardFooter } from '../../wizard';
 
 export interface IWizardDialogContainerFooterProps {
@@ -10,13 +10,16 @@ export interface IWizardDialogContainerFooterProps {
     formId: string;
 }
 
-export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterProps> = (props) => {
+export const WizardDialogContainerFooter: React.FC<
+    IWizardDialogContainerFooterProps
+> = (props) => {
     const { formId } = props;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
     const { hasPrevious } = useWizardContext();
-    const { displayValidationError, submitLabel, onPreviousClick } = useWizardFooter();
+    const { displayValidationError, submitLabel, onPreviousClick } =
+        useWizardFooter();
 
     const secondaryActionLabel = hasPrevious ? 'back' : 'close';
     const secondaryAction = {
@@ -27,9 +30,9 @@ export const WizardDialogContainerFooter: React.FC<IWizardDialogContainerFooterP
     return (
         <Dialog.Footer
             hasError={displayValidationError}
-            variant="wizard"
             primaryAction={{ label: submitLabel, type: 'submit', form: formId }}
             secondaryAction={secondaryAction}
+            variant="wizard"
         />
     );
 };

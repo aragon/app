@@ -1,1 +1,4 @@
-export { applicationMetadataUtils, type IGenerateDaoMetadataParams } from './applicationMetadataUtils';
+export {
+    applicationMetadataUtils,
+    type IGenerateDaoMetadataParams,
+} from './applicationMetadataUtils';

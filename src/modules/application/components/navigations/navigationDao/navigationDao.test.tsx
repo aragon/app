@@ -1,30 +1,45 @@
-import * as useDialogContext from '@/shared/components/dialogProvider';
-import type * as Navigation from '@/shared/components/navigation';
-import { generateDao, generateDaoPlugin, generateDialogContext } from '@/shared/testUtils';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { GukModulesProvider, type ICompositeAddress } from '@aragon/gov-ui-kit';
 import type * as GovUiKit from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import type * as Navigation from '@/shared/components/navigation';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateDialogContext,
+} from '@/shared/testUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ApplicationDialogId } from '../../../constants/applicationDialogId';
-import { NavigationDao, type INavigationDaoProps } from './navigationDao';
+import { type INavigationDaoProps, NavigationDao } from './navigationDao';
 
 jest.mock('@aragon/gov-ui-kit', () => ({
     ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
-    DaoAvatar: (props: { src: string }) => <div data-testid="dao-avatar-mock" data-src={props.src} />,
+    DaoAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="dao-avatar-mock" />
+    ),
     Wallet: (props: { user?: ICompositeAddress; onClick: () => void }) => (
-        <button onClick={props.onClick}>{props.user ? props.user.address : 'connect-mock'}</button>
+        <button onClick={props.onClick} type="button">
+            {props.user ? props.user.address : 'connect-mock'}
+        </button>
     ),
 }));
 
 jest.mock('@/shared/components/navigation', () => ({
     Navigation: {
-        ...jest.requireActual<typeof Navigation>('@/shared/components/navigation').Navigation,
+        ...jest.requireActual<typeof Navigation>(
+            '@/shared/components/navigation',
+        ).Navigation,
         Trigger: (props: { onClick: () => void; className: string }) => (
-            <button data-testid="nav-trigger-mock" onClick={props.onClick} className={props.className} />
+            <button
+                className={props.className}
+                data-testid="nav-trigger-mock"
+                onClick={props.onClick}
+                type="button"
+            />
         ),
     },
 }));
@@ -33,7 +48,10 @@ describe('<NavigationDao /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const usePathnameSpy = jest.spyOn(NextNavigation, 'usePathname');
-    const useDialogContextSpy = jest.spyOn(useDialogContext, 'useDialogContext');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
     const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
 
     beforeEach(() => {
@@ -81,20 +99,42 @@ describe('<NavigationDao /> component', () => {
         const dao = generateDao({ id: 'test', plugins: [plugin] });
         render(createTestComponent({ dao }));
 
-        expect(screen.getByRole('link', { name: /navigationDao.link.proposals/ })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /navigationDao.link.members/ })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /navigationDao.link.assets/ })).toBeInTheDocument();
-        expect(screen.getByRole('link', { name: /navigationDao.link.transactions/ })).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /navigationDao.link.proposals/ }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /navigationDao.link.members/ }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: /navigationDao.link.assets/ }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /navigationDao.link.transactions/,
+            }),
+        ).toBeInTheDocument();
 
-        expect(screen.queryByRole('link', { name: /navigationDao.link.dashboard/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('link', { name: /navigationDao.link.settings/ })).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', {
+                name: /navigationDao.link.dashboard/,
+            }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: /navigationDao.link.settings/ }),
+        ).not.toBeInTheDocument();
     });
 
     it('hides the members and proposals links when DAO has no supported plugin', () => {
         hasSupportedPluginsSpy.mockReturnValue(false);
         render(createTestComponent({ id: 'test' }));
-        expect(screen.queryByRole('link', { name: /navigationDao.link.members/ })).not.toBeInTheDocument();
-        expect(screen.queryByRole('link', { name: /navigationDao.link.proposals/ })).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', { name: /navigationDao.link.members/ }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('link', {
+                name: /navigationDao.link.proposals/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('renders a button to open the navigation dialog on mobile devices', async () => {
@@ -120,7 +160,10 @@ describe('<NavigationDao /> component', () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
-        useAccountSpy.mockReturnValue({ address, isConnected: true } as unknown as wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({
+            address,
+            isConnected: true,
+        } as unknown as wagmi.UseAccountReturnType);
         render(createTestComponent());
         const button = screen.getByText(address);
         expect(button).toBeInTheDocument();

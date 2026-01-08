@@ -1,9 +1,9 @@
 'use client';
 
-import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/tokenExistQueueFeeChart';
 import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/tokenExitQueueFeeCalculation';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
@@ -12,9 +12,14 @@ import { tokenExitQueueFeeUtils } from '../../utils/tokenExitQueueFeeUtils';
 import type { ITokenExitQueueWithdrawTransactionDialogParams } from '../tokenExitQueueWithdrawTransactionDialog';
 import type { ITokenExitQueueWithdrawDialogProps } from './tokenExitQueueWithdrawDialog.api';
 
-export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialogProps> = (props) => {
+export const TokenExitQueueWithdrawDialog: React.FC<
+    ITokenExitQueueWithdrawDialogProps
+> = (props) => {
     const { location } = props;
-    invariant(location.params != null, 'TokenExitQueueWithdrawDialog: required parameters must be set.');
+    invariant(
+        location.params != null,
+        'TokenExitQueueWithdrawDialog: required parameters must be set.',
+    );
 
     const {
         tokenId,
@@ -49,8 +54,13 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
             return feeAmountFromParams;
         }
 
-        const feeBasisPoints = Math.round((currentFeePercent * tokenExitQueueFeeUtils.MAX_FEE_PERCENT) / 100);
-        return (lockedAmount * BigInt(feeBasisPoints)) / BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT);
+        const feeBasisPoints = Math.round(
+            (currentFeePercent * tokenExitQueueFeeUtils.MAX_FEE_PERCENT) / 100,
+        );
+        return (
+            (lockedAmount * BigInt(feeBasisPoints)) /
+            BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT)
+        );
     }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
     const feeMode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
@@ -67,32 +77,52 @@ export const TokenExitQueueWithdrawDialog: React.FC<ITokenExitQueueWithdrawDialo
             onSuccess,
         };
 
-        open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_TRANSACTION, { params: txDialogParams });
+        open(TokenPluginDialogId.EXIT_QUEUE_WITHDRAW_TRANSACTION, {
+            params: txDialogParams,
+        });
     };
 
     return (
         <>
             <Dialog.Header
-                title={t('app.plugins.tokenExitQueue.withdrawDialog.title', { symbol: token.symbol })}
                 onClose={close}
+                title={t('app.plugins.tokenExitQueue.withdrawDialog.title', {
+                    symbol: token.symbol,
+                })}
             />
             <Dialog.Content className="flex flex-col gap-6 pt-4">
-                {shouldShowChart && <TokenExitQueueFeeChart ticket={ticket} currentTime={currentTime} />}
+                {shouldShowChart && (
+                    <TokenExitQueueFeeChart
+                        currentTime={currentTime}
+                        ticket={ticket}
+                    />
+                )}
 
                 <TokenExitQueueFeeCalculation
-                    lockedAmount={lockedAmount}
                     feeAmount={feeAmount}
+                    helpText={
+                        shouldShowChart
+                            ? t(
+                                  'app.plugins.tokenExitQueue.withdrawDialog.helpText',
+                              )
+                            : undefined
+                    }
+                    lockedAmount={lockedAmount}
                     token={token}
-                    helpText={shouldShowChart ? t('app.plugins.tokenExitQueue.withdrawDialog.helpText') : undefined}
                 />
             </Dialog.Content>
             <Dialog.Footer
-                variant="wizard"
-                secondaryAction={{ label: t('app.plugins.tokenExitQueue.withdrawDialog.back'), onClick: handleBack }}
                 primaryAction={{
-                    label: t('app.plugins.tokenExitQueue.withdrawDialog.submit'),
+                    label: t(
+                        'app.plugins.tokenExitQueue.withdrawDialog.submit',
+                    ),
                     onClick: handleWithdraw,
                 }}
+                secondaryAction={{
+                    label: t('app.plugins.tokenExitQueue.withdrawDialog.back'),
+                    onClick: handleBack,
+                }}
+                variant="wizard"
             />
         </>
     );

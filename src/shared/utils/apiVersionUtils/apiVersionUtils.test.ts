@@ -9,7 +9,7 @@ describe('apiVersionUtils', () => {
         });
 
         it('should return v2 by default when env var is not set', () => {
-            delete process.env.NEXT_PUBLIC_API_VERSION;
+            process.env.NEXT_PUBLIC_API_VERSION = undefined;
             expect(apiVersionUtils.getApiVersion()).toBe('v2');
         });
 
@@ -38,35 +38,50 @@ describe('apiVersionUtils', () => {
 
         it('should prepend version to path without version', () => {
             process.env.NEXT_PUBLIC_API_VERSION = 'v2';
-            expect(apiVersionUtils.buildVersionedUrl('/daos/:id')).toBe('/v2/daos/:id');
+            expect(apiVersionUtils.buildVersionedUrl('/daos/:id')).toBe(
+                '/v2/daos/:id',
+            );
         });
 
         it('should replace existing version in path', () => {
             process.env.NEXT_PUBLIC_API_VERSION = 'v3';
-            expect(apiVersionUtils.buildVersionedUrl('/v2/daos/:id')).toBe('/v3/daos/:id');
+            expect(apiVersionUtils.buildVersionedUrl('/v2/daos/:id')).toBe(
+                '/v3/daos/:id',
+            );
         });
 
         it('should handle path without leading slash', () => {
             process.env.NEXT_PUBLIC_API_VERSION = 'v2';
-            expect(apiVersionUtils.buildVersionedUrl('daos/:id')).toBe('/v2/daos/:id');
+            expect(apiVersionUtils.buildVersionedUrl('daos/:id')).toBe(
+                '/v2/daos/:id',
+            );
         });
 
         it('should use version option when provided', () => {
             process.env.NEXT_PUBLIC_API_VERSION = 'v2';
-            expect(apiVersionUtils.buildVersionedUrl('/daos/:id', { version: 'v3' })).toBe('/v3/daos/:id');
+            expect(
+                apiVersionUtils.buildVersionedUrl('/daos/:id', {
+                    version: 'v3',
+                }),
+            ).toBe('/v3/daos/:id');
         });
 
         it('should use forceVersion option over env', () => {
             process.env.NEXT_PUBLIC_API_VERSION = 'v3';
-            expect(apiVersionUtils.buildVersionedUrl('/permissions/:id', { forceVersion: 'v2' })).toBe(
-                '/v2/permissions/:id',
-            );
+            expect(
+                apiVersionUtils.buildVersionedUrl('/permissions/:id', {
+                    forceVersion: 'v2',
+                }),
+            ).toBe('/v2/permissions/:id');
         });
 
         it('should prioritize forceVersion over version option', () => {
-            expect(apiVersionUtils.buildVersionedUrl('/daos/:id', { version: 'v3', forceVersion: 'v2' })).toBe(
-                '/v2/daos/:id',
-            );
+            expect(
+                apiVersionUtils.buildVersionedUrl('/daos/:id', {
+                    version: 'v3',
+                    forceVersion: 'v2',
+                }),
+            ).toBe('/v2/daos/:id');
         });
     });
 });

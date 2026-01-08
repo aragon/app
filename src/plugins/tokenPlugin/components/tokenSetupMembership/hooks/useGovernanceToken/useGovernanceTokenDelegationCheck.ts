@@ -1,5 +1,5 @@
-import type { IUseTokenParams } from '@/shared/hooks/useToken';
 import { useReadContract } from 'wagmi';
+import type { IUseTokenParams } from '@/shared/hooks/useToken';
 
 export const erc20DelegatesAbi = [
     {
@@ -10,9 +10,12 @@ export const erc20DelegatesAbi = [
     },
 ] as const;
 
-export interface IUseGovernanceTokenDelegationCheckParams extends IUseTokenParams {}
+export interface IUseGovernanceTokenDelegationCheckParams
+    extends IUseTokenParams {}
 
-export const useGovernanceTokenDelegationCheck = (params: IUseGovernanceTokenDelegationCheckParams) => {
+export const useGovernanceTokenDelegationCheck = (
+    params: IUseGovernanceTokenDelegationCheckParams,
+) => {
     const { address, chainId, enabled = true } = params;
 
     const { data, isLoading } = useReadContract({

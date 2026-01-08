@@ -1,8 +1,8 @@
-import { generateFormContext, generateWizardContext } from '@/shared/testUtils';
 import { Button } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as ReactHookForm from 'react-hook-form';
+import { generateFormContext, generateWizardContext } from '@/shared/testUtils';
 import * as WizardProvider from '../wizardProvider';
 import { type IWizardFormProps, WizardForm } from './wizardForm';
 
@@ -38,8 +38,12 @@ describe('<WizardForm /> component', () => {
         const children = <Button type="submit" />;
         const nextStep = jest.fn();
         const handleSubmit = jest.fn(() => jest.fn());
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: true, nextStep }));
-        useFormContextSpy.mockReturnValue(generateFormContext({ handleSubmit }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: true, nextStep }),
+        );
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({ handleSubmit }),
+        );
         render(createTestComponent({ children }));
         await userEvent.click(screen.getByRole('button'));
         expect(handleSubmit).toHaveBeenCalledWith(nextStep);
@@ -49,8 +53,12 @@ describe('<WizardForm /> component', () => {
         const children = <Button type="submit" />;
         const handleSubmit = jest.fn(() => jest.fn());
         const onSubmit = jest.fn();
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: false }));
-        useFormContextSpy.mockReturnValue(generateFormContext({ handleSubmit }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: false }),
+        );
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({ handleSubmit }),
+        );
         render(createTestComponent({ children, onSubmit }));
         await userEvent.click(screen.getByRole('button'));
         expect(handleSubmit).toHaveBeenCalledWith(onSubmit);
@@ -58,11 +66,18 @@ describe('<WizardForm /> component', () => {
 
     it('does not throw error when the onSubmit property is not defined', async () => {
         const children = <Button type="submit" />;
-        const handleSubmit = ((callback: () => void) => () => callback()) as ReactHookForm.UseFormHandleSubmit<object>;
+        const handleSubmit = ((callback: () => void) => () =>
+            callback()) as ReactHookForm.UseFormHandleSubmit<object>;
         const onSubmit = undefined;
-        useWizardContextSpy.mockReturnValue(generateWizardContext({ hasNext: false }));
-        useFormContextSpy.mockReturnValue(generateFormContext({ handleSubmit }));
+        useWizardContextSpy.mockReturnValue(
+            generateWizardContext({ hasNext: false }),
+        );
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({ handleSubmit }),
+        );
         render(createTestComponent({ children, onSubmit }));
-        await expect(userEvent.click(screen.getByRole('button'))).resolves.toBeUndefined();
+        await expect(
+            userEvent.click(screen.getByRole('button')),
+        ).resolves.toBeUndefined();
     });
 });

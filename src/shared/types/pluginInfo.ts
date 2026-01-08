@@ -1,5 +1,5 @@
-import type { INavigationLink } from '@/shared/components/navigation';
 import type { Hex } from 'viem';
+import type { INavigationLink } from '@/shared/components/navigation';
 import type { Network } from '../api/daoService';
 import type { IPlugin } from '../utils/pluginRegistryUtils';
 import type { IContractVersionInfo } from './contractVersionInfo';

@@ -1,8 +1,8 @@
-import type { IToken } from '@/modules/finance/api/financeService';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useQueryClient } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
 import { useAccount, useBalance, useReadContract } from 'wagmi';
+import type { IToken } from '@/modules/finance/api/financeService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface IUseCheckTokenAllowanceParams {
     /**
@@ -15,7 +15,9 @@ export interface IUseCheckTokenAllowanceParams {
     token: IToken;
 }
 
-export const useCheckTokenAllowance = (props: IUseCheckTokenAllowanceParams) => {
+export const useCheckTokenAllowance = (
+    props: IUseCheckTokenAllowanceParams,
+) => {
     const { spender, token } = props;
 
     const queryClient = useQueryClient();

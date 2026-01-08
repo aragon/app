@@ -1,14 +1,17 @@
-import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 import type { IInputContainerProps } from '@aragon/gov-ui-kit';
-import {
-    type FieldPath,
-    type FieldPathValue,
-    type FieldValues,
-    type UseControllerProps,
-    type UseControllerReturn,
+import type {
+    FieldPath,
+    FieldPathValue,
+    FieldValues,
+    UseControllerProps,
+    UseControllerReturn,
 } from 'react-hook-form';
+import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
-export interface IUseFormFieldOptions<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>> {
+export interface IUseFormFieldOptions<
+    TFieldValues extends FieldValues,
+    TName extends FieldPath<TFieldValues>,
+> {
     /**
      * Disables the field when set to true.
      */
