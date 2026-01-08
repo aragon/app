@@ -32,7 +32,7 @@
     "@reown/walletkit": "^1.4.1",
     "@sentry/core": "^10.32.1",
     "@sentry/nextjs": "^10.32.1",
-    "@tanstack/react-query": "^5.90.11",
+    "@tanstack/react-query": "^5.90.16",
     "@tanstack/react-query-devtools": "^5.91.2",
     "@walletconnect/core": "^2.23.1",
     "@walletconnect/utils": "^2.23.1",
@@ -52,7 +52,7 @@
     "recharts": "^3.6.0",
     "require-in-the-middle": "8.0.1",
     "server-only": "^0.0.1",
-    "viem": "^2.38.0",
+    "viem": "^2.43.4",
     "wagmi": "^2.19.5"
   },
   "devDependencies": {
@@ -85,7 +85,7 @@
     "ts-jest": "^29.4.6",
     "turbo": "^2.7.2",
     "typescript": "^5.9.3",
-    "ultracite": "^6.4.0",
+    "ultracite": "^6.5.1",
     "vercel": "^48.12.1",
     "webpack": "^5.104.1"
   },
@@ -106,13 +106,14 @@
   "engines": {
     "node": ">=22.0.0"
   },
-  "packageManager": "pnpm@10.26.1+sha512.664074abc367d2c9324fdc18037097ce0a8f126034160f709928e9e9f95d98714347044e5c3164d65bd5da6c59c6be362b107546292a8eecb7999196e5ce58fa",
+  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a",
   "pnpm": {
     "overrides": {
-      "@reown/appkit": "^1.8.14",
+      "@reown/appkit": "^1.8.15",
       "@wagmi/connectors": "^6.2.0",
       "jsdom": "26.1.0",
-      "parse5": "7.1.2"
+      "parse5": "7.1.2",
+      "preact": "10.28.2"
     },
     "packageExtensions": {
       "@solana/codecs-strings@*": {
