@@ -8,6 +8,7 @@ import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembers
 import type { IDao } from '@/shared/api/daoService';
 import { Banner } from '@/shared/components/banner';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
@@ -24,6 +25,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
 
     const { isAdminMember, adminPlugin } = useAdminStatus({
         daoId: dao.id,
@@ -42,8 +44,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     };
 
     const displayAdminMemberBanner =
-        isAdminMember &&
-        process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
+        isAdminMember && isEnabled('governanceDesigner');
 
     const bannerType = displayAdminMemberBanner
         ? 'adminMember'

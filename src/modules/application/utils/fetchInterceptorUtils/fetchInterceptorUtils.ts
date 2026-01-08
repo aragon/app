@@ -5,8 +5,8 @@ import { responseUtils } from '@/shared/utils/responseUtils';
 class FetchInterceptorUtils {
     private originalFetch = global.fetch.bind(global);
 
-    intercept = () => {
-        if (process.env.NEXT_PUBLIC_USE_MOCKS === 'true') {
+    intercept = (useMocks = false) => {
+        if (useMocks) {
             global.fetch = this.mockDataInterceptor;
         }
     };
