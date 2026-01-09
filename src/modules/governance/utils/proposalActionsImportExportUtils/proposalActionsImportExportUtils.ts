@@ -201,8 +201,8 @@ class ProposalActionsImportExportUtils {
                 //         gaugeMetadata,
                 //     };
                 // }
-
-                return action;
+                // TODO: add support for basic views one by one. In the meantime import actions as Unknown type so that decoded view is usable at least.
+                return {...action, type: "Unknown"};
             },
         );
 
