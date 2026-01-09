@@ -167,11 +167,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             const actionId = crypto.randomUUID();
             return {
                 ...action,
-                // type: ActionItemId.CUSTOM_ACTION,
                 value: BigInt(action.value),
                 id: actionId,
                 daoId,
-                meta: undefined,
             } as unknown as IProposalActionData;
         });
         onAddAction(parsedActions);
@@ -204,8 +202,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 const decodedActions =
                     await proposalActionsImportExportUtils.decodeActions(
                         result.actions,
-                        dao.network,
-                        dao.address,
+                        dao,
                     );
 
                 handleImportActions(decodedActions);

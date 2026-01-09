@@ -1,6 +1,7 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { isAddress, isHex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IResource, Network } from '../../../../shared/api/daoService';
+import type { IDao, IResource } from '../../../../shared/api/daoService';
 import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { smartContractService } from '../../api/smartContractService';
 
@@ -126,9 +127,9 @@ class ProposalActionsImportExportUtils {
      */
     decodeActions = async (
         actions: IExportedAction[],
-        network: Network,
-        daoAddress: string,
+        dao: IDao,
     ): Promise<IProposalAction[]> => {
+        const { network, address: daoAddress } = dao;
         const decodedActions = await Promise.all(
             actions.map(async (action) => {
                 const decodedAction =
@@ -147,7 +148,7 @@ class ProposalActionsImportExportUtils {
             }),
         );
 
-        return this.normalizeDecodedActions(decodedActions);
+        return this.normalizeDecodedActions(decodedActions, dao);
     };
 
     /**
@@ -157,10 +158,16 @@ class ProposalActionsImportExportUtils {
      */
     normalizeDecodedActions = (
         decodedActions: IProposalAction[],
+        dao: IDao,
     ): IProposalAction[] => {
-        // return decodedActions.map((a) => ({ ...a, type: 'Unknown' }));
+        const { plugins } = dao;
+
         const normalizedActions: IProposalAction[] = decodedActions.map(
             (action) => {
+                const meta = plugins.find((plugin) =>
+                    addressUtils.isAddressEqual(plugin.address, action.to),
+                );
+
                 if ('proposedMetadata' in action) {
                     const { avatar, links, ...restMetadata } =
                         action.proposedMetadata as {
@@ -169,15 +176,16 @@ class ProposalActionsImportExportUtils {
                         };
 
                     const proposedMetadata = {
+                        ...restMetadata,
                         avatar: avatar && {
                             url: ipfsUtils.cidToSrc(avatar),
                         },
                         resources: links ?? [],
-                        ...restMetadata,
                     };
 
                     return {
                         ...action,
+                        meta,
                         proposedMetadata,
                     };
                 }
@@ -202,7 +210,11 @@ class ProposalActionsImportExportUtils {
                 //     };
                 // }
                 // TODO: add support for basic views one by one. In the meantime import actions as Unknown type so that decoded view is usable at least.
-                return {...action, type: "Unknown"};
+                return {
+                    ...action,
+                    meta,
+                    // type: "Unknown"
+                };
             },
         );
 
