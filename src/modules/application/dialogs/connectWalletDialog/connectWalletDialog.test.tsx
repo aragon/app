@@ -25,6 +25,7 @@ describe('<ConnectWalletDialog /> component', () => {
             open: false,
             loading: false,
             initialized: true,
+            connectingWallet: undefined,
         });
         useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
     });

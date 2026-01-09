@@ -44,6 +44,14 @@ pnpm install
 
 **Note**: pnpm will automatically use the correct Node.js version as configured in the project.
 
+2.1 Set up Husky for git hooks by running:
+
+```bash
+pnpm prepare
+```
+
+This step is required because automatic running of the `prepare` script is disabled in pnpm. Running this command manually will enable pre-commit hooks for code quality checks before each commit.
+
 3. (Optional) Configure Git to ignore certain commits in `git blame` for better readability:
 
 ```bash
