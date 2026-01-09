@@ -33,7 +33,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
         >
             <video
                 autoPlay={true}
-                className="-z-30 absolute inset-0 size-full object-cover"
+                className="absolute inset-0 -z-30 size-full object-cover"
                 loop={true}
                 muted={true}
                 playsInline={true}

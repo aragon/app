@@ -54,7 +54,7 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (
             })}
         >
             {highlightSlots && (
-                <p className="-top-6 absolute right-0 z-50 text-neutral-500">
+                <p className="absolute -top-6 right-0 z-50 text-neutral-500">
                     {slotId} ({pluginId})
                 </p>
             )}

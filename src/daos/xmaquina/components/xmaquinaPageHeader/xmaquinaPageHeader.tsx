@@ -38,7 +38,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
         >
             <Image
                 alt=""
-                className="-z-30 absolute inset-0 object-cover"
+                className="absolute inset-0 -z-30 object-cover"
                 fill={true}
                 priority={true}
                 src={BackgroundImage}
@@ -60,7 +60,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                 </div>
                 <Image
                     alt="XMAQUINA Robot"
-                    className="-z-20 absolute right-[8%] bottom-0 hidden lg:block"
+                    className="absolute right-[8%] bottom-0 -z-20 hidden lg:block"
                     height={421}
                     priority={true}
                     src={DroidImage}
@@ -79,10 +79,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                 </div>
             </Container>
             <div className="hidden md:block lg:hidden">
-                <div className="-translate-y-1/2 absolute top-0 left-4 h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 left-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-4 h-[400%] w-px bg-white/10" />
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel
                     animationDelay={2}
                     gap={1}
@@ -95,10 +95,10 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                 </Carousel>
             </div>
             <div className="block md:hidden">
-                <div className="-translate-y-1/2 absolute top-0 left-4 h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 left-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-[calc(33.33%)] h-[400%] w-px bg-white/10" />
-                <div className="-translate-y-1/2 absolute top-0 right-4 h-[400%] w-px bg-white/10" />
+                <div className="absolute top-0 left-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 left-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-[calc(33.33%)] h-[400%] w-px -translate-y-1/2 bg-white/10" />
+                <div className="absolute top-0 right-4 h-[400%] w-px -translate-y-1/2 bg-white/10" />
                 <Carousel
                     animationDelay={2}
                     gap={1}
