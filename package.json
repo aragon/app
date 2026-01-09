@@ -25,8 +25,8 @@
     "@aragon/gov-ui-kit": "^1.26.0",
     "@floating-ui/react": "^0.27.16",
     "@number-flow/react": "^0.5.10",
-    "@radix-ui/react-dialog": "1.1.15",
-    "@radix-ui/react-toggle-group": "1.1.11",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-toggle-group": "^1.1.11",
     "@reown/appkit": "^1.8.15",
     "@reown/appkit-adapter-wagmi": "^1.8.15",
     "@reown/walletkit": "^1.4.1",
@@ -39,9 +39,9 @@
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.23.25",
-    "import-in-the-middle": "2.0.1",
-    "isomorphic-dompurify": "2.35.0",
-    "jsdom": "^27.1.0",
+    "import-in-the-middle": "^2.0.1",
+    "isomorphic-dompurify": "^2.35.0",
+    "jsdom": "^27.4.0",
     "luxon": "^3.7.2",
     "next": "^15.5.9",
     "nextjs-toploader": "^3.9.17",
@@ -50,7 +50,7 @@
     "react-hook-form": "^7.64.0",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
-    "require-in-the-middle": "8.0.1",
+    "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "viem": "^2.43.4",
     "wagmi": "^2.19.5"
@@ -110,9 +110,6 @@
   "pnpm": {
     "overrides": {
       "@reown/appkit": "^1.8.15",
-      "@wagmi/connectors": "^6.2.0",
-      "jsdom": "26.1.0",
-      "parse5": "7.1.2",
       "preact": "10.28.2"
     },
     "packageExtensions": {
