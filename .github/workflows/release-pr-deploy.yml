@@ -1,0 +1,79 @@
+name: Release PR Deploy
+
+on:
+  pull_request:
+    branches:
+      - 'release/**'
+    types: [opened, synchronize]
+
+concurrency:
+  group: staging-deployment
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  build:
+    uses: ./.github/workflows/shared-build.yml
+    secrets: inherit
+    with:
+      env: 'staging'
+      ref: ${{ github.event.pull_request.head.sha }}
+
+  deploy:
+    needs: build
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: 'stg.app.aragon.org'
+      env: 'staging'
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Extract Slack Thread TS
+        id: extract-ts
+        run: |
+          # Extract TS from PR body using regex
+          PR_BODY="${{ github.event.pull_request.body }}"
+          TS=$(echo "$PR_BODY" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//')
+          echo "ts=$TS" >> $GITHUB_OUTPUT
+
+      - name: Notify Slack
+        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != '' && steps.extract-ts.outputs.ts != ''
+        run: |
+          MSG="🛠 *Staging Updated*
+          *Commit:* \`${{ github.event.pull_request.head.sha }}\`
+          *URL:* ${{ needs.deploy.outputs.deploymentUrl }}"
+           
+          node .github/workflows/scripts/slackNotify.js "$MSG"
+        env:
+          SLACK_BOT_TOKEN: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
+          SLACK_THREAD_TS: ${{ steps.extract-ts.outputs.ts }}

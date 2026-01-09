@@ -8,8 +8,12 @@ on:
   workflow_call:
     inputs:
       env:
-        description: "Used to setup the correct environment variables for the build"
+        description: 'Used to setup the correct environment variables for the build'
         required: true
+        type: string
+      ref:
+        description: 'The branch, tag or SHA to checkout'
+        required: false
         type: string
 permissions:
   contents: read
@@ -26,6 +30,8 @@ jobs:
             .github/actions/setup
       - name: Setup
         uses: ./.github/actions/setup
+        with:
+          ref: ${{ inputs.ref }}
       - name: Restore NextJs cache
         uses: actions/cache@v5.0.1
         with:
