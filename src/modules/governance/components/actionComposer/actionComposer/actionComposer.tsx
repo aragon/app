@@ -11,11 +11,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import type { IDaoPermission, IResource } from '@/shared/api/daoService';
+import type { IDaoPermission } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { ipfsUtils } from '../../../../../shared/utils/ipfsUtils';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import type { IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
@@ -26,7 +25,6 @@ import {
     type IExportedAction,
     proposalActionsImportExportUtils,
 } from '../../../utils/proposalActionsImportExportUtils';
-import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import {
     ActionComposerInput,
@@ -125,7 +123,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             }),
         [],
     );
-    console.log('importedContractAbis', importedContractAbis);
+
     const handleAddAction = () => {
         setUploadError(null);
         autocompleteInputRef.current?.focus();

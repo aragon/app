@@ -168,7 +168,6 @@ class ProposalActionsImportExportUtils {
                             links?: IResource[];
                         };
 
-                    console.log('avatar', avatar, action);
                     const proposedMetadata = {
                         avatar: avatar && {
                             url: ipfsUtils.cidToSrc(avatar),
