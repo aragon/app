@@ -1,6 +1,7 @@
 import { isAddress, isHex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { Network } from '../../../../shared/api/daoService';
+import type { IResource, Network } from '../../../../shared/api/daoService';
+import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
 import { smartContractService } from '../../api/smartContractService';
 
 export interface IExportedAction {
@@ -130,22 +131,83 @@ class ProposalActionsImportExportUtils {
     ): Promise<IProposalAction[]> => {
         const decodedActions = await Promise.all(
             actions.map(async (action) => {
-                const decodedAction = await smartContractService.decodeTransaction({
-                    urlParams: {
-                        network,
-                        address: action.to,
-                    },
-                    body: {
-                        data: action.data,
-                        value: action.value.toString(),
-                        from: daoAddress,
-                    },
-                });
+                const decodedAction =
+                    await smartContractService.decodeTransaction({
+                        urlParams: {
+                            network,
+                            address: action.to,
+                        },
+                        body: {
+                            data: action.data,
+                            value: action.value.toString(),
+                            from: daoAddress,
+                        },
+                    });
                 return decodedAction;
             }),
         );
 
-        return decodedActions;
+        return this.normalizeDecodedActions(decodedActions);
+    };
+
+    /**
+     * Normalize decoded actions to a format expected by create action input forms.
+     *
+     * @param decodedActions
+     */
+    normalizeDecodedActions = (
+        decodedActions: IProposalAction[],
+    ): IProposalAction[] => {
+        // return decodedActions.map((a) => ({ ...a, type: 'Unknown' }));
+        const normalizedActions: IProposalAction[] = decodedActions.map(
+            (action) => {
+                if ('proposedMetadata' in action) {
+                    const { avatar, links, ...restMetadata } =
+                        action.proposedMetadata as {
+                            avatar?: string;
+                            links?: IResource[];
+                        };
+
+                    console.log('avatar', avatar, action);
+                    const proposedMetadata = {
+                        avatar: avatar && {
+                            url: ipfsUtils.cidToSrc(avatar),
+                        },
+                        resources: links ?? [],
+                        ...restMetadata,
+                    };
+
+                    return {
+                        ...action,
+                        proposedMetadata,
+                    };
+                }
+
+                // if ('gaugeMetadata' in action) {
+                //     const { avatar, links, ...restMetadata } =
+                //         action.gaugeMetadata as {
+                //             avatar?: string;
+                //             links?: IResource[];
+                //         };
+                //     const gaugeMetadata = {
+                //         avatar: avatar && {
+                //             url: ipfsUtils.cidToSrc(avatar),
+                //         },
+                //         resources: links ?? [],
+                //         ...restMetadata,
+                //     };
+                //
+                //     return {
+                //         ...action,
+                //         gaugeMetadata,
+                //     };
+                // }
+
+                return action;
+            },
+        );
+
+        return normalizedActions;
     };
 
     /**

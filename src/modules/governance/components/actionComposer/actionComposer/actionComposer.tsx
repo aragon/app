@@ -6,17 +6,16 @@ import {
     Button,
     Dropdown,
     IconType,
+    invariant,
     Switch,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import type { IDaoPermission } from '@/shared/api/daoService';
+import type { IDaoPermission, IResource } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { addressUtils, AlertInline, Button, IconType, invariant, Switch } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { ipfsUtils } from '../../../../../shared/utils/ipfsUtils';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
 import type { IProposalAction } from '../../../api/governanceService';
 import type { ISmartContractAbi } from '../../../api/smartContractService';
@@ -27,6 +26,7 @@ import {
     type IExportedAction,
     proposalActionsImportExportUtils,
 } from '../../../utils/proposalActionsImportExportUtils';
+import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import {
     ActionComposerInput,
@@ -182,7 +182,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const handleDirectFileUpload = async (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
-        invariant(dao != null, 'DAO must be defined to import actions from file');
+        invariant(
+            dao != null,
+            'DAO must be defined to import actions from file',
+        );
 
         const file = event.target.files?.[0];
         if (!file) {
@@ -200,11 +203,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 );
 
             if (result.success && result.actions) {
-                const decodedActions = await proposalActionsImportExportUtils.decodeActions(
-                    result.actions,
-                    dao.network,
-                    dao.address,
-                );
+                const decodedActions =
+                    await proposalActionsImportExportUtils.decodeActions(
+                        result.actions,
+                        dao.network,
+                        dao.address,
+                    );
+
                 handleImportActions(decodedActions);
                 setUploadError(null);
             } else if (result.errorKey) {
