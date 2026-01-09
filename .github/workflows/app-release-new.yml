@@ -1,0 +1,119 @@
+name: App Release (New)
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: 'Commit SHA to start release from (default: main HEAD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          fetch-depth: 0
+          ref: ${{ inputs.base_commit || 'main' }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6.3.0
+        with:
+          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
+          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Generate Release Branch Name
+        id: branch-name
+        run: echo "name=release/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Create Release Branch
+        run: |
+          git checkout -b ${{ steps.branch-name.outputs.name }}
+          git push origin ${{ steps.branch-name.outputs.name }}
+
+      - name: Generate Release Summary
+        id: release-summary
+        run: |
+          node .github/workflows/scripts/generateReleaseSummary.js
+        env:
+          LINEAR_API_TOKEN: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
+
+      - name: Update version and changelog
+        run: |
+          pnpm changeset version
+          pnpm biome format --write --line-width 9999999 CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Commit changes
+        run: |
+          git add --all
+          git commit -am "Release v${{ steps.package-version.outputs.current-version}}"
+          git push origin ${{ steps.branch-name.outputs.name }}
+
+      - name: Create Pull Request
+        id: create-pr
+        run: |
+          PR_URL=$(gh pr create \
+            --base main \
+            --head ${{ steps.branch-name.outputs.name }} \
+            --title "Release v${{ steps.package-version.outputs.current-version }}" \
+            --body "${{ steps.release-summary.outputs.summary }}")
+          echo "url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Notify Slack
+        id: slack
+        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != ''
+        run: |
+          MSG="🚀 *Release v${{ steps.package-version.outputs.current-version }} Started*
+          *PR:* ${{ steps.create-pr.outputs.url }}"
+
+          node .github/workflows/scripts/slackNotify.js "$MSG"
+        env:
+          SLACK_BOT_TOKEN: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
+
+      - name: Update PR with Slack TS
+        if: steps.slack.outputs.ts != ''
+        run: |
+          gh pr edit ${{ steps.create-pr.outputs.url }} --body "${{ steps.release-summary.outputs.summary }}
+
+          <!-- slack_ts: ${{ steps.slack.outputs.ts }} -->"
+        env:
+          GH_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
