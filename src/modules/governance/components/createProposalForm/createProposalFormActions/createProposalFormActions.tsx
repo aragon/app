@@ -3,7 +3,7 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
@@ -104,6 +104,9 @@ export const CreateProposalFormActions: React.FC<
         (page) => page.data,
     );
 
+    const [isDownloadPinning, setIsDownloadPinning] = useState(false);
+    const [hasDownloadPinErrors, setHasDownloadPinErrors] = useState(false);
+
     /**
      * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
      * when dealing with complex nested objects, causing data loss and crashes. Instead,
@@ -148,104 +151,115 @@ export const CreateProposalFormActions: React.FC<
     }, [remove]);
 
     const handleDownloadActions = useCallback(async () => {
-        const currentActions = getValues('actions') ?? [];
+        setIsDownloadPinning(true);
+        setHasDownloadPinErrors(false);
 
-        // Pin and encode metadata actions for download
-        for (let i = 0; i < currentActions.length; i++) {
-            const action = currentActions[i];
+        try {
+            const currentActions = getValues('actions') ?? [];
 
-            if (action.type === ProposalActionType.METADATA_UPDATE) {
-                const actionWithMetadata = action as unknown as {
-                    proposedMetadata: {
-                        name: string;
-                        description: string;
-                        resources: unknown[];
-                        avatar?: { file?: File; url?: string };
+            // Pin and encode metadata actions for download
+            for (let i = 0; i < currentActions.length; i++) {
+                const action = currentActions[i];
+
+                if (action.type === ProposalActionType.METADATA_UPDATE) {
+                    const actionWithMetadata = action as unknown as {
+                        proposedMetadata: {
+                            name: string;
+                            description: string;
+                            resources: unknown[];
+                            avatar?: { file?: File; url?: string };
+                        };
                     };
-                };
-                const { name, description, resources, avatar } =
-                    actionWithMetadata.proposedMetadata;
-                const proposedMetadata = {
-                    name,
-                    description,
-                    links: resources,
-                };
-
-                let daoAvatar: string | undefined;
-
-                if (avatar?.file != null) {
-                    const avatarResult = await pinFile({ body: avatar.file });
-                    daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
-                } else if (avatar?.url) {
-                    daoAvatar = ipfsUtils.srcToUri(avatar.url);
-                }
-
-                const metadata = daoAvatar
-                    ? { ...proposedMetadata, avatar: daoAvatar }
-                    : proposedMetadata;
-
-                const ipfsResult = await pinJson({ body: metadata });
-                const hexResult = transactionUtils.stringToMetadataHex(
-                    ipfsResult.IpfsHash,
-                );
-                const data = encodeFunctionData({
-                    abi: [setMetadataAbi],
-                    args: [hexResult],
-                });
-
-                currentActions[i] = { ...action, data };
-            } else if (
-                action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
-            ) {
-                const actionWithMetadata = action as unknown as {
-                    proposedMetadata: {
-                        name: string;
-                        description: string;
-                        resources: unknown[];
-                        processKey?: string;
+                    const { name, description, resources, avatar } =
+                        actionWithMetadata.proposedMetadata;
+                    const proposedMetadata = {
+                        name,
+                        description,
+                        links: resources,
                     };
-                    existingMetadata: unknown;
-                };
-                const { proposedMetadata, existingMetadata } =
-                    actionWithMetadata;
-                const { name, description, resources, processKey } =
-                    proposedMetadata;
 
-                const meta = action.meta as
-                    | { isProcess?: boolean; isSubPlugin?: boolean }
-                    | undefined;
-                const isProcess = meta?.isProcess ?? false;
-                const isSubPlugin = meta?.isSubPlugin ?? false;
-                const displayProcessKey = isProcess && !isSubPlugin;
+                    let daoAvatar: string | undefined;
 
-                const pluginMetadata: Record<string, unknown> = {
-                    ...(existingMetadata as Record<string, unknown>),
-                    name,
-                    description,
-                    links: resources,
-                };
+                    if (avatar?.file != null) {
+                        const avatarResult = await pinFile({
+                            body: avatar.file,
+                        });
+                        daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
+                    } else if (avatar?.url) {
+                        daoAvatar = ipfsUtils.srcToUri(avatar.url);
+                    }
 
-                if (displayProcessKey) {
-                    pluginMetadata.processKey = processKey;
+                    const metadata = daoAvatar
+                        ? { ...proposedMetadata, avatar: daoAvatar }
+                        : proposedMetadata;
+
+                    const ipfsResult = await pinJson({ body: metadata });
+                    const hexResult = transactionUtils.stringToMetadataHex(
+                        ipfsResult.IpfsHash,
+                    );
+                    const data = encodeFunctionData({
+                        abi: [setMetadataAbi],
+                        args: [hexResult],
+                    });
+
+                    currentActions[i] = { ...action, data };
+                } else if (
+                    action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
+                ) {
+                    const actionWithMetadata = action as unknown as {
+                        proposedMetadata: {
+                            name: string;
+                            description: string;
+                            resources: unknown[];
+                            processKey?: string;
+                        };
+                        existingMetadata: unknown;
+                    };
+                    const { proposedMetadata, existingMetadata } =
+                        actionWithMetadata;
+                    const { name, description, resources, processKey } =
+                        proposedMetadata;
+
+                    const meta = action.meta as
+                        | { isProcess?: boolean; isSubPlugin?: boolean }
+                        | undefined;
+                    const isProcess = meta?.isProcess ?? false;
+                    const isSubPlugin = meta?.isSubPlugin ?? false;
+                    const displayProcessKey = isProcess && !isSubPlugin;
+
+                    const pluginMetadata: Record<string, unknown> = {
+                        ...(existingMetadata as Record<string, unknown>),
+                        name,
+                        description,
+                        links: resources,
+                    };
+
+                    if (displayProcessKey) {
+                        pluginMetadata.processKey = processKey;
+                    }
+
+                    const ipfsResult = await pinJson({ body: pluginMetadata });
+                    const hexResult = transactionUtils.stringToMetadataHex(
+                        ipfsResult.IpfsHash,
+                    );
+                    const data = encodeFunctionData({
+                        abi: [setMetadataAbi],
+                        args: [hexResult],
+                    });
+
+                    currentActions[i] = { ...action, data };
                 }
-
-                const ipfsResult = await pinJson({ body: pluginMetadata });
-                const hexResult = transactionUtils.stringToMetadataHex(
-                    ipfsResult.IpfsHash,
-                );
-                const data = encodeFunctionData({
-                    abi: [setMetadataAbi],
-                    args: [hexResult],
-                });
-
-                currentActions[i] = { ...action, data };
             }
-        }
 
-        proposalActionsImportExportUtils.downloadActionsAsJSON(
-            currentActions,
-            `dao-${daoId}-actions.json`,
-        );
+            proposalActionsImportExportUtils.downloadActionsAsJSON(
+                currentActions,
+                `dao-${daoId}-actions.json`,
+            );
+        } catch {
+            setHasDownloadPinErrors(true);
+        } finally {
+            setIsDownloadPinning(false);
+        }
     }, [daoId, getValues, pinJson, pinFile]);
 
     const getArrayControls = (
@@ -329,6 +343,8 @@ export const CreateProposalFormActions: React.FC<
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
+                    hasPinErrors={hasDownloadPinErrors}
+                    isPinning={isDownloadPinning}
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}

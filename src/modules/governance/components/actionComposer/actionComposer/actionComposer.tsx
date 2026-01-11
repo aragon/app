@@ -349,15 +349,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                                   )}
                                         </Dropdown.Item>
                                         <Dropdown.Item
-                                            onClick={() =>
-                                                handleDownloadActions(true)
-                                            }
-                                        >
-                                            {t(
-                                                'app.governance.actionComposer.proceedAnyway',
-                                            )}
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
                                             onClick={handleRemoveAllActions}
                                         >
                                             {t(
