@@ -1,8 +1,21 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { isAddress, isHex } from 'viem';
+import { formatUnits, isAddress, isHex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IDao, IResource } from '../../../../shared/api/daoService';
-import { ipfsUtils } from '../../../../shared/utils/ipfsUtils';
+import {
+    type IDao,
+    type IResource,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import type { IGaugeVoterCreateGaugeFormData } from '../../../../actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate';
+import { GaugeVoterActionType } from '../../../../actions/gaugeVoter/types/enum/gaugeVoterActionType';
+import type { IGaugeVoterActionCreateGauge } from '../../../../actions/gaugeVoter/types/gaugeVoterActionCreateGauge';
+import { MultisigProposalActionType } from '../../../../plugins/multisigPlugin/types';
+import {
+    type ITokenActionTokenMint,
+    type ITokenPlugin,
+    TokenProposalActionType,
+} from '../../../../plugins/tokenPlugin/types';
 import { smartContractService } from '../../api/smartContractService';
 
 export interface IExportedAction {
@@ -190,30 +203,100 @@ class ProposalActionsImportExportUtils {
                     };
                 }
 
-                // if ('gaugeMetadata' in action) {
-                //     const { avatar, links, ...restMetadata } =
-                //         action.gaugeMetadata as {
-                //             avatar?: string;
-                //             links?: IResource[];
-                //         };
-                //     const gaugeMetadata = {
-                //         avatar: avatar && {
-                //             url: ipfsUtils.cidToSrc(avatar),
-                //         },
-                //         resources: links ?? [],
-                //         ...restMetadata,
-                //     };
-                //
-                //     return {
-                //         ...action,
-                //         gaugeMetadata,
-                //     };
-                // }
+                if (action.type === GaugeVoterActionType.CREATE_GAUGE) {
+                    const { gaugeMetadata, inputData } =
+                        action as IGaugeVoterActionCreateGauge;
+                    const {
+                        name = '',
+                        description = '',
+                        avatar,
+                        links = [],
+                    } = gaugeMetadata ?? {};
+                    const gaugeAddress = inputData?.parameters[0]
+                        .value as string;
+
+                    const gaugeDetails: IGaugeVoterCreateGaugeFormData = {
+                        gaugeAddress: {
+                            address: gaugeAddress,
+                        },
+                        name,
+                        description,
+                        resources: links,
+                        avatar: {
+                            url: ipfsUtils.cidToSrc(avatar),
+                        },
+                    };
+
+                    return {
+                        ...action,
+                        meta,
+                        gaugeDetails,
+                    };
+                }
+
+                if (
+                    (
+                        [
+                            MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
+                            MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
+                            MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
+                            TokenProposalActionType.UPDATE_VOTE_SETTINGS,
+                        ] as string[]
+                    ).includes(action.type)
+                ) {
+                    if (!meta) {
+                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+                        return {
+                            ...action,
+                            type: 'Unknown',
+                        };
+                    }
+
+                    return {
+                        ...action,
+                        meta,
+                    };
+                }
+
+                if (action.type === TokenProposalActionType.MINT) {
+                    // In MINT, to is the address of the ERC20 token, not the address of the TV plugin
+                    const meta = plugins.find(
+                        (plugin) =>
+                            plugin.interfaceType ===
+                                PluginInterfaceType.TOKEN_VOTING &&
+                            addressUtils.isAddressEqual(
+                                action.to,
+                                (plugin as ITokenPlugin).settings?.token
+                                    ?.address,
+                            ),
+                    );
+
+                    if (!meta) {
+                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+                        return {
+                            ...action,
+                            type: 'Unknown',
+                        };
+                    }
+
+                    const { receivers, token } =
+                        action as ITokenActionTokenMint;
+                    const { address, newBalance } = receivers;
+
+                    return {
+                        ...action,
+                        receiver: {
+                            address,
+                        },
+                        amount: formatUnits(BigInt(newBalance), token.decimals),
+                        meta,
+                    };
+                }
+
                 // TODO: add support for basic views one by one. In the meantime import actions as Unknown type so that decoded view is usable at least.
                 return {
                     ...action,
-                    meta,
-                    // type: "Unknown"
+                    type: 'Unknown',
                 };
             },
         );
