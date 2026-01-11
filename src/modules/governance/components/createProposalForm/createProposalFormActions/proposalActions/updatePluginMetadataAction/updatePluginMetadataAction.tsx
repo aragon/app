@@ -38,14 +38,6 @@ export const UpdatePluginMetadataAction: React.FC<
 
     const prepareAction = useCallback(
         async (action: IUpdatePluginMetadataAction) => {
-            if (
-                action.data &&
-                action.data !== '0x' &&
-                action.ipfsMetadata?.pinnedData
-            ) {
-                return action.ipfsMetadata.pinnedData;
-            }
-
             const { proposedMetadata, existingMetadata } = action;
             const { name, description, resources, processKey } =
                 proposedMetadata;

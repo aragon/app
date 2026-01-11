@@ -1,33 +1,5 @@
-import type { Hex } from 'viem';
 import type { IProposalAction } from '../../api/governanceService';
 import type { IProposalCreate } from '../../dialogs/publishProposalDialog';
-
-/**
- * IPFS metadata for actions that have been pinned to IPFS.
- * Used for setMetadata actions to track IPFS pinning state.
- */
-export interface IIpfsMetadata {
-    /**
-     * IPFS CID of the pinned metadata JSON.
-     */
-    metadataCid: string;
-    /**
-     * IPFS CID of the pinned avatar file (if applicable).
-     */
-    avatarCid?: string;
-    /**
-     * Encoded hex transaction data ready for Ethereum.
-     */
-    pinnedData: Hex;
-    /**
-     * Timestamp when the metadata was pinned.
-     */
-    pinnedAt: number;
-    /**
-     * Hash of the source data to detect changes.
-     */
-    sourceHash: string;
-}
 
 export type IProposalActionData<
     TAction extends IProposalAction = IProposalAction,
@@ -45,11 +17,6 @@ export type IProposalActionData<
      * Additional metadata for the action.
      */
     meta: TMeta;
-    /**
-     * IPFS metadata for setMetadata actions (optional).
-     * Contains pinning state and encoded transaction data.
-     */
-    ipfsMetadata?: IIpfsMetadata;
 };
 
 export interface ICreateProposalFormData<TMeta = undefined>

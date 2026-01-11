@@ -15,10 +15,7 @@ import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
-import type {
-    IIpfsMetadata,
-    IProposalActionData,
-} from '../../../createProposalFormDefinitions';
+import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 
 export interface IUpdateDaoMetadataAction
@@ -28,14 +25,9 @@ export interface IUpdateDaoMetadataAction
      */
     proposedMetadata: ICreateDaoFormMetadataData;
     /**
-     * The encoded transaction data (populated by background pinning).
+     * The encoded transaction data (optional, populated during transaction preparation).
      */
     data?: string;
-    /**
-     * IPFS metadata for the action (optional).
-     * Contains pinning state and encoded transaction data.
-     */
-    ipfsMetadata?: IIpfsMetadata;
 }
 
 export interface IUpdateDaoMetadaActionProps
@@ -59,14 +51,6 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
 
     const prepareAction = useCallback(
         async (action: IUpdateDaoMetadataAction) => {
-            if (
-                action.data &&
-                action.data !== '0x' &&
-                action.ipfsMetadata?.pinnedData
-            ) {
-                return action.ipfsMetadata.pinnedData;
-            }
-
             const { name, description, resources, avatar } =
                 action.proposedMetadata;
             const proposedMetadata = { name, description, links: resources };
@@ -78,6 +62,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             } else if (avatar?.url) {
+                // Set previous avatar URL if user did not change the DAO avatar and DAO already has an avatar
                 daoAvatar = ipfsUtils.srcToUri(avatar.url);
             }
 

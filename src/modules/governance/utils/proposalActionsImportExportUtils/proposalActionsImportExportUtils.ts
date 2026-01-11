@@ -1,6 +1,5 @@
 import { isAddress, isHex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import type { IProposalActionData } from '../../components/createProposalForm';
 
 export interface IExportedAction {
     /**
@@ -35,29 +34,16 @@ export interface IImportActionsResult {
 class ProposalActionsImportExportUtils {
     /**
      * Exports actions to a JSON-serializable format.
-     * Prefers pinned IPFS data over action.data when available for metadata actions.
      */
     exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] =>
-        actions.map((action) => {
-            let exportData = action.data;
-
-            const actionWithMetadata = action as IProposalActionData;
-            if (
-                actionWithMetadata.ipfsMetadata?.pinnedData &&
-                actionWithMetadata.ipfsMetadata.pinnedData !== '0x'
-            ) {
-                exportData = actionWithMetadata.ipfsMetadata.pinnedData;
-            }
-
-            return {
-                to: action.to,
-                value:
-                    typeof action.value === 'bigint'
-                        ? Number(action.value)
-                        : Number(action.value || 0),
-                data: exportData,
-            };
-        });
+        actions.map((action) => ({
+            to: action.to,
+            value:
+                typeof action.value === 'bigint'
+                    ? Number(action.value)
+                    : Number(action.value || 0),
+            data: action.data,
+        }));
 
     /**
      * Downloads actions as a JSON file.

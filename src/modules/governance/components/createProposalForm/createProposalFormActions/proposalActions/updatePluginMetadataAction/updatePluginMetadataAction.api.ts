@@ -4,10 +4,7 @@ import type {
     IProposalActionUpdatePluginMetadataObject,
 } from '@/modules/governance/api/governanceService';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
-import type {
-    IIpfsMetadata,
-    IProposalActionData,
-} from '../../../createProposalFormDefinitions';
+import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface IUpdatePluginMetadataFormData
     extends Omit<IProposalActionUpdatePluginMetadataObject, 'links'> {
@@ -27,14 +24,9 @@ export interface IUpdatePluginMetadataAction
      */
     proposedMetadata: IUpdatePluginMetadataFormData;
     /**
-     * The encoded transaction data (populated by background pinning).
+     * The encoded transaction data (optional, populated during transaction preparation).
      */
     data?: string;
-    /**
-     * IPFS metadata for the action (optional).
-     * Contains pinning state and encoded transaction data.
-     */
-    ipfsMetadata?: IIpfsMetadata;
 }
 
 export interface IUpdatePluginMetadataActionProps
