@@ -42,6 +42,10 @@ export interface IWizardPageStepProps extends IWizardStepProps {
      * Instead of "Next" button, render a dropdown with given items.
      */
     nextDropdownItems?: IWizardPageStepDropdownItem[];
+    /**
+     * Disables the next button when set to true.
+     */
+    disableNext?: boolean;
 }
 
 export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
@@ -51,6 +55,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
         children,
         className,
         nextDropdownItems,
+        disableNext = false,
         ...otherProps
     } = props;
 
@@ -110,6 +115,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                         {nextDropdownItems != null &&
                         nextDropdownItems.length > 0 ? (
                             <Dropdown.Container
+                                disabled={disableNext}
                                 label={submitLabel}
                                 size="lg"
                                 variant={submitVariant}
@@ -128,6 +134,7 @@ export const WizardPageStep: React.FC<IWizardPageStepProps> = (props) => {
                             </Dropdown.Container>
                         ) : (
                             <Button
+                                disabled={disableNext}
                                 iconRight={IconType.CHEVRON_RIGHT}
                                 size="lg"
                                 type="submit"
