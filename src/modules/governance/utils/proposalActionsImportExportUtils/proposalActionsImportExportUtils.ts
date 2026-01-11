@@ -12,10 +12,12 @@ import { GaugeVoterActionType } from '../../../../actions/gaugeVoter/types/enum/
 import type { IGaugeVoterActionCreateGauge } from '../../../../actions/gaugeVoter/types/gaugeVoterActionCreateGauge';
 import { MultisigProposalActionType } from '../../../../plugins/multisigPlugin/types';
 import {
+    type ITokenActionChangeSettings,
     type ITokenActionTokenMint,
     type ITokenPlugin,
     TokenProposalActionType,
 } from '../../../../plugins/tokenPlugin/types';
+import { tokenSettingsUtils } from '../../../../plugins/tokenPlugin/utils/tokenSettingsUtils';
 import { smartContractService } from '../../api/smartContractService';
 
 export interface IExportedAction {
@@ -240,7 +242,6 @@ class ProposalActionsImportExportUtils {
                             MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
                             MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
                             MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
-                            TokenProposalActionType.UPDATE_VOTE_SETTINGS,
                         ] as string[]
                     ).includes(action.type)
                 ) {
@@ -254,6 +255,46 @@ class ProposalActionsImportExportUtils {
 
                     return {
                         ...action,
+                        meta,
+                    };
+                }
+
+                if (
+                    action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS
+                ) {
+                    if (!meta) {
+                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+                        return {
+                            ...action,
+                            type: 'Unknown',
+                        };
+                    }
+
+                    const { proposedSettings } =
+                        action as ITokenActionChangeSettings;
+                    const {
+                        minProposerVotingPower,
+                        minParticipation,
+                        supportThreshold,
+                    } = proposedSettings;
+
+                    return {
+                        ...action,
+                        proposedSettings: {
+                            ...proposedSettings,
+                            minParticipation:
+                                tokenSettingsUtils.ratioToPercentage(
+                                    minParticipation,
+                                ),
+                            supportThreshold:
+                                tokenSettingsUtils.ratioToPercentage(
+                                    supportThreshold,
+                                ),
+                            minProposerVotingPower: formatUnits(
+                                BigInt(minProposerVotingPower),
+                                (meta as ITokenPlugin).settings.token.decimals,
+                            ),
+                        },
                         meta,
                     };
                 }
