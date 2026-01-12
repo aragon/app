@@ -71,9 +71,12 @@ jobs:
       - name: Notify Slack
         if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != '' && steps.extract-ts.outputs.ts != ''
         run: |
-          MSG="✅ *Release Merged*
-          Tag: \`v${{ steps.package-version.outputs.current-version}}\`
-          Deployment to Production initiated."
+          PR_BODY="${{ github.event.pull_request.body }}"
+          CLEAN_BODY=$(echo "$PR_BODY" | sed 's/<!-- slack_ts: .* -->//')
+
+          MSG="✅ *Release v${{ steps.package-version.outputs.current-version}} Published*
+          *Changes:*
+          $CLEAN_BODY"
            
           node .github/workflows/scripts/slackNotify.js "$MSG"
         env:

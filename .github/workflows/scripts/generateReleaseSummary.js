@@ -90,34 +90,42 @@ const generateSummary = async ({ core }) => {
             category = 'fixes';
         }
 
-        // Extract linear issues
-        let additionalInfo = '';
-        if (linearMatches && linearToken) {
-            for (const issueId of linearMatches) {
-                if (issuesFound.has(issueId)) {
-                    continue;
-                }
-                issuesFound.add(issueId);
-
-                const issue = await fetchLinearIssue(issueId, linearToken);
-                if (issue) {
-                    additionalInfo += ` [${issueId}](${issue.url}): ${issue.title}`;
-                } else {
-                    additionalInfo += ` ${issueId}`;
-                }
-            }
-        }
-
         // Clean line prefix
-        const cleanLine = line
+        let cleanLine = line
             .replace(
                 /^(feat|fix|chore|docs|style|refactor|perf|test)(\(.*\))?:/,
                 '',
             )
             .trim();
 
+        // Linkify PR numbers (#123 -> [#123](url))
+        cleanLine = cleanLine.replace(
+            /\(#(\d+)\)/g,
+            '([#$1](https://github.com/aragon/app/pull/$1))',
+        );
+
+        // Extract linear issues
+        let additionalInfo = '';
+        if (linearMatches && linearToken) {
+            const addedIssues = new Set();
+            for (const issueId of linearMatches) {
+                if (issuesFound.has(issueId) || addedIssues.has(issueId)) {
+                    continue;
+                }
+                issuesFound.add(issueId);
+                addedIssues.add(issueId);
+
+                const issue = await fetchLinearIssue(issueId, linearToken);
+                if (issue) {
+                    additionalInfo += ` [${issueId}: ${issue.title}](${issue.url})`;
+                } else {
+                    additionalInfo += ` ${issueId}`;
+                }
+            }
+        }
+
         const entry = additionalInfo
-            ? `${cleanLine} — ${additionalInfo}`
+            ? `${cleanLine} —${additionalInfo}`
             : cleanLine;
         categories[category].push(entry);
     }

@@ -1,6 +1,19 @@
 const https = require('node:https');
 const fs = require('node:fs');
 
+// Convert GitHub Markdown to Slack mrkdwn
+const markdownToMrkdwn = (text) => {
+    return (
+        text
+            // Convert links: [text](url) -> <url|text>
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<$2|$1>')
+            // Convert headers: ## Header -> *Header*
+            .replace(/^#{1,6}\s+(.+)$/gm, '*$1*')
+            // Convert list items: - item -> • item
+            .replace(/^-\s+/gm, '• ')
+    );
+};
+
 const postMessage = (token, channel, text, threadTs) =>
     new Promise((resolve, reject) => {
         const payload = {
@@ -21,7 +34,7 @@ const postMessage = (token, channel, text, threadTs) =>
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
-                'Content-Length': data.length,
+                'Content-Length': Buffer.byteLength(data),
             },
         };
 
@@ -78,7 +91,7 @@ if (require.main === module) {
         `Sending Slack notification: "${message}"${threadTs ? ` (Thread: ${threadTs})` : ''}`,
     );
 
-    postMessage(token, channel, message, threadTs)
+    postMessage(token, channel, markdownToMrkdwn(message), threadTs)
         .then((ts) => {
             console.log(`Message sent. TS: ${ts}`);
             const outputFile = process.env.GITHUB_OUTPUT;

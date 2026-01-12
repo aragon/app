@@ -56,6 +56,7 @@ jobs:
         with:
           token: ${{ github.token }}
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
       - name: Extract Slack Thread TS
         id: extract-ts
@@ -64,6 +65,22 @@ jobs:
           PR_BODY="${{ github.event.pull_request.body }}"
           TS=$(echo "$PR_BODY" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//')
           echo "ts=$TS" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Summary
+        id: release-summary
+        run: |
+          node .github/workflows/scripts/generateReleaseSummary.js
+        env:
+          LINEAR_API_TOKEN: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
+
+      - name: Update PR Description
+        if: steps.extract-ts.outputs.ts != ''
+        run: |
+          gh pr edit ${{ github.event.pull_request.html_url }} --body "${{ steps.release-summary.outputs.summary }}
+
+          <!-- slack_ts: ${{ steps.extract-ts.outputs.ts }} -->"
+        env:
+          GH_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
       - name: Notify Slack
         if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != '' && steps.extract-ts.outputs.ts != ''

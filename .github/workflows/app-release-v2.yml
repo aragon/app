@@ -102,7 +102,9 @@ jobs:
         if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != ''
         run: |
           MSG="🚀 *Release v${{ steps.package-version.outputs.current-version }} Started*
-          *PR:* ${{ steps.create-pr.outputs.url }}"
+          *PR:* ${{ steps.create-pr.outputs.url }}
+
+          ${{ steps.release-summary.outputs.summary }}"
 
           node .github/workflows/scripts/slackNotify.js "$MSG"
         env:
