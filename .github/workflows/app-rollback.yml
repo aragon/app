@@ -12,7 +12,25 @@ permissions:
   contents: read
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag is in main
+        run: |
+          git fetch origin main
+          # Check if the tag is contained in origin/main
+          if ! git branch -r --contains ${{ inputs.tag }} | grep -q "origin/main"; then
+            echo "Error: Tag ${{ inputs.tag }} is not reachable from main branch!"
+            exit 1
+          fi
+
   build:
+    needs: validate
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
