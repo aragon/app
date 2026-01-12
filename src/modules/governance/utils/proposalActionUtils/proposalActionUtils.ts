@@ -21,7 +21,7 @@ import {
     type IProposalActionWithdrawToken,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
-import type { IResource } from '@/shared/api/daoService';
+import type {IDao, IResource} from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
@@ -30,7 +30,7 @@ import type { INormalizeActionsParams } from '../../types';
 class ProposalActionUtils {
     normalizeActions = (
         actions: IProposalAction[],
-        daoId: string,
+        dao: IDao,
     ): IGukProposalAction[] => {
         // Use all registered normalization functions to make sure we render the native action correctly even if a DAO
         // does not have the related plugin (e.g. a Multisig DAO updating the settings of a Token-based DAO)
@@ -41,7 +41,7 @@ class ProposalActionUtils {
 
         const pluginNormalizedActions = normalizeFunctions.reduce(
             (current, normalizeFunction) =>
-                normalizeFunction({ actions: current, daoId }),
+                normalizeFunction({ actions: current, daoId: dao.id }),
             actions,
         );
 

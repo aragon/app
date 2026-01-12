@@ -51,7 +51,7 @@ describe('proposalActionUtils', () => {
                 normalizationFunctionOne,
                 normalizationFunctionTwo,
             ]);
-            proposalActionUtils.normalizeActions(actions, dao.id);
+            proposalActionUtils.normalizeActions(actions, dao);
             const expectedParams = { actions, daoId: dao.id };
             expect(normalizationFunctionOne).toHaveBeenCalledWith(
                 expectedParams,
@@ -68,7 +68,7 @@ describe('proposalActionUtils', () => {
             ];
             const pluginNormalizationFunction = () => normalizedActions;
             getSlotFunctionsSpy.mockReturnValue([pluginNormalizationFunction]);
-            proposalActionUtils.normalizeActions([], 'dao-test-id');
+            proposalActionUtils.normalizeActions([], generateDao());
             expect(normalizeDefaultActionSpy).toHaveBeenNthCalledWith(
                 1,
                 normalizedActions[0],
