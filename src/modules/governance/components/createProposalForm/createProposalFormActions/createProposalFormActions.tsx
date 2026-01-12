@@ -5,17 +5,18 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { encodeFunctionData } from 'viem';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
-import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
+import {
+    type IProposalAction,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
-import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import { transactionUtils } from '@/shared/utils/transactionUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import type { IProposalCreateAction } from '../../../dialogs/publishProposalDialog';
+import { proposalActionPreparationUtils } from '../../../utils/proposalActionPreparationUtils';
 import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -23,6 +24,7 @@ import type {
     ICreateProposalFormData,
     IProposalActionData,
 } from '../createProposalFormDefinitions';
+import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
@@ -64,6 +66,8 @@ export const CreateProposalFormActions: React.FC<
 
     const { control, getValues, setValue } =
         useFormContext<ICreateProposalFormData>();
+
+    const { prepareActions } = useCreateProposalFormContext();
 
     const {
         fields: actions,
@@ -143,9 +147,6 @@ export const CreateProposalFormActions: React.FC<
         append(newActions);
     };
 
-    const { mutateAsync: pinJson } = usePinJson();
-    const { mutateAsync: pinFile } = usePinFile();
-
     const handleRemoveAllActions = useCallback(() => {
         remove();
     }, [remove]);
@@ -157,110 +158,30 @@ export const CreateProposalFormActions: React.FC<
         try {
             const currentActions = getValues('actions') ?? [];
 
-            // Pin and encode metadata actions for download
-            for (let i = 0; i < currentActions.length; i++) {
-                const action = currentActions[i];
-
-                if (action.type === ProposalActionType.METADATA_UPDATE) {
-                    const actionWithMetadata = action as unknown as {
-                        proposedMetadata: {
-                            name: string;
-                            description: string;
-                            resources: unknown[];
-                            avatar?: { file?: File; url?: string };
-                        };
-                    };
-                    const { name, description, resources, avatar } =
-                        actionWithMetadata.proposedMetadata;
-                    const proposedMetadata = {
-                        name,
-                        description,
-                        links: resources,
-                    };
-
-                    let daoAvatar: string | undefined;
-
-                    if (avatar?.file != null) {
-                        const avatarResult = await pinFile({
-                            body: avatar.file,
-                        });
-                        daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
-                    } else if (avatar?.url) {
-                        daoAvatar = ipfsUtils.srcToUri(avatar.url);
-                    }
-
-                    const metadata = daoAvatar
-                        ? { ...proposedMetadata, avatar: daoAvatar }
-                        : proposedMetadata;
-
-                    const ipfsResult = await pinJson({ body: metadata });
-                    const hexResult = transactionUtils.stringToMetadataHex(
-                        ipfsResult.IpfsHash,
-                    );
-                    const data = encodeFunctionData({
-                        abi: [setMetadataAbi],
-                        args: [hexResult],
-                    });
-
-                    currentActions[i] = { ...action, data };
-                } else if (
-                    action.type === ProposalActionType.METADATA_PLUGIN_UPDATE
-                ) {
-                    const actionWithMetadata = action as unknown as {
-                        proposedMetadata: {
-                            name: string;
-                            description: string;
-                            resources: unknown[];
-                            processKey?: string;
-                        };
-                        existingMetadata: unknown;
-                    };
-                    const { proposedMetadata, existingMetadata } =
-                        actionWithMetadata;
-                    const { name, description, resources, processKey } =
-                        proposedMetadata;
-
-                    const meta = action.meta as
-                        | { isProcess?: boolean; isSubPlugin?: boolean }
-                        | undefined;
-                    const isProcess = meta?.isProcess ?? false;
-                    const isSubPlugin = meta?.isSubPlugin ?? false;
-                    const displayProcessKey = isProcess && !isSubPlugin;
-
-                    const pluginMetadata: Record<string, unknown> = {
-                        ...(existingMetadata as Record<string, unknown>),
-                        name,
-                        description,
-                        links: resources,
-                    };
-
-                    if (displayProcessKey) {
-                        pluginMetadata.processKey = processKey;
-                    }
-
-                    const ipfsResult = await pinJson({ body: pluginMetadata });
-                    const hexResult = transactionUtils.stringToMetadataHex(
-                        ipfsResult.IpfsHash,
-                    );
-                    const data = encodeFunctionData({
-                        abi: [setMetadataAbi],
-                        args: [hexResult],
-                    });
-
-                    currentActions[i] = { ...action, data };
-                }
-            }
+            // Prepare actions using registered prepare functions
+            const preparedActions =
+                await proposalActionPreparationUtils.prepareActions({
+                    actions: currentActions as IProposalCreateAction[],
+                    prepareActions,
+                });
 
             proposalActionsImportExportUtils.downloadActionsAsJSON(
-                currentActions,
+                preparedActions as unknown as IProposalAction[],
                 `dao-${daoId}-actions.json`,
             );
-        } catch {
+        } catch (error) {
+            monitoringUtils.logError(error, {
+                context: {
+                    daoId,
+                    message:
+                        'Failed to pin or download proposal actions for DAO',
+                },
+            });
             setHasDownloadPinErrors(true);
         } finally {
             setIsDownloadPinning(false);
         }
-    }, [daoId, getValues, pinJson, pinFile]);
+    }, [daoId, getValues, prepareActions]);
 
     const getArrayControls = (
         index: number,

@@ -25,9 +25,8 @@ export const UpdatePluginMetadataAction: React.FC<
     const isSubPlugin = meta?.isSubPlugin ?? false;
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
-    const { addPrepareAction } = useCreateProposalFormContext<
-        IUpdatePluginMetadataAction & { data: string }
-    >();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IUpdatePluginMetadataAction>();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(

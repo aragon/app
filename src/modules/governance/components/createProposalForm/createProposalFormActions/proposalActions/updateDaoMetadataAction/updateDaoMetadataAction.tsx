@@ -19,15 +19,11 @@ import type { IProposalActionData } from '../../../createProposalFormDefinitions
 import { useCreateProposalFormContext } from '../../../createProposalFormProvider';
 
 export interface IUpdateDaoMetadataAction
-    extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata' | 'data'> {
+    extends Omit<IProposalActionUpdateMetadata, 'proposedMetadata'> {
     /**
      * Metadata proposed on the action.
      */
     proposedMetadata: ICreateDaoFormMetadataData;
-    /**
-     * The encoded transaction data (optional, populated during transaction preparation).
-     */
-    data?: string;
 }
 
 export interface IUpdateDaoMetadaActionProps
@@ -40,9 +36,8 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
 
     const { mutateAsync: pinJsonAsync } = usePinJson();
     const { mutateAsync: pinFileAsync } = usePinFile();
-    const { addPrepareAction } = useCreateProposalFormContext<
-        IUpdateDaoMetadataAction & { data: string }
-    >();
+    const { addPrepareAction } =
+        useCreateProposalFormContext<IUpdateDaoMetadataAction>();
 
     const fieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof fieldName>(
@@ -58,7 +53,7 @@ export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
             let daoAvatar: string | undefined;
 
             if (avatar?.file != null) {
-                // Pin the avatar set on the form when the file property is set, meaning that the user changed the gauge avatar
+                // Pin the avatar set on the form when the file property is set, meaning that the user changed the DAO avatar
                 const avatarResult = await pinFileAsync({ body: avatar.file });
                 daoAvatar = ipfsUtils.cidToUri(avatarResult.IpfsHash);
             } else if (avatar?.url) {

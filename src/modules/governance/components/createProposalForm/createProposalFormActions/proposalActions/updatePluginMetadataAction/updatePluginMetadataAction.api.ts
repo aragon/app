@@ -15,18 +15,11 @@ export interface IUpdatePluginMetadataFormData
 }
 
 export interface IUpdatePluginMetadataAction
-    extends Omit<
-        IProposalActionUpdatePluginMetadata,
-        'proposedMetadata' | 'data'
-    > {
+    extends Omit<IProposalActionUpdatePluginMetadata, 'proposedMetadata'> {
     /**
      * Metadata proposed on the action.
      */
     proposedMetadata: IUpdatePluginMetadataFormData;
-    /**
-     * The encoded transaction data (optional, populated during transaction preparation).
-     */
-    data?: string;
 }
 
 export interface IUpdatePluginMetadataActionProps

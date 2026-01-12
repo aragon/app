@@ -58,9 +58,8 @@ export interface IActionComposerProps
     hasActions?: boolean;
     /**
      * Callback triggered when the user downloads all actions.
-     * Can accept optional skipPinning parameter for "proceed anyway" functionality.
      */
-    onDownloadActions?: (skipPinning?: boolean) => void;
+    onDownloadActions?: () => void;
     /**
      * Granted permissions for DAO.
      */
@@ -76,7 +75,7 @@ export interface IActionComposerProps
     isPinning?: boolean;
     /**
      * Whether there are pinning errors.
-     * When true, shows retry and proceed anyway options in dropdown.
+     * When true, shows retry option in dropdown.
      */
     hasPinErrors?: boolean;
 }
@@ -242,12 +241,12 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
     };
 
-    const handleDownloadActions = (skipPinning = false) => {
+    const handleDownloadActions = () => {
         if (!onDownloadActions) {
             return;
         }
 
-        onDownloadActions(skipPinning);
+        onDownloadActions();
     };
 
     const handleRemoveAllActions = () => {
@@ -336,9 +335,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                     <>
                                         <Dropdown.Item
                                             disabled={isPinning}
-                                            onClick={() =>
-                                                handleDownloadActions(false)
-                                            }
+                                            onClick={handleDownloadActions}
                                         >
                                             {isPinning
                                                 ? t(
@@ -360,9 +357,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                     <>
                                         <Dropdown.Item
                                             disabled={isPinning}
-                                            onClick={() =>
-                                                handleDownloadActions(false)
-                                            }
+                                            onClick={handleDownloadActions}
                                         >
                                             {isPinning
                                                 ? t(
