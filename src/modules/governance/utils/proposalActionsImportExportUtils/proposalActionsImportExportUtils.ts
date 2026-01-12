@@ -354,7 +354,7 @@ class ProposalActionsImportExportUtils {
                         BigInt(amount),
                         token.decimals,
                     );
-                    console.log('actionactionactionaction', action);
+
                     return {
                         ...action,
                         type: ProposalActionType.TRANSFER,
@@ -362,6 +362,12 @@ class ProposalActionsImportExportUtils {
                             address: receiverAddress,
                         },
                         amount: formattedAmount,
+                        asset: {
+                            token: {
+                                ...token,
+                                network: dao.network,
+                            },
+                        },
                     };
                 }
 
