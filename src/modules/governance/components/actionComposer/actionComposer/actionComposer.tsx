@@ -104,6 +104,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         allowedActions != null,
     );
     const [uploadError, setUploadError] = useState<string | null>(null);
+    const [isUploadLoading, setIsUploadLoading] = useState(false);
 
     const [importedContractAbis, setImportedContractAbis] = useState<
         ISmartContractAbi[]
@@ -189,6 +190,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         }
 
         setUploadError(null);
+        setIsUploadLoading(true);
 
         try {
             const fileContent =
@@ -216,6 +218,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
                 ),
             );
+        } finally {
+            setIsUploadLoading(false);
         }
 
         event.target.value = '';
@@ -357,6 +361,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         )}
                     </div>
                 </div>
+                {isUploadLoading && (
+                    <AlertInline
+                        message={t(
+                            'app.governance.createProposalForm.actionsImportExport.uploadLoading',
+                        )}
+                        variant="info"
+                    />
+                )}
                 {uploadError && (
                     <AlertInline message={uploadError} variant="critical" />
                 )}

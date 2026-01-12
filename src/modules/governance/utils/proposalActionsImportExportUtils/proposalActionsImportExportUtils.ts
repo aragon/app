@@ -241,10 +241,10 @@ class ProposalActionsImportExportUtils {
                         [
                             MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
                             MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
-                            MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS,
                         ] as string[]
                     ).includes(action.type)
                 ) {
+                    // UPDATE_MULTISIG_SETTINGS has an init issue!
                     if (!meta) {
                         // If no meta, it means it's imported in another dao, in which case basic views cannot work.
                         return {

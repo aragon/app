@@ -1275,6 +1275,7 @@
             "invalidJSON": "The uploaded file is not a valid JSON.",
             "invalidValue": "Invalid value in action \"value\" field. Must be a non-negative number."
           },
+          "uploadLoading": "Decoding actions, please wait.",
           "import": {
             "accept": "Import actions",
             "cancel": "Cancel",
