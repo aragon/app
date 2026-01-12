@@ -7,7 +7,7 @@ import {
 } from '@/modules/governance/api/governanceService';
 import {
     type IDao,
-    type IResource,
+    type IDaoPlugin,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -171,9 +171,7 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Normalize decoded actions to a format expected by create action input forms.
-     *
-     * @param decodedActions
+     * Normalize decoded actions to a format expected by create action input forms (basic views).
      */
     normalizeDecodedActions = (
         decodedActions: IProposalAction[],
@@ -181,206 +179,228 @@ class ProposalActionsImportExportUtils {
     ): IProposalAction[] => {
         const { plugins } = dao;
 
-        const normalizedActions: IProposalAction[] = decodedActions.map(
-            (action) => {
-                const meta = plugins.find((plugin) =>
-                    addressUtils.isAddressEqual(plugin.address, action.to),
+        return decodedActions.map((action) => {
+            const meta = this.findPluginMetaByAddress(plugins, action.to);
+
+            if (action.type === GaugeVoterActionType.CREATE_GAUGE) {
+                return this.normalizeGaugeVoterCreateGaugeAction(
+                    action as IGaugeVoterActionCreateGauge,
+                    meta,
                 );
+            }
 
-                if ('proposedMetadata' in action) {
-                    const { avatar, links, ...restMetadata } =
-                        action.proposedMetadata as {
-                            avatar?: string;
-                            links?: IResource[];
-                        };
+            if (
+                (
+                    [
+                        MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
+                        MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
+                    ] as string[]
+                ).includes(action.type)
+            ) {
+                return this.normalizeMultisigMemberAction(action, meta);
+            }
 
-                    const proposedMetadata = {
-                        ...restMetadata,
-                        avatar: avatar && {
-                            url: ipfsUtils.cidToSrc(avatar),
-                        },
-                        resources: links ?? [],
-                    };
+            if (action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS) {
+                return this.normalizeTokenVoteSettingsAction(
+                    action as ITokenActionChangeSettings,
+                    meta,
+                );
+            }
 
-                    return {
-                        ...action,
-                        meta,
-                        proposedMetadata,
-                    };
-                }
+            if (action.type === TokenProposalActionType.MINT) {
+                return this.normalizeTokenMintAction(action, plugins);
+            }
 
-                if (action.type === GaugeVoterActionType.CREATE_GAUGE) {
-                    const { gaugeMetadata, inputData } =
-                        action as IGaugeVoterActionCreateGauge;
-                    const {
-                        name = '',
-                        description = '',
-                        avatar,
-                        links = [],
-                    } = gaugeMetadata ?? {};
-                    const gaugeAddress = inputData?.parameters[0]
-                        .value as string;
+            if (
+                action.type === ProposalActionType.TRANSFER ||
+                action.type === ProposalActionType.TRANSFER_NATIVE
+            ) {
+                return this.normalizeTransferAction(
+                    action as IProposalActionWithdrawToken,
+                    dao,
+                );
+            }
 
-                    const gaugeDetails: IGaugeVoterCreateGaugeFormData = {
-                        gaugeAddress: {
-                            address: gaugeAddress,
-                        },
-                        name,
-                        description,
-                        resources: links,
-                        avatar: {
-                            url: ipfsUtils.cidToSrc(avatar),
-                        },
-                    };
+            // For imported actions which are not handled explicitly above, set the type as `Unknown` so that the decoded view is usable.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        });
+    };
 
-                    return {
-                        ...action,
-                        meta,
-                        gaugeDetails,
-                    };
-                }
+    /**
+     * Normalize gauge voter create gauge action
+     */
+    private normalizeGaugeVoterCreateGaugeAction = (
+        action: IGaugeVoterActionCreateGauge,
+        meta?: IDaoPlugin,
+    ) => {
+        const { gaugeMetadata, inputData } = action;
+        const {
+            name = '',
+            description = '',
+            avatar,
+            links = [],
+        } = gaugeMetadata ?? {};
+        const gaugeAddress = inputData?.parameters[0].value as string;
 
-                if (
-                    (
-                        [
-                            MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
-                            MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
-                        ] as string[]
-                    ).includes(action.type)
-                ) {
-                    // UPDATE_MULTISIG_SETTINGS has an init issue!
-                    if (!meta) {
-                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
-                        return {
-                            ...action,
-                            type: 'Unknown',
-                        };
-                    }
-
-                    return {
-                        ...action,
-                        meta,
-                    };
-                }
-
-                if (
-                    action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS
-                ) {
-                    if (!meta) {
-                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
-                        return {
-                            ...action,
-                            type: 'Unknown',
-                        };
-                    }
-
-                    const { proposedSettings } =
-                        action as ITokenActionChangeSettings;
-                    const {
-                        minProposerVotingPower,
-                        minParticipation,
-                        supportThreshold,
-                    } = proposedSettings;
-
-                    return {
-                        ...action,
-                        proposedSettings: {
-                            ...proposedSettings,
-                            minParticipation:
-                                tokenSettingsUtils.ratioToPercentage(
-                                    minParticipation,
-                                ),
-                            supportThreshold:
-                                tokenSettingsUtils.ratioToPercentage(
-                                    supportThreshold,
-                                ),
-                            minProposerVotingPower: formatUnits(
-                                BigInt(minProposerVotingPower),
-                                (meta as ITokenPlugin).settings.token.decimals,
-                            ),
-                        },
-                        meta,
-                    };
-                }
-
-                if (action.type === TokenProposalActionType.MINT) {
-                    // In MINT, to is the address of the ERC20 token, not the address of the TV plugin
-                    const meta = plugins.find(
-                        (plugin) =>
-                            plugin.interfaceType ===
-                                PluginInterfaceType.TOKEN_VOTING &&
-                            addressUtils.isAddressEqual(
-                                action.to,
-                                (plugin as ITokenPlugin).settings?.token
-                                    ?.address,
-                            ),
-                    );
-
-                    if (!meta) {
-                        // If no meta, it means it's imported in another dao, in which case basic views cannot work.
-                        return {
-                            ...action,
-                            type: 'Unknown',
-                        };
-                    }
-
-                    const { receivers, token } =
-                        action as ITokenActionTokenMint;
-                    const { address, newBalance } = receivers;
-
-                    return {
-                        ...action,
-                        receiver: {
-                            address,
-                        },
-                        amount: formatUnits(BigInt(newBalance), token.decimals),
-                        meta,
-                    };
-                }
-
-                if (
-                    action.type === ProposalActionType.TRANSFER ||
-                    action.type === ProposalActionType.TRANSFER_NATIVE
-                ) {
-                    const { amount, token, inputData, to } =
-                        action as IProposalActionWithdrawToken;
-
-                    // For ERC20 transfers, receiver is in the first parameter (_to)
-                    // For native transfers, receiver is in the 'to' field
-                    const receiverAddress =
-                        (inputData?.parameters?.[0]?.value as string) || to;
-
-                    const formattedAmount = formatUnits(
-                        BigInt(amount),
-                        token.decimals,
-                    );
-
-                    return {
-                        ...action,
-                        type: ProposalActionType.TRANSFER,
-                        receiver: {
-                            address: receiverAddress,
-                        },
-                        amount: formattedAmount,
-                        asset: {
-                            token: {
-                                ...token,
-                                network: dao.network,
-                            },
-                        },
-                    };
-                }
-
-                // TODO: add support for basic views one by one. In the meantime import actions as Unknown type so that decoded view is usable at least.
-                return {
-                    ...action,
-                    type: 'Unknown',
-                };
+        const gaugeDetails: IGaugeVoterCreateGaugeFormData = {
+            gaugeAddress: {
+                address: gaugeAddress,
             },
+            name,
+            description,
+            resources: links,
+            avatar: {
+                url: ipfsUtils.cidToSrc(avatar),
+            },
+        };
+
+        return {
+            ...action,
+            meta,
+            gaugeDetails,
+        };
+    };
+
+    /**
+     * Normalize multisig member action (add/remove members)
+     */
+    private normalizeMultisigMemberAction = (
+        action: IProposalAction,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        return {
+            ...action,
+            meta,
+        };
+    };
+
+    /**
+     * Normalize token vote settings action
+     */
+    private normalizeTokenVoteSettingsAction = (
+        action: ITokenActionChangeSettings,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        const { proposedSettings } = action;
+        const { minProposerVotingPower, minParticipation, supportThreshold } =
+            proposedSettings;
+
+        return {
+            ...action,
+            proposedSettings: {
+                ...proposedSettings,
+                minParticipation:
+                    tokenSettingsUtils.ratioToPercentage(minParticipation),
+                supportThreshold:
+                    tokenSettingsUtils.ratioToPercentage(supportThreshold),
+                minProposerVotingPower: formatUnits(
+                    BigInt(minProposerVotingPower),
+                    (meta as ITokenPlugin).settings.token.decimals,
+                ),
+            },
+            meta,
+        };
+    };
+
+    /**
+     * Normalize token mint action
+     */
+    private normalizeTokenMintAction = (
+        action: IProposalAction,
+        plugins: IDaoPlugin[],
+    ) => {
+        // In MINT, `to` is the address of the ERC20 token, not the address of the TV plugin!
+        const meta = plugins.find(
+            (plugin) =>
+                plugin.interfaceType === PluginInterfaceType.TOKEN_VOTING &&
+                addressUtils.isAddressEqual(
+                    action.to,
+                    (plugin as ITokenPlugin).settings?.token?.address,
+                ),
         );
 
-        return normalizedActions;
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        const { receivers, token } = action as ITokenActionTokenMint;
+        const { address, newBalance } = receivers;
+
+        return {
+            ...action,
+            receiver: {
+                address,
+            },
+            amount: formatUnits(BigInt(newBalance), token.decimals),
+            meta,
+        };
     };
+
+    /**
+     * Normalize transfer action (ERC20 and native)
+     */
+    private normalizeTransferAction = (
+        action: IProposalActionWithdrawToken,
+        dao: IDao,
+    ) => {
+        const { amount, token, inputData, to } = action;
+
+        // For ERC20 transfers, receiver is in the first parameter (_to)
+        // For native transfers, receiver is in the 'to' field
+        const receiverAddress =
+            (inputData?.parameters?.[0]?.value as string) || to;
+
+        const formattedAmount = formatUnits(BigInt(amount), token.decimals);
+
+        return {
+            ...action,
+            type: ProposalActionType.TRANSFER,
+            receiver: {
+                address: receiverAddress,
+            },
+            amount: formattedAmount,
+            asset: {
+                token: {
+                    ...token,
+                    network: dao.network,
+                },
+            },
+        };
+    };
+
+    /**
+     * Find plugin metadata by matching address
+     */
+    private findPluginMetaByAddress = (
+        plugins: IDaoPlugin[],
+        address: string,
+    ) =>
+        plugins.find((plugin) =>
+            addressUtils.isAddressEqual(plugin.address, address),
+        );
 
     /**
      * Validates a single action structure
