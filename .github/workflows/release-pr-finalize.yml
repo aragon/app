@@ -1,0 +1,81 @@
+name: Release PR Finalize
+
+on:
+  pull_request:
+    types: [labeled]
+    branches: [main]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  finalize:
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Check label + approval
+        id: check
+        uses: actions/github-script@v8.0.0
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels.map(l => l.name);
+            if (!labels.includes('release:ready')) return core.info('Missing label, skip.');
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number,
+            });
+            const latest = new Map();
+            for (const r of reviews) latest.set(r.user?.login, r.state);
+            if (![...latest.values()].includes('APPROVED')) return core.info('No approval, skip.');
+            core.setOutput('ready', 'true');
+
+      - name: Checkout
+        if: steps.check.outputs.ready == 'true'
+        uses: actions/checkout@v6.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+
+      - name: Get version
+        if: steps.check.outputs.ready == 'true'
+        id: version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+
+      - name: Read changelog
+        if: steps.check.outputs.ready == 'true'
+        id: changelog
+        uses: actions/github-script@v8.0.0
+        env:
+          version: '${{ steps.version.outputs.current-version }}'
+          path: ./CHANGELOG.md
+        with:
+          script: |
+            const readChangelog = require('./.github/workflows/scripts/readChangelog.js');
+            await readChangelog({ github, context, core });
+
+      - name: Create tag
+        if: steps.check.outputs.ready == 'true'
+        run: |
+          git tag "v${{ steps.version.outputs.current-version }}" ${{ github.event.pull_request.head.sha }}
+          git push origin "v${{ steps.version.outputs.current-version }}"
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.ready == 'true'
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          tag_name: 'v${{ steps.version.outputs.current-version }}'
+          body: ${{ steps.changelog.outputs.changes }}
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}

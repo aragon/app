@@ -1,29 +1,69 @@
-name: Release PR Deploy
+name: Release PR Flow
 
 on:
   pull_request:
     branches:
-      - 'release/**'
-    types: [opened, synchronize]
+      - main
+    types: [opened, synchronize, reopened]
+    # GitHub can't filter PRs by HEAD branch in `on:`. We keep a job-level guard for `release/*`,
+    # but this `paths` filter prevents this workflow from even appearing on most non-release PRs.
+    paths:
+      - CHANGELOG.md
 
 concurrency:
-  group: staging-deployment
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 permissions:
   contents: read
-  pull-requests: read
+  pull-requests: write
 
 jobs:
   build:
+    if: startsWith(github.head_ref, 'release/')
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
       env: 'staging'
       ref: ${{ github.event.pull_request.head.sha }}
 
-  deploy:
+  test:
+    if: startsWith(github.head_ref, 'release/')
     needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Retrieve NextJs build
+        uses: actions/download-artifact@v7.0.0
+        with:
+          name: nextjs-build
+
+      - name: Check types
+        run: pnpm type-check
+
+      - name: Check linter with formatter
+        run: pnpm lint:check
+
+      - name: Run tests with coverage
+        run: |
+          set -eo pipefail
+          pnpm test:coverage
+
+  deploy:
+    if: startsWith(github.head_ref, 'release/')
+    needs: test
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
@@ -31,6 +71,7 @@ jobs:
       env: 'staging'
 
   notify:
+    if: startsWith(github.head_ref, 'release/')
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +84,8 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
       - name: Checkout actions
         uses: actions/checkout@v6.0.1

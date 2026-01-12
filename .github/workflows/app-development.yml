@@ -19,12 +19,15 @@ permissions:
 
 jobs:
   build:
+    # Release PRs have their own dedicated workflow (`Release PR Flow`).
+    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/') }}
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
       env: "development"
 
   test:
+    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/') }}
     needs: build
     runs-on: ubuntu-latest
     steps:

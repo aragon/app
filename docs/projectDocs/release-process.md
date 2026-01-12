@@ -1,89 +1,73 @@
-# App Release v2 — Process Guide
+# Release Process
 
-This document describes the new release flow for the Aragon App, designed to be **PR-centric, rollback-safe, and deterministic**.
+This document describes the release flow for the Aragon App.
 
-## 🚀 Key Concepts
+## Overview
 
-1.  **Release PR is King**: The source of truth for the release. If it's not in the PR, it's not in the release.
-2.  **Staging Only**: Release binaries are tested on `stg.app.aragon.org`. `dev` environment is unaffected and updates continuously from `main`.
-3.  **Tag = Production**: Production is deployed from a Git tag that points to the **tested commit** (PR head), not the merge commit.
-4.  **No manual deployments**: All deployments are handled by automation.
-
----
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│  Start Release  │───▶│  Test & Stage   │───▶│  Approve & Tag  │───▶│  Auto Deploy    │
+│  (manual)       │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
+```
 
 ## Workflow
 
-### 1. Start a Release
+### 1. Start Release
 
-Trigger the **App Release (New)** workflow manually.
+Trigger **App Release (New)** workflow manually (`workflow_dispatch`).
 
--   **Workflow**: `app-release-new.yml`
--   **Trigger**: `workflow_dispatch`
--   **Actions**:
-    -   Creates branch `release/YYYY-MM-DD_HH-mm`
-    -   Bumps versions via `changeset`
-    -   Generates release summary from Linear issues and commits
-    -   Creates a Pull Request to `main`
-    -   Posts to Slack thread
+- Creates branch `release/YYYY-MM-DD_HH-mm`
+- Bumps version via `changeset`
+- Opens PR to `main`
+- Posts to Slack
 
 ### 2. Test on Staging
 
-The release PR automatically deploys to staging.
+Every push to the release PR automatically:
 
--   **Trigger**: PR opened or updated (push)
--   **Environment**: `stg.app.aragon.org`
--   **Notification**: Staging URL posted to Slack thread.
+- Runs tests (types, lint, unit tests)
+- Deploys to `stg.app.aragon.org`
+- Updates PR description with release summary
+- Notifies Slack thread
 
-### 3. Finalize Release
+### 3. Approve & Release
 
-Merge the Release PR into `main`.
+When ready to release:
 
--   **Constraint**: Must use **"Create Merge Commit"**.
--   **Actions**:
-    -   Workflow `finish-release.yml` triggers.
-    -   Tags the **PR Head Commit** (ensuring exact match with staging).
-    -   Creates GitHub Release.
-    -   Deploys to `app.aragon.org`.
-    -   Notifies Slack.
+1. **Get approvals** — at least 1 approval from CODEOWNERS
+2. **Add label** `release:ready`
 
-### 4. Rollback (Emergency)
+Once both conditions are met → **tag + GitHub Release are created automatically**.
 
-If a bad release hits production, use **App Rollback**.
+### 4. Production Deploy
 
--   **Workflow**: `app-rollback.yml`
--   **Trigger**: `workflow_dispatch`
--   **Input**: `tag` (e.g., `v1.16.0`)
--   **Actions**:
-    -   Builds exact code from the specified tag.
-    -   Deploys to production.
+When GitHub Release is published → production deploys automatically to `app.aragon.org`.
+
+### 5. Merge PR
+
+After production is live, merge the release PR into `main`. This is just cleanup — the release is already done.
 
 ---
 
-## 🛠 Configuration
+## Rollback
 
-### Secrets (1Password)
+If a bad release hits production:
 
-Secrets are stored in `kv_app_infra` vault.
-
-| Secret              | Key                | Description                       |
-| :------------------ | :----------------- | :-------------------------------- |
-| **Slack Bot Token** | `SLACK_BOT_TOKEN`  | Bot OAuth token for notifications |
-| **Slack Channel**   | `SLACK_CHANNEL_ID` | Channel ID for release threads    |
-| **Linear API**      | `LINEAR_API_TOKEN` | (Optional) Fetch issue titles     |
-
-### Repository Settings
-
--   **Main Branch**: Protected.
--   **Merge Method**: **Merge Commit** (Required).
-    -   _Why?_ We tag the PR head SHA. Squash/Rebase commits create new SHAs that disconnect the tag from the tested PR history.
+1. Trigger **App Rollback** workflow
+2. Input: tag to rollback to (e.g., `v1.16.0`)
+3. Production redeploys from that tag
 
 ---
+---
 
-## ⚠️ Migration
+## Secrets
 
-Both the old (`app-release.yml`) and new workflows exist side-by-side.
+Stored in 1Password `kv_app_infra` vault:
 
--   **To use old flow**: Trigger "App Release".
--   **To use new flow**: Trigger "App Release (New)".
-
-Once the new flow is verified, `app-release.yml` will be deprecated.
+| Secret | Description |
+|--------|-------------|
+| `SLACK_BOT_TOKEN` | Slack notifications |
+| `SLACK_CHANNEL_ID` | Release channel |
+| `LINEAR_API_TOKEN` | Issue titles in summary |
+| `ARABOT_PAT` | GitHub API operations |
