@@ -1,6 +1,7 @@
 import { useAccount } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 
 export interface IUseAdminStatusParams {
@@ -37,8 +38,8 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
         enabled: memberAddress != null && adminPlugin != null,
     });
 
-    const adminFeatureEnabled =
-        process.env.NEXT_PUBLIC_FEATURE_GOVERNANCE_DESIGNER === 'true';
+    const { isEnabled } = useFeatureFlags();
+    const adminFeatureEnabled = isEnabled('governanceDesigner');
 
     return {
         isAdminMember: isAdminMember?.status === true && adminFeatureEnabled,

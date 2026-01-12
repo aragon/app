@@ -27,13 +27,6 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
             type: 'boolean',
             label: 'Highlight slot components',
         });
-        registerControl({
-            name: 'enableAllPlugins',
-            type: 'boolean',
-            label: 'Enable all plugins on body creation',
-            value: process.env.NEXT_PUBLIC_FEATURE_ENABLE_ALL_PLUGINS,
-            group: 'Governance designer',
-        });
 
         featureFlagsSnapshot.forEach((flag) => {
             // Don't show debugPanel flag in the debug panel itself

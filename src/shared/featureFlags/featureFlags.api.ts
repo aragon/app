@@ -8,7 +8,13 @@ export const FEATURE_FLAG_ENVIRONMENTS = [
 
 export type FeatureFlagEnvironment = (typeof FEATURE_FLAG_ENVIRONMENTS)[number];
 
-export type FeatureFlagKey = 'debugPanel' | 'subDao';
+export type FeatureFlagKey =
+    | 'debugPanel'
+    | 'subDao'
+    | 'governanceDesigner'
+    | 'osxUpdates'
+    | 'useMocks'
+    | 'enableAllPlugins';
 
 /**
  * Feature flag definition structure.
