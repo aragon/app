@@ -1,6 +1,10 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { formatUnits, isAddress, isHex } from 'viem';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalAction,
+    type IProposalActionWithdrawToken,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import {
     type IDao,
     type IResource,
@@ -331,6 +335,33 @@ class ProposalActionsImportExportUtils {
                         },
                         amount: formatUnits(BigInt(newBalance), token.decimals),
                         meta,
+                    };
+                }
+
+                if (
+                    action.type === ProposalActionType.TRANSFER ||
+                    action.type === ProposalActionType.TRANSFER_NATIVE
+                ) {
+                    const { amount, token, inputData, to } =
+                        action as IProposalActionWithdrawToken;
+
+                    // For ERC20 transfers, receiver is in the first parameter (_to)
+                    // For native transfers, receiver is in the 'to' field
+                    const receiverAddress =
+                        (inputData?.parameters?.[0]?.value as string) || to;
+
+                    const formattedAmount = formatUnits(
+                        BigInt(amount),
+                        token.decimals,
+                    );
+                    console.log('actionactionactionaction', action);
+                    return {
+                        ...action,
+                        type: ProposalActionType.TRANSFER,
+                        receiver: {
+                            address: receiverAddress,
+                        },
+                        amount: formattedAmount,
                     };
                 }
 
