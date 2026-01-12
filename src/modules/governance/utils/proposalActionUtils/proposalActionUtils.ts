@@ -21,7 +21,7 @@ import {
     type IProposalActionWithdrawToken,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
-import type {IDao, IResource} from '@/shared/api/daoService';
+import type { IDao, IResource } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
