@@ -12,7 +12,7 @@ import {
     parseUnits,
     zeroAddress,
 } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useBalance, useReadContract } from 'wagmi';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import {
     type ITransferAssetFormData,
@@ -90,12 +90,35 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const tokenName = asset?.token.name ?? 'Ether';
 
     const isNativeToken = tokenAddress === zeroAddress;
+
+    // For imported/uploaded actions fetch balance for the current DAO but keep it separate from transferActionLocked, which is a different thing.
+    const shouldFetchImportedTokenBalance =
+        !disableTokenSelection && asset != null && asset.amount == null;
+    const { data: nativeBalance } = useBalance({
+        address: dao!.address as Hex,
+        chainId,
+        query: {
+            enabled: shouldFetchImportedTokenBalance && isNativeToken,
+        },
+    });
+    const { data: erc20Balance } = useReadContract({
+        abi: erc20Abi,
+        address: tokenAddress as Hex,
+        functionName: 'balanceOf',
+        args: [dao!.address as Hex],
+        chainId,
+        query: {
+            enabled: shouldFetchImportedTokenBalance && !isNativeToken,
+        },
+    });
+
     const receiverAddress = addressUtils.isAddress(receiver?.address)
         ? receiver?.address
         : zeroAddress;
 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
 
+    // Initialize asset field for transferActionLocked case
     useEffect(() => {
         if (token == null || balance == null) {
             return;
@@ -113,6 +136,45 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
         setValue(`${fieldName}.asset`, asset);
     }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName, dao]);
+
+    // Update asset balance for imported actions. Uploaded and decoded transfer actions have token info, but don't have max available balance for the given DAO.
+    useEffect(() => {
+        if (!shouldFetchImportedTokenBalance) {
+            return;
+        }
+
+        const currentAsset = getValues(`${fieldName}.asset`);
+        if (currentAsset == null) {
+            return;
+        }
+
+        const balanceValue = isNativeToken
+            ? nativeBalance?.value
+            : erc20Balance;
+
+        if (balanceValue == null) {
+            return;
+        }
+
+        const formattedBalance = formatUnits(balanceValue, tokenDecimals);
+
+        // Only update if balance has actually changed to prevent loops
+        if (currentAsset.amount !== formattedBalance) {
+            setValue(`${fieldName}.asset`, {
+                ...currentAsset,
+                amount: formattedBalance,
+            });
+        }
+    }, [
+        shouldFetchImportedTokenBalance,
+        isNativeToken,
+        nativeBalance,
+        erc20Balance,
+        tokenDecimals,
+        setValue,
+        fieldName,
+        getValues,
+    ]);
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];
