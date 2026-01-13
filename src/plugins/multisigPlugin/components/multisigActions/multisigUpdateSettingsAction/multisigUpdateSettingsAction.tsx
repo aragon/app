@@ -76,7 +76,10 @@ export const MultisigUpdateSettingsAction: React.FC<
 
     const memberParams = { pluginAddress: action.to, daoId: action.daoId };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
-    const membersCount = memberList?.pages[0].metadata.totalRecords ?? 1;
+    // Use minApprovalsFieldValue as minimum fallback to prevent clamping imported values before member list loads
+    const membersCount =
+        memberList?.pages[0].metadata.totalRecords ??
+        Math.max(minApprovalsFieldValue, 1);
 
     useEffect(() => {
         const updateSettingsParams = {
