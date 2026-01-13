@@ -55,7 +55,6 @@ export const CreateProposalPageClientSteps: React.FC<
 
     const [metadataStep, actionsStep, settingsStep] = steps;
 
-    // Hide settings step if plugin has no custom settings for create-proposal flow
     const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
     const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
     const hideSettingsStep =

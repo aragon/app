@@ -3,14 +3,20 @@ import {
     type ProposalActionComponent,
     ProposalActions,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
-import { ProposalActionType } from '@/modules/governance/api/governanceService';
+import {
+    type IProposalAction,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
 import { useDao, useDaoPermissions } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import type { IProposalCreateAction } from '../../../dialogs/publishProposalDialog';
+import { proposalActionPreparationUtils } from '../../../utils/proposalActionPreparationUtils';
 import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '../../../utils/proposalActionUtils';
 import { ActionComposer, actionComposerUtils } from '../../actionComposer';
@@ -18,6 +24,7 @@ import type {
     ICreateProposalFormData,
     IProposalActionData,
 } from '../createProposalFormDefinitions';
+import { useCreateProposalFormContext } from '../createProposalFormProvider';
 import { TransferAssetAction } from './proposalActions/transferAssetAction';
 import { UpdateDaoMetadataAction } from './proposalActions/updateDaoMetadataAction';
 import { UpdatePluginMetadataAction } from './proposalActions/updatePluginMetadataAction';
@@ -60,6 +67,8 @@ export const CreateProposalFormActions: React.FC<
     const { control, getValues, setValue } =
         useFormContext<ICreateProposalFormData>();
 
+    const { prepareActions } = useCreateProposalFormContext();
+
     const {
         fields: actions,
         append,
@@ -98,6 +107,9 @@ export const CreateProposalFormActions: React.FC<
     const daoPermissions = daoPermissionsData?.pages.flatMap(
         (page) => page.data,
     );
+
+    const [isDownloadPinning, setIsDownloadPinning] = useState(false);
+    const [hasDownloadPinErrors, setHasDownloadPinErrors] = useState(false);
 
     /**
      * Note: We don't use useFieldArray.swap() or .move() because they create empty slots
@@ -139,13 +151,37 @@ export const CreateProposalFormActions: React.FC<
         remove();
     }, [remove]);
 
-    const handleDownloadActions = useCallback(() => {
-        const currentActions = getValues('actions') ?? [];
-        proposalActionsImportExportUtils.downloadActionsAsJSON(
-            currentActions,
-            `dao-${daoId}-actions.json`,
-        );
-    }, [daoId, getValues]);
+    const handleDownloadActions = useCallback(async () => {
+        setIsDownloadPinning(true);
+        setHasDownloadPinErrors(false);
+
+        try {
+            const currentActions = getValues('actions') ?? [];
+
+            // Prepare actions using registered prepare functions
+            const preparedActions =
+                await proposalActionPreparationUtils.prepareActions({
+                    actions: currentActions as IProposalCreateAction[],
+                    prepareActions,
+                });
+
+            proposalActionsImportExportUtils.downloadActionsAsJSON(
+                preparedActions as unknown as IProposalAction[],
+                `dao-${daoId}-actions.json`,
+            );
+        } catch (error) {
+            monitoringUtils.logError(error, {
+                context: {
+                    daoId,
+                    message:
+                        'Failed to pin or download proposal actions for DAO',
+                },
+            });
+            setHasDownloadPinErrors(true);
+        } finally {
+            setIsDownloadPinning(false);
+        }
+    }, [daoId, getValues, prepareActions]);
 
     const getArrayControls = (
         index: number,
@@ -228,6 +264,8 @@ export const CreateProposalFormActions: React.FC<
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
+                    hasPinErrors={hasDownloadPinErrors}
+                    isPinning={isDownloadPinning}
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}
