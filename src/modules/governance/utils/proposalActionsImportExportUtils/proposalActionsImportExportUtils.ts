@@ -173,13 +173,6 @@ class ProposalActionsImportExportUtils {
         return decodedActions.map((action) => {
             const meta = this.findPluginMetaByAddress(plugins, action.to);
 
-            if (action.type === GaugeVoterActionType.CREATE_GAUGE) {
-                return this.normalizeGaugeVoterCreateGaugeAction(
-                    action as IGaugeVoterActionCreateGauge,
-                    meta,
-                );
-            }
-
             if (
                 (
                     [
@@ -270,9 +263,15 @@ class ProposalActionsImportExportUtils {
             };
         }
 
+        // Parse members from action parameters
+        const memberAddresses = (action.inputData?.parameters?.[0]
+            ?.value as string[]) || [];
+        const members = memberAddresses.map((address) => ({ address }));
+
         return {
             ...action,
             meta,
+            members,
         };
     };
 
