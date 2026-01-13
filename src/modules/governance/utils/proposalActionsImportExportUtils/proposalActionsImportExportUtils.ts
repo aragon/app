@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { formatUnits, isAddress, isHex } from 'viem';
+import { formatUnits, isAddress, isHex, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     type IProposalActionWithdrawToken,
@@ -317,14 +317,40 @@ class ProposalActionsImportExportUtils {
         action: IProposalActionWithdrawToken,
         dao: IDao,
     ) => {
-        const { amount, token, inputData, to } = action;
+        const { inputData, to, value, type } = action;
+        const isNativeTransfer = type === ProposalActionType.TRANSFER_NATIVE;
 
-        // For ERC20 transfers, receiver is in the first parameter (_to)
-        // For native transfers, receiver is in the 'to' field
-        const receiverAddress =
-            (inputData?.parameters?.[0]?.value as string) || to;
+        // For ERC20 transfers: receiver is in parameters[0], amount is in parameters[1], token address is in 'to'
+        // For native transfers: receiver is in 'to', amount is in 'value'
+        const receiverAddress = isNativeTransfer
+            ? to
+            : (inputData?.parameters?.[0]?.value as string);
 
-        const formattedAmount = formatUnits(BigInt(amount), token.decimals);
+        const amountValue = isNativeTransfer
+            ? value
+            : (inputData?.parameters?.[1]?.value as string);
+
+        const tokenAddress = isNativeTransfer ? zeroAddress : to;
+
+        // For imported actions, we don't have full token info yet.
+        // The token details will be fetched by TransferAssetAction component.
+        // We provide minimal token structure with address and network.
+        const tokenInfo = {
+            address: tokenAddress,
+            network: dao.network,
+            symbol: isNativeTransfer ? 'ETH' : '',
+            name: isNativeTransfer ? 'Ether' : inputData?.contract || '',
+            logo: '',
+            decimals: 18, // Default decimals, actual decimals will be fetched by component for ERC20
+            priceUsd: '0',
+            totalSupply: null,
+        };
+
+        // For native transfers, we can format immediately with 18 decimals
+        // For ERC20, we need to wait for the actual decimals to be fetched
+        const formattedAmount = isNativeTransfer
+            ? formatUnits(BigInt(amountValue), 18)
+            : '0';
 
         return {
             ...action,
@@ -334,11 +360,11 @@ class ProposalActionsImportExportUtils {
             },
             amount: formattedAmount,
             asset: {
-                token: {
-                    ...token,
-                    network: dao.network,
-                },
+                token: tokenInfo,
+                amount: undefined, // Balance will be fetched by component
             },
+            // Store raw amount for ERC20 tokens to be formatted once decimals are known
+            rawAmount: isNativeTransfer ? undefined : amountValue,
         };
     };
 

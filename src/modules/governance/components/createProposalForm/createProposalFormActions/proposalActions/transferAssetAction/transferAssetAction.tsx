@@ -57,10 +57,14 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const disableTokenSelection =
         action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
+
+    // For imported ERC20 actions, we need to fetch token details to get correct decimals
+    const isImportedErc20Action =
+        action.rawAmount != null && action.to !== zeroAddress;
     const { data: token } = useToken({
         address: action.to as Hex,
         chainId,
-        enabled: disableTokenSelection,
+        enabled: disableTokenSelection || isImportedErc20Action,
     });
     const { data: balance } = useReadContract({
         abi: erc20Abi,
@@ -136,6 +140,49 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
         setValue(`${fieldName}.asset`, asset);
     }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName, dao]);
+
+    // Initialize imported ERC20 action with fetched token details and formatted amount
+    useEffect(() => {
+        if (
+            !isImportedErc20Action ||
+            token == null ||
+            action.rawAmount == null
+        ) {
+            return;
+        }
+
+        const tokenAsset = {
+            ...token,
+            address: tokenAddress,
+            network: dao!.network,
+            logo: '',
+            priceUsd: '0',
+        };
+
+        // Format the raw amount with the correct decimals
+        const formattedAmount = formatUnits(
+            BigInt(action.rawAmount),
+            token.decimals,
+        );
+
+        // Set both asset and amount fields
+        setValue(`${fieldName}.asset`, {
+            token: tokenAsset,
+            amount: undefined,
+        });
+        setValue(`${fieldName}.amount`, formattedAmount);
+
+        // Clear rawAmount after initialization
+        setValue(`${fieldName}.rawAmount`, undefined);
+    }, [
+        isImportedErc20Action,
+        token,
+        action.rawAmount,
+        tokenAddress,
+        dao,
+        setValue,
+        fieldName,
+    ]);
 
     // Update asset balance for imported actions. Uploaded and decoded transfer actions have token info, but don't have max available balance for the given DAO.
     useEffect(() => {
