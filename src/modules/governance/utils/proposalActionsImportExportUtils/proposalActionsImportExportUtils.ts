@@ -149,23 +149,14 @@ class ProposalActionsImportExportUtils {
         dao: IDao,
     ): Promise<IProposalAction[]> => {
         const { network, address: daoAddress } = dao;
-        const decodedActions = await Promise.all(
-            actions.map(async (action) => {
-                const decodedAction =
-                    await smartContractService.decodeTransaction({
-                        urlParams: {
-                            network,
-                            address: action.to,
-                        },
-                        body: {
-                            data: action.data,
-                            value: action.value.toString(),
-                            from: daoAddress,
-                        },
-                    });
-                return decodedAction;
-            }),
-        );
+        const decodedActions =
+            await smartContractService.decodeTransactionsLight({
+                urlParams: {
+                    network,
+                    address: daoAddress,
+                },
+                body: actions,
+            });
 
         return this.normalizeDecodedActions(decodedActions, dao);
     };
