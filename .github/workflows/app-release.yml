@@ -52,9 +52,10 @@ jobs:
         # Format CHANGELOG.md (used for Github release notes) to remove automatic formatting applied by changeset as
         # Github does not support soft line breaks.
         # (See https://github.com/changesets/changesets/issues/1452, https://github.com/orgs/community/discussions/10981)
+        # Note: Biome doesn't support Markdown formatting, so we use Prettier for this specific file.
         run: |
           pnpm changeset version
-          pnpm biome format --write --line-width 9999999 CHANGELOG.md
+          pnpm dlx prettier --write --prose-wrap never CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
       - name: Create tag

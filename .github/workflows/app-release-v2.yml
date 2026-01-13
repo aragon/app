@@ -69,9 +69,10 @@ jobs:
           LINEAR_API_TOKEN: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
 
       - name: Update version and changelog
+        # Format CHANGELOG.md to remove soft line breaks (Biome doesn't support Markdown)
         run: |
           pnpm changeset version
-          pnpm biome format --write --line-width 9999999 CHANGELOG.md
+          pnpm dlx prettier --write --prose-wrap never CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
