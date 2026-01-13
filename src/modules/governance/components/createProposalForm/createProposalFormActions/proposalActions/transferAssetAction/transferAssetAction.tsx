@@ -19,11 +19,11 @@ import {
     TransferAssetForm,
 } from '@/modules/finance/components/transferAssetForm';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import type { IImportedTransferActionData } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
-import type { IImportedTransferActionData } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps

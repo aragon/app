@@ -259,18 +259,28 @@ class ProposalActionsImportExportUtils {
             };
         }
 
-        const { proposedSettings } = action;
-        const { minProposerVotingPower, minParticipation, supportThreshold } =
-            proposedSettings;
+        // Array format: [votingMode, supportThreshold, minParticipation, minDuration, minProposerVotingPower]
+        const proposedSettings =
+            (action.inputData?.parameters?.[0]?.value as string[]) || [];
+        const [
+            votingMode,
+            supportThreshold,
+            minParticipation,
+            minDuration,
+            minProposerVotingPower,
+        ] = proposedSettings;
 
         return {
             ...action,
             proposedSettings: {
-                ...proposedSettings,
-                minParticipation:
-                    tokenSettingsUtils.ratioToPercentage(minParticipation),
-                supportThreshold:
-                    tokenSettingsUtils.ratioToPercentage(supportThreshold),
+                votingMode: Number(votingMode),
+                supportThreshold: tokenSettingsUtils.ratioToPercentage(
+                    Number(supportThreshold),
+                ),
+                minParticipation: tokenSettingsUtils.ratioToPercentage(
+                    Number(minParticipation),
+                ),
+                minDuration: Number(minDuration),
                 minProposerVotingPower: formatUnits(
                     BigInt(minProposerVotingPower),
                     (meta as ITokenPlugin).settings.token.decimals,
