@@ -364,7 +364,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                                       'app.governance.actionComposer.downloadPinning',
                                                   )
                                                 : t(
-                                                      'app.governance.actionComposer.downloadAllActions',
+                                                      'app.governance.actionComposer.downloadAsJSON',
                                                   )}
                                         </Dropdown.Item>
                                         <Dropdown.Item
