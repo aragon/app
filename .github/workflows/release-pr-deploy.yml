@@ -83,13 +83,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0
+          fetch-depth: 1
+          sparse-checkout: .github/actions/setup
 
       - name: Setup
         uses: ./.github/actions/setup
         with:
           token: ${{ github.token }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
 
       - name: Extract Slack TS from PR body
         id: ts
