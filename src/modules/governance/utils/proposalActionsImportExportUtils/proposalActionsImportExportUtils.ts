@@ -5,23 +5,19 @@ import {
     type IProposalActionWithdrawToken,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
-import {
-    type IDao,
-    type IDaoPlugin,
-    PluginInterfaceType,
-} from '@/shared/api/daoService';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import type { IGaugeVoterCreateGaugeFormData } from '../../../../actions/gaugeVoter/components/gaugeVoterCreateGaugeActionCreate';
-import { GaugeVoterActionType } from '../../../../actions/gaugeVoter/types/enum/gaugeVoterActionType';
-import type { IGaugeVoterActionCreateGauge } from '../../../../actions/gaugeVoter/types/gaugeVoterActionCreateGauge';
-import { MultisigProposalActionType } from '../../../../plugins/multisigPlugin/types';
+import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
 import {
     type ITokenActionChangeSettings,
     type ITokenActionTokenMint,
     type ITokenPlugin,
     TokenProposalActionType,
-} from '../../../../plugins/tokenPlugin/types';
-import { tokenSettingsUtils } from '../../../../plugins/tokenPlugin/utils/tokenSettingsUtils';
+} from '@/plugins/tokenPlugin/types';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import {
+    type IDao,
+    type IDaoPlugin,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
 import { smartContractService } from '../../api/smartContractService';
 
 export interface IExportedAction {
@@ -214,41 +210,6 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Normalize gauge voter create gauge action
-     */
-    private normalizeGaugeVoterCreateGaugeAction = (
-        action: IGaugeVoterActionCreateGauge,
-        meta?: IDaoPlugin,
-    ) => {
-        const { gaugeMetadata, inputData } = action;
-        const {
-            name = '',
-            description = '',
-            avatar,
-            links = [],
-        } = gaugeMetadata ?? {};
-        const gaugeAddress = inputData?.parameters[0].value as string;
-
-        const gaugeDetails: IGaugeVoterCreateGaugeFormData = {
-            gaugeAddress: {
-                address: gaugeAddress,
-            },
-            name,
-            description,
-            resources: links,
-            avatar: {
-                url: ipfsUtils.cidToSrc(avatar),
-            },
-        };
-
-        return {
-            ...action,
-            meta,
-            gaugeDetails,
-        };
-    };
-
-    /**
      * Normalize multisig member action (add/remove members)
      */
     private normalizeMultisigMemberAction = (
@@ -264,8 +225,8 @@ class ProposalActionsImportExportUtils {
         }
 
         // Parse members from action parameters
-        const memberAddresses = (action.inputData?.parameters?.[0]
-            ?.value as string[]) || [];
+        const memberAddresses =
+            (action.inputData?.parameters?.[0]?.value as string[]) || [];
         const members = memberAddresses.map((address) => ({ address }));
 
         return {
