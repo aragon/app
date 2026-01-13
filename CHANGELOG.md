@@ -1,5 +1,21 @@
 # @aragon/app
 
+## 1.18.0
+
+### Minor Changes
+
+- [#930](https://github.com/aragon/app/pull/930) [`d0fdcd7`](https://github.com/aragon/app/commit/d0fdcd7d956a6ca0bcfb4ba4e6bcc48005500474) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Migrate feature flags to latest client side pattern via debug panel, update component level implementations
+
+- [#921](https://github.com/aragon/app/pull/921) [`bfff297`](https://github.com/aragon/app/commit/bfff297e034cd98577d7a942b0faa64a1b18bfc9) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement dropdown menu on proposal action composition to download or remove all actions before creation
+
+- [#904](https://github.com/aragon/app/pull/904) [`712c0cb`](https://github.com/aragon/app/commit/712c0cb8b0ea1c989580fa0844acde5682189790) Thanks [@milosh86](https://github.com/milosh86)! - Implement basic actions for GaugeVoter contract
+
+- [#920](https://github.com/aragon/app/pull/920) [`3b3d17d`](https://github.com/aragon/app/commit/3b3d17d0e45057fb2451a7ccad01193c5a69105e) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement Biome toolchain for better linting, formatting
+
+### Patch Changes
+
+- [#922](https://github.com/aragon/app/pull/922) [`7fff9ae`](https://github.com/aragon/app/commit/7fff9ae82146ae059c55bb9f3fafa927fc1ce3f1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Added .git-blame-ignore-revs with formatter commits
+
 ## 1.17.0
 
 ### Minor Changes
