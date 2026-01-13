@@ -68,6 +68,16 @@ export interface IActionComposerProps
      * Callback called when all actions should be removed.
      */
     onRemoveAllActions?: () => void;
+    /**
+     * Whether metadata actions are currently being pinned.
+     * When true, the download button will show loading state.
+     */
+    isPinning?: boolean;
+    /**
+     * Whether there are pinning errors.
+     * When true, shows retry option in dropdown.
+     */
+    hasPinErrors?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -81,6 +91,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions,
         daoPermissions,
         onRemoveAllActions,
+        isPinning = false,
+        hasPinErrors = false,
     } = props;
 
     const daoUrlParams = { id: daoId };
@@ -319,20 +331,54 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                 }
                                 size="md"
                             >
-                                <Dropdown.Item onClick={handleDownloadActions}>
-                                    {t(
-                                        'app.governance.actionComposer.downloadAllActions',
-                                    )}
-                                </Dropdown.Item>
-                                <Dropdown.Item onClick={handleRemoveAllActions}>
-                                    {t(
-                                        'app.governance.actionComposer.removeAllActions',
-                                    )}
-                                </Dropdown.Item>
+                                {hasPinErrors ? (
+                                    <>
+                                        <Dropdown.Item
+                                            disabled={isPinning}
+                                            onClick={handleDownloadActions}
+                                        >
+                                            {isPinning
+                                                ? t(
+                                                      'app.governance.actionComposer.downloadPinning',
+                                                  )
+                                                : t(
+                                                      'app.governance.actionComposer.retry',
+                                                  )}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={handleRemoveAllActions}
+                                        >
+                                            {t(
+                                                'app.governance.actionComposer.removeAllActions',
+                                            )}
+                                        </Dropdown.Item>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Dropdown.Item
+                                            disabled={isPinning}
+                                            onClick={handleDownloadActions}
+                                        >
+                                            {isPinning
+                                                ? t(
+                                                      'app.governance.actionComposer.downloadPinning',
+                                                  )
+                                                : t(
+                                                      'app.governance.actionComposer.downloadAsJSON',
+                                                  )}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                            onClick={handleRemoveAllActions}
+                                        >
+                                            {t(
+                                                'app.governance.actionComposer.removeAllActions',
+                                            )}
+                                        </Dropdown.Item>
+                                    </>
+                                )}
                             </Dropdown.Container>
                         )}
                         {allowedActions && (
-                            // wrapper div needed here to tackle grow css prop in InputContainer inside Switch, which we cannot override
                             <div>
                                 <Switch
                                     checked={onlyShowAuthorizedActions}

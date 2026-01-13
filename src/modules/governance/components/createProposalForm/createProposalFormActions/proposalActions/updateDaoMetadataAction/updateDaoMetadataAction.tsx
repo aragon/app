@@ -9,6 +9,7 @@ import {
     type IProposalActionUpdateMetadata,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
+import { setMetadataAbi } from '@/modules/governance/constants/setMetadataAbi';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { usePinFile } from '@/shared/api/ipfsService/mutations/usePinFile';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -27,14 +28,6 @@ export interface IUpdateDaoMetadataAction
 
 export interface IUpdateDaoMetadaActionProps
     extends IProposalActionComponentProps<IProposalActionData> {}
-
-const setMetadataAbi = {
-    type: 'function',
-    inputs: [{ name: '_metadata', internalType: 'bytes', type: 'bytes' }],
-    name: 'setMetadata',
-    outputs: [],
-    stateMutability: 'nonpayable',
-};
 
 export const UpdateDaoMetadataAction: React.FC<IUpdateDaoMetadaActionProps> = (
     props,
