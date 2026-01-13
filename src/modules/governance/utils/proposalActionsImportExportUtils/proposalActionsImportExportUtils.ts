@@ -2,7 +2,6 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import { formatUnits, isAddress, isHex, zeroAddress } from 'viem';
 import {
     type IProposalAction,
-    type IProposalActionWithdrawToken,
     ProposalActionType,
 } from '@/modules/governance/api/governanceService';
 import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
@@ -19,6 +18,18 @@ import {
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { smartContractService } from '../../api/smartContractService';
+
+/**
+ * Extended action data for imported transfer actions.
+ * Includes temporary rawAmount field used until token decimals are fetched.
+ */
+export interface IImportedTransferActionData {
+    /**
+     * Raw amount value in wei for ERC20 transfers.
+     * Used temporarily for imported actions until token decimals are fetched by the component.
+     */
+    rawAmount?: string;
+}
 
 export interface IExportedAction {
     /**
@@ -195,10 +206,7 @@ class ProposalActionsImportExportUtils {
                 action.type === ProposalActionType.TRANSFER ||
                 action.type === ProposalActionType.TRANSFER_NATIVE
             ) {
-                return this.normalizeTransferAction(
-                    action as IProposalActionWithdrawToken,
-                    dao,
-                );
+                return this.normalizeTransferAction(action, dao);
             }
 
             // For imported actions which are not handled explicitly above, set the type as `Unknown` so that the decoded view is usable.
@@ -313,10 +321,7 @@ class ProposalActionsImportExportUtils {
     /**
      * Normalize transfer action (ERC20 and native)
      */
-    private normalizeTransferAction = (
-        action: IProposalActionWithdrawToken,
-        dao: IDao,
-    ) => {
+    private normalizeTransferAction = (action: IProposalAction, dao: IDao) => {
         const { inputData, to, value, type } = action;
         const isNativeTransfer = type === ProposalActionType.TRANSFER_NATIVE;
 
