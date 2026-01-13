@@ -101,11 +101,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Detect base tag from main
+        id: base
+        run: |
+          git fetch origin main --tags --force >/dev/null 2>&1 || true
+          BASE_REF=$(git describe --tags --abbrev=0 origin/main 2>/dev/null || true)
+          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+
       - name: Generate Release Summary
         id: summary
         run: node .github/workflows/scripts/generateReleaseSummary.js
         env:
           LINEAR_API_TOKEN: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
+          BASE_REF: ${{ steps.base.outputs.base_ref }}
 
       - name: Update PR Description
         run: |
@@ -118,9 +126,20 @@ jobs:
       - name: Notify Slack
         if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         run: |
-          node .github/workflows/scripts/slackNotify.js "🛠 *Staging Updated*
-          *Commit:* \`${{ github.event.pull_request.head.sha }}\`
-          *URL:* ${{ needs.deploy.outputs.deploymentUrl }}"
+          SHA="${{ github.event.pull_request.head.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+          REF="${{ github.event.pull_request.head.ref }}"
+          PR_URL="${{ github.event.pull_request.html_url }}"
+
+          MSG="🛠 *Staging Updated*
+          *Staging:* [stg.app.aragon.org](https://stg.app.aragon.org)
+          *Commit:* [$SHORT_SHA](https://github.com/aragon/app/commit/$SHA)
+
+          You can start testing on staging now.
+          - If you find bugs: create PR with fixes to the release branch [$REF](https://github.com/aragon/app/tree/$REF)
+          - If all good: approve the PR and add label \`release:ready\` — $PR_URL"
+
+          node .github/workflows/scripts/slackNotify.js "$MSG"
         env:
           SLACK_BOT_TOKEN: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
