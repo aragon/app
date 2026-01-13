@@ -190,6 +190,13 @@ class ProposalActionsImportExportUtils {
                 return this.normalizeMultisigMemberAction(action, meta);
             }
 
+            if (
+                action.type ===
+                MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS
+            ) {
+                return this.normalizeMultisigSettingsAction(action, meta);
+            }
+
             if (action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS) {
                 return this.normalizeTokenVoteSettingsAction(
                     action as ITokenActionChangeSettings,
@@ -240,6 +247,38 @@ class ProposalActionsImportExportUtils {
             ...action,
             meta,
             members,
+        };
+    };
+
+    /**
+     * Normalize multisig update settings action
+     */
+    private normalizeMultisigSettingsAction = (
+        action: IProposalAction,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        const proposedSettingsValues =
+            (action.inputData?.parameters?.[0]?.value as (
+                | boolean
+                | string
+            )[]) || [];
+        const [onlyListed, minApprovals] = proposedSettingsValues;
+
+        return {
+            ...action,
+            proposedSettings: {
+                onlyListed: Boolean(onlyListed),
+                minApprovals: Number(minApprovals),
+            },
+            meta,
         };
     };
 
