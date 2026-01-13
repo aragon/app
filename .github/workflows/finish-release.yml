@@ -1,0 +1,56 @@
+# Finish Release — notifies Slack when a release PR is merged or cancelled.
+
+name: Finish Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+    paths: [CHANGELOG.md]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  notify:
+    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Extract Slack Thread TS
+        id: ts
+        run: |
+          TS=$(echo "${{ github.event.pull_request.body }}" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//' || true)
+          echo "ts=$TS" >> $GITHUB_OUTPUT
+
+      - name: Checkout (for slackNotify script)
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: .github/workflows/scripts/slackNotify.js
+
+      - name: Notify Slack (merged)
+        if: github.event.pull_request.merged && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+        run: node .github/workflows/scripts/slackNotify.js "📦 *Release PR merged into main*"
+        env:
+          SLACK_BOT_TOKEN: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          SLACK_THREAD_TS: ${{ steps.ts.outputs.ts }}
+
+      - name: Notify Slack (cancelled)
+        if: github.event.pull_request.merged == false && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+        run: node .github/workflows/scripts/slackNotify.js "🛑 *Release cancelled*"
+        env:
+          SLACK_BOT_TOKEN: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          SLACK_THREAD_TS: ${{ steps.ts.outputs.ts }}

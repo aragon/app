@@ -1,0 +1,139 @@
+name: Release PR Flow
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    # GitHub can't filter PRs by HEAD branch in `on:`. We keep a job-level guard for `release/*`,
+    # but this `paths` filter prevents this workflow from even appearing on most non-release PRs.
+    paths:
+      - CHANGELOG.md
+
+concurrency:
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  build:
+    if: startsWith(github.head_ref, 'release/')
+    uses: ./.github/workflows/shared-build.yml
+    secrets: inherit
+    with:
+      env: 'staging'
+      ref: ${{ github.event.pull_request.head.sha }}
+
+  test:
+    if: startsWith(github.head_ref, 'release/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Retrieve NextJs build
+        uses: actions/download-artifact@v7.0.0
+        with:
+          name: nextjs-build
+
+      - name: Check types
+        run: pnpm type-check
+
+      - name: Check linter with formatter
+        run: pnpm lint:check
+
+      - name: Run tests with coverage
+        run: |
+          set -eo pipefail
+          pnpm test:coverage
+
+  deploy:
+    if: startsWith(github.head_ref, 'release/')
+    needs: test
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: 'stg.app.aragon.org'
+      env: 'staging'
+
+  notify:
+    if: startsWith(github.head_ref, 'release/')
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ github.token }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Extract Slack Thread TS
+        id: extract-ts
+        run: |
+          # Extract TS from PR body using regex
+          PR_BODY="${{ github.event.pull_request.body }}"
+          TS=$(echo "$PR_BODY" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//')
+          echo "ts=$TS" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Summary
+        id: release-summary
+        run: |
+          node .github/workflows/scripts/generateReleaseSummary.js
+        env:
+          LINEAR_API_TOKEN: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
+
+      - name: Update PR Description
+        if: steps.extract-ts.outputs.ts != ''
+        run: |
+          gh pr edit ${{ github.event.pull_request.html_url }} --body "${{ steps.release-summary.outputs.summary }}
+
+          <!-- slack_ts: ${{ steps.extract-ts.outputs.ts }} -->"
+        env:
+          GH_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Notify Slack
+        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != '' && steps.extract-ts.outputs.ts != ''
+        run: |
+          MSG="🛠 *Staging Updated*
+          *Commit:* \`${{ github.event.pull_request.head.sha }}\`
+          *URL:* ${{ needs.deploy.outputs.deploymentUrl }}"
+           
+          node .github/workflows/scripts/slackNotify.js "$MSG"
+        env:
+          SLACK_BOT_TOKEN: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
+          SLACK_THREAD_TS: ${{ steps.extract-ts.outputs.ts }}
