@@ -101,11 +101,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Detect base tag from main
+        id: base
+        run: |
+          git fetch origin main --tags --force >/dev/null 2>&1 || true
+          BASE_REF=$(git describe --tags --abbrev=0 origin/main 2>/dev/null || true)
+          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+
       - name: Generate Release Summary
         id: summary
         run: node .github/workflows/scripts/generateReleaseSummary.js
         env:
           LINEAR_API_TOKEN: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
+          BASE_REF: ${{ steps.base.outputs.base_ref }}
 
       - name: Update PR Description
         run: |
