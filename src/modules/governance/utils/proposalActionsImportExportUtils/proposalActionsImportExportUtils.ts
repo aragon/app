@@ -7,7 +7,6 @@ import {
 import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
 import {
     type ITokenActionChangeSettings,
-    type ITokenActionTokenMint,
     type ITokenPlugin,
     TokenProposalActionType,
 } from '@/plugins/tokenPlugin/types';
@@ -305,7 +304,7 @@ class ProposalActionsImportExportUtils {
                     action.to,
                     (plugin as ITokenPlugin).settings?.token?.address,
                 ),
-        );
+        ) as ITokenPlugin;
 
         if (!meta) {
             // If no meta, it means it's imported in another dao, in which case basic views cannot work.
@@ -315,15 +314,17 @@ class ProposalActionsImportExportUtils {
             };
         }
 
-        const { receivers, token } = action as ITokenActionTokenMint;
-        const { address, newBalance } = receivers;
+        const receiverAddress = action.inputData?.parameters?.[0]
+            ?.value as string;
+        const rawAmount = action.inputData?.parameters?.[1]?.value as string;
+        const tokenDecimals = meta.settings.token.decimals;
 
         return {
             ...action,
             receiver: {
-                address,
+                address: receiverAddress,
             },
-            amount: formatUnits(BigInt(newBalance), token.decimals),
+            amount: formatUnits(BigInt(rawAmount), tokenDecimals),
             meta,
         };
     };
