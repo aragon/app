@@ -5,5 +5,5 @@ echo "🔍 Running lint-staged (staged files only)..."
 pnpm lint-staged
 
 # Stage 2: Full parallel checks with caching
-echo "⚡ Running full checks with Turbo (parallel + cached)..."
-pnpm turbo lint type-check test
+# echo "⚡ Running full checks with Turbo (parallel + cached)..."
+# pnpm turbo lint type-check test

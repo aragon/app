@@ -424,6 +424,8 @@
       },
       "routerSelectorDialog": {
         "description": "Execute transactions for the routers below.",
+        "multiTab": "Multi",
+        "singleTab": "Single",
         "title": "Dispatch",
         "unnamedPolicy": "Unnamed Policy"
       },

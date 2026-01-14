@@ -1,5 +1,14 @@
-import { AvatarIcon, Dialog, IconType, invariant } from '@aragon/gov-ui-kit';
+import {
+    AvatarIcon,
+    Dialog,
+    IconType,
+    invariant,
+    Toggle,
+    ToggleGroup,
+} from '@aragon/gov-ui-kit';
+import { useMemo, useState } from 'react';
 import type { Network } from '@/shared/api/daoService';
+import { PolicyStrategyType } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
 import {
     type IDialogComponentProps,
@@ -32,6 +41,33 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
+    const [activeTab, setActiveTab] = useState<'multi' | 'single'>('multi');
+
+    const { multiPolicies, singlePolicies } = useMemo(() => {
+        const multi = policies.filter(
+            (policy) =>
+                policy.strategy?.type === PolicyStrategyType.MULTI_DISPATCH,
+        );
+        const single = policies.filter(
+            (policy) =>
+                policy.strategy?.type !== PolicyStrategyType.MULTI_DISPATCH,
+        );
+        return { multiPolicies: multi, singlePolicies: single };
+    }, [policies]);
+
+    const shouldShowTabs = multiPolicies.length > 0;
+    const displayedPolicies = shouldShowTabs
+        ? activeTab === 'multi'
+            ? multiPolicies
+            : singlePolicies
+        : policies;
+
+    const handleTabChange = (value?: string) => {
+        if (value) {
+            setActiveTab(value as 'multi' | 'single');
+        }
+    };
+
     const handleSelectPolicy = (policy: IDaoPolicy) => {
         const routerSelectorParams = location.params;
         const params: IDispatchDialogParams = {
@@ -53,8 +89,30 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                 title={t('app.capitalFlow.routerSelectorDialog.title')}
             />
             <Dialog.Content>
+                {shouldShowTabs && (
+                    <div className="flex flex-col gap-3 pt-2 pb-3">
+                        <ToggleGroup
+                            isMultiSelect={false}
+                            onChange={handleTabChange}
+                            value={activeTab}
+                        >
+                            <Toggle
+                                label={t(
+                                    'app.capitalFlow.routerSelectorDialog.multiTab',
+                                )}
+                                value="multi"
+                            />
+                            <Toggle
+                                label={t(
+                                    'app.capitalFlow.routerSelectorDialog.singleTab',
+                                )}
+                                value="single"
+                            />
+                        </ToggleGroup>
+                    </div>
+                )}
                 <div className="flex flex-col gap-3 pb-6">
-                    {policies.map((policy, index) => (
+                    {displayedPolicies.map((policy) => (
                         <button
                             className="flex items-center gap-6 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-6 shadow-neutral-sm transition-colors hover:border-neutral-200"
                             key={policy.address}
@@ -75,10 +133,8 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                 )}
                             </div>
                             <span className="text-base text-neutral-500">
-                                <span className="text-neutral-800">
-                                    {index + 1}
-                                </span>{' '}
-                                of {policies.length}
+                                <span className="text-neutral-800">3</span>{' '}
+                                routers
                             </span>
                             <AvatarIcon
                                 icon={IconType.CHEVRON_RIGHT}
