@@ -5,3 +5,4 @@ minimumReleaseAgeExclude: # https://pnpm.io/settings#minimumreleaseageexclude
     - "react-dom"
     - "next"
     - "@next/env"
+    - "preact@10.28.2"

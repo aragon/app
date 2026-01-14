@@ -50,7 +50,7 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
         >
             <Image
                 alt=""
-                className="-z-20 absolute inset-0 object-cover"
+                className="absolute inset-0 -z-20 object-cover"
                 fill={true}
                 src={BackgroundImage}
             />

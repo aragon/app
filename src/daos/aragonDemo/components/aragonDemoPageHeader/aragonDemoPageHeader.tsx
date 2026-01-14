@@ -91,7 +91,7 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (
         >
             <Image
                 alt="Aragon Demo Header"
-                className="-z-10 absolute top-0 left-0 size-full object-cover"
+                className="absolute top-0 left-0 -z-10 size-full object-cover"
                 src={AragonDemoHeader}
             />
             <Container className="flex w-full flex-col gap-6 pt-10 pb-4 md:gap-y-10 md:py-16">
