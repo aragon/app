@@ -74,7 +74,13 @@ export const AutocompleteInput = forwardRef<
     } = autocompleteInputProps;
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        setInputValue(sanitizePlainText(event.target.value));
+        const rawValue = event.target.value;
+        const sanitizedValue = sanitizePlainText(rawValue);
+        const shouldPreserveTrailingSpace =
+            sanitizedValue.length > 0 && /\s$/.test(rawValue);
+        setInputValue(
+            shouldPreserveTrailingSpace ? `${sanitizedValue} ` : sanitizedValue,
+        );
         setActiveIndex(0);
     };
 
