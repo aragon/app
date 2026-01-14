@@ -46,6 +46,10 @@ export interface IDaoPolicy {
          * Strategy source used.
          */
         source?: IPolicyDrainSource | IPolicyStreamBalanceSource;
+        /**
+         * Sub-router addresses for multi-dispatch routers.
+         */
+        subRouters?: string[];
     };
     /**
      * Release number of the plugin.

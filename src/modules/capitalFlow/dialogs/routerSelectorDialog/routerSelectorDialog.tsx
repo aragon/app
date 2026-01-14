@@ -114,7 +114,7 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                 <div className="flex flex-col gap-3 pb-6">
                     {displayedPolicies.map((policy) => (
                         <button
-                            className="flex items-center gap-6 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-6 shadow-neutral-sm transition-colors hover:border-neutral-200"
+                            className="flex cursor-pointer items-center gap-6 rounded-xl border border-neutral-100 bg-neutral-0 px-6 py-6 shadow-neutral-sm transition-colors hover:border-neutral-200"
                             key={policy.address}
                             onClick={() => handleSelectPolicy(policy)}
                             type="button"
@@ -132,10 +132,15 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                     </span>
                                 )}
                             </div>
-                            <span className="text-base text-neutral-500">
-                                <span className="text-neutral-800">3</span>{' '}
-                                routers
-                            </span>
+                            {shouldShowTabs && activeTab === 'multi' && (
+                                <span className="text-base text-neutral-500">
+                                    <span className="text-neutral-800">
+                                        {policy.strategy?.subRouters?.length ??
+                                            0}
+                                    </span>{' '}
+                                    routers
+                                </span>
+                            )}
                             <AvatarIcon
                                 icon={IconType.CHEVRON_RIGHT}
                                 size="sm"
