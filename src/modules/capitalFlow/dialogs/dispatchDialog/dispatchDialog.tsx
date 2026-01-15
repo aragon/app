@@ -2,12 +2,17 @@ import {
     addressUtils,
     Card,
     ChainEntityType,
+    DataList,
     DefinitionList,
     Dialog,
     invariant,
 } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
 import type { Network } from '@/shared/api/daoService';
-import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
+import {
+    type IDaoPolicy,
+    PolicyStrategyType,
+} from '@/shared/api/daoService/domain/daoPolicy';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -54,6 +59,28 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
     const { open, close } = useDialogContext();
     const { buildEntityUrl } = useDaoChain({ network });
 
+    const isMultiDispatch =
+        policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH;
+
+    const subRouters = useMemo(() => {
+        if (!policy.strategy.subRouters) {
+            return [];
+        }
+
+        const allPolicies = routerSelectorParams?.policies ?? [];
+
+        return policy.strategy.subRouters.map((address) => {
+            const subPolicy = allPolicies.find((policy) =>
+                addressUtils.isAddressEqual(policy.address, address),
+            );
+            return {
+                address,
+                name: subPolicy?.name,
+                policyKey: subPolicy?.policyKey,
+            };
+        });
+    }, [policy.strategy.subRouters, routerSelectorParams]);
+
     const handleDispatch = () => {
         const params: IDispatchTransactionDialogParams = {
             policy,
@@ -88,8 +115,8 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                 })}
             />
             <Dialog.Content>
-                <div className="pb-6">
-                    <Card className="flex flex-col gap-4 p-6">
+                <div className="flex flex-col gap-4 pb-6">
+                    <Card className="flex flex-col gap-4 border border-neutral-100 p-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-lg text-neutral-800">
@@ -126,11 +153,47 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Card>
+
+                    {isMultiDispatch && subRouters.length > 0 && (
+                        <div className="flex flex-col gap-3">
+                            {subRouters.map((subRouter, index) => (
+                                <DataList.Item
+                                    className="flex items-center gap-6 px-4 py-3 md:px-6 md:py-4"
+                                    key={subRouter.address}
+                                >
+                                    <div className="flex flex-1 items-baseline gap-2">
+                                        <span className="text-lg text-neutral-800">
+                                            {subRouter.name ??
+                                                t(
+                                                    'app.capitalFlow.dispatchDialog.unnamedSubRouter',
+                                                )}
+                                        </span>
+                                        {subRouter.policyKey && (
+                                            <span className="text-lg text-neutral-500">
+                                                {subRouter.policyKey}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="text-base text-neutral-500">
+                                        <span className="text-neutral-800">
+                                            {index + 1}
+                                        </span>{' '}
+                                        {t(
+                                            'app.capitalFlow.dispatchDialog.subRouterOf',
+                                            { total: subRouters.length },
+                                        )}
+                                    </span>
+                                </DataList.Item>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.capitalFlow.dispatchDialog.dispatchButton'),
+                    label: isMultiDispatch
+                        ? t('app.capitalFlow.dispatchDialog.dispatchAllButton')
+                        : t('app.capitalFlow.dispatchDialog.dispatchButton'),
                     onClick: handleDispatch,
                 }}
                 secondaryAction={

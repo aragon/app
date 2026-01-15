@@ -365,6 +365,7 @@
       "dispatchDialog": {
         "backButton": "Back",
         "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "dispatchAllButton": "Dispatch all",
         "dispatchButton": "Dispatch",
         "modelType": {
           "addressGauge": "Gauge",
@@ -377,7 +378,9 @@
           "multiDispatch": "Multi Dispatch",
           "router": "Router"
         },
-        "title": "Dispatch {{policyName}}"
+        "subRouterOf": "of {{total}}",
+        "title": "Dispatch {{policyName}}",
+        "unnamedSubRouter": "Unnamed sub-router"
       },
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",
