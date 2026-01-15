@@ -174,10 +174,10 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                                             </span>
                                         )}
                                     </div>
-                                    <span className="text-base">
+                                    <span className="flex gap-0.5 text-base">
                                         <span className="text-neutral-800">
                                             {index + 1}
-                                        </span>{' '}
+                                        </span>
                                         <span className="text-neutral-500">
                                             {t(
                                                 'app.capitalFlow.dispatchDialog.subRouterOf',

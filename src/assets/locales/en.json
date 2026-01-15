@@ -374,6 +374,7 @@
         "routerAddress": "Router address",
         "strategyType": {
           "burnRouter": "Burn Router",
+          "uniswapRouter": "Uniswap Router",
           "claimer": "Claimer",
           "multiDispatch": "Multi Dispatch",
           "router": "Router"
