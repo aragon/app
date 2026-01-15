@@ -364,14 +364,20 @@
       },
       "dispatchDialog": {
         "backButton": "Back",
-        "contract": "Contract",
         "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
         "dispatchButton": "Dispatch",
-        "links": "Links",
-        "recipients": "To",
-        "recipientsCount": "{{count}} recipients",
-        "title": "Dispatch {{policyName}}",
-        "token": "Token"
+        "modelType": {
+          "addressGauge": "Gauge",
+          "ratio": "Ratio"
+        },
+        "routerAddress": "Router address",
+        "strategyType": {
+          "burnRouter": "Burn Router",
+          "claimer": "Claimer",
+          "multiDispatch": "Multi Dispatch",
+          "router": "Router"
+        },
+        "title": "Dispatch {{policyName}}"
       },
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",

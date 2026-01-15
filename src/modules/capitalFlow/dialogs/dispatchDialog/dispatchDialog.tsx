@@ -7,10 +7,7 @@ import {
     invariant,
 } from '@aragon/gov-ui-kit';
 import type { Network } from '@/shared/api/daoService';
-import {
-    type IDaoPolicy,
-    PolicyStrategyModelType,
-} from '@/shared/api/daoService/domain/daoPolicy';
+import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -71,13 +68,15 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
         close(CapitalFlowDialogId.DISPATCH);
     };
 
-    // Extract data from strategy
-    const token = policy.strategy.source?.token;
-    const model = policy.strategy.model;
-    const recipientsCount =
-        model?.type === PolicyStrategyModelType.RATIO && 'recipients' in model
-            ? model.recipients.length
-            : undefined;
+    const strategyType = policy.strategy.type;
+    const modelType = policy.strategy.model?.type;
+
+    const baseTypeName = t(
+        `app.capitalFlow.dispatchDialog.strategyType.${strategyType}`,
+    );
+    const typeName = modelType
+        ? `${baseTypeName} (${t(`app.capitalFlow.dispatchDialog.modelType.${modelType}`)})`
+        : baseTypeName;
 
     return (
         <>
@@ -110,43 +109,21 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         </div>
 
                         <DefinitionList.Container>
-                            {token && (
-                                <DefinitionList.Item
-                                    copyValue={token.address}
-                                    link={{
-                                        href: buildEntityUrl({
-                                            type: ChainEntityType.ADDRESS,
-                                            id: token.address,
-                                        }),
-                                    }}
-                                    term={t(
-                                        'app.capitalFlow.dispatchDialog.token',
-                                    )}
-                                >
-                                    <div className="flex flex-col gap-0.5">
-                                        <span>
-                                            {addressUtils.truncateAddress(
-                                                token.address,
-                                            )}
-                                        </span>
-                                        <span className="text-neutral-400 text-sm">
-                                            {token.name} ({token.symbol})
-                                        </span>
-                                    </div>
-                                </DefinitionList.Item>
-                            )}
-                            {recipientsCount != null && (
-                                <DefinitionList.Item
-                                    term={t(
-                                        'app.capitalFlow.dispatchDialog.recipients',
-                                    )}
-                                >
-                                    {t(
-                                        'app.capitalFlow.dispatchDialog.recipientsCount',
-                                        { count: recipientsCount },
-                                    )}
-                                </DefinitionList.Item>
-                            )}
+                            <DefinitionList.Item
+                                copyValue={policy.address}
+                                description={typeName}
+                                link={{
+                                    href: buildEntityUrl({
+                                        type: ChainEntityType.ADDRESS,
+                                        id: policy.address,
+                                    }),
+                                }}
+                                term={t(
+                                    'app.capitalFlow.dispatchDialog.routerAddress',
+                                )}
+                            >
+                                {addressUtils.truncateAddress(policy.address)}
+                            </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Card>
                 </div>
