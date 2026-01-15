@@ -154,34 +154,38 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         </DefinitionList.Container>
                     </Card>
 
-                    {isMultiDispatch && subRouters.length > 0 && (
+                    {isMultiDispatch && (
                         <div className="flex flex-col gap-3">
                             {subRouters.map((subRouter, index) => (
                                 <DataList.Item
-                                    className="flex items-center gap-6 px-4 py-3 md:px-6 md:py-4"
+                                    className="flex items-baseline gap-6 px-6 py-6"
                                     key={subRouter.address}
                                 >
-                                    <div className="flex flex-1 items-baseline gap-2">
-                                        <span className="text-lg text-neutral-800">
+                                    <div className="flex flex-1 gap-2 text-lg">
+                                        <span className="text-neutral-800">
                                             {subRouter.name ??
                                                 t(
                                                     'app.capitalFlow.dispatchDialog.unnamedSubRouter',
                                                 )}
                                         </span>
                                         {subRouter.policyKey && (
-                                            <span className="text-lg text-neutral-500">
+                                            <span className="text-neutral-500">
                                                 {subRouter.policyKey}
                                             </span>
                                         )}
                                     </div>
-                                    <span className="text-base text-neutral-500">
+                                    <span className="text-base">
                                         <span className="text-neutral-800">
                                             {index + 1}
                                         </span>{' '}
-                                        {t(
-                                            'app.capitalFlow.dispatchDialog.subRouterOf',
-                                            { total: subRouters.length },
-                                        )}
+                                        <span className="text-neutral-500">
+                                            {t(
+                                                'app.capitalFlow.dispatchDialog.subRouterOf',
+                                                {
+                                                    total: subRouters.length,
+                                                },
+                                            )}
+                                        </span>
                                     </span>
                                 </DataList.Item>
                             ))}
