@@ -285,7 +285,7 @@ describe('<AutocompleteInput /> component', () => {
         const input = screen.getByRole('combobox');
         // includes control char and potential html - use paste to input all at once
         await userEvent.click(input);
-        await userEvent.paste('\u0000<script>alert(1)</script> one ');
+        await userEvent.paste('\u0000<script>alert(1)</script> one');
         // Verify input value is sanitized
         expect(input).toHaveValue('alert(1) one');
         // pick the visible option
