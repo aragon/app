@@ -23,7 +23,7 @@ integration of the [Aragon OSx SDK](https://github.com/aragon/sdk) and the
 
 Before setting up the project, ensure you have the following installed:
 
-- Node.js: Version >= 22
+- Node.js: Version >= 24
 - EditorConfig: Ensure your IDE has EditorConfig support enabled
 
 ## Getting Started

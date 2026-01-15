@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as daoService from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import {
@@ -50,5 +51,21 @@ describe('ActionComposer', () => {
         expect(
             screen.queryByRole('button', { name: /walletConnect/i }),
         ).not.toBeInTheDocument();
+    });
+
+    it('allows spaces while typing in the action search input', async () => {
+        const user = userEvent.setup();
+        render(createTestComponent());
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'app.governance.actionComposer.addAction.default',
+            }),
+        );
+
+        const input = screen.getByRole('combobox');
+        await user.type(input, 'Set metadata');
+
+        expect(input).toHaveValue('Set metadata');
     });
 });
