@@ -1,0 +1,26 @@
+name: GitHub PR Edit Body
+description: Updates PR body via gh using a body file.
+
+inputs:
+  pr_number:
+    description: Pull request number
+    required: true
+  token:
+    description: GitHub token (PAT recommended)
+    required: true
+  body:
+    description: New PR body
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        BODY: ${{ inputs.body }}
+      run: |
+        BODY_FILE="$(mktemp)"
+        printf "%s" "$BODY" > "$BODY_FILE"
+        gh pr edit "${{ inputs.pr_number }}" --body-file "$BODY_FILE"
+

@@ -1,0 +1,38 @@
+name: Build Release Notes
+description: Writes release notes file as (changelog changes + optional slack_ts marker).
+
+inputs:
+  changes:
+    description: Changelog changes text
+    required: true
+  slack_ts:
+    description: Slack thread ts (optional)
+    required: false
+    default: ""
+  path:
+    description: Output path
+    required: false
+    default: release-notes.md
+
+outputs:
+  path:
+    description: Notes file path
+    value: ${{ steps.write.outputs.path }}
+
+runs:
+  using: composite
+  steps:
+    - id: write
+      shell: bash
+      env:
+        CHANGES: ${{ inputs.changes }}
+      run: |
+        {
+          printf "%s\n" "$CHANGES"
+          echo
+          if [ -n "${{ inputs.slack_ts }}" ]; then
+            echo "<!-- slack_ts: ${{ inputs.slack_ts }} -->"
+          fi
+        } > "${{ inputs.path }}"
+        echo "path=${{ inputs.path }}" >> "$GITHUB_OUTPUT"
+
