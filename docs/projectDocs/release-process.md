@@ -31,6 +31,8 @@ Every push to the release PR automatically:
 - Updates PR description with release summary
 - Notifies Slack thread
 
+Note: the PR description contains `<!-- slack_ts: ... -->` which is used to post updates into the same Slack thread.
+
 ### 3. Approve & Release
 
 When ready to release:
