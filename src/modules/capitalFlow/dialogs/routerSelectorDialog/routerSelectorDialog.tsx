@@ -139,7 +139,9 @@ export const RouterSelectorDialog: React.FC<IRouterSelectorDialogProps> = (
                                             0}
                                     </span>
                                     <span className="text-neutral-500">
-                                        routers
+                                        {t(
+                                            'app.capitalFlow.routerSelectorDialog.routers',
+                                        )}
                                     </span>
                                 </span>
                             )}

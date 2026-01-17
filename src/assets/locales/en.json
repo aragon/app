@@ -435,6 +435,7 @@
       "routerSelectorDialog": {
         "description": "Execute transactions for the routers below.",
         "multiTab": "Multi",
+        "routers": "routers",
         "singleTab": "Single",
         "title": "Dispatch",
         "unnamedPolicy": "Unnamed Policy"
