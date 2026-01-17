@@ -2,14 +2,16 @@ import {
     addressUtils,
     Card,
     ChainEntityType,
+    DataList,
     DefinitionList,
     Dialog,
     invariant,
 } from '@aragon/gov-ui-kit';
+import { useMemo } from 'react';
 import type { Network } from '@/shared/api/daoService';
 import {
     type IDaoPolicy,
-    PolicyStrategyModelType,
+    PolicyStrategyType,
 } from '@/shared/api/daoService/domain/daoPolicy';
 import {
     type IDialogComponentProps,
@@ -57,6 +59,28 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
     const { open, close } = useDialogContext();
     const { buildEntityUrl } = useDaoChain({ network });
 
+    const isMultiDispatch =
+        policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH;
+
+    const subRouters = useMemo(() => {
+        if (!policy.strategy.subRouters) {
+            return [];
+        }
+
+        const allPolicies = routerSelectorParams?.policies ?? [];
+
+        return policy.strategy.subRouters.map((address) => {
+            const subPolicy = allPolicies.find((policy) =>
+                addressUtils.isAddressEqual(policy.address, address),
+            );
+            return {
+                address,
+                name: subPolicy?.name,
+                policyKey: subPolicy?.policyKey,
+            };
+        });
+    }, [policy.strategy.subRouters, routerSelectorParams]);
+
     const handleDispatch = () => {
         const params: IDispatchTransactionDialogParams = {
             policy,
@@ -71,13 +95,15 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
         close(CapitalFlowDialogId.DISPATCH);
     };
 
-    // Extract data from strategy
-    const token = policy.strategy.source?.token;
-    const model = policy.strategy.model;
-    const recipientsCount =
-        model?.type === PolicyStrategyModelType.RATIO && 'recipients' in model
-            ? model.recipients.length
-            : undefined;
+    const strategyType = policy.strategy.type;
+    const modelType = policy.strategy.model?.type;
+
+    const baseTypeName = t(
+        `app.capitalFlow.dispatchDialog.strategyType.${strategyType}`,
+    );
+    const typeName = modelType
+        ? `${baseTypeName} (${t(`app.capitalFlow.dispatchDialog.modelType.${modelType}`)})`
+        : baseTypeName;
 
     return (
         <>
@@ -89,8 +115,8 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                 })}
             />
             <Dialog.Content>
-                <div className="pb-6">
-                    <Card className="flex flex-col gap-4 p-6">
+                <div className="flex flex-col gap-4 pb-6">
+                    <Card className="flex flex-col gap-4 border border-neutral-100 p-6">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-lg text-neutral-800">
@@ -110,50 +136,68 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         </div>
 
                         <DefinitionList.Container>
-                            {token && (
-                                <DefinitionList.Item
-                                    copyValue={token.address}
-                                    link={{
-                                        href: buildEntityUrl({
-                                            type: ChainEntityType.ADDRESS,
-                                            id: token.address,
-                                        }),
-                                    }}
-                                    term={t(
-                                        'app.capitalFlow.dispatchDialog.token',
-                                    )}
-                                >
-                                    <div className="flex flex-col gap-0.5">
-                                        <span>
-                                            {addressUtils.truncateAddress(
-                                                token.address,
-                                            )}
-                                        </span>
-                                        <span className="text-neutral-400 text-sm">
-                                            {token.name} ({token.symbol})
-                                        </span>
-                                    </div>
-                                </DefinitionList.Item>
-                            )}
-                            {recipientsCount != null && (
-                                <DefinitionList.Item
-                                    term={t(
-                                        'app.capitalFlow.dispatchDialog.recipients',
-                                    )}
-                                >
-                                    {t(
-                                        'app.capitalFlow.dispatchDialog.recipientsCount',
-                                        { count: recipientsCount },
-                                    )}
-                                </DefinitionList.Item>
-                            )}
+                            <DefinitionList.Item
+                                copyValue={policy.address}
+                                description={typeName}
+                                link={{
+                                    href: buildEntityUrl({
+                                        type: ChainEntityType.ADDRESS,
+                                        id: policy.address,
+                                    }),
+                                }}
+                                term={t(
+                                    'app.capitalFlow.dispatchDialog.routerAddress',
+                                )}
+                            >
+                                {addressUtils.truncateAddress(policy.address)}
+                            </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Card>
+
+                    {isMultiDispatch && (
+                        <div className="flex flex-col gap-3">
+                            {subRouters.map((subRouter, index) => (
+                                <DataList.Item
+                                    className="flex items-baseline gap-6 px-6 py-6"
+                                    key={subRouter.address}
+                                >
+                                    <div className="flex flex-1 gap-2 text-lg">
+                                        <span className="text-neutral-800">
+                                            {subRouter.name ??
+                                                t(
+                                                    'app.capitalFlow.dispatchDialog.unnamedSubRouter',
+                                                )}
+                                        </span>
+                                        {subRouter.policyKey && (
+                                            <span className="text-neutral-500">
+                                                {subRouter.policyKey}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <span className="flex gap-0.5 text-base">
+                                        <span className="text-neutral-800">
+                                            {index + 1}
+                                        </span>
+                                        <span className="text-neutral-500">
+                                            {t(
+                                                'app.capitalFlow.dispatchDialog.subRouterOf',
+                                                {
+                                                    total: subRouters.length,
+                                                },
+                                            )}
+                                        </span>
+                                    </span>
+                                </DataList.Item>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: t('app.capitalFlow.dispatchDialog.dispatchButton'),
+                    label: isMultiDispatch
+                        ? t('app.capitalFlow.dispatchDialog.dispatchAllButton')
+                        : t('app.capitalFlow.dispatchDialog.dispatchButton'),
                     onClick: handleDispatch,
                 }}
                 secondaryAction={

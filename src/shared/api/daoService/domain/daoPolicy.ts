@@ -46,6 +46,10 @@ export interface IDaoPolicy {
          * Strategy source used.
          */
         source?: IPolicyDrainSource | IPolicyStreamBalanceSource;
+        /**
+         * Sub-router addresses for multi-dispatch routers.
+         */
+        subRouters?: string[];
     };
     /**
      * Release number of the plugin.
@@ -77,6 +81,7 @@ export enum PolicyInterfaceType {
 export enum PolicyStrategyType {
     ROUTER = 'router',
     BURN_ROUTER = 'burnRouter',
+    UNISWAP_ROUTER = 'uniswapRouter',
     CLAIMER = 'claimer',
     MULTI_DISPATCH = 'multiDispatch',
 }
