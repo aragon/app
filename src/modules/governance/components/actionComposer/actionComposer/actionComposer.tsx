@@ -6,6 +6,7 @@ import {
     Button,
     Dropdown,
     IconType,
+    invariant,
     Switch,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
@@ -115,6 +116,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         allowedActions != null,
     );
     const [uploadError, setUploadError] = useState<string | null>(null);
+    const [isUploadLoading, setIsUploadLoading] = useState(false);
 
     const [importedContractAbis, setImportedContractAbis] = useState<
         ISmartContractAbi[]
@@ -177,12 +179,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         const parsedActions = actions.map((action) => {
             const actionId = crypto.randomUUID();
             return {
-                to: action.to,
+                ...action,
                 value: BigInt(action.value),
-                data: action.data,
                 id: actionId,
                 daoId,
-                meta: undefined,
             } as unknown as IProposalActionData;
         });
         onAddAction(parsedActions);
@@ -191,12 +191,18 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const handleDirectFileUpload = async (
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
+        invariant(
+            dao != null,
+            'DAO must be defined to import actions from file',
+        );
+
         const file = event.target.files?.[0];
         if (!file) {
             return;
         }
 
         setUploadError(null);
+        setIsUploadLoading(true);
 
         try {
             const fileContent =
@@ -207,7 +213,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 );
 
             if (result.success && result.actions) {
-                handleImportActions(result.actions);
+                const decodedActions =
+                    await proposalActionsImportExportUtils.decodeActions(
+                        result.actions,
+                        dao,
+                    );
+
+                handleImportActions(decodedActions);
                 setUploadError(null);
             } else if (result.errorKey) {
                 setUploadError(t(result.errorKey));
@@ -218,6 +230,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     'app.governance.createProposalForm.actionsImportExport.errors.invalidJSON',
                 ),
             );
+        } finally {
+            setIsUploadLoading(false);
         }
 
         event.target.value = '';
@@ -393,6 +407,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                         )}
                     </div>
                 </div>
+                {isUploadLoading && (
+                    <AlertInline
+                        message={t(
+                            'app.governance.createProposalForm.actionsImportExport.uploadLoading',
+                        )}
+                        variant="info"
+                    />
+                )}
                 {uploadError && (
                     <AlertInline message={uploadError} variant="critical" />
                 )}
