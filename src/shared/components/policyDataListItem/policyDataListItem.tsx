@@ -13,6 +13,7 @@ const strategyTypeToNameMap: Record<PolicyStrategyType, string> = {
     [PolicyStrategyType.ROUTER]: 'router',
     [PolicyStrategyType.CLAIMER]: 'claimer',
     [PolicyStrategyType.BURN_ROUTER]: 'burn router',
+    [PolicyStrategyType.UNISWAP_ROUTER]: 'uniswap router',
     [PolicyStrategyType.MULTI_DISPATCH]: 'multi dispatch',
 };
 
