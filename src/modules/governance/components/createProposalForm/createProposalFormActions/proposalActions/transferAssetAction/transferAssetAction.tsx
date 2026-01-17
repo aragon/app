@@ -12,13 +12,14 @@ import {
     parseUnits,
     zeroAddress,
 } from 'viem';
-import { useReadContract } from 'wagmi';
+import { useBalance, useReadContract } from 'wagmi';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import {
     type ITransferAssetFormData,
     TransferAssetForm,
 } from '@/modules/finance/components/transferAssetForm';
 import { actionComposerUtils } from '@/modules/governance/components/actionComposer';
+import type { IImportedTransferActionData } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { useDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -26,7 +27,9 @@ import { useToken } from '@/shared/hooks/useToken';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
 
 export interface ITransferAssetActionProps
-    extends IProposalActionComponentProps<IProposalActionData> {}
+    extends IProposalActionComponentProps<
+        IProposalActionData & IImportedTransferActionData
+    > {}
 
 const erc20TransferAbi = {
     type: 'function',
@@ -57,10 +60,14 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const disableTokenSelection =
         action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
+
+    // For imported ERC20 actions, we need to fetch token details to get correct decimals
+    const isImportedErc20Action =
+        action.rawAmount != null && action.to !== zeroAddress;
     const { data: token } = useToken({
         address: action.to as Hex,
         chainId,
-        enabled: disableTokenSelection,
+        enabled: disableTokenSelection || isImportedErc20Action,
     });
     const { data: balance } = useReadContract({
         abi: erc20Abi,
@@ -90,12 +97,35 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const tokenName = asset?.token.name ?? 'Ether';
 
     const isNativeToken = tokenAddress === zeroAddress;
+
+    // For imported/uploaded actions fetch balance for the current DAO but keep it separate from transferActionLocked, which is a different thing.
+    const shouldFetchImportedTokenBalance =
+        !disableTokenSelection && asset != null && asset.amount == null;
+    const { data: nativeBalance } = useBalance({
+        address: dao!.address as Hex,
+        chainId,
+        query: {
+            enabled: shouldFetchImportedTokenBalance && isNativeToken,
+        },
+    });
+    const { data: erc20Balance } = useReadContract({
+        abi: erc20Abi,
+        address: tokenAddress as Hex,
+        functionName: 'balanceOf',
+        args: [dao!.address as Hex],
+        chainId,
+        query: {
+            enabled: shouldFetchImportedTokenBalance && !isNativeToken,
+        },
+    });
+
     const receiverAddress = addressUtils.isAddress(receiver?.address)
         ? receiver?.address
         : zeroAddress;
 
     const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
 
+    // Initialize asset field for transferActionLocked case
     useEffect(() => {
         if (token == null || balance == null) {
             return;
@@ -113,6 +143,88 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
         setValue(`${fieldName}.asset`, asset);
     }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName, dao]);
+
+    // Initialize imported ERC20 action with fetched token details and formatted amount
+    useEffect(() => {
+        if (
+            !isImportedErc20Action ||
+            token == null ||
+            action.rawAmount == null
+        ) {
+            return;
+        }
+
+        const tokenAsset = {
+            ...token,
+            address: tokenAddress,
+            network: dao!.network,
+            logo: '',
+            priceUsd: '0',
+        };
+
+        // Format the raw amount with the correct decimals
+        const formattedAmount = formatUnits(
+            BigInt(action.rawAmount),
+            token.decimals,
+        );
+
+        // Set both asset and amount fields
+        setValue(`${fieldName}.asset`, {
+            token: tokenAsset,
+            amount: undefined,
+        });
+        setValue(`${fieldName}.amount`, formattedAmount);
+
+        // Clear rawAmount after initialization
+        setValue(`${fieldName}.rawAmount`, undefined);
+    }, [
+        isImportedErc20Action,
+        token,
+        action.rawAmount,
+        tokenAddress,
+        dao,
+        setValue,
+        fieldName,
+    ]);
+
+    // Update asset balance for imported actions. Uploaded and decoded transfer actions have token info, but don't have max available balance for the given DAO.
+    useEffect(() => {
+        if (!shouldFetchImportedTokenBalance) {
+            return;
+        }
+
+        const currentAsset = getValues(`${fieldName}.asset`);
+        if (currentAsset == null) {
+            return;
+        }
+
+        const balanceValue = isNativeToken
+            ? nativeBalance?.value
+            : erc20Balance;
+
+        if (balanceValue == null) {
+            return;
+        }
+
+        const formattedBalance = formatUnits(balanceValue, tokenDecimals);
+
+        // Only update if balance has actually changed to prevent loops
+        if (currentAsset.amount !== formattedBalance) {
+            setValue(`${fieldName}.asset`, {
+                ...currentAsset,
+                amount: formattedBalance,
+            });
+        }
+    }, [
+        shouldFetchImportedTokenBalance,
+        isNativeToken,
+        nativeBalance,
+        erc20Balance,
+        tokenDecimals,
+        setValue,
+        fieldName,
+        getValues,
+    ]);
 
     useEffect(() => {
         const transferParams = [receiverAddress, weiAmount];

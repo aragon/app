@@ -48,3 +48,41 @@ export interface IDecodeTransactionParams
         IDecodeTransactionUrlParams,
         IDecodeTransactionBodyParams
     > {}
+
+export interface IDecodeTransactionsLightUrlParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Address of the DAO.
+     */
+    address: string;
+}
+
+export interface IDecodeTransactionsLightAction {
+    /**
+     * Target address of the action.
+     */
+    to: string;
+    /**
+     * Value of the action.
+     */
+    value: number | string;
+    /**
+     * Encoded data of the action.
+     */
+    data: string;
+}
+
+/**
+ * Array of actions to be decoded.
+ */
+export type IDecodeTransactionsLightBodyParams =
+    IDecodeTransactionsLightAction[];
+
+export interface IDecodeTransactionsLightParams
+    extends IRequestUrlBodyParams<
+        IDecodeTransactionsLightUrlParams,
+        IDecodeTransactionsLightBodyParams
+    > {}

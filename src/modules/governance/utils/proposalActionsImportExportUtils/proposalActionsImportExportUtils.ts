@@ -1,5 +1,34 @@
-import { isAddress, isHex } from 'viem';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import { addressUtils } from '@aragon/gov-ui-kit';
+import { formatUnits, isAddress, isHex, zeroAddress } from 'viem';
+import {
+    type IProposalAction,
+    ProposalActionType,
+} from '@/modules/governance/api/governanceService';
+import { MultisigProposalActionType } from '@/plugins/multisigPlugin/types';
+import {
+    type ITokenActionChangeSettings,
+    type ITokenPlugin,
+    TokenProposalActionType,
+} from '@/plugins/tokenPlugin/types';
+import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import {
+    type IDao,
+    type IDaoPlugin,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import { smartContractService } from '../../api/smartContractService';
+
+/**
+ * Extended action data for imported transfer actions.
+ * Includes temporary rawAmount field used until token decimals are fetched.
+ */
+export interface IImportedTransferActionData {
+    /**
+     * Raw amount value in wei for ERC20 transfers.
+     * Used temporarily for imported actions until token decimals are fetched by the component.
+     */
+    rawAmount?: string;
+}
 
 export interface IExportedAction {
     /**
@@ -103,6 +132,298 @@ class ProposalActionsImportExportUtils {
             };
         }
     };
+
+    /**
+     * Decodes imported actions using the smart contract service
+     *
+     * @param actions - Array of exported actions to decode
+     * @param network - Network where the contracts exist
+     * @param daoAddress - DAO address
+     * @returns Promise resolving to array of decoded proposal actions
+     */
+    decodeActions = async (
+        actions: IExportedAction[],
+        dao: IDao,
+    ): Promise<IProposalAction[]> => {
+        const { network, address: daoAddress } = dao;
+        const decodedActions =
+            await smartContractService.decodeTransactionsLight({
+                urlParams: {
+                    network,
+                    address: daoAddress,
+                },
+                body: actions,
+            });
+
+        return this.normalizeDecodedActions(decodedActions, dao);
+    };
+
+    /**
+     * Normalize decoded actions to a format expected by create action input forms (basic views).
+     */
+    normalizeDecodedActions = (
+        decodedActions: IProposalAction[],
+        dao: IDao,
+    ): IProposalAction[] => {
+        const { plugins } = dao;
+
+        return decodedActions.map((action) => {
+            const meta = this.findPluginMetaByAddress(plugins, action.to);
+
+            if (
+                (
+                    [
+                        MultisigProposalActionType.MULTISIG_ADD_MEMBERS,
+                        MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS,
+                    ] as string[]
+                ).includes(action.type)
+            ) {
+                return this.normalizeMultisigMemberAction(action, meta);
+            }
+
+            if (
+                action.type ===
+                MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS
+            ) {
+                return this.normalizeMultisigSettingsAction(action, meta);
+            }
+
+            if (action.type === TokenProposalActionType.UPDATE_VOTE_SETTINGS) {
+                return this.normalizeTokenVoteSettingsAction(
+                    action as ITokenActionChangeSettings,
+                    meta,
+                );
+            }
+
+            if (action.type === TokenProposalActionType.MINT) {
+                return this.normalizeTokenMintAction(action, plugins);
+            }
+
+            if (
+                action.type === ProposalActionType.TRANSFER ||
+                action.type === ProposalActionType.TRANSFER_NATIVE
+            ) {
+                return this.normalizeTransferAction(action, dao);
+            }
+
+            // For imported actions which are not handled explicitly above, set the type as `Unknown` so that the decoded view is usable.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        });
+    };
+
+    /**
+     * Normalize multisig member action (add/remove members)
+     */
+    private normalizeMultisigMemberAction = (
+        action: IProposalAction,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        // Parse members from action parameters
+        const memberAddresses =
+            (action.inputData?.parameters?.[0]?.value as string[]) || [];
+        const members = memberAddresses.map((address) => ({ address }));
+
+        return {
+            ...action,
+            meta,
+            members,
+        };
+    };
+
+    /**
+     * Normalize multisig update settings action
+     */
+    private normalizeMultisigSettingsAction = (
+        action: IProposalAction,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        const proposedSettingsValues =
+            (action.inputData?.parameters?.[0]?.value as (
+                | boolean
+                | string
+            )[]) || [];
+        const [onlyListed, minApprovals] = proposedSettingsValues;
+
+        return {
+            ...action,
+            proposedSettings: {
+                onlyListed: Boolean(onlyListed),
+                minApprovals: Number(minApprovals),
+            },
+            meta,
+        };
+    };
+
+    /**
+     * Normalize token vote settings action
+     */
+    private normalizeTokenVoteSettingsAction = (
+        action: ITokenActionChangeSettings,
+        meta?: IDaoPlugin,
+    ) => {
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        // Array format: [votingMode, supportThreshold, minParticipation, minDuration, minProposerVotingPower]
+        const proposedSettings =
+            (action.inputData?.parameters?.[0]?.value as string[]) || [];
+        const [
+            votingMode,
+            supportThreshold,
+            minParticipation,
+            minDuration,
+            minProposerVotingPower,
+        ] = proposedSettings;
+
+        return {
+            ...action,
+            proposedSettings: {
+                votingMode: Number(votingMode),
+                supportThreshold: tokenSettingsUtils.ratioToPercentage(
+                    Number(supportThreshold),
+                ),
+                minParticipation: tokenSettingsUtils.ratioToPercentage(
+                    Number(minParticipation),
+                ),
+                minDuration: Number(minDuration),
+                minProposerVotingPower: formatUnits(
+                    BigInt(minProposerVotingPower),
+                    (meta as ITokenPlugin).settings.token.decimals,
+                ),
+            },
+            meta,
+        };
+    };
+
+    /**
+     * Normalize token mint action
+     */
+    private normalizeTokenMintAction = (
+        action: IProposalAction,
+        plugins: IDaoPlugin[],
+    ) => {
+        // In MINT, `to` is the address of the ERC20 token, not the address of the TV plugin!
+        const meta = plugins.find(
+            (plugin) =>
+                plugin.interfaceType === PluginInterfaceType.TOKEN_VOTING &&
+                addressUtils.isAddressEqual(
+                    action.to,
+                    (plugin as ITokenPlugin).settings?.token?.address,
+                ),
+        ) as ITokenPlugin;
+
+        if (!meta) {
+            // If no meta, it means it's imported in another dao, in which case basic views cannot work.
+            return {
+                ...action,
+                type: 'Unknown',
+            };
+        }
+
+        const receiverAddress = action.inputData?.parameters?.[0]
+            ?.value as string;
+        const rawAmount = action.inputData?.parameters?.[1]?.value as string;
+        const tokenDecimals = meta.settings.token.decimals;
+
+        return {
+            ...action,
+            receiver: {
+                address: receiverAddress,
+            },
+            amount: formatUnits(BigInt(rawAmount), tokenDecimals),
+            meta,
+        };
+    };
+
+    /**
+     * Normalize transfer action (ERC20 and native)
+     */
+    private normalizeTransferAction = (action: IProposalAction, dao: IDao) => {
+        const { inputData, to, value, type } = action;
+        const isNativeTransfer = type === ProposalActionType.TRANSFER_NATIVE;
+
+        // For ERC20 transfers: receiver is in parameters[0], amount is in parameters[1], token address is in 'to'
+        // For native transfers: receiver is in 'to', amount is in 'value'
+        const receiverAddress = isNativeTransfer
+            ? to
+            : (inputData?.parameters?.[0]?.value as string);
+
+        const amountValue = isNativeTransfer
+            ? value
+            : (inputData?.parameters?.[1]?.value as string);
+
+        const tokenAddress = isNativeTransfer ? zeroAddress : to;
+
+        // For imported actions, we don't have full token info yet.
+        // The token details will be fetched by TransferAssetAction component.
+        // We provide minimal token structure with address and network.
+        const tokenInfo = {
+            address: tokenAddress,
+            network: dao.network,
+            symbol: isNativeTransfer ? 'ETH' : '',
+            name: isNativeTransfer ? 'Ether' : inputData?.contract || '',
+            logo: '',
+            decimals: 18, // Default decimals, actual decimals will be fetched by component for ERC20
+            priceUsd: '0',
+            totalSupply: null,
+        };
+
+        // For native transfers, we can format immediately with 18 decimals
+        // For ERC20, we need to wait for the actual decimals to be fetched
+        const formattedAmount = isNativeTransfer
+            ? formatUnits(BigInt(amountValue), 18)
+            : '0';
+
+        return {
+            ...action,
+            type: ProposalActionType.TRANSFER,
+            receiver: {
+                address: receiverAddress,
+            },
+            amount: formattedAmount,
+            asset: {
+                token: tokenInfo,
+                amount: undefined, // Balance will be fetched by component
+            },
+            // Store raw amount for ERC20 tokens to be formatted once decimals are known
+            rawAmount: isNativeTransfer ? undefined : amountValue,
+        };
+    };
+
+    /**
+     * Find plugin metadata by matching address
+     */
+    private findPluginMetaByAddress = (
+        plugins: IDaoPlugin[],
+        address: string,
+    ) =>
+        plugins.find((plugin) =>
+            addressUtils.isAddressEqual(plugin.address, address),
+        );
 
     /**
      * Validates a single action structure.

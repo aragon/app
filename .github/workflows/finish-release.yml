@@ -27,11 +27,14 @@ jobs:
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
-      - name: Extract Slack Thread TS
+      - name: Extract Slack TS from PR body
         id: ts
-        run: |
-          TS=$(echo "${{ github.event.pull_request.body }}" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//' || true)
-          echo "ts=$TS" >> $GITHUB_OUTPUT
+        uses: actions/github-script@v8.0.0
+        with:
+          script: |
+            const body = context.payload.pull_request?.body || '';
+            const m = body.match(/<!--\s*slack_ts:\s*([0-9.]+)\s*-->/);
+            core.setOutput('ts', m?.[1] || '');
 
       - name: Checkout (for slackNotify script)
         uses: actions/checkout@v6.0.1
