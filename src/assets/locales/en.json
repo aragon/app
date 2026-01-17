@@ -364,14 +364,24 @@
       },
       "dispatchDialog": {
         "backButton": "Back",
-        "contract": "Contract",
         "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "dispatchAllButton": "Dispatch all",
         "dispatchButton": "Dispatch",
-        "links": "Links",
-        "recipients": "To",
-        "recipientsCount": "{{count}} recipients",
+        "modelType": {
+          "addressGauge": "Gauge",
+          "ratio": "Ratio"
+        },
+        "routerAddress": "Router address",
+        "strategyType": {
+          "burnRouter": "Burn Router",
+          "uniswapRouter": "Uniswap Router",
+          "claimer": "Claimer",
+          "multiDispatch": "Multi Dispatch",
+          "router": "Router"
+        },
+        "subRouterOf": "of {{total}}",
         "title": "Dispatch {{policyName}}",
-        "token": "Token"
+        "unnamedSubRouter": "Unnamed sub-router"
       },
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",
@@ -424,6 +434,9 @@
       },
       "routerSelectorDialog": {
         "description": "Execute transactions for the routers below.",
+        "multiTab": "Multi",
+        "routers": "routers",
+        "singleTab": "Single",
         "title": "Dispatch",
         "unnamedPolicy": "Unnamed Policy"
       },
@@ -1277,6 +1290,7 @@
             "invalidJSON": "The uploaded file is not a valid JSON.",
             "invalidValue": "Invalid value in action \"value\" field. Must be a non-negative number."
           },
+          "uploadLoading": "Decoding actions, please wait.",
           "import": {
             "accept": "Import actions",
             "cancel": "Cancel",

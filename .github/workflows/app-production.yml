@@ -50,11 +50,14 @@ jobs:
           fetch-depth: 1
           sparse-checkout: .github/workflows/scripts/slackNotify.js
 
-      - name: Extract Slack Thread TS
+      - name: Extract Slack TS from release body
         id: ts
-        run: |
-          TS=$(echo "${{ github.event.release.body }}" | grep -o '<!-- slack_ts: [0-9.]* -->' | sed 's/<!-- slack_ts: //;s/ -->//' || true)
-          echo "ts=$TS" >> $GITHUB_OUTPUT
+        uses: actions/github-script@v8.0.0
+        with:
+          script: |
+            const body = context.payload.release?.body || '';
+            const m = body.match(/<!--\s*slack_ts:\s*([0-9.]+)\s*-->/);
+            core.setOutput('ts', m?.[1] || '');
 
       - name: Notify Slack
         if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
