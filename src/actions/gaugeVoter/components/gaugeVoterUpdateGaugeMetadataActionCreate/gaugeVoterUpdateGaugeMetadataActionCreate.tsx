@@ -8,7 +8,7 @@ import {
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import {
@@ -63,16 +63,22 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<
         unregister(`${actionFieldName}.gaugeDetails`);
     };
 
-    const { value: selectedGauge, alert } = useFormField<
-        Record<string, IGauge | undefined>,
-        string
-    >(selectedGaugeFieldName, {
-        label: t(
-            'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading',
-        ),
-        rules: {
-            required: true,
+    // Use useFormField for validation and alert handling
+    const { alert } = useFormField<Record<string, IGauge | undefined>, string>(
+        selectedGaugeFieldName,
+        {
+            label: t(
+                'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionCreate.emptyCard.heading',
+            ),
+            rules: {
+                required: true,
+            },
         },
+    );
+
+    // Use useWatch for reactive value updates when setValue is called
+    const selectedGauge = useWatch<Record<string, IGauge | undefined>>({
+        name: selectedGaugeFieldName,
     });
 
     const handleOpenGaugeSelectDialog = () => {

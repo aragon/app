@@ -1,7 +1,7 @@
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import type {
     IResourcesInputProps,
     IResourcesInputResource,
@@ -16,15 +16,16 @@ export const ResourcesInput: React.FC<IResourcesInputProps> = (props) => {
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
     const { t } = useTranslations();
-    const { fields, append, remove, replace } =
-        useFieldArray<ResourcesInputBaseForm>({ name: fieldName });
 
-    useEffect(() => {
-        if (defaultValue) {
-            replace(defaultValue);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [replace, defaultValue]);
+    // To properly init with defaultValue if provided
+    useFormField<ResourcesInputBaseForm, typeof name>(name, {
+        fieldPrefix,
+        defaultValue: defaultValue ?? [],
+    });
+
+    const { fields, append, remove } = useFieldArray<ResourcesInputBaseForm>({
+        name: fieldName,
+    });
 
     return (
         <div className="flex flex-col gap-2 md:gap-3">
