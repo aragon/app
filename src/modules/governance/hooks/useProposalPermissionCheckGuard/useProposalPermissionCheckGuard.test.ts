@@ -109,4 +109,42 @@ describe('useProposalPermissionCheckGuard hook', () => {
             `/dao/${daoNetwork}/${daoAddress}/${redirectTab}`,
         );
     });
+
+    it('calls createProposalGuard only once even when component re-renders with canCreateProposal false', () => {
+        const checkCreateProposalGuard = jest.fn();
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
+        ]);
+
+        usePermissionCheckGuardSpy.mockImplementation(() => {
+            // return new references so that useEffect is triggered to simulate the issue in the real environment
+            return {
+                result: false,
+                check: jest.fn(() => checkCreateProposalGuard()),
+            };
+        });
+
+        // Mock useDao to return a new dao object on each call to simulate the issue
+        useDaoSpy.mockImplementation(() =>
+            generateReactQueryResultSuccess({
+                data: generateDao(),
+            }),
+        );
+
+        const { rerender } = renderHook(() =>
+            useProposalPermissionCheckGuard({ daoId: '', pluginAddress: '' }),
+        );
+
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+
+        // Re-render the component multiple times
+        // Each re-render will get a new dao object from useDao and new createProposalGuard
+        rerender();
+        rerender();
+        rerender();
+
+        // Without the fix, guard would be called 4 times
+        // With the fix, it should only be called once
+        expect(checkCreateProposalGuard).toHaveBeenCalledTimes(1);
+    });
 });
