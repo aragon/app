@@ -55,7 +55,7 @@ export const useProposalPermissionCheckGuard = (
     const hasCalledGuardRef = useRef(false);
 
     useEffect(() => {
-        if (!(canCreateProposal || hasCalledGuardRef.current)) {
+        if (!canCreateProposal && !hasCalledGuardRef.current) {
             hasCalledGuardRef.current = true;
             createProposalGuard();
         }

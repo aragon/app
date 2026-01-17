@@ -105,7 +105,8 @@
                 "noForEach": "off",
                 "noVoid": "off",
                 "noExcessiveCognitiveComplexity": "off",
-                "useLiteralKeys": "off"
+                "useLiteralKeys": "off",
+                "useSimplifiedLogicExpression": "off"
             },
             "correctness": {
                 "noChildrenProp": "error",
