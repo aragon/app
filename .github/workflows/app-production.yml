@@ -48,24 +48,25 @@ jobs:
         uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 1
-          sparse-checkout: .github/workflows/scripts/slackNotify.js
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/extract-slack-ts
+            .github/actions/slack-notify
 
       - name: Extract Slack TS from release body
         id: ts
-        uses: actions/github-script@v8.0.0
+        uses: ./.github/actions/extract-slack-ts
         with:
-          script: |
-            const body = context.payload.release?.body || '';
-            const m = body.match(/<!--\s*slack_ts:\s*([0-9.]+)\s*-->/);
-            core.setOutput('ts', m?.[1] || '');
+          body: ${{ github.event.release.body }}
 
       - name: Notify Slack
         if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
-        run: |
-          node .github/workflows/scripts/slackNotify.js "✅ *Production Deployed*
-          *Tag:* \`${{ github.event.release.tag_name }}\`
-          *URL:* ${{ needs.deploy.outputs.deploymentUrl }}"
-        env:
-          SLACK_BOT_TOKEN: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          SLACK_THREAD_TS: ${{ steps.ts.outputs.ts }}
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            ✅ *Production Deployed*
+            *Tag:* `${{ github.event.release.tag_name }}`
+            *URL:* [app.aragon.org](https://app.aragon.org)

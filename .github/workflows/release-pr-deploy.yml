@@ -4,7 +4,6 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
-    paths: [CHANGELOG.md]
 
 concurrency:
   group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
@@ -16,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
@@ -24,7 +23,7 @@ jobs:
       ref: ${{ github.event.pull_request.head.sha }}
 
   test:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +54,7 @@ jobs:
         run: pnpm test:coverage
 
   deploy:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     needs: test
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
@@ -64,7 +63,7 @@ jobs:
       env: 'staging'
 
   notify:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -93,56 +92,54 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
+      - name: Read PR body
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
+
       - name: Extract Slack TS from PR body
         id: ts
-        run: |
-          # Use gh to get PR body properly (avoids shell escaping issues)
-          BODY=$(gh pr view ${{ github.event.pull_request.number }} --json body -q .body)
-          TS=$(echo "$BODY" | grep -o '<!-- slack_ts: [0-9.]*' | sed 's/<!-- slack_ts: //')
-          echo "ts=$TS" >> $GITHUB_OUTPUT
-        env:
-          GH_TOKEN: ${{ github.token }}
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ steps.pr.outputs.body }}
 
       - name: Detect base tag from main
         id: base
-        run: |
-          git fetch origin main --tags --force >/dev/null 2>&1 || true
-          BASE_REF=$(git describe --tags --abbrev=0 origin/main 2>/dev/null || true)
-          echo "base_ref=$BASE_REF" >> $GITHUB_OUTPUT
+        uses: ./.github/actions/git-detect-base-tag
+        with:
+          ref: HEAD
 
       - name: Generate Release Summary
         id: summary
-        run: node .github/workflows/scripts/generateReleaseSummary.js
-        env:
-          LINEAR_API_TOKEN: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
-          BASE_REF: ${{ steps.base.outputs.base_ref }}
+        uses: ./.github/actions/generate-release-summary
+        with:
+          linear_api_token: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
+          base_ref: ${{ steps.base.outputs.base_ref }}
 
       - name: Update PR Description
-        run: |
-          gh pr edit ${{ github.event.pull_request.number }} --body "${{ steps.summary.outputs.summary }}
+        uses: ./.github/actions/gh-pr-edit-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+          body: |
+            ${{ steps.summary.outputs.summary }}
 
-          <!-- slack_ts: ${{ steps.ts.outputs.ts }} -->"
-        env:
-          GH_TOKEN: ${{ steps.secrets.outputs.ARABOT_PAT }}
+            <!-- slack_ts: ${{ steps.ts.outputs.ts }} -->
 
       - name: Notify Slack
         if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
-        run: |
-          SHA="${{ github.event.pull_request.head.sha }}"
-          SHORT_SHA="${SHA:0:7}"
-          REF="${{ github.event.pull_request.head.ref }}"
-          PR_URL="${{ github.event.pull_request.html_url }}"
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            🛠 *Staging Updated*
+            *Staging:* [stg.app.aragon.org](https://stg.app.aragon.org)
+            *Commit:* [${{ github.event.pull_request.head.sha }}](https://github.com/aragon/app/commit/${{ github.event.pull_request.head.sha }})
 
-          MSG="🛠 *Staging Updated*
-          *Staging:* [stg.app.aragon.org](https://stg.app.aragon.org)
-          *Commit:* [$SHORT_SHA](https://github.com/aragon/app/commit/$SHA)
-
-          You can start testing on staging now.
-          - If you find bugs: create PR with fixes to the release branch [$REF](https://github.com/aragon/app/tree/$REF)
-          - If all good: approve the PR and add label \`release:ready\` — $PR_URL"
-
-          node .github/workflows/scripts/slackNotify.js "$MSG"
-        env:
-          SLACK_BOT_TOKEN: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          SLACK_THREAD_TS: ${{ steps.ts.outputs.ts }}
+            You can start testing on staging now.
+            - If you find bugs: create PR with fixes to the branch [${{ github.event.pull_request.head.ref }}](https://github.com/aragon/app/tree/${{ github.event.pull_request.head.ref }})
+            - If all good: approve the PR and add label `release:ready` — ${{ github.event.pull_request.html_url }}

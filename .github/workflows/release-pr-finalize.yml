@@ -7,15 +7,25 @@ on:
   pull_request_review:
     types: [submitted]
 
+concurrency:
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: read
 
 jobs:
   finalize:
-    if: startsWith(github.event.pull_request.head.ref, 'release/')
+    if: startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/')
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: .github/actions/pr-check-ready
+
       - name: Load secrets
         id: secrets
         uses: 1password/load-secrets-action@v3.1.0
@@ -27,19 +37,11 @@ jobs:
 
       - name: Check label + approval
         id: check
-        uses: actions/github-script@v8.0.0
+        uses: ./.github/actions/pr-check-ready
         with:
-          script: |
-            const pr = context.payload.pull_request;
-            const labels = pr.labels.map(l => l.name);
-            if (!labels.includes('release:ready')) return core.info('Missing label, skip.');
-            const { data: reviews } = await github.rest.pulls.listReviews({
-              owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.number,
-            });
-            const latest = new Map();
-            for (const r of reviews) latest.set(r.user?.login, r.state);
-            if (![...latest.values()].includes('APPROVED')) return core.info('No approval, skip.');
-            core.setOutput('ready', 'true');
+          pr_number: ${{ github.event.pull_request.number }}
+          required_labels: release:ready
+          require_approval: "true"
 
       - name: Checkout
         if: steps.check.outputs.ready == 'true'
@@ -49,6 +51,17 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
+      - name: "Guar: no new changesets at finalize"
+        if: steps.check.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ls .changeset/*.md >/dev/null 2>&1; then
+            echo "Found .changeset/*.md at finalize. Policy: do not add new changesets to an existing release/hotfix. Cancel and start a new one." >&2
+            ls -1 .changeset/*.md >&2 || true
+            exit 1
+          fi
+
       - name: Get version
         if: steps.check.outputs.ready == 'true'
         id: version
@@ -57,46 +70,48 @@ jobs:
       - name: Read changelog
         if: steps.check.outputs.ready == 'true'
         id: changelog
-        uses: actions/github-script@v8.0.0
-        env:
-          version: '${{ steps.version.outputs.current-version }}'
-          path: ./CHANGELOG.md
+        uses: ./.github/actions/read-changelog
         with:
-          script: |
-            const readChangelog = require('./.github/workflows/scripts/readChangelog.js');
-            await readChangelog({ github, context, core });
+          version: ${{ steps.version.outputs.current-version }}
+          path: ./CHANGELOG.md
+
+      - name: Read PR body
+        if: steps.check.outputs.ready == 'true'
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
 
       - name: Extract Slack TS from PR body
         if: steps.check.outputs.ready == 'true'
         id: ts
-        uses: actions/github-script@v8.0.0
+        uses: ./.github/actions/extract-slack-ts
         with:
-          script: |
-            const body = context.payload.pull_request?.body || '';
-            const m = body.match(/<!--\s*slack_ts:\s*([0-9.]+)\s*-->/);
-            core.setOutput('ts', m?.[1] || '');
+          body: ${{ steps.pr.outputs.body }}
 
       - name: Build release notes (changelog + slack_ts marker)
         if: steps.check.outputs.ready == 'true'
-        run: |
-          {
-            echo "${{ steps.changelog.outputs.changes }}"
-            echo
-            if [ -n "${{ steps.ts.outputs.ts }}" ]; then
-              echo "<!-- slack_ts: ${{ steps.ts.outputs.ts }} -->"
-            fi
-          } > release-notes.md
+        id: notes
+        uses: ./.github/actions/build-release-notes
+        with:
+          changes: ${{ steps.changelog.outputs.changes }}
+          slack_ts: ${{ steps.ts.outputs.ts }}
+          path: release-notes.md
 
       - name: Create tag
         if: steps.check.outputs.ready == 'true'
-        run: |
-          git tag "v${{ steps.version.outputs.current-version }}" ${{ github.event.pull_request.head.sha }}
-          git push origin "v${{ steps.version.outputs.current-version }}"
+        id: tag
+        uses: ./.github/actions/gh-ensure-tag
+        with:
+          tag: v${{ steps.version.outputs.current-version }}
+          sha: ${{ github.event.pull_request.head.sha }}
 
       - name: Create GitHub Release
         if: steps.check.outputs.ready == 'true'
-        uses: softprops/action-gh-release@v2.5.0
+        uses: ./.github/actions/gh-ensure-release
         with:
-          tag_name: 'v${{ steps.version.outputs.current-version }}'
-          body_path: release-notes.md
+          tag: v${{ steps.version.outputs.current-version }}
+          title: Release v${{ steps.version.outputs.current-version }}
+          notes_path: ${{ steps.notes.outputs.path }}
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}

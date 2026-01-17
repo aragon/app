@@ -1,0 +1,36 @@
+name: Slack Notify
+description: Sends a Slack message (optionally in a thread) using the repo slackNotify.js script.
+
+inputs:
+  slack_bot_token:
+    description: Slack bot token
+    required: true
+  slack_channel_id:
+    description: Slack channel id
+    required: true
+  message:
+    description: Message to send (GitHub Markdown allowed)
+    required: true
+  thread_ts:
+    description: Slack thread ts to reply in
+    required: false
+    default: ""
+
+outputs:
+  ts:
+    description: Slack message ts
+    value: ${{ steps.send.outputs.ts }}
+
+runs:
+  using: composite
+  steps:
+    - id: send
+      shell: bash
+      env:
+        SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
+        SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
+        SLACK_THREAD_TS: ${{ inputs.thread_ts }}
+        MESSAGE: ${{ inputs.message }}
+      run: |
+        node .github/workflows/scripts/slackNotify.js "$MESSAGE"
+
