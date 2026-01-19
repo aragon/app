@@ -102,7 +102,7 @@ jobs:
           slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
-            🚀 *Release v${{ steps.package-version.outputs.current-version }} Started*
+            🚀 *Release v${{ steps.package-version.outputs.current-version }} Started* @platform
             *PR:* ${{ steps.create-pr.outputs.url }}
 
             ${{ steps.release-summary.outputs.summary }}
