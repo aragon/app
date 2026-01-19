@@ -17,10 +17,11 @@ runs:
     - shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        PRETTIER_CHANGELOG: ${{ inputs.prettier_changelog }}
       run: |
         set -euo pipefail
         pnpm changeset version
-        if [ "${{ inputs.prettier_changelog }}" = "true" ]; then
+        if [ "$PRETTIER_CHANGELOG" = "true" ]; then
           pnpm dlx prettier --write --prose-wrap never CHANGELOG.md
         fi
 

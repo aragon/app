@@ -23,11 +23,12 @@ runs:
   steps:
     - id: ensure
       shell: bash
+      env:
+        TAG: ${{ inputs.tag }}
+        SHA: ${{ inputs.sha }}
+        REMOTE: ${{ inputs.remote }}
       run: |
         set -euo pipefail
-        TAG="${{ inputs.tag }}"
-        SHA="${{ inputs.sha }}"
-        REMOTE="${{ inputs.remote }}"
 
         git fetch "$REMOTE" --tags --force >/dev/null 2>&1 || true
 

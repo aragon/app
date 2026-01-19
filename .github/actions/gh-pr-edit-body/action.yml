@@ -19,8 +19,11 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
         BODY: ${{ inputs.body }}
+        PR_NUMBER: ${{ inputs.pr_number }}
       run: |
+        set -euo pipefail
         BODY_FILE="$(mktemp)"
+        trap 'rm -f "$BODY_FILE"' EXIT
         printf "%s" "$BODY" > "$BODY_FILE"
-        gh pr edit "${{ inputs.pr_number }}" --body-file "$BODY_FILE"
+        gh pr edit "$PR_NUMBER" --body-file "$BODY_FILE"
 

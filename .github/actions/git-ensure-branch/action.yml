@@ -23,11 +23,12 @@ runs:
   steps:
     - id: ensure
       shell: bash
+      env:
+        BRANCH: ${{ inputs.branch }}
+        BASE_REF: ${{ inputs.base_ref }}
+        REMOTE: ${{ inputs.remote }}
       run: |
         set -euo pipefail
-        BRANCH="${{ inputs.branch }}"
-        BASE_REF="${{ inputs.base_ref }}"
-        REMOTE="${{ inputs.remote }}"
 
         if git ls-remote --heads "$REMOTE" "$BRANCH" | grep -q .; then
           echo "created=false" >> "$GITHUB_OUTPUT"

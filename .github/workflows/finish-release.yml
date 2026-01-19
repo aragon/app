@@ -26,13 +26,7 @@ jobs:
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
-      - name: Extract Slack TS from PR body
-        id: ts
-        uses: ./.github/actions/extract-slack-ts
-        with:
-          body: ${{ github.event.pull_request.body }}
-
-      - name: Checkout (for slackNotify script)
+      - name: Checkout
         uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 1
@@ -40,6 +34,12 @@ jobs:
             .github/workflows/scripts/slackNotify.js
             .github/actions/extract-slack-ts
             .github/actions/slack-notify
+
+      - name: Extract Slack TS from PR body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ github.event.pull_request.body }}
 
       - name: Notify Slack (merged)
         if: github.event.pull_request.merged && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts

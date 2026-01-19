@@ -26,13 +26,16 @@ runs:
       shell: bash
       env:
         CHANGES: ${{ inputs.changes }}
+        SLACK_TS: ${{ inputs.slack_ts }}
+        OUTPUT_PATH: ${{ inputs.path }}
       run: |
+        set -euo pipefail
         {
           printf "%s\n" "$CHANGES"
           echo
-          if [ -n "${{ inputs.slack_ts }}" ]; then
-            echo "<!-- slack_ts: ${{ inputs.slack_ts }} -->"
+          if [ -n "$SLACK_TS" ]; then
+            echo "<!-- slack_ts: $SLACK_TS -->"
           fi
-        } > "${{ inputs.path }}"
-        echo "path=${{ inputs.path }}" >> "$GITHUB_OUTPUT"
+        } > "$OUTPUT_PATH"
+        echo "path=$OUTPUT_PATH" >> "$GITHUB_OUTPUT"
 

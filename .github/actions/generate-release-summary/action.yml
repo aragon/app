@@ -24,5 +24,7 @@ runs:
       env:
         LINEAR_API_TOKEN: ${{ inputs.linear_api_token }}
         BASE_REF: ${{ inputs.base_ref }}
-      run: node .github/workflows/scripts/generateReleaseSummary.js
+      run: |
+        set -euo pipefail
+        node .github/workflows/scripts/generateReleaseSummary.js
 

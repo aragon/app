@@ -19,6 +19,7 @@ runs:
       env:
         BODY: ${{ inputs.body }}
       run: |
+        set -euo pipefail
         node - <<'NODE'
         const fs = require("node:fs");
         const body = process.env.BODY || "";

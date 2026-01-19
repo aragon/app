@@ -22,11 +22,11 @@ runs:
     - shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
+        TAG: ${{ inputs.tag }}
+        TITLE: ${{ inputs.title }}
+        NOTES_PATH: ${{ inputs.notes_path }}
       run: |
         set -euo pipefail
-        TAG="${{ inputs.tag }}"
-        TITLE="${{ inputs.title }}"
-        NOTES_PATH="${{ inputs.notes_path }}"
 
         if gh release view "$TAG" >/dev/null 2>&1; then
           gh release edit "$TAG" --notes-file "$NOTES_PATH" ${TITLE:+--title "$TITLE"}

@@ -34,24 +34,28 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
         BODY: ${{ inputs.body }}
+        HEAD: ${{ inputs.head }}
+        BASE: ${{ inputs.base }}
+        TITLE: ${{ inputs.title }}
       run: |
         set -euo pipefail
-        HEAD="${{ inputs.head }}"
-        BASE="${{ inputs.base }}"
 
-        URL="$(gh pr list --head "$HEAD" --state open --json url -q '.[0].url' || true)"
-        NUMBER="$(gh pr list --head "$HEAD" --state open --json number -q '.[0].number' || true)"
-
-        if [ -n "$URL" ] && [ "$URL" != "null" ]; then
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
-          exit 0
+        EXISTING="$(gh pr list --head "$HEAD" --state open --json url,number -q '.[0]' || true)"
+        if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+          URL="$(echo "$EXISTING" | jq -r '.url // empty')"
+          NUMBER="$(echo "$EXISTING" | jq -r '.number // empty')"
+          if [ -n "$URL" ]; then
+            echo "url=$URL" >> "$GITHUB_OUTPUT"
+            echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
         fi
 
         BODY_FILE="$(mktemp)"
+        trap 'rm -f "$BODY_FILE"' EXIT
         printf "%s" "$BODY" > "$BODY_FILE"
 
-        URL="$(gh pr create --base "$BASE" --head "$HEAD" --title "${{ inputs.title }}" --body-file "$BODY_FILE")"
+        URL="$(gh pr create --base "$BASE" --head "$HEAD" --title "$TITLE" --body-file "$BODY_FILE")"
         NUMBER="$(gh pr view "$URL" --json number -q .number)"
         echo "url=$URL" >> "$GITHUB_OUTPUT"
         echo "number=$NUMBER" >> "$GITHUB_OUTPUT"

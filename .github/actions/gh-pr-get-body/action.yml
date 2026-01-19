@@ -21,8 +21,10 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
+        PR_NUMBER: ${{ inputs.pr_number }}
       run: |
-        BODY="$(gh pr view "${{ inputs.pr_number }}" --json body -q .body)"
+        set -euo pipefail
+        BODY="$(gh pr view "$PR_NUMBER" --json body -q .body)"
         {
           echo 'body<<EOF'
           echo "$BODY"
