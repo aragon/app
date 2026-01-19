@@ -11,6 +11,20 @@ const runGit = (command) => {
     }
 };
 
+// Latest semver-like tag by version (not reachability).
+const detectLatestSemverTag = () => {
+    return runGit(`git tag --list "v*" --sort=-v:refname | head -n 1`);
+};
+
+// If tags are created on release branches, the right "since last release cut" base on main
+// is the merge-base between main (HEAD) and the previous release tag commit.
+const detectReleaseCutBaseFromTag = (tag, headRef = 'HEAD') => {
+    if (!tag) {
+        return '';
+    }
+    return runGit(`git merge-base "${tag}" "${headRef}"`);
+};
+
 // Helper to fetch Linear issue details
 const fetchLinearIssue = async (issueId, token) => {
     if (!token) {
@@ -51,14 +65,36 @@ const generateSummary = async ({ core }) => {
     // Optional: Allow overriding the base ref (default: auto-detect from latest tag)
     let baseRef = process.env.BASE_REF;
 
-    // If no base ref provided, try to find the latest tag
+    // Auto-detect base when not provided.
+    //
+    // Note: our tags are created on release branches, so they are often NOT reachable from main.
+    // Using `git describe` on main would then pick an older tag (or none) and include already-
+    // released commits. Instead, we:
+    // - find the latest version tag by semver sort
+    // - compute merge-base(tag, HEAD) which equals "the main commit the previous release was cut from"
+    // - use that merge-base as the range start
     if (!baseRef) {
-        try {
-            baseRef = runGit('git describe --tags --abbrev=0');
-            console.log(`Detected latest release tag: ${baseRef}`);
-        } catch (_) {
-            // fail silently if no tags found
+        const latestTag = detectLatestSemverTag();
+        if (latestTag) {
+            const cutBase = detectReleaseCutBaseFromTag(latestTag, 'HEAD');
+            if (cutBase) {
+                baseRef = cutBase;
+                console.log(
+                    `Detected previous release cut base from ${latestTag}: ${baseRef}`,
+                );
+            } else {
+                console.log(
+                    `Found latest tag ${latestTag} but failed to compute merge-base. Using full history.`,
+                );
+            }
+        } else {
             console.log('No previous tags found. Using full history.');
+        }
+    } else if (/^v\d+\.\d+\.\d+/.test(baseRef)) {
+        // If workflow passed a tag explicitly, interpret it as "previous release tag".
+        const cutBase = detectReleaseCutBaseFromTag(baseRef, 'HEAD');
+        if (cutBase) {
+            baseRef = cutBase;
         }
     }
 
