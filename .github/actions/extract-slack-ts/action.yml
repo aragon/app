@@ -1,0 +1,30 @@
+name: Extract Slack TS
+description: "Extracts <!-- slack_ts: ... --> marker from a text body."
+
+inputs:
+  body:
+    description: Body text to parse
+    required: true
+
+outputs:
+  ts:
+    description: Extracted Slack thread ts (empty if missing)
+    value: ${{ steps.extract.outputs.ts }}
+
+runs:
+  using: composite
+  steps:
+    - id: extract
+      shell: bash
+      env:
+        BODY: ${{ inputs.body }}
+      run: |
+        set -euo pipefail
+        node - <<'NODE'
+        const fs = require("node:fs");
+        const body = process.env.BODY || "";
+        const m = body.match(/<!--\s*slack_ts:\s*([0-9.]+)\s*-->/);
+        const ts = (m && m[1]) ? m[1] : "";
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `ts=${ts}\n`);
+        NODE
+

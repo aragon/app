@@ -1,0 +1,33 @@
+name: GitHub PR Get Body
+description: Reads PR body via gh.
+
+inputs:
+  pr_number:
+    description: Pull request number
+    required: true
+  token:
+    description: GitHub token (PAT recommended)
+    required: true
+
+outputs:
+  body:
+    description: PR body
+    value: ${{ steps.get.outputs.body }}
+
+runs:
+  using: composite
+  steps:
+    - id: get
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        PR_NUMBER: ${{ inputs.pr_number }}
+      run: |
+        set -euo pipefail
+        BODY="$(gh pr view "$PR_NUMBER" --json body -q .body)"
+        {
+          echo 'body<<EOF'
+          echo "$BODY"
+          echo 'EOF'
+        } >> "$GITHUB_OUTPUT"
+

@@ -1,0 +1,41 @@
+name: Ensure Branch
+description: Ensures a remote branch exists, created from a base ref if missing.
+
+inputs:
+  branch:
+    description: Branch name to ensure (e.g. release/2026-01-16_12-00)
+    required: true
+  base_ref:
+    description: Base ref to branch from (e.g. main, a tag, or a SHA)
+    required: true
+  remote:
+    description: Remote name
+    required: false
+    default: origin
+
+outputs:
+  created:
+    description: Whether the branch was created by this run
+    value: ${{ steps.ensure.outputs.created }}
+
+runs:
+  using: composite
+  steps:
+    - id: ensure
+      shell: bash
+      env:
+        BRANCH: ${{ inputs.branch }}
+        BASE_REF: ${{ inputs.base_ref }}
+        REMOTE: ${{ inputs.remote }}
+      run: |
+        set -euo pipefail
+
+        if git ls-remote --heads "$REMOTE" "$BRANCH" | grep -q .; then
+          echo "created=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        git checkout -B "$BRANCH" "$BASE_REF"
+        git push "$REMOTE" "$BRANCH"
+        echo "created=true" >> "$GITHUB_OUTPUT"
+

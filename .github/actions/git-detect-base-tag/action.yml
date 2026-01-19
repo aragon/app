@@ -1,0 +1,27 @@
+name: Detect Base Tag
+description: "Detects latest tag reachable from a ref (default: HEAD)."
+
+inputs:
+  ref:
+    description: Ref to detect the latest reachable tag from (e.g. HEAD, origin/main, a SHA)
+    required: false
+    default: HEAD
+
+outputs:
+  base_ref:
+    description: Latest reachable tag (empty if none)
+    value: ${{ steps.detect.outputs.base_ref }}
+
+runs:
+  using: composite
+  steps:
+    - id: detect
+      shell: bash
+      env:
+        REF: ${{ inputs.ref }}
+      run: |
+        set -uo pipefail
+        git fetch --tags --force >/dev/null 2>&1 || true
+        BASE_REF="$(git describe --tags --abbrev=0 "$REF" 2>/dev/null || true)"
+        echo "base_ref=$BASE_REF" >> "$GITHUB_OUTPUT"
+

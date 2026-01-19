@@ -1,0 +1,37 @@
+name: Ensure GitHub Release
+description: Ensures a GitHub Release exists for a tag, and updates its notes.
+
+inputs:
+  tag:
+    description: Tag name (e.g. v1.2.3)
+    required: true
+  title:
+    description: Release title
+    required: false
+    default: ""
+  notes_path:
+    description: Path to release notes file
+    required: true
+  token:
+    description: GitHub token (PAT recommended)
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        TAG: ${{ inputs.tag }}
+        TITLE: ${{ inputs.title }}
+        NOTES_PATH: ${{ inputs.notes_path }}
+      run: |
+        set -euo pipefail
+
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          gh release edit "$TAG" --notes-file "$NOTES_PATH" ${TITLE:+--title "$TITLE"}
+          exit 0
+        fi
+
+        gh release create "$TAG" --notes-file "$NOTES_PATH" ${TITLE:+--title "$TITLE"}
+

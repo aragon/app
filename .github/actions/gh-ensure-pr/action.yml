@@ -1,0 +1,62 @@
+name: Ensure Pull Request
+description: Ensures a PR exists for a head branch into a base branch.
+
+inputs:
+  base:
+    description: Base branch
+    required: true
+  head:
+    description: Head branch
+    required: true
+  title:
+    description: PR title
+    required: true
+  body:
+    description: PR body
+    required: true
+  token:
+    description: GitHub token (PAT recommended)
+    required: true
+
+outputs:
+  url:
+    description: PR url
+    value: ${{ steps.ensure.outputs.url }}
+  number:
+    description: PR number
+    value: ${{ steps.ensure.outputs.number }}
+
+runs:
+  using: composite
+  steps:
+    - id: ensure
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        BODY: ${{ inputs.body }}
+        HEAD: ${{ inputs.head }}
+        BASE: ${{ inputs.base }}
+        TITLE: ${{ inputs.title }}
+      run: |
+        set -euo pipefail
+
+        EXISTING="$(gh pr list --head "$HEAD" --state open --json url,number -q '.[0]' || true)"
+        if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+          URL="$(echo "$EXISTING" | jq -r '.url // empty')"
+          NUMBER="$(echo "$EXISTING" | jq -r '.number // empty')"
+          if [ -n "$URL" ]; then
+            echo "url=$URL" >> "$GITHUB_OUTPUT"
+            echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+        fi
+
+        BODY_FILE="$(mktemp)"
+        trap 'rm -f "$BODY_FILE"' EXIT
+        printf "%s" "$BODY" > "$BODY_FILE"
+
+        URL="$(gh pr create --base "$BASE" --head "$HEAD" --title "$TITLE" --body-file "$BODY_FILE")"
+        NUMBER="$(gh pr view "$URL" --json number -q .number)"
+        echo "url=$URL" >> "$GITHUB_OUTPUT"
+        echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
+

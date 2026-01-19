@@ -1,0 +1,30 @@
+name: Generate Release Summary
+description: Generates a PR/Slack-friendly release summary based on git log range (optionally from a base tag).
+
+inputs:
+  linear_api_token:
+    description: Linear API token (optional)
+    required: false
+    default: ""
+  base_ref:
+    description: Base git ref (e.g. v1.2.3) to generate summary from (optional)
+    required: false
+    default: ""
+
+outputs:
+  summary:
+    description: Generated summary markdown
+    value: ${{ steps.summary.outputs.summary }}
+
+runs:
+  using: composite
+  steps:
+    - id: summary
+      shell: bash
+      env:
+        LINEAR_API_TOKEN: ${{ inputs.linear_api_token }}
+        BASE_REF: ${{ inputs.base_ref }}
+      run: |
+        set -euo pipefail
+        node .github/workflows/scripts/generateReleaseSummary.js
+

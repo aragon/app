@@ -1,0 +1,48 @@
+name: Ensure Git Tag
+description: Ensures a tag exists and points to the expected SHA.
+
+inputs:
+  tag:
+    description: Tag name (e.g. v1.2.3)
+    required: true
+  sha:
+    description: Commit SHA the tag must point to
+    required: true
+  remote:
+    description: Git remote name
+    required: false
+    default: origin
+
+outputs:
+  created:
+    description: Whether the tag was created by this run
+    value: ${{ steps.ensure.outputs.created }}
+
+runs:
+  using: composite
+  steps:
+    - id: ensure
+      shell: bash
+      env:
+        TAG: ${{ inputs.tag }}
+        SHA: ${{ inputs.sha }}
+        REMOTE: ${{ inputs.remote }}
+      run: |
+        set -euo pipefail
+
+        git fetch "$REMOTE" --tags --force >/dev/null 2>&1 || true
+
+        if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+          EXISTING_SHA="$(git rev-list -n 1 "$TAG")"
+          if [ "$EXISTING_SHA" != "$SHA" ]; then
+            echo "Tag $TAG already exists but points to $EXISTING_SHA (expected $SHA)" >&2
+            exit 1
+          fi
+          echo "created=false" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+
+        git tag "$TAG" "$SHA"
+        git push "$REMOTE" "$TAG"
+        echo "created=true" >> "$GITHUB_OUTPUT"
+

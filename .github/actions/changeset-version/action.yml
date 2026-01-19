@@ -1,0 +1,27 @@
+name: Changeset Version
+description: Runs `pnpm changeset version` and formats CHANGELOG.md (idempotent when no changesets).
+
+inputs:
+  prettier_changelog:
+    description: Whether to format CHANGELOG.md with prettier
+    required: false
+    default: "true"
+  github_token:
+    description: GitHub token for changesets (optional but recommended)
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github_token }}
+        PRETTIER_CHANGELOG: ${{ inputs.prettier_changelog }}
+      run: |
+        set -euo pipefail
+        pnpm changeset version
+        if [ "$PRETTIER_CHANGELOG" = "true" ]; then
+          pnpm dlx prettier --write --prose-wrap never CHANGELOG.md
+        fi
+

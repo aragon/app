@@ -1,0 +1,71 @@
+name: PR Check Ready
+description: Checks that PR has required label(s) and at least one APPROVED review.
+
+inputs:
+  pr_number:
+    description: Pull request number
+    required: true
+  required_labels:
+    description: Comma-separated label names (e.g. release:ready)
+    required: true
+  require_approval:
+    description: Whether an approval is required
+    required: false
+    default: "true"
+
+outputs:
+  ready:
+    description: 'true if conditions pass'
+    value: ${{ steps.check.outputs.ready }}
+
+runs:
+  using: composite
+  steps:
+    - id: check
+      uses: actions/github-script@v8.0.0
+      with:
+        script: |
+          const owner = context.repo.owner;
+          const repo = context.repo.repo;
+          const prNumber = Number(core.getInput('pr_number', { required: true }));
+          const requiredLabels = core
+            .getInput('required_labels', { required: true })
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
+          const requireApproval = core.getInput('require_approval') !== 'false';
+
+          const { data: pr } = await github.rest.pulls.get({
+            owner,
+            repo,
+            pull_number: prNumber,
+          });
+
+          const labels = (pr.labels || []).map(l => l.name);
+          const missing = requiredLabels.filter(l => !labels.includes(l));
+          if (missing.length > 0) {
+            core.info(`Missing required label(s): ${missing.join(', ')}, skip.`);
+            core.setOutput('ready', 'false');
+            return;
+          }
+
+          if (requireApproval) {
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner,
+              repo,
+              pull_number: prNumber,
+            });
+            const latest = new Map();
+            for (const r of reviews) {
+              if (r.user?.login) latest.set(r.user.login, r.state);
+            }
+            const approved = [...latest.values()].includes('APPROVED');
+            if (!approved) {
+              core.info('No approval found, skip.');
+              core.setOutput('ready', 'false');
+              return;
+            }
+          }
+
+          core.setOutput('ready', 'true');
+
