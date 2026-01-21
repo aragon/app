@@ -3,7 +3,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AragonDemoPageHeader } from './components/aragonDemoPageHeader';
 import { aragonDemoDaoPolicies } from './constants/aragonDemoDaoPolicies';
 
-export const initialiseAragonDemo = () => {
+export const initialiseAragonDemoPolicies = () => {
     pluginRegistryUtils
         .registerPlugin(aragonDemoDaoPolicies)
 
