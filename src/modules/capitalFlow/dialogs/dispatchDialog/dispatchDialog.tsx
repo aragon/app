@@ -263,13 +263,9 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
             ) : (
                 <Dialog.Footer
                     primaryAction={{
-                        label: isMultiDispatch
-                            ? t(
-                                  'app.capitalFlow.dispatchDialog.dispatchAllButton',
-                              )
-                            : t(
-                                  'app.capitalFlow.dispatchDialog.dispatchButton',
-                              ),
+                        label: t(
+                            `app.capitalFlow.dispatchDialog.${isMultiDispatch ? 'dispatchAllButton' : 'dispatchButton'}`,
+                        ),
                         onClick: handleDispatch,
                     }}
                     secondaryAction={

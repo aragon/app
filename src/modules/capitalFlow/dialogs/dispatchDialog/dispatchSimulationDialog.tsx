@@ -224,21 +224,12 @@ export const DispatchSimulationDialog: React.FC<
                     disabled: isLoading || error != null || simulation == null,
                     onClick: handleContinue,
                 }}
-                secondaryAction={
-                    showBackButton
-                        ? {
-                              label: t(
-                                  'app.capitalFlow.dispatchSimulationDialog.backButton',
-                              ),
-                              onClick: handleBack,
-                          }
-                        : {
-                              label: t(
-                                  'app.capitalFlow.dispatchSimulationDialog.cancel',
-                              ),
-                              onClick: handleBack,
-                          }
-                }
+                secondaryAction={{
+                    label: t(
+                        `app.capitalFlow.dispatchSimulationDialog.${showBackButton ? 'backButton' : 'cancel'}`,
+                    ),
+                    onClick: handleBack,
+                }}
                 variant="wizard"
             />
         </>
