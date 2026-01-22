@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 
-export interface IAragonDemoPageHeaderStatProps extends ComponentProps<'div'> {
+export interface IAragonDemoPoliciesPageHeaderStatProps
+    extends ComponentProps<'div'> {
     /**
      * Value of the stat.
      * @default 0
@@ -17,8 +18,8 @@ export interface IAragonDemoPageHeaderStatProps extends ComponentProps<'div'> {
     suffix?: string;
 }
 
-export const AragonDemoPageHeaderStat: React.FC<
-    IAragonDemoPageHeaderStatProps
+export const AragonDemoPoliciesPageHeaderStat: React.FC<
+    IAragonDemoPoliciesPageHeaderStatProps
 > = (props) => {
     const { value = 0, label, suffix, className, ...otherProps } = props;
 

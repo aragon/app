@@ -1,7 +1,7 @@
 import { initialiseAragonDemo } from './aragonDemo';
+import { initialiseAragonDemoPolicies } from './aragonDemoPolicies';
 import { initialiseBoundless } from './boundless';
 import { initialiseXmaquina } from './xmaquina';
-import { initialiseAragonDemoPolicies } from './aragonDemoPolicies';
 
 export const initialiseDaos = () => {
     initialiseAragonDemo();

@@ -12,24 +12,25 @@ import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import type { IDao } from '@/shared/api/daoService';
+import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import AragonDemoHeader from '../../assets/aragonDemoHeader.jpg';
-import { AragonDemoPageHeaderStat } from './aragonDemoPageHeaderStat';
+import AragonDemoHeader from '../../assets/aragonDemoPoliciesHeader.jpg';
+import { AragonDemoPoliciesPageHeaderStat } from './aragonDemoPoliciesPageHeaderStat';
 
-export interface IAragonDemoPageHeaderProps extends ComponentProps<'header'> {
+export interface IAragonDemoPoliciesPageHeaderProps
+    extends ComponentProps<'header'> {
     /**
      * DAO to display in the header.
      */
     dao: IDao;
 }
 
-export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (
-    props,
-) => {
+export const AragonDemoPoliciesPageHeader: React.FC<
+    IAragonDemoPoliciesPageHeaderProps
+> = (props) => {
     const { dao, className, ...otherProps } = props;
 
     const router = useRouter();
@@ -60,7 +61,10 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (
         },
     ];
 
-    const plugin = useDaoPlugins({ daoId })![0];
+    const plugin = useDaoPlugins({
+        daoId,
+        interfaceType: PluginInterfaceType.MULTISIG,
+    })![0];
 
     const createProposalUrl = daoUtils.getDaoUrl(
         dao,
@@ -113,7 +117,7 @@ export const AragonDemoPageHeader: React.FC<IAragonDemoPageHeaderProps> = (
                     </Button>
                     <div className="flex flex-row gap-10 md:gap-12">
                         {stats.map((stat) => (
-                            <AragonDemoPageHeaderStat
+                            <AragonDemoPoliciesPageHeaderStat
                                 key={stat.label}
                                 {...stat}
                             />
