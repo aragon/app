@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import { memberOptions } from '../../api/governanceService';
 import type { IDaoMemberPageParams } from '../../types';
 import { DaoMemberDetailsPageClient } from './daoMemberDetailsPageClient';
@@ -33,7 +34,7 @@ export const DaoMemberDetailsPage: React.FC<
     try {
         await queryClient.fetchQuery(memberOptions(memberParams));
     } catch (error: unknown) {
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/members`;
 

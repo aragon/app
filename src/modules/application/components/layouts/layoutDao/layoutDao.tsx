@@ -8,6 +8,7 @@ import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { BannerDao } from '../../bannerDao';
 import { ErrorBoundary } from '../../errorBoundary';
@@ -47,7 +48,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
             daoOptions({ urlParams: daoUrlParams }),
         );
     } catch (error: unknown) {
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         return (
             <Page.Error
                 error={parsedError}

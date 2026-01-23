@@ -4,7 +4,7 @@ import {
     type IEmptyStateBaseProps,
     type IllustrationObjectType,
 } from '@aragon/gov-ui-kit';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import { useSafeTranslations } from '@/shared/components/translationsProvider';
 
 export interface IErrorFeedbackProps {
     /**
@@ -42,7 +42,7 @@ export const ErrorFeedback: React.FC<IErrorFeedbackProps> = (props) => {
         hideReportButton,
     } = props;
 
-    const { t } = useTranslations();
+    const { t } = useSafeTranslations();
 
     const reportIssueButton = {
         label: t('app.shared.errorFeedback.link.report'),
