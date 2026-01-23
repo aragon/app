@@ -1,5 +1,25 @@
 # @aragon/app
 
+## 1.19.0
+
+### Minor Changes
+
+- [#931](https://github.com/aragon/app/pull/931) [`fc28a5c`](https://github.com/aragon/app/commit/fc28a5ccb4d5028466226ed771e537e340aaf7e2) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement debounced IPFS background pinning on metadata actions in composer
+
+- [#932](https://github.com/aragon/app/pull/932) [`10f9f05`](https://github.com/aragon/app/commit/10f9f055c5a5f0bb1741c788d10089fb5dd49567) Thanks [@milosh86](https://github.com/milosh86)! - Implement decoding of uploaded actions
+
+- [#942](https://github.com/aragon/app/pull/942) [`c2af304`](https://github.com/aragon/app/commit/c2af30440b7e6000505c0cbefd6c21e00bdd6c95) Thanks [@milosh86](https://github.com/milosh86)! - Improve multi-dispatch router UX
+
+### Patch Changes
+
+- [#946](https://github.com/aragon/app/pull/946) [`a9c9f32`](https://github.com/aragon/app/commit/a9c9f324a81c8f1a20a34d0e48bbe4efd33b59ab) Thanks [@milosh86](https://github.com/milosh86)! - Fix updateGaugeMetadata form initialization
+
+- [#943](https://github.com/aragon/app/pull/943) [`a4b3942`](https://github.com/aragon/app/commit/a4b3942b3a84b4aacba94be8a9741fb8af9b7356) Thanks [@milosh86](https://github.com/milosh86)! - Fix infinite loop issue on create proposal page reload
+
+- [#929](https://github.com/aragon/app/pull/929) [`ea5464c`](https://github.com/aragon/app/commit/ea5464c9b31ea89428dcf4422a33ebeefab1c977) Thanks [@dependabot](https://github.com/apps/dependabot)! - Dependency update
+
+- [#939](https://github.com/aragon/app/pull/939) [`1cada4e`](https://github.com/aragon/app/commit/1cada4e3dd1bdae43917d07b93b2e54289825d39) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Allow for spaces when typing on ActionComposer input
+
 ## 1.18.0
 
 ### Minor Changes
