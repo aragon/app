@@ -1,10 +1,12 @@
 import {
     addressUtils,
+    Button,
     Card,
     ChainEntityType,
     DataList,
     DefinitionList,
     Dialog,
+    Dropdown,
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
@@ -18,9 +20,11 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
 import type { IRouterSelectorDialogParams } from '../routerSelectorDialog';
+import type { IDispatchSimulationDialogParams } from './dispatchSimulationDialog';
 import type { IDispatchTransactionDialogParams } from './dispatchTransactionDialog';
 
 export interface IDispatchDialogParams {
@@ -58,6 +62,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const { buildEntityUrl } = useDaoChain({ network });
+    const { tenderlySupport } = networkDefinitions[network];
 
     const isMultiDispatch =
         policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH;
@@ -80,6 +85,19 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
             };
         });
     }, [policy.strategy.subRouters, routerSelectorParams]);
+
+    const handleSimulate = () => {
+        const params: IDispatchSimulationDialogParams = {
+            policy,
+            network,
+            showBackButton,
+            routerSelectorParams,
+        };
+        open(CapitalFlowDialogId.DISPATCH_SIMULATION, {
+            params,
+            stack: true,
+        });
+    };
 
     const handleDispatch = () => {
         const params: IDispatchTransactionDialogParams = {
@@ -104,6 +122,23 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
     const typeName = modelType
         ? `${baseTypeName} (${t(`app.capitalFlow.dispatchDialog.modelType.${modelType}`)})`
         : baseTypeName;
+
+    const shouldShowDropdown =
+        tenderlySupport &&
+        policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH;
+
+    const dropdownItems = shouldShowDropdown
+        ? [
+              {
+                  label: t('app.capitalFlow.dispatchDialog.simulate'),
+                  onClick: handleSimulate,
+              },
+              {
+                  label: t('app.capitalFlow.dispatchDialog.skipAndContinue'),
+                  onClick: handleDispatch,
+              },
+          ]
+        : undefined;
 
     return (
         <>
@@ -193,25 +228,59 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                     )}
                 </div>
             </Dialog.Content>
-            <Dialog.Footer
-                primaryAction={{
-                    label: isMultiDispatch
-                        ? t('app.capitalFlow.dispatchDialog.dispatchAllButton')
-                        : t('app.capitalFlow.dispatchDialog.dispatchButton'),
-                    onClick: handleDispatch,
-                }}
-                secondaryAction={
-                    showBackButton
-                        ? {
-                              label: t(
-                                  'app.capitalFlow.dispatchDialog.backButton',
-                              ),
-                              onClick: handleBack,
-                          }
-                        : undefined
-                }
-                variant="wizard"
-            />
+            {dropdownItems ? (
+                <Dialog.Footer variant="wizard">
+                    <div className="flex w-full items-center gap-3">
+                        {showBackButton && (
+                            <Button
+                                onClick={handleBack}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {t('app.capitalFlow.dispatchDialog.backButton')}
+                            </Button>
+                        )}
+                        <div className="ml-auto">
+                            <Dropdown.Container
+                                label={t(
+                                    'app.capitalFlow.dispatchDialog.dispatchAllButton',
+                                )}
+                                size="md"
+                                variant="primary"
+                            >
+                                {dropdownItems.map((item) => (
+                                    <Dropdown.Item
+                                        key={item.label}
+                                        onClick={item.onClick}
+                                    >
+                                        {item.label}
+                                    </Dropdown.Item>
+                                ))}
+                            </Dropdown.Container>
+                        </div>
+                    </div>
+                </Dialog.Footer>
+            ) : (
+                <Dialog.Footer
+                    primaryAction={{
+                        label: t(
+                            `app.capitalFlow.dispatchDialog.${isMultiDispatch ? 'dispatchAllButton' : 'dispatchButton'}`,
+                        ),
+                        onClick: handleDispatch,
+                    }}
+                    secondaryAction={
+                        showBackButton
+                            ? {
+                                  label: t(
+                                      'app.capitalFlow.dispatchDialog.backButton',
+                                  ),
+                                  onClick: handleBack,
+                              }
+                            : undefined
+                    }
+                    variant="wizard"
+                />
+            )}
         </>
     );
 };

@@ -372,6 +372,8 @@
           "ratio": "Ratio"
         },
         "routerAddress": "Router address",
+        "simulate": "Simulate dispatch",
+        "skipAndContinue": "Skip and continue",
         "strategyType": {
           "burnRouter": "Burn Router",
           "uniswapRouter": "Uniswap Router",
@@ -382,6 +384,26 @@
         "subRouterOf": "of {{total}}",
         "title": "Dispatch {{policyName}}",
         "unnamedSubRouter": "Unnamed sub-router"
+      },
+      "dispatchSimulationDialog": {
+        "backButton": "Back",
+        "cancel": "Cancel",
+        "continue": "Continue to dispatch",
+        "description": "Review the simulation before dispatching this router.",
+        "failed": "Simulation failed",
+        "loading": "Running simulation...",
+        "noTenderly": "Simulation is not available for this network.",
+        "noWallet": "Connect your wallet to run the simulation.",
+        "retry": "Retry simulation",
+        "title": "Dispatch {{policyName}}"
+      },
+      "simulationFlowVisualization": {
+        "summary": {
+          "daoGroup": "DAO",
+          "empty": "No balance changes detected.",
+          "externalGroup": "External"
+        },
+        "tenderlyLink": "View details on Tenderly"
       },
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",

@@ -22,7 +22,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.26.0",
+    "@aragon/gov-ui-kit": "^1.27.0",
     "@floating-ui/react": "^0.27.16",
     "@number-flow/react": "^0.5.10",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -38,7 +38,7 @@
     "@walletconnect/utils": "^2.23.1",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
-    "framer-motion": "^12.24.10",
+    "framer-motion": "^12.24.11",
     "import-in-the-middle": "^2.0.1",
     "isomorphic-dompurify": "^2.35.0",
     "jsdom": "^26.1.0",

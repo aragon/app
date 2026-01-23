@@ -36,7 +36,7 @@ export interface IDispatchTransactionDialogParams {
 export interface IDispatchTransactionDialogProps
     extends IDialogComponentProps<IDispatchTransactionDialogParams> {}
 
-const dispatchAbi = [
+export const dispatchAbi = [
     {
         name: 'dispatch',
         type: 'function',
