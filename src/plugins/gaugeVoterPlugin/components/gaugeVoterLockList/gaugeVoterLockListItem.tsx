@@ -16,11 +16,11 @@ import { formatUnits, type Hex, zeroAddress } from 'viem';
 import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveNftDialog';
+import { useTokenCheckNftAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckNftAllowance';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useCheckNftAllowance } from '../../../tokenPlugin/components/tokenMemberPanel/hooks/useCheckNftAllowance';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterExitQueueWithdrawDialogParams } from '../../dialogs/gaugeVoterExitQueueWithdrawDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
@@ -76,7 +76,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
     const { open } = useDialogContext();
 
     const baseStatus = gaugeVoterLockUtils.getLockStatus(lock);
-    const { needsApproval } = useCheckNftAllowance({
+    const { needsApproval } = useTokenCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
         nftId: BigInt(lock.tokenId),

@@ -3,7 +3,7 @@ import { useReadContract } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
-export interface IUseCheckNftAllowance {
+export interface IUseTokenCheckNftAllowanceParams {
     /**
      * Address being approved to transfer the NFT.
      */
@@ -26,7 +26,9 @@ export interface IUseCheckNftAllowance {
     enabled?: boolean;
 }
 
-export const useCheckNftAllowance = (props: IUseCheckNftAllowance) => {
+export const useTokenCheckNftAllowance = (
+    props: IUseTokenCheckNftAllowanceParams,
+) => {
     const { spender, nft, nftId, network, enabled } = props;
 
     const { id: chainId } = networkDefinitions[network];

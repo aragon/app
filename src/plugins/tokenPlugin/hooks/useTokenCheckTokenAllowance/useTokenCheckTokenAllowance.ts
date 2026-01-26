@@ -4,7 +4,7 @@ import { useAccount, useBalance, useReadContract } from 'wagmi';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
-export interface IUseCheckTokenAllowanceParams {
+export interface IUseTokenCheckTokenAllowanceParams {
     /**
      * Address being approved to spend the tokens.
      */
@@ -15,8 +15,8 @@ export interface IUseCheckTokenAllowanceParams {
     token: IToken;
 }
 
-export const useCheckTokenAllowance = (
-    props: IUseCheckTokenAllowanceParams,
+export const useTokenCheckTokenAllowance = (
+    props: IUseTokenCheckTokenAllowanceParams,
 ) => {
     const { spender, token } = props;
 

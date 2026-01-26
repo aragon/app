@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
 import { useAccount, useReadContract } from 'wagmi';
-import { useCheckTokenAllowance } from '@/plugins/tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -109,7 +109,7 @@ export const useLockToVoteData = (
         status: balanceStatus,
         invalidateQueries,
         isLoading: isAllowanceCheckLoading,
-    } = useCheckTokenAllowance({ spender: lockManagerAddress, token });
+    } = useTokenCheckTokenAllowance({ spender: lockManagerAddress, token });
 
     // Call onBalanceUpdated when balance changes.
     useEffect(() => {

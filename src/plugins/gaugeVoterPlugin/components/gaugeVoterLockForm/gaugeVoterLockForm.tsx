@@ -11,10 +11,10 @@ import {
 import { useMemberLocks } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useCheckTokenAllowance } from '../../../tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterLocksDialogParams } from '../../dialogs/gaugeVoterLocksDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
@@ -84,7 +84,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
         balance: unlockedBalance,
         status: unlockedBalanceStatus,
         invalidateQueries,
-    } = useCheckTokenAllowance({
+    } = useTokenCheckTokenAllowance({
         spender: escrowAddress,
         token: { ...token, address: token.underlying! },
     });
