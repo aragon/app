@@ -1,7 +1,7 @@
-import { TokenExitQueueFeeMode } from '../../../tokenPlugin/types';
+import { GaugeVoterExitQueueFeeMode } from '../../types/enum';
 import { gaugeVoterExitQueueFeeUtils } from './gaugeVoterExitQueueFeeUtils';
 
-describe('TokenExitQueueFeeUtils', () => {
+describe('GaugeVoterExitQueueFeeUtils', () => {
     describe('determineFeeMode', () => {
         it('returns FIXED when minFeePercent equals feePercent', () => {
             const ticket = {
@@ -15,7 +15,7 @@ describe('TokenExitQueueFeeUtils', () => {
             };
 
             expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
-                TokenExitQueueFeeMode.FIXED,
+                GaugeVoterExitQueueFeeMode.FIXED,
             );
         });
 
@@ -31,7 +31,7 @@ describe('TokenExitQueueFeeUtils', () => {
             };
 
             expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
-                TokenExitQueueFeeMode.TIERED,
+                GaugeVoterExitQueueFeeMode.TIERED,
             );
         });
 
@@ -47,7 +47,7 @@ describe('TokenExitQueueFeeUtils', () => {
             };
 
             expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
-                TokenExitQueueFeeMode.DYNAMIC,
+                GaugeVoterExitQueueFeeMode.DYNAMIC,
             );
         });
     });

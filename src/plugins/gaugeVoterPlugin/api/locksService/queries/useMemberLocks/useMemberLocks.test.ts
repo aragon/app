@@ -4,7 +4,7 @@ import {
     generatePaginatedResponse,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
-import { generateGaugeVoterLock } from '../../../../testUtils/generators/memberLock';
+import { generateGaugeVoterLock } from '../../../../testUtils';
 import { locksService } from '../../locksService';
 import { useMemberLocks } from './useMemberLocks';
 

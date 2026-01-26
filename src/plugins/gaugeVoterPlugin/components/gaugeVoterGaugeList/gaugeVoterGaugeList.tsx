@@ -6,9 +6,8 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
-import type { IGauge } from '../../api/gaugeVoterService/domain';
-import { useGaugeList } from '../../api/gaugeVoterService/queries';
+import type { IGauge, IGetGaugeListParams } from '../../api/gaugeVoterService';
+import { useGaugeList } from '../../api/gaugeVoterService';
 import { GaugeVoterGaugeListHeading } from './gaugeVoterGaugeListHeading';
 import { GaugeVoterGaugeListItemSkeleton } from './gaugeVoterGaugeListItemSkeleton';
 import { GaugeVoterGaugeListItemStructure } from './gaugeVoterGaugeListItemStructure';

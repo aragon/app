@@ -9,7 +9,7 @@ import { useAccount } from 'wagmi';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { useMemberLocks } from '../../../tokenPlugin/api/tokenService';
+import { useMemberLocks } from '../../api/locksService';
 import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterLockListItem } from './gaugeVoterLockListItem';
 
