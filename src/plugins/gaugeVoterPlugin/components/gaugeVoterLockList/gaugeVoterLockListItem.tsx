@@ -16,7 +16,6 @@ import { formatUnits, type Hex, zeroAddress } from 'viem';
 import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveNftDialog';
-import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -25,6 +24,7 @@ import { useCheckNftAllowance } from '../../../tokenPlugin/components/tokenMembe
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterExitQueueWithdrawDialogParams } from '../../dialogs/gaugeVoterExitQueueWithdrawDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
+import { useGaugeVoterExitQueueFeeData } from '../../hooks/useGaugeVoterExitQueueFeeData';
 import type { IGaugeVoterPlugin } from '../../types';
 import { gaugeVoterExitQueueFeeUtils } from '../../utils/gaugeVoterExitQueueFeeUtils';
 import {
@@ -128,7 +128,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
         feeAmount,
         canExit,
         isLoading: isFeeDataLoading,
-    } = useTokenExitQueueFeeData({
+    } = useGaugeVoterExitQueueFeeData({
         tokenId: BigInt(lock.tokenId),
         lockManagerAddress,
         chainId,

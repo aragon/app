@@ -1,6 +1,6 @@
 import type { IToken } from '@/modules/finance/api/financeService';
 
-export interface ITokenExitQueueFeeCalculationProps {
+export interface IGaugeVoterExitQueueFeeCalculationProps {
     /**
      * Total locked token amount (in wei).
      */

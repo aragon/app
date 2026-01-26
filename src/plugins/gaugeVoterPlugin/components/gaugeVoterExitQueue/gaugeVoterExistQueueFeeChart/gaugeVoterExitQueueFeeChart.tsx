@@ -10,17 +10,17 @@ import {
     YAxis,
 } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
-import { TokenExitQueueFeeMode } from '@/plugins/tokenPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { gaugeVoterExitQueueFeeUtils } from '../../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueFeeUtils';
+import { GaugeVoterExitQueueFeeMode } from '../../../types/enum';
+import { gaugeVoterExitQueueFeeUtils } from '../../../utils/gaugeVoterExitQueueFeeUtils';
 import {
     CHART_POINT_COUNT,
-    type ITokenExitQueueFeeChartProps,
-} from './tokenExitQueueFeeChart.api';
+    type IGaugeVoterExitQueueFeeChartProps,
+} from './gaugeVoterExitQueueFeeChart.api';
 
-export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
-    props,
-) => {
+export const GaugeVoterExitQueueFeeChart: React.FC<
+    IGaugeVoterExitQueueFeeChartProps
+> = (props) => {
     const { ticket, currentTime, className } = props;
 
     const { t } = useTranslations();
@@ -30,7 +30,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
     );
 
     const mode = gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket);
-    const isFixedMode = mode === TokenExitQueueFeeMode.FIXED;
+    const isFixedMode = mode === GaugeVoterExitQueueFeeMode.FIXED;
 
     const secondsPerDay = 24 * 60 * 60;
 
@@ -344,7 +344,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
                             stroke="var(--color-primary-400)"
                             strokeWidth={1}
                             type={
-                                mode === TokenExitQueueFeeMode.TIERED
+                                mode === GaugeVoterExitQueueFeeMode.TIERED
                                     ? 'stepAfter'
                                     : 'linear'
                             }

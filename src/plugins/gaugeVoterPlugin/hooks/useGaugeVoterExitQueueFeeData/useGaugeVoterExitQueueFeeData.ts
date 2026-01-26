@@ -1,15 +1,15 @@
 import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { dynamicExitQueueAbi } from '../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueTransactionUtils/dynamicExitQueueAbi';
+import { dynamicExitQueueAbi } from '../../utils/gaugeVoterExitQueueTransactionUtils';
 import type {
     ITicketData,
-    IUseTokenExitQueueFeeDataParams,
-    IUseTokenExitQueueFeeDataReturn,
-} from './useTokenExitQueueFeeData.api';
+    IUseGaugeVoterExitQueueFeeDataParams,
+    IUseGaugeVoterExitQueueFeeDataReturn,
+} from './useGaugeVoterExitQueueFeeData.api';
 
-export const useTokenExitQueueFeeData = (
-    params: IUseTokenExitQueueFeeDataParams,
-): IUseTokenExitQueueFeeDataReturn => {
+export const useGaugeVoterExitQueueFeeData = (
+    params: IUseGaugeVoterExitQueueFeeDataParams,
+): IUseGaugeVoterExitQueueFeeDataReturn => {
     const {
         tokenId,
         lockManagerAddress,

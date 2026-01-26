@@ -3,10 +3,10 @@
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { ITokenExitQueueFeeCalculationProps } from './tokenExitQueueFeeCalculation.api';
+import type { IGaugeVoterExitQueueFeeCalculationProps } from './gaugeVoterExitQueueFeeCalculation.api';
 
-export const TokenExitQueueFeeCalculation: React.FC<
-    ITokenExitQueueFeeCalculationProps
+export const GaugeVoterExitQueueFeeCalculation: React.FC<
+    IGaugeVoterExitQueueFeeCalculationProps
 > = (props) => {
     const { lockedAmount, feeAmount, token, helpText } = props;
 

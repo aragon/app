@@ -37,7 +37,7 @@ export const tokenMemberPanelFilterParam = 'memberPanel';
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
 
-    const { token } = plugin.settings;
+    const { token, votingEscrow } = plugin.settings;
     const { underlying, symbol, name } = token;
 
     const { t } = useTranslations();
@@ -65,7 +65,8 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const titleToken = underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
-    if (!visibleTabs.length) {
+    // don't show a members panel if it's a voting escrow type (it's handled in gaugeVoter page)
+    if (votingEscrow || !visibleTabs.length) {
         return null;
     }
 

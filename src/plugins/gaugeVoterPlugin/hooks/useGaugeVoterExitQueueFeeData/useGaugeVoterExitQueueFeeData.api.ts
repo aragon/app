@@ -1,4 +1,4 @@
-import type { ITokenExitQueueTicket } from '../../types';
+import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
 
 export interface ITicketData {
     /**
@@ -31,7 +31,7 @@ export interface ITicketData {
     slope?: bigint;
 }
 
-export interface IUseTokenExitQueueFeeDataParams {
+export interface IUseGaugeVoterExitQueueFeeDataParams {
     /**
      * Token ID for the NFT lock.
      */
@@ -54,11 +54,11 @@ export interface IUseTokenExitQueueFeeDataParams {
     refetchInterval?: number;
 }
 
-export interface IUseTokenExitQueueFeeDataReturn {
+export interface IUseGaugeVoterExitQueueFeeDataReturn {
     /**
      * Ticket information containing fee parameters.
      */
-    ticket: ITokenExitQueueTicket | undefined;
+    ticket: IGaugeVoterExitQueueTicket | undefined;
     /**
      * Current fee amount (in wei) calculated by the contract.
      */

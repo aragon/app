@@ -4,10 +4,10 @@ import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { TokenExitQueueFeeChart } from '../../../tokenPlugin/components/tokenExitQueue/tokenExistQueueFeeChart';
-import { TokenExitQueueFeeCalculation } from '../../../tokenPlugin/components/tokenExitQueue/tokenExitQueueFeeCalculation';
-import { TokenExitQueueFeeMode } from '../../../tokenPlugin/types';
+import { GaugeVoterExitQueueFeeChart } from '../../components/gaugeVoterExitQueue/gaugeVoterExistQueueFeeChart';
+import { GaugeVoterExitQueueFeeCalculation } from '../../components/gaugeVoterExitQueue/gaugeVoterExitQueueFeeCalculation';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import { GaugeVoterExitQueueFeeMode } from '../../types/enum';
 import { gaugeVoterExitQueueFeeUtils } from '../../utils/gaugeVoterExitQueueFeeUtils';
 import type { IGaugeVoterExitQueueWithdrawTransactionDialogParams } from '../gaugeVoterExitQueueWithdrawTransactionDialog';
 import type { IGaugeVoterExitQueueWithdrawDialogProps } from './gaugeVoterExitQueueWithdrawDialog.api';
@@ -65,7 +65,7 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
     }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
     const feeMode = gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket);
-    const shouldShowChart = feeMode !== TokenExitQueueFeeMode.FIXED;
+    const shouldShowChart = feeMode !== GaugeVoterExitQueueFeeMode.FIXED;
 
     const handleWithdraw = () => {
         close();
@@ -94,13 +94,13 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
             />
             <Dialog.Content className="flex flex-col gap-6 pt-4">
                 {shouldShowChart && (
-                    <TokenExitQueueFeeChart
+                    <GaugeVoterExitQueueFeeChart
                         currentTime={currentTime}
                         ticket={ticket}
                     />
                 )}
 
-                <TokenExitQueueFeeCalculation
+                <GaugeVoterExitQueueFeeCalculation
                     feeAmount={feeAmount}
                     helpText={
                         shouldShowChart

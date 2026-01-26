@@ -1,12 +1,12 @@
-import type { ITokenExitQueueTicket } from '../../../types';
+import type { IGaugeVoterExitQueueTicket } from '../../../types/gaugeVoterExitQueueTicket';
 
 export const CHART_POINT_COUNT = 50;
 
-export interface ITokenExitQueueFeeChartProps {
+export interface IGaugeVoterExitQueueFeeChartProps {
     /**
      * The ticket containing fee parameters for chart generation.
      */
-    ticket: ITokenExitQueueTicket;
+    ticket: IGaugeVoterExitQueueTicket;
     /**
      * Current timestamp (in seconds) for "Now" indicator positioning.
      */

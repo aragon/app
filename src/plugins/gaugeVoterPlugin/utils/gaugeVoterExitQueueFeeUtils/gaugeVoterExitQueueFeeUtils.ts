@@ -1,8 +1,6 @@
-import {
-    type ITokenPluginSettingsEscrowSettings,
-    TokenExitQueueFeeMode,
-} from '../../../tokenPlugin/types';
+import { GaugeVoterExitQueueFeeMode } from '../../types/enum';
 import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
+import type { IGaugeVoterPluginSettingsEscrowSettings } from '../../types/gaugeVoterPlugin';
 import type {
     ICalculateFeeAtTimeParams,
     ICalculateReceiveAmountParams,
@@ -31,19 +29,19 @@ class GaugeVoterExitQueueFeeUtils {
      */
     determineFeeMode = (
         ticket: IGaugeVoterExitQueueTicket,
-    ): TokenExitQueueFeeMode => {
+    ): GaugeVoterExitQueueFeeMode => {
         // Fixed: minFeePercent === feePercent
         if (ticket.minFeePercent === ticket.feePercent) {
-            return TokenExitQueueFeeMode.FIXED;
+            return GaugeVoterExitQueueFeeMode.FIXED;
         }
 
         // Tiered: slope === 0
         if (ticket.slope === BigInt(0)) {
-            return TokenExitQueueFeeMode.TIERED;
+            return GaugeVoterExitQueueFeeMode.TIERED;
         }
 
         // Dynamic: linear decay
-        return TokenExitQueueFeeMode.DYNAMIC;
+        return GaugeVoterExitQueueFeeMode.DYNAMIC;
     };
 
     /**
@@ -125,7 +123,7 @@ class GaugeVoterExitQueueFeeUtils {
     shouldShowFeeDialog = (
         config:
             | Pick<
-                  ITokenPluginSettingsEscrowSettings,
+                  IGaugeVoterPluginSettingsEscrowSettings,
                   'feePercent' | 'minFeePercent'
               >
             | {
@@ -152,12 +150,12 @@ class GaugeVoterExitQueueFeeUtils {
         const mode = this.determineFeeMode(ticket);
 
         // Don't generate chart data for fixed fee mode
-        if (mode === TokenExitQueueFeeMode.FIXED) {
+        if (mode === GaugeVoterExitQueueFeeMode.FIXED) {
             return [];
         }
 
         // Tiered fees only have two states (early vs normal exit). Ensure we include minCooldown breakpoint.
-        if (mode === TokenExitQueueFeeMode.TIERED) {
+        if (mode === GaugeVoterExitQueueFeeMode.TIERED) {
             const times = new Set<number>();
             const baseStep =
                 pointCount > 1
