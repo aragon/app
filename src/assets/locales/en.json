@@ -1842,8 +1842,14 @@
           }
         },
         "gaugeVoterGaugesPage": {
-          "aside": {
+          "asideStats": {
             "title": "Epoch {{epochId}}"
+          },
+          "asideLocks": {
+            "tabs": {
+              "delegate": "Delegate",
+              "lock": "Lock"
+            }
           },
           "main": {
             "title": "Gauges",
@@ -2465,7 +2471,6 @@
         "tokenMemberPanel": {
           "tabs": {
             "delegate": "Delegate",
-            "lock": "Lock",
             "wrap": "Wrap"
           }
         },
