@@ -1,6 +1,6 @@
 import type { Hex } from 'viem';
 import { useReadContracts } from 'wagmi';
-import { dynamicExitQueueAbi } from '../../utils/tokenExitQueueTransactionUtils/dynamicExitQueueAbi';
+import { dynamicExitQueueAbi } from '../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueTransactionUtils/dynamicExitQueueAbi';
 import type {
     ITicketData,
     IUseTokenExitQueueFeeDataParams,

@@ -2,7 +2,7 @@ import type { Address } from 'viem';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
-import type { ITokenExitQueueTicket } from '../../../tokenPlugin/types';
+import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
 
 export interface IGaugeVoterExitQueueWithdrawDialogParams {
     /**
@@ -24,7 +24,7 @@ export interface IGaugeVoterExitQueueWithdrawDialogParams {
     /**
      * Ticket containing fee parameters and queue information.
      */
-    ticket: ITokenExitQueueTicket;
+    ticket: IGaugeVoterExitQueueTicket;
     /**
      * Total locked amount (in wei).
      */

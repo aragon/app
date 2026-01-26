@@ -21,7 +21,6 @@ import {
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveNftDialog';
 import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
-import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -31,6 +30,7 @@ import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialog
 import type { IGaugeVoterExitQueueWithdrawDialogParams } from '../../dialogs/gaugeVoterExitQueueWithdrawDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
 import type { IGaugeVoterPlugin } from '../../types';
+import { gaugeVoterExitQueueFeeUtils } from '../../utils/gaugeVoterExitQueueFeeUtils';
 
 /**
  * Props for the GaugeVoterLockListItem component.
@@ -217,10 +217,11 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
     };
 
     const handleWithdraw = () => {
-        const hasConfiguredFees = tokenExitQueueFeeUtils.shouldShowFeeDialog({
-            feePercent: ticket?.feePercent ?? pluginFeePercent,
-            minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
-        });
+        const hasConfiguredFees =
+            gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
+                feePercent: ticket?.feePercent ?? pluginFeePercent,
+                minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
+            });
         const shouldShowFeeDialog =
             exitQueueAddress != null && ticket != null && hasConfiguredFees;
 

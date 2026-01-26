@@ -7,8 +7,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenExitQueueFeeChart } from '../../../tokenPlugin/components/tokenExitQueue/tokenExistQueueFeeChart';
 import { TokenExitQueueFeeCalculation } from '../../../tokenPlugin/components/tokenExitQueue/tokenExitQueueFeeCalculation';
 import { TokenExitQueueFeeMode } from '../../../tokenPlugin/types';
-import { tokenExitQueueFeeUtils } from '../../../tokenPlugin/utils/tokenExitQueueFeeUtils';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import { gaugeVoterExitQueueFeeUtils } from '../../utils/gaugeVoterExitQueueFeeUtils';
 import type { IGaugeVoterExitQueueWithdrawTransactionDialogParams } from '../gaugeVoterExitQueueWithdrawTransactionDialog';
 import type { IGaugeVoterExitQueueWithdrawDialogProps } from './gaugeVoterExitQueueWithdrawDialog.api';
 
@@ -44,7 +44,7 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
     const currentTime = Math.floor(Date.now() / 1000);
     const timeElapsed = currentTime - ticket.queuedAt;
 
-    const currentFeePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
+    const currentFeePercent = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
         timeElapsed,
         ticket,
     });
@@ -55,15 +55,16 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
         }
 
         const feeBasisPoints = Math.round(
-            (currentFeePercent * tokenExitQueueFeeUtils.MAX_FEE_PERCENT) / 100,
+            (currentFeePercent * gaugeVoterExitQueueFeeUtils.MAX_FEE_PERCENT) /
+                100,
         );
         return (
             (lockedAmount * BigInt(feeBasisPoints)) /
-            BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT)
+            BigInt(gaugeVoterExitQueueFeeUtils.MAX_FEE_PERCENT)
         );
     }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
-    const feeMode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
+    const feeMode = gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket);
     const shouldShowChart = feeMode !== TokenExitQueueFeeMode.FIXED;
 
     const handleWithdraw = () => {

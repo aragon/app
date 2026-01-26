@@ -15,11 +15,11 @@ import { DateTime } from 'luxon';
 import { formatUnits, type Hex, zeroAddress } from 'viem';
 import type { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
 import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
-import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { gaugeVoterExitQueueFeeUtils } from '../../../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueFeeUtils';
 import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
@@ -209,10 +209,11 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     };
 
     const handleWithdraw = () => {
-        const hasConfiguredFees = tokenExitQueueFeeUtils.shouldShowFeeDialog({
-            feePercent: ticket?.feePercent ?? pluginFeePercent,
-            minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
-        });
+        const hasConfiguredFees =
+            gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
+                feePercent: ticket?.feePercent ?? pluginFeePercent,
+                minFeePercent: ticket?.minFeePercent ?? pluginMinFeePercent,
+            });
         const shouldShowFeeDialog =
             exitQueueAddress != null && ticket != null && hasConfiguredFees;
 

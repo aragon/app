@@ -11,8 +11,8 @@ import {
 } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { TokenExitQueueFeeMode } from '@/plugins/tokenPlugin/types';
-import { tokenExitQueueFeeUtils } from '@/plugins/tokenPlugin/utils/tokenExitQueueFeeUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { gaugeVoterExitQueueFeeUtils } from '../../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueFeeUtils';
 import {
     CHART_POINT_COUNT,
     type ITokenExitQueueFeeChartProps,
@@ -29,7 +29,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
         undefined,
     );
 
-    const mode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
+    const mode = gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket);
     const isFixedMode = mode === TokenExitQueueFeeMode.FIXED;
 
     const secondsPerDay = 24 * 60 * 60;
@@ -42,7 +42,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
 
     const minFeePercent = useMemo(
         () =>
-            tokenExitQueueFeeUtils.calculateFeeAtTime({
+            gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                 timeElapsed: ticket.cooldown,
                 ticket,
             }),
@@ -55,7 +55,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
         }
 
         if (decayDuration <= 0) {
-            const startFee = tokenExitQueueFeeUtils.calculateFeeAtTime({
+            const startFee = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                 timeElapsed: ticket.minCooldown,
                 ticket,
             });
@@ -71,10 +71,11 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
                 const ratio = index / (CHART_POINT_COUNT - 1);
                 const xPosition = ratio * decayDuration;
                 const timeElapsed = ticket.minCooldown + xPosition;
-                const feePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
-                    timeElapsed,
-                    ticket,
-                });
+                const feePercent =
+                    gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
+                        timeElapsed,
+                        ticket,
+                    });
 
                 return {
                     elapsedSeconds: xPosition,
@@ -125,7 +126,7 @@ export const TokenExitQueueFeeChart: React.FC<ITokenExitQueueFeeChartProps> = (
         ticket.minCooldown,
         Math.min(timeElapsedNow, ticket.cooldown + ticket.cooldown),
     );
-    const currentFeePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
+    const currentFeePercent = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
         timeElapsed: boundedTimeElapsed,
         ticket,
     });

@@ -1,6 +1,6 @@
 import type { Hex } from 'viem';
 
-export interface ITokenExitQueueTicket {
+export interface IGaugeVoterExitQueueTicket {
     /**
      * Address of the ticket holder.
      */

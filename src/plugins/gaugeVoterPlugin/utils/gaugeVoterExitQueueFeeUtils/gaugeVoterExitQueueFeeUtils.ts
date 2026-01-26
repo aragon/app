@@ -1,19 +1,19 @@
 import {
-    type ITokenExitQueueTicket,
     type ITokenPluginSettingsEscrowSettings,
     TokenExitQueueFeeMode,
-} from '../../types';
+} from '../../../tokenPlugin/types';
+import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
 import type {
     ICalculateFeeAtTimeParams,
     ICalculateReceiveAmountParams,
     IChartDataPoint,
     IGetChartDataPointsParams,
-} from './tokenExitQueueFeeUtils.api';
+} from './gaugeVoterExitQueueFeeUtils.api';
 
 /**
  * Utility class for calculating and managing dynamic exit queue fees.
  */
-class TokenExitQueueFeeUtils {
+class GaugeVoterExitQueueFeeUtils {
     /**
      * Maximum fee percentage in basis points (100%).
      */
@@ -30,7 +30,7 @@ class TokenExitQueueFeeUtils {
      * @returns The fee mode (FIXED, DYNAMIC, or TIERED).
      */
     determineFeeMode = (
-        ticket: ITokenExitQueueTicket,
+        ticket: IGaugeVoterExitQueueTicket,
     ): TokenExitQueueFeeMode => {
         // Fixed: minFeePercent === feePercent
         if (ticket.minFeePercent === ticket.feePercent) {
@@ -242,4 +242,4 @@ class TokenExitQueueFeeUtils {
     };
 }
 
-export const tokenExitQueueFeeUtils = new TokenExitQueueFeeUtils();
+export const gaugeVoterExitQueueFeeUtils = new GaugeVoterExitQueueFeeUtils();

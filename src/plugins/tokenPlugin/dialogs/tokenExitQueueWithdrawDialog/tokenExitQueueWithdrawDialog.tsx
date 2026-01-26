@@ -4,11 +4,11 @@ import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { gaugeVoterExitQueueFeeUtils } from '../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueFeeUtils';
 import { TokenExitQueueFeeChart } from '../../components/tokenExitQueue/tokenExistQueueFeeChart';
 import { TokenExitQueueFeeCalculation } from '../../components/tokenExitQueue/tokenExitQueueFeeCalculation';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import { TokenExitQueueFeeMode } from '../../types';
-import { tokenExitQueueFeeUtils } from '../../utils/tokenExitQueueFeeUtils';
 import type { ITokenExitQueueWithdrawTransactionDialogParams } from '../tokenExitQueueWithdrawTransactionDialog';
 import type { ITokenExitQueueWithdrawDialogProps } from './tokenExitQueueWithdrawDialog.api';
 
@@ -44,7 +44,7 @@ export const TokenExitQueueWithdrawDialog: React.FC<
     const currentTime = Math.floor(Date.now() / 1000);
     const timeElapsed = currentTime - ticket.queuedAt;
 
-    const currentFeePercent = tokenExitQueueFeeUtils.calculateFeeAtTime({
+    const currentFeePercent = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
         timeElapsed,
         ticket,
     });
@@ -55,15 +55,16 @@ export const TokenExitQueueWithdrawDialog: React.FC<
         }
 
         const feeBasisPoints = Math.round(
-            (currentFeePercent * tokenExitQueueFeeUtils.MAX_FEE_PERCENT) / 100,
+            (currentFeePercent * gaugeVoterExitQueueFeeUtils.MAX_FEE_PERCENT) /
+                100,
         );
         return (
             (lockedAmount * BigInt(feeBasisPoints)) /
-            BigInt(tokenExitQueueFeeUtils.MAX_FEE_PERCENT)
+            BigInt(gaugeVoterExitQueueFeeUtils.MAX_FEE_PERCENT)
         );
     }, [currentFeePercent, feeAmountFromParams, lockedAmount]);
 
-    const feeMode = tokenExitQueueFeeUtils.determineFeeMode(ticket);
+    const feeMode = gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket);
     const shouldShowChart = feeMode !== TokenExitQueueFeeMode.FIXED;
 
     const handleWithdraw = () => {

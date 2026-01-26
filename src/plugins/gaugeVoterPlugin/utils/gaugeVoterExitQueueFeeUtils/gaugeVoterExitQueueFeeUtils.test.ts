@@ -1,5 +1,5 @@
-import { TokenExitQueueFeeMode } from '../../types';
-import { tokenExitQueueFeeUtils } from './tokenExitQueueFeeUtils';
+import { TokenExitQueueFeeMode } from '../../../tokenPlugin/types';
+import { gaugeVoterExitQueueFeeUtils } from './gaugeVoterExitQueueFeeUtils';
 
 describe('TokenExitQueueFeeUtils', () => {
     describe('determineFeeMode', () => {
@@ -14,7 +14,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(100),
             };
 
-            expect(tokenExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
+            expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
                 TokenExitQueueFeeMode.FIXED,
             );
         });
@@ -30,7 +30,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(0),
             };
 
-            expect(tokenExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
+            expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
                 TokenExitQueueFeeMode.TIERED,
             );
         });
@@ -46,7 +46,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(1e15), // Non-zero slope
             };
 
-            expect(tokenExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
+            expect(gaugeVoterExitQueueFeeUtils.determineFeeMode(ticket)).toBe(
                 TokenExitQueueFeeMode.DYNAMIC,
             );
         });
@@ -65,31 +65,31 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns same fee at any time', () => {
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 0,
                     ticket: fixedTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 100,
                     ticket: fixedTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 150,
                     ticket: fixedTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 200,
                     ticket: fixedTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 1000,
                     ticket: fixedTicket,
                 }),
@@ -110,19 +110,19 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns max fee before cooldown', () => {
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 0,
                     ticket: tieredTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 50,
                     ticket: tieredTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 199,
                     ticket: tieredTicket,
                 }),
@@ -131,19 +131,19 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns min fee at and after cooldown', () => {
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 200,
                     ticket: tieredTicket,
                 }),
             ).toBe(10);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 300,
                     ticket: tieredTicket,
                 }),
             ).toBe(10);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 1000,
                     ticket: tieredTicket,
                 }),
@@ -168,19 +168,19 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns max fee before and at minCooldown', () => {
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 0,
                     ticket: dynamicTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 50,
                     ticket: dynamicTicket,
                 }),
             ).toBe(50);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 100,
                     ticket: dynamicTicket,
                 }),
@@ -189,21 +189,21 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('decays linearly between minCooldown and cooldown', () => {
             // At 125 (25 seconds into decay): 50% - (25 * 0.4%) = 50% - 10% = 40%
-            const feeAt125 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+            const feeAt125 = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                 timeElapsed: 125,
                 ticket: dynamicTicket,
             });
             expect(feeAt125).toBeCloseTo(40, 1);
 
             // At 150 (50 seconds into decay): 50% - (50 * 0.4%) = 50% - 20% = 30%
-            const feeAt150 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+            const feeAt150 = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                 timeElapsed: 150,
                 ticket: dynamicTicket,
             });
             expect(feeAt150).toBeCloseTo(30, 1);
 
             // At 175 (75 seconds into decay): 50% - (75 * 0.4%) = 50% - 30% = 20%
-            const feeAt175 = tokenExitQueueFeeUtils.calculateFeeAtTime({
+            const feeAt175 = gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                 timeElapsed: 175,
                 ticket: dynamicTicket,
             });
@@ -212,19 +212,19 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns min fee at and after cooldown', () => {
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 200,
                     ticket: dynamicTicket,
                 }),
             ).toBe(10);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 300,
                     ticket: dynamicTicket,
                 }),
             ).toBe(10);
             expect(
-                tokenExitQueueFeeUtils.calculateFeeAtTime({
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
                     timeElapsed: 1000,
                     ticket: dynamicTicket,
                 }),
@@ -233,19 +233,21 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('handles boundary at minCooldown correctly (should be max fee)', () => {
             // At exactly minCooldown, should still be max fee (timeElapsed <= minCooldown)
-            const feeAtBoundary = tokenExitQueueFeeUtils.calculateFeeAtTime({
-                timeElapsed: 100,
-                ticket: dynamicTicket,
-            });
+            const feeAtBoundary =
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 100,
+                    ticket: dynamicTicket,
+                });
             expect(feeAtBoundary).toBe(50);
         });
 
         it('starts decay immediately after minCooldown', () => {
             // At minCooldown + 1, decay should have started
-            const feeAfterBoundary = tokenExitQueueFeeUtils.calculateFeeAtTime({
-                timeElapsed: 101,
-                ticket: dynamicTicket,
-            });
+            const feeAfterBoundary =
+                gaugeVoterExitQueueFeeUtils.calculateFeeAtTime({
+                    timeElapsed: 101,
+                    ticket: dynamicTicket,
+                });
             expect(feeAfterBoundary).toBeLessThan(50);
             expect(feeAfterBoundary).toBeGreaterThan(10);
         });
@@ -254,7 +256,7 @@ describe('TokenExitQueueFeeUtils', () => {
     describe('shouldShowFeeDialog', () => {
         it('returns false when both fees are zero', () => {
             expect(
-                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
                     feePercent: 0,
                     minFeePercent: 0,
                 }),
@@ -263,7 +265,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns false when both fees are null', () => {
             expect(
-                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
                     feePercent: null,
                     minFeePercent: null,
                 }),
@@ -272,7 +274,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns true when feePercent is greater than zero', () => {
             expect(
-                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
                     feePercent: 100,
                     minFeePercent: 0,
                 }),
@@ -281,7 +283,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns true when minFeePercent is greater than zero', () => {
             expect(
-                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
                     feePercent: 0,
                     minFeePercent: 100,
                 }),
@@ -290,7 +292,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('returns true when both fees are greater than zero', () => {
             expect(
-                tokenExitQueueFeeUtils.shouldShowFeeDialog({
+                gaugeVoterExitQueueFeeUtils.shouldShowFeeDialog({
                     feePercent: 5000,
                     minFeePercent: 1000,
                 }),
@@ -300,7 +302,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
     describe('calculateReceiveAmount', () => {
         it('calculates correct receive amount with 0% fee', () => {
-            const result = tokenExitQueueFeeUtils.calculateReceiveAmount({
+            const result = gaugeVoterExitQueueFeeUtils.calculateReceiveAmount({
                 lockedAmount: BigInt(1000e18),
                 feePercentage: 0,
             });
@@ -309,7 +311,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('calculates correct receive amount with 10% fee', () => {
             const lockedAmount = BigInt(1000e18);
-            const result = tokenExitQueueFeeUtils.calculateReceiveAmount({
+            const result = gaugeVoterExitQueueFeeUtils.calculateReceiveAmount({
                 lockedAmount,
                 feePercentage: 10,
             });
@@ -319,7 +321,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('calculates correct receive amount with 50% fee', () => {
             const lockedAmount = BigInt(1000e18);
-            const result = tokenExitQueueFeeUtils.calculateReceiveAmount({
+            const result = gaugeVoterExitQueueFeeUtils.calculateReceiveAmount({
                 lockedAmount,
                 feePercentage: 50,
             });
@@ -328,7 +330,7 @@ describe('TokenExitQueueFeeUtils', () => {
         });
 
         it('calculates correct receive amount with 100% fee', () => {
-            const result = tokenExitQueueFeeUtils.calculateReceiveAmount({
+            const result = gaugeVoterExitQueueFeeUtils.calculateReceiveAmount({
                 lockedAmount: BigInt(1000e18),
                 feePercentage: 100,
             });
@@ -337,7 +339,7 @@ describe('TokenExitQueueFeeUtils', () => {
 
         it('handles fractional percentages correctly', () => {
             const lockedAmount = BigInt(1000e18);
-            const result = tokenExitQueueFeeUtils.calculateReceiveAmount({
+            const result = gaugeVoterExitQueueFeeUtils.calculateReceiveAmount({
                 lockedAmount,
                 feePercentage: 2.5,
             });
@@ -348,32 +350,48 @@ describe('TokenExitQueueFeeUtils', () => {
 
     describe('formatFeePercent', () => {
         it('formats 0 basis points as 0%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(0)).toBe('0.00%');
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(0)).toBe(
+                '0.00%',
+            );
         });
 
         it('formats 5000 basis points as 50%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(5000)).toBe('50%');
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(5000)).toBe(
+                '50%',
+            );
         });
 
         it('formats 10000 basis points as 100%', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(10_000)).toBe(
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(10_000)).toBe(
                 '100%',
             );
         });
 
         it('formats small percentages with 2 decimals', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(50)).toBe('0.50%'); // 0.5%
-            expect(tokenExitQueueFeeUtils.formatFeePercent(25)).toBe('0.25%'); // 0.25%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(50)).toBe(
+                '0.50%',
+            ); // 0.5%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(25)).toBe(
+                '0.25%',
+            ); // 0.25%
         });
 
         it('formats percentages between 1-10 with 1 decimal', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(150)).toBe('1.5%'); // 1.5%
-            expect(tokenExitQueueFeeUtils.formatFeePercent(550)).toBe('5.5%'); // 5.5%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(150)).toBe(
+                '1.5%',
+            ); // 1.5%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(550)).toBe(
+                '5.5%',
+            ); // 5.5%
         });
 
         it('formats percentages >= 10 with no decimals', () => {
-            expect(tokenExitQueueFeeUtils.formatFeePercent(1000)).toBe('10%'); // 10%
-            expect(tokenExitQueueFeeUtils.formatFeePercent(2500)).toBe('25%'); // 25%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(1000)).toBe(
+                '10%',
+            ); // 10%
+            expect(gaugeVoterExitQueueFeeUtils.formatFeePercent(2500)).toBe(
+                '25%',
+            ); // 25%
         });
     });
 
@@ -389,7 +407,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(0),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+            const points = gaugeVoterExitQueueFeeUtils.getChartDataPoints({
                 ticket: fixedTicket,
                 currentTime: fixedTicket.queuedAt + fixedTicket.cooldown,
             });
@@ -407,7 +425,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(0),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+            const points = gaugeVoterExitQueueFeeUtils.getChartDataPoints({
                 ticket: tieredTicket,
                 pointCount: 6,
                 currentTime: tieredTicket.queuedAt + tieredTicket.cooldown,
@@ -443,7 +461,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(4e15),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+            const points = gaugeVoterExitQueueFeeUtils.getChartDataPoints({
                 ticket: dynamicTicket,
                 pointCount: 6,
                 currentTime: dynamicTicket.queuedAt + dynamicTicket.cooldown,
@@ -476,7 +494,7 @@ describe('TokenExitQueueFeeUtils', () => {
                 slope: BigInt(4e15),
             };
 
-            const points = tokenExitQueueFeeUtils.getChartDataPoints({
+            const points = gaugeVoterExitQueueFeeUtils.getChartDataPoints({
                 ticket: dynamicTicket,
                 currentTime: dynamicTicket.queuedAt + dynamicTicket.cooldown,
             });

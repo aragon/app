@@ -1,6 +1,6 @@
 import { type Hex, zeroAddress } from 'viem';
 import { useReadContract } from 'wagmi';
-import { votingEscrowAbi } from '../../utils/tokenExitQueueTransactionUtils/votingEscrowAbi';
+import { votingEscrowAbi } from '../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueTransactionUtils/votingEscrowAbi';
 import type {
     IUseTokenVotingEscrowTokenIdParams,
     IUseTokenVotingEscrowTokenIdReturn,

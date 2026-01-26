@@ -1,4 +1,4 @@
-import type { ITokenExitQueueTicket } from '../../types';
+import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
 
 export interface ICalculateFeeAtTimeParams {
     /**
@@ -8,14 +8,14 @@ export interface ICalculateFeeAtTimeParams {
     /**
      * The ticket containing fee parameters.
      */
-    ticket: ITokenExitQueueTicket;
+    ticket: IGaugeVoterExitQueueTicket;
 }
 
 export interface IGetChartDataPointsParams {
     /**
      * The ticket containing fee parameters.
      */
-    ticket: ITokenExitQueueTicket;
+    ticket: IGaugeVoterExitQueueTicket;
     /**
      * Current timestamp (in seconds).
      */
