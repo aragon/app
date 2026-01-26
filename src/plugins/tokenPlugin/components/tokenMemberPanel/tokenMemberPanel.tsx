@@ -104,7 +104,10 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     />
                 </Tabs.Content>
                 <Tabs.Content value={TokenMemberPanelTab.DELEGATE}>
-                    <TokenDelegationForm daoId={daoId} plugin={plugin} />
+                    <TokenDelegationForm
+                        daoId={daoId}
+                        tokenAddress={plugin.settings.token.address}
+                    />
                 </Tabs.Content>
             </Tabs.Root>
         </Page.AsideCard>

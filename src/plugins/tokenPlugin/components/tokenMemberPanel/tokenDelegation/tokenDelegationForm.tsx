@@ -27,7 +27,7 @@ import {
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     props,
 ) => {
-    const { plugin, daoId } = props;
+    const { tokenAddress, daoId } = props;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -38,7 +38,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     const { data: currentDelegate, isLoading: isCurrentDelegateLoading } =
         useTokenCurrentDelegate({
             userAddress: address,
-            tokenAddress: plugin.settings.token.address,
+            tokenAddress,
             network: dao!.network,
         });
 
@@ -103,7 +103,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
 
     const handleFormSubmit = () => {
         const params: ITokenDelegationDialogParams = {
-            token: plugin.settings.token.address,
+            token: tokenAddress,
             delegate,
             network: dao!.network,
         };

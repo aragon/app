@@ -1,6 +1,3 @@
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-
 export enum TokenDelegationSelection {
     YOURSELF = 'YOURSELF',
     OTHER = 'OTHER',
@@ -19,9 +16,9 @@ export interface ITokenDelegationFormData {
 
 export interface ITokenDelegationFormProps {
     /**
-     * DAO plugin for the token delegation.
+     * Address of the token used by the plugin.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    tokenAddress: string;
     /**
      * ID of the DAO.
      */
