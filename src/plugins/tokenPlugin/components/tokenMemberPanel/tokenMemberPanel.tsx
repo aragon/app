@@ -99,7 +99,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm
                         daoId={daoId}
-                        plugin={plugin}
+                        token={plugin.settings.token}
                         underlyingToken={underlyingToken}
                     />
                 </Tabs.Content>
