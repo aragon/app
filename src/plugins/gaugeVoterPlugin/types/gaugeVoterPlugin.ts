@@ -1,78 +1,100 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 
-export interface IGaugeVoterPluginTokenSettings {
+export interface IGaugeVoterPluginSettingsEscrowSettings {
     /**
-     * Network identifier where the token lives.
+     * The minimum amount required to lock.
      */
-    network?: string;
+    minDeposit: string;
     /**
-     * Token standard (e.g. ERC20).
+     * The minimum lock time before unlocking is available.
      */
-    type?: string;
+    minLockTime: number;
     /**
-     * Address of the token contract.
+     * The maximum time the voting power can increase.
      */
-    address?: string;
+    maxTime: number;
     /**
-     * Symbol for the token.
+     * The linear coefficient used to calculate the voting power increase over time.
      */
-    symbol?: string;
+    slope: number;
     /**
-     * Name of the token.
+     * The constant coefficient used to calculate the voting power increase over time.
      */
-    name?: string;
+    bias: number;
     /**
-     * Number of decimals the token uses.
+     * The time in seconds between unlock and withdrawal.
      */
-    decimals?: number;
+    cooldown: number;
     /**
-     * Total supply string as provided by the backend.
+     * Maximum exit fee percentage (basis points: 0-10000). Used for dynamic exit queue.
      */
-    totalSupply?: string;
+    feePercent?: number;
     /**
-     * Whether the token can be minted by the DAO.
+     * Minimum exit fee percentage (basis points: 0-10000). Used for dynamic exit queue.
      */
-    mintableByDao?: boolean;
+    minFeePercent?: number;
     /**
-     * Optional URL with the token logo.
+     * Minimum cooldown period for early withdrawal (seconds). Used for dynamic exit queue.
      */
-    logo?: string;
+    minCooldown?: number;
+}
+
+export interface IGaugeVoterPluginSettingsToken extends IToken {
     /**
-     * Additional backend flags.
+     * This is not a real ERC20 token, but an adapter contract with some of the interfaces supported (but not all).
      */
-    ignoreTransfer?: boolean;
-    isGovernance?: boolean;
-    underlying?: string | null;
-    hasDelegate?: boolean;
+    type: 'escrowAdapter';
+    /**
+     * The address of the underlying token contract.
+     */
+    underlying: string;
+    /**
+     * Defines if the token supports the delegation feature or not.
+     */
+    hasDelegate: boolean;
 }
 
 export interface IGaugeVoterPluginSettings extends IPluginSettings {
     /**
-     * Optional token metadata provided at the top level.
+     * The settings of the voting escrow.
      */
-    tokenSymbol?: string;
+    votingEscrow: IGaugeVoterPluginSettingsEscrowSettings;
     /**
      * Structured token configuration returned by the backend.
      */
-    token?: IGaugeVoterPluginTokenSettings;
-    /**
-     * Additional deployment stages information.
-     */
-    stages?: unknown[];
+    token: IGaugeVoterPluginSettingsToken;
 }
 
 export interface IGaugeVoterPlugin
     extends IDaoPlugin<IGaugeVoterPluginSettings> {
     /**
-     * List of supported gauge types for voting.
+     * The voting escrow settings of the plugin.
      */
-    supportedGaugeTypes?: string[];
-    /**
-     * Minimum voting power required to participate in gauge voting.
-     */
-    minimumVotingPower?: string;
-    /**
-     * Whether to enable delegation for gauge voting.
-     */
-    enableDelegation?: boolean;
+    votingEscrow?: {
+        /**
+         * The address of the curve contract.
+         */
+        curveAddress: string;
+        /**
+         * The address of the exit queue contract.
+         */
+        exitQueueAddress: string;
+        /**
+         * The address of the voting escrow contract.
+         */
+        escrowAddress: string;
+        /**
+         * The address of the clock contract.
+         */
+        clockAddress: string;
+        /**
+         * The address of the NFT lock contract.
+         */
+        nftLockAddress: string;
+        /**
+         * The address of the underlying token contract.
+         */
+        underlying: string;
+    };
 }
