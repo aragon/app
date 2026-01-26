@@ -6,11 +6,11 @@ import {
     ProposalDataListItem,
 } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
+import { useMemberLocks } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import type { ITokenPlugin } from '@/plugins/tokenPlugin/types';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
-import { useMemberLocks } from '../../../../api/tokenService';
 import { TokenLockListItem } from './tokenLockListItem';
 
 export interface ITokenLockListProps {

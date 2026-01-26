@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
-import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
+import type { IMemberLock } from '../../api/locksService';
 
-export const generateTokenLock = (
+export const generateGaugeVoterLock = (
     lock?: Partial<IMemberLock>,
 ): IMemberLock => ({
     id: 'lock-id',

@@ -13,7 +13,7 @@ import {
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex, zeroAddress } from 'viem';
-import type { IMemberLock } from '@/plugins/tokenPlugin/api/tokenService';
+import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import {
     type TokenLockStatus,
     tokenLockUtils,

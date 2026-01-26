@@ -8,7 +8,7 @@ import {
     AssetInput,
     type IAssetInputFormData,
 } from '@/modules/finance/components/assetInput';
-import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
+import { useMemberLocks } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import { useDao } from '@/shared/api/daoService';
