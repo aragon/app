@@ -1,13 +1,13 @@
-import type { ITokenExitQueueTicket } from '../../types';
+import type { IGaugeVoterExitQueueTicket } from '../../types/gaugeVoterExitQueueTicket';
 
 /**
- * Generates a test ticket for token-exit-queue with dynamic fees.
+ * Generates a test ticket for gauge-voter-exit-queue with dynamic fees.
  * @param ticket - Optional partial ticket to override defaults.
- * @returns A complete ITokenExitQueueTicket object.
+ * @returns A complete IGaugeVoterExitQueueTicket object.
  */
-export const generateTokenExitQueueTicket = (
-    ticket?: Partial<ITokenExitQueueTicket>,
-): ITokenExitQueueTicket => {
+export const generateGaugeVoterExitQueueTicket = (
+    ticket?: Partial<IGaugeVoterExitQueueTicket>,
+): IGaugeVoterExitQueueTicket => {
     const thirtyDaysInSeconds = 30 * 24 * 60 * 60;
     const twoDaysInSeconds = 2 * 24 * 60 * 60;
     const now = Math.floor(Date.now() / 1000);
@@ -34,11 +34,11 @@ export const generateTokenExitQueueTicket = (
 /**
  * Generates a test ticket with tiered fee configuration.
  * @param ticket - Optional partial ticket to override defaults.
- * @returns A complete ITokenExitQueueTicket object with tiered fees.
+ * @returns A complete IGaugeVoterExitQueueTicket object with tiered fees.
  */
-export const generateTokenExitQueueTicketWithTieredFees = (
-    ticket?: Partial<ITokenExitQueueTicket>,
-): ITokenExitQueueTicket => {
+export const generateGaugeVoterExitQueueTicketWithTieredFees = (
+    ticket?: Partial<IGaugeVoterExitQueueTicket>,
+): IGaugeVoterExitQueueTicket => {
     const tenDaysInSeconds = 10 * 24 * 60 * 60;
     const oneDayInSeconds = 24 * 60 * 60;
     const fiveDaysInSeconds = 5 * 24 * 60 * 60;
@@ -59,11 +59,11 @@ export const generateTokenExitQueueTicketWithTieredFees = (
 /**
  * Generates a test ticket with fixed fee configuration.
  * @param ticket - Optional partial ticket to override defaults.
- * @returns A complete ITokenExitQueueTicket object with fixed fee.
+ * @returns A complete IGaugeVoterExitQueueTicket object with fixed fee.
  */
-export const generateTokenExitQueueTicketWithFixedFee = (
-    ticket?: Partial<ITokenExitQueueTicket>,
-): ITokenExitQueueTicket => {
+export const generateGaugeVoterExitQueueTicketWithFixedFee = (
+    ticket?: Partial<IGaugeVoterExitQueueTicket>,
+): IGaugeVoterExitQueueTicket => {
     const fiveDaysInSeconds = 5 * 24 * 60 * 60;
     const now = Math.floor(Date.now() / 1000);
 
