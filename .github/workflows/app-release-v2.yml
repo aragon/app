@@ -28,6 +28,7 @@ jobs:
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
       - name: Checkout actions
@@ -102,7 +103,7 @@ jobs:
           slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
-            🚀 *Release v${{ steps.package-version.outputs.current-version }} Started* @platform
+            🚀 *Release v${{ steps.package-version.outputs.current-version }} Started* <!subteam^${{ steps.load-secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
             *PR:* ${{ steps.create-pr.outputs.url }}
 
             ${{ steps.release-summary.outputs.summary }}
