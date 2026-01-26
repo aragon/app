@@ -12,8 +12,8 @@ import {
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { parseUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { tokenLockUtils } from '../../../tokenPlugin/components/tokenMemberPanel/tokenLock/tokenLockUtils';
 import type { IGaugeVoterPluginSettings } from '../../types/gaugeVoterPlugin';
+import { gaugeVoterLockUtils } from '../../utils/gaugeVoterLockUtils';
 
 export interface IChartPoint {
     /**
@@ -66,7 +66,7 @@ export const GaugeVoterLockFormChart: React.FC<
             const futureDate = DateTime.now().plus({ seconds: lockDuration });
             const dateLabel =
                 index === 0 ? nowLabel : futureDate.toFormat('LLL d');
-            const votingPower = tokenLockUtils.calculateVotingPower(
+            const votingPower = gaugeVoterLockUtils.calculateVotingPower(
                 processedAmountWei,
                 lockDuration,
                 settings,

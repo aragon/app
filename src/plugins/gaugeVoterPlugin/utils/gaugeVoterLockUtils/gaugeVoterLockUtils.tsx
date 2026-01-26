@@ -1,8 +1,10 @@
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
-import type { IGaugeVoterPluginSettings } from '../../../../gaugeVoterPlugin/types/gaugeVoterPlugin';
-import type { IMemberLock } from '../../../api/tokenService';
-import type { ITokenPluginSettingsEscrowSettings } from '../../../types';
+import type { IMemberLock } from '../../api/locksService';
+import type {
+    IGaugeVoterPluginSettings,
+    IGaugeVoterPluginSettingsEscrowSettings,
+} from '../../types/gaugeVoterPlugin';
 
 /**
  * Status of a voting escrow lock.
@@ -15,7 +17,7 @@ export type TokenLockStatus = 'active' | 'cooldown' | 'available';
 /**
  * Utility class for calculating voting escrow lock status, voting power, and multipliers.
  */
-class TokenLockUtils {
+class GaugeVoterLockUtils {
     /**
      * Determines the current status of a lock based on exit queue state and time elapsed.
      * @param lock - The member lock to check status for.
@@ -84,11 +86,6 @@ class TokenLockUtils {
         const { token, votingEscrow } = settings;
         const { slope, maxTime, bias } = votingEscrow!;
 
-        // TODO: remove when backend fixed!
-        if (slope == null || maxTime == null || bias == null) {
-            return '0';
-        }
-
         const processedTime = Math.min(time, maxTime);
 
         const slopeAmount = BigInt(amount) * BigInt(slope);
@@ -130,7 +127,7 @@ class TokenLockUtils {
      */
     getMinLockTime = (
         lock: IMemberLock,
-        settings: ITokenPluginSettingsEscrowSettings,
+        settings: IGaugeVoterPluginSettingsEscrowSettings,
     ): number => {
         const { minLockTime } = settings;
         const { epochStartAt } = lock;
@@ -140,4 +137,4 @@ class TokenLockUtils {
     };
 }
 
-export const tokenLockUtils = new TokenLockUtils();
+export const gaugeVoterLockUtils = new GaugeVoterLockUtils();

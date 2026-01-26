@@ -1,17 +1,12 @@
 import { DateTime } from 'luxon';
 import { Network } from '@/shared/api/daoService';
-import type { IMemberLock } from '../../../api/tokenService';
-import { DaoTokenVotingMode, type ITokenPluginSettings } from '../../../types';
-import { tokenLockUtils } from './tokenLockUtils';
+import type { IMemberLock } from '../../api/locksService';
+import type { IGaugeVoterPluginSettings } from '../../types/gaugeVoterPlugin';
+import { gaugeVoterLockUtils } from './gaugeVoterLockUtils';
 
-describe('TokenLockUtils', () => {
-    const mockSettings: ITokenPluginSettings = {
+describe('GaugeVoterLockUtils', () => {
+    const mockSettings: IGaugeVoterPluginSettings = {
         pluginAddress: '0xplugin',
-        supportThreshold: 5000,
-        minParticipation: 2000,
-        minDuration: 3600,
-        minProposerVotingPower: '0',
-        votingMode: DaoTokenVotingMode.STANDARD,
         token: {
             address: '0x123' as `0x${string}`,
             network: Network.ETHEREUM_MAINNET,
@@ -22,7 +17,8 @@ describe('TokenLockUtils', () => {
             priceUsd: '1',
             totalSupply: '1000000000',
             hasDelegate: false,
-            underlying: '0x456' as `0x${string}`,
+            underlying: '0x456',
+            type: 'escrowAdapter',
         },
         votingEscrow: {
             slope: 1e15, // Slope for voting power calculation
@@ -55,7 +51,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('active');
+            expect(gaugeVoterLockUtils.getLockStatus(lock)).toBe('active');
         });
 
         it('returns "available" when current time >= unlockAt', () => {
@@ -78,7 +74,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('available');
+            expect(gaugeVoterLockUtils.getLockStatus(lock)).toBe('available');
         });
 
         it('returns "cooldown" when current time < unlockAt', () => {
@@ -101,7 +97,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('cooldown');
+            expect(gaugeVoterLockUtils.getLockStatus(lock)).toBe('cooldown');
         });
 
         it('returns "cooldown" when queuedAt or minCooldown is null even if exitDateAt is provided', () => {
@@ -123,7 +119,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('cooldown');
+            expect(gaugeVoterLockUtils.getLockStatus(lock)).toBe('cooldown');
         });
 
         it('returns "cooldown" when unlockAt is null', () => {
@@ -143,7 +139,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            expect(tokenLockUtils.getLockStatus(lock)).toBe('cooldown');
+            expect(gaugeVoterLockUtils.getLockStatus(lock)).toBe('cooldown');
         });
     });
 
@@ -152,7 +148,7 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token (18 decimals)
             const time = 86_400; // 1 day
 
-            const votingPower = tokenLockUtils.calculateVotingPower(
+            const votingPower = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
                 time,
                 mockSettings,
@@ -167,14 +163,14 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token
             const time = mockSettings.votingEscrow!.maxTime + 10_000; // Exceeds maxTime
 
-            const votingPower1 = tokenLockUtils.calculateVotingPower(
+            const votingPower1 = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
                 time,
                 mockSettings,
             );
-            const votingPower2 = tokenLockUtils.calculateVotingPower(
+            const votingPower2 = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
-                mockSettings.votingEscrow!.maxTime,
+                mockSettings.votingEscrow.maxTime,
                 mockSettings,
             );
 
@@ -186,7 +182,7 @@ describe('TokenLockUtils', () => {
             const amount = '0';
             const time = 86_400;
 
-            const votingPower = tokenLockUtils.calculateVotingPower(
+            const votingPower = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
                 time,
                 mockSettings,
@@ -196,10 +192,10 @@ describe('TokenLockUtils', () => {
         });
 
         it('calculates voting power with bias', () => {
-            const settingsWithBias: ITokenPluginSettings = {
+            const settingsWithBias: IGaugeVoterPluginSettings = {
                 ...mockSettings,
                 votingEscrow: {
-                    ...mockSettings.votingEscrow!,
+                    ...mockSettings.votingEscrow,
                     bias: 1e17, // Add bias
                 },
             };
@@ -207,7 +203,7 @@ describe('TokenLockUtils', () => {
             const amount = '1000000000000000000'; // 1 token
             const time = 86_400; // 1 day
 
-            const votingPower = tokenLockUtils.calculateVotingPower(
+            const votingPower = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
                 time,
                 settingsWithBias,
@@ -238,7 +234,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(
+            const votingPower = gaugeVoterLockUtils.getLockVotingPower(
                 lock,
                 mockSettings,
             );
@@ -266,7 +262,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(
+            const votingPower = gaugeVoterLockUtils.getLockVotingPower(
                 lock,
                 mockSettings,
             );
@@ -294,7 +290,7 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const votingPower = tokenLockUtils.getLockVotingPower(
+            const votingPower = gaugeVoterLockUtils.getLockVotingPower(
                 lock,
                 mockSettings,
             );
@@ -322,7 +318,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const multiplier = tokenLockUtils.getMultiplier(lock, mockSettings);
+            const multiplier = gaugeVoterLockUtils.getMultiplier(
+                lock,
+                mockSettings,
+            );
 
             // Multiplier = votingPower / amount. With current slope settings this is > 1.
             expect(multiplier).toBeGreaterThan(0);
@@ -349,7 +348,10 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const multiplier = tokenLockUtils.getMultiplier(lock, mockSettings);
+            const multiplier = gaugeVoterLockUtils.getMultiplier(
+                lock,
+                mockSettings,
+            );
 
             expect(multiplier).toBe(0);
         });
@@ -376,11 +378,11 @@ describe('TokenLockUtils', () => {
                 epochStartAt: DateTime.now().toSeconds() - 604_800, // 7 days
             };
 
-            const multiplier1Day = tokenLockUtils.getMultiplier(
+            const multiplier1Day = gaugeVoterLockUtils.getMultiplier(
                 lock1Day,
                 mockSettings,
             );
-            const multiplier7Days = tokenLockUtils.getMultiplier(
+            const multiplier7Days = gaugeVoterLockUtils.getMultiplier(
                 lock7Days,
                 mockSettings,
             );
@@ -408,9 +410,9 @@ describe('TokenLockUtils', () => {
                 },
             };
 
-            const minLockTime = tokenLockUtils.getMinLockTime(
+            const minLockTime = gaugeVoterLockUtils.getMinLockTime(
                 lock,
-                mockSettings.votingEscrow!,
+                mockSettings.votingEscrow,
             );
 
             // minLockTime = epochStartAt + minLockTime from settings

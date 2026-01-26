@@ -13,6 +13,11 @@ import {
 import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex, zeroAddress } from 'viem';
+import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
+import {
+    gaugeVoterLockUtils,
+    type TokenLockStatus,
+} from '@/plugins/gaugeVoterPlugin/utils/gaugeVoterLockUtils';
 import type { ITokenExitQueueWithdrawDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenExitQueueWithdrawDialog/tokenExitQueueWithdrawDialog.api';
 import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
 import type { IDao } from '@/shared/api/daoService';
@@ -20,13 +25,11 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeVoterExitQueueFeeUtils } from '../../../../../gaugeVoterPlugin/utils/gaugeVoterExitQueueFeeUtils';
-import type { IMemberLock } from '../../../../api/tokenService';
 import { TokenPluginDialogId } from '../../../../constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '../../../../dialogs/tokenApproveNftDialog';
 import type { ITokenLockUnlockDialogParams } from '../../../../dialogs/tokenLockUnlockDialog';
 import type { ITokenPlugin } from '../../../../types';
 import { useCheckNftAllowance } from '../../hooks/useCheckNftAllowance';
-import { type TokenLockStatus, tokenLockUtils } from '../tokenLockUtils';
 
 /**
  * Props for the TokenLockListItem component.
@@ -69,7 +72,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const baseStatus = tokenLockUtils.getLockStatus(lock);
+    const baseStatus = gaugeVoterLockUtils.getLockStatus(lock);
     const { needsApproval } = useCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
@@ -263,7 +266,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
         },
     );
 
-    const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
+    const multiplier = gaugeVoterLockUtils.getMultiplier(lock, plugin.settings);
     const formattedMultiplier =
         formatterUtils.formatNumber(multiplier.toString(), {
             format: NumberFormat.GENERIC_SHORT,
@@ -320,7 +323,7 @@ export const TokenLockListItem: React.FC<ITokenLockListItemProps> = (props) => {
                                     }}
                                     trend={-1}
                                     value={Number.parseFloat(
-                                        tokenLockUtils.getLockVotingPower(
+                                        gaugeVoterLockUtils.getLockVotingPower(
                                             lock,
                                             plugin.settings,
                                         ),

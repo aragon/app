@@ -14,10 +14,6 @@ import NumberFlow from '@number-flow/react';
 import { DateTime } from 'luxon';
 import { formatUnits, type Hex, zeroAddress } from 'viem';
 import type { IMemberLock } from '@/plugins/gaugeVoterPlugin/api/locksService';
-import {
-    type TokenLockStatus,
-    tokenLockUtils,
-} from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenLock/tokenLockUtils';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveNftDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveNftDialog';
 import { useTokenExitQueueFeeData } from '@/plugins/tokenPlugin/hooks/useTokenExitQueueFeeData';
@@ -31,6 +27,10 @@ import type { IGaugeVoterExitQueueWithdrawDialogParams } from '../../dialogs/gau
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
 import type { IGaugeVoterPlugin } from '../../types';
 import { gaugeVoterExitQueueFeeUtils } from '../../utils/gaugeVoterExitQueueFeeUtils';
+import {
+    gaugeVoterLockUtils,
+    type TokenLockStatus,
+} from '../../utils/gaugeVoterLockUtils';
 
 /**
  * Props for the GaugeVoterLockListItem component.
@@ -75,7 +75,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const baseStatus = tokenLockUtils.getLockStatus(lock);
+    const baseStatus = gaugeVoterLockUtils.getLockStatus(lock);
     const { needsApproval } = useCheckNftAllowance({
         spender: escrowAddress,
         nft: nftLockAddress,
@@ -273,7 +273,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
         },
     );
 
-    const multiplier = tokenLockUtils.getMultiplier(lock, plugin.settings);
+    const multiplier = gaugeVoterLockUtils.getMultiplier(lock, plugin.settings);
     const formattedMultiplier =
         formatterUtils.formatNumber(multiplier.toString(), {
             format: NumberFormat.GENERIC_SHORT,
@@ -330,7 +330,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                                     }}
                                     trend={-1}
                                     value={Number.parseFloat(
-                                        tokenLockUtils.getLockVotingPower(
+                                        gaugeVoterLockUtils.getLockVotingPower(
                                             lock,
                                             plugin.settings,
                                         ),

@@ -6,7 +6,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
-import { TokenLockForm } from './tokenLock';
 import { TokenWrapForm } from './tokenWrap';
 
 export interface ITokenMemberPanelProps {
@@ -23,15 +22,13 @@ export interface ITokenMemberPanelProps {
 enum TokenMemberPanelTab {
     DELEGATE = 'delegate',
     WRAP = 'wrap',
-    LOCK = 'lock',
 }
 
-const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
+const getTabsDefinitions = ({ token }: ITokenPluginSettings) => [
     {
         value: TokenMemberPanelTab.WRAP,
-        hidden: votingEscrow != null || token.underlying == null,
+        hidden: token.underlying == null,
     },
-    { value: TokenMemberPanelTab.LOCK, hidden: votingEscrow == null },
     { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
@@ -40,7 +37,7 @@ export const tokenMemberPanelFilterParam = 'memberPanel';
 export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
 
-    const { token, votingEscrow } = plugin.settings;
+    const { token } = plugin.settings;
     const { underlying, symbol, name } = token;
 
     const { t } = useTranslations();
@@ -49,12 +46,8 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         (tab) => !tab.hidden,
     );
 
-    const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
-    const initialSelectedTab = votingEscrow
-        ? LOCK
-        : underlying != null
-          ? WRAP
-          : DELEGATE;
+    const { WRAP, DELEGATE } = TokenMemberPanelTab;
+    const initialSelectedTab = underlying != null ? WRAP : DELEGATE;
     const [selectedTab, setSelectedTab] = useFilterUrlParam({
         name: tokenMemberPanelFilterParam,
         fallbackValue: initialSelectedTab,
@@ -69,8 +62,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         name: name.substring(11),
     };
 
-    const titleToken =
-        !votingEscrow && underlying != null ? underlyingToken : token;
+    const titleToken = underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
     if (!visibleTabs.length) {
@@ -91,11 +83,6 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                         />
                     ))}
                 </Tabs.List>
-                {votingEscrow != null && (
-                    <Tabs.Content value={TokenMemberPanelTab.LOCK}>
-                        <TokenLockForm daoId={daoId} plugin={plugin} />
-                    </Tabs.Content>
-                )}
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm
                         daoId={daoId}
