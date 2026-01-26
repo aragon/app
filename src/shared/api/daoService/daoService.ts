@@ -74,11 +74,21 @@ class DaoService extends AragonBackendService {
 
     /**
      * Ensure the returned DAO always has its plugins populated.
-     * Old backends already include plugins on the DAO endpoint; new ones
+     * Old backends (v2) already include plugins on the DAO endpoint; new ones (v3)
      * require an extra call to the plugins-by-dao endpoint.
+     *
+     * Note: plugins-by-dao endpoint is not yet deployed to production backend,
+     * so we skip the call when using v2 to avoid 404 errors.
      */
     private withPlugins = async (dao: IDaoApiResponse): Promise<IDao> => {
         if (dao.plugins != null && dao.plugins.length > 0) {
+            return dao as IDao;
+        }
+
+        // Skip plugins-by-dao call on v2 - endpoint not yet deployed to production
+        // TODO: Remove this once the endpoint is deployed to production and we are using NEXT_PUBLIC_API_VERSION=v3
+        const apiVersion = apiVersionUtils.getApiVersion();
+        if (apiVersion === 'v2') {
             return dao as IDao;
         }
 
@@ -124,9 +134,21 @@ class DaoService extends AragonBackendService {
         return result;
     };
 
+    /**
+     * Fetch policies for a DAO.
+     * Note: policies endpoint is not yet deployed to production backend,
+     * so we return empty array when using v2 to avoid 404 errors.
+     * TODO: Remove this check once the endpoint is deployed to production and we are using NEXT_PUBLIC_API_VERSION=v3
+     */
     getDaoPolicies = async (
         params: IGetDaoPoliciesParams,
     ): Promise<IDaoPolicy[]> => {
+        // Skip policies call on v2 - endpoint not yet deployed to production
+        const apiVersion = apiVersionUtils.getApiVersion();
+        if (apiVersion === 'v2') {
+            return [];
+        }
+
         const result = await this.request<IDaoPolicy[]>(
             this.urls.daoPolicies,
             params,

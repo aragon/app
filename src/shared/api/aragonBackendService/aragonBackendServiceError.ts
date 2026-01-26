@@ -22,6 +22,15 @@ export class AragonBackendServiceError extends Error {
     static fromResponse = async (
         response: Response,
     ): Promise<AragonBackendServiceError> => {
+        // Handle 404 responses directly to avoid unnecessary JSON parsing errors
+        if (response.status === 404) {
+            return new AragonBackendServiceError(
+                this.notFoundCode,
+                `Resource not found (url=${response.url})`,
+                404,
+            );
+        }
+
         const parsedData = await responseUtils.safeJsonParse(response);
 
         const isIErrorResponse = (value: unknown): value is IErrorResponse =>

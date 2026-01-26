@@ -13,6 +13,7 @@ import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 
 export interface ILayoutWizardProps<
     IPageParams extends IDaoPageParams = IDaoPageParams,
@@ -54,7 +55,7 @@ export const LayoutWizard = async <
             );
         }
     } catch (error: unknown) {
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         return (
             <Page.Error
                 error={parsedError}

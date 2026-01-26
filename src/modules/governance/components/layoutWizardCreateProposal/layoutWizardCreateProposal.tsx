@@ -7,6 +7,7 @@ import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import type { ICreateProposalPageParams } from '../../types';
 
 export interface ILayoutWizardCreateProposalProps {
@@ -57,7 +58,7 @@ export const LayoutWizardCreateProposal: React.FC<
         );
         wizardName = getWizardName(dao, pluginAddress);
     } catch (error: unknown) {
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         const errorNamespace =
             'app.governance.layoutWizardCreateProposal.error';
 
