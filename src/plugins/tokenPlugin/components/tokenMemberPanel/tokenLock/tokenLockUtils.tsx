@@ -86,6 +86,11 @@ class TokenLockUtils {
         const { token, votingEscrow } = settings;
         const { slope, maxTime, bias } = votingEscrow!;
 
+        // TODO: remove when backend fixed!
+        if (slope == null || maxTime == null || bias == null) {
+            return '0';
+        }
+
         const processedTime = Math.min(time, maxTime);
 
         const slopeAmount = BigInt(amount) * BigInt(slope);
