@@ -1,8 +1,6 @@
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude: # https://pnpm.io/settings#minimumreleaseageexclude
     - "@aragon/gov-ui-kit"
-    - "react"
-    - "react-dom"
-    - "next"
-    - "@next/env"
-    - "preact@10.28.2"
+    - "diff@4.0.4"
+    - "lodash@4.17.23"
+    - "tar@7.5.6"

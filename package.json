@@ -30,16 +30,16 @@
     "@reown/appkit": "^1.8.16",
     "@reown/appkit-adapter-wagmi": "^1.8.16",
     "@reown/walletkit": "^1.4.1",
-    "@sentry/core": "^10.32.1",
-    "@sentry/nextjs": "^10.32.1",
-    "@tanstack/react-query": "^5.90.16",
+    "@sentry/core": "^10.34.0",
+    "@sentry/nextjs": "^10.34.0",
+    "@tanstack/react-query": "^5.90.18",
     "@tanstack/react-query-devtools": "^5.91.2",
-    "@walletconnect/core": "^2.23.1",
-    "@walletconnect/utils": "^2.23.1",
+    "@walletconnect/core": "^2.23.3",
+    "@walletconnect/utils": "^2.23.3",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
-    "framer-motion": "^12.24.11",
-    "import-in-the-middle": "^2.0.1",
+    "framer-motion": "^12.26.2",
+    "import-in-the-middle": "^2.0.4",
     "isomorphic-dompurify": "^2.35.0",
     "jsdom": "^26.1.0",
     "luxon": "^3.7.2",
@@ -47,12 +47,12 @@
     "nextjs-toploader": "^3.9.17",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-hook-form": "^7.70.0",
+    "react-hook-form": "^7.71.1",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.6.0",
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
-    "viem": "^2.43.5",
+    "viem": "^2.44.4",
     "wagmi": "^2.19.5"
   },
   "devDependencies": {
@@ -69,8 +69,8 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^24.10.4",
-    "@types/react": "^19.2.7",
+    "@types/node": "^24.10.9",
+    "@types/react": "^19.2.8",
     "@types/react-dom": "^19.2.3",
     "@walletconnect/types": "2.23.1",
     "cross-env": "^10.1.0",
@@ -83,10 +83,10 @@
     "tailwindcss": "^4.1.18",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.6",
-    "turbo": "^2.7.3",
+    "turbo": "^2.7.4",
     "typescript": "^5.9.3",
     "ultracite": "^6.5.1",
-    "vercel": "^48.12.1",
+    "vercel": "^50.4.5",
     "webpack": "^5.104.1"
   },
   "repository": {
@@ -106,14 +106,17 @@
   "engines": {
     "node": ">=24.13.0"
   },
-  "packageManager": "pnpm@10.28.0+sha512.05df71d1421f21399e053fde567cea34d446fa02c76571441bfc1c7956e98e363088982d940465fd34480d4d90a0668bc12362f8aa88000a64e83d0b0e47be48",
+  "packageManager": "pnpm@10.28.1+sha512.7d7dbbca9e99447b7c3bf7a73286afaaf6be99251eb9498baefa7d406892f67b879adb3a1d7e687fc4ccc1a388c7175fbaae567a26ab44d1067b54fcb0d6a316",
   "pnpm": {
     "overrides": {
       "@reown/appkit": "^1.8.16",
       "@wagmi/connectors": "6.2.0",
-      "html-encoding-sniffer": "^4.0.0",
+      "diff": "^4.0.4",
       "jsdom": "^26.1.0",
-      "preact": "10.28.2"
+      "lodash": "^4.17.23",
+      "preact": "^10.28.2",
+      "tar": "^7.5.6",
+      "undici": "^5.29.0"
     },
     "packageExtensions": {
       "@solana/codecs-strings@*": {
