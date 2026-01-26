@@ -30,7 +30,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -86,7 +86,7 @@ jobs:
           SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
 
       - name: Checkout (for slackNotify script)
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: |
