@@ -3,6 +3,7 @@ import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import type { IDaoProcessDetailsPageParams } from '../../types';
 import { DaoProcessDetailsPageClient } from './daoProcessDetailsPageClient';
 
@@ -34,7 +35,7 @@ export const DaoProcessDetailsPage: React.FC<
             'Process not found',
             404,
         );
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         const errorNamespace = 'app.settings.daoProcessDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/settings`;
 

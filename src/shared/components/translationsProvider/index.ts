@@ -3,5 +3,6 @@ export {
     type ITranslationsProviderProps,
     type TranslationFunction,
     TranslationsProvider,
+    useSafeTranslations,
     useTranslations,
 } from './translationsProvider';

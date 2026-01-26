@@ -1,6 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { errorUtils } from '@/shared/utils/errorUtils';
 import {
     proposalActionsOptions,
     proposalBySlugOptions,
@@ -37,7 +38,7 @@ export const DaoProposalDetailsPage: React.FC<
             proposalActionsOptions({ urlParams: { id: proposal.id } }),
         );
     } catch (error: unknown) {
-        const parsedError = JSON.parse(JSON.stringify(error)) as unknown;
+        const parsedError = errorUtils.serialize(error);
         const errorNamespace = 'app.governance.daoProposalDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/proposals`;
 

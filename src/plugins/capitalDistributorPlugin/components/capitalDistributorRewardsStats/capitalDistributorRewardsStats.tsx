@@ -1,3 +1,5 @@
+'use client';
+
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
 import { useAccount } from 'wagmi';
 import { StatCard } from '@/shared/components/statCard';

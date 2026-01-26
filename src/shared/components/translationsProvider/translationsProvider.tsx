@@ -80,3 +80,21 @@ export const useTranslations = () => {
 
     return values;
 };
+
+/**
+ * A safe version of useTranslations that provides a fallback when the
+ * TranslationsProvider is not available. Use this in error boundary components
+ * or other places where the provider might not be mounted yet.
+ *
+ * Falls back to returning the translation key as-is if no provider is found.
+ */
+export const useSafeTranslations = (): ITranslationContext => {
+    const values = useContext(translationsContext);
+
+    if (values == null) {
+        // Fallback: return the key as-is (useful for error boundaries)
+        return { t: (key: string) => key };
+    }
+
+    return values;
+};
