@@ -6,7 +6,6 @@ import type { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
-import { TokenLockForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenLock';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
@@ -21,6 +20,7 @@ import {
     useGaugeList,
 } from '../../api/gaugeVoterService/queries';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
+import { GaugeVoterLockForm } from '../../components/gaugeVoterLockForm';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
 import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
@@ -329,7 +329,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
                             ))}
                         </Tabs.List>
                         <Tabs.Content value={GaugeVoterMemberPanelTab.LOCK}>
-                            <TokenLockForm
+                            <GaugeVoterLockForm
                                 daoId={dao.id}
                                 plugin={plugin.meta}
                             />

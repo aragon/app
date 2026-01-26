@@ -1,10 +1,8 @@
 import { DateTime } from 'luxon';
 import { formatUnits } from 'viem';
+import type { IGaugeVoterPluginSettings } from '../../../../gaugeVoterPlugin/types/gaugeVoterPlugin';
 import type { IMemberLock } from '../../../api/tokenService';
-import type {
-    ITokenPluginSettings,
-    ITokenPluginSettingsEscrowSettings,
-} from '../../../types';
+import type { ITokenPluginSettingsEscrowSettings } from '../../../types';
 
 /**
  * Status of a voting escrow lock.
@@ -53,7 +51,7 @@ class TokenLockUtils {
      */
     getLockVotingPower = (
         lock: IMemberLock,
-        settings: ITokenPluginSettings,
+        settings: IGaugeVoterPluginSettings,
     ) => {
         const { amount, epochStartAt } = lock;
         const status = this.getLockStatus(lock);
@@ -81,7 +79,7 @@ class TokenLockUtils {
     calculateVotingPower = (
         amount: string,
         time: number,
-        settings: ITokenPluginSettings,
+        settings: IGaugeVoterPluginSettings,
     ) => {
         const { token, votingEscrow } = settings;
         const { slope, maxTime, bias } = votingEscrow!;
@@ -109,7 +107,10 @@ class TokenLockUtils {
      * @param settings - Token plugin settings containing slope, bias, and maxTime parameters.
      * @returns Multiplier as a number (e.g., 1.5 means 1.5x voting power relative to locked amount).
      */
-    getMultiplier = (lock: IMemberLock, settings: ITokenPluginSettings) => {
+    getMultiplier = (
+        lock: IMemberLock,
+        settings: IGaugeVoterPluginSettings,
+    ) => {
         const { amount } = lock;
 
         const votingPower = this.getLockVotingPower(lock, settings);
