@@ -11,13 +11,13 @@ import {
 import { useMemberLocks } from '@/plugins/tokenPlugin/api/tokenService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
-import type { ITokenLocksDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLocksDialog';
-import type { ITokenLockUnlockDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenLockUnlockDialog';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useCheckTokenAllowance } from '../../../tokenPlugin/components/tokenMemberPanel/hooks/useCheckTokenAllowance';
-import type { ITokenPlugin } from '../../../tokenPlugin/types';
+import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import type { IGaugeVoterLocksDialogParams } from '../../dialogs/gaugeVoterLocksDialog';
+import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
 import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterLockFormChart } from './gaugeVoterLockFormChart';
 
@@ -147,7 +147,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     };
 
     const handleLockTokens = (amount: bigint) => {
-        const params: ITokenLockUnlockDialogParams = {
+        const params: IGaugeVoterLockUnlockDialogParams = {
             action: 'lock',
             dao: dao!,
             amount,
@@ -157,7 +157,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
             onSuccessClick: onLockTokensSuccessClick,
             showTransactionInfo: needsApproval,
         };
-        open(TokenPluginDialogId.LOCK_UNLOCK, { params });
+        open(GaugeVoterPluginDialogId.LOCK_UNLOCK, { params });
     };
 
     const onApproveTokensSuccess = (amount: bigint) => {
@@ -171,11 +171,11 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     };
 
     const handleViewLocks = () => {
-        const params: ITokenLocksDialogParams = {
+        const params: IGaugeVoterLocksDialogParams = {
             dao: dao!,
-            plugin: plugin as unknown as ITokenPlugin,
+            plugin,
         };
-        open(TokenPluginDialogId.VIEW_LOCKS, { params });
+        open(GaugeVoterPluginDialogId.VIEW_LOCKS, { params });
     };
 
     // Initialize asset field after fetching unlocked balance
