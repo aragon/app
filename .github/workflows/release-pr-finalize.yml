@@ -24,7 +24,12 @@ jobs:
         uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 1
-          sparse-checkout: .github/actions/pr-check-ready
+          sparse-checkout: |
+            .github/actions/pr-check-ready
+            .github/actions/slack-notify
+            .github/actions/extract-slack-ts
+            .github/actions/gh-pr-get-body
+            .github/workflows/scripts/slackNotify.js
 
       - name: Load secrets
         id: secrets
@@ -34,6 +39,8 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Check label + approval
         id: check
@@ -99,6 +106,17 @@ jobs:
           slack_ts: ${{ steps.ts.outputs.ts }}
           path: release-notes.md
 
+      - name: Notify Slack - Release Ready
+        if: steps.check.outputs.ready == 'true' && steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            🏷️ *Release marked as verified and ready!*
+            Creating tag and GitHub Release...
+
       - name: Create tag
         if: steps.check.outputs.ready == 'true'
         id: tag
@@ -109,9 +127,23 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check.outputs.ready == 'true'
+        id: release
         uses: ./.github/actions/gh-ensure-release
         with:
           tag: v${{ steps.version.outputs.current-version }}
           title: Release v${{ steps.version.outputs.current-version }}
           notes_path: ${{ steps.notes.outputs.path }}
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+
+      - name: Notify Slack - Release Created
+        if: steps.check.outputs.ready == 'true' && steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            📦 *GitHub Release Created!*
+            *Release:* <https://github.com/aragon/app/releases/tag/v${{ steps.version.outputs.current-version }}|v${{ steps.version.outputs.current-version }}>
+
+            _Production build & deploy will start automatically..._

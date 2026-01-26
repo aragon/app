@@ -48,7 +48,8 @@ jobs:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
-          message: 📦 *Release PR merged into main*
+          message: |
+            ✅ *PR merged, release complete!*
 
       - name: Notify Slack (cancelled)
         if: github.event.pull_request.merged == false && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts

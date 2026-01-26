@@ -16,7 +16,47 @@ permissions:
   contents: read
 
 jobs:
+  notify-start:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/extract-slack-ts
+            .github/actions/slack-notify
+
+      - name: Extract Slack TS from release body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ github.event.release.body }}
+
+      - name: Notify Slack - Production Deploy Started
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            🚀 *Production build & deploy started...*
+            *Tag:* `${{ github.event.release.tag_name }}`
+
   build:
+    needs: notify-start
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
@@ -43,6 +83,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
 
       - name: Checkout (for slackNotify script)
         uses: actions/checkout@v6.0.1
@@ -67,6 +108,10 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            ✅ *Production Deployed*
+            🎉 *Production Deployed!* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
+
             *Tag:* `${{ github.event.release.tag_name }}`
-            *URL:* [app.aragon.org](https://app.aragon.org)
+            *Production:* <https://app.aragon.org|app.aragon.org>
+
+            ⚠️ *Don't forget to merge the Release PR!*
+            If there are issues with the release, use hotfix or rollback.
