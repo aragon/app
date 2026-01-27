@@ -2758,6 +2758,7 @@
         "fallbackDialogTitle": "Uninstall process",
         "pluginName": "Plugin name",
         "processKey": "Process key",
+        "targetDao": "Target DAO",
         "uninstall": {
           "action": "Uninstall process",
           "info": "Proposals of this type can't be executed once this process is uninstalled."

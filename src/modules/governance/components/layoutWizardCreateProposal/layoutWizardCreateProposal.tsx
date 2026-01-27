@@ -3,7 +3,11 @@ import {
     type ILayoutWizardProps,
     LayoutWizard,
 } from '@/modules/application/components/layouts/layoutWizard';
-import { daoOptions, type IDao } from '@/shared/api/daoService';
+import {
+    daoOptions,
+    type IDao,
+    type IDaoPlugin,
+} from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -17,10 +21,12 @@ export interface ILayoutWizardCreateProposalProps {
     params: Promise<ICreateProposalPageParams>;
 }
 
-const getWizardName = (
-    dao: IDao,
-    pluginAddress: string,
-): ILayoutWizardProps['name'] => {
+interface IWizardConfig {
+    name: ILayoutWizardProps['name'];
+    targetDaoAddress?: string;
+}
+
+const getWizardConfig = (dao: IDao, pluginAddress: string): IWizardConfig => {
     const processes = daoUtils.getDaoPlugins(dao, {
         type: PluginType.PROCESS,
         includeSubPlugins: false,
@@ -28,8 +34,11 @@ const getWizardName = (
 
     const processPlugin = processes.find(
         ({ address }) => address.toLowerCase() === pluginAddress.toLowerCase(),
-    )!;
-    const pluginName = daoUtils.getPluginName(processPlugin);
+    ) as IDaoPlugin | undefined;
+
+    const pluginName = processPlugin
+        ? daoUtils.getPluginName(processPlugin)
+        : '';
 
     const nameSuffix = processes.length > 1 ? 'namePlugin' : 'name';
     const wizardName: ILayoutWizardProps['name'] = [
@@ -37,7 +46,11 @@ const getWizardName = (
         { plugin: pluginName },
     ];
 
-    return wizardName;
+    // Get target DAO address from plugin (for subDAO targeting).
+    // If plugin has daoAddress, it's installed on a subDAO; otherwise it's on main DAO.
+    const targetDaoAddress = processPlugin?.daoAddress ?? dao.address;
+
+    return { name: wizardName, targetDaoAddress };
 };
 
 export const LayoutWizardCreateProposal: React.FC<
@@ -47,7 +60,7 @@ export const LayoutWizardCreateProposal: React.FC<
     const { addressOrEns, network, pluginAddress } = await params;
 
     const queryClient = new QueryClient();
-    let wizardName: ILayoutWizardProps['name'] = '';
+    let wizardConfig: IWizardConfig = { name: '' };
 
     const proposalsPageUrl = `/dao/${network}/${addressOrEns}/proposals/`;
 
@@ -56,7 +69,7 @@ export const LayoutWizardCreateProposal: React.FC<
         const dao = await queryClient.fetchQuery(
             daoOptions({ urlParams: { id: daoId } }),
         );
-        wizardName = getWizardName(dao, pluginAddress);
+        wizardConfig = getWizardConfig(dao, pluginAddress);
     } catch (error: unknown) {
         const parsedError = errorUtils.serialize(error);
         const errorNamespace =
@@ -74,7 +87,8 @@ export const LayoutWizardCreateProposal: React.FC<
     return (
         <LayoutWizard
             exitPath={proposalsPageUrl}
-            name={wizardName}
+            name={wizardConfig.name}
+            targetDaoAddress={wizardConfig.targetDaoAddress}
             {...props}
         />
     );
