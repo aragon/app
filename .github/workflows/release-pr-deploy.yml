@@ -154,18 +154,11 @@ jobs:
         with:
           body: ${{ steps.pr.outputs.body }}
 
-      - name: Detect base tag from main
-        id: base
-        uses: ./.github/actions/git-detect-base-tag
-        with:
-          ref: HEAD
-
       - name: Generate Release Summary
         id: summary
         uses: ./.github/actions/generate-release-summary
         with:
           linear_api_token: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
-          base_ref: ${{ steps.base.outputs.base_ref }}
 
       - name: Update PR Description
         uses: ./.github/actions/gh-pr-edit-body
