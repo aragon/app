@@ -79,6 +79,11 @@ export interface IActionComposerProps
      * When true, shows retry option in dropdown.
      */
     hasPinErrors?: boolean;
+    /**
+     * Target DAO address for actions. Used when plugin targets a subDAO.
+     * If not provided, defaults to main DAO address.
+     */
+    targetDaoAddress?: string;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -94,6 +99,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onRemoveAllActions,
         isPinning = false,
         hasPinErrors = false,
+        targetDaoAddress,
     } = props;
 
     const daoUrlParams = { id: daoId };
@@ -102,10 +108,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
+    // Use target DAO address for native actions (defaults to main DAO)
+    const effectiveTargetAddress = targetDaoAddress ?? dao?.address;
+
     const { items, groups } = actionComposerUtils.getDaoActions({
         dao,
         permissions: daoPermissions,
         t,
+        targetDaoAddress: effectiveTargetAddress,
     });
 
     const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
@@ -169,7 +179,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         setUploadError(null);
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
-            daoAddress: dao!.address,
+            daoAddress: effectiveTargetAddress!,
             daoNetwork: dao!.network,
         };
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
@@ -431,6 +441,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 onActionSelected={handleItemSelected}
                 onOpenChange={setDisplayActionComposer}
                 ref={autocompleteInputRef}
+                targetDaoAddress={effectiveTargetAddress}
                 wrapperClassName={classNames('transition-none', {
                     '!sr-only': !displayActionComposer,
                 })}

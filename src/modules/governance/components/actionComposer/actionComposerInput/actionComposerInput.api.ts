@@ -53,4 +53,9 @@ export interface IActionComposerInputProps<TMeta = undefined>
      * If provided, only actions that are allowed will be displayed.
      */
     allowedActions?: IAllowedAction[];
+    /**
+     * Target DAO address for actions. Used when plugin targets a subDAO.
+     * If not provided, defaults to main DAO address.
+     */
+    targetDaoAddress?: string;
 }
