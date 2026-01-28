@@ -8,7 +8,6 @@ import { Page } from '@/shared/components/page';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { gaugeListOptions } from '../../api/gaugeVoterService/queries';
-import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterGaugesPageClient } from './gaugeVoterGaugesPageClient';
 
 export interface IGaugeVoterGaugesPageProps extends IDaoPluginPageProps {}
@@ -22,7 +21,7 @@ export const GaugeVoterGaugesPage: React.FC<
 
     const interfaceType = PluginInterfaceType.GAUGE_VOTER;
     const plugins = daoUtils.getDaoPlugins(dao, { interfaceType });
-    const plugin: IGaugeVoterPlugin | undefined = plugins?.[0];
+    const plugin = plugins?.[0];
 
     if (!plugin) {
         throw new Error(`Gauge plugin not found for DAO: ${dao.id}`);

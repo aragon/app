@@ -12,18 +12,18 @@ import {
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
+import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useWrappedTokenBalance } from '@/plugins/tokenPlugin/hooks/useWrappedTokenBalance';
-import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
+import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useCheckTokenAllowance } from '../hooks/useCheckTokenAllowance';
 
 export interface ITokenWrapFormProps {
     /**
-     * DAO plugin for the token delegation.
+     * Token used by the plugin.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    token: ITokenPluginSettingsToken;
     /**
      * ID of the DAO.
      */
@@ -37,9 +37,7 @@ export interface ITokenWrapFormProps {
 export interface ITokenWrapFormData extends IAssetInputFormData {}
 
 export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
-    const { plugin, daoId, underlyingToken } = props;
-
-    const { token } = plugin.settings;
+    const { token, daoId, underlyingToken } = props;
     const { symbol, decimals } = token;
 
     const { open } = useDialogContext();
@@ -56,7 +54,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         balance: unwrappedBalance,
         status: unwrappedBalanceStatus,
         invalidateQueries,
-    } = useCheckTokenAllowance({
+    } = useTokenCheckTokenAllowance({
         spender: token.address,
         token: underlyingToken,
     });
