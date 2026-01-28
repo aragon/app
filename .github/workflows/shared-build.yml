@@ -42,7 +42,7 @@ jobs:
       - name: Build ${{ inputs.env }} application
         run: |
           pnpm run setup ${{ inputs.env }}
-          pnpm run build
+          pnpm run build:ci
         env:
           NEXT_PUBLIC_SENTRY_ORG: ${{ vars.NEXT_PUBLIC_SENTRY_ORG }}
           NEXT_PUBLIC_SENTRY_PROJECT: ${{ vars.NEXT_PUBLIC_SENTRY_PROJECT }}

@@ -64,10 +64,10 @@ jobs:
           mode: alltofile
 
       - name: Bundle Vercel application
-        run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+        run: NODE_OPTIONS="--max-old-space-size=6144 --trace-deprecation" pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
       - name: Deploy to Vercel
-        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} --skip-domain --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+        run: NODE_OPTIONS="--max-old-space-size=6144 --trace-deprecation" pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} --skip-domain --yes -e NODE_OPTIONS=--trace-deprecation --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
       - name: Set output
         id: set-deployment-url
