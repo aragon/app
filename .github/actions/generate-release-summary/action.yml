@@ -3,11 +3,15 @@ description: Generates a PR/Slack-friendly release summary based on git log rang
 
 inputs:
   linear_api_token:
-    description: Linear API token (optional)
+    description: Linear API token for fetching issue titles (optional)
     required: false
     default: ""
   base_ref:
-    description: Base git ref (e.g. v1.2.3) to generate summary from (optional)
+    description: |
+      Override base ref for summary range (optional, not recommended).
+      Auto-detection finds the latest semver tag and computes merge-base,
+      which works correctly for both releases and hotfixes.
+      Only use this for debugging or edge cases.
     required: false
     default: ""
 

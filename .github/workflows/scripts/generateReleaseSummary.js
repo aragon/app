@@ -62,38 +62,33 @@ const fetchLinearIssue = async (issueId, token) => {
 
 const generateSummary = async ({ core }) => {
     const linearToken = process.env.LINEAR_API_TOKEN;
-    // Optional: Allow overriding the base ref (default: auto-detect from latest tag)
     let baseRef = process.env.BASE_REF;
 
-    // Auto-detect base when not provided.
+    // Auto-detect base ref (recommended, handles releases and hotfixes correctly).
     //
-    // Note: our tags are created on release branches, so they are often NOT reachable from main.
-    // Using `git describe` on main would then pick an older tag (or none) and include already-
-    // released commits. Instead, we:
-    // - find the latest version tag by semver sort
-    // - compute merge-base(tag, HEAD) which equals "the main commit the previous release was cut from"
-    // - use that merge-base as the range start
+    // Tags are created on release branches, so they're NOT reachable from main via `git describe`.
+    // Instead, we find the latest tag by semver version and compute merge-base(tag, HEAD).
+    // This gives us "the commit where the previous release diverged" — the correct range start.
     if (!baseRef) {
         const latestTag = detectLatestSemverTag();
         if (latestTag) {
             const cutBase = detectReleaseCutBaseFromTag(latestTag, 'HEAD');
             if (cutBase) {
                 baseRef = cutBase;
-                console.log(
-                    `Detected previous release cut base from ${latestTag}: ${baseRef}`,
-                );
+                console.log(`Auto-detected base from ${latestTag}: ${baseRef}`);
             } else {
                 console.log(
-                    `Found latest tag ${latestTag} but failed to compute merge-base. Using full history.`,
+                    `Found tag ${latestTag} but merge-base failed. Using full history.`,
                 );
             }
         } else {
-            console.log('No previous tags found. Using full history.');
+            console.log('No tags found. Using full history.');
         }
     } else if (/^v\d+\.\d+\.\d+/.test(baseRef)) {
-        // If workflow passed a tag explicitly, interpret it as "previous release tag".
+        // If a tag was passed explicitly, convert to merge-base (same logic as auto-detect).
         const cutBase = detectReleaseCutBaseFromTag(baseRef, 'HEAD');
         if (cutBase) {
+            console.log(`Converting tag ${baseRef} to merge-base: ${cutBase}`);
             baseRef = cutBase;
         }
     }
