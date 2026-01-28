@@ -14,8 +14,56 @@ permissions:
   pull-requests: write
 
 jobs:
+  notify-start:
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/extract-slack-ts
+            .github/actions/gh-pr-get-body
+            .github/actions/slack-notify
+            .github/workflows/scripts/slackNotify.js
+
+      - name: Read PR body
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
+
+      - name: Extract Slack TS from PR body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ steps.pr.outputs.body }}
+
+      - name: Notify Slack - Staging Deployment Started
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            ⏳ *Staging build & deploy started...*
+
   build:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
+    needs: notify-start
     uses: ./.github/workflows/shared-build.yml
     secrets: inherit
     with:
@@ -28,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
@@ -76,11 +124,12 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
@@ -105,18 +154,11 @@ jobs:
         with:
           body: ${{ steps.pr.outputs.body }}
 
-      - name: Detect base tag from main
-        id: base
-        uses: ./.github/actions/git-detect-base-tag
-        with:
-          ref: HEAD
-
       - name: Generate Release Summary
         id: summary
         uses: ./.github/actions/generate-release-summary
         with:
           linear_api_token: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
-          base_ref: ${{ steps.base.outputs.base_ref }}
 
       - name: Update PR Description
         uses: ./.github/actions/gh-pr-edit-body
@@ -136,10 +178,11 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            🛠 *Staging Updated*
-            *Staging:* [stg.app.aragon.org](https://stg.app.aragon.org)
-            *Commit:* [${{ github.event.pull_request.head.sha }}](https://github.com/aragon/app/commit/${{ github.event.pull_request.head.sha }})
+            ✅ *Staging Deployed* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
 
-            You can start testing on staging now.
-            - If you find bugs: create PR with fixes to the branch [${{ github.event.pull_request.head.ref }}](https://github.com/aragon/app/tree/${{ github.event.pull_request.head.ref }})
-            - If all good: approve the PR and add label `release:ready` — ${{ github.event.pull_request.html_url }}
+            *Staging:* <https://stg.app.aragon.org|stg.app.aragon.org>
+            *Commit:* <https://github.com/aragon/app/commit/${{ github.event.pull_request.head.sha }}|${{ github.event.pull_request.head.sha }}>
+
+            Ready for testing! 🧪
+            • Found bugs? Create a PR with fixes to <https://github.com/aragon/app/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>
+            • All good? Approve the PR and add label `release:ready` → <${{ github.event.pull_request.html_url }}|PR>

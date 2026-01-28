@@ -42,7 +42,7 @@ jobs:
           op-vault: "kv_app_infra"
 
       - name: Checkout actions
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup

@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.20.0
+
+### Minor Changes
+
+- [#957](https://github.com/aragon/app/pull/957) [`aeed8f4`](https://github.com/aragon/app/commit/aeed8f4fec810713bb44197bea8ae2de89b8b12f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Enhance Slack notifications and streamline release process
+
+- [#952](https://github.com/aragon/app/pull/952) [`4a24965`](https://github.com/aragon/app/commit/4a24965573b5f67c0d4fda53f0f4f4c4e23533ea) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Implement multi-dispatch visualization UI
+
+- [#955](https://github.com/aragon/app/pull/955) [`66606a0`](https://github.com/aragon/app/commit/66606a008c50cebb7515548288776199bcce7e25) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Switch backend url back to dev
+
+### Patch Changes
+
+- [#951](https://github.com/aragon/app/pull/951) [`24522ef`](https://github.com/aragon/app/commit/24522efaa8607b5d28719350b8e218e367dd9b2f) Thanks [@evanaronson](https://github.com/evanaronson)! - Add a custom DAO header for the Money Machine DAO
+
+- [#954](https://github.com/aragon/app/pull/954) [`cb5b6a3`](https://github.com/aragon/app/commit/cb5b6a3bde66833c42e5e425c0bfb90c78d919cc) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
+- [#953](https://github.com/aragon/app/pull/953) [`33e4343`](https://github.com/aragon/app/commit/33e43436f90e9322726481ae7c8a759a0aaf96e3) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Erros cleanup and improve error resilience
+
 ## 1.19.0
 
 ### Minor Changes

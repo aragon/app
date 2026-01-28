@@ -1,5 +1,13 @@
 # Releases
 
+> ⚠️ **DEPRECATED**: This document is outdated. Please use the current documentation:
+> **[Release Process](./release-process.md)**
+
+---
+
+<details>
+<summary>📜 Legacy documentation (for reference)</summary>
+
 The release process follows a **trunk-based development** approach, specifically the _release from trunk_ variant. This
 means that the application maintains a single `main` branch where all feature and bug-fix branches are developed and
 merged before a release.
@@ -45,3 +53,5 @@ releases consistent.
         - Create a new branch from `main`.
         - Implement the same fix using the regular development workflow.
         - Merge the fix into `main`.
+
+</details>

@@ -27,7 +27,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -48,7 +48,8 @@ jobs:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
-          message: 📦 *Release PR merged into main*
+          message: |
+            ✅ *PR merged, release complete!*
 
       - name: Notify Slack (cancelled)
         if: github.event.pull_request.merged == false && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
