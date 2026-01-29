@@ -1,11 +1,11 @@
 'use client';
 
 import { Tabs } from '@aragon/gov-ui-kit';
+import { GaugeVoterLockForm } from '@/plugins/gaugeVoterPlugin/components/gaugeVoterLockForm';
+import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
-import { GaugeVoterLockForm } from '../../../gaugeVoterPlugin/components/gaugeVoterLockForm';
-import type { IGaugeVoterPlugin } from '../../../gaugeVoterPlugin/types';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenWrapForm } from './tokenWrap';
