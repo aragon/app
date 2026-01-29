@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noConsole: <explanation> */
 import { fromHex, isHex } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
@@ -42,8 +43,14 @@ class WalletConnectActionDialogUtils {
     ): Promise<IProposalAction | undefined> => {
         const { request } = params.sessionRequest.params;
 
+        // DEBUG: Log incoming request
+        console.log('=== WalletConnect Session Request ===');
+        console.log('Method:', request.method);
+        console.log('Params:', JSON.stringify(request.params, null, 2));
+
         // Only sendTransaction session requests are currently supported
         if (request.method !== 'eth_sendTransaction') {
+            console.log('Skipping non-sendTransaction method:', request.method);
             return;
         }
 
@@ -51,13 +58,28 @@ class WalletConnectActionDialogUtils {
             request.params as ISessionRequestParams[typeof request.method],
         );
 
+        // DEBUG: Log raw action after parsing
+        console.log('=== Raw Action (after parsing) ===');
+        console.log('to:', rawAction.to);
+        console.log('data:', rawAction.data);
+        console.log('value:', rawAction.value);
+
         try {
             const decodedAction = await this.decodeRawAction({
                 ...params,
                 rawAction,
             });
+
+            // DEBUG: Log decoded action
+            console.log('=== Decoded Action ===');
+            console.log('type:', decodedAction.type);
+            console.log('data:', decodedAction.data);
+            console.log('Full:', JSON.stringify(decodedAction, null, 2));
+
             return decodedAction;
-        } catch {
+        } catch (error) {
+            // DEBUG: Log decode error
+            console.log('=== Decode Error ===', error);
             // Silently ignore eventual errors and just return the raw action when decode function fails.
             return rawAction;
         }
