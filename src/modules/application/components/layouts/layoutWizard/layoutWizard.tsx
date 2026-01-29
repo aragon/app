@@ -17,7 +17,10 @@ import { errorUtils } from '@/shared/utils/errorUtils';
 
 export interface ILayoutWizardProps<
     IPageParams extends IDaoPageParams = IDaoPageParams,
-> extends Pick<INavigationWizardProps, 'name' | 'exitPath'> {
+> extends Pick<
+        INavigationWizardProps,
+        'name' | 'exitPath' | 'targetDaoAddress'
+    > {
     /**
      * URL parameters of the layout.
      */
@@ -37,7 +40,8 @@ export const LayoutWizard = async <
 >(
     props: ILayoutWizardProps<IPageParams>,
 ) => {
-    const { params, name, exitPath, queryClient, children } = props;
+    const { params, name, exitPath, targetDaoAddress, queryClient, children } =
+        props;
     const { addressOrEns, network } = (await params) ?? {};
     const reactQueryClient = queryClient ?? new QueryClient();
     let dao: IDao | undefined;
@@ -66,7 +70,12 @@ export const LayoutWizard = async <
 
     return (
         <HydrationBoundary state={dehydrate(reactQueryClient)}>
-            <NavigationWizard dao={dao} exitPath={exitPath} name={name} />
+            <NavigationWizard
+                dao={dao}
+                exitPath={exitPath}
+                name={name}
+                targetDaoAddress={targetDaoAddress}
+            />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

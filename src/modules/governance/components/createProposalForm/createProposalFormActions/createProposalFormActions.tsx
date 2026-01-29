@@ -61,6 +61,9 @@ export const CreateProposalFormActions: React.FC<
     const [processPlugin] = daoUtils.getDaoPlugins(dao, { pluginAddress })!;
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
+    // Determine target DAO: if plugin has daoAddress, it's installed on a subDAO
+    const targetDaoAddress = processPlugin.daoAddress ?? dao!.address;
+
     const { t } = useTranslations();
     const { chainId } = useDaoChain({ daoId });
 
@@ -91,7 +94,7 @@ export const CreateProposalFormActions: React.FC<
         fetchNextPage,
         isFetchingNextPage,
     } = useDaoPermissions({
-        urlParams: { network: dao!.network, daoAddress: dao!.address },
+        urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
         queryParams: { pageSize: 50 },
     });
 
@@ -269,6 +272,7 @@ export const CreateProposalFormActions: React.FC<
                     onAddAction={handleAddAction}
                     onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}
+                    targetDaoAddress={targetDaoAddress}
                 />
             ) : (
                 <p className="text-primary-400">

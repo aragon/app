@@ -23,6 +23,11 @@ export interface IGetActionBaseParams {
      * Translation function for group labels.
      */
     t: TranslationFunction;
+    /**
+     * Target DAO address for actions. Used when plugin targets a subDAO.
+     * If not provided, defaults to dao.address.
+     */
+    targetDaoAddress?: string;
 }
 
 export interface IGetNativeActionGroupsParams extends IGetActionBaseParams {
