@@ -1899,6 +1899,114 @@
           "voteOnSelected": "Vote on selected",
           "yourVotes": "Your votes"
         },
+        "gaugeVoterLockForm": {
+          "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "chart": {
+            "now": "Now",
+            "votingPower": "Voting power"
+          },
+          "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
+          "locks": "View {{count}} locks",
+          "submit": {
+            "approve": "Approve {{symbol}}",
+            "lock": "Lock {{symbol}}"
+          }
+        },
+        "gaugeVoterExitQueue": {
+          "feeCalculation": {
+            "lockedTokens": "Locked tokens",
+            "receiveNow": "Receive now",
+            "withdrawFee": "Withdraw fee"
+          },
+          "feeChart": {
+            "exit": "Exit",
+            "fee": "Fee",
+            "now": "Now",
+            "timeUnit": {
+              "day": "d",
+              "hour": "h",
+              "minute": "m",
+              "year": "y"
+            }
+          },
+          "withdrawDialog": {
+            "a11y": {
+              "description": "Dialog for withdrawing tokens with dynamic fee calculation"
+            },
+            "back": "Back",
+            "helpText": "Withdrawing early comes with a fee that decreases over time. The chart above shows how your waiting time affects how much you’ll receive when you withdraw.",
+            "submit": "Withdraw tokens",
+            "title": "Withdraw {{symbol}}"
+          },
+          "withdrawTransactionDialog": {
+            "a11y": {
+              "description": "Transaction dialog for confirming token withdrawal"
+            },
+            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+            "submit": "Withdraw",
+            "success": "View Transaction",
+            "title": "Withdraw {{symbol}}"
+          }
+        },
+        "gaugeVoterLockList": {
+          "empty": {
+            "description": "This will show relevant locks when available.",
+            "title": "No locks found"
+          },
+          "entity": "veLocks",
+          "error": {
+            "description": "There was an error loading the locks. Try again later.",
+            "title": "Error loading locks"
+          },
+          "item": {
+            "actions": {
+              "unlock": "Unlock {{symbol}}",
+              "withdraw": "Withdraw {{symbol}}"
+            },
+            "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
+            "metrics": {
+              "locked": "Locked",
+              "multiplier": "Multiplier",
+              "votingPower": "Voting power"
+            },
+            "minLockTimeLeftSuffix": "left until unlockable",
+            "statusLabel": {
+              "active": "Active",
+              "available": "Available",
+              "cooldown": "In cooldown",
+              "warmup": "In warmup"
+            },
+            "timeLeftSuffix": "left",
+            "withdrawTimeLeftSuffix": "until withdraw"
+          }
+        },
+        "gaugeVoterLockUnlockDialog": {
+          "lock": {
+            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "submit": "Lock",
+            "success": "View your veLock",
+            "title": "Lock {{symbol}}",
+            "transactionInfoTitle": "Lock {{symbol}}"
+          },
+          "unlock": {
+            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
+            "submit": "Unlock",
+            "success": "View locks",
+            "title": "Unlock {{symbol}}",
+            "transactionInfoTitle": "Unlock {{symbol}}"
+          },
+          "withdraw": {
+            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
+            "submit": "Withdraw",
+            "success": "View locks",
+            "title": "Withdraw {{symbol}}",
+            "transactionInfoTitle": "Withdraw {{symbol}}"
+          }
+        },
+        "gaugeVoterLocksDialog": {
+          "description": "Unlock or withdraw your {{symbol}} tokens",
+          "title": "Your locks"
+        },
         "meta": {
           "link": {
             "gauges": "Gauges"
@@ -2382,78 +2490,6 @@
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
-        "tokenLockForm": {
-          "approveTransactionInfoTitle": "Approve {{symbol}}",
-          "chart": {
-            "now": "Now",
-            "votingPower": "Voting power"
-          },
-          "footerInfo": "Locking tokens will transfer them out of your wallet to the locking contract, where they can be withdrawn back to your wallet after the minimum locktime.",
-          "locks": "View {{count}} locks",
-          "submit": {
-            "approve": "Approve {{symbol}}",
-            "lock": "Lock {{symbol}}"
-          }
-        },
-        "tokenLockList": {
-          "empty": {
-            "description": "This will show relevant locks when available.",
-            "title": "No locks found"
-          },
-          "entity": "veLocks",
-          "error": {
-            "description": "There was an error loading the locks. Try again later.",
-            "title": "Error loading locks"
-          },
-          "item": {
-            "actions": {
-              "unlock": "Unlock {{symbol}}",
-              "withdraw": "Withdraw {{symbol}}"
-            },
-            "approveTransactionInfoTitle": "Approve NFT #{{tokenId}}",
-            "metrics": {
-              "locked": "Locked",
-              "multiplier": "Multiplier",
-              "votingPower": "Voting power"
-            },
-            "minLockTimeLeftSuffix": "left until unlockable",
-            "statusLabel": {
-              "active": "Active",
-              "available": "Available",
-              "cooldown": "In cooldown",
-              "warmup": "In warmup"
-            },
-            "timeLeftSuffix": "left",
-            "withdrawTimeLeftSuffix": "until withdraw"
-          }
-        },
-        "tokenLockUnlockDialog": {
-          "lock": {
-            "description": "To lock your {{symbol}}, confirm the onchain transaction in your wallet.",
-            "submit": "Lock",
-            "success": "View your veLock",
-            "title": "Lock {{symbol}}",
-            "transactionInfoTitle": "Lock {{symbol}}"
-          },
-          "unlock": {
-            "description": "To unlock your {{symbol}}, confirm the onchain transaction in your wallet.",
-            "submit": "Unlock",
-            "success": "View locks",
-            "title": "Unlock {{symbol}}",
-            "transactionInfoTitle": "Unlock {{symbol}}"
-          },
-          "withdraw": {
-            "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
-            "submit": "Withdraw",
-            "success": "View locks",
-            "title": "Withdraw {{symbol}}",
-            "transactionInfoTitle": "Withdraw {{symbol}}"
-          }
-        },
-        "tokenLocksDialog": {
-          "description": "Unlock or withdraw your {{symbol}} tokens",
-          "title": "Your locks"
-        },
         "tokenMemberInfo": {
           "distribution": "Members",
           "eligibleVoters": "Eligible voters",
@@ -2471,7 +2507,8 @@
         "tokenMemberPanel": {
           "tabs": {
             "delegate": "Delegate",
-            "wrap": "Wrap"
+            "wrap": "Wrap",
+            "lock": "Lock"
           }
         },
         "tokenMemberStats": {
@@ -2699,42 +2736,6 @@
             "title": "Wrap tokens",
             "transactionInfoTitle": "Wrap {{symbol}}"
           }
-        }
-      },
-      "tokenExitQueue": {
-        "feeCalculation": {
-          "lockedTokens": "Locked tokens",
-          "receiveNow": "Receive now",
-          "withdrawFee": "Withdraw fee"
-        },
-        "feeChart": {
-          "exit": "Exit",
-          "fee": "Fee",
-          "now": "Now",
-          "timeUnit": {
-            "day": "d",
-            "hour": "h",
-            "minute": "m",
-            "year": "y"
-          }
-        },
-        "withdrawDialog": {
-          "a11y": {
-            "description": "Dialog for withdrawing tokens with dynamic fee calculation"
-          },
-          "back": "Back",
-          "helpText": "Withdrawing early comes with a fee that decreases over time. The chart above shows how your waiting time affects how much you’ll receive when you withdraw.",
-          "submit": "Withdraw tokens",
-          "title": "Withdraw {{symbol}}"
-        },
-        "withdrawTransactionDialog": {
-          "a11y": {
-            "description": "Transaction dialog for confirming token withdrawal"
-          },
-          "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
-          "submit": "Withdraw",
-          "success": "View Transaction",
-          "title": "Withdraw {{symbol}}"
         }
       }
     },

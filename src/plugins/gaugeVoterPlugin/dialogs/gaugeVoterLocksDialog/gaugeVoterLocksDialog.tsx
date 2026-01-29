@@ -44,12 +44,12 @@ export const GaugeVoterLocksDialog: React.FC<IGaugeVoterLocksDialogProps> = (
         <>
             <Dialog.Header
                 onClose={close}
-                title={t('app.plugins.token.tokenLocksDialog.title')}
+                title={t('app.plugins.gaugeVoter.gaugeVoterLocksDialog.title')}
             />
             <Dialog.Content
                 className="pb-4 md:pb-6"
                 description={t(
-                    'app.plugins.token.tokenLocksDialog.description',
+                    'app.plugins.gaugeVoter.gaugeVoterLocksDialog.description',
                     { symbol: token.symbol },
                 )}
             >

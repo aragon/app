@@ -124,7 +124,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     const handleApproveTokens = () => {
         const { symbol } = token;
         const transactionInfoTitle = t(
-            'app.plugins.token.tokenLockForm.approveTransactionInfoTitle',
+            'app.plugins.gaugeVoter.gaugeVoterLockForm.approveTransactionInfoTitle',
             { symbol },
         );
         const transactionInfo = {
@@ -222,7 +222,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                         variant="primary"
                     >
                         {t(
-                            `app.plugins.token.tokenLockForm.submit.${submitLabel}`,
+                            `app.plugins.gaugeVoter.gaugeVoterLockForm.submit.${submitLabel}`,
                             {
                                 symbol: token.symbol,
                             },
@@ -234,13 +234,18 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                             size="lg"
                             variant="secondary"
                         >
-                            {t('app.plugins.token.tokenLockForm.locks', {
-                                count: locksCount,
-                            })}
+                            {t(
+                                'app.plugins.gaugeVoter.gaugeVoterLockForm.locks',
+                                {
+                                    count: locksCount,
+                                },
+                            )}
                         </Button>
                     )}
                     <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                        {t('app.plugins.token.tokenLockForm.footerInfo')}
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo',
+                        )}
                     </p>
                 </div>
             </form>

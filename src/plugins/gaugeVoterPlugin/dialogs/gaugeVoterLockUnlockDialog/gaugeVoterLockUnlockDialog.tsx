@@ -152,7 +152,7 @@ export const GaugeVoterLockUnlockDialog: React.FC<
 
     const { symbol } = token;
     const txInfoTitle = t(
-        `app.plugins.token.tokenLockUnlockDialog.${action}.transactionInfoTitle`,
+        `app.plugins.gaugeVoter.gaugeVoterLockUnlockDialog.${action}.transactionInfoTitle`,
         { symbol },
     );
     const transactionInfo = showTransactionInfo
@@ -168,7 +168,7 @@ export const GaugeVoterLockUnlockDialog: React.FC<
     return (
         <TransactionDialog
             description={t(
-                `app.plugins.token.tokenLockUnlockDialog.${action}.description`,
+                `app.plugins.gaugeVoter.gaugeVoterLockUnlockDialog.${action}.description`,
                 { symbol },
             )}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
@@ -178,16 +178,16 @@ export const GaugeVoterLockUnlockDialog: React.FC<
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t(
-                `app.plugins.token.tokenLockUnlockDialog.${action}.submit`,
+                `app.plugins.gaugeVoter.gaugeVoterLockUnlockDialog.${action}.submit`,
             )}
             successLink={{
                 label: t(
-                    `app.plugins.token.tokenLockUnlockDialog.${action}.success`,
+                    `app.plugins.gaugeVoter.gaugeVoterLockUnlockDialog.${action}.success`,
                 ),
                 onClick: handleSuccessClick,
             }}
             title={t(
-                `app.plugins.token.tokenLockUnlockDialog.${action}.title`,
+                `app.plugins.gaugeVoter.gaugeVoterLockUnlockDialog.${action}.title`,
                 { symbol },
             )}
             transactionInfo={transactionInfo}

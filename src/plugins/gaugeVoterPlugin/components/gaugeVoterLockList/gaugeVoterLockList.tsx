@@ -73,18 +73,22 @@ export const GaugeVoterLockList: React.FC<IGaugeVoterLockListProps> = (
     const itemsCount = data?.pages[0].metadata.totalRecords;
 
     const errorState = {
-        heading: t('app.plugins.token.tokenLockList.error.title'),
-        description: t('app.plugins.token.tokenLockList.error.description'),
+        heading: t('app.plugins.gaugeVoter.gaugeVoterLockList.error.title'),
+        description: t(
+            'app.plugins.gaugeVoter.gaugeVoterLockList.error.description',
+        ),
     };
 
     const emptyState = {
-        heading: t('app.plugins.token.tokenLockList.empty.title'),
-        description: t('app.plugins.token.tokenLockList.empty.description'),
+        heading: t('app.plugins.gaugeVoter.gaugeVoterLockList.empty.title'),
+        description: t(
+            'app.plugins.gaugeVoter.gaugeVoterLockList.empty.description',
+        ),
     };
 
     return (
         <DataListRoot
-            entityLabel={t('app.plugins.token.tokenLockList.entity')}
+            entityLabel={t('app.plugins.gaugeVoter.gaugeVoterLockList.entity')}
             itemsCount={itemsCount}
             onLoadMore={fetchNextPage}
             pageSize={pageSize}

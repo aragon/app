@@ -88,9 +88,12 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
         <>
             <Dialog.Header
                 onClose={close}
-                title={t('app.plugins.tokenExitQueue.withdrawDialog.title', {
-                    symbol: token.symbol,
-                })}
+                title={t(
+                    'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawDialog.title',
+                    {
+                        symbol: token.symbol,
+                    },
+                )}
             />
             <Dialog.Content className="flex flex-col gap-6 pt-4">
                 {shouldShowChart && (
@@ -105,7 +108,7 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
                     helpText={
                         shouldShowChart
                             ? t(
-                                  'app.plugins.tokenExitQueue.withdrawDialog.helpText',
+                                  'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawDialog.helpText',
                               )
                             : undefined
                     }
@@ -116,12 +119,14 @@ export const GaugeVoterExitQueueWithdrawDialog: React.FC<
             <Dialog.Footer
                 primaryAction={{
                     label: t(
-                        'app.plugins.tokenExitQueue.withdrawDialog.submit',
+                        'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawDialog.submit',
                     ),
                     onClick: handleWithdraw,
                 }}
                 secondaryAction={{
-                    label: t('app.plugins.tokenExitQueue.withdrawDialog.back'),
+                    label: t(
+                        'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawDialog.back',
+                    ),
                     onClick: handleBack,
                 }}
                 variant="wizard"
