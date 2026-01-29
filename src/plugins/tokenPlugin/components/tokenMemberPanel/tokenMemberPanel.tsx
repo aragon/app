@@ -4,6 +4,8 @@ import { Tabs } from '@aragon/gov-ui-kit';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
+import { GaugeVoterLockForm } from '../../../gaugeVoterPlugin/components/gaugeVoterLockForm';
+import type { IGaugeVoterPlugin } from '../../../gaugeVoterPlugin/types';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenWrapForm } from './tokenWrap';
@@ -89,7 +91,10 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                 </Tabs.List>
                 {votingEscrow != null && (
                     <Tabs.Content value={TokenMemberPanelTab.LOCK}>
-                        <h1>LOCK TOKEN</h1>
+                        <GaugeVoterLockForm
+                            daoId={daoId}
+                            plugin={plugin as unknown as IGaugeVoterPlugin}
+                        />
                     </Tabs.Content>
                 )}
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>

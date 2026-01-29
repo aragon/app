@@ -1,14 +1,14 @@
 'use client';
 
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { GaugeVoterLockList } from '../../components/gaugeVoterLockList';
-import type { IGaugeVoterPluginSettings } from '../../types/gaugeVoterPlugin';
+import type { IGaugeVoterPlugin } from '../../types/gaugeVoterPlugin';
 
 export interface IGaugeVoterLocksDialogParams {
     /**
@@ -18,7 +18,7 @@ export interface IGaugeVoterLocksDialogParams {
     /**
      * Gauge voter plugin containing voting escrow settings.
      */
-    plugin: IDaoPlugin<IGaugeVoterPluginSettings>;
+    plugin: IGaugeVoterPlugin;
 }
 
 export interface IGaugeVoterLocksDialogProps
