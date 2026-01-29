@@ -131,7 +131,9 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
         ticket,
     });
 
-    const nowLabel = t('app.plugins.tokenExitQueue.feeChart.now');
+    const nowLabel = t(
+        'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeChart.now',
+    );
 
     // Generate nice round ticks that will format cleanly
     const generateTicks = () => {
@@ -211,22 +213,22 @@ export const GaugeVoterExitQueueFeeChart: React.FC<
                 1,
                 Math.round(elapsedSeconds / secondsPerYear),
             );
-            formatted = `${String(years)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.year')}`;
+            formatted = `${String(years)}${t('app.plugins.gaugeVoter.gaugeVoterExitQueue.feeChart.timeUnit.year')}`;
         } else if (elapsedSeconds >= secondsPerDay) {
             const days = Math.max(
                 1,
                 Math.round(elapsedSeconds / secondsPerDay),
             );
-            formatted = `${String(days)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.day')}`;
+            formatted = `${String(days)}${t('app.plugins.gaugeVoter.gaugeVoterExitQueue.feeChart.timeUnit.day')}`;
         } else if (elapsedSeconds >= secondsPerHour) {
             const hours = Math.max(
                 1,
                 Math.round(elapsedSeconds / secondsPerHour),
             );
-            formatted = `${String(hours)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.hour')}`;
+            formatted = `${String(hours)}${t('app.plugins.gaugeVoter.gaugeVoterExitQueue.feeChart.timeUnit.hour')}`;
         } else {
             const minutes = Math.max(0, Math.round(elapsedSeconds / 60));
-            formatted = `${String(minutes)}${t('app.plugins.tokenExitQueue.feeChart.timeUnit.minute')}`;
+            formatted = `${String(minutes)}${t('app.plugins.gaugeVoter.gaugeVoterExitQueue.feeChart.timeUnit.minute')}`;
         }
 
         return isLastTick ? `>${formatted}` : formatted;

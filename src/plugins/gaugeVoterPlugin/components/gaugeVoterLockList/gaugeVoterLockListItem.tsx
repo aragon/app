@@ -195,7 +195,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                 },
                 transactionInfo: {
                     title: t(
-                        'app.plugins.token.tokenLockList.item.approveTransactionInfoTitle',
+                        'app.plugins.gaugeVoter.gaugeVoterLockList.item.approveTransactionInfoTitle',
                         {
                             tokenId: lock.tokenId,
                         },
@@ -289,7 +289,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
 
                 <Tag
                     label={t(
-                        `app.plugins.token.tokenLockList.item.statusLabel.${status}`,
+                        `app.plugins.gaugeVoter.gaugeVoterLockList.item.statusLabel.${status}`,
                     )}
                     variant={statusToVariant[status]}
                 />
@@ -299,7 +299,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                 <div className="flex flex-col">
                     <div className="text-neutral-500 text-sm md:text-base">
                         {t(
-                            'app.plugins.token.tokenLockList.item.metrics.locked',
+                            'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.locked',
                         )}
                     </div>
                     <div className="truncate">{formattedLockedAmount}</div>
@@ -307,7 +307,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                 <div className="flex flex-col">
                     <div className="text-neutral-500 text-sm md:text-base">
                         {t(
-                            'app.plugins.token.tokenLockList.item.metrics.multiplier',
+                            'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.multiplier',
                         )}
                     </div>
                     <div className="truncate">
@@ -317,7 +317,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                 <div className="flex flex-col">
                     <div className="text-neutral-500 text-sm md:text-base">
                         {t(
-                            'app.plugins.token.tokenLockList.item.metrics.votingPower',
+                            'app.plugins.gaugeVoter.gaugeVoterLockList.item.metrics.votingPower',
                         )}
                     </div>
                     {status === 'active' && (
@@ -353,7 +353,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                             variant="secondary"
                         >
                             {t(
-                                'app.plugins.token.tokenLockList.item.actions.unlock',
+                                'app.plugins.gaugeVoter.gaugeVoterLockList.item.actions.unlock',
                                 { symbol: token.symbol },
                             )}
                         </Button>
@@ -361,7 +361,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                             <p className="text-neutral-500 text-sm leading-normal">
                                 {formattedMinLock}{' '}
                                 {t(
-                                    'app.plugins.token.tokenLockList.item.minLockTimeLeftSuffix',
+                                    'app.plugins.gaugeVoter.gaugeVoterLockList.item.minLockTimeLeftSuffix',
                                 )}
                             </p>
                         )}
@@ -382,7 +382,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                             variant="tertiary"
                         >
                             {t(
-                                'app.plugins.token.tokenLockList.item.actions.withdraw',
+                                'app.plugins.gaugeVoter.gaugeVoterLockList.item.actions.withdraw',
                                 { symbol: token.symbol },
                             )}
                         </Button>
@@ -404,7 +404,7 @@ export const GaugeVoterLockListItem: React.FC<IGaugeVoterLockListItemProps> = (
                                         <p className="text-neutral-500 text-sm leading-normal">
                                             {formattedMinCooldownDate}{' '}
                                             {t(
-                                                'app.plugins.token.tokenLockList.item.withdrawTimeLeftSuffix',
+                                                'app.plugins.gaugeVoter.gaugeVoterLockList.item.withdrawTimeLeftSuffix',
                                             )}
                                         </p>
                                     );

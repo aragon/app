@@ -66,35 +66,37 @@ export interface IGaugeVoterPluginSettings extends IPluginSettings {
     token: IGaugeVoterPluginSettingsToken;
 }
 
+export interface IGaugeVoterPluginVotingEscrowAddresses {
+    /**
+     * The address of the curve contract.
+     */
+    curveAddress: string;
+    /**
+     * The address of the exit queue contract.
+     */
+    exitQueueAddress: string;
+    /**
+     * The address of the voting escrow contract.
+     */
+    escrowAddress: string;
+    /**
+     * The address of the clock contract.
+     */
+    clockAddress: string;
+    /**
+     * The address of the NFT lock contract.
+     */
+    nftLockAddress: string;
+    /**
+     * The address of the underlying token contract.
+     */
+    underlying: string;
+}
+
 export interface IGaugeVoterPlugin
     extends IDaoPlugin<IGaugeVoterPluginSettings> {
     /**
-     * The voting escrow settings of the plugin.
+     * The voting escrow contract addresses.
      */
-    votingEscrow?: {
-        /**
-         * The address of the curve contract.
-         */
-        curveAddress: string;
-        /**
-         * The address of the exit queue contract.
-         */
-        exitQueueAddress: string;
-        /**
-         * The address of the voting escrow contract.
-         */
-        escrowAddress: string;
-        /**
-         * The address of the clock contract.
-         */
-        clockAddress: string;
-        /**
-         * The address of the NFT lock contract.
-         */
-        nftLockAddress: string;
-        /**
-         * The address of the underlying token contract.
-         */
-        underlying: string;
-    };
+    votingEscrow: IGaugeVoterPluginVotingEscrowAddresses;
 }

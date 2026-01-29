@@ -33,7 +33,7 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             <div className="flex items-baseline justify-between font-normal text-base text-neutral-500 leading-tight">
                 <span>
                     {t(
-                        'app.plugins.tokenExitQueue.feeCalculation.lockedTokens',
+                        'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.lockedTokens',
                     )}
                 </span>
                 <span className="text-right">
@@ -44,7 +44,9 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             {/* Withdraw fee row */}
             <div className="flex items-baseline justify-between font-normal text-base text-primary-400 leading-tight">
                 <span>
-                    {t('app.plugins.tokenExitQueue.feeCalculation.withdrawFee')}
+                    {t(
+                        'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.withdrawFee',
+                    )}
                 </span>
                 <span className="text-right">
                     - {formattedFeeAmount} {token.symbol}
@@ -57,7 +59,9 @@ export const GaugeVoterExitQueueFeeCalculation: React.FC<
             {/* Receive now row */}
             <div className="flex items-baseline justify-between font-normal text-base text-neutral-800 leading-tight">
                 <span>
-                    {t('app.plugins.tokenExitQueue.feeCalculation.receiveNow')}
+                    {t(
+                        'app.plugins.gaugeVoter.gaugeVoterExitQueue.feeCalculation.receiveNow',
+                    )}
                 </span>
                 <span className="text-right">
                     {formattedReceiveAmount} {token.symbol}

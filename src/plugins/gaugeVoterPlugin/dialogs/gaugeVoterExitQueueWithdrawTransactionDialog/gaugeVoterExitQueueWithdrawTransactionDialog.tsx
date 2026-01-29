@@ -61,7 +61,7 @@ export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
     return (
         <TransactionDialog
             description={t(
-                'app.plugins.tokenExitQueue.withdrawTransactionDialog.description',
+                'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawTransactionDialog.description',
                 {
                     symbol: token.symbol,
                 },
@@ -70,11 +70,11 @@ export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t(
-                'app.plugins.tokenExitQueue.withdrawTransactionDialog.submit',
+                'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawTransactionDialog.submit',
             )}
             successLink={{
                 label: t(
-                    'app.plugins.tokenExitQueue.withdrawTransactionDialog.success',
+                    'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawTransactionDialog.success',
                 ),
                 onClick: () => {
                     router.refresh();
@@ -82,7 +82,7 @@ export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
                 },
             }}
             title={t(
-                'app.plugins.tokenExitQueue.withdrawTransactionDialog.title',
+                'app.plugins.gaugeVoter.gaugeVoterExitQueue.withdrawTransactionDialog.title',
                 { symbol: token.symbol },
             )}
             transactionType={TransactionType.WITHDRAW_CREATE}
