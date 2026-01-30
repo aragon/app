@@ -1,10 +1,8 @@
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { DaoBreadcrumbs } from '@/shared/components/daoBreadcrumbs';
-import { daoBreadcrumbsUtils } from '@/shared/utils/daoBreadcrumbsUtils';
+import { DaoTargetIndicator } from '@/shared/components/daoTargetIndicator';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { subDaoDisplayUtils } from '@/shared/utils/subDaoDisplayUtils';
 import { useTranslations } from '../translationsProvider';
 
 export type IProcessDataListItemProps = IDataListItemProps & {
@@ -30,11 +28,6 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
     const { t } = useTranslations();
 
     const { address, description, slug } = process;
-    const targetDaoAddress = subDaoDisplayUtils.getPluginDaoAddress(process);
-    const daoPath = daoBreadcrumbsUtils.buildDaoBreadcrumbPath({
-        rootDao: dao,
-        targetAddress: targetDaoAddress,
-    });
 
     const processedDescription =
         description != null && description.length > 0
@@ -50,19 +43,21 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             key={address}
             {...otherProps}
         >
-            <div className="flex flex-col gap-y-1">
-                <div className="flex gap-2 font-normal text-lg leading-tight">
-                    <p className="truncate text-neutral-800">
-                        {daoUtils.getPluginName(process)}
-                    </p>
-                    <p className="text-right text-neutral-500 uppercase">
-                        {slug}
+            <div className="flex flex-col gap-3 md:gap-4">
+                <div className="flex flex-col gap-y-1">
+                    <div className="flex gap-2 font-normal text-base leading-tight md:text-lg">
+                        <p className="truncate text-neutral-800">
+                            {daoUtils.getPluginName(process)}
+                        </p>
+                        <p className="text-right text-neutral-500 uppercase">
+                            {slug}
+                        </p>
+                    </div>
+                    <p className="line-clamp-2 font-normal text-neutral-500 text-sm leading-normal md:text-base">
+                        {processedDescription}
                     </p>
                 </div>
-                <p className="line-clamp-2 font-normal text-base text-neutral-500 leading-normal">
-                    {processedDescription}
-                </p>
-                <DaoBreadcrumbs path={daoPath} />
+                <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
             </div>
         </DataList.Item>
     );

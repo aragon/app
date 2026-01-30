@@ -1,5 +1,6 @@
 import { Button, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { DaoTargetIndicator } from '@/shared/components/daoTargetIndicator';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
@@ -72,6 +73,8 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
         launchedAtDefinition,
     ];
 
+    const hasSubDaos = (dao.subDaos?.length ?? 0) > 0;
+
     const handleUninstallProcess = () => {
         if (processPlugins.length > 1) {
             const params: IUninstallPluginAlertDialogParams = {
@@ -95,6 +98,13 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>
+                {hasSubDaos && (
+                    <DefinitionList.Item
+                        term={t('app.settings.daoProcessDetailsInfo.targetDao')}
+                    >
+                        <DaoTargetIndicator dao={dao} plugin={plugin} />
+                    </DefinitionList.Item>
+                )}
                 {orderedSettings.map(({ term, definition, ...setting }) => (
                     <DefinitionList.Item key={term} term={term} {...setting}>
                         {definition}

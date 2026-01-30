@@ -2739,14 +2739,11 @@
       }
     },
     "settings": {
-      "daoHierarchy": {
-        "mainDaoLabel": "Main DAO",
-        "subDaoLabel": "SubDAO"
-      },
       "daoPluginInfo": {
         "bodyName": "Body name",
         "processKey": "Process key",
         "processName": "Process name",
+        "targetDao": "Target DAO",
         "viewProcess": "View governance process"
       },
       "daoProcessAllowedActions": {
@@ -2763,6 +2760,7 @@
         "fallbackDialogTitle": "Uninstall process",
         "pluginName": "Plugin name",
         "processKey": "Process key",
+        "targetDao": "Target DAO",
         "uninstall": {
           "action": "Uninstall process",
           "info": "Proposals of this type can't be executed once this process is uninstalled."
@@ -2961,6 +2959,10 @@
         "launchedAt": "Plugin launched",
         "plugin": "Plugin address",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
+      },
+      "daoTypeTag": {
+        "mainLabel": "Main DAO",
+        "subLabel": "SubDAO"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",
