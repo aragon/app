@@ -26,6 +26,10 @@ export interface IUseDaoPluginsParams {
      */
     includeSubPlugins?: boolean;
     /**
+     * Include plugins that belong to the subDAOs of the specified DAO.
+     */
+    includeSubDaos?: boolean;
+    /**
      * Adds an "all" tab component item when set to true and DAO has more than one plugin.
      */
     includeGroupFilter?: boolean;
@@ -111,6 +115,7 @@ export const useDaoPlugins = (
         type,
         pluginAddress,
         includeSubPlugins,
+        includeSubDaos,
         includeGroupFilter,
         interfaceType,
         slug,
@@ -123,6 +128,7 @@ export const useDaoPlugins = (
         type,
         pluginAddress,
         includeSubPlugins,
+        includeSubDaos,
         interfaceType,
         slug,
         hasExecute,

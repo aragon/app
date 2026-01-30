@@ -3,6 +3,7 @@ import {
     daoService,
     type IDao,
     type IDaoPlugin,
+    type ISubDaoSummary,
     type Network,
     type PluginInterfaceType,
 } from '@/shared/api/daoService';
@@ -29,6 +30,11 @@ export interface IGetDaoPluginsParams {
      * @default false
      */
     includeSubPlugins?: boolean;
+    /**
+     * Include plugins that belong to the subDAOs in the result.
+     * @default true
+     */
+    includeSubDaos?: boolean;
     /**
      * Only returns the plugin with the specified interfaceType when set.
      */
@@ -86,6 +92,7 @@ class DaoUtils {
             type,
             pluginAddress,
             includeSubPlugins = false,
+            includeSubDaos = true,
             interfaceType,
             hasExecute,
             slug,
@@ -96,6 +103,7 @@ class DaoUtils {
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
+                this.filterBySubDaos(dao?.subDaos, plugin, includeSubDaos) &&
                 this.filterByInterfaceType(plugin, interfaceType) &&
                 this.filterByHasExecute(plugin, hasExecute) &&
                 this.filterBySlug(plugin, slug),
@@ -220,6 +228,16 @@ class DaoUtils {
         plugin: IDaoPlugin,
         includeSubPlugins: boolean,
     ) => includeSubPlugins || !plugin.isSubPlugin;
+
+    private filterBySubDaos = (
+        subDaos: ISubDaoSummary[] | undefined,
+        plugin: IDaoPlugin,
+        includeSubDaos: boolean,
+    ) =>
+        includeSubDaos ||
+        !subDaos?.some((subDao) =>
+            addressUtils.isAddressEqual(subDao.address, plugin.daoAddress),
+        );
 
     private filterByInterfaceType = (
         plugin: IDaoPlugin,
