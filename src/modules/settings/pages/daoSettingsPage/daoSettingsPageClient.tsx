@@ -215,7 +215,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                                 dao={dao}
                                 href={daoUtils.getDaoUrl(
                                     dao,
-                                    `/settings/${process.meta.slug}`,
+                                    `settings/${process.meta.slug}`,
                                 )}
                                 key={process.uniqueId}
                                 process={process.meta}
@@ -234,6 +234,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                     >
                         {policies.map((policy) => (
                             <PolicyDataListItem
+                                dao={dao}
                                 key={policy.address}
                                 policy={policy}
                             />
