@@ -1,4 +1,3 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     daoService,
     type IDao,
@@ -217,7 +216,8 @@ class DaoUtils {
     };
 
     private filterPluginByAddress = (plugin: IDaoPlugin, address?: string) =>
-        address == null || addressUtils.isAddressEqual(plugin.address, address);
+        address == null ||
+        plugin.address.toLowerCase() === address.toLowerCase();
 
     private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null ||
@@ -235,8 +235,10 @@ class DaoUtils {
         includeSubDaos: boolean,
     ) =>
         includeSubDaos ||
-        !subDaos?.some((subDao) =>
-            addressUtils.isAddressEqual(subDao.address, plugin.daoAddress),
+        !subDaos?.some(
+            (subDao) =>
+                subDao.address.toLowerCase() ===
+                plugin.daoAddress?.toLowerCase(),
         );
 
     private filterByInterfaceType = (
