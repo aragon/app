@@ -19,6 +19,7 @@ import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -111,14 +112,26 @@ export const DaoProcessDetailsPageClient: React.FC<
         },
     ];
 
-    const { isLoading, settings } = useSlotSingleFunction<
+    // Track client-side mounting to avoid hydration mismatch.
+    // Plugin registry is only available on client, so slot function returns
+    // different results on server (undefined -> fallback) vs client (actual result).
+    const isMounted = useIsMounted();
+
+    const slotResult = useSlotSingleFunction<
         IPermissionCheckGuardParams,
         IPermissionCheckGuardResult
     >({
         slotId: GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION,
         pluginId: plugin.interfaceType,
         params: { plugin, daoId, useConnectedUserInfo: false },
-    }) ?? { hasPermission: true, isLoading: false, settings: [] };
+    });
+
+    // Use fallback on server and first client render to ensure hydration match.
+    // After mount, use actual slot result if available.
+    const fallback = { hasPermission: true, isLoading: false, settings: [] };
+    const { isLoading, settings } = isMounted
+        ? (slotResult ?? fallback)
+        : fallback;
 
     return (
         <>

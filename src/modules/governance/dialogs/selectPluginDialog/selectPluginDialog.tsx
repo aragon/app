@@ -1,6 +1,6 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -62,6 +62,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
     const daoPlugins = useDaoPlugins({
         daoId,
         type: PluginType.PROCESS,
@@ -93,6 +95,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                 <div className="flex flex-col gap-2 py-2">
                     {processedDaoPlugins.map((plugin) => (
                         <ProcessDataListItem
+                            dao={dao}
                             isActive={
                                 plugin.uniqueId === selectedPlugin?.uniqueId
                             }

@@ -1,11 +1,17 @@
 'use client';
 
-import { DaoAvatar, Icon, IconType, Wallet } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    DaoAvatar,
+    Icon,
+    IconType,
+    Wallet,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Route } from 'next';
 import { useAccount } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import type { IDao } from '@/shared/api/daoService';
+import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
 import {
@@ -27,13 +33,46 @@ export interface INavigationWizardProps extends INavigationContainerProps {
      */
     dao?: IDao;
     /**
+     * Target DAO address to display instead of the parent DAO.
+     * Used when a plugin targets a subDAO.
+     */
+    targetDaoAddress?: string;
+    /**
      * Exit path to redirect to when exiting the wizard.
      */
     exitPath: Route;
 }
 
+/**
+ * Resolves the display DAO info based on target address.
+ * Returns the subDAO if targeting a subDAO, otherwise returns the parent DAO.
+ */
+const resolveDisplayDao = (
+    dao?: IDao,
+    targetDaoAddress?: string,
+): Pick<IDao | ISubDaoSummary, 'name' | 'avatar'> | undefined => {
+    if (dao == null) {
+        return undefined;
+    }
+
+    // If no target address specified or it matches parent DAO, show parent
+    if (
+        targetDaoAddress == null ||
+        addressUtils.isAddressEqual(dao.address, targetDaoAddress)
+    ) {
+        return dao;
+    }
+
+    // Find matching subDAO
+    const matchingSubDao = dao.subDaos?.find((subDao) =>
+        addressUtils.isAddressEqual(subDao.address, targetDaoAddress),
+    );
+
+    return matchingSubDao ?? dao;
+};
+
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
-    const { name, dao, exitPath } = props;
+    const { name, dao, targetDaoAddress, exitPath } = props;
 
     const { address, isConnected } = useAccount();
     const isMounted = useIsMounted();
@@ -49,7 +88,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     };
 
     const walletUser = isMounted && address != null ? { address } : undefined;
-    const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
+    const displayDao = resolveDisplayDao(dao, targetDaoAddress);
+    const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
         'items-center gap-3 rounded-full border border-neutral-100 p-4 text-neutral-300 transition-all',
@@ -68,13 +108,13 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     <p className="text-nowrap text-base text-neutral-800 leading-tight">
                         {wizardName}
                     </p>
-                    {dao != null && (
+                    {displayDao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-neutral-500 text-sm leading-tight">
-                                {dao.name}
+                                {displayDao.name}
                             </p>
                             <DaoAvatar
-                                name={dao.name}
+                                name={displayDao.name}
                                 size="sm"
                                 src={daoAvatar}
                             />
