@@ -17,6 +17,7 @@ export const ActionComposerInput = forwardRef<
         importedContractAbis,
         excludeActionTypes,
         allowedActions,
+        targetDaoAddress,
         ...otherProps
     } = props;
 
@@ -26,12 +27,18 @@ export const ActionComposerInput = forwardRef<
     const { t } = useTranslations();
 
     const groups = allowedActions
-        ? actionComposerUtils.getAllowedActionGroups({ t, dao, allowedActions })
+        ? actionComposerUtils.getAllowedActionGroups({
+              t,
+              dao,
+              allowedActions,
+              targetDaoAddress,
+          })
         : actionComposerUtils.getActionGroups({
               t,
               dao,
               abis: importedContractAbis,
               nativeGroups,
+              targetDaoAddress,
           });
 
     const items = allowedActions
@@ -40,6 +47,7 @@ export const ActionComposerInput = forwardRef<
               dao,
               nativeItems,
               allowedActions,
+              targetDaoAddress,
           })
         : actionComposerUtils.getActionItems({
               t,
@@ -47,6 +55,7 @@ export const ActionComposerInput = forwardRef<
               abis: importedContractAbis,
               nativeItems,
               excludeActionTypes,
+              targetDaoAddress,
           });
 
     const handleActionSelected = (itemId: string, inputValue: string) => {
