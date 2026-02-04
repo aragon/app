@@ -177,11 +177,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const handleImportActions = (actions: IExportedAction[]) => {
         const parsedActions = actions.map((action) => {
-            const actionId = crypto.randomUUID();
             return {
                 ...action,
                 value: BigInt(action.value),
-                id: actionId,
                 daoId,
             } as unknown as IProposalActionData;
         });
@@ -248,8 +246,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         const { id, defaultValue, meta } = action;
 
         if (defaultValue != null) {
-            const actionId = crypto.randomUUID();
-            onAddAction([{ ...defaultValue, id: actionId, daoId, meta }]);
+            // removed custom action id with crypto.randomUUID(), because it messes the internal RFH id!
+            onAddAction([{ ...defaultValue, daoId, meta }]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract(inputValue);
         }
