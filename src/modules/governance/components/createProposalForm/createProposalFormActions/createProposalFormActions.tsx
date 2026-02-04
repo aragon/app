@@ -248,27 +248,24 @@ export const CreateProposalFormActions: React.FC<
                 onExpandedActionsChange={noOpActionsChange}
             >
                 <ProposalActions.Container emptyStateDescription="">
-                    {controlledActions.map((action, index) => {
-                        console.log('action', action, action.type, action.id);
-                        return (
-                            <ProposalActions.Item<IProposalActionData>
-                                action={action as IProposalActionData}
-                                actionCount={controlledActions.length}
-                                actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
-                                    action as IProposalActionData,
-                                )}
-                                arrayControls={getArrayControls(index)}
-                                CustomComponent={
-                                    customActionComponents[action.type]
-                                }
-                                chainId={chainId}
-                                editMode={true}
-                                formPrefix={`actions.${index.toString()}`}
-                                key={action.id}
-                                value={action.id}
-                            />
-                        );
-                    })}
+                    {controlledActions.map((action, index) => (
+                        <ProposalActions.Item<IProposalActionData>
+                            action={action as IProposalActionData}
+                            actionCount={controlledActions.length}
+                            actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
+                                action as IProposalActionData,
+                            )}
+                            arrayControls={getArrayControls(index)}
+                            CustomComponent={
+                                customActionComponents[action.type]
+                            }
+                            chainId={chainId}
+                            editMode={true}
+                            formPrefix={`actions.${index.toString()}`}
+                            key={action.id}
+                            value={action.id}
+                        />
+                    ))}
                 </ProposalActions.Container>
             </ProposalActions.Root>
             {showActionComposer ? (
