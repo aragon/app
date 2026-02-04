@@ -40,8 +40,13 @@ class ActionComposerUtils {
 
     private transferSelector = '0xa9059cbb';
 
-    getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
-        const pluginActions = this.getDaoPluginActions(dao);
+    getDaoActions = ({
+        dao,
+        permissions,
+        t,
+        targetDaoAddress,
+    }: IGetDaoActionsParams) => {
+        const pluginActions = this.getDaoPluginActions(dao, targetDaoAddress);
         const permissionActions = this.getDaoPermissionActions({
             permissions,
             t,
@@ -56,9 +61,21 @@ class ActionComposerUtils {
         };
     };
 
-    getDaoPluginActions = (dao?: IDao) => {
-        const { plugins = [] } = dao ?? {};
-        const pluginActions = plugins.map((plugin) => {
+    getDaoPluginActions = (dao?: IDao, targetDaoAddress?: string) => {
+        const { plugins = [], address: mainDaoAddress } = dao ?? {};
+
+        // Filter plugins to only include those installed on the target DAO
+        const filteredPlugins = targetDaoAddress
+            ? plugins.filter((plugin) => {
+                  const pluginDaoAddress = plugin.daoAddress ?? mainDaoAddress;
+                  return (
+                      pluginDaoAddress?.toLowerCase() ===
+                      targetDaoAddress.toLowerCase()
+                  );
+              })
+            : plugins;
+
+        const pluginActions = filteredPlugins.map((plugin) => {
             const slotFunction = pluginRegistryUtils.getSlotFunction<
                 IDaoPlugin,
                 IActionComposerPluginData
@@ -133,12 +150,15 @@ class ActionComposerUtils {
         t,
         dao,
         allowedActions,
+        targetDaoAddress,
     }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {
-        const daoAddress = dao!.address;
+        // Use target DAO address (defaults to main DAO)
+        const daoAddress = targetDaoAddress ?? dao?.address;
         const [daoGroup] = this.getNativeActionGroups({
             t,
             dao,
             nativeGroups: [],
+            targetDaoAddress,
         });
 
         const actionGroups: IAutocompleteInputGroup[] = allowedActions.map(
@@ -200,19 +220,22 @@ class ActionComposerUtils {
     getActionGroups = (
         params: IGetCustomActionParams & IGetNativeActionGroupsParams,
     ): IAutocompleteInputGroup[] => {
-        const { t, dao, abis, nativeGroups } = params;
+        const { t, dao, abis, nativeGroups, targetDaoAddress } = params;
 
         const completeNativeGroups = this.getNativeActionGroups({
             dao,
             t,
             nativeGroups,
+            targetDaoAddress,
         });
         const completeCustomGroups = abis.map(this.buildCustomActionGroup);
 
+        // Use target DAO address for filtering (defaults to main DAO)
+        const daoAddress = targetDaoAddress ?? dao?.address;
         const nativeGroupIds = new Set(
             [
                 ...completeNativeGroups.map((group) => group.id),
-                dao?.address,
+                daoAddress,
             ].filter(Boolean),
         );
         const filteredCustomGroups = completeCustomGroups.filter(
@@ -226,7 +249,14 @@ class ActionComposerUtils {
     getActionItems = (
         params: IGetActionItemsParams,
     ): IActionComposerInputItem[] => {
-        const { t, dao, abis, nativeItems, excludeActionTypes } = params;
+        const {
+            t,
+            dao,
+            abis,
+            nativeItems,
+            excludeActionTypes,
+            targetDaoAddress,
+        } = params;
 
         // Show items in the following order:
         // 1. NO CONTRACT: first show actions not belonging to any group (i.e. add contract, transfer)
@@ -239,6 +269,7 @@ class ActionComposerUtils {
             t,
             dao,
             nativeItems,
+            targetDaoAddress,
         }).map(this.infoToSelectorMapper);
 
         const {
@@ -439,14 +470,17 @@ class ActionComposerUtils {
     private getNativeActionGroups = (
         params: IGetNativeActionGroupsParams,
     ): IAutocompleteInputGroup[] => {
-        const { t, dao, nativeGroups } = params;
+        const { t, dao, nativeGroups, targetDaoAddress } = params;
+
+        // Use target DAO address for grouping (defaults to main DAO)
+        const daoAddress = targetDaoAddress ?? dao!.address;
 
         return [
             {
-                id: dao!.address,
+                id: daoAddress,
                 name: t('app.governance.actionComposer.nativeGroup.DAO'),
-                info: addressUtils.truncateAddress(dao?.address),
-                indexData: [dao!.address],
+                info: addressUtils.truncateAddress(daoAddress),
+                indexData: [daoAddress],
             },
             ...nativeGroups,
         ];
@@ -455,7 +489,10 @@ class ActionComposerUtils {
     private getNativeActionItems = (
         params: IGetNativeActionItemsParams,
     ): IActionComposerInputItem[] => {
-        const { t, dao, nativeItems } = params;
+        const { t, dao, nativeItems, targetDaoAddress } = params;
+
+        // Use target DAO address for grouping (defaults to main DAO)
+        const daoAddress = targetDaoAddress ?? dao!.address;
 
         const transferAction = this.buildTransferNativeAction(t);
         const metadataUpdateAction = {
@@ -464,7 +501,7 @@ class ActionComposerUtils {
                 `app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`,
             ),
             icon: IconType.SETTINGS,
-            groupId: dao!.address,
+            groupId: daoAddress,
             defaultValue: this.buildDefaultActionMetadata(dao!),
         };
 
