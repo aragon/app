@@ -1,10 +1,7 @@
 import { DataList, type IDataListItemProps } from '@aragon/gov-ui-kit';
-import {
-    type IDao,
-    type IDaoPolicy,
-    PolicyStrategyType,
-} from '@/shared/api/daoService';
+import type { IDao, IDaoPolicy } from '@/shared/api/daoService';
 import { DaoTargetIndicator } from '@/shared/components/daoTargetIndicator';
+import { policyDisplayUtils } from '@/shared/utils/policyDisplayUtils';
 import { useTranslations } from '../translationsProvider';
 
 export type IPolicyDataListItemProps = IDataListItemProps & {
@@ -18,14 +15,6 @@ export type IPolicyDataListItemProps = IDataListItemProps & {
     dao?: IDao;
 };
 
-const strategyTypeToNameMap: Record<PolicyStrategyType, string> = {
-    [PolicyStrategyType.ROUTER]: 'router',
-    [PolicyStrategyType.CLAIMER]: 'claimer',
-    [PolicyStrategyType.BURN_ROUTER]: 'burn router',
-    [PolicyStrategyType.UNISWAP_ROUTER]: 'uniswap router',
-    [PolicyStrategyType.MULTI_DISPATCH]: 'multi dispatch',
-};
-
 export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
     props,
 ) => {
@@ -33,13 +22,14 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
 
     const { t } = useTranslations();
 
-    const { name, description, policyKey, strategy, daoAddress } = policy;
+    const { name, description, policyKey, daoAddress } = policy;
 
+    const labelKey = policyDisplayUtils.getPolicyRouterTypeLabelKey(policy);
     const processedName =
         name != null && name.length > 0
             ? name
             : t('app.shared.policyDataListItem.defaultName', {
-                  type: strategyTypeToNameMap[strategy.type],
+                  type: t(labelKey).toLowerCase(),
               });
     const processedDescription =
         description != null && description.length > 0
@@ -59,7 +49,7 @@ export const PolicyDataListItem: React.FC<IPolicyDataListItemProps> = (
                             {processedName}
                         </p>
                         {policyKey && (
-                            <p className="text-right text-neutral-500 uppercase">
+                            <p className="shrink-0 text-right text-neutral-500 uppercase">
                                 {policyKey}
                             </p>
                         )}

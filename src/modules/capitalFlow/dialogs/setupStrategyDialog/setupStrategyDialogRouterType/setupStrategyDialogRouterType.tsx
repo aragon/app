@@ -27,64 +27,64 @@ export const SetupStrategyDialogRouterType: React.FC = () => {
         >
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.FIXED}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.FIXED}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.FIXED}.label`,
                 )}
                 value={RouterType.FIXED}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.GAUGE}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.GAUGE}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.GAUGE}.label`,
                 )}
                 value={RouterType.GAUGE}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.STREAM}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.STREAM}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.STREAM}.label`,
                 )}
                 value={RouterType.STREAM}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.BURN}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.BURN}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.BURN}.label`,
                 )}
                 value={RouterType.BURN}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.DEX_SWAP}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.DEX_SWAP}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.DEX_SWAP}.label`,
                 )}
                 value={RouterType.DEX_SWAP}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.MULTI_DISPATCH}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.MULTI_DISPATCH}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.MULTI_DISPATCH}.label`,
                 )}
                 value={RouterType.MULTI_DISPATCH}
             />
             <RadioCard
                 description={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.description`,
+                    `app.capitalFlow.strategyType.${RouterType.UNISWAP}.description`,
                 )}
                 label={t(
-                    `app.capitalFlow.setupStrategyDialog.routerType.${RouterType.UNISWAP}.label`,
+                    `app.capitalFlow.strategyType.${RouterType.UNISWAP}.label`,
                 )}
                 value={RouterType.UNISWAP}
             />
