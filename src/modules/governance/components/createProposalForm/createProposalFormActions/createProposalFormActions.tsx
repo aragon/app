@@ -4,7 +4,7 @@ import {
     ProposalActions,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import {
     type IProposalAction,
@@ -77,6 +77,16 @@ export const CreateProposalFormActions: React.FC<
         control,
         name: 'actions',
     });
+
+    // We need to watch because action views can update data, and it's not reflected otherwise!
+    // We merge it with `actions` because of `id` and other internal props which are missing in watched action.
+    const watchFieldArray = useWatch<
+        Record<string, ICreateProposalFormData['actions']>
+    >({ name: 'actions' });
+    const controlledActions = actions.map((field, index) => ({
+        ...field,
+        ...watchFieldArray[index],
+    }));
 
     const { data: allowedActionsData } = useAllowedActions(
         {
@@ -238,10 +248,10 @@ export const CreateProposalFormActions: React.FC<
                 onExpandedActionsChange={noOpActionsChange}
             >
                 <ProposalActions.Container emptyStateDescription="">
-                    {actions.map((action, index) => (
+                    {controlledActions.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
                             action={action as IProposalActionData}
-                            actionCount={actions.length}
+                            actionCount={controlledActions.length}
                             actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
                                 action as IProposalActionData,
                             )}
