@@ -1,6 +1,8 @@
 'use client';
 
 import { Tabs } from '@aragon/gov-ui-kit';
+import { GaugeVoterLockForm } from '@/plugins/gaugeVoterPlugin/components/gaugeVoterLockForm';
+import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -22,13 +24,15 @@ export interface ITokenMemberPanelProps {
 enum TokenMemberPanelTab {
     DELEGATE = 'delegate',
     WRAP = 'wrap',
+    LOCK = 'lock',
 }
 
-const getTabsDefinitions = ({ token }: ITokenPluginSettings) => [
+const getTabsDefinitions = ({ votingEscrow, token }: ITokenPluginSettings) => [
     {
         value: TokenMemberPanelTab.WRAP,
-        hidden: token.underlying == null,
+        hidden: votingEscrow != null || token.underlying == null,
     },
+    { value: TokenMemberPanelTab.LOCK, hidden: votingEscrow == null },
     { value: TokenMemberPanelTab.DELEGATE, hidden: !token.hasDelegate },
 ];
 
@@ -46,8 +50,9 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         (tab) => !tab.hidden,
     );
 
-    const { WRAP, DELEGATE } = TokenMemberPanelTab;
-    const initialSelectedTab = underlying != null ? WRAP : DELEGATE;
+    const { LOCK, WRAP, DELEGATE } = TokenMemberPanelTab;
+    const initialSelectedTab =
+        votingEscrow != null ? LOCK : underlying != null ? WRAP : DELEGATE;
     const [selectedTab, setSelectedTab] = useFilterUrlParam({
         name: tokenMemberPanelFilterParam,
         fallbackValue: initialSelectedTab,
@@ -62,11 +67,11 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         name: name.substring(11),
     };
 
-    const titleToken = underlying != null ? underlyingToken : token;
+    const titleToken =
+        !votingEscrow && underlying != null ? underlyingToken : token;
     const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
 
-    // don't show a members panel if it's a voting escrow type (it's handled in gaugeVoter page)
-    if (votingEscrow || !visibleTabs.length) {
+    if (!visibleTabs.length) {
         return null;
     }
 
@@ -84,6 +89,14 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                         />
                     ))}
                 </Tabs.List>
+                {votingEscrow != null && (
+                    <Tabs.Content value={TokenMemberPanelTab.LOCK}>
+                        <GaugeVoterLockForm
+                            daoId={daoId}
+                            plugin={plugin as unknown as IGaugeVoterPlugin}
+                        />
+                    </Tabs.Content>
+                )}
                 <Tabs.Content value={TokenMemberPanelTab.WRAP}>
                     <TokenWrapForm
                         daoId={daoId}

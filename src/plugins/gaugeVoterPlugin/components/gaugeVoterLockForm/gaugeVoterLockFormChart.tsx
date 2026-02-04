@@ -57,7 +57,7 @@ export const GaugeVoterLockFormChart: React.FC<
     const oneYearInSeconds = 365 * 24 * 60 * 60;
     const chartTimeframe = Math.min(maxTime, oneYearInSeconds);
     const secondsStep = chartTimeframe / (chartPoints - 1);
-    const nowLabel = t('app.plugins.token.tokenLockForm.chart.now');
+    const nowLabel = t('app.plugins.gaugeVoter.gaugeVoterLockForm.chart.now');
 
     const points: IChartPoint[] = Array.from(
         { length: chartPoints },
@@ -171,7 +171,9 @@ export const GaugeVoterLockFormChart: React.FC<
                         format: NumberFormat.TOKEN_AMOUNT_SHORT,
                     })}{' '}
                     <span className="font-normal">
-                        {t('app.plugins.token.tokenLockForm.chart.votingPower')}
+                        {t(
+                            'app.plugins.gaugeVoter.gaugeVoterLockForm.chart.votingPower',
+                        )}
                     </span>
                 </p>
                 <span className="text-neutral-500 text-sm md:text-base">
