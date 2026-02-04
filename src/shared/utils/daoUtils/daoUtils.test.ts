@@ -5,7 +5,11 @@ import {
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generateSubDao,
+} from '@/shared/testUtils';
 import { type IPluginInfo, PluginType } from '@/shared/types';
 import { ipfsUtils } from '../ipfsUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
@@ -188,7 +192,7 @@ describe('dao utils', () => {
         });
     });
 
-    describe('getDaoPlugin', () => {
+    describe('getDaoPlugins', () => {
         it('returns all dao plugins by default', () => {
             const plugins = [generateDaoPlugin(), generateDaoPlugin()];
             const dao = generateDao({ plugins });
@@ -305,6 +309,54 @@ describe('dao utils', () => {
             expect(
                 daoUtils.getDaoPlugins(dao, { includeSubPlugins: false }),
             ).toEqual([plugins[0], plugins[1]]);
+        });
+
+        it('excludes subDAO plugins when includeSubDaos is false', () => {
+            const subDaoAddress = '0xSubDaoAddress';
+            const subDao = generateSubDao({ address: subDaoAddress });
+            const plugins = [
+                generateDaoPlugin({
+                    address: '0x1',
+                    interfaceType: PluginInterfaceType.SPP,
+                }),
+                generateDaoPlugin({
+                    address: '0x2',
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    daoAddress: subDaoAddress,
+                }),
+                generateDaoPlugin({
+                    address: '0x3',
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                }),
+            ];
+            const dao = generateDao({ plugins, subDaos: [subDao] });
+            expect(
+                daoUtils.getDaoPlugins(dao, { includeSubDaos: false }),
+            ).toEqual([plugins[0], plugins[2]]);
+        });
+
+        it('includes subDAO plugins when includeSubDaos is true', () => {
+            const subDaoAddress = '0xSubDaoAddress';
+            const subDao = generateSubDao({ address: subDaoAddress });
+            const plugins = [
+                generateDaoPlugin({
+                    address: '0x1',
+                    interfaceType: PluginInterfaceType.SPP,
+                }),
+                generateDaoPlugin({
+                    address: '0x2',
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    daoAddress: subDaoAddress,
+                }),
+                generateDaoPlugin({
+                    address: '0x3',
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                }),
+            ];
+            const dao = generateDao({ plugins, subDaos: [subDao] });
+            expect(
+                daoUtils.getDaoPlugins(dao, { includeSubDaos: true }),
+            ).toEqual(plugins);
         });
 
         it('correctly filters by type and includes sub-plugins when specified', () => {

@@ -8,10 +8,10 @@ import {
     DaoAvatar,
     DefinitionList,
     Link,
-    Tag,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
+import { DaoTypeTag } from '@/shared/components/daoTypeTag';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -32,13 +32,9 @@ interface IDaoInfoProps {
      * DAO or SubDAO object.
      */
     dao: IDao | ISubDaoSummary;
-    /**
-     * Whether the DAO is the main DAO.
-     */
-    isMainDao: boolean;
 }
 
-const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, isMainDao }) => {
+const DaoInfo: React.FC<IDaoInfoProps> = ({ dao }) => {
     const { t } = useTranslations();
     const { id: chainId } = networkDefinitions[dao.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
@@ -47,18 +43,6 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, isMainDao }) => {
 
     return (
         <DefinitionList.Container>
-            <DefinitionList.Item term={t('app.settings.daoSettingsInfo.type')}>
-                <div className="flex">
-                    <Tag
-                        label={
-                            isMainDao
-                                ? t('app.settings.daoHierarchy.mainDaoLabel')
-                                : t('app.settings.daoHierarchy.subDaoLabel')
-                        }
-                        variant={isMainDao ? 'primary' : 'neutral'}
-                    />
-                </div>
-            </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.daoSettingsInfo.blockchain')}
             >
@@ -155,7 +139,6 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, isMainDao }) => {
 
 export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const { dao, currentDaoId } = props;
-    const { t } = useTranslations();
 
     const isViewingMainDao = dao.id === currentDaoId;
     const hasSubDaos = dao.subDaos != null && dao.subDaos.length > 0;
@@ -180,13 +163,11 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                     {dao.name}
                                 </p>
                             </div>
-                            <p className="text-lg text-neutral-500 leading-tight">
-                                {t('app.settings.daoHierarchy.mainDaoLabel')}
-                            </p>
+                            <DaoTypeTag type="main" />
                         </div>
                     </Accordion.ItemHeader>
                     <Accordion.ItemContent>
-                        <DaoInfo dao={dao} isMainDao={true} />
+                        <DaoInfo dao={dao} />
                     </Accordion.ItemContent>
                 </Accordion.Item>
                 {dao.subDaos?.map((subDao) => (
@@ -203,13 +184,11 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                                         {subDao.name}
                                     </p>
                                 </div>
-                                <p className="text-lg text-neutral-500 leading-tight">
-                                    {t('app.settings.daoHierarchy.subDaoLabel')}
-                                </p>
+                                <DaoTypeTag type="sub" />
                             </div>
                         </Accordion.ItemHeader>
                         <Accordion.ItemContent>
-                            <DaoInfo dao={subDao} isMainDao={false} />
+                            <DaoInfo dao={subDao} />
                         </Accordion.ItemContent>
                     </Accordion.Item>
                 ))}
@@ -220,7 +199,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     // Default: regular view for main DAO without SubDAOs or when viewing a SubDAO
     return (
         <Card className="p-6">
-            <DaoInfo dao={dao} isMainDao={isViewingMainDao} />
+            <DaoInfo dao={dao} />
         </Card>
     );
 };
