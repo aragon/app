@@ -52,10 +52,10 @@ export const CreatePolicyStrategyDetails: React.FC<
     );
 
     const routerTypeLabel = t(
-        `app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.label`,
+        `app.capitalFlow.strategyType.${strategy.routerType}.label`,
     );
     const routerTypeDescription = t(
-        `app.capitalFlow.setupStrategyDialog.routerType.${strategy.routerType}.description`,
+        `app.capitalFlow.strategyType.${strategy.routerType}.description`,
     );
 
     const distributionField =

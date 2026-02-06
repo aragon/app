@@ -47,6 +47,10 @@ export interface IDaoPolicy {
          */
         source?: IPolicyDrainSource | IPolicyStreamBalanceSource;
         /**
+         * Swap settings (used by Uniswap/CowSwap routers).
+         */
+        swap?: IPolicySwapSettings;
+        /**
          * Sub-router addresses for multi-dispatch routers.
          */
         subRouters?: string[];
@@ -82,6 +86,7 @@ export enum PolicyStrategyType {
     ROUTER = 'router',
     BURN_ROUTER = 'burnRouter',
     UNISWAP_ROUTER = 'uniswapRouter',
+    COW_SWAP_ROUTER = 'cowSwapRouter',
     CLAIMER = 'claimer',
     MULTI_DISPATCH = 'multiDispatch',
 }
@@ -151,6 +156,36 @@ interface IPolicyModelBase {
      * Model contract address.
      */
     address: string;
+}
+
+export interface IPolicySwapSettings {
+    /**
+     * Token that will be received by the swap router.
+     */
+    targetTokenAddress?: string | null;
+    /**
+     * Target token details (when available).
+     * Note: backend may return token object under swap.targetToken.
+     */
+    targetToken?: {
+        address: string;
+        symbol?: string | null;
+        name?: string | null;
+        decimals?: number | null;
+        logo?: string | null;
+    } | null;
+    /**
+     * CowSwap settlement contract address.
+     */
+    cowSwapSettlement?: string | null;
+    /**
+     * CowSwap relayer address.
+     */
+    cowSwapRelayer?: string | null;
+    /**
+     * Uniswap router address.
+     */
+    uniswapRouter?: string | null;
 }
 
 interface IPolicyRatioModel extends IPolicyModelBase {

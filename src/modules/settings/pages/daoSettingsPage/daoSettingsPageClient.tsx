@@ -235,6 +235,10 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                         {policies.map((policy) => (
                             <PolicyDataListItem
                                 dao={dao}
+                                href={daoUtils.getDaoUrl(
+                                    dao,
+                                    `settings/automations/${policy.address}`,
+                                )}
                                 key={policy.address}
                                 policy={policy}
                             />

@@ -1,5 +1,6 @@
-import { addressUtils, DaoAvatar } from '@aragon/gov-ui-kit';
-import type { IDao, IDaoPlugin, ISubDaoSummary } from '@/shared/api/daoService';
+import { DaoAvatar } from '@aragon/gov-ui-kit';
+import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { daoTargetUtils } from '@/shared/utils/daoTargetUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoTargetIndicatorProps {
@@ -42,24 +43,6 @@ const resolveTargetAddress = (
 };
 
 /**
- * Finds the target DAO info (either parent DAO or a subDAO) based on the target address.
- */
-const findTargetDao = (
-    dao: IDao,
-    targetAddress: string,
-): Pick<IDao | ISubDaoSummary, 'name' | 'avatar'> | undefined => {
-    // Check if targeting parent DAO
-    if (addressUtils.isAddressEqual(dao.address, targetAddress)) {
-        return dao;
-    }
-
-    // Check subDAOs
-    return dao.subDaos?.find((subDao) =>
-        addressUtils.isAddressEqual(subDao.address, targetAddress),
-    );
-};
-
-/**
  * Displays a target DAO indicator (avatar + name) for a plugin or policy.
  * Only renders when there are multiple DAOs/subDAOs.
  */
@@ -90,7 +73,10 @@ export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
     }
 
     // Find target DAO info
-    const targetDao = findTargetDao(dao, resolvedAddress);
+    const targetDao = daoTargetUtils.findTargetDao({
+        dao,
+        targetAddress: resolvedAddress,
+    });
     if (targetDao == null) {
         return null;
     }
