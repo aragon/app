@@ -6,12 +6,14 @@ import {
     PolicyStrategyType,
 } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { daoTargetUtils } from '@/shared/utils/daoTargetUtils';
 import { policyDisplayUtils } from '@/shared/utils/policyDisplayUtils';
 
 export interface IPolicySettingItem {
     term: string;
     value: string;
     description?: string;
+    link?: { href: string; isExternal?: boolean };
     /**
      * Address for creating a link (will be converted to explorer link)
      */
@@ -68,24 +70,14 @@ export const getPolicySettingsForCard = (
     if (policy.strategy.source) {
         const { source } = policy.strategy;
 
-        // Check if source vault is current DAO context or a known subDAO
-        const isCurrentDao =
-            source.vaultAddress.toLowerCase() === dao.address.toLowerCase();
-        const subDao = dao.subDaos?.find(
-            (sub) =>
-                sub.address.toLowerCase() === source.vaultAddress.toLowerCase(),
-        );
+        const targetDao = daoTargetUtils.findTargetDao({
+            dao,
+            targetAddress: source.vaultAddress,
+        });
 
-        let sourceName: string;
-
-        if (isCurrentDao) {
-            sourceName = dao.name ?? addressUtils.truncateAddress(dao.address);
-        } else if (subDao) {
-            sourceName =
-                subDao.name ?? addressUtils.truncateAddress(subDao.address);
-        } else {
-            sourceName = addressUtils.truncateAddress(source.vaultAddress);
-        }
+        const sourceName =
+            targetDao?.name ??
+            addressUtils.truncateAddress(source.vaultAddress);
 
         settings.push({
             term: t('app.settings.daoPolicyDetailsInfo.source'),
@@ -109,6 +101,19 @@ export const getPolicySettingsForCard = (
                 address: token.address,
                 copyValue: token.address,
             });
+        }
+
+        // Uniswap pool link (if Uniswap router swap settings are available)
+        if (policy.strategy.type === PolicyStrategyType.UNISWAP_ROUTER) {
+            const uniswapRouterAddress = policy.strategy.swap?.uniswapRouter;
+            if (uniswapRouterAddress) {
+                settings.push({
+                    term: t('app.settings.daoPolicyDetailsInfo.uniswapRouter'),
+                    value: addressUtils.truncateAddress(uniswapRouterAddress),
+                    address: uniswapRouterAddress,
+                    copyValue: uniswapRouterAddress,
+                });
+            }
         }
 
         // Recipients (if ratio model)

@@ -126,14 +126,15 @@ export const DaoPolicyDetailsPageClient: React.FC<
                                         description={setting.description}
                                         key={setting.term}
                                         link={
-                                            setting.address
+                                            setting.link ??
+                                            (setting.address
                                                 ? {
                                                       href: getAddressLink(
                                                           setting.address,
                                                       ),
                                                       isExternal: true,
                                                   }
-                                                : undefined
+                                                : undefined)
                                         }
                                         term={setting.term}
                                     >

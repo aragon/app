@@ -37,6 +37,8 @@ export const getPolicyRouterType = (
             return RouterType.BURN;
         case PolicyStrategyType.UNISWAP_ROUTER:
             return RouterType.UNISWAP;
+        case PolicyStrategyType.COW_SWAP_ROUTER:
+            return RouterType.DEX_SWAP;
         case PolicyStrategyType.MULTI_DISPATCH:
             return RouterType.MULTI_DISPATCH;
         case PolicyStrategyType.CLAIMER:

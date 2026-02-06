@@ -2783,6 +2783,7 @@
         "target": "Target",
         "to": "To",
         "token": "Token",
+        "uniswapRouter": "Uniswap router",
         "gaugeVoter": "Gauge voter",
         "uninstall": {
           "action": "Uninstall policy",

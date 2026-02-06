@@ -8,6 +8,7 @@ import {
 import type { IDao, IDaoPolicy } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { daoTargetUtils } from '@/shared/utils/daoTargetUtils';
 import { daoPolicyDetailsClientUtils } from '../../pages/daoPolicyDetailsPage/daoPolicyDetailsClientUtils';
 
 export interface IDaoPolicyDetailsInfoProps {
@@ -33,30 +34,13 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
     const policyName = daoPolicyDetailsClientUtils.getPolicyName(policy, t);
     const policyKey = policy.policyKey?.toUpperCase();
 
-    // Determine target name based on policy.daoAddress
-    const getTargetName = (): string | undefined => {
-        if (!policy.daoAddress) {
-            return undefined;
-        }
-
-        // Check if it's the current DAO
-        if (policy.daoAddress.toLowerCase() === dao.address.toLowerCase()) {
-            return dao.name;
-        }
-
-        // Check if it's a known subDAO
-        const subDao = dao.subDaos?.find(
-            (sub) =>
-                sub.address.toLowerCase() === policy.daoAddress?.toLowerCase(),
-        );
-        if (subDao) {
-            return subDao.name;
-        }
-
-        return undefined;
-    };
-
-    const targetName = getTargetName();
+    const targetName =
+        policy.daoAddress != null
+            ? daoTargetUtils.findTargetDao({
+                  dao,
+                  targetAddress: policy.daoAddress,
+              })?.name
+            : undefined;
 
     const pluginLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
