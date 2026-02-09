@@ -172,6 +172,12 @@
           },
           "resourcesTerm": "Links"
         }
+      },
+      "capitalDistributor": {
+        "composer": {
+          "contractName": "Capital Distributor",
+          "createCampaignActionName": "Create campaign"
+        }
       }
     },
     "application": {
