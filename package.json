@@ -43,7 +43,7 @@
     "isomorphic-dompurify": "^2.35.0",
     "jsdom": "^26.1.0",
     "luxon": "^3.7.2",
-    "next": "^15.5.10",
+    "next": "^16.1.6",
     "nextjs-toploader": "^3.9.17",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
