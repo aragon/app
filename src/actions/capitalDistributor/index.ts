@@ -7,8 +7,9 @@ import { CapitalDistributorCreateCampaignActionDetails } from './components/capi
 import { createCampaignAbi } from './constants/addressCapitalDistributorAbi';
 import { CapitalDistributorActionType } from './types/enum/capitalDistributorActionType';
 
+// 0xaa7457bb67ce23e5a36a01f18dee9f03618b4d0464388dbbf37e437572d72d8d
 const campaignCreatorPermissionId = keccak256(
-    toBytes('CAMPAIGN_CREATOR_PERMISSION'),
+    toBytes('CAMPAIGN_MANAGER_PERMISSION'),
 );
 
 export const initCapitalDistributorActionViews = () => {

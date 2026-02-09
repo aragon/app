@@ -1,3 +1,4 @@
+import { initCapitalDistributorActionViews } from './capitalDistributor';
 import { initGaugeRegistrarActionViews } from './gaugeRegistrar';
 import { gaugeRegistrarDialogsDefinitions } from './gaugeRegistrar/constants/gaugeRegistrarDialogsDefinitions';
 import { initGaugeVoterActionViews } from './gaugeVoter';
@@ -6,6 +7,7 @@ import { gaugeVoterDialogsDefinitions } from './gaugeVoter/constants/gaugeVoterD
 export const initActionViewRegistry = () => {
     initGaugeRegistrarActionViews();
     initGaugeVoterActionViews();
+    initCapitalDistributorActionViews();
 };
 
 export const actionsDialogsDefinitions = {
