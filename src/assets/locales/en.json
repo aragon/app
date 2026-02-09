@@ -177,6 +177,38 @@
         "composer": {
           "contractName": "Capital Distributor",
           "createCampaignActionName": "Create campaign"
+        },
+        "capitalDistributorCreateCampaignActionCreateForm": {
+          "asset": {
+            "helpText": "Choose the token to distribute.",
+            "label": "Asset"
+          },
+          "description": {
+            "helpText": "Describe the campaign in a few sentences.",
+            "label": "Description"
+          },
+          "endTime": {
+            "helpText": "Set when the campaign ends.",
+            "label": "End time"
+          },
+          "jsonUpload": {
+            "button": "Upload JSON",
+            "helpText": "Upload a JSON file with campaign configuration.",
+            "label": "Campaign JSON",
+            "selected": "{{fileName}} selected"
+          },
+          "resources": {
+            "helpText": "Links to campaign resources, documentation, or socials.",
+            "label": "Links"
+          },
+          "startTime": {
+            "helpText": "Set when the campaign starts.",
+            "label": "Start time"
+          },
+          "title": {
+            "helpText": "Maximum of 128 characters.",
+            "label": "Title"
+          }
         }
       }
     },
