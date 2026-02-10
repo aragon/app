@@ -1,4 +1,5 @@
 import {
+    addressUtils,
     type IProposalActionsArrayControls,
     type ProposalActionComponent,
     ProposalActions,
@@ -61,6 +62,21 @@ export const CreateProposalFormActions: React.FC<
     const [processPlugin] = daoUtils.getDaoPlugins(dao, { pluginAddress })!;
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
+    // Resolve the target DAO from the plugin.
+    // If the plugin has a daoAddress (subDAO targeting), use it; otherwise target the parent DAO.
+    const targetDaoAddress = processPlugin.daoAddress ?? dao!.address;
+    const isParentTarget = addressUtils.isAddressEqual(
+        targetDaoAddress,
+        dao!.address,
+    );
+    const targetDaoId = isParentTarget
+        ? daoId
+        : `${dao!.network}-${targetDaoAddress}`;
+
+    // Fetch the target DAO so that the ActionComposer has it available.
+    // When targeting the parent DAO this resolves instantly from cache.
+    const { data: targetDao } = useDao({ urlParams: { id: targetDaoId } });
+
     const { t } = useTranslations();
     const { chainId } = useDaoChain({ daoId });
 
@@ -101,7 +117,7 @@ export const CreateProposalFormActions: React.FC<
         fetchNextPage,
         isFetchingNextPage,
     } = useDaoPermissions({
-        urlParams: { network: dao!.network, daoAddress: dao!.address },
+        urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
         queryParams: { pageSize: 50 },
     });
 
@@ -234,7 +250,8 @@ export const CreateProposalFormActions: React.FC<
     };
 
     const showActionComposer =
-        !hasConditionalPermissions || allowedActions != null;
+        (!hasConditionalPermissions || allowedActions != null) &&
+        targetDao != null;
     const hasActions = actions.length > 0;
 
     const expandedActions = actions.map((action) => action.id);
@@ -271,7 +288,7 @@ export const CreateProposalFormActions: React.FC<
             {showActionComposer ? (
                 <ActionComposer
                     allowedActions={allowedActions}
-                    daoId={daoId}
+                    daoId={targetDaoId}
                     daoPermissions={daoPermissions}
                     hasActions={hasActions}
                     hasPinErrors={hasDownloadPinErrors}

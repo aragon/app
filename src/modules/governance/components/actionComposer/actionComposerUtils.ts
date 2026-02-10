@@ -41,7 +41,11 @@ class ActionComposerUtils {
     private transferSelector = '0xa9059cbb';
 
     getDaoActions = ({ dao, permissions, t }: IGetDaoActionsParams) => {
-        const pluginActions = this.getDaoPluginActions(dao);
+        // Exclude plugins installed on child DAOs so only the target DAO's
+        // own plugin actions appear in the composer.
+        const pluginActions = this.getDaoPluginActions(dao, {
+            excludeSubDaoPlugins: true,
+        });
         const permissionActions = this.getDaoPermissionActions({
             permissions,
             t,
@@ -56,9 +60,25 @@ class ActionComposerUtils {
         };
     };
 
-    getDaoPluginActions = (dao?: IDao) => {
+    getDaoPluginActions = (
+        dao?: IDao,
+        { excludeSubDaoPlugins = false } = {},
+    ) => {
         const { plugins = [] } = dao ?? {};
-        const pluginActions = plugins.map((plugin) => {
+
+        // Plugins whose daoAddress is undefined or points to a child DAO are excluded.
+        const filteredPlugins = excludeSubDaoPlugins
+            ? plugins.filter(
+                  (plugin) =>
+                      !plugin.daoAddress ||
+                      addressUtils.isAddressEqual(
+                          plugin.daoAddress,
+                          dao?.address ?? '',
+                      ),
+              )
+            : plugins;
+
+        const pluginActions = filteredPlugins.map((plugin) => {
             const slotFunction = pluginRegistryUtils.getSlotFunction<
                 IDaoPlugin,
                 IActionComposerPluginData
