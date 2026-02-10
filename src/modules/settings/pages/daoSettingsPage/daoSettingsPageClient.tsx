@@ -6,15 +6,16 @@ import { GovernanceDialogId } from '@/modules/governance/constants/governanceDia
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
+import { AdminSettingsPanel } from '@/plugins/adminPlugin/components/adminSettingsPanel';
 import {
     type IDaoPlugin,
     type Network,
+    PluginInterfaceType,
     useDao,
     useDaoPolicies,
 } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
-import { PluginFilterComponent } from '@/shared/components/pluginFilterComponent';
 import { PolicyDataListItem } from '@/shared/components/policyDataListItem';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -29,7 +30,6 @@ import { DaoHierarchy } from '../../components/daoHierarchy';
 import { DaoSettingsInfo } from '../../components/daoSettingsInfo';
 import { DaoVersionInfo } from '../../components/daoVersionInfo';
 import { UpdateDaoContracts } from '../../components/updateDaoContracts';
-import { SettingsSlotId } from '../../constants/moduleSlots';
 
 export interface IDaoSettingsPageClientProps {
     /**
@@ -74,6 +74,14 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
         plugin: processPlugins[0]?.meta,
         daoId,
     });
+
+    const hasAdminPlugin = Boolean(
+        useDaoPlugins({
+            daoId,
+            interfaceType: PluginInterfaceType.ADMIN,
+            includeSubDaos: false,
+        })?.length,
+    );
 
     ////////////////
     // NEW PROCESS
@@ -181,12 +189,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     return (
         <>
             <Page.Main title={t('app.settings.daoSettingsPage.main.title')}>
-                <PluginFilterComponent
-                    daoId={daoId}
-                    plugins={processPlugins}
-                    searchParamName="settingsPanel"
-                    slotId={SettingsSlotId.SETTINGS_PANEL}
-                />
+                {hasAdminPlugin && <AdminSettingsPanel daoId={daoId} />}
                 <Page.MainSection
                     title={t(
                         'app.settings.daoSettingsPage.main.settingsInfoTitle',
