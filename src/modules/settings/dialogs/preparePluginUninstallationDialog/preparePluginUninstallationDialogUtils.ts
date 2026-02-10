@@ -1,5 +1,6 @@
 import type { Hex } from 'viem';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import { policyPluginRegistryUtils } from '@/modules/capitalFlow/utils/policyPluginRegistryUtils';
+import type { IDao, IDaoPlugin, IDaoPolicy } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -8,10 +9,36 @@ import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import type { IGetUninstallHelpersParams } from '../../types';
 
+type IUninstallTarget = IDaoPlugin | IDaoPolicy;
+
 class PreparePluginUninstallationDialogUtils {
+    getUninstallTargetName = (
+        target: IUninstallTarget,
+        params?: { includeSlug?: boolean },
+    ): string => {
+        const { includeSlug = false } = params ?? {};
+
+        if (policyPluginRegistryUtils.isPolicy(target)) {
+            if (target.name && target.name.length > 0) {
+                return target.name;
+            }
+
+            if (target.policyKey && target.policyKey.length > 0) {
+                return target.policyKey.toUpperCase();
+            }
+
+            return `Policy #${target.address.slice(-4)}`;
+        }
+
+        const pluginName = daoUtils.getPluginName(target);
+        return includeSlug
+            ? `${pluginName} (${target.slug.toUpperCase()})`
+            : pluginName;
+    };
+
     buildPrepareUninstallationTransaction = (
         dao: IDao,
-        plugin: IDaoPlugin,
+        plugin: IUninstallTarget,
     ): Promise<ITransactionRequest> => {
         const { pluginSetupProcessor } =
             networkDefinitions[dao.network].addresses;
@@ -27,7 +54,9 @@ class PreparePluginUninstallationDialogUtils {
             pluginId: plugin.interfaceType,
         });
 
-        const helpers = getHelpersFunction?.({ plugin }) ?? [];
+        const helpers = policyPluginRegistryUtils.isPolicy(plugin)
+            ? []
+            : (getHelpersFunction?.({ plugin }) ?? []);
         const prepareUninstallData =
             pluginTransactionUtils.buildPrepareUninstallData(
                 dao,
@@ -44,18 +73,26 @@ class PreparePluginUninstallationDialogUtils {
     };
 
     prepareApplyUninstallationProposalMetadata = (
-        uninstallPlugin: IDaoPlugin,
+        uninstallPlugin: IUninstallTarget,
         proposalPlugin: IDaoPlugin,
     ) => {
-        const uninstallPluginInfo = `${daoUtils.getPluginName(uninstallPlugin)} (${uninstallPlugin.slug.toUpperCase()})`;
+        const isPolicy = policyPluginRegistryUtils.isPolicy(uninstallPlugin);
+        const uninstallPluginInfo = this.getUninstallTargetName(
+            uninstallPlugin,
+            {
+                includeSlug: true,
+            },
+        );
         const proposalPluginInfo = `${daoUtils.getPluginName(proposalPlugin)} (${proposalPlugin.slug.toUpperCase()})`;
+        const targetTypeLabel = isPolicy ? 'policy' : 'process';
 
-        const title = `Uninstall ${uninstallPluginInfo} process`;
+        const title = `Uninstall ${uninstallPluginInfo} ${targetTypeLabel}`;
         const summary = [
-            `If approved, this proposal will uninstall the ${uninstallPluginInfo} plugin. It will revoke the`,
-            `plugin's permission to execute actions on the DAO's behalf. Vote in favor only if you're confident other`,
-            'installed governance processes are enough for the DAO to function as intended. The current',
-            `${proposalPluginInfo} process will not be affected`,
+            isPolicy
+                ? `If approved, this proposal will uninstall the ${uninstallPluginInfo} policy. It will stop this policy from executing automated capital flows on behalf of the DAO.`
+                : `If approved, this proposal will uninstall the ${uninstallPluginInfo} plugin. It will revoke the plugin's permission to execute actions on the DAO's behalf.`,
+            "Vote in favor only if you're confident this change is safe for the DAO. The current",
+            `${proposalPluginInfo} process will not be affected.`,
         ].join(' ');
 
         return { title, summary };

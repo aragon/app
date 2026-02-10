@@ -24,7 +24,10 @@ describe('pluginTransaction utils', () => {
         permissionTransactionUtils,
         'buildGrantRevokePermissionTransactions',
     );
-    const getPluginSpy = jest.spyOn(pluginRegistryUtils, 'getPlugin');
+    const getPluginRepositoryAddressSpy = jest.spyOn(
+        pluginRegistryUtils,
+        'getPluginRepositoryAddress',
+    );
 
     afterEach(() => {
         parseEventLogsSpy.mockReset();
@@ -32,7 +35,7 @@ describe('pluginTransaction utils', () => {
         encodeAbiParametersSpy.mockReset();
         encodeFunctionDataSpy.mockReset();
         grantRevokePermissionSpy.mockReset();
-        getPluginSpy.mockReset();
+        getPluginRepositoryAddressSpy.mockReset();
     });
 
     describe('getPluginInstallationSetupData', () => {
@@ -178,16 +181,13 @@ describe('pluginTransaction utils', () => {
                 build: '1',
                 release: '5',
             });
-            const pluginInfo = {
-                id: '',
-                name: '',
-                repositoryAddresses: { [dao.network]: '0x999' },
-            };
+            const pluginSetupRepo =
+                '0x0000000000000000000000000000000000000999';
             const helpers: Hex[] = ['0x123'];
             const data = '0x0';
             const transactionData = '0xencoded-data';
 
-            getPluginSpy.mockReturnValue(pluginInfo);
+            getPluginRepositoryAddressSpy.mockReturnValue(pluginSetupRepo);
             encodeFunctionDataSpy.mockReturnValue(transactionData);
             const result = pluginTransactionUtils.buildPrepareUninstallData(
                 dao,
@@ -196,8 +196,14 @@ describe('pluginTransaction utils', () => {
                 data,
             );
 
+            expect(getPluginRepositoryAddressSpy).toHaveBeenCalledWith({
+                pluginId: plugin.interfaceType,
+                network: dao.network,
+                plugin,
+            });
+
             const pluginSetupRef = {
-                pluginSetupRepo: pluginInfo.repositoryAddresses[dao.network],
+                pluginSetupRepo,
                 versionTag: {
                     build: Number(plugin.build),
                     release: Number(plugin.release),

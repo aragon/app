@@ -2,13 +2,13 @@ import {
     encodeAbiParameters,
     encodeFunctionData,
     type Hex,
+    isAddress,
     keccak256,
     parseEventLogs,
     type TransactionReceipt,
 } from 'viem';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao, IDaoPlugin, IDaoPolicy } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import type { IPluginInfo } from '@/shared/types';
 import { permissionTransactionUtils } from '../permissionTransactionUtils';
 import { pluginRegistryUtils } from '../pluginRegistryUtils';
 import type { ITransactionRequest } from '../transactionUtils';
@@ -108,18 +108,25 @@ class PluginTransactionUtils {
 
     buildPrepareUninstallData = (
         dao: IDao,
-        plugin: IDaoPlugin,
+        plugin: IDaoPlugin | IDaoPolicy,
         helpers: Hex[],
         data: Hex,
     ) => {
         const versionTag =
             versionComparatorUtils.normaliseComparatorInput(plugin)!;
-        const pluginDefinitions = pluginRegistryUtils.getPlugin(
-            plugin.interfaceType,
-        )! as IPluginInfo;
+        const pluginSetupRepo = pluginRegistryUtils.getPluginRepositoryAddress({
+            pluginId: plugin.interfaceType,
+            network: dao.network,
+            plugin,
+        });
+        if (pluginSetupRepo == null || !isAddress(pluginSetupRepo)) {
+            throw new Error(
+                `Plugin repository address not found for interface type: ${plugin.interfaceType}`,
+            );
+        }
 
         const pluginSetupRef = {
-            pluginSetupRepo: pluginDefinitions.repositoryAddresses[dao.network],
+            pluginSetupRepo,
             versionTag,
         };
         const setupPayload = {
