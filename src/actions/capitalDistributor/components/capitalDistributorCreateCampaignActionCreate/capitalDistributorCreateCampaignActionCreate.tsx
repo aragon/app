@@ -47,14 +47,8 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 'CapitalDistributorCreateCampaignAction: campaignDetails expected to be initialized by the create campaign form.',
             );
 
-            const {
-                asset,
-                title,
-                description,
-                resources,
-                startTimeFixed,
-                endTimeFixed,
-            } = action.campaignDetails;
+            const { asset, title, description, resources } =
+                action.campaignDetails;
 
             // Pin campaign metadata to IPFS
             const proposedMetadata = {
@@ -69,13 +63,6 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 metadataIpfsResult.IpfsHash,
             );
 
-            const startTimeSeconds = Math.floor(
-                new Date(startTimeFixed).getTime() / 1000,
-            );
-            const endTimeSeconds = Math.floor(
-                new Date(endTimeFixed).getTime() / 1000,
-            );
-
             const data = encodeFunctionData({
                 abi: [createCampaignAbi],
                 functionName: 'createCampaign',
@@ -88,8 +75,8 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                     'campaignConfig.actionEncoder' as Hex,
                     '0xcampaignConfig.actionEncoderInitializationAuxData',
                     false,
-                    BigInt(startTimeSeconds),
-                    BigInt(endTimeSeconds),
+                    BigInt(0),
+                    BigInt(0),
                 ],
             });
 

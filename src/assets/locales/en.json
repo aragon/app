@@ -193,8 +193,8 @@
           },
           "jsonUpload": {
             "button": "Upload JSON",
-            "helpText": "Upload a JSON file with campaign configuration.",
-            "label": "Campaign JSON",
+            "helpText": "Upload a JSON file with addresses and amounts to distribute.",
+            "label": "Distribution file",
             "selected": "{{fileName}} selected"
           },
           "resources": {

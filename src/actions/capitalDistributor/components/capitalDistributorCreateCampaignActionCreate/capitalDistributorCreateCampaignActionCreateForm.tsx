@@ -7,19 +7,15 @@ import {
     InputText,
     TextArea,
 } from '@aragon/gov-ui-kit';
-import { DateTime } from 'luxon';
 import { useRef } from 'react';
-import { useWatch } from 'react-hook-form';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
-import { AdvancedDateInput } from '@/shared/components/forms/advancedDateInput';
 import {
     type IResourcesInputResource,
     ResourcesInput,
 } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { dateUtils } from '@/shared/utils/dateUtils';
 import type { IAsset } from '../../../../modules/finance/api/financeService';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
@@ -117,14 +113,14 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         event.target.value = '';
     };
 
-    const startTimeFixed = useWatch({
-        name: `${fieldPrefix}.startTimeFixed` as 'startTimeFixed',
-    });
-
-    const minEndTime =
-        startTimeFixed != null
-            ? dateUtils.parseFixedDate(startTimeFixed)
-            : DateTime.now();
+    // const startTimeFixed = useWatch({
+    //     name: `${fieldPrefix}.startTimeFixed` as 'startTimeFixed',
+    // });
+    //
+    // const minEndTime =
+    //     startTimeFixed != null
+    //         ? dateUtils.parseFixedDate(startTimeFixed)
+    //         : DateTime.now();
 
     const selectedJsonFileName =
         jsonFileValue instanceof File ? jsonFileValue.name : undefined;
@@ -172,29 +168,27 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 name="resources"
             />
 
-            <div className="flex flex-col gap-6 md:gap-12">
-                <AdvancedDateInput
-                    field={`${fieldPrefix}.startTime`}
-                    helpText={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.helpText',
-                    )}
-                    label={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.label',
-                    )}
-                    minTime={DateTime.now()}
-                />
-                <AdvancedDateInput
-                    field={`${fieldPrefix}.endTime`}
-                    helpText={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.helpText',
-                    )}
-                    label={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.label',
-                    )}
-                    minTime={minEndTime}
-                    useDuration={true}
-                />
-            </div>
+            {/*<AdvancedDateInput*/}
+            {/*    field={`${fieldPrefix}.startTime`}*/}
+            {/*    helpText={t(*/}
+            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.helpText',*/}
+            {/*    )}*/}
+            {/*    label={t(*/}
+            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.label',*/}
+            {/*    )}*/}
+            {/*    minTime={DateTime.now()}*/}
+            {/*/>*/}
+            {/*<AdvancedDateInput*/}
+            {/*    field={`${fieldPrefix}.endTime`}*/}
+            {/*    helpText={t(*/}
+            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.helpText',*/}
+            {/*    )}*/}
+            {/*    label={t(*/}
+            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.label',*/}
+            {/*    )}*/}
+            {/*    minTime={minEndTime}*/}
+            {/*    useDuration={true}*/}
+            {/*/>*/}
 
             <InputContainer
                 alert={jsonFileAlert}
