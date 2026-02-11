@@ -11,8 +11,6 @@ import { CapitalDistributorActionType } from './types/enum/capitalDistributorAct
 const campaignCreatorPermissionId = keccak256(
     toBytes('CAMPAIGN_MANAGER_PERMISSION'),
 );
-// const campaignCreatorPermissionId =
-//     '0x4707e94b25cfce1a7c363508fbb838c35864388ad77284b248282b9746982b9b';
 
 export const initCapitalDistributorActionViews = () => {
     actionViewRegistry

@@ -130,53 +130,47 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         jsonFileValue instanceof File ? jsonFileValue.name : undefined;
 
     return (
-        <div className="flex flex-col gap-10">
-            <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-0.5 md:gap-1">
-                    <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
-                        {t(
-                            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.label',
-                        )}
-                    </p>
-                    <p className="font-normal text-neutral-500 text-sm leading-normal md:text-base">
-                        {t(
-                            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.helpText',
-                        )}
-                    </p>
-                </div>
-
+        <div className="flex w-full flex-col gap-10">
+            <InputContainer
+                helpText={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.helpText',
+                )}
+                id="campaignAsset"
+                label={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.label',
+                )}
+                useCustomWrapper={true}
+            >
                 <AssetInput
                     fetchAssetsParams={{ queryParams: { daoId } }}
                     fieldPrefix={fieldPrefix}
                     hideAmount={true}
                 />
-            </div>
+            </InputContainer>
 
-            <div className="flex flex-col gap-6">
-                <InputText
-                    helpText={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.title.helpText',
-                    )}
-                    maxLength={titleMaxLength}
-                    value={titleValue || ''}
-                    {...titleFieldRest}
-                />
-                <TextArea
-                    helpText={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.description.helpText',
-                    )}
-                    maxLength={descriptionMaxLength}
-                    value={descriptionValue || ''}
-                    {...descriptionFieldRest}
-                />
-                <ResourcesInput
-                    fieldPrefix={fieldPrefix}
-                    helpText={t(
-                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.resources.helpText',
-                    )}
-                    name="resources"
-                />
-            </div>
+            <InputText
+                helpText={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.title.helpText',
+                )}
+                maxLength={titleMaxLength}
+                value={titleValue || ''}
+                {...titleFieldRest}
+            />
+            <TextArea
+                helpText={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.description.helpText',
+                )}
+                maxLength={descriptionMaxLength}
+                value={descriptionValue || ''}
+                {...descriptionFieldRest}
+            />
+            <ResourcesInput
+                fieldPrefix={fieldPrefix}
+                helpText={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.resources.helpText',
+                )}
+                name="resources"
+            />
 
             <div className="flex flex-col gap-6 md:gap-12">
                 <AdvancedDateInput
