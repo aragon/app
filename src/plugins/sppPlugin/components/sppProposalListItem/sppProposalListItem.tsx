@@ -2,6 +2,7 @@
 
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
+import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
@@ -36,7 +37,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             ? (currentStage.name ?? defaultStageName)
             : undefined;
 
-    const proposalLink = daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`);
+    const proposalLink = proposalUtils.getProposalUrl(proposal, dao);
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
 
     return (
