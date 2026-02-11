@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AlertCard,
     Button,
     IconType,
     InputContainer,
@@ -228,6 +229,17 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     type="file"
                 />
             </InputContainer>
+
+            <AlertCard
+                message={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.alert.title',
+                )}
+                variant="info"
+            >
+                {t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.alert.message',
+                )}
+            </AlertCard>
         </div>
     );
 };

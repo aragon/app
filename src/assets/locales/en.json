@@ -179,6 +179,10 @@
           "createCampaignActionName": "Create campaign"
         },
         "capitalDistributorCreateCampaignActionCreateForm": {
+          "alert": {
+            "title": "Heads up",
+            "message": "Depending on the number of recipients, preparing this action may take a while to complete in the next step."
+          },
           "asset": {
             "helpText": "Choose the token to distribute.",
             "label": "Asset"
