@@ -206,8 +206,7 @@
             "label": "Start time"
           },
           "title": {
-            "helpText": "Maximum of 128 characters.",
-            "label": "Title"
+            "label": "Campaign title"
           }
         }
       }

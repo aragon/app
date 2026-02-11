@@ -82,7 +82,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
             'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.description.label',
         ),
         fieldPrefix,
-        rules: { required: true, maxLength: descriptionMaxLength },
+        rules: { maxLength: descriptionMaxLength },
         trimOnBlur: true,
     });
 
@@ -145,9 +145,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
             </InputContainer>
 
             <InputText
-                helpText={t(
-                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.title.helpText',
-                )}
                 maxLength={titleMaxLength}
                 value={titleValue || ''}
                 {...titleFieldRest}
@@ -156,6 +153,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 helpText={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.description.helpText',
                 )}
+                isOptional={true}
                 maxLength={descriptionMaxLength}
                 value={descriptionValue || ''}
                 {...descriptionFieldRest}
