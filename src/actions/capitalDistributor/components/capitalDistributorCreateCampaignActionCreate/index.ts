@@ -5,3 +5,11 @@ export const CapitalDistributorCreateCampaignActionCreate = dynamic(() =>
         (mod) => mod.CapitalDistributorCreateCampaignActionCreate,
     ),
 );
+
+export type { ICapitalDistributorCreateCampaignActionCreateProps } from './capitalDistributorCreateCampaignActionCreate';
+
+export {
+    CapitalDistributorCreateCampaignActionCreateForm,
+    type ICapitalDistributorCreateCampaignActionCreateFormProps,
+    type ICapitalDistributorCreateCampaignFormData,
+} from './capitalDistributorCreateCampaignActionCreateForm';

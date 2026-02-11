@@ -1,5 +1,5 @@
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { keccak256, toBytes, toFunctionSelector } from 'viem';
+import { toFunctionSelector } from 'viem';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { CapitalDistributorCreateCampaignActionCreate } from './components/capitalDistributorCreateCampaignActionCreate';
@@ -8,9 +8,11 @@ import { createCampaignAbi } from './constants/addressCapitalDistributorAbi';
 import { CapitalDistributorActionType } from './types/enum/capitalDistributorActionType';
 
 // 0xaa7457bb67ce23e5a36a01f18dee9f03618b4d0464388dbbf37e437572d72d8d
-const campaignCreatorPermissionId = keccak256(
-    toBytes('CAMPAIGN_MANAGER_PERMISSION'),
-);
+// const campaignCreatorPermissionId = keccak256(
+//     toBytes('CAMPAIGN_MANAGER_PERMISSION'),
+// );
+const campaignCreatorPermissionId =
+    '0x4707e94b25cfce1a7c363508fbb838c35864388ad77284b248282b9746982b9b';
 
 export const initCapitalDistributorActionViews = () => {
     actionViewRegistry
