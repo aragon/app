@@ -47,7 +47,7 @@ export const useCapitalDistributorCampaignUpload = (
             if (
                 dao == null ||
                 userAddress == null ||
-                multisigAddress == null ||
+                multisigAddress == null || //TODO: remove this
                 capitalDistributorAddress == null
             ) {
                 return;
@@ -70,6 +70,7 @@ export const useCapitalDistributorCampaignUpload = (
 
             open(CapitalDistributorDialogId.CAMPAIGN_UPLOAD_STATUS, {
                 params: dialogParams,
+                disableOutsideClick: true,
             });
         },
         [

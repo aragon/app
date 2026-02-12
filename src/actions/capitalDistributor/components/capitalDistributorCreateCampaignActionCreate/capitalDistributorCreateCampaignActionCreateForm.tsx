@@ -109,7 +109,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         name: `${fieldPrefix}.merkleTreeInfo` as 'merkleTreeInfo',
     });
 
-    const { upload, isReady } = useCapitalDistributorCampaignUpload({
+    const { upload } = useCapitalDistributorCampaignUpload({
         daoId,
         fieldPrefix,
     });
@@ -118,6 +118,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
 
     const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
+
         if (file) {
             upload(file);
         }
@@ -211,7 +212,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 <div className="flex flex-col gap-3">
                     <Button
                         className="w-fit"
-                        disabled={!isReady}
+                        // disabled={!isReady}
                         iconLeft={IconType.PLUS}
                         onClick={() => fileUploadInputRef.current?.click()}
                         size="md"
@@ -226,11 +227,9 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                         )}
                     </Button>
                     {merkleTreeInfo != null && (
-                        <div className="flex flex-col gap-1">
-                            <p className="font-normal text-neutral-500 text-sm leading-tight">
-                                {merkleTreeInfo.fileName}
-                            </p>
-                            <p className="font-normal text-neutral-500 text-sm leading-tight">
+                        <div className="flex flex-col gap-1 font-normal text-neutral-500 text-sm leading-tight">
+                            <p>{merkleTreeInfo.fileName}</p>
+                            <p>
                                 {t(
                                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
                                     {
@@ -239,7 +238,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                                     },
                                 )}
                             </p>
-                            <p className="break-all font-normal text-neutral-400 text-xs leading-tight">
+                            <p>
                                 {t(
                                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
                                     {
