@@ -62,13 +62,15 @@ export const GaugeVoterCreateGaugeActionDetails: React.FC<
             >
                 {name}
             </DefinitionList.Item>
-            <DefinitionList.Item
-                term={t(
-                    'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.avatarTerm',
-                )}
-            >
-                <Avatar size="md" src={avatarSrc} />
-            </DefinitionList.Item>
+            {avatarSrc && (
+                <DefinitionList.Item
+                    term={t(
+                        'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.avatarTerm',
+                    )}
+                >
+                    <Avatar size="md" src={avatarSrc} />
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item
                 term={t(
                     'app.actions.gaugeVoter.gaugeVoterCreateGaugeActionDetails.descriptionTerm',
