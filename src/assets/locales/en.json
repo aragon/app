@@ -178,6 +178,16 @@
           "contractName": "Capital Distributor",
           "createCampaignActionName": "Create campaign"
         },
+        "capitalDistributorCampaignUploadDialog": {
+          "done": "Done",
+          "step": {
+            "merkleTree": "Generating merkle tree",
+            "merkleTreeError": "Failed to generate merkle tree",
+            "upload": "Uploading members",
+            "uploadError": "Failed to upload members file"
+          },
+          "title": "Campaign Upload"
+        },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "alert": {
             "title": "Heads up",
@@ -199,7 +209,8 @@
             "button": "Upload JSON",
             "helpText": "Upload a JSON file with addresses and amounts to distribute.",
             "label": "Distribution file",
-            "selected": "{{fileName}} selected"
+            "merkleRoot": "Merkle root: {{merkleRoot}}",
+            "totalMembers": "{{totalMembers}} addresses imported"
           },
           "resources": {
             "helpText": "Links to campaign resources, documentation, or socials.",

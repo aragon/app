@@ -9,6 +9,7 @@ import {
     TextArea,
 } from '@aragon/gov-ui-kit';
 import { useRef } from 'react';
+import { useWatch } from 'react-hook-form';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import {
@@ -18,6 +19,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IAsset } from '../../../../modules/finance/api/financeService';
+import { useCapitalDistributorCampaignUpload } from '../../hooks';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
     /**
@@ -49,9 +51,9 @@ export interface ICapitalDistributorCreateCampaignFormData
      */
     resources: IResourcesInputResource[];
     /**
-     * JSON file with addresses and amounts to distribute.
+     * Merkle tree information generated from the uploaded distribution file.
      */
-    jsonFile: File;
+    merkleTreeInfo?: { merkleRoot: string; totalMembers: number };
 }
 
 const titleMaxLength = 128;
@@ -87,28 +89,33 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         trimOnBlur: true,
     });
 
-    const {
-        onChange: onJsonFileChange,
-        value: jsonFileValue,
-        alert: jsonFileAlert,
-    } = useFormField<ICapitalDistributorCreateCampaignFormData, 'jsonFile'>(
-        'jsonFile',
-        {
-            label: t(
-                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.label',
-            ),
-            fieldPrefix,
-            rules: { required: true },
-            sanitizeOnBlur: false,
-        },
-    );
+    const { alert: merkleTreeInfoAlert } = useFormField<
+        ICapitalDistributorCreateCampaignFormData,
+        'merkleTreeInfo'
+    >('merkleTreeInfo', {
+        label: t(
+            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.label',
+        ),
+        fieldPrefix,
+        rules: { required: true },
+        sanitizeOnBlur: false,
+    });
+
+    const merkleTreeInfo = useWatch({
+        name: `${fieldPrefix}.merkleTreeInfo` as 'merkleTreeInfo',
+    });
+
+    const { upload, isReady } = useCapitalDistributorCampaignUpload({
+        daoId,
+        fieldPrefix,
+    });
 
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleJsonUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            onJsonFileChange(file);
+            upload(file);
         }
 
         event.target.value = '';
@@ -122,9 +129,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
     //     startTimeFixed != null
     //         ? dateUtils.parseFixedDate(startTimeFixed)
     //         : DateTime.now();
-
-    const selectedJsonFileName =
-        jsonFileValue instanceof File ? jsonFileValue.name : undefined;
 
     return (
         <div className="flex w-full flex-col gap-10">
@@ -190,7 +194,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
             {/*/>*/}
 
             <InputContainer
-                alert={jsonFileAlert}
+                alert={merkleTreeInfo == null ? merkleTreeInfoAlert : undefined}
                 helpText={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.helpText',
                 )}
@@ -203,22 +207,40 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 <div className="flex flex-col gap-3">
                     <Button
                         className="w-fit"
+                        disabled={!isReady}
                         iconLeft={IconType.PLUS}
                         onClick={() => fileUploadInputRef.current?.click()}
                         size="md"
-                        variant={jsonFileAlert ? 'critical' : 'tertiary'}
+                        variant={
+                            merkleTreeInfo == null && merkleTreeInfoAlert
+                                ? 'critical'
+                                : 'tertiary'
+                        }
                     >
                         {t(
                             'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.button',
                         )}
                     </Button>
-                    {selectedJsonFileName && (
-                        <p className="font-normal text-neutral-500 text-sm leading-tight">
-                            {t(
-                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.selected',
-                                { fileName: selectedJsonFileName },
-                            )}
-                        </p>
+                    {merkleTreeInfo != null && (
+                        <div className="flex flex-col gap-1">
+                            <p className="font-normal text-neutral-500 text-sm leading-tight">
+                                {t(
+                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
+                                    {
+                                        totalMembers:
+                                            merkleTreeInfo.totalMembers,
+                                    },
+                                )}
+                            </p>
+                            <p className="break-all font-normal text-neutral-400 text-xs leading-tight">
+                                {t(
+                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
+                                    {
+                                        merkleRoot: merkleTreeInfo.merkleRoot,
+                                    },
+                                )}
+                            </p>
+                        </div>
                     )}
                 </div>
                 <input
