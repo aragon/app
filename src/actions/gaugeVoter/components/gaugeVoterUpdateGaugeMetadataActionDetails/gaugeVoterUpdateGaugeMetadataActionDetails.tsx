@@ -62,7 +62,7 @@ export const GaugeVoterUpdateGaugeMetadataActionDetails: React.FC<
             >
                 {name}
             </DefinitionList.Item>
-            {avatarSrc && (
+            {avatar && (
                 <DefinitionList.Item
                     term={t(
                         'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionDetails.avatarTerm',

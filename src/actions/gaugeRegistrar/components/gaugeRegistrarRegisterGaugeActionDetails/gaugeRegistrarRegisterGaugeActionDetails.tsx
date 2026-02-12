@@ -79,7 +79,7 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
             >
                 {name}
             </DefinitionList.Item>
-            {avatarSrc && (
+            {avatar && (
                 <DefinitionList.Item
                     term={t(
                         'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.avatarTerm',
