@@ -181,12 +181,13 @@
         "capitalDistributorCampaignUploadDialog": {
           "done": "Done",
           "step": {
-            "merkleTree": "Generating merkle tree",
-            "merkleTreeError": "Failed to generate merkle tree",
+            "merkleTree": "Generating Merkle tree",
+            "merkleTreeError": "Failed to generate Merkle tree",
             "upload": "Uploading members",
             "uploadError": "Failed to upload members file"
           },
-          "title": "Campaign Upload"
+          "title": "Upload members file",
+          "description": "Please wait, depending on the number of recipients, this may take a while to complete."
         },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "alert": {

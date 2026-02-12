@@ -165,12 +165,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
         },
     ];
 
-    const transactionInfo = {
-        title: t(
-            'app.actions.capitalDistributor.capitalDistributorCampaignUploadDialog.title',
-        ),
-    };
-
     const handleClose = () => {
         close(CapitalDistributorDialogId.CAMPAIGN_UPLOAD_STATUS);
     };
@@ -178,17 +172,16 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     return (
         <>
             <Dialog.Header
-                onClose={handleClose}
+                description={t(
+                    'app.actions.capitalDistributor.capitalDistributorCampaignUploadDialog.description',
+                )}
                 title={t(
                     'app.actions.capitalDistributor.capitalDistributorCampaignUploadDialog.title',
                 )}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-3 py-2">
-                    <TransactionStatus.Container
-                        steps={steps}
-                        transactionInfo={transactionInfo}
-                    >
+                    <TransactionStatus.Container steps={steps}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
                         ))}
