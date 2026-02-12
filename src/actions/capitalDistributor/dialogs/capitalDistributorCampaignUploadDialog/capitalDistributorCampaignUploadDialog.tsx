@@ -26,7 +26,11 @@ export interface ICapitalDistributorCampaignUploadDialogParams {
     userAddress: string;
     multisigAddress: string;
     capitalDistributorAddress: string;
-    onComplete: (info: { merkleRoot: string; totalMembers: number }) => void;
+    onComplete: (info: {
+        merkleRoot: string;
+        totalMembers: number;
+        fileName: string;
+    }) => void;
 }
 
 export interface ICapitalDistributorCampaignUploadDialogProps
@@ -102,9 +106,9 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     useEffect(() => {
         if (isComplete && !onCompleteCalledRef.current) {
             onCompleteCalledRef.current = true;
-            onComplete({ merkleRoot, totalMembers });
+            onComplete({ merkleRoot, totalMembers, fileName: file.name });
         }
-    }, [isComplete, merkleRoot, totalMembers, onComplete]);
+    }, [isComplete, merkleRoot, totalMembers, onComplete, file.name]);
 
     const uploadStepState = useMemo(() => {
         return match(uploadMutation)

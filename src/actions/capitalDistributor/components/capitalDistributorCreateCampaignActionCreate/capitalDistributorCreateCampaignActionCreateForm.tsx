@@ -53,7 +53,11 @@ export interface ICapitalDistributorCreateCampaignFormData
     /**
      * Merkle tree information generated from the uploaded distribution file.
      */
-    merkleTreeInfo?: { merkleRoot: string; totalMembers: number };
+    merkleTreeInfo?: {
+        merkleRoot: string;
+        totalMembers: number;
+        fileName: string;
+    };
 }
 
 const titleMaxLength = 128;
@@ -223,6 +227,9 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     </Button>
                     {merkleTreeInfo != null && (
                         <div className="flex flex-col gap-1">
+                            <p className="font-normal text-neutral-500 text-sm leading-tight">
+                                {merkleTreeInfo.fileName}
+                            </p>
                             <p className="font-normal text-neutral-500 text-sm leading-tight">
                                 {t(
                                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
