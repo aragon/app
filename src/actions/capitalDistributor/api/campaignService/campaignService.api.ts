@@ -21,10 +21,6 @@ export interface IUploadCampaignMembersBody {
      */
     userAddress: string;
     /**
-     * Address of the multisig plugin.
-     */
-    multisigAddress: string;
-    /**
      * Address of the capital distributor plugin.
      */
     capitalDistributorAddress: string;

@@ -24,7 +24,6 @@ export interface ICapitalDistributorCampaignUploadDialogParams {
     network: Network;
     daoAddress: string;
     userAddress: string;
-    multisigAddress: string;
     capitalDistributorAddress: string;
     onComplete: (info: {
         merkleRoot: string;
@@ -51,7 +50,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
         network,
         daoAddress,
         userAddress,
-        multisigAddress,
         capitalDistributorAddress,
         onComplete,
     } = location.params;
@@ -71,7 +69,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
             body: {
                 daoAddress,
                 userAddress,
-                multisigAddress,
                 capitalDistributorAddress,
                 membersFile: file,
             },

@@ -57,7 +57,6 @@ class CampaignService extends AragonBackendService {
         const {
             daoAddress,
             userAddress,
-            multisigAddress,
             capitalDistributorAddress,
             membersFile,
         } = params.body;
@@ -66,7 +65,6 @@ class CampaignService extends AragonBackendService {
         formData.append('membersFile', membersFile);
         formData.append('daoAddress', daoAddress);
         formData.append('userAddress', userAddress);
-        formData.append('multisigAddress', multisigAddress);
         formData.append('capitalDistributorAddress', capitalDistributorAddress);
 
         const result = await this.request<ICampaignUploadResult>(

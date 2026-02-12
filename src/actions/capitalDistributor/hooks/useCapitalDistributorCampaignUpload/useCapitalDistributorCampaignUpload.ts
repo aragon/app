@@ -28,17 +28,10 @@ export const useCapitalDistributorCampaignUpload = (
     const { address: userAddress } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const multisigPlugins = useDaoPlugins({
-        daoId,
-        interfaceType: PluginInterfaceType.MULTISIG,
-    });
-
     const capitalDistributorPlugins = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
     });
-
-    const multisigAddress = multisigPlugins?.[0]?.meta.address;
     const capitalDistributorAddress =
         capitalDistributorPlugins?.[0]?.meta.address;
 
@@ -47,7 +40,6 @@ export const useCapitalDistributorCampaignUpload = (
             if (
                 dao == null ||
                 userAddress == null ||
-                multisigAddress == null || //TODO: remove this
                 capitalDistributorAddress == null
             ) {
                 return;
@@ -59,7 +51,6 @@ export const useCapitalDistributorCampaignUpload = (
                     network: dao.network,
                     daoAddress: dao.address,
                     userAddress,
-                    multisigAddress,
                     capitalDistributorAddress,
                     onComplete: (info) => {
                         setValue(`${fieldPrefix}.merkleTreeInfo`, info, {
@@ -76,7 +67,6 @@ export const useCapitalDistributorCampaignUpload = (
         [
             dao,
             userAddress,
-            multisigAddress,
             capitalDistributorAddress,
             fieldPrefix,
             setValue,
@@ -85,10 +75,7 @@ export const useCapitalDistributorCampaignUpload = (
     );
 
     const isReady =
-        dao != null &&
-        userAddress != null &&
-        multisigAddress != null &&
-        capitalDistributorAddress != null;
+        dao != null && userAddress != null && capitalDistributorAddress != null;
 
     return { upload, isReady };
 };
