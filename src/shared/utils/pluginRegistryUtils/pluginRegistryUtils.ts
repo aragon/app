@@ -1,9 +1,11 @@
 import type {
     IPlugin,
     IPluginRegistry,
+    IPluginRepositoryAddressResolverParams,
     PluginComponent,
     PluginFunction,
     PluginId,
+    PluginRepositoryAddressResolver,
     SlotId,
 } from './pluginRegistryUtils.api';
 
@@ -70,12 +72,27 @@ export interface IGetSupportedSlotFunctionParams {
     pluginIds: PluginId[];
 }
 
+export interface IRegisterPluginRepositoryAddressResolverParams {
+    /**
+     * Id of the plugin.
+     */
+    pluginId: PluginId;
+    /**
+     * Resolver function that returns the repository address for a plugin instance.
+     */
+    resolve: PluginRepositoryAddressResolver;
+}
+
 export class PluginRegistryUtils {
     private pluginRegistry: IPluginRegistry = {
         plugins: [],
         slotComponents: {},
         slotFunctions: {},
     };
+    private pluginRepositoryAddressResolvers: Record<
+        PluginId,
+        PluginRepositoryAddressResolver | undefined
+    > = {};
 
     registerPlugin = (plugin: IPlugin): this => {
         const hasPlugin = this.pluginRegistry.plugins.some(
@@ -93,6 +110,34 @@ export class PluginRegistryUtils {
         this.pluginRegistry.plugins.find((plugin) => plugin.id === pluginId);
 
     getPlugins = (): IPlugin[] => this.pluginRegistry.plugins;
+
+    registerPluginRepositoryAddressResolver = (
+        params: IRegisterPluginRepositoryAddressResolverParams,
+    ): this => {
+        const { pluginId, resolve } = params;
+        this.pluginRepositoryAddressResolvers[pluginId] = resolve;
+
+        return this;
+    };
+
+    getPluginRepositoryAddress = (
+        params: IPluginRepositoryAddressResolverParams,
+    ) => {
+        const { pluginId, network } = params;
+        const resolver = this.pluginRepositoryAddressResolvers[pluginId];
+        const customRepositoryAddress = resolver?.(params);
+        if (customRepositoryAddress != null) {
+            return customRepositoryAddress;
+        }
+
+        const plugin = this.getPlugin(pluginId) as
+            | {
+                  repositoryAddresses?: Record<string, string | undefined>;
+              }
+            | undefined;
+
+        return plugin?.repositoryAddresses?.[network];
+    };
 
     registerSlotFunction = (params: IRegisterSlotFunctionParams): this => {
         const { slotId, pluginId, function: func } = params;
