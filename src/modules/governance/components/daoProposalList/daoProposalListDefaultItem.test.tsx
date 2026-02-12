@@ -38,12 +38,17 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         useDaoSpy.mockReset();
     });
 
+    const defaultDao = generateDao({
+        address: '0x123',
+        plugins: [generateDaoPlugin()],
+    });
+
     const createTestComponent = (
         props?: Partial<IDaoProposalListDefaultItemProps>,
     ) => {
         const completeProps: IDaoProposalListDefaultItemProps = {
             proposal: generateProposal(),
-            dao: generateDao(),
+            dao: defaultDao,
             proposalSlug: 'admin-1',
             ...props,
         };

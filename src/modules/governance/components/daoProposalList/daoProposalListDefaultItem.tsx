@@ -5,6 +5,7 @@ import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useUserVote } from '../../hooks/useUserVote';
+import { proposalUtils } from '../../utils/proposalUtils';
 
 export interface IDaoProposalListDefaultItemProps<
     TProposal extends IProposal = IProposal,
@@ -49,7 +50,8 @@ export const DaoProposalListDefaultItem: React.FC<
 
     const proposalDate = (executed.blockTimestamp ?? endDate) * 1000;
     const processedEndDate = proposalDate === 0 ? undefined : proposalDate;
-    const proposalHref = daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`);
+
+    const proposalHref = proposalUtils.getProposalUrl(proposal, dao);
 
     const publisherHref = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
     const publisherName = creator.ens ?? undefined;

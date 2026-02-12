@@ -1,6 +1,6 @@
 import { GukModulesProvider, ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import {
     generateSppPluginSettings,
     generateSppProposal,
@@ -22,11 +22,17 @@ describe('<SppProposalListItem /> component', () => {
         getProposalStatusSpy.mockReset();
     });
 
+    const defaultPlugin = generateDaoPlugin({ slug: 'spp' });
+    const defaultDao = generateDao({
+        address: '0x123',
+        plugins: [defaultPlugin],
+    });
+
     const createTestComponent = (
         props?: Partial<ISppProposalListItemProps>,
     ) => {
         const completeProps: ISppProposalListItemProps = {
-            dao: generateDao(),
+            dao: defaultDao,
             proposal: generateSppProposal(),
             proposalSlug: 'spp-1',
             ...props,
@@ -46,8 +52,8 @@ describe('<SppProposalListItem /> component', () => {
     });
 
     it('sets the correct link for proposal page', () => {
-        const proposalSlug = 'SPP-5';
-        render(createTestComponent({ proposalSlug }));
+        const proposal = generateSppProposal({ incrementalId: 5 });
+        render(createTestComponent({ proposal, proposalSlug: 'SPP-5' }));
         expect(screen.getAllByRole('link')[0].getAttribute('href')).toMatch(
             'proposals/SPP-5',
         );

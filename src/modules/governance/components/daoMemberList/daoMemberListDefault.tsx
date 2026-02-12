@@ -4,7 +4,7 @@ import {
     DataListRoot,
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type {
     IGetMemberListParams,
     IMember,
@@ -52,6 +52,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
 ) => {
     const {
         initialParams,
+        plugin,
         hidePagination,
         children,
         onMemberClick,
@@ -61,6 +62,28 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
 
     const { t } = useTranslations();
 
+    // Always use the parent DAO for the UI context (member URLs, etc.).
+    // The parent DAO is server-side prefetched → always a cache hit.
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    // For subDAO plugins the API call must target the subDAO's own daoId so the
+    // backend queries the correct DAO.
+    const apiParams = useMemo(() => {
+        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+
+        if (resolvedDaoId === daoId) {
+            return initialParams;
+        }
+
+        return {
+            ...initialParams,
+            queryParams: {
+                ...initialParams.queryParams,
+                daoId: resolvedDaoId,
+            },
+        };
+    }, [initialParams, plugin, dao, daoId]);
+
     const {
         onLoadMore,
         state,
@@ -69,8 +92,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         errorState,
         emptyState,
         memberList,
-    } = useMemberListData(initialParams);
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    } = useMemberListData(apiParams);
 
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
