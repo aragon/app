@@ -44,7 +44,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
         async (action: ICapitalDistributorActionCreateCampaign) => {
             invariant(
                 action.campaignDetails != null,
-                'CapitalDistributorCreateCampaignAction: campaignDetails expected to be initialized by the create campaign form.',
+                'CapitalDistributorCreateCampaignActionCreate: campaignDetails expected to be initialized by the create campaign form.',
             );
 
             const { asset, title, description, resources, merkleTreeInfo } =
@@ -55,6 +55,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 title,
                 description,
                 links: resources,
+                type: 'airdrop',
             };
             const metadataIpfsResult = await pinJsonAsync({
                 body: proposedMetadata,

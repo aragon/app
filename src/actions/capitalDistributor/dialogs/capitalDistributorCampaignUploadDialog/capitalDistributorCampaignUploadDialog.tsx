@@ -90,7 +90,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     const isComplete = merkleRoot != null;
     const hasError = uploadMutation.isError || prepareStatusQuery.isError;
 
-    // Call onComplete when merkle tree is ready
     useEffect(() => {
         if (isComplete && !onCompleteCalledRef.current) {
             onCompleteCalledRef.current = true;

@@ -9,15 +9,14 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import type { IAsset } from '@/modules/finance/api/financeService';
 import { AssetInput } from '@/modules/finance/components/assetInput';
-import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import {
     type IResourcesInputResource,
     ResourcesInput,
 } from '@/shared/components/forms/resourcesInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import type { IAsset } from '../../../../modules/finance/api/financeService';
 import { useCapitalDistributorCampaignUpload } from '../../hooks';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
@@ -31,10 +30,9 @@ export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
     daoId: string;
 }
 
-export interface ICapitalDistributorCreateCampaignFormData
-    extends ICreateProposalEndDateForm {
+export interface ICapitalDistributorCreateCampaignFormData {
     /**
-     * Asset selected for campaign.
+     * Asset selected for a campaign.
      */
     asset: IAsset;
     /**
@@ -102,11 +100,10 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         ),
         fieldPrefix,
         rules: { required: true },
-        sanitizeOnBlur: false,
     });
 
     const merkleTreeInfo = useWatch({
-        name: `${fieldPrefix}.merkleTreeInfo` as 'merkleTreeInfo',
+        name: `${fieldPrefix}.merkleTreeInfo`,
     });
 
     const handleUploadComplete = useCallback(
@@ -163,6 +160,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 value={titleValue || ''}
                 {...titleFieldRest}
             />
+
             <TextArea
                 helpText={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.description.helpText',
@@ -172,6 +170,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 value={descriptionValue || ''}
                 {...descriptionFieldRest}
             />
+
             <ResourcesInput
                 fieldPrefix={fieldPrefix}
                 helpText={t(
