@@ -61,6 +61,20 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         action.type === actionComposerUtils.transferActionLocked;
     const { id: chainId } = networkDefinitions[dao!.network];
 
+    // action.daoId is set to the target DAO's id when the action is created by the ActionComposer,
+    // so dao.address already points to the correct (target) DAO. action.from may additionally
+    // carry an explicit address for imported/uploaded actions; fall back to dao.address otherwise.
+    const sourceDaoAddress = action.from || dao!.address;
+
+    // When action.from is empty or matches the fetched DAO, the fetched DAO *is* the source.
+    // For imported actions with a different address we cannot inspect source DAO properties.
+    const isSourceMatchingDao =
+        !action.from || addressUtils.isAddressEqual(action.from, dao!.address);
+
+    // Only apply the onlyParent filter when we know the source DAO has subDAOs.
+    // When source differs from the fetched DAO we skip the filter (safe default).
+    const isParentDao = isSourceMatchingDao && (dao!.subDaos?.length ?? 0) > 0;
+
     // For imported ERC20 actions, we need to fetch token details to get correct decimals
     const isImportedErc20Action =
         action.rawAmount != null && action.to !== zeroAddress;
@@ -73,7 +87,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         abi: erc20Abi,
         address: action.to as Hex,
         functionName: 'balanceOf',
-        args: [dao!.address as Hex],
+        args: [sourceDaoAddress as Hex],
         chainId,
     });
 
@@ -102,7 +116,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const shouldFetchImportedTokenBalance =
         !disableTokenSelection && asset != null && asset.amount == null;
     const { data: nativeBalance } = useBalance({
-        address: dao!.address as Hex,
+        address: sourceDaoAddress as Hex,
         chainId,
         query: {
             enabled: shouldFetchImportedTokenBalance && isNativeToken,
@@ -112,7 +126,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         abi: erc20Abi,
         address: tokenAddress as Hex,
         functionName: 'balanceOf',
-        args: [dao!.address as Hex],
+        args: [sourceDaoAddress as Hex],
         chainId,
         query: {
             enabled: shouldFetchImportedTokenBalance && !isNativeToken,
@@ -286,13 +300,20 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         getValues,
     ]);
 
+    // Use the fetched DAO's canonical id when source matches it;
+    // otherwise construct an id from network + source address.
+    const sourceDaoId = isSourceMatchingDao
+        ? dao!.id
+        : `${dao!.network}-${sourceDaoAddress}`;
+
     return (
         <TransferAssetForm
-            daoId={dao!.id}
+            daoId={sourceDaoId}
             disableAssetField={disableTokenSelection}
             fieldPrefix={fieldName}
             network={dao!.network}
-            sender={dao!.address}
+            onlyParentAssets={isParentDao}
+            sender={sourceDaoAddress}
         />
     );
 };

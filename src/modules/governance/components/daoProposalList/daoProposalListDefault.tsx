@@ -4,7 +4,7 @@ import {
     DataListRoot,
     ProposalDataListItem,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type { IGetProposalListParams } from '@/modules/governance/api/governanceService';
 import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
 import {
@@ -14,6 +14,7 @@ import {
 } from '@/shared/api/daoService';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { DaoProposalListDefaultItem } from './daoProposalListDefaultItem';
@@ -42,11 +43,34 @@ export interface IDaoProposalListDefaultProps<
 export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, children } = props;
+    const { initialParams, plugin, hidePagination, children } = props;
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
+
+    // Always use the parent DAO for the UI context — its plugins array is a
+    // flat list that includes subDAO plugins, so getProposalSlug / getProposalUrl
+    // can resolve any plugin by address.  The parent DAO is server-side
+    // prefetched, so this is always a cache hit on initial render.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    // For subDAO plugins the API call must target the subDAO's own daoId so the
+    // backend queries the correct DAO.
+    const apiParams = useMemo(() => {
+        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+
+        if (resolvedDaoId === daoId) {
+            return initialParams;
+        }
+
+        return {
+            ...initialParams,
+            queryParams: {
+                ...initialParams.queryParams,
+                daoId: resolvedDaoId,
+            },
+        };
+    }, [initialParams, plugin, dao, daoId]);
 
     const {
         onLoadMore,
@@ -56,7 +80,7 @@ export const DaoProposalListDefault: React.FC<IDaoProposalListDefaultProps> = (
         errorState,
         emptyState,
         proposalList,
-    } = useProposalListData(initialParams);
+    } = useProposalListData(apiParams);
 
     return (
         <DataListRoot

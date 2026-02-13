@@ -1,3 +1,5 @@
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { generatePlugin } from '@/shared/testUtils';
 import { PluginRegistryUtils } from './pluginRegistryUtils';
 
@@ -310,6 +312,55 @@ describe('pluginRegistry utils', () => {
             expect(
                 pluginRegistryUtils.listContainsRegisteredPlugins(),
             ).toBeFalsy();
+        });
+    });
+
+    describe('plugin repository resolvers', () => {
+        it('returns repository from registered plugin when no custom resolver exists', () => {
+            const plugin = {
+                id: 'router',
+                name: 'Router',
+                repositoryAddresses: {
+                    [Network.ETHEREUM_SEPOLIA]:
+                        '0x0000000000000000000000000000000000000001',
+                },
+            };
+            pluginRegistryUtils.registerPlugin(plugin);
+
+            const result = pluginRegistryUtils.getPluginRepositoryAddress({
+                pluginId: plugin.id,
+                network: Network.ETHEREUM_SEPOLIA,
+                plugin: {} as IDaoPlugin,
+            });
+
+            expect(result).toBe('0x0000000000000000000000000000000000000001');
+        });
+
+        it('prioritizes custom resolver over plugin repository addresses', () => {
+            const plugin = {
+                id: 'router',
+                name: 'Router',
+                repositoryAddresses: {
+                    [Network.ETHEREUM_SEPOLIA]:
+                        '0x0000000000000000000000000000000000000001',
+                },
+            };
+            const resolvedAddress =
+                '0x0000000000000000000000000000000000000002';
+            pluginRegistryUtils
+                .registerPlugin(plugin)
+                .registerPluginRepositoryAddressResolver({
+                    pluginId: plugin.id,
+                    resolve: () => resolvedAddress,
+                });
+
+            const result = pluginRegistryUtils.getPluginRepositoryAddress({
+                pluginId: plugin.id,
+                network: Network.ETHEREUM_SEPOLIA,
+                plugin: {} as IDaoPlugin,
+            });
+
+            expect(result).toBe(resolvedAddress);
         });
     });
 });

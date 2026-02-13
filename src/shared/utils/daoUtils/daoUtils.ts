@@ -1,3 +1,4 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     daoService,
     type IDao,
@@ -199,6 +200,36 @@ class DaoUtils {
         const address = daoId.substring(lastDash + 1);
 
         return { network, address };
+    };
+
+    /**
+     * Checks whether a plugin belongs to a subDAO relative to the given DAO context.
+     */
+    isSubDaoPlugin = (
+        plugin: Pick<IDaoPlugin, 'daoAddress'>,
+        dao?: IDao,
+    ): boolean =>
+        plugin.daoAddress != null &&
+        dao != null &&
+        !addressUtils.isAddressEqual(plugin.daoAddress, dao.address);
+
+    /**
+     * Returns the `daoId` that should be used for API calls targeting this plugin.
+     * For subDAO plugins returns `{network}-{plugin.daoAddress}` so the backend
+     * queries the correct DAO context; otherwise returns the original `daoId`.
+     */
+    resolvePluginDaoId = (
+        daoId: string,
+        plugin: Pick<IDaoPlugin, 'daoAddress'>,
+        dao?: IDao,
+    ): string => {
+        if (!this.isSubDaoPlugin(plugin, dao)) {
+            return daoId;
+        }
+
+        const { network } = this.parseDaoId(daoId);
+
+        return `${network}-${plugin.daoAddress}`;
     };
 
     getDaoUrl = (dao?: IDao, path?: string): string | undefined => {

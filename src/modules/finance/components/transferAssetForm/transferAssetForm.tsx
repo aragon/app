@@ -27,10 +27,16 @@ export interface ITransferAssetFormProps
      * Network of the asset to be transferred.
      */
     network: Network;
+    /**
+     * When true, returns only the parent DAO's assets (excludes SubDAOs).
+     * Used when transferring from parent DAO to show only parent's assets.
+     */
+    onlyParentAssets?: boolean;
 }
 
 export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
-    const { daoId, network, fieldPrefix, disableAssetField } = props;
+    const { daoId, network, fieldPrefix, disableAssetField, onlyParentAssets } =
+        props;
 
     const { t } = useTranslations();
 
@@ -57,7 +63,9 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         value?.address,
     );
 
-    const fetchAssetsParams = { queryParams: { daoId } };
+    const fetchAssetsParams = {
+        queryParams: { daoId, onlyParent: onlyParentAssets },
+    };
     const { id: chainId } = networkDefinitions[network];
 
     return (

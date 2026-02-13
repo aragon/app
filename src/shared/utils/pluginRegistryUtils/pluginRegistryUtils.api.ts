@@ -1,4 +1,7 @@
 import type { ComponentType } from 'react';
+import type { Hex } from 'viem';
+import type { IDaoPolicy, Network } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService/domain/daoPlugin';
 
 // Id of the slot (e.g. GOVERNANCE_DAO_MEMBER_LIST)
 export type SlotId = string;
@@ -60,3 +63,22 @@ export interface IPluginRegistry {
      */
     slotFunctions: SlotFunctions;
 }
+
+export interface IPluginRepositoryAddressResolverParams {
+    /**
+     * Id of the plugin.
+     */
+    pluginId: PluginId;
+    /**
+     * Network of the plugin.
+     */
+    network: Network;
+    /**
+     * Plugin instance.
+     */
+    plugin: IDaoPlugin | IDaoPolicy;
+}
+
+export type PluginRepositoryAddressResolver = (
+    params: IPluginRepositoryAddressResolverParams,
+) => Hex | undefined;

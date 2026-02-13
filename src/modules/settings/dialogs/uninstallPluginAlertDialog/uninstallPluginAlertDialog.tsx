@@ -1,19 +1,20 @@
 import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
+import { policyPluginRegistryUtils } from '@/modules/capitalFlow/utils/policyPluginRegistryUtils';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { ISelectPluginDialogParams } from '@/modules/governance/dialogs/selectPluginDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, IDaoPolicy } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IPluginEventLog } from '../../api/settingsService';
 import { SettingsDialogId } from '../../constants/settingsDialogId';
 import type { IPreparePluginUninstallationDialogParams } from '../preparePluginUninstallationDialog';
+import { preparePluginUninstallationDialogUtils } from '../preparePluginUninstallationDialog/preparePluginUninstallationDialogUtils';
 
 export interface IUninstallPluginAlertDialogParams {
     /**
@@ -23,7 +24,7 @@ export interface IUninstallPluginAlertDialogParams {
     /**
      * Plugin to be uninstalled.
      */
-    uninstallPlugin: IDaoPlugin;
+    uninstallPlugin: IDaoPlugin | IDaoPolicy;
     /**
      *  Tx log for UninstallationPrepared event, if available. This means that
      *  the plugin uninstallation was already prepared but not applied yet.
@@ -48,6 +49,14 @@ export const UninstallPluginAlertDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
+    const isPolicy = policyPluginRegistryUtils.isPolicy(uninstallPlugin);
+    const translationNamespace = isPolicy
+        ? 'app.settings.uninstallPolicyAlertDialog'
+        : 'app.settings.uninstallPluginAlertDialog';
+    const uninstallTargetName =
+        preparePluginUninstallationDialogUtils.getUninstallTargetName(
+            uninstallPlugin,
+        );
 
     const [selectedPlugin, setSelectedPlugin] = useState<IDaoPlugin>();
 
@@ -70,9 +79,13 @@ export const UninstallPluginAlertDialog: React.FC<
     };
 
     const handleSelectPluginClick = () => {
+        const excludePluginIds =
+            !isPolicy && uninstallPlugin.slug != null
+                ? [uninstallPlugin.slug]
+                : [];
         const params: ISelectPluginDialogParams = {
             daoId,
-            excludePluginIds: [uninstallPlugin.slug],
+            excludePluginIds,
             onPluginSelected: handlePluginSelected,
             fullExecuteOnly: true,
         };
@@ -89,36 +102,26 @@ export const UninstallPluginAlertDialog: React.FC<
     return (
         <>
             <DialogAlert.Header
-                title={t('app.settings.uninstallPluginAlertDialog.title', {
-                    name: daoUtils.getPluginName(uninstallPlugin),
-                    slug: uninstallPlugin.slug.toUpperCase(),
+                title={t(`${translationNamespace}.title`, {
+                    name: uninstallTargetName,
+                    slug: isPolicy
+                        ? undefined
+                        : uninstallPlugin.slug.toUpperCase(),
                 })}
             />
             <DialogAlert.Content>
                 <div className="flex flex-col gap-y-4 pb-4 font-normal text-base text-neutral-500 leading-normal">
-                    <p>
-                        {t(
-                            'app.settings.uninstallPluginAlertDialog.description.1',
-                        )}
-                    </p>
-                    <p>
-                        {t(
-                            'app.settings.uninstallPluginAlertDialog.description.2',
-                        )}
-                    </p>
+                    <p>{t(`${translationNamespace}.description.1`)}</p>
+                    <p>{t(`${translationNamespace}.description.2`)}</p>
                 </div>
             </DialogAlert.Content>
             <DialogAlertFooter
                 actionButton={{
-                    label: t(
-                        'app.settings.uninstallPluginAlertDialog.action.select',
-                    ),
+                    label: t(`${translationNamespace}.action.select`),
                     onClick: handleSelectPluginClick,
                 }}
                 cancelButton={{
-                    label: t(
-                        'app.settings.uninstallPluginAlertDialog.action.cancel',
-                    ),
+                    label: t(`${translationNamespace}.action.cancel`),
                     onClick: () => close(),
                 }}
             />
