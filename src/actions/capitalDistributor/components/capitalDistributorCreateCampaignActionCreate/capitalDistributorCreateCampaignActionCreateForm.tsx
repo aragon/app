@@ -1,7 +1,9 @@
 'use client';
 
 import {
+    AlertCard,
     Button,
+    Clipboard,
     IconType,
     InputContainer,
     InputText,
@@ -207,26 +209,38 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                         )}
                     </Button>
                     {merkleTreeInfo != null && (
-                        <div className="flex flex-col gap-1 font-normal text-neutral-500 text-sm leading-tight">
-                            <p>{merkleTreeInfo.fileName}</p>
-                            <p>
-                                {t(
-                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
-                                    {
-                                        totalMembers:
-                                            merkleTreeInfo.totalMembers,
-                                    },
-                                )}
-                            </p>
-                            <p>
-                                {t(
-                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
-                                    {
-                                        merkleRoot: merkleTreeInfo.merkleRoot,
-                                    },
-                                )}
-                            </p>
-                        </div>
+                        <AlertCard
+                            message={t(
+                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.successAlertTitle',
+                            )}
+                            variant="success"
+                        >
+                            <div className="flex flex-col gap-1 font-normal text-neutral-500 text-sm leading-tight">
+                                <p>{merkleTreeInfo.fileName}</p>
+                                <p>
+                                    {t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
+                                        {
+                                            totalMembers:
+                                                merkleTreeInfo.totalMembers,
+                                        },
+                                    )}
+                                </p>
+                                <Clipboard
+                                    copyValue={merkleTreeInfo.merkleRoot}
+                                >
+                                    <p>
+                                        {t(
+                                            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
+                                            {
+                                                merkleRoot:
+                                                    merkleTreeInfo.merkleRoot,
+                                            },
+                                        )}
+                                    </p>
+                                </Clipboard>
+                            </div>
+                        </AlertCard>
                     )}
                 </div>
                 <input

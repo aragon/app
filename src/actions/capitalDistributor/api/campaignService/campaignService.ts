@@ -38,7 +38,7 @@ class CampaignService extends AragonBackendService {
     ): Promise<ICampaignUploadResult> => {
         // ========== MOCK START ==========
         // Remove this block when API is ready
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 second delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
 
         // Toggle error scenario by uncommenting:
         // throw new Error('Upload failed: Invalid file format');
@@ -76,7 +76,7 @@ class CampaignService extends AragonBackendService {
         // ========== MOCK START ==========
         // Remove this block when API is ready
         prepareStatusCallCount++;
-        await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 second delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
 
         // Toggle error scenario by uncommenting:
         // throw new Error('Failed to generate merkle tree');

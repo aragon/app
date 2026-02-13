@@ -55,7 +55,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 title,
                 description,
                 links: resources,
-                type: 'airdrop',
+                type: 'Distribution',
             };
             const metadataIpfsResult = await pinJsonAsync({
                 body: proposedMetadata,
