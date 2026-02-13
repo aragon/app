@@ -9,12 +9,15 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { AssetInput } from '@/modules/finance/components/assetInput';
+import { useDao } from '@/shared/api/daoService';
 import {
     type IResourcesInputResource,
     ResourcesInput,
 } from '@/shared/components/forms/resourcesInput';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useCapitalDistributorCampaignUpload } from '../../hooks';
@@ -66,6 +69,8 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
     const { fieldPrefix, daoId } = props;
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { value: titleValue, ...titleFieldRest } = useFormField<
         ICapitalDistributorCreateCampaignFormData,
@@ -178,6 +183,16 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 )}
                 name="resources"
             />
+
+            {dao && (
+                <PluginSingleComponent
+                    dao={dao}
+                    pluginId={dao.id}
+                    slotId={
+                        CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD
+                    }
+                />
+            )}
 
             <InputContainer
                 alert={merkleTreeInfo == null ? merkleTreeInfoAlert : undefined}
