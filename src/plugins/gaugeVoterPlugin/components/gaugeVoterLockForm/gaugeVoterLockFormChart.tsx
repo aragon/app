@@ -1,14 +1,7 @@
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import {
-    Area,
-    AreaChart,
-    ReferenceDot,
-    ResponsiveContainer,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { Area, AreaChart, ReferenceDot, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import type { MouseHandlerDataParam } from 'recharts/types/synchronisation/types';
 import { parseUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -40,18 +33,19 @@ export interface IGaugeVoterLockFormChartProps {
 const chartPoints = 6;
 const maxAmount = 1_000_000_000_000;
 
-export const GaugeVoterLockFormChart: React.FC<
-    IGaugeVoterLockFormChartProps
-> = (props) => {
+export const GaugeVoterLockFormChart: React.FC<IGaugeVoterLockFormChartProps> = (props) => {
     const { amount = '0', settings } = props;
-    const { maxTime } = settings.votingEscrow!;
+    const { maxTime, slope } = settings.votingEscrow!;
+
+    if (slope === 0) {
+        return null;
+    }
 
     const { t } = useTranslations();
 
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    const processedAmount =
-        Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
+    const processedAmount = Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
@@ -59,22 +53,14 @@ export const GaugeVoterLockFormChart: React.FC<
     const secondsStep = chartTimeframe / (chartPoints - 1);
     const nowLabel = t('app.plugins.gaugeVoter.gaugeVoterLockForm.chart.now');
 
-    const points: IChartPoint[] = Array.from(
-        { length: chartPoints },
-        (_, index) => {
-            const lockDuration = index * secondsStep;
-            const futureDate = DateTime.now().plus({ seconds: lockDuration });
-            const dateLabel =
-                index === 0 ? nowLabel : futureDate.toFormat('LLL d');
-            const votingPower = gaugeVoterLockUtils.calculateVotingPower(
-                processedAmountWei,
-                lockDuration,
-                settings,
-            );
+    const points: IChartPoint[] = Array.from({ length: chartPoints }, (_, index) => {
+        const lockDuration = index * secondsStep;
+        const futureDate = DateTime.now().plus({ seconds: lockDuration });
+        const dateLabel = index === 0 ? nowLabel : futureDate.toFormat('LLL d');
+        const votingPower = gaugeVoterLockUtils.calculateVotingPower(processedAmountWei, lockDuration, settings);
 
-            return { x: dateLabel, y: Number.parseFloat(votingPower) };
-        },
-    );
+        return { x: dateLabel, y: Number.parseFloat(votingPower) };
+    });
 
     const formatVotingPower = (value: number) =>
         formatterUtils.formatNumber(value, {
@@ -148,20 +134,10 @@ export const GaugeVoterLockFormChart: React.FC<
     const trillion = 1_000_000_000_000;
     const billion = 1_000_000_000;
     const million = 1_000_000;
-    const tickCount =
-        domainRange >= trillion
-            ? 6
-            : domainRange >= billion
-              ? 5
-              : domainRange >= million
-                ? 5
-                : 4;
+    const tickCount = domainRange >= trillion ? 6 : domainRange >= billion ? 5 : domainRange >= million ? 5 : 4;
 
     // Generate evenly-spaced ticks for visual consistency
-    const yAxisTicks = Array.from(
-        { length: tickCount },
-        (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i,
-    );
+    const yAxisTicks = Array.from({ length: tickCount }, (_, i) => yDomainMin + (domainRange / (tickCount - 1)) * i);
 
     return (
         <div className="w-full py-2">
@@ -171,14 +147,10 @@ export const GaugeVoterLockFormChart: React.FC<
                         format: NumberFormat.TOKEN_AMOUNT_SHORT,
                     })}{' '}
                     <span className="font-normal">
-                        {t(
-                            'app.plugins.gaugeVoter.gaugeVoterLockForm.chart.votingPower',
-                        )}
+                        {t('app.plugins.gaugeVoter.gaugeVoterLockForm.chart.votingPower')}
                     </span>
                 </p>
-                <span className="text-neutral-500 text-sm md:text-base">
-                    {activePoint.x}
-                </span>
+                <span className="text-neutral-500 text-sm md:text-base">{activePoint.x}</span>
             </div>
             <ResponsiveContainer height={200} width="100%">
                 <AreaChart
@@ -189,16 +161,8 @@ export const GaugeVoterLockFormChart: React.FC<
                 >
                     <defs>
                         <linearGradient id="colorY" x1="0" x2="0" y1="0" y2="1">
-                            <stop
-                                offset="5%"
-                                stopColor="var(--color-primary-400)"
-                                stopOpacity={0.4}
-                            />
-                            <stop
-                                offset="95%"
-                                stopColor="var(--color-primary-400)"
-                                stopOpacity={0}
-                            />
+                            <stop offset="5%" stopColor="var(--color-primary-400)" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="var(--color-primary-400)" stopOpacity={0} />
                         </linearGradient>
                     </defs>
                     <XAxis
