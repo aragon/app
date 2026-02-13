@@ -21,6 +21,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useCapitalDistributorCampaignUpload } from '../../hooks';
+import { CapitalDistributorCampaignScheduleField } from './capitalDistributorCampaignScheduleField';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
     /**
@@ -31,6 +32,11 @@ export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
      * DAO ID for asset selection.
      */
     daoId: string;
+}
+
+export enum CampaignScheduleType {
+    OPEN_ENDED = 'open-ended',
+    SCHEDULED = 'scheduled',
 }
 
 export interface ICapitalDistributorCreateCampaignFormData {
@@ -58,6 +64,30 @@ export interface ICapitalDistributorCreateCampaignFormData {
         totalMembers: number;
         fileName: string;
     };
+    /**
+     * Schedule type of the campaign.
+     */
+    scheduleType?: CampaignScheduleType;
+    /**
+     * Start time mode for scheduled campaigns.
+     */
+    startTimeMode?: 'now' | 'fixed';
+    /**
+     * Start time fixed date for scheduled campaigns.
+     */
+    startTimeFixed?: { date: string; time: string };
+    /**
+     * End time mode for scheduled campaigns.
+     */
+    endTimeMode?: 'duration' | 'fixed';
+    /**
+     * End time duration for scheduled campaigns.
+     */
+    endTimeDuration?: { days: number; hours: number; minutes: number };
+    /**
+     * End time fixed date for scheduled campaigns.
+     */
+    endTimeFixed?: { date: string; time: string };
 }
 
 const titleMaxLength = 128;
@@ -260,6 +290,10 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     type="file"
                 />
             </InputContainer>
+
+            <CapitalDistributorCampaignScheduleField
+                fieldPrefix={fieldPrefix}
+            />
         </div>
     );
 };

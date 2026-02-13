@@ -217,6 +217,26 @@
           },
           "title": {
             "label": "Campaign title"
+          },
+          "schedule": {
+            "label": "Campaign schedule",
+            "helpText": "Choose whether the campaign runs indefinitely or within a scheduled window.",
+            "openEnded": {
+              "label": "Open-ended",
+              "description": "Starts immediately with no end date"
+            },
+            "scheduled": {
+              "label": "Scheduled",
+              "description": "Define start and end times"
+            },
+            "startTime": {
+              "label": "Start time",
+              "helpText": "When the campaign becomes active."
+            },
+            "endTime": {
+              "label": "End time",
+              "helpText": "When the campaign expires."
+            }
           }
         }
       }
