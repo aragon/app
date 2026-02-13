@@ -6,7 +6,7 @@ import {
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
@@ -67,16 +67,25 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 abi: [createCampaignAbi],
                 functionName: 'createCampaign',
                 args: [
-                    metadataHexResult,
-                    'campaignConfig.strategyId' as Hex,
-                    { factory: '0x12344', params: '0x12344' },
-                    '0x',
-                    asset?.token.address as Hex,
-                    'campaignConfig.actionEncoder' as Hex,
-                    '0xcampaignConfig.actionEncoderInitializationAuxData',
-                    false,
-                    BigInt(0),
-                    BigInt(0),
+                    metadataHexResult, // _metadataURI
+                    {
+                        // _strategy
+                        strategyId:
+                            '0x6d65726b6c652d6469737472696275746f722d73747261746567790000000000', // toBytes32("merkle-distributor-strategy")
+                        strategyParams: '0x',
+                        initData: '0x', // merkle root
+                    },
+                    {
+                        // _payout
+                        token: asset.token.address as Hex,
+                        actionEncoderId: zeroAddress,
+                        actionEncoderInitData: '0x',
+                    },
+                    {
+                        // _settings
+                        startTime: BigInt(0),
+                        endTime: BigInt(0),
+                    },
                 ],
             });
 
