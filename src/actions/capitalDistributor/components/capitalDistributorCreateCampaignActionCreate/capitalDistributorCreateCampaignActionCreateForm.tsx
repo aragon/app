@@ -4,6 +4,7 @@ import {
     AlertCard,
     Button,
     Clipboard,
+    DefinitionList,
     IconType,
     InputContainer,
     InputText,
@@ -211,13 +212,23 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     {merkleTreeInfo != null && (
                         <AlertCard
                             message={t(
-                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.successAlertTitle',
+                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.successAlertTitle',
                             )}
                             variant="success"
                         >
-                            <div className="flex flex-col gap-1 font-normal text-neutral-500 text-sm leading-tight">
-                                <p>{merkleTreeInfo.fileName}</p>
-                                <p>
+                            <DefinitionList.Container>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.fileNameTerm',
+                                    )}
+                                >
+                                    {merkleTreeInfo.fileName}
+                                </DefinitionList.Item>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.totalMembersTerm',
+                                    )}
+                                >
                                     {t(
                                         'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
                                         {
@@ -225,21 +236,19 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                                                 merkleTreeInfo.totalMembers,
                                         },
                                     )}
-                                </p>
-                                <Clipboard
-                                    copyValue={merkleTreeInfo.merkleRoot}
+                                </DefinitionList.Item>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.merkleRootTerm',
+                                    )}
                                 >
-                                    <p>
-                                        {t(
-                                            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
-                                            {
-                                                merkleRoot:
-                                                    merkleTreeInfo.merkleRoot,
-                                            },
-                                        )}
-                                    </p>
-                                </Clipboard>
-                            </div>
+                                    <Clipboard
+                                        copyValue={merkleTreeInfo.merkleRoot}
+                                    >
+                                        {`${merkleTreeInfo.merkleRoot.slice(0, 10)}...${merkleTreeInfo.merkleRoot.slice(-8)}`}
+                                    </Clipboard>
+                                </DefinitionList.Item>
+                            </DefinitionList.Container>
                         </AlertCard>
                     )}
                 </div>
