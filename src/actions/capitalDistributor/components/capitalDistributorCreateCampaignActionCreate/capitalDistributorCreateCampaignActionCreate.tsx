@@ -47,7 +47,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 'CapitalDistributorCreateCampaignAction: campaignDetails expected to be initialized by the create campaign form.',
             );
 
-            const { asset, title, description, resources } =
+            const { asset, title, description, resources, merkleTreeInfo } =
                 action.campaignDetails;
 
             // Pin campaign metadata to IPFS
@@ -73,7 +73,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                         strategyId:
                             '0x6d65726b6c652d6469737472696275746f722d73747261746567790000000000', // toBytes32("merkle-distributor-strategy")
                         strategyParams: '0x',
-                        initData: '0x', // merkle root
+                        initData: merkleTreeInfo.merkleRoot as Hex,
                     },
                     {
                         // _payout

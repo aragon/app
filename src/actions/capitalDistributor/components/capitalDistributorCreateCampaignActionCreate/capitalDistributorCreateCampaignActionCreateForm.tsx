@@ -8,8 +8,8 @@ import {
     InputText,
     TextArea,
 } from '@aragon/gov-ui-kit';
-import { useRef } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useCallback, useRef } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import type { ICreateProposalEndDateForm } from '@/modules/governance/utils/createProposalUtils';
 import {
@@ -53,7 +53,7 @@ export interface ICapitalDistributorCreateCampaignFormData
     /**
      * Merkle tree information generated from the uploaded distribution file.
      */
-    merkleTreeInfo?: {
+    merkleTreeInfo: {
         merkleRoot: string;
         totalMembers: number;
         fileName: string;
@@ -68,6 +68,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
 > = (props) => {
     const { fieldPrefix, daoId } = props;
     const { t } = useTranslations();
+    const { setValue } = useFormContext();
 
     const { value: titleValue, ...titleFieldRest } = useFormField<
         ICapitalDistributorCreateCampaignFormData,
@@ -109,9 +110,22 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         name: `${fieldPrefix}.merkleTreeInfo` as 'merkleTreeInfo',
     });
 
+    const handleUploadComplete = useCallback(
+        (info: {
+            merkleRoot: string;
+            totalMembers: number;
+            fileName: string;
+        }) => {
+            setValue(`${fieldPrefix}.merkleTreeInfo`, info, {
+                shouldValidate: true,
+            });
+        },
+        [fieldPrefix, setValue],
+    );
+
     const { upload } = useCapitalDistributorCampaignUpload({
         daoId,
-        fieldPrefix,
+        onComplete: handleUploadComplete,
     });
 
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);

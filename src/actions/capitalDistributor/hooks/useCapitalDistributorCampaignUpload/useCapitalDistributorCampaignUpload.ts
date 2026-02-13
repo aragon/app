@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { useAccount } from 'wagmi';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -13,17 +12,20 @@ export interface IUseCapitalDistributorCampaignUploadParams {
      */
     daoId: string;
     /**
-     * Form field prefix for setting merkleTreeInfo.
+     * Callback to be called when the upload is complete.
      */
-    fieldPrefix: string;
+    onComplete: (info: {
+        merkleRoot: string;
+        totalMembers: number;
+        fileName: string;
+    }) => void;
 }
 
 export const useCapitalDistributorCampaignUpload = (
     params: IUseCapitalDistributorCampaignUploadParams,
 ) => {
-    const { daoId, fieldPrefix } = params;
+    const { daoId, onComplete } = params;
 
-    const { setValue } = useFormContext();
     const { open } = useDialogContext();
     const { address: userAddress } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -52,11 +54,7 @@ export const useCapitalDistributorCampaignUpload = (
                     daoAddress: dao.address,
                     userAddress,
                     capitalDistributorAddress,
-                    onComplete: (info) => {
-                        setValue(`${fieldPrefix}.merkleTreeInfo`, info, {
-                            shouldValidate: true,
-                        });
-                    },
+                    onComplete,
                 };
 
             open(CapitalDistributorDialogId.CAMPAIGN_UPLOAD_STATUS, {
@@ -64,14 +62,7 @@ export const useCapitalDistributorCampaignUpload = (
                 disableOutsideClick: true,
             });
         },
-        [
-            dao,
-            userAddress,
-            capitalDistributorAddress,
-            fieldPrefix,
-            setValue,
-            open,
-        ],
+        [dao, userAddress, capitalDistributorAddress, onComplete, open],
     );
 
     const isReady =
