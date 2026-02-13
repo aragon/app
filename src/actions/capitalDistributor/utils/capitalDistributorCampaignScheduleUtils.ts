@@ -31,13 +31,13 @@ class CapitalDistributorCampaignScheduleUtils {
             return { startTime: BigInt(0), endTime: BigInt(0) };
         }
 
-        let startTime = BigInt(0);
-        let endTime = BigInt(0);
+        let startTimeSeconds = 0;
+        let endTimeSeconds = 0;
 
         // Parse start time: 0 means "now" (no start restriction)
         if (startTimeMode === 'fixed' && startTimeFixed != null) {
             const parsedStart = dateUtils.parseFixedDate(startTimeFixed);
-            startTime = BigInt(Math.round(parsedStart.toMillis() / 1000));
+            startTimeSeconds = parsedStart.toSeconds();
         }
 
         // Parse end time from duration or fixed date
@@ -51,13 +51,16 @@ class CapitalDistributorCampaignScheduleUtils {
                 hours: endTimeDuration.hours,
                 minutes: endTimeDuration.minutes,
             });
-            endTime = BigInt(Math.round(endDate.toMillis() / 1000));
+            endTimeSeconds = endDate.toSeconds();
         } else if (endTimeMode === 'fixed' && endTimeFixed != null) {
             const parsedEnd = dateUtils.parseFixedDate(endTimeFixed);
-            endTime = BigInt(Math.round(parsedEnd.toMillis() / 1000));
+            endTimeSeconds = parsedEnd.toSeconds();
         }
 
-        return { startTime, endTime };
+        return {
+            startTime: BigInt(Math.round(startTimeSeconds)),
+            endTime: BigInt(Math.round(endTimeSeconds)),
+        };
     };
 }
 
