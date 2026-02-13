@@ -11,6 +11,7 @@ export type FeatureFlagEnvironment = (typeof FEATURE_FLAG_ENVIRONMENTS)[number];
 export type FeatureFlagKey =
     | 'debugPanel'
     | 'subDao'
+    | 'capitalFlowAutomation'
     | 'governanceDesigner'
     | 'osxUpdates'
     | 'useMocks'
