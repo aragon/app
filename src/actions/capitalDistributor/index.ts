@@ -3,7 +3,6 @@ import { keccak256, toBytes, toFunctionSelector } from 'viem';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { CapitalDistributorCreateCampaignActionCreate } from './components/capitalDistributorCreateCampaignActionCreate';
-import { CapitalDistributorCreateCampaignActionDetails } from './components/capitalDistributorCreateCampaignActionDetails';
 import { createCampaignAbi } from './constants/addressCapitalDistributorAbi';
 import { CapitalDistributorActionType } from './types/enum/capitalDistributorActionType';
 
@@ -28,7 +27,6 @@ export const initCapitalDistributorActionViews = () => {
             permissionId: campaignCreatorPermissionId,
             functionSelector: toFunctionSelector(createCampaignAbi),
             componentCreate: CapitalDistributorCreateCampaignActionCreate,
-            componentDetails: CapitalDistributorCreateCampaignActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${CapitalDistributorActionType.CREATE_CAMPAIGN}`,
                 name: t(

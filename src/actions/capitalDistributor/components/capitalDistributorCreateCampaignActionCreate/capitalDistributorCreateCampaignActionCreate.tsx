@@ -6,7 +6,7 @@ import {
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-import { encodeFunctionData, type Hex, zeroAddress } from 'viem';
+import { encodeFunctionData, type Hex, zeroHash } from 'viem';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
@@ -78,7 +78,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                     {
                         // _payout
                         token: asset.token.address as Hex,
-                        actionEncoderId: zeroAddress,
+                        actionEncoderId: zeroHash,
                         actionEncoderInitData: '0x',
                     },
                     {
