@@ -55,7 +55,7 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
 
     const uploadMutation = useUploadCampaignMembers();
 
-    // Trigger upload on mount
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Trigger upload on mount
     useEffect(() => {
         const uploadParams: IUploadCampaignMembersParams = {
             urlParams: { network },
@@ -69,7 +69,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
         uploadMutation.mutate(uploadParams, {
             onSuccess: (result) => setCampaignId(result.campaignId),
         });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const prepareStatusParams: IGetCampaignPrepareStatusParams = {

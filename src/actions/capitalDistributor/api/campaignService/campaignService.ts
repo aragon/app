@@ -85,8 +85,6 @@ class CampaignService extends AragonBackendService {
         if (prepareStatusCallCount < 3) {
             return {
                 campaignId: params.queryParams.campaignId,
-                pluginAddress: params.queryParams.capitalDistributorAddress,
-                network: params.urlParams.network,
                 merkleRoot: null,
                 totalMembers: 150,
             };
@@ -98,8 +96,6 @@ class CampaignService extends AragonBackendService {
         // Return final result on 3rd call
         return {
             campaignId: params.queryParams.campaignId,
-            pluginAddress: params.queryParams.capitalDistributorAddress,
-            network: params.urlParams.network,
             merkleRoot:
                 '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
             totalMembers: 150,
