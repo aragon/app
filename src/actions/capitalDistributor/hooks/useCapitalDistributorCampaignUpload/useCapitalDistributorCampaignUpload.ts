@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useAccount } from 'wagmi';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -27,7 +26,6 @@ export const useCapitalDistributorCampaignUpload = (
     const { daoId, onComplete } = params;
 
     const { open } = useDialogContext();
-    const { address: userAddress } = useAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const capitalDistributorPlugins = useDaoPlugins({
@@ -39,11 +37,7 @@ export const useCapitalDistributorCampaignUpload = (
 
     const upload = useCallback(
         (file: File) => {
-            if (
-                dao == null ||
-                userAddress == null ||
-                capitalDistributorAddress == null
-            ) {
+            if (dao == null || capitalDistributorAddress == null) {
                 return;
             }
 
@@ -52,7 +46,6 @@ export const useCapitalDistributorCampaignUpload = (
                     file,
                     network: dao.network,
                     daoAddress: dao.address,
-                    userAddress,
                     capitalDistributorAddress,
                     onComplete,
                 };
@@ -62,11 +55,10 @@ export const useCapitalDistributorCampaignUpload = (
                 disableOutsideClick: true,
             });
         },
-        [dao, userAddress, capitalDistributorAddress, onComplete, open],
+        [dao, capitalDistributorAddress, onComplete, open],
     );
 
-    const isReady =
-        dao != null && userAddress != null && capitalDistributorAddress != null;
+    const isReady = dao != null && capitalDistributorAddress != null;
 
     return { upload, isReady };
 };

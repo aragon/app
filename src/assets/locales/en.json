@@ -190,10 +190,6 @@
           "description": "Please wait, depending on the number of recipients, this may take a while to complete."
         },
         "capitalDistributorCreateCampaignActionCreateForm": {
-          "alert": {
-            "title": "Heads up",
-            "message": "Depending on the number of recipients, preparing this action may take a while to complete in the next step."
-          },
           "asset": {
             "helpText": "Choose the token to distribute.",
             "label": "Asset"
@@ -201,10 +197,6 @@
           "description": {
             "helpText": "Describe the campaign in a few sentences.",
             "label": "Description"
-          },
-          "endTime": {
-            "helpText": "Set when the campaign ends.",
-            "label": "End time"
           },
           "jsonUpload": {
             "button": "Upload JSON",
@@ -216,10 +208,6 @@
           "resources": {
             "helpText": "Links to campaign resources, documentation, or socials.",
             "label": "Links"
-          },
-          "startTime": {
-            "helpText": "Set when the campaign starts.",
-            "label": "Start time"
           },
           "title": {
             "label": "Campaign title"

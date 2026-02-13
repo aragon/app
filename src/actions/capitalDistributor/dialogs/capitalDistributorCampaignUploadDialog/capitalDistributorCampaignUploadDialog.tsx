@@ -23,7 +23,6 @@ export interface ICapitalDistributorCampaignUploadDialogParams {
     file: File;
     network: Network;
     daoAddress: string;
-    userAddress: string;
     capitalDistributorAddress: string;
     onComplete: (info: {
         merkleRoot: string;
@@ -45,14 +44,8 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
         'CapitalDistributorCampaignUploadDialog: params must be defined',
     );
 
-    const {
-        file,
-        network,
-        daoAddress,
-        userAddress,
-        capitalDistributorAddress,
-        onComplete,
-    } = location.params;
+    const { file, network, daoAddress, capitalDistributorAddress, onComplete } =
+        location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -68,7 +61,6 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
             urlParams: { network },
             body: {
                 daoAddress,
-                userAddress,
                 capitalDistributorAddress,
                 membersFile: file,
             },

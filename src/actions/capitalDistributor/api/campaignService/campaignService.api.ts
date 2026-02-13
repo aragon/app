@@ -17,10 +17,6 @@ export interface IUploadCampaignMembersBody {
      */
     daoAddress: string;
     /**
-     * Address of the user uploading the campaign members.
-     */
-    userAddress: string;
-    /**
      * Address of the capital distributor plugin.
      */
     capitalDistributorAddress: string;

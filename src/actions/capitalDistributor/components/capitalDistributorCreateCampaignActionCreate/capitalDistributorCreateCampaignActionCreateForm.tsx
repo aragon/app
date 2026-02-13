@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AlertCard,
     Button,
     IconType,
     InputContainer,
@@ -140,15 +139,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         event.target.value = '';
     };
 
-    // const startTimeFixed = useWatch({
-    //     name: `${fieldPrefix}.startTimeFixed` as 'startTimeFixed',
-    // });
-    //
-    // const minEndTime =
-    //     startTimeFixed != null
-    //         ? dateUtils.parseFixedDate(startTimeFixed)
-    //         : DateTime.now();
-
     return (
         <div className="flex w-full flex-col gap-10">
             <InputContainer
@@ -190,28 +180,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 name="resources"
             />
 
-            {/*<AdvancedDateInput*/}
-            {/*    field={`${fieldPrefix}.startTime`}*/}
-            {/*    helpText={t(*/}
-            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.helpText',*/}
-            {/*    )}*/}
-            {/*    label={t(*/}
-            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.startTime.label',*/}
-            {/*    )}*/}
-            {/*    minTime={DateTime.now()}*/}
-            {/*/>*/}
-            {/*<AdvancedDateInput*/}
-            {/*    field={`${fieldPrefix}.endTime`}*/}
-            {/*    helpText={t(*/}
-            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.helpText',*/}
-            {/*    )}*/}
-            {/*    label={t(*/}
-            {/*        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.endTime.label',*/}
-            {/*    )}*/}
-            {/*    minTime={minEndTime}*/}
-            {/*    useDuration={true}*/}
-            {/*/>*/}
-
             <InputContainer
                 alert={merkleTreeInfo == null ? merkleTreeInfoAlert : undefined}
                 helpText={t(
@@ -226,7 +194,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 <div className="flex flex-col gap-3">
                     <Button
                         className="w-fit"
-                        // disabled={!isReady}
                         iconLeft={IconType.PLUS}
                         onClick={() => fileUploadInputRef.current?.click()}
                         size="md"
@@ -271,17 +238,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     type="file"
                 />
             </InputContainer>
-
-            <AlertCard
-                message={t(
-                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.alert.title',
-                )}
-                variant="info"
-            >
-                {t(
-                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.alert.message',
-                )}
-            </AlertCard>
         </div>
     );
 };

@@ -46,25 +46,16 @@ class CampaignService extends AragonBackendService {
         return {
             success: true,
             message: 'Campaign members uploaded successfully',
-            totalInserted: 150,
-            totalUpdated: 0,
-            totalDeleted: 0,
-            totalProcessed: 150,
             campaignId: `campaign-${Date.now()}-${Math.random().toString(36).substring(7)}`,
         };
         // ========== MOCK END ==========
 
-        const {
-            daoAddress,
-            userAddress,
-            capitalDistributorAddress,
-            membersFile,
-        } = params.body;
+        const { daoAddress, capitalDistributorAddress, membersFile } =
+            params.body;
 
         const formData = new FormData();
         formData.append('membersFile', membersFile);
         formData.append('daoAddress', daoAddress);
-        formData.append('userAddress', userAddress);
         formData.append('capitalDistributorAddress', capitalDistributorAddress);
 
         const result = await this.request<ICampaignUploadResult>(
