@@ -3013,7 +3013,7 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "daoPluginInfo": {
-        "launchedAt": "Plugin launched",
+        "launchedAt": "Launched",
         "plugin": "Plugin address",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
