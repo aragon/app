@@ -44,11 +44,15 @@ export const GaugeVoterLockFormChart: React.FC<
     IGaugeVoterLockFormChartProps
 > = (props) => {
     const { amount = '0', settings } = props;
-    const { maxTime } = settings.votingEscrow!;
+    const { maxTime, slope } = settings.votingEscrow!;
 
     const { t } = useTranslations();
 
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
+
+    if (Number(slope) === 0) {
+        return null;
+    }
 
     const processedAmount =
         Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
