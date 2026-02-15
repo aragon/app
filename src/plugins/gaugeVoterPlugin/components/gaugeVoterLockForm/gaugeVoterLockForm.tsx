@@ -198,7 +198,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
                 <div className="flex flex-col gap-3">
-                    {votingEscrow.slope !== 0 && (
+                    {Number(votingEscrow.slope) !== 0 && (
                         <GaugeVoterLockFormChart
                             amount={lockAmount}
                             settings={plugin.settings}
