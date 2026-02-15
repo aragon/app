@@ -13,6 +13,7 @@ export interface INavigationDaoHome extends ComponentProps<'button'> {
 
 export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const { dao, className, ...otherProps } = props;
+    const daoDisplayName = dao.name || dao.address;
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
@@ -25,9 +26,9 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
 
     return (
         <button className={buttonClassName} {...otherProps}>
-            <DaoAvatar name={dao.name} size="lg" src={daoAvatar} />
+            <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
             <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
-                {dao.name}
+                {daoDisplayName}
             </p>
         </button>
     );

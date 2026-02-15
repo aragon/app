@@ -138,7 +138,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         href={daoUtils.getDaoUrl(dao, 'dashboard')}
                         key={dao.id}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
-                        name={dao.name}
+                        name={dao.name || dao.address}
                         network={networkDefinitions[dao.network].name}
                     />
                 ))}

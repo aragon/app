@@ -15,6 +15,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
     props,
 ) => {
     const { dao } = props;
+    const daoDisplayName = dao.name || dao.address;
 
     const { t } = useTranslations();
 
@@ -53,14 +54,14 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
         <Page.Header
             avatar={
                 <DaoAvatar
-                    name={dao.name}
+                    name={daoDisplayName}
                     size="2xl"
                     src={ipfsUtils.cidToSrc(dao.avatar)}
                 />
             }
             description={dao.description}
             stats={stats}
-            title={dao.name}
+            title={daoDisplayName}
         />
     );
 };
