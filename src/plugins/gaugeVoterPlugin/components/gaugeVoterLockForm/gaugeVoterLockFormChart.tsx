@@ -44,7 +44,7 @@ export const GaugeVoterLockFormChart: React.FC<
     IGaugeVoterLockFormChartProps
 > = (props) => {
     const { amount = '0', settings } = props;
-    const { maxTime, slope } = settings.votingEscrow!;
+    const { maxTime } = settings.votingEscrow!;
 
     const { t } = useTranslations();
 
@@ -53,10 +53,6 @@ export const GaugeVoterLockFormChart: React.FC<
     const processedAmount =
         Number.parseFloat(amount) > maxAmount ? maxAmount.toString() : amount;
     const processedAmountWei = parseUnits(processedAmount, 18).toString();
-
-    if (slope === 0) {
-        return null;
-    }
 
     const oneYearInSeconds = 365 * 24 * 60 * 60;
     const chartTimeframe = Math.min(maxTime, oneYearInSeconds);
