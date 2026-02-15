@@ -198,10 +198,12 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                 onSubmit={handleSubmit(handleFormSubmit)}
             >
                 <div className="flex flex-col gap-3">
-                    <GaugeVoterLockFormChart
-                        amount={lockAmount}
-                        settings={plugin.settings}
-                    />
+                    {votingEscrow.slope !== 0 && (
+                        <GaugeVoterLockFormChart
+                            amount={lockAmount}
+                            settings={plugin.settings}
+                        />
+                    )}
                     <AssetInput
                         disableAssetField={true}
                         hideAmountLabel={true}
