@@ -32,6 +32,10 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (
     const slug = proposalUtils.getProposalSlug(proposal, dao);
     const proposalHref = proposalUtils.getProposalUrl(proposal, dao);
 
+    if (slug == null) {
+        return null;
+    }
+
     return (
         <VoteProposalDataListItem.Structure
             date={vote.blockTimestamp * 1000}

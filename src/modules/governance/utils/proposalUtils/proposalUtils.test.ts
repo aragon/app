@@ -11,11 +11,10 @@ describe('proposalUtils', () => {
     });
 
     describe('getProposalSlug', () => {
-        it('throws an error when plugin is not found', () => {
+        it('returns undefined when plugin is not found', () => {
             getDaoPluginsSpy.mockReturnValue(undefined);
-            expect(() =>
-                proposalUtils.getProposalSlug(generateProposal()),
-            ).toThrow();
+            const result = proposalUtils.getProposalSlug(generateProposal());
+            expect(result).toBeUndefined();
         });
 
         it('returns the correct proposal slug', () => {
