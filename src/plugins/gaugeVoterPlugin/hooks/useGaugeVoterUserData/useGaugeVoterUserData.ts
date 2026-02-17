@@ -1,5 +1,5 @@
 import type { Hex } from 'viem';
-import { useAccount, useReadContract, useReadContracts } from 'wagmi';
+import { useConnection, useReadContract, useReadContracts } from 'wagmi';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { gaugeVoterAbi } from '../../utils/gaugeVoterContractUtils/abi/gaugeVoterAbi';
 import type {
@@ -30,7 +30,7 @@ export const useGaugeVoterUserData = (
         backendUsedVotingPower,
     } = params;
 
-    const { address: userAddress } = useAccount();
+    const { address: userAddress } = useConnection();
     const { id: chainId } = networkDefinitions[network];
 
     const isEnabled = enabled && !!userAddress;

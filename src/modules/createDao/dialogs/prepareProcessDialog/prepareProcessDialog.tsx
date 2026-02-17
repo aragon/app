@@ -1,7 +1,7 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import type { TransactionReceipt } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
@@ -62,7 +62,7 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (
     );
     const { daoId, values, pluginAddress } = location.params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(address != null, 'PrepareProcessDialog: user must be connected.');
 
     const { t } = useTranslations();

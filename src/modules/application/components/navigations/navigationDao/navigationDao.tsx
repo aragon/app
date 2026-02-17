@@ -10,7 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -38,7 +38,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { t } = useTranslations();
-    const { address, isConnected } = useAccount();
+    const { address, isConnected } = useConnection();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const { open } = useDialogContext();

@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
@@ -56,7 +56,7 @@ export const DispatchSimulationDialog: React.FC<
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { buildEntityUrl } = useDaoChain({ network });
 
     const [isLoading, setIsLoading] = useState(true);

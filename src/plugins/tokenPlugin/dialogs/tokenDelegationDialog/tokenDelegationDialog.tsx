@@ -4,7 +4,7 @@ import { invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { type Hex, zeroAddress } from 'viem';
 import { mainnet } from 'viem/chains';
-import { useAccount, useEnsName } from 'wagmi';
+import { useConnection, useEnsName } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -43,7 +43,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         'TokenDelegationDialog: required parameters must be set.',
     );
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'TokenDelegationDialog: user must be connected.',

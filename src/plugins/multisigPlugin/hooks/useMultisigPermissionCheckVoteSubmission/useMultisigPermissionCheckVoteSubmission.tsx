@@ -4,7 +4,7 @@ import {
     formatterUtils,
 } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { useConnection, useReadContract } from 'wagmi';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
@@ -35,7 +35,7 @@ export const useMultisigPermissionCheckVoteSubmission = (
 ): IPermissionCheckGuardResult => {
     const { proposal } = params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { t } = useTranslations();
 
     const {

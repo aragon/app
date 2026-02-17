@@ -33,7 +33,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         useSlotSingleFunction,
         'useSlotSingleFunction',
     );
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
     const useDaoPluginInfoSpy = jest.spyOn(
         useDaoPluginInfo,
@@ -41,13 +41,13 @@ describe('<ProposalVotingTerminal /> component', () => {
     );
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
         useDaoPluginInfoSpy.mockReturnValue([]);
         useEnsNameSpy.mockReturnValue({} as wagmi.UseEnsNameReturnType);
     });
 
     afterEach(() => {
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useDaoPluginInfoSpy.mockReset();
     });

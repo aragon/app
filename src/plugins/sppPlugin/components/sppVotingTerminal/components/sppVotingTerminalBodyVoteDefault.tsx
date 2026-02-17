@@ -1,6 +1,6 @@
 import { addressUtils, Button, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { SppPluginDialogId } from '@/plugins/sppPlugin/constants/sppPluginDialogId';
 import type { ISppReportProposalResultDialogParams } from '@/plugins/sppPlugin/dialogs/sppReportProposalResultDialog';
@@ -35,7 +35,7 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address } = useAccount();
+    const { address } = useConnection();
     const latestAddress = useRef(address);
 
     useEffect(() => {

@@ -18,7 +18,7 @@ jest.mock('../../components/daoList', () => ({
 }));
 
 describe('<ExploreDaosPageClient /> component', () => {
-    const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDialogContextSpy = jest.spyOn(
         useDialogContext,
         'useDialogContext',
@@ -26,7 +26,7 @@ describe('<ExploreDaosPageClient /> component', () => {
     const useFeaturedDaosSpy = jest.spyOn(CmsService, 'useFeaturedDaos');
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
+        useConnectionSpy.mockReturnValue({} as Wagmi.UseConnectionReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useFeaturedDaosSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: [] }),
@@ -34,7 +34,7 @@ describe('<ExploreDaosPageClient /> component', () => {
     });
 
     afterEach(() => {
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useDialogContextSpy.mockReset();
         useFeaturedDaosSpy.mockReset();
     });

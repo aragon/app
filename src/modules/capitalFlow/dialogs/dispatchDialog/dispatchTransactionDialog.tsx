@@ -1,7 +1,7 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData, type Hex } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
 import {
@@ -62,7 +62,7 @@ export const DispatchTransactionDialog: React.FC<
         routerSelectorParams,
     } = location.params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'DispatchTransactionDialog: user must be connected.',

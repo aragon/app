@@ -27,14 +27,14 @@ jest.mock('next/navigation', () => ({
 }));
 
 describe('<TokenDelegationDialog /> component', () => {
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
     const useRouterMock = useRouter as jest.MockedFunction<typeof useRouter>;
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useEnsNameSpy.mockReturnValue(
             {} as unknown as wagmi.UseEnsNameReturnType,
         );
@@ -49,7 +49,7 @@ describe('<TokenDelegationDialog /> component', () => {
     });
 
     afterEach(() => {
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useEnsNameSpy.mockReset();
         useRouterMock.mockReset();
         (TransactionDialog as jest.Mock).mockReset();
