@@ -82,7 +82,10 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     const prepareStatusQuery = useCampaignPrepareStatus(prepareStatusParams, {
         enabled: campaignId != null,
         refetchInterval: (query) =>
-            query.state.data?.merkleRoot != null ? false : 2000,
+            query.state.status === 'error' ||
+            query.state.data?.merkleRoot != null
+                ? false
+                : 2000,
     });
 
     const merkleRoot = prepareStatusQuery.data?.merkleRoot ?? null;
