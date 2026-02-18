@@ -91,6 +91,7 @@ describe('<DaoProposalsPage /> component', () => {
             sort: daoProposalsSort,
             isSubProposal: false,
             onlyActive: false,
+            includeSubDaos: false,
         };
         expect(prefetchInfiniteQuerySpy.mock.calls[0][0].queryKey).toEqual(
             proposalListOptions({ queryParams: memberListParams }).queryKey,
