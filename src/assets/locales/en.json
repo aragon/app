@@ -1140,6 +1140,13 @@
           "to": "to XMAQUINA Governance",
           "welcome": "Welcome"
         }
+      },
+      "capitalDistributorTest": {
+        "capitalDistributorTestMembersFileDownload": {
+          "helpText": "Click button to generate members distribution file based on current voting power. Please review file and submit it to the next step.",
+          "label": "Members file",
+          "button": "Create members file"
+        }
       }
     },
     "dashboard": {

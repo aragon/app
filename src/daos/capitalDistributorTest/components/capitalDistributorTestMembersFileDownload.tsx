@@ -1,6 +1,7 @@
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import type { ComponentProps } from 'react';
 import type { IDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ICapitalDistributorTestMembersFileDownloadProps
     extends ComponentProps<'header'> {
@@ -13,14 +14,18 @@ export interface ICapitalDistributorTestMembersFileDownloadProps
 export const CapitalDistributorTestMembersFileDownload: React.FC<
     ICapitalDistributorTestMembersFileDownloadProps
 > = () => {
+    const { t } = useTranslations();
+
     return (
         <InputContainer
-            helpText={
-                'Click button to generate members distribution file based on current voting power. Please review file and submit it to the next step.'
-            }
+            helpText={t(
+                'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.helpText',
+            )}
             id="katana-members-file"
             isOptional={true}
-            label={'Members file'}
+            label={t(
+                'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.label',
+            )}
             useCustomWrapper={true}
         >
             <Button
@@ -28,7 +33,9 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
                 iconLeft={IconType.REWARDS}
                 variant={'tertiary'}
             >
-                Create members file
+                {t(
+                    'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.button',
+                )}
             </Button>
         </InputContainer>
     );
