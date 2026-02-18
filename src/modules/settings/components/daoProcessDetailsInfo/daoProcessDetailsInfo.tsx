@@ -1,11 +1,17 @@
-import { Button, DefinitionList } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    ChainEntityType,
+    DefinitionList,
+} from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
-import { DaoTargetIndicator } from '@/shared/components/daoTargetIndicator';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { daoTargetUtils } from '@/shared/utils/daoTargetUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     EventLogPluginType,
@@ -56,6 +62,8 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
     });
 
     const { id: daoId } = dao;
+    const { buildEntityUrl } = useDaoChain({ network: dao.network });
+
     const settings = useDaoPluginInfo({
         daoId,
         address: plugin.address,
@@ -67,13 +75,15 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
 
     const [pluginDefinition, launchedAtDefinition, ...customSettings] =
         settings;
-    const orderedSettings = [
-        ...customSettings,
-        pluginDefinition,
-        launchedAtDefinition,
-    ];
+    const settingsBeforeTarget = [...customSettings, pluginDefinition];
 
     const hasSubDaos = (dao.subDaos?.length ?? 0) > 0;
+
+    const targetAddress = plugin.daoAddress ?? dao.address;
+    const targetName =
+        hasSubDaos && targetAddress != null
+            ? daoTargetUtils.findTargetDao({ dao, targetAddress })?.name
+            : undefined;
 
     const handleUninstallProcess = () => {
         if (processPlugins.length > 1) {
@@ -98,18 +108,46 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
     return (
         <div className="flex flex-col gap-6">
             <DefinitionList.Container>
-                {hasSubDaos && (
+                {/* Custom settings + Plugin address */}
+                {settingsBeforeTarget.map(
+                    ({ term, definition, ...setting }) => (
+                        <DefinitionList.Item
+                            key={term}
+                            term={term}
+                            {...setting}
+                        >
+                            {definition}
+                        </DefinitionList.Item>
+                    ),
+                )}
+
+                {/* Target */}
+                {hasSubDaos && targetAddress != null && (
                     <DefinitionList.Item
-                        term={t('app.settings.daoProcessDetailsInfo.targetDao')}
+                        copyValue={targetAddress}
+                        description={targetName}
+                        link={{
+                            href: buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: targetAddress,
+                            }),
+                            isExternal: true,
+                        }}
+                        term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
-                        <DaoTargetIndicator dao={dao} plugin={plugin} />
+                        {addressUtils.truncateAddress(targetAddress)}
                     </DefinitionList.Item>
                 )}
-                {orderedSettings.map(({ term, definition, ...setting }) => (
-                    <DefinitionList.Item key={term} term={term} {...setting}>
-                        {definition}
+
+                {/* Launched */}
+                {launchedAtDefinition != null && (
+                    <DefinitionList.Item
+                        link={launchedAtDefinition.link}
+                        term={launchedAtDefinition.term}
+                    >
+                        {launchedAtDefinition.definition}
                     </DefinitionList.Item>
-                ))}
+                )}
             </DefinitionList.Container>
             <div className="flex flex-col gap-3">
                 <Button

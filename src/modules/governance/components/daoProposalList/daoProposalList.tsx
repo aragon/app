@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import {
     type IPluginFilterComponentProps,
     PluginFilterComponent,
@@ -44,6 +45,8 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    const isSubDaoEnabled = isEnabled('subDao');
     const { activePlugin, setActivePlugin, plugins } =
         useDaoPluginFilterUrlParam({
             daoId,
@@ -68,6 +71,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
                 ...initialParams.queryParams,
                 pluginAddress,
                 onlyActive: isGroupTab,
+                includeSubDaos: isSubDaoEnabled && isGroupTab,
             },
         };
 

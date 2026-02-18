@@ -7,6 +7,7 @@ import {
 } from '@/modules/finance/api/financeService';
 import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
 import { useDao } from '@/shared/api/daoService';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
@@ -33,6 +34,8 @@ export const DaoTransactionsPageClient: React.FC<
 > = (props) => {
     const { id, initialParams } = props;
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
     const { activeOption } = useDaoFilterUrlParam({
         daoId: id,
@@ -90,7 +93,12 @@ export const DaoTransactionsPageClient: React.FC<
                     selectedMetadata={selectedTransactionsMetadata?.pages[0]}
                     statsType="transactions"
                 />
-                <DispatchPanel daoAddress={dao.address} network={dao.network} />
+                {isAutomationEnabled && (
+                    <DispatchPanel
+                        daoAddress={dao.address}
+                        network={dao.network}
+                    />
+                )}
             </Page.Aside>
         </Page.Content>
     );
