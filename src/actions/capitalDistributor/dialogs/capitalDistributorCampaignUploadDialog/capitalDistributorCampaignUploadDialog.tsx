@@ -58,8 +58,9 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     // biome-ignore lint/correctness/useExhaustiveDependencies: Trigger upload on mount
     useEffect(() => {
         const uploadParams: IUploadCampaignMembersParams = {
-            urlParams: { network },
+            urlParams: {},
             body: {
+                network,
                 daoAddress,
                 capitalDistributorAddress,
                 membersFile: file,
@@ -72,8 +73,9 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
     }, []);
 
     const prepareStatusParams: IGetCampaignPrepareStatusParams = {
-        urlParams: { network },
+        urlParams: {},
         queryParams: {
+            network,
             capitalDistributorAddress,
             campaignId: campaignId ?? '',
         },
