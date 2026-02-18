@@ -31,12 +31,14 @@ export const useProposalExecuteGuard = (
     const { daoId, pluginAddress, onSuccess, onError } = params;
 
     const { open } = useDialogContext();
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { meta: plugin } =
+        useDaoPlugins({ daoId, pluginAddress, includeSubPlugins: true })?.[0] ??
+        {};
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const checkUserPermission = useCallback(
         (functionParams?: Partial<IUseProposalExecuteGuardParams>) => {
-            if (!dao) {
+            if (!dao || !plugin) {
                 return;
             }
 

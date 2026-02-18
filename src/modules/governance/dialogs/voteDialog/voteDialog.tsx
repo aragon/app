@@ -105,7 +105,11 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     return (
         <TransactionDialog
             description={t('app.governance.voteDialog.description')}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            indexingFallbackUrl={
+                slug != null
+                    ? daoUtils.getDaoUrl(dao, `proposals/${slug}`)
+                    : undefined
+            }
             network={proposal.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
@@ -119,7 +123,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
         >
             <VoteProposalDataListItemStructure
                 isVeto={isVeto}
-                proposalId={slug}
+                proposalId={slug ?? ''}
                 proposalTitle={proposal.title}
                 voteIndicator={vote.label}
                 voteIndicatorDescription={vote.labelDescription}
