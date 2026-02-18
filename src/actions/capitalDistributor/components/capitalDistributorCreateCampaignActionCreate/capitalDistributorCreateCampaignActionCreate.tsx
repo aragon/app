@@ -16,6 +16,7 @@ import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { createCampaignAbi } from '../../constants/addressCapitalDistributorAbi';
 import type { ICapitalDistributorActionCreateCampaign } from '../../types/capitalDistributorActionCreateCampaign';
 import { CapitalDistributorActionType } from '../../types/enum/capitalDistributorActionType';
+import { capitalDistributorCampaignScheduleUtils } from '../../utils/capitalDistributorCampaignScheduleUtils';
 import { CapitalDistributorCreateCampaignActionCreateForm } from './capitalDistributorCreateCampaignActionCreateForm';
 
 export interface ICapitalDistributorCreateCampaignActionCreateProps
@@ -50,12 +51,17 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
             const { asset, title, description, resources, merkleTreeInfo } =
                 action.campaignDetails;
 
+            const { startTime: startTimeSeconds, endTime: endTimeSeconds } =
+                capitalDistributorCampaignScheduleUtils.parseScheduleSettings(
+                    action.campaignDetails,
+                );
+
             // Pin campaign metadata to IPFS
             const proposedMetadata = {
                 title,
                 description,
                 links: resources,
-                type: 'airdrop',
+                type: 'Distribution',
             };
             const metadataIpfsResult = await pinJsonAsync({
                 body: proposedMetadata,
@@ -84,8 +90,8 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                     },
                     {
                         // _settings
-                        startTime: BigInt(0),
-                        endTime: BigInt(0),
+                        startTime: startTimeSeconds,
+                        endTime: endTimeSeconds,
                     },
                 ],
             });

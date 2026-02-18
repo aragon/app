@@ -1,5 +1,35 @@
 # @aragon/app
 
+## 1.21.0
+
+### Minor Changes
+
+- [#967](https://github.com/aragon/app/pull/967) [`df6b7b2`](https://github.com/aragon/app/commit/df6b7b2ab2b9918b45e621d0db68501e0e32e0d1) Thanks [@asciiman](https://github.com/asciiman)! - Only show admin panel if current DAO has admin plugin
+
+- [#982](https://github.com/aragon/app/pull/982) [`c66e810`](https://github.com/aragon/app/commit/c66e81001e3b2a2f7e3bd6c99d7f1203cbda85b4) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Implement policy uninstall functionality
+
+- [#970](https://github.com/aragon/app/pull/970) [`c1f5531`](https://github.com/aragon/app/commit/c1f55313686fa37223f02abbb637981d751e00c0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Implement DAO Policy Details Page
+
+- [#960](https://github.com/aragon/app/pull/960) [`e305fbb`](https://github.com/aragon/app/commit/e305fbb9da8819372faf71df49e6437939cccd85) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Improve plugin targeting indicators throughout the app
+
+- [#974](https://github.com/aragon/app/pull/974) [`e5378cd`](https://github.com/aragon/app/commit/e5378cd42330356f013e01247f761b30389923b9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update package dependencies
+
+- [#983](https://github.com/aragon/app/pull/983) [`558012e`](https://github.com/aragon/app/commit/558012e24e8ae613a638f384160d1c5b88f191bb) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Show subDAOs' proposals and members
+
+- [#968](https://github.com/aragon/app/pull/968) [`b65c8d6`](https://github.com/aragon/app/commit/b65c8d6e75bbb30995d9e46edb24479ca7a91cb9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Filter action builder actions by target DAO permissions
+
+- [#956](https://github.com/aragon/app/pull/956) [`df05b5f`](https://github.com/aragon/app/commit/df05b5f8c8a4c3b3962a40edda4542ea79a240f1) Thanks [@milosh86](https://github.com/milosh86)! - Add token panel to gauge voting page
+
+### Patch Changes
+
+- [#975](https://github.com/aragon/app/pull/975) [`64dc64b`](https://github.com/aragon/app/commit/64dc64b6710745940a0ccab54aed466ac5536a80) Thanks [@milosh86](https://github.com/milosh86)! - Fix transfer and raw_calldata actions issues in action composer
+
+- [#964](https://github.com/aragon/app/pull/964) [`9bafdff`](https://github.com/aragon/app/commit/9bafdff3349705c1e6578776bab60e9f5267f688) Thanks [@milosh86](https://github.com/milosh86)! - Re-enable locking in token member panel
+
+- [#976](https://github.com/aragon/app/pull/976) [`012805c`](https://github.com/aragon/app/commit/012805c08e7ce6aa1a9f801757b96850a4c6a712) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove plugin toggle from settings page
+
+- [#977](https://github.com/aragon/app/pull/977) [`7d34ef4`](https://github.com/aragon/app/commit/7d34ef4562d8a16b36baa6fdc9b1f458e62c123f) Thanks [@dependabot](https://github.com/apps/dependabot)! - Update dependencies
+
 ## 1.20.0
 
 ### Minor Changes

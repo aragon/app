@@ -37,6 +37,10 @@ export interface IDaoSettingsPageClientProps {
      */
     daoId: string;
     /**
+     * Whether Automation & Policies feature is enabled.
+     */
+    isAutomationEnabled?: boolean;
+    /**
      * Whether SubDAO feature is enabled.
      */
     isSubDaoEnabled?: boolean;
@@ -45,7 +49,7 @@ export interface IDaoSettingsPageClientProps {
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     props,
 ) => {
-    const { daoId, isSubDaoEnabled } = props;
+    const { daoId, isAutomationEnabled, isSubDaoEnabled } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -63,7 +67,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                 daoAddress: dao?.address as string,
             },
         },
-        { enabled: isSubDaoEnabled && dao != null },
+        { enabled: isAutomationEnabled && dao != null },
     );
 
     const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
@@ -226,7 +230,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                         ))}
                     </Page.MainSection>
                 )}
-                {isSubDaoEnabled && (
+                {isAutomationEnabled && (
                     <Page.MainSection
                         action={addPolicyAction}
                         className="gap-3"

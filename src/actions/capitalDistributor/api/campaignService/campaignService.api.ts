@@ -4,14 +4,13 @@ import type {
     IRequestUrlParams,
 } from '@/shared/api/httpService';
 
-export interface IUploadCampaignMembersUrlParams {
+export interface IUploadCampaignMembersUrlParams {}
+
+export interface IUploadCampaignMembersBody {
     /**
      * Network of the capital distributor plugin.
      */
     network: Network;
-}
-
-export interface IUploadCampaignMembersBody {
     /**
      * Address of the DAO.
      */
@@ -32,14 +31,13 @@ export interface IUploadCampaignMembersParams
         IUploadCampaignMembersBody
     > {}
 
-export interface IGetCampaignPrepareStatusUrlParams {
-    /**
-     * Network of the capital distributor plugin.
-     */
-    network: Network;
-}
+export interface IGetCampaignPrepareStatusUrlParams {}
 
 export interface IGetCampaignPrepareStatusQueryParams {
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
     /**
      * Address of the capital distributor plugin.
      */

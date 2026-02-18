@@ -1,7 +1,10 @@
 'use client';
 
 import {
+    AlertCard,
     Button,
+    Clipboard,
+    DefinitionList,
     IconType,
     InputContainer,
     InputText,
@@ -21,6 +24,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useCapitalDistributorCampaignUpload } from '../../hooks';
+import { CapitalDistributorCampaignScheduleField } from './capitalDistributorCampaignScheduleField';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
     /**
@@ -31,6 +35,11 @@ export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
      * DAO ID for asset selection.
      */
     daoId: string;
+}
+
+export enum CampaignScheduleType {
+    OPEN_ENDED = 'open-ended',
+    SCHEDULED = 'scheduled',
 }
 
 export interface ICapitalDistributorCreateCampaignFormData {
@@ -58,6 +67,30 @@ export interface ICapitalDistributorCreateCampaignFormData {
         totalMembers: number;
         fileName: string;
     };
+    /**
+     * Schedule type of the campaign.
+     */
+    scheduleType?: CampaignScheduleType;
+    /**
+     * Start time mode for scheduled campaigns.
+     */
+    startTimeMode?: 'now' | 'fixed';
+    /**
+     * Start time fixed date for scheduled campaigns.
+     */
+    startTimeFixed?: { date: string; time: string };
+    /**
+     * End time mode for scheduled campaigns.
+     */
+    endTimeMode?: 'duration' | 'fixed';
+    /**
+     * End time duration for scheduled campaigns.
+     */
+    endTimeDuration?: { days: number; hours: number; minutes: number };
+    /**
+     * End time fixed date for scheduled campaigns.
+     */
+    endTimeFixed?: { date: string; time: string };
 }
 
 const titleMaxLength = 128;
@@ -222,26 +255,46 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                         )}
                     </Button>
                     {merkleTreeInfo != null && (
-                        <div className="flex flex-col gap-1 font-normal text-neutral-500 text-sm leading-tight">
-                            <p>{merkleTreeInfo.fileName}</p>
-                            <p>
-                                {t(
-                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
-                                    {
-                                        totalMembers:
-                                            merkleTreeInfo.totalMembers,
-                                    },
-                                )}
-                            </p>
-                            <p>
-                                {t(
-                                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.merkleRoot',
-                                    {
-                                        merkleRoot: merkleTreeInfo.merkleRoot,
-                                    },
-                                )}
-                            </p>
-                        </div>
+                        <AlertCard
+                            message={t(
+                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.successAlertTitle',
+                            )}
+                            variant="success"
+                        >
+                            <DefinitionList.Container>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.fileNameTerm',
+                                    )}
+                                >
+                                    {merkleTreeInfo.fileName}
+                                </DefinitionList.Item>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.totalMembersTerm',
+                                    )}
+                                >
+                                    {t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.totalMembers',
+                                        {
+                                            totalMembers:
+                                                merkleTreeInfo.totalMembers,
+                                        },
+                                    )}
+                                </DefinitionList.Item>
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.merkleRootTerm',
+                                    )}
+                                >
+                                    <Clipboard
+                                        copyValue={merkleTreeInfo.merkleRoot}
+                                    >
+                                        {`${merkleTreeInfo.merkleRoot.slice(0, 10)}...${merkleTreeInfo.merkleRoot.slice(-8)}`}
+                                    </Clipboard>
+                                </DefinitionList.Item>
+                            </DefinitionList.Container>
+                        </AlertCard>
                     )}
                 </div>
                 <input
@@ -252,6 +305,10 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     type="file"
                 />
             </InputContainer>
+
+            <CapitalDistributorCampaignScheduleField
+                fieldPrefix={fieldPrefix}
+            />
         </div>
     );
 };

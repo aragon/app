@@ -51,6 +51,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'capitalFlowAutomation',
+        name: 'Capital Flow Automation',
+        description:
+            'Enables automation section in settings and dispatch panel in transactions.',
+        defaultValue: false,
+        environments: {
+            local: true,
+        },
+    },
+    {
         key: 'governanceDesigner',
         name: 'Governance designer',
         description: 'Enables governance designer and admin member features',
