@@ -7,7 +7,7 @@ import type {
 import type { ICampaignPrepareStatus, ICampaignUploadResult } from './domain';
 
 // MOCK: Track prepare status poll count (remove with mock)
-// let prepareStatusCallCount = 0;
+let prepareStatusCallCount = 0;
 
 class CampaignService extends AragonBackendService {
     private basePaths = {
@@ -38,16 +38,16 @@ class CampaignService extends AragonBackendService {
     ): Promise<ICampaignUploadResult> => {
         // ========== MOCK START ==========
         // Remove this block when API is ready
-        // await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
 
         // Toggle error scenario by uncommenting:
         // throw new Error('Upload failed: Invalid file format');
 
-        // return {
-        //     success: true,
-        //     message: 'Campaign members uploaded successfully',
-        //     campaignId: `campaign-${Date.now()}-${Math.random().toString(36).substring(7)}`,
-        // };
+        return {
+            success: true,
+            message: 'Campaign members uploaded successfully',
+            campaignId: `campaign-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+        };
         // ========== MOCK END ==========
 
         const { network, daoAddress, capitalDistributorAddress, membersFile } =
@@ -76,31 +76,31 @@ class CampaignService extends AragonBackendService {
     ): Promise<ICampaignPrepareStatus | null> => {
         // ========== MOCK START ==========
         // Remove this block when API is ready
-        // prepareStatusCallCount++;
-        // await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
+        prepareStatusCallCount++;
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 second delay
 
         // Toggle error scenario by uncommenting:
         // throw new Error('Failed to generate merkle tree');
 
         // Return pending state (null merkleRoot) for first 2 calls
-        // if (prepareStatusCallCount < 3) {
-        //     return {
-        //         campaignId: params.queryParams.campaignId,
-        //         merkleRoot: null,
-        //         totalMembers: 150,
-        //     };
-        // }
+        if (prepareStatusCallCount < 3) {
+            return {
+                campaignId: params.queryParams.campaignId,
+                merkleRoot: null,
+                totalMembers: 150,
+            };
+        }
 
         // Reset counter for next upload (optional, for testing multiple uploads)
-        // prepareStatusCallCount = 0;
+        prepareStatusCallCount = 0;
 
         // Return final result on 3rd call
-        // return {
-        //     campaignId: params.queryParams.campaignId,
-        //     merkleRoot:
-        //         '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
-        //     totalMembers: 150,
-        // };
+        return {
+            campaignId: params.queryParams.campaignId,
+            merkleRoot:
+                '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
+            totalMembers: 150,
+        };
         // ========== MOCK END ==========
 
         const result = await this.request<ICampaignPrepareStatus | null>(
