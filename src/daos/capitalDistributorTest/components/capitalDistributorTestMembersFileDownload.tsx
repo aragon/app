@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 import {
     useEpochMetrics,
     useRewardDistribution,
@@ -9,6 +9,7 @@ import {
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { rewardUtils } from '../utils/rewardUtils';
 
 export interface ICapitalDistributorTestMembersFileDownloadProps
     extends ComponentProps<'header'> {
@@ -22,6 +23,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
     ICapitalDistributorTestMembersFileDownloadProps
 > = ({ dao }) => {
     const { t } = useTranslations();
+    const [totalAmount, setTotalAmount] = useState('');
 
     const gaugePlugins = useDaoPlugins({
         daoId: dao.id,
@@ -57,8 +59,24 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
 
     const handleClick = () => {
         rewardDistribution.refetch().then((result) => {
-            // biome-ignore lint/suspicious/noConsole: test component
-            console.log('rewardDistribution', result.data);
+            if (result.data == null) {
+                return;
+            }
+
+            const rewardJson = rewardUtils.toRewardJson({
+                owners: result.data.owners,
+                totalAmount: BigInt(totalAmount),
+            });
+
+            const blob = new Blob([JSON.stringify(rewardJson, null, 2)], {
+                type: 'application/json',
+            });
+            const url = URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = `reward-distribution-epoch-${result.data.epoch}.json`;
+            anchor.click();
+            URL.revokeObjectURL(url);
         });
     };
 
@@ -84,8 +102,16 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             )}
             useCustomWrapper={true}
         >
+            <input
+                className="w-full rounded border px-3 py-2 text-sm"
+                onChange={(e) => setTotalAmount(e.target.value)}
+                placeholder="Total amount (wei)"
+                type="number"
+                value={totalAmount}
+            />
             <Button
                 className="w-fit"
+                disabled={totalAmount === ''}
                 iconLeft={IconType.REWARDS}
                 isLoading={rewardDistribution.isFetching}
                 onClick={handleClick}
