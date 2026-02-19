@@ -19,6 +19,24 @@ import type {
 import { useCampaignPrepareStatus, useUploadCampaignMembers } from '../../api';
 import { CapitalDistributorDialogId } from '../../constants/capitalDistributorDialogId';
 
+const StepState = {
+    Idle: 'idle',
+    Pending: 'pending',
+    Success: 'success',
+    Error: 'error',
+} as const;
+
+type StepState = (typeof StepState)[keyof typeof StepState];
+
+const StepName = {
+    Upload: 'upload',
+    Merkle: 'merkle',
+} as const;
+
+type StepName = (typeof StepName)[keyof typeof StepName];
+
+type StepStates = Record<StepName, StepState>;
+
 export interface ICapitalDistributorCampaignUploadDialogParams {
     file: File;
     network: Network;
@@ -102,34 +120,42 @@ export const CapitalDistributorCampaignUploadDialog: React.FC<
         }
     }, [isComplete, merkleRoot, totalMembers, onComplete, file.name]);
 
-    const uploadStepState = useMemo(() => {
-        return match(uploadMutation)
-            .with({ isError: true }, () => 'error' as const)
-            .with({ isSuccess: true }, () => 'success' as const)
-            .with({ isPending: true }, () => 'pending' as const)
-            .otherwise(() => 'idle' as const);
-    }, [uploadMutation]);
+    const stepStates = useMemo<StepStates>(() => {
+        const ctx = {
+            uploadError: uploadMutation.isError,
+            uploadSuccess: uploadMutation.isSuccess,
+            uploadPending: uploadMutation.isPending,
+            prepareError: prepareStatusQuery.isError,
+            isComplete,
+            hasCampaignId: campaignId != null,
+        } as const;
 
-    const merkleStepState = useMemo(() => {
-        if (uploadMutation.isError) {
-            return 'idle' as const;
-        }
-        if (prepareStatusQuery.isError) {
-            return 'error' as const;
-        }
-        if (isComplete) {
-            return 'success' as const;
-        }
-        if (campaignId != null) {
-            return 'pending' as const;
-        }
-        return 'idle' as const;
+        const upload: StepState = match(ctx)
+            .with({ uploadError: true }, () => StepState.Error)
+            .with({ uploadSuccess: true }, () => StepState.Success)
+            .with({ uploadPending: true }, () => StepState.Pending)
+            .otherwise(() => StepState.Idle);
+
+        const merkle: StepState = match(ctx)
+            .with({ uploadError: true }, () => StepState.Idle)
+            .with({ prepareError: true }, () => StepState.Error)
+            .with({ isComplete: true }, () => StepState.Success)
+            .with({ hasCampaignId: true }, () => StepState.Pending)
+            .otherwise(() => StepState.Idle);
+        return {
+            [StepName.Upload]: upload,
+            [StepName.Merkle]: merkle,
+        };
     }, [
         uploadMutation.isError,
+        uploadMutation.isSuccess,
+        uploadMutation.isPending,
         prepareStatusQuery.isError,
         isComplete,
         campaignId,
     ]);
+    const uploadStepState = stepStates[StepName.Upload];
+    const merkleStepState = stepStates[StepName.Merkle];
 
     const steps: IStepperStep<ITransactionStatusStepMeta>[] = [
         {
