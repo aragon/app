@@ -19,14 +19,12 @@ export interface ICapitalDistributorCampaignScheduleFieldProps {
     fieldPrefix: string;
 }
 
-const recommendedMinDays = 1;
-
 export const CapitalDistributorCampaignScheduleField: React.FC<
     ICapitalDistributorCampaignScheduleFieldProps
 > = (props) => {
     const { fieldPrefix } = props;
     const { t } = useTranslations();
-    const { setValue } = useFormContext();
+    const { resetField } = useFormContext();
 
     const { onChange: onScheduleTypeChange, ...scheduleTypeField } =
         useFormField<ICapitalDistributorCreateCampaignFormData, 'scheduleType'>(
@@ -44,33 +42,34 @@ export const CapitalDistributorCampaignScheduleField: React.FC<
         name: `${fieldPrefix}.scheduleType`,
     }) as CampaignScheduleType | undefined;
 
+    const startTimeMode = useWatch({
+        name: `${fieldPrefix}.startTimeMode`,
+    }) as string | undefined;
+
     const startTimeFixed = useWatch({
         name: `${fieldPrefix}.startTimeFixed`,
     });
 
-    const minEndTime = startTimeFixed
-        ? dateUtils.parseFixedDate(startTimeFixed)
-        : DateTime.now();
+    const minEndTime =
+        startTimeMode === 'fixed' && startTimeFixed
+            ? dateUtils.parseFixedDate(startTimeFixed)
+            : DateTime.now();
 
     const handleScheduleTypeChange = (value: string) => {
         onScheduleTypeChange(value);
 
         if (value === CampaignScheduleType.OPEN_ENDED) {
-            setValue(`${fieldPrefix}.startTimeMode`, undefined, {
-                shouldValidate: true,
-            });
-            setValue(`${fieldPrefix}.startTimeFixed`, undefined, {
-                shouldValidate: true,
-            });
-            setValue(`${fieldPrefix}.endTimeMode`, undefined, {
-                shouldValidate: true,
-            });
-            setValue(`${fieldPrefix}.endTimeDuration`, undefined, {
-                shouldValidate: true,
-            });
-            setValue(`${fieldPrefix}.endTimeFixed`, undefined, {
-                shouldValidate: true,
-            });
+            const fields = [
+                `${fieldPrefix}.startTimeMode`,
+                `${fieldPrefix}.startTimeFixed`,
+                `${fieldPrefix}.endTimeMode`,
+                `${fieldPrefix}.endTimeDuration`,
+                `${fieldPrefix}.endTimeFixed`,
+            ] as const;
+
+            fields.forEach((name) =>
+                resetField(name, { defaultValue: undefined }),
+            );
         }
     };
 
@@ -128,7 +127,7 @@ export const CapitalDistributorCampaignScheduleField: React.FC<
                             'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.schedule.endTime.label',
                         )}
                         minDuration={{
-                            days: recommendedMinDays,
+                            days: 14,
                             hours: 0,
                             minutes: 0,
                         }}

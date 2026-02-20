@@ -58,7 +58,5 @@ export const useCapitalDistributorCampaignUpload = (
         [dao, capitalDistributorAddress, onComplete, open],
     );
 
-    const isReady = dao != null && capitalDistributorAddress != null;
-
-    return { upload, isReady };
+    return { upload };
 };
