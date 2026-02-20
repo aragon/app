@@ -1,4 +1,5 @@
 import { actionsDialogsDefinitions } from '@/actions';
+import { capitalDistributorTestDialogsDefinitions } from '@/daos/capitalDistributorTest/constants/capitalDistributorTestDialogsDefinitions';
 import { applicationDialogsDefinitions } from '@/modules/application/constants/applicationDialogsDefinitions';
 import { capitalFlowDialogsDefinitions } from '@/modules/capitalFlow/constants/capitalFlowDialogsDefinitions';
 import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
@@ -17,4 +18,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...settingsDialogDefinitions,
     ...capitalFlowDialogsDefinitions,
     ...actionsDialogsDefinitions,
+    ...capitalDistributorTestDialogsDefinitions,
 };

@@ -1143,9 +1143,17 @@
       },
       "capitalDistributorTest": {
         "capitalDistributorTestMembersFileDownload": {
-          "helpText": "Click button to generate members distribution file based on current voting power. Please review file and submit it to the next step.",
+          "helpText": "Generate a members distribution file based on current voting power.",
           "label": "Members file",
-          "button": "Create members file",
+          "button": "Create members file"
+        },
+        "capitalDistributorTestMembersFileDownloadDialog": {
+          "title": "Create members file",
+          "description": "Enter the epoch ID and total amount to generate a members distribution file based on current voting power.",
+          "epochIdLabel": "Epoch ID",
+          "amountLabel": "Total amount (wei)",
+          "generate": "Generate file",
+          "cancel": "Cancel",
           "error": "Failed to generate members file. Please try again."
         }
       }
