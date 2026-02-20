@@ -84,7 +84,7 @@
     "tailwindcss": "^4.1.18",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.6",
-    "turbo": "^2.8.3",
+    "turbo": "^2.8.6",
     "typescript": "^5.9.3",
     "ultracite": "^6.5.1",
     "vercel": "^50.10.0",
