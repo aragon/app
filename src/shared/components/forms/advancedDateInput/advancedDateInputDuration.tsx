@@ -87,7 +87,7 @@ export const AdvancedDateInputDuration: React.FC<
     return (
         <Card
             className={classNames(
-                'flex flex-col gap-4 p-6 shadow-neutral-sm',
+                'flex flex-col gap-4 border border-neutral-100 p-6 shadow-neutral-sm',
                 className,
             )}
             {...otherProps}

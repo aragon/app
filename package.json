@@ -52,6 +52,7 @@
     "recharts": "^3.7.0",
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
+    "ts-pattern": "^5.9.0",
     "viem": "^2.45.1",
     "wagmi": "^2.19.5"
   },

@@ -172,6 +172,73 @@
           },
           "resourcesTerm": "Links"
         }
+      },
+      "capitalDistributor": {
+        "composer": {
+          "contractName": "Capital Distributor",
+          "createCampaignActionName": "Create campaign"
+        },
+        "capitalDistributorCampaignUploadDialog": {
+          "done": "Done",
+          "step": {
+            "merkleTree": "Generating Merkle tree",
+            "merkleTreeError": "Failed to generate Merkle tree",
+            "upload": "Uploading members",
+            "uploadError": "Failed to upload members file"
+          },
+          "title": "Upload members file",
+          "description": "Please wait, depending on the number of recipients, this may take a while to complete."
+        },
+        "capitalDistributorCreateCampaignActionCreateForm": {
+          "asset": {
+            "helpText": "Choose the token to distribute.",
+            "label": "Asset"
+          },
+          "description": {
+            "helpText": "Describe the campaign in a few sentences.",
+            "label": "Description"
+          },
+          "jsonUpload": {
+            "alert": {
+              "fileNameTerm": "File name",
+              "merkleRootTerm": "Merkle root",
+              "successAlertTitle": "File uploaded",
+              "totalMembersTerm": "Total members"
+            },
+            "button": "Upload JSON",
+            "helpText": "Upload a JSON file with addresses and amounts to distribute.",
+            "label": "Distribution file",
+            "merkleRoot": "Merkle root: {{merkleRoot}}",
+            "totalMembers": "{{totalMembers}} addresses imported"
+          },
+          "resources": {
+            "helpText": "Links to campaign resources, documentation, or socials.",
+            "label": "Links"
+          },
+          "title": {
+            "label": "Campaign title"
+          },
+          "schedule": {
+            "label": "Campaign schedule",
+            "helpText": "Choose whether the campaign runs indefinitely or within a scheduled window.",
+            "openEnded": {
+              "label": "Open-ended",
+              "description": "Starts immediately with no end date"
+            },
+            "scheduled": {
+              "label": "Scheduled",
+              "description": "Define start and end times"
+            },
+            "startTime": {
+              "label": "Start time",
+              "helpText": "When the campaign becomes active."
+            },
+            "endTime": {
+              "label": "End time",
+              "helpText": "When the campaign expires."
+            }
+          }
+        }
       }
     },
     "application": {

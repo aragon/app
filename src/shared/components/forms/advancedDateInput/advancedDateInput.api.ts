@@ -21,7 +21,7 @@ export interface IAdvancedDateInputBaseProps {
      */
     infoDisplay?: 'inline' | 'card';
     /**
-     * Minimum duration added to the minTime for the input.
+     * Minimum (recommended) duration added to the minTime for the input.
      */
     minDuration?: IDateDuration;
     /**
