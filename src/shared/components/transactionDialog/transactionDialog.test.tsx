@@ -36,7 +36,7 @@ describe('<TransactionDialog /> component', () => {
         Wagmi,
         'useWaitForTransactionReceipt',
     );
-    const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
+    const useAccountSpy = jest.spyOn(Wagmi, 'useConnection');
     const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
     const monitorTransactionErrorSpy = jest.spyOn(
         transactionDialogUtils,
@@ -49,13 +49,13 @@ describe('<TransactionDialog /> component', () => {
         );
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
         useAccountSpy.mockReturnValue(
-            {} as unknown as Wagmi.UseAccountReturnType,
+            {} as unknown as Wagmi.UseConnectionReturnType,
         );
         useWaitForTransactionReceiptSpy.mockReturnValue(
             {} as Wagmi.UseWaitForTransactionReceiptReturnType,
         );
         useSwitchChainSpy.mockReturnValue({
-            switchChain: jest.fn(),
+            mutate: jest.fn(),
         } as unknown as Wagmi.UseSwitchChainReturnType);
     });
 
@@ -307,12 +307,12 @@ describe('<TransactionDialog /> component', () => {
         const network = Network.POLYGON_MAINNET;
         useAccountSpy.mockReturnValue({
             chainId: networkDefinitions[network].id,
-        } as unknown as Wagmi.UseAccountReturnType);
+        } as unknown as Wagmi.UseConnectionReturnType);
         useMutationSpy.mockReturnValue({
             data: transaction,
         } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({
-            sendTransaction,
+            mutate: sendTransaction,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
@@ -337,9 +337,9 @@ describe('<TransactionDialog /> component', () => {
         const switchChain = jest.fn();
         useAccountSpy.mockReturnValue({
             chainId: networkDefinitions[Network.ARBITRUM_MAINNET].id,
-        } as unknown as Wagmi.UseAccountReturnType);
+        } as unknown as Wagmi.UseConnectionReturnType);
         useSwitchChainSpy.mockReturnValue({
-            switchChain,
+            mutate: switchChain,
         } as unknown as Wagmi.UseSwitchChainReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
@@ -365,7 +365,7 @@ describe('<TransactionDialog /> component', () => {
             data: null,
         } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({
-            sendTransaction,
+            mutate: sendTransaction,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
@@ -389,7 +389,7 @@ describe('<TransactionDialog /> component', () => {
             data: transaction,
         } as unknown as ReactQuery.UseMutationResult);
         useSendTransactionSpy.mockReturnValue({
-            sendTransaction,
+            mutate: sendTransaction,
         } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
@@ -447,7 +447,7 @@ describe('<TransactionDialog /> component', () => {
         useAccountSpy.mockReturnValue({
             chainId: 1,
             address,
-        } as unknown as Wagmi.UseAccountReturnType);
+        } as unknown as Wagmi.UseConnectionReturnType);
         useWaitForTransactionReceiptSpy.mockReturnValue(waitTxError);
         render(createTestComponent());
         expect(monitorTransactionErrorSpy).toHaveBeenCalledWith(error, {

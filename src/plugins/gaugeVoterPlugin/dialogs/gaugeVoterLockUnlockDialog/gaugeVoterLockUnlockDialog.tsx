@@ -3,7 +3,7 @@
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { IGaugeVoterPluginSettingsToken } from '@/plugins/gaugeVoterPlugin/types/gaugeVoterPlugin';
 import type { IDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -85,7 +85,7 @@ export const GaugeVoterLockUnlockDialog: React.FC<
         'GaugeVoterLockUnlockDialog: required parameters must be set.',
     );
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'GaugeVoterLockUnlockDialog: user must be connected to perform the action',

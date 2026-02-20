@@ -1,7 +1,7 @@
 import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import {
     type IDialogComponentProps,
@@ -33,7 +33,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
     const { close, updateOptions } = useDialogContext();
     const { open: openWeb3Modal } = useAppKit();
     const { open: isAppKitModalOpen } = useAppKitState();
-    const { isConnected } = useAccount();
+    const { isConnected } = useConnection();
     const { t } = useTranslations();
 
     const handleConnectClick = () => openWeb3Modal();

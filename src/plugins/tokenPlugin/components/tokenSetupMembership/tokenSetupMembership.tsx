@@ -4,7 +4,7 @@ import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenSetupMembershipCreateToken } from './components/tokenSetupMembershipCreateToken';
 import { TokenSetupMembershipImportToken } from './components/tokenSetupMembershipImportToken';
@@ -21,7 +21,7 @@ export const TokenSetupMembership: React.FC<ITokenSetupMembershipProps> = (
 
     const { t } = useTranslations();
     const { setValue, getValues } = useFormContext();
-    const { address } = useAccount();
+    const { address } = useConnection();
 
     const currentTokenAddress = getValues(
         `${formPrefix}.token.address`,

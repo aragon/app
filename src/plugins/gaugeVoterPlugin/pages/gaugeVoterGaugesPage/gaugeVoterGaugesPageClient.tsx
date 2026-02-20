@@ -3,7 +3,7 @@
 import { Link, Tabs } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Address } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
@@ -48,7 +48,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
 > = (props) => {
     const { dao, initialParams } = props;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();

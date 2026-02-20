@@ -5,7 +5,7 @@ import {
     ProposalVoting,
 } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { useAccount, useEnsName } from 'wagmi';
+import { useConnection, useEnsName } from 'wagmi';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -38,7 +38,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
 ) => {
     const { proposal, status, daoId } = props;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { data: pluginEnsName } = useEnsName({
         address: proposal.pluginAddress as Hex,
     });

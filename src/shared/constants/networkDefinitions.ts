@@ -12,7 +12,7 @@ import {
     sepolia,
     zksync,
     zksyncSepoliaTestnet,
-} from 'wagmi/chains';
+} from 'viem/chains';
 import { Network } from '@/shared/api/daoService';
 import type { IContractVersionInfo } from '../types';
 

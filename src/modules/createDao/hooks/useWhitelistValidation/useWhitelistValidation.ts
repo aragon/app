@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useWhitelistedAddresses } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type {
@@ -12,7 +12,7 @@ export const useWhitelistValidation = (
 ): IWhitelistValidationResult => {
     const { plugins } = params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { data } = useWhitelistedAddresses();
     const { isEnabled } = useFeatureFlags();
 
