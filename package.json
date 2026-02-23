@@ -19,7 +19,12 @@
     "type-check": "tsc --noEmit",
     "precommit": "turbo lint type-check test",
     "setup": "./scripts/setupEnv.sh",
-    "prepare": "husky"
+    "prepare": "husky",
+    "e2e": "playwright test --config e2e/playwright.config.ts",
+    "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
+    "e2e:smoke": "playwright test --config e2e/playwright.config.ts e2e/tests/smoke",
+    "e2e:install": "playwright install --with-deps chromium",
+    "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
     "@aragon/gov-ui-kit": "^1.28.0",
@@ -62,6 +67,7 @@
     "@changesets/cli": "^2.29.8",
     "@hookform/devtools": "^4.4.0",
     "@next/bundle-analyzer": "^15.5.12",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",

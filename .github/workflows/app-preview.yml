@@ -1,13 +1,14 @@
-# The "App Preview" workflow runs when a pull request is labeled with "preview" or updated. It builds a preview version
-# of the application, deploys a preview environment, and comments the deployment URL on the pull request for easy access.
+# The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel, comments the
+# deployment URL on the pull request, and runs E2E smoke tests against the preview deployment.
 
 name: App Preview
 
 on:
   pull_request:
     types:
-      - labeled
+      - opened
       - synchronize
+      - reopened
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,19 +19,12 @@ permissions:
   pull-requests: write
 
 jobs:
-  build:
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    if: contains(github.event.pull_request.labels.*.name, 'preview')
-    with:
-      env: "preview"
-
   deploy:
     uses: ./.github/workflows/shared-deploy.yml
-    needs: build
     secrets: inherit
     with:
       env: "preview"
+      skip-build-artifact: true
 
   comment:
     runs-on: ubuntu-latest
@@ -41,4 +35,31 @@ jobs:
         with:
           message: "🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
           comment-tag: preview-url
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  e2e:
+    needs: deploy
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: ${{ needs.deploy.outputs.deploymentUrl }}
+      environment: preview
+
+  e2e-comment:
+    needs: [deploy, e2e]
+    if: ${{ always() && needs.deploy.result == 'success' && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment E2E results
+        uses: thollander/actions-comment-pull-request@v3.0.1
+        with:
+          comment-tag: e2e-results
+          message: |
+            **E2E Smoke Results**
+            | | |
+            |---|---|
+            | Base URL | ${{ needs.deploy.outputs.deploymentUrl }} |
+            | Suite | smoke |
+            | Result | ${{ needs.e2e.result == 'success' && '✅ passed' || '❌ failed' }} |
+            | Run | [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
           github-token: ${{ secrets.GITHUB_TOKEN }}

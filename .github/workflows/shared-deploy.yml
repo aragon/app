@@ -15,6 +15,11 @@ on:
         description: "Environment to get the Github secrets and variables from"
         required: true
         type: string
+      skip-build-artifact:
+        description: "Skip downloading the nextjs-build artifact (deploy will build from source)"
+        required: false
+        type: boolean
+        default: false
     outputs:
       deploymentUrl:
         description: "The URL of the Vercel deployment"
@@ -51,9 +56,14 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Retrieve NextJs build
+        if: ${{ !inputs.skip-build-artifact }}
         uses: actions/download-artifact@v7.0.0
         with:
           name: nextjs-build
+
+      - name: Setup env file for source build
+        if: ${{ inputs.skip-build-artifact }}
+        run: pnpm run setup ${{ inputs.env }}
 
       - name: Setup env file secrets
         uses: aragon/github-templates/steps/credential-retrieval@v0.4
