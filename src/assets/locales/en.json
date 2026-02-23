@@ -202,10 +202,10 @@
             "alert": {
               "fileNameTerm": "File name",
               "merkleRootTerm": "Merkle root",
-              "successAlertTitle": "File uploaded",
               "totalMembersTerm": "Total members"
             },
             "button": "Upload JSON",
+            "buttonAlt": "Replace JSON",
             "helpText": "Upload a JSON file with addresses and amounts to distribute.",
             "label": "Distribution file",
             "merkleRoot": "Merkle root: {{merkleRoot}}",
