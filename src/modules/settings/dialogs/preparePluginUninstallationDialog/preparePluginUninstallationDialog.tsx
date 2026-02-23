@@ -1,7 +1,7 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useRef } from 'react';
 import type { TransactionReceipt } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
@@ -50,7 +50,7 @@ export const PreparePluginUninstallationDialog: React.FC<
         uninstallationPreparedEventLog,
     } = location.params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'PreparePluginUninstallationDialog: user must be connected.',

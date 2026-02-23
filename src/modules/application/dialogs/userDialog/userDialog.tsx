@@ -10,7 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { mainnet } from 'viem/chains';
-import { useAccount, useDisconnect, useEnsName } from 'wagmi';
+import { useConnection, useDisconnect, useEnsName } from 'wagmi';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -26,7 +26,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { close } = useDialogContext();
-    const { address, chainId } = useAccount();
+    const { address, chainId } = useConnection();
     const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName({

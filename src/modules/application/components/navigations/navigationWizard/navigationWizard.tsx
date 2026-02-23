@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Route } from 'next';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -20,6 +20,7 @@ import {
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
@@ -50,7 +51,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 const resolveDisplayDao = (
     dao?: IDao,
     targetDaoAddress?: string,
-): Pick<IDao | ISubDaoSummary, 'name' | 'avatar'> | undefined => {
+): Pick<IDao | ISubDaoSummary, 'address' | 'name' | 'avatar'> | undefined => {
     if (dao == null) {
         return undefined;
     }
@@ -74,7 +75,7 @@ const resolveDisplayDao = (
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, targetDaoAddress, exitPath } = props;
 
-    const { address, isConnected } = useAccount();
+    const { address, isConnected } = useConnection();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const { t } = useTranslations();
@@ -89,6 +90,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
 
     const walletUser = isMounted && address != null ? { address } : undefined;
     const displayDao = resolveDisplayDao(dao, targetDaoAddress);
+    const displayDaoName =
+        displayDao != null ? daoUtils.getDaoDisplayName(displayDao) : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
@@ -111,10 +114,10 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     {displayDao != null && (
                         <div className="flex items-center gap-x-2">
                             <p className="truncate text-nowrap text-neutral-500 text-sm leading-tight">
-                                {displayDao.name}
+                                {displayDaoName}
                             </p>
                             <DaoAvatar
-                                name={displayDao.name}
+                                name={displayDaoName}
                                 size="sm"
                                 src={daoAvatar}
                             />

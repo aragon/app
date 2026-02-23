@@ -6,7 +6,7 @@ import {
     ToggleGroup,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
@@ -34,7 +34,7 @@ export const CapitalDistributorCampaignList: React.FC<
 > = (props) => {
     const { dao, initialParams } = props;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { t } = useTranslations();
 
     const [campaignFilter, setCampaignFilter] = useState(

@@ -37,7 +37,7 @@ describe('<NavigationWizard /> component', () => {
         useDialogContext,
         'useDialogContext',
     );
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
@@ -46,10 +46,10 @@ describe('<NavigationWizard /> component', () => {
             push: jest.fn(),
             prefetch: jest.fn(),
         } as unknown as AppRouterInstance);
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: '0x123',
             isConnected: true,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         confirmSpy.mockReset();
     });
@@ -57,7 +57,7 @@ describe('<NavigationWizard /> component', () => {
     afterEach(() => {
         cidToSrcSpy.mockReset();
         useRouterSpy.mockReset();
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useDialogContextSpy.mockReset();
         confirmSpy.mockReset();
     });
@@ -111,10 +111,10 @@ describe('<NavigationWizard /> component', () => {
     it('renders the user wallet address and opens the user dialog when clicked', async () => {
         const address = '0xUser123';
         const open = jest.fn();
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address,
             isConnected: true,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
         render(createTestComponent());
@@ -129,10 +129,10 @@ describe('<NavigationWizard /> component', () => {
     it('renders connect wallet button when user is not connected', async () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: null,
             isConnected: false,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         render(createTestComponent());
 

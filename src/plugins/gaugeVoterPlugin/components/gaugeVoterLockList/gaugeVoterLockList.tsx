@@ -5,7 +5,7 @@ import {
     invariant,
     ProposalDataListItem,
 } from '@aragon/gov-ui-kit';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
@@ -30,7 +30,7 @@ export const GaugeVoterLockList: React.FC<IGaugeVoterLockListProps> = (
     const { dao, plugin } = props;
 
     const { t } = useTranslations();
-    const { address } = useAccount();
+    const { address } = useConnection();
 
     const { votingEscrow } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;

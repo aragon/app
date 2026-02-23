@@ -1,6 +1,6 @@
 import { DaoDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { IPinResult } from '@/shared/api/ipfsService/domain';
 import { usePinFile, usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -41,7 +41,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         'PublishDaoDialog: required parameters must be set.',
     );
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(address != null, 'PublishDaoDialog: user must be connected.');
 
     const { values } = location.params;

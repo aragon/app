@@ -83,6 +83,31 @@ describe('dao utils', () => {
         });
     });
 
+    describe('getDaoDisplayName', () => {
+        it('returns dao name when it is set', () => {
+            const dao = generateDao({ name: 'My DAO' });
+            expect(daoUtils.getDaoDisplayName(dao)).toEqual('My DAO');
+        });
+
+        it('returns truncated dao address when name is empty or whitespace', () => {
+            const emptyNameDao = generateDao({
+                name: '',
+                address: '0x1234567890123456789012345678901234567890',
+            });
+            const whitespaceNameDao = generateDao({
+                name: '   ',
+                address: '0x1234567890123456789012345678901234567890',
+            });
+
+            expect(daoUtils.getDaoDisplayName(emptyNameDao)).toEqual(
+                addressUtils.truncateAddress(emptyNameDao.address),
+            );
+            expect(daoUtils.getDaoDisplayName(whitespaceNameDao)).toEqual(
+                addressUtils.truncateAddress(whitespaceNameDao.address),
+            );
+        });
+    });
+
     describe('getPluginName', () => {
         it('returns plugin name when available', () => {
             const name = 'Custom plugin';

@@ -2,6 +2,7 @@ import { DaoAvatar, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDashboardDefaultHeaderProps {
@@ -15,6 +16,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
     props,
 ) => {
     const { dao } = props;
+    const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const { t } = useTranslations();
 
@@ -53,14 +55,14 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
         <Page.Header
             avatar={
                 <DaoAvatar
-                    name={dao.name}
+                    name={daoDisplayName}
                     size="2xl"
                     src={ipfsUtils.cidToSrc(dao.avatar)}
                 />
             }
             description={dao.description}
             stats={stats}
-            title={dao.name}
+            title={daoDisplayName}
         />
     );
 };

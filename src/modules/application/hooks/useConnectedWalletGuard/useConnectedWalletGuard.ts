@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
@@ -19,7 +19,7 @@ export const useConnectedWalletGuard = (
 ) => {
     const { onSuccess, onError } = params ?? {};
 
-    const { isConnected } = useAccount();
+    const { isConnected } = useConnection();
     const { open } = useDialogContext();
 
     const checkWalletConnected = useCallback(

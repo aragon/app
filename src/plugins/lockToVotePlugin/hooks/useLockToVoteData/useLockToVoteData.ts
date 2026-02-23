@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { Hex } from 'viem';
-import { useAccount, useReadContract } from 'wagmi';
+import { useConnection, useReadContract } from 'wagmi';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
@@ -84,7 +84,7 @@ export const useLockToVoteData = (
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { id: chainId } = networkDefinitions[token.network];
