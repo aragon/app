@@ -36,6 +36,10 @@ export interface IGetProposalListQueryParams
      * Filter proposals only from currently installed plugins.
      */
     onlyActive?: boolean;
+    /**
+     * Include proposals from SubDAOs when set to true.
+     */
+    includeSubDaos?: boolean;
 }
 
 export interface IGetProposalListParams

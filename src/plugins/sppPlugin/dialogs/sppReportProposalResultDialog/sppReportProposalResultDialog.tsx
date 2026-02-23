@@ -5,7 +5,7 @@ import {
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -52,7 +52,7 @@ export const SppReportProposalResultDialog: React.FC<
         'SppReportProposalResultDialog: required parameters must be set.',
     );
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'SppReportProposalResultDialog: external wallet must be connected.',
@@ -88,7 +88,11 @@ export const SppReportProposalResultDialog: React.FC<
             description={t(
                 'app.plugins.spp.sppReportProposalResultDialog.description',
             )}
-            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            indexingFallbackUrl={
+                slug != null
+                    ? daoUtils.getDaoUrl(dao, `proposals/${slug}`)
+                    : undefined
+            }
             network={proposal.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
@@ -105,7 +109,7 @@ export const SppReportProposalResultDialog: React.FC<
             transactionType={TransactionType.PROPOSAL_REPORT_RESULTS}
         >
             <VoteProposalDataListItemStructure
-                proposalId={slug}
+                proposalId={slug ?? ''}
                 proposalTitle={proposal.title}
                 voteIndicator="yes"
                 voteIndicatorDescription={t(

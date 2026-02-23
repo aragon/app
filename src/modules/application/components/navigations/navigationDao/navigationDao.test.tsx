@@ -52,11 +52,11 @@ describe('<NavigationDao /> component', () => {
         useDialogContext,
         'useDialogContext',
     );
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
 
     beforeEach(() => {
         usePathnameSpy.mockReturnValue('');
-        useAccountSpy.mockReturnValue({} as wagmi.UseAccountReturnType);
+        useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
@@ -64,7 +64,7 @@ describe('<NavigationDao /> component', () => {
         cidToSrcSpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
@@ -160,10 +160,10 @@ describe('<NavigationDao /> component', () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address,
             isConnected: true,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         render(createTestComponent());
         const button = screen.getByText(address);
         expect(button).toBeInTheDocument();

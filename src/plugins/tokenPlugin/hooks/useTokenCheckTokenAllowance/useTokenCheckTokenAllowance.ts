@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
-import { useAccount, useBalance, useReadContract } from 'wagmi';
+import { useConnection, useReadContract } from 'wagmi';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
@@ -21,7 +21,7 @@ export const useTokenCheckTokenAllowance = (
     const { spender, token } = props;
 
     const queryClient = useQueryClient();
-    const { address } = useAccount();
+    const { address } = useConnection();
 
     const { id: chainId } = networkDefinitions[token.network];
 
@@ -39,11 +39,27 @@ export const useTokenCheckTokenAllowance = (
     });
 
     const {
-        data: balance,
+        data: balanceOf,
         queryKey: balanceQueryKey,
         status,
         isLoading: isBalanceLoading,
-    } = useBalance({ address, token: token.address as Hex, chainId });
+    } = useReadContract({
+        abi: erc20Abi,
+        functionName: 'balanceOf',
+        address: token.address as Hex,
+        args: [address as Hex],
+        query: { enabled: address != null },
+        chainId,
+    });
+
+    const balance =
+        balanceOf != null
+            ? {
+                  decimals: token.decimals,
+                  symbol: token.symbol,
+                  value: balanceOf,
+              }
+            : undefined;
 
     const invalidateQueries = () => {
         void queryClient.invalidateQueries({ queryKey: allowanceQueryKey });

@@ -3,7 +3,7 @@
 import classNames from 'classnames';
 import Image from 'next/image';
 import type { ComponentProps } from 'react';
-import { useAccount, useEnsName } from 'wagmi';
+import { useConnection, useEnsName } from 'wagmi';
 import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -19,7 +19,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
     props,
 ) => {
     const { className, ...otherProps } = props;
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { data: ensName } = useEnsName({
         address,
         chainId: 1,

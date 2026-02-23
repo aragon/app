@@ -296,8 +296,8 @@
           "label": "Gauge ratio"
         },
         "MULTI_DISPATCH": {
-          "description": "Choose several routers to dispatch them sequentially.",
-          "label": "Multi dispatch"
+          "description": "Dispatches several other routers sequentially within a single transaction.",
+          "label": "Multi-dispatch"
         },
         "STREAM": {
           "description": "Transfer a fixed quantity of an available asset over time to recipients.",
@@ -2787,7 +2787,7 @@
         "gaugeVoter": "Gauge voter",
         "uninstall": {
           "action": "Uninstall policy",
-          "info": "Policies of this type can't be executed once this policy is uninstalled."
+          "info": "This policy can't be dispatched once it's uninstalled."
         }
       },
       "daoPolicyDetailsPage": {
@@ -2857,7 +2857,7 @@
           "daoAction": "SubDAO",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
-          "settingsInfoTitle": "DAO",
+          "settingsInfoTitle": "Account",
           "title": "Settings"
         }
       },
@@ -3013,13 +3013,13 @@
         "message": "If you leave this process, you'll lose all the information you've entered so far."
       },
       "daoPluginInfo": {
-        "launchedAt": "Plugin launched",
+        "launchedAt": "Launched",
         "plugin": "Plugin address",
         "pluginVersionInfo": "{{name}} v{{release}}.{{build}}"
       },
       "daoTypeTag": {
-        "mainLabel": "Main DAO",
-        "subLabel": "SubDAO"
+        "mainLabel": "Primary account",
+        "subLabel": "Linked account"
       },
       "errorFeedback": {
         "description": "If you'd like to help, you can report the issue to our team.",

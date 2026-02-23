@@ -16,7 +16,7 @@ describe('<ConnectWalletDialog /> component', () => {
     );
     const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
     const useAppKitStateSpy = jest.spyOn(AppKit, 'useAppKitState');
-    const useAccountSpy = jest.spyOn(Wagmi, 'useAccount');
+    const useAccountSpy = jest.spyOn(Wagmi, 'useConnection');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
@@ -27,7 +27,7 @@ describe('<ConnectWalletDialog /> component', () => {
             initialized: true,
             connectingWallet: undefined,
         });
-        useAccountSpy.mockReturnValue({} as Wagmi.UseAccountReturnType);
+        useAccountSpy.mockReturnValue({} as Wagmi.UseConnectionReturnType);
     });
 
     afterEach(() => {

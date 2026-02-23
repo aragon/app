@@ -1,4 +1,4 @@
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type {
     IPermissionCheckGuardParams,
@@ -17,7 +17,7 @@ export const useMultisigPermissionCheckProposalCreation = (
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId } = params;
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { t } = useTranslations();
 
     const { onlyListed } = plugin.settings;

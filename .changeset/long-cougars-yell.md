@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Update package dependencies
+Fix vote history for SPP

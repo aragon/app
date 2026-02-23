@@ -1,4 +1,4 @@
-import { addressUtils, invariant } from '@aragon/gov-ui-kit';
+import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
@@ -7,14 +7,16 @@ class ProposalUtils {
     getProposalSlug = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,
         dao?: IDao,
-    ): string => {
+    ): string | undefined => {
         const { incrementalId, pluginAddress } = proposal;
         const plugin = daoUtils.getDaoPlugins(dao, {
             pluginAddress,
             includeSubPlugins: true,
         })?.[0];
 
-        invariant(plugin != null, 'getProposalSlug: proposal plugin not found');
+        if (plugin == null) {
+            return undefined;
+        }
 
         return `${plugin.slug}-${incrementalId.toString()}`.toUpperCase();
     };
@@ -35,6 +37,11 @@ class ProposalUtils {
         dao?: IDao,
     ): string | undefined => {
         const slug = this.getProposalSlug(proposal, dao);
+
+        if (slug == null) {
+            return undefined;
+        }
+
         const proposalPath = `proposals/${slug}`;
 
         // If we have enough information to detect a subDAO proposal, build a

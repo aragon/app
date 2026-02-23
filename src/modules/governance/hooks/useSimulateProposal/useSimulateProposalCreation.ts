@@ -1,4 +1,4 @@
-import { useAccount, useCall } from 'wagmi';
+import { useCall, useConnection } from 'wagmi';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
@@ -33,7 +33,7 @@ export const useSimulateProposalCreation = (
     params: IUseSimulateProposalCreationParams,
 ) => {
     const { plugin, network } = params;
-    const { address: userAddress } = useAccount();
+    const { address: userAddress } = useConnection();
     const { id: chainId } = networkDefinitions[network];
 
     const transactionData = publishProposalDialogUtils.buildTransaction({
