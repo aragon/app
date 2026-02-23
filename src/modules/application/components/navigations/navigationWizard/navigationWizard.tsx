@@ -20,6 +20,7 @@ import {
 } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 
@@ -90,10 +91,7 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const walletUser = isMounted && address != null ? { address } : undefined;
     const displayDao = resolveDisplayDao(dao, targetDaoAddress);
     const displayDaoName =
-        displayDao != null
-            ? displayDao.name ||
-              addressUtils.truncateAddress(displayDao.address)
-            : undefined;
+        displayDao != null ? daoUtils.getDaoDisplayName(displayDao) : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(displayDao?.avatar);
 
     const linkClassName = classNames(
