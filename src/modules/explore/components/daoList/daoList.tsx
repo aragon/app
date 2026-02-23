@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    addressUtils,
     DaoDataListItem,
     DataListContainer,
     DataListFilter,
@@ -139,10 +138,7 @@ export const DaoList: React.FC<IDaoListProps> = (props) => {
                         href={daoUtils.getDaoUrl(dao, 'dashboard')}
                         key={dao.id}
                         logoSrc={ipfsUtils.cidToSrc(dao.avatar)}
-                        name={
-                            dao.name ||
-                            addressUtils.truncateAddress(dao.address)
-                        }
+                        name={daoUtils.getDaoDisplayName(dao)}
                         network={networkDefinitions[dao.network].name}
                     />
                 ))}

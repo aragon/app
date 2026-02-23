@@ -1,7 +1,8 @@
-import { addressUtils, DaoAvatar } from '@aragon/gov-ui-kit';
+import { DaoAvatar } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import type { IDao } from '@/shared/api/daoService';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface INavigationDaoHome extends ComponentProps<'button'> {
@@ -13,8 +14,7 @@ export interface INavigationDaoHome extends ComponentProps<'button'> {
 
 export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
     const { dao, className, ...otherProps } = props;
-    const daoDisplayName =
-        dao.name || addressUtils.truncateAddress(dao.address);
+    const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 

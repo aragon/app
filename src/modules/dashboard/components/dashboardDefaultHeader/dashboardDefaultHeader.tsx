@@ -1,12 +1,8 @@
-import {
-    addressUtils,
-    DaoAvatar,
-    formatterUtils,
-    NumberFormat,
-} from '@aragon/gov-ui-kit';
+import { DaoAvatar, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDashboardDefaultHeaderProps {
@@ -20,8 +16,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
     props,
 ) => {
     const { dao } = props;
-    const daoDisplayName =
-        dao.name || addressUtils.truncateAddress(dao.address);
+    const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const { t } = useTranslations();
 
