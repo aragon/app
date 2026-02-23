@@ -2,7 +2,7 @@
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -66,7 +66,7 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (
         'TokenApproveNftDialog: required parameters must be set.',
     );
 
-    const { address } = useAccount();
+    const { address } = useConnection();
     invariant(
         address != null,
         'TokenApproveNftDialog: user must be connected.',

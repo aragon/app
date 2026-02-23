@@ -22,15 +22,15 @@ describe('<UserDialog /> component', () => {
         useDialogContext,
         'useDialogContext',
     );
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
     const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useAccountSpy.mockReturnValue(
-            {} as unknown as wagmi.UseAccountReturnType,
+        useConnectionSpy.mockReturnValue(
+            {} as unknown as wagmi.UseConnectionReturnType,
         );
         useDisconnectSpy.mockReturnValue(
             {} as unknown as wagmi.UseDisconnectReturnType,
@@ -42,7 +42,7 @@ describe('<UserDialog /> component', () => {
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useDisconnectSpy.mockReset();
         useEnsNameSpy.mockReset();
         clipboardCopySpy.mockReset();
@@ -62,9 +62,9 @@ describe('<UserDialog /> component', () => {
     };
 
     it('renders empty container when address is not defined', () => {
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: undefined,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         const { container } = render(createTestComponent());
         expect(container).toBeEmptyDOMElement();
     });
@@ -72,9 +72,9 @@ describe('<UserDialog /> component', () => {
     it('renders the connected user avatar, ens name and address', () => {
         const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
         const ensName = 'name.eth';
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useEnsNameSpy.mockReturnValue({
             data: ensName,
         } as unknown as wagmi.UseEnsNameReturnType);
@@ -88,9 +88,9 @@ describe('<UserDialog /> component', () => {
 
     it('only renders the user address when it is not linked to an ENS name', () => {
         const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useEnsNameSpy.mockReturnValue({
             data: null,
         } as unknown as wagmi.UseEnsNameReturnType);
@@ -103,9 +103,9 @@ describe('<UserDialog /> component', () => {
     it('renders a disconnect action for the user which disconnects', async () => {
         const disconnect = jest.fn();
         const close = jest.fn();
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: '0x123',
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useDisconnectSpy.mockReturnValue({
             disconnect,
         } as unknown as wagmi.UseDisconnectReturnType);
@@ -127,13 +127,13 @@ describe('<UserDialog /> component', () => {
     it('closes the dialog when the user disconnects', () => {
         const close = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
-        useAccountSpy
+        useConnectionSpy
             .mockReturnValueOnce({
                 address: '0x123',
-            } as unknown as wagmi.UseAccountReturnType)
+            } as unknown as wagmi.UseConnectionReturnType)
             .mockReturnValueOnce({
                 address: null,
-            } as unknown as wagmi.UseAccountReturnType);
+            } as unknown as wagmi.UseConnectionReturnType);
         const { rerender } = render(createTestComponent());
         rerender(createTestComponent());
         expect(close).toHaveBeenCalled();

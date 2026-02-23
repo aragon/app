@@ -2,7 +2,7 @@
 
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -24,7 +24,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { open } = useDialogContext();
 
     const [daoFilter, setDaoFilter] = useFilterUrlParam({

@@ -1,4 +1,4 @@
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import { type Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
@@ -23,7 +23,7 @@ export interface IUseAdminStatusParams {
 export const useAdminStatus = (params: IUseAdminStatusParams) => {
     const { daoId, network } = params;
 
-    const { address: memberAddress } = useAccount();
+    const { address: memberAddress } = useConnection();
 
     const adminPlugin = useDaoPlugins({
         daoId,

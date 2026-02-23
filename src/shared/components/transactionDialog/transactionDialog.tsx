@@ -2,7 +2,7 @@ import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
-    useAccount,
+    useConnection,
     useSendTransaction,
     useSwitchChain,
     useWaitForTransactionReceipt,
@@ -58,14 +58,14 @@ export const TransactionDialog = <TCustomStepId extends string>(
         activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
-    const { switchChain, status: switchChainStatus } = useSwitchChain();
+    const { mutate: switchChain, status: switchChainStatus } = useSwitchChain();
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { updateOptions } = useDialogContext();
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
 
-    const { chainId, address } = useAccount();
+    const { chainId, address } = useConnection();
     const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({
         network,
     });
@@ -88,7 +88,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
     } = useMutation({ mutationFn: prepareTransaction, onSuccess: nextStep });
 
     const {
-        sendTransaction,
+        mutate: sendTransaction,
         status: approveTransactionStatus,
         data: transactionHash,
     } = useSendTransaction({ mutation: { onSuccess: nextStep } });

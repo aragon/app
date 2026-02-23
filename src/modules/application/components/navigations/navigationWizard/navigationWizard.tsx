@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Route } from 'next';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -74,7 +74,7 @@ const resolveDisplayDao = (
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, targetDaoAddress, exitPath } = props;
 
-    const { address, isConnected } = useAccount();
+    const { address, isConnected } = useConnection();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const { t } = useTranslations();

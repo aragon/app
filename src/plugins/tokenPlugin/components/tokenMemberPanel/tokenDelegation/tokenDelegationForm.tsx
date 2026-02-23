@@ -8,7 +8,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
@@ -31,7 +31,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
-    const { address } = useAccount();
+    const { address } = useConnection();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { chainId } = useDaoChain({ daoId });
 
