@@ -75,6 +75,17 @@ class DaoUtils {
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;
 
+    /**
+     * Returns the DAO display name with address fallback when metadata has no usable name.
+     */
+    getDaoDisplayName = (dao: Pick<IDao, 'name' | 'address'>): string => {
+        const name = dao.name?.trim();
+
+        return name != null && name !== ''
+            ? name
+            : addressUtils.truncateAddress(dao.address);
+    };
+
     getPluginName = (plugin: IDaoPlugin): string => {
         if (plugin.name) {
             return plugin.name;

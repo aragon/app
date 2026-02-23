@@ -21,6 +21,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
@@ -34,6 +35,7 @@ export interface INavigationDaoProps extends INavigationContainerProps {
 
 export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const { dao, containerClasses, ...otherProps } = props;
+    const daoDisplayName = daoUtils.getDaoDisplayName(dao);
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -95,14 +97,14 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
             >
                 <div className="flex flex-col gap-3 px-8">
                     <DaoAvatar
-                        name={dao.name}
+                        name={daoDisplayName}
                         responsiveSize={{ sm: 'xl' }}
                         size="lg"
                         src={daoAvatar}
                     />
                     <div className="flex flex-col gap-1.5 font-normal leading-tight">
                         <p className="truncate text-lg text-neutral-800 sm:text-xl">
-                            {dao.name}
+                            {daoDisplayName}
                         </p>
                         <Clipboard className="w-full" copyValue={dao.address}>
                             <Link
