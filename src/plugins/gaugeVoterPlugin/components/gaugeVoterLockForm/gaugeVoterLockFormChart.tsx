@@ -33,6 +33,8 @@ export interface IGaugeVoterLockFormChartProps {
     amount?: string;
     /**
      * Settings of the token plugin with escrow contract.
+     * If `settings.votingEscrow.slope <= 0`, no chart is rendered because
+     * voting power does not change over time.
      */
     settings: IGaugeVoterPluginSettings;
 }
@@ -40,6 +42,10 @@ export interface IGaugeVoterLockFormChartProps {
 const chartPoints = 6;
 const maxAmount = 1_000_000_000_000;
 
+/**
+ * Voting-power preview for lock duration.
+ * The component hides itself when escrow slope is flat or invalid.
+ */
 export const GaugeVoterLockFormChart: React.FC<
     IGaugeVoterLockFormChartProps
 > = (props) => {
@@ -50,7 +56,7 @@ export const GaugeVoterLockFormChart: React.FC<
 
     const [hoveredPoint, setHoveredPoint] = useState<IChartPoint>();
 
-    if (Number(slope) === 0) {
+    if (slope <= 0) {
         return null;
     }
 
