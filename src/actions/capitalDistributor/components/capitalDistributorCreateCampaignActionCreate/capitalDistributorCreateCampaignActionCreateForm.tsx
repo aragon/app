@@ -1,8 +1,8 @@
 'use client';
 
 import {
-    AlertCard,
     Button,
+    Card,
     Clipboard,
     DefinitionList,
     IconType,
@@ -224,28 +224,8 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 useCustomWrapper={true}
             >
                 <div className="flex flex-col gap-3">
-                    <Button
-                        className="w-fit"
-                        iconLeft={IconType.PLUS}
-                        onClick={() => fileUploadInputRef.current?.click()}
-                        size="md"
-                        variant={
-                            merkleTreeInfo == null && merkleTreeInfoAlert
-                                ? 'critical'
-                                : 'tertiary'
-                        }
-                    >
-                        {t(
-                            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.button',
-                        )}
-                    </Button>
                     {merkleTreeInfo != null && (
-                        <AlertCard
-                            message={t(
-                                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.alert.successAlertTitle',
-                            )}
-                            variant="success"
-                        >
+                        <Card className="border border-neutral-100 px-6 py-2 shadow-neutral-sm">
                             <DefinitionList.Container>
                                 <DefinitionList.Item
                                     term={t(
@@ -279,8 +259,24 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                                     </Clipboard>
                                 </DefinitionList.Item>
                             </DefinitionList.Container>
-                        </AlertCard>
+                        </Card>
                     )}
+
+                    <Button
+                        className="w-fit"
+                        iconLeft={IconType.WITHDRAW}
+                        onClick={() => fileUploadInputRef.current?.click()}
+                        size="md"
+                        variant={
+                            merkleTreeInfo == null && merkleTreeInfoAlert
+                                ? 'critical'
+                                : 'tertiary'
+                        }
+                    >
+                        {t(
+                            `app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.jsonUpload.${merkleTreeInfo ? 'buttonAlt' : 'button'}`,
+                        )}
+                    </Button>
                 </div>
                 <input
                     accept=".json"
