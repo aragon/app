@@ -35,7 +35,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         if (gaugePlugin?.address == null) {
             return;
         }
-        console.log('gaugePluginAddress', gaugePlugin.address);
+
         const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
             gaugePluginAddress: gaugePlugin.address as `0x${string}`,
             network: dao.network,
@@ -53,7 +53,6 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
                 'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.helpText',
             )}
             id="katana-members-file"
-            isOptional={true}
             label={t(
                 'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.label',
             )}
@@ -62,8 +61,9 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             <Button
                 className="w-fit"
                 disabled={gaugePlugin?.address == null}
-                iconLeft={IconType.REWARDS}
+                iconLeft={IconType.PLUS}
                 onClick={handleClick}
+                size="md"
                 variant="tertiary"
             >
                 {t(

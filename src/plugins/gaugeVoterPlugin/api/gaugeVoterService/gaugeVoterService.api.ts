@@ -1,10 +1,7 @@
 import type { Hex } from 'viem';
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
-import type {
-    IRequestUrlParams,
-    IRequestUrlQueryParams,
-} from '@/shared/api/httpService';
+import type { IRequestUrlQueryParams } from '@/shared/api/httpService';
 
 export interface IGetGaugeListUrlParams {
     /**
@@ -69,5 +66,15 @@ export interface IGetRewardDistributionUrlParams {
     epochId: number;
 }
 
+export interface IGetRewardDistributionQueryParams {
+    /**
+     * Total amount to distribute.
+     */
+    rewardTotalAmount: string;
+}
+
 export interface IGetRewardDistributionParams
-    extends IRequestUrlParams<IGetRewardDistributionUrlParams> {}
+    extends IRequestUrlQueryParams<
+        IGetRewardDistributionUrlParams,
+        IGetRewardDistributionQueryParams
+    > {}

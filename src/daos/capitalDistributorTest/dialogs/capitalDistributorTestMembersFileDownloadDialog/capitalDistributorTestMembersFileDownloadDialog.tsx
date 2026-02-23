@@ -42,17 +42,15 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     const [totalAmount, setTotalAmount] = useState('');
     const [epochId, setEpochId] = useState('');
 
-    console.log('askdh', {
-        pluginAddress: gaugePluginAddress,
-        network,
-        epochId: Number(epochId),
-    });
     const rewardDistribution = useRewardDistribution(
         {
             urlParams: {
                 pluginAddress: gaugePluginAddress,
                 network,
                 epochId: Number(epochId),
+            },
+            queryParams: {
+                rewardTotalAmount: totalAmount,
             },
         },
         { enabled: false },
