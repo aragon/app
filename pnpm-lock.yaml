@@ -106,6 +106,9 @@ importers:
       server-only:
         specifier: ^0.0.1
         version: 0.0.1
+      ts-pattern:
+        specifier: ^5.9.0
+        version: 5.9.0
       viem:
         specifier: ^2.45.3
         version: 2.45.3(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.3.6)
@@ -6879,6 +6882,9 @@ packages:
 
   ts-morph@12.0.0:
     resolution: {integrity: sha512-VHC8XgU2fFW7yO1f/b3mxKDje1vmyzFXHWzOYmKEkCEwcLjDtbdLgBQviqj4ZwP4MJkQtRo6Ha2I29lq/B+VxA==}
+
+  ts-pattern@5.9.0:
+    resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
 
   ts-toolbelt@6.15.5:
     resolution: {integrity: sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==}
@@ -15430,6 +15436,8 @@ snapshots:
     dependencies:
       '@ts-morph/common': 0.11.1
       code-block-writer: 10.1.1
+
+  ts-pattern@5.9.0: {}
 
   ts-toolbelt@6.15.5: {}
 

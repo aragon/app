@@ -245,14 +245,22 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 onClick={handleOpenDialog}
                 onMouseDown={handleSelectMouseDown}
                 size={size}
-                variant="tertiary"
+                variant={assetField.alert ? 'critical' : 'tertiary'}
             >
                 <AssetInputToken token={assetField.value?.token} />
             </Button>
         );
 
     return hideAmount ? (
-        <div>{renderAssetButton('md')}</div>
+        <InputContainer
+            alert={assetField.alert}
+            className="w-fit"
+            id={inputId}
+            useCustomWrapper={true}
+            variant={assetField.variant}
+        >
+            {renderAssetButton('md')}
+        </InputContainer>
     ) : (
         <div className="flex flex-col gap-y-3">
             <InputContainer
