@@ -15,11 +15,15 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
     /**
      * Address of the user to retrieve the user-specific data for the campaigns.
      */
-    userAddress: string;
+    userAddress?: string;
     /**
      * Status of the campaigns to be fetched (claimed/claimable).
      */
     status?: CampaignStatus;
+    /**
+     * Activity status filter for the campaigns (active/inactive).
+     */
+    activityStatus?: 'active' | 'inactive';
 }
 
 export interface IGetCampaignListParams

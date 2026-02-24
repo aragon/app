@@ -176,7 +176,39 @@
       "capitalDistributor": {
         "composer": {
           "contractName": "Capital Distributor",
-          "createCampaignActionName": "Create campaign"
+          "createCampaignActionName": "Create campaign",
+          "pauseCampaignActionName": "Pause campaign",
+          "resumeCampaignActionName": "Resume campaign",
+          "endCampaignActionName": "End campaign"
+        },
+        "capitalDistributorSelectCampaignDialog": {
+          "title": "Select campaign",
+          "description": "Choose a campaign from the list below.",
+          "entityLabel": "Campaign",
+          "emptyState": "No campaigns available.",
+          "submit": "Select",
+          "cancel": "Cancel"
+        },
+        "capitalDistributorPauseCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "Pause campaign",
+            "description": "Select an active campaign to pause.",
+            "action": "Select campaign"
+          }
+        },
+        "capitalDistributorResumeCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "Resume campaign",
+            "description": "Select an inactive campaign to resume.",
+            "action": "Select campaign"
+          }
+        },
+        "capitalDistributorEndCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "End campaign",
+            "description": "Select an active campaign to end permanently.",
+            "action": "Select campaign"
+          }
         },
         "capitalDistributorCampaignUploadDialog": {
           "done": "Done",
