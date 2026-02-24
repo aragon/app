@@ -37,6 +37,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         }
 
         const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
+            daoId: dao.id,
             gaugePluginAddress: gaugePlugin.address as `0x${string}`,
             network: dao.network,
         };

@@ -1,16 +1,23 @@
 'use client';
 
 import { Dialog, InputNumber, invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { parseUnits } from 'viem';
 import { useRewardDistribution } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IGaugeVoterPlugin } from '../../../../plugins/gaugeVoterPlugin/types';
+import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
 export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
     /**
      * Address of the gauge plugin.
      */
@@ -34,13 +41,27 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         'CapitalDistributorTestMembersFileDownloadDialog: params must be defined',
     );
 
-    const { gaugePluginAddress, network } = location.params;
+    const { daoId, gaugePluginAddress, network } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
     const [totalAmount, setTotalAmount] = useState('');
     const [epochId, setEpochId] = useState('');
+
+    const plugin = useDaoPlugins({
+        daoId,
+        pluginAddress: gaugePluginAddress,
+    })![0];
+
+    const { token } = (plugin.meta as IGaugeVoterPlugin).settings;
+    const totalAmountInUnits = useMemo(
+        () =>
+            totalAmount
+                ? parseUnits(totalAmount, token.decimals).toString()
+                : '',
+        [totalAmount, token.decimals],
+    );
 
     const rewardDistribution = useRewardDistribution(
         {
@@ -50,7 +71,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                 epochId: Number(epochId),
             },
             queryParams: {
-                rewardTotalAmount: totalAmount,
+                rewardTotalAmount: totalAmountInUnits,
             },
         },
         { enabled: false },
@@ -113,7 +134,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                         min={0}
                         onChange={setTotalAmount}
                         placeholder="0"
-                        suffix="wei"
+                        suffix={token.symbol}
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (
