@@ -2,16 +2,17 @@ import type { IRewardDistributionOwner } from '@/plugins/gaugeVoterPlugin/api/ga
 
 export interface IToRewardJsonParams {
     /**
-     * List of owners with their share basis points from the reward distribution API.
+     * List of owners with their pre-computed reward amounts from the reward distribution API.
      */
     owners: IRewardDistributionOwner[];
-    /**
-     * Total reward amount in wei to distribute across all owners.
-     */
-    totalAmount: bigint;
+}
+
+export interface IRewardJsonEntry {
+    address: string;
+    amount: string;
 }
 
 /**
- * Map of owner address to reward amount string (in wei).
+ * List of owner address and reward amount pairs (in wei).
  */
-export type IRewardJson = Record<string, string>;
+export type IRewardJson = IRewardJsonEntry[];

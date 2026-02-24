@@ -66,7 +66,6 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
 
             const rewardJson = rewardUtils.toRewardJson({
                 owners: result.data.owners,
-                totalAmount: BigInt(totalAmount),
             });
 
             const blob = new Blob([JSON.stringify(rewardJson, null, 2)], {

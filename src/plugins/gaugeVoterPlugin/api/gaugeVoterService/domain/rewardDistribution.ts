@@ -8,7 +8,7 @@ export interface IRewardDistributionInvariant {
 export interface IRewardDistributionOwner {
     owner: string;
     votingPower: string;
-    shareBps: number;
+    rewardAmount: string;
     tokenIds: string[];
 }
 

@@ -5,26 +5,18 @@ class RewardUtils {
      * Converts a reward distribution API response to a downloadable JSON map of
      * owner address → reward amount in wei.
      *
-     * For each owner: `rewardAmt = floor(totalAmount * shareBps / 10_000)`.
      * @example
-     * toRewardJson({ owners: [{ owner: '0xabc', shareBps: 5000, ... }], totalAmount: 1000n })
-     * -> { '0xabc': '500' }
+     * toRewardJson({ owners: [{ owner: '0xabc', rewardAmount: '500', ... }] })
+     * -> [{ address: '0xabc', amount: '500' }]
      */
     toRewardJson = (params: IToRewardJsonParams): IRewardJson => {
-        const { owners, totalAmount } = params;
+        const { owners } = params;
 
-        return Object.fromEntries(
-            owners.map((owner) => [
-                owner.owner,
-                this.computeOwnerReward(totalAmount, owner.shareBps).toString(),
-            ]),
-        );
+        return owners.map((owner) => ({
+            address: owner.owner,
+            amount: owner.rewardAmount,
+        }));
     };
-
-    private computeOwnerReward = (
-        totalAmount: bigint,
-        shareBps: number,
-    ): bigint => (totalAmount * BigInt(shareBps)) / BigInt(10_000);
 }
 
 export const rewardUtils = new RewardUtils();

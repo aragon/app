@@ -6,7 +6,7 @@ const generateOwner = (
 ): IRewardDistributionOwner => ({
     owner: '0xabc',
     votingPower: '100',
-    shareBps: 10_000,
+    rewardAmount: '1000',
     tokenIds: [],
     ...data,
 });
@@ -15,95 +15,72 @@ describe('reward utils', () => {
     describe('toRewardJson', () => {
         it('returns correct reward amounts for each owner', () => {
             const owners = [
-                generateOwner({ owner: '0xaaa', shareBps: 5000 }),
-                generateOwner({ owner: '0xbbb', shareBps: 5000 }),
+                generateOwner({ owner: '0xaaa', rewardAmount: '500' }),
+                generateOwner({ owner: '0xbbb', rewardAmount: '500' }),
             ];
 
-            const result = rewardUtils.toRewardJson({
-                owners,
-                totalAmount: BigInt(1000),
-            });
+            const result = rewardUtils.toRewardJson({ owners });
 
-            expect(result).toEqual({ '0xaaa': '500', '0xbbb': '500' });
+            expect(result).toEqual([
+                { address: '0xaaa', amount: '500' },
+                { address: '0xbbb', amount: '500' },
+            ]);
         });
 
-        it('floors fractional reward amounts', () => {
-            const owners = [generateOwner({ owner: '0xaaa', shareBps: 3333 })];
-
-            const result = rewardUtils.toRewardJson({
-                owners,
-                totalAmount: BigInt(10_000),
-            });
-
-            expect(result).toEqual({ '0xaaa': '3333' });
-        });
-
-        it('handles a single owner with full share', () => {
+        it('preserves rewardAmount as-is from the owner entry', () => {
             const owners = [
-                generateOwner({ owner: '0xaaa', shareBps: 10_000 }),
+                generateOwner({ owner: '0xaaa', rewardAmount: '3333' }),
             ];
 
-            const result = rewardUtils.toRewardJson({
-                owners,
-                totalAmount: BigInt(999),
-            });
+            const result = rewardUtils.toRewardJson({ owners });
 
-            expect(result).toEqual({ '0xaaa': '999' });
+            expect(result).toEqual([{ address: '0xaaa', amount: '3333' }]);
         });
 
-        it('returns zero amounts when totalAmount is 0', () => {
-            const owners = [generateOwner({ owner: '0xaaa', shareBps: 5000 })];
-
-            const result = rewardUtils.toRewardJson({
-                owners,
-                totalAmount: BigInt(0),
-            });
-
-            expect(result).toEqual({ '0xaaa': '0' });
-        });
-
-        it('distributes 85% to the two largest owners and splits the remainder across 8 others', () => {
-            // 2 dominant owners hold 85% combined (5000 + 3500 bps)
-            // 8 remaining owners split the leftover 15% (1500 bps) in varying amounts
+        it('handles a single owner', () => {
             const owners = [
-                generateOwner({ owner: '0x01', shareBps: 5000 }), // 50%
-                generateOwner({ owner: '0x02', shareBps: 3500 }), // 35%
-                generateOwner({ owner: '0x03', shareBps: 300 }),
-                generateOwner({ owner: '0x04', shareBps: 250 }),
-                generateOwner({ owner: '0x05', shareBps: 200 }),
-                generateOwner({ owner: '0x06', shareBps: 175 }),
-                generateOwner({ owner: '0x07', shareBps: 150 }),
-                generateOwner({ owner: '0x08', shareBps: 150 }),
-                generateOwner({ owner: '0x09', shareBps: 150 }),
-                generateOwner({ owner: '0x10', shareBps: 125 }),
-            ]; // total: 10_000 bps
+                generateOwner({ owner: '0xaaa', rewardAmount: '999' }),
+            ];
 
-            const result = rewardUtils.toRewardJson({
-                owners,
-                totalAmount: BigInt(1_000_000),
-            });
+            const result = rewardUtils.toRewardJson({ owners });
 
-            expect(result).toEqual({
-                '0x01': '500000',
-                '0x02': '350000',
-                '0x03': '30000',
-                '0x04': '25000',
-                '0x05': '20000',
-                '0x06': '17500',
-                '0x07': '15000',
-                '0x08': '15000',
-                '0x09': '15000',
-                '0x10': '12500',
-            });
+            expect(result).toEqual([{ address: '0xaaa', amount: '999' }]);
         });
 
-        it('returns empty object when owners is empty', () => {
-            const result = rewardUtils.toRewardJson({
-                owners: [],
-                totalAmount: BigInt(1000),
-            });
+        it('returns zero amounts when rewardAmount is 0', () => {
+            const owners = [
+                generateOwner({ owner: '0xaaa', rewardAmount: '0' }),
+            ];
 
-            expect(result).toEqual({});
+            const result = rewardUtils.toRewardJson({ owners });
+
+            expect(result).toEqual([{ address: '0xaaa', amount: '0' }]);
+        });
+
+        it('handles multiple owners with varying reward amounts', () => {
+            const owners = [
+                generateOwner({ owner: '0x01', rewardAmount: '500000' }),
+                generateOwner({ owner: '0x02', rewardAmount: '350000' }),
+                generateOwner({ owner: '0x03', rewardAmount: '30000' }),
+                generateOwner({ owner: '0x04', rewardAmount: '25000' }),
+                generateOwner({ owner: '0x05', rewardAmount: '20000' }),
+            ];
+
+            const result = rewardUtils.toRewardJson({ owners });
+
+            expect(result).toEqual([
+                { address: '0x01', amount: '500000' },
+                { address: '0x02', amount: '350000' },
+                { address: '0x03', amount: '30000' },
+                { address: '0x04', amount: '25000' },
+                { address: '0x05', amount: '20000' },
+            ]);
+        });
+
+        it('returns empty array when owners is empty', () => {
+            const result = rewardUtils.toRewardJson({ owners: [] });
+
+            expect(result).toEqual([]);
         });
     });
 });
