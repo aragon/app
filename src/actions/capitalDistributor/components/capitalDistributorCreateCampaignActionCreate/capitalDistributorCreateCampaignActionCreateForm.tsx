@@ -198,7 +198,9 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 useCustomWrapper={true}
             >
                 <AssetInput
-                    fetchAssetsParams={{ queryParams: { daoId } }}
+                    fetchAssetsParams={{
+                        queryParams: { daoId, onlyParent: true },
+                    }}
                     fieldPrefix={fieldPrefix}
                     hideAmount={true}
                 />

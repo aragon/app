@@ -60,6 +60,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
     const plugins = useDaoPlugins({
         daoId: dao.id,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
+        includeSubDaos: false,
     }) as IFilterComponentPlugin<IGaugeVoterPlugin>[];
     const plugin = plugins[0];
 
