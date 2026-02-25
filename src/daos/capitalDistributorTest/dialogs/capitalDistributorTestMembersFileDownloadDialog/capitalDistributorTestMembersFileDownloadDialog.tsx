@@ -93,7 +93,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
             anchor.download = fileName;
             anchor.click();
             URL.revokeObjectURL(url);
-            location.params.onDownload?.(fileName);
+            location.params?.onDownload?.(fileName);
             handleClose();
         });
     };
