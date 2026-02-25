@@ -18,17 +18,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    # Release PRs have their own dedicated workflow (`Release PR Flow`).
-    if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/') }}
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: "development"
-
   test:
     if: ${{ github.event_name != 'pull_request' || !startsWith(github.head_ref, 'release/') }}
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
@@ -41,10 +32,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           fetch-depth: 0
-      - name: Retrieve NextJs build
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: nextjs-build
       - name: Check types
         run: pnpm type-check
       - name: Check linter with formatter

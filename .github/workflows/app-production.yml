@@ -4,7 +4,12 @@
 name: App Production
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy (e.g. v1.17.0)"
+        required: true
+        type: string
   release:
     types: [published]
 
@@ -16,6 +21,15 @@ permissions:
   contents: read
 
 jobs:
+  validate:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate tag exists
+        run: |
+          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
+            (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
+
   notify-start:
     runs-on: ubuntu-latest
     steps:
@@ -53,22 +67,17 @@ jobs:
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
             🚀 *Production build & deploy started...*
-            *Tag:* `${{ github.event.release.tag_name }}`
-
-  build:
-    needs: notify-start
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: "production"
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
 
   deploy:
-    needs: build
+    needs: [validate, notify-start]
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
       domain: "app.aragon.org"
       env: "production"
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
 
   e2e:
     needs: deploy
@@ -159,7 +168,7 @@ jobs:
           message: |
             🎉 *Production Deployed!* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
 
-            *Tag:* `${{ github.event.release.tag_name }}`
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
             *Production:* <https://app.aragon.org|app.aragon.org>
 
             ⚠️ *Don't forget to merge the Release PR!*
