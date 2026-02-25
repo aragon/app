@@ -2,11 +2,11 @@
 
 import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import type { ComponentProps } from 'react';
+import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import type { IGaugeVoterPlugin } from '../../../plugins/gaugeVoterPlugin/types';
 import { CapitalDistributorTestDialogId } from '../constants/capitalDistributorTestDialogId';
 import type { ICapitalDistributorTestMembersFileDownloadDialogParams } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 

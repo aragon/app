@@ -2,8 +2,7 @@ import type { IRewardJson, IToRewardJsonParams } from './rewardUtils.api';
 
 class RewardUtils {
     /**
-     * Converts a reward distribution API response to a downloadable JSON map of
-     * owner address → reward amount in wei.
+     * Converts a reward distribution API response to a downloadable JSON.
      *
      * @example
      * toRewardJson({ owners: [{ owner: '0xabc', rewardAmount: '500', ... }] })

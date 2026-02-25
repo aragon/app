@@ -4,11 +4,11 @@ import { Dialog, InputNumber, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import { useRewardDistribution } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import type { IGaugeVoterPlugin } from '../../../../plugins/gaugeVoterPlugin/types';
 import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
