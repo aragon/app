@@ -70,6 +70,55 @@ jobs:
       domain: "app.aragon.org"
       env: "production"
 
+  e2e:
+    needs: deploy
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: https://app.aragon.org
+      environment: production
+
+  e2e-notify:
+    needs: e2e
+    if: ${{ always() && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/extract-slack-ts
+            .github/actions/slack-notify
+
+      - name: Extract Slack TS from release body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ github.event.release.body }}
+
+      - name: Notify Slack — E2E results
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            ${{ needs.e2e.result == 'success' && '✅ Smoke tests on *production* passed' || '❌ Smoke tests on *production* failed' }}
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
+
   notify:
     needs: deploy
     runs-on: ubuntu-latest

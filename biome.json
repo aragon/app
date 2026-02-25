@@ -388,7 +388,8 @@
         {
             "includes": [
                 "**/*.test.ts",
-                "**/*.test.tsx"
+                "**/*.test.tsx",
+                "e2e/**/*.ts"
             ],
             "linter": {
                 "rules": {}

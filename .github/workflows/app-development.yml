@@ -65,3 +65,12 @@ jobs:
     with:
       domain: "dev.app.aragon.org"
       env: "development"
+
+  e2e:
+    needs: deploy
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: https://dev.app.aragon.org
+      environment: development
