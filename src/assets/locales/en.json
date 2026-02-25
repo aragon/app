@@ -1143,7 +1143,7 @@
       },
       "capitalDistributorTest": {
         "capitalDistributorTestMembersFileDownload": {
-          "helpText": "Generate a distribution file based on current voting power.",
+          "helpText": "Generate a distribution file based on current voting power. Available only for epochs for which voting period is over.",
           "label": "Generate distribution file",
           "button": "Generate JSON"
         },
@@ -1151,6 +1151,7 @@
           "title": "Create members file",
           "description": "Enter the epoch ID and total amount to generate a members distribution file based on current voting power.",
           "epochIdLabel": "Epoch ID",
+          "epochIdHelpText": "Voting period must be over for a given epoch ID.",
           "amountLabel": "Total amount",
           "generate": "Generate file",
           "cancel": "Cancel",
