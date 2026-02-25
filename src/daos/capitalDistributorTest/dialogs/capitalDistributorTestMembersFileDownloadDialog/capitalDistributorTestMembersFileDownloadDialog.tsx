@@ -8,7 +8,7 @@ import {
     InputNumber,
     invariant,
 } from '@aragon/gov-ui-kit';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import {
@@ -60,7 +60,10 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    console.log('gaugePlugin', gaugePlugin);
+
+    const [totalAmount, setTotalAmount] = useState('');
+    const [epochId, setEpochId] = useState('');
+
     const epochMetrics = useEpochMetrics({
         urlParams: {
             pluginAddress: gaugePlugin.address as Hex,
@@ -72,6 +75,12 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     const currentEpochId = epochMetrics.data?.epochId
         ? Number(epochMetrics.data.epochId)
         : undefined;
+
+    useEffect(() => {
+        if (currentEpochId != null && epochId === '') {
+            setEpochId(String(currentEpochId));
+        }
+    }, [currentEpochId, epochId]);
 
     const validEpochs = useMemo(() => {
         if (currentEpochId == null) {
@@ -90,11 +99,6 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
 
         return epochs;
     }, [currentEpochId]);
-
-    const defaultEpoch = currentEpochId != null ? String(currentEpochId) : '';
-
-    const [totalAmount, setTotalAmount] = useState('');
-    const [epochId, setEpochId] = useState(defaultEpoch);
 
     const tokenDecimals =
         asset?.token.decimals ?? gaugePlugin.settings.token.decimals;
