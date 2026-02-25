@@ -1151,8 +1151,10 @@
         "capitalDistributorTestMembersFileDownloadDialog": {
           "title": "Create members file",
           "description": "Enter the epoch ID and total amount to generate a members distribution file based on current voting power.",
-          "epochIdLabel": "Epoch ID",
-          "epochIdHelpText": "Voting period must be over for a given epoch ID.",
+          "epochIdLabel": "Epoch",
+          "epochIdHelpText": "Voting period must be over for a given epoch.",
+          "epochSelectPlaceholder": "Select epoch",
+          "epochOption": "Epoch {{epochId}}",
           "amountLabel": "Total amount",
           "generate": "Generate file",
           "cancel": "Cancel",

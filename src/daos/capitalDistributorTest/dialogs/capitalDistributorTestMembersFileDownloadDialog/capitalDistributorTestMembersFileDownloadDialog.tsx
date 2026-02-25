@@ -1,15 +1,27 @@
 'use client';
 
-import { Dialog, InputNumber, invariant } from '@aragon/gov-ui-kit';
+import {
+    Dialog,
+    DropdownContainer,
+    DropdownItem,
+    InputContainer,
+    InputNumber,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { type Hex, parseUnits } from 'viem';
-import { useRewardDistribution } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import type { IAsset } from '@/modules/finance/api/financeService';
+import {
+    useEpochMetrics,
+    useRewardDistribution,
+} from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
+import { capitalDistributorTestMinEpochId } from '../../constants/capitalDistributorTestMinEpochId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
 export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
@@ -21,6 +33,10 @@ export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
      * Network of the DAO.
      */
     network: Network;
+    /**
+     * Asset selected in the campaign creation form.
+     */
+    asset?: IAsset;
     /**
      * Called with the downloaded file name after a successful download.
      */
@@ -40,21 +56,56 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         'CapitalDistributorTestMembersFileDownloadDialog: params must be defined',
     );
 
-    const { gaugePlugin, network } = location.params;
+    const { gaugePlugin, network, asset } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
+    console.log('gaugePlugin', gaugePlugin);
+    const epochMetrics = useEpochMetrics({
+        urlParams: {
+            pluginAddress: gaugePlugin.address as Hex,
+            network,
+        },
+        queryParams: {},
+    });
+
+    const currentEpochId = epochMetrics.data?.epochId
+        ? Number(epochMetrics.data.epochId)
+        : undefined;
+
+    const validEpochs = useMemo(() => {
+        if (currentEpochId == null) {
+            return [];
+        }
+
+        const epochs: number[] = [];
+
+        for (
+            let i = currentEpochId;
+            i >= capitalDistributorTestMinEpochId && epochs.length < 10;
+            i--
+        ) {
+            epochs.push(i);
+        }
+
+        return epochs;
+    }, [currentEpochId]);
+
+    const defaultEpoch = currentEpochId != null ? String(currentEpochId) : '';
 
     const [totalAmount, setTotalAmount] = useState('');
-    const [epochId, setEpochId] = useState('');
+    const [epochId, setEpochId] = useState(defaultEpoch);
 
-    const { token } = gaugePlugin.settings;
+    const tokenDecimals =
+        asset?.token.decimals ?? gaugePlugin.settings.token.decimals;
+    const tokenSymbol = asset?.token.symbol;
+
     const totalAmountInUnits = useMemo(
         () =>
             totalAmount
-                ? parseUnits(totalAmount, token.decimals).toString()
+                ? parseUnits(totalAmount, tokenDecimals).toString()
                 : '',
-        [totalAmount, token.decimals],
+        [totalAmount, tokenDecimals],
     );
 
     const rewardDistribution = useRewardDistribution(
@@ -102,6 +153,16 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         close(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD);
     };
 
+    const selectedEpochLabel =
+        epochId !== ''
+            ? t(
+                  'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochOption',
+                  { epochId },
+              )
+            : t(
+                  'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochSelectPlaceholder',
+              );
+
     return (
         <>
             <Dialog.Header
@@ -114,18 +175,40 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 py-2">
-                    <InputNumber
+                    <InputContainer
                         helpText={t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochIdHelpText',
                         )}
+                        id="epoch-select"
                         label={t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochIdLabel',
                         )}
-                        min={0}
-                        onChange={setEpochId}
-                        placeholder="0"
-                        value={epochId}
-                    />
+                        useCustomWrapper={true}
+                    >
+                        <div className="w-fit">
+                            <DropdownContainer
+                                disabled={validEpochs.length === 0}
+                                label={selectedEpochLabel}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {validEpochs.map((epoch) => (
+                                    <DropdownItem
+                                        key={epoch}
+                                        onSelect={() =>
+                                            setEpochId(String(epoch))
+                                        }
+                                        selected={epochId === String(epoch)}
+                                    >
+                                        {t(
+                                            'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.epochOption',
+                                            { epochId: epoch },
+                                        )}
+                                    </DropdownItem>
+                                ))}
+                            </DropdownContainer>
+                        </div>
+                    </InputContainer>
                     <InputNumber
                         label={t(
                             'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.amountLabel',
@@ -133,7 +216,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                         min={0}
                         onChange={setTotalAmount}
                         placeholder="0"
-                        suffix={token.symbol}
+                        suffix={tokenSymbol}
                         value={totalAmount}
                     />
                     {rewardDistribution.isError && (

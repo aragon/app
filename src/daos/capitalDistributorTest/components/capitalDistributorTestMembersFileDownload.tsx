@@ -1,8 +1,8 @@
 'use client';
 
 import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
-import type { ComponentProps } from 'react';
 import { useState } from 'react';
+import type { IAsset } from '@/modules/finance/api/financeService';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -11,18 +11,21 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { CapitalDistributorTestDialogId } from '../constants/capitalDistributorTestDialogId';
 import type { ICapitalDistributorTestMembersFileDownloadDialogParams } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 
-export interface ICapitalDistributorTestMembersFileDownloadProps
-    extends ComponentProps<'header'> {
+export interface ICapitalDistributorTestMembersFileDownloadProps {
     /**
      * DAO to display in the header.
      */
     dao: IDao;
+    /**
+     * Asset selected in the campaign creation form, passed via PluginSingleComponent.
+     */
+    asset?: IAsset;
 }
 
 export const CapitalDistributorTestMembersFileDownload: React.FC<
     ICapitalDistributorTestMembersFileDownloadProps
 > = (props) => {
-    const { dao } = props;
+    const { dao, asset } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -45,6 +48,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
             gaugePlugin,
             network: dao.network,
+            asset,
             onDownload: setDownloadedFileName,
         };
 

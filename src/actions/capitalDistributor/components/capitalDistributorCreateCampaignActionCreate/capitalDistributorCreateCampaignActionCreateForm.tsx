@@ -140,8 +140,19 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
         rules: { required: true },
     });
 
-    const merkleTreeInfo = useWatch({
+    const merkleTreeInfo = useWatch<
+        Record<
+            string,
+            ICapitalDistributorCreateCampaignFormData['merkleTreeInfo']
+        >
+    >({
         name: `${fieldPrefix}.merkleTreeInfo`,
+    });
+
+    const selectedAsset = useWatch<
+        Record<string, ICapitalDistributorCreateCampaignFormData['asset']>
+    >({
+        name: `${fieldPrefix}.asset`,
     });
 
     const handleUploadComplete = useCallback(
@@ -219,6 +230,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
 
             {dao && (
                 <PluginSingleComponent
+                    asset={selectedAsset}
                     dao={dao}
                     pluginId={dao.id}
                     slotId={
