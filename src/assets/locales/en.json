@@ -1145,7 +1145,8 @@
         "capitalDistributorTestMembersFileDownload": {
           "helpText": "Generate a distribution file based on current voting power.",
           "label": "Generate distribution file",
-          "button": "Generate JSON"
+          "button": "Generate JSON",
+          "downloadedFile": "Downloaded: {{fileName}}"
         },
         "capitalDistributorTestMembersFileDownloadDialog": {
           "title": "Create members file",

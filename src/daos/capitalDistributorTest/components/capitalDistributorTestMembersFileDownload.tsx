@@ -1,7 +1,8 @@
 'use client';
 
-import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import type { ComponentProps } from 'react';
+import { useState } from 'react';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -26,6 +27,10 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
+    const [downloadedFileName, setDownloadedFileName] = useState<string | null>(
+        null,
+    );
+
     const gaugePlugins = useDaoPlugins({
         daoId: dao.id,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
@@ -40,6 +45,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
             gaugePlugin,
             network: dao.network,
+            onDownload: setDownloadedFileName,
         };
 
         open(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD, {
@@ -59,6 +65,16 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             )}
             useCustomWrapper={true}
         >
+            {downloadedFileName && (
+                <Card className="border border-neutral-100 px-6 py-2 shadow-neutral-sm">
+                    <p className="text-neutral-400 text-sm">
+                        {t(
+                            'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.downloadedFile',
+                            { fileName: downloadedFileName },
+                        )}
+                    </p>
+                </Card>
+            )}
             <Button
                 className="w-fit"
                 disabled={gaugePlugin?.address == null}

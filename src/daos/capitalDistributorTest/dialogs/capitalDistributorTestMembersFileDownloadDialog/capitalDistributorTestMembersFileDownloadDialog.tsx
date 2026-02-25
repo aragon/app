@@ -21,6 +21,10 @@ export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
      * Network of the DAO.
      */
     network: Network;
+    /**
+     * Called with the downloaded file name after a successful download.
+     */
+    onDownload?: (fileName: string) => void;
 }
 
 export interface ICapitalDistributorTestMembersFileDownloadDialogProps
@@ -84,10 +88,12 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
+            const fileName = `reward-distribution-epoch-${result.data.epoch}.json`;
             anchor.href = url;
-            anchor.download = `reward-distribution-epoch-${result.data.epoch}.json`;
+            anchor.download = fileName;
             anchor.click();
             URL.revokeObjectURL(url);
+            location.params.onDownload?.(fileName);
             handleClose();
         });
     };
