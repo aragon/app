@@ -1143,7 +1143,7 @@
       },
       "capitalDistributorTest": {
         "capitalDistributorTestMembersFileDownload": {
-          "helpText": "Generate a distribution file based on current voting power. Available only for epochs for which voting period is over.",
+          "helpText": "Generate a distribution file based on current voting power.",
           "label": "Generate distribution file",
           "button": "Generate JSON"
         },

@@ -2,26 +2,21 @@
 
 import { Dialog, InputNumber, invariant } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { parseUnits } from 'viem';
+import { type Hex, parseUnits } from 'viem';
 import { useRewardDistribution } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IGaugeVoterPlugin } from '../../../../plugins/gaugeVoterPlugin/types';
-import { useDaoPlugins } from '../../../../shared/hooks/useDaoPlugins';
 import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
 export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
     /**
-     * ID of the DAO.
+     * Gauge plugin.
      */
-    daoId: string;
-    /**
-     * Address of the gauge plugin.
-     */
-    gaugePluginAddress: `0x${string}`;
+    gaugePlugin: IGaugeVoterPlugin;
     /**
      * Network of the DAO.
      */
@@ -41,7 +36,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         'CapitalDistributorTestMembersFileDownloadDialog: params must be defined',
     );
 
-    const { daoId, gaugePluginAddress, network } = location.params;
+    const { gaugePlugin, network } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -49,12 +44,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     const [totalAmount, setTotalAmount] = useState('');
     const [epochId, setEpochId] = useState('');
 
-    const plugin = useDaoPlugins({
-        daoId,
-        pluginAddress: gaugePluginAddress,
-    })![0];
-
-    const { token } = (plugin.meta as IGaugeVoterPlugin).settings;
+    const { token } = gaugePlugin.settings;
     const totalAmountInUnits = useMemo(
         () =>
             totalAmount
@@ -66,7 +56,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     const rewardDistribution = useRewardDistribution(
         {
             urlParams: {
-                pluginAddress: gaugePluginAddress,
+                pluginAddress: gaugePlugin.address as Hex,
                 network,
                 epochId: Number(epochId),
             },

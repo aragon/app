@@ -6,6 +6,7 @@ import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import type { IGaugeVoterPlugin } from '../../../plugins/gaugeVoterPlugin/types';
 import { CapitalDistributorTestDialogId } from '../constants/capitalDistributorTestDialogId';
 import type { ICapitalDistributorTestMembersFileDownloadDialogParams } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 
@@ -29,7 +30,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         daoId: dao.id,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
     });
-    const gaugePlugin = gaugePlugins?.[0]?.meta;
+    const gaugePlugin = gaugePlugins?.[0]?.meta as IGaugeVoterPlugin;
 
     const handleClick = () => {
         if (gaugePlugin?.address == null) {
@@ -37,8 +38,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
         }
 
         const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
-            daoId: dao.id,
-            gaugePluginAddress: gaugePlugin.address as `0x${string}`,
+            gaugePlugin,
             network: dao.network,
         };
 
