@@ -1,5 +1,5 @@
+import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { CapitalFlowDaoSlotId } from '../../modules/capitalFlow/constants/moduleDaoSlots';
 import { CapitalDistributorTestMembersFileDownload } from './components/capitalDistributorTestMembersFileDownload';
 import { capitalDistributorTestDao } from './constants/capitalDistributorTestDao';
 
