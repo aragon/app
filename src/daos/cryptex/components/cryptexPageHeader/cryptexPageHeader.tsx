@@ -8,6 +8,7 @@ import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { actions } from '../../constants/actions';
 import { CryptexActionItem } from './cryptexActionItem';
+import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
 export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 
@@ -21,40 +22,80 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
 
     const { t } = useTranslations();
 
+    // Center the orbit 120px above the bottom edge so ~73% of the circle is visible.
+    // right: calc(20% - half) keeps the orbit center fixed at 80% from the left
+    // regardless of ORBIT_SIZE, with the right edge clipping naturally.
+    const orbitHalf = ORBIT_SIZE / 2;
+
     return (
         <header
             className={classNames(
-                'relative flex h-fit flex-col gap-y-4 pt-6 pb-4 md:gap-y-12 md:pt-16 md:pb-10',
+                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden bg-[#0A0A0F] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
         >
-            <video
-                autoPlay={true}
-                className="absolute inset-0 -z-30 size-full object-cover"
-                loop={true}
-                muted={true}
-                playsInline={true}
+            {/* Background texture — blurred blobs + noise grain over dark base */}
+            <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                {/* Left bloom — upper left behind welcome text */}
+                <div className="absolute -top-20 -left-20 h-[480px] w-[480px] rounded-full bg-purple-500/20 blur-[120px]" />
+                {/* Center bloom — behind middle card area */}
+                <div className="absolute bottom-0 left-[38%] h-[280px] w-[360px] -translate-x-1/2 rounded-full bg-purple-500/15 blur-[100px]" />
+                {/* Noise grain layer */}
+                <svg
+                    aria-hidden="true"
+                    className="absolute inset-0 h-full w-full opacity-[0.035]"
+                    focusable="false"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <filter id="cryptex-grain">
+                        <feTurbulence
+                            baseFrequency="0.65"
+                            numOctaves="3"
+                            stitchTiles="stitch"
+                            type="fractalNoise"
+                        />
+                    </filter>
+                    <rect
+                        filter="url(#cryptex-grain)"
+                        height="100%"
+                        width="100%"
+                    />
+                </svg>
+            </div>
+
+            {/*
+             * Orbit — center sits 290px above the header's bottom edge (~40% from
+             * top on a 480px header), placing the crown near the header top-right.
+             * overflow-hidden clips the bottom portion and any right bleed.
+             */}
+            <div
+                className="pointer-events-none absolute hidden md:block"
+                style={{
+                    bottom: `${-(orbitHalf - 370)}px`,
+                    right: `calc(25% - ${orbitHalf}px)`,
+                    transform: 'translateY(-1%) scale(1.02)',
+                    transformOrigin: 'center',
+                }}
             >
-                <source
-                    src="/static/media/cryptex-header-video.mp4"
-                    type="video/mp4"
-                />
-            </video>
-            <Container className="flex w-full flex-col gap-y-12">
-                <div className="flex max-w-[720px] flex-col gap-1.5 text-center md:gap-3 md:text-left">
-                    <p className="text-3xl text-[#000000] leading-tight md:text-5xl">
+                <CryptexOrbitAnimation />
+            </div>
+
+            <Container className="relative z-10 flex w-full flex-col gap-y-12">
+                <div className="flex max-w-[600px] flex-col gap-1.5 text-left md:gap-3">
+                    <p className="text-3xl text-white leading-tight md:text-5xl">
                         {t('app.daos.cryptex.cryptexPageHeader.welcome')}{' '}
                         {ensName && (
-                            <span className="text-[#537263]">{ensName}</span>
+                            <span className="text-purple-400">{ensName}</span>
                         )}
                         <br />
                         {t('app.daos.cryptex.cryptexPageHeader.to')}
                     </p>
-                    <p className="text-[#2D2C2B] text-lg md:text-xl">
+                    <p className="text-lg text-white/60 md:text-xl">
                         {t('app.daos.cryptex.cryptexPageHeader.info')}
                     </p>
                 </div>
+
                 {/* Static row for desktop view */}
                 <div className="hidden w-full items-center justify-between gap-4 lg:flex">
                     {actions.map((action) => (
@@ -69,8 +110,9 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     ))}
                 </div>
             </Container>
-            {/* Draggable unbounded carousel for mobile view */}
-            <div className="hidden md:block lg:hidden">
+
+            {/* Tablet carousel */}
+            <div className="relative z-10 hidden md:block lg:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
@@ -88,7 +130,9 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     ))}
                 </Carousel>
             </div>
-            <div className="block md:hidden">
+
+            {/* Mobile draggable carousel */}
+            <div className="relative z-10 block md:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
