@@ -185,27 +185,28 @@
           "title": "Select campaign",
           "description": "Choose a campaign from the list below.",
           "entityLabel": "Campaign",
-          "emptyState": "No campaigns available.",
-          "submit": "Select",
+          "emptyStateActive": "No inactive campaigns available.",
+          "emptyStateInactive": "No active campaigns available.",
+          "submit": "Select campaign",
           "cancel": "Cancel"
         },
         "capitalDistributorPauseCampaignActionCreate": {
           "emptyCard": {
-            "heading": "Pause campaign",
+            "heading": "Select campaign",
             "description": "Select an active campaign to pause.",
             "action": "Select campaign"
           }
         },
         "capitalDistributorResumeCampaignActionCreate": {
           "emptyCard": {
-            "heading": "Resume campaign",
+            "heading": "Select campaign",
             "description": "Select an inactive campaign to resume.",
             "action": "Select campaign"
           }
         },
         "capitalDistributorEndCampaignActionCreate": {
           "emptyCard": {
-            "heading": "End campaign",
+            "heading": "Select campaign",
             "description": "Select an active campaign to end permanently.",
             "action": "Select campaign"
           }

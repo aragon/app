@@ -38,14 +38,20 @@ export const CapitalDistributorEndCampaignActionCreate: React.FC<
     const { action, index } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { setValue } = useFormContext();
+    const { setValue, resetField } = useFormContext();
 
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
 
+    // We use form to keep the state, so we can prevent wizard progressing if action state is invalid.
     const actionFieldName = `actions.[${index.toString()}]`;
     const selectedCampaignFieldName = `${actionFieldName}.campaignToEnd`;
 
     const setSelectedCampaign = (campaign?: ICampaign) => {
+        if (!campaign) {
+            resetField(selectedCampaignFieldName);
+            return;
+        }
+
         setValue(selectedCampaignFieldName, campaign);
     };
 

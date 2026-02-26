@@ -54,12 +54,16 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
         queryParams: {
             pluginAddress,
             network: dao.network,
-            activityStatus,
+            onlyActive: activityStatus === 'active',
             pageSize: 50,
         },
     });
 
-    const campaigns = data?.pages[0]?.data ?? [];
+    let campaigns = data?.pages[0]?.data ?? [];
+
+    if (activityStatus === 'inactive') {
+        campaigns = campaigns.filter((campaign) => !campaign.active);
+    }
 
     const [selectedCampaign, setSelectedCampaign] = useState<ICampaign | null>(
         null,
@@ -121,7 +125,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                     {!isLoading && campaigns.length === 0 && (
                         <div className="flex items-center justify-center py-8 text-neutral-500">
                             {t(
-                                'app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.emptyState',
+                                `app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.${activityStatus === 'active' ? 'emptyStateActive' : 'emptyStateInactive'}`,
                             )}
                         </div>
                     )}
