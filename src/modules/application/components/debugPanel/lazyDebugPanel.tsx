@@ -2,12 +2,10 @@
 
 import dynamic from 'next/dynamic';
 
-const DebugPanelLazy = dynamic(
+export const DebugPanelLazy = dynamic(
     () =>
         import('./debugPanel').then((mod) => ({
             default: mod.DebugPanel,
         })),
     { ssr: false },
 );
-
-export const LazyDebugPanel: React.FC = () => <DebugPanelLazy />;

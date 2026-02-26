@@ -11,7 +11,7 @@ import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
-import { LazyDebugPanel } from '../../debugPanel/lazyDebugPanel';
+import { DebugPanelLazy } from '../../debugPanel/lazyDebugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
 import { Providers } from '../../providers';
@@ -73,7 +73,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        {isDebugPanelEnabled && <LazyDebugPanel />}
+                        {isDebugPanelEnabled && <DebugPanelLazy />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>
