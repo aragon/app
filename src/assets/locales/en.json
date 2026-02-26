@@ -185,8 +185,8 @@
           "title": "Select campaign",
           "description": "Choose a campaign from the list below.",
           "entityLabel": "Campaign",
-          "emptyStateActive": "No inactive campaigns available.",
-          "emptyStateInactive": "No active campaigns available.",
+          "emptyStateActive": "No active campaigns available.",
+          "emptyStateInactive": "No inactive campaigns available.",
           "submit": "Select campaign",
           "cancel": "Cancel"
         },
