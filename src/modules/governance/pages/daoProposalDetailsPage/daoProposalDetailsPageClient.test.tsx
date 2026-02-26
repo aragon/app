@@ -13,6 +13,7 @@ import {
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
 import {
     generateProposal,
+    generateProposalAction,
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
@@ -317,6 +318,59 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal voting terminal', () => {
         render(createTestComponent());
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
+    });
+
+    it('shows decode warning in raw view on the ADMIN-6 mock mismatch route', async () => {
+        const previousPath = window.location.pathname;
+        window.history.pushState(
+            {},
+            '',
+            '/dao/ethereum-sepolia/0x6f38f0F26dECa2527a7F6669Fcb7e13F66840901/proposals/ADMIN-6',
+        );
+
+        useProposalActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: {
+                    decoding: false,
+                    actions: [
+                        generateProposalAction({
+                            inputData: {
+                                contract: 'CapitalDistributorPlugin',
+                                function: 'createCampaign',
+                                parameters: [
+                                    {
+                                        name: 'startTime',
+                                        type: 'uint64',
+                                        value: 0,
+                                    },
+                                ],
+                            },
+                        }),
+                    ],
+                    rawActions: [
+                        {
+                            to: '0x8CfE248EC9779A53D7CC684010E3f87A6f735B6E',
+                            value: '0',
+                            data: '0x3d4ebc5b0000000000000000000000000000000000000000000000000000000000000000',
+                        },
+                    ],
+                },
+            }),
+        );
+
+        render(createTestComponent({ proposalSlug: 'ADMIN-6' }));
+        await userEvent.click(screen.getAllByRole('button')[0]);
+
+        expect(
+            screen.getByText('Actions could not decode properly'),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'Some action fields have failed to decode to human readable form. Raw calldata is still available.',
+            ),
+        ).toBeInTheDocument();
+
+        window.history.pushState({}, '', previousPath);
     });
 
     describe('Action simulation behavior', () => {

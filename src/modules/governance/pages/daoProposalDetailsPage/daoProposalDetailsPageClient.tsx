@@ -11,6 +11,7 @@ import {
     type IProposalActionsFooterDropdownItem,
     Link,
     ProposalActions,
+    ProposalActionTypeNoBasicView,
     ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
@@ -97,7 +98,8 @@ export const DaoProposalDetailsPageClient: React.FC<
                 state.data?.decoding ? 2000 : false,
         },
     );
-    const actionsCount = actionData?.rawActions?.length ?? 0;
+    const actionsCount =
+        actionData?.rawActions?.length ?? actionData?.actions?.length ?? 0;
 
     const isSimulationSupportedByStatus = [
         ProposalStatus.ACTIVE,
@@ -165,8 +167,42 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
+    // Dev-only local QA hook: force decode mismatch for the known ADMIN-6 repro URL.
+    const shouldMockDecodeMismatchForAdmin6 =
+        process.env.NODE_ENV !== 'production' &&
+        typeof window !== 'undefined' &&
+        window.location.pathname ===
+            '/dao/ethereum-sepolia/0x6f38f0F26dECa2527a7F6669Fcb7e13F66840901/proposals/ADMIN-6';
+    const processedActionData =
+        shouldMockDecodeMismatchForAdmin6 &&
+        actionData?.rawActions != null &&
+        actionData.rawActions.length > 0
+            ? {
+                  ...actionData,
+                  actions: actionData.actions.slice(
+                      0,
+                      Math.max(0, actionData.rawActions.length - 1),
+                  ),
+              }
+            : actionData;
+
+    const hasActionDecodeMismatch =
+        processedActionData?.rawActions != null &&
+        processedActionData.rawActions.length !==
+            processedActionData.actions.length;
+    const proposalActions = hasActionDecodeMismatch
+        ? (processedActionData?.rawActions?.map((rawAction) => ({
+              from: creator.address,
+              to: rawAction.to,
+              data: rawAction.data,
+              value: rawAction.value,
+              type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
+              inputData: null,
+          })) ?? [])
+        : (processedActionData?.actions ?? []);
+
     const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        actionData?.actions ?? [],
+        proposalActions,
         dao,
     );
     const formattedCreationDate = formatterUtils.formatDate(
@@ -225,7 +261,7 @@ export const DaoProposalDetailsPageClient: React.FC<
             ),
             onClick: () =>
                 proposalActionsImportExportUtils.downloadActionsAsJSON(
-                    actionData?.actions ?? [],
+                    proposalActions,
                     `proposal-${proposalSlug}-actions.json`,
                 ),
         },
