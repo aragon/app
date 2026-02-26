@@ -21,9 +21,9 @@ export interface IGetCampaignListQueryParams extends IPaginatedRequest {
      */
     status?: CampaignStatus;
     /**
-     * Activity status filter for the campaigns (active/inactive).
+     * Defaults to true (only active campaigns). Pass false to retrieve all campaigns regardless of activity status.
      */
-    activityStatus?: 'active' | 'inactive';
+    onlyActive?: boolean;
 }
 
 export interface IGetCampaignListParams
