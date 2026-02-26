@@ -16,6 +16,7 @@ import {
     generateProposalAction,
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -65,6 +66,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useSlotSingleFunction,
         'useSlotSingleFunction',
     );
+    const downloadActionsAsJSONSpy = jest.spyOn(
+        proposalActionsImportExportUtils,
+        'downloadActionsAsJSON',
+    );
 
     const mockInvalidateQueries = jest.fn();
     const mockQueryClient = { invalidateQueries: mockInvalidateQueries };
@@ -94,6 +99,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalActionsSpy.mockReset();
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
+        downloadActionsAsJSONSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
         mockInvalidateQueries.mockReset();
@@ -320,12 +326,20 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
     });
 
-    it('shows decode warning in raw view on the ADMIN-6 mock mismatch route', async () => {
+    it('uses raw fallback actions for export on the ADMIN-6 mock mismatch route', async () => {
         const previousPath = window.location.pathname;
         window.history.pushState(
             {},
             '',
             '/dao/ethereum-sepolia/0x6f38f0F26dECa2527a7F6669Fcb7e13F66840901/proposals/ADMIN-6',
+        );
+        const proposal = generateProposal({
+            creator: generateAddressInfo({
+                address: '0xabc1230000000000000000000000000000000000',
+            }),
+        });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
         );
 
         useProposalActionsSpy.mockReturnValue(
@@ -359,16 +373,29 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         );
 
         render(createTestComponent({ proposalSlug: 'ADMIN-6' }));
-        await userEvent.click(screen.getAllByRole('button')[0]);
+        const moreButton = screen.getAllByRole('button', {
+            name: /more/i,
+        })[0];
+        await userEvent.click(moreButton);
+        await userEvent.click(
+            screen.getByRole('menuitem', {
+                name: /daoProposalDetailsPage\.main\.actions\.downloadAsJSON/,
+            }),
+        );
 
-        expect(
-            screen.getByText('Actions could not decode properly'),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'Some action fields have failed to decode to human readable form. Raw calldata is still available.',
-            ),
-        ).toBeInTheDocument();
+        expect(downloadActionsAsJSONSpy).toHaveBeenCalledWith(
+            [
+                {
+                    from: proposal.creator.address,
+                    to: '0x8CfE248EC9779A53D7CC684010E3f87A6f735B6E',
+                    data: '0x3d4ebc5b0000000000000000000000000000000000000000000000000000000000000000',
+                    value: '0',
+                    type: 'RAW_CALLDATA',
+                    inputData: null,
+                },
+            ],
+            'proposal-ADMIN-6-actions.json',
+        );
 
         window.history.pushState({}, '', previousPath);
     });
