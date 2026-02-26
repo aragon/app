@@ -89,9 +89,14 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
 
         const epochs: number[] = [];
 
+        const firstEpoch =
+            capitalDistributorTestMinEpochId > currentEpochId
+                ? 1
+                : capitalDistributorTestMinEpochId;
+
         for (
             let i = currentEpochId;
-            i >= capitalDistributorTestMinEpochId && epochs.length < 10;
+            i >= firstEpoch && epochs.length < 100;
             i--
         ) {
             epochs.push(i);
