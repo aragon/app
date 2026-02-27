@@ -40,8 +40,8 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 <div className="absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26" />
                 {/* Left bloom — upper left behind welcome text */}
                 <div className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px]" />
-                {/* Right bloom — around orbit area */}
-                <div className="absolute top-24 right-[20px] h-[540px] w-[700px] rounded-full bg-[#B895FF]/44 blur-[170px]" />
+                {/* Center-bottom bloom — soft edge distinction near cards */}
+                <div className="absolute -bottom-16 left-[48%] h-[280px] w-[440px] -translate-x-1/2 rounded-full bg-[#C7B0FF]/30 blur-[115px]" />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"

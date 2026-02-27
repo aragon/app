@@ -92,10 +92,10 @@ export const CryptexOrbitAnimation: React.FC = () => {
             <div
                 className="absolute rounded-full bg-purple-500/10 blur-3xl"
                 style={{
-                    width: '160%',
-                    height: '70%',
-                    top: '15%',
-                    left: '-30%',
+                    width: '280%',
+                    height: '150%',
+                    top: '-8%',
+                    left: '-92%',
                     transform: 'rotate(-25deg)',
                 }}
             />
@@ -144,15 +144,22 @@ export const CryptexOrbitAnimation: React.FC = () => {
 
             {/* Conic gradient milky-way sweep */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                <div
-                    className="animate-spin rounded-full opacity-25"
+                <motion.div
+                    animate={{ opacity: 0.2 }}
+                    className="animate-spin rounded-full blur-[2px]"
+                    initial={{ opacity: 0 }}
                     style={{
-                        width: OUTER_RADIUS * 2 + 40,
-                        height: OUTER_RADIUS * 2 + 40,
+                        width: ORBIT_SIZE * 5,
+                        height: ORBIT_SIZE * 5,
                         background:
                             'conic-gradient(from 0deg, transparent 0%, rgba(168,85,247,0.12) 15%, rgba(168,85,247,0.06) 30%, transparent 50%, rgba(168,85,247,0.08) 70%, transparent 85%)',
                         animationDuration: OUTER_SPEED,
+                        WebkitMaskImage:
+                            'radial-gradient(circle, black 44%, rgba(0,0,0,0.72) 72%, transparent 100%)',
+                        maskImage:
+                            'radial-gradient(circle, black 44%, rgba(0,0,0,0.72) 72%, transparent 100%)',
                     }}
+                    transition={{ delay: 0.45, duration: 1.1 }}
                 />
             </div>
 
