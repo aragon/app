@@ -1158,7 +1158,8 @@
           "amountLabel": "Total amount",
           "generate": "Generate file",
           "cancel": "Cancel",
-          "error": "Failed to generate members file. Please try again."
+          "error": "Failed to generate members file. Please try again.",
+          "errorEpochWindowInvalid": "The voting window for the selected epoch has not closed yet. Please try again later."
         }
       }
     },

@@ -16,6 +16,7 @@ import {
     useRewardDistribution,
 } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
+import type { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -130,6 +131,9 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         },
         { enabled: false },
     );
+    const errorCode =
+        rewardDistribution.error &&
+        (rewardDistribution.error as AragonBackendServiceError).code;
 
     const isFormValid = totalAmount !== '' && epochId !== '';
 
@@ -231,7 +235,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                     {rewardDistribution.isError && (
                         <p className="text-critical-600 text-sm">
                             {t(
-                                'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.error',
+                                `app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.${errorCode === 'epochWindowInvalid' ? 'errorEpochWindowInvalid' : 'error'}`,
                             )}
                         </p>
                     )}
