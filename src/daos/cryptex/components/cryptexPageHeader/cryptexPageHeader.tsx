@@ -30,7 +30,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden bg-[#0A0A0F] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-[#1D1B28] border-b bg-[#0A0A0F] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
@@ -83,7 +83,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 </div>
             </div>
 
-            <Container className="relative z-10 flex w-full flex-col gap-y-12">
+            <Container className="relative z-[1] flex w-full flex-col gap-y-12">
                 <div className="relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
                     <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-black/70 via-black/26 to-transparent blur-2xl md:block" />
                     <p className="text-3xl text-white leading-tight md:text-5xl">
@@ -115,7 +115,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </Container>
 
             {/* Tablet and large-screen carousel */}
-            <div className="relative z-10 hidden md:block xl:hidden">
+            <div className="relative z-[1] hidden md:block xl:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
@@ -135,7 +135,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </div>
 
             {/* Mobile draggable carousel */}
-            <div className="relative z-10 block md:hidden">
+            <div className="relative z-[1] block md:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
