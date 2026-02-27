@@ -38,7 +38,7 @@ export const CryptexActionItem: React.FC<ICryptexActionItemProps> = (props) => {
     return (
         <Link
             className={classNames(
-                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl p-4 backdrop-blur-sm transition-colors duration-100 md:w-[400px] md:p-6',
+                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl p-4 backdrop-blur-sm transition-colors duration-[1200ms] ease-in-out md:w-[400px] md:p-6',
                 isLightMode
                     ? 'border border-[#CEC7E2] bg-[#ECE8F5]/74 hover:border-[#BBB1D8] hover:bg-[#E5E0F2]/86'
                     : 'border border-white/10 bg-white/[0.06] hover:border-white/20 hover:bg-white/[0.09]',

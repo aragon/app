@@ -1,7 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, useEffect, useState } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -15,6 +15,7 @@ export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { className, ...otherProps } = props;
     const [isLightMode, setIsLightMode] = useState(false);
+    const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
         address,
@@ -28,10 +29,18 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     // regardless of ORBIT_SIZE, with the right edge clipping naturally.
     const orbitHalf = ORBIT_SIZE / 2;
 
+    useEffect(() => {
+        const timeout = window.setTimeout(() => {
+            setIsShimLightMode(isLightMode);
+        }, 220);
+
+        return () => window.clearTimeout(timeout);
+    }, [isLightMode]);
+
     return (
         <header
             className={classNames(
-                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-b pt-6 pb-4 transition-colors duration-500 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-b pt-6 pb-4 transition-colors duration-[1200ms] ease-in-out md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 isLightMode
                     ? 'border-[#E5E6EC] bg-[#F3F4F7]'
                     : 'border-[#1D1B28] bg-[#0A0A0F]',
@@ -42,34 +51,35 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             {/* Background texture */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
                 <div
-                    className={classNames(
-                        'absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26 transition-opacity duration-700',
-                        isLightMode ? 'opacity-100' : 'opacity-0',
-                    )}
+                    className="absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26"
+                    style={{
+                        opacity: isShimLightMode ? 1 : 0,
+                        transition: 'opacity 1200ms ease-in-out',
+                    }}
                 />
                 {/* Left bloom — upper left behind welcome text */}
                 <div
-                    className={classNames(
-                        'absolute rounded-full blur-[130px] transition-all duration-700',
-                        isLightMode
-                            ? '-top-20 -left-24 h-[520px] w-[520px] bg-[#B493FF]/30'
-                            : '-top-20 -left-20 h-[480px] w-[480px] bg-purple-500/20',
-                    )}
+                    className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px] transition-opacity duration-[1200ms] ease-in-out"
+                    style={{ opacity: isLightMode ? 1 : 0 }}
+                />
+                <div
+                    className="absolute -top-20 -left-20 h-[480px] w-[480px] rounded-full bg-purple-500/20 blur-[120px] transition-opacity duration-[1200ms] ease-in-out"
+                    style={{ opacity: isLightMode ? 0 : 1 }}
                 />
                 {/* Center-bottom bloom — soft edge distinction near cards */}
                 <div
-                    className={classNames(
-                        'absolute left-[48%] -translate-x-1/2 rounded-full transition-all duration-700',
-                        isLightMode
-                            ? '-bottom-16 h-[280px] w-[440px] bg-[#C7B0FF]/30 blur-[115px]'
-                            : '-bottom-42 h-[190px] w-[720px] bg-purple-500/14 blur-[120px]',
-                    )}
+                    className="absolute -bottom-16 left-[48%] h-[280px] w-[440px] -translate-x-1/2 rounded-full bg-[#C7B0FF]/30 blur-[115px] transition-opacity duration-[1200ms] ease-in-out"
+                    style={{ opacity: isLightMode ? 1 : 0 }}
+                />
+                <div
+                    className="absolute -bottom-42 left-[48%] h-[190px] w-[720px] -translate-x-1/2 rounded-full bg-purple-500/14 blur-[120px] transition-opacity duration-[1200ms] ease-in-out"
+                    style={{ opacity: isLightMode ? 0 : 1 }}
                 />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
                     className={classNames(
-                        'absolute inset-0 h-full w-full transition-opacity duration-700',
+                        'absolute inset-0 h-full w-full transition-opacity duration-[1200ms] ease-in-out',
                         isLightMode ? 'opacity-[0.018]' : 'opacity-[0.035]',
                     )}
                     focusable="false"
@@ -116,16 +126,16 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             <Container className="pointer-events-none relative z-[3] flex w-full flex-col gap-y-12">
                 <div className="pointer-events-auto relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
                     <div
-                        className={classNames(
-                            'pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden blur-2xl transition-all duration-700 md:block',
-                            isLightMode
-                                ? 'bg-gradient-to-l from-white/70 via-white/26 to-transparent'
-                                : 'bg-gradient-to-l from-black/70 via-black/26 to-transparent',
-                        )}
+                        className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-white/70 via-white/26 to-transparent blur-2xl transition-opacity duration-[1200ms] ease-in-out md:block"
+                        style={{ opacity: isLightMode ? 1 : 0 }}
+                    />
+                    <div
+                        className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-black/70 via-black/26 to-transparent blur-2xl transition-opacity duration-[1200ms] ease-in-out md:block"
+                        style={{ opacity: isLightMode ? 0 : 1 }}
                     />
                     <p
                         className={classNames(
-                            'text-3xl leading-tight transition-colors duration-500 md:text-5xl',
+                            'text-3xl leading-tight transition-colors duration-[1200ms] ease-in-out md:text-5xl',
                             isLightMode ? 'text-[#171335]' : 'text-white',
                         )}
                     >
@@ -146,7 +156,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     </p>
                     <p
                         className={classNames(
-                            'text-lg transition-colors duration-500 md:text-xl',
+                            'text-lg transition-colors duration-[1200ms] ease-in-out md:text-xl',
                             isLightMode ? 'text-[#252041]/72' : 'text-white/60',
                         )}
                     >
