@@ -37,6 +37,21 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
         return () => window.clearTimeout(timeout);
     }, [isLightMode]);
 
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+
+        const syncWithSystemTheme = () => {
+            setIsLightMode(mediaQuery.matches);
+        };
+
+        syncWithSystemTheme();
+        mediaQuery.addEventListener('change', syncWithSystemTheme);
+
+        return () => {
+            mediaQuery.removeEventListener('change', syncWithSystemTheme);
+        };
+    }, []);
+
     return (
         <header
             className={classNames(
