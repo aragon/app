@@ -36,7 +36,7 @@ export const CryptexActionItem: React.FC<ICryptexActionItemProps> = (props) => {
     return (
         <Link
             className={classNames(
-                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl border border-[#D9D2ED] bg-white/45 p-4 backdrop-blur-sm transition-colors duration-100 hover:border-[#C6BCE2] hover:bg-white/65 md:w-[400px] md:p-6',
+                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl border border-[#CEC7E2] bg-[#ECE8F5]/74 p-4 backdrop-blur-sm transition-colors duration-100 hover:border-[#BBB1D8] hover:bg-[#E5E0F2]/86 md:w-[400px] md:p-6',
                 className,
             )}
             href={href}
