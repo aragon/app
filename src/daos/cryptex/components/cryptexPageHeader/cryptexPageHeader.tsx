@@ -41,6 +41,8 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 <div className="absolute -top-20 -left-20 h-[480px] w-[480px] rounded-full bg-purple-500/20 blur-[120px]" />
                 {/* Center bloom — behind middle card area */}
                 <div className="absolute bottom-0 left-[38%] h-[280px] w-[360px] -translate-x-1/2 rounded-full bg-purple-500/15 blur-[100px]" />
+                {/* Center-bottom bloom — soft edge distinction near cards */}
+                <div className="absolute -bottom-42 left-[48%] h-[190px] w-[720px] -translate-x-1/2 rounded-full bg-purple-500/14 blur-[120px]" />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
