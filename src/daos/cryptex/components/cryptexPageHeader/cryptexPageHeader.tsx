@@ -1,7 +1,12 @@
 'use client';
 
 import classNames from 'classnames';
-import { type ComponentProps, useEffect, useState } from 'react';
+import {
+    type ComponentProps,
+    useEffect,
+    useState,
+    useSyncExternalStore,
+} from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -12,9 +17,26 @@ import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
 export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 
+const subscribeToColorScheme = (callback: () => void): (() => void) => {
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    mq.addEventListener('change', callback);
+    return () => mq.removeEventListener('change', callback);
+};
+
+const getSystemLightPreference = (): boolean =>
+    window.matchMedia('(prefers-color-scheme: light)').matches;
+
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { className, ...otherProps } = props;
-    const [isLightMode, setIsLightMode] = useState(false);
+    const systemIsLightMode = useSyncExternalStore(
+        subscribeToColorScheme,
+        getSystemLightPreference,
+        () => false,
+    );
+    const [manualIsLightMode, setManualIsLightMode] = useState<boolean | null>(
+        null,
+    );
+    const isLightMode = manualIsLightMode ?? systemIsLightMode;
     const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
@@ -37,20 +59,9 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
         return () => window.clearTimeout(timeout);
     }, [isLightMode]);
 
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
-
-        const syncWithSystemTheme = () => {
-            setIsLightMode(mediaQuery.matches);
-        };
-
-        syncWithSystemTheme();
-        mediaQuery.addEventListener('change', syncWithSystemTheme);
-
-        return () => {
-            mediaQuery.removeEventListener('change', syncWithSystemTheme);
-        };
-    }, []);
+    const handleToggleMode = (): void => {
+        setManualIsLightMode(!isLightMode);
+    };
 
     return (
         <header
@@ -133,7 +144,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 <div className="pointer-events-auto md:translate-x-20 lg:translate-x-24 xl:translate-x-0">
                     <CryptexOrbitAnimation
                         isLightMode={isLightMode}
-                        onToggleMode={() => setIsLightMode((value) => !value)}
+                        onToggleMode={handleToggleMode}
                     />
                 </div>
             </div>
