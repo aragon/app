@@ -20,7 +20,7 @@ export const CryptexActionAvatarIcon: React.FC<
                     ? { opacity: 1, x: 0, y: 0, scale: 1 }
                     : { opacity: 0, x: 6, y: -6, scale: 0.8 }
             }
-            className="absolute top-4 right-4 md:top-5 md:right-6"
+            className="absolute top-3 right-3 md:top-4 md:right-4"
             initial={{ opacity: 0, x: 6, y: -6, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
         >
