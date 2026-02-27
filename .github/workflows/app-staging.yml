@@ -14,15 +14,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: "staging"
-
   deploy:
     uses: ./.github/workflows/shared-deploy.yml
-    needs: build
     secrets: inherit
     with:
       domain: "stg.app.aragon.org"

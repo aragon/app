@@ -1,6 +1,6 @@
-import { middlewareUtils } from '@/modules/application/utils/middlewareUtils';
+import { proxyUtils } from '@/modules/application/utils/proxyUtils';
 
-export const middleware = middlewareUtils.middleware;
+export const proxy = proxyUtils.proxy;
 
 /*
  * Match all request paths except for the ones starting with:
@@ -8,9 +8,6 @@ export const middleware = middlewareUtils.middleware;
  * - _next/(static|image) (static and image optimization files)
  * - favicon.ico (favicon file)
  * (See https://nextjs.org/docs/app/building-your-application/configuring/content-security-policy)
- *
- * NOTE:
- * The middleware configs needs to be placed on the src/middleware.ts file, otherwise NextJs throws an error at build time.
  */
 export const config = {
     matcher: [

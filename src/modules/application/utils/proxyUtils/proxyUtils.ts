@@ -1,8 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import packageInfo from '../../../../../package.json' with { type: 'json' };
 
-class MiddlewareUtils {
-    middleware = (request: NextRequest): NextResponse => {
+class ProxyUtils {
+    proxy = (request: NextRequest): NextResponse => {
         const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
         const cspHeader = this.getContentSecurityPolicies(
             nonce,
@@ -80,4 +80,4 @@ class MiddlewareUtils {
     };
 }
 
-export const middlewareUtils = new MiddlewareUtils();
+export const proxyUtils = new ProxyUtils();
