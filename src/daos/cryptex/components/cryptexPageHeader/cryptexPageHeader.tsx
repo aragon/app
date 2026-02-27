@@ -30,18 +30,18 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden bg-[#F7F5FC] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-[#E5E6EC] border-b bg-[#F3F4F7] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
         >
             {/* Background texture — soft lilac blooms + subtle grain over light base */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-[#EEE9FF]/30" />
+                <div className="absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26" />
                 {/* Left bloom — upper left behind welcome text */}
                 <div className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px]" />
                 {/* Right bloom — around orbit area */}
-                <div className="absolute top-8 right-[-120px] h-[420px] w-[520px] rounded-full bg-[#C8B4FF]/35 blur-[135px]" />
+                <div className="absolute top-6 right-[-120px] h-[400px] w-[500px] rounded-full bg-[#C8B4FF]/28 blur-[130px]" />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
