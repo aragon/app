@@ -1,7 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -14,6 +14,7 @@ export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { className, ...otherProps } = props;
+    const [isLightMode, setIsLightMode] = useState(false);
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
         address,
@@ -30,22 +31,47 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-[#E5E6EC] border-b bg-[#F3F4F7] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-b pt-6 pb-4 transition-colors duration-500 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                isLightMode
+                    ? 'border-[#E5E6EC] bg-[#F3F4F7]'
+                    : 'border-[#1D1B28] bg-[#0A0A0F]',
                 className,
             )}
             {...otherProps}
         >
-            {/* Background texture — soft lilac blooms + subtle grain over light base */}
+            {/* Background texture */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26" />
+                <div
+                    className={classNames(
+                        'absolute inset-0 bg-gradient-to-r from-white/82 via-white/50 to-[#EEE9FF]/26 transition-opacity duration-700',
+                        isLightMode ? 'opacity-100' : 'opacity-0',
+                    )}
+                />
                 {/* Left bloom — upper left behind welcome text */}
-                <div className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px]" />
+                <div
+                    className={classNames(
+                        'absolute rounded-full blur-[130px] transition-all duration-700',
+                        isLightMode
+                            ? '-top-20 -left-24 h-[520px] w-[520px] bg-[#B493FF]/30'
+                            : '-top-20 -left-20 h-[480px] w-[480px] bg-purple-500/20',
+                    )}
+                />
                 {/* Center-bottom bloom — soft edge distinction near cards */}
-                <div className="absolute -bottom-16 left-[48%] h-[280px] w-[440px] -translate-x-1/2 rounded-full bg-[#C7B0FF]/30 blur-[115px]" />
+                <div
+                    className={classNames(
+                        'absolute left-[48%] -translate-x-1/2 rounded-full transition-all duration-700',
+                        isLightMode
+                            ? '-bottom-16 h-[280px] w-[440px] bg-[#C7B0FF]/30 blur-[115px]'
+                            : '-bottom-42 h-[190px] w-[720px] bg-purple-500/14 blur-[120px]',
+                    )}
+                />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
-                    className="absolute inset-0 h-full w-full opacity-[0.018]"
+                    className={classNames(
+                        'absolute inset-0 h-full w-full transition-opacity duration-700',
+                        isLightMode ? 'opacity-[0.018]' : 'opacity-[0.035]',
+                    )}
                     focusable="false"
                     xmlns="http://www.w3.org/2000/svg"
                 >
@@ -71,7 +97,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
              * overflow-hidden clips the bottom portion and any right bleed.
              */}
             <div
-                className="pointer-events-none absolute hidden md:block"
+                className="absolute z-[2] hidden md:block"
                 style={{
                     bottom: `${-(orbitHalf - 370)}px`,
                     right: `calc(25% - ${orbitHalf}px)`,
@@ -79,35 +105,64 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     transformOrigin: 'center',
                 }}
             >
-                <div className="md:translate-x-20 lg:translate-x-24 xl:translate-x-0">
-                    <CryptexOrbitAnimation />
+                <div className="pointer-events-auto md:translate-x-20 lg:translate-x-24 xl:translate-x-0">
+                    <CryptexOrbitAnimation
+                        isLightMode={isLightMode}
+                        onToggleMode={() => setIsLightMode((value) => !value)}
+                    />
                 </div>
             </div>
 
-            <Container className="relative z-[1] flex w-full flex-col gap-y-12">
-                <div className="relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
-                    <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-white/70 via-white/26 to-transparent blur-2xl md:block" />
-                    <p className="text-3xl text-[#171335] leading-tight md:text-5xl">
+            <Container className="pointer-events-none relative z-[3] flex w-full flex-col gap-y-12">
+                <div className="pointer-events-auto relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
+                    <div
+                        className={classNames(
+                            'pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden blur-2xl transition-all duration-700 md:block',
+                            isLightMode
+                                ? 'bg-gradient-to-l from-white/70 via-white/26 to-transparent'
+                                : 'bg-gradient-to-l from-black/70 via-black/26 to-transparent',
+                        )}
+                    />
+                    <p
+                        className={classNames(
+                            'text-3xl leading-tight transition-colors duration-500 md:text-5xl',
+                            isLightMode ? 'text-[#171335]' : 'text-white',
+                        )}
+                    >
                         {t('app.daos.cryptex.cryptexPageHeader.welcome')}{' '}
                         {ensName && (
-                            <span className="text-[#5A34CC]">{ensName}</span>
+                            <span
+                                className={
+                                    isLightMode
+                                        ? 'text-[#5A34CC]'
+                                        : 'text-purple-400'
+                                }
+                            >
+                                {ensName}
+                            </span>
                         )}
                         <br />
                         {t('app.daos.cryptex.cryptexPageHeader.to')}
                     </p>
-                    <p className="text-[#252041]/72 text-lg md:text-xl">
+                    <p
+                        className={classNames(
+                            'text-lg transition-colors duration-500 md:text-xl',
+                            isLightMode ? 'text-[#252041]/72' : 'text-white/60',
+                        )}
+                    >
                         {t('app.daos.cryptex.cryptexPageHeader.info')}
                     </p>
                 </div>
 
                 {/* Static row for extra-large desktop view */}
-                <div className="hidden w-full items-center justify-between gap-4 xl:flex">
+                <div className="pointer-events-auto relative z-[3] hidden w-full items-center justify-between gap-4 xl:flex">
                     {actions.map((action) => (
                         <CryptexActionItem
                             description={action.description}
                             href={action.href}
                             image={action.image}
                             isExternal={action.isExternal}
+                            isLightMode={isLightMode}
                             key={action.title}
                             title={action.title}
                         />
@@ -116,7 +171,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </Container>
 
             {/* Tablet and large-screen carousel */}
-            <div className="relative z-[1] hidden md:block xl:hidden">
+            <div className="pointer-events-auto relative z-[3] hidden md:block xl:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
@@ -128,6 +183,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                             description={action.description}
                             href={action.href}
                             image={action.image}
+                            isLightMode={isLightMode}
                             key={action.title}
                             title={action.title}
                         />
@@ -136,7 +192,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </div>
 
             {/* Mobile draggable carousel */}
-            <div className="relative z-[1] block md:hidden">
+            <div className="pointer-events-auto relative z-[3] block md:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
@@ -149,6 +205,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                             description={action.description}
                             href={action.href}
                             image={action.image}
+                            isLightMode={isLightMode}
                             key={action.title}
                             title={action.title}
                         />

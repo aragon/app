@@ -26,6 +26,11 @@ interface IOrbitRingProps {
     reverse?: boolean;
 }
 
+interface ICryptexOrbitAnimationProps {
+    isLightMode?: boolean;
+    onToggleMode?: () => void;
+}
+
 const OrbitRing: React.FC<IOrbitRingProps> = ({
     tokens,
     radius,
@@ -34,7 +39,7 @@ const OrbitRing: React.FC<IOrbitRingProps> = ({
     reverse,
 }) => (
     <div
-        className="absolute inset-0 animate-spin"
+        className="pointer-events-none absolute inset-0 animate-spin"
         style={{
             animationDuration: speed,
             animationDirection: reverse ? 'reverse' : 'normal',
@@ -80,7 +85,10 @@ const OrbitRing: React.FC<IOrbitRingProps> = ({
     </div>
 );
 
-export const CryptexOrbitAnimation: React.FC = () => {
+export const CryptexOrbitAnimation: React.FC<ICryptexOrbitAnimationProps> = (
+    props,
+) => {
+    const { isLightMode, onToggleMode } = props;
     const center = ORBIT_SIZE / 2;
 
     return (
@@ -92,10 +100,10 @@ export const CryptexOrbitAnimation: React.FC = () => {
             <div
                 className="absolute rounded-full bg-purple-500/10 blur-3xl"
                 style={{
-                    width: '280%',
-                    height: '150%',
-                    top: '-8%',
-                    left: '-92%',
+                    width: isLightMode ? '280%' : '160%',
+                    height: isLightMode ? '150%' : '70%',
+                    top: isLightMode ? '-8%' : '15%',
+                    left: isLightMode ? '-92%' : '-30%',
                     transform: 'rotate(-25deg)',
                 }}
             />
@@ -149,8 +157,8 @@ export const CryptexOrbitAnimation: React.FC = () => {
                     className="animate-spin rounded-full blur-[2px]"
                     initial={{ opacity: 0 }}
                     style={{
-                        width: ORBIT_SIZE * 5,
-                        height: ORBIT_SIZE * 5,
+                        width: ORBIT_SIZE * (isLightMode ? 5 : 1.8),
+                        height: ORBIT_SIZE * (isLightMode ? 5 : 1.8),
                         background:
                             'conic-gradient(from 0deg, transparent 0%, rgba(168,85,247,0.12) 15%, rgba(168,85,247,0.06) 30%, transparent 50%, rgba(168,85,247,0.08) 70%, transparent 85%)',
                         animationDuration: OUTER_SPEED,
@@ -203,7 +211,7 @@ export const CryptexOrbitAnimation: React.FC = () => {
             </motion.div>
 
             {/* Central CTX logo */}
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
                     animate={{ opacity: 1, scale: 1 }}
                     initial={{ opacity: 0, scale: 0.6 }}
@@ -213,17 +221,40 @@ export const CryptexOrbitAnimation: React.FC = () => {
                         ease: [0.21, 0.47, 0.32, 0.98],
                     }}
                 >
-                    <div className="relative">
-                        <div className="absolute inset-0 scale-150 rounded-full bg-purple-500/20 blur-2xl" />
-                        <Image
-                            alt="Cryptex"
-                            className="relative drop-shadow-2xl"
-                            height={COIN_SIZE}
-                            priority={true}
-                            src={TokenLogo}
-                            width={COIN_SIZE}
-                        />
-                    </div>
+                    {onToggleMode ? (
+                        <motion.button
+                            animate={{ scale: [1, 1.04, 1] }}
+                            aria-label="Toggle Cryptex theme"
+                            className="relative z-10 cursor-pointer rounded-full bg-transparent focus:outline-none"
+                            key={isLightMode ? 'light-mode' : 'dark-mode'}
+                            onClick={onToggleMode}
+                            transition={{ duration: 0.45, ease: 'easeInOut' }}
+                            type="button"
+                            whileTap={{ scale: 0.92 }}
+                        >
+                            <div className="absolute inset-0 scale-150 rounded-full bg-purple-500/20 blur-2xl" />
+                            <Image
+                                alt="Cryptex"
+                                className="relative drop-shadow-2xl"
+                                height={COIN_SIZE}
+                                priority={true}
+                                src={TokenLogo}
+                                width={COIN_SIZE}
+                            />
+                        </motion.button>
+                    ) : (
+                        <div className="relative">
+                            <div className="absolute inset-0 scale-150 rounded-full bg-purple-500/20 blur-2xl" />
+                            <Image
+                                alt="Cryptex"
+                                className="relative drop-shadow-2xl"
+                                height={COIN_SIZE}
+                                priority={true}
+                                src={TokenLogo}
+                                width={COIN_SIZE}
+                            />
+                        </div>
+                    )}
                 </motion.div>
             </div>
         </div>

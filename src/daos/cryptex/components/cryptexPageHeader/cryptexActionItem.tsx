@@ -27,16 +27,21 @@ export interface ICryptexActionItemProps extends ComponentProps<'button'> {
      * Whether the link is external or not.
      */
     isExternal?: boolean;
+    isLightMode?: boolean;
 }
 
 export const CryptexActionItem: React.FC<ICryptexActionItemProps> = (props) => {
-    const { title, description, href, isExternal, className } = props;
+    const { title, description, href, isExternal, isLightMode, className } =
+        props;
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Link
             className={classNames(
-                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl border border-[#CEC7E2] bg-[#ECE8F5]/74 p-4 backdrop-blur-sm transition-colors duration-100 hover:border-[#BBB1D8] hover:bg-[#E5E0F2]/86 md:w-[400px] md:p-6',
+                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-xl p-4 backdrop-blur-sm transition-colors duration-100 md:w-[400px] md:p-6',
+                isLightMode
+                    ? 'border border-[#CEC7E2] bg-[#ECE8F5]/74 hover:border-[#BBB1D8] hover:bg-[#E5E0F2]/86'
+                    : 'border border-white/10 bg-white/[0.06] hover:border-white/20 hover:bg-white/[0.09]',
                 className,
             )}
             href={href}
@@ -49,10 +54,14 @@ export const CryptexActionItem: React.FC<ICryptexActionItemProps> = (props) => {
                 <CryptexActionText
                     description={description}
                     isHovered={isHovered}
+                    isLightMode={isLightMode}
                     title={title}
                 />
             </div>
-            <CryptexActionAvatarIcon isHovered={isHovered} />
+            <CryptexActionAvatarIcon
+                isHovered={isHovered}
+                isLightMode={isLightMode}
+            />
         </Link>
     );
 };

@@ -6,12 +6,13 @@ export interface ICryptexActionAvatarIconProps {
      * Whether the parent action item is hovered.
      */
     isHovered: boolean;
+    isLightMode?: boolean;
 }
 
 export const CryptexActionAvatarIcon: React.FC<
     ICryptexActionAvatarIconProps
 > = (props) => {
-    const { isHovered } = props;
+    const { isHovered, isLightMode } = props;
 
     return (
         <motion.div
@@ -24,9 +25,17 @@ export const CryptexActionAvatarIcon: React.FC<
             initial={{ opacity: 0, x: 6, y: -6, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
         >
-            <div className="flex size-7 items-center justify-center rounded-full bg-[#2F2547]/12">
+            <div
+                className={
+                    isLightMode
+                        ? 'flex size-7 items-center justify-center rounded-full bg-[#2F2547]/12'
+                        : 'flex size-7 items-center justify-center rounded-full bg-white/10'
+                }
+            >
                 <Icon
-                    className="text-[#2A2142]/70"
+                    className={
+                        isLightMode ? 'text-[#2A2142]/70' : 'text-white/70'
+                    }
                     icon={IconType.LINK_EXTERNAL}
                     size="sm"
                 />
