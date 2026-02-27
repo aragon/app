@@ -24,9 +24,9 @@ export const CryptexActionAvatarIcon: React.FC<
             initial={{ opacity: 0, x: 6, y: -6, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 500, damping: 18 }}
         >
-            <div className="flex size-7 items-center justify-center rounded-full bg-white/10">
+            <div className="flex size-7 items-center justify-center rounded-full bg-[#2F2547]/12">
                 <Icon
-                    className="text-white/70"
+                    className="text-[#2A2142]/70"
                     icon={IconType.LINK_EXTERNAL}
                     size="sm"
                 />

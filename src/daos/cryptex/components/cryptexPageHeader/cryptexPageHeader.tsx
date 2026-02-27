@@ -30,21 +30,22 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden bg-[#0A0A0F] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden bg-[#F7F5FC] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
         >
-            {/* Background texture — blurred blobs + noise grain over dark base */}
+            {/* Background texture — soft lilac blooms + subtle grain over light base */}
             <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-[#EEE9FF]/30" />
                 {/* Left bloom — upper left behind welcome text */}
-                <div className="absolute -top-20 -left-20 h-[480px] w-[480px] rounded-full bg-purple-500/20 blur-[120px]" />
-                {/* Center bloom — behind middle card area */}
-                <div className="absolute bottom-0 left-[38%] h-[280px] w-[360px] -translate-x-1/2 rounded-full bg-purple-500/15 blur-[100px]" />
+                <div className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px]" />
+                {/* Right bloom — around orbit area */}
+                <div className="absolute top-8 right-[-120px] h-[420px] w-[520px] rounded-full bg-[#C8B4FF]/35 blur-[135px]" />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
-                    className="absolute inset-0 h-full w-full opacity-[0.035]"
+                    className="absolute inset-0 h-full w-full opacity-[0.018]"
                     focusable="false"
                     xmlns="http://www.w3.org/2000/svg"
                 >
@@ -85,16 +86,16 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
 
             <Container className="relative z-10 flex w-full flex-col gap-y-12">
                 <div className="relative flex max-w-[600px] flex-col gap-1.5 text-left md:gap-3">
-                    <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-r from-black/50 via-black/30 to-transparent blur-xl md:block" />
-                    <p className="text-3xl text-white leading-tight md:text-5xl">
+                    <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-r from-white/75 via-white/45 to-transparent blur-xl md:block" />
+                    <p className="text-3xl text-[#171335] leading-tight md:text-5xl">
                         {t('app.daos.cryptex.cryptexPageHeader.welcome')}{' '}
                         {ensName && (
-                            <span className="text-purple-400">{ensName}</span>
+                            <span className="text-[#5A34CC]">{ensName}</span>
                         )}
                         <br />
                         {t('app.daos.cryptex.cryptexPageHeader.to')}
                     </p>
-                    <p className="text-lg text-white/60 md:text-xl">
+                    <p className="text-[#252041]/72 text-lg md:text-xl">
                         {t('app.daos.cryptex.cryptexPageHeader.info')}
                     </p>
                 </div>
