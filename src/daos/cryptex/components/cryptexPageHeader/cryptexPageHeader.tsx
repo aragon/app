@@ -79,14 +79,14 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     transformOrigin: 'center',
                 }}
             >
-                <div className="md:translate-x-10 lg:translate-x-14 xl:translate-x-0">
+                <div className="md:translate-x-20 lg:translate-x-24 xl:translate-x-0">
                     <CryptexOrbitAnimation />
                 </div>
             </div>
 
             <Container className="relative z-10 flex w-full flex-col gap-y-12">
-                <div className="relative flex max-w-[600px] flex-col gap-1.5 text-left md:gap-3">
-                    <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-r from-white/75 via-white/45 to-transparent blur-xl md:block" />
+                <div className="relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
+                    <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-white/70 via-white/26 to-transparent blur-2xl md:block" />
                     <p className="text-3xl text-[#171335] leading-tight md:text-5xl">
                         {t('app.daos.cryptex.cryptexPageHeader.welcome')}{' '}
                         {ensName && (
