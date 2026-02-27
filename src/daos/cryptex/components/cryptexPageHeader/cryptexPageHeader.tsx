@@ -30,7 +30,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     return (
         <header
             className={classNames(
-                'relative flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-[#E5E6EC] border-b bg-[#F3F4F7] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
+                'relative isolate z-0 flex h-fit min-h-[400px] flex-col gap-y-4 overflow-hidden border-[#E5E6EC] border-b bg-[#F3F4F7] pt-6 pb-4 md:min-h-[480px] md:gap-y-12 md:pt-16 md:pb-10',
                 className,
             )}
             {...otherProps}
@@ -41,7 +41,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 {/* Left bloom — upper left behind welcome text */}
                 <div className="absolute -top-20 -left-24 h-[520px] w-[520px] rounded-full bg-[#B493FF]/30 blur-[130px]" />
                 {/* Right bloom — around orbit area */}
-                <div className="absolute top-6 right-[-120px] h-[400px] w-[500px] rounded-full bg-[#C8B4FF]/28 blur-[130px]" />
+                <div className="absolute top-24 right-[20px] h-[540px] w-[700px] rounded-full bg-[#B895FF]/44 blur-[170px]" />
                 {/* Noise grain layer */}
                 <svg
                     aria-hidden="true"
@@ -84,7 +84,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                 </div>
             </div>
 
-            <Container className="relative z-10 flex w-full flex-col gap-y-12">
+            <Container className="relative z-[1] flex w-full flex-col gap-y-12">
                 <div className="relative flex max-w-[520px] flex-col gap-1.5 text-left md:gap-3 xl:max-w-[600px]">
                     <div className="pointer-events-none absolute -inset-x-10 -inset-y-8 -z-10 hidden bg-gradient-to-l from-white/70 via-white/26 to-transparent blur-2xl md:block" />
                     <p className="text-3xl text-[#171335] leading-tight md:text-5xl">
@@ -116,7 +116,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </Container>
 
             {/* Tablet and large-screen carousel */}
-            <div className="relative z-10 hidden md:block xl:hidden">
+            <div className="relative z-[1] hidden md:block xl:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
@@ -136,7 +136,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </div>
 
             {/* Mobile draggable carousel */}
-            <div className="relative z-10 block md:hidden">
+            <div className="relative z-[1] block md:hidden">
                 <Carousel
                     animationDelay={2}
                     gap={16}
