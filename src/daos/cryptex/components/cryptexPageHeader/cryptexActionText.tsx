@@ -25,8 +25,10 @@ export const CryptexActionText: React.FC<ICryptexActionTextProps> = (props) => {
             initial={{ y: 0, scale: 1 }}
             transition={{ type: 'spring', stiffness: 400, damping: 20 }}
         >
-            <p className="text-white text-xl leading-tight">{t(title)}</p>
-            <p className="text-white/50 text-xs leading-snug">
+            <p className="text-white text-xl leading-tight md:text-2xl">
+                {t(title)}
+            </p>
+            <p className="text-sm text-white/50 leading-snug md:text-base">
                 {t(description)}
             </p>
         </motion.div>
