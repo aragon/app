@@ -135,7 +135,7 @@ const nextConfig = {
         version: packageInfo.version,
     },
     serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
-    reactCompiler: true,
+    reactCompiler: false,
     turbopack: {
         resolveAlias: {
             '@react-native-async-storage/async-storage': {
