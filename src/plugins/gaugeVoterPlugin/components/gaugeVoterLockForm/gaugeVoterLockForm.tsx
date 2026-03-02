@@ -11,6 +11,7 @@ import {
 import { useMemberLocks } from '@/plugins/gaugeVoterPlugin/api/locksService';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
+import { useOpenDelegationOnboardingIfNeeded } from '@/plugins/tokenPlugin/hooks/useOpenDelegationOnboardingIfNeeded';
 import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -61,6 +62,13 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     const { address } = useConnection();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const { openIfNeeded } = useOpenDelegationOnboardingIfNeeded({
+        tokenAddress: token.underlying!,
+        tokenSymbol: token.symbol,
+        network: dao!.network,
+        daoId,
+    });
 
     const memberLocksQueryParams = {
         network: dao!.network,
@@ -153,7 +161,12 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
             amount,
             escrowContract: escrowAddress,
             token,
-            onSuccess: invalidateQueries,
+            onSuccess: () => {
+                invalidateQueries();
+                if (token.hasDelegate) {
+                    openIfNeeded();
+                }
+            },
             onSuccessClick: onLockTokensSuccessClick,
             showTransactionInfo: needsApproval,
         };

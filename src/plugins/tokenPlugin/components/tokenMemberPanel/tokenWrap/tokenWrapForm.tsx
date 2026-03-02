@@ -12,6 +12,7 @@ import {
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenApproveTokensDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenApproveTokensDialog';
 import type { ITokenWrapUnwrapDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenWrapUnwrapDialog';
+import { useOpenDelegationOnboardingIfNeeded } from '@/plugins/tokenPlugin/hooks/useOpenDelegationOnboardingIfNeeded';
 import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useWrappedTokenBalance } from '@/plugins/tokenPlugin/hooks/useWrappedTokenBalance';
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
@@ -45,6 +46,13 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
 
     const { address } = useConnection();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const { openIfNeeded } = useOpenDelegationOnboardingIfNeeded({
+        tokenAddress: token.address,
+        tokenSymbol: token.symbol,
+        network: dao!.network,
+        daoId,
+    });
 
     const { result: isConnected, check: walletGuard } =
         useConnectedWalletGuard();
@@ -145,6 +153,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const onWrapUnwrapTokensSuccess = () => {
         invalidateQueries();
         void refetchWrappedBalance();
+        openIfNeeded();
     };
 
     // Initialize asset field after fetching unwrapped balance

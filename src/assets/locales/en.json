@@ -2524,6 +2524,19 @@
             "label": "Voting start time"
           }
         },
+        "tokenDelegationOnboardingDialog": {
+          "intro": {
+            "title": "Your {{tokenSymbol}} is undelegated",
+            "description": "Delegate your voting power to yourself or to another address.",
+            "cta": "Set up your delegation",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "title": "Set up your delegation",
+            "cancel": "Cancel",
+            "submit": "Delegate now"
+          }
+        },
         "tokenDelegationForm": {
           "delegate": {
             "helpText": "Enter the address where you want to delegate your current or future token balance's voting power.",

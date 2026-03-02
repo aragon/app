@@ -29,6 +29,11 @@ export interface ITokenDelegationDialogParams {
      * Network used for the transaction.
      */
     network: Network;
+    /**
+     * Optional callback invoked when the user clicks the success button.
+     * Use this to close parent dialogs after a successful delegation.
+     */
+    onSuccessClick?: () => void;
 }
 
 export interface ITokenDelegationDialogProps
@@ -49,7 +54,12 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         'TokenDelegationDialog: user must be connected.',
     );
 
-    const { token, delegate = zeroAddress, network } = location.params;
+    const {
+        token,
+        delegate = zeroAddress,
+        network,
+        onSuccessClick: onSuccessClickParam,
+    } = location.params;
     const { data: delegateEnsName } = useEnsName({
         address: delegate as Hex,
         chainId: mainnet.id,
@@ -69,6 +79,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
 
     const onSuccessClick = () => {
         router.refresh();
+        onSuccessClickParam?.();
     };
 
     return (
