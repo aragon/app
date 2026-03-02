@@ -500,6 +500,42 @@ describe('tokenProposal utils', () => {
                 tokenProposalUtils.isSupportReached(proposal, true),
             ).toBeFalsy();
         });
+
+        it('returns false when early param is true and historicalTotalSupply is undefined', () => {
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 500_000,
+                historicalTotalSupply: undefined,
+            });
+            const votesByOption = [
+                { type: VoteOption.YES, totalVotingPower: '510' },
+                { type: VoteOption.NO, totalVotingPower: '490' },
+            ];
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
+            expect(
+                tokenProposalUtils.isSupportReached(proposal, true),
+            ).toBeFalsy();
+        });
+
+        it('returns false when early param is true and historicalTotalSupply is zero', () => {
+            const settings = generateTokenPluginSettings({
+                supportThreshold: 500_000,
+                historicalTotalSupply: '0',
+            });
+            const votesByOption = [
+                { type: VoteOption.YES, totalVotingPower: '510' },
+                { type: VoteOption.NO, totalVotingPower: '490' },
+            ];
+            const proposal = generateTokenProposal({
+                settings,
+                metrics: { votesByOption },
+            });
+            expect(
+                tokenProposalUtils.isSupportReached(proposal, true),
+            ).toBeFalsy();
+        });
     });
 
     describe('getTotalVotes', () => {

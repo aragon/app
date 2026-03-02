@@ -98,19 +98,26 @@ class TokenProposalUtils {
         const { votesByOption } = proposal.metrics;
 
         const yesVotes = this.getVoteByType(votesByOption, VoteOption.YES);
-        const abstainVotes = this.getVoteByType(
-            votesByOption,
-            VoteOption.ABSTAIN,
-        );
-
         const noVotesCurrent = this.getVoteByType(votesByOption, VoteOption.NO);
-        const noVotesWorstCase =
-            bigIntUtils.safeParse(historicalTotalSupply) -
-            yesVotes -
-            abstainVotes;
 
-        // For early-execution, check that the support threshold is met even if all remaining votes are no votes.
-        const noVotesComparator = early ? noVotesWorstCase : noVotesCurrent;
+        let noVotesComparator = noVotesCurrent;
+
+        if (early) {
+            const parsedTotalSupply = bigIntUtils.safeParse(
+                historicalTotalSupply,
+            );
+
+            if (parsedTotalSupply === BigInt(0)) {
+                return false;
+            }
+
+            const abstainVotes = this.getVoteByType(
+                votesByOption,
+                VoteOption.ABSTAIN,
+            );
+
+            noVotesComparator = parsedTotalSupply - yesVotes - abstainVotes;
+        }
 
         return (
             (tokenSettingsUtils.ratioBase -
