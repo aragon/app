@@ -1,12 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import {
-    type ComponentProps,
-    useEffect,
-    useState,
-    useSyncExternalStore,
-} from 'react';
+import { type ComponentProps, useEffect, useState } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -17,26 +12,9 @@ import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
 export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 
-const subscribeToColorScheme = (callback: () => void): (() => void) => {
-    const mq = window.matchMedia('(prefers-color-scheme: light)');
-    mq.addEventListener('change', callback);
-    return () => mq.removeEventListener('change', callback);
-};
-
-const getSystemLightPreference = (): boolean =>
-    window.matchMedia('(prefers-color-scheme: light)').matches;
-
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { className, ...otherProps } = props;
-    const systemIsLightMode = useSyncExternalStore(
-        subscribeToColorScheme,
-        getSystemLightPreference,
-        () => false,
-    );
-    const [manualIsLightMode, setManualIsLightMode] = useState<boolean | null>(
-        null,
-    );
-    const isLightMode = manualIsLightMode ?? systemIsLightMode;
+    const [isLightMode, setIsLightMode] = useState(true);
     const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
@@ -60,7 +38,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     }, [isLightMode]);
 
     const handleToggleMode = (): void => {
-        setManualIsLightMode(!isLightMode);
+        setIsLightMode(!isLightMode);
     };
 
     return (
@@ -128,16 +106,16 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             </div>
 
             {/*
-             * Orbit — center sits 290px above the header's bottom edge (~40% from
-             * top on a 480px header), placing the crown near the header top-right.
-             * overflow-hidden clips the bottom portion and any right bleed.
+             * Orbit — keep the full circle visible in the 480px desktop header by
+             * placing its bottom slightly below the header edge, while preserving
+             * right-side composition and natural right bleed clipping.
              */}
             <div
                 className="absolute z-[2] hidden md:block"
                 style={{
-                    bottom: `${-(orbitHalf - 370)}px`,
+                    bottom: `${-(orbitHalf - 275)}px`,
                     right: `calc(25% - ${orbitHalf}px)`,
-                    transform: 'translateY(-1%) scale(1.02)',
+                    transform: 'translateY(0) scale(1)',
                     transformOrigin: 'center',
                 }}
             >
