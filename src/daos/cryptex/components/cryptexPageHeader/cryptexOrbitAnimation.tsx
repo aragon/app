@@ -6,12 +6,12 @@ import TokenLogo from '../../assets/cryptex-token-logo.png';
 import { TOKEN_ICONS } from '../../assets/icons/tokenIcons';
 import { CRYPTEX40_TOKENS } from '../../constants/tokens';
 
-export const ORBIT_SIZE = 560;
-const COIN_SIZE = 210;
-const OUTER_RADIUS = 250;
-const INNER_RADIUS = 184;
-const OUTER_TOKEN_SIZE = 28;
-const INNER_TOKEN_SIZE = 24;
+export const ORBIT_SIZE = 504;
+const COIN_SIZE = 190;
+const OUTER_RADIUS = 225;
+const INNER_RADIUS = 166;
+const OUTER_TOKEN_SIZE = 25;
+const INNER_TOKEN_SIZE = 22;
 const OUTER_SPEED = '120s';
 const INNER_SPEED = '80s';
 

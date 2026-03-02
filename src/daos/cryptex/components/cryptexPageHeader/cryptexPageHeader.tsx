@@ -113,7 +113,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
             <div
                 className="absolute z-[2] hidden md:block"
                 style={{
-                    bottom: `${-(orbitHalf - 275)}px`,
+                    bottom: `${-(orbitHalf - 280)}px`,
                     right: `calc(25% - ${orbitHalf}px)`,
                     transform: 'translateY(0) scale(1)',
                     transformOrigin: 'center',
