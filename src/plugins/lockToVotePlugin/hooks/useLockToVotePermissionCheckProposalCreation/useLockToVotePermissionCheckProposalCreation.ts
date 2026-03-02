@@ -10,6 +10,7 @@ import type {
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ILockToVotePlugin } from '../../types';
 import { useLockToVoteData } from '../useLockToVoteData';
@@ -107,7 +108,8 @@ export const useLockToVotePermissionCheckProposalCreation = (
 
     const hasPermission =
         !isLoadingRequiredLockAmount && lockedAmount >= requiredLockAmount;
-    const isRestricted = BigInt(minProposerVotingPower) > 0;
+    const isRestricted =
+        bigIntUtils.safeParse(minProposerVotingPower) > BigInt(0);
 
     return {
         hasPermission,

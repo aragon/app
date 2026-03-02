@@ -13,6 +13,7 @@ import type {
 } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useWrappedTokenBalance } from '../useWrappedTokenBalance';
 
@@ -34,7 +35,7 @@ export const useTokenPermissionCheckProposalCreation = (
     const { decimals: tokenDecimals, symbol: tokenSymbol } = token;
 
     const parsedMinVotingPower = formatUnits(
-        BigInt(minProposerVotingPower),
+        bigIntUtils.safeParse(minProposerVotingPower),
         tokenDecimals,
     );
     const formattedMinVotingPower = formatterUtils.formatNumber(
@@ -71,7 +72,7 @@ export const useTokenPermissionCheckProposalCreation = (
         token,
     });
 
-    const userVotingPower = BigInt(member?.votingPower ?? '0');
+    const userVotingPower = bigIntUtils.safeParse(member?.votingPower);
 
     const parsedMemberVotingPower = formatUnits(userVotingPower, tokenDecimals);
     const formattedMemberVotingPower = formatterUtils.formatNumber(
@@ -123,7 +124,8 @@ export const useTokenPermissionCheckProposalCreation = (
         ? defaultSettings.concat(connectedUserSettings)
         : defaultSettings;
 
-    const isRestricted = BigInt(minProposerVotingPower) > 0;
+    const isRestricted =
+        bigIntUtils.safeParse(minProposerVotingPower) > BigInt(0);
 
     return {
         hasPermission: canCreateProposal?.status === true,
