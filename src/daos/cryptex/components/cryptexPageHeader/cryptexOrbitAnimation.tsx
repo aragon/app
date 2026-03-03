@@ -19,15 +19,36 @@ const OUTER_TOKENS = CRYPTEX40_TOKENS.slice(0, 25);
 const INNER_TOKENS = CRYPTEX40_TOKENS.slice(25);
 
 interface IOrbitRingProps {
+    /**
+     * Token symbols to display along the ring.
+     */
     tokens: readonly string[];
+    /**
+     * Ring radius in pixels.
+     */
     radius: number;
+    /**
+     * Token icon size in pixels.
+     */
     tokenSize: number;
+    /**
+     * Orbit rotation duration, e.g. `120s`.
+     */
     speed: string;
+    /**
+     * Whether the ring rotates in reverse direction.
+     */
     reverse?: boolean;
 }
 
 interface ICryptexOrbitAnimationProps {
+    /**
+     * Whether the header is rendered in light mode.
+     */
     isLightMode?: boolean;
+    /**
+     * Callback used to toggle header color mode.
+     */
     onToggleMode?: () => void;
 }
 

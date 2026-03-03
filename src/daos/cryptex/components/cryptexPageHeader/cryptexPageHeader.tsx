@@ -10,6 +10,9 @@ import { actions } from '../../constants/actions';
 import { CryptexActionItem } from './cryptexActionItem';
 import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
+/**
+ * Props for the Cryptex custom header wrapper.
+ */
 export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
 
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
@@ -24,9 +27,6 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
 
     const { t } = useTranslations();
 
-    // Center the orbit 120px above the bottom edge so ~73% of the circle is visible.
-    // right: calc(20% - half) keeps the orbit center fixed at 80% from the left
-    // regardless of ORBIT_SIZE, with the right edge clipping naturally.
     const orbitHalf = ORBIT_SIZE / 2;
 
     useEffect(() => {
@@ -104,12 +104,6 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                     />
                 </svg>
             </div>
-
-            {/*
-             * Orbit — keep the full circle visible in the 480px desktop header by
-             * placing its bottom slightly below the header edge, while preserving
-             * right-side composition and natural right bleed clipping.
-             */}
             <div
                 className="absolute z-[2] hidden md:block"
                 style={{

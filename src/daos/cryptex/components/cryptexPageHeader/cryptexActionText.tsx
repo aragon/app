@@ -10,7 +10,13 @@ export interface ICryptexActionTextProps {
      * Description of the action text.
      */
     description: string;
+    /**
+     * Whether the parent action item is currently hovered.
+     */
     isHovered: boolean;
+    /**
+     * Whether the header is rendered in light mode.
+     */
     isLightMode?: boolean;
 }
 

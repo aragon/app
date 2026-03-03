@@ -27,6 +27,9 @@ export interface ICryptexActionItemProps extends ComponentProps<'button'> {
      * Whether the link is external or not.
      */
     isExternal?: boolean;
+    /**
+     * Whether the header is rendered in light mode.
+     */
     isLightMode?: boolean;
 }
 

@@ -6,6 +6,9 @@ export interface ICryptexActionAvatarIconProps {
      * Whether the parent action item is hovered.
      */
     isHovered: boolean;
+    /**
+     * Whether the header is rendered in light mode.
+     */
     isLightMode?: boolean;
 }
 
