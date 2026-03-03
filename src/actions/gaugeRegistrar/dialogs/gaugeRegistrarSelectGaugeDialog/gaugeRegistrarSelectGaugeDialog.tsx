@@ -50,6 +50,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
         useDaoPlugins({
             daoId: dao.id,
             interfaceType: PluginInterfaceType.GAUGE_VOTER,
+            includeSubDaos: false,
         }) ?? [];
     const { data: gauges, isLoading } = useGaugeRegistrarGauges({
         pluginAddress,

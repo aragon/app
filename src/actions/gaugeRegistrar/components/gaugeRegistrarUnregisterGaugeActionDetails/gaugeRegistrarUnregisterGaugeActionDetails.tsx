@@ -60,6 +60,7 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<
         useDaoPlugins({
             daoId: action.daoId,
             interfaceType: PluginInterfaceType.GAUGE_VOTER,
+            includeSubDaos: false,
         }) ?? [];
     const { t } = useTranslations();
 

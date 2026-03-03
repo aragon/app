@@ -31,6 +31,7 @@ export const useCapitalDistributorCampaignUpload = (
     const capitalDistributorPlugins = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+        includeSubDaos: false,
     });
     const capitalDistributorAddress =
         capitalDistributorPlugins?.[0]?.meta.address;

@@ -69,8 +69,11 @@ export const AdminManageMembersDialog: React.FC<
     const memberParams = { daoId, pluginAddress, pageSize: 50 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const [adminPlugin] =
-        useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN }) ??
-        [];
+        useDaoPlugins({
+            daoId,
+            interfaceType: PluginInterfaceType.ADMIN,
+            includeSubDaos: false,
+        }) ?? [];
 
     const currentAdmins = useMemo(
         () => memberList?.pages.flatMap((page) => page.data) ?? [],
