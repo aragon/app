@@ -167,24 +167,7 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
-    // Dev-only local QA hook: force decode mismatch for the known ADMIN-6 repro URL.
-    const shouldMockDecodeMismatchForAdmin6 =
-        process.env.NODE_ENV !== 'production' &&
-        typeof window !== 'undefined' &&
-        window.location.pathname ===
-            '/dao/ethereum-sepolia/0x6f38f0F26dECa2527a7F6669Fcb7e13F66840901/proposals/ADMIN-6';
-    const processedActionData =
-        shouldMockDecodeMismatchForAdmin6 &&
-        actionData?.rawActions != null &&
-        actionData.rawActions.length > 0
-            ? {
-                  ...actionData,
-                  actions: actionData.actions.slice(
-                      0,
-                      Math.max(0, actionData.rawActions.length - 1),
-                  ),
-              }
-            : actionData;
+    const processedActionData = actionData;
 
     const hasActionDecodeMismatch =
         processedActionData?.rawActions != null &&
