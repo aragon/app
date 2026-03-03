@@ -43,12 +43,16 @@ export const Footer: React.FC<IFooterProps> = (props) => {
             >
                 <div className="flex flex-row items-center justify-between gap-4 pt-3 pb-4 [grid-area:metadata] md:justify-normal md:py-0 lg:justify-self-start">
                     <div className="flex items-center gap-2.5">
-                        <p className="text-neutral-800 text-sm leading-tight md:text-base">
+                        <p className="text-nowrap text-neutral-800 text-sm leading-tight md:text-base">
                             {t('app.application.footer.governed')}
                         </p>
                         <AragonLogo size="sm" />
                     </div>
-                    <Tag label={version} variant="primary" />
+                    <Tag
+                        className="shrink-0"
+                        label={version}
+                        variant="primary"
+                    />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
                     {footerLinks.map(({ link, label, target }) => (
