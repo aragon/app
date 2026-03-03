@@ -8,7 +8,13 @@ export interface IToRewardJsonParams {
 }
 
 export interface IRewardJsonEntry {
+    /**
+     * Address of the user receiving the reward.
+     */
     address: string;
+    /**
+     * Reward amount in wei.
+     */
     amount: string;
 }
 

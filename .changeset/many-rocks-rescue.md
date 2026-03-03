@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Implement katana rewards calculation in campaign creation
+Implement Katana rewards calculation in campaign creation
