@@ -111,7 +111,6 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
@@ -165,7 +164,7 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            ✅ *Staging Deployed* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
+            ✅ *Staging Deployed*
 
             *Staging:* <https://stg.app.aragon.org|stg.app.aragon.org>
             *Commit:* <https://github.com/aragon/app/commit/${{ github.event.pull_request.head.sha }}|${{ github.event.pull_request.head.sha }}>
