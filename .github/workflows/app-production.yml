@@ -141,7 +141,6 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
 
       - name: Checkout (for slackNotify script)
         uses: actions/checkout@v6.0.2
@@ -166,7 +165,7 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            🎉 *Production Deployed!* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
+            🎉 *Production Deployed!*
 
             *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
             *Production:* <https://app.aragon.org|app.aragon.org>
