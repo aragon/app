@@ -3027,7 +3027,10 @@
     "shared": {
       "addressesInput": {
         "container": {
-          "add": "Add"
+          "add": "Add",
+          "more": "More",
+          "removeAll": "Remove all",
+          "resetAll": "Reset all"
         },
         "item": {
           "input": {

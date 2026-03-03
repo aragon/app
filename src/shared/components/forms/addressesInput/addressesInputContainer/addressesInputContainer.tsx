@@ -1,5 +1,6 @@
 import {
     Button,
+    Dropdown,
     type ICompositeAddress,
     IconType,
     type IInputComponentProps,
@@ -34,6 +35,10 @@ export interface IAddressesInputContainerProps
      * Callback to overwrite the general add button behavior.
      */
     onAddClick?: () => void;
+    /**
+     * Whether to show the "Reset all" option in the more actions menu.
+     */
+    showResetAllAction?: boolean;
 }
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
@@ -49,6 +54,7 @@ export const AddressesInputContainer: React.FC<
         onAddClick,
         label,
         helpText,
+        showResetAllAction = true,
     } = props;
 
     const { t } = useTranslations();
@@ -59,6 +65,7 @@ export const AddressesInputContainer: React.FC<
         fields: membersField,
         append: addMember,
         remove: removeMember,
+        replace: replaceMembers,
     } = useFieldArray<AddressListInputBaseForm>({
         name: membersFieldName,
     });
@@ -77,6 +84,26 @@ export const AddressesInputContainer: React.FC<
         } else {
             addMember({ address: '' });
         }
+    };
+
+    const handleResetAllMembers = () => {
+        if (membersField.length === 0) {
+            return;
+        }
+
+        replaceMembers(
+            membersField.map(() => ({
+                address: '',
+            })),
+        );
+    };
+
+    const handleRemoveAllMembers = () => {
+        if (membersField.length === 0) {
+            return;
+        }
+
+        replaceMembers([]);
     };
 
     const contextValue = {
@@ -101,9 +128,9 @@ export const AddressesInputContainer: React.FC<
 
     return (
         <AddressesInputContextProvider value={contextValue}>
-            <div className="flex w-full grow flex-col gap-6">
+            <div className="flex w-full shrink-0 grow flex-col gap-3">
                 <InputContainer
-                    className="gap-3 md:gap-2"
+                    className="gap-3"
                     helpText={helpText}
                     id="addresses"
                     label={label}
@@ -111,15 +138,48 @@ export const AddressesInputContainer: React.FC<
                 >
                     {childrenWithKeys}
                 </InputContainer>
-                <Button
-                    className="w-fit"
-                    iconLeft={IconType.PLUS}
-                    onClick={handleAddMember}
-                    size="md"
-                    variant="tertiary"
-                >
-                    {t('app.shared.addressesInput.container.add')}
-                </Button>
+                <div className="flex w-full justify-between">
+                    <Button
+                        className="w-fit"
+                        iconLeft={IconType.PLUS}
+                        onClick={handleAddMember}
+                        responsiveSize={{ md: 'md' }}
+                        size="sm"
+                        variant="secondary"
+                    >
+                        {t('app.shared.addressesInput.container.add')}
+                    </Button>
+                    {membersField.length > 1 && (
+                        <Dropdown.Container
+                            align="end"
+                            customTrigger={
+                                <Button
+                                    iconRight={IconType.DOTS_VERTICAL}
+                                    responsiveSize={{ md: 'md' }}
+                                    size="sm"
+                                    variant="tertiary"
+                                >
+                                    {t(
+                                        'app.shared.addressesInput.container.more',
+                                    )}
+                                </Button>
+                            }
+                        >
+                            {showResetAllAction && (
+                                <Dropdown.Item onClick={handleResetAllMembers}>
+                                    {t(
+                                        'app.shared.addressesInput.container.resetAll',
+                                    )}
+                                </Dropdown.Item>
+                            )}
+                            <Dropdown.Item onClick={handleRemoveAllMembers}>
+                                {t(
+                                    'app.shared.addressesInput.container.removeAll',
+                                )}
+                            </Dropdown.Item>
+                        </Dropdown.Container>
+                    )}
+                </div>
             </div>
         </AddressesInputContextProvider>
     );

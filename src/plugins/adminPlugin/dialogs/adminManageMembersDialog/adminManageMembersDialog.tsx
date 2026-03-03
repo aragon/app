@@ -17,9 +17,8 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-import { AddressesInput } from '@/shared/components/forms/addressesInput';
+import { PluginMembershipInput } from '@/shared/components/forms/pluginMembershipInput/pluginMembershipInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
@@ -62,7 +61,6 @@ export const AdminManageMembersDialog: React.FC<
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
-    const { id: chainId } = networkDefinitions[dao.network];
 
     // TODO: (APP-4045). Setting this to the max pageSize of 50 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
@@ -149,18 +147,11 @@ export const AdminManageMembersDialog: React.FC<
                     id={formId}
                     onSubmit={handleSubmit(handleSubmitAddresses)}
                 >
-                    <AddressesInput.Container
+                    <PluginMembershipInput
                         allowEmptyList={true}
-                        name="members"
-                    >
-                        {watchMembersField.map((_field, index) => (
-                            <AddressesInput.Item
-                                chainId={chainId}
-                                index={index}
-                                key={index}
-                            />
-                        ))}
-                    </AddressesInput.Container>
+                        daoId={daoId}
+                        formPrefix=""
+                    />
                 </form>
             </Dialog.Content>
             <Dialog.Footer

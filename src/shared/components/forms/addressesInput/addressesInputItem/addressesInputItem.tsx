@@ -3,7 +3,6 @@ import {
     addressUtils,
     Button,
     Card,
-    Dropdown,
     type IAddressInputResolvedValue,
     type ICompositeAddress,
     IconType,
@@ -94,35 +93,42 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
     }, [trigger, memberFieldName, value.address]);
 
     return (
-        <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <AddressInput
-                chainId={chainId}
-                disabled={disabled}
-                onAccept={handleAddressAccept}
-                onChange={setAddressInput}
-                placeholder={t(
-                    'app.shared.addressesInput.item.input.placeholder',
-                )}
-                value={addressInput}
-                {...addressField}
-            />
-
-            <Dropdown.Container
-                constrainContentWidth={false}
-                customTrigger={
-                    <Button
-                        iconLeft={IconType.DOTS_VERTICAL}
-                        size="lg"
-                        variant="tertiary"
-                    />
-                }
-                disabled={!canRemove}
-                size="md"
-            >
-                <Dropdown.Item onClick={() => onRemoveMember(index)}>
-                    {t('app.shared.addressesInput.item.remove')}
-                </Dropdown.Item>
-            </Dropdown.Container>
+        <Card className="w-full shrink-0 border border-neutral-100 p-4 shadow-neutral-sm">
+            <div className="flex w-full min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-2">
+                <AddressInput
+                    chainId={chainId}
+                    className="w-full min-w-0"
+                    disabled={disabled}
+                    onAccept={handleAddressAccept}
+                    onChange={setAddressInput}
+                    placeholder={t(
+                        'app.shared.addressesInput.item.input.placeholder',
+                    )}
+                    value={addressInput}
+                    {...addressField}
+                    label={undefined}
+                />
+                <Button
+                    aria-label={t('app.shared.addressesInput.item.remove')}
+                    className="hidden shrink-0 sm:flex"
+                    disabled={!canRemove}
+                    iconLeft={IconType.CLOSE}
+                    onClick={() => onRemoveMember(index)}
+                    size="sm"
+                    variant="tertiary"
+                />
+                <Button
+                    aria-label={t('app.shared.addressesInput.item.remove')}
+                    className="flex shrink-0 sm:hidden"
+                    disabled={!canRemove}
+                    iconLeft={IconType.CLOSE}
+                    onClick={() => onRemoveMember(index)}
+                    size="sm"
+                    variant="tertiary"
+                >
+                    Remove
+                </Button>
+            </div>
         </Card>
     );
 };

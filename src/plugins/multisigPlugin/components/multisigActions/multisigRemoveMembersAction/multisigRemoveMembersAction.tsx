@@ -109,8 +109,8 @@ export const MultisigRemoveMembersAction: React.FC<
             daoId={action.daoId}
             disabled={true}
             formPrefix={actionFieldName}
-            hideLabel={true}
             onAddClick={handleAddClick}
+            showResetAllAction={false}
         />
     );
 };

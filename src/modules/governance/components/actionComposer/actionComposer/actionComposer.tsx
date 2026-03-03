@@ -283,8 +283,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     hidden: displayActionComposer,
                 })}
             >
-                <div className="flex items-center justify-between">
-                    <div className="flex flex-row gap-3">
+                <div className="md:flew-row flex flex-col items-center justify-between gap-3">
+                    <div className="flex w-full flex-col gap-y-1 md:flex-row md:gap-x-3">
                         <Button
                             iconLeft={IconType.PLUS}
                             onClick={handleAddAction}
@@ -325,23 +325,25 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                             type="file"
                         />
                     </div>
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="flex w-full flex-row items-center justify-end gap-3 md:w-auto">
+                        <Switch
+                            checked={onlyShowAuthorizedActions}
+                            inlineLabel={t(
+                                'app.governance.actionComposer.authorizedSwitchLabel',
+                            )}
+                            onCheckedChanged={setOnlyShowAuthorizedActions}
+                        />
                         {shouldRenderDropdown && hasActions && (
                             <Dropdown.Container
                                 constrainContentWidth={false}
                                 customTrigger={
                                     <Button
-                                        className="w-fit"
-                                        iconRight={IconType.DOTS_VERTICAL}
+                                        className="aspect-square w-fit shrink-0"
+                                        iconLeft={IconType.DOTS_VERTICAL}
                                         size="md"
                                         variant="tertiary"
-                                    >
-                                        {t(
-                                            'app.governance.actionComposer.moreActions',
-                                        )}
-                                    </Button>
+                                    />
                                 }
-                                size="md"
                             >
                                 {hasPinErrors ? (
                                     <>
@@ -389,19 +391,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                     </>
                                 )}
                             </Dropdown.Container>
-                        )}
-                        {allowedActions && (
-                            <div>
-                                <Switch
-                                    checked={onlyShowAuthorizedActions}
-                                    inlineLabel={t(
-                                        'app.governance.actionComposer.authorizedSwitchLabel',
-                                    )}
-                                    onCheckedChanged={
-                                        setOnlyShowAuthorizedActions
-                                    }
-                                />
-                            </div>
                         )}
                     </div>
                 </div>

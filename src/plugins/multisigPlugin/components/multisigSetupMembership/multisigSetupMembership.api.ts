@@ -25,9 +25,9 @@ export interface IMultisigSetupMembershipProps
      */
     daoId?: string;
     /**
-     * Hides the field label and help-text when set to true.
+     * Whether to show the "Reset all" option in the more actions menu.
      */
-    hideLabel?: boolean;
+    showResetAllAction?: boolean;
 }
 
 export interface IMultisigSetupMembershipForm
