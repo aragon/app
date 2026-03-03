@@ -11,7 +11,7 @@ import { sanctionedAddressesOptions } from '@/modules/explore/api/cmsService';
 import { whitelistedAddressesOptions } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
-import { DebugPanel } from '../../debugPanel';
+import { DebugPanelLazy } from '../../debugPanel/lazyDebugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
 import { Providers } from '../../providers';
@@ -32,20 +32,27 @@ initActionViewRegistry();
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
     const { children } = props;
 
-    const translationAssets = await translations.en();
+    const [translationAssets, requestHeaders, featureFlagsSnapshot] =
+        await Promise.all([
+            translations.en(),
+            headers(),
+            featureFlags.getSnapshot(),
+        ]);
 
-    const requestHeaders = await headers();
     const wagmiInitialState = cookieToInitialState(
         wagmiConfig,
         requestHeaders.get('cookie'),
     );
 
-    const featureFlagsSnapshot = await featureFlags.getSnapshot();
-    const isDebugPanelEnabled = await featureFlags.isEnabled('debugPanel');
+    const isDebugPanelEnabled =
+        featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
+        false;
 
     const queryClient = new QueryClient();
-    await queryClient.prefetchQuery(sanctionedAddressesOptions());
-    await queryClient.prefetchQuery(whitelistedAddressesOptions());
+    await Promise.all([
+        queryClient.prefetchQuery(sanctionedAddressesOptions()),
+        queryClient.prefetchQuery(whitelistedAddressesOptions()),
+    ]);
     const dehydratedState = dehydrate(queryClient);
 
     return (
@@ -66,7 +73,7 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        {isDebugPanelEnabled && <DebugPanel />}
+                        {isDebugPanelEnabled && <DebugPanelLazy />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>
