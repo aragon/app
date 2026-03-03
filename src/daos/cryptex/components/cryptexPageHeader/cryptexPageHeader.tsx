@@ -168,7 +168,6 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                         <CryptexActionItem
                             description={action.description}
                             href={action.href}
-                            image={action.image}
                             isExternal={action.isExternal}
                             isLightMode={isLightMode}
                             key={action.title}
@@ -190,7 +189,6 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                         <CryptexActionItem
                             description={action.description}
                             href={action.href}
-                            image={action.image}
                             isLightMode={isLightMode}
                             key={action.title}
                             title={action.title}
@@ -212,7 +210,6 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
                         <CryptexActionItem
                             description={action.description}
                             href={action.href}
-                            image={action.image}
                             isLightMode={isLightMode}
                             key={action.title}
                             title={action.title}

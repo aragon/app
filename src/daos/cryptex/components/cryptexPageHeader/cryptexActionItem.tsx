@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import type { Route } from 'next';
-import type { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { type ComponentProps, useState } from 'react';
 import { CryptexActionText } from './cryptexActionText';
@@ -15,10 +14,6 @@ export interface ICryptexActionItemProps extends ComponentProps<'button'> {
      * The description of the card.
      */
     description: string;
-    /**
-     * The image to display in the card.
-     */
-    image: StaticImageData;
     /**
      * The href to navigate to when the card is clicked.
      */

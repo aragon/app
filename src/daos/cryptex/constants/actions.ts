@@ -1,6 +1,3 @@
-import CtxImage from '../assets/cryptex-img-ctx.png';
-import GovernImage from '../assets/cryptex-img-govern.png';
-import StakeImage from '../assets/cryptex-img-stake.png';
 import { cryptex } from './cryptex';
 
 const cryptexIdDelimiterIndex = cryptex.id.lastIndexOf('-');
@@ -15,7 +12,6 @@ export const actions = [
         title: 'app.daos.cryptex.cryptexPageHeader.actions.getCtx.title',
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.getCtx.description',
-        image: CtxImage,
         href: 'https://www.coinbase.com/en-es/price/cryptex-finance',
         isExternal: true,
     },
@@ -23,7 +19,6 @@ export const actions = [
         title: 'app.daos.cryptex.cryptexPageHeader.actions.stake.title',
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.stake.description',
-        image: StakeImage,
         href: cryptexMembersHref,
         isExternal: false,
     },
@@ -31,7 +26,6 @@ export const actions = [
         title: 'app.daos.cryptex.cryptexPageHeader.actions.govern.title',
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.govern.description',
-        image: GovernImage,
         href: cryptexProposalsHref,
         isExternal: false,
     },
