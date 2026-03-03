@@ -1,6 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
+import { Suspense } from 'react';
 import {
     type PluginId,
     pluginRegistryUtils,
@@ -58,10 +59,12 @@ export const PluginSingleComponent: React.FC<IPluginSingleComponentProps> = (
                     {slotId} ({pluginId})
                 </p>
             )}
-            {LoadedComponent == null && Fallback != null && (
-                <Fallback {...otherProps} />
-            )}
-            {LoadedComponent != null && <LoadedComponent {...otherProps} />}
+            <Suspense fallback={null}>
+                {LoadedComponent == null && Fallback != null && (
+                    <Fallback {...otherProps} />
+                )}
+                {LoadedComponent != null && <LoadedComponent {...otherProps} />}
+            </Suspense>
         </div>
     );
 };
