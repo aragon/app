@@ -8,6 +8,7 @@ const cryptexNetwork = cryptex.id.slice(0, cryptexIdDelimiterIndex);
 const cryptexAddress = cryptex.id.slice(cryptexIdDelimiterIndex + 1);
 
 const cryptexProposalsHref = `/dao/${cryptexNetwork}/${cryptexAddress}/proposals`;
+const cryptexMembersHref = `/dao/${cryptexNetwork}/${cryptexAddress}/members`;
 
 export const actions = [
     {
@@ -15,7 +16,7 @@ export const actions = [
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.getCtx.description',
         image: CtxImage,
-        href: 'https://www.cryptex.finance/',
+        href: 'https://www.coinbase.com/en-es/price/cryptex-finance',
         isExternal: true,
     },
     {
@@ -23,8 +24,8 @@ export const actions = [
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.stake.description',
         image: StakeImage,
-        href: 'https://www.cryptex.finance/',
-        isExternal: true,
+        href: cryptexMembersHref,
+        isExternal: false,
     },
     {
         title: 'app.daos.cryptex.cryptexPageHeader.actions.govern.title',
