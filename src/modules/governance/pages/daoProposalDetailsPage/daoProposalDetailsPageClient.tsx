@@ -11,6 +11,7 @@ import {
     type IProposalActionsFooterDropdownItem,
     Link,
     ProposalActions,
+    ProposalActionTypeNoBasicView,
     ProposalStatus,
     proposalStatusToTagVariant,
     Tag,
@@ -97,7 +98,8 @@ export const DaoProposalDetailsPageClient: React.FC<
                 state.data?.decoding ? 2000 : false,
         },
     );
-    const actionsCount = actionData?.rawActions?.length ?? 0;
+    const actionsCount =
+        actionData?.rawActions?.length ?? actionData?.actions?.length ?? 0;
 
     const isSimulationSupportedByStatus = [
         ProposalStatus.ACTIVE,
@@ -165,8 +167,25 @@ export const DaoProposalDetailsPageClient: React.FC<
         resources,
     } = proposal;
 
+    const processedActionData = actionData;
+
+    const hasActionDecodeMismatch =
+        processedActionData?.rawActions != null &&
+        processedActionData.rawActions.length !==
+            processedActionData.actions.length;
+    const proposalActions = hasActionDecodeMismatch
+        ? (processedActionData?.rawActions?.map((rawAction) => ({
+              from: creator.address,
+              to: rawAction.to,
+              data: rawAction.data,
+              value: rawAction.value,
+              type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
+              inputData: null,
+          })) ?? [])
+        : (processedActionData?.actions ?? []);
+
     const normalizedProposalActions = proposalActionUtils.normalizeActions(
-        actionData?.actions ?? [],
+        proposalActions,
         dao,
     );
     const formattedCreationDate = formatterUtils.formatDate(
@@ -225,7 +244,7 @@ export const DaoProposalDetailsPageClient: React.FC<
             ),
             onClick: () =>
                 proposalActionsImportExportUtils.downloadActionsAsJSON(
-                    actionData?.actions ?? [],
+                    proposalActions,
                     `proposal-${proposalSlug}-actions.json`,
                 ),
         },
