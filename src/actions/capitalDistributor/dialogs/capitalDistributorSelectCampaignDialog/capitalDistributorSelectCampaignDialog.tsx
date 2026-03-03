@@ -3,7 +3,7 @@
 import { DataList, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { ICampaign } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
-import { useCampaignList } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
+import { useAllCampaigns } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import type { IDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -50,22 +50,22 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const { data, isLoading } = useCampaignList({
-        queryParams: {
-            pluginAddress,
-            network: dao.network,
-            onlyActive: activityStatus === 'active',
-            pageSize: 50,
+    const { data: allCampaigns, isLoading } = useAllCampaigns({
+        campaignListParams: {
+            queryParams: {
+                pluginAddress,
+                network: dao.network,
+                onlyActive: activityStatus === 'active',
+            },
         },
     });
 
-    let campaigns = data?.pages[0]?.data ?? [];
-
-    if (activityStatus === 'inactive') {
-        campaigns = campaigns.filter(
-            (campaign) => !campaign.active && !campaign.ended,
-        );
-    }
+    const campaigns =
+        activityStatus === 'inactive'
+            ? allCampaigns.filter(
+                  (campaign) => !campaign.active && !campaign.ended,
+              )
+            : allCampaigns;
 
     const [selectedCampaign, setSelectedCampaign] = useState<ICampaign | null>(
         null,
