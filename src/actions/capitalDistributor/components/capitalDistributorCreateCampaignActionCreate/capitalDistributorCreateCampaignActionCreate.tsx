@@ -6,18 +6,30 @@ import {
     invariant,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
-import { encodeFunctionData, type Hex, zeroHash } from 'viem';
+import {
+    encodeAbiParameters,
+    encodeFunctionData,
+    type Hex,
+    zeroHash,
+} from 'viem';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
 } from '@/modules/governance/components/createProposalForm';
+import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
+import { PluginInterfaceType } from '@/shared/api/daoService/domain/enum/pluginInterfaceType';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { createCampaignAbi } from '../../constants/addressCapitalDistributorAbi';
+import { veLockEncoderActionId } from '../../constants/veLockEncoderActionId';
 import type { ICapitalDistributorActionCreateCampaign } from '../../types/capitalDistributorActionCreateCampaign';
 import { CapitalDistributorActionType } from '../../types/enum/capitalDistributorActionType';
 import { capitalDistributorCampaignScheduleUtils } from '../../utils/capitalDistributorCampaignScheduleUtils';
-import { CapitalDistributorCreateCampaignActionCreateForm } from './capitalDistributorCreateCampaignActionCreateForm';
+import {
+    CampaignPayoutType,
+    CapitalDistributorCreateCampaignActionCreateForm,
+} from './capitalDistributorCreateCampaignActionCreateForm';
 
 export interface ICapitalDistributorCreateCampaignActionCreateProps
     extends IProposalActionComponentProps<
@@ -39,6 +51,15 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
     const { addPrepareAction } =
         useCreateProposalFormContext<ICapitalDistributorActionCreateCampaign>();
 
+    const gaugeVoterPlugins = useDaoPlugins({
+        daoId,
+        interfaceType: PluginInterfaceType.GAUGE_VOTER,
+        includeSubDaos: false,
+    });
+    const gaugePlugin = gaugeVoterPlugins?.[0]?.meta as
+        | IGaugeVoterPlugin
+        | undefined;
+
     const fieldName = `actions.[${index.toString()}]`;
 
     const prepareAction = useCallback(
@@ -48,13 +69,36 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                 'CapitalDistributorCreateCampaignActionCreate: campaignDetails expected to be initialized by the create campaign form.',
             );
 
-            const { asset, title, description, resources, merkleTreeInfo } =
-                action.campaignDetails;
+            const {
+                asset,
+                title,
+                description,
+                resources,
+                merkleTreeInfo,
+                payoutType,
+            } = action.campaignDetails;
 
             const { startTime: startTimeSeconds, endTime: endTimeSeconds } =
                 capitalDistributorCampaignScheduleUtils.parseScheduleSettings(
                     action.campaignDetails,
                 );
+
+            let actionEncoderId: Hex;
+            let actionEncoderInitData: Hex;
+
+            if (payoutType === CampaignPayoutType.VE_LOCK_ENCODER) {
+                invariant(gaugePlugin != null, 'GaugeVoter plugin not found.');
+                const escrowAddress = gaugePlugin.votingEscrow
+                    .escrowAddress as Hex;
+                actionEncoderId = veLockEncoderActionId;
+                actionEncoderInitData = encodeAbiParameters(
+                    [{ name: '_votingEscrowAddress', type: 'address' }],
+                    [escrowAddress],
+                );
+            } else {
+                actionEncoderId = zeroHash;
+                actionEncoderInitData = '0x';
+            }
 
             // Pin campaign metadata to IPFS
             const proposedMetadata = {
@@ -85,8 +129,8 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
                     {
                         // _payout
                         token: asset.token.address as Hex,
-                        actionEncoderId: zeroHash,
-                        actionEncoderInitData: '0x',
+                        actionEncoderId,
+                        actionEncoderInitData,
                     },
                     {
                         // _settings
@@ -98,7 +142,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
 
             return data;
         },
-        [pinJsonAsync],
+        [gaugePlugin, pinJsonAsync],
     );
 
     useEffect(() => {

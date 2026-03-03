@@ -24,6 +24,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useCapitalDistributorCampaignUpload } from '../../hooks';
+import { CapitalDistributorCampaignPayoutField } from './capitalDistributorCampaignPayoutField';
 import { CapitalDistributorCampaignScheduleField } from './capitalDistributorCampaignScheduleField';
 
 export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
@@ -38,8 +39,13 @@ export interface ICapitalDistributorCreateCampaignActionCreateFormProps {
 }
 
 export enum CampaignScheduleType {
-    OPEN_ENDED = 'open-ended',
-    SCHEDULED = 'scheduled',
+    OPEN_ENDED = 'OPEN_ENDED',
+    SCHEDULED = 'SCHEDULED',
+}
+
+export enum CampaignPayoutType {
+    DEFAULT = 'DEFAULT',
+    VE_LOCK_ENCODER = 'VE_LOCK_ENCODER',
 }
 
 export interface ICapitalDistributorCreateCampaignFormData {
@@ -67,6 +73,10 @@ export interface ICapitalDistributorCreateCampaignFormData {
         totalMembers: number;
         fileName: string;
     };
+    /**
+     * Payout type of the campaign.
+     */
+    payoutType?: CampaignPayoutType;
     /**
      * Schedule type of the campaign.
      */
@@ -187,25 +197,6 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
 
     return (
         <div className="flex w-full flex-col gap-10">
-            <InputContainer
-                helpText={t(
-                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.helpText',
-                )}
-                id="campaignAsset"
-                label={t(
-                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.label',
-                )}
-                useCustomWrapper={true}
-            >
-                <AssetInput
-                    fetchAssetsParams={{
-                        queryParams: { daoId, onlyParent: true },
-                    }}
-                    fieldPrefix={fieldPrefix}
-                    hideAmount={true}
-                />
-            </InputContainer>
-
             <InputText
                 maxLength={titleMaxLength}
                 value={titleValue || ''}
@@ -228,6 +219,30 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.resources.helpText',
                 )}
                 name="resources"
+            />
+
+            <InputContainer
+                helpText={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.helpText',
+                )}
+                id="campaignAsset"
+                label={t(
+                    'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.asset.label',
+                )}
+                useCustomWrapper={true}
+            >
+                <AssetInput
+                    fetchAssetsParams={{
+                        queryParams: { daoId, onlyParent: true },
+                    }}
+                    fieldPrefix={fieldPrefix}
+                    hideAmount={true}
+                />
+            </InputContainer>
+
+            <CapitalDistributorCampaignPayoutField
+                daoId={daoId}
+                fieldPrefix={fieldPrefix}
             />
 
             {dao && (

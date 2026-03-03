@@ -218,6 +218,22 @@
           "title": {
             "label": "Campaign title"
           },
+          "payout": {
+            "label": "Campaign payout config",
+            "helpText": "Select action encoder for this campaign",
+            "error": {
+              "noGaugeVoter": "GaugeVoter plugin not found.",
+              "tokenMismatch": "The selected asset doesn't match the underlying token of the Gauge Voter plugin."
+            },
+            "default": {
+              "label": "Default",
+              "description": "No encoder, direct payout in selected token"
+            },
+            "veLockEncoder": {
+              "label": "VE Lock Encoder",
+              "description": "Payout in veTokens"
+            }
+          },
           "schedule": {
             "label": "Campaign schedule",
             "helpText": "Choose whether the campaign runs indefinitely or within a scheduled window.",
