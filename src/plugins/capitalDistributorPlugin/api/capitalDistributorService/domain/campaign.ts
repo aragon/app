@@ -43,6 +43,10 @@ export interface ICampaign<
      */
     active: boolean;
     /**
+     * Flag indicating whether the campaign is ended.
+     */
+    ended: boolean;
+    /**
      * Flag indicating whether the user can claim multiple times.
      */
     multipleClaimsAllowed: boolean;

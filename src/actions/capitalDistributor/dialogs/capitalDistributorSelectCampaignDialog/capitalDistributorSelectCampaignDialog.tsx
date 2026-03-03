@@ -62,7 +62,9 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
     let campaigns = data?.pages[0]?.data ?? [];
 
     if (activityStatus === 'inactive') {
-        campaigns = campaigns.filter((campaign) => !campaign.active);
+        campaigns = campaigns.filter(
+            (campaign) => !campaign.active && !campaign.ended,
+        );
     }
 
     const [selectedCampaign, setSelectedCampaign] = useState<ICampaign | null>(
