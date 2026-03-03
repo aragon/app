@@ -34,7 +34,7 @@ runs:
   using: "composite"
   steps:
     - name: Checkout repository
-      uses: actions/checkout@v6.0.1
+      uses: actions/checkout@v6.0.2
       with:
         repository: ${{ inputs.repository }}
         fetch-depth: ${{ inputs.fetch-depth }}

@@ -1,10 +1,5 @@
-import BundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
-
-const withBundleAnalyzer = BundleAnalyzer({
-    enabled: process.env.ANALYZE === 'true',
-});
 
 const webFunctionalities = [
     'accelerometer=()',
@@ -59,8 +54,11 @@ const sentryConfig = {
     widenClientFileUpload: true,
     // Use tunneling to forward events to Sentry and circumvent ad blockers
     tunnelRoute: '/api/monitoring',
-    // Disable Sentry debug logger to save bundle size
-    disableLogger: true,
+    // Tree-shake Sentry debug statements to save bundle size (replaces deprecated disableLogger)
+    bundleSizeOptimizations: {
+        excludeDebugStatements: true,
+        excludeReplayWorker: true,
+    },
     // Release version for Sentry
     release: { name: packageInfo.version },
     // Delete sourcemaps from NextJs build after upload
@@ -70,11 +68,6 @@ const sentryConfig = {
         : { deleteSourcemapsAfterUpload: true },
     // Disable sending data to Sentry
     telemetry: false,
-    // Options to optimise the bundle size
-    bundleSizeOptimizations: {
-        // Exclude replay worker from bundle as self-hosted for current CSP policies
-        excludeReplayWorker: true,
-    },
 };
 
 /** @type {import('next').NextConfig} */
@@ -141,21 +134,16 @@ const nextConfig = {
     env: {
         version: packageInfo.version,
     },
-    // **WARN**: Avoid adding to webpack config, as long term plan for Next.js is to move away from Webpack to Turbopack.
-    webpack: (config) => {
-        // Configs needed by wallet-connect (see https://docs.walletconnect.com/appkit/next/core/installation#extra-configuration)
-        // Needed only in production builds, Turbopack (used in `pnpm dev`) does not require this.
-        config.externals.push('pino-pretty', 'lokijs', 'encoding');
-
-        // Fix for MetaMask SDK React Native dependencies in browser
-        config.resolve.fallback = {
-            ...config.resolve.fallback,
-            '@react-native-async-storage/async-storage': false,
-            'react-native': false,
-        };
-
-        return config;
+    serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
+    reactCompiler: false,
+    turbopack: {
+        resolveAlias: {
+            '@react-native-async-storage/async-storage': {
+                browser: './src/empty.ts',
+            },
+            'react-native': { browser: './src/empty.ts' },
+        },
     },
 };
 
-export default withSentryConfig(withBundleAnalyzer(nextConfig), sentryConfig);
+export default withSentryConfig(nextConfig, sentryConfig);

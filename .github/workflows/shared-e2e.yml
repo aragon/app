@@ -1,0 +1,85 @@
+# Shared E2E workflow — runs Playwright smoke tests against a deployed environment.
+# Called by app-preview, app-development, app-staging, and app-production after deploy.
+
+name: Shared E2E
+
+on:
+  workflow_call:
+    inputs:
+      deployment-url:
+        description: "Base URL to run E2E tests against"
+        required: true
+        type: string
+      environment:
+        description: "Environment name (preview, development, staging, production) — used for artifact naming"
+        required: true
+        type: string
+    outputs:
+      result:
+        description: "E2E job result (success, failure, cancelled)"
+        value: ${{ jobs.e2e.outputs.result }}
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      result: ${{ steps.job-result.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Get Playwright version
+        id: pw-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v5.0.3
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm e2e:install
+
+      - name: Install Playwright OS deps
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Run smoke tests
+        run: pnpm e2e:smoke
+        env:
+          E2E_BASE_URL: ${{ inputs.deployment-url }}
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v7.0.0
+        if: always()
+        with:
+          name: playwright-report-${{ inputs.environment }}
+          path: e2e/playwright-report/
+          retention-days: 14
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v7.0.0
+        if: failure()
+        with:
+          name: playwright-traces-${{ inputs.environment }}
+          path: e2e/test-results/
+          retention-days: 7
+
+      - name: Export job result
+        id: job-result
+        if: always()
+        run: echo "result=${{ job.status }}" >> "$GITHUB_OUTPUT"

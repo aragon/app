@@ -2,6 +2,7 @@ import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
 import { useAppKit, useAppKitState } from '@reown/appkit/react';
 import { useCallback, useEffect } from 'react';
 import { useConnection } from 'wagmi';
+import { ensureAppKit } from '@/modules/application/constants/wagmi';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import {
     type IDialogComponentProps,
@@ -28,6 +29,8 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
 ) => {
     const { params, id } = props.location;
     const { onSuccess, onError } = params ?? {};
+
+    ensureAppKit();
 
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { close, updateOptions } = useDialogContext();

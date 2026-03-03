@@ -4,7 +4,12 @@
 name: App Production
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy (e.g. v1.17.0)"
+        required: true
+        type: string
   release:
     types: [published]
 
@@ -16,6 +21,15 @@ permissions:
   contents: read
 
 jobs:
+  validate:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate tag exists
+        run: |
+          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
+            (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
+
   notify-start:
     runs-on: ubuntu-latest
     steps:
@@ -53,22 +67,66 @@ jobs:
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
             🚀 *Production build & deploy started...*
-            *Tag:* `${{ github.event.release.tag_name }}`
-
-  build:
-    needs: notify-start
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: "production"
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
 
   deploy:
-    needs: build
+    needs: [validate, notify-start]
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
       domain: "app.aragon.org"
       env: "production"
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
+
+  e2e:
+    needs: deploy
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: https://app.aragon.org
+      environment: production
+
+  e2e-notify:
+    needs: e2e
+    if: ${{ always() && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/extract-slack-ts
+            .github/actions/slack-notify
+
+      - name: Extract Slack TS from release body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ github.event.release.body }}
+
+      - name: Notify Slack — E2E results
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            ${{ needs.e2e.result == 'success' && '✅ Smoke tests on *production* passed' || '❌ Smoke tests on *production* failed' }}
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
 
   notify:
     needs: deploy
@@ -83,7 +141,6 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
 
       - name: Checkout (for slackNotify script)
         uses: actions/checkout@v6.0.2
@@ -108,9 +165,9 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            🎉 *Production Deployed!* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
+            🎉 *Production Deployed!*
 
-            *Tag:* `${{ github.event.release.tag_name }}`
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
             *Production:* <https://app.aragon.org|app.aragon.org>
 
             ⚠️ *Don't forget to merge the Release PR!*
