@@ -32,6 +32,10 @@ describe('bigIntUtils', () => {
             expect(bigIntUtils.safeParse('0xff')).toBe(BigInt(255));
         });
 
+        it('handles hex strings that contain "e"', () => {
+            expect(bigIntUtils.safeParse('0x1e')).toBe(BigInt(30));
+        });
+
         // --- Floating-point strings (the original bug) ---
 
         it('handles ".0" suffix from APIs', () => {

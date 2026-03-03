@@ -1,4 +1,8 @@
 class BigIntUtils {
+    private readonly scientificNotationRegex =
+        /^([+-]?)(\d+\.?\d*)[eE]([+-]?\d+)$/;
+    private readonly hexNotationRegex = /^0[xX][0-9a-fA-F]+$/;
+
     /**
      * Safely converts a value to BigInt, handling floating-point representations
      * (e.g. "10000000000000000000000000.0") and scientific notation (e.g. "1e+25")
@@ -30,8 +34,12 @@ class BigIntUtils {
             return fallback;
         }
 
-        if (/[eE]/.test(str)) {
-            return this.parseScientificString(str) ?? fallback;
+        const scientificValue = this.parseScientificString(str);
+        if (scientificValue != null) {
+            return scientificValue;
+        }
+        if (/[eE]/.test(str) && !this.hexNotationRegex.test(str)) {
+            return fallback;
         }
 
         const integerPart = str.split('.')[0];
@@ -48,7 +56,7 @@ class BigIntUtils {
      * without going through Number, preserving full precision for the significant digits.
      */
     private parseScientificString = (str: string): bigint | null => {
-        const match = str.match(/^([+-]?)(\d+\.?\d*)[eE]([+-]?\d+)$/);
+        const match = str.match(this.scientificNotationRegex);
         if (!match) {
             return null;
         }
