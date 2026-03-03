@@ -1,5 +1,32 @@
 # @aragon/app
 
+## 1.22.0
+
+### Minor Changes
+
+- [#986](https://github.com/aragon/app/pull/986) [`fb29e63`](https://github.com/aragon/app/commit/fb29e63531257a90e55800799e7dadbd3544183b) Thanks [@milosh86](https://github.com/milosh86)! - Add campaign creation basic view
+
+- [#994](https://github.com/aragon/app/pull/994) [`75259e0`](https://github.com/aragon/app/commit/75259e0b5b71e6126811c2343a2c225f830d0500) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Upgrade wagmi from v2.19.5 to v3.4.2, update viem to 2.45.2, and remove all v3 deprecations
+    - **wagmi v3**: Connector dependencies are now optional peer dependencies, giving more control over the dependency tree
+    - **Removed overrides**: Eliminated `@reown/appkit` version override and `@wagmi/connectors` pin that are no longer needed
+    - **useBalance migration**: Replaced deprecated `useBalance({ token })` with `useReadContract({ abi: erc20Abi, functionName: 'balanceOf' })` for ERC20 token balance fetching
+    - **Import path optimization**: Moved chain definitions from `wagmi/chains` to `viem/chains` (the canonical source)
+    - **useAccount → useConnection**: Migrated all `useAccount` hook usage to the new `useConnection` hook across ~60 files
+    - **mutateFn rename**: Replaced deprecated `sendTransaction`/`switchChain` destructured names with `mutate` in `useSendTransaction` and `useSwitchChain` hooks
+    - **Test updates**: Updated all test mocks and type references to use `useConnection` and `UseConnectionReturnType`
+
+- [#992](https://github.com/aragon/app/pull/992) [`eb316ae`](https://github.com/aragon/app/commit/eb316ae369f5eb927d3ff33efbb39d3e59d118a3) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix vote history for SPP
+
+### Patch Changes
+
+- [#989](https://github.com/aragon/app/pull/989) [`70f14e8`](https://github.com/aragon/app/commit/70f14e8aa79f9348995f230234953feedb18b6b0) Thanks [@evanaronson](https://github.com/evanaronson)! - Hide veLocker chart when the slope is flat
+
+- [#993](https://github.com/aragon/app/pull/993) [`b63b40e`](https://github.com/aragon/app/commit/b63b40e91710d7368fba1c59dd375829461435f8) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix ENS name rendering in the token delegation transaction dialog by resolving and passing the delegate ENS to the member list item.
+
+- [#991](https://github.com/aragon/app/pull/991) [`7a346d5`](https://github.com/aragon/app/commit/7a346d5240502e7408ae28ed4cbc6107e454912a) Thanks [@evanaronson](https://github.com/evanaronson)! - Fall back on DAO address in places where DAO name is missing
+
+- [#984](https://github.com/aragon/app/pull/984) [`17a413f`](https://github.com/aragon/app/commit/17a413fd00f9dca324b694b5a997d4d38d02b9c6) Thanks [@milosh86](https://github.com/milosh86)! - Remove empty avatar definition list items when no avatar is set
+
 ## 1.21.0
 
 ### Minor Changes

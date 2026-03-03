@@ -172,6 +172,73 @@
           },
           "resourcesTerm": "Links"
         }
+      },
+      "capitalDistributor": {
+        "composer": {
+          "contractName": "Capital Distributor",
+          "createCampaignActionName": "Create campaign"
+        },
+        "capitalDistributorCampaignUploadDialog": {
+          "done": "Done",
+          "step": {
+            "merkleTree": "Generating Merkle tree",
+            "merkleTreeError": "Failed to generate Merkle tree",
+            "upload": "Uploading members",
+            "uploadError": "Failed to upload members file"
+          },
+          "title": "Upload members file",
+          "description": "Please wait, depending on the number of recipients, this may take a while to complete."
+        },
+        "capitalDistributorCreateCampaignActionCreateForm": {
+          "asset": {
+            "helpText": "Select the token to distributed in this campaign.",
+            "label": "Asset"
+          },
+          "description": {
+            "helpText": "This will be shown on the rewards page to the eligible recipients.",
+            "label": "Description"
+          },
+          "jsonUpload": {
+            "alert": {
+              "fileNameTerm": "File name",
+              "merkleRootTerm": "Merkle root",
+              "totalMembersTerm": "Total members"
+            },
+            "button": "Upload JSON",
+            "buttonAlt": "Replace JSON",
+            "helpText": "Upload a JSON file with addresses and the amounts to distribute.",
+            "label": "Distribution file",
+            "merkleRoot": "Merkle root: {{merkleRoot}}",
+            "totalMembers": "{{totalMembers}} addresses imported"
+          },
+          "resources": {
+            "helpText": "Add any additional external resources that help recipients understand the campaign.",
+            "label": "Links"
+          },
+          "title": {
+            "label": "Campaign title"
+          },
+          "schedule": {
+            "label": "Campaign schedule",
+            "helpText": "Choose whether the campaign runs indefinitely or within a scheduled window.",
+            "openEnded": {
+              "label": "Ongoing",
+              "description": "Starts immediately and has no end date"
+            },
+            "scheduled": {
+              "label": "Scheduled",
+              "description": "Define start and end times"
+            },
+            "startTime": {
+              "label": "Start time",
+              "helpText": "Before this time recipients will not be able to claim."
+            },
+            "endTime": {
+              "label": "End time",
+              "helpText": "After this time recipients will not be able to claim."
+            }
+          }
+        }
       }
     },
     "application": {
@@ -1322,7 +1389,7 @@
           "import": {
             "accept": "Import actions",
             "cancel": "Cancel",
-            "chooseFile": "Choose File",
+            "chooseFile": "Choose file",
             "description": "Upload a JSON file containing actions to add to the proposal.",
             "fileInputHelpText": "Must contain actions formatted: [{\"to\":\"\",\"value\": 0,\"data\": \"\"}]",
             "fileInputLabel": "Select JSON file",

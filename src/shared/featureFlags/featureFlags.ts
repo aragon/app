@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { cache } from 'react';
 import type {
     FeatureFlagDefinition,
     FeatureFlagEnvironment,
@@ -56,8 +57,15 @@ class FeatureFlags {
         this.provider = provider;
         this.definitions = definitions;
         this.environment = environment;
+
+        this.getSnapshotInternal = cache(this.getSnapshotInternal.bind(this));
     }
 
+    /**
+     * Deduplicated per React server render pass via React.cache: multiple
+     * getSnapshot / isEnabled calls within the same request share a single
+     * CMS fetch instead of triggering one per call.
+     */
     private async getSnapshotInternal(): Promise<FeatureFlagSnapshot[]> {
         const overrides = await this.provider.loadOverrides();
 
@@ -89,7 +97,6 @@ class FeatureFlags {
 
             return flag.enabled;
         } catch {
-            // Fail-safe: if anything goes wrong resolving a flag, treat it as disabled.
             return false;
         }
     };
@@ -101,7 +108,6 @@ class FeatureFlags {
         try {
             return await this.getSnapshotInternal();
         } catch {
-            // On error, return a conservative snapshot: all known flags disabled.
             return this.definitions.map((definition) => ({
                 key: definition.key,
                 name: definition.name,
@@ -121,9 +127,10 @@ class FeatureFlags {
  * explicitly by the caller.
  */
 export const featureFlags = new FeatureFlags(
-    new GithubCmsFeatureFlagsProvider(getEnvironment(), () =>
-        headers().then((h) => h.get('cookie')),
-    ),
+    new GithubCmsFeatureFlagsProvider(getEnvironment(), async () => {
+        const h = await headers();
+        return h.get('cookie');
+    }),
     FEATURE_FLAG_DEFINITIONS,
     getEnvironment(),
 );
