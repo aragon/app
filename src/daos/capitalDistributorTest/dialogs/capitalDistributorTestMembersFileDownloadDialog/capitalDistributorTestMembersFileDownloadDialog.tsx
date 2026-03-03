@@ -131,9 +131,20 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         },
         { enabled: false },
     );
+
     const errorCode =
         rewardDistribution.error &&
         (rewardDistribution.error as AragonBackendServiceError).code;
+    const errorKey =
+        errorCode &&
+        [
+            'epochWindowInvalid',
+            'epochVotingNotClosed',
+            'epochWindowExpired',
+            'epochNoActiveVoters',
+        ].includes(errorCode)
+            ? errorCode
+            : 'default';
 
     const isFormValid = totalAmount !== '' && epochId !== '';
 
@@ -235,7 +246,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
                     {rewardDistribution.isError && (
                         <p className="text-critical-600 text-sm">
                             {t(
-                                `app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.${errorCode === 'epochWindowInvalid' ? 'errorEpochWindowInvalid' : 'error'}`,
+                                `app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownloadDialog.error.${errorKey}`,
                             )}
                         </p>
                     )}

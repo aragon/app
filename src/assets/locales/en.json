@@ -1174,8 +1174,13 @@
           "amountLabel": "Total amount",
           "generate": "Generate file",
           "cancel": "Cancel",
-          "error": "Failed to generate members file. Please try again.",
-          "errorEpochWindowInvalid": "The voting window for the selected epoch has not closed yet. Please try again later."
+          "error": {
+            "default": "Failed to generate members file. Please try again.",
+            "epochWindowInvalid": "The voting window for the selected epoch has not closed yet. Please try again later.",
+            "epochVotingNotClosed": "Epoch voting window has not closed yet",
+            "epochWindowExpired": "Epoch reward generation window has passed",
+            "epochNoActiveVoters": "No active voters found for this epoch"
+          }
         }
       }
     },
