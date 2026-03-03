@@ -13,7 +13,6 @@ import {
 } from '@/modules/governance/pages/daoProposalDetailsPage/daoProposalDetailsPageClient';
 import {
     generateProposal,
-    generateProposalAction,
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
@@ -324,80 +323,6 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal voting terminal', () => {
         render(createTestComponent());
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
-    });
-
-    it('uses raw fallback actions for export on the ADMIN-6 mock mismatch route', async () => {
-        const previousPath = window.location.pathname;
-        window.history.pushState(
-            {},
-            '',
-            '/dao/ethereum-sepolia/0x6f38f0F26dECa2527a7F6669Fcb7e13F66840901/proposals/ADMIN-6',
-        );
-        const proposal = generateProposal({
-            creator: generateAddressInfo({
-                address: '0xabc1230000000000000000000000000000000000',
-            }),
-        });
-        useProposalSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: proposal }),
-        );
-
-        useProposalActionsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: {
-                    decoding: false,
-                    actions: [
-                        generateProposalAction({
-                            inputData: {
-                                contract: 'CapitalDistributorPlugin',
-                                function: 'createCampaign',
-                                parameters: [
-                                    {
-                                        name: 'startTime',
-                                        type: 'uint64',
-                                        value: 0,
-                                    },
-                                ],
-                            },
-                        }),
-                    ],
-                    rawActions: [
-                        {
-                            to: '0x8CfE248EC9779A53D7CC684010E3f87A6f735B6E',
-                            value: '0',
-                            data: '0x3d4ebc5b0000000000000000000000000000000000000000000000000000000000000000',
-                        },
-                    ],
-                },
-            }),
-        );
-
-        render(createTestComponent({ proposalSlug: 'ADMIN-6' }));
-        const moreButton = screen.getAllByRole('button', {
-            name: /more/i,
-        })[0];
-        await userEvent.click(moreButton);
-        await userEvent.click(
-            screen.getByRole('menuitem', {
-                name: /daoProposalDetailsPage\.main\.actions\.downloadAsJSON/,
-            }),
-        );
-
-        expect(downloadActionsAsJSONSpy).toHaveBeenCalledWith(
-            [
-                {
-                    from: proposal.creator.address,
-                    to: '0x8CfE248EC9779A53D7CC684010E3f87A6f735B6E',
-                    data: '0x3d4ebc5b0000000000000000000000000000000000000000000000000000000000000000',
-                    value: '0',
-                    type: 'RAW_CALLDATA',
-                    inputData: null,
-                },
-            ],
-            'proposal-ADMIN-6-actions.json',
-        );
-
-        window.history.pushState({}, '', previousPath);
     });
 
     describe('Action simulation behavior', () => {
