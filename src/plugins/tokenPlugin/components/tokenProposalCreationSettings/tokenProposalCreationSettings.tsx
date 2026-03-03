@@ -15,7 +15,6 @@ import type { IPluginProposalCreationSettingsParams } from '@/modules/createDao/
 import { BodyType } from '@/modules/createDao/types/enum';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { safeBigIntUtils } from '@/shared/utils/safeBigIntUtils';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
 import type {
     ITokenSetupMembershipForm,
@@ -45,11 +44,8 @@ export const TokenProposalCreationSettings: React.FC<
     const { type, name = '', description, membership } = body;
     const { totalSupply, decimals } = membership.token;
 
-    const parsedTotalSupplyValue = safeBigIntUtils.toBigInt(totalSupply);
     const parsedTotalSupply =
-        parsedTotalSupplyValue == null
-            ? undefined
-            : formatUnits(parsedTotalSupplyValue, decimals);
+        totalSupply && formatUnits(BigInt(totalSupply), decimals);
 
     const { value: canCreateProposal, onChange: onCreateProposalChange } =
         useFormField<ISetupBodyForm, 'canCreateProposal'>('canCreateProposal', {
@@ -124,8 +120,7 @@ export const TokenProposalCreationSettings: React.FC<
                             'app.plugins.token.tokenProposalCreationSettings.helpText',
                         )}
                         max={
-                            parsedTotalSupplyValue == null ||
-                            parsedTotalSupplyValue === 0n
+                            totalSupply === '0' || parsedTotalSupply == null
                                 ? undefined
                                 : Number(parsedTotalSupply)
                         }

@@ -20,7 +20,6 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
-import { safeBigIntUtils } from '@/shared/utils/safeBigIntUtils';
 import { DaoTokenVotingMode } from '../../types';
 import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
 import type {
@@ -81,11 +80,8 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { votingMode, supportThreshold, minParticipation, minDuration } =
         governance;
 
-    const parsedTotalSupplyValue = safeBigIntUtils.toBigInt(totalSupply);
     const parsedTotalSupply =
-        parsedTotalSupplyValue == null
-            ? undefined
-            : formatUnits(parsedTotalSupplyValue, tokenDecimals);
+        totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
@@ -179,7 +175,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     })}
                 </DefinitionList.Item>
             )}
-            {parsedTotalSupplyValue != null && parsedTotalSupplyValue > 0n && (
+            {totalSupply && Number(totalSupply) > 0 && (
                 <DefinitionList.Item
                     term={t(
                         'app.plugins.token.tokenProcessBodyField.supplyTerm',
