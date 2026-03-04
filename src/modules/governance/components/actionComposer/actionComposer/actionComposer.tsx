@@ -276,6 +276,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         hideWalletConnect || onlyShowAuthorizedActions
     );
 
+    const shouldRenderUpload = !onlyShowAuthorizedActions;
+
     return (
         <>
             <div
@@ -283,8 +285,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                     hidden: displayActionComposer,
                 })}
             >
-                <div className="flex items-center justify-between">
-                    <div className="flex flex-row gap-3">
+                <div className="flex flex-col items-center justify-between gap-3 md:flex-row">
+                    <div className="flex w-full flex-col gap-y-2 md:flex-row md:gap-x-3">
                         <Button
                             iconLeft={IconType.PLUS}
                             onClick={handleAddAction}
@@ -307,41 +309,50 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                 )}
                             </Button>
                         )}
-                        <Button
-                            iconLeft={IconType.WITHDRAW}
-                            onClick={triggerFileUpload}
-                            size="md"
-                            variant={uploadError ? 'critical' : 'tertiary'}
-                        >
-                            {t(
-                                'app.governance.createProposalForm.actionsImportExport.importButton',
-                            )}
-                        </Button>
-                        <input
-                            accept=".json"
-                            className="hidden"
-                            onChange={handleDirectFileUpload}
-                            ref={fileUploadInputRef}
-                            type="file"
-                        />
+                        {shouldRenderUpload && (
+                            <>
+                                <Button
+                                    iconLeft={IconType.WITHDRAW}
+                                    onClick={triggerFileUpload}
+                                    size="md"
+                                    variant={
+                                        uploadError ? 'critical' : 'tertiary'
+                                    }
+                                >
+                                    {t(
+                                        'app.governance.createProposalForm.actionsImportExport.importButton',
+                                    )}
+                                </Button>
+
+                                <input
+                                    accept=".json"
+                                    className="hidden"
+                                    onChange={handleDirectFileUpload}
+                                    ref={fileUploadInputRef}
+                                    type="file"
+                                />
+                            </>
+                        )}
                     </div>
-                    <div className="flex flex-row items-center gap-3">
+                    <div className="flex w-full shrink-0 flex-row items-center justify-end gap-3 md:w-auto">
+                        <Switch
+                            checked={onlyShowAuthorizedActions}
+                            inlineLabel={t(
+                                'app.governance.actionComposer.authorizedSwitchLabel',
+                            )}
+                            onCheckedChanged={setOnlyShowAuthorizedActions}
+                        />
                         {shouldRenderDropdown && hasActions && (
                             <Dropdown.Container
                                 constrainContentWidth={false}
                                 customTrigger={
                                     <Button
-                                        className="w-fit"
-                                        iconRight={IconType.DOTS_VERTICAL}
+                                        className="aspect-square w-fit shrink-0"
+                                        iconLeft={IconType.DOTS_VERTICAL}
                                         size="md"
                                         variant="tertiary"
-                                    >
-                                        {t(
-                                            'app.governance.actionComposer.moreActions',
-                                        )}
-                                    </Button>
+                                    />
                                 }
-                                size="md"
                             >
                                 {hasPinErrors ? (
                                     <>
@@ -389,19 +400,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                                     </>
                                 )}
                             </Dropdown.Container>
-                        )}
-                        {allowedActions && (
-                            <div>
-                                <Switch
-                                    checked={onlyShowAuthorizedActions}
-                                    inlineLabel={t(
-                                        'app.governance.actionComposer.authorizedSwitchLabel',
-                                    )}
-                                    onCheckedChanged={
-                                        setOnlyShowAuthorizedActions
-                                    }
-                                />
-                            </div>
                         )}
                     </div>
                 </div>

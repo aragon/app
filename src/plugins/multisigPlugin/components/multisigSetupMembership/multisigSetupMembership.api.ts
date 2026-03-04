@@ -13,6 +13,10 @@ export interface IMultisigSetupMembershipProps
      */
     onAddClick?: () => void;
     /**
+     * Flag to determine if the list can be empty.
+     */
+    allowEmptyList?: boolean;
+    /**
      * Address of the plugin, used to validate if the entered user address is already a member of the plugin.
      */
     pluginAddress?: string;
@@ -28,6 +32,10 @@ export interface IMultisigSetupMembershipProps
      * Hides the field label and help-text when set to true.
      */
     hideLabel?: boolean;
+    /**
+     * Whether to show the "Reset all" option in the more actions menu.
+     */
+    showResetAllAction?: boolean;
 }
 
 export interface IMultisigSetupMembershipForm

@@ -62,6 +62,12 @@ export const MultisigAddMembersAction: React.FC<
     );
 
     useEffect(() => {
+        if (watchMembersField.length === 0) {
+            setValue(membersFieldName, [{ address: '' }]);
+        }
+    }, [membersFieldName, setValue, watchMembersField.length]);
+
+    useEffect(() => {
         if (
             controlledMembersField.some(
                 (field) => !addressUtils.isAddress(field.address),
@@ -83,6 +89,7 @@ export const MultisigAddMembersAction: React.FC<
 
     return (
         <MultisigSetupMembership
+            allowEmptyList={true}
             daoId={action.daoId}
             formPrefix={actionFieldName}
             hideLabel={true}
