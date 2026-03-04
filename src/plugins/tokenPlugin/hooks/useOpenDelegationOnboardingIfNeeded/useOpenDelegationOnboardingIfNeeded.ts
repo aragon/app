@@ -51,12 +51,24 @@ export const useOpenDelegationOnboardingIfNeeded = (
     });
 
     const openIfNeeded = useCallback(() => {
+        if (isDelegateLoading || isDelegateError) {
+            return;
+        }
+
         if (delegate == null || delegate === zeroAddress) {
             open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
-                params: { token: tokenAddress, tokenSymbol, network, daoId },
+                params: { tokenAddress, tokenSymbol, daoId },
             });
         }
-    }, [delegate, open, tokenAddress, tokenSymbol, network, daoId]);
+    }, [
+        delegate,
+        isDelegateLoading,
+        isDelegateError,
+        open,
+        tokenAddress,
+        tokenSymbol,
+        daoId,
+    ]);
 
     return { openIfNeeded };
 };

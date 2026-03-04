@@ -27,7 +27,7 @@ export const TokenDelegationOnboardingIntroDialog: React.FC<
 
     const handleSetupDelegation = () => {
         open(TokenPluginDialogId.DELEGATION_ONBOARDING, {
-            params: { token: tokenAddress, daoId },
+            params: { tokenAddress, tokenSymbol, daoId },
             stack: false,
         });
     };

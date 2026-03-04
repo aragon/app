@@ -2527,6 +2527,7 @@
         "tokenDelegationOnboardingDialog": {
           "intro": {
             "title": "Your {{tokenSymbol}} is undelegated",
+            "hiddenTitle": "Token delegation onboarding",
             "description": "Delegate your voting power to yourself or to another address.",
             "cta": "Set up your delegation",
             "cancel": "Cancel"

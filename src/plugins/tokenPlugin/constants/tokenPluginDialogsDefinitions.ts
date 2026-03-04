@@ -22,7 +22,7 @@ export const tokenPluginDialogsDefinitions: Record<
     [TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO]: {
         Component: TokenDelegationOnboardingIntroDialog,
         hiddenTitle:
-            'app.plugins.token.tokenDelegationOnboardingDialog.intro.title',
+            'app.plugins.token.tokenDelegationOnboardingDialog.intro.hiddenTitle',
     },
     [TokenPluginDialogId.DELEGATION_ONBOARDING]: {
         Component: TokenDelegationOnboardingFormDialog,

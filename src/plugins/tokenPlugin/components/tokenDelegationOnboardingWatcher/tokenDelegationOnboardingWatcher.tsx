@@ -72,7 +72,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         hasFiredRef.current = true;
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
             params: {
-                token: tokenAddress,
+                tokenAddress,
                 tokenSymbol,
                 daoId: dao.id,
             },
