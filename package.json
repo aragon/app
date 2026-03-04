@@ -27,7 +27,7 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.28.0",
+    "@aragon/gov-ui-kit": "^1.29.0",
     "@floating-ui/react": "^0.27.18",
     "@number-flow/react": "^0.5.14",
     "@radix-ui/react-dialog": "^1.1.15",

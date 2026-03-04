@@ -1120,6 +1120,27 @@
           "welcome": "Welcome"
         }
       },
+      "cryptex": {
+        "cryptexPageHeader": {
+          "actions": {
+            "getCtx": {
+              "description": "Acquire the Cryptex governance token. CTX represents ownership in the Cryptex protocol and its decentralized index infrastructure.",
+              "title": "Get CTX"
+            },
+            "govern": {
+              "description": "Shape the future of digital asset indexes. Vote on protocol upgrades, index evolution, and ecosystem expansion.",
+              "title": "Govern"
+            },
+            "stake": {
+              "description": "Secure Cryptex and steward its indexes. Stake CTX to help safeguard the protocol and participate in long-term governance alignment.",
+              "title": "Stake"
+            }
+          },
+          "info": "Cryptex Finance is building the index standard for digital assets. Transparent, rules-based, and owned by its participants. As a CTX holder, you help guide the evolution of decentralized index infrastructure.",
+          "to": "to Cryptex Governance",
+          "welcome": "Welcome"
+        }
+      },
       "xmaquina": {
         "xmaquinaPageHeader": {
           "actions": {

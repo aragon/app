@@ -3,6 +3,7 @@
 import { ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { formatUnits } from 'viem';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import type { ITokenProposal } from '../../types';
 import { VoteOption } from '../../types/enum/voteOption';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
@@ -56,7 +57,7 @@ export const TokenProposalVotingBreakdown: React.FC<
             )}
             tokenSymbol={symbol}
             tokenTotalSupply={formatUnits(
-                BigInt(historicalTotalSupply!),
+                bigIntUtils.safeParse(historicalTotalSupply),
                 decimals,
             )}
             totalAbstain={abstainVotes}

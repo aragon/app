@@ -1,0 +1,1 @@
+export { CryptexPageHeader } from './cryptexPageHeader';

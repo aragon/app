@@ -9,6 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { type ITokenProposal, VoteOption } from '../../types';
 import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
 import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
@@ -63,7 +64,7 @@ export const TokenProposalVotingSummary: React.FC<
     );
 
     const tokenTotalSupply = formatUnits(
-        BigInt(historicalTotalSupply!),
+        bigIntUtils.safeParse(historicalTotalSupply),
         decimals,
     );
     const totalSupplyNumber = Number(tokenTotalSupply);

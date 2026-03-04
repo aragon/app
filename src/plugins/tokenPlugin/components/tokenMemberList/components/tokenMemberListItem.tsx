@@ -5,6 +5,7 @@ import type {
     ITokenPluginSettings,
 } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface ITokenMemberListItemProps {
@@ -29,7 +30,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
 
     const tokenDecimals = plugin.settings.token.decimals;
     const parsedVotingPower = formatUnits(
-        BigInt(member.votingPower ?? '0'),
+        bigIntUtils.safeParse(member.votingPower),
         tokenDecimals,
     );
     const { data: dao } = useDao({ urlParams: { id: daoId } });
