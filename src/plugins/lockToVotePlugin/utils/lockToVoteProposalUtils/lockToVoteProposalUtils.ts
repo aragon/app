@@ -1,6 +1,7 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     type ITokenProposalOptionVotes,
@@ -53,11 +54,9 @@ class LockToVoteProposalUtils {
     isMinParticipationReached = (proposal: ILockToVoteProposal): boolean => {
         const { minParticipation } = proposal.settings;
 
-        // Don't do the ratio-to-percentage conversion here as the minParticipation can be a value with decimals and
-        // the BigInt constructor does not support such values.
-        const parsedMinParticipation = BigInt(minParticipation);
-        const parsedTotalSupply = BigInt(
-            this.getProposalTokenTotalSupply(proposal) ?? 0,
+        const parsedMinParticipation = bigIntUtils.safeParse(minParticipation);
+        const parsedTotalSupply = bigIntUtils.safeParse(
+            this.getProposalTokenTotalSupply(proposal),
         );
 
         if (parsedTotalSupply === BigInt(0)) {
@@ -83,9 +82,10 @@ class LockToVoteProposalUtils {
         const noVotesComparator = noVotesCurrent;
 
         return (
-            (tokenSettingsUtils.ratioBase - BigInt(supportThreshold)) *
+            (tokenSettingsUtils.ratioBase -
+                bigIntUtils.safeParse(supportThreshold)) *
                 yesVotes >
-            BigInt(supportThreshold) * noVotesComparator
+            bigIntUtils.safeParse(supportThreshold) * noVotesComparator
         );
     };
 
@@ -100,7 +100,9 @@ class LockToVoteProposalUtils {
                 return accumulator;
             }
 
-            return accumulator + BigInt(current.totalVotingPower);
+            return (
+                accumulator + bigIntUtils.safeParse(current.totalVotingPower)
+            );
         }, BigInt(0));
 
         return totalVotes;
@@ -112,7 +114,7 @@ class LockToVoteProposalUtils {
     ): bigint => {
         const optionVotes = votes.find((option) => option.type === type);
 
-        return BigInt(optionVotes?.totalVotingPower ?? 0);
+        return bigIntUtils.safeParse(optionVotes?.totalVotingPower);
     };
 
     getOptionVotingPower = (
@@ -123,7 +125,7 @@ class LockToVoteProposalUtils {
             (vote) => vote.type === option,
         );
         const parsedVotingPower = formatUnits(
-            BigInt(votes?.totalVotingPower ?? 0),
+            bigIntUtils.safeParse(votes?.totalVotingPower),
             proposal.settings.token.decimals,
         );
 
