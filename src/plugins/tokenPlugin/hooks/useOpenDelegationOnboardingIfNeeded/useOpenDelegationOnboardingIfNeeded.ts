@@ -43,7 +43,11 @@ export const useOpenDelegationOnboardingIfNeeded = (
     const { open } = useDialogContext();
     const { address } = useConnection();
 
-    const { data: delegate } = useTokenCurrentDelegate({
+    const {
+        data: delegate,
+        isLoading: isDelegateLoading,
+        isError: isDelegateError,
+    } = useTokenCurrentDelegate({
         tokenAddress,
         userAddress: address,
         network,
@@ -55,7 +59,7 @@ export const useOpenDelegationOnboardingIfNeeded = (
             return;
         }
 
-        if (delegate == null || delegate === zeroAddress) {
+        if (delegate === zeroAddress) {
             open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
                 params: { tokenAddress, tokenSymbol, daoId },
             });
