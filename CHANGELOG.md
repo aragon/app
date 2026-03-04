@@ -1,5 +1,31 @@
 # @aragon/app
 
+## 1.23.0
+
+### Minor Changes
+
+- [#998](https://github.com/aragon/app/pull/998) [`290856f`](https://github.com/aragon/app/commit/290856fe8ba2e24acb8bdfb50dd54746de1181f6) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add Playwright E2E infrastructure and smoke tests with CI and Slack notifications.
+
+- [#1014](https://github.com/aragon/app/pull/1014) [`79a6821`](https://github.com/aragon/app/commit/79a6821fbec353d154bb643f94387a4af04be300) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Rename SubDAO to linked account across the frontend and add API compatibility layer.
+
+- [#1003](https://github.com/aragon/app/pull/1003) [`572872c`](https://github.com/aragon/app/commit/572872cbbc8e3f99e87684b1dc345d912a7c391e) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement custom DAO header for Cryptex
+
+- [#1001](https://github.com/aragon/app/pull/1001) [`539232f`](https://github.com/aragon/app/commit/539232fb2e5a0d32d6d0cb0c5a7c4a7c9584b862) Thanks [@milosh86](https://github.com/milosh86)! - Add pause, resume, and end campaign basic actions for Capital Distributor
+
+- [#996](https://github.com/aragon/app/pull/996) [`cf8e4fb`](https://github.com/aragon/app/commit/cf8e4fb191a6f210003fd645808ef1b058af9131) Thanks [@milosh86](https://github.com/milosh86)! - Implement Katana rewards calculation in campaign creation
+
+- [#999](https://github.com/aragon/app/pull/999) [`e480c59`](https://github.com/aragon/app/commit/e480c59abbfd01fc475aae678301b9de684d8933) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Upgrade to Next.js 16 with React Compiler and Turbopack
+
+- [#1000](https://github.com/aragon/app/pull/1000) [`8d66325`](https://github.com/aragon/app/commit/8d66325dfa9da48a597d60ad0b8bb4f70dc39a70) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement fallback behavior for partial decoded actions
+
+### Patch Changes
+
+- [#1006](https://github.com/aragon/app/pull/1006) [`bd4e2d1`](https://github.com/aragon/app/commit/bd4e2d14fddd17e20a3cf0a8e2d67f5264af6cb8) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix runtime crash on BigInt conversion of floating-point strings from APIs (e.g. `"10000000000000000000000000.0"`). Add `bigIntUtils.safeParse()` utility that handles decimal suffixes, scientific notation, and non-finite numbers across all token and lock-to-vote plugin components.
+
+- [#1011](https://github.com/aragon/app/pull/1011) [`8fbc8ca`](https://github.com/aragon/app/commit/8fbc8ca14f1aba82ec67336adda260128c730d6e) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove platform ping in slack during release
+
+- [#1010](https://github.com/aragon/app/pull/1010) [`61d7011`](https://github.com/aragon/app/commit/61d7011af4d9e65e1278fa39469f5684faf2e4f6) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix misaligned add/remove members UI and update to latest spec
+
 ## 1.22.0
 
 ### Minor Changes
