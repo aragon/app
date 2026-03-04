@@ -15,7 +15,7 @@ import { DaoProposalList, type IDaoProposalListProps } from './daoProposalList';
 interface IPluginMockProps {
     initialParams?: {
         queryParams?: {
-            includeSubDaos?: boolean;
+            includeLinkedAccounts?: boolean;
         };
     };
 }
@@ -29,9 +29,9 @@ jest.mock('@/shared/components/pluginFilterComponent', () => ({
             data-plugins={JSON.stringify(
                 props.plugins.map((plugin) => ({
                     id: plugin.id,
-                    includeSubDaos: (
+                    includeLinkedAccounts: (
                         plugin.props as IPluginMockProps | undefined
-                    )?.initialParams?.queryParams?.includeSubDaos,
+                    )?.initialParams?.queryParams?.includeLinkedAccounts,
                 })),
             )}
             data-slotid={props.slotId}
@@ -57,23 +57,25 @@ describe('<DaoProposalList /> component', () => {
     };
 
     const createFeatureFlagsSnapshot = (
-        isSubDaoEnabled: boolean,
+        isLinkedAccountEnabled: boolean,
     ): FeatureFlagSnapshot[] => [
         {
-            key: 'subDao',
-            name: 'SubDAO',
-            description: 'Enables subDAO support',
-            enabled: isSubDaoEnabled,
+            key: 'linkedAccount',
+            name: 'Linked account',
+            description: 'Enables linked account support',
+            enabled: isLinkedAccountEnabled,
         },
     ];
 
     const renderWithFlags = (
-        isSubDaoEnabled: boolean,
+        isLinkedAccountEnabled: boolean,
         component: ReactElement,
     ) =>
         render(
             <FeatureFlagsProvider
-                initialSnapshot={createFeatureFlagsSnapshot(isSubDaoEnabled)}
+                initialSnapshot={createFeatureFlagsSnapshot(
+                    isLinkedAccountEnabled,
+                )}
             >
                 {component}
             </FeatureFlagsProvider>,
@@ -84,7 +86,7 @@ describe('<DaoProposalList /> component', () => {
 
         return JSON.parse(pluginComponent.dataset.plugins ?? '[]') as Array<{
             id: string;
-            includeSubDaos?: boolean;
+            includeLinkedAccounts?: boolean;
         }>;
     };
 
@@ -105,7 +107,7 @@ describe('<DaoProposalList /> component', () => {
         );
     });
 
-    it('sets includeSubDaos=true only for group tab when subDao feature is enabled', () => {
+    it('sets includeLinkedAccounts=true only for group tab when linkedAccount feature is enabled', () => {
         const plugins = [
             pluginGroupFilter,
             generateFilterComponentPlugin({
@@ -117,12 +119,12 @@ describe('<DaoProposalList /> component', () => {
         renderWithFlags(true, createTestComponent());
 
         expect(getRenderedPlugins()).toEqual([
-            { id: pluginGroupFilter.id, includeSubDaos: true },
-            { id: 'token', includeSubDaos: false },
+            { id: pluginGroupFilter.id, includeLinkedAccounts: true },
+            { id: 'token', includeLinkedAccounts: false },
         ]);
     });
 
-    it('sets includeSubDaos=false for all tabs when subDao feature is disabled', () => {
+    it('sets includeLinkedAccounts=false for all tabs when linkedAccount feature is disabled', () => {
         const plugins = [
             pluginGroupFilter,
             generateFilterComponentPlugin({
@@ -134,8 +136,8 @@ describe('<DaoProposalList /> component', () => {
         renderWithFlags(false, createTestComponent());
 
         expect(getRenderedPlugins()).toEqual([
-            { id: pluginGroupFilter.id, includeSubDaos: false },
-            { id: 'token', includeSubDaos: false },
+            { id: pluginGroupFilter.id, includeLinkedAccounts: false },
+            { id: 'token', includeLinkedAccounts: false },
         ]);
     });
 });

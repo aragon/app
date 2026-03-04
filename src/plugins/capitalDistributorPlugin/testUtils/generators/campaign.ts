@@ -11,6 +11,7 @@ export const generateCampaign = (campaign?: Partial<ICampaign>): ICampaign => ({
     startTime: 0,
     endTime: 0,
     active: true,
+    ended: false,
     multipleClaimsAllowed: false,
     strategy: null,
     userData: {

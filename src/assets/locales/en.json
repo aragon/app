@@ -176,7 +176,40 @@
       "capitalDistributor": {
         "composer": {
           "contractName": "Capital Distributor",
-          "createCampaignActionName": "Create campaign"
+          "createCampaignActionName": "Create campaign",
+          "pauseCampaignActionName": "Pause campaign",
+          "resumeCampaignActionName": "Resume campaign",
+          "endCampaignActionName": "End campaign"
+        },
+        "capitalDistributorSelectCampaignDialog": {
+          "title": "Select campaign",
+          "description": "Choose a campaign from the list below.",
+          "entityLabel": "Campaign",
+          "emptyStateActive": "No active campaigns available.",
+          "emptyStateInactive": "No inactive campaigns available.",
+          "submit": "Select campaign",
+          "cancel": "Cancel"
+        },
+        "capitalDistributorPauseCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "Select campaign",
+            "description": "Select an active campaign to pause.",
+            "action": "Select campaign"
+          }
+        },
+        "capitalDistributorResumeCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "Select campaign",
+            "description": "Select an inactive campaign to resume.",
+            "action": "Select campaign"
+          }
+        },
+        "capitalDistributorEndCampaignActionCreate": {
+          "emptyCard": {
+            "heading": "Select campaign",
+            "description": "Select an active campaign to end permanently.",
+            "action": "Select campaign"
+          }
         },
         "capitalDistributorCampaignUploadDialog": {
           "done": "Done",
@@ -700,11 +733,7 @@
         },
         "sourceVault": {
           "helpText": "This is the source vault from which the assets will be routed. Only DAOs with ROOT permission are eligible.",
-          "label": "Source vault",
-          "tags": {
-            "mainDao": "MainDAO",
-            "subDao": "SubDAO"
-          }
+          "label": "Source vault"
         },
         "submit": "Next",
         "title": "Create strategy"
@@ -1136,6 +1165,27 @@
           "welcome": "Welcome"
         }
       },
+      "cryptex": {
+        "cryptexPageHeader": {
+          "actions": {
+            "getCtx": {
+              "description": "Acquire the Cryptex governance token. CTX represents ownership in the Cryptex protocol and its decentralized index infrastructure.",
+              "title": "Get CTX"
+            },
+            "govern": {
+              "description": "Shape the future of digital asset indexes. Vote on protocol upgrades, index evolution, and ecosystem expansion.",
+              "title": "Govern"
+            },
+            "stake": {
+              "description": "Secure Cryptex and steward its indexes. Stake CTX to help safeguard the protocol and participate in long-term governance alignment.",
+              "title": "Stake"
+            }
+          },
+          "info": "Cryptex Finance is building the index standard for digital assets. Transparent, rules-based, and owned by its participants. As a CTX holder, you help guide the evolution of decentralized index infrastructure.",
+          "to": "to Cryptex Governance",
+          "welcome": "Welcome"
+        }
+      },
       "xmaquina": {
         "xmaquinaPageHeader": {
           "actions": {
@@ -1293,8 +1343,8 @@
       },
       "assetListStats": {
         "daos": "DAOs",
-        "note": "Aggregate treasury data across all SubDAOs coming soon.",
-        "subDaos": "SubDAOs",
+        "note": "Aggregate treasury data across all linked accounts coming soon.",
+        "linkedAccounts": "Linked accounts",
         "tokens": "Unique tokens",
         "totalValueUsd": "Total value (USD)"
       },
@@ -1336,7 +1386,7 @@
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
-      "subDaoInfo": {
+      "linkedAccountInfo": {
         "chain": "Chain",
         "description": "Description",
         "pluginAddress": "Plugin address"
@@ -1356,10 +1406,10 @@
       "transactionListStats": {
         "daos": "DAOs",
         "lastActivity": "Last activity",
-        "subDaos": "SubDAOs",
+        "linkedAccounts": "Linked accounts",
         "totalTransactions": "Total transactions"
       },
-      "transactionSubDaoInfo": {
+      "transactionLinkedAccountInfo": {
         "address": "Address",
         "chain": "Chain",
         "description": "Description",
@@ -1800,6 +1850,9 @@
             },
             "description": "Add or remove the addresses that should be able to make any change to the DAO without a proposal.",
             "title": "Manage admins"
+          },
+          "item": {
+            "alreadyMember": "Address is already an admin of the DAO"
           }
         },
         "adminMemberInfo": {
@@ -2963,7 +3016,7 @@
         "main": {
           "automationAction": "Policy",
           "automationInfoTitle": "Automation",
-          "daoAction": "SubDAO",
+          "daoAction": "Linked account",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "Account",
@@ -3069,7 +3122,10 @@
     "shared": {
       "addressesInput": {
         "container": {
-          "add": "Add"
+          "add": "Add",
+          "clearAll": "Clear all",
+          "more": "More",
+          "resetFields": "Reset fields"
         },
         "item": {
           "input": {

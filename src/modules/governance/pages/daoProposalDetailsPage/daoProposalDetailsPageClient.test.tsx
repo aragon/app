@@ -15,6 +15,7 @@ import {
     generateProposal,
     generateSimulationResult,
 } from '@/modules/governance/testUtils';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import * as DaoService from '@/shared/api/daoService';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
@@ -64,6 +65,10 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useSlotSingleFunction,
         'useSlotSingleFunction',
     );
+    const downloadActionsAsJSONSpy = jest.spyOn(
+        proposalActionsImportExportUtils,
+        'downloadActionsAsJSON',
+    );
 
     const mockInvalidateQueries = jest.fn();
     const mockQueryClient = { invalidateQueries: mockInvalidateQueries };
@@ -93,6 +98,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         useProposalActionsSpy.mockReset();
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
+        downloadActionsAsJSONSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useLastSimulationSpy.mockReset();
         mockInvalidateQueries.mockReset();

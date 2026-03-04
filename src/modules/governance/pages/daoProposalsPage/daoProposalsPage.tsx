@@ -50,7 +50,7 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
         sort: daoProposalsSort,
         isSubProposal: false,
         onlyActive: pluginAddress == null,
-        includeSubDaos: false,
+        includeLinkedAccounts: false,
     };
     const proposalListParams = { queryParams: proposalListQueryParams };
 

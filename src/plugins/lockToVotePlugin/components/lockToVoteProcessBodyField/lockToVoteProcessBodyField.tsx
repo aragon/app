@@ -22,6 +22,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DaoLockToVoteVotingMode } from '../../types';
@@ -91,7 +92,8 @@ export const LockToVoteProcessBodyField = (
         governance;
 
     const parsedTotalSupply =
-        totalSupply && formatUnits(BigInt(totalSupply), tokenDecimals);
+        totalSupply &&
+        formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals);
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',

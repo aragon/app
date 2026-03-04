@@ -18,18 +18,20 @@ import { FinanceDetailsList } from '../financeDetailsList';
 import type { IDaoInfoAsideProps } from './daoInfoAside.api';
 
 export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
-    const { network, daoId, subDao, dao, stats, ...otherProps } = props;
+    const { network, daoId, linkedAccount, dao, stats, ...otherProps } = props;
 
     const { t } = useTranslations();
 
     const { isEnabled } = useFeatureFlags();
 
-    const isSubDaoEnabled = isEnabled('subDao');
+    const isLinkedAccountEnabled = isEnabled('linkedAccount');
 
-    const resolvedNetwork = subDao?.network ?? dao?.network ?? network;
-    const resolvedAddress = subDao?.address ?? dao?.address ?? '';
-    const description = (subDao?.description ?? dao?.description)?.trim();
-    const links = subDao?.links ?? dao?.links ?? [];
+    const resolvedNetwork = linkedAccount?.network ?? dao?.network ?? network;
+    const resolvedAddress = linkedAccount?.address ?? dao?.address ?? '';
+    const description = (
+        linkedAccount?.description ?? dao?.description
+    )?.trim();
+    const links = linkedAccount?.links ?? dao?.links ?? [];
 
     const { buildEntityUrl } = useDaoChain({ network: resolvedNetwork, daoId });
     const pluginAddressLink = buildEntityUrl({
@@ -40,7 +42,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
         ? `https://pro.octav.fi/?addresses=${resolvedAddress}`
         : '';
 
-    if (isSubDaoEnabled) {
+    if (isLinkedAccountEnabled) {
         return (
             <>
                 {description && (
@@ -65,14 +67,18 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                 )}
                 <DefinitionList.Container {...otherProps}>
                     <DefinitionList.Item
-                        term={t('app.finance.transactionSubDaoInfo.chain')}
+                        term={t(
+                            'app.finance.transactionLinkedAccountInfo.chain',
+                        )}
                     >
                         {networkDefinitions[resolvedNetwork].name}
                     </DefinitionList.Item>
                     <DefinitionList.Item
                         copyValue={resolvedAddress}
                         link={{ href: pluginAddressLink }}
-                        term={t('app.finance.transactionSubDaoInfo.address')}
+                        term={t(
+                            'app.finance.transactionLinkedAccountInfo.address',
+                        )}
                     >
                         {addressUtils.truncateAddress(resolvedAddress)}
                     </DefinitionList.Item>

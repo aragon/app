@@ -26,9 +26,9 @@ export interface IUseDaoPluginsParams {
      */
     includeSubPlugins?: boolean;
     /**
-     * Include plugins that belong to the subDAOs of the specified DAO.
+     * Include plugins that belong to the linked accounts of the specified DAO.
      */
-    includeSubDaos?: boolean;
+    includeLinkedAccounts?: boolean;
     /**
      * Adds an "all" tab component item when set to true and DAO has more than one plugin.
      */
@@ -59,26 +59,30 @@ interface IBuildFilterPluginsParams {
     plugins?: IDaoPlugin[];
     rootDaoAddress?: string;
     includeGroupFilter?: boolean;
-    isSubDaoEnabled: boolean;
+    isLinkedAccountEnabled: boolean;
 }
 
 /**
  * Normalizes raw plugins from the backend into filter-ready items:
- * - applies SubDAO feature-flag behaviour (aggregate vs single DAO),
+ * - applies linked account feature-flag behaviour (aggregate vs single DAO),
  * - optionally groups plugins by (daoAddress, slug) when aggregating,
  * - builds `IFilterComponentPlugin` items and group tab when needed.
  */
 const buildFilterPlugins = (
     params: IBuildFilterPluginsParams,
 ): IFilterComponentPlugin<IDaoPlugin>[] => {
-    const { plugins, rootDaoAddress, includeGroupFilter, isSubDaoEnabled } =
-        params;
+    const {
+        plugins,
+        rootDaoAddress,
+        includeGroupFilter,
+        isLinkedAccountEnabled,
+    } = params;
 
     const allPlugins = plugins ?? [];
 
-    // When SubDAO feature is disabled, only use plugins installed on the current DAO
-    // (ignore SubDAO plugins returned by the API).
-    const filteredPlugins = isSubDaoEnabled
+    // When linked account feature is disabled, only use plugins installed on the current DAO
+    // (ignore linked account plugins returned by the API).
+    const filteredPlugins = isLinkedAccountEnabled
         ? allPlugins
         : allPlugins.filter((plugin) => {
               const daoAddress = plugin.daoAddress ?? rootDaoAddress;
@@ -115,7 +119,7 @@ export const useDaoPlugins = (
         type,
         pluginAddress,
         includeSubPlugins,
-        includeSubDaos,
+        includeLinkedAccounts,
         includeGroupFilter,
         interfaceType,
         slug,
@@ -128,18 +132,18 @@ export const useDaoPlugins = (
         type,
         pluginAddress,
         includeSubPlugins,
-        includeSubDaos,
+        includeLinkedAccounts,
         interfaceType,
         slug,
         hasExecute,
     });
 
-    const isSubDaoEnabled = isEnabled('subDao');
+    const isLinkedAccountEnabled = isEnabled('linkedAccount');
     const processedPlugins = buildFilterPlugins({
         plugins,
         rootDaoAddress: dao?.address,
         includeGroupFilter,
-        isSubDaoEnabled,
+        isLinkedAccountEnabled,
     });
 
     return processedPlugins;

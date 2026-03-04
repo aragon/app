@@ -24,7 +24,8 @@ export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (
     }
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
-    const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
+    const isLinkedAccountEnabled =
+        await featureFlags.isEnabled('linkedAccount');
     const isAutomationEnabled = await featureFlags.isEnabled(
         'capitalFlowAutomation',
     );
@@ -35,7 +36,7 @@ export const DaoSettingsPage: React.FC<IDaoSettingsPageProps> = async (
                 <DaoSettingsPageClient
                     daoId={daoId}
                     isAutomationEnabled={isAutomationEnabled}
-                    isSubDaoEnabled={isSubDaoEnabled}
+                    isLinkedAccountEnabled={isLinkedAccountEnabled}
                 />
             </Page.Content>
         </Page.Container>

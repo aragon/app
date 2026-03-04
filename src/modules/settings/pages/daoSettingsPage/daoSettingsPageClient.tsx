@@ -41,15 +41,15 @@ export interface IDaoSettingsPageClientProps {
      */
     isAutomationEnabled?: boolean;
     /**
-     * Whether SubDAO feature is enabled.
+     * Whether linked account feature is enabled.
      */
-    isSubDaoEnabled?: boolean;
+    isLinkedAccountEnabled?: boolean;
 }
 
 export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     props,
 ) => {
-    const { daoId, isAutomationEnabled, isSubDaoEnabled } = props;
+    const { daoId, isAutomationEnabled, isLinkedAccountEnabled } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -83,7 +83,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
         useDaoPlugins({
             daoId,
             interfaceType: PluginInterfaceType.ADMIN,
-            includeSubDaos: false,
+            includeLinkedAccounts: false,
         })?.length,
     );
 
@@ -199,7 +199,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                         'app.settings.daoSettingsPage.main.settingsInfoTitle',
                     )}
                 >
-                    {isSubDaoEnabled ? (
+                    {isLinkedAccountEnabled ? (
                         <DaoHierarchy currentDaoId={daoId} dao={dao} />
                     ) : (
                         <DaoSettingsInfo dao={dao} />

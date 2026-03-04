@@ -12,12 +12,12 @@ export interface IDaoFilterAsideCardProps {
      */
     activeOption: IUseDaoFilterUrlParamReturn['activeOption'];
     /**
-     * Metadata for the selected DAO/SubDAO view.
+     * Metadata for the selected DAO/linked account view.
      * Used to build stats like transaction count, asset count, last activity, etc.
      */
     selectedMetadata?: IPaginatedResponse<unknown>;
     /**
-     * Metadata for "All" view (parent + all SubDAOs).
+     * Metadata for "All" view (parent + all linked accounts).
      * Used to get totalAssets for AllAssetsStats component.
      */
     allMetadata?: IPaginatedResponse<unknown>;

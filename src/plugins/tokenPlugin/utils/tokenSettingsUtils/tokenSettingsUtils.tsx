@@ -9,6 +9,7 @@ import {
     type ITokenPluginSettings,
 } from '@/plugins/tokenPlugin/types';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 
 export interface IParseTokenSettingsParams {
@@ -84,7 +85,7 @@ class TokenSettingsUtils {
             (Number(processedTotalSupply) * parsedMinParticipation) / 100,
         );
         const parsedMinParticipationToken = formatUnits(
-            BigInt(minParticipationToken),
+            bigIntUtils.safeParse(minParticipationToken),
             decimals,
         );
         const formattedMinParticipationToken = formatterUtils.formatNumber(
@@ -105,7 +106,7 @@ class TokenSettingsUtils {
         );
 
         const parsedMinVotingPower = formatUnits(
-            BigInt(minProposerVotingPower),
+            bigIntUtils.safeParse(minProposerVotingPower),
             decimals,
         );
         const formattedProposerVotingPower = formatterUtils.formatNumber(

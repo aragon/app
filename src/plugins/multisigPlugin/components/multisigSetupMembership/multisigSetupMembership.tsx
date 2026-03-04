@@ -1,14 +1,8 @@
 'use client';
 
-import { useWatch } from 'react-hook-form';
-import { useDao } from '@/shared/api/daoService';
-import { AddressesInput } from '@/shared/components/forms/addressesInput';
+import { ManageMembershipAddressList } from '@/shared/components/forms/manageMembershipAddressList';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { MultisigSetupMembershipItem } from './components/multisigSetupMembershipItem';
-import type {
-    IMultisigSetupMembershipForm,
-    IMultisigSetupMembershipProps,
-} from './multisigSetupMembership.api';
+import type { IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
 
 export const MultisigSetupMembership: React.FC<
     IMultisigSetupMembershipProps
@@ -17,28 +11,23 @@ export const MultisigSetupMembership: React.FC<
         formPrefix,
         disabled,
         onAddClick,
+        allowEmptyList,
         pluginAddress,
         hideLabel,
         network,
         daoId,
+        showResetAllAction,
     } = props;
 
     const { t } = useTranslations();
-    const { data: dao } = useDao(
-        { urlParams: { id: daoId ?? '' } },
-        { enabled: daoId != null },
-    );
-    const membershipNetwork = network ?? dao?.network;
-
-    const watchMembersField = useWatch<
-        Record<string, IMultisigSetupMembershipForm['members']>
-    >({
-        name: `${formPrefix}.members`,
-        defaultValue: [],
-    });
 
     return (
-        <AddressesInput.Container
+        <ManageMembershipAddressList
+            allowEmptyList={allowEmptyList}
+            alreadyMemberErrorKey="app.plugins.multisig.multisigSetupMembership.item.alreadyMember"
+            daoId={daoId}
+            disabled={disabled}
+            formPrefix={formPrefix}
             helpText={
                 hideLabel
                     ? undefined
@@ -49,19 +38,10 @@ export const MultisigSetupMembership: React.FC<
                     ? undefined
                     : t('app.plugins.multisig.multisigSetupMembership.label')
             }
-            name={`${formPrefix}.members`}
+            network={network}
             onAddClick={onAddClick}
-        >
-            {watchMembersField.map((_, index) => (
-                <MultisigSetupMembershipItem
-                    disabled={disabled}
-                    index={index}
-                    key={index}
-                    member={watchMembersField[index]}
-                    network={membershipNetwork}
-                    pluginAddress={pluginAddress}
-                />
-            ))}
-        </AddressesInput.Container>
+            pluginAddress={pluginAddress}
+            showResetAllAction={showResetAllAction}
+        />
     );
 };

@@ -63,7 +63,7 @@ export const CreateProposalFormActions: React.FC<
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     // Resolve the target DAO from the plugin.
-    // If the plugin has a daoAddress (subDAO targeting), use it; otherwise target the parent DAO.
+    // If the plugin has a daoAddress (linked account targeting), use it; otherwise target the parent DAO.
     const targetDaoAddress = processPlugin.daoAddress ?? dao!.address;
     const isParentTarget = addressUtils.isAddressEqual(
         targetDaoAddress,

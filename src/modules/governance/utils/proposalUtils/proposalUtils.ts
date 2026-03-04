@@ -23,8 +23,8 @@ class ProposalUtils {
 
     /**
      * Builds the full URL path for a proposal detail page.
-     * When the proposal belongs to a subDAO the link points to the subDAO's
-     * own page (`/dao/<network>/<subDaoAddress>/proposals/<slug>`) so that
+     * When the proposal belongs to a linked account the link points to the linked account's
+     * own page (`/dao/<network>/<linkedAccountAddress>/proposals/<slug>`) so that
      * `getProposalBySlug` on the backend resolves the slug in the correct DAO
      * context without any extra parameters.
      *
@@ -44,15 +44,15 @@ class ProposalUtils {
 
         const proposalPath = `proposals/${slug}`;
 
-        // If we have enough information to detect a subDAO proposal, build a
-        // direct link to the subDAO page.
-        const isSubDaoProposal =
+        // If we have enough information to detect a linked account proposal, build a
+        // direct link to the linked account page.
+        const isLinkedAccountProposal =
             proposal.daoAddress != null &&
             proposal.network != null &&
             dao != null &&
             !addressUtils.isAddressEqual(proposal.daoAddress, dao.address);
 
-        if (isSubDaoProposal) {
+        if (isLinkedAccountProposal) {
             return `/dao/${proposal.network}/${proposal.daoAddress}/${proposalPath}`;
         }
 

@@ -42,8 +42,8 @@ const getWizardConfig = (dao: IDao, pluginAddress: string): IWizardConfig => {
         { plugin: pluginName },
     ];
 
-    // Get target DAO address from plugin (for subDAO targeting).
-    // If plugin has daoAddress, it's installed on a subDAO; otherwise it's on main DAO.
+    // Get target DAO address from plugin (for linked account targeting).
+    // If plugin has daoAddress, it's installed on a linked account; otherwise it's on main DAO.
     const targetDaoAddress = processPlugin?.daoAddress ?? dao.address;
 
     return { name: wizardName, targetDaoAddress };

@@ -71,9 +71,10 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     const isSourceMatchingDao =
         !action.from || addressUtils.isAddressEqual(action.from, dao!.address);
 
-    // Only apply the onlyParent filter when we know the source DAO has subDAOs.
+    // Only apply the onlyParent filter when we know the source DAO has linked accounts.
     // When source differs from the fetched DAO we skip the filter (safe default).
-    const isParentDao = isSourceMatchingDao && (dao!.subDaos?.length ?? 0) > 0;
+    const isParentDao =
+        isSourceMatchingDao && (dao!.linkedAccounts?.length ?? 0) > 0;
 
     // For imported ERC20 actions, we need to fetch token details to get correct decimals
     const isImportedErc20Action =
