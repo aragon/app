@@ -1,5 +1,9 @@
 import type { IDefinitionListContainerProps } from '@aragon/gov-ui-kit';
-import type { IDao, ISubDaoSummary, Network } from '@/shared/api/daoService';
+import type {
+    IDao,
+    ILinkedAccountSummary,
+    Network,
+} from '@/shared/api/daoService';
 
 export interface IDaoInfoAsideProps
     extends Omit<IDefinitionListContainerProps, 'onCopy'> {
@@ -12,9 +16,9 @@ export interface IDaoInfoAsideProps
      */
     daoId: string;
     /**
-     * Selected SubDAO data, if any.
+     * Selected linked account data, if any.
      */
-    subDao?: ISubDaoSummary;
+    linkedAccount?: ILinkedAccountSummary;
     /**
      * Parent DAO data, used as a fallback.
      */

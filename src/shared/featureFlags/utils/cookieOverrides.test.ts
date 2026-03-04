@@ -10,7 +10,7 @@ describe('feature flags cookies utils', () => {
         it('serializes overrides object to cookie string', () => {
             const overrides: FeatureFlagOverrides = {
                 debugPanel: true,
-                subDao: false,
+                linkedAccount: false,
             };
 
             const result = serializeFeatureFlagOverridesToCookie(overrides);

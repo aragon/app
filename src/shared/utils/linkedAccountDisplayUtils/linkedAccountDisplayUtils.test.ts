@@ -2,31 +2,31 @@ import { Network } from '@/shared/api/daoService';
 import {
     generateDao,
     generateDaoPlugin,
-    generateSubDao,
+    generateLinkedAccount,
 } from '@/shared/testUtils';
-import { subDaoDisplayUtils } from './subDaoDisplayUtils';
+import { linkedAccountDisplayUtils } from './linkedAccountDisplayUtils';
 
 const groupLabel = 'All items';
 const fallbackLabel = 'Fallback';
 
-describe('subDaoDisplayUtils', () => {
+describe('linkedAccountDisplayUtils', () => {
     describe('getPluginDaoAddress', () => {
         it('returns lowercased daoAddress when present', () => {
             const plugin = generateDaoPlugin({
                 daoAddress: '0x1111111111111111111111111111111111111111',
             });
-            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual(
-                '0x1111111111111111111111111111111111111111',
-            );
+            expect(
+                linkedAccountDisplayUtils.getPluginDaoAddress(plugin),
+            ).toEqual('0x1111111111111111111111111111111111111111');
         });
 
         it('falls back to address when daoAddress is missing', () => {
             const plugin = generateDaoPlugin({
                 address: '0x2222222222222222222222222222222222222222',
             });
-            expect(subDaoDisplayUtils.getPluginDaoAddress(plugin)).toEqual(
-                '0x2222222222222222222222222222222222222222',
-            );
+            expect(
+                linkedAccountDisplayUtils.getPluginDaoAddress(plugin),
+            ).toEqual('0x2222222222222222222222222222222222222222');
         });
     });
 
@@ -35,9 +35,9 @@ describe('subDaoDisplayUtils', () => {
             const parentAddress = '0x1111111111111111111111111111111111111111';
             const dao = generateDao({ address: parentAddress });
             const plugin = generateDaoPlugin({ daoAddress: parentAddress });
-            expect(subDaoDisplayUtils.isParentPlugin({ dao, plugin })).toBe(
-                true,
-            );
+            expect(
+                linkedAccountDisplayUtils.isParentPlugin({ dao, plugin }),
+            ).toBe(true);
         });
 
         it('returns false otherwise', () => {
@@ -45,32 +45,45 @@ describe('subDaoDisplayUtils', () => {
             const childAddress = '0x2222222222222222222222222222222222222222';
             const dao = generateDao({ address: parentAddress });
             const plugin = generateDaoPlugin({ daoAddress: childAddress });
-            expect(subDaoDisplayUtils.isParentPlugin({ dao, plugin })).toBe(
-                false,
-            );
+            expect(
+                linkedAccountDisplayUtils.isParentPlugin({ dao, plugin }),
+            ).toBe(false);
         });
     });
 
-    describe('getMatchingSubDao', () => {
-        it('returns the matching subDAO by address', () => {
-            const subDaoAddress = '0x3333333333333333333333333333333333333333';
-            const subDao = generateSubDao({ address: subDaoAddress });
-            const dao = generateDao({ subDaos: [subDao] });
-            const plugin = generateDaoPlugin({ daoAddress: subDaoAddress });
+    describe('getMatchingLinkedAccount', () => {
+        it('returns the matching linked account by address', () => {
+            const linkedAccountAddress =
+                '0x3333333333333333333333333333333333333333';
+            const linkedAccount = generateLinkedAccount({
+                address: linkedAccountAddress,
+            });
+            const dao = generateDao({ linkedAccounts: [linkedAccount] });
+            const plugin = generateDaoPlugin({
+                daoAddress: linkedAccountAddress,
+            });
             expect(
-                subDaoDisplayUtils.getMatchingSubDao({ dao, plugin }),
-            ).toEqual(subDao);
+                linkedAccountDisplayUtils.getMatchingLinkedAccount({
+                    dao,
+                    plugin,
+                }),
+            ).toEqual(linkedAccount);
         });
 
         it('returns undefined when no match', () => {
             const otherAddress = '0x4444444444444444444444444444444444444444';
             const missingAddress = '0x5555555555555555555555555555555555555555';
             const dao = generateDao({
-                subDaos: [generateSubDao({ address: otherAddress })],
+                linkedAccounts: [
+                    generateLinkedAccount({ address: otherAddress }),
+                ],
             });
             const plugin = generateDaoPlugin({ daoAddress: missingAddress });
             expect(
-                subDaoDisplayUtils.getMatchingSubDao({ dao, plugin }),
+                linkedAccountDisplayUtils.getMatchingLinkedAccount({
+                    dao,
+                    plugin,
+                }),
             ).toBeUndefined();
         });
     });
@@ -84,7 +97,7 @@ describe('subDaoDisplayUtils', () => {
             });
             const plugin = generateDaoPlugin({ daoAddress: parentAddress });
             expect(
-                subDaoDisplayUtils.getPluginDisplayName({
+                linkedAccountDisplayUtils.getPluginDisplayName({
                     dao,
                     plugin,
                     groupLabel,
@@ -93,17 +106,20 @@ describe('subDaoDisplayUtils', () => {
             ).toBe('Parent DAO');
         });
 
-        it('returns matching subDAO name when a subDAO plugin is selected', () => {
-            const subDaoAddress = '0x3333333333333333333333333333333333333333';
-            const subDao = generateSubDao({
-                address: subDaoAddress,
+        it('returns matching linked account name when a linked account plugin is selected', () => {
+            const linkedAccountAddress =
+                '0x3333333333333333333333333333333333333333';
+            const linkedAccount = generateLinkedAccount({
+                address: linkedAccountAddress,
                 name: 'Child DAO',
                 network: Network.POLYGON_MAINNET,
             });
-            const dao = generateDao({ subDaos: [subDao] });
-            const plugin = generateDaoPlugin({ daoAddress: subDaoAddress });
+            const dao = generateDao({ linkedAccounts: [linkedAccount] });
+            const plugin = generateDaoPlugin({
+                daoAddress: linkedAccountAddress,
+            });
             expect(
-                subDaoDisplayUtils.getPluginDisplayName({
+                linkedAccountDisplayUtils.getPluginDisplayName({
                     dao,
                     plugin,
                     groupLabel,
@@ -119,7 +135,7 @@ describe('subDaoDisplayUtils', () => {
                 name: undefined,
             });
             expect(
-                subDaoDisplayUtils.getPluginDisplayName({
+                linkedAccountDisplayUtils.getPluginDisplayName({
                     dao,
                     plugin,
                     groupLabel,

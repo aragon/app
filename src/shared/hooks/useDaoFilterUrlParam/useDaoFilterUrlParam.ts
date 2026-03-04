@@ -17,7 +17,7 @@ export interface IDaoFilterOption {
      */
     label: string;
     /**
-     * The DAO ID to query (parent or SubDAO ID).
+     * The DAO ID to query (parent or linked account ID).
      * Undefined for "All" option.
      */
     daoId?: string;
@@ -42,7 +42,7 @@ export interface IUseDaoFilterUrlParamParams
      */
     daoId: string;
     /**
-     * Include "All" option when DAO has SubDAOs.
+     * Include "All" option when DAO has linked accounts.
      */
     includeAllOption?: boolean;
 }
@@ -77,7 +77,7 @@ export const useDaoFilterUrlParam = (
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { isEnabled } = useFeatureFlags();
-    const isSubDaoEnabled = isEnabled('subDao');
+    const isLinkedAccountEnabled = isEnabled('linkedAccount');
 
     const options = useMemo<IDaoFilterOption[] | undefined>(() => {
         if (!dao) {
@@ -85,10 +85,11 @@ export const useDaoFilterUrlParam = (
         }
 
         const result: IDaoFilterOption[] = [];
-        const hasSubDaos = isSubDaoEnabled && (dao.subDaos?.length ?? 0) > 0;
+        const hasLinkedAccounts =
+            isLinkedAccountEnabled && (dao.linkedAccounts?.length ?? 0) > 0;
 
-        // Add "All" option if requested and has SubDAOs
-        if (includeAllOption && hasSubDaos) {
+        // Add "All" option if requested and has linked accounts
+        if (includeAllOption && hasLinkedAccounts) {
             result.push({
                 id: 'all',
                 label: '', // Will be set by consumer with translation
@@ -101,22 +102,22 @@ export const useDaoFilterUrlParam = (
         // Add parent DAO
         result.push({
             id: dao.id,
-            label: isSubDaoEnabled
+            label: isLinkedAccountEnabled
                 ? dao.name
                 : t('app.finance.financeDetailsList.title'),
             daoId: dao.id,
             isAll: false,
             isParent: true,
-            onlyParent: hasSubDaos ? true : undefined,
+            onlyParent: hasLinkedAccounts ? true : undefined,
         });
 
-        // Add SubDAOs if feature enabled
-        if (isSubDaoEnabled && dao.subDaos) {
-            dao.subDaos.forEach((subDao) => {
+        // Add linked accounts if feature enabled
+        if (isLinkedAccountEnabled && dao.linkedAccounts) {
+            dao.linkedAccounts.forEach((linkedAccount) => {
                 result.push({
-                    id: subDao.id,
-                    label: subDao.name,
-                    daoId: subDao.id,
+                    id: linkedAccount.id,
+                    label: linkedAccount.name,
+                    daoId: linkedAccount.id,
                     isAll: false,
                     isParent: false,
                 });
@@ -124,7 +125,7 @@ export const useDaoFilterUrlParam = (
         }
 
         return result;
-    }, [dao, isSubDaoEnabled, includeAllOption, t]);
+    }, [dao, isLinkedAccountEnabled, includeAllOption, t]);
 
     const fallbackValue = fallbackValueProp ?? options?.[0]?.id;
     const validValues = options?.map((option) => option.id);

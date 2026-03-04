@@ -39,7 +39,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (
 
     const allAssetsSelected = activeOption?.isAll ?? false;
     const selectedDaoId = activeOption?.daoId ?? id;
-    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
+    const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
 
     // Fetch assets for "All" view
     const { data: allAssetsMetadata } = useAssetList(
@@ -61,7 +61,7 @@ export const DaoAssetsPageClient: React.FC<IDaoAssetsPageClientProps> = (
                 onlyParent: activeOption?.onlyParent,
             },
         },
-        { enabled: !(allAssetsSelected && hasSubDaos) },
+        { enabled: !(allAssetsSelected && hasLinkedAccounts) },
     );
 
     if (dao == null) {

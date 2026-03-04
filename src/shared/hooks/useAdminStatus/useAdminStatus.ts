@@ -18,7 +18,7 @@ export interface IUseAdminStatusParams {
 /**
  * Hook to check if the user is an admin member of the DAO.
  *
- * Note: This will not search any subDAOs of the DAO. It will only check admin members of the DAO specified directly.
+ * Note: This will not search any linked accounts of the DAO. It will only check admin members of the DAO specified directly.
  */
 export const useAdminStatus = (params: IUseAdminStatusParams) => {
     const { daoId, network } = params;
@@ -28,7 +28,7 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     const adminPlugin = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.ADMIN,
-        includeSubDaos: false,
+        includeLinkedAccounts: false,
     })?.[0]?.meta;
 
     const memberExistsParams = {

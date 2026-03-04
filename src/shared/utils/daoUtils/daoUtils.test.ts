@@ -8,7 +8,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
     generateDaoPlugin,
-    generateSubDao,
+    generateLinkedAccount,
 } from '@/shared/testUtils';
 import { type IPluginInfo, PluginType } from '@/shared/types';
 import { ipfsUtils } from '../ipfsUtils';
@@ -336,9 +336,11 @@ describe('dao utils', () => {
             ).toEqual([plugins[0], plugins[1]]);
         });
 
-        it('excludes subDAO plugins when includeSubDaos is false', () => {
-            const subDaoAddress = '0xSubDaoAddress';
-            const subDao = generateSubDao({ address: subDaoAddress });
+        it('excludes linked account plugins when includeLinkedAccounts is false', () => {
+            const linkedAccountAddress = '0xLinkedAccountAddress';
+            const linkedAccount = generateLinkedAccount({
+                address: linkedAccountAddress,
+            });
             const plugins = [
                 generateDaoPlugin({
                     address: '0x1',
@@ -347,22 +349,27 @@ describe('dao utils', () => {
                 generateDaoPlugin({
                     address: '0x2',
                     interfaceType: PluginInterfaceType.MULTISIG,
-                    daoAddress: subDaoAddress,
+                    daoAddress: linkedAccountAddress,
                 }),
                 generateDaoPlugin({
                     address: '0x3',
                     interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 }),
             ];
-            const dao = generateDao({ plugins, subDaos: [subDao] });
+            const dao = generateDao({
+                plugins,
+                linkedAccounts: [linkedAccount],
+            });
             expect(
-                daoUtils.getDaoPlugins(dao, { includeSubDaos: false }),
+                daoUtils.getDaoPlugins(dao, { includeLinkedAccounts: false }),
             ).toEqual([plugins[0], plugins[2]]);
         });
 
-        it('includes subDAO plugins when includeSubDaos is true', () => {
-            const subDaoAddress = '0xSubDaoAddress';
-            const subDao = generateSubDao({ address: subDaoAddress });
+        it('includes linked account plugins when includeLinkedAccounts is true', () => {
+            const linkedAccountAddress = '0xLinkedAccountAddress';
+            const linkedAccount = generateLinkedAccount({
+                address: linkedAccountAddress,
+            });
             const plugins = [
                 generateDaoPlugin({
                     address: '0x1',
@@ -371,16 +378,19 @@ describe('dao utils', () => {
                 generateDaoPlugin({
                     address: '0x2',
                     interfaceType: PluginInterfaceType.MULTISIG,
-                    daoAddress: subDaoAddress,
+                    daoAddress: linkedAccountAddress,
                 }),
                 generateDaoPlugin({
                     address: '0x3',
                     interfaceType: PluginInterfaceType.TOKEN_VOTING,
                 }),
             ];
-            const dao = generateDao({ plugins, subDaos: [subDao] });
+            const dao = generateDao({
+                plugins,
+                linkedAccounts: [linkedAccount],
+            });
             expect(
-                daoUtils.getDaoPlugins(dao, { includeSubDaos: true }),
+                daoUtils.getDaoPlugins(dao, { includeLinkedAccounts: true }),
             ).toEqual(plugins);
         });
 

@@ -28,7 +28,7 @@ export interface ITransferAssetFormProps
      */
     network: Network;
     /**
-     * When true, returns only the parent DAO's assets (excludes SubDAOs).
+     * When true, returns only the parent DAO's assets (excludes linked accounts).
      * Used when transferring from parent DAO to show only parent's assets.
      */
     onlyParentAssets?: boolean;

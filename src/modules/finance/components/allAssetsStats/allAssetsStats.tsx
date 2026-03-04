@@ -20,7 +20,7 @@ export interface IAllAssetsStatsProps {
      */
     totalValueUsd?: string | number;
     /**
-     * Total amount of assets across DAO and SubDAOs.
+     * Total amount of assets across DAO and linked accounts.
      */
     totalAssets?: number;
     /**

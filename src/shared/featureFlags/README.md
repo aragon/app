@@ -24,7 +24,7 @@ Local override (cookie) > CMS override > Environment-specific (code) > Default (
 import { featureFlags } from '@/shared/featureFlags';
 
 // Check if a feature is enabled
-const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
+const isLinkedAccountEnabled = await featureFlags.isEnabled('linkedAccount');
 
 // Get all flags snapshot
 const snapshot = await featureFlags.getSnapshot();
@@ -38,8 +38,8 @@ import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 function MyComponent() {
   const { isEnabled } = useFeatureFlags();
 
-  if (isEnabled('subDao')) {
-    return <SubDaoFeature />;
+  if (isEnabled('linkedAccount')) {
+    return <LinkedAccountFeature />;
   }
 
   return null;
@@ -74,7 +74,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
 Update `FeatureFlagKey` in `featureFlags.api.ts`:
 
 ```typescript
-export type FeatureFlagKey = 'debugPanel' | 'subDao' | 'myNewFeature';
+export type FeatureFlagKey = 'debugPanel' | 'linkedAccount' | 'myNewFeature';
 ```
 
 ### 3. (Optional) Add CMS override
@@ -109,7 +109,7 @@ The CMS file is located at:
 
 ```json
 {
-    "subDao": true
+    "linkedAccount": true
 }
 ```
 
@@ -117,7 +117,7 @@ The CMS file is located at:
 
 ```json
 {
-    "subDao": {
+    "linkedAccount": {
         "development": true,
         "local": true,
         "preview": false,
@@ -132,7 +132,7 @@ The CMS file is located at:
 ```json
 {
     "debugPanel": true,
-    "subDao": {
+    "linkedAccount": {
         "local": true,
         "preview": false,
         "production": false
@@ -159,13 +159,13 @@ The cookie name is: `aragon.featureFlags.overrides`
 Example cookie value:
 
 ```
-aragon.featureFlags.overrides=%7B%22subDao%22%3Atrue%7D
+aragon.featureFlags.overrides=%7B%22linkedAccount%22%3Atrue%7D
 ```
 
 Which decodes to:
 
 ```json
-{ "subDao": true }
+{ "linkedAccount": true }
 ```
 
 ### Using the Debug Panel
@@ -260,7 +260,7 @@ function Dashboard() {
   return (
     <div>
       <MainContent />
-      {isEnabled('subDao') && <SubDaoSection />}
+      {isEnabled('linkedAccount') && <LinkedAccountSection />}
     </div>
   );
 }
@@ -272,9 +272,9 @@ function Dashboard() {
 import { featureFlags } from '@/shared/featureFlags';
 
 export async function getServerSideProps() {
-    const isSubDaoEnabled = await featureFlags.isEnabled('subDao');
+    const isLinkedAccountEnabled = await featureFlags.isEnabled('linkedAccount');
 
-    if (!isSubDaoEnabled) {
+    if (!isLinkedAccountEnabled) {
         return { notFound: true };
     }
 

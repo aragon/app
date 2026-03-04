@@ -5,7 +5,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoTargetIndicatorProps {
     /**
-     * The root DAO used to determine if there are subDAOs.
+     * The root DAO used to determine if there are linked accounts.
      */
     dao?: IDao;
     /**
@@ -29,7 +29,7 @@ export interface IDaoTargetIndicatorProps {
 
 /**
  * Resolves the target DAO address from either explicit address or plugin.
- * If plugin has daoAddress, it's installed on a subDAO; otherwise it's on main DAO.
+ * If plugin has daoAddress, it's installed on a linked account; otherwise it's on main DAO.
  */
 const resolveTargetAddress = (
     targetDaoAddress?: string,
@@ -44,7 +44,7 @@ const resolveTargetAddress = (
 
 /**
  * Displays a target DAO indicator (avatar + name) for a plugin or policy.
- * Only renders when there are multiple DAOs/subDAOs.
+ * Only renders when there are multiple DAOs/linked accounts.
  */
 const sizeConfig = {
     sm: 'text-sm',
@@ -56,9 +56,9 @@ export const DaoTargetIndicator: React.FC<IDaoTargetIndicatorProps> = (
 ) => {
     const { dao, plugin, targetDaoAddress, size } = props;
 
-    // Only show when there are subDAOs
-    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
-    if (!hasSubDaos || dao == null) {
+    // Only show when there are linked accounts
+    const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
+    if (!hasLinkedAccounts || dao == null) {
         return null;
     }
 

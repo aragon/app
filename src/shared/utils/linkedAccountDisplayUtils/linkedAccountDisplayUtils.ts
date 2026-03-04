@@ -1,7 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 
-class SubDaoDisplayUtils {
+class LinkedAccountDisplayUtils {
     getPluginDaoAddress(plugin?: IDaoPlugin): string {
         return (plugin?.daoAddress ?? plugin?.address ?? '').toLowerCase();
     }
@@ -33,12 +33,13 @@ class SubDaoDisplayUtils {
         return addressUtils.isAddressEqual(pluginDaoAddress, daoAddress);
     }
 
-    getMatchingSubDao(params: { dao?: IDao; plugin?: IDaoPlugin }) {
+    getMatchingLinkedAccount(params: { dao?: IDao; plugin?: IDaoPlugin }) {
         const { dao, plugin } = params;
         const targetAddress = this.getPluginDaoAddress(plugin);
 
-        return dao?.subDaos?.find(
-            (subDao) => subDao.address.toLowerCase() === targetAddress,
+        return dao?.linkedAccounts?.find(
+            (linkedAccount) =>
+                linkedAccount.address.toLowerCase() === targetAddress,
         );
     }
 
@@ -63,10 +64,13 @@ class SubDaoDisplayUtils {
             return dao.name;
         }
 
-        // Try matching SubDAO name, then plugin name, then fallback/group label.
-        const matchingSubDaoName = this.getMatchingSubDaoName({ dao, plugin });
-        if (matchingSubDaoName) {
-            return matchingSubDaoName;
+        // Try matching linked account name, then plugin name, then fallback/group label.
+        const matchingLinkedAccountName = this.getMatchingLinkedAccountName({
+            dao,
+            plugin,
+        });
+        if (matchingLinkedAccountName) {
+            return matchingLinkedAccountName;
         }
 
         return pluginName ?? safeFallback ?? groupLabel;
@@ -76,12 +80,12 @@ class SubDaoDisplayUtils {
         return params.plugin == null;
     }
 
-    private getMatchingSubDaoName(params: {
+    private getMatchingLinkedAccountName(params: {
         dao?: IDao;
         plugin?: IDaoPlugin;
     }): string | undefined {
-        return this.getMatchingSubDao(params)?.name ?? undefined;
+        return this.getMatchingLinkedAccount(params)?.name ?? undefined;
     }
 }
 
-export const subDaoDisplayUtils = new SubDaoDisplayUtils();
+export const linkedAccountDisplayUtils = new LinkedAccountDisplayUtils();

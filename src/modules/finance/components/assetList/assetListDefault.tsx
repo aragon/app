@@ -25,7 +25,7 @@ export interface IAssetListDefaultProps<
      */
     initialParams: IGetAssetListParams;
     /**
-     * DAO plugin (SubDAO) to display assets for.
+     * DAO plugin (linked account) to display assets for.
      */
     plugin?: IDaoPlugin<TSettings>;
     /**

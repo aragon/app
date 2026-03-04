@@ -27,7 +27,7 @@ export interface IAssetListContainerProps {
     children?: ReactNode;
 }
 
-export const assetListFilterParam = 'subdao';
+export const assetListFilterParam = 'linkedaccount';
 
 export const AssetListContainer: React.FC<IAssetListContainerProps> = (
     props,

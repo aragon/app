@@ -5,55 +5,55 @@ import type { Network } from './enum';
 import type { IResource } from './resource';
 
 /**
- * Summary of a SubDAO (child DAO) without plugins.
+ * Summary of a linked account (child DAO) without plugins.
  */
-export interface ISubDaoSummary {
+export interface ILinkedAccountSummary {
     /**
-     * Identifier of the SubDAO.
+     * Identifier of the linked account.
      */
     id: string;
     /**
-     * Address of the SubDAO.
+     * Address of the linked account.
      */
     address: string;
     /**
-     * Network of the SubDAO.
+     * Network of the linked account.
      */
     network: Network;
     /**
-     * Name of the SubDAO.
+     * Name of the linked account.
      */
     name: string;
     /**
-     * Description of the SubDAO.
+     * Description of the linked account.
      */
     description: string;
     /**
-     * ENS name of the SubDAO (e.g. `my-dao.dao.eth`).
+     * ENS name of the linked account (e.g. `my-dao.dao.eth`).
      */
     ens: string | null;
     /**
-     * ENS subdomain of the SubDAO.
+     * ENS subdomain of the linked account.
      */
     subdomain: string | null;
     /**
-     * Avatar of the SubDAO or null when SubDAO has no avatar.
+     * Avatar of the linked account or null when linked account has no avatar.
      */
     avatar: string | null;
     /**
-     * Metrics of the SubDAO.
+     * Metrics of the linked account.
      */
     metrics: IDaoMetrics;
     /**
-     * Links of the SubDAO.
+     * Links of the linked account.
      */
     links: IResource[];
     /**
-     * SubDAO creation date by block timestamp (in seconds).
+     * Linked account creation date by block timestamp (in seconds).
      */
     blockTimestamp: number;
     /**
-     * Transaction hash of the SubDAO creation.
+     * Transaction hash of the linked account creation.
      */
     transactionHash: string;
 }
@@ -120,9 +120,9 @@ export interface IDao {
      */
     transactionHash: string;
     /**
-     * SubDAOs (child DAOs) of this DAO.
+     * Linked accounts (child DAOs) of this DAO.
      */
-    subDaos?: ISubDaoSummary[];
+    linkedAccounts?: ILinkedAccountSummary[];
     /**
      * Creator information of the DAO.
      */
