@@ -24,7 +24,7 @@ export interface ITransactionListDefaultProps<
      */
     initialParams: IGetTransactionListParams;
     /**
-     * DAO plugin (SubDAO) to display transactions for.
+     * DAO plugin (linked account) to display transactions for.
      */
     plugin?: IDaoPlugin<TSettings>;
     /**

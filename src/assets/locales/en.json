@@ -684,11 +684,7 @@
         },
         "sourceVault": {
           "helpText": "This is the source vault from which the assets will be routed. Only DAOs with ROOT permission are eligible.",
-          "label": "Source vault",
-          "tags": {
-            "mainDao": "MainDAO",
-            "subDao": "SubDAO"
-          }
+          "label": "Source vault"
         },
         "submit": "Next",
         "title": "Create strategy"
@@ -1251,8 +1247,8 @@
       },
       "assetListStats": {
         "daos": "DAOs",
-        "note": "Aggregate treasury data across all SubDAOs coming soon.",
-        "subDaos": "SubDAOs",
+        "note": "Aggregate treasury data across all Linked Accounts coming soon.",
+        "linkedAccounts": "Linked Accounts",
         "tokens": "Unique tokens",
         "totalValueUsd": "Total value (USD)"
       },
@@ -1294,7 +1290,7 @@
         "vaultAddress": "Vault address",
         "vaultEns": "Vault ENS"
       },
-      "subDaoInfo": {
+      "linkedAccountInfo": {
         "chain": "Chain",
         "description": "Description",
         "pluginAddress": "Plugin address"
@@ -1314,10 +1310,10 @@
       "transactionListStats": {
         "daos": "DAOs",
         "lastActivity": "Last activity",
-        "subDaos": "SubDAOs",
+        "linkedAccounts": "Linked Accounts",
         "totalTransactions": "Total transactions"
       },
-      "transactionSubDaoInfo": {
+      "transactionLinkedAccountInfo": {
         "address": "Address",
         "chain": "Chain",
         "description": "Description",
@@ -2921,7 +2917,7 @@
         "main": {
           "automationAction": "Policy",
           "automationInfoTitle": "Automation",
-          "daoAction": "SubDAO",
+          "daoAction": "Linked Account",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
           "settingsInfoTitle": "Account",

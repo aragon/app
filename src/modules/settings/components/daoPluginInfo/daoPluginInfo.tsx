@@ -29,11 +29,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
 
     const processLink = daoUtils.getDaoUrl(dao, `settings/${plugin.slug}`);
 
-    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
+    const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
 
     const targetAddress = plugin.daoAddress ?? dao?.address;
     const targetName =
-        hasSubDaos && targetAddress != null && dao != null
+        hasLinkedAccounts && targetAddress != null && dao != null
             ? daoTargetUtils.findTargetDao({ dao, targetAddress })?.name
             : undefined;
 
@@ -59,7 +59,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 )}
 
                 {/* Target */}
-                {hasSubDaos && targetAddress != null && (
+                {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
                         copyValue={targetAddress}
                         description={targetName}

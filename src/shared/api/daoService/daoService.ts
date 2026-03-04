@@ -6,6 +6,10 @@ import {
     type IPaginatedResponse,
 } from '../aragonBackendService';
 import { pluginsService } from '../pluginsService';
+import {
+    type ICompatDaoResponse,
+    normalizeDaoResponse,
+} from './apiCompatAdapter';
 import type {
     IGetDaoByEnsParams,
     IGetDaoParams,
@@ -21,6 +25,9 @@ import type { IDao, IDaoPermission, IDaoPolicy, Network } from './domain';
 type IDaoApiResponse = Omit<IDao, 'plugins'> & {
     plugins?: IDao['plugins'];
 };
+
+type IDaoApiCompatResponse = Omit<IDaoApiResponse, 'linkedAccounts'> &
+    ICompatDaoResponse;
 
 class DaoService extends AragonBackendService {
     // Base paths without version prefix
@@ -106,21 +113,21 @@ class DaoService extends AragonBackendService {
     };
 
     getDao = async (params: IGetDaoParams): Promise<IDao> => {
-        const result = await this.request<IDaoApiResponse>(
+        const result = await this.request<IDaoApiCompatResponse>(
             this.urls.dao,
             params,
         );
 
-        return this.withPlugins(result);
+        return this.withPlugins(normalizeDaoResponse(result));
     };
 
     getDaoByEns = async (params: IGetDaoByEnsParams): Promise<IDao> => {
-        const result = await this.request<IDaoApiResponse>(
+        const result = await this.request<IDaoApiCompatResponse>(
             this.urls.daoByEns,
             params,
         );
 
-        return this.withPlugins(result);
+        return this.withPlugins(normalizeDaoResponse(result));
     };
 
     getDaoPermissions = async (

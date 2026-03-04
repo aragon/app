@@ -1,5 +1,5 @@
 export type { IAddressInfo } from './addressInfo';
-export type { IDao, ISubDaoSummary } from './dao';
+export type { IDao, ILinkedAccountSummary } from './dao';
 export type { IDaoMetrics } from './daoMetrics';
 export type { IDaoPermission } from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';

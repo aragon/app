@@ -9,14 +9,14 @@
  * 1. **Simple format** - Same value for all environments:
  *    ```json
  *    {
- *      "subDao": true
+ *      "linkedAccount": true
  *    }
  *    ```
  *
  * 2. **Environment-specific format** - Different values per environment:
  *    ```json
  *    {
- *      "subDao": {
+ *      "linkedAccount": {
  *        "local": true,
  *        "preview": false,
  *        "development": true,
@@ -30,7 +30,7 @@
  *    ```json
  *    {
  *      "debugPanel": true,
- *      "subDao": {
+ *      "linkedAccount": {
  *        "local": true,
  *        "preview": false,
  *        "production": false

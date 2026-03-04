@@ -42,9 +42,9 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'subDao',
-        name: 'SubDAO support',
-        description: 'Enables SubDAO-related features and navigation.',
+        key: 'linkedAccount',
+        name: 'Linked Account support',
+        description: 'Enables Linked Account-related features and navigation.',
         defaultValue: false,
         environments: {
             local: true,

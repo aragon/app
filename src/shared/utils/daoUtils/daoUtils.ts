@@ -3,7 +3,7 @@ import {
     daoService,
     type IDao,
     type IDaoPlugin,
-    type ISubDaoSummary,
+    type ILinkedAccountSummary,
     type Network,
     type PluginInterfaceType,
 } from '@/shared/api/daoService';
@@ -31,10 +31,10 @@ export interface IGetDaoPluginsParams {
      */
     includeSubPlugins?: boolean;
     /**
-     * Include plugins that belong to the subDAOs in the result.
+     * Include plugins that belong to the linked accounts in the result.
      * @default true
      */
-    includeSubDaos?: boolean;
+    includeLinkedAccounts?: boolean;
     /**
      * Only returns the plugin with the specified interfaceType when set.
      */
@@ -103,7 +103,7 @@ class DaoUtils {
             type,
             pluginAddress,
             includeSubPlugins = false,
-            includeSubDaos = true,
+            includeLinkedAccounts = true,
             interfaceType,
             hasExecute,
             slug,
@@ -114,7 +114,11 @@ class DaoUtils {
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
                 this.filterBySubPlugin(plugin, includeSubPlugins) &&
-                this.filterBySubDaos(dao?.subDaos, plugin, includeSubDaos) &&
+                this.filterByLinkedAccounts(
+                    dao?.linkedAccounts,
+                    plugin,
+                    includeLinkedAccounts,
+                ) &&
                 this.filterByInterfaceType(plugin, interfaceType) &&
                 this.filterByHasExecute(plugin, hasExecute) &&
                 this.filterBySlug(plugin, slug),
@@ -214,9 +218,9 @@ class DaoUtils {
     };
 
     /**
-     * Checks whether a plugin belongs to a subDAO relative to the given DAO context.
+     * Checks whether a plugin belongs to a linked account relative to the given DAO context.
      */
-    isSubDaoPlugin = (
+    isLinkedAccountPlugin = (
         plugin: Pick<IDaoPlugin, 'daoAddress'>,
         dao?: IDao,
     ): boolean =>
@@ -226,7 +230,7 @@ class DaoUtils {
 
     /**
      * Returns the `daoId` that should be used for API calls targeting this plugin.
-     * For subDAO plugins returns `{network}-{plugin.daoAddress}` so the backend
+     * For linked account plugins returns `{network}-{plugin.daoAddress}` so the backend
      * queries the correct DAO context; otherwise returns the original `daoId`.
      */
     resolvePluginDaoId = (
@@ -234,7 +238,7 @@ class DaoUtils {
         plugin: Pick<IDaoPlugin, 'daoAddress'>,
         dao?: IDao,
     ): string => {
-        if (!this.isSubDaoPlugin(plugin, dao)) {
+        if (!this.isLinkedAccountPlugin(plugin, dao)) {
             return daoId;
         }
 
@@ -271,15 +275,15 @@ class DaoUtils {
         includeSubPlugins: boolean,
     ) => includeSubPlugins || !plugin.isSubPlugin;
 
-    private filterBySubDaos = (
-        subDaos: ISubDaoSummary[] | undefined,
+    private filterByLinkedAccounts = (
+        linkedAccounts: ILinkedAccountSummary[] | undefined,
         plugin: IDaoPlugin,
-        includeSubDaos: boolean,
+        includeLinkedAccounts: boolean,
     ) =>
-        includeSubDaos ||
-        !subDaos?.some(
-            (subDao) =>
-                subDao.address.toLowerCase() ===
+        includeLinkedAccounts ||
+        !linkedAccounts?.some(
+            (linkedAccount) =>
+                linkedAccount.address.toLowerCase() ===
                 plugin.daoAddress?.toLowerCase(),
         );
 

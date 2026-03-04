@@ -40,8 +40,8 @@ describe('<AssetList.Container /> component', () => {
             enabled: false,
         },
         {
-            key: 'subDao',
-            name: 'SubDAO support',
+            key: 'linkedAccount',
+            name: 'Linked Account support',
             description: '',
             enabled: true,
         },
@@ -52,7 +52,7 @@ describe('<AssetList.Container /> component', () => {
             data: generateDao({
                 id: 'test-dao',
                 address: '0x123',
-                subDaos: [],
+                linkedAccounts: [],
             }),
             isLoading: false,
             error: null,
@@ -138,16 +138,16 @@ describe('<AssetList.Container /> component', () => {
                     isParent: false,
                 },
                 {
-                    id: 'subdao-1',
-                    label: 'SubDAO 1',
-                    daoId: 'subdao-1',
+                    id: 'linked-account-1',
+                    label: 'Linked Account 1',
+                    daoId: 'linked-account-1',
                     isAll: false,
                     isParent: false,
                 },
                 {
-                    id: 'subdao-2',
-                    label: 'SubDAO 2',
-                    daoId: 'subdao-2',
+                    id: 'linked-account-2',
+                    label: 'Linked Account 2',
+                    daoId: 'linked-account-2',
                     isAll: false,
                     isParent: false,
                 },
@@ -156,7 +156,7 @@ describe('<AssetList.Container /> component', () => {
 
         render(createTestComponent());
 
-        // Should have 3 plugins: group filter + 2 unique SubDAOs (plugin2 is deduplicated)
+        // Should have 3 plugins: group filter + 2 unique linked accounts (plugin2 is deduplicated)
         expect(screen.getByText(/Plugins: 3/)).toBeInTheDocument();
     });
 
@@ -187,7 +187,7 @@ describe('<AssetList.Container /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('passes correct query params for group tab (all SubDAOs)', () => {
+    it('passes correct query params for group tab (all linked accounts)', () => {
         render(createTestComponent());
         // Group tab should use the parent daoId without onlyParent flag
         expect(
@@ -195,7 +195,7 @@ describe('<AssetList.Container /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('passes correct query params for individual SubDAO tabs', () => {
+    it('passes correct query params for individual linked account tabs', () => {
         useDaoFilterUrlParamSpy.mockReturnValue({
             activeOption: {
                 id: 'all',
@@ -214,9 +214,9 @@ describe('<AssetList.Container /> component', () => {
                     isParent: false,
                 },
                 {
-                    id: 'subdao-1',
-                    label: 'SubDAO 1',
-                    daoId: 'subdao-1',
+                    id: 'linked-account-1',
+                    label: 'Linked Account 1',
+                    daoId: 'linked-account-1',
                     isAll: false,
                     isParent: false,
                 },

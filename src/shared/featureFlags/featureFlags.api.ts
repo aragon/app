@@ -10,7 +10,7 @@ export type FeatureFlagEnvironment = (typeof FEATURE_FLAG_ENVIRONMENTS)[number];
 
 export type FeatureFlagKey =
     | 'debugPanel'
-    | 'subDao'
+    | 'linkedAccount'
     | 'capitalFlowAutomation'
     | 'governanceDesigner'
     | 'osxUpdates'
@@ -25,9 +25,9 @@ export type FeatureFlagKey =
  * @example
  * // Example feature flag definition
  * {
- *   key: 'subDao',
- *   name: 'SubDAO support',
- *   description: 'Enables SubDAO-related features and navigation.',
+ *   key: 'linkedAccount',
+ *   name: 'Linked Account support',
+ *   description: 'Enables Linked Account-related features and navigation.',
  *   defaultValue: false,
  *   environments: {
  *     local: true,

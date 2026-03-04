@@ -54,7 +54,7 @@ describe('GithubCmsFeatureFlagsProvider', () => {
         mockedCmsService.getFeatureFlags.mockRejectedValueOnce(
             new Error('network error'),
         );
-        parseOverridesMock.mockReturnValueOnce({ subDao: true });
+        parseOverridesMock.mockReturnValueOnce({ linkedAccount: true });
 
         const provider = new GithubCmsFeatureFlagsProvider(
             'local',
@@ -63,6 +63,6 @@ describe('GithubCmsFeatureFlagsProvider', () => {
 
         const result = await provider.loadOverrides();
 
-        expect(result).toEqual<FeatureFlagOverrides>({ subDao: true });
+        expect(result).toEqual<FeatureFlagOverrides>({ linkedAccount: true });
     });
 });

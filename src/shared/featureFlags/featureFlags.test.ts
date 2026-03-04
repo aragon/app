@@ -61,9 +61,9 @@ const defaultDefinitions: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'subDao',
-        name: 'SubDAO support',
-        description: 'Enables SubDAO features.',
+        key: 'linkedAccount',
+        name: 'Linked Account support',
+        description: 'Enables Linked Account features.',
         defaultValue: false,
         environments: {
             local: false,
@@ -75,15 +75,15 @@ const defaultDefinitions: FeatureFlagDefinition[] = [
 describe('FeatureFlags service', () => {
     it('uses overrides when they are provided by the provider', async () => {
         const { service, provider } = createService({
-            overrides: { debugPanel: true, subDao: false },
+            overrides: { debugPanel: true, linkedAccount: false },
         });
 
         const isDebugEnabled = await service.isEnabled('debugPanel');
-        const isSubDaoEnabled = await service.isEnabled('subDao');
+        const isLinkedAccountEnabled = await service.isEnabled('linkedAccount');
 
         expect(provider.loadOverrides).toHaveBeenCalled();
         expect(isDebugEnabled).toBe(true);
-        expect(isSubDaoEnabled).toBe(false);
+        expect(isLinkedAccountEnabled).toBe(false);
     });
 
     it('falls back to static environment/default values when no overrides are present', async () => {
@@ -93,10 +93,12 @@ describe('FeatureFlags service', () => {
 
         const snapshot = await service.getSnapshot();
         const debugPanel = snapshot.find((flag) => flag.key === 'debugPanel');
-        const subDao = snapshot.find((flag) => flag.key === 'subDao');
+        const linkedAccount = snapshot.find(
+            (flag) => flag.key === 'linkedAccount',
+        );
 
         expect(debugPanel?.enabled).toBe(true); // local env override
-        expect(subDao?.enabled).toBe(false); // all false in config
+        expect(linkedAccount?.enabled).toBe(false); // all false in config
     });
 
     it('returns false for unknown feature flag keys', async () => {

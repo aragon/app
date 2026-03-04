@@ -31,12 +31,14 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (
             : t('app.finance.daoAssetsPage.aside.summary')
         : activeOption.label;
 
-    // Get selected DAO (parent or SubDAO)
+    // Get selected DAO (parent or linked account)
     const selectedDaoId = activeOption.daoId ?? dao.id;
-    const matchingSubDao = dao.subDaos?.find(
-        (subDao) => subDao.id === selectedDaoId,
+    const matchingLinkedAccount = dao.linkedAccounts?.find(
+        (linkedAccount) => linkedAccount.id === selectedDaoId,
     );
-    const selectedDao = activeOption.isParent ? dao : (matchingSubDao ?? dao);
+    const selectedDao = activeOption.isParent
+        ? dao
+        : (matchingLinkedAccount ?? dao);
 
     // Build stats for specific DAO view
     const specificStats = (() => {
@@ -45,7 +47,7 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (
                 return [
                     {
                         label: t(
-                            'app.finance.transactionSubDaoInfo.transactions',
+                            'app.finance.transactionLinkedAccountInfo.transactions',
                         ),
                         value: '-',
                     },
@@ -77,7 +79,9 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (
 
             return [
                 {
-                    label: t('app.finance.transactionSubDaoInfo.transactions'),
+                    label: t(
+                        'app.finance.transactionLinkedAccountInfo.transactions',
+                    ),
                     value: formattedTransactionsCount,
                 },
                 {
@@ -126,9 +130,9 @@ export const DaoFilterAsideCard: React.FC<IDaoFilterAsideCardProps> = (
                 <DaoInfoAside
                     dao={dao}
                     daoId={selectedDaoId}
+                    linkedAccount={matchingLinkedAccount}
                     network={dao.network}
                     stats={specificStats}
-                    subDao={matchingSubDao}
                 />
             )}
         </Page.AsideCard>

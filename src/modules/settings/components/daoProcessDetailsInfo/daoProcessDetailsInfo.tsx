@@ -77,11 +77,11 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
         settings;
     const settingsBeforeTarget = [...customSettings, pluginDefinition];
 
-    const hasSubDaos = (dao.subDaos?.length ?? 0) > 0;
+    const hasLinkedAccounts = (dao.linkedAccounts?.length ?? 0) > 0;
 
     const targetAddress = plugin.daoAddress ?? dao.address;
     const targetName =
-        hasSubDaos && targetAddress != null
+        hasLinkedAccounts && targetAddress != null
             ? daoTargetUtils.findTargetDao({ dao, targetAddress })?.name
             : undefined;
 
@@ -122,7 +122,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                 )}
 
                 {/* Target */}
-                {hasSubDaos && targetAddress != null && (
+                {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
                         copyValue={targetAddress}
                         description={targetName}

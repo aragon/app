@@ -66,7 +66,7 @@ class SimulationFlowVisualizationUtils {
             wallet: IconType.BLOCKCHAIN_WALLET,
             contract: IconType.BLOCKCHAIN_SMARTCONTRACT,
             dao: IconType.BLOCKCHAIN_BLOCKCHAIN,
-            subdao: IconType.BLOCKCHAIN_BLOCKCHAIN,
+            linkedaccount: IconType.BLOCKCHAIN_BLOCKCHAIN,
             burn: IconType.BURN_ASSETS,
         };
         return iconMap[role];

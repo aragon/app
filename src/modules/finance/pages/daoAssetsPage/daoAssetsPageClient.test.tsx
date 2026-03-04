@@ -6,8 +6,8 @@ import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import {
     generateDao,
+    generateLinkedAccount,
     generateReactQueryResultSuccess,
-    generateSubDao,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
 import {
@@ -45,8 +45,8 @@ describe('<DaoAssetsPageClient /> component', () => {
             enabled: false,
         },
         {
-            key: 'subDao',
-            name: 'SubDAO support',
+            key: 'linkedAccount',
+            name: 'Linked Account support',
             description: '',
             enabled: true,
         },
@@ -55,7 +55,7 @@ describe('<DaoAssetsPageClient /> component', () => {
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateDao({ subDaos: [] }),
+                data: generateDao({ linkedAccounts: [] }),
             }),
         );
         useDaoFilterUrlParamSpy.mockReturnValue({
@@ -127,7 +127,7 @@ describe('<DaoAssetsPageClient /> component', () => {
     it('renders AllAssetsStats when "All" tab is selected', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateDao({ subDaos: [] }),
+                data: generateDao({ linkedAccounts: [] }),
             }),
         );
         render(createTestComponent(), { wrapper: ReactQueryWrapper });
@@ -140,13 +140,15 @@ describe('<DaoAssetsPageClient /> component', () => {
         expect(screen.queryByTestId('dao-info-aside')).not.toBeInTheDocument();
     });
 
-    it('renders AllAssetsStats only when "All" tab is selected and DAO has SubDAOs', () => {
-        const subDaos = [
-            generateSubDao({ address: '0x123' }),
-            generateSubDao({ address: '0x456' }),
+    it('renders AllAssetsStats only when "All" tab is selected and DAO has linked accounts', () => {
+        const linkedAccounts = [
+            generateLinkedAccount({ address: '0x123' }),
+            generateLinkedAccount({ address: '0x456' }),
         ];
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }),
+            generateReactQueryResultSuccess({
+                data: generateDao({ linkedAccounts }),
+            }),
         );
         useDaoFilterUrlParamSpy.mockReturnValue({
             activeOption: {
@@ -174,16 +176,16 @@ describe('<DaoAssetsPageClient /> component', () => {
                     onlyParent: true,
                 },
                 {
-                    id: subDaos[0].id,
-                    label: subDaos[0].name,
-                    daoId: subDaos[0].id,
+                    id: linkedAccounts[0].id,
+                    label: linkedAccounts[0].name,
+                    daoId: linkedAccounts[0].id,
                     isAll: false,
                     isParent: false,
                 },
                 {
-                    id: subDaos[1].id,
-                    label: subDaos[1].name,
-                    daoId: subDaos[1].id,
+                    id: linkedAccounts[1].id,
+                    label: linkedAccounts[1].name,
+                    daoId: linkedAccounts[1].id,
                     isAll: false,
                     isParent: false,
                 },
@@ -201,18 +203,20 @@ describe('<DaoAssetsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('renders DaoInfoAside when a specific SubDAO tab is selected', () => {
-        const subDaos = [
-            generateSubDao({ address: '0x123' }),
-            generateSubDao({ address: '0x456' }),
+    it('renders DaoInfoAside when a specific linked account tab is selected', () => {
+        const linkedAccounts = [
+            generateLinkedAccount({ address: '0x123' }),
+            generateLinkedAccount({ address: '0x456' }),
         ];
         useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao({ subDaos }) }),
+            generateReactQueryResultSuccess({
+                data: generateDao({ linkedAccounts }),
+            }),
         );
         const selectedOption = {
-            id: subDaos[0].id,
-            label: subDaos[0].name,
-            daoId: subDaos[0].id,
+            id: linkedAccounts[0].id,
+            label: linkedAccounts[0].name,
+            daoId: linkedAccounts[0].id,
             isAll: false,
             isParent: false,
         };

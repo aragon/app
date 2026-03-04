@@ -6,8 +6,8 @@ import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import {
     generateDao,
+    generateLinkedAccount,
     generateReactQueryResultSuccess,
-    generateSubDao,
 } from '@/shared/testUtils';
 import {
     DaoTransactionsPageClient,
@@ -21,7 +21,7 @@ jest.mock('@/modules/finance/components/transactionList', () => ({
         )),
         Default: jest.fn(() => null),
     },
-    transactionListFilterParam: 'subdao',
+    transactionListFilterParam: 'linkedaccount',
 }));
 
 jest.mock('@/modules/finance/components/allAssetsStats', () => ({
@@ -29,7 +29,9 @@ jest.mock('@/modules/finance/components/allAssetsStats', () => ({
 }));
 
 jest.mock('@/modules/finance/components/daoInfoAside', () => ({
-    DaoInfoAside: jest.fn(() => <div data-testid="transaction-subdao-info" />),
+    DaoInfoAside: jest.fn(() => (
+        <div data-testid="transaction-linkedaccount-info" />
+    )),
 }));
 
 jest.mock(
@@ -59,8 +61,8 @@ describe('<DaoTransactionsPageClient /> component', () => {
             enabled: false,
         },
         {
-            key: 'subDao',
-            name: 'SubDAO support',
+            key: 'linkedAccount',
+            name: 'Linked Account support',
             description: '',
             enabled: true,
         },
@@ -161,21 +163,21 @@ describe('<DaoTransactionsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId('all-assets-stats')).toBeInTheDocument();
         expect(
-            screen.queryByTestId('transaction-subdao-info'),
+            screen.queryByTestId('transaction-linkedaccount-info'),
         ).not.toBeInTheDocument();
     });
 
-    it('renders SubDAO info when a specific SubDAO is selected', () => {
-        const subDao = generateSubDao({ address: '0xplug1' });
-        const dao = generateDao({ subDaos: [subDao] });
+    it('renders linked account info when a specific linked account is selected', () => {
+        const linkedAccount = generateLinkedAccount({ address: '0xplug1' });
+        const dao = generateDao({ linkedAccounts: [linkedAccount] });
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: dao }),
         );
 
         const option = {
-            id: subDao.id,
-            label: subDao.name,
-            daoId: subDao.id,
+            id: linkedAccount.id,
+            label: linkedAccount.name,
+            daoId: linkedAccount.id,
             isAll: false,
             isParent: false,
         };
@@ -200,7 +202,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
             screen.getByTestId('transaction-list-container'),
         ).toBeInTheDocument();
         expect(
-            screen.getByTestId('transaction-subdao-info'),
+            screen.getByTestId('transaction-linkedaccount-info'),
         ).toBeInTheDocument();
         expect(
             screen.queryByTestId('all-assets-stats'),
