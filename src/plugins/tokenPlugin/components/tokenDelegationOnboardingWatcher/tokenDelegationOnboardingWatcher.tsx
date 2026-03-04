@@ -48,41 +48,28 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         enabled: delegationPlugin != null && address != null,
     });
 
-    const hadDisconnectedRef = useRef(status === 'disconnected');
+    const hasFiredRef = useRef(false);
 
     useEffect(() => {
-        if (status === 'disconnected') {
-            hadDisconnectedRef.current = true;
+        if (status !== 'connected') {
+            hasFiredRef.current = false;
         }
     }, [status]);
 
     useEffect(() => {
-        open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
-            params: {
-                token: tokenAddress,
-                tokenSymbol,
-                daoId: dao.id,
-            },
-        });
+        if (status !== 'connected' || hasFiredRef.current) {
+            return;
+        }
 
-        if (!hadDisconnectedRef.current) {
-            return;
-        }
-        if (status !== 'connected') {
-            return;
-        }
         if (isLoading || !shouldTrigger) {
             return;
         }
-        if (
-            delegationPlugin == null ||
-            tokenAddress == null ||
-            tokenSymbol == null
-        ) {
+
+        if (tokenAddress == null || tokenSymbol == null) {
             return;
         }
 
-        hadDisconnectedRef.current = false;
+        hasFiredRef.current = true;
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
             params: {
                 token: tokenAddress,
@@ -94,7 +81,6 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         status,
         shouldTrigger,
         isLoading,
-        delegationPlugin,
         tokenAddress,
         tokenSymbol,
         dao.id,
