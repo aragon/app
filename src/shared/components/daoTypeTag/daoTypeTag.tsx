@@ -25,8 +25,8 @@ const daoTypeConfig: Record<
 };
 
 /**
- * Unified component for displaying Main DAO / linked account tags with consistent styling.
- * - Main DAO: primary variant (blue)
+ * Unified component for displaying primary account / linked account tags with consistent styling.
+ * - Primary account: primary variant (blue)
  * - linked account: neutral variant (gray)
  */
 export const DaoTypeTag: React.FC<IDaoTypeTagProps> = (props) => {

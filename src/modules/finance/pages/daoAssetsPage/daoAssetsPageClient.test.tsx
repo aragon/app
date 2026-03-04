@@ -46,7 +46,7 @@ describe('<DaoAssetsPageClient /> component', () => {
         },
         {
             key: 'linkedAccount',
-            name: 'Linked Account support',
+            name: 'Linked account support',
             description: '',
             enabled: true,
         },

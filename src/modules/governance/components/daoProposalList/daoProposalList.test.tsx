@@ -61,7 +61,7 @@ describe('<DaoProposalList /> component', () => {
     ): FeatureFlagSnapshot[] => [
         {
             key: 'linkedAccount',
-            name: 'Linked Account',
+            name: 'Linked account',
             description: 'Enables linked account support',
             enabled: isLinkedAccountEnabled,
         },

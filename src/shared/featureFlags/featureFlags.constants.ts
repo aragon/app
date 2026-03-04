@@ -43,8 +43,8 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     },
     {
         key: 'linkedAccount',
-        name: 'Linked Account support',
-        description: 'Enables Linked Account-related features and navigation.',
+        name: 'Linked account support',
+        description: 'Enables linked account-related features and navigation.',
         defaultValue: false,
         environments: {
             local: true,

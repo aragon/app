@@ -62,8 +62,8 @@ const defaultDefinitions: FeatureFlagDefinition[] = [
     },
     {
         key: 'linkedAccount',
-        name: 'Linked Account support',
-        description: 'Enables Linked Account features.',
+        name: 'Linked account support',
+        description: 'Enables linked account features.',
         defaultValue: false,
         environments: {
             local: false,

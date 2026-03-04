@@ -18,7 +18,7 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoHierarchyProps {
     /**
-     * Main DAO object.
+     * Primary account (main DAO) object.
      */
     dao: IDao;
     /**

@@ -64,7 +64,7 @@ class LinkedAccountDisplayUtils {
             return dao.name;
         }
 
-        // Try matching Linked Account name, then plugin name, then fallback/group label.
+        // Try matching linked account name, then plugin name, then fallback/group label.
         const matchingLinkedAccountName = this.getMatchingLinkedAccountName({
             dao,
             plugin,

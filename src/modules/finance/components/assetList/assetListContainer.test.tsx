@@ -41,7 +41,7 @@ describe('<AssetList.Container /> component', () => {
         },
         {
             key: 'linkedAccount',
-            name: 'Linked Account support',
+            name: 'Linked account support',
             description: '',
             enabled: true,
         },
@@ -139,14 +139,14 @@ describe('<AssetList.Container /> component', () => {
                 },
                 {
                     id: 'linked-account-1',
-                    label: 'Linked Account 1',
+                    label: 'Linked account 1',
                     daoId: 'linked-account-1',
                     isAll: false,
                     isParent: false,
                 },
                 {
                     id: 'linked-account-2',
-                    label: 'Linked Account 2',
+                    label: 'Linked account 2',
                     daoId: 'linked-account-2',
                     isAll: false,
                     isParent: false,
@@ -215,7 +215,7 @@ describe('<AssetList.Container /> component', () => {
                 },
                 {
                     id: 'linked-account-1',
-                    label: 'Linked Account 1',
+                    label: 'Linked account 1',
                     daoId: 'linked-account-1',
                     isAll: false,
                     isParent: false,

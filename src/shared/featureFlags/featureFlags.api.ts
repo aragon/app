@@ -26,8 +26,8 @@ export type FeatureFlagKey =
  * // Example feature flag definition
  * {
  *   key: 'linkedAccount',
- *   name: 'Linked Account support',
- *   description: 'Enables Linked Account-related features and navigation.',
+ *   name: 'Linked account support',
+ *   description: 'Enables linked account-related features and navigation.',
  *   defaultValue: false,
  *   environments: {
  *     local: true,
