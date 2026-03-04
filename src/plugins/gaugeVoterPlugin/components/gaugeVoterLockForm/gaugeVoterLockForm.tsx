@@ -16,6 +16,7 @@ import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useToke
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterLocksDialogParams } from '../../dialogs/gaugeVoterLocksDialog';
 import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoterLockUnlockDialog';
@@ -84,8 +85,10 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     );
     const locksCount = memberLocks?.pages[0]?.metadata.totalRecords ?? 0;
 
+    const isMounted = useIsMounted();
     const { result: isConnected, check: walletGuard } =
         useConnectedWalletGuard();
+    const effectiveIsConnected = isMounted && isConnected;
 
     const {
         allowance,
@@ -119,7 +122,8 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
     const needsApproval =
-        isConnected && (allowance == null || allowance < lockAmountWei);
+        effectiveIsConnected &&
+        (allowance == null || allowance < lockAmountWei);
 
     const handleFormSubmit = () => {
         if (needsApproval) {
@@ -229,9 +233,13 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                 <div className="flex flex-col gap-3">
                     <Button
                         disabled={disableSubmit}
-                        onClick={isConnected ? undefined : () => walletGuard()}
+                        onClick={
+                            effectiveIsConnected
+                                ? undefined
+                                : () => walletGuard()
+                        }
                         size="lg"
-                        type={isConnected ? 'submit' : undefined}
+                        type={effectiveIsConnected ? 'submit' : undefined}
                         variant="primary"
                     >
                         {t(
