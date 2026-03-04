@@ -3,7 +3,7 @@
 import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -35,7 +35,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<
 
     const plugin = useDaoPlugins({
         daoId: dao.id,
-        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+        pluginAddress: initialParams.queryParams.pluginAddress,
     })![0];
 
     const pluginName = daoUtils.getPluginName(plugin.meta);

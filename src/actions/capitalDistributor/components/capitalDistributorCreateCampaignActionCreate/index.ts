@@ -9,6 +9,7 @@ export const CapitalDistributorCreateCampaignActionCreate = dynamic(() =>
 export type { ICapitalDistributorCreateCampaignActionCreateProps } from './capitalDistributorCreateCampaignActionCreate';
 
 export {
+    CampaignPayoutType,
     CampaignScheduleType,
     CapitalDistributorCreateCampaignActionCreateForm,
     type ICapitalDistributorCreateCampaignActionCreateFormProps,

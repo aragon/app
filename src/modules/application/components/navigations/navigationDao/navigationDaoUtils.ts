@@ -88,7 +88,9 @@ class NavigationDaoUtils {
         baseUrl: string,
         context: NavigationDaoContext,
     ) => {
-        const pluginLinks = dao.plugins.reduce<{
+        const plugins =
+            daoUtils.getDaoPlugins(dao, { includeSubPlugins: false }) ?? [];
+        const pluginLinks = plugins.reduce<{
             left: INavigationLink[];
             right: INavigationLink[];
         }>(

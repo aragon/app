@@ -47,9 +47,9 @@ export const CapitalDistributorRewardsPage: React.FC<
 
     const userAddress = getConnectedAccount(cookieHeader);
 
-    const interfaceType = PluginInterfaceType.CAPITAL_DISTRIBUTOR;
     const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, {
-        interfaceType,
+        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+        includeSubPlugins: false,
     })![0];
 
     const defaultQueryParams = {

@@ -8,7 +8,7 @@ import {
     NumberFormat,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { type IDao, PluginInterfaceType } from '@/shared/api/daoService/domain';
+import type { IDao } from '@/shared/api/daoService/domain';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -29,19 +29,23 @@ export interface ICapitalDistributorCampaignListItemStructureProps {
      * The DAO with the capital-distributor plugin installed.
      */
     dao: IDao;
+    /**
+     * The address of the CD plugin.
+     */
+    pluginAddress: string;
 }
 
 export const CapitalDistributorCampaignListItemStructure: React.FC<
     ICapitalDistributorCampaignListItemStructureProps
 > = (props) => {
-    const { campaign, dao } = props;
+    const { campaign, dao, pluginAddress } = props;
     const { id, network } = dao;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const plugin = useDaoPlugins({
         daoId: id,
-        interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
+        pluginAddress,
     })![0];
 
     const { userData, token, title, description } = campaign;
