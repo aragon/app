@@ -159,7 +159,7 @@ export const AddressesInputContainer: React.FC<
         fieldName: membersFieldName,
         onRemoveMember: handleRemoveMember,
     };
-    const watchedMembers = useWatch<ICompositeAddress[]>({
+    const watchedMembers = useWatch<AddressListInputBaseForm>({
         name: membersFieldName,
         defaultValue: [],
     });
