@@ -64,7 +64,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { openIfNeeded } = useOpenDelegationOnboardingIfNeeded({
-        tokenAddress: token.underlying!,
+        tokenAddress: token.address,
         tokenSymbol: token.symbol,
         network: dao!.network,
         daoId,
