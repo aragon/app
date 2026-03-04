@@ -78,6 +78,10 @@ export const AdminManageMembersDialog: React.FC<
         () => currentAdmins.map((member) => ({ address: member.address })),
         [currentAdmins],
     );
+    const currentAdminAddresses = useMemo(
+        () => currentAdmins.map((member) => member.address),
+        [currentAdmins],
+    );
 
     const formMethods = useForm<IManageMembersFormData>({
         defaultValues: { members: initialMembers },
@@ -148,11 +152,11 @@ export const AdminManageMembersDialog: React.FC<
                     onSubmit={handleSubmit(handleSubmitAddresses)}
                 >
                     <ManageMembershipAddressList
-                        allowEmptyList={true}
+                        allowEmptyList={false}
                         alreadyMemberErrorKey="app.plugins.admin.adminManageMembers.item.alreadyMember"
                         daoId={daoId}
-                        formPrefix=""
                         pluginAddress={pluginAddress}
+                        skipMemberExistsForAddresses={currentAdminAddresses}
                     />
                 </form>
             </Dialog.Content>

@@ -30,6 +30,10 @@ export interface IManageMembershipAddressListItemProps {
      * When provided, enables async member-exists validation.
      */
     alreadyMemberErrorKey?: string;
+    /**
+     * Addresses that should bypass async member-exists validation.
+     */
+    skipMemberExistsForAddresses?: string[];
 }
 
 export const ManageMembershipAddressListItem: React.FC<
@@ -42,8 +46,15 @@ export const ManageMembershipAddressListItem: React.FC<
         pluginAddress,
         network,
         alreadyMemberErrorKey,
+        skipMemberExistsForAddresses,
     } = props;
     const { chainId } = useDaoChain({ network });
+    const shouldSkipMemberExistsValidation =
+        skipMemberExistsForAddresses?.some(
+            (address) =>
+                addressUtils.isAddress(member.address) &&
+                addressUtils.isAddressEqual(address, member.address),
+        ) ?? false;
 
     const memberExistsParams = {
         urlParams: {
@@ -57,12 +68,15 @@ export const ManageMembershipAddressListItem: React.FC<
             alreadyMemberErrorKey != null &&
             network != null &&
             pluginAddress != null &&
+            !shouldSkipMemberExistsValidation &&
             addressUtils.isAddress(member.address),
     });
 
     const isMember = data?.status === true;
     const customValidator = () =>
-        isMember ? (alreadyMemberErrorKey ?? true) : true;
+        isMember && !shouldSkipMemberExistsValidation
+            ? (alreadyMemberErrorKey ?? true)
+            : true;
 
     return (
         <AddressesInput.Item

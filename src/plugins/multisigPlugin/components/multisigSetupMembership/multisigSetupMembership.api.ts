@@ -13,6 +13,10 @@ export interface IMultisigSetupMembershipProps
      */
     onAddClick?: () => void;
     /**
+     * Flag to determine if the list can be empty.
+     */
+    allowEmptyList?: boolean;
+    /**
      * Address of the plugin, used to validate if the entered user address is already a member of the plugin.
      */
     pluginAddress?: string;

@@ -3052,9 +3052,9 @@
       "addressesInput": {
         "container": {
           "add": "Add",
+          "clearAll": "Clear all",
           "more": "More",
-          "removeAll": "Remove all",
-          "resetAll": "Reset all"
+          "resetFields": "Reset fields"
         },
         "item": {
           "input": {

@@ -12,7 +12,7 @@ import {
     cloneElement,
     isValidElement,
 } from 'react';
-import { useFieldArray } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AddressesInputContextProvider } from '../addressesInputContext';
 
@@ -43,6 +43,49 @@ export interface IAddressesInputContainerProps
 
 export type AddressListInputBaseForm = Record<string, ICompositeAddress[]>;
 
+const getNestedValue = (obj: unknown, path: string): unknown => {
+    const normalizedPath = path.replace(/\[(\d+)\]/g, '.$1');
+    return normalizedPath
+        .split('.')
+        .filter(Boolean)
+        .reduce<unknown>((acc, part) => {
+            if (acc == null || typeof acc !== 'object') {
+                return undefined;
+            }
+            return (acc as Record<string, unknown>)[part];
+        }, obj);
+};
+
+const hasTruthyLeaf = (value: unknown): boolean => {
+    if (value === true) {
+        return true;
+    }
+    if (Array.isArray(value)) {
+        return value.some(hasTruthyLeaf);
+    }
+    if (value != null && typeof value === 'object') {
+        return Object.values(value as Record<string, unknown>).some(
+            hasTruthyLeaf,
+        );
+    }
+    return false;
+};
+
+const hasNestedValue = (value: unknown): boolean => {
+    if (value == null) {
+        return false;
+    }
+    if (Array.isArray(value)) {
+        return value.some(hasNestedValue);
+    }
+    if (typeof value === 'object') {
+        return Object.values(value as Record<string, unknown>).some(
+            hasNestedValue,
+        );
+    }
+    return true;
+};
+
 export const AddressesInputContainer: React.FC<
     IAddressesInputContainerProps
 > = (props) => {
@@ -58,6 +101,7 @@ export const AddressesInputContainer: React.FC<
     } = props;
 
     const { t } = useTranslations();
+    const { formState } = useFormContext();
 
     const membersFieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
@@ -103,13 +147,31 @@ export const AddressesInputContainer: React.FC<
             return;
         }
 
-        replaceMembers([]);
+        if (allowEmptyList) {
+            replaceMembers([]);
+            return;
+        }
+
+        replaceMembers([{ address: '' }]);
     };
 
     const contextValue = {
         fieldName: membersFieldName,
         onRemoveMember: handleRemoveMember,
     };
+    const watchedMembers = useWatch<ICompositeAddress[]>({
+        name: membersFieldName,
+        defaultValue: [],
+    });
+    const hasDirtyMembers = hasTruthyLeaf(
+        getNestedValue(formState.dirtyFields, membersFieldName),
+    );
+    const hasMemberErrors = hasNestedValue(
+        getNestedValue(formState.errors, membersFieldName),
+    );
+    const hasNonEmptyMembers = watchedMembers.some(
+        (member) => (member?.address ?? '').trim() !== '',
+    );
 
     // This is needed because in the parent we are using, useWatch, but this hook
     // does not expose the RHF IDs of the fields, which results in the lists being
@@ -165,16 +227,20 @@ export const AddressesInputContainer: React.FC<
                                 </Button>
                             }
                         >
-                            {showResetAllAction && (
-                                <Dropdown.Item onClick={handleResetAllMembers}>
-                                    {t(
-                                        'app.shared.addressesInput.container.resetAll',
-                                    )}
-                                </Dropdown.Item>
-                            )}
+                            {showResetAllAction &&
+                                ((hasDirtyMembers && hasNonEmptyMembers) ||
+                                    hasMemberErrors) && (
+                                    <Dropdown.Item
+                                        onClick={handleResetAllMembers}
+                                    >
+                                        {t(
+                                            'app.shared.addressesInput.container.resetFields',
+                                        )}
+                                    </Dropdown.Item>
+                                )}
                             <Dropdown.Item onClick={handleRemoveAllMembers}>
                                 {t(
-                                    'app.shared.addressesInput.container.removeAll',
+                                    'app.shared.addressesInput.container.clearAll',
                                 )}
                             </Dropdown.Item>
                         </Dropdown.Container>

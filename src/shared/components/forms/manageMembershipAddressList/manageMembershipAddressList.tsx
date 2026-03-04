@@ -13,8 +13,11 @@ export interface IManageMembershipAddressListProps
     extends Pick<IInputComponentProps, 'label' | 'helpText'> {
     /**
      * Prefix to be appended to all form fields.
+     * Keep this undefined for root-level forms (`members`).
+     * Set this for nested forms (for example, `actions.[0]`) so fields resolve to
+     * `<formPrefix>.members`.
      */
-    formPrefix: string;
+    formPrefix?: string;
     /**
      * When true show a read-only mode for the address fields.
      */
@@ -45,6 +48,10 @@ export interface IManageMembershipAddressListProps
      */
     alreadyMemberErrorKey?: string;
     /**
+     * Addresses that should bypass async member-exists validation.
+     */
+    skipMemberExistsForAddresses?: string[];
+    /**
      * Whether to show the "Reset all" option in the more actions menu.
      */
     showResetAllAction?: boolean;
@@ -62,6 +69,7 @@ export const ManageMembershipAddressList: React.FC<
         network,
         daoId,
         alreadyMemberErrorKey,
+        skipMemberExistsForAddresses,
         showResetAllAction,
         label,
         helpText,
@@ -97,6 +105,7 @@ export const ManageMembershipAddressList: React.FC<
                     member={member}
                     network={membershipNetwork}
                     pluginAddress={pluginAddress}
+                    skipMemberExistsForAddresses={skipMemberExistsForAddresses}
                 />
             ))}
         </AddressesInput.Container>

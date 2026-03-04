@@ -11,6 +11,7 @@ export const MultisigSetupMembership: React.FC<
         formPrefix,
         disabled,
         onAddClick,
+        allowEmptyList,
         pluginAddress,
         hideLabel,
         network,
@@ -22,6 +23,7 @@ export const MultisigSetupMembership: React.FC<
 
     return (
         <ManageMembershipAddressList
+            allowEmptyList={allowEmptyList}
             alreadyMemberErrorKey="app.plugins.multisig.multisigSetupMembership.item.alreadyMember"
             daoId={daoId}
             disabled={disabled}

@@ -41,7 +41,7 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
 
     const { t } = useTranslations();
 
-    const { trigger } = useFormContext();
+    const { getFieldState, trigger } = useFormContext();
 
     const { fieldName, onRemoveMember } = useAddressesInputContext();
 
@@ -85,12 +85,13 @@ export const AddressesInputItem: React.FC<IAddressesInputItemProps> = (
         [onAddressChange],
     );
 
-    // Only trigger already-in-list validation if value is a valid address to avoid displaying an error on mount.
+    // Trigger async/custom validation only after user interaction.
     useEffect(() => {
-        if (addressUtils.isAddress(value.address)) {
+        const { isDirty, isTouched } = getFieldState(memberFieldName);
+        if (addressUtils.isAddress(value.address) && (isDirty || isTouched)) {
             void trigger(memberFieldName);
         }
-    }, [trigger, memberFieldName, value.address]);
+    }, [getFieldState, trigger, memberFieldName, value.address]);
 
     return (
         <Card className="w-full shrink-0 border border-neutral-100 p-4 shadow-neutral-sm">
