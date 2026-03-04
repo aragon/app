@@ -36,4 +36,29 @@ describe('capitalDistributor service', () => {
         );
         expect(result).toEqual(campaignsListResponse);
     });
+
+    it('getCampaignList passes onlyActive=false to the API to retrieve all campaigns', async () => {
+        const campaignsListResponse = generatePaginatedResponse({ data: [] });
+        const params = {
+            queryParams: {
+                pluginAddress: '0x123',
+                network: Network.BASE_MAINNET,
+                onlyActive: false,
+            },
+        };
+
+        requestSpy.mockResolvedValue(campaignsListResponse);
+        await capitalDistributorService.getCampaignList(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            capitalDistributorService['urls'].campaigns,
+            {
+                queryParams: {
+                    pluginAddress: '0x123',
+                    network: Network.BASE_MAINNET,
+                    onlyActive: false,
+                },
+            },
+        );
+    });
 });
