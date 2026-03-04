@@ -21,7 +21,7 @@ export const GaugeVoterGaugesPage: React.FC<
 
     const plugins = daoUtils.getDaoPlugins(dao, {
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeSubDaos: false,
+        includeSubPlugins: false,
     });
     const plugin = plugins?.[0];
 

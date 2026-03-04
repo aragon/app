@@ -49,7 +49,7 @@ export const CapitalDistributorRewardsPage: React.FC<
 
     const plugin: ICapitalDistributorPlugin = daoUtils.getDaoPlugins(dao, {
         interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
-        includeSubDaos: false,
+        includeSubPlugins: false,
     })![0];
 
     const defaultQueryParams = {

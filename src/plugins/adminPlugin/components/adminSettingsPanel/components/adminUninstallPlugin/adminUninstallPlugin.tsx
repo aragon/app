@@ -27,12 +27,12 @@ export const AdminUninstallPlugin: React.FC<IAdminUninstallPluginProps> = (
         daoId,
         type: PluginType.PROCESS,
         hasExecute: true,
-        includeSubDaos: false,
+        includeSubPlugins: false,
     })!;
     const adminPlugin = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.ADMIN,
-        includeSubDaos: false,
+        includeSubPlugins: false,
     })![0]?.meta;
 
     const handleOpenDialog = () => {

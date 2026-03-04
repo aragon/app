@@ -37,7 +37,7 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
     const gaugeVoterPlugins = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeSubDaos: false,
+        includeSubPlugins: false,
     });
 
     const { onChange, ...payoutTypeField } = useFormField<
