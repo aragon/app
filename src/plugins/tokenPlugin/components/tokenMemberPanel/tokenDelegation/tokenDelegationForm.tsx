@@ -3,9 +3,11 @@ import {
     addressUtils,
     Button,
     type IAddressInputResolvedValue,
+    IconType,
     RadioCard,
     RadioGroup,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useConnection } from 'wagmi';
@@ -27,7 +29,7 @@ import {
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     props,
 ) => {
-    const { tokenAddress, daoId } = props;
+    const { tokenAddress, daoId, mode = 'panel', onCancel } = props;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -163,18 +165,59 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                 value={delegateInput}
                 {...delegateField}
             />
-            <div className="flex flex-col gap-3">
-                <Button
-                    disabled={isSubmitDisabled}
-                    onClick={isConnected ? undefined : () => walletGuard()}
-                    type={isConnected ? 'submit' : undefined}
-                >
-                    {t('app.plugins.token.tokenDelegationForm.submit')}
-                </Button>
-                <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                    {t('app.plugins.token.tokenDelegationForm.info')}
-                </p>
-            </div>
+            {mode === 'dialog' ? (
+                <div className="flex flex-col gap-9">
+                    <p className="font-normal text-neutral-500 text-sm leading-normal">
+                        {t('app.plugins.token.tokenDelegationForm.info')}
+                    </p>
+                    <div
+                        className={classNames(
+                            'flex gap-3',
+                            onCancel != null
+                                ? 'justify-between'
+                                : 'justify-end',
+                        )}
+                    >
+                        {onCancel != null && (
+                            <Button
+                                onClick={onCancel}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {t(
+                                    'app.plugins.token.tokenDelegationForm.cancel',
+                                )}
+                            </Button>
+                        )}
+                        <Button
+                            disabled={isSubmitDisabled}
+                            iconRight={IconType.CHEVRON_RIGHT}
+                            onClick={
+                                isConnected ? undefined : () => walletGuard()
+                            }
+                            size="md"
+                            type={isConnected ? 'submit' : undefined}
+                        >
+                            {t(
+                                'app.plugins.token.tokenDelegationForm.submitDialog',
+                            )}
+                        </Button>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-3">
+                    <Button
+                        disabled={isSubmitDisabled}
+                        onClick={isConnected ? undefined : () => walletGuard()}
+                        type={isConnected ? 'submit' : undefined}
+                    >
+                        {t('app.plugins.token.tokenDelegationForm.submit')}
+                    </Button>
+                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+                        {t('app.plugins.token.tokenDelegationForm.info')}
+                    </p>
+                </div>
+            )}
         </form>
     );
 };

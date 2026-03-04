@@ -41,6 +41,8 @@ export const TokenDelegationOnboardingFormDialog: React.FC<
             <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
                 <TokenDelegationForm
                     daoId={daoId}
+                    mode="dialog"
+                    onCancel={handleCancel}
                     tokenAddress={tokenAddress}
                 />
             </Dialog.Content>

@@ -23,4 +23,12 @@ export interface ITokenDelegationFormProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Display mode of the form. Defaults to 'panel'.
+     */
+    mode?: 'panel' | 'dialog';
+    /**
+     * Callback for the cancel button. When provided, the cancel button is visible (Only in dialog mode).
+     */
+    onCancel?: () => void;
 }

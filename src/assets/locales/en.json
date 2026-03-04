@@ -2557,7 +2557,9 @@
               "self": "Yourself"
             }
           },
-          "submit": "Delegate voting power"
+          "submit": "Delegate voting power",
+          "submitDialog": "Delegate now",
+          "cancel": "Cancel"
         },
         "tokenGovernanceSettings": {
           "approvalThreshold": "Support threshold",
