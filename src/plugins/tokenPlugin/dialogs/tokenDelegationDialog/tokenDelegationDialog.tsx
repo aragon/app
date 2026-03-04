@@ -58,7 +58,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         token,
         delegate = zeroAddress,
         network,
-        onSuccessClick: onSuccessClickParam,
+        onSuccessClick,
     } = location.params;
     const { data: delegateEnsName } = useEnsName({
         address: delegate as Hex,
@@ -77,9 +77,9 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
     const handlePrepareTransaction = () =>
         tokenDelegationDialogUtils.buildTransaction(token, delegate);
 
-    const onSuccessClick = () => {
+    const handleSuccessClick = () => {
         router.refresh();
-        onSuccessClickParam?.();
+        onSuccessClick?.();
     };
 
     return (
@@ -97,7 +97,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
                 label: t(
                     'app.plugins.token.tokenDelegationForm.dialog.button.success',
                 ),
-                onClick: onSuccessClick,
+                onClick: handleSuccessClick,
             }}
             title={t('app.plugins.token.tokenDelegationForm.dialog.title')}
         >

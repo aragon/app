@@ -42,7 +42,7 @@ export const useOpenDelegationOnboardingIfNeeded = (
 
     const { open } = useDialogContext();
     const { address } = useConnection();
-    // TODO: check
+
     const { data: delegate } = useTokenCurrentDelegate({
         tokenAddress,
         userAddress: address,
