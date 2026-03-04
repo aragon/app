@@ -22,6 +22,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 > = (props) => {
     const { dao } = props;
 
+    // TODO: extend to get the all "eligible" plugins?
     const delegationPlugin = dao.plugins.find(
         (plugin) =>
             (plugin.interfaceType === PluginInterfaceType.TOKEN_VOTING ||
@@ -33,12 +34,11 @@ export const TokenDelegationOnboardingWatcher: React.FC<
     const { address, status } = useConnection();
     const { open } = useDialogContext();
 
-    const tokenAddress = delegationPlugin
-        ? (delegationPlugin.settings as ITokenPluginSettings).token.address
+    const token = delegationPlugin
+        ? (delegationPlugin.settings as ITokenPluginSettings).token
         : undefined;
-    const tokenSymbol = delegationPlugin
-        ? (delegationPlugin.settings as ITokenPluginSettings).token.symbol
-        : undefined;
+    const tokenAddress = token?.address;
+    const tokenSymbol = token?.symbol;
     const network = dao.network;
 
     const { shouldTrigger, isLoading } = useTokenDelegationOnboardingCheck({
@@ -65,15 +65,22 @@ export const TokenDelegationOnboardingWatcher: React.FC<
             },
         });
 
-        if (!hadDisconnectedRef.current) return;
-        if (status !== 'connected') return;
-        if (isLoading || !shouldTrigger) return;
+        if (!hadDisconnectedRef.current) {
+            return;
+        }
+        if (status !== 'connected') {
+            return;
+        }
+        if (isLoading || !shouldTrigger) {
+            return;
+        }
         if (
             delegationPlugin == null ||
             tokenAddress == null ||
             tokenSymbol == null
-        )
+        ) {
             return;
+        }
 
         hadDisconnectedRef.current = false;
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
@@ -90,7 +97,6 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         delegationPlugin,
         tokenAddress,
         tokenSymbol,
-        network,
         dao.id,
         open,
     ]);

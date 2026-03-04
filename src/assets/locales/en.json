@@ -2532,9 +2532,7 @@
             "cancel": "Cancel"
           },
           "form": {
-            "title": "Set up your delegation",
-            "cancel": "Cancel",
-            "submit": "Delegate now"
+            "title": "Set up your delegation"
           }
         },
         "tokenDelegationForm": {
