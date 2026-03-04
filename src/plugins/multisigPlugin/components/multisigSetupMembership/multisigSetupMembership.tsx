@@ -1,6 +1,7 @@
 'use client';
 
-import { PluginMembershipInput } from '@/shared/components/forms/pluginMembershipInput/pluginMembershipInput';
+import { ManageMembershipAddressList } from '@/shared/components/forms/manageMembershipAddressList';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IMultisigSetupMembershipProps } from './multisigSetupMembership.api';
 
 export const MultisigSetupMembership: React.FC<
@@ -11,22 +12,34 @@ export const MultisigSetupMembership: React.FC<
         disabled,
         onAddClick,
         pluginAddress,
+        hideLabel,
         network,
         daoId,
         showResetAllAction,
     } = props;
 
+    const { t } = useTranslations();
+
     return (
-        <PluginMembershipInput
+        <ManageMembershipAddressList
             alreadyMemberErrorKey="app.plugins.multisig.multisigSetupMembership.item.alreadyMember"
             daoId={daoId}
             disabled={disabled}
             formPrefix={formPrefix}
+            helpText={
+                hideLabel
+                    ? undefined
+                    : t('app.plugins.multisig.multisigSetupMembership.helpText')
+            }
+            label={
+                hideLabel
+                    ? undefined
+                    : t('app.plugins.multisig.multisigSetupMembership.label')
+            }
             network={network}
             onAddClick={onAddClick}
             pluginAddress={pluginAddress}
             showResetAllAction={showResetAllAction}
-            validateMemberExists={true}
         />
     );
 };

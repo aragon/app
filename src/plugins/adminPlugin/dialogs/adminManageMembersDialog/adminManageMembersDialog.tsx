@@ -17,7 +17,7 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-import { PluginMembershipInput } from '@/shared/components/forms/pluginMembershipInput/pluginMembershipInput';
+import { ManageMembershipAddressList } from '@/shared/components/forms/manageMembershipAddressList';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
@@ -147,10 +147,12 @@ export const AdminManageMembersDialog: React.FC<
                     id={formId}
                     onSubmit={handleSubmit(handleSubmitAddresses)}
                 >
-                    <PluginMembershipInput
+                    <ManageMembershipAddressList
                         allowEmptyList={true}
+                        alreadyMemberErrorKey="app.plugins.admin.adminManageMembers.item.alreadyMember"
                         daoId={daoId}
                         formPrefix=""
+                        pluginAddress={pluginAddress}
                     />
                 </form>
             </Dialog.Content>

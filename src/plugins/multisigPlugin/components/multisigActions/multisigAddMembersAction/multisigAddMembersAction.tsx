@@ -85,6 +85,7 @@ export const MultisigAddMembersAction: React.FC<
         <MultisigSetupMembership
             daoId={action.daoId}
             formPrefix={actionFieldName}
+            hideLabel={true}
             network={network}
             pluginAddress={action.to}
         />
