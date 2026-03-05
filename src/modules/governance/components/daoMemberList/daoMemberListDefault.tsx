@@ -66,7 +66,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     // The parent DAO is server-side prefetched → always a cache hit.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // For subDAO plugins the API call must target the subDAO's own daoId so the
+    // For linked account plugins the API call must target the linked account's own daoId so the
     // backend queries the correct DAO.
     const apiParams = useMemo(() => {
         const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);

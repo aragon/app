@@ -32,7 +32,7 @@ export const SetupStrategyDialogSourceVault: React.FC<
     );
 
     const daoAvatar = ipfsUtils.cidToSrc(dao?.avatar);
-    const hasSubDaos = (dao?.subDaos?.length ?? 0) > 0;
+    const hasLinkedAccounts = (dao?.linkedAccounts?.length ?? 0) > 0;
 
     if (dao == null) {
         return null;
@@ -50,7 +50,7 @@ export const SetupStrategyDialogSourceVault: React.FC<
                 description={dao.ens ?? addressUtils.truncateAddress(address)}
                 label={dao.name}
                 tag={
-                    hasSubDaos
+                    hasLinkedAccounts
                         ? {
                               variant: 'primary',
                               label: t('app.shared.daoTypeTag.mainLabel'),

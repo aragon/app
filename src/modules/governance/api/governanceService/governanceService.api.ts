@@ -37,9 +37,9 @@ export interface IGetProposalListQueryParams
      */
     onlyActive?: boolean;
     /**
-     * Include proposals from SubDAOs when set to true.
+     * Include proposals from linked accounts when set to true.
      */
-    includeSubDaos?: boolean;
+    includeLinkedAccounts?: boolean;
 }
 
 export interface IGetProposalListParams

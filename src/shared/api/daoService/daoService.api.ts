@@ -11,8 +11,8 @@ export interface IGetDaoUrlParams {
 
 export interface IGetDaoQueryParams {
     /**
-     * When true, returns only the parent DAO's metrics (excludes SubDAOs from aggregation).
-     * Used to differentiate between "All Assets" (parent + SubDAOs) and "Parent DAO" tab.
+     * When true, returns only the parent DAO's metrics (excludes linked accounts from aggregation).
+     * Used to differentiate between "All Assets" (parent + linked accounts) and "Parent DAO" tab.
      */
     onlyParent?: boolean;
 }

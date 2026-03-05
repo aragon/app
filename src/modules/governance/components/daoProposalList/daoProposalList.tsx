@@ -46,7 +46,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
 
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
-    const isSubDaoEnabled = isEnabled('subDao');
+    const isLinkedAccountEnabled = isEnabled('linkedAccount');
     const { activePlugin, setActivePlugin, plugins } =
         useDaoPluginFilterUrlParam({
             daoId,
@@ -71,7 +71,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
                 ...initialParams.queryParams,
                 pluginAddress,
                 onlyActive: isGroupTab,
-                includeSubDaos: isSubDaoEnabled && isGroupTab,
+                includeLinkedAccounts: isLinkedAccountEnabled && isGroupTab,
             },
         };
 

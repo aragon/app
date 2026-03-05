@@ -104,14 +104,14 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
 
     // Handler function to disable the navigation block when the transaction is needed.
     // We can't simply just pass the href to the TransactionDialog.
-    // For subDAO plugins the link points directly to the subDAO's page so the
+    // For linked account plugins the link points directly to the linked account's page so the
     // slug resolves in the correct DAO context.
     const getProposalsLink = ({
         slug,
     }: IBuildTransactionDialogSuccessLinkHref) => {
         const proposalPath = `proposals/${slug!.toUpperCase()}`;
 
-        if (daoUtils.isSubDaoPlugin(plugin, dao)) {
+        if (daoUtils.isLinkedAccountPlugin(plugin, dao)) {
             return `/dao/${dao!.network}/${plugin.daoAddress}/${proposalPath}`;
         }
 

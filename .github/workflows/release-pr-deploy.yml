@@ -61,18 +61,9 @@ jobs:
           message: |
             ⏳ *Staging build & deploy started...*
 
-  build:
-    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
-    needs: notify-start
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: 'staging'
-      ref: ${{ github.event.pull_request.head.sha }}
-
   test:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
-    needs: build
+    needs: notify-start
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
@@ -86,11 +77,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-
-      - name: Retrieve NextJs build
-        uses: actions/download-artifact@v7.0.0
-        with:
-          name: nextjs-build
 
       - name: Check types
         run: pnpm type-check
@@ -109,6 +95,7 @@ jobs:
     with:
       domain: 'stg.app.aragon.org'
       env: 'staging'
+      ref: ${{ github.event.pull_request.head.sha }}
 
   notify:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
@@ -124,7 +111,6 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
-          SLACK_PLATFORM_GROUP_ID: op://kv_app_infra/SLACK_PLATFORM_GROUP_ID/credential
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
@@ -178,7 +164,7 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            ✅ *Staging Deployed* <!subteam^${{ steps.secrets.outputs.SLACK_PLATFORM_GROUP_ID }}|platform>
+            ✅ *Staging Deployed*
 
             *Staging:* <https://stg.app.aragon.org|stg.app.aragon.org>
             *Commit:* <https://github.com/aragon/app/commit/${{ github.event.pull_request.head.sha }}|${{ github.event.pull_request.head.sha }}>

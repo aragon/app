@@ -6,7 +6,13 @@
         "useIgnoreFile": true
     },
     "files": {
-        "ignoreUnknown": false
+        "ignoreUnknown": false,
+        "includes": [
+            "!snapshots",
+            "!.next",
+            "!coverage",
+            "!.turbo"
+        ]
     },
     "formatter": {
         "enabled": true,
@@ -54,10 +60,7 @@
             "nursery": {
                 "noShadow": "off",
                 "noEqualsToNull": "off",
-                "noLeakedRender": "off",
-                "noEmptySource": "off",
-                "noUnusedExpressions": "off",
-                "noUselessUndefined": "off"
+                "noLeakedRender": "off"
             },
             "a11y": {
                 "noAccessKey": "error",
@@ -106,7 +109,8 @@
                 "noVoid": "off",
                 "noExcessiveCognitiveComplexity": "off",
                 "useLiteralKeys": "off",
-                "useSimplifiedLogicExpression": "off"
+                "useSimplifiedLogicExpression": "off",
+                "noUselessUndefined": "off"
             },
             "correctness": {
                 "noChildrenProp": "error",
@@ -225,7 +229,9 @@
                 "noDocumentCookie": "off",
                 "noAssignInExpressions": "off",
                 "noBitwiseOperators": "off",
-                "noImplicitAnyLet": "off"
+                "noImplicitAnyLet": "off",
+                "noEmptySource": "off",
+                "noUnusedExpressions": "off"
             }
         },
         "includes": [
@@ -394,6 +400,19 @@
             "linter": {
                 "rules": {}
             }
+        },
+        {
+            "includes": [
+                ".github/**/*.js",
+                ".github/**/*.mjs"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
         }
     ],
     "assist": {
@@ -401,7 +420,9 @@
         "actions": {
             "source": {
                 "organizeImports": "on",
-                "useSortedAttributes": "on"
+                "useSortedAttributes": "on",
+                "useSortedInterfaceMembers": "off",
+                "useSortedProperties": "off"
             }
         }
     },

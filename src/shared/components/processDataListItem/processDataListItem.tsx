@@ -15,7 +15,7 @@ export type IProcessDataListItemProps = IDataListItemProps & {
      */
     isActive?: boolean;
     /**
-     * Parent DAO used to show SubDAO breadcrumbs when applicable.
+     * Parent DAO used to show linked account breadcrumbs when applicable.
      */
     dao?: IDao;
 };

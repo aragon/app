@@ -10,7 +10,7 @@ import {
     Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
+import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { DaoTypeTag } from '@/shared/components/daoTypeTag';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -18,20 +18,20 @@ import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoHierarchyProps {
     /**
-     * Main DAO object.
+     * Primary account (main DAO) object.
      */
     dao: IDao;
     /**
-     * Current DAO ID to determine if we're viewing a SubDAO.
+     * Current DAO ID to determine if we're viewing a linked account.
      */
     currentDaoId: string;
 }
 
 interface IDaoInfoProps {
     /**
-     * DAO or SubDAO object.
+     * DAO or linked account object.
      */
-    dao: IDao | ISubDaoSummary;
+    dao: IDao | ILinkedAccountSummary;
 }
 
 const DaoInfo: React.FC<IDaoInfoProps> = ({ dao }) => {
@@ -141,13 +141,14 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const { dao, currentDaoId } = props;
 
     const isViewingMainDao = dao.id === currentDaoId;
-    const hasSubDaos = dao.subDaos != null && dao.subDaos.length > 0;
+    const hasLinkedAccounts =
+        dao.linkedAccounts != null && dao.linkedAccounts.length > 0;
 
-    const getDaoAvatar = (d: IDao | ISubDaoSummary) =>
+    const getDaoAvatar = (d: IDao | ILinkedAccountSummary) =>
         ipfsUtils.cidToSrc(d.avatar);
 
-    // If viewing main DAO with SubDAOs, show accordion structure
-    if (isViewingMainDao && hasSubDaos) {
+    // If viewing main DAO with linked accounts, show accordion structure
+    if (isViewingMainDao && hasLinkedAccounts) {
         return (
             <Accordion.Container defaultValue={[dao.id]} isMulti={true}>
                 <Accordion.Item value={dao.id}>
@@ -170,25 +171,28 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                         <DaoInfo dao={dao} />
                     </Accordion.ItemContent>
                 </Accordion.Item>
-                {dao.subDaos?.map((subDao) => (
-                    <Accordion.Item key={subDao.id} value={subDao.id}>
+                {dao.linkedAccounts?.map((linkedAccount) => (
+                    <Accordion.Item
+                        key={linkedAccount.id}
+                        value={linkedAccount.id}
+                    >
                         <Accordion.ItemHeader className="items-center">
                             <div className="flex w-full items-center gap-3">
                                 <div className="flex min-w-0 flex-1 items-center gap-3">
                                     <DaoAvatar
-                                        name={subDao.name}
+                                        name={linkedAccount.name}
                                         size="md"
-                                        src={getDaoAvatar(subDao)}
+                                        src={getDaoAvatar(linkedAccount)}
                                     />
                                     <p className="truncate text-lg text-neutral-800 leading-tight">
-                                        {subDao.name}
+                                        {linkedAccount.name}
                                     </p>
                                 </div>
                                 <DaoTypeTag type="sub" />
                             </div>
                         </Accordion.ItemHeader>
                         <Accordion.ItemContent>
-                            <DaoInfo dao={subDao} />
+                            <DaoInfo dao={linkedAccount} />
                         </Accordion.ItemContent>
                     </Accordion.Item>
                 ))}
@@ -196,7 +200,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
         );
     }
 
-    // Default: regular view for main DAO without SubDAOs or when viewing a SubDAO
+    // Default: regular view for main DAO without linked accounts or when viewing a linked account
     return (
         <Card className="p-6">
             <DaoInfo dao={dao} />

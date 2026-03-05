@@ -29,18 +29,11 @@ jobs:
             exit 1
           fi
 
-  build:
-    needs: validate
-    uses: ./.github/workflows/shared-build.yml
-    secrets: inherit
-    with:
-      env: 'production'
-      ref: ${{ inputs.tag }}
-
   deploy:
-    needs: build
+    needs: validate
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
       domain: 'app.aragon.org'
       env: 'production'
+      ref: ${{ inputs.tag }}

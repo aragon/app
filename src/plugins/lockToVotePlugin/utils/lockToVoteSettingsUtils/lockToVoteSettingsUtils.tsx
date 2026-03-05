@@ -5,6 +5,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { tokenSettingsUtils } from '../../../tokenPlugin/utils/tokenSettingsUtils';
 import {
@@ -72,7 +73,7 @@ class LockToVoteSettingsUtils {
             (Number(processedTotalSupply) * parsedMinParticipation) / 100,
         );
         const parsedMinParticipationToken = formatUnits(
-            BigInt(minParticipationToken),
+            bigIntUtils.safeParse(minParticipationToken),
             decimals,
         );
         const formattedMinParticipationToken = formatterUtils.formatNumber(
@@ -93,7 +94,7 @@ class LockToVoteSettingsUtils {
         );
 
         const parsedMinVotingPower = formatUnits(
-            BigInt(minProposerVotingPower),
+            bigIntUtils.safeParse(minProposerVotingPower),
             decimals,
         );
         const formattedProposerVotingPower = formatterUtils.formatNumber(

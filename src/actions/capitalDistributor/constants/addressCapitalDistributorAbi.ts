@@ -1,3 +1,27 @@
+export const pauseCampaignAbi = {
+    type: 'function',
+    name: 'pauseCampaign',
+    inputs: [{ name: '_campaignId', type: 'uint256', internalType: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+} as const;
+
+export const resumeCampaignAbi = {
+    type: 'function',
+    name: 'resumeCampaign',
+    inputs: [{ name: '_campaignId', type: 'uint256', internalType: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+} as const;
+
+export const endCampaignAbi = {
+    type: 'function',
+    name: 'endCampaign',
+    inputs: [{ name: '_campaignId', type: 'uint256', internalType: 'uint256' }],
+    outputs: [],
+    stateMutability: 'nonpayable',
+} as const;
+
 export const createCampaignAbi = {
     type: 'function',
     name: 'createCampaign',

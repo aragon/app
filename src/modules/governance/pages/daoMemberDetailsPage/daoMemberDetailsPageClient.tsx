@@ -18,6 +18,7 @@ import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHe
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { daoUtils } from '../../../../shared/utils/daoUtils';
@@ -78,9 +79,11 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { chainId, buildEntityUrl } = useDaoChain({ daoId });
 
     const firstBlockNumber =
-        firstActivity != null ? BigInt(firstActivity) : undefined;
+        firstActivity != null
+            ? bigIntUtils.safeParse(firstActivity)
+            : undefined;
     const lastBlockNumber =
-        lastActivity != null ? BigInt(lastActivity) : undefined;
+        lastActivity != null ? bigIntUtils.safeParse(lastActivity) : undefined;
 
     const { data: firstBlock } = useBlock({
         chainId,

@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import type { Route } from 'next';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
-import type { IDao, ISubDaoSummary } from '@/shared/api/daoService';
+import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
 import {
@@ -35,7 +35,7 @@ export interface INavigationWizardProps extends INavigationContainerProps {
     dao?: IDao;
     /**
      * Target DAO address to display instead of the parent DAO.
-     * Used when a plugin targets a subDAO.
+     * Used when a plugin targets a linked account.
      */
     targetDaoAddress?: string;
     /**
@@ -46,12 +46,14 @@ export interface INavigationWizardProps extends INavigationContainerProps {
 
 /**
  * Resolves the display DAO info based on target address.
- * Returns the subDAO if targeting a subDAO, otherwise returns the parent DAO.
+ * Returns the linked account if targeting a linked account, otherwise returns the parent DAO.
  */
 const resolveDisplayDao = (
     dao?: IDao,
     targetDaoAddress?: string,
-): Pick<IDao | ISubDaoSummary, 'address' | 'name' | 'avatar'> | undefined => {
+):
+    | Pick<IDao | ILinkedAccountSummary, 'address' | 'name' | 'avatar'>
+    | undefined => {
     if (dao == null) {
         return undefined;
     }
@@ -64,12 +66,12 @@ const resolveDisplayDao = (
         return dao;
     }
 
-    // Find matching subDAO
-    const matchingSubDao = dao.subDaos?.find((subDao) =>
-        addressUtils.isAddressEqual(subDao.address, targetDaoAddress),
+    // Find matching linked account
+    const matchingLinkedAccount = dao.linkedAccounts?.find((linkedAccount) =>
+        addressUtils.isAddressEqual(linkedAccount.address, targetDaoAddress),
     );
 
-    return matchingSubDao ?? dao;
+    return matchingLinkedAccount ?? dao;
 };
 
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {

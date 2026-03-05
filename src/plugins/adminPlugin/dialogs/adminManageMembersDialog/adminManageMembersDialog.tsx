@@ -17,9 +17,8 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-import { AddressesInput } from '@/shared/components/forms/addressesInput';
+import { ManageMembershipAddressList } from '@/shared/components/forms/manageMembershipAddressList';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { adminManageMembersDialogUtils } from './adminManageMembersDialogUtils';
 
@@ -62,15 +61,17 @@ export const AdminManageMembersDialog: React.FC<
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     invariant(dao != null, 'ManageAdminsDialogPublish: DAO data must be set.');
-    const { id: chainId } = networkDefinitions[dao.network];
 
     // TODO: (APP-4045). Setting this to the max pageSize of 50 for now to ensure we get all of the data
     // in the future we should find a better way to handle this.
     const memberParams = { daoId, pluginAddress, pageSize: 50 };
     const { data: memberList } = useMemberList({ queryParams: memberParams });
     const [adminPlugin] =
-        useDaoPlugins({ daoId, interfaceType: PluginInterfaceType.ADMIN }) ??
-        [];
+        useDaoPlugins({
+            daoId,
+            interfaceType: PluginInterfaceType.ADMIN,
+            includeSubPlugins: false,
+        }) ?? [];
 
     const currentAdmins = useMemo(
         () => memberList?.pages.flatMap((page) => page.data) ?? [],
@@ -78,6 +79,10 @@ export const AdminManageMembersDialog: React.FC<
     );
     const initialMembers = useMemo(
         () => currentAdmins.map((member) => ({ address: member.address })),
+        [currentAdmins],
+    );
+    const currentAdminAddresses = useMemo(
+        () => currentAdmins.map((member) => member.address),
         [currentAdmins],
     );
 
@@ -149,18 +154,13 @@ export const AdminManageMembersDialog: React.FC<
                     id={formId}
                     onSubmit={handleSubmit(handleSubmitAddresses)}
                 >
-                    <AddressesInput.Container
-                        allowEmptyList={true}
-                        name="members"
-                    >
-                        {watchMembersField.map((_field, index) => (
-                            <AddressesInput.Item
-                                chainId={chainId}
-                                index={index}
-                                key={index}
-                            />
-                        ))}
-                    </AddressesInput.Container>
+                    <ManageMembershipAddressList
+                        allowEmptyList={false}
+                        alreadyMemberErrorKey="app.plugins.admin.adminManageMembers.item.alreadyMember"
+                        daoId={daoId}
+                        pluginAddress={pluginAddress}
+                        skipMemberExistsForAddresses={currentAdminAddresses}
+                    />
                 </form>
             </Dialog.Content>
             <Dialog.Footer

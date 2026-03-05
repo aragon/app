@@ -129,6 +129,9 @@ export const CapitalDistributorCampaignList: React.FC<
                             campaign={campaign}
                             dao={dao}
                             key={campaign.campaignId}
+                            pluginAddress={
+                                initialParams.queryParams.pluginAddress
+                            }
                         />
                     ))}
                 </DataListContainer>

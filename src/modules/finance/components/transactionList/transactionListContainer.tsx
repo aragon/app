@@ -27,7 +27,7 @@ export interface ITransactionListContainerProps {
     children?: ReactNode;
 }
 
-export const transactionListFilterParam = 'subdao';
+export const transactionListFilterParam = 'linkedaccount';
 
 export const TransactionListContainer: React.FC<
     ITransactionListContainerProps

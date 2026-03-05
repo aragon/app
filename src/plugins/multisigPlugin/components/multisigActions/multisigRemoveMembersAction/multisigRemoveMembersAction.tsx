@@ -111,6 +111,7 @@ export const MultisigRemoveMembersAction: React.FC<
             formPrefix={actionFieldName}
             hideLabel={true}
             onAddClick={handleAddClick}
+            showResetAllAction={false}
         />
     );
 };

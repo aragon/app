@@ -24,7 +24,6 @@ jobs:
     secrets: inherit
     with:
       env: "preview"
-      skip-build-artifact: true
 
   comment:
     runs-on: ubuntu-latest
