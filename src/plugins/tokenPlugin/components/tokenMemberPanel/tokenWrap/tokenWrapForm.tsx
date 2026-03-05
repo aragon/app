@@ -137,7 +137,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
             underlyingToken,
             amount,
             network: dao!.network,
-            onSuccess: onWrapUnwrapTokensSuccess,
+            onSuccess: () => onWrapUnwrapTokensSuccess(action),
             showTransactionInfo: action === 'wrap' && needsApproval,
         };
 
@@ -150,10 +150,12 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
         handleWrapUnwrapTokens('wrap', tokenAmount);
     };
 
-    const onWrapUnwrapTokensSuccess = () => {
+    const onWrapUnwrapTokensSuccess = (action: 'wrap' | 'unwrap') => {
         invalidateQueries();
         void refetchWrappedBalance();
-        openIfNeeded();
+        if (action === 'wrap') {
+            openIfNeeded();
+        }
     };
 
     // Initialize asset field after fetching unwrapped balance

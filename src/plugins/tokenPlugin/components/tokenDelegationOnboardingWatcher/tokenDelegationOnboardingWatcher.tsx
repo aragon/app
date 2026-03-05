@@ -49,15 +49,29 @@ export const TokenDelegationOnboardingWatcher: React.FC<
     });
 
     const hasFiredRef = useRef(false);
+    const hasSeenDisconnectedRef = useRef(false);
+    const shouldOpenAfterConnectRef = useRef(false);
 
     useEffect(() => {
-        if (status !== 'connected') {
+        if (status === 'disconnected') {
             hasFiredRef.current = false;
+            hasSeenDisconnectedRef.current = true;
+            shouldOpenAfterConnectRef.current = false;
+        }
+
+        if (hasSeenDisconnectedRef.current && status === 'connected') {
+            hasFiredRef.current = false;
+            shouldOpenAfterConnectRef.current = true;
+            hasSeenDisconnectedRef.current = false;
         }
     }, [status]);
 
     useEffect(() => {
-        if (status !== 'connected' || hasFiredRef.current) {
+        if (
+            status !== 'connected' ||
+            !shouldOpenAfterConnectRef.current ||
+            hasFiredRef.current
+        ) {
             return;
         }
 
@@ -70,6 +84,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         }
 
         hasFiredRef.current = true;
+        shouldOpenAfterConnectRef.current = false;
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
             params: {
                 tokenAddress,

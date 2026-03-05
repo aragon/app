@@ -10,6 +10,7 @@ import {
 import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zeroAddress } from 'viem';
 import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
@@ -45,16 +46,22 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
         });
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
+        const hasExistingDelegate =
+            currentDelegate != null &&
+            !addressUtils.isAddressEqual(currentDelegate, zeroAddress);
         const isSelfDelegate = addressUtils.isAddressEqual(
             address,
             currentDelegate ?? undefined,
         );
-        const defaultDelegate = currentDelegate ?? undefined;
+        const defaultDelegate = hasExistingDelegate
+            ? currentDelegate
+            : (address ?? undefined);
 
         return {
-            selection: isSelfDelegate
-                ? TokenDelegationSelection.YOURSELF
-                : TokenDelegationSelection.OTHER,
+            selection:
+                isSelfDelegate || !hasExistingDelegate
+                    ? TokenDelegationSelection.YOURSELF
+                    : TokenDelegationSelection.OTHER,
             delegate: defaultDelegate,
         };
     }, [address, currentDelegate]);
@@ -92,10 +99,15 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     });
 
     const handleSelectionChange = (value: string) => {
+        const hasExistingDelegate =
+            currentDelegate != null &&
+            !addressUtils.isAddressEqual(currentDelegate, zeroAddress);
         const newDelegateInput =
             value === TokenDelegationSelection.YOURSELF
                 ? address
-                : currentDelegate;
+                : hasExistingDelegate
+                  ? currentDelegate
+                  : undefined;
         setDelegateInput(newDelegateInput ?? undefined);
         onSelectionChange(value);
     };
