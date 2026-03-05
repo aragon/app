@@ -17,6 +17,8 @@ jobs:
   notify-start:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     runs-on: ubuntu-latest
+    outputs:
+      slack-ts: ${{ steps.ts.outputs.ts }}
     steps:
       - name: Load secrets
         id: secrets
@@ -99,7 +101,7 @@ jobs:
 
   notify:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
-    needs: deploy
+    needs: [notify-start, deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
@@ -127,19 +129,6 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
 
-      - name: Read PR body
-        id: pr
-        uses: ./.github/actions/gh-pr-get-body
-        with:
-          pr_number: ${{ github.event.pull_request.number }}
-          token: ${{ github.token }}
-
-      - name: Extract Slack TS from PR body
-        id: ts
-        uses: ./.github/actions/extract-slack-ts
-        with:
-          body: ${{ steps.pr.outputs.body }}
-
       - name: Generate Release Summary
         id: summary
         uses: ./.github/actions/generate-release-summary
@@ -154,15 +143,15 @@ jobs:
           body: |
             ${{ steps.summary.outputs.summary }}
 
-            <!-- slack_ts: ${{ steps.ts.outputs.ts }} -->
+            <!-- slack_ts: ${{ needs.notify-start.outputs.slack-ts }} -->
 
       - name: Notify Slack
-        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        if: needs.notify-start.outputs.slack-ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ steps.ts.outputs.ts }}
+          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
           message: |
             ✅ *Staging Deployed*
 
@@ -172,3 +161,46 @@ jobs:
             Ready for testing! 🧪
             • Found bugs? Create a PR with fixes to <https://github.com/aragon/app/tree/${{ github.event.pull_request.head.ref }}|${{ github.event.pull_request.head.ref }}>
             • All good? Approve the PR and add label `release:ready` → <${{ github.event.pull_request.html_url }}|PR>
+
+  e2e:
+    if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
+    needs: deploy
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: https://stg.app.aragon.org
+      environment: staging
+
+  e2e-notify:
+    needs: [notify-start, e2e]
+    if: ${{ always() && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v3.1.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/slack-notify
+
+      - name: Notify Slack — E2E results
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          message: |
+            ${{ needs.e2e.result == 'success' && '✅ Smoke tests on *staging* passed' || '❌ Smoke tests on *staging* failed' }}
+            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
