@@ -6,7 +6,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenDelegationForm } from '../../components/tokenMemberPanel/tokenDelegation';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
-import type { ITokenDelegationOnboardingDialogParams } from './tokenDelegationOnboardingDialog.api';
+import type { ITokenDelegationOnboardingDialogParams } from './tokenDelegationOnboardingFormDialog.api';
 
 export interface ITokenDelegationOnboardingFormDialogProps
     extends IDialogComponentProps<ITokenDelegationOnboardingDialogParams> {}

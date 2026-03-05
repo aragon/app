@@ -2,10 +2,8 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { TokenApproveNftDialog } from '../dialogs/tokenApproveNftDialog';
 import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
-import {
-    TokenDelegationOnboardingFormDialog,
-    TokenDelegationOnboardingIntroDialog,
-} from '../dialogs/tokenDelegationOnboardingDialog';
+import { TokenDelegationOnboardingFormDialog } from '../dialogs/tokenDelegationOnboardingFormDialog';
+import { TokenDelegationOnboardingIntroDialog } from '../dialogs/tokenDelegationOnboardingIntroDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 
