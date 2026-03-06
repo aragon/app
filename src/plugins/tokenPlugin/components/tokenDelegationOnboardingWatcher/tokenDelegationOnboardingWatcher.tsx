@@ -48,34 +48,31 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         enabled: delegationPlugin != null && address != null,
     });
 
-    const hasFiredRef = useRef(false);
-    const hasSeenDisconnectedRef = useRef(false);
-    const shouldOpenAfterConnectRef = useRef(false);
+    const hasFiredRef = useRef(status === 'connected');
+    const hasConnectIntentRef = useRef(false);
 
     useEffect(() => {
         if (status === 'disconnected') {
             hasFiredRef.current = false;
-            hasSeenDisconnectedRef.current = true;
-            shouldOpenAfterConnectRef.current = false;
+            hasConnectIntentRef.current = false;
         }
 
-        if (hasSeenDisconnectedRef.current && status === 'connected') {
+        if (status === 'connecting') {
             hasFiredRef.current = false;
-            shouldOpenAfterConnectRef.current = true;
-            hasSeenDisconnectedRef.current = false;
+            hasConnectIntentRef.current = true;
         }
     }, [status]);
 
     useEffect(() => {
         if (
             status !== 'connected' ||
-            !shouldOpenAfterConnectRef.current ||
-            hasFiredRef.current
+            hasFiredRef.current ||
+            !hasConnectIntentRef.current
         ) {
             return;
         }
 
-        if (isLoading || !shouldTrigger) {
+        if (isLoading) {
             return;
         }
 
@@ -83,8 +80,13 @@ export const TokenDelegationOnboardingWatcher: React.FC<
             return;
         }
 
+        // Consume this connect flow once the onboarding check is resolved.
         hasFiredRef.current = true;
-        shouldOpenAfterConnectRef.current = false;
+        hasConnectIntentRef.current = false;
+        if (!shouldTrigger) {
+            return;
+        }
+
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
             params: {
                 tokenAddress,
