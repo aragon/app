@@ -13,6 +13,7 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import type { IGauge, IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
@@ -53,7 +54,8 @@ export const GaugeVoterGaugesPageClient: React.FC<
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
-    const isUserConnected = !!address;
+    const isMounted = useIsMounted();
+    const isUserConnected = isMounted && !!address;
     const { data: gaugeListData } = useGaugeList(initialParams);
 
     // There are possible multiple gaugeVoter plugins, but we don't support it currently (so we display only the first one).

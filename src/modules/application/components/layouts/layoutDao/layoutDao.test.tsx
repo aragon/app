@@ -27,6 +27,13 @@ jest.mock('../../bannerDao', () => ({
     BannerDao: () => <div data-testid="banner-mock" />,
 }));
 
+jest.mock(
+    '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher',
+    () => ({
+        TokenDelegationOnboardingWatcher: () => null,
+    }),
+);
+
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
