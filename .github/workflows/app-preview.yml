@@ -20,6 +20,7 @@ permissions:
 
 jobs:
   deploy:
+    if: ${{ !startsWith(github.head_ref, 'release/') && !startsWith(github.head_ref, 'hotfix/') }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
