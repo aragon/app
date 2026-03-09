@@ -2175,6 +2175,15 @@
           "description": "Unlock or withdraw your {{symbol}} tokens",
           "title": "Your locks"
         },
+        "gaugeVoterLockOnboardingDialog": {
+          "intro": {
+            "hiddenTitle": "Lock tokens onboarding",
+            "title": "Your {{tokenSymbol}} is unlocked",
+            "description": "Lock more tokens to increase your voting power.",
+            "cta": "Lock tokens",
+            "cancel": "Cancel"
+          }
+        },
         "meta": {
           "link": {
             "gauges": "Gauges"

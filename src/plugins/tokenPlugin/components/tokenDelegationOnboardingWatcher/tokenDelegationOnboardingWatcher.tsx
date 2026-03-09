@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useConnection } from 'wagmi';
-
+import { GaugeVoterPluginDialogId } from '@/plugins/gaugeVoterPlugin/constants/gaugeVoterPluginDialogId';
 import type { IDao } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -55,6 +55,11 @@ export const TokenDelegationOnboardingWatcher: React.FC<
     });
 
     useEffect(() => {
+        // TODO: remove — testing only
+        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_INTRO, {
+            params: { tokenAddress, tokenSymbol, daoId: dao.id },
+        });
+
         if (
             !hasPendingConnection ||
             !shouldTrigger ||
