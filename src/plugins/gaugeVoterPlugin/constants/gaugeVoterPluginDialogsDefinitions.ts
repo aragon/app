@@ -2,6 +2,7 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { GaugeVoterExitQueueWithdrawDialog } from '../dialogs/gaugeVoterExitQueueWithdrawDialog';
 import { GaugeVoterExitQueueWithdrawTransactionDialog } from '../dialogs/gaugeVoterExitQueueWithdrawTransactionDialog';
 import { GaugeVoterGaugeDetailsDialog } from '../dialogs/gaugeVoterGaugeDetailsDialog';
+import { GaugeVoterLockOnboardingFormDialog } from '../dialogs/gaugeVoterLockOnboardingFormDialog';
 import { GaugeVoterLockOnboardingIntroDialog } from '../dialogs/gaugeVoterLockOnboardingIntroDialog';
 import { GaugeVoterLockOnboardingLockTimeInfoDialog } from '../dialogs/gaugeVoterLockOnboardingLockTimeInfoDialog';
 import { GaugeVoterLocksDialog } from '../dialogs/gaugeVoterLocksDialog';
@@ -49,5 +50,8 @@ export const gaugeVoterPluginDialogsDefinitions: Record<
     },
     [GaugeVoterPluginDialogId.LOCK_ONBOARDING_LOCK_TIME_INFO]: {
         Component: GaugeVoterLockOnboardingLockTimeInfoDialog,
+    },
+    [GaugeVoterPluginDialogId.LOCK_ONBOARDING_FORM]: {
+        Component: GaugeVoterLockOnboardingFormDialog,
     },
 };

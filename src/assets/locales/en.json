@@ -2069,6 +2069,7 @@
         },
         "gaugeVoterLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "chart": {
             "now": "Now",
             "votingPower": "Voting power"
@@ -2182,6 +2183,9 @@
             "description": "Lock more tokens to increase your voting power.",
             "cta": "Lock tokens",
             "cancel": "Cancel"
+          },
+          "form": {
+            "title": "Join token holders"
           },
           "lockTimeInfo": {
             "title": "Lock {{tokenSymbol}}",

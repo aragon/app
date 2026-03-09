@@ -1,4 +1,5 @@
 import { Button, invariant } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -35,6 +36,14 @@ export interface IGaugeVoterLockFormProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Rendering mode: 'panel' (default) or 'dialog'.
+     */
+    mode?: 'panel' | 'dialog';
+    /**
+     * Callback invoked when the user cancels (dialog mode only).
+     */
+    onCancel?: () => void;
 }
 
 /**
@@ -45,7 +54,7 @@ export interface IGaugeVoterLockFormData extends IAssetInputFormData {}
 export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     props,
 ) => {
-    const { plugin, daoId } = props;
+    const { plugin, daoId, mode = 'panel', onCancel } = props;
 
     const { votingEscrow, token } = plugin.settings;
     const { votingEscrow: votingEscrowAddresses } = plugin;
@@ -230,45 +239,94 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                         }}
                     />
                 </div>
-                <div className="flex flex-col gap-3">
-                    <Button
-                        disabled={disableSubmit}
-                        onClick={
-                            effectiveIsConnected
-                                ? undefined
-                                : () => walletGuard()
-                        }
-                        size="lg"
-                        type={effectiveIsConnected ? 'submit' : undefined}
-                        variant="primary"
-                    >
-                        {t(
-                            `app.plugins.gaugeVoter.gaugeVoterLockForm.submit.${submitLabel}`,
-                            {
-                                symbol: token.symbol,
-                            },
-                        )}
-                    </Button>
-                    {locksCount > 0 && (
+                {mode === 'dialog' ? (
+                    <div className="flex flex-col gap-9">
+                        <p className="font-normal text-neutral-500 text-sm leading-normal">
+                            {t(
+                                'app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo',
+                            )}
+                        </p>
+                        <div
+                            className={classNames(
+                                'flex gap-3',
+                                onCancel != null
+                                    ? 'justify-between'
+                                    : 'justify-end',
+                            )}
+                        >
+                            {onCancel != null && (
+                                <Button
+                                    onClick={onCancel}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {t(
+                                        'app.plugins.gaugeVoter.gaugeVoterLockForm.cancel',
+                                    )}
+                                </Button>
+                            )}
+                            <Button
+                                disabled={disableSubmit}
+                                onClick={
+                                    effectiveIsConnected
+                                        ? undefined
+                                        : () => walletGuard()
+                                }
+                                size="md"
+                                type={
+                                    effectiveIsConnected ? 'submit' : undefined
+                                }
+                            >
+                                {t(
+                                    `app.plugins.gaugeVoter.gaugeVoterLockForm.submit.${submitLabel}`,
+                                    {
+                                        symbol: token.symbol,
+                                    },
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-3">
                         <Button
-                            onClick={handleViewLocks}
+                            disabled={disableSubmit}
+                            onClick={
+                                effectiveIsConnected
+                                    ? undefined
+                                    : () => walletGuard()
+                            }
                             size="lg"
-                            variant="secondary"
+                            type={effectiveIsConnected ? 'submit' : undefined}
+                            variant="primary"
                         >
                             {t(
-                                'app.plugins.gaugeVoter.gaugeVoterLockForm.locks',
+                                `app.plugins.gaugeVoter.gaugeVoterLockForm.submit.${submitLabel}`,
                                 {
-                                    count: locksCount,
+                                    symbol: token.symbol,
                                 },
                             )}
                         </Button>
-                    )}
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                        {t(
-                            'app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo',
+                        {locksCount > 0 && (
+                            <Button
+                                onClick={handleViewLocks}
+                                size="lg"
+                                variant="secondary"
+                            >
+                                {t(
+                                    'app.plugins.gaugeVoter.gaugeVoterLockForm.locks',
+                                    {
+                                        count: locksCount,
+                                    },
+                                )}
+                            </Button>
                         )}
-                    </p>
-                </div>
+                        <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+                            {t(
+                                'app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo',
+                            )}
+                        </p>
+                    </div>
+                )}
             </form>
         </FormProvider>
     );

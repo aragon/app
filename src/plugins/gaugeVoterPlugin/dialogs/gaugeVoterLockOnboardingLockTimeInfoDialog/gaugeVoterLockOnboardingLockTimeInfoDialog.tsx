@@ -26,7 +26,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
         'GaugeVoterLockOnboardingLockTimeInfoDialog: required parameters must be set.',
     );
 
-    const { plugin } = location.params;
+    const { plugin, daoId } = location.params;
     const { token, votingEscrow } = plugin.settings;
 
     const { symbol: tokenSymbol } = token;
@@ -39,11 +39,13 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
     ).days;
     const totalDays = minLockDays + cooldownDays;
 
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
     const { t } = useTranslations();
 
     const handleLock = () => {
-        // TODO: open lock tokens dialog
+        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_FORM, {
+            params: { plugin, daoId },
+        });
     };
 
     const handleCancel = () => {
