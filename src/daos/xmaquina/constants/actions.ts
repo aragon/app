@@ -8,7 +8,7 @@ export const actions = [
         description:
             'app.daos.xmaquina.xmaquinaPageHeader.actions.stake.description',
         icon: StakeIcon as string,
-        href: 'https://genesis.xmaquina.io/stake',
+        href: 'https://dao.xmaquina.io/stake',
         isExternal: true,
     },
     {
