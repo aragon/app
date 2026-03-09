@@ -7,7 +7,10 @@ import type { IDao } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
+import type { IGaugeVoterLockOnboardingIntroDialogParams } from '../../../gaugeVoterPlugin/dialogs/gaugeVoterLockOnboardingIntroDialog/gaugeVoterLockOnboardingIntroDialog';
+import type { IGaugeVoterPlugin } from '../../../gaugeVoterPlugin/types';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
+import type { ITokenDelegationOnboardingDialogParams } from '../../dialogs/tokenDelegationOnboardingFormDialog';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
 import type { ITokenPluginSettings } from '../../types';
 
@@ -56,10 +59,17 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 
     useEffect(() => {
         // TODO: remove — testing only
-        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_INTRO, {
-            params: { tokenAddress, tokenSymbol, daoId: dao.id },
-        });
+        if (delegationPlugin != null) {
+            const params: IGaugeVoterLockOnboardingIntroDialogParams = {
+                daoId: dao.id,
+                plugin: delegationPlugin as IGaugeVoterPlugin,
+            };
 
+            open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_INTRO, { params });
+        }
+    }, [open, delegationPlugin, dao.id]);
+
+    useEffect(() => {
         if (
             !hasPendingConnection ||
             !shouldTrigger ||
@@ -71,8 +81,11 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 
         setHasPendingConnection(false);
 
+        const delegationOnboardingIntroParams: ITokenDelegationOnboardingDialogParams =
+            { tokenAddress, tokenSymbol, daoId: dao.id };
+
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
-            params: { tokenAddress, tokenSymbol, daoId: dao.id },
+            params: delegationOnboardingIntroParams,
         });
     }, [
         hasPendingConnection,

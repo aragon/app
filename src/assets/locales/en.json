@@ -2182,6 +2182,16 @@
             "description": "Lock more tokens to increase your voting power.",
             "cta": "Lock tokens",
             "cancel": "Cancel"
+          },
+          "lockTimeInfo": {
+            "title": "Lock {{tokenSymbol}}",
+            "description": "Note that you will need to wait for the warmup, minimum locktime and cooldown periods to complete in order to withdraw your {{tokenSymbol}}.",
+            "minLocktime": "Minimum locktime",
+            "cooldown": "Cooldown",
+            "total": "Total",
+            "days": "{{count}} days",
+            "cta": "Lock",
+            "cancel": "Cancel"
           }
         },
         "meta": {

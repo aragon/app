@@ -3,6 +3,7 @@ import { GaugeVoterExitQueueWithdrawDialog } from '../dialogs/gaugeVoterExitQueu
 import { GaugeVoterExitQueueWithdrawTransactionDialog } from '../dialogs/gaugeVoterExitQueueWithdrawTransactionDialog';
 import { GaugeVoterGaugeDetailsDialog } from '../dialogs/gaugeVoterGaugeDetailsDialog';
 import { GaugeVoterLockOnboardingIntroDialog } from '../dialogs/gaugeVoterLockOnboardingIntroDialog';
+import { GaugeVoterLockOnboardingLockTimeInfoDialog } from '../dialogs/gaugeVoterLockOnboardingLockTimeInfoDialog';
 import { GaugeVoterLocksDialog } from '../dialogs/gaugeVoterLocksDialog';
 import { GaugeVoterLockUnlockDialog } from '../dialogs/gaugeVoterLockUnlockDialog';
 import { GaugeVoterVoteDialog } from '../dialogs/gaugeVoterVoteDialog';
@@ -45,5 +46,8 @@ export const gaugeVoterPluginDialogsDefinitions: Record<
         Component: GaugeVoterLockOnboardingIntroDialog,
         hiddenTitle:
             'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.intro.hiddenTitle',
+    },
+    [GaugeVoterPluginDialogId.LOCK_ONBOARDING_LOCK_TIME_INFO]: {
+        Component: GaugeVoterLockOnboardingLockTimeInfoDialog,
     },
 };

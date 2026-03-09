@@ -5,10 +5,10 @@ import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
+import type { IGaugeVoterPlugin } from '../../types/gaugeVoterPlugin';
 
 export interface IGaugeVoterLockOnboardingIntroDialogParams {
-    tokenAddress: string;
-    tokenSymbol: string;
+    plugin: IGaugeVoterPlugin;
     daoId: string;
 }
 
@@ -25,13 +25,16 @@ export const GaugeVoterLockOnboardingIntroDialog: React.FC<
         'GaugeVoterLockOnboardingIntroDialog: required parameters must be set.',
     );
 
-    const { tokenSymbol } = location.params;
+    const { plugin, daoId } = location.params;
+    const tokenSymbol = plugin.settings.token.symbol;
 
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
     const { t } = useTranslations();
 
     const handleLockTokens = () => {
-        // TODO: open lock tokens dialog
+        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_LOCK_TIME_INFO, {
+            params: { plugin, daoId },
+        });
     };
 
     const handleCancel = () => {
