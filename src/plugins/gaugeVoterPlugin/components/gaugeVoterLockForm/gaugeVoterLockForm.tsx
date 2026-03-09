@@ -1,5 +1,4 @@
 import { Button, invariant } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -246,25 +245,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                                 'app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo',
                             )}
                         </p>
-                        <div
-                            className={classNames(
-                                'flex gap-3',
-                                onCancel != null
-                                    ? 'justify-between'
-                                    : 'justify-end',
-                            )}
-                        >
-                            {onCancel != null && (
-                                <Button
-                                    onClick={onCancel}
-                                    size="md"
-                                    variant="tertiary"
-                                >
-                                    {t(
-                                        'app.plugins.gaugeVoter.gaugeVoterLockForm.cancel',
-                                    )}
-                                </Button>
-                            )}
+                        <div className="flex gap-3">
                             <Button
                                 disabled={disableSubmit}
                                 onClick={
@@ -284,6 +265,17 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                                     },
                                 )}
                             </Button>
+                            {onCancel != null && (
+                                <Button
+                                    onClick={onCancel}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {t(
+                                        'app.plugins.gaugeVoter.gaugeVoterLockForm.cancel',
+                                    )}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 ) : (
