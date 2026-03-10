@@ -2,7 +2,7 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { CapitalDistributorTestMembersFileDownloadDialog } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 import { CapitalDistributorTestDialogId } from './capitalDistributorTestDialogId';
 
-export const capitalDistributorTestDialogsDefinitions: Record<
+export const gaugeRewardDialogsDefinitions: Record<
     CapitalDistributorTestDialogId,
     IDialogComponentDefinitions
 > = {
