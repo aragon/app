@@ -2930,6 +2930,7 @@
         },
         "tokenWrapForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to get voting power.",
           "submit": {

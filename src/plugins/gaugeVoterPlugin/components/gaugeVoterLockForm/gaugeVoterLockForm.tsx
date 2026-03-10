@@ -1,4 +1,4 @@
-import { Button, invariant } from '@aragon/gov-ui-kit';
+import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -219,6 +219,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     const renderSubmitButton = ({ size }: { size: 'md' | 'lg' }) => (
         <Button
             disabled={disableSubmit}
+            iconRight={mode === 'dialog' ? IconType.CHEVRON_RIGHT : undefined}
             onClick={effectiveIsConnected ? undefined : () => walletGuard()}
             size={size}
             type={effectiveIsConnected ? 'submit' : undefined}
@@ -263,8 +264,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                 {mode === 'dialog' ? (
                     <div className="flex flex-col gap-9">
                         {footerInfo}
-                        <div className="flex gap-3">
-                            {renderSubmitButton({ size: 'md' })}
+                        <div className="flex justify-between gap-3">
                             {onCancel != null && (
                                 <Button
                                     onClick={onCancel}
@@ -276,6 +276,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
                                     )}
                                 </Button>
                             )}
+                            {renderSubmitButton({ size: 'md' })}
                         </div>
                     </div>
                 ) : (

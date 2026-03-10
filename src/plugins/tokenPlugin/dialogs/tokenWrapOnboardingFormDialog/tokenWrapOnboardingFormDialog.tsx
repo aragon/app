@@ -43,6 +43,8 @@ export const TokenWrapOnboardingFormDialog: React.FC<
             <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
                 <TokenWrapForm
                     daoId={daoId}
+                    mode="dialog"
+                    onCancel={handleCancel}
                     token={token}
                     underlyingToken={underlyingToken}
                 />
