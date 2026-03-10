@@ -1,5 +1,7 @@
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { pluginMetaUtils } from '@/shared/utils/pluginMetaUtils';
+import type { ITokenPluginSettingsToken } from '../../types';
 
 export interface ITokenPluginHasExecutePermissionParams {
     /**
@@ -9,6 +11,20 @@ export interface ITokenPluginHasExecutePermissionParams {
 }
 
 class TokenPluginUtils {
+    getUnderlyingToken = (token: ITokenPluginSettingsToken): IToken => {
+        if (token.underlying == null) {
+            return token;
+        }
+
+        return {
+            ...token,
+            address: token.underlying,
+            // Remove the "g" and "Governance" prefixes from the token symbol / name
+            symbol: token.symbol.substring(1),
+            name: token.name.substring(11),
+        };
+    };
+
     hasExecuteProposalPermissionModifier = (
         params: ITokenPluginHasExecutePermissionParams,
     ): boolean => {

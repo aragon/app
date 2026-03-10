@@ -2654,6 +2654,18 @@
             "title": "Set up your delegation"
           }
         },
+        "tokenWrapOnboardingDialog": {
+          "intro": {
+            "hiddenTitle": "Wrap tokens onboarding",
+            "title": "Your {{underlyingTokenSymbol}} is unwrapped",
+            "description": "Wrap your tokens to participate in governance.",
+            "cta": "Wrap tokens",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "title": "Wrap tokens"
+          }
+        },
         "tokenDelegationForm": {
           "delegate": {
             "helpText": "Enter the address where you want to delegate your current or future token balance's voting power.",
