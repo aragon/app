@@ -70,7 +70,7 @@ export const AdminManageMembersDialog: React.FC<
         useDaoPlugins({
             daoId,
             interfaceType: PluginInterfaceType.ADMIN,
-            includeSubPlugins: false,
+            includeLinkedAccounts: false,
         }) ?? [];
 
     const currentAdmins = useMemo(
