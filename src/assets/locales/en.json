@@ -2240,12 +2240,25 @@
         },
         "lockToVoteLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
           "info": "Lock {{symbol}} to participate in governance.",
           "submit": {
             "approve": "Approve {{symbol}}",
             "lock": "Lock {{symbol}}",
             "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
+        "lockToVoteLockOnboardingDialog": {
+          "form": {
+            "title": "Join token holders"
+          },
+          "intro": {
+            "cancel": "Cancel",
+            "cta": "Lock tokens",
+            "description": "Lock more tokens to increase your voting power.",
+            "hiddenTitle": "Lock tokens onboarding",
+            "title": "Your {{tokenSymbol}} is unlocked"
           }
         },
         "lockToVoteLockUnlockDialog": {
