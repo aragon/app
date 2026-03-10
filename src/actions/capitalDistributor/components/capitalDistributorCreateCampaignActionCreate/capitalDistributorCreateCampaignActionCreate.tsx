@@ -54,7 +54,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
     const gaugeVoterPlugins = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeSubPlugins: false,
+        includeLinkedAccounts: false,
     });
     const gaugePlugin = gaugeVoterPlugins?.[0]?.meta as
         | IGaugeVoterPlugin

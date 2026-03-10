@@ -26,7 +26,7 @@ export const AdminManageMembers: React.FC<IAdminMangeMembersProps> = (
     const [adminPlugin] = useDaoPlugins({
         daoId,
         interfaceType: PluginInterfaceType.ADMIN,
-        includeSubPlugins: false,
+        includeLinkedAccounts: false,
     })!;
 
     const openManageMembersDialog = () => {
