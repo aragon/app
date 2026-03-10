@@ -60,7 +60,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                     { tokenSymbol },
                 )}
             />
-            <Dialog.Content className="flex flex-col gap-4">
+            <Dialog.Content className="flex flex-col gap-4 pb-3">
                 <p className="text-neutral-500">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.description',
