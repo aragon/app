@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Add GaugeVoter lock and wrap onboarding dialogs
+Add lock and wrap onboarding dialogs
