@@ -21,11 +21,11 @@ import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
-import { capitalDistributorTestMinEpochId } from '../../constants/capitalDistributorTestMinEpochId';
+import { GaugeRewardDialogId } from '../../constants/gaugeRewardDialogId';
+import { gaugeRewardMinEpochId } from '../../constants/gaugeRewardMinEpochId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
-export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
+export interface IGaugeRewardMembersFileDownloadDialogParams {
     /**
      * Gauge plugin.
      */
@@ -44,17 +44,17 @@ export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
     onDownload?: (fileName: string) => void;
 }
 
-export interface ICapitalDistributorTestMembersFileDownloadDialogProps
-    extends IDialogComponentProps<ICapitalDistributorTestMembersFileDownloadDialogParams> {}
+export interface IGaugeRewardMembersFileDownloadDialogProps
+    extends IDialogComponentProps<IGaugeRewardMembersFileDownloadDialogParams> {}
 
-export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
-    ICapitalDistributorTestMembersFileDownloadDialogProps
+export const GaugeRewardMembersFileDownloadDialog: React.FC<
+    IGaugeRewardMembersFileDownloadDialogProps
 > = (props) => {
     const { location } = props;
 
     invariant(
         location.params != null,
-        'CapitalDistributorTestMembersFileDownloadDialog: params must be defined',
+        'GaugeRewardMembersFileDownloadDialog: params must be defined',
     );
 
     const { gaugePlugin, network, asset } = location.params;
@@ -91,9 +91,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         const epochs: number[] = [];
 
         const firstEpoch =
-            capitalDistributorTestMinEpochId > currentEpochId
-                ? 1
-                : capitalDistributorTestMinEpochId;
+            gaugeRewardMinEpochId > currentEpochId ? 1 : gaugeRewardMinEpochId;
 
         for (
             let i = currentEpochId;
@@ -174,7 +172,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     };
 
     const handleClose = () => {
-        close(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD);
+        close(GaugeRewardDialogId.GAUGE_REWARD_MEMBERS_FILE_DOWNLOAD);
     };
 
     const selectedEpochLabel =

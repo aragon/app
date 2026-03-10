@@ -1,7 +1,7 @@
 import type { IAsset } from '@/modules/finance/api/financeService';
 import type { IDao } from '@/shared/api/daoService';
 
-export interface ICryptexMembersFileDownloadProps {
+export interface ITokenRewardMembersFileDownloadProps {
     /**
      * DAO to display in the header.
      */

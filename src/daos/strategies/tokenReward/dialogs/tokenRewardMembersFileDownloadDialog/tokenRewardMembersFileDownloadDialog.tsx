@@ -10,9 +10,9 @@ import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTokenRewardDistribution } from '../../api/tokenRewardService';
-import { CryptexDialogId } from '../../constants/cryptexDialogId';
+import { TokenRewardDialogId } from '../../constants/tokenRewardDialogId';
 
-export interface ICryptexMembersFileDownloadDialogParams {
+export interface ITokenRewardMembersFileDownloadDialogParams {
     /**
      * Token voting governance plugin address.
      */
@@ -31,17 +31,17 @@ export interface ICryptexMembersFileDownloadDialogParams {
     onDownload: (fileName: string) => void;
 }
 
-export interface ICryptexMembersFileDownloadDialogProps
-    extends IDialogComponentProps<ICryptexMembersFileDownloadDialogParams> {}
+export interface ITokenRewardMembersFileDownloadDialogProps
+    extends IDialogComponentProps<ITokenRewardMembersFileDownloadDialogParams> {}
 
-export const CryptexMembersFileDownloadDialog: React.FC<
-    ICryptexMembersFileDownloadDialogProps
+export const TokenRewardMembersFileDownloadDialog: React.FC<
+    ITokenRewardMembersFileDownloadDialogProps
 > = (props) => {
     const { location } = props;
 
     invariant(
         location.params != null,
-        'CryptexMembersFileDownloadDialog: params must be defined',
+        'TokenRewardMembersFileDownloadDialog: params must be defined',
     );
 
     const { pluginAddress, network, asset, onDownload } = location.params;
@@ -97,7 +97,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
     };
 
     const handleClose = () => {
-        close(CryptexDialogId.CRYPTEX_MEMBERS_FILE_DOWNLOAD);
+        close(TokenRewardDialogId.TOKEN_REWARD_MEMBERS_FILE_DOWNLOAD);
     };
 
     const todayFormatted = DateTime.now().toFormat('yyyy-MM-dd');

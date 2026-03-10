@@ -7,12 +7,12 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { CryptexDialogId } from '../../constants/cryptexDialogId';
-import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
-import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
+import { TokenRewardDialogId } from '../../constants/tokenRewardDialogId';
+import type { ITokenRewardMembersFileDownloadDialogParams } from '../../dialogs/tokenRewardMembersFileDownloadDialog';
+import type { ITokenRewardMembersFileDownloadProps } from './tokenRewardMembersFileDownload.api';
 
-export const CryptexMembersFileDownload: React.FC<
-    ICryptexMembersFileDownloadProps
+export const TokenRewardMembersFileDownload: React.FC<
+    ITokenRewardMembersFileDownloadProps
 > = (props) => {
     const { dao, asset } = props;
 
@@ -36,14 +36,14 @@ export const CryptexMembersFileDownload: React.FC<
             return;
         }
 
-        const params: ICryptexMembersFileDownloadDialogParams = {
+        const params: ITokenRewardMembersFileDownloadDialogParams = {
             pluginAddress: governancePlugin.address as Hex,
             network: dao.network,
             asset,
             onDownload: setDownloadedFileName,
         };
 
-        open(CryptexDialogId.CRYPTEX_MEMBERS_FILE_DOWNLOAD, {
+        open(TokenRewardDialogId.TOKEN_REWARD_MEMBERS_FILE_DOWNLOAD, {
             params,
             disableOutsideClick: true,
         });
@@ -52,7 +52,7 @@ export const CryptexMembersFileDownload: React.FC<
     return (
         <InputContainer
             helpText="Generate and download a rewards JSON based on governance participation"
-            id="cryptex-members-file"
+            id="token-reward-members-file"
             label="Members file"
             useCustomWrapper={true}
         >

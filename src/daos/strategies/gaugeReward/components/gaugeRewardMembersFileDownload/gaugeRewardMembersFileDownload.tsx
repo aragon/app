@@ -2,28 +2,17 @@
 
 import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { IAsset } from '@/modules/finance/api/financeService';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
-import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { CapitalDistributorTestDialogId } from '../constants/capitalDistributorTestDialogId';
-import type { ICapitalDistributorTestMembersFileDownloadDialogParams } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
+import { GaugeRewardDialogId } from '../../constants/gaugeRewardDialogId';
+import type { IGaugeRewardMembersFileDownloadDialogParams } from '../../dialogs/gaugeRewardMembersFileDownloadDialog';
+import type { IGaugeRewardMembersFileDownloadProps } from './gaugeRewardMembersFileDownload.api';
 
-export interface ICapitalDistributorTestMembersFileDownloadProps {
-    /**
-     * DAO to display in the header.
-     */
-    dao: IDao;
-    /**
-     * Asset selected in the campaign creation form, passed via PluginSingleComponent.
-     */
-    asset?: IAsset;
-}
-
-export const CapitalDistributorTestMembersFileDownload: React.FC<
-    ICapitalDistributorTestMembersFileDownloadProps
+export const GaugeRewardMembersFileDownload: React.FC<
+    IGaugeRewardMembersFileDownloadProps
 > = (props) => {
     const { dao, asset } = props;
 
@@ -46,14 +35,14 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             return;
         }
 
-        const params: ICapitalDistributorTestMembersFileDownloadDialogParams = {
+        const params: IGaugeRewardMembersFileDownloadDialogParams = {
             gaugePlugin,
             network: dao.network,
             asset,
             onDownload: setDownloadedFileName,
         };
 
-        open(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD, {
+        open(GaugeRewardDialogId.GAUGE_REWARD_MEMBERS_FILE_DOWNLOAD, {
             params,
             disableOutsideClick: true,
         });
@@ -64,7 +53,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             helpText={t(
                 'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.helpText',
             )}
-            id="katana-members-file"
+            id="gauge-reward-members-file"
             label={t(
                 'app.daos.capitalDistributorTest.capitalDistributorTestMembersFileDownload.label',
             )}

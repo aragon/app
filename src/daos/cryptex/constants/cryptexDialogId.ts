@@ -1,3 +1,0 @@
-export enum CryptexDialogId {
-    CRYPTEX_MEMBERS_FILE_DOWNLOAD = 'CRYPTEX_MEMBERS_FILE_DOWNLOAD',
-}
