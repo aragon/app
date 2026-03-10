@@ -1,8 +1,10 @@
 import { QueryClient } from '@tanstack/react-query';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { proposalListOptions } from '../../api/governanceService';
 import { DaoProposalsPageClient } from './daoProposalsPageClient';
@@ -35,13 +37,18 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
     const daoParams = { urlParams: daoUrlParams };
     const dao = await queryClient.fetchQuery(daoOptions(daoParams));
 
-    // Set pluginAddress parameter to undefined when DAO has more than one plugin as the UI will display an "All proposals"
-    // tab that is selected by default
-    const processPlugins = daoUtils.getDaoPlugins(dao, {
-        type: PluginType.PROCESS,
-    })!;
+    const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
+    const daoOverride = daoOverrides[daoId];
+
+    const allProcessPlugins =
+        daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS }) ?? [];
+    const processPlugins = daoVisibilityUtils.filterHiddenPlugins(
+        allProcessPlugins,
+        daoOverride,
+    );
+
     const pluginAddress =
-        processPlugins.length > 1 ? undefined : processPlugins[0].address;
+        processPlugins.length > 1 ? undefined : processPlugins[0]?.address;
 
     const proposalListQueryParams = {
         daoId,
