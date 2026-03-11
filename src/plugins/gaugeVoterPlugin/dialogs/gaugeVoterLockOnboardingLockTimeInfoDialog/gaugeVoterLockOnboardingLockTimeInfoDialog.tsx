@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import { Dialog, IconType, invariant } from '@aragon/gov-ui-kit';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -122,6 +122,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                         'app.plugins.gaugeVoter.gaugeVoterLockOnboardingDialog.lockTimeInfo.cta',
                     ),
                     onClick: handleLock,
+                    iconRight: IconType.CHEVRON_RIGHT,
                 }}
                 secondaryAction={{
                     label: t(
@@ -129,6 +130,7 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
                     ),
                     onClick: handleCancel,
                 }}
+                variant="wizard"
             />
         </>
     );

@@ -39,7 +39,7 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
             .with(PluginInterfaceType.LOCK_TO_VOTE, () => true)
             .with(
                 PluginInterfaceType.TOKEN_VOTING,
-                // TOKEN_VOTING only matches if token.underlying != null (wrapping case).
+                // TOKEN_VOTING only matches if token.underlying != null (wrapping/non-gov case or VE token adapter case).
                 () =>
                     (plugin.settings as ITokenPluginSettings).token
                         ?.underlying != null,
@@ -93,7 +93,13 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
 
         setHasPendingConnection(false);
 
-        if (eligiblePlugin.interfaceType === PluginInterfaceType.GAUGE_VOTER) {
+        if (
+            // Either GaugeVoter or TokenVoting with a votingEscrow token adapter.
+            eligiblePlugin.interfaceType === PluginInterfaceType.GAUGE_VOTER ||
+            (eligiblePlugin.interfaceType ===
+                PluginInterfaceType.TOKEN_VOTING &&
+                (eligiblePlugin as ITokenPlugin).votingEscrow != null)
+        ) {
             const params: IGaugeVoterLockOnboardingIntroDialogParams = {
                 plugin: eligiblePlugin as IGaugeVoterPlugin,
                 daoId: dao.id,
