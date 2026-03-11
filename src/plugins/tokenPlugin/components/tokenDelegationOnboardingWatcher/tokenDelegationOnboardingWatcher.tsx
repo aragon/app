@@ -6,6 +6,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenDelegationOnboardingDialogParams } from '../../dialogs/tokenDelegationOnboardingFormDialog';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
@@ -23,8 +24,13 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 > = (props) => {
     const { dao } = props;
 
+    const daoPlugins =
+        daoUtils.getDaoPlugins(dao, {
+            includeLinkedAccounts: false,
+        }) ?? [];
+
     // TODO: extend to get the all "eligible" plugins?
-    const delegationPlugin = dao.plugins.find(
+    const delegationPlugin = daoPlugins.find(
         (plugin) =>
             (plugin.interfaceType === PluginInterfaceType.TOKEN_VOTING ||
                 plugin.interfaceType === PluginInterfaceType.GAUGE_VOTER) &&

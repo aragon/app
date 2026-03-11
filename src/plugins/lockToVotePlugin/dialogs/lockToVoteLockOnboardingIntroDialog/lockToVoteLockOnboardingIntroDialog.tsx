@@ -32,13 +32,13 @@ export const LockToVoteLockOnboardingIntroDialog: React.FC<
     const { t } = useTranslations();
 
     const handleLockTokens = () => {
-        open(LockToVotePluginDialogId.LOCK_ONBOARDING_FORM, {
+        open(LockToVotePluginDialogId.LOCK_ONBOARDING_FORM_L2V, {
             params: { plugin, daoId },
         });
     };
 
     const handleCancel = () => {
-        close(LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO);
+        close(LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO_L2V);
     };
 
     return (

@@ -27,7 +27,7 @@ export const LockToVoteLockOnboardingFormDialog: React.FC<
     const { t } = useTranslations();
 
     const handleCancel = () => {
-        close(LockToVotePluginDialogId.LOCK_ONBOARDING_FORM);
+        close(LockToVotePluginDialogId.LOCK_ONBOARDING_FORM_L2V);
     };
 
     return (

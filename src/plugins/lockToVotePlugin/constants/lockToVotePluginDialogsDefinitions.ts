@@ -31,12 +31,12 @@ export const lockToVotePluginDialogsDefinitions: Record<
         hiddenDescription:
             'app.plugins.lockToVote.unlockBlockedInfoDialog.a11y.description',
     },
-    [LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO]: {
+    [LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO_L2V]: {
         Component: LockToVoteLockOnboardingIntroDialog,
         hiddenTitle:
             'app.plugins.lockToVote.lockToVoteLockOnboardingDialog.intro.hiddenTitle',
     },
-    [LockToVotePluginDialogId.LOCK_ONBOARDING_FORM]: {
+    [LockToVotePluginDialogId.LOCK_ONBOARDING_FORM_L2V]: {
         Component: LockToVoteLockOnboardingFormDialog,
     },
 };
