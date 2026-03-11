@@ -8,9 +8,8 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
 import type { ITokenDelegationOnboardingDialogParams } from '../../dialogs/tokenDelegationOnboardingFormDialog';
-import type { ITokenWrapOnboardingIntroDialogParams } from '../../dialogs/tokenWrapOnboardingIntroDialog/tokenWrapOnboardingIntroDialog';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
-import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
+import type { ITokenPluginSettings } from '../../types';
 
 export interface ITokenDelegationOnboardingWatcherProps {
     /**
@@ -54,18 +53,6 @@ export const TokenDelegationOnboardingWatcher: React.FC<
     useWalletConnectionEvent({
         onConnected: () => setHasPendingConnection(true),
     });
-
-    useEffect(() => {
-        // TODO: remove — testing only
-        if (delegationPlugin != null) {
-            const params: ITokenWrapOnboardingIntroDialogParams = {
-                daoId: dao.id,
-                token: (delegationPlugin as ITokenPlugin).settings.token,
-            };
-
-            open(TokenPluginDialogId.WRAP_ONBOARDING_INTRO, { params });
-        }
-    }, [open, delegationPlugin, dao.id]);
 
     useEffect(() => {
         if (

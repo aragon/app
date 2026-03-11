@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher';
+import { TokenLockAndWrapOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
@@ -63,6 +64,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
             <NavigationDao dao={dao} />
             <BannerDao dao={dao} />
             <TokenDelegationOnboardingWatcher dao={dao} />
+            <TokenLockAndWrapOnboardingWatcher dao={dao} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
