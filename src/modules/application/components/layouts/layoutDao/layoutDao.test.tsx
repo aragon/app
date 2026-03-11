@@ -41,6 +41,13 @@ jest.mock(
     }),
 );
 
+jest.mock(
+    '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher',
+    () => ({
+        LockToVoteLockOnboardingWatcher: () => null,
+    }),
+);
+
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
