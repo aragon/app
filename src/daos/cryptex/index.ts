@@ -1,9 +1,9 @@
-import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
+import { CapitalDistributorDaoSlotId } from '@/actions/capitalDistributor/constants/capitalDistributorDaoSlotId';
 import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { TokenRewardMembersFileDownload } from '../strategies/tokenReward';
 import { CryptexPageHeader } from './components/cryptexPageHeader';
 import { cryptex } from './constants/cryptex';
+import { CryptexRewardsMembersFileDownload } from './rewards';
 
 export const initialiseCryptex = () => {
     pluginRegistryUtils
@@ -16,8 +16,8 @@ export const initialiseCryptex = () => {
         })
 
         .registerSlotComponent({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
+            slotId: CapitalDistributorDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
             pluginId: cryptex.id,
-            component: TokenRewardMembersFileDownload,
+            component: CryptexRewardsMembersFileDownload,
         });
 };

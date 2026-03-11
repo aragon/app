@@ -12,7 +12,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
+import { CapitalDistributorDaoSlotId } from '@/actions/capitalDistributor/constants/capitalDistributorDaoSlotId';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import { AssetInput } from '@/modules/finance/components/assetInput';
 import { useDao } from '@/shared/api/daoService';
@@ -251,7 +251,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                     dao={dao}
                     pluginId={dao.id}
                     slotId={
-                        CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD
+                        CapitalDistributorDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD
                     }
                 />
             )}
