@@ -109,7 +109,7 @@ class DaoUtils {
             slug,
         } = params ?? {};
 
-        return (dao?.plugins ?? []).filter(
+        return dao?.plugins.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
