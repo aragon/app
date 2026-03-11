@@ -34,6 +34,13 @@ jest.mock(
     }),
 );
 
+jest.mock(
+    '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher',
+    () => ({
+        TokenLockAndWrapOnboardingWatcher: () => null,
+    }),
+);
+
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
