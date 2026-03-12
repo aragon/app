@@ -2,6 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
@@ -47,8 +48,15 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
         daoOverride,
     );
 
+    if (!processPlugins.length) {
+        const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
+        return <RedirectToUrl url={daoUrl} />;
+    }
+
+    // Set pluginAddress to undefined when DAO has multiple process plugins.
+    // The UI defaults to the "All proposals" tab in this case.
     const pluginAddress =
-        processPlugins.length > 1 ? undefined : processPlugins[0]?.address;
+        processPlugins.length > 1 ? undefined : processPlugins[0].address;
 
     const proposalListQueryParams = {
         daoId,

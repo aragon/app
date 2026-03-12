@@ -9,21 +9,18 @@ import {
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
 import { useBlock } from 'wagmi';
-import { useDaoOverrides } from '@/modules/explore/api/cmsService';
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useEfpStats } from '@/modules/governance/api/efpService';
 import { EfpCard } from '@/modules/governance/components/efpCard';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { PluginType } from '@/shared/types';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { useMember } from '../../api/governanceService';
@@ -41,6 +38,10 @@ export interface IDaoMemberDetailsPageClientProps {
      * Address of the DAO member.
      */
     address: string;
+    /**
+     * Address of the body plugin resolved by the server component.
+     */
+    pluginAddress: string;
 }
 
 const memberProposalsCount = 3;
@@ -50,7 +51,7 @@ const memberDaosCount = 3;
 export const DaoMemberDetailsPageClient: React.FC<
     IDaoMemberDetailsPageClientProps
 > = (props) => {
-    const { address, daoId } = props;
+    const { address, daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
 
@@ -59,37 +60,25 @@ export const DaoMemberDetailsPageClient: React.FC<
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
-    const { data: daoOverrides } = useDaoOverrides();
 
-    const allBodyPlugins =
-        daoUtils.getDaoPlugins(dao, {
-            type: PluginType.BODY,
-            includeSubPlugins: true,
-        }) ?? [];
-    const daoOverride = daoOverrides?.[daoId];
-    const visibleBodyPlugins = daoVisibilityUtils.filterHiddenPlugins(
-        allBodyPlugins,
-        daoOverride,
-    );
-    const bodyPlugin = visibleBodyPlugins[0];
+    const bodyPlugins = useDaoPlugins({
+        daoId,
+        pluginAddress,
+    });
+    const bodyPlugin = bodyPlugins?.[0]?.meta;
 
     const memberUrlParams = { address };
-    const memberQueryParams = {
-        daoId,
-        pluginAddress: bodyPlugin?.address,
-    };
+    const memberQueryParams = { daoId, pluginAddress };
     const memberParams = {
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
     };
-    const { data: member } = useMember(memberParams, {
-        enabled: bodyPlugin != null,
-    });
+    const { data: member } = useMember(memberParams);
 
     const memberStatsParams = {
         daoId,
         address,
-        plugin: bodyPlugin as IDaoPlugin,
+        plugin: bodyPlugin!,
     };
     const pluginStats = useSlotSingleFunction<
         IUsePluginMemberStatsParams,

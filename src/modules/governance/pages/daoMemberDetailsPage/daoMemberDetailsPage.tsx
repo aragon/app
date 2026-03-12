@@ -75,7 +75,11 @@ export const DaoMemberDetailsPage: React.FC<
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoMemberDetailsPageClient address={address} daoId={daoId} />
+            <DaoMemberDetailsPageClient
+                address={address}
+                daoId={daoId}
+                pluginAddress={bodyPlugin.address}
+            />
         </Page.Container>
     );
 };
