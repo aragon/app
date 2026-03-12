@@ -27,23 +27,23 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^1.29.0",
-    "@floating-ui/react": "^0.27.18",
+    "@aragon/gov-ui-kit": "^1.29.1",
+    "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.5.14",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-toggle-group": "^1.1.11",
-    "@reown/appkit": "^1.8.18",
-    "@reown/appkit-adapter-wagmi": "^1.8.18",
+    "@reown/appkit": "^1.8.19",
+    "@reown/appkit-adapter-wagmi": "^1.8.19",
     "@reown/walletkit": "^1.5.3",
-    "@sentry/core": "^10.39.0",
-    "@sentry/nextjs": "^10.39.0",
+    "@sentry/core": "^10.42.0",
+    "@sentry/nextjs": "^10.42.0",
     "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-query-devtools": "^5.91.3",
-    "@walletconnect/core": "^2.23.6",
-    "@walletconnect/utils": "^2.23.6",
+    "@walletconnect/core": "^2.23.7",
+    "@walletconnect/utils": "^2.23.7",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
-    "framer-motion": "^12.34.3",
+    "framer-motion": "^12.35.0",
     "import-in-the-middle": "^2.0.6",
     "isomorphic-dompurify": "^2.36.0",
     "jsdom": "^26.1.0",
@@ -58,13 +58,13 @@
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "ts-pattern": "^5.9.0",
-    "viem": "^2.46.2",
+    "viem": "^2.46.3",
     "wagmi": "^3.5.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.4",
+    "@biomejs/biome": "^2.4.5",
     "@changesets/changelog-github": "^0.5.2",
-    "@changesets/cli": "^2.29.8",
+    "@changesets/cli": "^2.30.0",
     "@hookform/devtools": "^4.4.0",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.2.1",
@@ -75,26 +75,26 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^24.10.13",
+    "@types/node": "^24.11.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@walletconnect/types": "^2.23.6",
+    "@walletconnect/types": "^2.23.7",
     "babel-plugin-react-compiler": "^1.0.0",
     "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.2.0",
-    "lint-staged": "^16.2.7",
-    "postcss": "^8.5.6",
+    "lint-staged": "^16.3.2",
+    "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.6",
-    "turbo": "^2.8.10",
+    "turbo": "^2.8.13",
     "typescript": "^5.9.3",
-    "ultracite": "^7.2.3",
-    "vercel": "^50.22.1",
-    "webpack": "^5.105.2"
+    "ultracite": "^7.2.4",
+    "vercel": "^50.26.1",
+    "webpack": "^5.105.4"
   },
   "repository": {
     "type": "git",
@@ -113,24 +113,26 @@
   "engines": {
     "node": ">=24.13.0"
   },
-  "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017",
+  "packageManager": "pnpm@10.32.1+sha512.a706938f0e89ac1456b6563eab4edf1d1faf3368d1191fc5c59790e96dc918e4456ab2e67d613de1043d2e8c81f87303e6b40d4ffeca9df15ef1ad567348f2be",
   "pnpm": {
     "overrides": {
       "isomorphic-dompurify>jsdom": "26.1.0",
-      "tar": "^7.5.8",
+      "tar": "^7.5.11",
       "undici": "^5.29.0",
       "@vercel/blob>undici": "^6.23.0",
+      "dompurify": "^3.3.2",
       "ajv": "^8.18.0",
-      "basic-ftp": ">=5.2.0",
-      "minimatch@3": "^3.1.4",
-      "minimatch@9": "^9.0.7",
-      "minimatch@10": "^10.2.3",
-      "serialize-javascript": ">=7.0.3"
+      "minimatch@10": "^10.2.4"
     },
     "packageExtensions": {
       "@solana/codecs-strings@*": {
         "dependencies": {
           "fastestsmallesttextencoderdecoder": "^1.0.22"
+        }
+      },
+      "@walletconnect/jsonrpc-ws-connection@*": {
+        "dependencies": {
+          "utf-8-validate": "^5.0.10"
         }
       }
     }
