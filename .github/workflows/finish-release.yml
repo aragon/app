@@ -29,17 +29,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.2
         with:
+          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 1
           sparse-checkout: |
             .github/workflows/scripts/slackNotify.js
             .github/actions/extract-slack-ts
+            .github/actions/gh-pr-get-body
             .github/actions/slack-notify
+
+      - name: Read PR body
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
 
       - name: Extract Slack TS from PR body
         id: ts
         uses: ./.github/actions/extract-slack-ts
         with:
-          body: ${{ github.event.pull_request.body }}
+          body: ${{ steps.pr.outputs.body }}
 
       - name: Notify Slack (merged)
         if: github.event.pull_request.merged && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
