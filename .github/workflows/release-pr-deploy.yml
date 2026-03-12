@@ -103,6 +103,8 @@ jobs:
     if: startsWith(github.head_ref, 'release/') || startsWith(github.head_ref, 'hotfix/')
     needs: [notify-start, deploy]
     runs-on: ubuntu-latest
+    outputs:
+      slack-ts: ${{ steps.ts.outputs.ts }}
     steps:
       - name: Load secrets
         id: secrets
@@ -135,6 +137,19 @@ jobs:
         with:
           linear_api_token: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
 
+      - name: Read current PR body for latest Slack TS
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
+
+      - name: Extract Slack TS
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ steps.pr.outputs.body }}
+
       - name: Update PR Description
         uses: ./.github/actions/gh-pr-edit-body
         with:
@@ -143,15 +158,15 @@ jobs:
           body: |
             ${{ steps.summary.outputs.summary }}
 
-            <!-- slack_ts: ${{ needs.notify-start.outputs.slack-ts }} -->
+            <!-- slack_ts: ${{ steps.ts.outputs.ts }} -->
 
       - name: Notify Slack
-        if: needs.notify-start.outputs.slack-ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
             ✅ *Staging Deployed*
 
@@ -172,7 +187,7 @@ jobs:
       environment: staging
 
   e2e-notify:
-    needs: [notify-start, e2e]
+    needs: [notify, e2e]
     if: ${{ always() && needs.e2e.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
@@ -195,12 +210,12 @@ jobs:
             .github/actions/slack-notify
 
       - name: Notify Slack — E2E results
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify.outputs.slack-ts
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          thread_ts: ${{ needs.notify.outputs.slack-ts }}
           message: |
             ${{ needs.e2e.result == 'success' && '✅ Smoke tests on *staging* passed' || '❌ Smoke tests on *staging* failed' }}
             <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
