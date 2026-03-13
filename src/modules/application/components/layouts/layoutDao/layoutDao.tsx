@@ -4,6 +4,7 @@ import {
     QueryClient,
 } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -45,9 +46,10 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     try {
         const daoId = await daoUtils.resolveDaoId(daoPageParams);
         const daoUrlParams = { id: daoId };
-        dao = await queryClient.fetchQuery(
-            daoOptions({ urlParams: daoUrlParams }),
-        );
+        [dao] = await Promise.all([
+            queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams })),
+            queryClient.prefetchQuery(daoOverridesOptions()),
+        ]);
     } catch (error: unknown) {
         const parsedError = errorUtils.serialize(error);
         return (

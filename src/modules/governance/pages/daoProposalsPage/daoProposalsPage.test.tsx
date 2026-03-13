@@ -32,6 +32,7 @@ jest.mock('./daoProposalsPageClient', () => ({
 
 describe('<DaoProposalsPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
     const prefetchInfiniteQuerySpy = jest.spyOn(
         QueryClient.prototype,
@@ -40,7 +41,8 @@ describe('<DaoProposalsPage /> component', () => {
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
-        fetchQuerySpy.mockImplementation(jest.fn());
+        fetchQuerySpy.mockResolvedValue({});
+        prefetchQuerySpy.mockImplementation(jest.fn());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
         getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
@@ -48,6 +50,7 @@ describe('<DaoProposalsPage /> component', () => {
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
+        prefetchQuerySpy.mockReset();
         prefetchInfiniteQuerySpy.mockReset();
         getDaoPluginsSpy.mockReset();
         resolveDaoIdSpy.mockReset();
@@ -71,7 +74,7 @@ describe('<DaoProposalsPage /> component', () => {
     it('prefetches the DAO proposal list of the first DAO process plugin', async () => {
         const dao = generateDao({ id: 'dao-id' });
         const bodyPlugin = generateDaoPlugin({ address: '0x123' });
-        fetchQuerySpy.mockResolvedValue(dao);
+        fetchQuerySpy.mockResolvedValueOnce(dao).mockResolvedValue({});
         getDaoPluginsSpy.mockReturnValue([bodyPlugin]);
         resolveDaoIdSpy.mockResolvedValue(dao.id);
 

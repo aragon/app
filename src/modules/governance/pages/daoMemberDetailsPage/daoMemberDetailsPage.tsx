@@ -1,7 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
+import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { errorUtils } from '@/shared/utils/errorUtils';
 import { memberOptions } from '../../api/governanceService';
 import type { IDaoMemberPageParams } from '../../types';
@@ -24,8 +28,30 @@ export const DaoMemberDetailsPage: React.FC<
 
     const queryClient = new QueryClient();
 
+    const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
+    const daoOverride = daoOverrides[daoId];
+
+    const allBodyPlugins =
+        daoUtils.getDaoPlugins(dao, {
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+        }) ?? [];
+    const visibleBodyPlugins = daoVisibilityUtils.filterHiddenPlugins(
+        allBodyPlugins,
+        daoOverride,
+    );
+    const bodyPlugin = visibleBodyPlugins[0];
+
+    if (bodyPlugin == null) {
+        const membersUrl = daoUtils.getDaoUrl(dao, 'members')!;
+        return <RedirectToUrl url={membersUrl} />;
+    }
+
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress: dao.plugins[0].address };
+    const memberQueryParams = {
+        daoId,
+        pluginAddress: bodyPlugin.address,
+    };
     const memberParams = {
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
@@ -49,7 +75,11 @@ export const DaoMemberDetailsPage: React.FC<
 
     return (
         <Page.Container queryClient={queryClient}>
-            <DaoMemberDetailsPageClient address={address} daoId={daoId} />
+            <DaoMemberDetailsPageClient
+                address={address}
+                daoId={daoId}
+                pluginAddress={bodyPlugin.address}
+            />
         </Page.Container>
     );
 };
