@@ -1,5 +1,15 @@
 # @aragon/app
 
+## 1.23.1
+
+### Patch Changes
+
+- [#1017](https://github.com/aragon/app/pull/1017) [`31d8531`](https://github.com/aragon/app/commit/31d85310325cbdf15834b8597b74d11ee5ceeee1) Thanks [@evanaronson](https://github.com/evanaronson)! - Update DAO header link for XMAQUINA
+
+- [#1020](https://github.com/aragon/app/pull/1020) [`c5467c1`](https://github.com/aragon/app/commit/c5467c108e7669128f2816bf4f7c7acdffc6eb2c) Thanks [@milosh86](https://github.com/milosh86)! - Fix includeLinkedAccounts param mistakenly named includeSubPlugins in getDaoPlugins calls
+
+- [#1023](https://github.com/aragon/app/pull/1023) [`0c6b1c3`](https://github.com/aragon/app/commit/0c6b1c3ebda229bd8f423b58463cfd695ad74778) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
 ## 1.23.0
 
 ### Minor Changes
