@@ -13,7 +13,7 @@ export interface ITokenRewardEntry {
 }
 
 /**
- * Response from the GET /v2/token/rewards/:pluginAddress/:network endpoint.
+ * Response from the GET /v2/tokens/rewards/:pluginAddress/:network endpoint.
  * Array of reward entries where Σ amount === totalAmount from the request.
  */
 export type ITokenRewardDistribution = ITokenRewardEntry[];

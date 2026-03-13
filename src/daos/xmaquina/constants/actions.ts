@@ -1,8 +1,9 @@
+import type { Network } from '@/shared/api/daoService';
 import ClaimIcon from '../assets/xmaquina_claim.svg';
 import GovernIcon from '../assets/xmaquina_govern.svg';
 import StakeIcon from '../assets/xmaquina_stake.svg';
 
-export const actions = [
+export const getActions = (network: Network, address: string) => [
     {
         title: 'app.daos.xmaquina.xmaquinaPageHeader.actions.stake.title',
         description:
@@ -16,7 +17,7 @@ export const actions = [
         description:
             'app.daos.xmaquina.xmaquinaPageHeader.actions.govern.description',
         icon: GovernIcon as string,
-        href: '/dao/base-mainnet/0xfEA21e0500022F34dE0a02Ae3A7D04dF923Ed020/proposals',
+        href: `/dao/${network}/${address}/proposals`,
         isExternal: false,
     },
     {

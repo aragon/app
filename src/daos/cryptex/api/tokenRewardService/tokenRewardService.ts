@@ -4,7 +4,7 @@ import type { IGetTokenRewardDistributionParams } from './tokenRewardService.api
 
 class TokenRewardService extends AragonBackendService {
     private urls = {
-        rewardDistribution: '/v2/token/rewards/:pluginAddress/:network',
+        rewardDistribution: '/v2/tokens/rewards/:pluginAddress/:network',
     };
 
     /**

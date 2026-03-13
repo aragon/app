@@ -1,17 +1,12 @@
 'use client';
 
-import {
-    addressUtils,
-    InputContainer,
-    RadioCard,
-    RadioGroup,
-} from '@aragon/gov-ui-kit';
+import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
-import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
-import { PluginInterfaceType } from '@/shared/api/daoService/domain/enum/pluginInterfaceType';
+import type { Hex } from 'viem';
+import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import {
     CampaignPayoutType,
     type ICapitalDistributorCreateCampaignFormData,
@@ -23,7 +18,7 @@ export interface ICapitalDistributorCampaignPayoutFieldProps {
      */
     fieldPrefix: string;
     /**
-     * DAO ID to check for gauge voter plugin availability.
+     * DAO ID to resolve the voting escrow address via slot function.
      */
     daoId: string;
 }
@@ -34,10 +29,10 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
     const { fieldPrefix, daoId } = props;
     const { t } = useTranslations();
 
-    const gaugeVoterPlugins = useDaoPlugins({
-        daoId,
-        interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeSubPlugins: false,
+    const escrowAddress = useSlotSingleFunction<void, Hex | undefined>({
+        slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+        pluginId: daoId,
+        params: undefined,
     });
 
     const { onChange, ...payoutTypeField } = useFormField<
@@ -54,32 +49,12 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
         name: `${fieldPrefix}.payoutType`,
     });
 
-    const selectedAsset = useWatch<
-        Record<string, ICapitalDistributorCreateCampaignFormData['asset']>
-    >({
-        name: `${fieldPrefix}.asset`,
-    });
-
-    const gaugePlugin = gaugeVoterPlugins?.[0]?.meta as
-        | IGaugeVoterPlugin
-        | undefined;
-
-    const gaugeVoterPluginFound = gaugePlugin != null;
-
-    const tokenMismatch =
-        gaugeVoterPluginFound &&
-        selectedAsset?.token?.address != null &&
-        !addressUtils.isAddressEqual(
-            selectedAsset.token.address,
-            gaugePlugin.votingEscrow.underlying,
-        );
-
     const showError =
         payoutType === CampaignPayoutType.VE_LOCK_ENCODER &&
-        (!gaugeVoterPluginFound || tokenMismatch);
+        escrowAddress == null;
 
     const errorMessage = t(
-        `app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.payout.error.${tokenMismatch ? 'tokenMismatch' : 'noGaugeVoter'}`,
+        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.payout.error.noGaugeVoter',
     );
 
     return (

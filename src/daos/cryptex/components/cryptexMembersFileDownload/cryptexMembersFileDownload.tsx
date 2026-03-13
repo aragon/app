@@ -2,11 +2,8 @@
 
 import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import type { Hex } from 'viem';
-import type { IDaoPlugin } from '@/shared/api/daoService';
-import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { cryptexTokenVotingPluginAddresses } from '../../constants/cryptex';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
 import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
@@ -22,22 +19,15 @@ export const CryptexMembersFileDownload: React.FC<
         null,
     );
 
-    const governancePlugins = useDaoPlugins({
-        daoId: dao.id,
-        interfaceType: PluginInterfaceType.TOKEN_VOTING,
-        includeSubPlugins: false,
-    });
-    const governancePlugin = governancePlugins?.[0]?.meta as
-        | IDaoPlugin
-        | undefined;
+    const pluginAddress = cryptexTokenVotingPluginAddresses[dao.id];
 
     const handleClick = () => {
-        if (governancePlugin?.address == null) {
+        if (pluginAddress == null) {
             return;
         }
 
         const params: ICryptexMembersFileDownloadDialogParams = {
-            pluginAddress: governancePlugin.address as Hex,
+            pluginAddress,
             network: dao.network,
             asset,
             onDownload: setDownloadedFileName,
@@ -65,7 +55,7 @@ export const CryptexMembersFileDownload: React.FC<
             )}
             <Button
                 className="w-fit"
-                disabled={governancePlugin?.address == null}
+                disabled={pluginAddress == null}
                 iconLeft={IconType.PLUS}
                 onClick={handleClick}
                 size="md"

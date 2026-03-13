@@ -5,20 +5,23 @@ import Image from 'next/image';
 import type { ComponentProps } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
+import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import BackgroundImage from '../../assets/xmaquina_bg.jpg';
 import DroidImage from '../../assets/xmaquina_droid.webp';
-import { actions } from '../../constants/actions';
+import { getActions } from '../../constants/actions';
 import { XmaquinaActionItem } from './xmaquinaActionItem';
 
-export interface IXmaquinaPageHeaderProps extends ComponentProps<'header'> {}
+export interface IXmaquinaPageHeaderProps extends ComponentProps<'header'> {
+    dao: IDao;
+}
 
 export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
     props,
 ) => {
-    const { className, ...otherProps } = props;
+    const { dao, className, ...otherProps } = props;
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
         address,
@@ -73,7 +76,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
 
                 {/* Static row for desktop view */}
                 <div className="hidden h-full grow border-l border-l-neutral-0/10 lg:flex">
-                    {actions.map((action) => (
+                    {getActions(dao.network, dao.address).map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </div>
@@ -89,7 +92,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                     speed={40}
                     speedOnHoverFactor={0.2}
                 >
-                    {actions.map((action) => (
+                    {getActions(dao.network, dao.address).map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </Carousel>
@@ -106,7 +109,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
                     speed={40}
                     speedOnHoverFactor={0.2}
                 >
-                    {actions.map((action) => (
+                    {getActions(dao.network, dao.address).map((action) => (
                         <XmaquinaActionItem key={action.title} {...action} />
                     ))}
                 </Carousel>
