@@ -4,6 +4,8 @@ import { TokenApproveTokensDialog } from '../dialogs/tokenApproveTokensDialog';
 import { TokenDelegationDialog } from '../dialogs/tokenDelegationDialog';
 import { TokenDelegationOnboardingFormDialog } from '../dialogs/tokenDelegationOnboardingFormDialog';
 import { TokenDelegationOnboardingIntroDialog } from '../dialogs/tokenDelegationOnboardingIntroDialog';
+import { TokenWrapOnboardingFormDialog } from '../dialogs/tokenWrapOnboardingFormDialog';
+import { TokenWrapOnboardingIntroDialog } from '../dialogs/tokenWrapOnboardingIntroDialog';
 import { TokenWrapUnwrapDialog } from '../dialogs/tokenWrapUnwrapDialog';
 import { TokenPluginDialogId } from './tokenPluginDialogId';
 
@@ -24,5 +26,13 @@ export const tokenPluginDialogsDefinitions: Record<
     },
     [TokenPluginDialogId.DELEGATION_ONBOARDING]: {
         Component: TokenDelegationOnboardingFormDialog,
+    },
+    [TokenPluginDialogId.WRAP_ONBOARDING_INTRO]: {
+        Component: TokenWrapOnboardingIntroDialog,
+        hiddenTitle:
+            'app.plugins.token.tokenWrapOnboardingDialog.intro.hiddenTitle',
+    },
+    [TokenPluginDialogId.WRAP_ONBOARDING_FORM]: {
+        Component: TokenWrapOnboardingFormDialog,
     },
 };

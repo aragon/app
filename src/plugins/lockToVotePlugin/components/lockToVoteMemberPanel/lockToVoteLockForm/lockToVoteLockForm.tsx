@@ -1,4 +1,9 @@
-import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -11,14 +16,17 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
 
-export interface ILockToVoteLockFormProps extends ILockToVoteMemberPanelProps {}
+export interface ILockToVoteLockFormProps extends ILockToVoteMemberPanelProps {
+    mode?: 'panel' | 'dialog';
+    onCancel?: () => void;
+}
 
 export interface ILockToVoteLockFormData extends IAssetInputFormData {}
 
 export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     props,
 ) => {
-    const { plugin, daoId } = props;
+    const { plugin, daoId, mode = 'panel', onCancel } = props;
     const { token } = plugin.settings;
     const { symbol, decimals } = token;
 
@@ -75,6 +83,30 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     const submitLabel = needsApprovalForAmount ? 'approve' : 'lock';
     const disableSubmit = isLoading || balance === BigInt(0);
 
+    const renderSubmitButton = ({ size }: { size: 'md' | 'lg' }) => (
+        <Button
+            disabled={disableSubmit}
+            iconRight={mode === 'dialog' ? IconType.CHEVRON_RIGHT : undefined}
+            onClick={isConnected ? undefined : () => walletGuard()}
+            size={size}
+            type={isConnected ? 'submit' : undefined}
+            variant="primary"
+        >
+            {t(
+                `app.plugins.lockToVote.lockToVoteLockForm.submit.${submitLabel}`,
+                {
+                    symbol: token.symbol,
+                },
+            )}
+        </Button>
+    );
+
+    const footerInfo = (
+        <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+            {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
+        </p>
+    );
+
     return (
         <FormProvider {...formValues}>
             <form
@@ -95,43 +127,46 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
                         tokenDecimals: decimals,
                     }}
                 />
-                <div className="flex flex-col gap-3">
-                    <Button
-                        disabled={disableSubmit}
-                        onClick={isConnected ? undefined : () => walletGuard()}
-                        size="lg"
-                        type={isConnected ? 'submit' : undefined}
-                        variant="primary"
-                    >
-                        {t(
-                            `app.plugins.lockToVote.lockToVoteLockForm.submit.${submitLabel}`,
-                            {
-                                symbol: token.symbol,
-                            },
-                        )}
-                    </Button>
-                    {lockedAmount > 0 && (
-                        <Button
-                            disabled={isLoading}
-                            onClick={unlockTokens}
-                            size="lg"
-                            variant="secondary"
-                        >
-                            {t(
-                                'app.plugins.lockToVote.lockToVoteLockForm.submit.unlock',
-                                {
-                                    amount: formattedLockedAmount,
-                                    symbol,
-                                },
+                {mode === 'dialog' ? (
+                    <div className="flex flex-col gap-9">
+                        {footerInfo}
+                        <div className="flex justify-between gap-3">
+                            {onCancel != null && (
+                                <Button
+                                    onClick={onCancel}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {t(
+                                        'app.plugins.lockToVote.lockToVoteLockForm.cancel',
+                                    )}
+                                </Button>
                             )}
-                        </Button>
-                    )}
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                        {t(
-                            'app.plugins.lockToVote.lockToVoteLockForm.footerInfo',
+                            {renderSubmitButton({ size: 'md' })}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {renderSubmitButton({ size: 'lg' })}
+                        {lockedAmount > 0 && (
+                            <Button
+                                disabled={isLoading}
+                                onClick={unlockTokens}
+                                size="lg"
+                                variant="secondary"
+                            >
+                                {t(
+                                    'app.plugins.lockToVote.lockToVoteLockForm.submit.unlock',
+                                    {
+                                        amount: formattedLockedAmount,
+                                        symbol,
+                                    },
+                                )}
+                            </Button>
                         )}
-                    </p>
-                </div>
+                        {footerInfo}
+                    </div>
+                )}
             </form>
         </FormProvider>
     );

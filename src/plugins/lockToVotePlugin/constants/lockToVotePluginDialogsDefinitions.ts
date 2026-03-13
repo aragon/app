@@ -1,5 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { LockToVoteLockBeforeVoteDialog } from '../dialogs/lockToVoteLockBeforeVoteDialog';
+import { LockToVoteLockOnboardingFormDialog } from '../dialogs/lockToVoteLockOnboardingFormDialog';
+import { LockToVoteLockOnboardingIntroDialog } from '../dialogs/lockToVoteLockOnboardingIntroDialog';
 import { LockToVoteLockUnlockDialog } from '../dialogs/lockToVoteLockUnlockDialog';
 import { LockToVoteSubmitVoteFeedbackDialog } from '../dialogs/lockToVoteSubmitVoteFeedbackDialog';
 import { UnlockBlockedInfoDialog } from '../dialogs/unlockBlockedInfoDialog';
@@ -28,5 +30,13 @@ export const lockToVotePluginDialogsDefinitions: Record<
         Component: UnlockBlockedInfoDialog,
         hiddenDescription:
             'app.plugins.lockToVote.unlockBlockedInfoDialog.a11y.description',
+    },
+    [LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO_L2V]: {
+        Component: LockToVoteLockOnboardingIntroDialog,
+        hiddenTitle:
+            'app.plugins.lockToVote.lockToVoteLockOnboardingDialog.intro.hiddenTitle',
+    },
+    [LockToVotePluginDialogId.LOCK_ONBOARDING_FORM_L2V]: {
+        Component: LockToVoteLockOnboardingFormDialog,
     },
 };
