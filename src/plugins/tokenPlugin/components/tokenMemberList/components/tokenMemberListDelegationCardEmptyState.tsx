@@ -26,7 +26,7 @@ export const TokenMemberListDelegationCardEmptyState: React.FC<
             tokenSymbol: token.symbol,
             daoId,
         };
-        open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, { params });
+        open(TokenPluginDialogId.DELEGATION_ONBOARDING, { params });
     };
 
     return (

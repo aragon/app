@@ -2,11 +2,11 @@
 
 import { CardEmptyState } from '@aragon/gov-ui-kit';
 import { GaugeVoterPluginDialogId } from '@/plugins/gaugeVoterPlugin/constants/gaugeVoterPluginDialogId';
-import type { IGaugeVoterLockOnboardingIntroDialogParams } from '@/plugins/gaugeVoterPlugin/dialogs/gaugeVoterLockOnboardingIntroDialog/gaugeVoterLockOnboardingIntroDialog';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IGaugeVoterLockOnboardingLockTimeInfoDialogParams } from '../../../../gaugeVoterPlugin/dialogs/gaugeVoterLockOnboardingLockTimeInfoDialog/gaugeVoterLockOnboardingLockTimeInfoDialog';
 import type { ITokenPluginSettings } from '../../../types';
 
 export interface ITokenMemberListLockCardEmptyStateProps {
@@ -25,11 +25,13 @@ export const TokenMemberListLockCardEmptyState: React.FC<
     const { token } = plugin.settings;
 
     const handleLockTokens = () => {
-        const params: IGaugeVoterLockOnboardingIntroDialogParams = {
+        const params: IGaugeVoterLockOnboardingLockTimeInfoDialogParams = {
             plugin: plugin as unknown as IGaugeVoterPlugin,
             daoId,
         };
-        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_INTRO, { params });
+        open(GaugeVoterPluginDialogId.LOCK_ONBOARDING_LOCK_TIME_INFO, {
+            params,
+        });
     };
 
     return (

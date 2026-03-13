@@ -4,8 +4,9 @@ import { CardEmptyState } from '@aragon/gov-ui-kit';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TokenPluginDialogId } from '../../../constants/tokenPluginDialogId';
-import type { ITokenWrapOnboardingIntroDialogParams } from '../../../dialogs/tokenWrapOnboardingIntroDialog/tokenWrapOnboardingIntroDialog';
+import type { ITokenWrapOnboardingFormDialogParams } from '../../../dialogs/tokenWrapOnboardingFormDialog';
 import type { ITokenPluginSettingsToken } from '../../../types';
+import { tokenPluginUtils } from '../../../utils/tokenPluginUtils';
 
 export interface ITokenMemberListWrapCardEmptyStateProps {
     token: ITokenPluginSettingsToken;
@@ -16,13 +17,14 @@ export const TokenMemberListWrapCardEmptyState: React.FC<
     ITokenMemberListWrapCardEmptyStateProps
 > = (props) => {
     const { token, daoId } = props;
+    const underlyingToken = tokenPluginUtils.getUnderlyingToken(token);
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const handleWrapTokens = () => {
-        const params: ITokenWrapOnboardingIntroDialogParams = { token, daoId };
-        open(TokenPluginDialogId.WRAP_ONBOARDING_INTRO, { params });
+        const params: ITokenWrapOnboardingFormDialogParams = { token, daoId };
+        open(TokenPluginDialogId.WRAP_ONBOARDING_FORM, { params });
     };
 
     return (
@@ -32,7 +34,7 @@ export const TokenMemberListWrapCardEmptyState: React.FC<
             )}
             heading={t(
                 'app.plugins.token.tokenMemberList.wrapOnboardingCard.heading',
-                { symbol: token.symbol },
+                { symbol: underlyingToken.symbol },
             )}
             isStacked={false}
             objectIllustration={{ object: 'WALLET' }}
