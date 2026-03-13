@@ -2732,7 +2732,22 @@
           "tokenSupply": "{{supply}} {{symbol}}"
         },
         "tokenMemberList": {
-          "entity": "Members"
+          "entity": "Members",
+          "lockOnboardingCard": {
+            "heading": "You have unlocked {{symbol}}",
+            "description": "Lock more tokens to increase your voting power.",
+            "action": "Lock tokens"
+          },
+          "wrapOnboardingCard": {
+            "heading": "You have unwrapped {{symbol}}",
+            "description": "Wrap more tokens to increase your voting power.",
+            "action": "Wrap tokens"
+          },
+          "delegationOnboardingCard": {
+            "heading": "Your {{symbol}} is undelegated",
+            "description": "Delegate your voting power to yourself or to someone else.",
+            "action": "Set up your delegation"
+          }
         },
         "tokenMemberPanel": {
           "tabs": {
