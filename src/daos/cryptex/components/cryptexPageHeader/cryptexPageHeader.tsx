@@ -1,22 +1,25 @@
 'use client';
 
 import classNames from 'classnames';
-import { type ComponentProps, useEffect, useState } from 'react';
+import { type ComponentProps, useEffect, useMemo, useState } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
+import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { actions } from '../../constants/actions';
+import { getActions } from '../../constants/actions';
 import { CryptexActionItem } from './cryptexActionItem';
 import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
-/**
- * Props for the Cryptex custom header wrapper.
- */
-export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {}
+export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {
+    /**
+     * DAO to generate internal navigation links for.
+     */
+    dao?: IDao;
+}
 
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
-    const { className, ...otherProps } = props;
+    const { dao, className, ...otherProps } = props;
     const [isLightMode, setIsLightMode] = useState(true);
     const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useConnection();
@@ -26,6 +29,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     });
 
     const { t } = useTranslations();
+    const actions = useMemo(() => (dao ? getActions(dao) : []), [dao]);
 
     const orbitHalf = ORBIT_SIZE / 2;
 

@@ -1,3 +1,3 @@
-export enum CapitalDistributorTestDialogId {
+export enum KatanaDialogId {
     MEMBERS_FILE_DOWNLOAD = 'CAPITAL_DISTRIBUTOR_TEST_MEMBERS_FILE_DOWNLOAD',
 }

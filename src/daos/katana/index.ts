@@ -8,7 +8,7 @@ import {
     katanaCDDemoVotingEscrowAddress,
     katanaEmissionsTest,
     katanaEmissionsTestVotingEscrowAddress,
-} from './constants/capitalDistributorTestDao';
+} from './constants/katana';
 
 export const initialiseKatana = () => {
     pluginRegistryUtils

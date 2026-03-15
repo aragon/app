@@ -5,7 +5,7 @@ export interface IBoundlessActionImageProps {
     /**
      * The image to be displayed.
      */
-    image: StaticImageData;
+    image: StaticImageData | string;
     /**
      * The alternative text for the image.
      */

@@ -1,20 +1,26 @@
 'use client';
 
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useMemo } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
+import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { actions } from '../../constants/actions';
+import { getActions } from '../../constants/actions';
 import { BoundlessActionItem } from './boundlessActionItem';
 
-export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {}
+export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {
+    /**
+     * DAO to generate internal navigation links for.
+     */
+    dao?: IDao;
+}
 
 export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     props,
 ) => {
-    const { className, ...otherProps } = props;
+    const { dao, className, ...otherProps } = props;
     const { address } = useConnection();
     const { data: ensName } = useEnsName({
         address,
@@ -22,6 +28,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     });
 
     const { t } = useTranslations();
+    const actions = useMemo(() => (dao ? getActions(dao) : []), [dao]);
 
     return (
         <header
@@ -60,14 +67,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                 {/* Static row for desktop view */}
                 <div className="hidden w-full items-center justify-between gap-4 lg:flex">
                     {actions.map((action) => (
-                        <BoundlessActionItem
-                            description={action.description}
-                            href={action.href}
-                            image={action.image}
-                            isExternal={action.isExternal}
-                            key={action.title}
-                            title={action.title}
-                        />
+                        <BoundlessActionItem key={action.title} {...action} />
                     ))}
                 </div>
             </Container>
@@ -80,13 +80,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                     speedOnHoverFactor={0.2}
                 >
                     {actions.map((action) => (
-                        <BoundlessActionItem
-                            description={action.description}
-                            href={action.href}
-                            image={action.image}
-                            key={action.title}
-                            title={action.title}
-                        />
+                        <BoundlessActionItem key={action.title} {...action} />
                     ))}
                 </Carousel>
             </div>
@@ -99,13 +93,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
                     speedOnHoverFactor={0.2}
                 >
                     {actions.map((action) => (
-                        <BoundlessActionItem
-                            description={action.description}
-                            href={action.href}
-                            image={action.image}
-                            key={action.title}
-                            title={action.title}
-                        />
+                        <BoundlessActionItem key={action.title} {...action} />
                     ))}
                 </Carousel>
             </div>

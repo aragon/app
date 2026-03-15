@@ -54,7 +54,7 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
         escrowAddress == null;
 
     const errorMessage = t(
-        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.payout.error.noGaugeVoter',
+        'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionCreateForm.payout.error.noEscrowAddress',
     );
 
     return (

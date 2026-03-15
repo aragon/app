@@ -8,7 +8,7 @@ import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { CapitalDistributorTestDialogId } from '../constants/capitalDistributorTestDialogId';
+import { KatanaDialogId } from '../constants/katanaDialogId';
 import type { ICapitalDistributorTestMembersFileDownloadDialogParams } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 
 export interface ICapitalDistributorTestMembersFileDownloadProps {
@@ -53,7 +53,7 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
             onDownload: setDownloadedFileName,
         };
 
-        open(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD, {
+        open(KatanaDialogId.MEMBERS_FILE_DOWNLOAD, {
             params,
             disableOutsideClick: true,
         });

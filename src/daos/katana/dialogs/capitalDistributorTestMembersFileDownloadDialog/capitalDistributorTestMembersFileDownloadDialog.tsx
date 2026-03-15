@@ -21,8 +21,8 @@ import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { CapitalDistributorTestDialogId } from '../../constants/capitalDistributorTestDialogId';
-import { capitalDistributorTestMinEpochId } from '../../constants/capitalDistributorTestMinEpochId';
+import { KatanaDialogId } from '../../constants/katanaDialogId';
+import { katanaMinEpochId } from '../../constants/katanaMinEpochId';
 import { rewardUtils } from '../../utils/rewardUtils';
 
 export interface ICapitalDistributorTestMembersFileDownloadDialogParams {
@@ -91,9 +91,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
         const epochs: number[] = [];
 
         const firstEpoch =
-            capitalDistributorTestMinEpochId > currentEpochId
-                ? 1
-                : capitalDistributorTestMinEpochId;
+            katanaMinEpochId > currentEpochId ? 1 : katanaMinEpochId;
 
         for (
             let i = currentEpochId;
@@ -174,7 +172,7 @@ export const CapitalDistributorTestMembersFileDownloadDialog: React.FC<
     };
 
     const handleClose = () => {
-        close(CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD);
+        close(KatanaDialogId.MEMBERS_FILE_DOWNLOAD);
     };
 
     const selectedEpochLabel =

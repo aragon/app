@@ -1,48 +1,23 @@
-import classNames from 'classnames';
-import type { Route } from 'next';
-import Image, { type StaticImageData } from 'next/image';
+import Image from 'next/image';
 import Link from 'next/link';
-import { type ComponentProps, useState } from 'react';
+import { useState } from 'react';
+import type { IDaoHeaderAction } from '@/shared/utils/daoUtils';
 import BackgroundImage from '../../assets/boundless-img-background.png';
 import { BoundlessActionImage } from './boundlessActionImage';
 import { BoundlessActionText } from './boundlessActionText';
 import { BoundlessActionAvatarIcon } from './boundlessAvatarIcon';
 
-export interface IBoundlessActionItemProps extends ComponentProps<'button'> {
-    /**
-     * The title of the card.
-     */
-    title: string;
-    /**
-     * The description of the card.
-     */
-    description: string;
-    /**
-     * The image to display in the card.
-     */
-    image: StaticImageData;
-    /**
-     * The href to navigate to when the card is clicked.
-     */
-    href: Route;
-    /**
-     * Whether the link is external or not.
-     */
-    isExternal?: boolean;
-}
+export interface IBoundlessActionItemProps extends IDaoHeaderAction {}
 
 export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
     props,
 ) => {
-    const { title, description, image, href, isExternal, className } = props;
+    const { title, description, image, href, isExternal } = props;
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Link
-            className={classNames(
-                'group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6',
-                className,
-            )}
+            className="group relative flex h-40 w-80 items-center justify-between overflow-hidden rounded-lg p-4 transition-all md:w-[400px] md:p-6"
             href={href}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -62,11 +37,13 @@ export const BoundlessActionItem: React.FC<IBoundlessActionItemProps> = (
                 />
                 <BoundlessActionAvatarIcon isHovered={isHovered} />
             </div>
-            <BoundlessActionImage
-                alt={title}
-                image={image}
-                isHovered={isHovered}
-            />
+            {image && (
+                <BoundlessActionImage
+                    alt={title}
+                    image={image}
+                    isHovered={isHovered}
+                />
+            )}
         </Link>
     );
 };

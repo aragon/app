@@ -9,6 +9,7 @@ import type { AragonBackendServiceError } from '@/shared/api/aragonBackendServic
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useTokenRewardDistribution } from '../../api/tokenRewardService';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 
@@ -46,6 +47,7 @@ export const CryptexMembersFileDownloadDialog: React.FC<
 
     const { pluginAddress, network, asset, onDownload } = location.params;
     const { close } = useDialogContext();
+    const { t } = useTranslations();
 
     const [lookbackDate, setLookbackDate] = useState('');
     const [totalAmount, setTotalAmount] = useState('');
@@ -75,25 +77,25 @@ export const CryptexMembersFileDownloadDialog: React.FC<
 
     const isFormValid = lookbackDate !== '' && totalAmount !== '';
 
-    const handleGenerate = () => {
-        rewardDistribution.refetch().then((result) => {
-            if (result.data == null) {
-                return;
-            }
+    const handleGenerate = async () => {
+        const result = await rewardDistribution.refetch();
 
-            const blob = new Blob([JSON.stringify(result.data, null, 2)], {
-                type: 'application/json',
-            });
-            const url = URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            const fileName = `cryptex-rewards-${lookbackDate}.json`;
-            anchor.href = url;
-            anchor.download = fileName;
-            anchor.click();
-            URL.revokeObjectURL(url);
-            onDownload(fileName);
-            handleClose();
+        if (result.data == null) {
+            return;
+        }
+
+        const blob = new Blob([JSON.stringify(result.data, null, 2)], {
+            type: 'application/json',
         });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        const fileName = `cryptex-rewards-${lookbackDate}.json`;
+        anchor.href = url;
+        anchor.download = fileName;
+        anchor.click();
+        URL.revokeObjectURL(url);
+        onDownload(fileName);
+        handleClose();
     };
 
     const handleClose = () => {
@@ -105,13 +107,19 @@ export const CryptexMembersFileDownloadDialog: React.FC<
     return (
         <>
             <Dialog.Header
-                description="Generate and download a rewards JSON based on governance participation"
-                title="Generate rewards file"
+                description={t(
+                    'app.daos.cryptex.cryptexMembersFileDownloadDialog.description',
+                )}
+                title={t(
+                    'app.daos.cryptex.cryptexMembersFileDownloadDialog.title',
+                )}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 py-2">
                     <InputDate
-                        label="Include proposals since"
+                        label={t(
+                            'app.daos.cryptex.cryptexMembersFileDownloadDialog.lookbackDateLabel',
+                        )}
                         max={todayFormatted}
                         onChange={(event) =>
                             setLookbackDate(event.target.value)
@@ -119,7 +127,9 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                         value={lookbackDate}
                     />
                     <InputNumber
-                        label="Total reward amount"
+                        label={t(
+                            'app.daos.cryptex.cryptexMembersFileDownloadDialog.totalAmountLabel',
+                        )}
                         min={0}
                         onChange={setTotalAmount}
                         placeholder="0"
@@ -129,21 +139,30 @@ export const CryptexMembersFileDownloadDialog: React.FC<
                     {rewardDistribution.isError && (
                         <p className="text-critical-600 text-sm">
                             {errorCode
-                                ? `Failed to generate rewards: ${errorCode}`
-                                : 'Failed to generate reward distribution. Please try again.'}
+                                ? t(
+                                      'app.daos.cryptex.cryptexMembersFileDownloadDialog.error.withCode',
+                                      { errorCode },
+                                  )
+                                : t(
+                                      'app.daos.cryptex.cryptexMembersFileDownloadDialog.error.default',
+                                  )}
                         </p>
                     )}
                 </div>
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
-                    label: 'Generate',
+                    label: t(
+                        'app.daos.cryptex.cryptexMembersFileDownloadDialog.generate',
+                    ),
                     onClick: handleGenerate,
                     disabled: !isFormValid,
                     isLoading: rewardDistribution.isFetching,
                 }}
                 secondaryAction={{
-                    label: 'Cancel',
+                    label: t(
+                        'app.daos.cryptex.cryptexMembersFileDownloadDialog.cancel',
+                    ),
                     onClick: handleClose,
                 }}
             />

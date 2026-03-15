@@ -3,6 +3,7 @@
 import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { cryptexTokenVotingPluginAddresses } from '../../constants/cryptex';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
@@ -13,6 +14,7 @@ export const CryptexMembersFileDownload: React.FC<
 > = (props) => {
     const { dao, asset } = props;
 
+    const { t } = useTranslations();
     const { open } = useDialogContext();
 
     const [downloadedFileName, setDownloadedFileName] = useState<string | null>(
@@ -41,15 +43,18 @@ export const CryptexMembersFileDownload: React.FC<
 
     return (
         <InputContainer
-            helpText="Generate and download a rewards JSON based on governance participation"
+            helpText={t('app.daos.cryptex.cryptexMembersFileDownload.helpText')}
             id="cryptex-members-file"
-            label="Members file"
+            label={t('app.daos.cryptex.cryptexMembersFileDownload.label')}
             useCustomWrapper={true}
         >
             {downloadedFileName && (
                 <Card className="border border-neutral-100 px-6 py-2 shadow-neutral-sm">
                     <p className="text-neutral-400 text-sm">
-                        {downloadedFileName}
+                        {t(
+                            'app.daos.cryptex.cryptexMembersFileDownload.downloadedFile',
+                            { fileName: downloadedFileName },
+                        )}
                     </p>
                 </Card>
             )}
@@ -61,7 +66,7 @@ export const CryptexMembersFileDownload: React.FC<
                 size="md"
                 variant="tertiary"
             >
-                Generate rewards file
+                {t('app.daos.cryptex.cryptexMembersFileDownload.button')}
             </Button>
         </InputContainer>
     );

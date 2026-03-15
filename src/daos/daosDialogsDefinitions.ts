@@ -1,7 +1,7 @@
 import { tokenRewardDialogsDefinitions } from './cryptex/constants/cryptexDialogsDefinitions';
-import { gaugeRewardDialogsDefinitions } from './katana/constants/capitalDistributorTestDialogsDefinitions';
+import { katanaDialogsDefinitions } from './katana/constants/katanaDialogsDefinitions';
 
 export const daosDialogsDefinitions = {
-    ...gaugeRewardDialogsDefinitions,
+    ...katanaDialogsDefinitions,
     ...tokenRewardDialogsDefinitions,
 };

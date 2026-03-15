@@ -1,12 +1,12 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { CapitalDistributorTestMembersFileDownloadDialog } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
-import { CapitalDistributorTestDialogId } from './capitalDistributorTestDialogId';
+import { KatanaDialogId } from './katanaDialogId';
 
-export const gaugeRewardDialogsDefinitions: Record<
-    CapitalDistributorTestDialogId,
+export const katanaDialogsDefinitions: Record<
+    KatanaDialogId,
     IDialogComponentDefinitions
 > = {
-    [CapitalDistributorTestDialogId.MEMBERS_FILE_DOWNLOAD]: {
+    [KatanaDialogId.MEMBERS_FILE_DOWNLOAD]: {
         Component: CapitalDistributorTestMembersFileDownloadDialog,
     },
 };
