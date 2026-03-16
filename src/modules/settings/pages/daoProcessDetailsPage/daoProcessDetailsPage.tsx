@@ -1,8 +1,12 @@
+import { QueryClient } from '@tanstack/react-query';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { errorUtils } from '@/shared/utils/errorUtils';
 import type { IDaoProcessDetailsPageParams } from '../../types';
 import { DaoProcessDetailsPageClient } from './daoProcessDetailsPageClient';
@@ -23,13 +27,28 @@ export const DaoProcessDetailsPage: React.FC<
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });
     const dao = await daoService.getDao({ urlParams: { id: daoId } });
 
-    const plugins = daoUtils.getDaoPlugins(dao, {
-        slug: slug.toLowerCase(),
-        type: PluginType.PROCESS,
-        includeSubPlugins: true,
-    });
+    const queryClient = new QueryClient();
+    const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
+    const daoOverride = daoOverrides[daoId];
 
-    if (!plugins || plugins.length === 0) {
+    const allMatchingPlugins =
+        daoUtils.getDaoPlugins(dao, {
+            slug: slug.toLowerCase(),
+            type: PluginType.PROCESS,
+            includeSubPlugins: true,
+        }) ?? [];
+
+    const plugins = daoVisibilityUtils.filterHiddenPlugins(
+        allMatchingPlugins,
+        daoOverride,
+    );
+
+    if (plugins.length === 0 && allMatchingPlugins.length > 0) {
+        const settingsUrl = `/dao/${network}/${addressOrEns}/settings`;
+        return <RedirectToUrl url={settingsUrl} />;
+    }
+
+    if (plugins.length === 0) {
         const error = new AragonBackendServiceError(
             AragonBackendServiceError.notFoundCode,
             'Process not found',
