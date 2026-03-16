@@ -38,8 +38,14 @@ export const TokenMemberListDelegationCardEmptyState: React.FC<
                 'app.plugins.token.tokenMemberList.delegationOnboardingCard.heading',
                 { symbol: token.symbol },
             )}
+            humanIllustration={{
+                body: 'ELEVATING',
+                hairs: 'SHORT',
+                accessory: 'PIERCINGS_TATTOO',
+                sunglasses: 'LARGE_STYLIZED',
+                expression: 'SMILE_WINK',
+            }}
             isStacked={false}
-            objectIllustration={{ object: 'USERS' }}
             primaryButton={{
                 label: t(
                     'app.plugins.token.tokenMemberList.delegationOnboardingCard.action',
