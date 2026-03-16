@@ -2069,6 +2069,7 @@
         },
         "gaugeVoterLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "chart": {
             "now": "Now",
             "votingPower": "Voting power"
@@ -2175,6 +2176,28 @@
           "description": "Unlock or withdraw your {{symbol}} tokens",
           "title": "Your locks"
         },
+        "gaugeVoterLockOnboardingDialog": {
+          "intro": {
+            "hiddenTitle": "Lock tokens onboarding",
+            "title": "Your {{tokenSymbol}} is unlocked",
+            "description": "Lock more tokens to increase your voting power.",
+            "cta": "Lock tokens",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "title": "Join token holders"
+          },
+          "lockTimeInfo": {
+            "title": "Lock {{tokenSymbol}}",
+            "description": "Note that you will need to wait for the warmup, minimum locktime and cooldown periods to complete in order to withdraw your {{tokenSymbol}}.",
+            "minLocktime": "Minimum locktime",
+            "cooldown": "Cooldown",
+            "total": "Total",
+            "days": "{{count}} days",
+            "cta": "Lock",
+            "cancel": "Cancel"
+          }
+        },
         "meta": {
           "link": {
             "gauges": "Gauges"
@@ -2217,12 +2240,25 @@
         },
         "lockToVoteLockForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "footerInfo": "Locking tokens will transfer them out of your wallet to the lock manager contract, where they can be unlocked to regain control.",
           "info": "Lock {{symbol}} to participate in governance.",
           "submit": {
             "approve": "Approve {{symbol}}",
             "lock": "Lock {{symbol}}",
             "unlock": "Unlock {{amount}} {{symbol}}"
+          }
+        },
+        "lockToVoteLockOnboardingDialog": {
+          "form": {
+            "title": "Join token holders"
+          },
+          "intro": {
+            "cancel": "Cancel",
+            "cta": "Lock tokens",
+            "description": "Lock more tokens to increase your voting power.",
+            "hiddenTitle": "Lock tokens onboarding",
+            "title": "Your {{tokenSymbol}} is unlocked"
           }
         },
         "lockToVoteLockUnlockDialog": {
@@ -2631,6 +2667,18 @@
             "title": "Set up your delegation"
           }
         },
+        "tokenWrapOnboardingDialog": {
+          "intro": {
+            "hiddenTitle": "Wrap tokens onboarding",
+            "title": "Your {{underlyingTokenSymbol}} is unwrapped",
+            "description": "Wrap your tokens to participate in governance.",
+            "cta": "Wrap tokens",
+            "cancel": "Cancel"
+          },
+          "form": {
+            "title": "Wrap tokens"
+          }
+        },
         "tokenDelegationForm": {
           "delegate": {
             "helpText": "Enter the address where you want to delegate your current or future token balance's voting power.",
@@ -2895,6 +2943,7 @@
         },
         "tokenWrapForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",
+          "cancel": "Cancel",
           "footerInfo": "Wrapping tokens will transfer them out of your wallet to the wrapping contract, where they can be withdrawn back to your wallet at any time.",
           "info": "Wrap {{underlyingSymbol}} to get voting power.",
           "submit": {

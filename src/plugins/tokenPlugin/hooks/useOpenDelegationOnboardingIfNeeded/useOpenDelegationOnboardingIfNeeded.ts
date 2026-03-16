@@ -10,7 +10,7 @@ import { useTokenCurrentDelegate } from '../useTokenCurrentDelegate';
 
 export interface IUseOpenDelegationOnboardingIfNeededParams {
     /**
-     * Address of the governance token.
+     * Address of the governance token (not the underlying token!).
      */
     tokenAddress: string;
     /**
