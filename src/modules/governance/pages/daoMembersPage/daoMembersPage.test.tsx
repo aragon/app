@@ -31,6 +31,7 @@ jest.mock('./daoMembersPageClient', () => ({
 
 describe('<DaoMembersPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
     const prefetchInfiniteQuerySpy = jest.spyOn(
         QueryClient.prototype,
@@ -39,7 +40,10 @@ describe('<DaoMembersPage /> component', () => {
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
-        fetchQuerySpy.mockImplementation(jest.fn());
+        fetchQuerySpy
+            .mockResolvedValueOnce(generateDao())
+            .mockResolvedValue({});
+        prefetchQuerySpy.mockImplementation(jest.fn());
         prefetchInfiniteQuerySpy.mockImplementation(jest.fn());
         getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
@@ -47,6 +51,7 @@ describe('<DaoMembersPage /> component', () => {
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
+        prefetchQuerySpy.mockReset();
         prefetchInfiniteQuerySpy.mockReset();
         getDaoPluginsSpy.mockReset();
         resolveDaoIdSpy.mockReset();

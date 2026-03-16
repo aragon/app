@@ -9,6 +9,11 @@ export interface IUseWalletConnectionEventParams {
     onConnected: () => void;
 }
 
+/**
+ * Fires a callback when the user actively connects a wallet.
+ * Skips silent page-load reconnections (`isReconnected === true`).
+ * Re-fires on each new manual connection after a disconnect.
+ */
 export const useWalletConnectionEvent = (
     params: IUseWalletConnectionEventParams,
 ) => {

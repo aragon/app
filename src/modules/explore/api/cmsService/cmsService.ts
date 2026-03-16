@@ -1,5 +1,6 @@
 import { HttpService } from '@/shared/api/httpService';
 import type {
+    DaoOverridesMap,
     ICmsFeatureFlagsResponse,
     IFeaturedDao,
     ISanctionedAddressesResult,
@@ -12,10 +13,19 @@ class CmsService extends HttpService {
     }
 
     private urls = {
+        daoOverrides: '/main/dao-overrides.json',
         featuredDaos: '/main/featured-daos.json',
         whitelistedAddresses: '/main/whitelisted-addresses.json',
         sanctionedAddresses: '/main/sanctioned-addresses.json',
         featureFlags: '/main/feature-flags.json',
+    };
+
+    getDaoOverrides = async (): Promise<DaoOverridesMap> => {
+        const result = await this.request<DaoOverridesMap>(
+            this.urls.daoOverrides,
+        );
+
+        return result;
     };
 
     getFeaturedDaos = async (): Promise<IFeaturedDao[]> => {
