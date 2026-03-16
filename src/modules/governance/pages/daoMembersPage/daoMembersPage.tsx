@@ -1,9 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { memberListOptions } from '../../api/governanceService';
 import { DaoMembersPageClient } from './daoMembersPageClient';
@@ -34,12 +36,21 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         daoOptions({ urlParams: daoUrlParams }),
     );
 
-    const plugins = daoUtils.getDaoPlugins(dao, {
-        type: PluginType.BODY,
-        includeSubPlugins: true,
-    });
+    const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
+    const daoOverride = daoOverrides[daoId];
 
-    if (!plugins?.length) {
+    const allBodyPlugins =
+        daoUtils.getDaoPlugins(dao, {
+            type: PluginType.BODY,
+            includeSubPlugins: true,
+        }) ?? [];
+
+    const plugins = daoVisibilityUtils.filterHiddenPlugins(
+        allBodyPlugins,
+        daoOverride,
+    );
+
+    if (!plugins.length) {
         const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
         return <RedirectToUrl url={daoUrl} />;
     }

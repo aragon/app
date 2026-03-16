@@ -1,3 +1,4 @@
+import { useDaoOverrides } from '@/modules/explore/api/cmsService';
 import {
     type IDaoPlugin,
     type PluginInterfaceType,
@@ -7,6 +8,7 @@ import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 
 export interface IUseDaoPluginsParams {
     /**
@@ -128,7 +130,9 @@ export const useDaoPlugins = (
 
     const { isEnabled } = useFeatureFlags();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const plugins = daoUtils.getDaoPlugins(dao, {
+    const { data: daoOverrides } = useDaoOverrides();
+
+    const allPlugins = daoUtils.getDaoPlugins(dao, {
         type,
         pluginAddress,
         includeSubPlugins,
@@ -137,6 +141,12 @@ export const useDaoPlugins = (
         slug,
         hasExecute,
     });
+
+    const daoOverride = daoOverrides?.[daoId];
+    const plugins =
+        allPlugins != null
+            ? daoVisibilityUtils.filterHiddenPlugins(allPlugins, daoOverride)
+            : allPlugins;
 
     const isLinkedAccountEnabled = isEnabled('linkedAccount');
     const processedPlugins = buildFilterPlugins({

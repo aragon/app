@@ -29,19 +29,24 @@ jest.mock('./daoMemberDetailsPageClient', () => ({
 
 describe('<DaoMemberDetailsPage /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
     const getDaoSpy = jest.spyOn(daoService, 'getDao');
 
     beforeEach(() => {
-        fetchQuerySpy.mockImplementation(jest.fn());
+        fetchQuerySpy.mockResolvedValue({});
+        prefetchQuerySpy.mockImplementation(jest.fn());
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
         getDaoSpy.mockResolvedValue(
-            generateDao({ plugins: [generateDaoPlugin()] }),
+            generateDao({
+                plugins: [generateDaoPlugin({ isBody: true })],
+            }),
         );
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
+        prefetchQuerySpy.mockReset();
         resolveDaoIdSpy.mockReset();
         getDaoSpy.mockReset();
     });
@@ -64,7 +69,12 @@ describe('<DaoMemberDetailsPage /> component', () => {
 
     it('prefetches the DAO member data from the given address and dao ID', async () => {
         const dao = generateDao({
-            plugins: [generateDaoPlugin({ address: 'test-plugin-address' })],
+            plugins: [
+                generateDaoPlugin({
+                    address: 'test-plugin-address',
+                    isBody: true,
+                }),
+            ],
         });
         const params = {
             addressOrEns: 'test.dao.eth',
@@ -84,7 +94,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         getDaoSpy.mockResolvedValue(dao);
 
         render(await createTestComponent({ params: Promise.resolve(params) }));
-        expect(fetchQuerySpy.mock.calls[0][0].queryKey).toEqual(
+        expect(fetchQuerySpy.mock.calls[1][0].queryKey).toEqual(
             memberOptions(memberParams).queryKey,
         );
     });
@@ -103,7 +113,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
             address: '',
         };
 
-        fetchQuerySpy.mockRejectedValue('error');
+        fetchQuerySpy.mockResolvedValueOnce({}).mockRejectedValueOnce('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', {
             name: /daoMemberDetailsPage.error.action/,
