@@ -2,10 +2,6 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
-import {
-    type ICompatRequestParams,
-    normalizeRequestParams,
-} from '@/shared/api/daoService/apiCompatAdapter';
 import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
@@ -25,15 +21,8 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
-    IGetProposalListQueryParams,
     IGetVoteListParams,
 } from './governanceService.api';
-
-type IGetProposalListQueryParamsCompat = Omit<
-    IGetProposalListQueryParams,
-    'includeLinkedAccounts'
-> &
-    ICompatRequestParams;
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -80,18 +69,9 @@ class GovernanceService extends AragonBackendService {
     getProposalList = async <TProposal extends IProposal = IProposal>(
         params: IGetProposalListParams,
     ): Promise<IPaginatedResponse<TProposal>> => {
-        const queryParamsCompat: IGetProposalListQueryParamsCompat = {
-            ...params.queryParams,
-        };
-
-        const normalizedParams = {
-            ...params,
-            queryParams: normalizeRequestParams(queryParamsCompat),
-        };
-
         const result = await this.request<IPaginatedResponse<TProposal>>(
             this.urls.proposals,
-            normalizedParams,
+            params,
         );
 
         return result;
