@@ -37,8 +37,9 @@ export const CapitalDistributorTestMembersFileDownload: React.FC<
     const gaugePlugins = useDaoPlugins({
         daoId: dao.id,
         interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeSubPlugins: false,
+        includeLinkedAccounts: false,
     });
+
     const gaugePlugin = gaugePlugins?.[0]?.meta as IGaugeVoterPlugin;
 
     const handleClick = () => {
