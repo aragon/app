@@ -1,21 +1,16 @@
 'use client';
 
 import classNames from 'classnames';
-import { type ComponentProps, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
-import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IDaoPageHeaderProps } from '@/shared/utils/daoUtils';
 import { getActions } from '../../constants/actions';
 import { BoundlessActionItem } from './boundlessActionItem';
 
-export interface IBoundlessPageHeaderProps extends ComponentProps<'header'> {
-    /**
-     * DAO to generate internal navigation links for.
-     */
-    dao?: IDao;
-}
+export interface IBoundlessPageHeaderProps extends IDaoPageHeaderProps {}
 
 export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     props,
@@ -28,7 +23,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     });
 
     const { t } = useTranslations();
-    const actions = useMemo(() => (dao ? getActions(dao) : []), [dao]);
+    const actions = useMemo(() => getActions(dao), [dao]);
 
     return (
         <header

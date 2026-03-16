@@ -1,22 +1,17 @@
 'use client';
 
 import classNames from 'classnames';
-import { type ComponentProps, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
-import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IDaoPageHeaderProps } from '@/shared/utils/daoUtils';
 import { getActions } from '../../constants/actions';
 import { CryptexActionItem } from './cryptexActionItem';
 import { CryptexOrbitAnimation, ORBIT_SIZE } from './cryptexOrbitAnimation';
 
-export interface ICryptexPageHeaderProps extends ComponentProps<'header'> {
-    /**
-     * DAO to generate internal navigation links for.
-     */
-    dao?: IDao;
-}
+export interface ICryptexPageHeaderProps extends IDaoPageHeaderProps {}
 
 export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { dao, className, ...otherProps } = props;
@@ -29,7 +24,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     });
 
     const { t } = useTranslations();
-    const actions = useMemo(() => (dao ? getActions(dao) : []), [dao]);
+    const actions = useMemo(() => getActions(dao), [dao]);
 
     const orbitHalf = ORBIT_SIZE / 2;
 

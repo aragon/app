@@ -2,24 +2,19 @@
 
 import classNames from 'classnames';
 import Image from 'next/image';
-import { type ComponentProps, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useConnection, useEnsName } from 'wagmi';
 import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
-import type { IDao } from '@/shared/api/daoService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IDaoPageHeaderProps } from '@/shared/utils/daoUtils';
 import BackgroundImage from '../../assets/xmaquina_bg.jpg';
 import DroidImage from '../../assets/xmaquina_droid.webp';
 import { getActions } from '../../constants/actions';
 import { XmaquinaActionItem } from './xmaquinaActionItem';
 
-export interface IXmaquinaPageHeaderProps extends ComponentProps<'header'> {
-    /**
-     * DAO to generate internal navigation links for.
-     */
-    dao?: IDao;
-}
+export interface IXmaquinaPageHeaderProps extends IDaoPageHeaderProps {}
 
 export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
     props,
@@ -33,7 +28,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
 
     const { t } = useTranslations();
 
-    const actions = useMemo(() => (dao ? getActions(dao) : []), [dao]);
+    const actions = useMemo(() => getActions(dao), [dao]);
 
     return (
         <header
