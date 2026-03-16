@@ -36,6 +36,7 @@ export const DaoProcessDetailsPage: React.FC<
             slug: slug.toLowerCase(),
             type: PluginType.PROCESS,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
         }) ?? [];
 
     const plugins = daoVisibilityUtils.filterHiddenPlugins(

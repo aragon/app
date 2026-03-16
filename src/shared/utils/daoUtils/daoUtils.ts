@@ -103,7 +103,7 @@ class DaoUtils {
             type,
             pluginAddress,
             includeSubPlugins = false,
-            includeLinkedAccounts = true,
+            includeLinkedAccounts = false,
             interfaceType,
             hasExecute,
             slug,

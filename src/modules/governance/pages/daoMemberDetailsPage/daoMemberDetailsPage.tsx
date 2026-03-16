@@ -35,6 +35,7 @@ export const DaoMemberDetailsPage: React.FC<
         daoUtils.getDaoPlugins(dao, {
             type: PluginType.BODY,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
         }) ?? [];
     const visibleBodyPlugins = daoVisibilityUtils.filterHiddenPlugins(
         allBodyPlugins,
