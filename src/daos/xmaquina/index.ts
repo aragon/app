@@ -1,16 +1,23 @@
+import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { xmaquinaDomains } from './domains';
+import { XmaquinaPageHeader } from './components';
+import { xmaquina, xmaquinaPeaq } from './constants';
 
 export const initialiseXmaquina = () => {
-    for (const domain of xmaquinaDomains) {
-        pluginRegistryUtils.registerPlugin(domain.plugin);
+    pluginRegistryUtils
+        .registerPlugin(xmaquina)
 
-        for (const slotComponent of domain.slotComponents ?? []) {
-            pluginRegistryUtils.registerSlotComponent({
-                slotId: slotComponent.slotId,
-                pluginId: domain.plugin.id,
-                component: slotComponent.component,
-            });
-        }
-    }
+        .registerSlotComponent({
+            slotId: DashboardDaoSlotId.DASHBOARD_DAO_HEADER,
+            pluginId: xmaquina.id,
+            component: XmaquinaPageHeader,
+        })
+
+        .registerPlugin(xmaquinaPeaq)
+
+        .registerSlotComponent({
+            slotId: DashboardDaoSlotId.DASHBOARD_DAO_HEADER,
+            pluginId: xmaquinaPeaq.id,
+            component: XmaquinaPageHeader,
+        });
 };
