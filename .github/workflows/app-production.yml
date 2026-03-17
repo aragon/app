@@ -97,6 +97,7 @@ jobs:
 
   e2e:
     needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     uses: ./.github/workflows/shared-e2e.yml
     secrets: inherit
     with:
@@ -139,6 +140,7 @@ jobs:
 
   notify:
     needs: [notify-start, deploy]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
