@@ -4,10 +4,21 @@ import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { cryptexTokenVotingPluginAddresses } from '../../constants/cryptex';
+import {
+    cryptex,
+    cryptexTokenVotingPluginAddress,
+    tokenCDTest,
+    tokenCDTestTokenVotingPluginAddress,
+} from '../../constants/cryptex';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
 import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
+
+// TODO: Remove tokenCDTest entry when mainnet capital distributor is live (APP-558)
+const tokenVotingPluginAddresses: Record<string, `0x${string}`> = {
+    [cryptex.id]: cryptexTokenVotingPluginAddress,
+    [tokenCDTest.id]: tokenCDTestTokenVotingPluginAddress,
+};
 
 export const CryptexMembersFileDownload: React.FC<
     ICryptexMembersFileDownloadProps
@@ -21,7 +32,7 @@ export const CryptexMembersFileDownload: React.FC<
         null,
     );
 
-    const pluginAddress = cryptexTokenVotingPluginAddresses[dao.id];
+    const pluginAddress = tokenVotingPluginAddresses[dao.id];
 
     const handleClick = () => {
         if (pluginAddress == null) {
