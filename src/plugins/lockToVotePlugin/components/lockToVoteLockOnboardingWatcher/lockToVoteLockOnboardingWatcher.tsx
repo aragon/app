@@ -25,6 +25,7 @@ export const LockToVoteLockOnboardingWatcher: React.FC<
 
     const daoPlugins = daoUtils.getDaoPlugins(dao, {
         interfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+        includeSubPlugins: true,
         includeLinkedAccounts: false,
     });
 
