@@ -103,6 +103,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     'app.explore.exploreDaosPage.enterpriseService.actionLabel',
                                 )}
                                 imgSrc={enterpriseServiceIcon as string}
+                                isExternal={true}
                                 isPrimary={true}
                                 subtitle={t(
                                     'app.explore.exploreDaosPage.enterpriseService.subtitle',
@@ -119,6 +120,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     open(CreateDaoDialogId.CREATE_DAO_DETAILS)
                                 }
                                 imgSrc={noCodeSetupIcon as string}
+                                isExternal={false}
                                 isPrimary={false}
                                 subtitle={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.subtitle',
@@ -133,6 +135,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     'app.explore.exploreDaosPage.doItYourself.actionLabel',
                                 )}
                                 imgSrc={doItYourselfIcon as string}
+                                isExternal={true}
                                 isPrimary={false}
                                 subtitle={t(
                                     'app.explore.exploreDaosPage.doItYourself.subtitle',
