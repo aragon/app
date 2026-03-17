@@ -29,6 +29,7 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
 
     const daoPlugins =
         daoUtils.getDaoPlugins(dao, {
+            includeSubPlugins: true,
             includeLinkedAccounts: false,
         }) ?? [];
 
