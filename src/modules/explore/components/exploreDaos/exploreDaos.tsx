@@ -1,10 +1,8 @@
 'use client';
 
-import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useConnection } from 'wagmi';
-import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -25,7 +23,6 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const { t } = useTranslations();
     const { address } = useConnection();
-    const { open } = useDialogContext();
 
     const [daoFilter, setDaoFilter] = useFilterUrlParam({
         name: exploreDaoFilterParam,
@@ -77,14 +74,6 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                         value="member"
                     />
                 </ToggleGroup>
-                <Button
-                    className="shrink-0"
-                    onClick={() => open(CreateDaoDialogId.CREATE_DAO_DETAILS)}
-                    size="md"
-                    variant="primary"
-                >
-                    {t('app.explore.exploreDao.createDao')}
-                </Button>
             </div>
             <DaoList
                 initialParams={initialParams}
