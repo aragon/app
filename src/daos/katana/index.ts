@@ -1,57 +1,24 @@
-import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { CapitalDistributorTestMembersFileDownload } from './components/capitalDistributorTestMembersFileDownload';
-import {
-    capitalDistributorTestDao,
-    capitalDistributorTestVotingEscrowAddress,
-    katanaCDDemo,
-    katanaCDDemoVotingEscrowAddress,
-    katanaEmissionsTest,
-    katanaEmissionsTestVotingEscrowAddress,
-} from './constants/katana';
+import { katanaDomains } from './domains';
 
 export const initialiseKatana = () => {
-    pluginRegistryUtils
-        .registerPlugin(katanaCDDemo)
+    for (const domain of katanaDomains) {
+        pluginRegistryUtils.registerPlugin(domain.plugin);
 
-        .registerSlotComponent({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-            pluginId: katanaCDDemo.id,
-            component: CapitalDistributorTestMembersFileDownload,
-        })
+        for (const slotComponent of domain.slotComponents ?? []) {
+            pluginRegistryUtils.registerSlotComponent({
+                slotId: slotComponent.slotId,
+                pluginId: domain.plugin.id,
+                component: slotComponent.component,
+            });
+        }
 
-        .registerSlotFunction({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-            pluginId: katanaCDDemo.id,
-            function: () => katanaCDDemoVotingEscrowAddress,
-        })
-
-        .registerPlugin(katanaEmissionsTest)
-
-        .registerSlotComponent({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-            pluginId: katanaEmissionsTest.id,
-            component: CapitalDistributorTestMembersFileDownload,
-        })
-
-        .registerSlotFunction({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-            pluginId: katanaEmissionsTest.id,
-            function: () => katanaEmissionsTestVotingEscrowAddress,
-        })
-
-        // TODO: Remove capitalDistributorTest when mainnet capital distributor is live (APP-558)
-        .registerPlugin(capitalDistributorTestDao)
-
-        .registerSlotComponent({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-            pluginId: capitalDistributorTestDao.id,
-            component: CapitalDistributorTestMembersFileDownload,
-        })
-
-        .registerSlotFunction({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-            pluginId: capitalDistributorTestDao.id,
-            function: () => capitalDistributorTestVotingEscrowAddress,
-        });
+        for (const slotFunction of domain.slotFunctions ?? []) {
+            pluginRegistryUtils.registerSlotFunction({
+                slotId: slotFunction.slotId,
+                pluginId: domain.plugin.id,
+                function: slotFunction.fn,
+            });
+        }
+    }
 };

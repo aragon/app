@@ -4,14 +4,16 @@ import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { CryptexDialogId } from '../../constants/cryptexDialogId';
+import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
 import {
     cryptex,
     cryptexTokenVotingPluginAddress,
+} from '../../domains/cryptexMainnet';
+import {
     tokenCDTest,
     tokenCDTestTokenVotingPluginAddress,
-} from '../../constants/cryptex';
-import { CryptexDialogId } from '../../constants/cryptexDialogId';
-import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
+} from '../../domains/tokenCDTest';
 import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
 
 // TODO: Remove tokenCDTest entry when mainnet capital distributor is live (APP-558)
