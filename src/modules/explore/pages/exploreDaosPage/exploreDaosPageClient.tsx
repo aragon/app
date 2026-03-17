@@ -94,16 +94,23 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
             <Container className="py-10 pb-16 md:px-6 md:py-20">
                 <main className="flex flex-col gap-10 md:gap-20">
                     <ExploreSection
-                        title={t('app.explore.exploreDaosPage.section.daos')}
-                    >
-                        <Suspense fallback={null}>
-                            <ExploreDaos initialParams={initialParams} />
-                        </Suspense>
-                    </ExploreSection>
-                    <ExploreSection
                         title={t('app.explore.exploreDaosPage.section.cta')}
                     >
                         <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
+                            <CtaCard
+                                actionHref="https://www.aragon.org/get-assistance-form"
+                                actionLabel={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.actionLabel',
+                                )}
+                                imgSrc={enterpriseServiceIcon as string}
+                                isPrimary={true}
+                                subtitle={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.subtitle',
+                                )}
+                                title={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.title',
+                                )}
+                            />
                             <CtaCard
                                 actionLabel={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
@@ -112,26 +119,12 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     open(CreateDaoDialogId.CREATE_DAO_DETAILS)
                                 }
                                 imgSrc={noCodeSetupIcon as string}
-                                isPrimary={true}
+                                isPrimary={false}
                                 subtitle={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.subtitle',
                                 )}
                                 title={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.title',
-                                )}
-                            />
-                            <CtaCard
-                                actionHref="https://www.aragon.org/get-assistance-form"
-                                actionLabel={t(
-                                    'app.explore.exploreDaosPage.enterpriseService.actionLabel',
-                                )}
-                                imgSrc={enterpriseServiceIcon as string}
-                                isPrimary={false}
-                                subtitle={t(
-                                    'app.explore.exploreDaosPage.enterpriseService.subtitle',
-                                )}
-                                title={t(
-                                    'app.explore.exploreDaosPage.enterpriseService.title',
                                 )}
                             />
                             <CtaCard
@@ -149,6 +142,13 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                 )}
                             />
                         </div>
+                    </ExploreSection>
+                    <ExploreSection
+                        title={t('app.explore.exploreDaosPage.section.daos')}
+                    >
+                        <Suspense fallback={null}>
+                            <ExploreDaos initialParams={initialParams} />
+                        </Suspense>
                     </ExploreSection>
                 </main>
             </Container>
