@@ -14,8 +14,8 @@ Sentry.init({
         }),
     ],
 
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 0.5,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0.05,
 });
 
 // eslint-disable-next-line import/namespace
