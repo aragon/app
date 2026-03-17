@@ -4,6 +4,7 @@ import {
     IconType,
     NumberFormat,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -102,7 +103,15 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     );
 
     const footerInfo = (
-        <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+        <p
+            className={classNames(
+                'font-normal text-neutral-500 text-sm leading-normal',
+                {
+                    'text-center': mode === 'panel',
+                    'text-left': mode === 'dialog',
+                },
+            )}
+        >
             {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
         </p>
     );

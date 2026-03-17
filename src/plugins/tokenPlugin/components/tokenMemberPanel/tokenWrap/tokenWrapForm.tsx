@@ -4,6 +4,7 @@ import {
     IconType,
     NumberFormat,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -207,7 +208,15 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     );
 
     const footerInfo = (
-        <p className="font-normal text-neutral-500 text-sm leading-normal">
+        <p
+            className={classNames(
+                'font-normal text-neutral-500 text-sm leading-normal',
+                {
+                    'text-center': mode === 'panel',
+                    'text-left': mode === 'dialog',
+                },
+            )}
+        >
             {t('app.plugins.token.tokenWrapForm.footerInfo')}
         </p>
     );

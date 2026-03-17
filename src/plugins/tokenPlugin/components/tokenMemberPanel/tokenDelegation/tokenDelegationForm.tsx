@@ -140,6 +140,20 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     // multiple button state changes during page refresh
     const isSubmitDisabled = isCurrentDelegateLoading || isDelegateUnchanged;
 
+    const footerInfo = (
+        <p
+            className={classNames(
+                'font-normal text-neutral-500 text-sm leading-normal',
+                {
+                    'text-center': mode === 'panel',
+                    'text-left': mode === 'dialog',
+                },
+            )}
+        >
+            {t('app.plugins.token.tokenDelegationForm.info')}
+        </p>
+    );
+
     return (
         <form
             className="flex flex-col gap-4"
@@ -179,9 +193,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
             />
             {mode === 'dialog' ? (
                 <div className="flex flex-col gap-9">
-                    <p className="font-normal text-neutral-500 text-sm leading-normal">
-                        {t('app.plugins.token.tokenDelegationForm.info')}
-                    </p>
+                    {footerInfo}
                     <div
                         className={classNames(
                             'flex gap-3',
@@ -225,9 +237,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                     >
                         {t('app.plugins.token.tokenDelegationForm.submit')}
                     </Button>
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                        {t('app.plugins.token.tokenDelegationForm.info')}
-                    </p>
+                    {footerInfo}
                 </div>
             )}
         </form>
