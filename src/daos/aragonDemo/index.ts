@@ -1,15 +1,16 @@
-import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { AragonDemoPageHeader } from './components/aragonDemoPageHeader';
-import { aragonDemoDao } from './constants/aragonDemoDao';
+import { aragonDemoDomains } from './domains';
 
 export const initialiseAragonDemo = () => {
-    pluginRegistryUtils
-        .registerPlugin(aragonDemoDao)
+    for (const domain of aragonDemoDomains) {
+        pluginRegistryUtils.registerPlugin(domain.plugin);
 
-        .registerSlotComponent({
-            slotId: DashboardDaoSlotId.DASHBOARD_DAO_HEADER,
-            pluginId: aragonDemoDao.id,
-            component: AragonDemoPageHeader,
-        });
+        for (const slotComponent of domain.slotComponents ?? []) {
+            pluginRegistryUtils.registerSlotComponent({
+                slotId: slotComponent.slotId,
+                pluginId: domain.plugin.id,
+                component: slotComponent.component,
+            });
+        }
+    }
 };

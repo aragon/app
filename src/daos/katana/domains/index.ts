@@ -14,15 +14,24 @@ import {
 import { katanaVKatManagement } from './katanaVKatManagement';
 
 interface IKatanaDomainMeta {
+    /**
+     * Voting escrow address used by capital distributor integrations.
+     */
     votingEscrowAddress?: `0x${string}`;
 }
 
 interface IKatanaDomainConfig {
+    /**
+     * Plugin identity for the Katana domain.
+     */
     plugin:
         | typeof capitalDistributorTestDao
         | typeof katanaCDDemo
         | typeof katanaEmissionsTest
         | typeof katanaVKatManagement;
+    /**
+     * Optional voting escrow address for domains that expose one.
+     */
     votingEscrowAddress?: `0x${string}`;
 }
 

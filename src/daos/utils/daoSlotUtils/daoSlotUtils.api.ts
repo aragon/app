@@ -5,10 +5,6 @@ import type {
 } from '@/daos/daoDomains';
 import type { IPlugin } from '@/shared/utils/pluginRegistryUtils';
 
-/**
- * Parameters used to generate final DAO domain definitions from
- * family-level domain configs.
- */
 export interface IGenerateDomainParams<TConfig, TMeta extends object = object> {
     /**
      * Source configs for a DAO family.
@@ -36,9 +32,6 @@ export interface IGenerateDomainParams<TConfig, TMeta extends object = object> {
     ) => IDaoDomainSlotFunctionDefinition[] | undefined;
 }
 
-/**
- * Function signature for generating DAO domain definitions.
- */
 export type GenerateDomain = <TConfig, TMeta extends object = object>(
     params: IGenerateDomainParams<TConfig, TMeta>,
 ) => IDaoDomainDefinition<TMeta>[];

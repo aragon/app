@@ -5,9 +5,6 @@ import type {
     SlotId,
 } from '@/shared/utils/pluginRegistryUtils';
 
-/**
- * Component registration definition for a DAO domain slot.
- */
 export interface IDaoDomainSlotComponentDefinition {
     /**
      * Slot to register the component under.
@@ -19,9 +16,6 @@ export interface IDaoDomainSlotComponentDefinition {
     component: PluginComponent;
 }
 
-/**
- * Function registration definition for a DAO domain slot.
- */
 export interface IDaoDomainSlotFunctionDefinition {
     /**
      * Slot to register the function under.
@@ -33,9 +27,6 @@ export interface IDaoDomainSlotFunctionDefinition {
     fn: PluginFunction;
 }
 
-/**
- * Final generated DAO domain definition consumed by DAO initializers.
- */
 export interface IDaoDomainDefinition<TMeta extends object = object> {
     /**
      * Plugin identity for the domain.

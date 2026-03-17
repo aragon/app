@@ -15,12 +15,24 @@ import {
 } from './tokenCDTest';
 
 interface ICryptexDomainMeta {
+    /**
+     * Token voting plugin address used by Cryptex reward flows.
+     */
     tokenVotingPluginAddress?: `0x${string}`;
 }
 
 interface ICryptexDomainConfig {
+    /**
+     * Plugin identity for the Cryptex domain.
+     */
     plugin: typeof cryptex | typeof tokenCDTest;
+    /**
+     * Token voting plugin address used for reward file generation.
+     */
     tokenVotingPluginAddress: `0x${string}`;
+    /**
+     * Whether the domain should register the custom dashboard header.
+     */
     hasHeader?: boolean;
 }
 
