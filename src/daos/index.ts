@@ -5,6 +5,7 @@ import { initialiseCapitalDistributorTest } from './capitalDistributorTest';
 import { initialiseCryptex } from './cryptex';
 import { initialiseKatanaCDDemo } from './katanaCDDemo';
 import { initialiseKatanaEmissionsTest } from './katanaEmissionsTest';
+import { initialiseKatanaVKatManagement } from './katanaVKatManagement';
 import { initialiseXmaquina } from './xmaquina';
 
 export const initialiseDaos = () => {
@@ -16,4 +17,5 @@ export const initialiseDaos = () => {
     initialiseCapitalDistributorTest();
     initialiseKatanaCDDemo();
     initialiseKatanaEmissionsTest();
+    initialiseKatanaVKatManagement();
 };

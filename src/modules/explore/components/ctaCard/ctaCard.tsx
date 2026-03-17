@@ -25,6 +25,10 @@ export interface ICtaCardProps {
      */
     actionLabel: string;
     /**
+     * Flag to determine if the action points to an external destination.
+     */
+    isExternal?: boolean;
+    /**
      * Path to navigate to when the action button is clicked.
      */
     actionHref?: string;
@@ -47,6 +51,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
         title,
         subtitle,
         isPrimary,
+        isExternal = false,
         actionHref,
         actionLabel,
         actionOnClick,
@@ -82,10 +87,10 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
             <Button
                 className="self-stretch md:self-start"
                 href={actionHref}
-                iconRight={isPrimary ? undefined : IconType.LINK_EXTERNAL}
+                iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
                 onClick={actionOnClick}
                 size="md"
-                target={isPrimary ? '_self' : '_blank'}
+                target={isExternal ? '_blank' : '_self'}
                 variant={isPrimary ? 'primary' : 'secondary'}
             >
                 {actionLabel}

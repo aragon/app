@@ -26,6 +26,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 
     const daoPlugins =
         daoUtils.getDaoPlugins(dao, {
+            includeSubPlugins: true,
             includeLinkedAccounts: false,
         }) ?? [];
 
