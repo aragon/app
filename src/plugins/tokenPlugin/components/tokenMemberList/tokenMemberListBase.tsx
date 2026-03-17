@@ -6,10 +6,12 @@ import {
     DataListRoot,
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode, useMemo } from 'react';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
 
@@ -28,6 +30,26 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         props;
 
     const { t } = useTranslations();
+    const { daoId } = initialParams.queryParams;
+
+    // Always use the parent DAO for the UI context (member URLs, etc.).
+    // The parent DAO is server-side prefetched → always a cache hit.
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    // For linked account plugins the API call must target the linked account's own daoId so the
+    // backend queries the correct DAO.
+    const apiParams = useMemo(() => {
+        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+
+        if (resolvedDaoId === daoId) {
+            return initialParams;
+        }
+
+        return {
+            ...initialParams,
+            queryParams: { ...initialParams.queryParams, daoId: resolvedDaoId },
+        };
+    }, [initialParams, plugin, dao, daoId]);
 
     const {
         onLoadMore,
@@ -37,8 +59,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         errorState,
         emptyState,
         memberList,
-    } = useMemberListData<ITokenMember>(initialParams);
-    const { daoId } = initialParams.queryParams;
+    } = useMemberListData<ITokenMember>(apiParams);
 
     return (
         <DataListRoot
