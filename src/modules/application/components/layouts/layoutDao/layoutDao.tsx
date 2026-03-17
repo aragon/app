@@ -4,7 +4,10 @@ import {
     QueryClient,
 } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
+import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
+import { LockToVoteLockOnboardingWatcher } from '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher';
 import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher';
+import { TokenLockAndWrapOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
@@ -45,9 +48,10 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
     try {
         const daoId = await daoUtils.resolveDaoId(daoPageParams);
         const daoUrlParams = { id: daoId };
-        dao = await queryClient.fetchQuery(
-            daoOptions({ urlParams: daoUrlParams }),
-        );
+        [dao] = await Promise.all([
+            queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams })),
+            queryClient.prefetchQuery(daoOverridesOptions()),
+        ]);
     } catch (error: unknown) {
         const parsedError = errorUtils.serialize(error);
         return (
@@ -63,6 +67,8 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
             <NavigationDao dao={dao} />
             <BannerDao dao={dao} />
             <TokenDelegationOnboardingWatcher dao={dao} />
+            <TokenLockAndWrapOnboardingWatcher dao={dao} />
+            <LockToVoteLockOnboardingWatcher dao={dao} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );

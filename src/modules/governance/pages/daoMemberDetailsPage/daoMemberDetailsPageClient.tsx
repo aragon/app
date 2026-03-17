@@ -17,11 +17,12 @@ import { Page } from '@/shared/components/page';
 import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { VoteList } from '../../components/voteList';
@@ -37,6 +38,10 @@ export interface IDaoMemberDetailsPageClientProps {
      * Address of the DAO member.
      */
     address: string;
+    /**
+     * Address of the body plugin resolved by the server component.
+     */
+    pluginAddress: string;
 }
 
 const memberProposalsCount = 3;
@@ -46,7 +51,7 @@ const memberDaosCount = 3;
 export const DaoMemberDetailsPageClient: React.FC<
     IDaoMemberDetailsPageClientProps
 > = (props) => {
-    const { address, daoId } = props;
+    const { address, daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
 
@@ -56,22 +61,32 @@ export const DaoMemberDetailsPageClient: React.FC<
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
+    const bodyPlugins = useDaoPlugins({
+        daoId,
+        pluginAddress,
+    });
+    const bodyPlugin = bodyPlugins?.[0]?.meta;
+
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress: dao!.plugins[0].address };
+    const memberQueryParams = { daoId, pluginAddress };
     const memberParams = {
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
     };
     const { data: member } = useMember(memberParams);
 
-    const memberStatsParams = { daoId, address, plugin: dao!.plugins[0] };
+    const memberStatsParams = {
+        daoId,
+        address,
+        plugin: bodyPlugin!,
+    };
     const pluginStats = useSlotSingleFunction<
         IUsePluginMemberStatsParams,
         IPageHeaderStat[]
     >({
         params: memberStatsParams,
         slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-        pluginId: dao?.plugins[0]?.interfaceType ?? '',
+        pluginId: bodyPlugin?.interfaceType ?? '',
     });
 
     const { lastActivity, firstActivity } = member?.metrics ?? {};
@@ -139,7 +154,7 @@ export const DaoMemberDetailsPageClient: React.FC<
         },
     ];
 
-    if (member == null || dao == null) {
+    if (member == null || dao == null || bodyPlugin == null) {
         return null;
     }
 

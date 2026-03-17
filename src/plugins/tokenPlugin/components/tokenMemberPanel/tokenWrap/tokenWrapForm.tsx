@@ -1,4 +1,9 @@
-import { Button, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    formatterUtils,
+    IconType,
+    NumberFormat,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -33,12 +38,20 @@ export interface ITokenWrapFormProps {
      * Underlying token of the wrapper governance token.
      */
     underlyingToken: IToken;
+    /**
+     * Rendering mode: 'panel' (default) or 'dialog'.
+     */
+    mode?: 'panel' | 'dialog';
+    /**
+     * Callback invoked when the user cancels (dialog mode only).
+     */
+    onCancel?: () => void;
 }
 
 export interface ITokenWrapFormData extends IAssetInputFormData {}
 
 export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
-    const { token, daoId, underlyingToken } = props;
+    const { token, daoId, underlyingToken, mode = 'panel', onCancel } = props;
     const { symbol, decimals } = token;
 
     const { open } = useDialogContext();
@@ -178,6 +191,27 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const submitLabel = needsApproval ? 'approve' : 'wrap';
     const disableSubmit = unwrappedBalance?.value === BigInt(0);
 
+    const renderSubmitButton = ({ size }: { size: 'md' | 'lg' }) => (
+        <Button
+            disabled={disableSubmit}
+            iconRight={mode === 'dialog' ? IconType.CHEVRON_RIGHT : undefined}
+            onClick={isConnected ? undefined : () => walletGuard()}
+            size={size}
+            type={isConnected ? 'submit' : undefined}
+            variant="primary"
+        >
+            {t(`app.plugins.token.tokenWrapForm.submit.${submitLabel}`, {
+                underlyingSymbol: underlyingToken.symbol,
+            })}
+        </Button>
+    );
+
+    const footerInfo = (
+        <p className="font-normal text-neutral-500 text-sm leading-normal">
+            {t('app.plugins.token.tokenWrapForm.footerInfo')}
+        </p>
+    );
+
     return (
         <FormProvider {...formValues}>
             <form
@@ -200,42 +234,50 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
                         }}
                     />
                 </div>
-                <div className="flex flex-col gap-3">
-                    <Button
-                        disabled={disableSubmit}
-                        onClick={isConnected ? undefined : () => walletGuard()}
-                        size="lg"
-                        type={isConnected ? 'submit' : undefined}
-                        variant="primary"
-                    >
-                        {t(
-                            `app.plugins.token.tokenWrapForm.submit.${submitLabel}`,
-                            {
-                                underlyingSymbol: underlyingToken.symbol,
-                            },
-                        )}
-                    </Button>
-                    {wrappedBalance > 0 && (
-                        <Button
-                            onClick={() =>
-                                handleWrapUnwrapTokens('unwrap', wrappedBalance)
-                            }
-                            size="lg"
-                            variant="secondary"
-                        >
-                            {t(
-                                'app.plugins.token.tokenWrapForm.submit.unwrap',
-                                {
-                                    amount: formattedWrappedAmount,
-                                    symbol,
-                                },
+                {mode === 'dialog' ? (
+                    <div className="flex flex-col gap-9">
+                        {footerInfo}
+                        <div className="flex justify-between gap-3">
+                            {onCancel != null && (
+                                <Button
+                                    onClick={onCancel}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {t(
+                                        'app.plugins.token.tokenWrapForm.cancel',
+                                    )}
+                                </Button>
                             )}
-                        </Button>
-                    )}
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-                        {t('app.plugins.token.tokenWrapForm.footerInfo')}
-                    </p>
-                </div>
+                            {renderSubmitButton({ size: 'md' })}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-3">
+                        {renderSubmitButton({ size: 'lg' })}
+                        {wrappedBalance > 0 && (
+                            <Button
+                                onClick={() =>
+                                    handleWrapUnwrapTokens(
+                                        'unwrap',
+                                        wrappedBalance,
+                                    )
+                                }
+                                size="lg"
+                                variant="secondary"
+                            >
+                                {t(
+                                    'app.plugins.token.tokenWrapForm.submit.unwrap',
+                                    {
+                                        amount: formattedWrappedAmount,
+                                        symbol,
+                                    },
+                                )}
+                            </Button>
+                        )}
+                        {footerInfo}
+                    </div>
+                )}
             </form>
         </FormProvider>
     );

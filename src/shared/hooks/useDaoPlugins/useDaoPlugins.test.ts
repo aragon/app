@@ -11,6 +11,10 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useDaoPlugins } from './useDaoPlugins';
 
+jest.mock('@/modules/explore/api/cmsService', () => ({
+    useDaoOverrides: () => ({ data: undefined }),
+}));
+
 describe('useDaoPlugins hook', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');

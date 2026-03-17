@@ -7,6 +7,7 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import type { ITokenPlugin, ITokenPluginSettings } from '../../types';
+import { tokenPluginUtils } from '../../utils/tokenPluginUtils';
 import { TokenDelegationForm } from './tokenDelegation';
 import { TokenWrapForm } from './tokenWrap';
 
@@ -42,7 +43,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const { plugin, daoId } = props;
 
     const { token, votingEscrow } = plugin.settings;
-    const { underlying, symbol, name } = token;
+    const { underlying } = token;
 
     const { t } = useTranslations();
 
@@ -59,13 +60,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
         validValues: visibleTabs.map((tab) => tab.value),
     });
 
-    // Remove the "g" and "Governance" prefixes from the token symbol / name
-    const underlyingToken = {
-        ...token,
-        address: underlying!,
-        symbol: symbol.substring(1),
-        name: name.substring(11),
-    };
+    const underlyingToken = tokenPluginUtils.getUnderlyingToken(token);
 
     const titleToken =
         !votingEscrow && underlying != null ? underlyingToken : token;

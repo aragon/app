@@ -1,12 +1,14 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useConnection } from 'wagmi';
-
 import type { IDao } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
+import type { ITokenDelegationOnboardingDialogParams } from '../../dialogs/tokenDelegationOnboardingFormDialog';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
 import type { ITokenPluginSettings } from '../../types';
 
@@ -22,8 +24,13 @@ export const TokenDelegationOnboardingWatcher: React.FC<
 > = (props) => {
     const { dao } = props;
 
+    const daoPlugins =
+        daoUtils.getDaoPlugins(dao, {
+            includeLinkedAccounts: false,
+        }) ?? [];
+
     // TODO: extend to get the all "eligible" plugins?
-    const delegationPlugin = dao.plugins.find(
+    const delegationPlugin = daoPlugins.find(
         (plugin) =>
             (plugin.interfaceType === PluginInterfaceType.TOKEN_VOTING ||
                 plugin.interfaceType === PluginInterfaceType.GAUGE_VOTER) &&
@@ -31,7 +38,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
                 true,
     );
 
-    const { address, status } = useConnection();
+    const { address } = useConnection();
     const { open } = useDialogContext();
 
     const token = delegationPlugin
@@ -41,65 +48,41 @@ export const TokenDelegationOnboardingWatcher: React.FC<
     const tokenSymbol = token?.symbol;
     const network = dao.network;
 
-    const { shouldTrigger, isLoading } = useTokenDelegationOnboardingCheck({
+    const { shouldTrigger } = useTokenDelegationOnboardingCheck({
         tokenAddress,
         userAddress: address,
         network,
         enabled: delegationPlugin != null && address != null,
     });
 
-    const hasFiredRef = useRef(status === 'connected');
-    const hasConnectIntentRef = useRef(false);
-
-    useEffect(() => {
-        if (status === 'disconnected') {
-            hasFiredRef.current = false;
-            hasConnectIntentRef.current = false;
-        }
-
-        if (status === 'connecting') {
-            hasFiredRef.current = false;
-            hasConnectIntentRef.current = true;
-        }
-    }, [status]);
+    const [hasPendingConnection, setHasPendingConnection] = useState(false);
+    useWalletConnectionEvent({
+        onConnected: () => setHasPendingConnection(true),
+    });
 
     useEffect(() => {
         if (
-            status !== 'connected' ||
-            hasFiredRef.current ||
-            !hasConnectIntentRef.current
+            !hasPendingConnection ||
+            !shouldTrigger ||
+            tokenAddress == null ||
+            tokenSymbol == null
         ) {
             return;
         }
 
-        if (isLoading) {
-            return;
-        }
+        setHasPendingConnection(false);
 
-        if (tokenAddress == null || tokenSymbol == null) {
-            return;
-        }
-
-        // Consume this connect flow once the onboarding check is resolved.
-        hasFiredRef.current = true;
-        hasConnectIntentRef.current = false;
-        if (!shouldTrigger) {
-            return;
-        }
+        const delegationOnboardingIntroParams: ITokenDelegationOnboardingDialogParams =
+            { tokenAddress, tokenSymbol, daoId: dao.id };
 
         open(TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO, {
-            params: {
-                tokenAddress,
-                tokenSymbol,
-                daoId: dao.id,
-            },
+            params: delegationOnboardingIntroParams,
         });
     }, [
-        status,
-        shouldTrigger,
-        isLoading,
+        hasPendingConnection,
         tokenAddress,
         tokenSymbol,
+        shouldTrigger,
         dao.id,
         open,
     ]);

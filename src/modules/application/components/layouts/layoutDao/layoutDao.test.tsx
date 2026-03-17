@@ -34,19 +34,36 @@ jest.mock(
     }),
 );
 
+jest.mock(
+    '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher',
+    () => ({
+        TokenLockAndWrapOnboardingWatcher: () => null,
+    }),
+);
+
+jest.mock(
+    '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher',
+    () => ({
+        LockToVoteLockOnboardingWatcher: () => null,
+    }),
+);
+
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');
+    const prefetchQuerySpy = jest.spyOn(QueryClient.prototype, 'prefetchQuery');
     const consoleErrorSpy = jest.spyOn(console, 'error');
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
 
     beforeEach(() => {
         consoleErrorSpy.mockImplementation(jest.fn());
         fetchQuerySpy.mockImplementation(jest.fn());
+        prefetchQuerySpy.mockImplementation(jest.fn());
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
     });
 
     afterEach(() => {
         fetchQuerySpy.mockReset();
+        prefetchQuerySpy.mockReset();
         consoleErrorSpy.mockReset();
         resolveDaoIdSpy.mockReset();
     });
