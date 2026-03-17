@@ -1,4 +1,5 @@
 import type { IDaoDomainDefinition } from '@/daos/daoDomains';
+import { daoSlotUtils } from '@/daos/utils/daoSlotUtils';
 import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { CapitalDistributorTestMembersFileDownload } from '../components/capitalDistributorTestMembersFileDownload';
 import {
@@ -16,69 +17,57 @@ interface IKatanaDomainMeta {
     votingEscrowAddress?: `0x${string}`;
 }
 
-export const katanaDomains: IDaoDomainDefinition<IKatanaDomainMeta>[] = [
+interface IKatanaDomainConfig {
+    plugin:
+        | typeof capitalDistributorTestDao
+        | typeof katanaCDDemo
+        | typeof katanaEmissionsTest
+        | typeof katanaVKatManagement;
+    votingEscrowAddress?: `0x${string}`;
+}
+
+const katanaDomainConfigs: IKatanaDomainConfig[] = [
     {
         plugin: katanaCDDemo,
-        slotComponents: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-                component: CapitalDistributorTestMembersFileDownload,
-            },
-        ],
-        slotFunctions: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-                fn: () => katanaCDDemoVotingEscrowAddress,
-            },
-        ],
-        meta: {
-            votingEscrowAddress: katanaCDDemoVotingEscrowAddress,
-        },
+        votingEscrowAddress: katanaCDDemoVotingEscrowAddress,
     },
     {
         plugin: katanaEmissionsTest,
-        slotComponents: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-                component: CapitalDistributorTestMembersFileDownload,
-            },
-        ],
-        slotFunctions: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-                fn: () => katanaEmissionsTestVotingEscrowAddress,
-            },
-        ],
-        meta: {
-            votingEscrowAddress: katanaEmissionsTestVotingEscrowAddress,
-        },
+        votingEscrowAddress: katanaEmissionsTestVotingEscrowAddress,
     },
     {
-        // TODO: Remove capitalDistributorTest when mainnet capital distributor is live (APP-558)
         plugin: capitalDistributorTestDao,
-        slotComponents: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-                component: CapitalDistributorTestMembersFileDownload,
-            },
-        ],
-        slotFunctions: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-                fn: () => capitalDistributorTestVotingEscrowAddress,
-            },
-        ],
-        meta: {
-            votingEscrowAddress: capitalDistributorTestVotingEscrowAddress,
-        },
+        votingEscrowAddress: capitalDistributorTestVotingEscrowAddress,
     },
     {
         plugin: katanaVKatManagement,
-        slotComponents: [
-            {
-                slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-                component: CapitalDistributorTestMembersFileDownload,
-            },
-        ],
     },
 ];
+
+const getKatanaSlotComponents = () => [
+    {
+        slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
+        component: CapitalDistributorTestMembersFileDownload,
+    },
+];
+
+const getKatanaSlotFunctions = (config: IKatanaDomainConfig) =>
+    config.votingEscrowAddress == null
+        ? []
+        : [
+              {
+                  slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+                  fn: () => config.votingEscrowAddress,
+              },
+          ];
+
+export const katanaDomains: IDaoDomainDefinition<IKatanaDomainMeta>[] =
+    daoSlotUtils.generateDomain<IKatanaDomainConfig, IKatanaDomainMeta>({
+        configs: katanaDomainConfigs,
+        getPlugin: (config) => config.plugin,
+        getMeta: (config) => ({
+            votingEscrowAddress: config.votingEscrowAddress,
+        }),
+        getSlotComponents: getKatanaSlotComponents,
+        getSlotFunctions: getKatanaSlotFunctions,
+    });
