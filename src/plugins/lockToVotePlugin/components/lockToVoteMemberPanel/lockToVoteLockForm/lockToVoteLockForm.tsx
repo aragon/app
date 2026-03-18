@@ -12,6 +12,7 @@ import {
     AssetInput,
     type IAssetInputFormData,
 } from '@/modules/finance/components/assetInput';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
@@ -102,9 +103,10 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     );
 
     const footerInfo = (
-        <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
-            {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
+        />
     );
 
     return (
