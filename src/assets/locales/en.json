@@ -1295,11 +1295,11 @@
         },
         "enterpriseService": {
           "actionLabel": "Get in touch",
-          "subtitle": "Let our team manage the complexities of governance so you can focus on building your product and community.",
-          "title": "Enterprise service"
+          "subtitle": "Let Aragon design and build custom governance and tokenomics mechanisms for your organization.",
+          "title": "Work with our team"
         },
         "hero": {
-          "subtitle": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+          "subtitle": "Explore the organizations using our modular governance stack to secure their protocols and treasuries.",
           "title": "Governed on Aragon"
         },
         "noCodeSetup": {
