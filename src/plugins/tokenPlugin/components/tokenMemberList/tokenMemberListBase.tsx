@@ -7,16 +7,31 @@ import {
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { ITokenMember, ITokenPluginSettings } from '../../types';
+import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
 
+/**
+ * Lowest common plugin settings for TV and LTV plugins.
+ */
+export interface ITokenMemberListPluginSettings extends IPluginSettings {
+    /**
+     * Governance token of the DAO.
+     */
+    token: IToken;
+}
+
 export interface ITokenMemberListBaseProps
-    extends IDaoMemberListDefaultProps<ITokenPluginSettings> {
+    extends Omit<
+        IDaoMemberListDefaultProps<ITokenMemberListPluginSettings>,
+        'onMemberClick'
+    > {
     /**
      * Onboarding card to display (lock/wrap/delegate).
      */
@@ -26,8 +41,14 @@ export interface ITokenMemberListBaseProps
 export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, plugin, onboardingCard, children } =
-        props;
+    const {
+        initialParams,
+        hidePagination,
+        layoutClassNames,
+        plugin,
+        onboardingCard,
+        children,
+    } = props;
 
     const { t } = useTranslations();
     const { daoId } = initialParams.queryParams;
@@ -73,7 +94,10 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}
-                layoutClassName="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+                layoutClassName={
+                    layoutClassNames ??
+                    'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                }
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
                 {memberList?.map((member) => (
