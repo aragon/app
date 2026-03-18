@@ -1,34 +1,41 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
-import * as governanceService from '@/modules/governance/api/governanceService';
-import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
-import * as daoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
-import * as useTokenCurrentDelegateModule from '../../hooks/useTokenCurrentDelegate';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import * as useTokenDelegationOnboardingCheckModule from '../../hooks/useTokenDelegationOnboardingCheck';
 import * as useTokenLockAndWrapOnboardingCheckModule from '../../hooks/useTokenLockAndWrapOnboardingCheck';
-import {
-    generateTokenMember,
-    generateTokenPluginSettings,
-} from '../../testUtils';
-import type { ITokenMember } from '../../types';
+import { generateTokenPluginSettings } from '../../testUtils';
 import { type ITokenMemberListProps, TokenMemberList } from './tokenMemberList';
 
-jest.mock('./components/tokenMemberListItem', () => ({
-    TokenMemberListItem: (props: {
-        member: ITokenMember;
-        isDelegate?: boolean;
-    }) => (
-        <div data-is-delegate={props.isDelegate} data-testid="member-mock">
-            {props.member.address}
-        </div>
-    ),
+const tokenMemberListBaseMock = jest.fn<
+    ReactNode,
+    [
+        {
+            enableDelegation?: boolean;
+            onboardingCard?: ReactNode;
+            children?: ReactNode;
+        },
+    ]
+>();
+
+jest.mock('./tokenMemberListBase', () => ({
+    TokenMemberListBase: (props: {
+        enableDelegation?: boolean;
+        onboardingCard?: ReactNode;
+        children?: ReactNode;
+    }) => {
+        tokenMemberListBaseMock(props);
+        return (
+            <div data-testid="member-list-base-mock">
+                <div data-testid="enable-delegation-flag">
+                    {String(props.enableDelegation)}
+                </div>
+                {props.onboardingCard}
+                {props.children}
+            </div>
+        );
+    },
 }));
 
 jest.mock('./components/tokenMemberListDelegationCardEmptyState', () => ({
@@ -50,19 +57,7 @@ jest.mock('./components/tokenMemberListWrapCardEmptyState', () => ({
 }));
 
 describe('<TokenMemberList /> component', () => {
-    const useMemberListDataSpy = jest.spyOn(
-        useMemberListData,
-        'useMemberListData',
-    );
-    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useTokenCurrentDelegateSpy = jest.spyOn(
-        useTokenCurrentDelegateModule,
-        'useTokenCurrentDelegate',
-    );
-    const useMemberSpy = jest.spyOn(governanceService, 'useMember');
-
-    const defaultDao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
     const useDelegationOnboardingCheckSpy = jest.spyOn(
         useTokenDelegationOnboardingCheckModule,
         'useTokenDelegationOnboardingCheck',
@@ -73,31 +68,7 @@ describe('<TokenMemberList /> component', () => {
     );
 
     beforeEach(() => {
-        useMemberListDataSpy.mockReturnValue({
-            memberList: undefined,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: defaultDao }),
-        );
-        useConnectionSpy.mockReturnValue({
-            address: undefined,
-        } as unknown as wagmi.UseConnectionReturnType);
-        useTokenCurrentDelegateSpy.mockReturnValue({
-            data: undefined,
-            isLoading: false,
-            isError: false,
-        });
-        useMemberSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            }),
-        );
+        tokenMemberListBaseMock.mockReset();
         useConnectionSpy.mockReturnValue({
             address: undefined,
         } as unknown as wagmi.UseConnectionReturnType);
@@ -112,11 +83,7 @@ describe('<TokenMemberList /> component', () => {
     });
 
     afterEach(() => {
-        useMemberListDataSpy.mockReset();
-        useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
-        useTokenCurrentDelegateSpy.mockReset();
-        useMemberSpy.mockReset();
         useDelegationOnboardingCheckSpy.mockReset();
         useLockAndWrapOnboardingCheckSpy.mockReset();
     });
@@ -138,6 +105,21 @@ describe('<TokenMemberList /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    it('passes delegation support through to the shared member list base', () => {
+        const plugin = generateDaoPlugin({
+            settings: generateTokenPluginSettings({
+                token: generateTokenPluginSettings().token,
+            }),
+        });
+
+        render(createTestComponent({ plugin }));
+
+        expect(screen.getByTestId('member-list-base-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('enable-delegation-flag')).toHaveTextContent(
+            String(plugin.settings.token.hasDelegate),
+        );
+    });
 
     it('renders the delegation card when showDelegationCard is true', () => {
         useDelegationOnboardingCheckSpy.mockReturnValue({
@@ -208,369 +190,11 @@ describe('<TokenMemberList /> component', () => {
 
     it('renders no onboarding card when neither condition is true', () => {
         render(createTestComponent());
+        expect(screen.getByTestId('member-list-base-mock')).toBeInTheDocument();
         expect(
             screen.queryByTestId('delegation-card-mock'),
         ).not.toBeInTheDocument();
         expect(screen.queryByTestId('lock-card-mock')).not.toBeInTheDocument();
         expect(screen.queryByTestId('wrap-card-mock')).not.toBeInTheDocument();
-    });
-
-    it('pins the connected user to the top when they have voting power', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const paginatedMembers = [
-            generateTokenMember({
-                address: '0x9999999999999999999999999999999999999999',
-                votingPower: '5000',
-            }),
-            generateTokenMember({
-                address: '0x8888888888888888888888888888888888888888',
-                votingPower: '4000',
-            }),
-        ];
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '100',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: paginatedMembers,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 3,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(2);
-        expect(memberElements[0].textContent).toBe(userAddress);
-        expect(memberElements[1].textContent).toBe(
-            '0x9999999999999999999999999999999999999999',
-        );
-    });
-
-    it('pins the delegate to the top when user has a valid delegate', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        const paginatedMembers = [
-            generateTokenMember({
-                address: '0x9999999999999999999999999999999999999999',
-                votingPower: '5000',
-            }),
-            generateTokenMember({
-                address: '0x8888888888888888888888888888888888888888',
-                votingPower: '4000',
-            }),
-        ];
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '100',
-        });
-        const delegateMember = generateTokenMember({
-            address: delegateAddr,
-            votingPower: '200',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useTokenCurrentDelegateSpy.mockReturnValue({
-            data: delegateAddr as `0x${string}`,
-            isLoading: false,
-            isError: false,
-        });
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: paginatedMembers,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 4,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            if (params.urlParams.address === delegateAddr) {
-                return generateReactQueryResultSuccess({
-                    data: delegateMember,
-                });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(2);
-        expect(memberElements[0].textContent).toBe(userAddress);
-        expect(memberElements[1].textContent).toBe(delegateAddr);
-        expect(memberElements[1].getAttribute('data-is-delegate')).toBe('true');
-    });
-
-    it('keeps the rendered member count aligned with the backend page size', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        const paginatedMembers = [
-            generateTokenMember({
-                address: '0x9999999999999999999999999999999999999999',
-                votingPower: '5000',
-            }),
-            generateTokenMember({
-                address: '0x8888888888888888888888888888888888888888',
-                votingPower: '4000',
-            }),
-        ];
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '100',
-        });
-        const delegateMember = generateTokenMember({
-            address: delegateAddr,
-            votingPower: '200',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useTokenCurrentDelegateSpy.mockReturnValue({
-            data: delegateAddr as `0x${string}`,
-            isLoading: false,
-            isError: false,
-        });
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: paginatedMembers,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 50,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            if (params.urlParams.address === delegateAddr) {
-                return generateReactQueryResultSuccess({
-                    data: delegateMember,
-                });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(paginatedMembers.length);
-        expect(memberElements[0].textContent).toBe(userAddress);
-        expect(memberElements[1].textContent).toBe(delegateAddr);
-    });
-
-    it('does not pin user when voting power is zero (e.g. delegated away)', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const otherMember = generateTokenMember({
-            address: '0x9999999999999999999999999999999999999999',
-            votingPower: '5000',
-        });
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '0',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [otherMember],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 1,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(1);
-        expect(memberElements[0].textContent).toBe(
-            '0x9999999999999999999999999999999999999999',
-        );
-    });
-
-    it('does not treat self-delegation as a valid delegate', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '100',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useTokenCurrentDelegateSpy.mockReturnValue({
-            data: userAddress as `0x${string}`,
-            isLoading: false,
-            isError: false,
-        });
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [
-                generateTokenMember({
-                    address: '0x9999999999999999999999999999999999999999',
-                    votingPower: '5000',
-                }),
-            ],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 2,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements[0].getAttribute('data-is-delegate')).toBe(
-            'false',
-        );
-    });
-
-    it('does not treat zero address delegate as a valid delegate', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useTokenCurrentDelegateSpy.mockReturnValue({
-            data: '0x0000000000000000000000000000000000000000' as `0x${string}`,
-            isLoading: false,
-            isError: false,
-        });
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [
-                generateTokenMember({
-                    address: '0x9999999999999999999999999999999999999999',
-                    votingPower: '5000',
-                }),
-            ],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 1,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            }),
-        );
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(1);
-        expect(memberElements[0].getAttribute('data-is-delegate')).toBe(
-            'false',
-        );
-    });
-
-    it('deduplicates pinned members from the paginated list', () => {
-        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const userMember = generateTokenMember({
-            address: userAddress,
-            votingPower: '100',
-        });
-
-        useConnectionSpy.mockReturnValue({
-            address: userAddress,
-        } as unknown as wagmi.UseConnectionReturnType);
-
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [
-                userMember,
-                generateTokenMember({
-                    address: '0x9999999999999999999999999999999999999999',
-                }),
-            ],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 2,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-
-        useMemberSpy.mockImplementation((params) => {
-            if (params.urlParams.address === userAddress) {
-                return generateReactQueryResultSuccess({ data: userMember });
-            }
-            return generateReactQueryResultSuccess({
-                data: undefined as unknown as ITokenMember,
-            });
-        });
-
-        render(createTestComponent());
-
-        const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(2);
-        expect(memberElements[0].textContent).toBe(userAddress);
-        expect(memberElements[1].textContent).toBe(
-            '0x9999999999999999999999999999999999999999',
-        );
     });
 });
