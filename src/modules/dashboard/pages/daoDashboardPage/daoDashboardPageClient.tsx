@@ -62,6 +62,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
             daoId,
             type: PluginType.BODY,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
             name: daoDashboardPageMembersFilterParam,
         });
 
@@ -72,6 +73,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         daoId,
         type: PluginType.PROCESS,
         includeGroupFilter: true,
+        includeLinkedAccounts: true,
         name: daoDashboardPageProposalsFilterParam,
     });
 

@@ -32,6 +32,7 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
         name: daoMembersPageFilterParam,
     });
 
