@@ -6,7 +6,6 @@ import {
     type IGetMemberParams,
     useMember,
 } from '@/modules/governance/api/governanceService';
-import { type Network, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import type { ITokenMember } from '../../types';
 import { useTokenCurrentDelegate } from '../useTokenCurrentDelegate';
@@ -21,30 +20,28 @@ export interface IUseTokenPinnedMembersResult {
 export const useTokenPinnedMembers = (
     params: IUseTokenPinnedMembersParams,
 ): IUseTokenPinnedMembersResult => {
-    const { daoId, pluginAddress, pluginSettings } = params;
+    const { daoId, pluginAddress, token, enableDelegation = false } = params;
     const { address: connectedAddress } = useConnection();
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
-    const delegateQueryEnabled =
-        connectedAddress != null && dao?.network != null;
+    const delegateQueryEnabled = enableDelegation && connectedAddress != null;
 
     const { data: delegateAddress } = useTokenCurrentDelegate({
-        tokenAddress: pluginSettings.token.address,
+        tokenAddress: token.address,
         userAddress: connectedAddress,
-        network: dao?.network as Network,
+        network: token.network,
         enabled: delegateQueryEnabled,
     });
 
     const hasValidDelegate = useMemo(
         () =>
+            enableDelegation &&
             delegateAddress != null &&
             delegateAddress !== zeroAddress &&
             !addressUtils.isAddressEqual(
                 delegateAddress,
                 connectedAddress ?? '',
             ),
-        [connectedAddress, delegateAddress],
+        [connectedAddress, delegateAddress, enableDelegation],
     );
 
     const connectedUserMemberParams = useMemo<IGetMemberParams>(
