@@ -18,6 +18,7 @@ import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -141,17 +142,10 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     const isSubmitDisabled = isCurrentDelegateLoading || isDelegateUnchanged;
 
     const footerInfo = (
-        <p
-            className={classNames(
-                'font-normal text-neutral-500 text-sm leading-normal',
-                {
-                    'text-center': mode === 'panel',
-                    'text-left': mode === 'dialog',
-                },
-            )}
-        >
-            {t('app.plugins.token.tokenDelegationForm.info')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.token.tokenDelegationForm.info')}
+        />
     );
 
     return (

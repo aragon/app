@@ -4,7 +4,6 @@ import {
     IconType,
     NumberFormat,
 } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import { useCallback } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -13,6 +12,7 @@ import {
     AssetInput,
     type IAssetInputFormData,
 } from '@/modules/finance/components/assetInput';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useLockToVoteData } from '../../../hooks/useLockToVoteData';
 import type { ILockToVoteMemberPanelProps } from '../lockToVoteMemberPanel';
@@ -103,17 +103,10 @@ export const LockToVoteLockForm: React.FC<ILockToVoteLockFormProps> = (
     );
 
     const footerInfo = (
-        <p
-            className={classNames(
-                'font-normal text-neutral-500 text-sm leading-normal',
-                {
-                    'text-center': mode === 'panel',
-                    'text-left': mode === 'dialog',
-                },
-            )}
-        >
-            {t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.lockToVote.lockToVoteLockForm.footerInfo')}
+        />
     );
 
     return (

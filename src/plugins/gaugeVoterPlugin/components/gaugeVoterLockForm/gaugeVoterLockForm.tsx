@@ -1,5 +1,4 @@
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
@@ -16,6 +15,7 @@ import { useOpenDelegationOnboardingIfNeeded } from '@/plugins/tokenPlugin/hooks
 import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
@@ -235,17 +235,10 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     );
 
     const footerInfo = (
-        <p
-            className={classNames(
-                'font-normal text-neutral-500 text-sm leading-normal',
-                {
-                    'text-center': mode === 'panel',
-                    'text-left': mode === 'dialog',
-                },
-            )}
-        >
-            {t('app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo')}
+        />
     );
 
     return (
