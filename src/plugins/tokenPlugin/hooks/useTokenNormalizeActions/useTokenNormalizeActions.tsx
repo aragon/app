@@ -17,7 +17,12 @@ export const useTokenNormalizeActions = (
     const { actions, daoId } = params;
 
     const { t } = useTranslations();
-    const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true }) ?? [];
+    const daoPlugins =
+        useDaoPlugins({
+            daoId,
+            includeSubPlugins: true,
+            includeLinkedAccounts: true,
+        }) ?? [];
 
     return actions.map((action) => {
         if (tokenActionUtils.isTokenMintAction(action)) {

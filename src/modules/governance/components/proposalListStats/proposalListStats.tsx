@@ -41,7 +41,11 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
     };
     const { itemsCount: executedCount } = useProposalListData(executedParams);
 
-    const plugins = useDaoPlugins({ daoId, type: PluginType.PROCESS });
+    const plugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        includeLinkedAccounts: true,
+    });
     const buttonUrl = daoUtils.getDaoUrl(dao, 'settings#governance');
 
     const latestProposalDate =

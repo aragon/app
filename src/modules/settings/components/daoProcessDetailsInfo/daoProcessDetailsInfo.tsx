@@ -70,8 +70,12 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
         settings: pluginInfoSettings,
     });
     const processPlugins =
-        useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ??
-        [];
+        useDaoPlugins({
+            daoId,
+            type: PluginType.PROCESS,
+            hasExecute: true,
+            includeLinkedAccounts: true,
+        }) ?? [];
 
     const [pluginDefinition, launchedAtDefinition, ...customSettings] =
         settings;
