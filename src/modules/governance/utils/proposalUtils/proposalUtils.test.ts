@@ -29,6 +29,7 @@ describe('proposalUtils', () => {
             expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
                 pluginAddress: proposal.pluginAddress,
                 includeSubPlugins: true,
+                includeLinkedAccounts: true,
             });
             expect(result).toEqual('PLUGIN-SLUG-1');
         });

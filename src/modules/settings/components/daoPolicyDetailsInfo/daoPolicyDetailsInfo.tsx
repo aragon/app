@@ -45,8 +45,12 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
     const daoId = dao.id;
 
     const processPlugins =
-        useDaoPlugins({ daoId, type: PluginType.PROCESS, hasExecute: true }) ??
-        [];
+        useDaoPlugins({
+            daoId,
+            type: PluginType.PROCESS,
+            hasExecute: true,
+            includeLinkedAccounts: true,
+        }) ?? [];
     const hasGovernanceProcess = processPlugins.length > 0;
 
     const eventLogParams: IGetLastPluginEventLogUrlParams = {

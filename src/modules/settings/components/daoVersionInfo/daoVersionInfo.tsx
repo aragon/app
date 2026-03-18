@@ -29,6 +29,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     const processPlugins = useDaoPlugins({
         daoId: dao.id,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     });
 
     return (

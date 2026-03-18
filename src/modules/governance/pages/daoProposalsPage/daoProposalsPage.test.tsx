@@ -85,6 +85,7 @@ describe('<DaoProposalsPage /> component', () => {
         );
         expect(getDaoPluginsSpy).toHaveBeenCalledWith(dao, {
             type: PluginType.PROCESS,
+            includeLinkedAccounts: true,
         });
 
         const memberListParams = {

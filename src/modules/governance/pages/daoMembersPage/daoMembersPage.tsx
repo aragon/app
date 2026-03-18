@@ -43,6 +43,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
         daoUtils.getDaoPlugins(dao, {
             type: PluginType.BODY,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
         }) ?? [];
 
     const plugins = daoVisibilityUtils.filterHiddenPlugins(

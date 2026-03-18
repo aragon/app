@@ -47,6 +47,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
             daoId: initialParams.queryParams.daoId,
             type: PluginType.BODY,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
             name: daoMemberListFilterParam,
             enableUrlUpdate: onValueChange == null,
         });

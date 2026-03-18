@@ -52,6 +52,7 @@ export const DaoProposalList: React.FC<IDaoProposalListProps> = (props) => {
             daoId,
             type: PluginType.PROCESS,
             includeGroupFilter: true,
+            includeLinkedAccounts: true,
             name: daoProposalListFilterParam,
             enableUrlUpdate: onValueChange == null,
         });

@@ -38,6 +38,7 @@ export const useDaoPluginInfo = (
         daoId,
         pluginAddress: address,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })?.[0];
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });

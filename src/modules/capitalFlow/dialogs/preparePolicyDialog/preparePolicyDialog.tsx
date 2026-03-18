@@ -103,7 +103,9 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
         useState<IPrepareSourceAndModelContracts>();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const [plugin] = useDaoPlugins({ daoId, pluginAddress }) ?? [];
+    const [plugin] =
+        useDaoPlugins({ daoId, pluginAddress, includeLinkedAccounts: true }) ??
+        [];
     invariant(
         !!plugin,
         `PreparePolicyDialog: plugin with address "${pluginAddress}" not found.`,
