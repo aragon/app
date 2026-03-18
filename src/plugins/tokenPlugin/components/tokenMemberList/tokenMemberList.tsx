@@ -57,5 +57,11 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
         ))
         .otherwise(() => null);
 
-    return <TokenMemberListBase {...props} onboardingCard={onboardingCard} />;
+    return (
+        <TokenMemberListBase
+            {...props}
+            enableDelegation={token.hasDelegate}
+            onboardingCard={onboardingCard}
+        />
+    );
 };

@@ -1,23 +1,41 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
-import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
-import * as daoService from '@/shared/api/daoService';
-import {
-    generateDao,
-    generateDaoPlugin,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import * as useTokenDelegationOnboardingCheckModule from '../../hooks/useTokenDelegationOnboardingCheck';
 import * as useTokenLockAndWrapOnboardingCheckModule from '../../hooks/useTokenLockAndWrapOnboardingCheck';
 import { generateTokenPluginSettings } from '../../testUtils';
-import type { ITokenMember } from '../../types';
 import { type ITokenMemberListProps, TokenMemberList } from './tokenMemberList';
 
-jest.mock('./components/tokenMemberListItem', () => ({
-    TokenMemberListItem: (props: { member: ITokenMember }) => (
-        <div data-testid="member-mock">{props.member.address}</div>
-    ),
+const tokenMemberListBaseMock = jest.fn<
+    ReactNode,
+    [
+        {
+            enableDelegation?: boolean;
+            onboardingCard?: ReactNode;
+            children?: ReactNode;
+        },
+    ]
+>();
+
+jest.mock('./tokenMemberListBase', () => ({
+    TokenMemberListBase: (props: {
+        enableDelegation?: boolean;
+        onboardingCard?: ReactNode;
+        children?: ReactNode;
+    }) => {
+        tokenMemberListBaseMock(props);
+        return (
+            <div data-testid="member-list-base-mock">
+                <div data-testid="enable-delegation-flag">
+                    {String(props.enableDelegation)}
+                </div>
+                {props.onboardingCard}
+                {props.children}
+            </div>
+        );
+    },
 }));
 
 jest.mock('./components/tokenMemberListDelegationCardEmptyState', () => ({
@@ -39,11 +57,6 @@ jest.mock('./components/tokenMemberListWrapCardEmptyState', () => ({
 }));
 
 describe('<TokenMemberList /> component', () => {
-    const useMemberListDataSpy = jest.spyOn(
-        useMemberListData,
-        'useMemberListData',
-    );
-    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useDelegationOnboardingCheckSpy = jest.spyOn(
         useTokenDelegationOnboardingCheckModule,
@@ -55,18 +68,7 @@ describe('<TokenMemberList /> component', () => {
     );
 
     beforeEach(() => {
-        useMemberListDataSpy.mockReturnValue({
-            memberList: undefined,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
-        });
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: generateDao() }),
-        );
+        tokenMemberListBaseMock.mockReset();
         useConnectionSpy.mockReturnValue({
             address: undefined,
         } as unknown as wagmi.UseConnectionReturnType);
@@ -81,8 +83,6 @@ describe('<TokenMemberList /> component', () => {
     });
 
     afterEach(() => {
-        useMemberListDataSpy.mockReset();
-        useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
         useDelegationOnboardingCheckSpy.mockReset();
         useLockAndWrapOnboardingCheckSpy.mockReset();
@@ -105,6 +105,21 @@ describe('<TokenMemberList /> component', () => {
             </GukModulesProvider>
         );
     };
+
+    it('passes delegation support through to the shared member list base', () => {
+        const plugin = generateDaoPlugin({
+            settings: generateTokenPluginSettings({
+                token: generateTokenPluginSettings().token,
+            }),
+        });
+
+        render(createTestComponent({ plugin }));
+
+        expect(screen.getByTestId('member-list-base-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('enable-delegation-flag')).toHaveTextContent(
+            String(plugin.settings.token.hasDelegate),
+        );
+    });
 
     it('renders the delegation card when showDelegationCard is true', () => {
         useDelegationOnboardingCheckSpy.mockReturnValue({
@@ -175,6 +190,7 @@ describe('<TokenMemberList /> component', () => {
 
     it('renders no onboarding card when neither condition is true', () => {
         render(createTestComponent());
+        expect(screen.getByTestId('member-list-base-mock')).toBeInTheDocument();
         expect(
             screen.queryByTestId('delegation-card-mock'),
         ).not.toBeInTheDocument();

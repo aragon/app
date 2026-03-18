@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    addressUtils,
     DataListContainer,
     DataListPagination,
     DataListRoot,
@@ -14,6 +15,7 @@ import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { useTokenPinnedMembers } from '../../hooks/useTokenPinnedMembers';
 import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
 
@@ -36,6 +38,10 @@ export interface ITokenMemberListBaseProps
      * Onboarding card to display (lock/wrap/delegate).
      */
     onboardingCard?: ReactNode;
+    /**
+     * Enables delegation-specific behavior in the shared member list.
+     */
+    enableDelegation?: boolean;
 }
 
 export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
@@ -47,6 +53,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         layoutClassNames,
         plugin,
         onboardingCard,
+        enableDelegation,
         children,
     } = props;
 
@@ -82,6 +89,53 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         memberList,
     } = useMemberListData<ITokenMember>(apiParams);
 
+    const { connectedUserMember, delegateMember, hasValidDelegate } =
+        useTokenPinnedMembers({
+            daoId: apiParams.queryParams.daoId,
+            pluginAddress: apiParams.queryParams.pluginAddress,
+            token: plugin.settings.token,
+            enableDelegation,
+        });
+
+    const mergedMemberList = useMemo(() => {
+        if (!memberList) {
+            return undefined;
+        }
+
+        const pinnedAddresses = new Set<string>();
+        const merged: ITokenMember[] = [];
+
+        const appendPinnedMember = (member?: ITokenMember) => {
+            if (member?.address == null) {
+                return;
+            }
+
+            const memberAddress = member.address.toLowerCase();
+            if (pinnedAddresses.has(memberAddress)) {
+                return;
+            }
+
+            pinnedAddresses.add(memberAddress);
+            merged.push(member);
+        };
+
+        appendPinnedMember(connectedUserMember);
+        if (hasValidDelegate) {
+            appendPinnedMember(delegateMember);
+        }
+
+        for (const member of memberList) {
+            const memberAddress = member.address.toLowerCase();
+            if (pinnedAddresses.has(memberAddress)) {
+                continue;
+            }
+
+            merged.push(member);
+        }
+
+        return merged.slice(0, memberList.length);
+    }, [memberList, connectedUserMember, delegateMember, hasValidDelegate]);
+
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenMemberList.entity')}
@@ -100,9 +154,16 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
                 }
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
-                {memberList?.map((member) => (
+                {mergedMemberList?.map((member) => (
                     <TokenMemberListItem
                         daoId={daoId}
+                        isDelegate={
+                            hasValidDelegate &&
+                            addressUtils.isAddressEqual(
+                                member.address,
+                                delegateMember?.address ?? '',
+                            )
+                        }
                         key={member.address}
                         member={member}
                         plugin={plugin}
