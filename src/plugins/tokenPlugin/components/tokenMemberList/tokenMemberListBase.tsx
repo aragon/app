@@ -36,6 +36,10 @@ export interface ITokenMemberListBaseProps
      * Onboarding card to display (lock/wrap/delegate).
      */
     onboardingCard?: ReactNode;
+    /**
+     * Enables delegation-specific behavior in the shared member list.
+     */
+    enableDelegation?: boolean;
 }
 
 export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (

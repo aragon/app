@@ -1,12 +1,10 @@
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import type {
-    ITokenMember,
-    ITokenPluginSettings,
-} from '@/plugins/tokenPlugin/types';
+import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import type { ITokenMemberListPluginSettings } from '../tokenMemberListBase';
 
 export interface ITokenMemberListItemProps {
     /**
@@ -20,7 +18,7 @@ export interface ITokenMemberListItemProps {
     /**
      * Plugin to display the member for.
      */
-    plugin: IDaoPlugin<ITokenPluginSettings>;
+    plugin: IDaoPlugin<ITokenMemberListPluginSettings>;
     /**
      * Whether the member is the current user's delegate.
      */
