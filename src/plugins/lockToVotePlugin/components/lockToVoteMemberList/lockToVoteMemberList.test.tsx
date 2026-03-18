@@ -26,14 +26,11 @@ jest.mock(
     }),
 );
 
-jest.mock(
-    '@/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListLockCardEmptyState',
-    () => ({
-        TokenMemberListLockCardEmptyState: () => (
-            <div data-testid="lock-card-mock" />
-        ),
-    }),
-);
+jest.mock('./lockToVoteMemberListLockCardEmptyState', () => ({
+    LockToVoteMemberListLockCardEmptyState: () => (
+        <div data-testid="lock-card-mock" />
+    ),
+}));
 
 describe('<LockToVoteMemberList /> component', () => {
     const useMemberListDataSpy = jest.spyOn(
