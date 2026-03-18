@@ -37,6 +37,7 @@ export const VoteList: React.FC<IVoteListProps> = (props) => {
         type: PluginType.BODY,
         pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     });
     const processedPlugins = processPlugins?.map((plugin) => {
         const pluginInitialParams = {

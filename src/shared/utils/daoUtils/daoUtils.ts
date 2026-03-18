@@ -32,7 +32,7 @@ export interface IGetDaoPluginsParams {
     includeSubPlugins?: boolean;
     /**
      * Include plugins that belong to the linked accounts in the result.
-     * @default true
+     * @default false
      */
     includeLinkedAccounts?: boolean;
     /**
