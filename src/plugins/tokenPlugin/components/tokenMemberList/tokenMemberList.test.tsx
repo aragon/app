@@ -142,10 +142,16 @@ describe('<TokenMemberList /> component', () => {
 
     it('pins the connected user to the top when they have voting power', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
-        const otherMember = generateTokenMember({
-            address: '0x9999999999999999999999999999999999999999',
-            votingPower: '5000',
-        });
+        const paginatedMembers = [
+            generateTokenMember({
+                address: '0x9999999999999999999999999999999999999999',
+                votingPower: '5000',
+            }),
+            generateTokenMember({
+                address: '0x8888888888888888888888888888888888888888',
+                votingPower: '4000',
+            }),
+        ];
         const userMember = generateTokenMember({
             address: userAddress,
             votingPower: '100',
@@ -156,11 +162,11 @@ describe('<TokenMemberList /> component', () => {
         } as unknown as wagmi.UseConnectionReturnType);
 
         useMemberListDataSpy.mockReturnValue({
-            memberList: [otherMember],
+            memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
-            itemsCount: 2,
+            itemsCount: 3,
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
@@ -187,10 +193,16 @@ describe('<TokenMemberList /> component', () => {
     it('pins the delegate to the top when user has a valid delegate', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
-        const otherMember = generateTokenMember({
-            address: '0x9999999999999999999999999999999999999999',
-            votingPower: '5000',
-        });
+        const paginatedMembers = [
+            generateTokenMember({
+                address: '0x9999999999999999999999999999999999999999',
+                votingPower: '5000',
+            }),
+            generateTokenMember({
+                address: '0x8888888888888888888888888888888888888888',
+                votingPower: '4000',
+            }),
+        ];
         const userMember = generateTokenMember({
             address: userAddress,
             votingPower: '100',
@@ -211,11 +223,11 @@ describe('<TokenMemberList /> component', () => {
         });
 
         useMemberListDataSpy.mockReturnValue({
-            memberList: [otherMember],
+            memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
             pageSize: 10,
-            itemsCount: 3,
+            itemsCount: 4,
             emptyState: { heading: '', description: '' },
             errorState: { heading: '', description: '' },
         });
@@ -237,13 +249,74 @@ describe('<TokenMemberList /> component', () => {
         render(createTestComponent());
 
         const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(3);
+        expect(memberElements).toHaveLength(2);
         expect(memberElements[0].textContent).toBe(userAddress);
         expect(memberElements[1].textContent).toBe(delegateAddr);
         expect(memberElements[1].getAttribute('data-is-delegate')).toBe('true');
-        expect(memberElements[2].textContent).toBe(
-            '0x9999999999999999999999999999999999999999',
-        );
+    });
+
+    it('keeps the rendered member count aligned with the backend page size', () => {
+        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
+        const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
+        const paginatedMembers = [
+            generateTokenMember({
+                address: '0x9999999999999999999999999999999999999999',
+                votingPower: '5000',
+            }),
+            generateTokenMember({
+                address: '0x8888888888888888888888888888888888888888',
+                votingPower: '4000',
+            }),
+        ];
+        const userMember = generateTokenMember({
+            address: userAddress,
+            votingPower: '100',
+        });
+        const delegateMember = generateTokenMember({
+            address: delegateAddr,
+            votingPower: '200',
+        });
+
+        useConnectionSpy.mockReturnValue({
+            address: userAddress,
+        } as unknown as wagmi.UseConnectionReturnType);
+
+        useTokenCurrentDelegateSpy.mockReturnValue({
+            data: delegateAddr as `0x${string}`,
+            isLoading: false,
+            isError: false,
+        });
+
+        useMemberListDataSpy.mockReturnValue({
+            memberList: paginatedMembers,
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 50,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        useMemberSpy.mockImplementation((params) => {
+            if (params.urlParams.address === userAddress) {
+                return generateReactQueryResultSuccess({ data: userMember });
+            }
+            if (params.urlParams.address === delegateAddr) {
+                return generateReactQueryResultSuccess({
+                    data: delegateMember,
+                });
+            }
+            return generateReactQueryResultSuccess({
+                data: undefined as unknown as ITokenMember,
+            });
+        });
+
+        render(createTestComponent());
+
+        const memberElements = screen.getAllByTestId('member-mock');
+        expect(memberElements).toHaveLength(paginatedMembers.length);
+        expect(memberElements[0].textContent).toBe(userAddress);
+        expect(memberElements[1].textContent).toBe(delegateAddr);
     });
 
     it('does not pin user when voting power is zero (e.g. delegated away)', () => {
