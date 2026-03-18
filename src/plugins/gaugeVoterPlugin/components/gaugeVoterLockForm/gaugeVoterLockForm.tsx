@@ -15,6 +15,7 @@ import { useOpenDelegationOnboardingIfNeeded } from '@/plugins/tokenPlugin/hooks
 import { useTokenCheckTokenAllowance } from '@/plugins/tokenPlugin/hooks/useTokenCheckTokenAllowance';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
@@ -234,9 +235,10 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
     );
 
     const footerInfo = (
-        <p className="font-normal text-neutral-500 text-sm leading-normal">
-            {t('app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.gaugeVoter.gaugeVoterLockForm.footerInfo')}
+        />
     );
 
     return (

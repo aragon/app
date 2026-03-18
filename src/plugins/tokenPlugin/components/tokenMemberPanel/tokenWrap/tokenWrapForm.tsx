@@ -23,6 +23,7 @@ import { useWrappedTokenBalance } from '@/plugins/tokenPlugin/hooks/useWrappedTo
 import type { ITokenPluginSettingsToken } from '@/plugins/tokenPlugin/types';
 import { useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { FooterInfo } from '@/shared/components/footerInfo';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ITokenWrapFormProps {
@@ -207,9 +208,10 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     );
 
     const footerInfo = (
-        <p className="font-normal text-neutral-500 text-sm leading-normal">
-            {t('app.plugins.token.tokenWrapForm.footerInfo')}
-        </p>
+        <FooterInfo
+            mode={mode}
+            text={t('app.plugins.token.tokenWrapForm.footerInfo')}
+        />
     );
 
     return (
