@@ -8,9 +8,13 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface ILockToVoteMemberListLockCardEmptyStateProps {
-    /** The lock-to-vote plugin instance. */
+    /**
+     * The lock-to-vote plugin instance.
+     */
     plugin: ILockToVotePlugin;
-    /** The DAO identifier. */
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
 }
 
@@ -35,17 +39,17 @@ export const LockToVoteMemberListLockCardEmptyState: React.FC<
     return (
         <CardEmptyState
             description={t(
-                'app.plugin.lockToVote.lockToVoteMemberList.lockOnboardingCard.description',
+                'app.plugins.lockToVote.lockToVoteMemberList.lockOnboardingCard.description',
             )}
             heading={t(
-                'app.plugin.lockToVote.lockToVoteMemberList.lockOnboardingCard.heading',
+                'app.plugins.lockToVote.lockToVoteMemberList.lockOnboardingCard.heading',
                 { symbol: token.symbol },
             )}
             isStacked={false}
             objectIllustration={{ object: 'WALLET' }}
             primaryButton={{
                 label: t(
-                    'app.plugin.lockToVote.lockToVoteMemberList.lockOnboardingCard.action',
+                    'app.plugins.lockToVote.lockToVoteMemberList.lockOnboardingCard.action',
                 ),
                 onClick: handleLockTokens,
             }}
