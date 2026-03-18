@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.24.0
+
+### Minor Changes
+
+- [#1019](https://github.com/aragon/app/pull/1019) [`6f56480`](https://github.com/aragon/app/commit/6f5648088e8cfe427c236ece1252cb72aaa43bdf) Thanks [@milosh86](https://github.com/milosh86)! - Add lock and wrap onboarding dialogs
+
+- [#1022](https://github.com/aragon/app/pull/1022) [`61725f5`](https://github.com/aragon/app/commit/61725f58469ab63a7c4fbc6d5e3029bce34e9a32) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Implement DAO overrides functionality to hide unneded bodies
+
+### Patch Changes
+
+- [#1031](https://github.com/aragon/app/pull/1031) [`9aa2408`](https://github.com/aragon/app/commit/9aa240871a98ed103e0aa53c52f1f9d9f017cfe3) Thanks [@milosh86](https://github.com/milosh86)! - Add Katana vKAT Management DAO slot configuration with the real Katana deployment address
+
+- [#1033](https://github.com/aragon/app/pull/1033) [`2ede0c2`](https://github.com/aragon/app/commit/2ede0c2931e85d4d39ec9c56ebf65968fb213a2e) Thanks [@milosh86](https://github.com/milosh86)! - Include sub-plugins when fetching plugins for onboarding watchers
+
+- [#1032](https://github.com/aragon/app/pull/1032) [`d6b1f57`](https://github.com/aragon/app/commit/d6b1f5717809b68e96380e1beb6385b37c13803c) Thanks [@evanaronson](https://github.com/evanaronson)! - Rearrange content on the DAO explore page
+
+- [#1034](https://github.com/aragon/app/pull/1034) [`3d21f88`](https://github.com/aragon/app/commit/3d21f882ad7d82a2e57a245a1a199b9b0fc8e2bb) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Reduce Sentry sample and replay rates. Fix production release notifications.
+
 ## 1.23.1
 
 ### Patch Changes
