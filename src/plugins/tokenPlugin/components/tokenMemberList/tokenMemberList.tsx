@@ -9,7 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { useConnection } from 'wagmi';
 import {
     type IGetMemberParams,
     useMember,
@@ -18,6 +18,7 @@ import type { IDaoMemberListDefaultProps } from '@/modules/governance/components
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import { type Network, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { useTokenCurrentDelegate } from '../../hooks/useTokenCurrentDelegate';
 import type { ITokenMember, ITokenPluginSettings } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
@@ -29,7 +30,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { initialParams, hidePagination, plugin, children } = props;
 
     const { t } = useTranslations();
-    const { address: connectedAddress } = useAccount();
+    const { address: connectedAddress } = useConnection();
 
     const {
         onLoadMore,
@@ -92,7 +93,8 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
                 ),
             );
             const entry = paginatedEntry ?? connectedUserMember;
-            const hasVotingPower = BigInt(entry.votingPower ?? '0') > BigInt(0);
+            const hasVotingPower =
+                bigIntUtils.safeParse(entry.votingPower) > BigInt(0);
 
             if (hasVotingPower) {
                 pinned.push(entry);

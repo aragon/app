@@ -35,7 +35,7 @@ describe('<TokenMemberList /> component', () => {
         'useMemberListData',
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useAccountSpy = jest.spyOn(wagmi, 'useAccount');
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useTokenCurrentDelegateSpy = jest.spyOn(
         useTokenCurrentDelegateModule,
         'useTokenCurrentDelegate',
@@ -57,9 +57,9 @@ describe('<TokenMemberList /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: defaultDao }),
         );
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: undefined,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
         useTokenCurrentDelegateSpy.mockReturnValue({
             data: undefined,
             isLoading: false,
@@ -75,7 +75,7 @@ describe('<TokenMemberList /> component', () => {
     afterEach(() => {
         useMemberListDataSpy.mockReset();
         useDaoSpy.mockReset();
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useTokenCurrentDelegateSpy.mockReset();
         useMemberSpy.mockReset();
     });
@@ -151,9 +151,9 @@ describe('<TokenMemberList /> component', () => {
             votingPower: '100',
         });
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember],
@@ -200,9 +200,9 @@ describe('<TokenMemberList /> component', () => {
             votingPower: '200',
         });
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useTokenCurrentDelegateSpy.mockReturnValue({
             data: delegateAddr as `0x${string}`,
@@ -257,9 +257,9 @@ describe('<TokenMemberList /> component', () => {
             votingPower: '0',
         });
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember],
@@ -296,9 +296,9 @@ describe('<TokenMemberList /> component', () => {
             votingPower: '100',
         });
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useTokenCurrentDelegateSpy.mockReturnValue({
             data: userAddress as `0x${string}`,
@@ -341,9 +341,9 @@ describe('<TokenMemberList /> component', () => {
     it('does not treat zero address delegate as a valid delegate', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useTokenCurrentDelegateSpy.mockReturnValue({
             data: '0x0000000000000000000000000000000000000000' as `0x${string}`,
@@ -388,9 +388,9 @@ describe('<TokenMemberList /> component', () => {
             votingPower: '100',
         });
 
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: userAddress,
-        } as unknown as wagmi.UseAccountReturnType);
+        } as unknown as wagmi.UseConnectionReturnType);
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [
