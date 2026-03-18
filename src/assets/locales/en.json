@@ -2205,6 +2205,13 @@
         }
       },
       "lockToVote": {
+        "lockToVoteMemberList": {
+          "lockOnboardingCard": {
+            "heading": "You have unlocked {{symbol}}",
+            "description": "Lock more tokens to increase your voting power.",
+            "action": "Lock tokens"
+          }
+        },
         "lockToVoteActions": {
           "UpdateLockToVoteVoteSettings": "Update settings"
         },

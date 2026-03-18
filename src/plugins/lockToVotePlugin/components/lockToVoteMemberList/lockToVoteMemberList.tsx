@@ -2,12 +2,12 @@
 
 import { useConnection } from 'wagmi';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
-import { TokenMemberListLockCardEmptyState } from '@/plugins/tokenPlugin/components/tokenMemberList/components/tokenMemberListLockCardEmptyState';
 import { TokenMemberListBase } from '@/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useLockToVoteLockOnboardingCheck } from '../../hooks/useLockToVoteLockOnboardingCheck';
 import type { ILockToVotePlugin, ILockToVotePluginSettings } from '../../types';
+import { LockToVoteMemberListLockCardEmptyState } from './lockToVoteMemberListLockCardEmptyState';
 
 export interface ILockToVoteMemberListProps
     extends IDaoMemberListDefaultProps<ILockToVotePluginSettings> {
@@ -38,9 +38,9 @@ export const LockToVoteMemberList: React.FC<ILockToVoteMemberListProps> = (
             {...props}
             onboardingCard={
                 showLockCard && (
-                    <TokenMemberListLockCardEmptyState
+                    <LockToVoteMemberListLockCardEmptyState
                         daoId={daoId}
-                        plugin={tokenPlugin}
+                        plugin={plugin}
                     />
                 )
             }
