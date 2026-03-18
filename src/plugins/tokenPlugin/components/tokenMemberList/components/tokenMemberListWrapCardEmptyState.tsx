@@ -9,7 +9,13 @@ import type { ITokenPluginSettingsToken } from '../../../types';
 import { tokenPluginUtils } from '../../../utils/tokenPluginUtils';
 
 export interface ITokenMemberListWrapCardEmptyStateProps {
+    /**
+     * Token to display the wrap card for.
+     */
     token: ITokenPluginSettingsToken;
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
 }
 

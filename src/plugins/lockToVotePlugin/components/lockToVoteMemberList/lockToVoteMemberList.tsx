@@ -9,6 +9,9 @@ import { LockToVoteMemberListLockCardEmptyState } from './lockToVoteMemberListLo
 
 export interface ILockToVoteMemberListProps
     extends IDaoMemberListDefaultProps<ILockToVotePluginSettings> {
+    /**
+     * Lock to vote plugin.
+     */
     plugin: ILockToVotePlugin;
 }
 

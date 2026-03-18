@@ -10,7 +10,13 @@ import type { IGaugeVoterLockOnboardingLockTimeInfoDialogParams } from '../../..
 import type { ITokenPluginSettings } from '../../../types';
 
 export interface ITokenMemberListLockCardEmptyStateProps {
+    /**
+     * Token voting plugin to display the lock card for.
+     */
     plugin: IDaoPlugin<ITokenPluginSettings>;
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
 }
 

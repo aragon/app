@@ -8,7 +8,13 @@ import type { ITokenDelegationOnboardingDialogParams } from '../../../dialogs/to
 import type { ITokenPluginSettingsToken } from '../../../types';
 
 export interface ITokenMemberListDelegationCardEmptyStateProps {
+    /**
+     * Token to display the delegation card for.
+     */
     token: ITokenPluginSettingsToken;
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
 }
 
