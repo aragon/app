@@ -73,7 +73,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
     // Only apply the onlyParent filter when we know the source DAO has linked accounts.
     // When source differs from the fetched DAO we skip the filter (safe default).
-    const isParentDao =
+    const isParentAccount =
         isSourceMatchingDao && (dao!.linkedAccounts?.length ?? 0) > 0;
 
     // For imported ERC20 actions, we need to fetch token details to get correct decimals
@@ -313,7 +313,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             disableAssetField={disableTokenSelection}
             fieldPrefix={fieldName}
             network={dao!.network}
-            onlyParentAssets={isParentDao}
+            onlyParentAssets={isParentAccount}
             sender={sourceDaoAddress}
         />
     );

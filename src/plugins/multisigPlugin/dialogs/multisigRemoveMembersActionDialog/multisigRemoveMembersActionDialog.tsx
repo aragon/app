@@ -45,6 +45,7 @@ export const MultisigRemoveMembersActionDialog: React.FC<
         daoId,
         pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })!;
 
     const membersParams = { queryParams: { daoId, pluginAddress } };

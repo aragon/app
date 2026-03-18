@@ -44,6 +44,7 @@ export const DaoProposalsPageClient: React.FC<IDaoProposalsPageClientProps> = (
             daoId,
             type: PluginType.PROCESS,
             includeGroupFilter: true,
+            includeLinkedAccounts: true,
             name: daoProposalsPageFilterParam,
         });
 

@@ -11,6 +11,8 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import * as useTokenCurrentDelegateModule from '../../hooks/useTokenCurrentDelegate';
+import * as useTokenDelegationOnboardingCheckModule from '../../hooks/useTokenDelegationOnboardingCheck';
+import * as useTokenLockAndWrapOnboardingCheckModule from '../../hooks/useTokenLockAndWrapOnboardingCheck';
 import {
     generateTokenMember,
     generateTokenPluginSettings,
@@ -29,6 +31,24 @@ jest.mock('./components/tokenMemberListItem', () => ({
     ),
 }));
 
+jest.mock('./components/tokenMemberListDelegationCardEmptyState', () => ({
+    TokenMemberListDelegationCardEmptyState: () => (
+        <div data-testid="delegation-card-mock" />
+    ),
+}));
+
+jest.mock('./components/tokenMemberListLockCardEmptyState', () => ({
+    TokenMemberListLockCardEmptyState: () => (
+        <div data-testid="lock-card-mock" />
+    ),
+}));
+
+jest.mock('./components/tokenMemberListWrapCardEmptyState', () => ({
+    TokenMemberListWrapCardEmptyState: () => (
+        <div data-testid="wrap-card-mock" />
+    ),
+}));
+
 describe('<TokenMemberList /> component', () => {
     const useMemberListDataSpy = jest.spyOn(
         useMemberListData,
@@ -43,6 +63,14 @@ describe('<TokenMemberList /> component', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
 
     const defaultDao = generateDao({ network: Network.ETHEREUM_SEPOLIA });
+    const useDelegationOnboardingCheckSpy = jest.spyOn(
+        useTokenDelegationOnboardingCheckModule,
+        'useTokenDelegationOnboardingCheck',
+    );
+    const useLockAndWrapOnboardingCheckSpy = jest.spyOn(
+        useTokenLockAndWrapOnboardingCheckModule,
+        'useTokenLockAndWrapOnboardingCheck',
+    );
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
@@ -70,6 +98,17 @@ describe('<TokenMemberList /> component', () => {
                 data: undefined as unknown as ITokenMember,
             }),
         );
+        useConnectionSpy.mockReturnValue({
+            address: undefined,
+        } as unknown as wagmi.UseConnectionReturnType);
+        useDelegationOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: false,
+            isLoading: false,
+        });
+        useLockAndWrapOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: false,
+            isLoading: false,
+        });
     });
 
     afterEach(() => {
@@ -78,6 +117,8 @@ describe('<TokenMemberList /> component', () => {
         useConnectionSpy.mockReset();
         useTokenCurrentDelegateSpy.mockReset();
         useMemberSpy.mockReset();
+        useDelegationOnboardingCheckSpy.mockReset();
+        useLockAndWrapOnboardingCheckSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITokenMemberListProps>) => {
@@ -98,46 +139,80 @@ describe('<TokenMemberList /> component', () => {
         );
     };
 
-    it('fetches and renders the token member list', () => {
-        const members = [
-            generateTokenMember({ address: '0x123' }),
-            generateTokenMember({ address: '0x456' }),
-        ];
-        useMemberListDataSpy.mockReturnValue({
-            memberList: members,
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: members.length,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
+    it('renders the delegation card when showDelegationCard is true', () => {
+        useDelegationOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: true,
+            isLoading: false,
         });
         render(createTestComponent());
-        expect(screen.getAllByTestId('member-mock')).toHaveLength(2);
-        expect(screen.getByText(members[0].address)).toBeInTheDocument();
-        expect(screen.getByText(members[1].address)).toBeInTheDocument();
-        expect(screen.getByRole('progressbar')).toBeInTheDocument();
+        expect(screen.getByTestId('delegation-card-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('lock-card-mock')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('wrap-card-mock')).not.toBeInTheDocument();
     });
 
-    it('does not render the data-list pagination when hidePagination is set to true', () => {
-        const hidePagination = true;
-        useMemberListDataSpy.mockReturnValue({
-            memberList: [generateTokenMember()],
-            onLoadMore: jest.fn(),
-            state: 'idle',
-            pageSize: 10,
-            itemsCount: 0,
-            emptyState: { heading: '', description: '' },
-            errorState: { heading: '', description: '' },
+    it('renders the lock card when showLockOrWrapCard is true and plugin has votingEscrow', () => {
+        useLockAndWrapOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: true,
+            isLoading: false,
         });
-        render(createTestComponent({ hidePagination }));
-        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+        const plugin = generateDaoPlugin({
+            settings: generateTokenPluginSettings({
+                votingEscrow: {
+                    minDeposit: '0',
+                    minLockTime: 0,
+                    cooldown: 0,
+                    maxTime: 0,
+                    slope: 0,
+                    bias: 0,
+                },
+            }),
+        });
+        render(createTestComponent({ plugin }));
+        expect(screen.getByTestId('lock-card-mock')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('delegation-card-mock'),
+        ).not.toBeInTheDocument();
+        expect(screen.queryByTestId('wrap-card-mock')).not.toBeInTheDocument();
     });
 
-    it('renders the children property', () => {
-        const children = 'test-children';
-        render(createTestComponent({ children }));
-        expect(screen.getByText(children)).toBeInTheDocument();
+    it('renders the wrap card when showLockOrWrapCard is true and plugin has no votingEscrow', () => {
+        useLockAndWrapOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: true,
+            isLoading: false,
+        });
+        const plugin = generateDaoPlugin({
+            settings: generateTokenPluginSettings({ votingEscrow: undefined }),
+        });
+        render(createTestComponent({ plugin }));
+        expect(screen.getByTestId('wrap-card-mock')).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('delegation-card-mock'),
+        ).not.toBeInTheDocument();
+        expect(screen.queryByTestId('lock-card-mock')).not.toBeInTheDocument();
+    });
+
+    it('renders the delegation card over lock/wrap card when both conditions are true', () => {
+        useDelegationOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: true,
+            isLoading: false,
+        });
+        useLockAndWrapOnboardingCheckSpy.mockReturnValue({
+            shouldTrigger: true,
+            isLoading: false,
+        });
+        render(createTestComponent());
+        expect(screen.getByTestId('delegation-card-mock')).toBeInTheDocument();
+        expect(screen.queryByTestId('lock-card-mock')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('wrap-card-mock')).not.toBeInTheDocument();
+    });
+
+    it('renders no onboarding card when neither condition is true', () => {
+        render(createTestComponent());
+        expect(
+            screen.queryByTestId('delegation-card-mock'),
+        ).not.toBeInTheDocument();
+        expect(screen.queryByTestId('lock-card-mock')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('wrap-card-mock')).not.toBeInTheDocument();
     });
 
     it('pins the connected user to the top when they have voting power', () => {

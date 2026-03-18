@@ -68,6 +68,7 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
         daoId,
         pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })!;
     const plugin = plugins[0].meta as ILockToVotePlugin;
 

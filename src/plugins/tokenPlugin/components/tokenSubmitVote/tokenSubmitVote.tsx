@@ -58,6 +58,7 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
         daoId,
         pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })![0];
 
     const { buildEntityUrl } = useDaoChain({ network });

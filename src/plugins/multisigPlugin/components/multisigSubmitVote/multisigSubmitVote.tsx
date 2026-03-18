@@ -61,6 +61,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
         daoId,
         pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })![0];
 
     const { check: submitVoteGuard, result: canSubmitVote } =

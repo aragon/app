@@ -26,6 +26,7 @@ const getWizardConfig = (dao: IDao, pluginAddress: string): IWizardConfig => {
     const processes = daoUtils.getDaoPlugins(dao, {
         type: PluginType.PROCESS,
         includeSubPlugins: false,
+        includeLinkedAccounts: true,
     })!;
 
     const processPlugin = processes.find(

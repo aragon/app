@@ -68,6 +68,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
         daoId,
         type: PluginType.PROCESS,
         includeSubPlugins: false,
+        includeLinkedAccounts: true,
         hasExecute: fullExecuteOnly,
     })!;
 
