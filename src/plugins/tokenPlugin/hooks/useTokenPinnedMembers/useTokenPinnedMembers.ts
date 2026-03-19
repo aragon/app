@@ -50,17 +50,27 @@ export const useTokenPinnedMembers = (
     const connectedUserMemberParams = useMemo<IGetMemberParams>(
         () => ({
             urlParams: { address: connectedAddress ?? '' },
-            queryParams: { daoId, pluginAddress },
+            queryParams: {
+                daoId,
+                pluginAddress,
+                tokenAddress: token.address,
+                network: token.network,
+            },
         }),
-        [connectedAddress, daoId, pluginAddress],
+        [connectedAddress, daoId, pluginAddress, token.address, token.network],
     );
 
     const delegateMemberParams = useMemo<IGetMemberParams>(
         () => ({
             urlParams: { address: delegateAddress ?? '' },
-            queryParams: { daoId, pluginAddress },
+            queryParams: {
+                daoId,
+                pluginAddress,
+                tokenAddress: token.address,
+                network: token.network,
+            },
         }),
-        [daoId, delegateAddress, pluginAddress],
+        [daoId, delegateAddress, pluginAddress, token.address, token.network],
     );
 
     const { data: connectedUserMemberData } = useMember<ITokenMember>(
