@@ -1,0 +1,1 @@
+export { useImpersonatedAddress } from './useImpersonatedAddress';
