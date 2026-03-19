@@ -86,7 +86,9 @@ describe('useTokenMemberStats hook', () => {
             useTokenMemberStats({
                 address: '0x123',
                 daoId: '1',
-                plugin: generateDaoPlugin(),
+                plugin: generateDaoPlugin({
+                    settings: generateTokenPluginSettings(),
+                }),
             }),
         );
         expect(result.current).toEqual([]);
@@ -100,7 +102,9 @@ describe('useTokenMemberStats hook', () => {
             useTokenMemberStats({
                 address: '0x123',
                 daoId: '1',
-                plugin: generateDaoPlugin(),
+                plugin: generateDaoPlugin({
+                    settings: generateTokenPluginSettings(),
+                }),
             }),
         );
         expect(result.current).toEqual([]);
