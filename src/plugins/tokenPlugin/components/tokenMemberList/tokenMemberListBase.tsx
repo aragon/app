@@ -115,14 +115,8 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
                 return;
             }
 
-            // Prefer the paginated entry (has full data like votingPower)
-            // over the useMember response (may have votingPower: null).
-            const paginatedEntry = memberList.find((m) =>
-                addressUtils.isAddressEqual(m.address, member.address),
-            );
-
             pinnedAddresses.add(memberAddress);
-            merged.push(paginatedEntry ?? member);
+            merged.push(member);
         };
 
         appendPinnedMember(connectedUserMember);
