@@ -1,14 +1,17 @@
 import {
+    addressUtils,
     DataListContainer,
     DataListPagination,
     DataListRoot,
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
+import { useConnection } from 'wagmi';
 import type {
     IGetMemberListParams,
     IMember,
 } from '@/modules/governance/api/governanceService';
+import { useMember } from '@/modules/governance/api/governanceService';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import {
     type IDaoPlugin,
@@ -61,6 +64,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
+    const { address: connectedAddress } = useConnection();
 
     // Always use the parent DAO for the UI context (member URLs, etc.).
     // The parent DAO is server-side prefetched → always a cache hit.
@@ -94,6 +98,36 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         memberList,
     } = useMemberListData(apiParams);
 
+    const { data: connectedUserMember } = useMember(
+        {
+            urlParams: { address: connectedAddress ?? '' },
+            queryParams: apiParams.queryParams,
+        },
+        { enabled: connectedAddress != null },
+    );
+
+    const mergedMemberList = useMemo(() => {
+        if (!memberList) {
+            return undefined;
+        }
+
+        if (!connectedUserMember?.address) {
+            return memberList;
+        }
+
+        const pinnedAddress = connectedUserMember.address.toLowerCase();
+        const rest = memberList.filter(
+            (m) => m.address.toLowerCase() !== pinnedAddress,
+        );
+
+        // Prefer paginated entry if available (has full data).
+        const paginatedEntry = memberList.find((m) =>
+            addressUtils.isAddressEqual(m.address, connectedUserMember.address),
+        );
+
+        return [paginatedEntry ?? connectedUserMember, ...rest];
+    }, [memberList, connectedUserMember]);
+
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
@@ -116,7 +150,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
                 layoutClassName={processedLayoutClassNames}
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
-                {memberList?.map((member) => (
+                {mergedMemberList?.map((member) => (
                     <MemberDataListItem.Structure
                         address={member.address}
                         className="min-w-0"

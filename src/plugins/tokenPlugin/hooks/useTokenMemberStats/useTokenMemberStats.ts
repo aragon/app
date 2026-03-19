@@ -21,15 +21,19 @@ export const useTokenMemberStats = (
 ): IPageHeaderStat[] => {
     const { address, daoId, plugin } = params;
     const { t } = useTranslations();
+    const { token } = plugin.settings;
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress: plugin.address };
+    const memberQueryParams = {
+        daoId,
+        pluginAddress: plugin.address,
+        tokenAddress: token.address,
+        network: token.network,
+    };
     const { data: member } = useMember({
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
     });
-
-    const { token } = plugin.settings;
 
     // Read wrapped token balance directly from blockchain
     const { balance: tokenBalance } = useWrappedTokenBalance({

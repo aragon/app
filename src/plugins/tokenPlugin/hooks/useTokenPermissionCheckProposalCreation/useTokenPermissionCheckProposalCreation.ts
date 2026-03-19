@@ -48,7 +48,12 @@ export const useTokenPermissionCheckProposalCreation = (
     const minTokenRequired = `${formattedMinVotingPower ?? '0'} ${tokenSymbol}`;
 
     const memberUrlParams = { address: address as string };
-    const memberQueryParams = { daoId, pluginAddress: plugin.address };
+    const memberQueryParams = {
+        daoId,
+        pluginAddress: plugin.address,
+        tokenAddress: token.address,
+        network: dao?.network,
+    };
     const { data: member, isLoading } = useMember<ITokenMember>(
         { urlParams: memberUrlParams, queryParams: memberQueryParams },
         { enabled: address != null },

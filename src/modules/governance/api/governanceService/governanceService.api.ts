@@ -75,6 +75,14 @@ export interface IGetMemberQueryParams {
      * Address of the plugin used to include the member stats.
      */
     pluginAddress: string;
+    /**
+     * Address of the governance token. Required to include voting power in the response.
+     */
+    tokenAddress?: string;
+    /**
+     * Network of the DAO.
+     */
+    network?: string;
 }
 
 export interface IGetMemberParams
