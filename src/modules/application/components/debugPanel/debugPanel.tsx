@@ -86,7 +86,7 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
             />
             <div
                 className={classNames(
-                    'fixed right-0 z-50 flex h-full w-[480px] flex-col gap-4 border-neutral-100 border-l bg-neutral-0 px-4 py-2',
+                    'fixed right-0 z-50 flex h-full w-full flex-col gap-4 border-neutral-100 border-l bg-neutral-0 px-4 py-2 sm:w-[480px]',
                     { hidden: !isOpen },
                 )}
                 ref={panelRef}
@@ -102,7 +102,7 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
                         variant="ghost"
                     />
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 overflow-y-auto">
                     {Object.keys(groupedControls).map((group) => (
                         <div className="flex flex-col gap-2" key={group}>
                             <Heading size="h3">{group}</Heading>
