@@ -18,7 +18,11 @@ export const useSppPermissionCheckProposalCreation = (
 ): IPermissionCheckGuardResult => {
     const { daoId, plugin, useConnectedUserInfo = true } = params;
 
-    const daoPlugins = useDaoPlugins({ daoId, includeSubPlugins: true });
+    const daoPlugins = useDaoPlugins({
+        daoId,
+        includeSubPlugins: true,
+        includeLinkedAccounts: true,
+    });
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     invariant(

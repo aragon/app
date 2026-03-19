@@ -42,7 +42,11 @@ export const CreateProposalPageClient: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { meta: plugin } = useDaoPlugins({
+        daoId,
+        pluginAddress,
+        includeLinkedAccounts: true,
+    })![0];
 
     useProposalPermissionCheckGuard({
         daoId,

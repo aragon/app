@@ -42,7 +42,10 @@ export const DaoProposalsPage: React.FC<IDaoProposalsPageProps> = async (
     const daoOverride = daoOverrides[daoId];
 
     const allProcessPlugins =
-        daoUtils.getDaoPlugins(dao, { type: PluginType.PROCESS }) ?? [];
+        daoUtils.getDaoPlugins(dao, {
+            type: PluginType.PROCESS,
+            includeLinkedAccounts: true,
+        }) ?? [];
     const processPlugins = daoVisibilityUtils.filterHiddenPlugins(
         allProcessPlugins,
         daoOverride,

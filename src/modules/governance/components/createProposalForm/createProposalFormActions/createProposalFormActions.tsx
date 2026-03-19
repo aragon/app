@@ -59,7 +59,10 @@ export const CreateProposalFormActions: React.FC<
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
-    const [processPlugin] = daoUtils.getDaoPlugins(dao, { pluginAddress })!;
+    const [processPlugin] = daoUtils.getDaoPlugins(dao, {
+        pluginAddress,
+        includeLinkedAccounts: true,
+    })!;
     const hasConditionalPermissions = processPlugin.conditionAddress != null;
 
     // Resolve the target DAO from the plugin.

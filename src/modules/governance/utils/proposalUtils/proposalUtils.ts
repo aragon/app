@@ -12,6 +12,7 @@ class ProposalUtils {
         const plugin = daoUtils.getDaoPlugins(dao, {
             pluginAddress,
             includeSubPlugins: true,
+            includeLinkedAccounts: true,
         })?.[0];
 
         if (plugin == null) {

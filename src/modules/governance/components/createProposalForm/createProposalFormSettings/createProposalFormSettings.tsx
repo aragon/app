@@ -18,7 +18,11 @@ export const CreateProposalFormSettings: React.FC<
 > = (props) => {
     const { daoId, pluginAddress } = props;
 
-    const daoPlugin = useDaoPlugins({ daoId, pluginAddress })![0];
+    const daoPlugin = useDaoPlugins({
+        daoId,
+        pluginAddress,
+        includeLinkedAccounts: true,
+    })![0];
 
     return (
         <PluginSingleComponent

@@ -29,7 +29,11 @@ export const useProposalPermissionCheckGuard = (
 
     const router = useRouter();
 
-    const { meta: plugin } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { meta: plugin } = useDaoPlugins({
+        daoId,
+        pluginAddress,
+        includeLinkedAccounts: true,
+    })![0];
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 

@@ -53,6 +53,7 @@ export const DaoProcessDetailsPageClient: React.FC<
         slug: slug.toLowerCase(),
         type: PluginType.PROCESS,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     })![0];
 
     const pluginFormData = daoProcessDetailsClientUtils.pluginToProcessFormData(

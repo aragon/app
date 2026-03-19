@@ -36,6 +36,7 @@ export const LayoutWizardCreatePolicy: React.FC<
         const processes = daoUtils.getDaoPlugins(dao, {
             type: PluginType.PROCESS,
             includeSubPlugins: false,
+            includeLinkedAccounts: true,
         });
 
         const processPlugin = processes?.find(

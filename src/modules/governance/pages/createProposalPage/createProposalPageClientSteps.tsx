@@ -55,7 +55,11 @@ export const CreateProposalPageClientSteps: React.FC<
 
     const [metadataStep, actionsStep, settingsStep] = steps;
 
-    const { id: pluginId } = useDaoPlugins({ daoId, pluginAddress })![0];
+    const { id: pluginId } = useDaoPlugins({
+        daoId,
+        pluginAddress,
+        includeLinkedAccounts: true,
+    })![0];
     const slotId = GovernanceSlotId.GOVERNANCE_CREATE_PROPOSAL_SETTINGS_FORM;
     const hideSettingsStep =
         pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;

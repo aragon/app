@@ -58,7 +58,11 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
 
-    const processPlugins = useDaoPlugins({ daoId, type: PluginType.PROCESS })!;
+    const processPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        includeLinkedAccounts: true,
+    })!;
 
     const { data: policies = [] } = useDaoPolicies(
         {

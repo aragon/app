@@ -3,13 +3,13 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenMemberInfo } from '../tokenPlugin/components/tokenMemberInfo';
-import { TokenMemberList } from '../tokenPlugin/components/tokenMemberList';
 import { TokenProposalCreationSettings } from '../tokenPlugin/components/tokenProposalCreationSettings';
 import { TokenVoteList } from '../tokenPlugin/components/tokenVoteList';
 import { useTokenMemberStats } from '../tokenPlugin/hooks/useTokenMemberStats';
 import { tokenBodyUtils } from '../tokenPlugin/utils/tokenBodyUtils';
 import { tokenTransactionUtils } from '../tokenPlugin/utils/tokenTransactionUtils';
 import { LockToVoteCreateProposalSettingsForm } from './components/lockToVoteCreateProposalSettingsForm';
+import { LockToVoteMemberList } from './components/lockToVoteMemberList';
 import { LockToVoteMemberPanel } from './components/lockToVoteMemberPanel';
 import { LockToVoteProcessBodyField } from './components/lockToVoteProcessBodyField';
 import { LockToVoteProposalVotingBreakdown } from './components/lockToVoteProposalVotingBreakdown';
@@ -35,7 +35,7 @@ export const initialiseLockToVotePlugin = () => {
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST,
             pluginId: lockToVotePlugin.id,
-            component: TokenMemberList,
+            component: LockToVoteMemberList,
         })
         .registerSlotComponent({
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
