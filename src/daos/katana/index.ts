@@ -9,6 +9,7 @@ import {
     katanaEmissionsTest,
     katanaEmissionsTestVotingEscrowAddress,
     katanaVKatManagement,
+    katanaVKatManagementVotingEscrowAddress,
 } from './constants';
 
 export const initialiseKatana = () => {
@@ -62,5 +63,11 @@ export const initialiseKatana = () => {
             slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
             pluginId: katanaVKatManagement.id,
             component: CapitalDistributorTestMembersFileDownload,
+        })
+
+        .registerSlotFunction({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+            pluginId: katanaVKatManagement.id,
+            function: () => katanaVKatManagementVotingEscrowAddress,
         });
 };
