@@ -38,7 +38,7 @@ jest.mock('@/shared/components/transactionDialog', () => ({
 }));
 
 describe('<PublishProposalDialog /> component', () => {
-    const useAccountSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const usePinJsonSpy = jest.spyOn(usePinJson, 'usePinJson');
@@ -52,7 +52,7 @@ describe('<PublishProposalDialog /> component', () => {
     );
 
     beforeEach(() => {
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: '0x123',
         } as unknown as Wagmi.UseConnectionReturnType);
         useDaoSpy.mockReturnValue(
@@ -68,7 +68,7 @@ describe('<PublishProposalDialog /> component', () => {
     });
 
     afterEach(() => {
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         usePinJsonSpy.mockReset();
         prepareMetadataSpy.mockReset();
@@ -112,7 +112,7 @@ describe('<PublishProposalDialog /> component', () => {
     it('throws error when user is not connected', () => {
         testLogger.suppressErrors();
         const location = generateDialogLocation();
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: undefined,
         } as Wagmi.UseConnectionReturnType);
         expect(() => render(createTestComponent({ location }))).toThrow();
@@ -140,7 +140,7 @@ describe('<PublishProposalDialog /> component', () => {
             summary: 'Proposal summary',
         });
         const location = generateDialogLocation({ proposal });
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             address: '0xD740fd724D616795120BC363316580dAFf41129A',
         } as unknown as Wagmi.UseConnectionReturnType);
         render(createTestComponent({ location }));

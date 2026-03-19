@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { DebugPanelControl } from './debugPanelControl';
 
 export interface IDebugPanelProps {}
@@ -14,6 +15,7 @@ export const DebugPanel: React.FC<IDebugPanelProps> = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const { controls, registerControl } = useDebugContext();
+    useAddressImpersonation();
     const { t } = useTranslations();
     const { snapshot: featureFlagsSnapshot, setOverride } = useFeatureFlags();
 

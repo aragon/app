@@ -56,3 +56,4 @@ next-env.d.ts
 .zed
 .tempor
 .agents
+.playwright-mcp/

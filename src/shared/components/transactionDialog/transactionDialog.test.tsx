@@ -36,7 +36,7 @@ describe('<TransactionDialog /> component', () => {
         Wagmi,
         'useWaitForTransactionReceipt',
     );
-    const useAccountSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
     const monitorTransactionErrorSpy = jest.spyOn(
         transactionDialogUtils,
@@ -48,7 +48,7 @@ describe('<TransactionDialog /> component', () => {
             {} as Wagmi.UseSendTransactionReturnType,
         );
         useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
-        useAccountSpy.mockReturnValue(
+        useConnectionSpy.mockReturnValue(
             {} as unknown as Wagmi.UseConnectionReturnType,
         );
         useWaitForTransactionReceiptSpy.mockReturnValue(
@@ -62,7 +62,7 @@ describe('<TransactionDialog /> component', () => {
     afterEach(() => {
         useSendTransactionSpy.mockReset();
         useMutationSpy.mockReset();
-        useAccountSpy.mockReset();
+        useConnectionSpy.mockReset();
         useWaitForTransactionReceiptSpy.mockReset();
         useSwitchChainSpy.mockReset();
         monitorTransactionErrorSpy.mockReset();
@@ -305,7 +305,7 @@ describe('<TransactionDialog /> component', () => {
         const transaction = { from: '0x123', data: '0x000' };
         const sendTransaction = jest.fn();
         const network = Network.POLYGON_MAINNET;
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             chainId: networkDefinitions[network].id,
         } as unknown as Wagmi.UseConnectionReturnType);
         useMutationSpy.mockReturnValue({
@@ -335,7 +335,7 @@ describe('<TransactionDialog /> component', () => {
     it('approve transaction step switches user network when network prop does not match current chain', () => {
         const network = Network.BASE_MAINNET;
         const switchChain = jest.fn();
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             chainId: networkDefinitions[Network.ARBITRUM_MAINNET].id,
         } as unknown as Wagmi.UseConnectionReturnType);
         useSwitchChainSpy.mockReturnValue({
@@ -444,7 +444,7 @@ describe('<TransactionDialog /> component', () => {
             ...generateReactQueryResultError({ error }),
         };
         const address = '0x123';
-        useAccountSpy.mockReturnValue({
+        useConnectionSpy.mockReturnValue({
             chainId: 1,
             address,
         } as unknown as Wagmi.UseConnectionReturnType);

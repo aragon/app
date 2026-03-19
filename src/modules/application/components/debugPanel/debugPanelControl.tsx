@@ -1,4 +1,4 @@
-import { InputText, Switch } from '@aragon/gov-ui-kit';
+import { AddressInput, InputText, Switch } from '@aragon/gov-ui-kit';
 import {
     type IDebugContextControl,
     useDebugContext,
@@ -36,6 +36,19 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
                 onCheckedChanged={(event) =>
                     handleValueChange(name, event, onChange)
                 }
+            />
+        );
+    }
+
+    if (type === 'address') {
+        return (
+            <AddressInput
+                label={label}
+                onAccept={(resolved) =>
+                    handleValueChange(name, resolved?.address, onChange)
+                }
+                onChange={(value) => handleValueChange(name, value, onChange)}
+                value={(values[name] as string | undefined) ?? ''}
             />
         );
     }

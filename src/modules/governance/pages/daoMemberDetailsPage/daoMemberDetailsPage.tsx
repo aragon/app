@@ -48,10 +48,15 @@ export const DaoMemberDetailsPage: React.FC<
         return <RedirectToUrl url={membersUrl} />;
     }
 
+    const token = (bodyPlugin.settings as unknown as Record<string, unknown>)
+        .token as { address: string; network: string } | undefined;
+
     const memberUrlParams = { address };
     const memberQueryParams = {
         daoId,
         pluginAddress: bodyPlugin.address,
+        tokenAddress: token?.address,
+        network: token?.network,
     };
     const memberParams = {
         urlParams: memberUrlParams,
@@ -79,7 +84,9 @@ export const DaoMemberDetailsPage: React.FC<
             <DaoMemberDetailsPageClient
                 address={address}
                 daoId={daoId}
+                network={token?.network}
                 pluginAddress={bodyPlugin.address}
+                tokenAddress={token?.address}
             />
         </Page.Container>
     );
