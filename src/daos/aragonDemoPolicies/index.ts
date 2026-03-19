@@ -1,7 +1,7 @@
 import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { AragonDemoPoliciesPageHeader } from './components/aragonDemoPoliciesPageHeader';
-import { aragonDemoDaoPolicies } from './constants/aragonDemoDaoPolicies';
+import { aragonDemoDaoPolicies } from './constants';
 
 export const initialiseAragonDemoPolicies = () => {
     pluginRegistryUtils

@@ -1,38 +1,16 @@
 import classNames from 'classnames';
-import type { Route } from 'next';
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
 import { useState } from 'react';
+import type { IDaoHeaderAction } from '@/shared/utils/daoUtils';
 import { XmaquinaActionImage } from './xmaquinaActionImage';
 import { XmaquinaActionText } from './xmaquinaActionText';
 
-export interface IXmaquinaActionItemProps extends ComponentProps<'a'> {
-    /**
-     * The title of the action.
-     */
-    title: string;
-    /**
-     * The description of the action.
-     */
-    description: string;
-    /**
-     * The SVG icon to display.
-     */
-    icon: string;
-    /**
-     * The href to navigate to when clicked.
-     */
-    href: Route;
-    /**
-     * Whether the link is external or not.
-     */
-    isExternal?: boolean;
-}
+export interface IXmaquinaActionItemProps extends IDaoHeaderAction {}
 
 export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (
     props,
 ) => {
-    const { title, description, icon, href, isExternal, className } = props;
+    const { title, description, image, href, isExternal } = props;
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -44,7 +22,6 @@ export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (
                     'before:absolute before:top-[calc(50%+408px)] before:left-1/2 before:size-160 before:-translate-x-1/2 before:-translate-y-1/2',
                     'before:rounded-full before:bg-[#1ED612] before:transition-[top] before:duration-500 before:ease-out',
                     'hover:before:top-1/2',
-                    className,
                 )}
                 href={href}
                 onMouseEnter={() => setIsHovered(true)}
@@ -57,11 +34,13 @@ export const XmaquinaActionItem: React.FC<IXmaquinaActionItemProps> = (
                     title={title}
                 />
 
-                <XmaquinaActionImage
-                    alt={title}
-                    icon={icon}
-                    isHovered={isHovered}
-                />
+                {image && (
+                    <XmaquinaActionImage
+                        alt={title}
+                        image={image}
+                        isHovered={isHovered}
+                    />
+                )}
             </Link>
         </div>
     );

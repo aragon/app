@@ -58,6 +58,7 @@
     ".next/types/**/*.ts",
     "./src/shared/types/media.d.ts",
     "instrumentation-client.ts",
-    ".next/dev/types/**/*.ts"
+    ".next/dev/types/**/*.ts",
+    "src/daos/utils/daoSlotUtils/generate/.ts"
   ]
 }

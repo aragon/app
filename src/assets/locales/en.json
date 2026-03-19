@@ -255,7 +255,7 @@
             "label": "Campaign payout config",
             "helpText": "Select action encoder for this campaign",
             "error": {
-              "noGaugeVoter": "GaugeVoter plugin not found.",
+              "noEscrowAddress": "No voting escrow address registered for this DAO.",
               "tokenMismatch": "The selected asset doesn't match the underlying token of the Gauge Voter plugin."
             },
             "default": {
@@ -1166,6 +1166,24 @@
         }
       },
       "cryptex": {
+        "cryptexMembersFileDownload": {
+          "helpText": "Generate and download a rewards JSON based on governance participation.",
+          "label": "Members file",
+          "button": "Generate rewards file",
+          "downloadedFile": "{{fileName}}"
+        },
+        "cryptexMembersFileDownloadDialog": {
+          "title": "Generate rewards file",
+          "description": "Generate and download a rewards JSON based on governance participation",
+          "lookbackDateLabel": "Include proposals since",
+          "totalAmountLabel": "Total reward amount",
+          "generate": "Generate",
+          "cancel": "Cancel",
+          "error": {
+            "default": "Failed to generate reward distribution. Please try again.",
+            "withCode": "Failed to generate rewards: {{errorCode}}"
+          }
+        },
         "cryptexPageHeader": {
           "actions": {
             "getCtx": {
