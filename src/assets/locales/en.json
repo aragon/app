@@ -2179,7 +2179,7 @@
         "gaugeVoterLockOnboardingDialog": {
           "intro": {
             "hiddenTitle": "Lock tokens onboarding",
-            "title": "Your {{tokenSymbol}} is unlocked",
+            "title": "Your have unlocked {{tokenSymbol}}",
             "description": "Lock more tokens to increase your voting power.",
             "cta": "Lock tokens",
             "cancel": "Cancel"
@@ -2265,7 +2265,7 @@
             "cta": "Lock tokens",
             "description": "Lock more tokens to increase your voting power.",
             "hiddenTitle": "Lock tokens onboarding",
-            "title": "Your {{tokenSymbol}} is unlocked"
+            "title": "You have unlocked {{tokenSymbol}}"
           }
         },
         "lockToVoteLockUnlockDialog": {
@@ -2677,7 +2677,7 @@
         "tokenWrapOnboardingDialog": {
           "intro": {
             "hiddenTitle": "Wrap tokens onboarding",
-            "title": "Your {{underlyingTokenSymbol}} is unwrapped",
+            "title": "You have unlocked {{underlyingTokenSymbol}}",
             "description": "Wrap your tokens to participate in governance.",
             "cta": "Wrap tokens",
             "cancel": "Cancel"
