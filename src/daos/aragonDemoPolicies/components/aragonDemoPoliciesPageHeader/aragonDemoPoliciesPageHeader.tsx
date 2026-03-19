@@ -9,24 +9,18 @@ import {
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import type { ComponentProps } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
-import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoUtils, type IDaoPageHeaderProps } from '@/shared/utils/daoUtils';
 import AragonDemoHeader from '../../assets/aragonDemoPoliciesHeader.jpg';
 import { AragonDemoPoliciesPageHeaderStat } from './aragonDemoPoliciesPageHeaderStat';
 
 export interface IAragonDemoPoliciesPageHeaderProps
-    extends ComponentProps<'header'> {
-    /**
-     * DAO to display in the header.
-     */
-    dao: IDao;
-}
+    extends IDaoPageHeaderProps {}
 
 export const AragonDemoPoliciesPageHeader: React.FC<
     IAragonDemoPoliciesPageHeaderProps

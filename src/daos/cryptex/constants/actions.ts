@@ -1,13 +1,7 @@
-import { cryptex } from './cryptex';
+import type { IDao } from '@/shared/api/daoService';
+import { daoUtils, type IDaoHeaderAction } from '@/shared/utils/daoUtils';
 
-const cryptexIdDelimiterIndex = cryptex.id.lastIndexOf('-');
-const cryptexNetwork = cryptex.id.slice(0, cryptexIdDelimiterIndex);
-const cryptexAddress = cryptex.id.slice(cryptexIdDelimiterIndex + 1);
-
-const cryptexProposalsHref = `/dao/${cryptexNetwork}/${cryptexAddress}/proposals`;
-const cryptexMembersHref = `/dao/${cryptexNetwork}/${cryptexAddress}/members`;
-
-export const actions = [
+export const getActions = (dao: IDao): IDaoHeaderAction[] => [
     {
         title: 'app.daos.cryptex.cryptexPageHeader.actions.getCtx.title',
         description:
@@ -19,14 +13,14 @@ export const actions = [
         title: 'app.daos.cryptex.cryptexPageHeader.actions.stake.title',
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.stake.description',
-        href: cryptexMembersHref,
+        href: daoUtils.getDaoUrl(dao, 'members') ?? '',
         isExternal: false,
     },
     {
         title: 'app.daos.cryptex.cryptexPageHeader.actions.govern.title',
         description:
             'app.daos.cryptex.cryptexPageHeader.actions.govern.description',
-        href: cryptexProposalsHref,
+        href: daoUtils.getDaoUrl(dao, 'proposals') ?? '',
         isExternal: false,
     },
 ];

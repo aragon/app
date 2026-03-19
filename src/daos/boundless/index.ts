@@ -1,7 +1,7 @@
 import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { BoundlessPageHeader } from './components/boundlessPageHeader';
-import { boundless } from './constants/boundless';
+import { boundless } from './constants';
 
 export const initialiseBoundless = () => {
     pluginRegistryUtils

@@ -12,14 +12,13 @@ import {
     type Hex,
     zeroHash,
 } from 'viem';
+import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
 } from '@/modules/governance/components/createProposalForm';
-import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
-import { PluginInterfaceType } from '@/shared/api/daoService/domain/enum/pluginInterfaceType';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { transactionUtils } from '@/shared/utils/transactionUtils';
 import { createCampaignAbi } from '../../constants/addressCapitalDistributorAbi';
 import { veLockEncoderActionId } from '../../constants/veLockEncoderActionId';
@@ -51,14 +50,11 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
     const { addPrepareAction } =
         useCreateProposalFormContext<ICapitalDistributorActionCreateCampaign>();
 
-    const gaugeVoterPlugins = useDaoPlugins({
-        daoId,
-        interfaceType: PluginInterfaceType.GAUGE_VOTER,
-        includeLinkedAccounts: false,
+    const escrowAddress = useSlotSingleFunction<void, Hex | undefined>({
+        slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+        pluginId: daoId,
+        params: undefined,
     });
-    const gaugePlugin = gaugeVoterPlugins?.[0]?.meta as
-        | IGaugeVoterPlugin
-        | undefined;
 
     const fieldName = `actions.[${index.toString()}]`;
 
@@ -87,9 +83,10 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
             let actionEncoderInitData: Hex;
 
             if (payoutType === CampaignPayoutType.VE_LOCK_ENCODER) {
-                invariant(gaugePlugin != null, 'GaugeVoter plugin not found.');
-                const escrowAddress = gaugePlugin.votingEscrow
-                    .escrowAddress as Hex;
+                invariant(
+                    escrowAddress != null,
+                    'Voting escrow address not found.',
+                );
                 actionEncoderId = veLockEncoderActionId;
                 actionEncoderInitData = encodeAbiParameters(
                     [{ name: '_votingEscrowAddress', type: 'address' }],
@@ -142,7 +139,7 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
 
             return data;
         },
-        [gaugePlugin, pinJsonAsync],
+        [escrowAddress, pinJsonAsync],
     );
 
     useEffect(() => {

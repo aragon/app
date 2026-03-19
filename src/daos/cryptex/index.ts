@@ -1,7 +1,13 @@
+import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { DashboardDaoSlotId } from '@/modules/dashboard/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { CryptexMembersFileDownload } from './components/cryptexMembersFileDownload';
 import { CryptexPageHeader } from './components/cryptexPageHeader';
-import { cryptex } from './constants/cryptex';
+import {
+    cryptex,
+    getCryptexVotingEscrowAddress,
+    tokenCDTest,
+} from './constants';
 
 export const initialiseCryptex = () => {
     pluginRegistryUtils
@@ -11,5 +17,32 @@ export const initialiseCryptex = () => {
             slotId: DashboardDaoSlotId.DASHBOARD_DAO_HEADER,
             pluginId: cryptex.id,
             component: CryptexPageHeader,
+        })
+
+        .registerSlotComponent({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
+            pluginId: cryptex.id,
+            component: CryptexMembersFileDownload,
+        })
+
+        .registerSlotFunction({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+            pluginId: cryptex.id,
+            function: getCryptexVotingEscrowAddress,
+        })
+
+        // TODO: Remove tokenCDTest when mainnet capital distributor is live (APP-558)
+        .registerPlugin(tokenCDTest)
+
+        .registerSlotComponent({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
+            pluginId: tokenCDTest.id,
+            component: CryptexMembersFileDownload,
+        })
+
+        .registerSlotFunction({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+            pluginId: tokenCDTest.id,
+            function: getCryptexVotingEscrowAddress,
         });
 };
