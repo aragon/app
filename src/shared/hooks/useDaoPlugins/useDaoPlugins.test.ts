@@ -11,7 +11,7 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useDaoPlugins } from './useDaoPlugins';
 
-jest.mock('@/modules/explore/api/cmsService', () => ({
+jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => ({ data: undefined }),
 }));
 

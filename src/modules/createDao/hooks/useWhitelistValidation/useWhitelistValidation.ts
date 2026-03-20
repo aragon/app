@@ -1,6 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
-import { useWhitelistedAddresses } from '@/modules/explore/api/cmsService/queries/useWhitelistedAddresses';
+import { useWhitelistedAddresses } from '@/shared/api/cmsService/queries/useWhitelistedAddresses';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type {
     IWhitelistValidationParams,
