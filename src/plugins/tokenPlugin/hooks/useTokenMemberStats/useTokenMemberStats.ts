@@ -73,5 +73,9 @@ export const useTokenMemberStats = (
             value: formattedTokenBalance,
             suffix: token.symbol,
         },
+        {
+            label: t('app.plugins.token.tokenMemberStats.delegations'),
+            value: member.delegationCount,
+        },
     ];
 };
