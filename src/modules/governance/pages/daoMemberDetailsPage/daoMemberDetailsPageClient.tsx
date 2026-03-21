@@ -64,6 +64,8 @@ export const DaoMemberDetailsPageClient: React.FC<
     const bodyPlugins = useDaoPlugins({
         daoId,
         pluginAddress,
+        includeLinkedAccounts: true,
+        includeSubPlugins: true,
     });
     const bodyPlugin = bodyPlugins?.[0]?.meta;
 

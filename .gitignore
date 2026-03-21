@@ -54,3 +54,5 @@ next-env.d.ts
 .claude
 .vscode
 .zed
+
+.patches
