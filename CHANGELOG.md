@@ -1,5 +1,29 @@
 # @aragon/app
 
+## 1.25.0
+
+### Minor Changes
+
+- [#1027](https://github.com/aragon/app/pull/1027) [`fa0eb96`](https://github.com/aragon/app/commit/fa0eb9646f50971d3b8a9f61974347611dbd217c) Thanks [@milosh86](https://github.com/milosh86)! - Add member list onboarding entry point cards for delegation and lock/wrap
+
+- [#1039](https://github.com/aragon/app/pull/1039) [`9a56f96`](https://github.com/aragon/app/commit/9a56f96821dd5c9ff69142fe271544adef580acb) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Pin “You” and “Your delegate” tags on token members list
+
+- [#1028](https://github.com/aragon/app/pull/1028) [`2b61eef`](https://github.com/aragon/app/commit/2b61eefa03838b724b4d445a4255b179b35aec1b) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add cryptex rewards support, refactor custom DAO slot configs
+
+- [#1043](https://github.com/aragon/app/pull/1043) [`fd802e3`](https://github.com/aragon/app/commit/fd802e326e2aeca844216aa7c8e61f5d7e14ff99) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix params for token members list to get voting power properly, pin multisig connected user in list
+
+### Patch Changes
+
+- [#1040](https://github.com/aragon/app/pull/1040) [`8dd08ca`](https://github.com/aragon/app/commit/8dd08ca06fc05db327ebe7b9ff911074372714c9) Thanks [@milosh86](https://github.com/milosh86)! - Default includeLinkedAccounts to false in getDaoPlugins and explicitly opt in where needed
+
+- [#1036](https://github.com/aragon/app/pull/1036) [`e9b435d`](https://github.com/aragon/app/commit/e9b435d2e72f053aa76ce041ef4159443dc5ddf1) Thanks [@milosh86](https://github.com/milosh86)! - Fix info text alignment in lock, wrap and delegate forms
+
+- [#1030](https://github.com/aragon/app/pull/1030) [`dcd09bf`](https://github.com/aragon/app/commit/dcd09bfd2c8c2863a7361b4d3fd70b0c361c00a7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove compatibility adapter for linked accounts
+
+- [#1047](https://github.com/aragon/app/pull/1047) [`73df695`](https://github.com/aragon/app/commit/73df69527a4986351217ad4a1f4534a08b12d7aa) Thanks [@milosh86](https://github.com/milosh86)! - Include sub-plugins when fetching plugins on the member details page
+
+- [#1041](https://github.com/aragon/app/pull/1041) [`957c16a`](https://github.com/aragon/app/commit/957c16a8d8a55a6b04deeb4a4955f56dffea98b0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
 ## 1.24.0
 
 ### Minor Changes
