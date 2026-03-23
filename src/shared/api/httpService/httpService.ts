@@ -1,5 +1,6 @@
 import { responseUtils } from '@/shared/utils/responseUtils';
 import type {
+    FetchCacheConfig,
     HttpServiceErrorHandler,
     IRequestOptions,
     IRequestParams,
@@ -9,6 +10,9 @@ export class HttpService {
     private baseUrl: string;
     private errorHandler?: HttpServiceErrorHandler;
     private apiKey?: string;
+
+    /** Fetch cache configuration applied to all requests. Defaults to `{ cache: 'no-store' }` which bypasses caching. */
+    protected fetchCacheConfig: FetchCacheConfig = { cache: 'no-store' };
 
     constructor(
         baseUrl: string,
@@ -35,7 +39,7 @@ export class HttpService {
         const parsedBody = this.parseBody(params.body);
 
         const response = await fetch(completeUrl, {
-            cache: 'no-store',
+            ...this.fetchCacheConfig,
             body: parsedBody,
             ...processedOptions,
         });

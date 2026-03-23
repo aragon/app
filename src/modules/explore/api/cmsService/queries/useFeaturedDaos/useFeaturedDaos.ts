@@ -9,6 +9,7 @@ export const featuredDaosOptions = (
 ) => ({
     queryKey: cmsServiceKeys.featuredDaos(),
     queryFn: () => cmsService.getFeaturedDaos(),
+    staleTime: Number.POSITIVE_INFINITY,
     ...options,
 });
 
