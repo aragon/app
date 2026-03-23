@@ -31,6 +31,8 @@ describe('useAddressImpersonation', () => {
     });
 
     beforeEach(() => {
+        localStorage.clear();
+
         useConnectSpy.mockReturnValue({
             connectAsync: mockConnectAsync,
         } as unknown as wagmi.UseConnectReturnType);
@@ -54,7 +56,7 @@ describe('useAddressImpersonation', () => {
         useDebugContextSpy.mockReset();
     });
 
-    it('registers an address control on mount', () => {
+    it('registers address and persist controls on mount', () => {
         renderHook(() => useAddressImpersonation());
 
         expect(mockRegisterControl).toHaveBeenCalledWith(
@@ -62,17 +64,29 @@ describe('useAddressImpersonation', () => {
                 name: 'impersonateAddress',
                 type: 'address',
                 label: 'Impersonate address',
-                group: 'Wallet',
+                group: 'Simulation',
+            }),
+        );
+
+        expect(mockRegisterControl).toHaveBeenCalledWith(
+            expect.objectContaining({
+                name: 'impersonatePersist',
+                type: 'boolean',
+                label: 'Persist across reloads',
+                group: 'Simulation',
             }),
         );
     });
 
-    it('unregisters the control on unmount', () => {
+    it('unregisters both controls on unmount', () => {
         const { unmount } = renderHook(() => useAddressImpersonation());
         unmount();
 
         expect(mockUnregisterControl).toHaveBeenCalledWith(
             'impersonateAddress',
+        );
+        expect(mockUnregisterControl).toHaveBeenCalledWith(
+            'impersonatePersist',
         );
     });
 
@@ -103,12 +117,74 @@ describe('useAddressImpersonation', () => {
     it('disconnects when onChange fires with undefined', async () => {
         renderHook(() => useAddressImpersonation());
 
-        const registeredControl = mockRegisterControl.mock.calls[0][0];
-        await act(() => registeredControl.onChange(undefined));
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        await act(() => addressControl.onChange(undefined));
 
         await waitFor(() => {
             expect(mockDisconnectAsync).toHaveBeenCalled();
             expect(mockConnectAsync).not.toHaveBeenCalled();
         });
+    });
+
+    it('removes saved address from localStorage when onChange fires with undefined', async () => {
+        localStorage.setItem('debug:impersonateAddress', validAddress);
+
+        renderHook(() => useAddressImpersonation());
+
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        await act(() => addressControl.onChange(undefined));
+
+        expect(localStorage.getItem('debug:impersonateAddress')).toBeNull();
+    });
+
+    it('saves address to localStorage when persist is enabled', async () => {
+        renderHook(() => useAddressImpersonation());
+
+        const addressControl = mockRegisterControl.mock.calls[0][0];
+        const persistControl = mockRegisterControl.mock.calls[1][0];
+
+        act(() => persistControl.onChange(true));
+        await act(() => addressControl.onChange(validAddress));
+
+        expect(localStorage.getItem('debug:impersonateAddress')).toBe(
+            validAddress,
+        );
+        expect(localStorage.getItem('debug:impersonatePersist')).toBe('true');
+    });
+
+    it('clears localStorage when persist is disabled', () => {
+        localStorage.setItem('debug:impersonatePersist', 'true');
+        localStorage.setItem('debug:impersonateAddress', validAddress);
+
+        renderHook(() => useAddressImpersonation());
+
+        const persistControl = mockRegisterControl.mock.calls[1][0];
+        act(() => persistControl.onChange(false));
+
+        expect(localStorage.getItem('debug:impersonateAddress')).toBeNull();
+        expect(localStorage.getItem('debug:impersonatePersist')).toBeNull();
+    });
+
+    it('restores persisted address and auto-connects on mount', async () => {
+        localStorage.setItem('debug:impersonatePersist', 'true');
+        localStorage.setItem('debug:impersonateAddress', validAddress);
+
+        renderHook(() => useAddressImpersonation());
+
+        await waitFor(() => {
+            expect(mockDisconnectAsync).toHaveBeenCalled();
+            expect(mockConnectAsync).toHaveBeenCalledWith({
+                connector: mockConnector,
+            });
+        });
+    });
+
+    it('does not auto-connect when persist is disabled', () => {
+        localStorage.setItem('debug:impersonateAddress', validAddress);
+
+        renderHook(() => useAddressImpersonation());
+
+        expect(mockConnectAsync).not.toHaveBeenCalled();
+        expect(mockDisconnectAsync).not.toHaveBeenCalled();
     });
 });
