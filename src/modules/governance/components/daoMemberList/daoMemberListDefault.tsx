@@ -7,6 +7,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
 import { useConnection } from 'wagmi';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type {
     IGetMemberListParams,
     IMember,
@@ -148,7 +149,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
-    const getMemberLink = (member: IMember) =>
+    const getMemberLink = (member: IMember): string | undefined =>
         onMemberClick != null
             ? undefined
             : daoUtils.getDaoUrl(dao, `members/${member.address}`);
@@ -168,12 +169,10 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
                 {mergedMemberList?.map((member) => (
-                    <MemberDataListItem.Structure
-                        address={member.address}
-                        className="min-w-0"
-                        ensName={member.ens ?? undefined}
+                    <EnsAwareMemberItem
                         href={getMemberLink(member)}
                         key={member.address}
+                        member={member}
                         onClick={() => onMemberClick?.(member)}
                     />
                 ))}
@@ -181,5 +180,34 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
             {!hidePagination && <DataListPagination />}
             {children}
         </DataListRoot>
+    );
+};
+
+/**
+ * Wrapper component that resolves ENS name and avatar for each member in the list.
+ *
+ * Extracted from the inline `.map()` because React hooks cannot
+ * be called inside a callback — they must be called at the top level of a component.
+ * With `batch.multicall` enabled on the viem client, the ENS reads across
+ * the rendered list items are auto-batched into RPC multicalls.
+ */
+const EnsAwareMemberItem: React.FC<{
+    member: IMember;
+    href?: string;
+    onClick?: () => void;
+}> = (props) => {
+    const { member, href, onClick } = props;
+    const { data: ensName } = useEnsName(member.address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
+
+    return (
+        <MemberDataListItem.Structure
+            address={member.address}
+            avatarSrc={ensAvatar ?? undefined}
+            className="min-w-0"
+            ensName={ensName ?? undefined}
+            href={href}
+            onClick={onClick}
+        />
     );
 };

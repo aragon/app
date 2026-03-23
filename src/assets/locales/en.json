@@ -1566,6 +1566,12 @@
           },
           "efpCard": {
             "title": "Ethereum Follow Protocol"
+          },
+          "links": {
+            "title": "Links",
+            "website": "Website",
+            "twitter": "X",
+            "github": "GitHub"
           }
         },
         "error": {

@@ -5,8 +5,10 @@ import {
     DataListPagination,
     DataListRoot,
     VoteDataListItem,
+    type VoteIndicator,
     VoteProposalDataListItem,
 } from '@aragon/gov-ui-kit';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type { IGetVoteListParams } from '@/modules/governance/api/governanceService';
 import {
     type IVoteListProps,
@@ -69,23 +71,41 @@ export const MultisigVoteList: React.FC<IMultisigVoteListProps> = (props) => {
                             voteIndicator={votingIndicator}
                         />
                     ) : (
-                        <VoteDataListItem.Structure
-                            href={daoUtils.getDaoUrl(
-                                dao,
-                                `members/${vote.member.address}`,
-                            )}
+                        <MultisigVoteItem
+                            dao={dao}
                             key={vote.transactionHash}
+                            vote={vote}
                             voteIndicator={votingIndicator}
-                            voter={{
-                                address: vote.member.address,
-                                avatarSrc: vote.member.avatar ?? undefined,
-                                name: vote.member.ens ?? undefined,
-                            }}
                         />
                     );
                 })}
             </DataListContainer>
             <DataListPagination />
         </DataListRoot>
+    );
+};
+
+/**
+ * Wrapper for a single vote item that resolves the voter's ENS name.
+ */
+const MultisigVoteItem: React.FC<{
+    vote: IMultisigVote;
+    dao: ReturnType<typeof useDao>['data'];
+    voteIndicator: VoteIndicator;
+}> = (props) => {
+    const { vote, dao, voteIndicator } = props;
+    const { data: ensName } = useEnsName(vote.member.address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
+
+    return (
+        <VoteDataListItem.Structure
+            href={daoUtils.getDaoUrl(dao, `members/${vote.member.address}`)}
+            voteIndicator={voteIndicator}
+            voter={{
+                address: vote.member.address,
+                avatarSrc: ensAvatar ?? undefined,
+                name: ensName ?? undefined,
+            }}
+        />
     );
 };

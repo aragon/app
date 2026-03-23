@@ -1,5 +1,6 @@
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
@@ -36,12 +37,15 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
         tokenDecimals,
     );
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { data: ensName } = useEnsName(member.address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
 
     return (
         <MemberDataListItem.Structure
             address={member.address}
+            avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
-            ensName={member.ens ?? undefined}
+            ensName={ensName ?? undefined}
             href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
             isDelegate={isDelegate}
             key={member.address}

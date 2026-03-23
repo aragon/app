@@ -3,8 +3,8 @@ import { render } from '@testing-library/react';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import type { ReactElement } from 'react';
-import { mainnet } from 'viem/chains';
 import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import {
     type ITransactionDialogProps,
@@ -28,16 +28,22 @@ jest.mock('next/navigation', () => ({
 
 describe('<TokenDelegationDialog /> component', () => {
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const useRouterMock = useRouter as jest.MockedFunction<typeof useRouter>;
 
     beforeEach(() => {
         useConnectionSpy.mockReturnValue({
             address: '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5',
         } as unknown as wagmi.UseConnectionReturnType);
-        useEnsNameSpy.mockReturnValue(
-            {} as unknown as wagmi.UseEnsNameReturnType,
-        );
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsAvatarSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsAvatar>);
         useRouterMock.mockReturnValue({
             back: jest.fn(),
             forward: jest.fn(),
@@ -51,6 +57,7 @@ describe('<TokenDelegationDialog /> component', () => {
     afterEach(() => {
         useConnectionSpy.mockReset();
         useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
         useRouterMock.mockReset();
         (TransactionDialog as jest.Mock).mockReset();
     });
@@ -94,16 +101,12 @@ describe('<TokenDelegationDialog /> component', () => {
         const delegateEnsName = 'delegate.eth';
         useEnsNameSpy.mockReturnValue({
             data: delegateEnsName,
-        } as unknown as wagmi.UseEnsNameReturnType);
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
 
         render(createTestComponent({ location }));
 
-        expect(useEnsNameSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                address: location.params.delegate,
-                chainId: mainnet.id,
-            }),
-        );
+        expect(useEnsNameSpy).toHaveBeenCalledWith(location.params.delegate);
         expect(getDelegateProps()).toEqual(
             expect.objectContaining({
                 address: location.params.delegate,
@@ -114,10 +117,6 @@ describe('<TokenDelegationDialog /> component', () => {
     });
 
     it('passes undefined ENS name when no ENS is resolved', () => {
-        useEnsNameSpy.mockReturnValue({
-            data: null,
-        } as unknown as wagmi.UseEnsNameReturnType);
-
         render(createTestComponent({ location }));
 
         expect(getDelegateProps()).toEqual(
