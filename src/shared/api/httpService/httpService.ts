@@ -39,9 +39,9 @@ export class HttpService {
         const parsedBody = this.parseBody(params.body);
 
         const response = await fetch(completeUrl, {
-            ...this.fetchCacheConfig,
             body: parsedBody,
             ...processedOptions,
+            ...this.fetchCacheConfig,
         });
 
         if (!response.ok) {

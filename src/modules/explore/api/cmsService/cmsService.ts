@@ -1,4 +1,4 @@
-import { HttpService } from '@/shared/api/httpService';
+import { type FetchCacheConfig, HttpService } from '@/shared/api/httpService';
 import type {
     DaoOverridesMap,
     ICmsFeatureFlagsResponse,
@@ -8,11 +8,11 @@ import type {
 } from './domain';
 
 class CmsService extends HttpService {
-    protected override fetchCacheConfig = {
+    protected override fetchCacheConfig: FetchCacheConfig = {
         // https://vercel.com/docs/caching/runtime-cache#using-fetch-with-force-cache
         cache: 'force-cache',
         next: { revalidate: 600 }, // revalidate in the background every 10 min
-    } as const;
+    };
 
     constructor() {
         super('https://raw.githubusercontent.com/aragon/app-cms');
