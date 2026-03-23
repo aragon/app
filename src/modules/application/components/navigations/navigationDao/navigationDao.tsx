@@ -89,6 +89,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     links={navigationDaoUtils.buildLinks(
                         daoWithVisiblePlugins,
                         'page',
+                        daoOverride?.navLinksToHide,
                     )}
                 />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
@@ -107,6 +108,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 links={navigationDaoUtils.buildLinks(
                     daoWithVisiblePlugins,
                     'dialog',
+                    daoOverride?.navLinksToHide,
                 )}
                 onOpenChange={setIsDialogOpen}
                 open={isDialogOpen}
