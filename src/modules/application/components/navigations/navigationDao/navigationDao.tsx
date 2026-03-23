@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
@@ -22,6 +23,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
@@ -51,6 +53,14 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         id: dao.address,
     });
 
+    const { data: daoOverrides } = useDaoOverrides();
+    const daoOverride = daoOverrides?.[dao.id];
+    const visiblePlugins = daoVisibilityUtils.filterHiddenPlugins(
+        dao.plugins,
+        daoOverride,
+    );
+    const daoWithVisiblePlugins = { ...dao, plugins: visiblePlugins };
+
     const handleWalletClick = () => {
         const dialog = effectiveIsConnected
             ? ApplicationDialogId.USER
@@ -76,7 +86,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 />
                 <Navigation.Links
                     className="hidden lg:flex"
-                    links={navigationDaoUtils.buildLinks(dao, 'page')}
+                    links={navigationDaoUtils.buildLinks(
+                        daoWithVisiblePlugins,
+                        'page',
+                    )}
                 />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
                     <Wallet onClick={handleWalletClick} user={walletUser} />
@@ -91,7 +104,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     'app.application.navigationDao.a11y.description',
                 )}
                 hiddenTitle={t('app.application.navigationDao.a11y.title')}
-                links={navigationDaoUtils.buildLinks(dao, 'dialog')}
+                links={navigationDaoUtils.buildLinks(
+                    daoWithVisiblePlugins,
+                    'dialog',
+                )}
                 onOpenChange={setIsDialogOpen}
                 open={isDialogOpen}
             >
