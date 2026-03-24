@@ -2,9 +2,9 @@
 
 import { invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { type Hex, zeroAddress } from 'viem';
-import { mainnet } from 'viem/chains';
-import { useConnection, useEnsName } from 'wagmi';
+import { zeroAddress } from 'viem';
+import { useConnection } from 'wagmi';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import {
@@ -60,10 +60,8 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         network,
         onSuccessClick,
     } = location.params;
-    const { data: delegateEnsName } = useEnsName({
-        address: delegate as Hex,
-        chainId: mainnet.id,
-    });
+    const { data: delegateEnsName } = useEnsName(delegate);
+    const { data: delegateEnsAvatar } = useEnsAvatar(delegateEnsName);
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -103,6 +101,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         >
             <MemberDataListItem.Structure
                 address={delegate}
+                avatarSrc={delegateEnsAvatar ?? undefined}
                 ensName={delegateEnsName ?? undefined}
                 isDelegate={true}
             />

@@ -2,7 +2,8 @@
 
 import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
-import { useConnection, useEnsName } from 'wagmi';
+import { useConnection } from 'wagmi';
+import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -18,10 +19,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const [isLightMode, setIsLightMode] = useState(true);
     const [isShimLightMode, setIsShimLightMode] = useState(false);
     const { address } = useConnection();
-    const { data: ensName } = useEnsName({
-        address,
-        chainId: 1,
-    });
+    const { data: ensName } = useEnsName(address);
 
     const { t } = useTranslations();
     const actions = useMemo(() => getActions(dao), [dao]);

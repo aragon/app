@@ -9,9 +9,16 @@ import {
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
 import { useBlock } from 'wagmi';
+import {
+    ENS_RECORD_KEYS,
+    useEnsAvatar,
+    useEnsName,
+    useEnsRecords,
+} from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useEfpStats } from '@/modules/governance/api/efpService';
 import { EfpCard } from '@/modules/governance/components/efpCard';
+import { MemberLinksCard } from '@/modules/governance/components/memberLinksCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
@@ -156,13 +163,21 @@ export const DaoMemberDetailsPageClient: React.FC<
         },
     ];
 
+    const { data: ensName } = useEnsName(address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
+    const { data: ensRecords } = useEnsRecords(ensName);
+    const memberLinks = {
+        github: ensRecords?.[ENS_RECORD_KEYS.github],
+        twitter: ensRecords?.[ENS_RECORD_KEYS.twitter],
+        url: ensRecords?.[ENS_RECORD_KEYS.url],
+    };
+
     if (member == null || dao == null || bodyPlugin == null) {
         return null;
     }
 
-    const { ens } = member;
     const truncatedAddress = addressUtils.truncateAddress(address);
-    const memberName = ens ?? truncatedAddress;
+    const memberName = ensName ?? truncatedAddress;
 
     const addressUrl = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -214,11 +229,13 @@ export const DaoMemberDetailsPageClient: React.FC<
                 avatar={
                     <MemberAvatar
                         address={address}
-                        ensName={ens ?? undefined}
+                        avatarSrc={ensAvatar ?? undefined}
+                        ensName={ensName ?? undefined}
                         size="2xl"
                     />
                 }
                 breadcrumbs={pageBreadcrumbs}
+                description={ensRecords?.description ?? undefined}
                 stats={stats}
                 title={memberName}
             />
@@ -270,15 +287,15 @@ export const DaoMemberDetailsPageClient: React.FC<
                             >
                                 {truncatedAddress}
                             </DefinitionList.Item>
-                            {ens && addressUrl && (
+                            {ensName && addressUrl && (
                                 <DefinitionList.Item
-                                    copyValue={ens}
+                                    copyValue={ensName}
                                     link={{ href: addressUrl }}
                                     term={t(
                                         'app.governance.daoMemberDetailsPage.aside.details.ens',
                                     )}
                                 >
-                                    {ens}
+                                    {ensName}
                                 </DefinitionList.Item>
                             )}
                             <DefinitionList.Item
@@ -290,6 +307,21 @@ export const DaoMemberDetailsPageClient: React.FC<
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
+                    {(memberLinks.url ||
+                        memberLinks.twitter ||
+                        memberLinks.github) && (
+                        <Page.AsideCard
+                            title={t(
+                                'app.governance.daoMemberDetailsPage.aside.links.title',
+                            )}
+                        >
+                            <MemberLinksCard
+                                github={memberLinks.github}
+                                twitter={memberLinks.twitter}
+                                url={memberLinks.url}
+                            />
+                        </Page.AsideCard>
+                    )}
                     {efpStats && (
                         <Page.AsideCard
                             icon={EfpLogo as string}

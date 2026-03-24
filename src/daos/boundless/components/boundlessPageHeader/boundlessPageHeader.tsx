@@ -2,7 +2,8 @@
 
 import classNames from 'classnames';
 import { useMemo } from 'react';
-import { useConnection, useEnsName } from 'wagmi';
+import { useConnection } from 'wagmi';
+import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -17,10 +18,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
 ) => {
     const { dao, className, ...otherProps } = props;
     const { address } = useConnection();
-    const { data: ensName } = useEnsName({
-        address,
-        chainId: 1,
-    });
+    const { data: ensName } = useEnsName(address);
 
     const { t } = useTranslations();
     const actions = useMemo(() => getActions(dao), [dao]);

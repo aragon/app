@@ -179,7 +179,21 @@
                     }
                 },
                 "noParameterProperties": "off",
-                "useReadonlyClassProperties": "off"
+                "useReadonlyClassProperties": "off",
+                "noRestrictedImports": {
+                    "level": "warn",
+                    "options": {
+                        "paths": {
+                            "wagmi": {
+                                "importNames": [
+                                    "useEnsAvatar",
+                                    "useEnsName"
+                                ],
+                                "message": "Import ENS hooks from @/modules/ens instead. They provide consistent chainId, caching, monitoring, and app-level wrappers. Add biome-ignore with reason if direct wagmi access is needed."
+                            }
+                        }
+                    }
+                }
             },
             "suspicious": {
                 "noAsyncPromiseExecutor": "error",
@@ -244,88 +258,6 @@
         ]
     },
     "overrides": [
-        {
-            "includes": [
-                "**/*.ts",
-                "**/*.tsx",
-                "**/*.mts",
-                "**/*.cts"
-            ],
-            "linter": {
-                "rules": {
-                    "complexity": {
-                        "noArguments": "error"
-                    },
-                    "correctness": {
-                        "noConstAssign": "off",
-                        "noGlobalObjectCalls": "off",
-                        "noInvalidBuiltinInstantiation": "off",
-                        "noInvalidConstructorSuper": "off",
-                        "noSetterReturn": "off",
-                        "noUndeclaredVariables": "off",
-                        "noUnreachable": "off",
-                        "noUnreachableSuper": "off"
-                    },
-                    "style": {
-                        "useConst": "error"
-                    },
-                    "suspicious": {
-                        "noClassAssign": "off",
-                        "noDuplicateClassMembers": "off",
-                        "noDuplicateObjectKeys": "off",
-                        "noDuplicateParameters": "off",
-                        "noFunctionAssign": "off",
-                        "noImportAssign": "off",
-                        "noRedeclare": "off",
-                        "noUnsafeNegation": "off",
-                        "noVar": "error",
-                        "noWith": "off",
-                        "useGetterReturn": "off"
-                    }
-                }
-            }
-        },
-        {
-            "includes": [
-                "**/*.ts",
-                "**/*.tsx",
-                "**/*.mts",
-                "**/*.cts"
-            ],
-            "linter": {
-                "rules": {
-                    "complexity": {
-                        "noArguments": "error"
-                    },
-                    "correctness": {
-                        "noConstAssign": "off",
-                        "noGlobalObjectCalls": "off",
-                        "noInvalidBuiltinInstantiation": "off",
-                        "noInvalidConstructorSuper": "off",
-                        "noSetterReturn": "off",
-                        "noUndeclaredVariables": "off",
-                        "noUnreachable": "off",
-                        "noUnreachableSuper": "off"
-                    },
-                    "style": {
-                        "useConst": "error"
-                    },
-                    "suspicious": {
-                        "noClassAssign": "off",
-                        "noDuplicateClassMembers": "off",
-                        "noDuplicateObjectKeys": "off",
-                        "noDuplicateParameters": "off",
-                        "noFunctionAssign": "off",
-                        "noImportAssign": "off",
-                        "noRedeclare": "off",
-                        "noUnsafeNegation": "off",
-                        "noVar": "error",
-                        "noWith": "off",
-                        "useGetterReturn": "off"
-                    }
-                }
-            }
-        },
         {
             "includes": [
                 "**/*.ts",

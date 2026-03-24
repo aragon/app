@@ -9,8 +9,8 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import { mainnet } from 'viem/chains';
-import { useConnection, useDisconnect, useEnsName } from 'wagmi';
+import { useConnection, useDisconnect } from 'wagmi';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import {
     type IDialogComponentProps,
     useDialogContext,
@@ -29,11 +29,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { address, chainId } = useConnection();
     const { disconnect } = useDisconnect();
 
-    const { data: ensName } = useEnsName({
-        address,
-        query: { enabled: address != null },
-        chainId: mainnet.id,
-    });
+    const { data: ensName } = useEnsName(address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
 
     const formattedAddress = addressUtils.truncateAddress(address);
 
@@ -63,6 +60,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             <div className="flex flex-col gap-3 px-8">
                 <MemberAvatar
                     address={address}
+                    avatarSrc={ensAvatar ?? undefined}
+                    ensName={ensName ?? undefined}
                     responsiveSize={{ sm: 'xl' }}
                     size="lg"
                 />
