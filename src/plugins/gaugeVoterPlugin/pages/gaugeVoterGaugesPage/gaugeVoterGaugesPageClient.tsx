@@ -6,20 +6,24 @@ import type { Address } from 'viem';
 import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
+import { useDaoOverrides } from '@/shared/api/cmsService';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGauge, IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
 import { GaugeVoterLockForm } from '../../components/gaugeVoterLockForm';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
 import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
+import { GaugeVoterPluginPages } from '../../constants/gaugeVoterPlugin';
 import { GaugeVoterPluginDialogId } from '../../constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterGaugeDetailsDialogParams } from '../../dialogs/gaugeVoterGaugeDetailsDialog';
 import type { IGaugeVoterVoteDialogParams } from '../../dialogs/gaugeVoterVoteDialog';
@@ -243,6 +247,17 @@ export const GaugeVoterGaugesPageClient: React.FC<
     );
 
     const cardTitle = token ? `${token.name} (${token.symbol})` : '';
+
+    const { data: daoOverrides } = useDaoOverrides();
+    const daoOverride = daoOverrides?.[dao.id];
+    const isGaugesPageHidden = daoOverride?.navLinksToHide?.includes(
+        GaugeVoterPluginPages.GAUGES,
+    );
+
+    if (isGaugesPageHidden) {
+        const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
+        return <RedirectToUrl url={daoUrl} />;
+    }
 
     return (
         <Page.Content>

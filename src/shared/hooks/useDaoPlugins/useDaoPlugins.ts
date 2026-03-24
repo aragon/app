@@ -1,4 +1,4 @@
-import { useDaoOverrides } from '@/modules/explore/api/cmsService';
+import { useDaoOverrides } from '@/shared/api/cmsService';
 import {
     type IDaoPlugin,
     type PluginInterfaceType,

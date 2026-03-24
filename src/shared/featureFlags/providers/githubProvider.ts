@@ -1,5 +1,5 @@
-import type { ICmsFeatureFlagsResponse } from '@/modules/explore/api/cmsService';
-import { cmsService } from '@/modules/explore/api/cmsService';
+import type { ICmsFeatureFlagsResponse } from '@/shared/api/cmsService';
+import { cmsService } from '@/shared/api/cmsService';
 import type {
     FeatureFlagEnvironment,
     FeatureFlagOverrides,

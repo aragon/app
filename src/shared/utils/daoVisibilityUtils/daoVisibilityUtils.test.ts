@@ -1,4 +1,4 @@
-import type { IDaoOverride } from '@/modules/explore/api/cmsService';
+import type { IDaoOverride } from '@/shared/api/cmsService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { daoVisibilityUtils } from './daoVisibilityUtils';
 

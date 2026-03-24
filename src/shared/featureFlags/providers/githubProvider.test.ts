@@ -1,10 +1,10 @@
-import type { ICmsFeatureFlagsResponse } from '@/modules/explore/api/cmsService';
-import { cmsService } from '@/modules/explore/api/cmsService';
+import type { ICmsFeatureFlagsResponse } from '@/shared/api/cmsService';
+import { cmsService } from '@/shared/api/cmsService';
 import type { FeatureFlagOverrides } from '../featureFlags.api';
 import { parseFeatureFlagOverridesFromCookie } from '../utils/cookieOverrides';
 import { GithubCmsFeatureFlagsProvider } from './githubProvider';
 
-jest.mock('@/modules/explore/api/cmsService', () => ({
+jest.mock('@/shared/api/cmsService', () => ({
     cmsService: {
         getFeatureFlags: jest.fn(),
     },
