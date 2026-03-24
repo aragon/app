@@ -64,7 +64,7 @@ describe('useTokenMemberStats hook', () => {
         const { result } = renderHook(() =>
             useTokenMemberStats(memberStatsParams),
         );
-        const [votingPower, tokenBalance] = result.current;
+        const [votingPower, tokenBalance, delegations] = result.current;
 
         expect(votingPower.label).toBe(
             'app.plugins.token.tokenMemberStats.votingPower',
@@ -75,6 +75,11 @@ describe('useTokenMemberStats hook', () => {
             'app.plugins.token.tokenMemberStats.tokenBalance',
         );
         expect(tokenBalance.value).toBe('123.46K');
+
+        expect(delegations.label).toBe(
+            'app.plugins.token.tokenMemberStats.delegations',
+        );
+        expect(delegations.value).toBe(47_928_374);
     });
 
     it('returns empty list when member is not a token member', () => {
