@@ -49,6 +49,14 @@ export interface IDaoMemberDetailsPageClientProps {
      * Address of the body plugin resolved by the server component.
      */
     pluginAddress: string;
+    /**
+     * Address of the governance token. Required to include voting power in the response.
+     */
+    tokenAddress?: string;
+    /**
+     * Network of the DAO.
+     */
+    network?: string;
 }
 
 const memberProposalsCount = 3;
@@ -58,7 +66,7 @@ const memberDaosCount = 3;
 export const DaoMemberDetailsPageClient: React.FC<
     IDaoMemberDetailsPageClientProps
 > = (props) => {
-    const { address, daoId, pluginAddress } = props;
+    const { address, daoId, network, pluginAddress, tokenAddress } = props;
 
     const { t } = useTranslations();
 
@@ -77,7 +85,7 @@ export const DaoMemberDetailsPageClient: React.FC<
     const bodyPlugin = bodyPlugins?.[0]?.meta;
 
     const memberUrlParams = { address };
-    const memberQueryParams = { daoId, pluginAddress };
+    const memberQueryParams = { daoId, pluginAddress, tokenAddress, network };
     const memberParams = {
         urlParams: memberUrlParams,
         queryParams: memberQueryParams,
