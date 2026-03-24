@@ -1,5 +1,2 @@
-export {
-    DebugPanelControl,
-    type IDebugPanelControlProps,
-} from './debugPanelControl';
-export type {} from './debugPanelControl.api';
+export { DebugPanelControl } from './debugPanelControl';
+export type { IDebugPanelControlProps } from './debugPanelControl.api';

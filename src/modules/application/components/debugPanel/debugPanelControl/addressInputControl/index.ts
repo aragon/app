@@ -1,5 +1,2 @@
-export {
-    AddressInputControl,
-    type IAddressInputControlProps,
-} from './addressInputControl';
-export type {} from './addressInputControl.api';
+export { AddressInputControl } from './addressInputControl';
+export type { IAddressInputControlProps } from './addressInputControl.api';
