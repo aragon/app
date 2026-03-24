@@ -49,3 +49,16 @@ export interface IRequestOptions
 }
 
 export type HttpServiceErrorHandler = (response: Response) => Promise<Error>;
+
+/**
+ * Fetch cache configuration for HTTP requests.
+ * Use `{ cache: 'no-store' }` to bypass caching (default) or
+ * `{ cache: 'force-cache', next: { revalidate, tags } }` for Vercel Data Cache
+ * with time-based revalidation.
+ */
+export type FetchCacheConfig =
+    | { cache: 'no-store' }
+    | {
+          cache: 'force-cache';
+          next?: { revalidate?: number | false; tags?: string[] };
+      };

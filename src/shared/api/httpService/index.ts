@@ -1,5 +1,6 @@
 export { HttpService } from './httpService';
 export type {
+    FetchCacheConfig,
     HttpServiceErrorHandler,
     IRequestBodyParams,
     IRequestOptions,
