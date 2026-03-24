@@ -24,6 +24,7 @@ describe('<DaoMemberListDefault /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
+    const useMemberExistsSpy = jest.spyOn(governanceService, 'useMemberExists');
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
@@ -46,6 +47,9 @@ describe('<DaoMemberListDefault /> component', () => {
                 data: undefined as unknown as IMember,
             }),
         );
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: false } }),
+        );
     });
 
     afterEach(() => {
@@ -53,6 +57,7 @@ describe('<DaoMemberListDefault /> component', () => {
         useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
         useMemberSpy.mockReset();
+        useMemberExistsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -130,6 +135,10 @@ describe('<DaoMemberListDefault /> component', () => {
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
 
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: true } }),
+        );
+
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember, userMember],
             onLoadMore: jest.fn(),
@@ -204,6 +213,10 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
+
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: true } }),
+        );
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember, userMember],

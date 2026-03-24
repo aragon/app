@@ -11,11 +11,15 @@ import type {
     IGetMemberListParams,
     IMember,
 } from '@/modules/governance/api/governanceService';
-import { useMember } from '@/modules/governance/api/governanceService';
+import {
+    useMember,
+    useMemberExists,
+} from '@/modules/governance/api/governanceService';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import {
     type IDaoPlugin,
     type IPluginSettings,
+    type Network,
     useDao,
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -98,12 +102,25 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         memberList,
     } = useMemberListData(apiParams);
 
+    const { data: memberExists } = useMemberExists(
+        {
+            urlParams: {
+                memberAddress: connectedAddress ?? '',
+                pluginAddress: plugin.address,
+            },
+            queryParams: { network: dao?.network as Network },
+        },
+        { enabled: connectedAddress != null && dao?.network != null },
+    );
+
+    const isMember = memberExists?.status === true;
+
     const { data: connectedUserMember } = useMember(
         {
             urlParams: { address: connectedAddress ?? '' },
             queryParams: apiParams.queryParams,
         },
-        { enabled: connectedAddress != null },
+        { enabled: isMember },
     );
 
     const mergedMemberList = useMemo(() => {
