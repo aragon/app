@@ -1,6 +1,7 @@
 'use client';
 
 import { ProposalDataListItem } from '@aragon/gov-ui-kit';
+import { useEnsName } from '@/modules/ens';
 import type { IDaoProposalListDefaultItemProps } from '@/modules/governance/components/daoProposalList';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
@@ -39,6 +40,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
 
     const proposalLink = proposalUtils.getProposalUrl(proposal, dao);
     const publisherLink = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
+    const { data: publisherEnsName } = useEnsName(creator.address);
 
     return (
         <ProposalDataListItem.Structure
@@ -49,7 +51,7 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             key={id}
             publisher={{
                 address: creator.address,
-                name: creator.ens ?? undefined,
+                name: publisherEnsName ?? undefined,
                 link: publisherLink,
             }}
             status={proposalStatus}

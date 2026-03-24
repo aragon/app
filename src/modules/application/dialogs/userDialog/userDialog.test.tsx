@@ -8,6 +8,7 @@ import {
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDialogContext } from '@/shared/testUtils';
 import { type IUserDialogProps, UserDialog } from './userDialog';
@@ -24,7 +25,8 @@ describe('<UserDialog /> component', () => {
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
-    const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
 
     beforeEach(() => {
@@ -35,9 +37,14 @@ describe('<UserDialog /> component', () => {
         useDisconnectSpy.mockReturnValue(
             {} as unknown as wagmi.UseDisconnectReturnType,
         );
-        useEnsNameSpy.mockReturnValue(
-            {} as unknown as wagmi.UseEnsNameReturnType,
-        );
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsAvatarSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsAvatar>);
     });
 
     afterEach(() => {
@@ -45,6 +52,7 @@ describe('<UserDialog /> component', () => {
         useConnectionSpy.mockReset();
         useDisconnectSpy.mockReset();
         useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
         clipboardCopySpy.mockReset();
     });
 
@@ -77,7 +85,8 @@ describe('<UserDialog /> component', () => {
         } as unknown as wagmi.UseConnectionReturnType);
         useEnsNameSpy.mockReturnValue({
             data: ensName,
-        } as unknown as wagmi.UseEnsNameReturnType);
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
         render(createTestComponent());
         expect(screen.getByTestId('member-avatar-mock')).toBeInTheDocument();
         expect(screen.getByText(ensName)).toBeInTheDocument();
@@ -91,9 +100,6 @@ describe('<UserDialog /> component', () => {
         useConnectionSpy.mockReturnValue({
             address,
         } as unknown as wagmi.UseConnectionReturnType);
-        useEnsNameSpy.mockReturnValue({
-            data: null,
-        } as unknown as wagmi.UseEnsNameReturnType);
         render(createTestComponent());
         expect(
             screen.getByText(addressUtils.truncateAddress(address)),

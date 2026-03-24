@@ -22,6 +22,17 @@ const wagmiAdapter = new WagmiAdapter({
         createClient({
             chain,
             transport: http(`/api/rpc/${chain.id.toString()}`),
+            // Enables automatic batching of all readContract calls (including ENS
+            // resolution from useEnsName / getEnsText) into a single eth_call via
+            // the Multicall3 contract. 50 list items = 1 HTTP request instead of 50.
+            //
+            // Known limitations:
+            // - Multicall3 must be deployed on the target chain (available on all major
+            //   EVM chains including mainnet, Arbitrum, Base, Polygon, etc.)
+            // - simulateContract calls are NOT batched (by viem design)
+            // - RPC-level errors inside a batch (e.g. rate-limit 429) may not trigger
+            //   retries since the HTTP response is still 200
+            batch: { multicall: true },
         }),
     projectId: walletConnectDefinitions.projectId,
     storage: createStorage({ storage: cookieStorage }),

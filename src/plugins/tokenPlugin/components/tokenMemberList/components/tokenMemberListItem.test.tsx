@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as ensModule from '@/modules/ens';
 import {
     generateTokenMember,
     generateTokenPluginSettings,
@@ -19,15 +20,27 @@ import {
 
 describe('<TokenMemberListItem /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsAvatarSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsAvatar>);
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -50,12 +63,17 @@ describe('<TokenMemberListItem /> component', () => {
     };
 
     it('renders the token member', () => {
+        const ensName = 'tttt.eth';
         const member = generateTokenMember({
             ens: 'tttt.eth',
             address: '0x123',
         });
+        useEnsNameSpy.mockReturnValue({
+            data: ensName,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
         render(createTestComponent({ member }));
-        expect(screen.getByText(member.ens!)).toBeInTheDocument();
+        expect(screen.getByText(ensName)).toBeInTheDocument();
     });
 
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {

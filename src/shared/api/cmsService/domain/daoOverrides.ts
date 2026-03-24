@@ -22,6 +22,13 @@ export interface IDaoOverride {
     comment?: string;
     /** Plugins to hide in the UI for this DAO. Only field used by the app (via daoVisibilityUtils). */
     pluginsToHide?: IDaoOverridePluginMetadata[];
+    /**
+     * Nav links to hide in the UI for this DAO.
+     * Mainly for hiding "default" nav links, "plugin" nav links could be hidden via `pluginsToHide` instead.
+     *
+     * @example ['assets', 'settings']
+     */
+    navLinksToHide?: string[];
 }
 
 /**

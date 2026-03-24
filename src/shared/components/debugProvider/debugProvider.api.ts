@@ -6,7 +6,7 @@ export interface IDebugContextControl {
     /**
      * Control type used to define the component to be rendered.
      */
-    type: 'boolean' | 'string';
+    type: 'boolean' | 'string' | 'address';
     /**
      * Name of the control.
      */

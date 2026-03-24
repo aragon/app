@@ -11,6 +11,7 @@ class NavigationDaoUtils {
     buildLinks = (
         dao: IDao,
         context: NavigationDaoContext,
+        navLinksToHide: string[] = [],
     ): INavigationLink[] => {
         const baseUrl = daoUtils.getDaoUrl(dao)!;
 
@@ -20,7 +21,10 @@ class NavigationDaoUtils {
         const allLinks = [...left, ...defaultLinks, ...right];
 
         // Deduplicate links by URL to avoid duplicate navigation items, e.g. multiple "gauge" plugins are possible
-        const seen = new Set<string>();
+        // Also, filter out links that should be hidden.
+        const seen = new Set<string>(
+            navLinksToHide.map((route) => `${baseUrl}/${route}`),
+        );
         return allLinks.filter((link) => {
             if (seen.has(link.link)) {
                 return false;

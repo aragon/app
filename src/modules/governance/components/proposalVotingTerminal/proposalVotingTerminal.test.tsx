@@ -2,6 +2,7 @@ import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDaoPluginInfo from '@/shared/hooks/useDaoPluginInfo';
@@ -34,7 +35,7 @@ describe('<ProposalVotingTerminal /> component', () => {
         'useSlotSingleFunction',
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useEnsNameSpy = jest.spyOn(wagmi, 'useEnsName');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useDaoPluginInfoSpy = jest.spyOn(
         useDaoPluginInfo,
         'useDaoPluginInfo',
@@ -43,13 +44,17 @@ describe('<ProposalVotingTerminal /> component', () => {
     beforeEach(() => {
         useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
         useDaoPluginInfoSpy.mockReturnValue([]);
-        useEnsNameSpy.mockReturnValue({} as wagmi.UseEnsNameReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: undefined,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
     });
 
     afterEach(() => {
         useConnectionSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
         useDaoPluginInfoSpy.mockReset();
+        useEnsNameSpy.mockReset();
     });
 
     const createTestComponent = (

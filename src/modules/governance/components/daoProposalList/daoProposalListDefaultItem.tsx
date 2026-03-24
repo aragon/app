@@ -1,4 +1,5 @@
 import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
+import { useEnsName } from '@/modules/ens';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IDao } from '@/shared/api/daoService';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -54,7 +55,8 @@ export const DaoProposalListDefaultItem: React.FC<
     const proposalHref = proposalUtils.getProposalUrl(proposal, dao);
 
     const publisherHref = daoUtils.getDaoUrl(dao, `members/${creator.address}`);
-    const publisherName = creator.ens ?? undefined;
+    const { data: publisherEnsName } = useEnsName(creator.address);
+    const publisherName = publisherEnsName ?? undefined;
 
     return (
         <ProposalDataListItem.Structure

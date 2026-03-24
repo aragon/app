@@ -2,9 +2,9 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
+import { featuredDaosOptions } from '@/shared/api/cmsService';
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { featuredDaosOptions } from '../../api/cmsService';
 import { daoListOptions } from '../../api/daoExplorerService';
 import { ExploreDaosPage, type IExploreDaosPageProps } from './exploreDaosPage';
 

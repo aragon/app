@@ -125,10 +125,13 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             }),
         },
         copyValue: tokenAddress,
-        description: t('app.plugins.token.tokenMemberInfo.tokenNameAndSymbol', {
-            tokenName,
-            tokenSymbol,
-        }),
+        description: t(
+            'app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol',
+            {
+                tokenName,
+                tokenSymbol,
+            },
+        ),
     };
 
     const contractInfo = useDaoPluginInfo({

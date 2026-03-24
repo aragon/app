@@ -1,8 +1,6 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { Hex } from 'viem';
-import { mainnet } from 'viem/chains';
-import { useEnsName } from 'wagmi';
+import { useEnsName } from '@/modules/ens';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
@@ -33,10 +31,7 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
     const { proposal, body, stage, canVote } = props;
 
     const { t } = useTranslations();
-    const { data: ensName } = useEnsName({
-        address: body as Hex,
-        chainId: mainnet.id,
-    });
+    const { data: ensName } = useEnsName(body);
 
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const displayName = ensName ?? addressUtils.truncateAddress(body);

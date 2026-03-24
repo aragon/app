@@ -18,6 +18,7 @@ import {
     useGukModulesContext,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { useEnsName } from '@/modules/ens';
 import { ProposalExecutionStatus } from '@/modules/governance/components/proposalExecutionStatus';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
@@ -128,6 +129,8 @@ export const DaoProposalDetailsPageClient: React.FC<
         isError: hasSimulationFailed,
     } = useSimulateProposal();
 
+    const { data: creatorEnsName } = useEnsName(proposal?.creator.address);
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -196,7 +199,7 @@ export const DaoProposalDetailsPageClient: React.FC<
     );
 
     const creatorName =
-        creator.ens ?? addressUtils.truncateAddress(creator.address);
+        creatorEnsName ?? addressUtils.truncateAddress(creator.address);
 
     const creatorLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -409,7 +412,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={creator.ens ?? creator.address}
+                                copyValue={creatorEnsName ?? creator.address}
                                 link={{ href: creatorLink }}
                                 term={t(
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',

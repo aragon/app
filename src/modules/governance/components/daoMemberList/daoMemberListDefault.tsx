@@ -7,15 +7,20 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
 import { useConnection } from 'wagmi';
+import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type {
     IGetMemberListParams,
     IMember,
 } from '@/modules/governance/api/governanceService';
-import { useMember } from '@/modules/governance/api/governanceService';
+import {
+    useMember,
+    useMemberExists,
+} from '@/modules/governance/api/governanceService';
 import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
 import {
     type IDaoPlugin,
     type IPluginSettings,
+    type Network,
     useDao,
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -98,12 +103,25 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         memberList,
     } = useMemberListData(apiParams);
 
+    const { data: memberExists } = useMemberExists(
+        {
+            urlParams: {
+                memberAddress: connectedAddress ?? '',
+                pluginAddress: plugin.address,
+            },
+            queryParams: { network: dao?.network as Network },
+        },
+        { enabled: connectedAddress != null && dao?.network != null },
+    );
+
+    const isMember = memberExists?.status === true;
+
     const { data: connectedUserMember } = useMember(
         {
             urlParams: { address: connectedAddress ?? '' },
             queryParams: apiParams.queryParams,
         },
-        { enabled: connectedAddress != null },
+        { enabled: isMember },
     );
 
     const mergedMemberList = useMemo(() => {
@@ -131,7 +149,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
-    const getMemberLink = (member: IMember) =>
+    const getMemberLink = (member: IMember): string | undefined =>
         onMemberClick != null
             ? undefined
             : daoUtils.getDaoUrl(dao, `members/${member.address}`);
@@ -151,12 +169,10 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
                 SkeletonElement={MemberDataListItem.Skeleton}
             >
                 {mergedMemberList?.map((member) => (
-                    <MemberDataListItem.Structure
-                        address={member.address}
-                        className="min-w-0"
-                        ensName={member.ens ?? undefined}
+                    <EnsAwareMemberItem
                         href={getMemberLink(member)}
                         key={member.address}
+                        member={member}
                         onClick={() => onMemberClick?.(member)}
                     />
                 ))}
@@ -164,5 +180,34 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
             {!hidePagination && <DataListPagination />}
             {children}
         </DataListRoot>
+    );
+};
+
+/**
+ * Wrapper component that resolves ENS name and avatar for each member in the list.
+ *
+ * Extracted from the inline `.map()` because React hooks cannot
+ * be called inside a callback — they must be called at the top level of a component.
+ * With `batch.multicall` enabled on the viem client, the ENS reads across
+ * the rendered list items are auto-batched into RPC multicalls.
+ */
+const EnsAwareMemberItem: React.FC<{
+    member: IMember;
+    href?: string;
+    onClick?: () => void;
+}> = (props) => {
+    const { member, href, onClick } = props;
+    const { data: ensName } = useEnsName(member.address);
+    const { data: ensAvatar } = useEnsAvatar(ensName);
+
+    return (
+        <MemberDataListItem.Structure
+            address={member.address}
+            avatarSrc={ensAvatar ?? undefined}
+            className="min-w-0"
+            ensName={ensName ?? undefined}
+            href={href}
+            onClick={onClick}
+        />
     );
 };

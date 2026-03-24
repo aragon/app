@@ -42,13 +42,35 @@ describe('Http service', () => {
             );
         });
 
-        it('does not cache the request', async () => {
+        it('does not cache the request by default', async () => {
             fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
             const url = '/entity';
             await serviceTest.request(url);
             expect(fetchSpy).toHaveBeenCalledWith(
                 expect.anything(),
                 expect.objectContaining({ cache: 'no-store' }),
+            );
+        });
+
+        it('uses custom fetchCacheConfig when overridden by subclass', async () => {
+            fetchSpy.mockResolvedValue(generateResponse({ ok: true }));
+            const revalidate = 300;
+
+            class CachedService extends HttpService {
+                protected override fetchCacheConfig = {
+                    cache: 'force-cache',
+                    next: { revalidate },
+                } as const;
+            }
+
+            const cachedService = new CachedService('https://example.com');
+            await cachedService.request('/test');
+            expect(fetchSpy).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({
+                    cache: 'force-cache',
+                    next: { revalidate },
+                }),
             );
         });
 

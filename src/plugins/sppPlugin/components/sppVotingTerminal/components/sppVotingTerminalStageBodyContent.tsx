@@ -3,8 +3,7 @@ import {
     ProposalVoting,
     ProposalVotingTab,
 } from '@aragon/gov-ui-kit';
-import type { Hex } from 'viem';
-import { useEnsName } from 'wagmi';
+import { useEnsName } from '@/modules/ens';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
@@ -39,7 +38,7 @@ export const SppVotingTerminalStageBodyContent: React.FC<
 > = (props) => {
     const { plugin, stage, proposal, daoId, displayStatus } = props;
 
-    const { data: pluginEns } = useEnsName({ address: plugin.address as Hex });
+    const { data: pluginEns } = useEnsName(plugin.address);
 
     const status = sppStageUtils.getStageStatus(proposal, stage);
 

@@ -4,13 +4,8 @@ import {
     useDebugContext,
 } from '@/shared/components/debugProvider';
 import { sanitizePlainText } from '@/shared/security';
-
-export interface IDebugPanelControlProps {
-    /**
-     * Control to be rendered.
-     */
-    control: IDebugContextControl;
-}
+import { AddressInputControl } from './addressInputControl';
+import type { IDebugPanelControlProps } from './debugPanelControl.api';
 
 export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     const { control } = props;
@@ -36,6 +31,16 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
                 onCheckedChanged={(event) =>
                     handleValueChange(name, event, onChange)
                 }
+            />
+        );
+    }
+
+    if (type === 'address') {
+        return (
+            <AddressInputControl
+                label={label}
+                name={name}
+                onChange={onChange}
             />
         );
     }
