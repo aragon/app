@@ -40,7 +40,7 @@ jest.mock('@/modules/explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
-jest.mock('@/modules/explore/api/cmsService', () => ({
+jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => ({ data: undefined }),
 }));
 

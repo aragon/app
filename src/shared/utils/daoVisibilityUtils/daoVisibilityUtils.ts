@@ -1,4 +1,4 @@
-import type { IDaoOverride } from '@/modules/explore/api/cmsService';
+import type { IDaoOverride } from '@/shared/api/cmsService';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 
 /**

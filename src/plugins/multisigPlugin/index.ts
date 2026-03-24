@@ -5,7 +5,6 @@ import { useMultisigPermissionCheckProposalCreation } from '@/plugins/multisigPl
 import { useMultisigPermissionCheckVoteSubmission } from '@/plugins/multisigPlugin/hooks/useMultisigPermissionCheckVoteSubmission';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { MultisigCreateProposalSettingsForm } from './components/multisigCreateProposalSettingsForm';
-import { MultisigMemberInfo } from './components/multisigMemberInfo';
 import { MultisigProcessBodyField } from './components/multisigProcessBodyField';
 import { MultisigProposalCreationSettings } from './components/multisigProposalCreationSettings';
 import { MultisigProposalVotingBreakdown } from './components/multisigProposalVotingBreakdown';
@@ -104,11 +103,6 @@ export const initialiseMultisigPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: multisigPlugin.id,
             function: useMultisigGovernanceSettings,
-        })
-        .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
-            pluginId: multisigPlugin.id,
-            component: MultisigMemberInfo,
         })
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA,
