@@ -5,3 +5,4 @@ export {
     sanitizePlainText,
     sanitizePlainTextMultiline,
 } from './htmlSanitizer';
+export { sanitizeExternalHttpUrl } from './sanitizeExternalUrl';

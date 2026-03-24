@@ -14,7 +14,7 @@ import { logEnsError } from '../utils/logEnsError';
  * @param name - ENS name (for example `"vitalik.eth"`), or `null`/`undefined` to skip.
  */
 export function useEnsAvatar(name: string | null | undefined) {
-    const { error: normalizeError, normalizedName } = useMemo(() => {
+    const { error: normalizedError, normalizedName } = useMemo(() => {
         if (name == null || name.length === 0) {
             return {
                 error: null,
@@ -46,16 +46,16 @@ export function useEnsAvatar(name: string | null | undefined) {
     });
 
     useEffect(() => {
-        if (normalizeError == null || name == null) {
+        if (normalizedError == null || name == null) {
             return;
         }
-        logEnsError(normalizeError, {
+        logEnsError(normalizedError, {
             hook: 'useEnsAvatar',
             stage: 'normalize',
             name,
             chainId: ENS_CHAIN_ID,
         });
-    }, [normalizeError, name]);
+    }, [normalizedError, name]);
 
     useEffect(() => {
         if (result.error == null || normalizedName == null) {

@@ -1,5 +1,6 @@
-import { Link, urlUtils } from '@aragon/gov-ui-kit';
+import { Link } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { sanitizeExternalHttpUrl } from '@/shared/security';
 
 export interface IMemberLinksCardProps {
     /** ENS `url` text record. */
@@ -42,27 +43,6 @@ export function buildGithubUrl(handle: string): string | null {
 }
 
 /**
- * Normalizes a website URL using the shared UI kit utility and only allows
- * absolute HTTP(S) targets.
- */
-export function sanitizeUrl(url: string): string | null {
-    const normalized = urlUtils.normalizeExternalHref(url);
-    if (normalized == null) {
-        return null;
-    }
-
-    try {
-        const parsed = new URL(normalized);
-        if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-            return parsed.href;
-        }
-        return null;
-    } catch {
-        return null;
-    }
-}
-
-/**
  * Renders a list of external links (Website, X, GitHub) resolved from ENS text records.
  * Returns `null` when no links are available so the parent can skip rendering the card.
  */
@@ -73,7 +53,7 @@ export const MemberLinksCard: React.FC<IMemberLinksCardProps> = (props) => {
     const links: ILinkEntry[] = [];
 
     if (url) {
-        const safe = sanitizeUrl(url);
+        const safe = sanitizeExternalHttpUrl(url);
         if (safe) {
             links.push({
                 labelKey:
