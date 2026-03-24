@@ -1,16 +1,11 @@
-import { AddressInput, InputText, Switch } from '@aragon/gov-ui-kit';
+import { InputText, Switch } from '@aragon/gov-ui-kit';
 import {
     type IDebugContextControl,
     useDebugContext,
 } from '@/shared/components/debugProvider';
 import { sanitizePlainText } from '@/shared/security';
-
-export interface IDebugPanelControlProps {
-    /**
-     * Control to be rendered.
-     */
-    control: IDebugContextControl;
-}
+import { AddressInputControl } from './addressInputControl';
+import type { IDebugPanelControlProps } from './debugPanelControl.api';
 
 export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
     const { control } = props;
@@ -42,13 +37,10 @@ export const DebugPanelControl: React.FC<IDebugPanelControlProps> = (props) => {
 
     if (type === 'address') {
         return (
-            <AddressInput
+            <AddressInputControl
                 label={label}
-                onAccept={(resolved) =>
-                    handleValueChange(name, resolved?.address, onChange)
-                }
-                onChange={(value) => handleValueChange(name, value, onChange)}
-                value={(values[name] as string | undefined) ?? ''}
+                name={name}
+                onChange={onChange}
             />
         );
     }

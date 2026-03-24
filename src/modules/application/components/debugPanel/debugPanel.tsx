@@ -9,9 +9,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAddressImpersonation } from '../../hooks/useAddressImpersonation';
 import { DebugPanelControl } from './debugPanelControl';
 
-export interface IDebugPanelProps {}
-
-export const DebugPanel: React.FC<IDebugPanelProps> = () => {
+export const DebugPanel: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const { controls, registerControl } = useDebugContext();

@@ -1,1 +1,1 @@
-export { DebugPanel, type IDebugPanelProps } from './debugPanel';
+export { DebugPanel } from './debugPanel';
