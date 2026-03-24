@@ -50,7 +50,7 @@ describe('useTokenMemberStats hook', () => {
         const member = generateTokenMember({
             votingPower: '47928374987234',
             metrics: generateTokenMemberMetrics({
-                delegateReceivedCount: 47_928_374,
+                delegationCount: 47_928_374,
             }),
         });
         useMemberSpy.mockReturnValue(

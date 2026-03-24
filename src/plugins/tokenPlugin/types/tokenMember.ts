@@ -11,10 +11,6 @@ export interface ITokenMember extends Omit<IMember, 'metrics'> {
      */
     votingPower: string | null;
     /**
-     * Number of delegations the member has.
-     */
-    delegationCount: number;
-    /**
      * Metrics for the token member.
      */
     metrics: ITokenMemberMetrics;

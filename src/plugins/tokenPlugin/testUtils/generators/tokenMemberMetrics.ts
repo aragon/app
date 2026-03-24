@@ -5,6 +5,6 @@ export const generateTokenMemberMetrics = (
     metrics?: Partial<ITokenMemberMetrics>,
 ): ITokenMemberMetrics => ({
     ...generateMemberMetrics(),
-    delegateReceivedCount: 0,
+    delegationCount: 0,
     ...metrics,
 });

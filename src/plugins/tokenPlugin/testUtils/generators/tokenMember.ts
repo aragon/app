@@ -8,7 +8,6 @@ export const generateTokenMember = (
     ...generateMember(),
     type: 'token-voting',
     votingPower: '0',
-    delegationCount: 2,
     metrics: generateTokenMemberMetrics(),
     ...member,
 });
