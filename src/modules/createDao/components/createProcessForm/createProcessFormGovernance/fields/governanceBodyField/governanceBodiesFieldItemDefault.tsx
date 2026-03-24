@@ -3,9 +3,8 @@ import {
     ChainEntityType,
     DefinitionList,
 } from '@aragon/gov-ui-kit';
-import type { Hash } from 'viem';
-import { useEnsName } from 'wagmi';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useEnsName } from '@/modules/ens';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -32,10 +31,9 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
 
-    const { data: ensName } = useEnsName({
-        address:
-            body.type !== BodyType.NEW ? (body.address as Hash) : undefined,
-    });
+    const { data: ensName } = useEnsName(
+        body.type !== BodyType.NEW ? body.address : undefined,
+    );
 
     if (body.type !== BodyType.EXTERNAL && body.type !== BodyType.EXISTING) {
         return null;

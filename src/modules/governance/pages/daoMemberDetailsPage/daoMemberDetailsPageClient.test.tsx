@@ -10,6 +10,8 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
+import { ENS_RECORD_KEYS } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
@@ -40,7 +42,7 @@ jest.mock('@/modules/explore/components/daoList', () => ({
     DaoList: jest.fn(() => <div data-testid="dao-list-mock" />),
 }));
 
-jest.mock('@/modules/explore/api/cmsService', () => ({
+jest.mock('@/shared/api/cmsService', () => ({
     useDaoOverrides: () => ({ data: undefined }),
 }));
 
@@ -54,6 +56,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useEfpStatsSpy = jest.spyOn(efpService, 'useEfpStats');
     const useBlockSpy = jest.spyOn(wagmi, 'useBlock');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
+    const useEnsRecordsSpy = jest.spyOn(ensModule, 'useEnsRecords');
 
     const defaultPlugin = generateDaoPlugin({ isBody: true });
 
@@ -72,6 +77,18 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             }),
         );
         useBlockSpy.mockReturnValue({} as wagmi.UseBlockReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsAvatarSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsAvatar>);
+        useEnsRecordsSpy.mockReturnValue({
+            data: {},
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsRecords>);
     });
 
     afterEach(() => {
@@ -80,6 +97,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         clipboardCopySpy.mockReset();
         useEfpStatsSpy.mockReset();
         useBlockSpy.mockReset();
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
+        useEnsRecordsSpy.mockReset();
         (DaoList as jest.Mock).mockClear();
     });
 
@@ -113,13 +133,17 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         });
         const address = '0x1234567890123456789012345678901234567890';
         const ens = 'member.eth';
-        const member = generateMember({ ens, address });
+        const member = generateMember({ address });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: member }),
         );
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: dao }),
         );
+        useEnsNameSpy.mockReturnValue({
+            data: ens,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
 
         render(
             createTestComponent({
@@ -154,10 +178,14 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('supports member address and ens copy', async () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({ ens, address });
+        const member = generateMember({ address });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: member }),
         );
+        useEnsNameSpy.mockReturnValue({
+            data: ens,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
         render(createTestComponent({ address }));
         const clipboards = screen.getAllByTestId(IconType.COPY);
         expect(clipboards.length).toBe(2);
@@ -170,10 +198,14 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('renders the member information', () => {
         const ens = 'member.eth';
         const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({ ens, address });
+        const member = generateMember({ address });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: member }),
         );
+        useEnsNameSpy.mockReturnValue({
+            data: ens,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
         render(createTestComponent({ address }));
 
         expect(
@@ -217,6 +249,67 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders bio and ENS links when records are present', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'member.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsRecordsSpy.mockReturnValue({
+            data: {
+                [ENS_RECORD_KEYS.description]: 'Delegate bio',
+                [ENS_RECORD_KEYS.url]: 'example.com',
+                [ENS_RECORD_KEYS.twitter]: 'member_handle',
+                [ENS_RECORD_KEYS.github]: 'member-dev',
+            },
+            isLoading: false,
+        } as unknown as ReturnType<typeof ensModule.useEnsRecords>);
+
+        render(createTestComponent());
+
+        expect(screen.getByText('Delegate bio')).toBeInTheDocument();
+        expect(
+            screen.getByText(/daoMemberDetailsPage.aside.links.title/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /daoMemberDetailsPage.aside.links.website/,
+            }),
+        ).toHaveAttribute('href', 'https://example.com/');
+        expect(
+            screen.getByRole('link', {
+                name: /daoMemberDetailsPage.aside.links.twitter/,
+            }),
+        ).toHaveAttribute('href', 'https://x.com/member_handle');
+        expect(
+            screen.getByRole('link', {
+                name: /daoMemberDetailsPage.aside.links.github/,
+            }),
+        ).toHaveAttribute('href', 'https://github.com/member-dev');
+    });
+
+    it('does not render the links card when no ENS links are available', () => {
+        useEnsNameSpy.mockReturnValue({
+            data: 'member.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsRecordsSpy.mockReturnValue({
+            data: {
+                [ENS_RECORD_KEYS.description]: 'Delegate bio',
+                [ENS_RECORD_KEYS.url]: null,
+                [ENS_RECORD_KEYS.twitter]: null,
+                [ENS_RECORD_KEYS.github]: null,
+            },
+            isLoading: false,
+        } as unknown as ReturnType<typeof ensModule.useEnsRecords>);
+
+        render(createTestComponent());
+
+        expect(screen.getByText('Delegate bio')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/daoMemberDetailsPage.aside.links.title/),
+        ).not.toBeInTheDocument();
+    });
+
     it('passes the correct params to the DaoList component', () => {
         const plugin = generateDaoPlugin({
             address: 'plugin-address',
@@ -227,7 +320,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             plugins: [plugin],
         });
         const address = '0x1234567890123456789012345678901234567890';
-        const member = generateMember({ ens: 'member.eth', address });
+        const member = generateMember({ address });
         const pageSize = 3;
         const excludeDaoId = dao.id;
 
@@ -237,6 +330,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: dao }),
         );
+        useEnsNameSpy.mockReturnValue({
+            data: 'member.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
 
         render(
             createTestComponent({

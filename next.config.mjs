@@ -68,6 +68,10 @@ const sentryConfig = {
         : { deleteSourcemapsAfterUpload: true },
     // Disable sending data to Sentry
     telemetry: false,
+    // Mark first-party bundles for thirdPartyErrorFilterIntegration
+    _experimental: {
+        turbopackApplicationKey: 'aragon-app',
+    },
 };
 
 /** @type {import('next').NextConfig} */

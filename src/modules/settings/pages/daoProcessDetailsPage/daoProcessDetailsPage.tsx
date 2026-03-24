@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
-import { daoOverridesOptions } from '@/modules/explore/api/cmsService';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
+import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';

@@ -1,7 +1,7 @@
 import { addressUtils, InputText } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
-import { useSanctionedAddresses } from '@/modules/explore/api/cmsService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
+import { useSanctionedAddresses } from '@/shared/api/cmsService';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';

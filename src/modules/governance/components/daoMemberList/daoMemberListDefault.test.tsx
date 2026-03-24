@@ -1,6 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
+import * as ensModule from '@/modules/ens';
 import type { IMember } from '@/modules/governance/api/governanceService';
 import * as governanceService from '@/modules/governance/api/governanceService';
 import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
@@ -24,6 +25,16 @@ describe('<DaoMemberListDefault /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
+    const useMemberExistsSpy = jest.spyOn(governanceService, 'useMemberExists');
+    const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
+    const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
+
+    const mockEnsNameByAddress = (entries: Record<string, string | null>) => {
+        useEnsNameSpy.mockImplementation(((address) => ({
+            data: address ? (entries[address] ?? null) : null,
+            isLoading: false,
+        })) as typeof ensModule.useEnsName);
+    };
 
     beforeEach(() => {
         useMemberListDataSpy.mockReturnValue({
@@ -46,6 +57,17 @@ describe('<DaoMemberListDefault /> component', () => {
                 data: undefined as unknown as IMember,
             }),
         );
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: false } }),
+        );
+        useEnsNameSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useEnsAvatarSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsAvatar>);
     });
 
     afterEach(() => {
@@ -53,6 +75,9 @@ describe('<DaoMemberListDefault /> component', () => {
         useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
         useMemberSpy.mockReset();
+        useMemberExistsSpy.mockReset();
+        useEnsNameSpy.mockReset();
+        useEnsAvatarSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -74,10 +99,15 @@ describe('<DaoMemberListDefault /> component', () => {
     };
 
     it('fetches and renders the multisig member list', () => {
+        const resolvedEns = 'member-1';
         const members = [
             generateMember({ address: '0x123' }),
-            generateMember({ address: '0x456', ens: 'member-1' }),
+            generateMember({ address: '0x456', ens: resolvedEns }),
         ];
+        mockEnsNameByAddress({
+            '0x123': null,
+            '0x456': resolvedEns,
+        });
         useMemberListDataSpy.mockReturnValue({
             memberList: members,
             onLoadMore: jest.fn(),
@@ -89,7 +119,7 @@ describe('<DaoMemberListDefault /> component', () => {
         });
         render(createTestComponent());
         expect(screen.getByText(members[0].address)).toBeInTheDocument();
-        expect(screen.getByText(members[1].ens!)).toBeInTheDocument();
+        expect(screen.getByText(resolvedEns)).toBeInTheDocument();
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
@@ -129,6 +159,14 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
+        mockEnsNameByAddress({
+            [userAddress]: 'you.eth',
+            [otherAddress]: 'other.eth',
+        });
+
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: true } }),
+        );
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember, userMember],
@@ -164,6 +202,9 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
+        mockEnsNameByAddress({
+            [otherMember.address]: 'other.eth',
+        });
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember],
@@ -204,6 +245,14 @@ describe('<DaoMemberListDefault /> component', () => {
         useConnectionSpy.mockReturnValue({
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
+        mockEnsNameByAddress({
+            [userAddress]: 'you.eth',
+            [otherMember.address]: 'other.eth',
+        });
+
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: true } }),
+        );
 
         useMemberListDataSpy.mockReturnValue({
             memberList: [otherMember, userMember],

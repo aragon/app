@@ -1566,6 +1566,12 @@
           },
           "efpCard": {
             "title": "Ethereum Follow Protocol"
+          },
+          "links": {
+            "title": "Links",
+            "website": "Website",
+            "twitter": "X",
+            "github": "GitHub"
           }
         },
         "error": {
@@ -1872,10 +1878,6 @@
           "item": {
             "alreadyMember": "Address is already an admin of the DAO"
           }
-        },
-        "adminMemberInfo": {
-          "admins": "Admins",
-          "membersCount": "{{count}} addresses"
         },
         "adminPermissionCheckProposalCreation": {
           "function": "Proposal creation",
@@ -2472,13 +2474,6 @@
           "minimumVeto": "Minimum veto",
           "proposalCreation": "Proposal creation"
         },
-        "multisigMembersInfo": {
-          "eligibleVoters": "Eligible voters",
-          "linkDescription": "View all members",
-          "membersCount": "See {{count}} addresses",
-          "membersLabel": "Members",
-          "multisigMembers": "Multisig members"
-        },
         "multisigPermissionCheckProposalCreation": {
           "function": "Proposal creation",
           "pluginLabelName": "Name",
@@ -2745,17 +2740,6 @@
           "voteChange": "Vote change",
           "yes": "Enabled"
         },
-        "tokenMemberInfo": {
-          "distribution": "Members",
-          "eligibleVoters": "Eligible voters",
-          "members": "Members",
-          "supply": "Supply",
-          "tokenDistribution": "{{count}} delegates",
-          "tokenHolders": "Token holders",
-          "tokenLabel": "Token",
-          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
-          "tokenSupply": "{{supply}} {{symbol}}"
-        },
         "tokenMemberList": {
           "entity": "Members",
           "lockOnboardingCard": {
@@ -2819,6 +2803,7 @@
           "supportDefinition": "> {{threshold}}%",
           "supportTerm": "Support threshold",
           "tokenTerm": "Token",
+          "tokenNameAndSymbol": "{{tokenName}} ({{tokenSymbol}})",
           "voteChange": "Vote change"
         },
         "tokenProposalCreationSettings": {

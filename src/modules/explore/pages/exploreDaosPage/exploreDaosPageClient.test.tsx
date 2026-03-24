@@ -1,13 +1,13 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as Wagmi from 'wagmi';
+import * as CmsService from '@/shared/api/cmsService';
 import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import {
     generateDialogContext,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
-import * as CmsService from '../../api/cmsService';
 import {
     ExploreDaosPageClient,
     type IExploreDaosPageClientProps,

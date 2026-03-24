@@ -3,15 +3,18 @@
 import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
+import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGetCampaignListParams } from '../../api/capitalDistributorService';
 import { CapitalDistributorCampaignList } from '../../components/capitalDistributorCampaignList';
 import { CapitalDistributorRewardsStats } from '../../components/capitalDistributorRewardsStats';
+import { CapitalDistributorPluginPages } from '../../constants/capitalDistributorPlugin';
 
 export interface ICapitalDistributorRewardsPageClientProps {
     /**
@@ -37,6 +40,17 @@ export const CapitalDistributorRewardsPageClient: React.FC<
         daoId: dao.id,
         pluginAddress: initialParams.queryParams.pluginAddress,
     })![0];
+
+    const { data: daoOverrides } = useDaoOverrides();
+    const daoOverride = daoOverrides?.[dao.id];
+    const isRewardsPageHidden = daoOverride?.navLinksToHide?.includes(
+        CapitalDistributorPluginPages.REWARDS,
+    );
+
+    if (isRewardsPageHidden) {
+        const daoUrl = daoUtils.getDaoUrl(dao, 'dashboard')!;
+        return <RedirectToUrl url={daoUrl} />;
+    }
 
     const pluginName = daoUtils.getPluginName(plugin.meta);
     const { description, links } = plugin.meta;

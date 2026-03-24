@@ -2,8 +2,6 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { useAdminPermissionCheckProposalCreation } from '@/plugins/adminPlugin/hooks/useAdminPermissionCheckProposalCreation';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { AdminMemberInfo } from './components/adminMemberInfo';
-import { AdminSettingsPanel } from './components/adminSettingsPanel';
 import { AdminVotingTerminal } from './components/adminVotingTerminal';
 import { adminPlugin } from './constants/adminPlugin';
 import { useAdminGovernanceSettings } from './hooks/useAdminGovernanceSettings';
@@ -48,15 +46,5 @@ export const initialiseAdminPlugin = () => {
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
             pluginId: adminPlugin.id,
             function: useAdminGovernanceSettings,
-        })
-        .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_MEMBERS_INFO,
-            pluginId: adminPlugin.id,
-            component: AdminMemberInfo,
-        })
-        .registerSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_PANEL,
-            pluginId: adminPlugin.id,
-            component: AdminSettingsPanel,
         });
 };
