@@ -1,0 +1,310 @@
+'use client';
+
+import {
+    addressUtils,
+    Button,
+    Card,
+    EmptyState,
+    Heading,
+    IconType,
+    invariant,
+    Tag,
+} from '@aragon/gov-ui-kit';
+import Image from 'next/image';
+import type { Hex } from 'viem';
+import { useConnection } from 'wagmi';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
+import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
+import { useEnsName } from '@/modules/ens';
+import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
+import type { IDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
+import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
+
+export interface IDashboardOnboardingProps {
+    /**
+     * The DAO data.
+     */
+    dao: IDao;
+}
+
+export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
+    props,
+) => {
+    const { dao } = props;
+
+    const { open } = useDialogContext();
+    const { address } = useConnection();
+    const { data: ensName } = useEnsName(address);
+
+    const { isAdminMember, adminPlugin } = useAdminStatus({
+        daoId: dao.id,
+        network: dao.network,
+    });
+
+    const displayName =
+        ensName ?? (address ? addressUtils.truncateAddress(address) : null);
+
+    const daoUrl = daoUtils.getDaoUrl(dao)!;
+
+    const handleAddGovernance = () => {
+        invariant(
+            adminPlugin != null,
+            'DashboardOnboarding: admin plugin is expected.',
+        );
+        const params: ICreateProcessDetailsDialogParams = {
+            daoUrl,
+            pluginAddress: adminPlugin.address as Hex,
+        };
+        open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
+    };
+
+    if (isAdminMember) {
+        return (
+            <AdminOnboarding
+                displayName={displayName}
+                onAddGovernance={handleAddGovernance}
+            />
+        );
+    }
+
+    const viewAdminsHref = `${daoUrl}/members?${daoMembersPageFilterParam}=${adminPlugin?.slug ?? ''}`;
+
+    return (
+        <NonAdminOnboarding
+            displayName={displayName}
+            viewAdminsHref={viewAdminsHref}
+        />
+    );
+};
+
+interface IAdminOnboardingProps {
+    /**
+     * Display name of the connected user (ENS or truncated address).
+     */
+    displayName: string | null;
+    /**
+     * Callback to open the governance designer dialog.
+     */
+    onAddGovernance: () => void;
+}
+
+const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
+    const { displayName, onAddGovernance } = props;
+
+    const { t } = useTranslations();
+
+    return (
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
+                <Heading size="h1">
+                    {t('app.dashboard.dashboardOnboarding.admin.welcome')}{' '}
+                    {displayName != null && (
+                        <span className="text-primary-400">{displayName}</span>
+                    )}
+                    <br />
+                    {t('app.dashboard.dashboardOnboarding.admin.subtitle')}
+                </Heading>
+                <p className="text-lg text-neutral-500">
+                    {t('app.dashboard.dashboardOnboarding.admin.description')}
+                </p>
+            </div>
+            <div className="flex flex-col gap-4">
+                <OnboardingCard
+                    actionHref="https://www.aragon.org/get-assistance-form"
+                    actionLabel={t(
+                        'app.dashboard.dashboardOnboarding.admin.enterprise.action',
+                    )}
+                    description={t(
+                        'app.dashboard.dashboardOnboarding.admin.enterprise.description',
+                    )}
+                    imgSrc={enterpriseServiceIcon as string}
+                    isPrimary={true}
+                    tag={t(
+                        'app.dashboard.dashboardOnboarding.admin.enterprise.tag',
+                    )}
+                    title={t(
+                        'app.dashboard.dashboardOnboarding.admin.enterprise.title',
+                    )}
+                />
+                <div className="flex items-center gap-4">
+                    <div className="h-px flex-1 bg-neutral-100" />
+                    <span className="text-neutral-300 text-sm">
+                        {t('app.dashboard.dashboardOnboarding.admin.divider')}
+                    </span>
+                    <div className="h-px flex-1 bg-neutral-100" />
+                </div>
+                <OnboardingCard
+                    actionLabel={t(
+                        'app.dashboard.dashboardOnboarding.admin.free.addGovernance',
+                    )}
+                    actionOnClick={onAddGovernance}
+                    description={t(
+                        'app.dashboard.dashboardOnboarding.admin.free.description',
+                    )}
+                    imgSrc={noCodeSetupIcon as string}
+                    isPrimary={false}
+                    secondaryActionHref="https://docs.aragon.org"
+                    secondaryActionLabel={t(
+                        'app.dashboard.dashboardOnboarding.admin.free.viewDocs',
+                    )}
+                    title={t(
+                        'app.dashboard.dashboardOnboarding.admin.free.title',
+                    )}
+                />
+            </div>
+        </div>
+    );
+};
+
+interface INonAdminOnboardingProps {
+    /**
+     * Display name of the connected user (ENS or truncated address).
+     */
+    displayName: string | null;
+    /**
+     * URL to the admin members page.
+     */
+    viewAdminsHref: string;
+}
+
+const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (props) => {
+    const { displayName, viewAdminsHref } = props;
+
+    const { t } = useTranslations();
+
+    return (
+        <div className="flex flex-col gap-6">
+            <Heading size="h1">
+                {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
+                {displayName != null && (
+                    <span className="text-primary-400">{displayName}</span>
+                )}
+            </Heading>
+            <EmptyState
+                description={t(
+                    'app.dashboard.dashboardOnboarding.nonAdmin.description',
+                )}
+                heading={t('app.dashboard.dashboardOnboarding.nonAdmin.title')}
+                humanIllustration={{
+                    body: 'ELEVATING',
+                    hairs: 'SHORT',
+                    accessory: 'PIERCINGS_TATTOO',
+                    sunglasses: 'LARGE_STYLIZED',
+                    expression: 'SMILE_WINK',
+                }}
+                secondaryButton={{
+                    label: t(
+                        'app.dashboard.dashboardOnboarding.nonAdmin.viewAdmins',
+                    ),
+                    href: viewAdminsHref,
+                }}
+            />
+        </div>
+    );
+};
+
+interface IOnboardingCardProps {
+    /**
+     * Headline image source.
+     */
+    imgSrc: string;
+    /**
+     * Title of the card.
+     */
+    title: string;
+    /**
+     * Description of the card.
+     */
+    description: string;
+    /**
+     * Whether the primary action button is a primary variant.
+     */
+    isPrimary: boolean;
+    /**
+     * Label for the primary action button.
+     */
+    actionLabel: string;
+    /**
+     * URL for the primary action button (opens external link).
+     */
+    actionHref?: string;
+    /**
+     * Callback for the primary action button.
+     */
+    actionOnClick?: () => void;
+    /**
+     * Optional tag label displayed in the top-right corner.
+     */
+    tag?: string;
+    /**
+     * Label for the secondary action button.
+     */
+    secondaryActionLabel?: string;
+    /**
+     * URL for the secondary action button (opens external link).
+     */
+    secondaryActionHref?: string;
+}
+
+const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
+    const {
+        imgSrc,
+        title,
+        description,
+        isPrimary,
+        actionLabel,
+        actionHref,
+        actionOnClick,
+        tag,
+        secondaryActionLabel,
+        secondaryActionHref,
+    } = props;
+
+    const isExternal = actionHref != null;
+
+    return (
+        <Card className="flex flex-col gap-6 border border-neutral-100 p-6">
+            <div className="flex items-start justify-between">
+                <div className="flex size-24 items-center justify-center rounded-full bg-neutral-50">
+                    {/* Decorative icon */}
+                    <Image alt="" src={imgSrc} />
+                </div>
+                {tag != null && <Tag label={tag} variant="primary" />}
+            </div>
+            <div className="flex flex-col gap-3">
+                <Heading size="h2">{title}</Heading>
+                <p className="text-base text-neutral-500 leading-normal">
+                    {description}
+                </p>
+            </div>
+            <div className="flex gap-4">
+                <Button
+                    href={actionHref}
+                    iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
+                    onClick={actionOnClick}
+                    size="md"
+                    target={isExternal ? '_blank' : undefined}
+                    variant={isPrimary ? 'primary' : 'secondary'}
+                >
+                    {actionLabel}
+                </Button>
+                {secondaryActionLabel != null && (
+                    <Button
+                        href={secondaryActionHref}
+                        iconRight={IconType.LINK_EXTERNAL}
+                        size="md"
+                        target="_blank"
+                        variant="tertiary"
+                    >
+                        {secondaryActionLabel}
+                    </Button>
+                )}
+            </div>
+        </Card>
+    );
+};

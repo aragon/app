@@ -1283,6 +1283,32 @@
           "proposals": "Proposals",
           "treasury": "Treasury"
         }
+      },
+      "dashboardOnboarding": {
+        "admin": {
+          "description": "Your DAO has no governance yet. Without it, only you can execute actions — your community can't participate. Choose how you want to set it up.",
+          "divider": "or",
+          "enterprise": {
+            "action": "Get in touch",
+            "description": "Most successful DAOs on Aragon are launched with expert guidance. Let our team design and deploy your governance — so you can focus on your project.",
+            "tag": "Recommended",
+            "title": "Work with Aragon's team"
+          },
+          "free": {
+            "addGovernance": "Add governance",
+            "description": "Deploy basic governance or custom processes with our no-code wizard. Best for technical teams who know what they need.",
+            "title": "Set up governance yourself",
+            "viewDocs": "View docs"
+          },
+          "subtitle": "Now, let's get started!",
+          "welcome": "Welcome"
+        },
+        "nonAdmin": {
+          "description": "The admin is configuring governance. Once it's live, you'll be able to view proposals, vote, and participate.",
+          "title": "This DAO is being set up",
+          "viewAdmins": "View admins",
+          "welcome": "Welcome"
+        }
       }
     },
     "explore": {
