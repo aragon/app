@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import type React from 'react';
 
-export interface ICtaCardProps {
+interface ICtaCardBaseProps {
     /**
      * Headline image source.
      */
@@ -29,18 +29,40 @@ export interface ICtaCardProps {
      */
     isExternal?: boolean;
     /**
-     * Path to navigate to when the action button is clicked.
-     */
-    actionHref?: string;
-    /**
-     * Callback function to execute when the action button is clicked.
-     */
-    actionOnClick?: () => void;
-    /**
      * Custom class name for the component.
      */
     className?: string;
 }
+
+interface ICtaCardLinkActionProps {
+    /**
+     * Path to navigate to when the action button is clicked.
+     */
+    actionHref: string;
+    /**
+     * Callback function to execute when the action button is clicked.
+     */
+    actionOnClick?: never;
+}
+
+interface ICtaCardButtonActionProps {
+    /**
+     * Path to navigate to when the action button is clicked.
+     */
+    actionHref?: never;
+    /**
+     * Callback function to execute when the action button is clicked.
+     */
+    actionOnClick: () => void;
+}
+
+export type ICtaCardProps = ICtaCardBaseProps &
+    (ICtaCardLinkActionProps | ICtaCardButtonActionProps);
+
+const hasLinkAction = (
+    props: ICtaCardProps,
+): props is ICtaCardBaseProps & ICtaCardLinkActionProps =>
+    typeof props.actionHref === 'string';
 
 /**
  * Might be promoted to a shared component in the future!
@@ -52,9 +74,7 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
         subtitle,
         isPrimary,
         isExternal = false,
-        actionHref,
         actionLabel,
-        actionOnClick,
         className,
     } = props;
 
@@ -84,17 +104,27 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     {subtitle}
                 </p>
             </div>
-            <Button
-                className="self-stretch md:self-start"
-                href={actionHref}
-                iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
-                onClick={actionOnClick}
-                size="md"
-                target={isExternal ? '_blank' : '_self'}
-                variant={isPrimary ? 'primary' : 'secondary'}
-            >
-                {actionLabel}
-            </Button>
+            {hasLinkAction(props) ? (
+                <Button
+                    className="self-stretch md:self-start"
+                    href={props.actionHref}
+                    iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
+                    size="md"
+                    target={isExternal ? '_blank' : undefined}
+                    variant={isPrimary ? 'primary' : 'secondary'}
+                >
+                    {actionLabel}
+                </Button>
+            ) : (
+                <Button
+                    className="self-stretch md:self-start"
+                    onClick={props.actionOnClick}
+                    size="md"
+                    variant={isPrimary ? 'primary' : 'secondary'}
+                >
+                    {actionLabel}
+                </Button>
+            )}
         </div>
     );
 };

@@ -1,6 +1,10 @@
 'use client';
 
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
+import {
+    Dialog,
+    type IDialogFooterAction,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { parseUnits } from 'viem';
 import {
@@ -61,7 +65,7 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<
     });
     const lockAmountWei = parseUnits(lockAmount ?? '0', token.decimals);
 
-    const primaryAction = {
+    const primaryAction: IDialogFooterAction = {
         label: t(
             'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.action.lock',
         ),
@@ -69,7 +73,7 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<
         type: 'submit',
     };
 
-    const secondaryAction = {
+    const secondaryAction: IDialogFooterAction = {
         label: t(
             'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.action.cancel',
         ),

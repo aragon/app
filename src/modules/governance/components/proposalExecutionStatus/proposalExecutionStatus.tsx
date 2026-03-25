@@ -1,7 +1,6 @@
 import {
     Button,
     ChainEntityType,
-    type IButtonProps,
     IconType,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
@@ -63,34 +62,45 @@ export const ProposalExecutionStatus: React.FC<
         onSuccess: openTransactionDialog,
     });
 
-    const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
-        [ProposalStatus.EXECUTED]: {
-            children: t(
-                'app.governance.proposalExecutionStatus.buttons.executed',
-            ),
-            variant: 'success',
-            iconRight: IconType.LINK_EXTERNAL,
-            href: executedBlockLink,
-            target: '_blank',
-        },
-        [ProposalStatus.EXECUTABLE]: {
-            children: t(
-                'app.governance.proposalExecutionStatus.buttons.execute',
-            ),
-            variant: 'primary',
-            onClick: () => checkProposalExecutePermission(),
-        },
-    };
+    if (proposalStatus === ProposalStatus.EXECUTED) {
+        const buttonLabel = t(
+            'app.governance.proposalExecutionStatus.buttons.executed',
+        );
 
-    const buttonConfig = buttonConfigs[proposalStatus];
-
-    if (!buttonConfig) {
-        return (
-            <p className="text-neutral-500 text-sm leading-normal">
-                {t('app.governance.proposalExecutionStatus.notExecutable')}
-            </p>
+        return executedBlockLink ? (
+            <Button
+                className="w-full md:w-fit"
+                href={executedBlockLink}
+                iconRight={IconType.LINK_EXTERNAL}
+                size="md"
+                target="_blank"
+                variant="success"
+            >
+                {buttonLabel}
+            </Button>
+        ) : (
+            <Button className="w-full md:w-fit" size="md" variant="success">
+                {buttonLabel}
+            </Button>
         );
     }
 
-    return <Button className="w-full md:w-fit" size="md" {...buttonConfig} />;
+    if (proposalStatus === ProposalStatus.EXECUTABLE) {
+        return (
+            <Button
+                className="w-full md:w-fit"
+                onClick={() => checkProposalExecutePermission()}
+                size="md"
+                variant="primary"
+            >
+                {t('app.governance.proposalExecutionStatus.buttons.execute')}
+            </Button>
+        );
+    }
+
+    return (
+        <p className="text-neutral-500 text-sm leading-normal">
+            {t('app.governance.proposalExecutionStatus.notExecutable')}
+        </p>
+    );
 };

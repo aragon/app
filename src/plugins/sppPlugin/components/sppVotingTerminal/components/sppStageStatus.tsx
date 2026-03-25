@@ -1,6 +1,7 @@
 import {
     Button,
     ChainEntityType,
+    type IButtonProps,
     IconType,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
@@ -73,23 +74,30 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         enabled: displayAdvanceButton && minAdvanceTime != null,
     });
 
-    const { label: buttonLabel, ...buttonProps } = isStageAdvanced
-        ? {
-              label: 'advanced',
-              href: advanceTransactionHref,
-              target: '_blank',
-              variant: 'secondary' as const,
-              iconRight: IconType.LINK_EXTERNAL,
-          }
-        : {
-              label: 'advance',
-              onClick: () =>
-                  isConnected
-                      ? openAdvanceStageDialog()
-                      : promptWalletConnection(),
-              variant: 'primary' as const,
-              disabled: !canAdvance,
-          };
+    const { label: buttonLabel, ...buttonProps } = (
+        isStageAdvanced
+            ? advanceTransactionHref
+                ? {
+                      label: 'advanced',
+                      href: advanceTransactionHref,
+                      target: '_blank',
+                      variant: 'secondary' as const,
+                      iconRight: IconType.LINK_EXTERNAL,
+                  }
+                : {
+                      label: 'advanced',
+                      variant: 'secondary' as const,
+                  }
+            : {
+                  label: 'advance',
+                  onClick: () =>
+                      isConnected
+                          ? openAdvanceStageDialog()
+                          : promptWalletConnection(),
+                  variant: 'primary' as const,
+                  disabled: !canAdvance,
+              }
+    ) satisfies { label: string } & IButtonProps;
 
     const advanceTimeContext = isLastStage ? 'Execute' : 'Advance';
 
