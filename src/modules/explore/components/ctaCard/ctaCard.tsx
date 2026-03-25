@@ -84,17 +84,27 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                     {subtitle}
                 </p>
             </div>
-            <Button
-                className="self-stretch md:self-start"
-                href={actionHref}
-                iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
-                onClick={actionOnClick}
-                size="md"
-                target={isExternal ? '_blank' : '_self'}
-                variant={isPrimary ? 'primary' : 'secondary'}
-            >
-                {actionLabel}
-            </Button>
+            {actionHref != null ? (
+                <Button
+                    className="self-stretch md:self-start"
+                    href={actionHref}
+                    iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
+                    size="md"
+                    target={isExternal ? '_blank' : '_self'}
+                    variant={isPrimary ? 'primary' : 'secondary'}
+                >
+                    {actionLabel}
+                </Button>
+            ) : (
+                <Button
+                    className="self-stretch md:self-start"
+                    onClick={actionOnClick}
+                    size="md"
+                    variant={isPrimary ? 'primary' : 'secondary'}
+                >
+                    {actionLabel}
+                </Button>
+            )}
         </div>
     );
 };
