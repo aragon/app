@@ -93,8 +93,8 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
     const { t } = useTranslations();
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
                 <Heading size="h1">
                     {t('app.dashboard.dashboardOnboarding.admin.welcome')}{' '}
                     {displayName != null && (
@@ -107,7 +107,7 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     {t('app.dashboard.dashboardOnboarding.admin.description')}
                 </p>
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
                 <CtaCard
                     actionHref="https://www.aragon.org/get-assistance-form"
                     actionLabel={t(
