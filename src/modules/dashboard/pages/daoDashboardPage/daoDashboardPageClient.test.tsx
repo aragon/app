@@ -12,6 +12,8 @@ import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import * as useAdminStatusModule from '@/shared/hooks/useAdminStatus';
+import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
     generateDaoMetrics,
@@ -54,21 +56,34 @@ jest.mock('@/modules/finance/components/assetList', () => ({
     },
 }));
 
+jest.mock('../../components/dashboardOnboarding', () => ({
+    DashboardOnboarding: () => <div data-testid="dashboard-onboarding-mock" />,
+}));
+
 describe('<DaoDashboardPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
+    const useAdminStatusSpy = jest.spyOn(
+        useAdminStatusModule,
+        'useAdminStatus',
+    );
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
+        useAdminStatusSpy.mockReturnValue({
+            isAdminMember: false,
+            adminPlugin: undefined,
+        });
     });
 
     afterEach(() => {
         useDaoSpy.mockReset();
         clipboardCopySpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
+        useAdminStatusSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -333,6 +348,94 @@ describe('<DaoDashboardPageClient /> component', () => {
             });
             expect(linkElement).toBeInTheDocument();
             expect(linkElement.href).toMatch(link.url);
+        });
+    });
+
+    describe('Onboarding', () => {
+        const useDaoPluginsSpy = jest.spyOn(
+            useDaoPluginsModule,
+            'useDaoPlugins',
+        );
+
+        afterEach(() => {
+            useDaoPluginsSpy.mockReset();
+        });
+
+        it('renders DashboardOnboarding when admin plugin is present and no process plugins exist', () => {
+            useAdminStatusSpy.mockReturnValue({
+                isAdminMember: true,
+                adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
+                    typeof useAdminStatusModule.useAdminStatus
+                >['adminPlugin'],
+            });
+            useDaoPluginsSpy.mockReturnValue(undefined);
+
+            render(createTestComponent());
+
+            expect(
+                screen.getByTestId('dashboard-onboarding-mock'),
+            ).toBeInTheDocument();
+            expect(
+                screen.queryByTestId('proposal-list-mock'),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId('member-list-mock'),
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByTestId('asset-list-mock'),
+            ).not.toBeInTheDocument();
+        });
+
+        it('renders DashboardOnboarding for non-admin users when admin plugin is present', () => {
+            useAdminStatusSpy.mockReturnValue({
+                isAdminMember: false,
+                adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
+                    typeof useAdminStatusModule.useAdminStatus
+                >['adminPlugin'],
+            });
+            useDaoPluginsSpy.mockReturnValue(undefined);
+
+            render(createTestComponent());
+
+            expect(
+                screen.getByTestId('dashboard-onboarding-mock'),
+            ).toBeInTheDocument();
+        });
+
+        it('does not render DashboardOnboarding when admin plugin is not present', () => {
+            useAdminStatusSpy.mockReturnValue({
+                isAdminMember: false,
+                adminPlugin: undefined,
+            });
+            useDaoPluginsSpy.mockReturnValue(undefined);
+
+            render(createTestComponent());
+
+            expect(
+                screen.queryByTestId('dashboard-onboarding-mock'),
+            ).not.toBeInTheDocument();
+        });
+
+        it('does not render DashboardOnboarding when non-admin process plugins exist', () => {
+            useAdminStatusSpy.mockReturnValue({
+                isAdminMember: true,
+                adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
+                    typeof useAdminStatusModule.useAdminStatus
+                >['adminPlugin'],
+            });
+            useDaoPluginsSpy.mockReturnValue([
+                {
+                    meta: {
+                        interfaceType: 'token-voting' as string,
+                    },
+                },
+            ] as ReturnType<typeof useDaoPluginsModule.useDaoPlugins>);
+
+            render(createTestComponent());
+
+            expect(
+                screen.queryByTestId('dashboard-onboarding-mock'),
+            ).not.toBeInTheDocument();
         });
     });
 });

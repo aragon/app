@@ -8,7 +8,11 @@ import {
     formatterUtils,
     Link,
 } from '@aragon/gov-ui-kit';
-import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
+import {
+    type Network,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -47,7 +51,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
 
     const { adminPlugin } = useAdminStatus({
         daoId,
-        network: dao!.network,
+        network: dao?.network as Network,
     });
 
     const processPlugins =
