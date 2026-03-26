@@ -2,17 +2,10 @@
 
 import {
     addressUtils,
-    Button,
-    Card,
     EmptyState,
     Heading,
-    IconType,
-    IllustrationObject,
-    type IllustrationObjectType,
     invariant,
-    Tag,
 } from '@aragon/gov-ui-kit';
-import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { useConnection } from 'wagmi';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
@@ -20,6 +13,7 @@ import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dial
 import { useEnsName } from '@/modules/ens';
 import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
 import type { IDao } from '@/shared/api/daoService';
+import { CtaCard } from '@/shared/components/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
@@ -114,7 +108,7 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                 </p>
             </div>
             <div className="flex flex-col gap-4">
-                <OnboardingCard
+                <CtaCard
                     actionHref="https://www.aragon.org/get-assistance-form"
                     actionLabel={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.action',
@@ -123,7 +117,7 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                         'app.dashboard.dashboardOnboarding.admin.enterprise.description',
                     )}
                     isPrimary={true}
-                    object="USERS"
+                    objectType="USERS"
                     tag={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.tag',
                     )}
@@ -138,7 +132,7 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     </span>
                     <div className="h-px flex-1 bg-neutral-100" />
                 </div>
-                <OnboardingCard
+                <CtaCard
                     actionLabel={t(
                         'app.dashboard.dashboardOnboarding.admin.free.addGovernance',
                     )}
@@ -147,11 +141,13 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                         'app.dashboard.dashboardOnboarding.admin.free.description',
                     )}
                     isPrimary={false}
-                    object="SMART_CONTRACT"
-                    secondaryActionHref="https://docs.aragon.org"
-                    secondaryActionLabel={t(
-                        'app.dashboard.dashboardOnboarding.admin.free.viewDocs',
-                    )}
+                    objectType="SMART_CONTRACT"
+                    secondaryAction={{
+                        label: t(
+                            'app.dashboard.dashboardOnboarding.admin.free.viewDocs',
+                        ),
+                        href: 'https://docs.aragon.org',
+                    }}
                     title={t(
                         'app.dashboard.dashboardOnboarding.admin.free.title',
                     )}
@@ -205,122 +201,5 @@ const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (props) => {
                 }}
             />
         </div>
-    );
-};
-
-interface IOnboardingCardProps {
-    /**
-     * Illustration object to render in the card header.
-     */
-    object: IllustrationObjectType;
-    /**
-     * Title of the card.
-     */
-    title: string;
-    /**
-     * Description of the card.
-     */
-    description: string;
-    /**
-     * Whether the primary action button is a primary variant.
-     */
-    isPrimary: boolean;
-    /**
-     * Label for the primary action button.
-     */
-    actionLabel: string;
-    /**
-     * URL for the primary action button (opens external link).
-     */
-    actionHref?: string;
-    /**
-     * Callback for the primary action button.
-     */
-    actionOnClick?: () => void;
-    /**
-     * Optional tag label displayed in the top-right corner.
-     */
-    tag?: string;
-    /**
-     * Label for the secondary action button.
-     */
-    secondaryActionLabel?: string;
-    /**
-     * URL for the secondary action button (opens external link).
-     */
-    secondaryActionHref?: string;
-}
-
-const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
-    const {
-        object,
-        title,
-        description,
-        isPrimary,
-        actionLabel,
-        actionHref,
-        actionOnClick,
-        tag,
-        secondaryActionLabel,
-        secondaryActionHref,
-    } = props;
-
-    const isExternal = actionHref != null;
-
-    return (
-        <Card
-            className={classNames(
-                'relative flex flex-col gap-4 border p-4 md:gap-6 md:p-6',
-                {
-                    'border-primary-200 shadow-primary': isPrimary,
-                    'border-neutral-100': !isPrimary,
-                },
-            )}
-        >
-            {tag != null && (
-                <Tag
-                    className="absolute top-4 right-4 md:top-6 md:right-6"
-                    label={tag}
-                    variant="primary"
-                />
-            )}
-            <IllustrationObject
-                className="size-16 rounded-full bg-neutral-50 md:size-24"
-                object={object}
-            />
-            <div className="flex flex-col gap-3">
-                <Heading as="h2" size="h1">
-                    {title}
-                </Heading>
-                <p className="text-base text-neutral-500 leading-normal md:text-lg">
-                    {description}
-                </p>
-            </div>
-            <div className="flex flex-col gap-3 md:flex-row">
-                <Button
-                    className="w-full md:w-auto"
-                    href={actionHref}
-                    iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
-                    onClick={actionOnClick}
-                    size="md"
-                    target={isExternal ? '_blank' : undefined}
-                    variant={isPrimary ? 'primary' : 'secondary'}
-                >
-                    {actionLabel}
-                </Button>
-                {secondaryActionLabel != null && (
-                    <Button
-                        className="w-full md:w-auto"
-                        href={secondaryActionHref}
-                        iconRight={IconType.LINK_EXTERNAL}
-                        size="md"
-                        target="_blank"
-                        variant="tertiary"
-                    >
-                        {secondaryActionLabel}
-                    </Button>
-                )}
-            </div>
-        </Card>
     );
 };

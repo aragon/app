@@ -1340,6 +1340,7 @@
         "enterpriseService": {
           "actionLabel": "Get in touch",
           "subtitle": "Let Aragon design and build custom governance and tokenomics mechanisms for your organization.",
+          "tag": "Recommended",
           "title": "Work with our team"
         },
         "hero": {
