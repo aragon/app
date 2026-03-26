@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyState, Heading } from '@aragon/gov-ui-kit';
+import { CardEmptyState, Heading } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
 export interface INonAdminOnboardingProps {
@@ -22,23 +22,23 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
     const { t } = useTranslations();
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-8">
             <Heading size="h1">
                 {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
                 {displayName != null && (
                     <span className="text-primary-400">{displayName}</span>
                 )}
             </Heading>
-            <EmptyState
+            <CardEmptyState
                 description={t(
                     'app.dashboard.dashboardOnboarding.nonAdmin.description',
                 )}
                 heading={t('app.dashboard.dashboardOnboarding.nonAdmin.title')}
                 humanIllustration={{
-                    body: 'ELEVATING',
-                    hairs: 'SHORT',
+                    body: 'BLOCKS',
+                    hairs: 'COOL',
                     accessory: 'PIERCINGS_TATTOO',
-                    sunglasses: 'LARGE_STYLIZED',
+                    sunglasses: 'SMALL_WEIRD_ONE',
                     expression: 'SMILE_WINK',
                 }}
                 secondaryButton={{
