@@ -115,9 +115,8 @@ export const GovernanceBasicBodyField: React.FC<
                     heading={t(
                         'app.createDao.createProcessForm.governance.basicBodyField.emptyState.heading',
                     )}
-                    isStacked={false}
-                    objectIllustration={{ object: 'LIGHTBULB' }}
-                    secondaryButton={{
+                    objectIllustration={{ object: 'USERS' }}
+                    primaryButton={{
                         label: t(
                             'app.createDao.createProcessForm.governance.basicBodyField.emptyState.cta',
                         ),

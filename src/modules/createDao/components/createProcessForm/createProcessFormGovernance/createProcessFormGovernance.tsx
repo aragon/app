@@ -66,13 +66,13 @@ export const CreateProcessFormGovernance: React.FC<
               label: t(
                   'app.createDao.createProcessForm.governance.advancedEmptyState.tag',
               ),
-              variant: 'neutral' as const,
+              variant: 'primary' as const,
           };
 
     return (
         <div className="flex w-full flex-col gap-10">
             <RadioGroup
-                className="w-full gap-4 md:flex-row"
+                className="w-full gap-4 md:flex-row [&>*]:min-w-0 [&>*]:flex-1"
                 helpText={t(
                     'app.createDao.createProcessForm.governance.type.helpText',
                 )}

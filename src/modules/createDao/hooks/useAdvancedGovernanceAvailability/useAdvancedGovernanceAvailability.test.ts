@@ -1,11 +1,16 @@
 import { renderHook } from '@testing-library/react';
 import { useDao } from '@/shared/api/daoService';
+import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
 import * as getEnvironmentModule from '@/shared/featureFlags/utils/getEnvironment';
 import { useAdvancedGovernanceAvailability } from './useAdvancedGovernanceAvailability';
 
 jest.mock('@/shared/api/daoService', () => ({ useDao: jest.fn() }));
+jest.mock('@/shared/components/debugProvider/debugProvider', () => ({
+    useDebugContext: jest.fn(),
+}));
 
 const useDaoMock = useDao as jest.Mock;
+const useDebugContextMock = useDebugContext as jest.Mock;
 
 describe('useAdvancedGovernanceAvailability', () => {
     const getEnvironmentSpy = jest.spyOn(
@@ -13,9 +18,14 @@ describe('useAdvancedGovernanceAvailability', () => {
         'getEnvironment',
     );
 
+    beforeEach(() => {
+        useDebugContextMock.mockReturnValue({ values: {} });
+    });
+
     afterEach(() => {
         getEnvironmentSpy.mockReset();
         useDaoMock.mockReset();
+        useDebugContextMock.mockReset();
     });
 
     it('returns available in non-production without fetching DAO', () => {
@@ -118,6 +128,37 @@ describe('useAdvancedGovernanceAvailability', () => {
             isAvailable: false,
             isLoading: false,
         });
+
+        process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP = original;
+    });
+
+    it('applies production gating in non-prod when debug gate override is enabled', () => {
+        getEnvironmentSpy.mockReturnValue('development');
+        useDebugContextMock.mockReturnValue({
+            values: { gateAdvancedGovernance: true },
+        });
+        useDaoMock.mockReturnValue({
+            data: { blockTimestamp: 1_900_000_000 },
+            isLoading: false,
+        });
+
+        const original =
+            process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP;
+        process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP =
+            '1800000000';
+
+        const { result } = renderHook(() =>
+            useAdvancedGovernanceAvailability({ daoId: 'dao-1' }),
+        );
+
+        expect(result.current).toEqual({
+            isAvailable: false,
+            isLoading: false,
+        });
+        expect(useDaoMock).toHaveBeenCalledWith(
+            { urlParams: { id: 'dao-1' } },
+            { enabled: true },
+        );
 
         process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP = original;
     });
