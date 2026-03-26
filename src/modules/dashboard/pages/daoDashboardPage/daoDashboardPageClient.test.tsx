@@ -75,6 +75,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         );
         useAdminStatusSpy.mockReturnValue({
             isAdminMember: false,
+            isLoading: false,
             adminPlugin: undefined,
         });
     });
@@ -364,6 +365,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         it('renders DashboardOnboarding when admin plugin is present and no process plugins exist', () => {
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: true,
+                isLoading: false,
                 adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
                     typeof useAdminStatusModule.useAdminStatus
                 >['adminPlugin'],
@@ -389,6 +391,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         it('renders DashboardOnboarding for non-admin users when admin plugin is present', () => {
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: false,
+                isLoading: false,
                 adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
                     typeof useAdminStatusModule.useAdminStatus
                 >['adminPlugin'],
@@ -405,6 +408,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         it('does not render DashboardOnboarding when admin plugin is not present', () => {
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: false,
+                isLoading: false,
                 adminPlugin: undefined,
             });
             useDaoPluginsSpy.mockReturnValue(undefined);
@@ -419,6 +423,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         it('does not render DashboardOnboarding when non-admin process plugins exist', () => {
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: true,
+                isLoading: false,
                 adminPlugin: { address: '0x1', slug: 'admin' } as ReturnType<
                     typeof useAdminStatusModule.useAdminStatus
                 >['adminPlugin'],
