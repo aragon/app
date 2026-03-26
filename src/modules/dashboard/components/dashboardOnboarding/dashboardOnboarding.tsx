@@ -109,7 +109,7 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     <br />
                     {t('app.dashboard.dashboardOnboarding.admin.subtitle')}
                 </Heading>
-                <p className="text-lg text-neutral-500">
+                <p className="text-base text-neutral-500 md:text-lg">
                     {t('app.dashboard.dashboardOnboarding.admin.description')}
                 </p>
             </div>
@@ -269,32 +269,36 @@ const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
 
     return (
         <Card
-            className={classNames('relative flex flex-col gap-6 border p-6', {
-                'border-primary-200 shadow-primary': isPrimary,
-                'border-neutral-100': !isPrimary,
-            })}
+            className={classNames(
+                'relative flex flex-col gap-4 border p-4 md:gap-6 md:p-6',
+                {
+                    'border-primary-200 shadow-primary': isPrimary,
+                    'border-neutral-100': !isPrimary,
+                },
+            )}
         >
             {tag != null && (
                 <Tag
-                    className="absolute top-6 right-6"
+                    className="absolute top-4 right-4 md:top-6 md:right-6"
                     label={tag}
                     variant="primary"
                 />
             )}
             <IllustrationObject
-                className="size-24 rounded-full bg-neutral-50"
+                className="size-16 rounded-full bg-neutral-50 md:size-24"
                 object={object}
             />
             <div className="flex flex-col gap-3">
                 <Heading as="h2" size="h1">
                     {title}
                 </Heading>
-                <p className="text-lg text-neutral-500 leading-normal">
+                <p className="text-base text-neutral-500 leading-normal md:text-lg">
                     {description}
                 </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 md:flex-row">
                 <Button
+                    className="w-full md:w-auto"
                     href={actionHref}
                     iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
                     onClick={actionOnClick}
@@ -306,6 +310,7 @@ const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
                 </Button>
                 {secondaryActionLabel != null && (
                     <Button
+                        className="w-full md:w-auto"
                         href={secondaryActionHref}
                         iconRight={IconType.LINK_EXTERNAL}
                         size="md"
