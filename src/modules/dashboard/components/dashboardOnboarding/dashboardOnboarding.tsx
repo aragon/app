@@ -266,23 +266,32 @@ const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
     } = props;
 
     const isExternal = actionHref != null;
+    const borderClass = isPrimary ? 'border-primary-200' : 'border-neutral-100';
 
     return (
-        <Card className="flex flex-col gap-6 border border-neutral-100 p-6">
-            <div className="flex items-start justify-between">
-                <div className="flex size-24 items-center justify-center rounded-full bg-neutral-50">
-                    {/* Decorative icon */}
-                    <Image alt="" src={imgSrc} />
-                </div>
-                {tag != null && <Tag label={tag} variant="primary" />}
+        <Card
+            className={`relative flex flex-col gap-6 border p-6 ${borderClass}`}
+        >
+            {tag != null && (
+                <Tag
+                    className="absolute top-6 right-6"
+                    label={tag}
+                    variant="primary"
+                />
+            )}
+            <div className="flex size-24 items-center justify-center rounded-full bg-neutral-50">
+                {/* Decorative icon */}
+                <Image alt="" src={imgSrc} />
             </div>
             <div className="flex flex-col gap-3">
-                <Heading size="h2">{title}</Heading>
-                <p className="text-base text-neutral-500 leading-normal">
+                <Heading as="h2" size="h1">
+                    {title}
+                </Heading>
+                <p className="text-lg text-neutral-500 leading-normal">
                     {description}
                 </p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
                 <Button
                     href={actionHref}
                     iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
