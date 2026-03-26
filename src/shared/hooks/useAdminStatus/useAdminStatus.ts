@@ -40,7 +40,11 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
         queryParams: { network },
     };
 
-    const { data: isAdminMember } = useMemberExists(memberExistsParams, {
+    const {
+        data: isAdminMember,
+        isLoading,
+        isPending,
+    } = useMemberExists(memberExistsParams, {
         enabled: memberAddress != null && adminPlugin != null,
     });
 
@@ -50,5 +54,6 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     return {
         isAdminMember: isAdminMember?.status === true && adminFeatureEnabled,
         adminPlugin,
+        isLoading: isLoading || isPending,
     };
 };

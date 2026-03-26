@@ -8,6 +8,7 @@ import {
     formatterUtils,
     Link,
 } from '@aragon/gov-ui-kit';
+import { useConnection } from 'wagmi';
 import {
     type Network,
     PluginInterfaceType,
@@ -42,6 +43,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const { daoId } = props;
 
     const { t } = useTranslations();
+    const { isConnected: isWalletConnected } = useConnection();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -66,7 +68,9 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     );
 
     const isOnboarding =
-        adminPlugin != null && nonAdminProcessPlugins.length === 0;
+        isWalletConnected &&
+        adminPlugin != null &&
+        nonAdminProcessPlugins.length === 0;
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao.address);

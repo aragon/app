@@ -30,7 +30,7 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     const { address } = useConnection();
     const { data: ensName } = useEnsName(address);
 
-    const { isAdminMember, adminPlugin } = useAdminStatus({
+    const { isAdminMember, adminPlugin, isLoading } = useAdminStatus({
         daoId: dao.id,
         network: dao.network,
     });
@@ -51,6 +51,10 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
         };
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
+
+    if (isLoading) {
+        return null;
+    }
 
     if (isAdminMember) {
         return (
