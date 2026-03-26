@@ -1,21 +1,21 @@
 import type { Page as PlaywrightPage } from '@playwright/test';
 import { DaoPage } from '../../shared';
 
-export class DaoMembersPage extends DaoPage {
+export class DaoProposalsPage extends DaoPage {
     constructor(params: {
         page: PlaywrightPage;
         network: string;
         address: string;
     }) {
-        super({ ...params, path: 'members' });
+        super({ ...params, path: 'proposals' });
     }
 
     readonly pageTitle = () =>
-        this.page.getByRole('heading', { name: 'Members' });
+        this.page.getByRole('heading', { name: 'Proposals', exact: true });
 
-    readonly memberLinks = () => this.page.getByRole('main').getByRole('link');
+    readonly proposalList = () => this.page.getByRole('main').getByRole('link');
 
-    readonly firstMember = () => this.memberLinks().first();
+    readonly firstProposal = () => this.proposalList().first();
 
     readonly asideCard = () => this.page.getByRole('complementary');
 }

@@ -1,6 +1,6 @@
 # E2E Tests
 
-Playwright + TypeScript + Chromium. Smoke tests that verify the app is alive, pages render, and key flows work.
+Playwright + TypeScript + Chromium. Smoke tests that verify the app is alive, pages render, and key flows work against real production DAOs.
 
 ## Quick start
 
@@ -58,24 +58,49 @@ e2e/
 ├── playwright.config.ts       # config (baseURL, retries, reporters)
 ├── tests/smoke/               # smoke test specs
 │   ├── explore/               # explore page
-│   ├── daoPage/               # dashboard & tabs
-│   ├── memberProfile/         # member details
-│   └── walletConnect/         # connect dialog
+│   ├── walletConnect/         # connect dialog
+│   └── daoPage/               # all DAO page specs
+│       ├── daoDashboard       # dashboard: main content, aside
+│       ├── daoProposals       # proposals list page
+│       ├── daoProposalDetail  # proposal detail page
+│       ├── daoMembers         # members list page
+│       ├── daoMemberDetail    # member profile detail
+│       ├── daoAssets          # assets page
+│       ├── daoTransactions    # transactions page
+│       ├── daoSettings        # settings + governance process detail
+│       ├── daoGauges          # gauges page (feature-gated)
+│       └── daoRewards         # rewards page (feature-gated)
 ├── helpers/
-│   ├── pages/                 # page objects (ExplorePage, DaoDashboardPage, …)
+│   ├── pages/                 # page objects (one class per page)
 │   ├── shared/                # base Page & DaoPage classes
-│   ├── constants/             # curated DAO list for tests
+│   ├── constants/             # curated DAO list with feature tags
 │   └── types/                 # shared interfaces
 └── README.md
 ```
+
+### DAO list
+
+Tests run against real production DAOs selected by plugin category:
+
+| DAO | Network | Features |
+|-----|---------|----------|
+| Cryptex | ethereum-mainnet | spp, tokenvoting |
+| Aragon Automated Capital Flow | ethereum-sepolia | linkedaccounts |
+| Swiss Shield DAO | ethereum-mainnet | multisig |
+| Katana vKAT Management | katana-mainnet | gauges, multisig, rewards |
+
+Base tests (dashboard, proposals, members, assets, transactions, settings, member detail, proposal detail) run for **all** DAOs. Category-specific tests (gauges, rewards) run only for DAOs with the matching feature tag.
 
 ### Conventions
 
 - **Page Object Model** — one class per page/component in `helpers/pages/`, extend `Page` or `DaoPage`
 - **User-facing locators** — prefer `getByRole`, `getByText`, `getByLabel` over CSS selectors
 - **Web-first assertions** — use `await expect(locator).toBeVisible()` instead of manual waits
-- **`data-testid`** — only when role/text locators are unstable
+- **Soft assertions** — use `expect.soft()` for multi-block checks so all assertions run even if one fails
 - **No hardcoded waits** — no `page.waitForTimeout()`
+- **`data-testid`** — only when role/text locators are unstable
+- **One test per page per DAO** — each test navigates once and checks everything with `expect.soft()`
+- **Simple structure** — `for (dao) { test() }`, no abstractions or metaprogramming
 
 ### Example
 
@@ -95,8 +120,11 @@ test('explore page renders DAO list', async ({ page }) => {
 Runs automatically on every PR via `shared-e2e.yml`:
 
 1. Vercel deploys → `E2E_BASE_URL`
-2. Smoke tests run against the URL
-3. HTML report (14 days) + traces on failure (7 days) uploaded as GitHub artifacts
-4. Results posted as a PR comment (for preview)
+2. Warmup request ensures the deployment is alive
+3. Smoke tests run against the URL
+4. HTML report (14 days) + traces on failure (7 days) uploaded as GitHub artifacts
+5. Results posted as a PR comment (for preview)
+
+E2E results are **non-blocking** for PR merge — failures are reported in comments and Slack but do not prevent merging.
 
 Runners are ephemeral (`ubuntu-latest`) — no state leaks between runs. Artifacts are stored in GitHub Actions storage and auto-deleted after the retention period.
