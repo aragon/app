@@ -817,9 +817,27 @@
       },
       "createProcessForm": {
         "governance": {
+          "advancedEmptyState": {
+            "available": {
+              "cta": "Add stage",
+              "description": "Build a multi-stage governance pipeline. Proposals advance through sequential stages, each with its own voting bodies and settings.",
+              "heading": "Multi-stage governance"
+            },
+            "gated": {
+              "cta": "Get in touch",
+              "description": "Our modular governance framework lets you design multi-stage decision pipelines with configurable voting bodies, approval thresholds, veto mechanisms, and timelocks. This level of customization requires hands-on guidance from our team to ensure security and correctness for your DAO's specific needs.",
+              "heading": "Advanced governance"
+            },
+            "tag": "On request"
+          },
           "basicBodyField": {
             "action": {
               "add": "Add"
+            },
+            "emptyState": {
+              "cta": "Set up voting body",
+              "description": "Add a voting body to decide whether proposals of this type pass or fail.",
+              "heading": "No voting body"
             },
             "error": {
               "required": "A body must be added to this process."
