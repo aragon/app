@@ -66,7 +66,7 @@ export const LockToVoteLockBeforeVoteDialog: React.FC<
             'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.action.lock',
         ),
         onClick: () => onVoteClick(lockAmountWei),
-        type: 'submit',
+        type: 'submit' as const,
     };
 
     const secondaryAction = {

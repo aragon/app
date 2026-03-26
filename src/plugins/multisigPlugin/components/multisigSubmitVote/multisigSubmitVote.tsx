@@ -79,17 +79,43 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
 
     return (
         <div className="w-full">
-            <Button
-                className="w-full md:w-fit"
-                href={voted ? voteTransactionHref : undefined}
-                iconLeft={voted ? IconType.CHECKMARK : undefined}
-                onClick={voted ? undefined : handleVoteClick}
-                size="md"
-                target={voted ? '_blank' : undefined}
-                variant={voted ? 'secondary' : 'primary'}
-            >
-                {t(`app.plugins.multisig.multisigSubmitVote.${voteLabel}`)}
-            </Button>
+            {voted ? (
+                voteTransactionHref != null ? (
+                    <Button
+                        className="w-full md:w-fit"
+                        href={voteTransactionHref}
+                        iconLeft={IconType.CHECKMARK}
+                        size="md"
+                        target="_blank"
+                        variant="secondary"
+                    >
+                        {t(
+                            `app.plugins.multisig.multisigSubmitVote.${voteLabel}`,
+                        )}
+                    </Button>
+                ) : (
+                    <Button
+                        className="w-full md:w-fit"
+                        disabled
+                        iconLeft={IconType.CHECKMARK}
+                        size="md"
+                        variant="secondary"
+                    >
+                        {t(
+                            `app.plugins.multisig.multisigSubmitVote.${voteLabel}`,
+                        )}
+                    </Button>
+                )
+            ) : (
+                <Button
+                    className="w-full md:w-fit"
+                    onClick={handleVoteClick}
+                    size="md"
+                    variant="primary"
+                >
+                    {t(`app.plugins.multisig.multisigSubmitVote.${voteLabel}`)}
+                </Button>
+            )}
         </div>
     );
 };
