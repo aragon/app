@@ -12,6 +12,7 @@ import {
     invariant,
     Tag,
 } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
 import type { Hex } from 'viem';
 import { useConnection } from 'wagmi';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
@@ -265,11 +266,13 @@ const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
     } = props;
 
     const isExternal = actionHref != null;
-    const borderClass = isPrimary ? 'border-primary-200' : 'border-neutral-100';
 
     return (
         <Card
-            className={`relative flex flex-col gap-6 border p-6 ${borderClass}`}
+            className={classNames('relative flex flex-col gap-6 border p-6', {
+                'border-primary-200 shadow-primary': isPrimary,
+                'border-neutral-100': !isPrimary,
+            })}
         >
             {tag != null && (
                 <Tag
