@@ -8,6 +8,7 @@ import {
 import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
+import * as wagmi from 'wagmi';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
@@ -68,6 +69,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         useAdminStatusModule,
         'useAdminStatus',
     );
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
@@ -78,6 +80,9 @@ describe('<DaoDashboardPageClient /> component', () => {
             isLoading: false,
             adminPlugin: undefined,
         });
+        useConnectionSpy.mockReturnValue({
+            isConnected: false,
+        } as ReturnType<typeof wagmi.useConnection>);
     });
 
     afterEach(() => {
@@ -85,6 +90,7 @@ describe('<DaoDashboardPageClient /> component', () => {
         clipboardCopySpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
         useAdminStatusSpy.mockReset();
+        useConnectionSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -363,6 +369,9 @@ describe('<DaoDashboardPageClient /> component', () => {
         });
 
         it('renders DashboardOnboarding when admin plugin is present and no process plugins exist', () => {
+            useConnectionSpy.mockReturnValue({
+                isConnected: true,
+            } as ReturnType<typeof wagmi.useConnection>);
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: true,
                 isLoading: false,
@@ -389,6 +398,9 @@ describe('<DaoDashboardPageClient /> component', () => {
         });
 
         it('renders DashboardOnboarding for non-admin users when admin plugin is present', () => {
+            useConnectionSpy.mockReturnValue({
+                isConnected: true,
+            } as ReturnType<typeof wagmi.useConnection>);
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: false,
                 isLoading: false,
@@ -406,6 +418,9 @@ describe('<DaoDashboardPageClient /> component', () => {
         });
 
         it('does not render DashboardOnboarding when admin plugin is not present', () => {
+            useConnectionSpy.mockReturnValue({
+                isConnected: true,
+            } as ReturnType<typeof wagmi.useConnection>);
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: false,
                 isLoading: false,
@@ -421,6 +436,9 @@ describe('<DaoDashboardPageClient /> component', () => {
         });
 
         it('does not render DashboardOnboarding when non-admin process plugins exist', () => {
+            useConnectionSpy.mockReturnValue({
+                isConnected: true,
+            } as ReturnType<typeof wagmi.useConnection>);
             useAdminStatusSpy.mockReturnValue({
                 isAdminMember: true,
                 isLoading: false,
