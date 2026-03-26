@@ -7,10 +7,11 @@ import {
     EmptyState,
     Heading,
     IconType,
+    IllustrationObject,
+    type IllustrationObjectType,
     invariant,
     Tag,
 } from '@aragon/gov-ui-kit';
-import Image from 'next/image';
 import type { Hex } from 'viem';
 import { useConnection } from 'wagmi';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
@@ -22,8 +23,6 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
-import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
 
 export interface IDashboardOnboardingProps {
     /**
@@ -122,8 +121,8 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     description={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.description',
                     )}
-                    imgSrc={enterpriseServiceIcon as string}
                     isPrimary={true}
+                    object="USERS"
                     tag={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.tag',
                     )}
@@ -146,8 +145,8 @@ const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     description={t(
                         'app.dashboard.dashboardOnboarding.admin.free.description',
                     )}
-                    imgSrc={noCodeSetupIcon as string}
                     isPrimary={false}
+                    object="SMART_CONTRACT"
                     secondaryActionHref="https://docs.aragon.org"
                     secondaryActionLabel={t(
                         'app.dashboard.dashboardOnboarding.admin.free.viewDocs',
@@ -210,9 +209,9 @@ const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (props) => {
 
 interface IOnboardingCardProps {
     /**
-     * Headline image source.
+     * Illustration object to render in the card header.
      */
-    imgSrc: string;
+    object: IllustrationObjectType;
     /**
      * Title of the card.
      */
@@ -253,7 +252,7 @@ interface IOnboardingCardProps {
 
 const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
     const {
-        imgSrc,
+        object,
         title,
         description,
         isPrimary,
@@ -279,10 +278,10 @@ const OnboardingCard: React.FC<IOnboardingCardProps> = (props) => {
                     variant="primary"
                 />
             )}
-            <div className="flex size-24 items-center justify-center rounded-full bg-neutral-50">
-                {/* Decorative icon */}
-                <Image alt="" src={imgSrc} />
-            </div>
+            <IllustrationObject
+                className="size-24 rounded-full bg-neutral-50"
+                object={object}
+            />
             <div className="flex flex-col gap-3">
                 <Heading as="h2" size="h1">
                     {title}
