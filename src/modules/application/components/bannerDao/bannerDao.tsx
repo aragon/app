@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
-import { usePathname } from 'next/navigation';
+import { useSelectedLayoutSegment } from 'next/navigation';
 import type { Hex } from 'viem';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
@@ -27,7 +27,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { isEnabled } = useFeatureFlags();
-    const pathname = usePathname();
+    const segment = useSelectedLayoutSegment();
 
     const { isAdminMember, adminPlugin } = useAdminStatus({
         daoId: dao.id,
@@ -45,7 +45,7 @@ export const BannerDao: React.FC<IBannerDaoProps> = (props) => {
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
-    const isSettingsPage = pathname.endsWith('/settings');
+    const isSettingsPage = segment === 'settings';
 
     const displayAdminMemberBanner =
         isAdminMember && isEnabled('governanceDesigner');

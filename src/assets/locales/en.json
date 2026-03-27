@@ -294,7 +294,6 @@
       "bannerDao": {
         "adminMember": {
           "action": "Add governance",
-          "manage": "Manage admins",
           "message": "You are a DAO admin. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
