@@ -64,15 +64,22 @@ export const ProposalExecutionStatus: React.FC<
     });
 
     const buttonConfigs: Partial<Record<ProposalStatus, IButtonProps>> = {
-        [ProposalStatus.EXECUTED]: {
-            children: t(
-                'app.governance.proposalExecutionStatus.buttons.executed',
-            ),
-            variant: 'success',
-            iconRight: IconType.LINK_EXTERNAL,
-            href: executedBlockLink,
-            target: '_blank',
-        },
+        [ProposalStatus.EXECUTED]: executedBlockLink
+            ? {
+                  children: t(
+                      'app.governance.proposalExecutionStatus.buttons.executed',
+                  ),
+                  variant: 'success',
+                  iconRight: IconType.LINK_EXTERNAL,
+                  href: executedBlockLink,
+                  target: '_blank',
+              }
+            : {
+                  children: t(
+                      'app.governance.proposalExecutionStatus.buttons.executed',
+                  ),
+                  variant: 'success',
+              },
         [ProposalStatus.EXECUTABLE]: {
             children: t(
                 'app.governance.proposalExecutionStatus.buttons.execute',

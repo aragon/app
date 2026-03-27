@@ -1,5 +1,41 @@
 # @aragon/app
 
+## 1.25.0
+
+### Minor Changes
+
+- [#1027](https://github.com/aragon/app/pull/1027) [`fa0eb96`](https://github.com/aragon/app/commit/fa0eb9646f50971d3b8a9f61974347611dbd217c) Thanks [@milosh86](https://github.com/milosh86)! - Add member list onboarding entry point cards for delegation and lock/wrap
+
+- [#1051](https://github.com/aragon/app/pull/1051) [`73ecc98`](https://github.com/aragon/app/commit/73ecc9828f201ad044c5f30b659e18f9533e0c49) Thanks [@milosh86](https://github.com/milosh86)! - Allow hiding DAO navbar links via CMS overrides
+
+- [#1039](https://github.com/aragon/app/pull/1039) [`9a56f96`](https://github.com/aragon/app/commit/9a56f96821dd5c9ff69142fe271544adef580acb) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Pin “You” and “Your delegate” tags on token members list
+
+- [#1044](https://github.com/aragon/app/pull/1044) [`0fbb973`](https://github.com/aragon/app/commit/0fbb973b2c939c29e38060155085c4b6b43ccf1f) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement debug impersonator tool, update wagmi v3 migration usage
+
+- [#1055](https://github.com/aragon/app/pull/1055) [`b352490`](https://github.com/aragon/app/commit/b352490ebe8a26fbbcf8666e81876545d29497d7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Centralise ENS resolution on frontend with real-time records.
+
+- [#1028](https://github.com/aragon/app/pull/1028) [`2b61eef`](https://github.com/aragon/app/commit/2b61eefa03838b724b4d445a4255b179b35aec1b) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add cryptex rewards support, refactor custom DAO slot configs
+
+- [#1043](https://github.com/aragon/app/pull/1043) [`fd802e3`](https://github.com/aragon/app/commit/fd802e326e2aeca844216aa7c8e61f5d7e14ff99) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix params for token members list to get voting power properly, pin multisig connected user in list
+
+### Patch Changes
+
+- [#1040](https://github.com/aragon/app/pull/1040) [`8dd08ca`](https://github.com/aragon/app/commit/8dd08ca06fc05db327ebe7b9ff911074372714c9) Thanks [@milosh86](https://github.com/milosh86)! - Default includeLinkedAccounts to false in getDaoPlugins and explicitly opt in where needed
+
+- [#1053](https://github.com/aragon/app/pull/1053) [`3e7e9a9`](https://github.com/aragon/app/commit/3e7e9a92564fe4054b27580aaba9641abdbb7ead) Thanks [@milosh86](https://github.com/milosh86)! - Cache CMS GitHub content fetches using Vercel Data Cache with time-based revalidation
+
+- [#1036](https://github.com/aragon/app/pull/1036) [`e9b435d`](https://github.com/aragon/app/commit/e9b435d2e72f053aa76ce041ef4159443dc5ddf1) Thanks [@milosh86](https://github.com/milosh86)! - Fix info text alignment in lock, wrap and delegate forms
+
+- [#1046](https://github.com/aragon/app/pull/1046) [`fddd573`](https://github.com/aragon/app/commit/fddd5735a7332af3956c43e7183675697fdfdd39) Thanks [@milosh86](https://github.com/milosh86)! - Remove unused SETTINGS_MEMBERS_INFO and SETTINGS_PANEL plugin slots and associated components
+
+- [#1056](https://github.com/aragon/app/pull/1056) [`2228b60`](https://github.com/aragon/app/commit/2228b60aec8b67b99d00dade684824d8f8dd2ec4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix innaccurate 'You' member showing on multisig for connected wallets
+
+- [#1030](https://github.com/aragon/app/pull/1030) [`dcd09bf`](https://github.com/aragon/app/commit/dcd09bfd2c8c2863a7361b4d3fd70b0c361c00a7) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove compatibility adapter for linked accounts
+
+- [#1047](https://github.com/aragon/app/pull/1047) [`73df695`](https://github.com/aragon/app/commit/73df69527a4986351217ad4a1f4534a08b12d7aa) Thanks [@milosh86](https://github.com/milosh86)! - Include sub-plugins when fetching plugins on the member details page
+
+- [#1041](https://github.com/aragon/app/pull/1041) [`957c16a`](https://github.com/aragon/app/commit/957c16a8d8a55a6b04deeb4a4955f56dffea98b0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
 ## 1.24.0
 
 ### Minor Changes

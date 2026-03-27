@@ -186,18 +186,32 @@ export const LockToVoteSubmitVote: React.FC<ILockToVoteSubmitVoteProps> = (
             )}
             {!showOptions && latestVote != null && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
-                    <Button
-                        className="w-full md:w-fit"
-                        href={latestVoteTxHref}
-                        iconLeft={IconType.CHECKMARK}
-                        size="md"
-                        target="_blank"
-                        variant="secondary"
-                    >
-                        {t(
-                            'app.plugins.lockToVote.lockToVoteSubmitVote.buttons.submitted',
-                        )}
-                    </Button>
+                    {latestVoteTxHref != null ? (
+                        <Button
+                            className="w-full md:w-fit"
+                            href={latestVoteTxHref}
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            target="_blank"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.lockToVote.lockToVoteSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    ) : (
+                        <Button
+                            className="w-full md:w-fit"
+                            disabled
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.lockToVote.lockToVoteSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    )}
                     {/* In lock to vote we always show the update button. If vote replacement is enabled, then the user can
                     change their vote. Otherwise, they can only update their voting power on the existing choice. */}
                     <Button

@@ -22,6 +22,7 @@ export const AddressInputControl: React.FC<IAddressInputControlProps> = (
 
     return (
         <AddressInput
+            hideControls={true}
             label={label}
             onAccept={handleAccept}
             onChange={setInputValue}
