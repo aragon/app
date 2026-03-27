@@ -73,23 +73,7 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         enabled: displayAdvanceButton && minAdvanceTime != null,
     });
 
-    const { label: buttonLabel, ...buttonProps } = isStageAdvanced
-        ? {
-              label: 'advanced',
-              href: advanceTransactionHref,
-              target: '_blank',
-              variant: 'secondary' as const,
-              iconRight: IconType.LINK_EXTERNAL,
-          }
-        : {
-              label: 'advance',
-              onClick: () =>
-                  isConnected
-                      ? openAdvanceStageDialog()
-                      : promptWalletConnection(),
-              variant: 'primary' as const,
-              disabled: !canAdvance,
-          };
+    const buttonLabel = isStageAdvanced ? 'advanced' : 'advance';
 
     const advanceTimeContext = isLastStage ? 'Execute' : 'Advance';
 
@@ -108,8 +92,43 @@ export const SppStageStatus: React.FC<ISppStageStatusProps> = (props) => {
         return null;
     }
 
+    if (isStageAdvanced) {
+        return advanceTransactionHref != null ? (
+            <Button
+                className="w-full md:w-fit"
+                href={advanceTransactionHref}
+                iconRight={IconType.LINK_EXTERNAL}
+                size="md"
+                target="_blank"
+                variant="secondary"
+            >
+                {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+            </Button>
+        ) : (
+            <Button
+                className="w-full md:w-fit"
+                disabled
+                iconRight={IconType.LINK_EXTERNAL}
+                size="md"
+                variant="secondary"
+            >
+                {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
+            </Button>
+        );
+    }
+
     return (
-        <Button className="w-full md:w-fit" size="md" {...buttonProps}>
+        <Button
+            className="w-full md:w-fit"
+            disabled={!canAdvance}
+            onClick={() =>
+                isConnected
+                    ? openAdvanceStageDialog()
+                    : promptWalletConnection()
+            }
+            size="md"
+            variant="primary"
+        >
             {t(`app.plugins.spp.sppStageStatus.button.${buttonLabel}`)}
         </Button>
     );

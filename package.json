@@ -1,6 +1,6 @@
 {
   "name": "@aragon/app",
-  "version": "1.24.0",
+  "version": "1.25.0",
   "description": "Human-centered DAO infrastructure",
   "author": "Aragon Association",
   "homepage": "https://github.com/aragon/app#readme",
@@ -27,7 +27,7 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "1.29.2",
+    "@aragon/gov-ui-kit": "^2.0.0",
     "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.5.14",
     "@radix-ui/react-dialog": "^1.1.15",
