@@ -125,11 +125,14 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
             <div className="flex flex-col gap-3 md:flex-row">
                 <Button
                     className="w-full md:w-auto"
-                    href={primaryAction.href}
-                    iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
-                    onClick={primaryAction.onClick}
+                    {...(isExternal
+                        ? {
+                              href: primaryAction.href!,
+                              iconRight: IconType.LINK_EXTERNAL,
+                              target: '_blank',
+                          }
+                        : { onClick: primaryAction.onClick })}
                     size="md"
-                    target={isExternal ? '_blank' : undefined}
                     variant={isPrimary ? 'primary' : 'secondary'}
                 >
                     {primaryAction.label}
