@@ -37,15 +37,17 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
             </div>
             <div className="flex flex-col gap-6">
                 <CtaCard
-                    actionHref="https://www.aragon.org/get-assistance-form"
-                    actionLabel={t(
-                        'app.dashboard.dashboardOnboarding.admin.enterprise.action',
-                    )}
                     description={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.description',
                     )}
                     isPrimary={true}
                     objectType="USERS"
+                    primaryAction={{
+                        href: 'https://www.aragon.org/get-assistance-form',
+                        label: t(
+                            'app.dashboard.dashboardOnboarding.admin.enterprise.action',
+                        ),
+                    }}
                     tag={t(
                         'app.dashboard.dashboardOnboarding.admin.enterprise.tag',
                     )}
@@ -61,15 +63,17 @@ export const AdminOnboarding: React.FC<IAdminOnboardingProps> = (props) => {
                     <div className="h-px flex-1 bg-neutral-100" />
                 </div>
                 <CtaCard
-                    actionLabel={t(
-                        'app.dashboard.dashboardOnboarding.admin.free.addGovernance',
-                    )}
-                    actionOnClick={onAddGovernance}
                     description={t(
                         'app.dashboard.dashboardOnboarding.admin.free.description',
                     )}
                     isPrimary={false}
                     objectType="SMART_CONTRACT"
+                    primaryAction={{
+                        label: t(
+                            'app.dashboard.dashboardOnboarding.admin.free.addGovernance',
+                        ),
+                        onClick: onAddGovernance,
+                    }}
                     secondaryAction={{
                         label: t(
                             'app.dashboard.dashboardOnboarding.admin.free.viewDocs',

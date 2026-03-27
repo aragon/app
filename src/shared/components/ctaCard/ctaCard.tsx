@@ -27,17 +27,22 @@ export interface ICtaCardProps {
      */
     isPrimary: boolean;
     /**
-     * Label for the primary action button.
+     * Primary action button configuration.
      */
-    actionLabel: string;
-    /**
-     * URL for the primary action button (opens external link).
-     */
-    actionHref?: string;
-    /**
-     * Callback for the primary action button.
-     */
-    actionOnClick?: () => void;
+    primaryAction: {
+        /**
+         * Label for the primary action button.
+         */
+        label: string;
+        /**
+         * URL for the primary action button (opens external link).
+         */
+        href?: string;
+        /**
+         * Callback for the primary action button.
+         */
+        onClick?: () => void;
+    };
     /**
      * Optional tag label displayed in the top-right corner.
      */
@@ -72,16 +77,14 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
         title,
         description,
         isPrimary,
-        actionLabel,
-        actionHref,
-        actionOnClick,
+        primaryAction,
         tag,
         secondaryAction,
         textSize = 'normal',
         className,
     } = props;
 
-    const isExternal = actionHref != null;
+    const isExternal = primaryAction.href != null;
     const isSmaller = textSize === 'smaller';
 
     return (
@@ -122,14 +125,14 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
             <div className="flex flex-col gap-3 md:flex-row">
                 <Button
                     className="w-full md:w-auto"
-                    href={actionHref}
+                    href={primaryAction.href}
                     iconRight={isExternal ? IconType.LINK_EXTERNAL : undefined}
-                    onClick={actionOnClick}
+                    onClick={primaryAction.onClick}
                     size="md"
                     target={isExternal ? '_blank' : undefined}
                     variant={isPrimary ? 'primary' : 'secondary'}
                 >
-                    {actionLabel}
+                    {primaryAction.label}
                 </Button>
                 {secondaryAction != null && (
                     <Button
