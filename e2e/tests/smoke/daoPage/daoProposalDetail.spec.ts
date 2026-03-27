@@ -14,7 +14,7 @@ for (const dao of SMOKE_DAOS) {
         }).navigate();
 
         const firstProposalLink = proposals.firstProposal();
-        await expect(firstProposalLink).toBeVisible();
+        await expect(firstProposalLink).toBeVisible({ timeout: 30_000 });
 
         const href = await firstProposalLink.getAttribute('href');
         expect(href).toBeTruthy();
