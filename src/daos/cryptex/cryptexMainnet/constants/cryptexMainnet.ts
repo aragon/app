@@ -1,5 +1,5 @@
 export const cryptex = {
-    id: 'ethereum-mainnet-0xf204245b0B05E9A0780761E326552A569c1D6ceb',
+    id: 'ethereum-sepolia-0x3c5909c6671E012950aE5fFe1578ffe828A53711',
     name: 'cryptex',
 };
 
@@ -8,13 +8,13 @@ export const cryptex = {
  * Used to query the rewards API for governance participation-based distributions.
  */
 export const cryptexTokenVotingPluginAddress: `0x${string}` =
-    '0x17a1688C56087aDe762721180e1cC1E831C73719';
+    '0x9ddC4a301BE8E755D89eB611E46b7B43873C04ba';
 
 /**
  * Hardcoded voting escrow (veLocker) address shared by Cryptex DAOs.
  */
 export const cryptexVotingEscrowAddress: `0x${string}` =
-    '0x2DE5aE18750FBf82821212194D59aCc989469CDd';
+    '0x5F5C5557667676622d115f5C7a91c61d2f3b4fcE';
 
 export const getCryptexVotingEscrowAddress = (): `0x${string}` =>
     cryptexVotingEscrowAddress;
