@@ -76,6 +76,21 @@ const sentryConfig = {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    experimental: {
+        optimizePackageImports: [
+            '@aragon/gov-ui-kit',
+            'framer-motion',
+            'luxon',
+            'recharts',
+            'viem',
+            'viem/chains',
+            'wagmi',
+            '@reown/appkit',
+            '@reown/appkit/react',
+            '@tanstack/react-query',
+            '@floating-ui/react',
+        ],
+    },
     async redirects() {
         return [
             {
@@ -127,6 +142,7 @@ const nextConfig = {
         ];
     },
     images: {
+        minimumCacheTTL: 2_592_000, // 30 days — IPFS content is immutable (CID-addressed)
         remotePatterns: [
             {
                 protocol: 'https',
@@ -137,6 +153,29 @@ const nextConfig = {
     },
     env: {
         version: packageInfo.version,
+    },
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            config.optimization.splitChunks = {
+                ...config.optimization.splitChunks,
+                cacheGroups: {
+                    ...config.optimization.splitChunks?.cacheGroups,
+                    web3: {
+                        test: /[\\/]node_modules[\\/](wagmi|viem|@reown|@walletconnect)[\\/]/,
+                        name: 'vendor-web3',
+                        chunks: 'all',
+                        priority: 30,
+                    },
+                    charts: {
+                        test: /[\\/]node_modules[\\/](recharts|d3-)[\\/]/,
+                        name: 'vendor-charts',
+                        chunks: 'all',
+                        priority: 25,
+                    },
+                },
+            };
+        }
+        return config;
     },
     serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
     reactCompiler: false,

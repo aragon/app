@@ -1,33 +1,54 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
-import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialog';
-import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
-import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
-import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
-import { SetupStageSettingsDialog } from '../dialogs/setupStageSettingsDialog';
 import { CreateDaoDialogId } from './createDaoDialogId';
 
 export const createDaoDialogsDefinitions: Record<
     CreateDaoDialogId,
     IDialogComponentDefinitions
 > = {
-    [CreateDaoDialogId.PUBLISH_DAO]: { Component: PublishDaoDialog },
+    [CreateDaoDialogId.PUBLISH_DAO]: {
+        Component: dynamic(() =>
+            import('../dialogs/publishDaoDialog').then(
+                (m) => m.PublishDaoDialog,
+            ),
+        ),
+    },
     [CreateDaoDialogId.CREATE_DAO_DETAILS]: {
-        Component: CreateDaoDetailsDialog,
+        Component: dynamic(() =>
+            import('../dialogs/createDaoDetailsDialog').then(
+                (m) => m.CreateDaoDetailsDialog,
+            ),
+        ),
         size: 'lg',
     },
     [CreateDaoDialogId.CREATE_PROCESS_DETAILS]: {
-        Component: CreateProcessDetailsDialog,
+        Component: dynamic(() =>
+            import('../dialogs/createProcessDetailsDialog').then(
+                (m) => m.CreateProcessDetailsDialog,
+            ),
+        ),
         size: 'lg',
     },
-    [CreateDaoDialogId.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
+    [CreateDaoDialogId.PREPARE_PROCESS]: {
+        Component: dynamic(() =>
+            import('../dialogs/prepareProcessDialog').then(
+                (m) => m.PrepareProcessDialog,
+            ),
+        ),
+    },
     [CreateDaoDialogId.SETUP_BODY]: {
-        Component: SetupBodyDialog,
+        Component: dynamic(() =>
+            import('../dialogs/setupBodyDialog').then((m) => m.SetupBodyDialog),
+        ),
         size: 'lg',
         hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
     },
     [CreateDaoDialogId.SETUP_STAGE_SETTINGS]: {
-        Component: SetupStageSettingsDialog,
+        Component: dynamic(() =>
+            import('../dialogs/setupStageSettingsDialog').then(
+                (m) => m.SetupStageSettingsDialog,
+            ),
+        ),
         size: 'lg',
         hiddenDescription:
             'app.createDao.setupStageSettingsDialog.a11y.description',

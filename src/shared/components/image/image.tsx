@@ -25,10 +25,9 @@ export interface IImageProps
 export const Image: React.FC<IImageProps> = (props) => {
     const { src, alt = 'image', fill = true, sizes, ...otherProps } = props;
 
-    // Set a default value to '50vw' for the sizes property (default value required by the Image component from NextJs)
-    // when fill is set to true and sizes property is not set. We currently uses fill set to true for gov-ui-kit images
-    // and these never exceed 50vw.
-    const processedSizes = sizes ?? (fill ? '50vw' : undefined);
+    // Conservative default for fill images — most gov-ui-kit images are small avatars/icons.
+    // 128px prevents the browser from selecting oversized srcset candidates.
+    const processedSizes = sizes ?? (fill ? '128px' : undefined);
 
     if (src == null) {
         return null;

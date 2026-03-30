@@ -15,7 +15,7 @@ class IpfsUtils {
         cid?: string | null,
         options?: ICidToSrcOptions,
     ): string | undefined => {
-        const { size = 256 } = options ?? {};
+        const { size = 80 } = options ?? {};
 
         const processedSize = size.toString();
         const processedCid = cid?.startsWith(this.ipfsPrefix)

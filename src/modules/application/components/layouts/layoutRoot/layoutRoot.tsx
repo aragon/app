@@ -57,6 +57,13 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
 
     return (
         <html className="h-full" lang="en">
+            <head>
+                <link href="https://aragon-1.mypinata.cloud" rel="preconnect" />
+                <link
+                    href="https://aragon-1.mypinata.cloud"
+                    rel="dns-prefetch"
+                />
+            </head>
             <body className="flex h-full flex-col bg-neutral-50">
                 <NextTopLoader
                     color="var(--color-primary-400)"

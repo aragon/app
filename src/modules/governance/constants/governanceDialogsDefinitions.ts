@@ -1,41 +1,73 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
-import { ExecuteDialog } from '../dialogs/executeDialog';
-import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
-import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
-import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
-import { SimulateActionsDialog } from '../dialogs/simulateActionsDialog';
-import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
-import { VoteDialog } from '../dialogs/voteDialog';
-import { WalletConnectActionDialog } from '../dialogs/walletConnectActionDialog';
 import { GovernanceDialogId } from './governanceDialogId';
 
 export const governanceDialogsDefinitions: Record<
     GovernanceDialogId,
     IDialogComponentDefinitions
 > = {
-    [GovernanceDialogId.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
-    [GovernanceDialogId.EXECUTE]: { Component: ExecuteDialog },
-    [GovernanceDialogId.VOTE]: { Component: VoteDialog },
-    [GovernanceDialogId.SELECT_PLUGIN]: { Component: SelectPluginDialog },
+    [GovernanceDialogId.PUBLISH_PROPOSAL]: {
+        Component: dynamic(() =>
+            import('../dialogs/publishProposalDialog').then(
+                (m) => m.PublishProposalDialog,
+            ),
+        ),
+    },
+    [GovernanceDialogId.EXECUTE]: {
+        Component: dynamic(() =>
+            import('../dialogs/executeDialog').then((m) => m.ExecuteDialog),
+        ),
+    },
+    [GovernanceDialogId.VOTE]: {
+        Component: dynamic(() =>
+            import('../dialogs/voteDialog').then((m) => m.VoteDialog),
+        ),
+    },
+    [GovernanceDialogId.SELECT_PLUGIN]: {
+        Component: dynamic(() =>
+            import('../dialogs/selectPluginDialog').then(
+                (m) => m.SelectPluginDialog,
+            ),
+        ),
+    },
     [GovernanceDialogId.VERIFY_SMART_CONTRACT]: {
-        Component: VerifySmartContractDialog,
+        Component: dynamic(() =>
+            import('../dialogs/verifySmartContractDialog').then(
+                (m) => m.VerifySmartContractDialog,
+            ),
+        ),
         useFocusTrap: false,
     },
     [GovernanceDialogId.PERMISSION_CHECK]: {
-        Component: PermissionCheckDialog,
+        Component: dynamic(() =>
+            import('../dialogs/permissionCheckDialog').then(
+                (m) => m.PermissionCheckDialog,
+            ),
+        ),
         hiddenDescription:
             'app.governance.permissionCheckDialog.a11y.description',
     },
     [GovernanceDialogId.EXECUTE_CHECK]: {
-        Component: ExecuteCheckDialog,
+        Component: dynamic(() =>
+            import('../dialogs/executeCheckDialog').then(
+                (m) => m.ExecuteCheckDialog,
+            ),
+        ),
         hiddenDescription: 'app.governance.executeCheckDialog.a11y.description',
     },
     [GovernanceDialogId.WALLET_CONNECT_ACTION]: {
-        Component: WalletConnectActionDialog,
+        Component: dynamic(() =>
+            import('../dialogs/walletConnectActionDialog').then(
+                (m) => m.WalletConnectActionDialog,
+            ),
+        ),
     },
     [GovernanceDialogId.SIMULATE_ACTIONS]: {
-        Component: SimulateActionsDialog,
+        Component: dynamic(() =>
+            import('../dialogs/simulateActionsDialog').then(
+                (m) => m.SimulateActionsDialog,
+            ),
+        ),
         size: 'lg',
     },
 };

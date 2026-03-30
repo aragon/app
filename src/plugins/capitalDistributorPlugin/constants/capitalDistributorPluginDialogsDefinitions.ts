@@ -1,6 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { CapitalDistributorClaimDialog } from '../dialogs/capitalDistributorClaimDialog';
-import { CapitalDistributorClaimTransactionDialog } from '../dialogs/capitalDistributorClaimTransactionDialog';
 import { CapitalDistributorPluginDialogId } from './capitalDistributorPluginDialogId';
 
 export const capitalDistributorPluginDialogsDefinitions: Record<
@@ -8,9 +7,17 @@ export const capitalDistributorPluginDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [CapitalDistributorPluginDialogId.CLAIM]: {
-        Component: CapitalDistributorClaimDialog,
+        Component: dynamic(() =>
+            import('../dialogs/capitalDistributorClaimDialog').then(
+                (m) => m.CapitalDistributorClaimDialog,
+            ),
+        ),
     },
     [CapitalDistributorPluginDialogId.CLAIM_TRANSACTION]: {
-        Component: CapitalDistributorClaimTransactionDialog,
+        Component: dynamic(() =>
+            import('../dialogs/capitalDistributorClaimTransactionDialog').then(
+                (m) => m.CapitalDistributorClaimTransactionDialog,
+            ),
+        ),
     },
 };

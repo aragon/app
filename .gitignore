@@ -58,3 +58,5 @@ next-env.d.ts
 .agents
 .playwright-mcp
 .patches
+
+resultados_analisis

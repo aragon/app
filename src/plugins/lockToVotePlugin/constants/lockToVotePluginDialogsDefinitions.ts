@@ -1,10 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { LockToVoteLockBeforeVoteDialog } from '../dialogs/lockToVoteLockBeforeVoteDialog';
-import { LockToVoteLockOnboardingFormDialog } from '../dialogs/lockToVoteLockOnboardingFormDialog';
-import { LockToVoteLockOnboardingIntroDialog } from '../dialogs/lockToVoteLockOnboardingIntroDialog';
-import { LockToVoteLockUnlockDialog } from '../dialogs/lockToVoteLockUnlockDialog';
-import { LockToVoteSubmitVoteFeedbackDialog } from '../dialogs/lockToVoteSubmitVoteFeedbackDialog';
-import { UnlockBlockedInfoDialog } from '../dialogs/unlockBlockedInfoDialog';
 import { LockToVotePluginDialogId } from './lockToVotePluginDialogId';
 
 export const lockToVotePluginDialogsDefinitions: Record<
@@ -12,31 +7,55 @@ export const lockToVotePluginDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [LockToVotePluginDialogId.SUBMIT_VOTE_FEEDBACK]: {
-        Component: LockToVoteSubmitVoteFeedbackDialog,
+        Component: dynamic(() =>
+            import('../dialogs/lockToVoteSubmitVoteFeedbackDialog').then(
+                (m) => m.LockToVoteSubmitVoteFeedbackDialog,
+            ),
+        ),
         hiddenTitle:
             'app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.a11y.title',
         hiddenDescription:
             'app.plugins.lockToVote.lockToVoteSubmitVoteFeedbackDialog.a11y.description',
     },
     [LockToVotePluginDialogId.LOCK_BEFORE_VOTE]: {
-        Component: LockToVoteLockBeforeVoteDialog,
+        Component: dynamic(() =>
+            import('../dialogs/lockToVoteLockBeforeVoteDialog').then(
+                (m) => m.LockToVoteLockBeforeVoteDialog,
+            ),
+        ),
         hiddenDescription:
             'app.plugins.lockToVote.lockToVoteLockBeforeVoteDialog.a11y.description',
     },
     [LockToVotePluginDialogId.LOCK_UNLOCK_L2V]: {
-        Component: LockToVoteLockUnlockDialog,
+        Component: dynamic(() =>
+            import('../dialogs/lockToVoteLockUnlockDialog').then(
+                (m) => m.LockToVoteLockUnlockDialog,
+            ),
+        ),
     },
     [LockToVotePluginDialogId.UNLOCK_BLOCKED_INFO]: {
-        Component: UnlockBlockedInfoDialog,
+        Component: dynamic(() =>
+            import('../dialogs/unlockBlockedInfoDialog').then(
+                (m) => m.UnlockBlockedInfoDialog,
+            ),
+        ),
         hiddenDescription:
             'app.plugins.lockToVote.unlockBlockedInfoDialog.a11y.description',
     },
     [LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO_L2V]: {
-        Component: LockToVoteLockOnboardingIntroDialog,
+        Component: dynamic(() =>
+            import('../dialogs/lockToVoteLockOnboardingIntroDialog').then(
+                (m) => m.LockToVoteLockOnboardingIntroDialog,
+            ),
+        ),
         hiddenTitle:
             'app.plugins.lockToVote.lockToVoteLockOnboardingDialog.intro.hiddenTitle',
     },
     [LockToVotePluginDialogId.LOCK_ONBOARDING_FORM_L2V]: {
-        Component: LockToVoteLockOnboardingFormDialog,
+        Component: dynamic(() =>
+            import('../dialogs/lockToVoteLockOnboardingFormDialog').then(
+                (m) => m.LockToVoteLockOnboardingFormDialog,
+            ),
+        ),
     },
 };

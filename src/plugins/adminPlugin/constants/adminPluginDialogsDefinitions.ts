@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { AdminManageMembersDialog } from '../dialogs/adminManageMembersDialog';
 import { AdminPluginDialogId } from './adminPluginDialogId';
 
 export const adminPluginDialogsDefinitions: Record<
@@ -7,7 +7,11 @@ export const adminPluginDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [AdminPluginDialogId.MANAGE_MEMBERS]: {
-        Component: AdminManageMembersDialog,
+        Component: dynamic(() =>
+            import('../dialogs/adminManageMembersDialog').then(
+                (m) => m.AdminManageMembersDialog,
+            ),
+        ),
         size: 'lg',
     },
 };

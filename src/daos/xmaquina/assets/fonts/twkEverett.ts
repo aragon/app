@@ -8,17 +8,7 @@ export const twkEverett = localFont({
             style: 'normal',
         },
         {
-            path: './TWK Everett Regular/TWKEverett-Regular.woff',
-            weight: '400',
-            style: 'normal',
-        },
-        {
             path: './TWK Everett Medium/TWKEverett-Medium.woff2',
-            weight: '500',
-            style: 'normal',
-        },
-        {
-            path: './TWK Everett Medium/TWKEverett-Medium.woff',
             weight: '500',
             style: 'normal',
         },

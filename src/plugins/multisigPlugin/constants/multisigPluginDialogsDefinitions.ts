@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { MultisigRemoveMembersActionDialog } from '../dialogs/multisigRemoveMembersActionDialog';
 import { MultisigPluginDialogId } from './multisigPluginDialogId';
 
 export const multisigPluginDialogsDefinitions: Record<
@@ -7,6 +7,10 @@ export const multisigPluginDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [MultisigPluginDialogId.REMOVE_MEMBERS]: {
-        Component: MultisigRemoveMembersActionDialog,
+        Component: dynamic(() =>
+            import('../dialogs/multisigRemoveMembersActionDialog').then(
+                (m) => m.MultisigRemoveMembersActionDialog,
+            ),
+        ),
     },
 };

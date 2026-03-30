@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { GaugeRegistrarSelectGaugeDialog } from '../dialogs/gaugeRegistrarSelectGaugeDialog';
 import { GaugeRegistrarDialogId } from './gaugeRegistrarDialogId';
 
 export const gaugeRegistrarDialogsDefinitions: Record<
@@ -7,6 +7,10 @@ export const gaugeRegistrarDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [GaugeRegistrarDialogId.SELECT_GAUGE]: {
-        Component: GaugeRegistrarSelectGaugeDialog,
+        Component: dynamic(() =>
+            import('../dialogs/gaugeRegistrarSelectGaugeDialog').then(
+                (m) => m.GaugeRegistrarSelectGaugeDialog,
+            ),
+        ),
     },
 };

@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { CapitalDistributorTestMembersFileDownloadDialog } from '../dialogs/capitalDistributorTestMembersFileDownloadDialog';
 import { KatanaDialogId } from './katanaDialogId';
 
 export const katanaDialogsDefinitions: Record<
@@ -7,6 +7,10 @@ export const katanaDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [KatanaDialogId.MEMBERS_FILE_DOWNLOAD]: {
-        Component: CapitalDistributorTestMembersFileDownloadDialog,
+        Component: dynamic(() =>
+            import(
+                '../dialogs/capitalDistributorTestMembersFileDownloadDialog'
+            ).then((m) => m.CapitalDistributorTestMembersFileDownloadDialog),
+        ),
     },
 };

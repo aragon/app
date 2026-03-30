@@ -1,8 +1,17 @@
-import { HttpService, type IRequestQueryParams } from '../httpService';
+import {
+    type FetchCacheConfig,
+    HttpService,
+    type IRequestQueryParams,
+} from '../httpService';
 import { AragonBackendServiceError } from './aragonBackendServiceError';
 import type { IPaginatedResponse } from './domain';
 
 export class AragonBackendService extends HttpService {
+    protected override fetchCacheConfig: FetchCacheConfig = {
+        cache: 'force-cache',
+        next: { revalidate: 30 },
+    };
+
     constructor() {
         // Send the request directly to the backend server when the request is done on the server side, otherwise proxy
         // it through the /api/backend NextJs route.

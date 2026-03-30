@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { AssetSelectionDialog } from '../dialogs/assetSelectionDialog/assetSelectionDialog';
 import { FinanceDialogId } from './financeDialogId';
 
 export const financeDialogsDefinitions: Record<
@@ -7,7 +7,11 @@ export const financeDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [FinanceDialogId.ASSET_SELECTION]: {
-        Component: AssetSelectionDialog,
+        Component: dynamic(() =>
+            import('../dialogs/assetSelectionDialog/assetSelectionDialog').then(
+                (m) => m.AssetSelectionDialog,
+            ),
+        ),
         hiddenDescription: 'app.finance.assetSelectionDialog.a11y.description',
     },
 };

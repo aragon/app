@@ -1,9 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { GovernanceProcessRequiredDialog } from '../dialogs/governanceProcessRequiredDialog';
-import { PrepareDaoContractsUpdateDialog } from '../dialogs/prepareDaoContractsUpdateDialog';
-import { PreparePluginUninstallationDialog } from '../dialogs/preparePluginUninstallationDialog';
-import { UninstallPluginAlertDialog } from '../dialogs/uninstallPluginAlertDialog';
-import { UpdateDaoContractsListDialog } from '../dialogs/updateDaoContractsListDialog';
 import { SettingsDialogId } from './settingsDialogId';
 
 export const settingsDialogDefinitions: Record<
@@ -11,26 +7,46 @@ export const settingsDialogDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [SettingsDialogId.UPDATE_DAO_CONTRACTS_LIST]: {
-        Component: UpdateDaoContractsListDialog,
+        Component: dynamic(() =>
+            import('../dialogs/updateDaoContractsListDialog').then(
+                (m) => m.UpdateDaoContractsListDialog,
+            ),
+        ),
         size: 'lg',
     },
     [SettingsDialogId.PREPARE_DAO_CONTRACTS_UPDATE]: {
-        Component: PrepareDaoContractsUpdateDialog,
+        Component: dynamic(() =>
+            import('../dialogs/prepareDaoContractsUpdateDialog').then(
+                (m) => m.PrepareDaoContractsUpdateDialog,
+            ),
+        ),
     },
     [SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED]: {
-        Component: GovernanceProcessRequiredDialog,
+        Component: dynamic(() =>
+            import('../dialogs/governanceProcessRequiredDialog').then(
+                (m) => m.GovernanceProcessRequiredDialog,
+            ),
+        ),
         size: 'lg',
         hiddenDescription:
             'app.settings.governanceProcessRequiredDialog.a11y.description',
     },
     [SettingsDialogId.UNINSTALL_PLUGIN_ALERT]: {
-        Component: UninstallPluginAlertDialog,
+        Component: dynamic(() =>
+            import('../dialogs/uninstallPluginAlertDialog').then(
+                (m) => m.UninstallPluginAlertDialog,
+            ),
+        ),
         size: 'lg',
         hiddenDescription:
             'app.settings.uninstallPluginAlertDialog.a11y.description',
         variant: 'critical',
     },
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: {
-        Component: PreparePluginUninstallationDialog,
+        Component: dynamic(() =>
+            import('../dialogs/preparePluginUninstallationDialog').then(
+                (m) => m.PreparePluginUninstallationDialog,
+            ),
+        ),
     },
 };

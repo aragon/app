@@ -1,5 +1,5 @@
+import dynamic from 'next/dynamic';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { GaugeVoterSelectGaugeDialog } from '../dialogs/gaugeVoterSelectGaugeDialog';
 import { GaugeVoterDialogId } from './gaugeVoterDialogId';
 
 export const gaugeVoterDialogsDefinitions: Record<
@@ -7,6 +7,10 @@ export const gaugeVoterDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [GaugeVoterDialogId.SELECT_GAUGE]: {
-        Component: GaugeVoterSelectGaugeDialog,
+        Component: dynamic(() =>
+            import('../dialogs/gaugeVoterSelectGaugeDialog').then(
+                (m) => m.GaugeVoterSelectGaugeDialog,
+            ),
+        ),
     },
 };
