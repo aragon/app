@@ -7,7 +7,11 @@ export interface INonAdminOnboardingProps {
     /**
      * Display name of the connected user (ENS or truncated address).
      */
-    displayName: string | null;
+    displayName?: string;
+    /**
+     * Name of the DAO.
+     */
+    daoName?: string;
     /**
      * URL to the admin members page.
      */
@@ -17,7 +21,7 @@ export interface INonAdminOnboardingProps {
 export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
     props,
 ) => {
-    const { displayName, viewAdminsHref } = props;
+    const { displayName, daoName, viewAdminsHref } = props;
 
     const { t } = useTranslations();
 
@@ -33,7 +37,9 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
                 description={t(
                     'app.dashboard.dashboardOnboarding.nonAdmin.description',
                 )}
-                heading={t('app.dashboard.dashboardOnboarding.nonAdmin.title')}
+                heading={t('app.dashboard.dashboardOnboarding.nonAdmin.title', {
+                    daoName,
+                })}
                 humanIllustration={{
                     body: 'BLOCKS',
                     hairs: 'COOL',

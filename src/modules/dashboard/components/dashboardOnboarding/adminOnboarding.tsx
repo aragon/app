@@ -8,7 +8,7 @@ export interface IAdminOnboardingProps {
     /**
      * Display name of the connected user (ENS or truncated address).
      */
-    displayName: string | null;
+    displayName?: string;
     /**
      * Callback to open the governance designer dialog.
      */

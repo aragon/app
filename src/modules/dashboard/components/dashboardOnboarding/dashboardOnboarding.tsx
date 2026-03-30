@@ -36,7 +36,8 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     });
 
     const displayName =
-        ensName ?? (address ? addressUtils.truncateAddress(address) : null);
+        ensName ??
+        (address ? addressUtils.truncateAddress(address) : undefined);
 
     const daoUrl = daoUtils.getDaoUrl(dao)!;
 
@@ -69,6 +70,7 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
 
     return (
         <NonAdminOnboarding
+            daoName={dao.name}
             displayName={displayName}
             viewAdminsHref={viewAdminsHref}
         />
