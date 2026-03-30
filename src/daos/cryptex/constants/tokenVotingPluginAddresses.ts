@@ -3,16 +3,11 @@ import {
     cryptexTokenVotingPluginAddress,
 } from '../cryptexMainnet/constants/cryptexMainnet';
 import {
-    tokenCDTest,
-    tokenCDTestTokenVotingPluginAddress,
-} from '../tokenCDTest/constants/tokenCDTest';
-import {
-    tokenRewards,
-    tokenRewardsTokenVotingPluginAddress,
-} from '../tokenCDTest/constants/tokenRewards';
+    tokenVotingRewardsTest,
+    tokenVotingRewardsTestTokenVotingPluginAddress,
+} from '../tokenVotingRewardsTest/tokenVotingRewardsTest';
 
 export const cryptexTokenVotingPluginAddressByDaoId = {
     [cryptex.id]: cryptexTokenVotingPluginAddress,
-    [tokenCDTest.id]: tokenCDTestTokenVotingPluginAddress,
-    [tokenRewards.id]: tokenRewardsTokenVotingPluginAddress,
+    [tokenVotingRewardsTest.id]: tokenVotingRewardsTestTokenVotingPluginAddress,
 } satisfies Record<string, `0x${string}`>;
