@@ -115,8 +115,9 @@ export const CtaCard: React.FC<ICtaCardProps> = (props) => {
                 </Heading>
                 <p
                     className={classNames(
-                        'text-base text-neutral-500 leading-normal',
-                        { 'md:text-lg': !isSmaller },
+                        'text-neutral-500 leading-normal',
+                        { 'text-sm md:text-base': isSmaller },
+                        { 'text-base md:text-lg': !isSmaller },
                     )}
                 >
                     {description}
