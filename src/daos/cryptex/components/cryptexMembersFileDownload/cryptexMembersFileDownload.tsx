@@ -9,6 +9,8 @@ import {
     cryptexTokenVotingPluginAddress,
     tokenCDTest,
     tokenCDTestTokenVotingPluginAddress,
+    tokenRewards,
+    tokenRewardsTokenVotingPluginAddress,
 } from '../../constants';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
@@ -18,6 +20,7 @@ import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownl
 const tokenVotingPluginAddresses: Record<string, `0x${string}`> = {
     [cryptex.id]: cryptexTokenVotingPluginAddress,
     [tokenCDTest.id]: tokenCDTestTokenVotingPluginAddress,
+    [tokenRewards.id]: tokenRewardsTokenVotingPluginAddress,
 };
 
 export const CryptexMembersFileDownload: React.FC<

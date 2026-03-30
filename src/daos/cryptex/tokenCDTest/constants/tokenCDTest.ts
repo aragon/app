@@ -4,5 +4,7 @@ export const tokenCDTest = {
     name: 'tokenCDTest',
 };
 
+// Intentionally aligned with Cryptex mainnet while the temporary tokenCDTest DAO reuses
+// the same capital distributor flow.
 export const tokenCDTestTokenVotingPluginAddress: `0x${string}` =
-    '0x1652FDd272fEf49B53bd102550DE775519e60b8E';
+    '0x17a1688C56087aDe762721180e1cC1E831C73719';
