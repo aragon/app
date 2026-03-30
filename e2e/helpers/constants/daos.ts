@@ -25,6 +25,30 @@ export const SMOKE_DAOS: ISmokeDao[] = [
         address: '0xb72291652f15cF73651357383c0A86FBba29B675',
         features: ['gauges', 'multisig', 'rewards'],
     },
+    {
+        name: 'AF Treasury',
+        network: 'ethereum-mainnet',
+        address: 'af.dao.eth',
+        features: ['multisig'],
+    },
+    {
+        name: 'Polygon Community Treasury',
+        network: 'ethereum-mainnet',
+        address: 'polygoncommunitytreasury.dao.eth',
+        features: ['tokenvoting'],
+    },
+    {
+        name: 'Union of Federated Corp',
+        network: 'polygon-mainnet',
+        address: '0x4895E4315E53Eca5467FD648BC4D7cF3EAF18882',
+        features: ['tokenvoting'],
+    },
+    {
+        name: 'SafariDAO',
+        network: 'polygon-mainnet',
+        address: '0xD877Cd16836109f8d26975b7E79fE3ba2c943bD0',
+        features: ['multisig'],
+    },
 ];
 
 export const getDaosWithFeature = (feature: SmokeDaoFeature) =>

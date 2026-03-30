@@ -29,9 +29,17 @@ jobs:
       deployment-url: https://stg.app.aragon.org
       environment: staging
 
+  bv:
+    needs: deploy
+    uses: ./.github/workflows/shared-bv.yml
+    secrets: inherit
+    with:
+      deployment-url: https://stg.app.aragon.org
+      environment: staging
+
   e2e-notify:
-    needs: e2e
-    if: ${{ always() && needs.e2e.result != 'skipped' }}
+    needs: [e2e, bv]
+    if: ${{ always() && (needs.e2e.result != 'skipped' || needs.bv.result != 'skipped') }}
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
@@ -61,4 +69,6 @@ jobs:
           message: |
             ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *staging* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *staging* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *staging* failed' || '⏹️ Smoke tests on *staging* were cancelled' }}
             ${{ needs.e2e.outputs.summary }}
+            ${{ needs.bv.outputs.result == 'passed' && '✅ BV tests on *staging* passed' || needs.bv.outputs.result == 'flaky' && '⚠️ BV tests on *staging* completed with flaky tests' || needs.bv.outputs.result == 'failed' && '❌ BV tests on *staging* failed' || '⏹️ BV tests on *staging* were cancelled' }}
+            ${{ needs.bv.outputs.summary }}
             <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
