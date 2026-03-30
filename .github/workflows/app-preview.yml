@@ -60,6 +60,8 @@ jobs:
             |---|---|
             | Base URL | ${{ needs.deploy.outputs.deploymentUrl }} |
             | Suite | smoke |
-            | Result | ${{ needs.e2e.result == 'success' && '✅ passed' || '❌ failed' }} |
+            | Playwright result | ${{ needs.e2e.outputs.result_label }} |
+            | Summary | ${{ needs.e2e.outputs.summary }} |
+            | GitHub job | ${{ needs.e2e.result == 'success' && '✅ completed' || needs.e2e.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
             | Run | [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
           github-token: ${{ secrets.GITHUB_TOKEN }}

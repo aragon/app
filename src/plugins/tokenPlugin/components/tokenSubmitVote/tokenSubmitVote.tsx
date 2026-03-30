@@ -133,18 +133,32 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
             )}
             {!showOptions && latestVote != null && (
                 <div className="flex w-full flex-col items-center gap-4 md:flex-row">
-                    <Button
-                        className="w-full md:w-fit"
-                        href={latestVoteTxHref}
-                        iconLeft={IconType.CHECKMARK}
-                        size="md"
-                        target="_blank"
-                        variant="secondary"
-                    >
-                        {t(
-                            'app.plugins.token.tokenSubmitVote.buttons.submitted',
-                        )}
-                    </Button>
+                    {latestVoteTxHref != null ? (
+                        <Button
+                            className="w-full md:w-fit"
+                            href={latestVoteTxHref}
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            target="_blank"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.token.tokenSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    ) : (
+                        <Button
+                            className="w-full md:w-fit"
+                            disabled
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.token.tokenSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    )}
                     {proposal.settings.votingMode ===
                         DaoTokenVotingMode.VOTE_REPLACEMENT && (
                         <Button

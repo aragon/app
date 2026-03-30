@@ -8,11 +8,12 @@ export default defineConfig({
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 2 : undefined,
+    workers: process.env.CI ? 4 : undefined,
     reporter: process.env.CI
         ? [
               ['html', { outputFolder: './playwright-report', open: 'never' }],
               ['github'],
+              ['json', { outputFile: './test-results/results.json' }],
           ]
         : [
               [
@@ -21,9 +22,10 @@ export default defineConfig({
               ],
           ],
     timeout: 60_000,
-    expect: { timeout: 10_000 },
+    expect: { timeout: process.env.CI ? 15_000 : 10_000 },
     use: {
         baseURL,
+        actionTimeout: 15_000,
         navigationTimeout: 30_000,
         trace: 'on-first-retry',
         screenshot: 'only-on-failure',
