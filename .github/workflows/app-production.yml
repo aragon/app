@@ -135,7 +135,8 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
           message: |
-            ${{ needs.e2e.result == 'success' && '✅ Smoke tests on *production* passed' || '❌ Smoke tests on *production* failed' }}
+            ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *production* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *production* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *production* failed' || '⏹️ Smoke tests on *production* were cancelled' }}
+            ${{ needs.e2e.outputs.summary }}
             <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
 
   notify:
