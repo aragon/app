@@ -45,6 +45,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
             address={member.address}
             avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
+            delegationCount={member.metrics.delegationCount}
             ensName={ensName ?? undefined}
             href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
             isDelegate={isDelegate}
