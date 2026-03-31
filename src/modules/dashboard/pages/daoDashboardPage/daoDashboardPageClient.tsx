@@ -8,7 +8,6 @@ import {
     formatterUtils,
     Link,
 } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
 import {
     type Network,
     PluginInterfaceType,
@@ -43,7 +42,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const { daoId } = props;
 
     const { t } = useTranslations();
-    const { isConnected: isWalletConnected } = useConnection();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -51,7 +49,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         network: dao?.network,
     });
 
-    const { adminPlugin } = useAdminStatus({
+    const { adminPlugin, isLoading } = useAdminStatus({
         daoId,
         network: dao?.network as Network,
     });
@@ -59,7 +57,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const processPlugins =
         useDaoPlugins({ daoId, type: PluginType.PROCESS }) ?? [];
 
-    if (dao == null) {
+    if (dao == null || isLoading) {
         return null;
     }
 
@@ -68,9 +66,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     );
 
     const isOnboarding =
-        isWalletConnected &&
-        adminPlugin != null &&
-        nonAdminProcessPlugins.length === 0;
+        adminPlugin != null && nonAdminProcessPlugins.length === 0;
 
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao.address);

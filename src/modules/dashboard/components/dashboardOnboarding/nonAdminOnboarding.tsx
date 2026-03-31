@@ -27,7 +27,7 @@ export const NonAdminOnboarding: React.FC<INonAdminOnboardingProps> = (
 
     return (
         <div className="flex flex-col gap-8">
-            <Heading size="h1">
+            <Heading className="text-3xl! md:text-4xl!" size="h1">
                 {t('app.dashboard.dashboardOnboarding.nonAdmin.welcome')}{' '}
                 {displayName != null && (
                     <span className="text-primary-400">{displayName}</span>
