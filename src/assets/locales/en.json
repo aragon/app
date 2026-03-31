@@ -2767,7 +2767,9 @@
         },
         "tokenMemberStats": {
           "tokenBalance": "Token balance",
-          "votingPower": "Voting power"
+          "votingPower": "Voting power",
+          "delegation": "Delegation",
+          "delegations": "Delegations"
         },
         "tokenMintTokensAction": {
           "address": {
