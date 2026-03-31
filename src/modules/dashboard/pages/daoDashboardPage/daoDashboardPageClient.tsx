@@ -49,7 +49,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         network: dao?.network,
     });
 
-    const { adminPlugin, isLoading } = useAdminStatus({
+    const { adminPlugin } = useAdminStatus({
         daoId,
         network: dao?.network as Network,
     });
@@ -57,7 +57,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const processPlugins =
         useDaoPlugins({ daoId, type: PluginType.PROCESS }) ?? [];
 
-    if (dao == null || isLoading) {
+    if (dao == null) {
         return null;
     }
 

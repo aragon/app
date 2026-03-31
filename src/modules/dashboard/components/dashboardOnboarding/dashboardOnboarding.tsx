@@ -27,10 +27,14 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     const { dao } = props;
 
     const { open } = useDialogContext();
-    const { address } = useConnection();
+    const { address, isConnected } = useConnection();
     const { data: ensName } = useEnsName(address);
 
-    const { isAdminMember, adminPlugin, isLoading } = useAdminStatus({
+    const {
+        isAdminMember,
+        adminPlugin,
+        isLoading: isAdminMemberLoading,
+    } = useAdminStatus({
         daoId: dao.id,
         network: dao.network,
     });
@@ -53,7 +57,9 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
         open(CreateDaoDialogId.CREATE_PROCESS_DETAILS, { params });
     };
 
-    if (isLoading) {
+    // To avoid rendering NonAdminOnboarding first even if user is a member
+    // If not connected, NonAdminOnboarding should be rendered
+    if (isConnected && isAdminMemberLoading) {
         return null;
     }
 
