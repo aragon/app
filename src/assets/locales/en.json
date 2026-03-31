@@ -817,9 +817,34 @@
       },
       "createProcessForm": {
         "governance": {
+          "advancedEmptyState": {
+            "available": {
+              "cta": "Add stage",
+              "description": "Advanced governance lets you build a proposal flow with multiple sequential stages — each with one or more voting bodies. Use it for multi-step processes like optimistic governance with community review, a guardian veto, or a founder sign off.",
+              "heading": "Design your own advanced governance"
+            },
+            "gated": {
+              "cta": "Get in touch",
+              "description": "The Aragon team can help you design an advanced governance flow designed for the unique needs of your organization. For example:",
+              "features": {
+                "1": "Different proposal flows for different types of decisions",
+                "2": "Granular permissions around who can do what",
+                "3": "Optimistic governance where proposals pass unless vetoed",
+                "4": "Security councils that can propose or review proposals before execution",
+                "5": "The ability to adapt your governance over time"
+              },
+              "heading": "Governance custom-built for {{daoName}}"
+            },
+            "tag": "On request"
+          },
           "basicBodyField": {
             "action": {
               "add": "Add"
+            },
+            "emptyState": {
+              "cta": "Add voting body",
+              "description": "Basic governance supports a single voting body — either a multisig or token voting. Add one to define how proposals are decided.",
+              "heading": "Set up your voting body"
             },
             "error": {
               "required": "A body must be added to this process."
