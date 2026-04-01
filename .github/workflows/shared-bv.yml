@@ -89,7 +89,7 @@ jobs:
 
       - name: Build Synpress wallet cache
         if: steps.synpress-cache.outputs.cache-hit != 'true'
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
+        run: xvfb-run pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
 
       - name: Warmup deployment
         run: |

@@ -28,11 +28,17 @@ export default defineConfig({
     timeout: 240_000,
     expect: { timeout: 12_000 },
     use: {
+        headless: true,
         baseURL,
         actionTimeout: 18_000,
         navigationTimeout: 30_000,
         trace: 'retain-on-failure',
         screenshot: 'only-on-failure',
     },
-    projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+    projects: [
+        {
+            name: 'chromium',
+            use: { ...devices['Desktop Chrome'], headless: true },
+        },
+    ],
 });
