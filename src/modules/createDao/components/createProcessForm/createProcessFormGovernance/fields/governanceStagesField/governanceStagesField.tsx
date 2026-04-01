@@ -54,7 +54,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
 
     if (!isAdvancedAvailable) {
         return (
-            <div className="flex flex-col gap-6 rounded-xl border border-neutral-100 bg-neutral-0 p-6 shadow-neutral-sm md:p-12">
+            <div className="flex flex-col gap-6 rounded-xl border border-neutral-100 bg-neutral-0 p-4 shadow-neutral-sm md:p-12">
                 <div className="flex items-start justify-between gap-6">
                     <div className="flex flex-col gap-2">
                         <p className="text-lg text-neutral-800 leading-tight md:text-2xl">
@@ -78,8 +78,8 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                 </div>
                 <ol className="flex flex-col gap-3 text-neutral-500 text-sm leading-normal md:text-base">
                     {gatedFeatureKeys.map((key) => (
-                        <li className="flex items-center gap-3" key={key}>
-                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary-50 text-primary-400 text-sm">
+                        <li className="flex items-baseline gap-3" key={key}>
+                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-neutral-50 text-neutral-500 text-sm">
                                 {key}
                             </span>
                             <span>
@@ -91,7 +91,7 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                     ))}
                 </ol>
                 <Button
-                    className="self-start"
+                    className="w-full md:w-auto md:self-start"
                     href={GOVERNANCE_ASSISTANCE_URL}
                     iconRight={IconType.LINK_EXTERNAL}
                     rel="noopener noreferrer"
