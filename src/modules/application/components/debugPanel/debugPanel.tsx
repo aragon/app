@@ -28,6 +28,13 @@ export const DebugPanel: React.FC = () => {
             label: 'Highlight slot components',
         });
 
+        registerControl({
+            name: 'gateAdvancedGovernance',
+            type: 'boolean',
+            label: 'Gate advanced governance',
+            group: 'Feature flags',
+        });
+
         featureFlagsSnapshot.forEach((flag) => {
             // Don't show debugPanel flag in the debug panel itself
             if (flag.key === 'debugPanel') {

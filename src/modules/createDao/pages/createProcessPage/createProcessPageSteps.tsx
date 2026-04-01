@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
@@ -25,6 +26,8 @@ export const CreateProcessPageClientSteps: React.FC<
     const { t } = useTranslations();
     const [metadataStep, processesStep, creationStep, permissionsStep] = steps;
 
+    const [disableGovernanceNext, setDisableGovernanceNext] = useState(false);
+
     return (
         <>
             <WizardPage.Step
@@ -42,12 +45,16 @@ export const CreateProcessPageClientSteps: React.FC<
                 description={t(
                     `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.description`,
                 )}
+                disableNext={disableGovernanceNext}
                 title={t(
                     `app.createDao.createProcessPage.steps.${CreateProcessWizardStep.STAGES}.title`,
                 )}
                 {...processesStep}
             >
-                <CreateProcessForm.Governance daoId={daoId} />
+                <CreateProcessForm.Governance
+                    daoId={daoId}
+                    onDisableNextChange={setDisableGovernanceNext}
+                />
             </WizardPage.Step>
             <WizardPage.Step
                 description={t(

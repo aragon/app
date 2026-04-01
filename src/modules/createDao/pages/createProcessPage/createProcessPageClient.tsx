@@ -7,7 +7,6 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
-import { createProcessFormUtils } from '../../components/createProcessForm/createProcessFormUtils';
 import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
@@ -60,7 +59,7 @@ export const CreateProcessPageClient: React.FC<
         <Page.Main fullWidth={true}>
             <WizardPage.Container
                 defaultValues={{
-                    stages: [createProcessFormUtils.buildDefaultStage()],
+                    stages: [],
                 }}
                 finalStep={t('app.createDao.createProcessPage.finalStep')}
                 initialSteps={processedSteps}
