@@ -2,28 +2,28 @@
 
 import {
     addressUtils,
-    Button,
     ChainEntityType,
     DateFormat,
     DefinitionList,
     formatterUtils,
-    IconType,
     Link,
 } from '@aragon/gov-ui-kit';
-import { AssetList } from '@/modules/finance/components/assetList';
-import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
-import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
-import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
-import { daoProposalsPageFilterParam } from '@/modules/governance/pages/daoProposalsPage';
-import { useDao } from '@/shared/api/daoService';
+import {
+    type Network,
+    PluginInterfaceType,
+    useDao,
+} from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import { useDaoPluginFilterUrlParam } from '@/shared/hooks/useDaoPluginFilterUrlParam';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
+import { DashboardOnboarded } from '../../components/dashboardOnboarded';
+import { DashboardOnboarding } from '../../components/dashboardOnboarding';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
 export interface IDaoDashboardPageClientProps {
@@ -32,10 +32,6 @@ export interface IDaoDashboardPageClientProps {
      */
     daoId: string;
 }
-
-const dashboardProposalsCount = 3;
-const dashboardMembersCount = 6;
-const dashboardAssetsCount = 3;
 
 export const daoDashboardPageMembersFilterParam = 'members';
 export const daoDashboardPageProposalsFilterParam = 'proposals';
@@ -47,59 +43,33 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
 
     const { t } = useTranslations();
 
-    const useDaoParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: useDaoParams });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { buildEntityUrl, networkDefinition } = useDaoChain({
         network: dao?.network,
     });
 
-    const daoEns = daoUtils.getDaoEns(dao);
-    const truncatedAddress = addressUtils.truncateAddress(dao?.address);
-
-    const { activePlugin: membersPlugin, setActivePlugin: setMembersPlugin } =
-        useDaoPluginFilterUrlParam({
-            daoId,
-            type: PluginType.BODY,
-            includeSubPlugins: true,
-            includeLinkedAccounts: true,
-            name: daoDashboardPageMembersFilterParam,
-        });
-
-    const {
-        activePlugin: proposalsPlugin,
-        setActivePlugin: setProposalsPlugin,
-    } = useDaoPluginFilterUrlParam({
+    const { adminPlugin } = useAdminStatus({
         daoId,
-        type: PluginType.PROCESS,
-        includeGroupFilter: true,
-        includeLinkedAccounts: true,
-        name: daoDashboardPageProposalsFilterParam,
+        network: dao?.network as Network,
     });
+
+    const processPlugins =
+        useDaoPlugins({ daoId, type: PluginType.PROCESS }) ?? [];
 
     if (dao == null) {
         return null;
     }
 
-    const daoUrl = daoUtils.getDaoUrl(dao)!;
+    const nonAdminProcessPlugins = processPlugins.filter(
+        (plugin) => plugin.meta.interfaceType !== PluginInterfaceType.ADMIN,
+    );
 
-    const proposalListParams = {
-        queryParams: {
-            daoId,
-            pageSize: dashboardProposalsCount,
-            sort: 'blockTimestamp',
-            isSubProposal: false,
-        },
-    };
+    const isOnboarding =
+        adminPlugin != null && nonAdminProcessPlugins.length === 0;
 
-    const memberListParams = {
-        queryParams: { daoId, pageSize: dashboardMembersCount },
-    };
-    const assetListParams = {
-        queryParams: { daoId: dao.id, pageSize: dashboardAssetsCount },
-    };
-
-    const hasSupportedPlugins = daoUtils.hasSupportedPlugins(dao);
+    const daoEns = daoUtils.getDaoEns(dao);
+    const truncatedAddress = addressUtils.truncateAddress(dao.address);
 
     const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
@@ -114,93 +84,23 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         id: dao.transactionHash,
     });
 
-    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.uniqueId ?? ''}`;
-    const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.uniqueId ?? ''}`;
-
     return (
         <>
-            <PluginSingleComponent
-                dao={dao}
-                Fallback={DashboardDefaultHeader}
-                pluginId={dao.id}
-                slotId={DashboardDaoSlotId.DASHBOARD_DAO_HEADER}
-            />
+            {!isOnboarding && (
+                <PluginSingleComponent
+                    dao={dao}
+                    Fallback={DashboardDefaultHeader}
+                    pluginId={dao.id}
+                    slotId={DashboardDaoSlotId.DASHBOARD_DAO_HEADER}
+                />
+            )}
             <Page.Content>
                 <Page.Main>
-                    {hasSupportedPlugins && (
-                        <Page.MainSection
-                            title={t(
-                                'app.dashboard.daoDashboardPage.main.proposals.title',
-                            )}
-                        >
-                            <DaoProposalList
-                                hidePagination={true}
-                                initialParams={proposalListParams}
-                                onValueChange={setProposalsPlugin}
-                                value={proposalsPlugin}
-                            >
-                                <Button
-                                    className="self-start"
-                                    href={proposalsPageUrl}
-                                    iconRight={IconType.CHEVRON_RIGHT}
-                                    size="md"
-                                    variant="tertiary"
-                                >
-                                    {t(
-                                        'app.dashboard.daoDashboardPage.main.viewAll',
-                                    )}
-                                </Button>
-                            </DaoProposalList>
-                        </Page.MainSection>
+                    {isOnboarding ? (
+                        <DashboardOnboarding dao={dao} />
+                    ) : (
+                        <DashboardOnboarded dao={dao} />
                     )}
-                    {hasSupportedPlugins && (
-                        <Page.MainSection
-                            title={t(
-                                'app.dashboard.daoDashboardPage.main.members.title',
-                            )}
-                        >
-                            <DaoMemberList.Container
-                                hidePagination={true}
-                                initialParams={memberListParams}
-                                onValueChange={setMembersPlugin}
-                                value={membersPlugin}
-                            >
-                                <Button
-                                    className="self-start"
-                                    href={membersPageUrl}
-                                    iconRight={IconType.CHEVRON_RIGHT}
-                                    size="md"
-                                    variant="tertiary"
-                                >
-                                    {t(
-                                        'app.dashboard.daoDashboardPage.main.viewAll',
-                                    )}
-                                </Button>
-                            </DaoMemberList.Container>
-                        </Page.MainSection>
-                    )}
-                    <Page.MainSection
-                        title={t(
-                            'app.dashboard.daoDashboardPage.main.assets.title',
-                        )}
-                    >
-                        <AssetList.Default
-                            hidePagination={true}
-                            initialParams={assetListParams}
-                        >
-                            <Button
-                                className="self-start"
-                                href={`${daoUrl}/assets`}
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                size="md"
-                                variant="tertiary"
-                            >
-                                {t(
-                                    'app.dashboard.daoDashboardPage.main.viewAll',
-                                )}
-                            </Button>
-                        </AssetList.Default>
-                    </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
                     <Page.AsideCard

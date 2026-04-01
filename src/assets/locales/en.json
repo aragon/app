@@ -294,7 +294,6 @@
       "bannerDao": {
         "adminMember": {
           "action": "Add governance",
-          "manage": "Manage admins",
           "message": "You are a DAO admin. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
@@ -1308,6 +1307,32 @@
           "proposals": "Proposals",
           "treasury": "Treasury"
         }
+      },
+      "dashboardOnboarding": {
+        "admin": {
+          "description": "Your organization has no governance yet. Without it, only you can execute actions - your team or community can't participate. Choose how you want to get set up.",
+          "divider": "or",
+          "enterprise": {
+            "action": "Get in touch",
+            "description": "Most successful organizations on Aragon are launched with expert guidance. Work with our team to design and deploy a governance and tokenomics setup tailored to your organization.",
+            "tag": "Best for custom setups",
+            "title": "Work with the Aragon team"
+          },
+          "free": {
+            "addGovernance": "Add governance",
+            "description": "Use the no-code wizard to deploy governance and configure your organization's governance or explore our documentation to build it yourself.",
+            "title": "Set up governance yourself",
+            "viewDocs": "View docs"
+          },
+          "subtitle": "Now, let's get started!",
+          "welcome": "Welcome"
+        },
+        "nonAdmin": {
+          "description": "Admins can install plugins that enable governance, affect tokenomics, or support other onchain operations.",
+          "title": "{{daoName}} is being set up",
+          "viewAdmins": "View admins",
+          "welcome": "Welcome"
+        }
       }
     },
     "explore": {
@@ -1339,6 +1364,7 @@
         "enterpriseService": {
           "actionLabel": "Get in touch",
           "subtitle": "Let Aragon design and build custom governance and tokenomics mechanisms for your organization.",
+          "tag": "Recommended",
           "title": "Work with our team"
         },
         "hero": {
