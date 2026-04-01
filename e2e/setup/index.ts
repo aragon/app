@@ -18,13 +18,17 @@ export const test = base.extend<{ metamask: MetaMask }>({
                         !p.url().includes('onboarding'),
                 ) ?? metamaskPage;
 
+        // MetaMask may lock between tests; unlock if the password field is present.
         const lockInput = mmPage.locator('[data-testid="unlock-password"]');
         if ((await lockInput.count()) > 0) {
             await lockInput.fill(walletSetup.walletPassword);
             await mmPage.locator('[data-testid="unlock-submit"]').click();
+            // Extension UI re-renders after unlock — no reliable DOM event to await.
             await mmPage.waitForTimeout(1000);
         }
 
+        // Close stale extension tabs (onboarding, popups) that Synpress
+        // may have left open — they interfere with notification detection.
         const extPrefix = `chrome-extension://${extensionId}/`;
         for (const p of context.pages()) {
             if (p !== mmPage && p.url().startsWith(extPrefix)) {

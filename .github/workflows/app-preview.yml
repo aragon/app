@@ -1,5 +1,6 @@
 # The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel, comments the
-# deployment URL on the pull request, and runs E2E smoke tests plus build verification (Synpress) against the preview.
+# deployment URL on the pull request, and runs E2E smoke tests against the preview.
+# Build verification (BV/Synpress) tests run only on staging as part of the release process.
 
 name: App Preview
 
@@ -45,18 +46,8 @@ jobs:
       deployment-url: ${{ needs.deploy.outputs.deploymentUrl }}
       environment: preview
 
-  # BV needs MetaMask secrets; fork PRs do not receive repo secrets, so skip to avoid a failing job.
-  bv:
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-    needs: deploy
-    uses: ./.github/workflows/shared-bv.yml
-    secrets: inherit
-    with:
-      deployment-url: ${{ needs.deploy.outputs.deploymentUrl }}
-      environment: preview
-
   e2e-comment:
-    needs: [deploy, e2e, bv]
+    needs: [deploy, e2e]
     if: ${{ always() && needs.deploy.result == 'success' && needs.e2e.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
@@ -75,14 +66,6 @@ jobs:
             | Playwright result | ${{ needs.e2e.outputs.result_label }} |
             | Summary | ${{ needs.e2e.outputs.summary }} |
             | GitHub job | ${{ needs.e2e.result == 'success' && '✅ completed' || needs.e2e.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
-
-            **Build verification (Synpress)**
-            | | |
-            |---|---|
-            | Suite | bv |
-            | Playwright result | ${{ needs.bv.result == 'skipped' && '⏭️ skipped (fork PR — no repo secrets)' || needs.bv.outputs.result_label }} |
-            | Summary | ${{ needs.bv.result == 'skipped' && '—' || needs.bv.outputs.summary }} |
-            | GitHub job | ${{ needs.bv.result == 'skipped' && '⏭️ skipped' || needs.bv.result == 'success' && '✅ completed' || needs.bv.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
 
             [View run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           github-token: ${{ secrets.GITHUB_TOKEN }}

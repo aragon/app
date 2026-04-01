@@ -1,5 +1,5 @@
 # Shared BV workflow — runs Playwright build verification tests against a deployed environment.
-# Called by app-staging (and app-preview) after deploy.
+# Called by app-staging after deploy.
 # Wallet: 1Password kv_app_infra / E2E_FE_MM_WALLET (password + secret recovery phrase) via op:// refs.
 
 name: Shared BV
@@ -12,7 +12,7 @@ on:
         required: true
         type: string
       environment:
-        description: "Environment name (development, staging) — used for artifact naming"
+        description: "Environment name (staging) — used for artifact naming"
         required: true
         type: string
     secrets:
@@ -44,10 +44,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/setup
 
       - name: Load E2E MetaMask wallet from 1Password
         uses: 1password/load-secrets-action@v3.2.1
@@ -85,10 +81,11 @@ jobs:
         uses: actions/cache@v5.0.4
         with:
           path: .cache-synpress
-          key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts') }}
+          key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts', 'package.json') }}
 
       - name: Build Synpress wallet cache
         if: steps.synpress-cache.outputs.cache-hit != 'true'
+        # xvfb-run: MetaMask extension requires a display for onboarding UI.
         run: xvfb-run pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
 
       - name: Warmup deployment
@@ -113,52 +110,10 @@ jobs:
       - name: Parse Playwright results
         id: playwright-result
         if: always()
-        run: |
-          REPORT="e2e/test-results/results.json"
-          result="failed"
-          result_label="❌ failed"
-          summary="No Playwright report available"
-
-          if [[ "$BV_OUTCOME" == "cancelled" ]]; then
-            result="cancelled"
-            result_label="⏹️ cancelled"
-            summary="BV run was cancelled"
-
-          elif [[ -f "$REPORT" ]] && jq -e '.stats' "$REPORT" >/dev/null 2>&1; then
-            expected=$(jq '.stats.expected // 0' "$REPORT")
-            flaky=$(jq '.stats.flaky // 0' "$REPORT")
-            unexpected=$(jq '.stats.unexpected // 0' "$REPORT")
-            skipped=$(jq '.stats.skipped // 0' "$REPORT")
-
-            summary=""
-            if (( expected > 0 ));   then summary+="${expected} passed"; fi
-            if (( flaky > 0 ));      then summary+="${summary:+, }${flaky} flaky"; fi
-            if (( unexpected > 0 )); then summary+="${summary:+, }${unexpected} failed"; fi
-            if (( skipped > 0 ));    then summary+="${summary:+, }${skipped} skipped"; fi
-            : "${summary:=No tests reported}"
-
-            if (( unexpected > 0 )); then
-              result="failed"; result_label="❌ failed"
-            elif (( flaky > 0 )); then
-              result="flaky"; result_label="⚠️ completed with flaky tests"
-            else
-              result="passed"; result_label="✅ passed"
-            fi
-
-          elif [[ "$BV_OUTCOME" == "success" ]]; then
-            result="passed"
-            result_label="✅ passed"
-            summary="BV suite completed (no JSON report)"
-
-          else
-            echo "::warning::Playwright JSON report not found or malformed"
-          fi
-
-          echo "result=${result}" >> "$GITHUB_OUTPUT"
-          echo "result_label=${result_label}" >> "$GITHUB_OUTPUT"
-          echo "summary=${summary}" >> "$GITHUB_OUTPUT"
-        env:
-          BV_OUTCOME: ${{ steps.bv.outcome }}
+        uses: ./.github/actions/parse-playwright-results
+        with:
+          report-path: e2e/test-results/results.json
+          step-outcome: ${{ steps.bv.outcome }}
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v7.0.0

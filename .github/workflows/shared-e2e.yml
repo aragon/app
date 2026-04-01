@@ -43,6 +43,7 @@ jobs:
           fetch-depth: 1
           sparse-checkout: |
             .github/actions/setup
+            .github/actions/parse-playwright-results
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -88,52 +89,10 @@ jobs:
       - name: Parse Playwright results
         id: playwright-result
         if: always()
-        run: |
-          REPORT="e2e/test-results/results.json"
-          result="failed"
-          result_label="❌ failed"
-          summary="No Playwright report available"
-
-          if [[ "$SMOKE_OUTCOME" == "cancelled" ]]; then
-            result="cancelled"
-            result_label="⏹️ cancelled"
-            summary="Smoke run was cancelled"
-
-          elif [[ -f "$REPORT" ]] && jq -e '.stats' "$REPORT" >/dev/null 2>&1; then
-            expected=$(jq '.stats.expected // 0' "$REPORT")
-            flaky=$(jq '.stats.flaky // 0' "$REPORT")
-            unexpected=$(jq '.stats.unexpected // 0' "$REPORT")
-            skipped=$(jq '.stats.skipped // 0' "$REPORT")
-
-            summary=""
-            if (( expected > 0 ));   then summary+="${expected} passed"; fi
-            if (( flaky > 0 ));      then summary+="${summary:+, }${flaky} flaky"; fi
-            if (( unexpected > 0 )); then summary+="${summary:+, }${unexpected} failed"; fi
-            if (( skipped > 0 ));    then summary+="${summary:+, }${skipped} skipped"; fi
-            : "${summary:=No tests reported}"
-
-            if (( unexpected > 0 )); then
-              result="failed"; result_label="❌ failed"
-            elif (( flaky > 0 )); then
-              result="flaky"; result_label="⚠️ completed with flaky tests"
-            else
-              result="passed"; result_label="✅ passed"
-            fi
-
-          elif [[ "$SMOKE_OUTCOME" == "success" ]]; then
-            result="passed"
-            result_label="✅ passed"
-            summary="Smoke suite completed (no JSON report)"
-
-          else
-            echo "::warning::Playwright JSON report not found or malformed"
-          fi
-
-          echo "result=${result}" >> "$GITHUB_OUTPUT"
-          echo "result_label=${result_label}" >> "$GITHUB_OUTPUT"
-          echo "summary=${summary}" >> "$GITHUB_OUTPUT"
-        env:
-          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
+        uses: ./.github/actions/parse-playwright-results
+        with:
+          report-path: e2e/test-results/results.json
+          step-outcome: ${{ steps.smoke.outcome }}
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v7.0.0

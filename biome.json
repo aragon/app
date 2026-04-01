@@ -345,6 +345,18 @@
                     }
                 }
             }
+        },
+        {
+            "includes": [
+                "e2e/scripts/**/*.mjs"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
         }
     ],
     "assist": {

@@ -1,14 +1,14 @@
 /**
  * Copies the Synpress-generated wallet cache (hex-named dir) to a stable
- * `wallet-setup` directory name that matches the hash exported from wallet.setup.ts.
+ * directory name that matches the hash exported from wallet.setup.ts.
  * Also patches the MetaMask manifest to disable Side Panel (not accessible to Playwright).
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { WALLET_SETUP_CACHE_KEY } from '../setup/walletCacheKey.mjs';
 
 const CACHE_ROOT = path.join(process.cwd(), '.cache-synpress');
-/** Must match the `hash` exported from e2e/setup/wallet.setup.ts */
-const TARGET_DIR_NAME = 'wallet-setup';
+const TARGET_DIR_NAME = WALLET_SETUP_CACHE_KEY;
 const SETUP_HASH_DIR = /^[a-f0-9]{20}$/;
 
 /** Remove Side Panel entries from MetaMask manifest so it falls back to notification.html popups. */

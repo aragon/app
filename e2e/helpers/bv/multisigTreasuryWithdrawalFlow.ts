@@ -2,6 +2,11 @@ import { expect, type Page } from '@playwright/test';
 import type { MetaMask } from '@synthetixio/synpress/playwright';
 import { getAddress } from 'viem';
 import type { BvMultisigTreasuryDao } from '../constants/bvDaos';
+import {
+    MEMBER_GATE_API_TIMEOUT,
+    PROPOSAL_FORM_ELEMENT_TIMEOUT,
+    PUBLISH_DIALOG_TIMEOUT,
+} from '../constants/timeouts';
 import { DaoProposalDetailPage } from '../pages/daoProposalDetailPage/daoProposalDetailPage';
 import { DaoProposalsPage } from '../pages/daoProposalsPage/daoProposalsPage';
 import { WalletConnectionPage } from '../shared/walletConnectionPage/walletConnectionPage';
@@ -19,6 +24,8 @@ const CREATE_PROPOSAL_FORM = '#createProposalWizard';
 async function advanceFromActionsStepSkippingSimulation(
     page: Page,
 ): Promise<void> {
+    // The proposal form footer has a split-button; the last button opens a dropdown.
+    // TODO: replace Tailwind-class locator with data-testid once the app adds one.
     const footerPrimary = page
         .locator(CREATE_PROPOSAL_FORM)
         .locator('div.flex.flex-row.justify-between')
@@ -44,9 +51,13 @@ async function advanceFromActionsStepSkippingSimulation(
         page
             .getByRole('dialog', { name: 'Publish proposal' })
             .or(page.getByRole('heading', { name: /Proposal settings/i })),
-    ).toBeVisible({ timeout: 30_000 });
+    ).toBeVisible({ timeout: PUBLISH_DIALOG_TIMEOUT });
 }
 
+/**
+ * Navigates to the DAO dashboard, connects the MetaMask wallet,
+ * and switches to the DAO's network — the prerequisite for every BV test.
+ */
 export async function ensureBvDaoSession(
     page: Page,
     metamask: MetaMask,
@@ -58,18 +69,28 @@ export async function ensureBvDaoSession(
     });
     await walletPage.navigate();
     await walletPage.connectWallet(metamask);
-    await switchNetwork(page, metamask, 'Sepolia');
+    await switchNetwork(page, metamask, dao.network);
 }
 
+/**
+ * Waits for the `/v2/members/.../exists` API response that gates the
+ * "New Proposal" button on the proposals page. Without this, clicking
+ * the button may race against the member-check and fail.
+ */
 export async function waitForProposalsMemberGate(page: Page): Promise<void> {
     await page.waitForResponse(
         (res) =>
             /\/v2\/members\/[^/]+\/[^/]+\/exists(?:\?|$)/.test(res.url()) &&
             res.ok(),
-        { timeout: 25_000 },
+        { timeout: MEMBER_GATE_API_TIMEOUT },
     );
 }
 
+/**
+ * Opens the proposal creation wizard from the proposals page.
+ * Handles both multi-process DAOs (dialog with plugin choice) and
+ * single-process DAOs (direct navigation to `/create/.../proposal`).
+ */
 export async function openMultisigProposalWizard(page: Page): Promise<void> {
     await page
         .getByRole('main')
@@ -81,7 +102,8 @@ export async function openMultisigProposalWizard(page: Page): Promise<void> {
             .getByRole('dialog')
             .waitFor({ state: 'visible', timeout: 10_000 });
     } catch {
-        // Single-process plugin: navigates straight to the create URL.
+        // Single-process DAOs skip the plugin selection dialog
+        // and navigate straight to the create URL.
     }
 
     const dialog = page.getByRole('dialog');
@@ -90,10 +112,12 @@ export async function openMultisigProposalWizard(page: Page): Promise<void> {
         await dialog.getByRole('button', { name: 'Create proposal' }).click();
     }
 
-    await expect(page).toHaveURL(/\/create\/.*\/proposal/, { timeout: 25_000 });
+    await expect(page).toHaveURL(/\/create\/.*\/proposal/, {
+        timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT,
+    });
 }
 
-/** Fill the multisig native ETH withdrawal proposal form (title → actions → recipient → amount). */
+/** Fills the multisig native ETH withdrawal proposal form (title, actions, recipient, amount). */
 export async function fillMultisigNativeWithdrawProposal(
     page: Page,
     {
@@ -110,7 +134,7 @@ export async function fillMultisigNativeWithdrawProposal(
     const wizardForm = page.locator(CREATE_PROPOSAL_FORM);
 
     await expect(page.getByLabel('Proposal title')).toBeVisible({
-        timeout: 25_000,
+        timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT,
     });
     await page.getByLabel('Proposal title').fill(proposalTitle);
 
@@ -120,7 +144,9 @@ export async function fillMultisigNativeWithdrawProposal(
         name: 'Action',
         exact: true,
     });
-    await expect(addActionBtn).toBeVisible({ timeout: 25_000 });
+    await expect(addActionBtn).toBeVisible({
+        timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT,
+    });
     await addActionBtn.click();
 
     const actionSearch = page.getByPlaceholder(
@@ -146,7 +172,7 @@ export async function fillMultisigNativeWithdrawProposal(
     await expect(assetDialog).toBeVisible({ timeout: 20_000 });
     await expect(
         assetDialog.getByText(/ETH|Ether|Ethereum/i).first(),
-    ).toBeVisible({ timeout: 25_000 });
+    ).toBeVisible({ timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT });
     await assetDialog
         .getByText(/^(Ether|Ethereum|ETH)$/)
         .first()
@@ -155,7 +181,7 @@ export async function fillMultisigNativeWithdrawProposal(
 
     await expect(
         wizardForm.getByRole('button', { name: 'Max', exact: true }),
-    ).toBeVisible({ timeout: 30_000 });
+    ).toBeVisible({ timeout: PUBLISH_DIALOG_TIMEOUT });
 
     const amountField = wizardForm.getByRole('spinbutton');
     await expect(amountField).toBeEnabled({ timeout: 15_000 });
@@ -167,7 +193,8 @@ export async function fillMultisigNativeWithdrawProposal(
     await recipientField.click();
     await recipientField.fill(checksummedReceiver);
     await recipientField.blur();
-    // AddressInput debounces 300 ms before committing the value.
+    // AddressInput component debounces 300 ms before committing the value;
+    // wait slightly longer so the resolved address appears in the UI.
     await page.waitForTimeout(400);
     await expect(
         wizardForm
@@ -188,17 +215,25 @@ export async function fillMultisigNativeWithdrawProposal(
             .locator(CREATE_PROPOSAL_FORM)
             .getByRole('button', { name: 'Publish proposal', exact: true })
             .click();
-        await expect(publishDialog).toBeVisible({ timeout: 30_000 });
+        await expect(publishDialog).toBeVisible({
+            timeout: PUBLISH_DIALOG_TIMEOUT,
+        });
     }
 }
 
+/**
+ * Verifies that the proposal detail page shows decoded action data
+ * (expands the accordion if collapsed and checks for "Ether" text).
+ */
 export async function expectProposalActionsDecoded(page: Page): Promise<void> {
     const detail = new DaoProposalDetailPage(page);
     const actionsHeading = page.getByRole('heading', {
         name: 'Actions',
         exact: true,
     });
-    await expect(actionsHeading).toBeVisible({ timeout: 30_000 });
+    await expect(actionsHeading).toBeVisible({
+        timeout: PUBLISH_DIALOG_TIMEOUT,
+    });
     await expect(detail.mainContent()).not.toBeEmpty();
 
     const mainWithActions = page
@@ -216,9 +251,14 @@ export async function expectProposalActionsDecoded(page: Page): Promise<void> {
 
     await expect(
         mainWithActions.getByText('Ether', { exact: true }).first(),
-    ).toBeVisible({ timeout: 30_000 });
+    ).toBeVisible({ timeout: PUBLISH_DIALOG_TIMEOUT });
 }
 
+/**
+ * End-to-end: navigates to proposals, opens the multisig wizard,
+ * fills a native ETH withdrawal proposal, publishes it, and returns
+ * the created proposal's title and URL.
+ */
 export async function createAndPublishMultisigWithdrawProposal(
     page: Page,
     metamask: MetaMask,

@@ -4,18 +4,18 @@ import type {
     TestInfo,
 } from '@playwright/test';
 
-export interface IPageParams {
+export interface IBasePageParams {
     page: PlaywrightPage;
     path: string;
 }
 
-export class Page {
+export class BasePage {
     protected page: PlaywrightPage;
     protected path: string;
     protected response: Response | null = null;
     private vercelError = false;
 
-    constructor(params: IPageParams) {
+    constructor(params: IBasePageParams) {
         this.page = params.page;
         this.path = params.path;
     }
