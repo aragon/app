@@ -102,9 +102,15 @@ export const CreateProposalFormActions: React.FC<
     const watchFieldArray = useWatch<
         Record<string, ICreateProposalFormData['actions']>
     >({ name: 'actions' });
+    // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
+    const watchedActions =
+        watchFieldArray?.length === actions.length
+            ? watchFieldArray
+            : undefined;
     const controlledActions = actions.map((field, index) => ({
         ...field,
-        ...watchFieldArray[index],
+        ...watchedActions?.[index],
+        id: field.id,
     }));
 
     const { data: allowedActionsData } = useAllowedActions(

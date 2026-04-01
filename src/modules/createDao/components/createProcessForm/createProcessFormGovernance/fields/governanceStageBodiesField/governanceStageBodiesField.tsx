@@ -57,12 +57,16 @@ export const GovernanceStageBodiesField: React.FC<
         Record<string, ISetupBodyForm[]>
     >({ name: fieldName });
 
-    const bodiesWatch = useWatch<Record<string, ISetupBodyForm[]>>({
+    const watchFieldArray = useWatch<Record<string, ISetupBodyForm[]>>({
         name: fieldName,
     });
+    // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
+    const watchedBodies =
+        watchFieldArray?.length === fields.length ? watchFieldArray : undefined;
     const bodies = fields.map((field, index) => ({
         ...field,
-        ...bodiesWatch[index],
+        ...watchedBodies?.[index],
+        id: field.id,
     }));
 
     const handleBodySubmit = (index?: number) => (values: ISetupBodyForm) => {

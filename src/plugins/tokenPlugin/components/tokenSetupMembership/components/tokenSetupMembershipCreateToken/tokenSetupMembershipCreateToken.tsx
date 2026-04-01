@@ -97,14 +97,20 @@ export const TokenSetupMembershipCreateToken: React.FC<
     } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
         name: membersFieldName,
     });
-    const watchMembersField = useWatch<
+    const watchFieldArray = useWatch<
         Record<string, ITokenSetupMembershipForm['members']>
     >({
         name: membersFieldName,
     });
+    // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
+    const watchedMembers =
+        watchFieldArray?.length === membersField.length
+            ? watchFieldArray
+            : undefined;
     const controlledMembersField = membersField.map((field, index) => ({
         ...field,
-        ...watchMembersField[index],
+        ...watchedMembers?.[index],
+        id: field.id,
     }));
 
     const handleAddMember = () => addMember({ address: '', tokenAmount: 1 });
