@@ -74,6 +74,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'gateAdvancedGovernance',
+        name: 'Gate advanced governance',
+        description:
+            'Gates advanced governance setup behind a DAO creation cutoff timestamp',
+        defaultValue: false,
+        environments: {
+            production: true,
+        },
+    },
+    {
         key: 'osxUpdates',
         name: 'OSX updates',
         description: 'Enables DAO contract upgrade functionality',

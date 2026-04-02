@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.26.0
+
+### Minor Changes
+
+- [#1061](https://github.com/aragon/app/pull/1061) [`ef68d72`](https://github.com/aragon/app/commit/ef68d72650a0af27db401e544bcf49ba20eea05f) Thanks [@milosh86](https://github.com/milosh86)! - Add onboarding dashboard state with CTAs when only the admin plugin is installed
+
+- [#1045](https://github.com/aragon/app/pull/1045) [`16d4619`](https://github.com/aragon/app/commit/16d46191df042e1db13f887353c7a28c5c372732) Thanks [@milosh86](https://github.com/milosh86)! - Add the number of delegations metrics to a token members list
+
+- [#1062](https://github.com/aragon/app/pull/1062) [`f91e042`](https://github.com/aragon/app/commit/f91e04242746ef86c94684bf6e0ed851e1b3c6f7) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement gate for Governance Designer 'Advanced' flow
+
+- [#1060](https://github.com/aragon/app/pull/1060) [`56550fe`](https://github.com/aragon/app/commit/56550fe3bb28980010c5870ecee39066d9680c4a) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update Playwright smoke coverage to exercise real DAOs and feature-specific scenarios
+
+### Patch Changes
+
+- [#1073](https://github.com/aragon/app/pull/1073) [`cd6d7ef`](https://github.com/aragon/app/commit/cd6d7ef086758c3f9f6edf58fa8541df495aa8ba) Thanks [@milosh86](https://github.com/milosh86)! - Fix crash when removing items from watched field arrays
+
+- [#1066](https://github.com/aragon/app/pull/1066) [`bb2198b`](https://github.com/aragon/app/commit/bb2198b1746d97e654fba7b87ee7456d4513b49e) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Resolve cryptex voting escrow addresses dynamically
+
 ## 1.25.0
 
 ### Minor Changes
