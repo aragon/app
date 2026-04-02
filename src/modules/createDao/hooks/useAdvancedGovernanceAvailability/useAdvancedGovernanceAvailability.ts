@@ -28,7 +28,6 @@ export const useAdvancedGovernanceAvailability = (
     }
 
     const isAvailable = resolveAdvancedGovernanceAvailability({
-        environment: 'production',
         daoBlockTimestamp: dao?.blockTimestamp,
         cutoffTimestamp:
             process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP,
