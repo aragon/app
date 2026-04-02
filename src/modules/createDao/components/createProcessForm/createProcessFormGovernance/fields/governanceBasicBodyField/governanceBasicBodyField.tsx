@@ -87,14 +87,21 @@ export const GovernanceBasicBodyField: React.FC<
         onBodyChange({ ...body, name: processName });
     }, [body, onBodyChange, processName, readOnly]);
 
+    const showFieldContext = body != null || readOnly;
+
     return (
         <InputContainer
-            helpText={t(
-                'app.createDao.createProcessForm.governance.basicBodyField.helpText',
-            )}
             id="basicBody"
             useCustomWrapper={true}
             {...bodyField}
+            helpText={
+                showFieldContext
+                    ? t(
+                          'app.createDao.createProcessForm.governance.basicBodyField.helpText',
+                      )
+                    : undefined
+            }
+            label={showFieldContext ? bodyField.label : undefined}
         >
             {body != null && (
                 <GovernanceBodyField

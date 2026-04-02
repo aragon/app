@@ -12,7 +12,10 @@ import {
     type Hex,
     zeroHash,
 } from 'viem';
-import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
+import {
+    CapitalFlowDaoSlotId,
+    type ICapitalDistributorVotingEscrowAddressParams,
+} from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import {
     type IProposalActionData,
     useCreateProposalFormContext,
@@ -50,10 +53,13 @@ export const CapitalDistributorCreateCampaignActionCreate: React.FC<
     const { addPrepareAction } =
         useCreateProposalFormContext<ICapitalDistributorActionCreateCampaign>();
 
-    const escrowAddress = useSlotSingleFunction<void, Hex | undefined>({
+    const escrowAddress = useSlotSingleFunction<
+        ICapitalDistributorVotingEscrowAddressParams,
+        Hex | undefined
+    >({
         slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
         pluginId: daoId,
-        params: undefined,
+        params: { daoId },
     });
 
     const fieldName = `actions.[${index.toString()}]`;

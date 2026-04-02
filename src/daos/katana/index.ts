@@ -3,14 +3,11 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { CapitalDistributorTestMembersFileDownload } from './components/capitalDistributorTestMembersFileDownload';
 import {
     capitalDistributorTestDao,
-    capitalDistributorTestVotingEscrowAddress,
     katanaCDDemo,
-    katanaCDDemoVotingEscrowAddress,
     katanaEmissionsTest,
-    katanaEmissionsTestVotingEscrowAddress,
     katanaVKatManagement,
-    katanaVKatManagementVotingEscrowAddress,
 } from './constants';
+import { useKatanaVotingEscrowAddress } from './hooks/useKatanaVotingEscrowAddress';
 
 export const initialiseKatana = () => {
     pluginRegistryUtils
@@ -25,7 +22,7 @@ export const initialiseKatana = () => {
         .registerSlotFunction({
             slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
             pluginId: katanaCDDemo.id,
-            function: () => katanaCDDemoVotingEscrowAddress,
+            function: useKatanaVotingEscrowAddress,
         })
 
         .registerPlugin(katanaEmissionsTest)
@@ -39,7 +36,7 @@ export const initialiseKatana = () => {
         .registerSlotFunction({
             slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
             pluginId: katanaEmissionsTest.id,
-            function: () => katanaEmissionsTestVotingEscrowAddress,
+            function: useKatanaVotingEscrowAddress,
         })
 
         // TODO: Remove capitalDistributorTest when mainnet capital distributor is live (APP-558)
@@ -54,7 +51,7 @@ export const initialiseKatana = () => {
         .registerSlotFunction({
             slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
             pluginId: capitalDistributorTestDao.id,
-            function: () => capitalDistributorTestVotingEscrowAddress,
+            function: useKatanaVotingEscrowAddress,
         })
 
         .registerPlugin(katanaVKatManagement)
@@ -68,6 +65,6 @@ export const initialiseKatana = () => {
         .registerSlotFunction({
             slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
             pluginId: katanaVKatManagement.id,
-            function: () => katanaVKatManagementVotingEscrowAddress,
+            function: useKatanaVotingEscrowAddress,
         });
 };

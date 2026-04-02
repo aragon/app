@@ -8,14 +8,11 @@ import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialog
 import { useFeaturedDaos } from '@/shared/api/cmsService';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
+import { CtaCard } from '@/shared/components/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import doItYourselfIcon from '../../../../assets/images/doItYourselfIcon.svg';
-import enterpriseServiceIcon from '../../../../assets/images/enterpriseServiceIcon.svg';
 import NetBackground from '../../../../assets/images/net_bg.svg';
-import noCodeSetupIcon from '../../../../assets/images/noCodeSetup.svg';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
-import { CtaCard } from '../../components/ctaCard';
 import { DaoCarouselCard } from '../../components/daoCarouselCard';
 import { ExploreDaos } from '../../components/exploreDaos';
 import { ExploreNav } from '../../components/exploreNav';
@@ -96,50 +93,63 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                     <ExploreSection
                         title={t('app.explore.exploreDaosPage.section.cta')}
                     >
-                        <div className="flex flex-col items-start gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
+                        <div className="flex flex-col gap-4 self-stretch md:flex-row md:gap-4 lg:gap-8">
                             <CtaCard
-                                actionHref="https://www.aragon.org/get-assistance-form"
-                                actionLabel={t(
-                                    'app.explore.exploreDaosPage.enterpriseService.actionLabel',
-                                )}
-                                imgSrc={enterpriseServiceIcon as string}
-                                isExternal={true}
-                                isPrimary={true}
-                                subtitle={t(
+                                className="flex-1"
+                                description={t(
                                     'app.explore.exploreDaosPage.enterpriseService.subtitle',
                                 )}
+                                isPrimary={true}
+                                objectType="SMART_CONTRACT"
+                                primaryAction={{
+                                    href: 'https://www.aragon.org/get-assistance-form',
+                                    label: t(
+                                        'app.explore.exploreDaosPage.enterpriseService.actionLabel',
+                                    ),
+                                }}
+                                tag={t(
+                                    'app.explore.exploreDaosPage.enterpriseService.tag',
+                                )}
+                                textSize="smaller"
                                 title={t(
                                     'app.explore.exploreDaosPage.enterpriseService.title',
                                 )}
                             />
                             <CtaCard
-                                actionLabel={t(
-                                    'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
-                                )}
-                                actionOnClick={() =>
-                                    open(CreateDaoDialogId.CREATE_DAO_DETAILS)
-                                }
-                                imgSrc={noCodeSetupIcon as string}
-                                isExternal={false}
-                                isPrimary={false}
-                                subtitle={t(
+                                className="flex-1"
+                                description={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.subtitle',
                                 )}
+                                isPrimary={false}
+                                objectType="APP"
+                                primaryAction={{
+                                    label: t(
+                                        'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
+                                    ),
+                                    onClick: () =>
+                                        open(
+                                            CreateDaoDialogId.CREATE_DAO_DETAILS,
+                                        ),
+                                }}
+                                textSize="smaller"
                                 title={t(
                                     'app.explore.exploreDaosPage.noCodeSetup.title',
                                 )}
                             />
                             <CtaCard
-                                actionHref="https://docs.aragon.org/"
-                                actionLabel={t(
-                                    'app.explore.exploreDaosPage.doItYourself.actionLabel',
-                                )}
-                                imgSrc={doItYourselfIcon as string}
-                                isExternal={true}
-                                isPrimary={false}
-                                subtitle={t(
+                                className="flex-1"
+                                description={t(
                                     'app.explore.exploreDaosPage.doItYourself.subtitle',
                                 )}
+                                isPrimary={false}
+                                objectType="BOOK"
+                                primaryAction={{
+                                    href: 'https://docs.aragon.org/',
+                                    label: t(
+                                        'app.explore.exploreDaosPage.doItYourself.actionLabel',
+                                    ),
+                                }}
+                                textSize="smaller"
                                 title={t(
                                     'app.explore.exploreDaosPage.doItYourself.title',
                                 )}

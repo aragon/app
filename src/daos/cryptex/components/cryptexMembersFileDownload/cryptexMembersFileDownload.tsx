@@ -7,17 +7,16 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     cryptex,
     cryptexTokenVotingPluginAddress,
-    tokenCDTest,
-    tokenCDTestTokenVotingPluginAddress,
+    tokenVotingRewardsTest,
+    tokenVotingRewardsTestTokenVotingPluginAddress,
 } from '../../constants';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
 import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
 
-// TODO: Remove tokenCDTest entry when mainnet capital distributor is live (APP-558)
 const tokenVotingPluginAddresses: Record<string, `0x${string}`> = {
     [cryptex.id]: cryptexTokenVotingPluginAddress,
-    [tokenCDTest.id]: tokenCDTestTokenVotingPluginAddress,
+    [tokenVotingRewardsTest.id]: tokenVotingRewardsTestTokenVotingPluginAddress,
 };
 
 export const CryptexMembersFileDownload: React.FC<
