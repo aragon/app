@@ -52,12 +52,18 @@ export const ProposalCreationEligibilityField: React.FC<
                 value={radioValue}
             >
                 <RadioCard
+                    description={t(
+                        'app.plugins.token.tokenSetupGovernance.eligibleField.members.description',
+                    )}
                     label={t(
                         'app.plugins.token.tokenSetupGovernance.eligibleField.members.label',
                     )}
                     value="members"
                 />
                 <RadioCard
+                    description={t(
+                        'app.plugins.token.tokenSetupGovernance.eligibleField.anyWallet.description',
+                    )}
                     label={t(
                         'app.plugins.token.tokenSetupGovernance.eligibleField.anyWallet.label',
                     )}
