@@ -99,17 +99,15 @@ export const CreateProposalFormActions: React.FC<
 
     // We need to watch because action views can update data, and it's not reflected otherwise!
     // We merge it with `actions` because of `id` and other internal props which are missing in watched action.
-    const watchFieldArray = useWatch<
+    const watchActions = useWatch<
         Record<string, ICreateProposalFormData['actions']>
     >({ name: 'actions' });
     // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
-    const watchedActions =
-        watchFieldArray?.length === actions.length
-            ? watchFieldArray
-            : undefined;
-    const controlledActions = actions.map((field, index) => ({
+    const stableWatchActions =
+        watchActions?.length === actions.length ? watchActions : undefined;
+    const actionsMerged = actions.map((field, index) => ({
         ...field,
-        ...watchedActions?.[index],
+        ...stableWatchActions?.[index],
         id: field.id,
     }));
 
@@ -274,10 +272,10 @@ export const CreateProposalFormActions: React.FC<
                 onExpandedActionsChange={noOpActionsChange}
             >
                 <ProposalActions.Container emptyStateDescription="">
-                    {controlledActions.map((action, index) => (
+                    {actionsMerged.map((action, index) => (
                         <ProposalActions.Item<IProposalActionData>
                             action={action as IProposalActionData}
-                            actionCount={controlledActions.length}
+                            actionCount={actionsMerged.length}
                             actionFunctionSelector={proposalActionUtils.actionToFunctionSelector(
                                 action as IProposalActionData,
                             )}

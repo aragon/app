@@ -97,26 +97,24 @@ export const TokenSetupMembershipCreateToken: React.FC<
     } = useFieldArray<Record<string, ITokenSetupMembershipForm['members']>>({
         name: membersFieldName,
     });
-    const watchFieldArray = useWatch<
+    const watchMembers = useWatch<
         Record<string, ITokenSetupMembershipForm['members']>
     >({
         name: membersFieldName,
     });
     // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
-    const watchedMembers =
-        watchFieldArray?.length === membersField.length
-            ? watchFieldArray
-            : undefined;
-    const controlledMembersField = membersField.map((field, index) => ({
+    const stableWatchMembers =
+        watchMembers?.length === membersField.length ? watchMembers : undefined;
+    const membersMerged = membersField.map((field, index) => ({
         ...field,
-        ...watchedMembers?.[index],
+        ...stableWatchMembers?.[index],
         id: field.id,
     }));
 
     const handleAddMember = () => addMember({ address: '', tokenAmount: 1 });
 
     useEffect(() => {
-        const totalSupply = controlledMembersField.reduce(
+        const totalSupply = membersMerged.reduce(
             (current, member) => current + Number(member.tokenAmount ?? 0),
             0,
         );
@@ -125,7 +123,7 @@ export const TokenSetupMembershipCreateToken: React.FC<
             defaultTokenDecimals,
         );
         setValue(`${tokenFormPrefix}.totalSupply`, totalSupplyWei.toString());
-    }, [controlledMembersField, setValue, tokenFormPrefix]);
+    }, [membersMerged, setValue, tokenFormPrefix]);
 
     return (
         <>
@@ -161,7 +159,7 @@ export const TokenSetupMembershipCreateToken: React.FC<
                         index={index}
                         initialValue={member.address}
                         key={member.id}
-                        members={controlledMembersField}
+                        members={membersMerged}
                         onRemove={
                             membersField.length > 1
                                 ? () => removeMember(index)

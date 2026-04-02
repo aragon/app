@@ -57,15 +57,15 @@ export const GovernanceStageBodiesField: React.FC<
         Record<string, ISetupBodyForm[]>
     >({ name: fieldName });
 
-    const watchFieldArray = useWatch<Record<string, ISetupBodyForm[]>>({
+    const watchBodies = useWatch<Record<string, ISetupBodyForm[]>>({
         name: fieldName,
     });
     // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
-    const watchedBodies =
-        watchFieldArray?.length === fields.length ? watchFieldArray : undefined;
-    const bodies = fields.map((field, index) => ({
+    const stableWatchBodies =
+        watchBodies?.length === fields.length ? watchBodies : undefined;
+    const bodiesMerged = fields.map((field, index) => ({
         ...field,
-        ...watchedBodies?.[index],
+        ...stableWatchBodies?.[index],
         id: field.id,
     }));
 
@@ -80,7 +80,7 @@ export const GovernanceStageBodiesField: React.FC<
     };
 
     const openSetupBodyDialog = (index?: number) => {
-        const initialValues = index != null ? bodies[index] : undefined;
+        const initialValues = index != null ? bodiesMerged[index] : undefined;
         const onSubmit = handleBodySubmit(index);
         const params: ISetupBodyDialogParams = {
             onSubmit,
@@ -110,7 +110,7 @@ export const GovernanceStageBodiesField: React.FC<
             )}
             useCustomWrapper={true}
         >
-            {bodies.length === 0 && (
+            {bodiesMerged.length === 0 && (
                 <CardEmptyState
                     className="border border-neutral-100"
                     description={t(
@@ -134,9 +134,9 @@ export const GovernanceStageBodiesField: React.FC<
                     }
                 />
             )}
-            {bodies.length > 0 && (
+            {bodiesMerged.length > 0 && (
                 <div className="flex flex-col gap-3 md:gap-2">
-                    {bodies.map((body, index) => (
+                    {bodiesMerged.map((body, index) => (
                         <GovernanceBodyField
                             body={body}
                             daoId={daoId}
