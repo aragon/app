@@ -1,6 +1,5 @@
 import { useDao } from '@/shared/api/daoService';
-import { useDebugContext } from '@/shared/components/debugProvider/debugProvider';
-import { getEnvironment } from '@/shared/featureFlags/utils/getEnvironment';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { resolveAdvancedGovernanceAvailability } from './advancedGovernanceAvailabilityUtils';
 import type {
     IUseAdvancedGovernanceAvailabilityParams,
@@ -12,18 +11,15 @@ export const useAdvancedGovernanceAvailability = (
 ): IUseAdvancedGovernanceAvailabilityReturn => {
     const { daoId } = params;
 
-    const environment = getEnvironment();
-    const { values } = useDebugContext();
-    const isGateOverride = values['gateAdvancedGovernance'] === true;
-    const isNonProd = environment !== 'production';
-    const shouldBypassGating = isNonProd && !isGateOverride;
+    const { isEnabled } = useFeatureFlags();
+    const shouldGateAdvancedGovernance = isEnabled('gateAdvancedGovernance');
 
     const { data: dao, isLoading } = useDao(
         { urlParams: { id: daoId } },
-        { enabled: !shouldBypassGating },
+        { enabled: shouldGateAdvancedGovernance },
     );
 
-    if (shouldBypassGating) {
+    if (!shouldGateAdvancedGovernance) {
         return { isAvailable: true, isLoading: false };
     }
 
@@ -32,7 +28,7 @@ export const useAdvancedGovernanceAvailability = (
     }
 
     const isAvailable = resolveAdvancedGovernanceAvailability({
-        environment: isGateOverride ? 'production' : environment,
+        environment: 'production',
         daoBlockTimestamp: dao?.blockTimestamp,
         cutoffTimestamp:
             process.env.NEXT_PUBLIC_GOVERNANCE_ADVANCED_CUTOFF_TIMESTAMP,
