@@ -22,6 +22,7 @@ describe('network utils', () => {
             expect(result).toContain(Network.POLYGON_MAINNET);
             expect(result).toContain(Network.BASE_MAINNET);
             expect(result).toContain(Network.ARBITRUM_MAINNET);
+            expect(result).toContain(Network.CITREA_MAINNET);
             expect(result).toContain(Network.OPTIMISM_MAINNET);
             expect(result).toContain(Network.ZKSYNC_MAINNET);
             expect(result).toContain(Network.PEAQ_MAINNET);

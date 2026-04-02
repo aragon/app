@@ -17,6 +17,7 @@ export const adminPlugin: IPluginInfo = {
         [Network.ARBITRUM_MAINNET]:
             '0x326A2aee6A8eE78D79E7E956DE60C6E452f76a8e',
         [Network.BASE_MAINNET]: '0x212eF339C77B3390599caB4D46222D79fAabcb5c',
+        [Network.CITREA_MAINNET]: '0x7eE0108dfe487D27B5c077E486a88E167321242E',
         [Network.ETHEREUM_MAINNET]:
             '0xA4371a239D08bfBA6E8894eccf8466C6323A52C3',
         [Network.ETHEREUM_SEPOLIA]:
