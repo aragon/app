@@ -13,6 +13,7 @@ export type FeatureFlagKey =
     | 'linkedAccount'
     | 'capitalFlowAutomation'
     | 'governanceDesigner'
+    | 'gateAdvancedGovernance'
     | 'osxUpdates'
     | 'useMocks'
     | 'enableAllPlugins';
