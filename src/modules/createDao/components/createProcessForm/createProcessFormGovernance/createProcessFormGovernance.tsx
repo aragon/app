@@ -70,7 +70,7 @@ export const CreateProcessFormGovernance: React.FC<
           };
 
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-4 md:gap-6">
             <RadioGroup
                 className="w-full gap-4 md:flex-row [&>*]:min-w-0 [&>*]:flex-1"
                 helpText={t(
@@ -81,18 +81,12 @@ export const CreateProcessFormGovernance: React.FC<
                 {...governanceTypeField}
             >
                 <RadioCard
-                    description={t(
-                        'app.createDao.createProcessForm.governance.type.BASIC.description',
-                    )}
                     label={t(
                         'app.createDao.createProcessForm.governance.type.BASIC.label',
                     )}
                     value={GovernanceType.BASIC}
                 />
                 <RadioCard
-                    description={t(
-                        'app.createDao.createProcessForm.governance.type.ADVANCED.description',
-                    )}
                     label={t(
                         'app.createDao.createProcessForm.governance.type.ADVANCED.label',
                     )}

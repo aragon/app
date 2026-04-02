@@ -69,9 +69,9 @@ export const GovernanceStagesField: React.FC<IGovernanceStagesFieldProps> = (
                             )}
                         </p>
                     </div>
-                    <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-neutral-50 md:size-28">
+                    <div className="flex size-24 shrink-0 items-center justify-center rounded-full bg-neutral-50">
                         <IllustrationObject
-                            className="size-14 md:size-24"
+                            className="size-[5.25rem]"
                             object="SECURITY"
                         />
                     </div>
