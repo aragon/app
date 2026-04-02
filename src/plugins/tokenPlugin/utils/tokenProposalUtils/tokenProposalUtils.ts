@@ -26,7 +26,7 @@ class TokenProposalUtils {
                 ? approvalReachedEarly
                 : approvalReached;
 
-        return proposalStatusUtils.getProposalStatus({
+        const status = proposalStatusUtils.getProposalStatus({
             isExecuted: executed.status,
             isVetoed: false,
             startDate,
@@ -35,6 +35,8 @@ class TokenProposalUtils {
             hasActions,
             canExecuteEarly: isEarlyExecution,
         });
+
+        return status;
     };
 
     isApprovalReached = (

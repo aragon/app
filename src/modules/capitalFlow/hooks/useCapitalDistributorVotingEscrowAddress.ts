@@ -5,16 +5,43 @@ import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import type { ICapitalDistributorVotingEscrowAddressParams } from '../constants/moduleDaoSlots';
 
+/**
+ * Internal plugin meta shape used by the voting-escrow resolver.
+ */
 interface IPluginWithVotingEscrow {
+    /**
+     * Plugin instance address returned by the DAO plugins query.
+     */
     address: string;
+    /**
+     * Interface discriminator used to prioritize matching plugins.
+     */
     interfaceType: PluginInterfaceType;
+    /**
+     * Optional voting-escrow configuration exposed on plugin metadata.
+     */
     votingEscrow?: {
+        /**
+         * Voting escrow contract address associated with the plugin.
+         */
         escrowAddress: string;
     };
 }
 
+/**
+ * Internal configuration for building the capital distributor voting-escrow
+ * address resolver.
+ */
 export interface ICreateCapitalDistributorVotingEscrowAddressResolverParams {
+    /**
+     * Optional DAO-to-plugin address overrides used to resolve a specific
+     * plugin before falling back to interface-type matching.
+     */
     pluginAddressByDaoId?: Record<string, `0x${string}`>;
+    /**
+     * Preferred plugin interface order used when multiple plugins expose a
+     * voting escrow address.
+     */
     preferredInterfaceTypes?: PluginInterfaceType[];
 }
 
