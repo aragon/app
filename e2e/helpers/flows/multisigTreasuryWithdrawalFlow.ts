@@ -24,15 +24,14 @@ const CREATE_PROPOSAL_FORM = '#createProposalWizard';
 async function advanceFromActionsStepSkippingSimulation(
     page: Page,
 ): Promise<void> {
-    // The proposal form footer has a split-button; the last button opens a dropdown.
-    // TODO: replace Tailwind-class locator with data-testid once the app adds one.
-    const footerPrimary = page
+    // The Actions step footer renders a Dropdown.Container whose trigger button
+    // has the label "Next" (submitLabel when hasNext=true). Radix also sets
+    // data-state on the trigger, so we can combine both to stay stable.
+    const dropdownTrigger = page
         .locator(CREATE_PROPOSAL_FORM)
-        .locator('div.flex.flex-row.justify-between')
-        .last()
-        .getByRole('button')
-        .last();
-    await footerPrimary.click();
+        .getByRole('button', { name: 'Next', exact: true })
+        .and(page.locator('[data-state]'));
+    await dropdownTrigger.click();
     const actionsFooterMenu = page
         .getByRole('menu')
         .filter({
