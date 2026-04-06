@@ -27,7 +27,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
 
     const { close } = useDialogContext();
     const { address, chainId } = useConnection();
-    const { disconnect } = useDisconnect();
+    const disconnect = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -90,7 +90,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 )}
                 <Navigation.Item
                     icon={IconType.LOGOUT}
-                    onClick={() => disconnect()}
+                    onClick={() => disconnect.mutate()}
                     variant="column"
                 >
                     {t('app.application.userDialog.disconnect')}
