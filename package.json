@@ -23,6 +23,9 @@
     "e2e": "playwright test --config e2e/playwright.config.ts",
     "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
     "e2e:smoke": "playwright test --config e2e/playwright.config.ts e2e/tests/smoke",
+    "e2e:bv": "playwright test --config e2e/playwright.bv.config.ts e2e/tests/bv/treasuryWithdrawal.spec.ts",
+    "e2e:bv:stg": "E2E_BASE_URL=${E2E_BASE_URL:-https://stg.app.aragon.org} playwright test --config e2e/playwright.bv.config.ts e2e/tests/bv/treasuryWithdrawal.spec.ts",
+    "e2e:bv:wallet-cache": "pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs",
     "e2e:install": "playwright install --with-deps chromium",
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
@@ -66,7 +69,8 @@
     "@changesets/changelog-github": "^0.5.2",
     "@changesets/cli": "^2.30.0",
     "@hookform/devtools": "^4.4.0",
-    "@playwright/test": "^1.58.2",
+    "@playwright/test": "1.51.1",
+    "@synthetixio/synpress": "^4.1.2",
     "@tailwindcss/postcss": "^4.2.1",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",
@@ -81,6 +85,7 @@
     "@walletconnect/types": "^2.23.8",
     "babel-plugin-react-compiler": "^1.0.0",
     "cross-env": "^10.1.0",
+    "dotenv": "^17.3.1",
     "husky": "^9.1.7",
     "jest": "^30.3.0",
     "jest-canvas-mock": "^2.5.2",
@@ -115,6 +120,12 @@
   },
   "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319",
   "pnpm": {
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@playwright/test": ">=1.48.2",
+        "playwright-core": ">=1.48.2"
+      }
+    },
     "overrides": {
       "isomorphic-dompurify>jsdom": "26.1.0",
       "tar": "^7.5.11",

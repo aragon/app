@@ -1,37 +1,42 @@
-# Shared E2E workflow — runs Playwright smoke tests against a deployed environment.
-# Called by app-preview, app-development, app-staging, and app-production after deploy.
+# Shared BV workflow — runs Playwright build verification tests against a deployed environment.
+# Called by app-staging after deploy.
+# Wallet: 1Password kv_app_infra / E2E_FE_MM_WALLET (password + secret recovery phrase) via op:// refs.
 
-name: Shared E2E
+name: Shared BV
 
 on:
   workflow_call:
     inputs:
       deployment-url:
-        description: "Base URL to run E2E tests against"
+        description: "Base URL to run BV tests against"
         required: true
         type: string
       environment:
-        description: "Environment name (preview, development, staging, production) — used for artifact naming"
+        description: "Environment name (staging) — used for artifact naming"
         required: true
         type: string
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN:
+        description: "1Password service account — reads kv_app_infra / E2E_FE_MM_WALLET for Synpress"
+        required: true
     outputs:
       result:
-        description: "Playwright smoke outcome (passed, flaky, failed, cancelled)"
-        value: ${{ jobs.e2e.outputs.result }}
+        description: "Playwright BV outcome (passed, flaky, failed, cancelled)"
+        value: ${{ jobs.bv.outputs.result }}
       result_label:
-        description: "Playwright smoke outcome"
-        value: ${{ jobs.e2e.outputs.result_label }}
+        description: "Playwright BV outcome label"
+        value: ${{ jobs.bv.outputs.result_label }}
       summary:
-        description: "Playwright smoke summary counts"
-        value: ${{ jobs.e2e.outputs.summary }}
+        description: "Playwright BV summary counts"
+        value: ${{ jobs.bv.outputs.summary }}
 
 permissions:
   contents: read
 
 jobs:
-  e2e:
+  bv:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     outputs:
       result: ${{ steps.playwright-result.outputs.result }}
       result_label: ${{ steps.playwright-result.outputs.result_label }}
@@ -39,11 +44,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
+
+      - name: Load E2E MetaMask wallet from 1Password
+        uses: 1password/load-secrets-action@v3.2.1
         with:
-          fetch-depth: 1
-          sparse-checkout: |
-            .github/actions/setup
-            .github/actions/parse-playwright-results
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          E2E_FE_MM_WALLET_PASSWORD: op://kv_app_infra/E2E_FE_MM_WALLET/password
+          E2E_FE_MM_WALLET_SECRET_RECOVERY_PHRASE: "op://kv_app_infra/E2E_FE_MM_WALLET/secret recovery phrase"
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -67,6 +76,18 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
+      - name: Cache Synpress wallet
+        id: synpress-cache
+        uses: actions/cache@v5.0.4
+        with:
+          path: .cache-synpress
+          key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts', 'package.json') }}
+
+      - name: Build Synpress wallet cache
+        if: steps.synpress-cache.outputs.cache-hit != 'true'
+        # xvfb-run: MetaMask extension requires a display for onboarding UI.
+        run: xvfb-run pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
+
       - name: Warmup deployment
         run: |
           for i in 1 2 3; do
@@ -79,10 +100,10 @@ jobs:
         env:
           E2E_BASE_URL: ${{ inputs.deployment-url }}
 
-      - name: Run smoke tests
-        id: smoke
+      - name: Run BV tests
+        id: bv
         continue-on-error: true
-        run: pnpm e2e:smoke
+        run: xvfb-run pnpm e2e:bv
         env:
           E2E_BASE_URL: ${{ inputs.deployment-url }}
 
@@ -92,13 +113,13 @@ jobs:
         uses: ./.github/actions/parse-playwright-results
         with:
           report-path: e2e/test-results/results.json
-          step-outcome: ${{ steps.smoke.outcome }}
+          step-outcome: ${{ steps.bv.outcome }}
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v7.0.0
         if: always()
         with:
-          name: playwright-report-${{ inputs.environment }}
+          name: playwright-bv-report-${{ inputs.environment }}
           path: e2e/playwright-report/
           retention-days: 14
 
@@ -106,6 +127,6 @@ jobs:
         uses: actions/upload-artifact@v7.0.0
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
-          name: playwright-traces-${{ inputs.environment }}
+          name: playwright-bv-traces-${{ inputs.environment }}
           path: e2e/test-results/
           retention-days: 7
