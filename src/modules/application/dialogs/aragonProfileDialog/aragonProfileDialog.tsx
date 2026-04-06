@@ -185,12 +185,15 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                         {visibleSocials.map((key) => (
                             <div className="flex items-center gap-2" key={key}>
                                 <InputText
+                                    addon={t(
+                                        `app.application.aragonProfileDialog.fields.socials.${key}`,
+                                    )}
                                     className="flex-1"
                                     id={`aragon-profile-social-${key}`}
                                     placeholder={t(
                                         `app.application.aragonProfileDialog.fields.socials.${key}`,
                                     )}
-                                    prefix={'LLAL'}
+                                    wrapperClassName="h-12"
                                     {...register(key)}
                                 />
                                 <Button
