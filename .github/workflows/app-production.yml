@@ -31,9 +31,11 @@ jobs:
             (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
 
   notify-start:
+    needs: validate
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
     runs-on: ubuntu-latest
     outputs:
-      slack-ts: ${{ steps.ts.outputs.ts }}
+      slack-ts: ${{ steps.set-ts.outputs.ts }}
     steps:
       - name: Load secrets
         id: secrets
@@ -56,9 +58,10 @@ jobs:
 
       - name: Get release body via API
         id: release
+        if: github.event_name == 'release'
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          TAG: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
           BODY="$(gh release view "$TAG" --json body -q .body 2>/dev/null || echo "")"
@@ -70,12 +73,14 @@ jobs:
 
       - name: Extract Slack TS from release body
         id: ts
+        if: github.event_name == 'release'
         uses: ./.github/actions/extract-slack-ts
         with:
           body: ${{ steps.release.outputs.body }}
 
-      - name: Notify Slack - Production Deploy Started
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+      - name: Notify Slack - Production Deploy Started (in release thread)
+        id: notify-thread
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
@@ -84,6 +89,25 @@ jobs:
           message: |
             🚀 *Production build & deploy started...*
             *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
+
+      - name: Notify Slack - Production Deploy Started (new message)
+        id: notify-new
+        if: ${{ !steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN }}
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          message: |
+            🚀 *Production deploy started*
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
+            *Triggered by:* ${{ github.actor }}
+
+      - name: Set final TS output
+        id: set-ts
+        shell: bash
+        run: |
+          TS="${{ steps.ts.outputs.ts || steps.notify-new.outputs.ts }}"
+          echo "ts=$TS" >> "$GITHUB_OUTPUT"
 
   deploy:
     needs: [validate, notify-start]
@@ -175,5 +199,4 @@ jobs:
             *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
             *Production:* <https://app.aragon.org|app.aragon.org>
 
-            ⚠️ *Don't forget to merge the Release PR!*
             If there are issues with the release, use hotfix or rollback.
