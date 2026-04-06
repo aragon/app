@@ -388,11 +388,23 @@
         "disconnect": "Disconnect",
         "editAragonProfile": "Edit Aragon profile"
       },
+      "aragonProfileUpdateTransactionDialog": {
+        "a11y": {
+          "description": "Update your Aragon profile transaction"
+        },
+        "description": "To update your Aragon profile, confirm the onchain transaction in your wallet.",
+        "submit": "Update profile",
+        "successLink": {
+          "label": "View your profile"
+        },
+        "title": "Update your Aragon profile",
+        "you": "You"
+      },
       "aragonProfileDialog": {
         "a11y": {
-          "description": "Update your Aragon profile",
-          "title": "Aragon profile"
+          "description": "Update your Aragon profile"
         },
+        "title": "Aragon profile",
         "fields": {
           "ensName": {
             "label": "ENS name"

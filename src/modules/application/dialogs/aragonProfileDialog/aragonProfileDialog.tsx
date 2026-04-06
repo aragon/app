@@ -20,6 +20,7 @@ import {
 } from '@/shared/components/dialogProvider';
 import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
 type SocialKey = Exclude<keyof IAragonProfileDialogFormData, 'bio' | 'avatar'>;
 
@@ -71,7 +72,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     const { id } = props.location;
 
     const { t } = useTranslations();
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
     const { address } = useConnection();
 
     const { data: ensName } = useEnsName(address);
@@ -132,8 +133,16 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const handleCancel = () => close(id);
 
-    // TODO: implement ENS record update transaction
-    const onSubmit = handleSubmit(() => undefined);
+    const onSubmit = handleSubmit((data) => {
+        close(id);
+        open(ApplicationDialogId.ARAGON_PROFILE_UPDATE, {
+            params: {
+                ensName: ensName!,
+                address,
+                avatarSrc: data.avatar?.url,
+            },
+        });
+    });
 
     const primaryLabel = isDirty
         ? t('app.application.aragonProfileDialog.actions.updateProfile')
@@ -143,7 +152,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         <FormProvider {...methods}>
             <Dialog.Header
                 onClose={handleCancel}
-                title={t('app.application.aragonProfileDialog.a11y.title')}
+                title={t('app.application.aragonProfileDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <InputText
