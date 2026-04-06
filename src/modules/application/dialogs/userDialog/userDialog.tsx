@@ -17,6 +17,7 @@ import {
 } from '@/shared/components/dialogProvider';
 import { Navigation } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
 export interface IUserDialogProps extends IDialogComponentProps {}
 
@@ -25,7 +26,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
     const { address, chainId } = useConnection();
     const disconnect = useDisconnect();
 
@@ -40,6 +41,9 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         id: address,
         chainId,
     });
+
+    const handleEditAragonProfile = () =>
+        open(ApplicationDialogId.ARAGON_PROFILE);
 
     // Close dialog if user disconnects
     useEffect(() => {
@@ -84,7 +88,11 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             </div>
             <div className="flex flex-col gap-1 px-4">
                 {ensName != null && (
-                    <Navigation.Item icon={IconType.PERSON} variant="column">
+                    <Navigation.Item
+                        icon={IconType.PERSON}
+                        onClick={handleEditAragonProfile}
+                        variant="column"
+                    >
                         {t('app.application.userDialog.editAragonProfile')}
                     </Navigation.Item>
                 )}

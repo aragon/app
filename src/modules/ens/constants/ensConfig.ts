@@ -25,6 +25,9 @@ export const ENS_RECORD_KEYS = {
     url: 'url',
     twitter: 'com.twitter',
     github: 'com.github',
+    email: 'email',
+    discord: 'com.discord',
+    telegram: 'org.telegram',
 } as const;
 
 /** Ordered list of record keys used by `useEnsRecords` to fetch in a single query. */

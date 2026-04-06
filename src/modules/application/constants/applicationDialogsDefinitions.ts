@@ -1,4 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { AragonProfileDialog } from '../dialogs/aragonProfileDialog';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
 import { ApplicationDialogId } from './applicationDialogId';
@@ -18,5 +19,10 @@ export const applicationDialogsDefinitions: Record<
         Component: UserDialog,
         hiddenTitle: 'app.application.userDialog.a11y.title',
         hiddenDescription: 'app.application.userDialog.a11y.description',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE]: {
+        Component: AragonProfileDialog,
+        hiddenDescription:
+            'app.application.aragonProfileDialog.a11y.description',
     },
 };

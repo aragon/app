@@ -387,6 +387,42 @@
         },
         "disconnect": "Disconnect",
         "editAragonProfile": "Edit Aragon profile"
+      },
+      "aragonProfileDialog": {
+        "a11y": {
+          "description": "Update your Aragon profile",
+          "title": "Aragon profile"
+        },
+        "fields": {
+          "ensName": {
+            "label": "ENS name"
+          },
+          "avatar": {
+            "label": "Avatar"
+          },
+          "bio": {
+            "label": "Bio"
+          },
+          "socials": {
+            "discord": "Discord",
+            "email": "E-Mail",
+            "github": "GitHub",
+            "label": "Add socials",
+            "telegram": "Telegram",
+            "twitter": "X",
+            "website": "Website"
+          }
+        },
+        "alert": {
+          "description": "Note that any changes you make here will apply to your primary ENS name, which means they will also be reflected in other DApps.",
+          "title": "Primary ENS imported",
+          "viewEns": "View ENS DApp"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "updateProfile": "Update your profile",
+          "viewProfile": "View your profile"
+        }
       }
     },
     "capitalFlow": {
