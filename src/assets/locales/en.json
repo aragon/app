@@ -393,6 +393,12 @@
           "description": "Update your Aragon profile transaction"
         },
         "description": "To update your Aragon profile, confirm the onchain transaction in your wallet.",
+        "step": {
+          "PIN_AVATAR": {
+            "errorLabel": "Avatar upload failed",
+            "label": "Upload avatar"
+          }
+        },
         "submit": "Update profile",
         "successLink": {
           "label": "View your profile"

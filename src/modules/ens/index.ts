@@ -16,6 +16,7 @@
  * ```
  */
 export {
+    ENS_AVATAR_KEY,
     ENS_CACHE,
     ENS_CHAIN_ID,
     ENS_RECORD_KEYS,
@@ -24,3 +25,5 @@ export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';
 export type { IEnsRecords, TEnsRecordKey } from './types';
+export type { IBuildUpdateRecordsTransactionParams } from './utils/ensTransactionUtils';
+export { ensTransactionUtils } from './utils/ensTransactionUtils';

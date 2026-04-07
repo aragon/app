@@ -32,3 +32,6 @@ export const ENS_RECORD_KEYS = {
 
 /** Ordered list of record keys used by `useEnsRecords` to fetch in a single query. */
 export const ENS_PROFILE_KEYS = Object.values(ENS_RECORD_KEYS);
+
+/** ENS text-record key used for the profile avatar URL. */
+export const ENS_AVATAR_KEY = 'avatar' as const;

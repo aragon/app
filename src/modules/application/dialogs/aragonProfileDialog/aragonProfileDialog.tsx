@@ -12,19 +12,30 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useConnection } from 'wagmi';
-import { useEnsAvatar, useEnsName, useEnsRecords } from '@/modules/ens';
-import { ENS_RECORD_KEYS } from '@/modules/ens/constants/ensConfig';
+import type { TEnsRecordKey } from '@/modules/ens';
+import {
+    ENS_AVATAR_KEY,
+    ENS_RECORD_KEYS,
+    useEnsAvatar,
+    useEnsName,
+    useEnsRecords,
+} from '@/modules/ens';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFormField } from '@/shared/hooks/useFormField';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
 
-type SocialKey = Exclude<keyof IAragonProfileDialogFormData, 'bio' | 'avatar'>;
+export type SocialKey = Exclude<
+    keyof IAragonProfileDialogFormData,
+    'bio' | 'avatar'
+>;
 
-interface IAragonProfileDialogFormData {
+export interface IAragonProfileDialogFormData {
     /** ENS `description` text record. */
     bio: string;
     /** ENS avatar image. */
@@ -43,7 +54,7 @@ interface IAragonProfileDialogFormData {
     telegram: string;
 }
 
-const SOCIAL_KEYS: SocialKey[] = [
+const socialKeys: SocialKey[] = [
     'github',
     'twitter',
     'website',
@@ -52,15 +63,15 @@ const SOCIAL_KEYS: SocialKey[] = [
     'telegram',
 ];
 
-const EMPTY_DEFAULTS: IAragonProfileDialogFormData = {
-    bio: '',
-    avatar: undefined,
-    github: '',
-    twitter: '',
-    website: '',
-    email: '',
-    discord: '',
-    telegram: '',
+/** Maps form field names to their corresponding ENS text-record keys. */
+const fieldToEnsKey: Record<SocialKey | 'bio', string> = {
+    bio: ENS_RECORD_KEYS.description,
+    github: ENS_RECORD_KEYS.github,
+    twitter: ENS_RECORD_KEYS.twitter,
+    website: ENS_RECORD_KEYS.url,
+    email: ENS_RECORD_KEYS.email,
+    discord: ENS_RECORD_KEYS.discord,
+    telegram: ENS_RECORD_KEYS.telegram,
 };
 
 /** Props for {@link AragonProfileDialog}. */
@@ -79,16 +90,34 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsRecords(ensName);
 
-    const methods = useForm<IAragonProfileDialogFormData>({
-        defaultValues: EMPTY_DEFAULTS,
+    const formMethods = useForm<IAragonProfileDialogFormData>({
+        mode: 'onTouched',
+        defaultValues: {
+            bio: '',
+            avatar: undefined,
+            github: '',
+            twitter: '',
+            website: '',
+            email: '',
+            discord: '',
+            telegram: '',
+        },
     });
     const {
-        register,
+        control,
         handleSubmit,
         reset,
         setValue,
         formState: { isDirty },
-    } = methods;
+    } = formMethods;
+
+    const bioField = useFormField<IAragonProfileDialogFormData, 'bio'>('bio', {
+        label: t('app.application.aragonProfileDialog.fields.bio.label'),
+        sanitizeMode: 'multiline',
+        sanitizeOnBlur: true,
+        trimOnBlur: true,
+        control,
+    });
 
     const [visibleSocials, setVisibleSocials] = useState<SocialKey[]>([]);
     const hasInitialized = useRef(false);
@@ -111,14 +140,14 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         };
 
         reset(values);
-        setVisibleSocials(SOCIAL_KEYS.filter((key) => values[key] !== ''));
+        setVisibleSocials(socialKeys.filter((key) => values[key] !== ''));
     }, [ensAvatar, ensRecords, reset]);
 
     if (address == null) {
         return null;
     }
 
-    const hiddenSocials = SOCIAL_KEYS.filter(
+    const hiddenSocials = socialKeys.filter(
         (key) => !visibleSocials.includes(key),
     );
 
@@ -128,18 +157,45 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const handleRemoveSocial = (key: SocialKey) => {
         setVisibleSocials((prev) => prev.filter((k) => k !== key));
-        setValue(key, '');
+        setValue(key, '', { shouldDirty: true });
     };
 
     const handleCancel = () => close(id);
 
     const onSubmit = handleSubmit((data) => {
+        if (ensName == null) {
+            return;
+        }
+
+        const updates: Record<string, string> = {};
+
+        for (const [field, ensKey] of Object.entries(fieldToEnsKey)) {
+            const formValue = data[field as keyof typeof fieldToEnsKey] ?? '';
+            const existing = ensRecords?.[ensKey as TEnsRecordKey] ?? '';
+            if (formValue !== existing) {
+                updates[ensKey] = formValue;
+            }
+        }
+
+        let avatarFile: File | undefined;
+        if (data.avatar?.file != null) {
+            avatarFile = data.avatar.file;
+        } else if (data.avatar == null && ensAvatar != null) {
+            updates[ENS_AVATAR_KEY] = '';
+        }
+
+        if (Object.keys(updates).length === 0 && avatarFile == null) {
+            return;
+        }
+
         close(id);
         open(ApplicationDialogId.ARAGON_PROFILE_UPDATE, {
             params: {
-                ensName: ensName!,
+                ensName,
                 address,
                 avatarSrc: data.avatar?.url,
+                updates,
+                avatarFile,
             },
         });
     });
@@ -149,7 +205,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         : t('app.application.aragonProfileDialog.actions.viewProfile');
 
     return (
-        <FormProvider {...methods}>
+        <FormProvider {...formMethods}>
             <Dialog.Header
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileDialog.title')}
@@ -161,7 +217,6 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                     label={t(
                         'app.application.aragonProfileDialog.fields.ensName.label',
                     )}
-                    readOnly
                     value={ensName ?? ''}
                 />
 
@@ -175,11 +230,8 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 <TextArea
                     id="aragon-profile-bio"
                     isOptional
-                    label={t(
-                        'app.application.aragonProfileDialog.fields.bio.label',
-                    )}
                     maxLength={160}
-                    {...register('bio')}
+                    {...bioField}
                 />
 
                 <InputContainer
@@ -192,27 +244,11 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 >
                     <div className="flex flex-col gap-3">
                         {visibleSocials.map((key) => (
-                            <div className="flex items-center gap-2" key={key}>
-                                <InputText
-                                    addon={t(
-                                        `app.application.aragonProfileDialog.fields.socials.${key}`,
-                                    )}
-                                    className="flex-1"
-                                    id={`aragon-profile-social-${key}`}
-                                    placeholder={t(
-                                        `app.application.aragonProfileDialog.fields.socials.${key}`,
-                                    )}
-                                    wrapperClassName="h-12"
-                                    {...register(key)}
-                                />
-                                <Button
-                                    iconLeft={IconType.CLOSE}
-                                    onClick={() => handleRemoveSocial(key)}
-                                    size="md"
-                                    type="button"
-                                    variant="tertiary"
-                                />
-                            </div>
+                            <AragonProfileSocialFieldRow
+                                fieldName={key}
+                                key={key}
+                                onRemove={() => handleRemoveSocial(key)}
+                            />
                         ))}
                         {hiddenSocials.length > 0 && (
                             <div className="flex flex-wrap gap-3">
