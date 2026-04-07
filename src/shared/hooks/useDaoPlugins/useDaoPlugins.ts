@@ -1,7 +1,7 @@
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import {
     type IDaoPlugin,
-    PluginInterfaceType,
+    type PluginInterfaceType,
     useDao,
 } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
@@ -9,36 +9,7 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
-
-const pluginInterfaceTypePriority: Record<string, number> = {
-    [PluginInterfaceType.TOKEN_VOTING]: 1,
-    [PluginInterfaceType.MULTISIG]: 2,
-    [PluginInterfaceType.LOCK_TO_VOTE]: 3,
-};
-
-const DEFAULT_PLUGIN_PRIORITY = 99;
-
-export const compareFilterPlugins = (
-    a: IFilterComponentPlugin<IDaoPlugin>,
-    b: IFilterComponentPlugin<IDaoPlugin>,
-    rootDaoAddress?: string,
-): number => {
-    const aIsRoot = !a.meta.isSubPlugin && a.meta.daoAddress === rootDaoAddress;
-    const bIsRoot = !b.meta.isSubPlugin && b.meta.daoAddress === rootDaoAddress;
-
-    if (aIsRoot !== bIsRoot) {
-        return aIsRoot ? -1 : 1;
-    }
-
-    const aPriority =
-        pluginInterfaceTypePriority[a.meta.interfaceType] ??
-        DEFAULT_PLUGIN_PRIORITY;
-    const bPriority =
-        pluginInterfaceTypePriority[b.meta.interfaceType] ??
-        DEFAULT_PLUGIN_PRIORITY;
-
-    return aPriority - bPriority;
-};
+import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
 
 export interface IUseDaoPluginsParams {
     /**
@@ -127,16 +98,16 @@ const buildFilterPlugins = (
               return daoAddress === rootDaoAddress;
           });
 
-    const processedPlugins: IFilterComponentPlugin<IDaoPlugin>[] =
-        filteredPlugins
-            .map((plugin) => ({
-                id: plugin.interfaceType,
-                uniqueId: `${plugin.address}-${plugin.slug}`,
-                label: daoUtils.getPluginName(plugin),
-                meta: plugin,
-                props: {},
-            }))
-            .sort((a, b) => compareFilterPlugins(a, b, rootDaoAddress));
+    const processedPlugins = pluginSortUtils.sortByDisplayOrder(
+        filteredPlugins.map((plugin) => ({
+            id: plugin.interfaceType,
+            uniqueId: `${plugin.address}-${plugin.slug}`,
+            label: daoUtils.getPluginName(plugin),
+            meta: plugin,
+            props: {},
+        })),
+        { rootDaoAddress },
+    );
 
     const addGroupFilter = includeGroupFilter && processedPlugins.length > 1;
 
