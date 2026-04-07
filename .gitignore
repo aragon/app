@@ -27,6 +27,9 @@
 .DS_Store
 *.pem
 
+# local anvil fork state
+anvil-state.json
+
 # IDE
 .cursor
 
