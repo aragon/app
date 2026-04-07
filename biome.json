@@ -168,6 +168,7 @@
                 "useShorthandFunctionType": "error",
                 "useTemplate": "warn",
                 "useUnifiedTypeSignatures": "error",
+                "noNegationElse": "off",
                 "noNestedTernary": "off",
                 "noEnum": "off",
                 "noExportedImports": "off",

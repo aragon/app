@@ -128,7 +128,7 @@ describe('responseUtils.safeJsonParse', () => {
                     status: 200,
                     url: '',
                     contentType: 'application/json',
-                    bodyPreview: invalidJson.substring(0, 100),
+                    bodyPreview: invalidJson.slice(0, 100),
                 },
             });
         });
@@ -152,7 +152,7 @@ describe('responseUtils.safeJsonParse', () => {
                     status: 200,
                     url: '',
                     contentType: 'application/json',
-                    bodyPreview: malformedJson.substring(0, 100),
+                    bodyPreview: malformedJson.slice(0, 100),
                 },
             });
         });
@@ -214,7 +214,7 @@ describe('responseUtils.safeJsonParse', () => {
                     status: 500,
                     url: '',
                     contentType: 'application/json',
-                    bodyPreview: invalidErrorJson.substring(0, 100),
+                    bodyPreview: invalidErrorJson.slice(0, 100),
                 },
             });
         });
