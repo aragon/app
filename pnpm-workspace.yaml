@@ -1,8 +1,9 @@
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude: # https://pnpm.io/settings#minimumreleaseageexclude
     - "@aragon/gov-ui-kit"
-    - "@next/*"
-    - "next"
-    - "undici"
+    - "lodash@4.18.0 || 4.18.1"
+    - "defu@6.1.5 || 6.1.6"
 strictDepBuilds: true
+blockExoticSubdeps: true
 trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 131400 # skip trust checks for packages published >3 months ago

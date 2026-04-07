@@ -11,7 +11,6 @@ for (const dao of SMOKE_DAOS) {
 
         if (transactions.isVercelError()) {
             await transactions.attachErrorContext(test.info());
-            // biome-ignore lint/suspicious/noSkippedTests: runtime skip for Vercel platform errors (e.g. FUNCTION_INVOCATION_TIMEOUT)
             test.skip(true, 'Vercel platform error');
         }
 
