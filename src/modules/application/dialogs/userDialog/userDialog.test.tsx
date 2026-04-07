@@ -113,7 +113,7 @@ describe('<UserDialog /> component', () => {
             address: '0x123',
         } as unknown as wagmi.UseConnectionReturnType);
         useDisconnectSpy.mockReturnValue({
-            disconnect,
+            mutate: disconnect,
         } as unknown as wagmi.UseDisconnectReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
         render(createTestComponent());
