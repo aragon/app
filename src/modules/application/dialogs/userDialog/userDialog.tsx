@@ -1,5 +1,6 @@
 import {
     addressUtils,
+    Button,
     ChainEntityType,
     Clipboard,
     Dialog,
@@ -8,14 +9,16 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useConnection, useDisconnect } from 'wagmi';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
+import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
+import { exploreDaosSectionId } from '@/modules/explore/pages/exploreDaosPage';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
-import { Navigation } from '@/shared/components/navigation';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
@@ -42,10 +45,19 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         chainId,
     });
 
+    const router = useRouter();
+
     const handleEditAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE);
 
     const handleDisconnect = () => disconnect.mutate();
+
+    const handleMyDaosClick = () => {
+        router.push(
+            `/?${exploreDaoFilterParam}=member#${exploreDaosSectionId}`,
+        );
+        close(id);
+    };
 
     // Close dialog if user disconnects
     useEffect(() => {
@@ -58,53 +70,95 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         return null;
     }
 
+    const hasAragonProfile = ensName != null;
+
     return (
         <Dialog.Content
-            className="flex flex-col gap-4 pt-8 pb-4"
+            className="flex flex-col gap-6 pt-8 pb-4"
             noInset={true}
         >
             <div className="flex flex-col gap-3 px-8">
-                <MemberAvatar
-                    address={address}
-                    avatarSrc={ensAvatar ?? undefined}
-                    ensName={ensName ?? undefined}
-                    responsiveSize={{ sm: 'xl' }}
-                    size="lg"
-                />
-                <div className="flex flex-col gap-1.5 font-normal leading-tight">
-                    {ensName != null && (
-                        <p className="text-lg text-neutral-800 md:text-xl">
+                <div className="flex items-start justify-between">
+                    <MemberAvatar
+                        address={address}
+                        avatarSrc={ensAvatar ?? undefined}
+                        ensName={ensName ?? undefined}
+                        responsiveSize={{ sm: 'xl' }}
+                        size="lg"
+                    />
+                    <div className="flex gap-2">
+                        {hasAragonProfile && (
+                            <Button
+                                iconLeft={IconType.PERSON}
+                                onClick={handleEditAragonProfile}
+                                size="md"
+                                variant="tertiary"
+                            />
+                        )}
+                        <Button
+                            iconLeft={IconType.LOGOUT}
+                            onClick={handleDisconnect}
+                            size="md"
+                            variant="tertiary"
+                        />
+                    </div>
+                </div>
+                {hasAragonProfile ? (
+                    <div className="flex flex-col gap-1">
+                        <p className="font-normal text-neutral-800 text-xl leading-tight">
                             {ensName}
                         </p>
-                    )}
+                        <Clipboard copyValue={address}>
+                            <Link
+                                className="truncate text-base"
+                                href={addressLink}
+                                isExternal={true}
+                            >
+                                {formattedAddress}
+                            </Link>
+                        </Clipboard>
+                    </div>
+                ) : (
                     <Clipboard copyValue={address}>
                         <Link
-                            className="truncate text-sm md:text-base"
+                            className="truncate text-neutral-800 text-xl"
                             href={addressLink}
                             isExternal={true}
                         >
                             {formattedAddress}
                         </Link>
                     </Clipboard>
-                </div>
-            </div>
-            <div className="flex flex-col gap-1 px-4">
-                {ensName != null && (
-                    <Navigation.Item
-                        icon={IconType.PERSON}
-                        onClick={handleEditAragonProfile}
-                        variant="column"
-                    >
-                        {t('app.application.userDialog.editAragonProfile')}
-                    </Navigation.Item>
                 )}
-                <Navigation.Item
-                    icon={IconType.LOGOUT}
-                    onClick={handleDisconnect}
-                    variant="column"
-                >
-                    {t('app.application.userDialog.disconnect')}
-                </Navigation.Item>
+            </div>
+            <div className="flex flex-col gap-3 px-8">
+                <div className="flex flex-col gap-3">
+                    <Button
+                        className="w-full"
+                        iconRight={IconType.LINK_EXTERNAL}
+                        onClick={handleMyDaosClick}
+                        size="md"
+                        variant="tertiary"
+                    >
+                        {t('app.application.userDialog.myDaos')}
+                    </Button>
+                    {!hasAragonProfile && (
+                        <Button
+                            className="w-full"
+                            onClick={handleEditAragonProfile}
+                            size="md"
+                            variant="primary"
+                        >
+                            {t(
+                                'app.application.userDialog.createAragonProfile',
+                            )}
+                        </Button>
+                    )}
+                </div>
+                {!hasAragonProfile && (
+                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
+                        {t('app.application.userDialog.description')}
+                    </p>
+                )}
             </div>
         </Dialog.Content>
     );

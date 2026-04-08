@@ -385,8 +385,10 @@
           "description": "Information about the connected user",
           "title": "Connected user"
         },
-        "disconnect": "Disconnect",
-        "editAragonProfile": "Edit Aragon profile"
+        "createAragonProfile": "Create Aragon profile",
+        "description": "Claim your Aragon profile with a dedicated ENS name to stand out in the Aragon experience.",
+        "editAragonProfile": "Edit Aragon profile",
+        "myDaos": "My DAOs"
       },
       "aragonProfileUpdateTransactionDialog": {
         "a11y": {
