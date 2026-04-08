@@ -16,6 +16,7 @@ export interface IBuildUpdateRecordsTransactionParams {
     updates: Record<string, string>;
 }
 
+/** Utilities for building ENS write transactions. */
 class EnsTransactionUtils {
     /**
      * Builds a transaction to update one or more ENS text records.
@@ -29,7 +30,7 @@ class EnsTransactionUtils {
         const { ensName, updates } = params;
         const entries = Object.entries(updates);
 
-        // Always normalize befor hasing: https://docs.ens.domains/resolution/names#namehash
+        // Always normalize before hashing: https://docs.ens.domains/resolution/names#namehash
         const normalizedName = normalize(ensName);
         const node = namehash(normalizedName) as Hex;
 

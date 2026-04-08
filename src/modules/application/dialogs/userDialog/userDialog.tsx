@@ -45,6 +45,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const handleEditAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE);
 
+    const handleDisconnect = () => disconnect.mutate();
+
     // Close dialog if user disconnects
     useEffect(() => {
         if (address == null) {
@@ -98,7 +100,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 )}
                 <Navigation.Item
                     icon={IconType.LOGOUT}
-                    onClick={() => disconnect.mutate()}
+                    onClick={handleDisconnect}
                     variant="column"
                 >
                     {t('app.application.userDialog.disconnect')}

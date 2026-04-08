@@ -30,6 +30,7 @@ import { useFormField } from '@/shared/hooks/useFormField';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
 
+/** Form field names that correspond to social network ENS text records. */
 export type SocialKey = Exclude<
     keyof IAragonProfileDialogFormData,
     'bio' | 'avatar'
@@ -80,7 +81,8 @@ export interface IAragonProfileDialogProps extends IDialogComponentProps {}
 export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     props,
 ) => {
-    const { id } = props.location;
+    const { location } = props;
+    const { id } = location;
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();

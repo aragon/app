@@ -3,6 +3,7 @@
 import { Card, invariant, MemberAvatar, Tag } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
+import type { Address } from 'viem';
 import { ENS_AVATAR_KEY, ensTransactionUtils } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import { usePinFile } from '@/shared/api/ipfsService/mutations';
@@ -21,6 +22,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
+/** Steps that precede the main on-chain transaction in the update flow. */
 export enum AragonProfileUpdateStep {
     PIN_AVATAR = 'PIN_AVATAR',
 }
@@ -29,7 +31,7 @@ export interface IAragonProfileUpdateTransactionDialogParams {
     /** ENS name of the user. */
     ensName: string;
     /** Connected wallet address. */
-    address: string;
+    address: Address;
     /** Avatar display URL for the preview (may be a blob URL if a new file was selected). */
     avatarSrc?: string;
     /** ENS text-record updates to commit onchain (does not include avatar). */
@@ -85,6 +87,11 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
             );
         },
         [avatarFile, pinFile, stepper.nextStep],
+    );
+
+    const handleCancel = useCallback(
+        () => close(location.id),
+        [close, location.id],
     );
 
     const handleSuccess = useCallback(() => {
@@ -144,7 +151,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
                 'app.application.aragonProfileUpdateTransactionDialog.description',
             )}
             network={Network.ETHEREUM_MAINNET}
-            onCancelClick={() => close(location.id)}
+            onCancelClick={handleCancel}
             onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}
             stepper={stepper}
