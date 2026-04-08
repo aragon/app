@@ -24,6 +24,9 @@ on:
       summary:
         description: "Playwright smoke summary counts"
         value: ${{ jobs.e2e.outputs.summary }}
+      report_artifact_id:
+        description: "Artifact ID of the uploaded Playwright HTML report"
+        value: ${{ jobs.e2e.outputs.report_artifact_id }}
 
 permissions:
   contents: read
@@ -36,6 +39,7 @@ jobs:
       result: ${{ steps.playwright-result.outputs.result }}
       result_label: ${{ steps.playwright-result.outputs.result_label }}
       summary: ${{ steps.playwright-result.outputs.summary }}
+      report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -95,6 +99,7 @@ jobs:
           step-outcome: ${{ steps.smoke.outcome }}
 
       - name: Upload HTML report
+        id: upload-report
         uses: actions/upload-artifact@v7.0.0
         if: always()
         with:
