@@ -1,5 +1,5 @@
 import type { Page as PlaywrightPage } from '@playwright/test';
-import { Page } from '../page';
+import { BasePage } from '../page';
 
 export interface IDaoPageParams {
     page: PlaywrightPage;
@@ -8,7 +8,7 @@ export interface IDaoPageParams {
     path?: string;
 }
 
-export class DaoPage extends Page {
+export class DaoPage extends BasePage {
     constructor(params: IDaoPageParams) {
         const { page, network, address, path = '' } = params;
         super({

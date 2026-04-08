@@ -1,5 +1,10 @@
 import type { Page as PlaywrightPage } from '@playwright/test';
 
+/**
+ * Proposal detail page — does not extend DaoPage because it is always
+ * reached via navigation from another page (proposals list, governance dialog),
+ * never constructed with a known URL.
+ */
 export class DaoProposalDetailPage {
     constructor(private readonly page: PlaywrightPage) {}
 

@@ -168,6 +168,7 @@
                 "useShorthandFunctionType": "error",
                 "useTemplate": "warn",
                 "useUnifiedTypeSignatures": "error",
+                "noNegationElse": "off",
                 "noNestedTernary": "off",
                 "noEnum": "off",
                 "noExportedImports": "off",
@@ -337,6 +338,18 @@
             "includes": [
                 ".github/**/*.js",
                 ".github/**/*.mjs"
+            ],
+            "linter": {
+                "rules": {
+                    "suspicious": {
+                        "noConsole": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": [
+                "e2e/scripts/**/*.mjs"
             ],
             "linter": {
                 "rules": {

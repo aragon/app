@@ -1,0 +1,73 @@
+name: Parse Playwright Results
+description: Extracts result, result_label, and summary from a Playwright JSON report.
+
+inputs:
+  report-path:
+    description: Path to the Playwright JSON report file
+    required: true
+  step-outcome:
+    description: Outcome of the Playwright step (success, failure, cancelled)
+    required: true
+
+outputs:
+  result:
+    description: "Parsed outcome: passed, flaky, failed, cancelled"
+    value: ${{ steps.parse.outputs.result }}
+  result_label:
+    description: Human-readable label with emoji
+    value: ${{ steps.parse.outputs.result_label }}
+  summary:
+    description: "Counts string, e.g. '5 passed, 1 flaky'"
+    value: ${{ steps.parse.outputs.summary }}
+
+runs:
+  using: composite
+  steps:
+    - id: parse
+      shell: bash
+      env:
+        REPORT: ${{ inputs.report-path }}
+        OUTCOME: ${{ inputs.step-outcome }}
+      run: |
+        result="failed"
+        result_label="❌ failed"
+        summary="No Playwright report available"
+
+        if [[ "$OUTCOME" == "cancelled" ]]; then
+          result="cancelled"
+          result_label="⏹️ cancelled"
+          summary="Run was cancelled"
+
+        elif [[ -f "$REPORT" ]] && jq -e '.stats' "$REPORT" >/dev/null 2>&1; then
+          expected=$(jq '.stats.expected // 0' "$REPORT")
+          flaky=$(jq '.stats.flaky // 0' "$REPORT")
+          unexpected=$(jq '.stats.unexpected // 0' "$REPORT")
+          skipped=$(jq '.stats.skipped // 0' "$REPORT")
+
+          summary=""
+          if (( expected > 0 ));   then summary+="${expected} passed"; fi
+          if (( flaky > 0 ));      then summary+="${summary:+, }${flaky} flaky"; fi
+          if (( unexpected > 0 )); then summary+="${summary:+, }${unexpected} failed"; fi
+          if (( skipped > 0 ));    then summary+="${summary:+, }${skipped} skipped"; fi
+          : "${summary:=No tests reported}"
+
+          if (( unexpected > 0 )); then
+            result="failed"; result_label="❌ failed"
+          elif (( flaky > 0 )); then
+            result="flaky"; result_label="⚠️ completed with flaky tests"
+          else
+            result="passed"; result_label="✅ passed"
+          fi
+
+        elif [[ "$OUTCOME" == "success" ]]; then
+          result="passed"
+          result_label="✅ passed"
+          summary="Suite completed (no JSON report)"
+
+        else
+          echo "::warning::Playwright JSON report not found or malformed"
+        fi
+
+        echo "result=${result}" >> "$GITHUB_OUTPUT"
+        echo "result_label=${result_label}" >> "$GITHUB_OUTPUT"
+        echo "summary=${summary}" >> "$GITHUB_OUTPUT"

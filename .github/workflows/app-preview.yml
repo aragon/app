@@ -1,5 +1,6 @@
 # The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel, comments the
-# deployment URL on the pull request, and runs E2E smoke tests against the preview deployment.
+# deployment URL on the pull request, and runs E2E smoke tests against the preview.
+# Build verification (BV/Synpress) tests run only on staging as part of the release process.
 
 name: App Preview
 
@@ -55,7 +56,9 @@ jobs:
         with:
           comment-tag: e2e-results
           message: |
-            **E2E Smoke Results**
+            **E2E results (preview)**
+
+            **Smoke**
             | | |
             |---|---|
             | Base URL | ${{ needs.deploy.outputs.deploymentUrl }} |
@@ -63,5 +66,6 @@ jobs:
             | Playwright result | ${{ needs.e2e.outputs.result_label }} |
             | Summary | ${{ needs.e2e.outputs.summary }} |
             | GitHub job | ${{ needs.e2e.result == 'success' && '✅ completed' || needs.e2e.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
-            | Run | [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |
+
+            [View run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           github-token: ${{ secrets.GITHUB_TOKEN }}

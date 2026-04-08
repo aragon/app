@@ -46,7 +46,7 @@ class ResponseUtils {
                     status: response.status,
                     url: response.url,
                     contentType,
-                    bodyPreview: text.substring(0, 100),
+                    bodyPreview: text.slice(0, 100),
                 },
             });
 
