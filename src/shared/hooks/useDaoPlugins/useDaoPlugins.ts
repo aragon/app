@@ -98,22 +98,25 @@ const buildFilterPlugins = (
               return daoAddress === rootDaoAddress;
           });
 
-    const processedPlugins = pluginSortUtils.sortByDisplayOrder(
-        filteredPlugins.map((plugin) => ({
-            id: plugin.interfaceType,
-            uniqueId: `${plugin.address}-${plugin.slug}`,
-            label: daoUtils.getPluginName(plugin),
-            meta: plugin,
-            props: {},
-        })),
+    const processedPlugins = filteredPlugins.map((plugin) => ({
+        id: plugin.interfaceType,
+        uniqueId: `${plugin.address}-${plugin.slug}`,
+        label: daoUtils.getPluginName(plugin),
+        meta: plugin,
+        props: {},
+    }));
+
+    const processedPluginsSorted = pluginSortUtils.sortByDisplayOrder(
+        processedPlugins,
         { rootDaoAddress },
     );
 
-    const addGroupFilter = includeGroupFilter && processedPlugins.length > 1;
+    const addGroupFilter =
+        includeGroupFilter && processedPluginsSorted.length > 1;
 
     return addGroupFilter
-        ? [pluginGroupFilter].concat(processedPlugins)
-        : processedPlugins;
+        ? [pluginGroupFilter].concat(processedPluginsSorted)
+        : processedPluginsSorted;
 };
 
 export const useDaoPlugins = (
