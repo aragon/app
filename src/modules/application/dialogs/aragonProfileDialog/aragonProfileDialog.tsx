@@ -9,7 +9,7 @@ import {
     Link,
     TextArea,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useConnection } from 'wagmi';
 import type { TEnsRecordKey } from '@/modules/ens';
@@ -120,13 +120,11 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     });
 
     const [visibleSocials, setVisibleSocials] = useState<SocialKey[]>([]);
-    const hasInitialized = useRef(false);
 
     useEffect(() => {
-        if (ensRecords == null || hasInitialized.current) {
+        if (ensRecords == null || isDirty) {
             return;
         }
-        hasInitialized.current = true;
 
         const values: IAragonProfileDialogFormData = {
             bio: ensRecords[ENS_RECORD_KEYS.description] ?? '',
@@ -141,7 +139,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
         reset(values);
         setVisibleSocials(socialKeys.filter((key) => values[key] !== ''));
-    }, [ensAvatar, ensRecords, reset]);
+    }, [ensAvatar, ensRecords, isDirty, reset]);
 
     if (address == null) {
         return null;

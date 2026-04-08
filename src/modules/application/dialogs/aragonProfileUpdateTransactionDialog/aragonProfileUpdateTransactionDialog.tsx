@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, invariant, MemberAvatar, Tag } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { ENS_AVATAR_KEY, ensTransactionUtils } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
@@ -55,6 +56,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
+    const queryClient = useQueryClient();
 
     const stepper = useStepper<
         ITransactionDialogStepMeta,
@@ -84,6 +86,14 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
         },
         [avatarFile, pinFile, stepper.nextStep],
     );
+
+    const handleSuccess = useCallback(() => {
+        queryClient.refetchQueries({
+            queryKey: ['ensRecords', ensName],
+            type: 'all',
+        });
+        queryClient.refetchQueries({ queryKey: ['ensAvatar'], type: 'all' });
+    }, [ensName, queryClient]);
 
     const prepareTransaction = useCallback(async () => {
         const allUpdates = { ...updates };
@@ -135,6 +145,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
             )}
             network={Network.ETHEREUM_MAINNET}
             onCancelClick={() => close(location.id)}
+            onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}
             stepper={stepper}
             submitLabel={t(
