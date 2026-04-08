@@ -28,10 +28,14 @@ Fork mainnet using your Alchemy key (the same key used by the app in production)
 anvil \
   --fork-url https://eth-mainnet.g.alchemy.com/v2/<NEXT_SECRET_RPC_KEY> \
   --port 8545 \
-  --chain-id 1
+  --chain-id 1 \
+  --dump-state anvil-state.json \
+  --load-state anvil-state.json
 ```
 
-`--chain-id 1` keeps MetaMask on the "Ethereum Mainnet" network so ENS resolution works correctly.
+State persistence (remove those if not needed):
+- `--dump-state <file>` — when anvil **shuts down**, it writes the current chain state to the file.
+- `--load-state <file>` — when anvil **starts up**, it reads that file and restores the state. Remove on the first run!
 
 ### 2. Configure the app to use Anvil
 
@@ -54,97 +58,26 @@ Add a custom network in MetaMask:
 | Chain ID | `1` |
 | Currency symbol | ETH |
 
+Now you can interact with dApps and update the state on Anvil!
+
 ### 4. Start the dev server
 
 ```bash
 pnpm dev
 ```
 
-## Persisting fork state
-
-Anvil state is in-memory only — stopping it loses all changes (reverse records, approvals, balances). To preserve your setup:
+## Useful commands
 
 ```bash
-# Save current state to disk
-cast rpc anvil_dumpState --rpc-url http://localhost:8545 > anvil-state.json
-
-# Restore on next start
-anvil \
-  --fork-url https://eth-mainnet.g.alchemy.com/v2/<NEXT_SECRET_RPC_KEY> \
-  --port 8545 \
-  --chain-id 1 \
-  --load-state anvil-state.json
-```
-
-`anvil-state.json` is already in `.gitignore` — don't commit it.
-
-## Testing with a real ENS name
-
-Anvil supports impersonation — you can act as any address without its private key.
-
-### Impersonate an ENS holder
-
-```bash
+# Impersonate an address
 cast rpc anvil_impersonateAccount <address> --rpc-url http://localhost:8545
 ```
 
-Then in MetaMask, import the account using its private key — or use a wallet that supports impersonation like [Impersonator](https://github.com/wslyvh/impersonator).
-
-### Fund the impersonated account for gas
-
 ```bash
+# Fund the impersonated account
 cast rpc anvil_setBalance <address> 0xDE0B6B3A7640000 --rpc-url http://localhost:8545
 ```
-
 `0xDE0B6B3A7640000` = 1 ETH in wei (hex). Increase the value for more gas budget.
-
-### Set reverse ENS record
-
-The reverse record maps your address → primary ENS name so `useEnsName(address)` resolves correctly.
-
-```bash
-# 1. Impersonate and fund your address
-cast rpc anvil_impersonateAccount <your-address> --rpc-url http://localhost:8545
-cast rpc anvil_setBalance <your-address> 0xDE0B6B3A7640000 --rpc-url http://localhost:8545
-
-# 2. Set reverse record via the ENS Reverse Registrar
-cast send 0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb "setName(string)" "<your-ens-name>" --from <your-address> --unlocked --rpc-url http://localhost:8545
-```
-
-### Grant record update permission for a wrapped subdomain
-
-If the ENS name is a **wrapped subdomain** (owner in the registry is the NameWrapper `0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401`), calling `setText` directly will revert. The resolver checks its own `isApprovedForAll` mapping — you need the NameWrapper token owner to approve your address on the **resolver**.
-
-```bash
-# 1. Find the NameWrapper token owner for your subdomain
-PARENT_OWNER=$(cast call 0xD4416b13d2b3a9aBae7AcD5D6C2BbDBE25686401 \
-  "ownerOf(uint256)(address)" \
-  $(cast to-dec $(cast namehash <your-ens-name>)) \
-  --rpc-url http://localhost:8545)
-
-# 2. Impersonate and fund the token owner
-cast rpc anvil_impersonateAccount $PARENT_OWNER --rpc-url http://localhost:8545
-cast rpc anvil_setBalance $PARENT_OWNER 0xDE0B6B3A7640000 --rpc-url http://localhost:8545
-
-# 3. Approve your address on the resolver (NOT the NameWrapper)
-cast send 0xF29100983E058B709F3D539b0c765937B804AC15 \
-  "setApprovalForAll(address,bool)" <your-address> true \
-  --from $PARENT_OWNER --unlocked --rpc-url http://localhost:8545
-```
-
-Verify:
-
-```bash
-cast call 0xF29100983E058B709F3D539b0c765937B804AC15 \
-  "isApprovedForAll(address,address)(bool)" \
-  $PARENT_OWNER <your-address> \
-  --rpc-url http://localhost:8545
-# → true
-```
-
-After this your address can call `setText` on the resolver for any name owned by `$PARENT_OWNER`.
-
-## Useful commands
 
 ```bash
 # Check ETH balance
