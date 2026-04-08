@@ -29,6 +29,7 @@
 
 # local anvil fork state
 anvil-state.json
+anvil-state.json.bac
 
 # IDE
 .cursor
