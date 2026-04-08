@@ -14,6 +14,15 @@ export interface IAragonProfileSocialFieldRowProps {
     onRemove: () => void;
 }
 
+const socialKeyToIconType: Record<SocialKey, IconType> = {
+    github: IconType.SOCIAL_GITHUB,
+    twitter: IconType.SOCIAL_X,
+    website: IconType.SOCIAL_WEBSITE,
+    email: IconType.SOCIAL_EMAIL,
+    discord: IconType.SOCIAL_DISCORD,
+    telegram: IconType.SOCIAL_TELEGRAM,
+};
+
 /** Renders a single social input row with a remove button. */
 export const AragonProfileSocialFieldRow: React.FC<
     IAragonProfileSocialFieldRowProps
@@ -30,15 +39,12 @@ export const AragonProfileSocialFieldRow: React.FC<
     return (
         <div className="flex items-center gap-2">
             <InputText
-                addon={t(
-                    `app.application.aragonProfileDialog.fields.socials.${fieldName}`,
-                )}
                 className="flex-1"
+                iconLeft={socialKeyToIconType[fieldName]}
                 id={`aragon-profile-social-${fieldName}`}
                 placeholder={t(
                     `app.application.aragonProfileDialog.fields.socials.${fieldName}`,
                 )}
-                wrapperClassName="h-12"
                 {...socialField}
             />
             <Button
