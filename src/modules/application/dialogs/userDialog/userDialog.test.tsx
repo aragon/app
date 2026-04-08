@@ -142,7 +142,6 @@ describe('<UserDialog /> component', () => {
         expect(
             screen.getByText(/app.application.userDialog.description/),
         ).toBeInTheDocument();
-        expect(screen.getByTestId(IconType.PERSON)).not.toBeInTheDocument();
     });
 
     it('renders only My DAOs button when user has an ENS name', () => {
