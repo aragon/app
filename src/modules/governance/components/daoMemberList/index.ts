@@ -7,4 +7,5 @@ export const DaoMemberList = {
 };
 
 export type { IDaoMemberListContainerProps } from './daoMemberListContainer';
+export { featuredDelegatesTabId } from './daoMemberListContainer';
 export type { IDaoMemberListDefaultProps } from './daoMemberListDefault';

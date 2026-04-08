@@ -3,6 +3,7 @@ import type {
     DaoOverridesMap,
     ICmsFeatureFlagsResponse,
     IFeaturedDao,
+    IFeaturedDelegates,
     ISanctionedAddressesResult,
     IWhitelistedAddresses,
 } from './domain';
@@ -21,6 +22,7 @@ class CmsService extends HttpService {
     private urls = {
         daoOverrides: '/main/dao-overrides.json',
         featuredDaos: '/main/featured-daos.json',
+        featuredDelegates: '/main/featured-delegates.json',
         whitelistedAddresses: '/main/whitelisted-addresses.json',
         sanctionedAddresses: '/main/sanctioned-addresses.json',
         featureFlags: '/main/feature-flags.json',
@@ -40,6 +42,16 @@ class CmsService extends HttpService {
         );
 
         return result;
+    };
+
+    getFeaturedDelegates = async (): Promise<IFeaturedDelegates[]> => {
+        try {
+            return await this.request<IFeaturedDelegates[]>(
+                this.urls.featuredDelegates,
+            );
+        } catch {
+            return [];
+        }
     };
 
     getWhitelistedAddresses = async (): Promise<IWhitelistedAddresses> => {

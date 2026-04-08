@@ -2,10 +2,16 @@
 
 import { Button, IconType } from '@aragon/gov-ui-kit';
 import { AssetList } from '@/modules/finance/components/assetList';
-import { DaoMemberList } from '@/modules/governance/components/daoMemberList';
+import {
+    DaoMemberList,
+    featuredDelegatesTabId,
+} from '@/modules/governance/components/daoMemberList';
 import { DaoProposalList } from '@/modules/governance/components/daoProposalList';
 import { daoMembersPageFilterParam } from '@/modules/governance/pages/daoMembersPage';
 import { daoProposalsPageFilterParam } from '@/modules/governance/pages/daoProposalsPage';
+import { FeaturedDelegatesList } from '@/plugins/tokenPlugin/components/featuredDelegatesList';
+import { useFeaturedDelegatesPlugin } from '@/plugins/tokenPlugin/hooks/useFeaturedDelegatesPlugin';
+import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -26,14 +32,23 @@ export interface IDashboardOnboardedProps {
      * The DAO data.
      */
     dao: IDao;
+    /**
+     * Featured delegates config from CMS.
+     */
+    featuredDelegates: IFeaturedDelegates[];
 }
 
 export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
     props,
 ) => {
-    const { dao } = props;
+    const { dao, featuredDelegates } = props;
 
     const { t } = useTranslations();
+
+    const featuredDelegatesInfo = useFeaturedDelegatesPlugin({
+        daoId: dao.id,
+        featuredDelegates,
+    });
 
     const { activePlugin: membersPlugin, setActivePlugin: setMembersPlugin } =
         useDaoPluginFilterUrlParam({
@@ -42,6 +57,8 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
             includeSubPlugins: true,
             includeLinkedAccounts: true,
             name: daoDashboardPageMembersFilterParam,
+            // Don't pollute the URL with a plugin address when featured delegates are shown.
+            enableUrlUpdate: !featuredDelegatesInfo.hasFeaturedDelegates,
         });
 
     const {
@@ -73,8 +90,15 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
         queryParams: { daoId: dao.id, pageSize: dashboardAssetsCount },
     };
 
-    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersPlugin?.uniqueId ?? ''}`;
+    const membersTabParam = featuredDelegatesInfo.hasFeaturedDelegates
+        ? featuredDelegatesTabId
+        : (membersPlugin?.uniqueId ?? '');
+    const membersPageUrl = `${daoUrl}/members?${daoMembersPageFilterParam}=${membersTabParam}`;
     const proposalsPageUrl = `${daoUrl}/proposals?${daoProposalsPageFilterParam}=${proposalsPlugin?.uniqueId ?? ''}`;
+
+    const membersTitle = featuredDelegatesInfo.hasFeaturedDelegates
+        ? t('app.dashboard.daoDashboardPage.main.featuredDelegates.title')
+        : t('app.dashboard.daoDashboardPage.main.members.title');
 
     return (
         <>
@@ -103,27 +127,51 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
                 </Page.MainSection>
             )}
             {hasSupportedPlugins && (
-                <Page.MainSection
-                    title={t(
-                        'app.dashboard.daoDashboardPage.main.members.title',
-                    )}
-                >
-                    <DaoMemberList.Container
-                        hidePagination={true}
-                        initialParams={memberListParams}
-                        onValueChange={setMembersPlugin}
-                        value={membersPlugin}
-                    >
-                        <Button
-                            className="self-start"
-                            href={membersPageUrl}
-                            iconRight={IconType.CHEVRON_RIGHT}
-                            size="md"
-                            variant="tertiary"
+                <Page.MainSection title={membersTitle}>
+                    {featuredDelegatesInfo.hasFeaturedDelegates ? (
+                        <>
+                            <FeaturedDelegatesList
+                                addresses={
+                                    featuredDelegatesInfo
+                                        .featuredDelegatesConfig.delegates
+                                }
+                                daoId={dao.id}
+                                plugin={
+                                    featuredDelegatesInfo.featuredDelegatesPlugin
+                                }
+                            />
+                            <Button
+                                className="self-start"
+                                href={membersPageUrl}
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {t(
+                                    'app.dashboard.daoDashboardPage.main.viewAll',
+                                )}
+                            </Button>
+                        </>
+                    ) : (
+                        <DaoMemberList.Container
+                            hidePagination={true}
+                            initialParams={memberListParams}
+                            onValueChange={setMembersPlugin}
+                            value={membersPlugin}
                         >
-                            {t('app.dashboard.daoDashboardPage.main.viewAll')}
-                        </Button>
-                    </DaoMemberList.Container>
+                            <Button
+                                className="self-start"
+                                href={membersPageUrl}
+                                iconRight={IconType.CHEVRON_RIGHT}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {t(
+                                    'app.dashboard.daoDashboardPage.main.viewAll',
+                                )}
+                            </Button>
+                        </DaoMemberList.Container>
+                    )}
                 </Page.MainSection>
             )}
             <Page.MainSection

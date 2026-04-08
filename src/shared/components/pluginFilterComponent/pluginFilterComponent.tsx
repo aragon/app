@@ -24,6 +24,7 @@ export const PluginFilterComponent = <
 
     const supportedPlugins = plugins.filter(
         (plugin) =>
+            plugin.renderContent != null ||
             pluginRegistryUtils.getSlotComponent({
                 slotId,
                 pluginId: plugin.id,
@@ -72,8 +73,14 @@ export const PluginFilterComponent = <
     }
 
     if (isSingleComponent) {
-        const { id, props } =
+        const singlePlugin =
             supportedPlugins.length === 1 ? supportedPlugins[0] : plugins[0];
+
+        if (singlePlugin.renderContent != null) {
+            return singlePlugin.renderContent();
+        }
+
+        const { id, props } = singlePlugin;
 
         return (
             <PluginSingleComponent
@@ -93,20 +100,28 @@ export const PluginFilterComponent = <
                 onChange={handleChange}
                 value={activePlugin}
             >
-                {plugins.map(({ uniqueId, label }) => (
-                    <Toggle key={uniqueId} label={label} value={uniqueId} />
+                {plugins.map(({ uniqueId, label, className }) => (
+                    <Toggle
+                        className={className}
+                        key={uniqueId}
+                        label={label}
+                        value={uniqueId}
+                    />
                 ))}
             </ToggleGroup>
 
-            {activePluginRecord != null && (
-                <PluginSingleComponent
-                    Fallback={Fallback}
-                    pluginId={activePluginRecord.id}
-                    slotId={slotId}
-                    {...activePluginRecord.props}
-                    {...otherProps}
-                />
-            )}
+            {activePluginRecord != null &&
+                (activePluginRecord.renderContent != null ? (
+                    activePluginRecord.renderContent()
+                ) : (
+                    <PluginSingleComponent
+                        Fallback={Fallback}
+                        pluginId={activePluginRecord.id}
+                        slotId={slotId}
+                        {...activePluginRecord.props}
+                        {...otherProps}
+                    />
+                ))}
         </div>
     );
 };
