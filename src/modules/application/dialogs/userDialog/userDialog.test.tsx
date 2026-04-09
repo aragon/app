@@ -123,7 +123,7 @@ describe('<UserDialog /> component', () => {
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
         render(createTestComponent());
-        expect(screen.getByTestId(IconType.PERSON)).toBeInTheDocument();
+        expect(screen.getByTestId(IconType.PEN)).toBeInTheDocument();
         expect(screen.getByTestId(IconType.LOGOUT)).toBeInTheDocument();
     });
 
@@ -178,7 +178,7 @@ describe('<UserDialog /> component', () => {
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         render(createTestComponent());
 
-        await userEvent.click(screen.getByTestId(IconType.PERSON));
+        await userEvent.click(screen.getByTestId(IconType.PEN));
         expect(open).toHaveBeenCalled();
     });
 
