@@ -120,13 +120,9 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     </div>
                 ) : (
                     <Clipboard copyValue={address}>
-                        <Link
-                            className="truncate text-neutral-800 text-xl"
-                            href={addressLink}
-                            isExternal={true}
-                        >
+                        <span className="truncate text-neutral-800 text-xl">
                             {formattedAddress}
-                        </Link>
+                        </span>
                     </Clipboard>
                 )}
             </div>
