@@ -115,7 +115,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     const handleCancel = () => close(id);
 
     const handleClaim = handleSubmit(({ subdomain: subdomainValue }) => {
-        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TX, {
+        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TRANSACTION, {
             stack: true,
             params: { subdomain: subdomainValue },
         });

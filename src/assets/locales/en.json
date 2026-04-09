@@ -432,30 +432,18 @@
       },
       "aragonProfileClaimSubdomainTransactionDialog": {
         "a11y": {
-          "description": "Confirm the onchain transaction to claim your ENS subname",
-          "title": "Claim ENS subname transaction"
+          "description": "Confirm the onchain transactions to claim your ENS subname and set your primary ENS",
+          "title": "Create your Aragon profile transaction"
         },
         "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
-        "submit": "Confirm in wallet",
-        "title": "Create your Aragon profile",
-        "transactionInfo": {
-          "title": "Claim ENS subname"
-        },
-        "you": "You"
-      },
-      "aragonProfileSetReverseEnsTransactionDialog": {
-        "a11y": {
-          "description": "Confirm the onchain transaction to set your primary ENS name",
-          "title": "Set primary ENS transaction"
-        },
-        "description": "To finalize your Aragon profile, set your primary ENS name so your address resolves to your new subname.",
         "submit": "Confirm in wallet",
         "successLink": {
           "label": "Add profile content"
         },
         "title": "Create your Aragon profile",
         "transactionInfo": {
-          "title": "Set primary ENS"
+          "register": "Claim ENS subname",
+          "setReverse": "Set primary ENS"
         },
         "you": "You"
       },

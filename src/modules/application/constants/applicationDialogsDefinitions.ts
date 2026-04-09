@@ -3,7 +3,6 @@ import { AragonProfileClaimSubdomainDialog } from '../dialogs/aragonProfileClaim
 import { AragonProfileClaimSubdomainTransactionDialog } from '../dialogs/aragonProfileClaimSubdomainTransactionDialog';
 import { AragonProfileDialog } from '../dialogs/aragonProfileDialog';
 import { AragonProfileIntroDialog } from '../dialogs/aragonProfileIntroDialog';
-import { AragonProfileSetReverseEnsTransactionDialog } from '../dialogs/aragonProfileSetReverseEnsTransactionDialog';
 import { AragonProfileUpdateTransactionDialog } from '../dialogs/aragonProfileUpdateTransactionDialog';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
@@ -39,19 +38,12 @@ export const applicationDialogsDefinitions: Record<
         hiddenDescription:
             'app.application.aragonProfileClaimSubdomainDialog.a11y.description',
     },
-    [ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TX]: {
+    [ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TRANSACTION]: {
         Component: AragonProfileClaimSubdomainTransactionDialog,
         hiddenTitle:
             'app.application.aragonProfileClaimSubdomainTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileClaimSubdomainTransactionDialog.a11y.description',
-    },
-    [ApplicationDialogId.ARAGON_PROFILE_SET_REVERSE_ENS_TX]: {
-        Component: AragonProfileSetReverseEnsTransactionDialog,
-        hiddenTitle:
-            'app.application.aragonProfileSetReverseEnsTransactionDialog.a11y.title',
-        hiddenDescription:
-            'app.application.aragonProfileSetReverseEnsTransactionDialog.a11y.description',
     },
     [ApplicationDialogId.ARAGON_PROFILE]: {
         Component: AragonProfileDialog,
