@@ -21,6 +21,7 @@ export {
     ENS_CHAIN_ID,
     ENS_RECORD_KEYS,
 } from './constants/ensConfig';
+export { memberRegistryAddress } from './constants/registry';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';

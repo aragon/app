@@ -408,6 +408,30 @@
         "title": "Update your Aragon profile",
         "you": "You"
       },
+      "aragonProfileClaimSubdomainDialog": {
+        "a11y": {
+          "title": "Claim your ENS subname"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "claim": "Claim your ENS name"
+        },
+        "error": {
+          "transactionFailed": "Transaction failed. Please try again."
+        },
+        "fields": {
+          "subdomain": {
+            "error": {
+              "invalidFormat": "Only lowercase letters, numbers, and hyphens are allowed.",
+              "nameTaken": "This name is already taken. Please choose a different one."
+            },
+            "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App.",
+            "label": "ENS subname",
+            "placeholder": "yourname"
+          }
+        },
+        "title": "Create your Aragon profile"
+      },
       "aragonProfileIntroDialog": {
         "a11y": {
           "title": "Create your Aragon profile"

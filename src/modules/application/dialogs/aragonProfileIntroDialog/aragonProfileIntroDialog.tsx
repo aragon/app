@@ -6,8 +6,12 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
+/** Optional params for {@link AragonProfileIntroDialog}. */
+export interface IAragonProfileIntroDialogParams {}
+
 /** Props for {@link AragonProfileIntroDialog}. */
-export interface IAragonProfileIntroDialogProps extends IDialogComponentProps {}
+export interface IAragonProfileIntroDialogProps
+    extends IDialogComponentProps<IAragonProfileIntroDialogParams> {}
 
 export const AragonProfileIntroDialog: React.FC<
     IAragonProfileIntroDialogProps
@@ -19,7 +23,7 @@ export const AragonProfileIntroDialog: React.FC<
     const { open, close } = useDialogContext();
 
     const handleCreateProfile = () => {
-        open(ApplicationDialogId.ARAGON_PROFILE);
+        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN);
     };
 
     const handleCancel = () => {

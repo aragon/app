@@ -1,4 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { AragonProfileClaimSubdomainDialog } from '../dialogs/aragonProfileClaimSubdomainDialog';
 import { AragonProfileDialog } from '../dialogs/aragonProfileDialog';
 import { AragonProfileIntroDialog } from '../dialogs/aragonProfileIntroDialog';
 import { AragonProfileUpdateTransactionDialog } from '../dialogs/aragonProfileUpdateTransactionDialog';
@@ -26,6 +27,11 @@ export const applicationDialogsDefinitions: Record<
         Component: AragonProfileIntroDialog,
         hiddenTitle: 'app.application.aragonProfileIntroDialog.a11y.title',
         size: 'lg',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN]: {
+        Component: AragonProfileClaimSubdomainDialog,
+        hiddenTitle:
+            'app.application.aragonProfileClaimSubdomainDialog.a11y.title',
     },
     [ApplicationDialogId.ARAGON_PROFILE]: {
         Component: AragonProfileDialog,
