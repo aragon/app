@@ -89,7 +89,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     <div className="flex gap-2">
                         {hasAragonProfile && (
                             <Button
-                                iconLeft={IconType.PERSON}
+                                iconLeft={IconType.PEN}
                                 onClick={handleEditAragonProfile}
                                 size="md"
                                 variant="tertiary"
