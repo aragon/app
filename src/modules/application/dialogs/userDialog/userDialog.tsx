@@ -48,10 +48,16 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const router = useRouter();
 
     const handleCreateAragonProfile = () =>
-        open(ApplicationDialogId.ARAGON_PROFILE_INTRO, { stack: true });
+        open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
+            stack: true,
+            params: { mode: 'create' },
+        });
 
     const handleEditAragonProfile = () =>
-        open(ApplicationDialogId.ARAGON_PROFILE, { stack: true });
+        open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
+            stack: true,
+            params: { mode: 'edit' },
+        });
 
     const handleDisconnect = () => disconnect.mutate();
 

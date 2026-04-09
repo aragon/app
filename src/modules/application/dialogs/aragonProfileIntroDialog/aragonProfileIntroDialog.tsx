@@ -1,13 +1,16 @@
 'use client';
 
-import { Dialog, EmptyState } from '@aragon/gov-ui-kit';
+import { Dialog, EmptyState, invariant } from '@aragon/gov-ui-kit';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
-/** Optional params for {@link AragonProfileIntroDialog}. */
-export interface IAragonProfileIntroDialogParams {}
+/** Required params for {@link AragonProfileIntroDialog}. */
+export interface IAragonProfileIntroDialogParams {
+    /** Whether the user is creating a new profile or editing an existing one. */
+    mode: 'create' | 'edit';
+}
 
 /** Props for {@link AragonProfileIntroDialog}. */
 export interface IAragonProfileIntroDialogProps
@@ -19,11 +22,21 @@ export const AragonProfileIntroDialog: React.FC<
     const { location } = props;
     const { id } = location;
 
+    invariant(
+        location.params != null,
+        'AragonProfileIntroDialog: required params must be set.',
+    );
+    const { mode } = location.params;
+
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
-    const handleCreateProfile = () => {
-        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN);
+    const handleCta = () => {
+        if (mode === 'edit') {
+            open(ApplicationDialogId.ARAGON_PROFILE);
+        } else {
+            open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN);
+        }
     };
 
     const handleCancel = () => {
@@ -45,8 +58,10 @@ export const AragonProfileIntroDialog: React.FC<
                     expression: 'SMILE',
                 }}
                 primaryButton={{
-                    label: t('app.application.aragonProfileIntroDialog.cta'),
-                    onClick: handleCreateProfile,
+                    label: t(
+                        `app.application.aragonProfileIntroDialog.cta.${mode}`,
+                    ),
+                    onClick: handleCta,
                     className: 'sm:w-max',
                 }}
                 secondaryButton={{
