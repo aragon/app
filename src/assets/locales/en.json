@@ -408,6 +408,15 @@
         "title": "Update your Aragon profile",
         "you": "You"
       },
+      "aragonProfileIntroDialog": {
+        "a11y": {
+          "title": "Create your Aragon profile"
+        },
+        "cancel": "Cancel",
+        "cta": "Create your profile",
+        "description": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once.",
+        "title": "Create your Aragon profile"
+      },
       "aragonProfileDialog": {
         "a11y": {
           "description": "Update your Aragon profile"

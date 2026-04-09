@@ -47,8 +47,11 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
 
     const router = useRouter();
 
+    const handleCreateAragonProfile = () =>
+        open(ApplicationDialogId.ARAGON_PROFILE_INTRO, { stack: true });
+
     const handleEditAragonProfile = () =>
-        open(ApplicationDialogId.ARAGON_PROFILE);
+        open(ApplicationDialogId.ARAGON_PROFILE, { stack: true });
 
     const handleDisconnect = () => disconnect.mutate();
 
@@ -140,7 +143,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     {!hasAragonProfile && (
                         <Button
                             className="w-full"
-                            onClick={handleEditAragonProfile}
+                            onClick={handleCreateAragonProfile}
                             size="md"
                             variant="primary"
                         >
