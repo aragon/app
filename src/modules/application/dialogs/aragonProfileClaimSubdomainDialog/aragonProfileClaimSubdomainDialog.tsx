@@ -3,39 +3,26 @@
 import { Dialog, InputText } from '@aragon/gov-ui-kit';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { encodeFunctionData } from 'viem';
-import { useEnsAddress, useSendTransaction } from 'wagmi';
-import { ENS_CHAIN_ID, memberRegistryAddress } from '@/modules/ens';
+import { useEnsAddress } from 'wagmi';
+import { ENS_CHAIN_ID } from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-
-/** ENS suffix appended to member subdomains in the UI and for availability checks. */
-const ENS_SUBDOMAIN_SUFFIX = '.member.dao.eth';
+import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Maximum character length allowed for a subdomain label. */
-const SUBDOMAIN_MAX_LENGTH = 80;
+const subdomainMaxLength = 80;
 
 /** Debounce delay in ms before triggering the ENS availability check. */
-const AVAILABILITY_DEBOUNCE_MS = 500;
+const availabilityDebounceMs = 500;
 
 /**
  * Valid ENS label: lowercase alphanumeric and hyphens,
  * must not start or end with a hyphen.
  */
-const ENS_LABEL_PATTERN = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
-
-/** Minimal ABI for IMemberRegistry.register. */
-const memberRegistryAbi = [
-    {
-        type: 'function',
-        name: 'register',
-        inputs: [{ name: 'subdomain', type: 'string' }],
-        outputs: [],
-        stateMutability: 'nonpayable',
-    },
-] as const;
+const ensLabelPattern = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
 
 interface IFormData {
     /** ENS subdomain label to claim, e.g. "alice". */
@@ -56,10 +43,9 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     const { id } = location;
 
     const { t } = useTranslations();
-    const { close } = useDialogContext();
+    const { open, close } = useDialogContext();
 
     const [debouncedSubdomain, setDebouncedSubdomain] = useState('');
-    const [txError, setTxError] = useState<string | undefined>();
 
     const { control, handleSubmit, watch } = useForm<IFormData>({
         mode: 'onTouched',
@@ -71,7 +57,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     useEffect(() => {
         const timer = setTimeout(
             () => setDebouncedSubdomain(subdomain),
-            AVAILABILITY_DEBOUNCE_MS,
+            availabilityDebounceMs,
         );
         return () => clearTimeout(timer);
     }, [subdomain]);
@@ -86,9 +72,9 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
         ),
         rules: {
             required: true,
-            maxLength: SUBDOMAIN_MAX_LENGTH,
+            maxLength: subdomainMaxLength,
             pattern: {
-                value: ENS_LABEL_PATTERN,
+                value: ensLabelPattern,
                 message: t(
                     'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidFormat',
                 ),
@@ -101,13 +87,13 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const isValidForCheck =
         debouncedSubdomain.length > 0 &&
-        ENS_LABEL_PATTERN.test(debouncedSubdomain) &&
+        ensLabelPattern.test(debouncedSubdomain) &&
         fieldAlert == null;
 
     const { data: ensAddress, isLoading: isCheckingAvailability } =
         useEnsAddress({
             name: isValidForCheck
-                ? `${debouncedSubdomain}${ENS_SUBDOMAIN_SUFFIX}`
+                ? `${debouncedSubdomain}${ensSubdomainSuffix}`
                 : undefined,
             chainId: ENS_CHAIN_ID,
             query: { enabled: isValidForCheck },
@@ -126,37 +112,16 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const composedAlert = fieldAlert ?? availabilityAlert;
 
-    const { sendTransactionAsync, isPending } = useSendTransaction();
-
     const handleCancel = () => close(id);
 
-    const onSubmit = handleSubmit(async ({ subdomain: subdomainValue }) => {
-        if (isNameTaken) {
-            return;
-        }
-
-        setTxError(undefined);
-
-        try {
-            const data = encodeFunctionData({
-                abi: memberRegistryAbi,
-                functionName: 'register',
-                args: [subdomainValue],
-            });
-
-            await sendTransactionAsync({ to: memberRegistryAddress, data });
-
-            close(id);
-        } catch {
-            setTxError(
-                t(
-                    'app.application.aragonProfileClaimSubdomainDialog.error.transactionFailed',
-                ),
-            );
-        }
+    const handleClaim = handleSubmit(({ subdomain: subdomainValue }) => {
+        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TX, {
+            stack: true,
+            params: { subdomain: subdomainValue },
+        });
     });
 
-    const isSubmitDisabled = isNameTaken || isPending;
+    const isSubmitDisabled = isNameTaken || isCheckingAvailability;
 
     return (
         <>
@@ -181,29 +146,23 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                 </div>
                 <InputText
                     {...fieldProps}
-                    addon={ENS_SUBDOMAIN_SUFFIX}
+                    addon={ensSubdomainSuffix}
                     addonPosition="right"
                     alert={composedAlert}
-                    id="aragon-profile-subdomain"
-                    maxLength={SUBDOMAIN_MAX_LENGTH}
+                    maxLength={subdomainMaxLength}
                     placeholder={t(
                         'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.placeholder',
                     )}
                 />
-                {txError != null && (
-                    <p className="font-normal text-critical-800 text-sm leading-normal">
-                        {txError}
-                    </p>
-                )}
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{
                     label: t(
                         'app.application.aragonProfileClaimSubdomainDialog.actions.claim',
                     ),
-                    onClick: onSubmit,
+                    onClick: handleClaim,
                     disabled: isSubmitDisabled,
-                    isLoading: isCheckingAvailability || isPending,
+                    isLoading: isCheckingAvailability,
                 }}
                 secondaryAction={{
                     label: t(

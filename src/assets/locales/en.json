@@ -410,14 +410,12 @@
       },
       "aragonProfileClaimSubdomainDialog": {
         "a11y": {
+          "description": "Enter a subdomain label to claim your Aragon profile ENS name",
           "title": "Claim your ENS subname"
         },
         "actions": {
           "cancel": "Cancel",
           "claim": "Claim your ENS name"
-        },
-        "error": {
-          "transactionFailed": "Transaction failed. Please try again."
         },
         "fields": {
           "subdomain": {
@@ -432,8 +430,38 @@
         },
         "title": "Create your Aragon profile"
       },
+      "aragonProfileClaimSubdomainTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to claim your ENS subname",
+          "title": "Claim ENS subname transaction"
+        },
+        "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
+        "submit": "Confirm in wallet",
+        "title": "Create your Aragon profile",
+        "transactionInfo": {
+          "title": "Claim ENS subname"
+        },
+        "you": "You"
+      },
+      "aragonProfileSetReverseEnsTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to set your primary ENS name",
+          "title": "Set primary ENS transaction"
+        },
+        "description": "To finalize your Aragon profile, set your primary ENS name so your address resolves to your new subname.",
+        "submit": "Confirm in wallet",
+        "successLink": {
+          "label": "Add profile content"
+        },
+        "title": "Create your Aragon profile",
+        "transactionInfo": {
+          "title": "Set primary ENS"
+        },
+        "you": "You"
+      },
       "aragonProfileIntroDialog": {
         "a11y": {
+          "description": "Introduction to creating your Aragon profile with an ENS subname",
           "title": "Create your Aragon profile"
         },
         "cancel": "Cancel",
