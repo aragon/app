@@ -9,6 +9,7 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import type { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
+import { pluginSortUtils } from '@/shared/utils/pluginSortUtils';
 
 export interface IUseDaoPluginsParams {
     /**
@@ -97,20 +98,25 @@ const buildFilterPlugins = (
               return daoAddress === rootDaoAddress;
           });
 
-    const processedPlugins: IFilterComponentPlugin<IDaoPlugin>[] =
-        filteredPlugins.map((plugin) => ({
-            id: plugin.interfaceType,
-            uniqueId: `${plugin.address}-${plugin.slug}`,
-            label: daoUtils.getPluginName(plugin),
-            meta: plugin,
-            props: {},
-        }));
+    const processedPlugins = filteredPlugins.map((plugin) => ({
+        id: plugin.interfaceType,
+        uniqueId: `${plugin.address}-${plugin.slug}`,
+        label: daoUtils.getPluginName(plugin),
+        meta: plugin,
+        props: {},
+    }));
 
-    const addGroupFilter = includeGroupFilter && processedPlugins.length > 1;
+    const processedPluginsSorted = pluginSortUtils.sortByDisplayOrder(
+        processedPlugins,
+        { rootDaoAddress },
+    );
+
+    const addGroupFilter =
+        includeGroupFilter && processedPluginsSorted.length > 1;
 
     return addGroupFilter
-        ? [pluginGroupFilter].concat(processedPlugins)
-        : processedPlugins;
+        ? [pluginGroupFilter].concat(processedPluginsSorted)
+        : processedPluginsSorted;
 };
 
 export const useDaoPlugins = (
