@@ -49,7 +49,6 @@ jobs:
             *Triggered by:* ${{ github.actor }}
 
   deploy:
-    needs: notify-start
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
