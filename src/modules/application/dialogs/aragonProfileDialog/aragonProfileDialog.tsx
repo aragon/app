@@ -9,6 +9,7 @@ import {
     Link,
     TextArea,
 } from '@aragon/gov-ui-kit';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useConnection } from 'wagmi';
@@ -87,6 +88,12 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
     const { address } = useConnection();
+
+    const router = useRouter();
+    const { network, addressOrEns } = useParams<{
+        network?: string;
+        addressOrEns?: string;
+    }>();
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -200,6 +207,16 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         });
     });
 
+    const handleViewProfile = () => {
+        if (network == null || addressOrEns == null || address == null) {
+            close();
+            return;
+        }
+
+        router.push(`/dao/${network}/${addressOrEns}/members/${address}`);
+        close();
+    };
+
     const primaryLabel = isDirty
         ? t('app.application.aragonProfileDialog.actions.updateProfile')
         : t('app.application.aragonProfileDialog.actions.viewProfile');
@@ -295,7 +312,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
             <Dialog.Footer
                 primaryAction={{
                     label: primaryLabel,
-                    onClick: isDirty ? onSubmit : handleCancel,
+                    onClick: isDirty ? onSubmit : handleViewProfile,
                 }}
                 secondaryAction={{
                     label: t(
