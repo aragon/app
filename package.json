@@ -17,6 +17,7 @@
     "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
     "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
     "type-check": "tsc --noEmit",
+    "generate:slot-docs": "node scripts/generateSlotDocs.mjs",
     "precommit": "turbo lint type-check test",
     "setup": "./scripts/setupEnv.sh",
     "prepare": "husky",
