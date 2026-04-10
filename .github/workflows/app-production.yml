@@ -153,6 +153,8 @@ jobs:
 
       - name: Notify Slack — E2E results
         if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
@@ -161,7 +163,7 @@ jobs:
           message: |
             ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *production* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *production* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *production* failed' || '⏹️ Smoke tests on *production* were cancelled' }}
             ${{ needs.e2e.outputs.summary }}
-            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
+            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View report>
 
   notify:
     needs: [notify-start, deploy]

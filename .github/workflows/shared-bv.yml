@@ -29,6 +29,9 @@ on:
       summary:
         description: "Playwright BV summary counts"
         value: ${{ jobs.bv.outputs.summary }}
+      report_artifact_id:
+        description: "Artifact ID of the uploaded Playwright HTML BV report"
+        value: ${{ jobs.bv.outputs.report_artifact_id }}
 
 permissions:
   contents: read
@@ -41,6 +44,7 @@ jobs:
       result: ${{ steps.playwright-result.outputs.result }}
       result_label: ${{ steps.playwright-result.outputs.result_label }}
       summary: ${{ steps.playwright-result.outputs.summary }}
+      report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -116,12 +120,27 @@ jobs:
           step-outcome: ${{ steps.bv.outcome }}
 
       - name: Upload HTML report
+        id: upload-report
         uses: actions/upload-artifact@v7.0.0
         if: always()
         with:
           name: playwright-bv-report-${{ inputs.environment }}
           path: e2e/playwright-report/
           retention-days: 14
+
+      - name: Add report link to job summary
+        if: always()
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
+        run: |
+          echo "### 🎭 Playwright BV Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Environment** | \`${{ inputs.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Result** | ${{ steps.playwright-result.outputs.result_label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Summary** | ${{ steps.playwright-result.outputs.summary }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload traces on failure
         uses: actions/upload-artifact@v7.0.0

@@ -107,6 +107,20 @@ jobs:
           path: e2e/playwright-report/
           retention-days: 14
 
+      - name: Add report link to job summary
+        if: always()
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
+        run: |
+          echo "### 🎭 Playwright Smoke Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Environment** | \`${{ inputs.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Result** | ${{ steps.playwright-result.outputs.result_label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Summary** | ${{ steps.playwright-result.outputs.summary }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload traces on failure
         uses: actions/upload-artifact@v7.0.0
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
