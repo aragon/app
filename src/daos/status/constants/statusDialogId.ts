@@ -1,0 +1,3 @@
+export enum StatusDialogId {
+    MEMBERS_FILE_DOWNLOAD = 'STATUS_MEMBERS_FILE_DOWNLOAD',
+}
