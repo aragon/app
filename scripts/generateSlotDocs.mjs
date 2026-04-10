@@ -277,7 +277,7 @@ for (const source of Object.values(slotsByModule)) {
     }
 }
 
-for (const [pluginName, plugin] of Object.entries(pluginRegistrations)) {
+for (const [, plugin] of Object.entries(pluginRegistrations)) {
     for (const reg of plugin.registrations) {
         if (slotRegistry[reg.slotId]) {
             slotRegistry[reg.slotId].registeredBy.push(plugin.label);
@@ -412,6 +412,7 @@ function generateApplicationSlots() {
     md += '    pageLinksRight: (baseUrl, context) => [\n';
     md += '        {\n';
     md += `            label: 'app.plugins.myPlugin.meta.link.dashboard',\n`;
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: intentional code example in markdown
     md += '            link: `${baseUrl}/dashboard`,\n';
     md += '            icon: IconType.APP_PROPOSALS,\n';
     md += `            lgHidden: context === 'dialog',\n`;
