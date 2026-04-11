@@ -162,6 +162,49 @@ Only `active` locks contribute to `getVotes()`.
 
 ---
 
+## Token Flag Reference: `hasDelegate` and `isGovernance`
+
+Both flags are set by the backend's `TokenDetector` helper, which fetches the token contract's **bytecode** and checks for the presence of specific function selectors (keccak256 hashes). They are stored in the `Token` database document and returned via the API as part of the plugin settings.
+
+### `hasDelegate`
+
+**Detected by:** presence of `delegate(address)` in bytecode.
+
+`true` means the contract implements the ERC20Votes write-side delegation method. A token holder must call `delegate(address)` at least once — even to themselves — to activate their voting power. Without this call, `getVotes()` returns 0 regardless of balance. This is what the delegation onboarding flow resolves.
+
+**When is it true:**
+- Any standard ERC20Votes token (e.g. OpenZeppelin `ERC20Votes`)
+- All escrow adapter contracts (always implement `delegate(address)`)
+
+**When is it false:**
+- Plain ERC20 tokens with no governance extension
+- Any token contract that does not include `delegate(address)`
+
+### `isGovernance`
+
+**Detected by:** presence of `getVotes(address)`, `getPastVotes(address,uint256)`, `getPastTotalSupply(uint256)` in bytecode.
+
+`true` means the contract implements the ERC20Votes read interface — it can report voting power for an account at a given point in time. This is required for a token to be usable as a governance token in the plugin.
+
+**When is it true:**
+- Standard ERC20Votes tokens
+- Escrow adapter contracts (they expose `getVotes` as an aggregated view over VE lock positions)
+
+**When is it false:**
+- Plain ERC20 tokens with no governance extension
+
+### Relationship between the two
+
+| `isGovernance` | `hasDelegate` | Meaning |
+|---|---|---|
+| `true` | `true` | Full ERC20Votes token — can read voting power and write delegations. Standard case. |
+| `true` | `false` | Can report voting power but has no delegation mechanism (unusual; not used in practice by these plugins). |
+| `false` | `false` | Plain ERC20 — no voting power, no delegation. |
+
+In practice, for all tokens used by Token Voting and Gauge Voter, both flags are `true`. The `isGovernance` flag is not surfaced directly in the frontend plugin settings but determines whether the backend treats the token as a governance token at all. `hasDelegate` is the one the frontend uses to gate onboarding and UI features.
+
+---
+
 ## Key Type Definitions
 
 ### `ITokenPluginSettingsToken`
