@@ -53,10 +53,10 @@ Before listing conditions, it is important to understand the two distinct Token 
 
 ### Contract calls (on the governance token address)
 
-| Call | Returns |
-|---|---|
-| `delegates(userAddress)` | The address to which voting power is delegated |
-| `balanceOf(userAddress)` | Current token balance of the user |
+| Call | Returns | Semantics for standard TV | Semantics for escrow adapter (TV+escrow / Gauge Voter) |
+|---|---|---|---|
+| `delegates(userAddress)` | Delegated-to address | Address the user delegated ERC20Votes power to | Address the user delegated VE lock voting power to |
+| `balanceOf(userAddress)` | `uint256` | ERC-20 token balance (amount held) | **Count of lock NFT positions** owned — positive only after at least one lock is created |
 
 ### Trigger condition
 
@@ -64,21 +64,19 @@ Before listing conditions, it is important to understand the two distinct Token 
 shouldTrigger = delegate === zeroAddress (or null)  AND  balance > 0
 ```
 
-The user holds governance tokens but has never delegated (including self-delegation). Because the ERC20Votes standard requires an explicit delegation call to activate voting power, a non-zero balance without delegation results in **zero on-chain voting power**.
+For **standard Token Voting**: user holds governance tokens but has never delegated. Without a delegation call, `getVotes()` returns 0 regardless of balance.
+
+For **escrow adapter** (Gauge Voter / TV+escrow): user has at least one lock position (`balanceOf(adapter) > 0`) but has never delegated voting power from those locks. This check fires **after** the first lock is created, not before.
 
 ### What does NOT trigger it
 
 - `delegate !== zeroAddress` — user has already delegated (to self or another address).
-- `balance === 0` — user holds no tokens; delegation is irrelevant.
+- `balance === 0` — for standard TV: no tokens held. For escrow adapter: no lock positions exist yet (user has not locked anything).
 
 ### Dialog flow
 
 1. `DELEGATION_ONBOARDING_INTRO` — explains why delegation is needed.
 2. `DELEGATION_ONBOARDING_FORM` — lets the user delegate to themselves or a chosen address.
-
-### Notes for Gauge Voter with escrow adapter
-
-The governance token address in the context of this check is the **escrow adapter** address. The adapter exposes `delegates()` and `balanceOf()`. Because escrow adapters always implement `delegate(address)`, `hasDelegate` is always `true` for Gauge Voter — delegation onboarding always applies.
 
 ---
 
@@ -137,6 +135,26 @@ votingPower = (amount × slope × min(timeElapsed, maxTime) + amount × bias) / 
 
 Where `slope`, `bias`, and `maxTime` come from `plugin.settings.votingEscrow`. Voting power increases with time elapsed since the lock epoch start, capped at `maxTime`. A lock that has been queued for exit (`lockExit.status === true`) contributes **zero** voting power.
 
+### Post-lock delegation trigger (in-session)
+
+For escrow adapter plugins, the lock form itself also triggers the delegation dialog immediately after a successful lock transaction, without waiting for the next wallet connection. This is handled in `gaugeVoterLockForm.tsx`:
+
+```typescript
+onSuccess: () => {
+    invalidateQueries();
+    if (token.hasDelegate) {
+        openIfNeeded(); // opens delegation dialog if not yet delegated
+    }
+},
+```
+
+This means the intended in-session flow for a new Gauge Voter user is:
+1. Lock check triggers on connect → user opens lock dialog and locks tokens
+2. Lock form calls `openIfNeeded()` on success → delegation dialog opens immediately
+3. User delegates within the same session
+
+The two watcher-based checks act as a **safety net** for users who locked in a previous session but never delegated.
+
 ### Lock status lifecycle
 
 | Status | Condition |
@@ -158,7 +176,15 @@ Only `active` locks contribute to `getVotes()`.
 | TOKEN_VOTING + escrow adapter | always `true` | set | present | YES (always) | YES |
 | GAUGE_VOTER | always `true` | set (always) | present (always) | YES (always) | YES |
 
-**Important:** Both conditions are checked independently. If both apply, both dialogs can trigger on the same wallet connection (sequentially, not simultaneously, as each watcher fires its own dialog on the `onConnected` event).
+**Important:** Both conditions are checked independently by separate watchers on each wallet connection event.
+
+For **standard Token Voting** both can fire simultaneously (user holds tokens but has no delegation).
+
+For **escrow adapter** plugins (Gauge Voter / TV+escrow) they target **sequential stages** and cannot both fire for a fresh user:
+- Lock check requires `getVotes === 0` — impossible once any active lock exists.
+- Delegation check requires `balanceOf(adapter) > 0` — impossible before the first lock is created.
+
+The only edge case where both fire together is a user whose existing locks are all in the exit queue (`lockExit.status === true`), giving `getVotes === 0` and `balanceOf(adapter) > 0` simultaneously.
 
 ---
 
@@ -257,17 +283,43 @@ interface ITokenPluginSettingsEscrowSettings {
 
 ## Summary Flow for a Newly Connected User
 
+### Standard Token Voting
+
 ```
 User connects wallet
         │
         ├─► TokenDelegationOnboardingWatcher
-        │       Find plugin: (TOKEN_VOTING or GAUGE_VOTER) with token.hasDelegate=true
-        │       Check: delegates(user) === zeroAddress AND balanceOf(token, user) > 0
-        │       → if true: open DELEGATION_ONBOARDING_INTRO dialog
+        │       token.hasDelegate === true?
+        │       delegates(user) === zeroAddress AND balanceOf(token, user) > 0?
+        │       → open DELEGATION_ONBOARDING_INTRO
+        │
+        └─► (lock/wrap check does not apply — no underlying token)
+```
+
+### Gauge Voter / Token Voting with Escrow Adapter
+
+Two separate stages. The watchers act as safety nets; the primary in-session path goes through the lock form.
+
+```
+User connects wallet (first time — no locks yet)
+        │
+        ├─► TokenDelegationOnboardingWatcher
+        │       balanceOf(adapter, user) === 0  →  does NOT trigger (no locks yet)
         │
         └─► TokenLockAndWrapOnboardingWatcher
-                Find plugin: GAUGE_VOTER  OR  TOKEN_VOTING with token.underlying != null
-                Check: getVotes(escrowAdapter, user) === 0 AND balanceOf(underlying, user) > 0
-                → if true (and plugin is GAUGE_VOTER or TOKEN_VOTING with votingEscrow):
-                      open LOCK_ONBOARDING_INTRO dialog (gauge lock flow)
+                getVotes(adapter, user) === 0 AND balanceOf(underlying, user) > 0?
+                → open LOCK_ONBOARDING_INTRO → LOCK_ONBOARDING_LOCK_TIME_INFO → LOCK_ONBOARDING_FORM
+                        │
+                        └─► on successful lock (in-session):
+                                token.hasDelegate === true → openIfNeeded()
+                                → open DELEGATION_ONBOARDING_INTRO → DELEGATION_ONBOARDING_FORM
+
+User connects wallet (locked previously, never delegated)
+        │
+        ├─► TokenDelegationOnboardingWatcher
+        │       balanceOf(adapter, user) > 0 AND delegates(user) === zeroAddress?
+        │       → open DELEGATION_ONBOARDING_INTRO → DELEGATION_ONBOARDING_FORM
+        │
+        └─► TokenLockAndWrapOnboardingWatcher
+                getVotes(adapter, user) > 0  →  does NOT trigger
 ```
