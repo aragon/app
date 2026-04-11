@@ -145,23 +145,27 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
         </Card>
     );
 
+    const sharedDialogProps = {
+        description: t(
+            'app.application.aragonProfileClaimSubdomainTransactionDialog.description',
+        ),
+        network: Network.ETHEREUM_MAINNET,
+        onCancelClick: handleCancel,
+        submitLabel: t(
+            'app.application.aragonProfileClaimSubdomainTransactionDialog.submit',
+        ),
+        title: t(
+            'app.application.aragonProfileClaimSubdomainTransactionDialog.title',
+        ),
+    };
+
     if (phase === 1) {
         return (
             <TransactionDialog
-                description={t(
-                    'app.application.aragonProfileClaimSubdomainTransactionDialog.description',
-                )}
-                network={Network.ETHEREUM_MAINNET}
-                onCancelClick={handleCancel}
+                {...sharedDialogProps}
                 onSuccess={handleRegisterSuccess}
                 prepareTransaction={prepareRegisterTransaction}
                 stepper={registerStepper}
-                submitLabel={t(
-                    'app.application.aragonProfileClaimSubdomainTransactionDialog.submit',
-                )}
-                title={t(
-                    'app.application.aragonProfileClaimSubdomainTransactionDialog.title',
-                )}
                 transactionInfo={{
                     title: t(
                         'app.application.aragonProfileClaimSubdomainTransactionDialog.transactionInfo.register',
@@ -177,26 +181,15 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
 
     return (
         <TransactionDialog
-            description={t(
-                'app.application.aragonProfileClaimSubdomainTransactionDialog.description',
-            )}
-            network={Network.ETHEREUM_MAINNET}
-            onCancelClick={handleCancel}
-            onSuccess={handleSetReverseSuccess}
+            {...sharedDialogProps}
             prepareTransaction={prepareSetReverseTransaction}
             stepper={setReverseStepper}
-            submitLabel={t(
-                'app.application.aragonProfileClaimSubdomainTransactionDialog.submit',
-            )}
             successLink={{
                 label: t(
                     'app.application.aragonProfileClaimSubdomainTransactionDialog.successLink.label',
                 ),
                 onClick: handleSetReverseSuccess,
             }}
-            title={t(
-                'app.application.aragonProfileClaimSubdomainTransactionDialog.title',
-            )}
             transactionInfo={{
                 title: t(
                     'app.application.aragonProfileClaimSubdomainTransactionDialog.transactionInfo.setReverse',
