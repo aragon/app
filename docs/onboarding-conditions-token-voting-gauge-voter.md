@@ -32,13 +32,14 @@ Before listing conditions, it is important to understand the two distinct Token 
 - `plugin.votingEscrow !== null` (contains `escrowAddress`, `exitQueueAddress`, `curveAddress`, `clockAddress`, `nftLockAddress`, `underlying`)
 - `plugin.settings.votingEscrow` (optional escrow settings: `minDeposit`, `minLockTime`, `cooldown`, `maxTime`, `slope`, `bias`)
 - The "governance token" address is an **escrow adapter** contract (not a real ERC20). Voting power comes from locked positions (NFT-based VE locks), not from token balance.
+- `token.hasDelegate` is **always `true`** — escrow adapters always implement `delegate(address)`.
 - The same lock dialog flow used by Gauge Voter is used here.
 
 ### Gauge Voter
 - Always has `plugin.votingEscrow` (required, not optional).
 - `plugin.settings.token.type === 'escrowAdapter'` — the token is explicitly marked as an adapter, not a real ERC20.
 - `plugin.settings.token.underlying` is always set (address of the real ERC20 that gets locked).
-- `plugin.settings.token.hasDelegate` may be true or false.
+- `plugin.settings.token.hasDelegate` is **always `true`** — escrow adapter contracts always implement `delegate(address)`, so delegation onboarding always applies.
 - Voting power comes from VE locks (NFT positions). The `ivotesAdapter` contract on the Gauge Voter plugin exposes `getVotes()` as the aggregated view.
 
 ---
@@ -77,7 +78,7 @@ The user holds governance tokens but has never delegated (including self-delegat
 
 ### Notes for Gauge Voter with escrow adapter
 
-The governance token address in the context of this check is the **escrow adapter** address. The adapter exposes `delegates()` and `balanceOf()`. The `hasDelegate` field on the token settings controls whether this check runs at all for the Gauge Voter plugin.
+The governance token address in the context of this check is the **escrow adapter** address. The adapter exposes `delegates()` and `balanceOf()`. Because escrow adapters always implement `delegate(address)`, `hasDelegate` is always `true` for Gauge Voter — delegation onboarding always applies.
 
 ---
 
@@ -154,10 +155,8 @@ Only `active` locks contribute to `getVotes()`.
 |---|---|---|---|---|---|
 | Standard TOKEN_VOTING | `true` | `null` | absent | YES | NO |
 | Standard TOKEN_VOTING | `false` | `null` | absent | NO | NO |
-| TOKEN_VOTING + escrow adapter | `true` | set | present | YES | YES |
-| TOKEN_VOTING + escrow adapter | `false` | set | present | NO | YES |
-| GAUGE_VOTER | `true` | set (always) | present (always) | YES | YES |
-| GAUGE_VOTER | `false` | set (always) | present (always) | NO | YES |
+| TOKEN_VOTING + escrow adapter | always `true` | set | present | YES (always) | YES |
+| GAUGE_VOTER | always `true` | set (always) | present (always) | YES (always) | YES |
 
 **Important:** Both conditions are checked independently. If both apply, both dialogs can trigger on the same wallet connection (sequentially, not simultaneously, as each watcher fires its own dialog on the `onConnected` event).
 
@@ -192,7 +191,7 @@ interface ITokenPlugin extends IDaoPlugin<ITokenPluginSettings> {
 interface IGaugeVoterPluginSettingsToken extends IToken {
     type: 'escrowAdapter';       // Always escrowAdapter — this is not a real ERC20
     underlying: string;          // Always set
-    hasDelegate: boolean;
+    hasDelegate: boolean;        // Always true — escrow adapters always implement delegate(address)
 }
 ```
 
