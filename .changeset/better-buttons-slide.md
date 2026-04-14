@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Edit ENS records for your primary ENS
+Implement member.dao.eth subdomain claiming and edit of ENS records for your primary ENS
