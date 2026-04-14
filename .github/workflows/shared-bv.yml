@@ -67,7 +67,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: pw-cache
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
@@ -82,7 +82,7 @@ jobs:
 
       - name: Cache Synpress wallet
         id: synpress-cache
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: .cache-synpress
           key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts', 'package.json') }}
@@ -121,7 +121,7 @@ jobs:
 
       - name: Upload HTML report
         id: upload-report
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
           name: playwright-bv-report-${{ inputs.environment }}
@@ -143,7 +143,7 @@ jobs:
           echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload traces on failure
-        uses: actions/upload-artifact@v7.0.0
+        uses: actions/upload-artifact@v7.0.1
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
           name: playwright-bv-traces-${{ inputs.environment }}
