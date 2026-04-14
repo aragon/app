@@ -1,7 +1,8 @@
 /**
  * Address of the MemberRegistry contract.
  */
-export const memberRegistryAddress = '0x123';
+export const memberRegistryAddress =
+    '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82';
 
 /** Minimal ABI for IMemberRegistry.register. */
 export const memberRegistryAbi = [
