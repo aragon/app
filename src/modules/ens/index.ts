@@ -15,6 +15,8 @@
  * const { data: ensRecords } = useEnsRecords(ensName);
  * ```
  */
+
+export * from './constants/contracts';
 export {
     ENS_AVATAR_KEY,
     ENS_CACHE,

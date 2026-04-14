@@ -385,8 +385,10 @@
           "description": "Information about the connected user",
           "title": "Connected user"
         },
-        "disconnect": "Disconnect",
-        "editAragonProfile": "Edit Aragon profile"
+        "createAragonProfile": "Create Aragon profile",
+        "description": "Claim your Aragon profile with a dedicated ENS name to stand out in the Aragon experience.",
+        "editAragonProfile": "Edit Aragon profile",
+        "myDaos": "My DAOs"
       },
       "aragonProfileUpdateTransactionDialog": {
         "a11y": {
@@ -405,6 +407,60 @@
         },
         "title": "Update your Aragon profile",
         "you": "You"
+      },
+      "aragonProfileClaimSubdomainDialog": {
+        "a11y": {
+          "description": "Enter a subdomain label to claim your Aragon profile ENS name",
+          "title": "Claim your ENS subname"
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "claim": "Claim your ENS name"
+        },
+        "fields": {
+          "subdomain": {
+            "error": {
+              "invalidFormat": "Only lowercase letters, numbers, and hyphens are allowed.",
+              "nameTaken": "This name is already taken. Please choose a different one."
+            },
+            "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App.",
+            "label": "ENS subname",
+            "placeholder": "yourname"
+          }
+        },
+        "title": "Create your Aragon profile"
+      },
+      "aragonProfileClaimSubdomainTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transactions to claim your ENS subname and set your primary ENS",
+          "title": "Create your Aragon profile transaction"
+        },
+        "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
+        "submit": "Confirm in wallet",
+        "successLink": {
+          "label": "Add profile content"
+        },
+        "title": "Create your Aragon profile",
+        "transactionInfo": {
+          "register": "Claim ENS subname",
+          "setReverse": "Set primary ENS"
+        }
+      },
+      "aragonProfilePreviewCard": {
+        "you": "You"
+      },
+      "aragonProfileIntroDialog": {
+        "a11y": {
+          "description": "Introduction to creating your Aragon profile with an ENS subname",
+          "title": "Create your Aragon profile"
+        },
+        "cancel": "Cancel",
+        "cta": {
+          "create": "Create your profile",
+          "edit": "Edit your profile"
+        },
+        "description": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once.",
+        "title": "Create your Aragon profile"
       },
       "aragonProfileDialog": {
         "a11y": {
