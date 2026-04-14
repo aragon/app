@@ -10,6 +10,8 @@ import {
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
+ensureAppKit();
+
 export interface IConnectWalletDialogParams {
     /**
      * Callback triggered on connection success.
@@ -29,8 +31,6 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
 ) => {
     const { params, id } = props.location;
     const { onSuccess, onError } = params ?? {};
-
-    ensureAppKit();
 
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { close, updateOptions } = useDialogContext();
