@@ -76,8 +76,12 @@ const fieldToEnsKey: Record<SocialKey | 'bio', string> = {
     telegram: ENS_RECORD_KEYS.telegram,
 };
 
+/** Parameters for {@link AragonProfileDialog}. */
+export interface IAragonProfileDialogParams {}
+
 /** Props for {@link AragonProfileDialog}. */
-export interface IAragonProfileDialogProps extends IDialogComponentProps {}
+export interface IAragonProfileDialogProps
+    extends IDialogComponentProps<IAragonProfileDialogParams> {}
 
 export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     props,
@@ -224,13 +228,18 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
     return (
         <FormProvider {...formMethods}>
             <Dialog.Header
+                description={t(
+                    'app.application.aragonProfileDialog.description',
+                )}
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <InputText
                     disabled
-                    id="aragon-profile-ens-name"
+                    helpText={t(
+                        'app.application.aragonProfileDialog.fields.ensName.helpText',
+                    )}
                     label={t(
                         'app.application.aragonProfileDialog.fields.ensName.label',
                     )}

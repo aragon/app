@@ -466,10 +466,12 @@
         "a11y": {
           "description": "Update your Aragon profile"
         },
-        "title": "Aragon profile",
+        "title": "Update your Aragon profile",
+        "description": "Add more content to your profile so DAO members can recognise you.",
         "fields": {
           "ensName": {
-            "label": "ENS name"
+            "label": "ENS name",
+            "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App."
           },
           "avatar": {
             "label": "Avatar"
