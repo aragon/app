@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, invariant, MemberAvatar, Tag } from '@aragon/gov-ui-kit';
+import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useState } from 'react';
 import type { Address } from 'viem';
 import { encodeFunctionData } from 'viem';
@@ -21,6 +21,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
@@ -102,23 +103,7 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
     const fullEnsName = `${subdomain}${ensSubdomainSuffix}`;
 
     const profileCard = (
-        <Card className="w-full border border-neutral-100 px-6 py-0 shadow-neutral-sm">
-            <div className="flex flex-col gap-3 py-6">
-                <div className="flex items-center gap-4">
-                    <MemberAvatar address={address} size="md" />
-                    <div className="flex flex-1 justify-end">
-                        <Tag
-                            label={t(
-                                'app.application.aragonProfileClaimSubdomainTransactionDialog.you',
-                            )}
-                        />
-                    </div>
-                </div>
-                <p className="truncate text-neutral-800 text-xl leading-tight">
-                    {fullEnsName}
-                </p>
-            </div>
-        </Card>
+        <AragonProfilePreviewCard address={address} label={fullEnsName} />
     );
 
     const sharedDialogProps = {

@@ -444,7 +444,9 @@
         "transactionInfo": {
           "register": "Claim ENS subname",
           "setReverse": "Set primary ENS"
-        },
+        }
+      },
+      "aragonProfilePreviewCard": {
         "you": "You"
       },
       "aragonProfileIntroDialog": {

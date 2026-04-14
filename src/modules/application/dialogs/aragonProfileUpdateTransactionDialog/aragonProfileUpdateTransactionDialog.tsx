@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, invariant, MemberAvatar, Tag } from '@aragon/gov-ui-kit';
+import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
@@ -21,6 +21,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 
 /** Steps that precede the main on-chain transaction in the update flow. */
 export enum AragonProfileUpdateStep {
@@ -167,28 +168,12 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
                 'app.application.aragonProfileUpdateTransactionDialog.title',
             )}
         >
-            <Card className="w-full border border-neutral-100 px-6 py-0 shadow-neutral-sm">
-                <div className="flex flex-col gap-3 py-6">
-                    <div className="flex items-center gap-4">
-                        <MemberAvatar
-                            address={address}
-                            avatarSrc={avatarSrc}
-                            ensName={ensName}
-                            size="md"
-                        />
-                        <div className="flex flex-1 justify-end">
-                            <Tag
-                                label={t(
-                                    'app.application.aragonProfileUpdateTransactionDialog.you',
-                                )}
-                            />
-                        </div>
-                    </div>
-                    <p className="truncate text-neutral-800 text-xl leading-tight">
-                        {ensName}
-                    </p>
-                </div>
-            </Card>
+            <AragonProfilePreviewCard
+                address={address}
+                avatarSrc={avatarSrc}
+                ensName={ensName}
+                label={ensName}
+            />
         </TransactionDialog>
     );
 };
