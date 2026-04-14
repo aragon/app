@@ -44,7 +44,7 @@ export const AragonProfileIntroDialog: React.FC<
     };
 
     return (
-        <Dialog.Content className="flex flex-col items-center gap-4">
+        <Dialog.Content>
             <EmptyState
                 description={t(
                     'app.application.aragonProfileIntroDialog.description',

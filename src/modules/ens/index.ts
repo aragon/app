@@ -15,13 +15,14 @@
  * const { data: ensRecords } = useEnsRecords(ensName);
  * ```
  */
+
+export * from './constants/contracts';
 export {
     ENS_AVATAR_KEY,
     ENS_CACHE,
     ENS_CHAIN_ID,
     ENS_RECORD_KEYS,
 } from './constants/ensConfig';
-export { memberRegistryAddress } from './constants/registry';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';

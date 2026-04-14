@@ -1,7 +1,6 @@
 'use client';
 
-import { Dialog, InputText } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
 import { useEnsAddress } from 'wagmi';
 import { ENS_CHAIN_ID } from '@/modules/ens';
@@ -14,9 +13,6 @@ import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Maximum character length allowed for a subdomain label. */
 const subdomainMaxLength = 80;
-
-/** Debounce delay in ms before triggering the ENS availability check. */
-const availabilityDebounceMs = 500;
 
 /**
  * Valid ENS label: lowercase alphanumeric and hyphens,
@@ -45,28 +41,20 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
-    const [debouncedSubdomain, setDebouncedSubdomain] = useState('');
-
     const { control, handleSubmit, watch } = useForm<IFormData>({
         mode: 'onTouched',
         defaultValues: { subdomain: '' },
     });
 
     const subdomain = watch('subdomain');
+    const [subdomainDebounced] = useDebouncedValue(subdomain, {
+        delay: 500,
+    });
 
-    useEffect(() => {
-        const timer = setTimeout(
-            () => setDebouncedSubdomain(subdomain),
-            availabilityDebounceMs,
-        );
-        return () => clearTimeout(timer);
-    }, [subdomain]);
-
-    const {
-        label: _label,
-        alert: fieldAlert,
-        ...fieldProps
-    } = useFormField<IFormData, 'subdomain'>('subdomain', {
+    const { alert: fieldAlert, ...fieldProps } = useFormField<
+        IFormData,
+        'subdomain'
+    >('subdomain', {
         label: t(
             'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.label',
         ),
@@ -80,20 +68,20 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                 ),
             },
         },
-        sanitizeMode: 'none',
+        sanitizeOnBlur: true,
         trimOnBlur: true,
         control,
     });
 
     const isValidForCheck =
-        debouncedSubdomain.length > 0 &&
-        ensLabelPattern.test(debouncedSubdomain) &&
+        subdomainDebounced.length > 0 &&
+        ensLabelPattern.test(subdomainDebounced) &&
         fieldAlert == null;
 
     const { data: ensAddress, isLoading: isCheckingAvailability } =
         useEnsAddress({
             name: isValidForCheck
-                ? `${debouncedSubdomain}${ensSubdomainSuffix}`
+                ? `${subdomainDebounced}${ensSubdomainSuffix}`
                 : undefined,
             chainId: ENS_CHAIN_ID,
             query: { enabled: isValidForCheck },
@@ -132,23 +120,14 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                 )}
             />
             <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
-                <div className="flex flex-col gap-1">
-                    <p className="font-normal text-lg text-neutral-800 leading-tight">
-                        {t(
-                            'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.label',
-                        )}
-                    </p>
-                    <p className="font-normal text-base text-neutral-500 leading-normal">
-                        {t(
-                            'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.helpText',
-                        )}
-                    </p>
-                </div>
                 <InputText
                     {...fieldProps}
                     addon={ensSubdomainSuffix}
                     addonPosition="right"
                     alert={composedAlert}
+                    helpText={t(
+                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.helpText',
+                    )}
                     maxLength={subdomainMaxLength}
                     placeholder={t(
                         'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.placeholder',

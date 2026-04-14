@@ -5,7 +5,12 @@ import { useCallback, useState } from 'react';
 import type { Address } from 'viem';
 import { encodeFunctionData } from 'viem';
 import { useConnection } from 'wagmi';
-import { memberRegistryAddress } from '@/modules/ens';
+import {
+    ensReverseRegistrarAbi,
+    ensReverseRegistrarAddress,
+    memberRegistryAbi,
+    memberRegistryAddress,
+} from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -18,35 +23,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { ensSubdomainSuffix } from '../../constants/aragonProfile';
-
-/**
- * ENS Reverse Registrar contract address on mainnet.
- * Source: https://docs.ens.domains/contract-api-reference/reverseregistrar
- */
-const ensReverseRegistrarAddress =
-    '0xa58E81fe9b61B5c3fE2AFD33CF304c454AbFc7Cb' as const;
-
-/** Minimal ABI for IMemberRegistry.register. */
-const memberRegistryAbi = [
-    {
-        type: 'function',
-        name: 'register',
-        inputs: [{ name: 'subdomain', type: 'string' }],
-        outputs: [],
-        stateMutability: 'nonpayable',
-    },
-] as const;
-
-/** Minimal ABI for ENS ReverseRegistrar.setName. */
-const ensReverseRegistrarAbi = [
-    {
-        type: 'function',
-        name: 'setName',
-        inputs: [{ name: 'name', type: 'string' }],
-        outputs: [{ name: '', type: 'bytes32' }],
-        stateMutability: 'nonpayable',
-    },
-] as const;
 
 /** Required params for {@link AragonProfileClaimSubdomainTransactionDialog}. */
 export interface IAragonProfileClaimSubdomainTransactionDialogParams {
