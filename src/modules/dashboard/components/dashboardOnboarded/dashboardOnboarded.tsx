@@ -100,6 +100,18 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
         ? t('app.dashboard.daoDashboardPage.main.featuredDelegates.title')
         : t('app.dashboard.daoDashboardPage.main.members.title');
 
+    const viewAllMembersButton = (
+        <Button
+            className="self-start"
+            href={membersPageUrl}
+            iconRight={IconType.CHEVRON_RIGHT}
+            size="md"
+            variant="tertiary"
+        >
+            {t('app.dashboard.daoDashboardPage.main.viewAll')}
+        </Button>
+    );
+
     return (
         <>
             {hasSupportedPlugins && (
@@ -140,17 +152,7 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
                                     featuredDelegatesInfo.featuredDelegatesPlugin
                                 }
                             />
-                            <Button
-                                className="self-start"
-                                href={membersPageUrl}
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                size="md"
-                                variant="tertiary"
-                            >
-                                {t(
-                                    'app.dashboard.daoDashboardPage.main.viewAll',
-                                )}
-                            </Button>
+                            {viewAllMembersButton}
                         </>
                     ) : (
                         <DaoMemberList.Container
@@ -159,17 +161,7 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
                             onValueChange={setMembersPlugin}
                             value={membersPlugin}
                         >
-                            <Button
-                                className="self-start"
-                                href={membersPageUrl}
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                size="md"
-                                variant="tertiary"
-                            >
-                                {t(
-                                    'app.dashboard.daoDashboardPage.main.viewAll',
-                                )}
-                            </Button>
+                            {viewAllMembersButton}
                         </DaoMemberList.Container>
                     )}
                 </Page.MainSection>

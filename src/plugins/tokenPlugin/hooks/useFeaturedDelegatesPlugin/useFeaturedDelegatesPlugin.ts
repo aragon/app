@@ -71,6 +71,7 @@ export const useFeaturedDelegatesPlugin = (
         type: PluginType.BODY,
         pluginAddress: featuredDelegatesConfig?.pluginAddress,
         includeSubPlugins: true,
+        includeLinkedAccounts: true,
     });
 
     return useMemo(() => {

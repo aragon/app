@@ -5,9 +5,21 @@ import { memberOptions } from '@/modules/governance/api/governanceService';
 import type { ITokenMember } from '../../types';
 
 export interface IUseFeaturedDelegatesParams {
+    /**
+     * Addresses of the featured delegates to fetch.
+     */
     addresses: string[];
+    /**
+     * ID of the DAO.
+     */
     daoId: string;
+    /**
+     * Address of the token voting plugin.
+     */
     pluginAddress: string;
+    /**
+     * Token associated with the plugin, required to fetch voting power.
+     */
     token: IToken | undefined;
 }
 
