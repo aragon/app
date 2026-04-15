@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { daoOverridesOptions } from '@/shared/api/cmsService';
+import { cmsService, daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
@@ -32,11 +32,12 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
 
     const daoId = await daoUtils.resolveDaoId(daoPageParams);
     const daoUrlParams = { id: daoId };
-    const dao = await queryClient.fetchQuery(
-        daoOptions({ urlParams: daoUrlParams }),
-    );
+    const [dao, daoOverrides, featuredDelegates] = await Promise.all([
+        queryClient.fetchQuery(daoOptions({ urlParams: daoUrlParams })),
+        queryClient.fetchQuery(daoOverridesOptions()),
+        cmsService.getFeaturedDelegates(),
+    ]);
 
-    const daoOverrides = await queryClient.fetchQuery(daoOverridesOptions());
     const daoOverride = daoOverrides[daoId];
 
     const allBodyPlugins =
@@ -70,7 +71,10 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     return (
         <Page.Container queryClient={queryClient}>
             <Page.Content>
-                <DaoMembersPageClient initialParams={memberListParams} />
+                <DaoMembersPageClient
+                    featuredDelegates={featuredDelegates}
+                    initialParams={memberListParams}
+                />
             </Page.Content>
         </Page.Container>
     );
