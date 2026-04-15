@@ -1,4 +1,8 @@
-# Hotfix Start — creates a hotfix branch + PR from a tag (default: latest tag)
+# Hotfix Start — branch from a release tag with optional cherry-picks from main.
+# Supports resuming an existing hotfix branch via existing_hotfix_branch input.
+# If hotfix HEAD equals the base release tag, downstream jobs are skipped.
+# Order: unit tests → staging deploy → git tag (not gated on E2E) → smoke E2E parallel with tag.
+# Prod: run App Production workflow_dispatch with the hotfix tag.
 
 name: Hotfix Start
 
@@ -6,22 +10,51 @@ on:
   workflow_dispatch:
     inputs:
       base_tag:
-        description: "Tag to hotfix from (default: latest tag)"
+        description: >
+          Release tag to branch from (e.g. v1.2.0). Leave empty for latest tag.
+          Only needed when resuming a branch whose name doesn't match hotfix/vX.Y.Z_….
         required: false
         type: string
       commits:
-        description: "Commit SHAs to cherry-pick from main (comma/space/newline separated)"
-        required: true
+        description: >
+          SHAs on main to cherry-pick (comma/space/newline separated).
+          Empty = no cherry-picks. First run copies the release tag; resume uses pushed commits.
+        required: false
+        type: string
+      existing_hotfix_branch:
+        description: >
+          Continue an existing hotfix branch (after local commits/push).
+          Empty = create hotfix/<tag>_<timestamp> from base_tag or latest tag.
+        required: false
         type: string
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   start:
     runs-on: ubuntu-latest
+    outputs:
+      hotfix-tag: ${{ steps.tag.outputs.name }}
+      hotfix-sha: ${{ steps.push.outputs.sha }}
+      slack-ts: ${{ steps.notify.outputs.ts }}
+      skip: ${{ steps.delta.outputs.skip }}
     steps:
+      - name: Determine mode
+        id: meta
+        env:
+          INPUT_BRANCH: ${{ inputs.existing_hotfix_branch }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BRANCH="$(printf '%s' "$INPUT_BRANCH" | xargs 2>/dev/null || true)"
+          if [ -n "$BRANCH" ]; then
+            echo "mode=resume"   >> "$GITHUB_OUTPUT"
+            echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=fresh" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Load secrets
         id: load-secrets
         uses: 1password/load-secrets-action@v4.0.0
@@ -48,39 +81,48 @@ jobs:
         with:
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
           fetch-depth: 0
-          ref: ${{ inputs.base_tag || 'main' }}
+          ref: main
 
-      - name: Detect base tag (if not provided)
-        id: base
+      - name: Resolve base tag and branch
+        id: ctx
+        env:
+          MODE: ${{ steps.meta.outputs.mode }}
+          RESUME_BRANCH: ${{ steps.meta.outputs.branch }}
+          INPUT_TAG: ${{ inputs.base_tag }}
         shell: bash
         run: |
+          set -euo pipefail
           git fetch --tags --force >/dev/null 2>&1 || true
-          if [ -n "${{ inputs.base_tag }}" ]; then
-            echo "tag=${{ inputs.base_tag }}" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-          if [ -z "$TAG" ]; then
-            echo "No tags found and base_tag not provided." >&2
-            exit 1
-          fi
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
-      - name: Generate hotfix branch name
-        id: branch
-        shell: bash
-        run: echo "name=hotfix/${{ steps.base.outputs.tag }}_$(date +'%Y-%m-%d_%H-%M')" >> "$GITHUB_OUTPUT"
+          # --- resolve tag ---
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          elif [ "$MODE" = "resume" ]; then
+            rest="${RESUME_BRANCH#hotfix/}"
+            [ "$rest" = "$RESUME_BRANCH" ] && { echo "::error::Branch must start with hotfix/ or provide base_tag."; exit 1; }
+            TAG="${rest%%_*}"
+            [ -z "$TAG" ] || [ "$TAG" = "$rest" ] && { echo "::error::Cannot parse tag from branch name; provide base_tag."; exit 1; }
+          else
+            TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+            [ -z "$TAG" ] && { echo "::error::No tags found — provide base_tag."; exit 1; }
+          fi
+
+          # --- resolve branch ---
+          if [ "$MODE" = "resume" ]; then
+            BRANCH="$RESUME_BRANCH"
+          else
+            BRANCH="hotfix/${TAG}_$(date +'%Y-%m-%d_%H-%M')"
+          fi
+
+          echo "tag=$TAG"       >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
 
       - name: Ensure hotfix branch from tag
+        if: steps.meta.outputs.mode == 'fresh'
         uses: ./.github/actions/git-ensure-branch
         with:
-          branch: ${{ steps.branch.outputs.name }}
-          base_ref: ${{ steps.base.outputs.tag }}
-
-      - name: Checkout hotfix branch
-        shell: bash
-        run: |
-          git checkout "${{ steps.branch.outputs.name }}"
+          branch: ${{ steps.ctx.outputs.branch }}
+          base_ref: ${{ steps.ctx.outputs.tag }}
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v7.0.0
@@ -90,89 +132,234 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      - name: Cherry-pick selected commits from main
+      - name: Checkout hotfix branch
+        env:
+          BRANCH: ${{ steps.ctx.outputs.branch }}
         shell: bash
         run: |
           set -euo pipefail
+          git fetch origin "$BRANCH"
+          git checkout "$BRANCH"
+
+      - name: Cherry-pick commits from main
+        env:
+          RAW_COMMITS: ${{ inputs.commits }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          COMMITS="$(printf '%s' "$RAW_COMMITS" | tr ', ' '\n\n' | sed '/^$/d')"
+          [ -z "$COMMITS" ] && exit 0
+
           git fetch origin main --force >/dev/null 2>&1 || true
-
-          RAW="${{ inputs.commits }}"
-          # normalize separators to newlines
-          COMMITS="$(printf "%s" "$RAW" | tr ', ' '\n\n' | sed '/^$/d')"
-          if [ -z "$COMMITS" ]; then
-            echo "No commits provided." >&2
-            exit 1
-          fi
-
           echo "Cherry-picking:"
           echo "$COMMITS"
-
           while IFS= read -r sha; do
             [ -z "$sha" ] && continue
             git cherry-pick -x "$sha"
           done <<< "$COMMITS"
 
-      - name: Update version and changelog (hotfix start)
-        uses: ./.github/actions/changeset-version
-        with:
-          prettier_changelog: "true"
-          github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
-
-      - name: Commit & push (hotfix)
+      - name: Push hotfix branch
         id: push
+        env:
+          BRANCH: ${{ steps.ctx.outputs.branch }}
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "No changes detected after cherry-pick + version. Did you include the right commits and/or changesets?" >&2
-            exit 1
+          git push origin "HEAD:$BRANCH"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Check for changes vs base tag
+        id: delta
+        env:
+          BASE_TAG: ${{ steps.ctx.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA="$(git rev-parse HEAD)"
+          BASE_SHA="$(git rev-parse "${BASE_TAG}^{commit}" 2>/dev/null || git rev-parse "$BASE_TAG")"
+          if [ "$HEAD_SHA" = "$BASE_SHA" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "Hotfix HEAD matches base tag — nothing to verify."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
-          VERSION="$(node -p "require('./package.json').version")"
-          git add --all
-          git commit -m "Hotfix v${VERSION}"
-          git push origin "HEAD:${{ steps.branch.outputs.name }}"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Ensure Pull Request
-        id: pr
-        uses: ./.github/actions/gh-ensure-pr
-        with:
-          base: main
-          head: ${{ steps.branch.outputs.name }}
-          title: Hotfix v${{ steps.push.outputs.version }} (from ${{ steps.base.outputs.tag }})
-          body: |
-            Hotfix started from `${{ steps.base.outputs.tag }}`.
+      - name: Determine next hotfix tag
+        id: tag
+        env:
+          BASE_TAG: ${{ steps.ctx.outputs.tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          LAST="$(git tag --list "${BASE_TAG}-hotfix.*" | sort -V | tail -1 || true)"
+          if [ -z "$LAST" ]; then
+            NEXT=1
+          else
+            NEXT=$(( ${LAST##*.} + 1 ))
+          fi
+          echo "name=${BASE_TAG}-hotfix.${NEXT}" >> "$GITHUB_OUTPUT"
 
-            - Cherry-pick required commits into `${{ steps.branch.outputs.name }}`
-            - Deploy to staging and test
-            - Approve + add label `release:ready` to tag and deploy
-          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
-
-      - name: Notify Slack
-        id: slack
-        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != ''
+      - name: Notify Slack — Hotfix Started
+        id: notify
+        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
             🩹 *Hotfix Started*
-            *Base Tag:* `${{ steps.base.outputs.tag }}`
-            *Version:* `${{ steps.push.outputs.version }}`
-            *PR:* ${{ steps.pr.outputs.url }}
+            *Base Tag:* `${{ steps.ctx.outputs.tag }}`
+            ${{ steps.delta.outputs.skip == 'true' && '*Hotfix tag:* not created — branch HEAD equals base tag commit' || format('*Planned hotfix tag:* `{0}` *(after successful staging deploy)*', steps.tag.outputs.name) }}
+            *Branch:* `${{ steps.ctx.outputs.branch }}`
 
-      - name: Update PR with Slack TS
-        if: steps.slack.outputs.ts != ''
-        uses: ./.github/actions/gh-pr-edit-body
+            ${{ steps.delta.outputs.skip == 'true' && '🔁 *Skipping* unit tests, staging deploy, git tag, and E2E (nothing new vs release tag).' || 'Unit tests → staging deploy → tag push; smoke E2E runs after deploy *(non-blocking for the tag)*. Review smoke before *App Production*.' }}
+
+  test:
+    needs: start
+    if: ${{ needs.start.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.2
         with:
-          pr_number: ${{ steps.pr.outputs.number }}
-          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
-          body: |
-            Hotfix started from `${{ steps.base.outputs.tag }}`.
+          fetch-depth: 1
+          sparse-checkout: .github/actions/setup
 
-            - Cherry-pick required commits into `${{ steps.branch.outputs.name }}`
-            - Deploy to staging and test
-            - Approve + add label `release:ready` to tag and deploy
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          ref: ${{ needs.start.outputs.hotfix-sha }}
+          fetch-depth: 0
 
-            <!-- slack_ts: ${{ steps.slack.outputs.ts }} -->
+      - name: Check types
+        run: pnpm type-check
 
+      - name: Check linter with formatter
+        run: pnpm lint:check
+
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+  deploy:
+    needs: [start, test]
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: 'stg.app.aragon.org'
+      env: 'staging'
+      ref: ${{ needs.start.outputs.hotfix-sha }}
+
+  push-hotfix-tag:
+    needs: [start, deploy]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ needs.start.outputs.hotfix-sha }}
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+          fetch-depth: 1
+
+      - name: Create and push hotfix tag
+        env:
+          TAG: ${{ needs.start.outputs.hotfix-tag }}
+          SHA: ${{ needs.start.outputs.hotfix-sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git tag "$TAG" "$SHA"
+          git push origin "refs/tags/$TAG"
+
+  e2e:
+    needs: deploy
+    uses: ./.github/workflows/shared-e2e.yml
+    secrets: inherit
+    with:
+      deployment-url: https://stg.app.aragon.org
+      environment: staging
+
+  notify-staging:
+    needs: [start, deploy]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/slack-notify
+
+      - name: Notify Slack — Staging Deployed
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.start.outputs.slack-ts
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ needs.start.outputs.slack-ts }}
+          message: |
+            ✅ *Hotfix deployed to staging*
+            *Hotfix tag:* `${{ needs.start.outputs.hotfix-tag }}` *(pushed after deploy; smoke is non-blocking)*
+            *Staging:* <https://stg.app.aragon.org|stg.app.aragon.org>
+
+            Smoke E2E is running in parallel…
+
+  e2e-notify:
+    needs: [start, e2e]
+    if: ${{ always() && needs.e2e.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/slack-notify
+
+      - name: Notify Slack — E2E results
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.start.outputs.slack-ts
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ needs.start.outputs.slack-ts }}
+          message: |
+            ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *staging* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *staging* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *staging* failed' || '⏹️ Smoke tests on *staging* were cancelled' }}
+            ${{ needs.e2e.outputs.summary }}
+            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View report>
+
+            ${{ format('Hotfix tag `{0}` is pushed after a successful deploy (smoke does not gate the tag). Confirm staging → run *App Production*.', needs.start.outputs.hotfix-tag) }}

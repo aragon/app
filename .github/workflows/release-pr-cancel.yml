@@ -1,6 +1,6 @@
-# Finish Release — notifies Slack when a release PR is merged or cancelled.
+# Release PR Cancel — notifies Slack when a release PR is closed without merge.
 
-name: Finish Release
+name: Release PR Cancel
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   notify:
-    if: startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/')
+    if: github.event.pull_request.merged == false && startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
@@ -50,18 +50,8 @@ jobs:
         with:
           body: ${{ steps.pr.outputs.body }}
 
-      - name: Notify Slack (merged)
-        if: github.event.pull_request.merged && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
-        uses: ./.github/actions/slack-notify
-        with:
-          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
-          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
-          thread_ts: ${{ steps.ts.outputs.ts }}
-          message: |
-            ✅ *PR merged, release complete!*
-
       - name: Notify Slack (cancelled)
-        if: github.event.pull_request.merged == false && steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
