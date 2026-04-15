@@ -3,7 +3,10 @@
 import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useWatch } from 'react-hook-form';
 import type { Hex } from 'viem';
-import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
+import {
+    CapitalFlowDaoSlotId,
+    type ICapitalDistributorVotingEscrowAddressParams,
+} from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
@@ -29,10 +32,13 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
     const { fieldPrefix, daoId } = props;
     const { t } = useTranslations();
 
-    const escrowAddress = useSlotSingleFunction<void, Hex | undefined>({
+    const escrowAddress = useSlotSingleFunction<
+        ICapitalDistributorVotingEscrowAddressParams,
+        Hex | undefined
+    >({
         slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
         pluginId: daoId,
-        params: undefined,
+        params: { daoId },
     });
 
     const { onChange, ...payoutTypeField } = useFormField<

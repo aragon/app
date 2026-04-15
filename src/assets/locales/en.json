@@ -13,7 +13,7 @@
         },
         "gaugeRegistrarRegisterGaugeActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "incentive": {
@@ -52,7 +52,7 @@
         },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
-          "description": "Select a gauge to remove from the next epoche.",
+          "description": "Select a gauge to remove from the next epoch.",
           "emptyState": "No gauges available",
           "entityLabel": "Gauge",
           "submit": "Select gauge",
@@ -61,7 +61,7 @@
         "gaugeRegistrarUnregisterGaugeActionCreate": {
           "emptyCard": {
             "action": "Select gauge",
-            "description": "Select a gauge to remove from the next epoche.",
+            "description": "Select a gauge to remove from the next epoch.",
             "heading": "Select gauge"
           }
         },
@@ -95,7 +95,7 @@
         },
         "gaugeVoterCreateGaugeActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "gaugeAddress": {
@@ -149,7 +149,7 @@
         },
         "gaugeVoterUpdateGaugeMetadataActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "name": {
@@ -224,7 +224,7 @@
         },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "asset": {
-            "helpText": "Select the token to distributed in this campaign.",
+            "helpText": "Select the token to distribute in this campaign.",
             "label": "Asset"
           },
           "description": {
@@ -407,7 +407,7 @@
           "label": "Fixed ratio"
         },
         "GAUGE": {
-          "description": "Route an asset to recipients proportionally according a gauge vote.",
+          "description": "Route an asset to recipients proportionally according to a gauge vote.",
           "label": "Gauge ratio"
         },
         "MULTI_DISPATCH": {
@@ -462,7 +462,7 @@
         },
         "metadata": {
           "description": {
-            "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "helpText": "Describe your policy’s purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
             "label": "Description"
           },
           "name": {
@@ -513,7 +513,7 @@
       },
       "dispatchDialog": {
         "backButton": "Back",
-        "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "description": "You can dispatch this policy by confirming the transactions using your connected wallet.",
         "dispatchAllButton": "Dispatch all",
         "dispatchButton": "Dispatch",
         "modelType": {
@@ -557,7 +557,7 @@
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",
         "dispatchButton": "Dispatch",
-        "routingDescription": "Automatically routs assets from the treasury to one or more target addresses.",
+        "routingDescription": "Automatically routes assets from the treasury to one or more target addresses.",
         "routingTitle": "Routing",
         "title": "Automated transactions"
       },
@@ -609,7 +609,7 @@
         "routers": "routers",
         "singleTab": "Single",
         "title": "Dispatch",
-        "unnamedPolicy": "Unnamed Policy"
+        "unnamedPolicy": "Unnamed policy"
       },
       "setupStrategyDialog": {
         "a11y": {
@@ -918,11 +918,9 @@
           },
           "type": {
             "ADVANCED": {
-              "description": "Proposals advance across multiple stages.",
               "label": "Advanced"
             },
             "BASIC": {
-              "description": "Proposals are decided on by a single body.",
               "label": "Basic"
             },
             "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
@@ -1126,7 +1124,7 @@
           "stageDurationField": {
             "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
             "infoText": "Recommended minimum voting period is 7 days.",
-            "label": "Stage Duration"
+            "label": "Stage duration"
           },
           "stageEarlyAdvanceField": {
             "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
@@ -2005,7 +2003,7 @@
           "description": "Confirm the onchain transaction to claim your rewards",
           "submit": "Claim rewards",
           "successLinkLabel": "View rewards",
-          "title": "Claim Transaction"
+          "title": "Claim transaction"
         },
         "capitalDistributorRewardsAside": {
           "stats": {
@@ -2067,8 +2065,8 @@
           },
           "heading": {
             "name": "Name",
-            "totalVotes": "Total Votes",
-            "yourVotes": "Your Votes"
+            "totalVotes": "Total votes",
+            "yourVotes": "Your votes"
           },
           "item": {
             "noVotes": "None",
@@ -2107,7 +2105,7 @@
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power approach across your selected gauges.",
+            "description": "Proportionally distribute your voting power across your selected gauges.",
             "used": "used"
           },
           "footer": {
@@ -2184,7 +2182,7 @@
             },
             "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
             "submit": "Withdraw",
-            "success": "View Transaction",
+            "success": "View transaction",
             "title": "Withdraw {{symbol}}"
           }
         },
@@ -2250,7 +2248,7 @@
         "gaugeVoterLockOnboardingDialog": {
           "intro": {
             "hiddenTitle": "Lock tokens onboarding",
-            "title": "Your have unlocked {{tokenSymbol}}",
+            "title": "You have unlocked {{tokenSymbol}}",
             "description": "Lock more tokens to increase your voting power.",
             "cta": "Lock tokens",
             "cancel": "Cancel"
@@ -2613,7 +2611,7 @@
         "sppGovernanceSettings": {
           "default": {
             "address": "Address",
-            "name": "ENS Name"
+            "name": "ENS name"
           },
           "numberOfStages": "Number of stages"
         },
@@ -3141,7 +3139,7 @@
         "address": "Address",
         "blockchain": "Blockchain",
         "chain": "Chain",
-        "ens": "ENS Name",
+        "ens": "ENS name",
         "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
@@ -3221,7 +3219,7 @@
         },
         "description": {
           "1": "You have to create and pass a proposal in another governance process to uninstall this process.",
-          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done only when you are certain it is not needed and have the other processes needed by the DAO."
+          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done when you are certain it is not needed and have the other processes needed by the DAO."
         },
         "title": "Uninstall {{name}} ({{slug}}) process"
       },

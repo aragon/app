@@ -1,0 +1,151 @@
+# Shared BV workflow — runs Playwright build verification tests against a deployed environment.
+# Called by app-staging after deploy.
+# Wallet: 1Password kv_app_infra / E2E_FE_MM_WALLET (password + secret recovery phrase) via op:// refs.
+
+name: Shared BV
+
+on:
+  workflow_call:
+    inputs:
+      deployment-url:
+        description: "Base URL to run BV tests against"
+        required: true
+        type: string
+      environment:
+        description: "Environment name (staging) — used for artifact naming"
+        required: true
+        type: string
+    secrets:
+      OP_SERVICE_ACCOUNT_TOKEN:
+        description: "1Password service account — reads kv_app_infra / E2E_FE_MM_WALLET for Synpress"
+        required: true
+    outputs:
+      result:
+        description: "Playwright BV outcome (passed, flaky, failed, cancelled)"
+        value: ${{ jobs.bv.outputs.result }}
+      result_label:
+        description: "Playwright BV outcome label"
+        value: ${{ jobs.bv.outputs.result_label }}
+      summary:
+        description: "Playwright BV summary counts"
+        value: ${{ jobs.bv.outputs.summary }}
+      report_artifact_id:
+        description: "Artifact ID of the uploaded Playwright HTML BV report"
+        value: ${{ jobs.bv.outputs.report_artifact_id }}
+
+permissions:
+  contents: read
+
+jobs:
+  bv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      result: ${{ steps.playwright-result.outputs.result }}
+      result_label: ${{ steps.playwright-result.outputs.result_label }}
+      summary: ${{ steps.playwright-result.outputs.summary }}
+      report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+
+      - name: Load E2E MetaMask wallet from 1Password
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          E2E_FE_MM_WALLET_PASSWORD: op://kv_app_infra/E2E_FE_MM_WALLET/password
+          E2E_FE_MM_WALLET_SECRET_RECOVERY_PHRASE: "op://kv_app_infra/E2E_FE_MM_WALLET/secret recovery phrase"
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Get Playwright version
+        id: pw-version
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v5.0.5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: pnpm e2e:install
+
+      - name: Install Playwright OS deps
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Cache Synpress wallet
+        id: synpress-cache
+        uses: actions/cache@v5.0.5
+        with:
+          path: .cache-synpress
+          key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts', 'package.json') }}
+
+      - name: Build Synpress wallet cache
+        if: steps.synpress-cache.outputs.cache-hit != 'true'
+        # xvfb-run: MetaMask extension requires a display for onboarding UI.
+        run: xvfb-run pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
+
+      - name: Warmup deployment
+        run: |
+          for i in 1 2 3; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$E2E_BASE_URL" || true)
+            echo "Attempt $i: HTTP $STATUS"
+            [ "$STATUS" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "::warning::Warmup did not get 200 — proceeding anyway"
+        env:
+          E2E_BASE_URL: ${{ inputs.deployment-url }}
+
+      - name: Run BV tests
+        id: bv
+        continue-on-error: true
+        run: xvfb-run pnpm e2e:bv
+        env:
+          E2E_BASE_URL: ${{ inputs.deployment-url }}
+
+      - name: Parse Playwright results
+        id: playwright-result
+        if: always()
+        uses: ./.github/actions/parse-playwright-results
+        with:
+          report-path: e2e/test-results/results.json
+          step-outcome: ${{ steps.bv.outcome }}
+
+      - name: Upload HTML report
+        id: upload-report
+        uses: actions/upload-artifact@v7.0.1
+        if: always()
+        with:
+          name: playwright-bv-report-${{ inputs.environment }}
+          path: e2e/playwright-report/
+          retention-days: 14
+
+      - name: Add report link to job summary
+        if: always()
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
+        run: |
+          echo "### 🎭 Playwright BV Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Environment** | \`${{ inputs.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Result** | ${{ steps.playwright-result.outputs.result_label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Summary** | ${{ steps.playwright-result.outputs.summary }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload traces on failure
+        uses: actions/upload-artifact@v7.0.1
+        if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
+        with:
+          name: playwright-bv-traces-${{ inputs.environment }}
+          path: e2e/test-results/
+          retention-days: 7

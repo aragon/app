@@ -20,8 +20,8 @@ class TokenPluginUtils {
             ...token,
             address: token.underlying,
             // Remove the "g" and "Governance" prefixes from the token symbol / name
-            symbol: token.symbol.substring(1),
-            name: token.name.substring(11),
+            symbol: token.symbol.slice(1),
+            name: token.name.slice(11),
         };
     };
 

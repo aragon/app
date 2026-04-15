@@ -1,7 +1,7 @@
 import type { Page as PlaywrightPage } from '@playwright/test';
-import { Page } from '../../shared';
+import { BasePage } from '../../shared';
 
-export class ExplorePage extends Page {
+export class ExplorePage extends BasePage {
     constructor(page: PlaywrightPage) {
         super({ page, path: '/' });
     }
