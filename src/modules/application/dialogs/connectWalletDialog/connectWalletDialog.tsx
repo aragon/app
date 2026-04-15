@@ -10,6 +10,9 @@ import {
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
+// Safe to call at module level: this module is loaded lazily via next/dynamic,
+// so the code below only executes when the dialog chunk is
+// first requested — i.e. when the dialog is about to render.
 ensureAppKit();
 
 export interface IConnectWalletDialogParams {

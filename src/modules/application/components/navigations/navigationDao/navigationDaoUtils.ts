@@ -6,6 +6,19 @@ import type { IPluginInfo } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 
+// Ensure the plugin registry is populated before any method of NavigationDaoUtils
+// runs. Without this, client-side hydration may evaluate this module before
+// providers.tsx calls initPluginRegistry(), causing getPluginLinks() to return
+// an empty list and triggering an SSR hydration mismatch (nav items "jump").
+// The call is idempotent (registerPlugin deduplicates), so the extra invocation
+// from layoutRoot.tsx / providers.tsx is harmless.
+//
+// TODO: remove once the plugin registry is refactored to be self-initializing
+// (e.g. plugins register themselves at import time via side-effect modules,
+// or pluginRegistryUtils.getPlugin() lazily triggers initialization on first
+// access). That would eliminate the need for scattered initPluginRegistry()
+// calls and the implicit dependency on call order across layoutRoot / providers
+// / consumer modules.
 initPluginRegistry();
 
 export type NavigationDaoContext = 'page' | 'dialog';
