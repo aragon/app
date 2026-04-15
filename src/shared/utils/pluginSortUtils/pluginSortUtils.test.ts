@@ -13,22 +13,25 @@ const buildFilterPlugin = (plugin: Partial<IDaoPlugin>) => ({
 });
 
 describe('pluginSortUtils.sortByDisplayOrder', () => {
-    it('sorts root-DAO plugins before sub-plugins of the same type', () => {
-        const root = buildFilterPlugin({
+    it('treats sub-plugins on the root DAO as root-level for sorting purposes', () => {
+        const standalone = buildFilterPlugin({
             interfaceType: PluginInterfaceType.MULTISIG,
             daoAddress: ROOT_DAO_ADDRESS,
             isSubPlugin: false,
         });
         const sub = buildFilterPlugin({
-            interfaceType: PluginInterfaceType.MULTISIG,
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
             daoAddress: ROOT_DAO_ADDRESS,
             isSubPlugin: true,
         });
 
-        const sorted = pluginSortUtils.sortByDisplayOrder([sub, root], {
+        const sorted = pluginSortUtils.sortByDisplayOrder([standalone, sub], {
             rootDaoAddress: ROOT_DAO_ADDRESS,
         });
-        expect(sorted).toEqual([root, sub]);
+        expect(sorted.map((p) => p.meta.interfaceType)).toEqual([
+            PluginInterfaceType.TOKEN_VOTING,
+            PluginInterfaceType.MULTISIG,
+        ]);
     });
 
     it('sorts root-DAO plugins before linked-account plugins of the same type', () => {
@@ -172,8 +175,8 @@ describe('pluginSortUtils.sortByDisplayOrder', () => {
         expect(sorted.map((p) => p.meta.address)).toEqual([
             '0x1',
             '0x2',
-            '0x3',
             '0x4',
+            '0x3',
         ]);
     });
 
