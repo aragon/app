@@ -1,5 +1,6 @@
 'use client';
 
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { DaoPluginInfo } from '@/modules/settings/components/daoPluginInfo';
@@ -85,16 +86,36 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         includeLinkedAccounts: true,
     });
 
-    const activeRealPlugin = useMemo(() => {
-        if (allBodyPlugins == null || isFeaturedTabActive) {
+    const activeAsidePlugin = useMemo(() => {
+        if (allBodyPlugins == null) {
             return undefined;
+        }
+
+        // When the featured delegates tab is active, show the aside for the
+        // plugin those delegates belong to (resolved from the CMS config).
+        if (isFeaturedTabActive) {
+            if (!featuredDelegatesInfo.hasFeaturedDelegates) {
+                return undefined;
+            }
+
+            return allBodyPlugins.find((plugin) =>
+                addressUtils.isAddressEqual(
+                    plugin.meta.address,
+                    featuredDelegatesInfo.featuredDelegatesConfig.pluginAddress,
+                ),
+            );
         }
 
         return (
             allBodyPlugins.find((p) => p.uniqueId === activeTabParam) ??
             allBodyPlugins[0]
         );
-    }, [allBodyPlugins, activeTabParam, isFeaturedTabActive]);
+    }, [
+        allBodyPlugins,
+        activeTabParam,
+        isFeaturedTabActive,
+        featuredDelegatesInfo,
+    ]);
 
     return (
         <>
@@ -105,20 +126,20 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
                 />
             </Page.Main>
             <Page.Aside>
-                {activeRealPlugin != null && (
-                    <Page.AsideCard title={activeRealPlugin.label}>
+                {activeAsidePlugin != null && (
+                    <Page.AsideCard title={activeAsidePlugin.label}>
                         <DaoPluginInfo
                             daoId={daoId}
-                            plugin={activeRealPlugin.meta}
+                            plugin={activeAsidePlugin.meta}
                             type={PluginType.BODY}
                         />
                     </Page.AsideCard>
                 )}
-                {activeRealPlugin != null && (
+                {activeAsidePlugin != null && (
                     <PluginSingleComponent
                         daoId={daoId}
-                        plugin={activeRealPlugin.meta}
-                        pluginId={activeRealPlugin.id}
+                        plugin={activeAsidePlugin.meta}
+                        pluginId={activeAsidePlugin.id}
                         slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
                     />
                 )}
