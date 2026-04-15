@@ -29,8 +29,7 @@
 *.pem
 
 # local anvil fork state
-anvil-state.json
-anvil-state.json.bac
+anvil-*
 
 # IDE
 .cursor

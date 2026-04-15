@@ -123,6 +123,7 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
     if (phase === 1) {
         return (
             <TransactionDialog
+                key="register"
                 {...sharedDialogProps}
                 onSuccess={handleRegisterSuccess}
                 prepareTransaction={prepareRegisterTransaction}
@@ -139,9 +140,9 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
             </TransactionDialog>
         );
     }
-
     return (
         <TransactionDialog
+            key="set-reverse"
             {...sharedDialogProps}
             prepareTransaction={prepareSetReverseTransaction}
             stepper={setReverseStepper}
