@@ -1,5 +1,31 @@
 # @aragon/app
 
+## 1.27.0
+
+### Minor Changes
+
+- [#1083](https://github.com/aragon/app/pull/1083) [`818114c`](https://github.com/aragon/app/commit/818114cdeebccf8421c54f84eb7cab20df48d770) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add featured delegates functionality to DAO dashboard and members page
+
+- [#1079](https://github.com/aragon/app/pull/1079) [`964752b`](https://github.com/aragon/app/commit/964752b2cdd3e7edc5f8325fe485dbbadf0030fc) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement sorting for bodies in members list
+
+- [#1092](https://github.com/aragon/app/pull/1092) [`11fe6b5`](https://github.com/aragon/app/commit/11fe6b58c389adcd6f5fec25ea62da557fb4000a) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add Status DAO campaign creation with epoch-based reward distributions
+
+- [#1090](https://github.com/aragon/app/pull/1090) [`51edae0`](https://github.com/aragon/app/commit/51edae00467c94066f3457e0cc05b74d08be4e19) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add gauge icon and change nav order
+
+- [#1085](https://github.com/aragon/app/pull/1085) [`34944ef`](https://github.com/aragon/app/commit/34944ef84dba33438a04e3c880e9c58d5e3dc617) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Create docs section for comprehensive slot creation & usage
+
+### Patch Changes
+
+- [#1077](https://github.com/aragon/app/pull/1077) [`b33e145`](https://github.com/aragon/app/commit/b33e145cb7705033893dabe8cf8cf935b467de10) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies and harden supply chain security
+
+- [#1080](https://github.com/aragon/app/pull/1080) [`2fd4d0c`](https://github.com/aragon/app/commit/2fd4d0c13227178415c83da71e786023a5e5b678) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Change release workflows
+
+- [#1076](https://github.com/aragon/app/pull/1076) [`4c6ba34`](https://github.com/aragon/app/commit/4c6ba349e7efd3aa007589cfbc69e5ecda101b4b) Thanks [@milosh86](https://github.com/milosh86)! - Harden pnpm configuration with strictDepBuilds and trustPolicy settings
+
+- [#1093](https://github.com/aragon/app/pull/1093) [`af539e4`](https://github.com/aragon/app/commit/af539e49e5917d9af5e96f67e89ec8b6d58bd769) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support featured delegates in the aside panel
+
+- [#1086](https://github.com/aragon/app/pull/1086) [`8dae43e`](https://github.com/aragon/app/commit/8dae43e93a5d921b361391bf77284722f5517694) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix typos and grammatical issues in copy throughout the app
+
 ## 1.26.0
 
 ### Minor Changes
