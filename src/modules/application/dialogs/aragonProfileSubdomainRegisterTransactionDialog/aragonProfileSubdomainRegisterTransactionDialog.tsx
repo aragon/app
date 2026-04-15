@@ -4,7 +4,11 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
 import { useConnection } from 'wagmi';
-import { memberRegistryAbi, memberRegistryAddress } from '@/modules/ens';
+import {
+    memberRegistryAbi,
+    memberRegistryAddress,
+    memberRegistrySubdomainSuffix,
+} from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -17,7 +21,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
-import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Required params for {@link AragonProfileSubdomainRegisterTransactionDialog}. */
 export interface IAragonProfileSubdomainRegisterTransactionDialogParams {
@@ -101,7 +104,7 @@ export const AragonProfileSubdomainRegisterTransactionDialog: React.FC<
         >
             <AragonProfilePreviewCard
                 address={address}
-                label={`${subdomain}${ensSubdomainSuffix}`}
+                label={`${subdomain}${memberRegistrySubdomainSuffix}`}
             />
         </TransactionDialog>
     );

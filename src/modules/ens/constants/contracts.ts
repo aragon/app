@@ -3,6 +3,10 @@
  */
 export const memberRegistryAddress =
     '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82' as const;
+/**
+ * Subdomain suffix for member ENS names.
+ */
+export const memberRegistrySubdomainSuffix = '.aragonx.eth';
 
 /**
  * ENS Reverse Registrar contract address on mainnet.

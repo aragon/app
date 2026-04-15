@@ -10,6 +10,7 @@ import {
     ensReverseRegistrarAddress,
     useEnsName,
 } from '@/modules/ens';
+import { memberRegistrySubdomainSuffix } from '@/modules/ens/';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -22,7 +23,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
-import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Required params for {@link AragonProfileSetPrimaryEnsTransactionDialog}. */
 export interface IAragonProfileSetPrimaryEnsTransactionDialogParams {
@@ -68,7 +68,7 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
         [close, location.id],
     );
 
-    const fullEnsName = `${subdomain}${ensSubdomainSuffix}`;
+    const fullEnsName = `${subdomain}${memberRegistrySubdomainSuffix}`;
 
     const prepareTransaction = useCallback(
         () =>

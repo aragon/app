@@ -7,6 +7,7 @@ import {
     ensChainId,
     memberRegistryAbi,
     memberRegistryAddress,
+    memberRegistrySubdomainSuffix,
 } from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -14,7 +15,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
-import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Maximum character length allowed for a subdomain label. */
 const subdomainMaxLength = 50;
@@ -111,7 +111,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     const { data: ensAddress, isLoading: isCheckingAvailability } =
         useEnsAddress({
             name: isValidForCheck
-                ? `${subdomainDebounced}${ensSubdomainSuffix}`
+                ? `${subdomainDebounced}${memberRegistrySubdomainSuffix}`
                 : undefined,
             chainId: ensChainId,
             query: {
@@ -167,7 +167,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                 <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
                     <AragonProfilePreviewCard
                         address={address}
-                        label={`${existingSubdomain}${ensSubdomainSuffix}`}
+                        label={`${existingSubdomain}${memberRegistrySubdomainSuffix}`}
                     />
                 </Dialog.Content>
                 <Dialog.Footer
@@ -202,7 +202,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
             <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
                 <InputText
                     {...fieldProps}
-                    addon={ensSubdomainSuffix}
+                    addon={memberRegistrySubdomainSuffix}
                     addonPosition="right"
                     alert={composedAlert}
                     helpText={t(
