@@ -246,7 +246,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         logo: '/networks/citrea.svg',
         order: 8,
         protocolVersion: latestProtocolVersion,
-        beta: true,
         tenderlySupport: false,
         addresses: {
             dao: '0x0e30F6A8119E2528511C7B2d034d89dAb1cEC6b8',
@@ -285,7 +284,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
         order: 10,
         protocolVersion: latestProtocolVersion,
-        beta: true,
         tenderlySupport: false,
         addresses: {
             dao: '0x221B2d4fF2dEf7Bb1Da68460760B299e4c2D8AdD',
