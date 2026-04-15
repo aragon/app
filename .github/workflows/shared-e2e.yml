@@ -16,8 +16,17 @@ on:
         type: string
     outputs:
       result:
-        description: "E2E job result (success, failure, cancelled)"
+        description: "Playwright smoke outcome (passed, flaky, failed, cancelled)"
         value: ${{ jobs.e2e.outputs.result }}
+      result_label:
+        description: "Playwright smoke outcome"
+        value: ${{ jobs.e2e.outputs.result_label }}
+      summary:
+        description: "Playwright smoke summary counts"
+        value: ${{ jobs.e2e.outputs.summary }}
+      report_artifact_id:
+        description: "Artifact ID of the uploaded Playwright HTML report"
+        value: ${{ jobs.e2e.outputs.report_artifact_id }}
 
 permissions:
   contents: read
@@ -27,7 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
-      result: ${{ steps.job-result.outputs.result }}
+      result: ${{ steps.playwright-result.outputs.result }}
+      result_label: ${{ steps.playwright-result.outputs.result_label }}
+      summary: ${{ steps.playwright-result.outputs.summary }}
+      report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -35,6 +47,7 @@ jobs:
           fetch-depth: 1
           sparse-checkout: |
             .github/actions/setup
+            .github/actions/parse-playwright-results
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -45,7 +58,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: pw-cache
-        uses: actions/cache@v5.0.4
+        uses: actions/cache@v5.0.5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
@@ -58,28 +71,60 @@ jobs:
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
+      - name: Warmup deployment
+        run: |
+          for i in 1 2 3; do
+            STATUS=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$E2E_BASE_URL" || true)
+            echo "Attempt $i: HTTP $STATUS"
+            [ "$STATUS" = "200" ] && exit 0
+            sleep 10
+          done
+          echo "::warning::Warmup did not get 200 — proceeding anyway"
+        env:
+          E2E_BASE_URL: ${{ inputs.deployment-url }}
+
       - name: Run smoke tests
+        id: smoke
+        continue-on-error: true
         run: pnpm e2e:smoke
         env:
           E2E_BASE_URL: ${{ inputs.deployment-url }}
 
+      - name: Parse Playwright results
+        id: playwright-result
+        if: always()
+        uses: ./.github/actions/parse-playwright-results
+        with:
+          report-path: e2e/test-results/results.json
+          step-outcome: ${{ steps.smoke.outcome }}
+
       - name: Upload HTML report
-        uses: actions/upload-artifact@v7.0.0
+        id: upload-report
+        uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
           name: playwright-report-${{ inputs.environment }}
           path: e2e/playwright-report/
           retention-days: 14
 
+      - name: Add report link to job summary
+        if: always()
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
+        run: |
+          echo "### 🎭 Playwright Smoke Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Environment** | \`${{ inputs.environment }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Result** | ${{ steps.playwright-result.outputs.result_label }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Summary** | ${{ steps.playwright-result.outputs.summary }} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **HTML Report** | [View report](https://${ARTIFACT_VIEWER_HOST}/${{ github.repository }}/${{ steps.upload-report.outputs.artifact-id }}/index.html) |" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload traces on failure
-        uses: actions/upload-artifact@v7.0.0
-        if: failure()
+        uses: actions/upload-artifact@v7.0.1
+        if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
           name: playwright-traces-${{ inputs.environment }}
           path: e2e/test-results/
           retention-days: 7
-
-      - name: Export job result
-        id: job-result
-        if: always()
-        run: echo "result=${{ job.status }}" >> "$GITHUB_OUTPUT"

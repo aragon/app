@@ -1,12 +1,12 @@
 import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 import { useFormContext } from 'react-hook-form';
+import { useAdvancedGovernanceAvailability } from '@/modules/createDao/hooks/useAdvancedGovernanceAvailability';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import {
     GovernanceType,
     type ICreateProcessFormData,
 } from '../createProcessFormDefinitions';
-import { createProcessFormUtils } from '../createProcessFormUtils';
 import { GovernanceBasicBodyField } from './fields/governanceBasicBodyField';
 import { GovernanceStagesField } from './fields/governanceStagesField';
 
@@ -15,15 +15,22 @@ export interface ICreateProcessFormGovernanceProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Callback to signal whether the Next button should be disabled.
+     */
+    onDisableNextChange?: (disabled: boolean) => void;
 }
 
 export const CreateProcessFormGovernance: React.FC<
     ICreateProcessFormGovernanceProps
 > = (props) => {
-    const { daoId } = props;
+    const { daoId, onDisableNextChange } = props;
 
     const { t } = useTranslations();
     const { setValue } = useFormContext();
+
+    const { isAvailable: isAdvancedAvailable } =
+        useAdvancedGovernanceAvailability({ daoId });
 
     const {
         value: governanceType,
@@ -41,8 +48,11 @@ export const CreateProcessFormGovernance: React.FC<
     const handleGovernanceTypeChange = (value: string) => {
         if (value === GovernanceType.ADVANCED) {
             setValue('body', undefined);
+            setValue('stages', []);
+            onDisableNextChange?.(!isAdvancedAvailable);
         } else {
-            setValue('stages', [createProcessFormUtils.buildDefaultStage()]);
+            setValue('stages', []);
+            onDisableNextChange?.(false);
         }
 
         onGovernanceTypeChange(value);
@@ -50,10 +60,19 @@ export const CreateProcessFormGovernance: React.FC<
 
     const isAdvancedGovernance = governanceType === GovernanceType.ADVANCED;
 
+    const advancedTag = isAdvancedAvailable
+        ? undefined
+        : {
+              label: t(
+                  'app.createDao.createProcessForm.governance.advancedEmptyState.tag',
+              ),
+              variant: 'primary' as const,
+          };
+
     return (
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-4 md:gap-6">
             <RadioGroup
-                className="w-full gap-4 md:flex-row"
+                className="w-full gap-4 md:flex-row [&>*]:min-w-0 [&>*]:flex-1"
                 helpText={t(
                     'app.createDao.createProcessForm.governance.type.helpText',
                 )}
@@ -61,23 +80,29 @@ export const CreateProcessFormGovernance: React.FC<
                 value={governanceType}
                 {...governanceTypeField}
             >
-                {Object.values(GovernanceType).map((type) => (
-                    <RadioCard
-                        description={t(
-                            `app.createDao.createProcessForm.governance.type.${type}.description`,
-                        )}
-                        key={type}
-                        label={t(
-                            `app.createDao.createProcessForm.governance.type.${type}.label`,
-                        )}
-                        value={type}
-                    />
-                ))}
+                <RadioCard
+                    label={t(
+                        'app.createDao.createProcessForm.governance.type.BASIC.label',
+                    )}
+                    value={GovernanceType.BASIC}
+                />
+                <RadioCard
+                    label={t(
+                        'app.createDao.createProcessForm.governance.type.ADVANCED.label',
+                    )}
+                    tag={advancedTag}
+                    value={GovernanceType.ADVANCED}
+                />
             </RadioGroup>
             {!isAdvancedGovernance && (
                 <GovernanceBasicBodyField daoId={daoId} />
             )}
-            {isAdvancedGovernance && <GovernanceStagesField daoId={daoId} />}
+            {isAdvancedGovernance && (
+                <GovernanceStagesField
+                    daoId={daoId}
+                    isAdvancedAvailable={isAdvancedAvailable}
+                />
+            )}
         </div>
     );
 };

@@ -9,12 +9,3 @@ export const cryptex = {
  */
 export const cryptexTokenVotingPluginAddress: `0x${string}` =
     '0x17a1688C56087aDe762721180e1cC1E831C73719';
-
-/**
- * Hardcoded voting escrow (veLocker) address shared by Cryptex DAOs.
- */
-export const cryptexVotingEscrowAddress: `0x${string}` =
-    '0x2DE5aE18750FBf82821212194D59aCc989469CDd';
-
-export const getCryptexVotingEscrowAddress = (): `0x${string}` =>
-    cryptexVotingEscrowAddress;

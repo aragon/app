@@ -62,6 +62,8 @@ export const useTokenMemberStats = (
         },
     );
 
+    const { delegationCount } = member.metrics;
+
     return [
         {
             label: t('app.plugins.token.tokenMemberStats.votingPower'),
@@ -72,6 +74,12 @@ export const useTokenMemberStats = (
             label: t('app.plugins.token.tokenMemberStats.tokenBalance'),
             value: formattedTokenBalance,
             suffix: token.symbol,
+        },
+        {
+            label: t(
+                `app.plugins.token.tokenMemberStats.${delegationCount === 1 ? 'delegation' : 'delegations'}`,
+            ),
+            value: member.metrics.delegationCount,
         },
     ];
 };

@@ -13,7 +13,7 @@
         },
         "gaugeRegistrarRegisterGaugeActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "incentive": {
@@ -52,7 +52,7 @@
         },
         "gaugeRegistrarSelectGaugeDialog": {
           "cancel": "Cancel",
-          "description": "Select a gauge to remove from the next epoche.",
+          "description": "Select a gauge to remove from the next epoch.",
           "emptyState": "No gauges available",
           "entityLabel": "Gauge",
           "submit": "Select gauge",
@@ -61,7 +61,7 @@
         "gaugeRegistrarUnregisterGaugeActionCreate": {
           "emptyCard": {
             "action": "Select gauge",
-            "description": "Select a gauge to remove from the next epoche.",
+            "description": "Select a gauge to remove from the next epoch.",
             "heading": "Select gauge"
           }
         },
@@ -95,7 +95,7 @@
         },
         "gaugeVoterCreateGaugeActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "gaugeAddress": {
@@ -149,7 +149,7 @@
         },
         "gaugeVoterUpdateGaugeMetadataActionCreateForm": {
           "description": {
-            "helpText": "Describe the Gauge in a few sentences. This is listed on gauge detail page so contributors understand the gauge.",
+            "helpText": "Describe the gauge in a few sentences. This is listed on the gauge detail page so contributors understand the gauge.",
             "label": "Description"
           },
           "name": {
@@ -224,7 +224,7 @@
         },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "asset": {
-            "helpText": "Select the token to distributed in this campaign.",
+            "helpText": "Select the token to distribute in this campaign.",
             "label": "Asset"
           },
           "description": {
@@ -294,7 +294,6 @@
       "bannerDao": {
         "adminMember": {
           "action": "Add governance",
-          "manage": "Manage admins",
           "message": "You are a DAO admin. You can add as many custom governance processes as your DAO needs."
         },
         "adminPlugin": {
@@ -408,7 +407,7 @@
           "label": "Fixed ratio"
         },
         "GAUGE": {
-          "description": "Route an asset to recipients proportionally according a gauge vote.",
+          "description": "Route an asset to recipients proportionally according to a gauge vote.",
           "label": "Gauge ratio"
         },
         "MULTI_DISPATCH": {
@@ -463,7 +462,7 @@
         },
         "metadata": {
           "description": {
-            "helpText": "Describe your policies’ purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
+            "helpText": "Describe your policy’s purpose in a few sentences. This is listed on the Explore page so new contributors can find you.",
             "label": "Description"
           },
           "name": {
@@ -514,7 +513,7 @@
       },
       "dispatchDialog": {
         "backButton": "Back",
-        "description": "You can dispatch this policy by confirm the transactions using your connected wallet.",
+        "description": "You can dispatch this policy by confirming the transactions using your connected wallet.",
         "dispatchAllButton": "Dispatch all",
         "dispatchButton": "Dispatch",
         "modelType": {
@@ -558,7 +557,7 @@
       "dispatchPanel": {
         "description": "Execute eligible transactions that adhere to the organization's policies.",
         "dispatchButton": "Dispatch",
-        "routingDescription": "Automatically routs assets from the treasury to one or more target addresses.",
+        "routingDescription": "Automatically routes assets from the treasury to one or more target addresses.",
         "routingTitle": "Routing",
         "title": "Automated transactions"
       },
@@ -610,7 +609,7 @@
         "routers": "routers",
         "singleTab": "Single",
         "title": "Dispatch",
-        "unnamedPolicy": "Unnamed Policy"
+        "unnamedPolicy": "Unnamed policy"
       },
       "setupStrategyDialog": {
         "a11y": {
@@ -817,9 +816,34 @@
       },
       "createProcessForm": {
         "governance": {
+          "advancedEmptyState": {
+            "available": {
+              "cta": "Add stage",
+              "description": "Advanced governance lets you build a proposal flow with multiple sequential stages — each with one or more voting bodies. Use it for multi-step processes like optimistic governance with community review, a guardian veto, or a founder sign off.",
+              "heading": "Design your own advanced governance"
+            },
+            "gated": {
+              "cta": "Get in touch",
+              "description": "The Aragon team can help you design an advanced governance flow designed for the unique needs of your organization. For example:",
+              "features": {
+                "1": "Different proposal flows for different types of decisions",
+                "2": "Granular permissions around who can do what",
+                "3": "Optimistic governance where proposals pass unless vetoed",
+                "4": "Security councils that can propose or review proposals before execution",
+                "5": "The ability to adapt your governance over time"
+              },
+              "heading": "Governance custom-built for {{daoName}}"
+            },
+            "tag": "On request"
+          },
           "basicBodyField": {
             "action": {
               "add": "Add"
+            },
+            "emptyState": {
+              "cta": "Add voting body",
+              "description": "Basic governance supports a single voting body — either a multisig or token voting. Add one to define how proposals are decided.",
+              "heading": "Set up your voting body"
             },
             "error": {
               "required": "A body must be added to this process."
@@ -894,11 +918,9 @@
           },
           "type": {
             "ADVANCED": {
-              "description": "Proposals advance across multiple stages.",
               "label": "Advanced"
             },
             "BASIC": {
-              "description": "Proposals are decided on by a single body.",
               "label": "Basic"
             },
             "helpText": "This determines the amount of control and flexibility you need to design your governance process.",
@@ -1102,7 +1124,7 @@
           "stageDurationField": {
             "helpText": "The period of time a proposal is active. Proposals can be created with a longer duration, but not shorter.",
             "infoText": "Recommended minimum voting period is 7 days.",
-            "label": "Stage Duration"
+            "label": "Stage duration"
           },
           "stageEarlyAdvanceField": {
             "helpText": "This allows a proposal to be advanced early to subsequent stages if it's approved before the voting period ends.",
@@ -1204,6 +1226,32 @@
           "welcome": "Welcome"
         }
       },
+      "status": {
+        "statusMembersFileDownload": {
+          "label": "Reward distribution",
+          "helpText": "Generate the reward distribution JSON for a specific epoch based on gauge voting results.",
+          "button": "Generate distribution",
+          "downloadedFile": "Downloaded: {{fileName}}"
+        },
+        "statusMembersFileDownloadDialog": {
+          "title": "Generate reward distribution",
+          "description": "Select an epoch and enter the total reward amount to generate a reward distribution JSON based on gauge voting results.",
+          "epochIdLabel": "Epoch",
+          "epochIdHelpText": "Select an epoch to generate the reward distribution for.",
+          "epochOption": "Epoch {{epochId}}",
+          "epochSelectPlaceholder": "Select epoch",
+          "amountLabel": "Total reward amount",
+          "generate": "Generate",
+          "cancel": "Cancel",
+          "error": {
+            "default": "Failed to fetch reward distribution. Please try again.",
+            "epochWindowInvalid": "The epoch voting window is not valid.",
+            "epochVotingNotClosed": "Voting for this epoch has not closed yet.",
+            "epochWindowExpired": "The reward distribution window for this epoch has expired.",
+            "epochNoActiveVoters": "No active voters found for this epoch."
+          }
+        }
+      },
       "xmaquina": {
         "xmaquinaPageHeader": {
           "actions": {
@@ -1268,6 +1316,9 @@
           "assets": {
             "title": "Assets"
           },
+          "featuredDelegates": {
+            "title": "Featured delegates"
+          },
           "members": {
             "title": "Members"
           },
@@ -1282,6 +1333,32 @@
           "members": "Members",
           "proposals": "Proposals",
           "treasury": "Treasury"
+        }
+      },
+      "dashboardOnboarding": {
+        "admin": {
+          "description": "Your organization has no governance yet. Without it, only you can execute actions - your team or community can't participate. Choose how you want to get set up.",
+          "divider": "or",
+          "enterprise": {
+            "action": "Get in touch",
+            "description": "Most successful organizations on Aragon are launched with expert guidance. Work with our team to design and deploy a governance and tokenomics setup tailored to your organization.",
+            "tag": "Best for custom setups",
+            "title": "Work with the Aragon team"
+          },
+          "free": {
+            "addGovernance": "Add governance",
+            "description": "Use the no-code wizard to deploy governance and configure your organization's governance or explore our documentation to build it yourself.",
+            "title": "Set up governance yourself",
+            "viewDocs": "View docs"
+          },
+          "subtitle": "Now, let's get started!",
+          "welcome": "Welcome"
+        },
+        "nonAdmin": {
+          "description": "Admins can install plugins that enable governance, affect tokenomics, or support other onchain operations.",
+          "title": "{{daoName}} is being set up",
+          "viewAdmins": "View admins",
+          "welcome": "Welcome"
         }
       }
     },
@@ -1314,6 +1391,7 @@
         "enterpriseService": {
           "actionLabel": "Get in touch",
           "subtitle": "Let Aragon design and build custom governance and tokenomics mechanisms for your organization.",
+          "tag": "Recommended",
           "title": "Work with our team"
         },
         "hero": {
@@ -1614,6 +1692,9 @@
         }
       },
       "daoMembersPage": {
+        "featuredDelegates": {
+          "tab": "Featured delegates"
+        },
         "main": {
           "title": "Members"
         }
@@ -1954,7 +2035,7 @@
           "description": "Confirm the onchain transaction to claim your rewards",
           "submit": "Claim rewards",
           "successLinkLabel": "View rewards",
-          "title": "Claim Transaction"
+          "title": "Claim transaction"
         },
         "capitalDistributorRewardsAside": {
           "stats": {
@@ -2016,8 +2097,8 @@
           },
           "heading": {
             "name": "Name",
-            "totalVotes": "Total Votes",
-            "yourVotes": "Your Votes"
+            "totalVotes": "Total votes",
+            "yourVotes": "Your votes"
           },
           "item": {
             "noVotes": "None",
@@ -2056,7 +2137,7 @@
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power approach across your selected gauges.",
+            "description": "Proportionally distribute your voting power across your selected gauges.",
             "used": "used"
           },
           "footer": {
@@ -2133,7 +2214,7 @@
             },
             "description": "To withdraw your {{symbol}}, confirm the onchain transactions in your wallet.",
             "submit": "Withdraw",
-            "success": "View Transaction",
+            "success": "View transaction",
             "title": "Withdraw {{symbol}}"
           }
         },
@@ -2199,7 +2280,7 @@
         "gaugeVoterLockOnboardingDialog": {
           "intro": {
             "hiddenTitle": "Lock tokens onboarding",
-            "title": "Your have unlocked {{tokenSymbol}}",
+            "title": "You have unlocked {{tokenSymbol}}",
             "description": "Lock more tokens to increase your voting power.",
             "cta": "Lock tokens",
             "cancel": "Cancel"
@@ -2562,7 +2643,7 @@
         "sppGovernanceSettings": {
           "default": {
             "address": "Address",
-            "name": "ENS Name"
+            "name": "ENS name"
           },
           "numberOfStages": "Number of stages"
         },
@@ -2767,7 +2848,9 @@
         },
         "tokenMemberStats": {
           "tokenBalance": "Token balance",
-          "votingPower": "Voting power"
+          "votingPower": "Voting power",
+          "delegation": "Delegation",
+          "delegations": "Delegations"
         },
         "tokenMintTokensAction": {
           "address": {
@@ -3088,7 +3171,7 @@
         "address": "Address",
         "blockchain": "Blockchain",
         "chain": "Chain",
-        "ens": "ENS Name",
+        "ens": "ENS name",
         "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
@@ -3168,7 +3251,7 @@
         },
         "description": {
           "1": "You have to create and pass a proposal in another governance process to uninstall this process.",
-          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done only when you are certain it is not needed and have the other processes needed by the DAO."
+          "2": "Once uninstalled, this process will no longer be able to govern the DAO. This should only be done when you are certain it is not needed and have the other processes needed by the DAO."
         },
         "title": "Uninstall {{name}} ({{slug}}) process"
       },

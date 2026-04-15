@@ -2,3 +2,7 @@ export enum CapitalFlowDaoSlotId {
     CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD = 'CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD',
     CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS = 'CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS',
 }
+
+export interface ICapitalDistributorVotingEscrowAddressParams {
+    daoId: string;
+}

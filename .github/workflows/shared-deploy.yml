@@ -71,7 +71,7 @@ jobs:
         run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
       - name: Deploy to Vercel
-        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} --skip-domain --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
       - name: Set output
         id: set-deployment-url

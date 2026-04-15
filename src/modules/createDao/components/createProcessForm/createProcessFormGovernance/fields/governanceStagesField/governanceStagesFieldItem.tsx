@@ -26,10 +26,6 @@ export interface IGovernanceStagesFieldItemProps {
      */
     daoId: string;
     /**
-     * Current number of stages.
-     */
-    stagesCount: number;
-    /**
      * Callback called on delete button click.
      */
     onDelete: () => void;
@@ -49,14 +45,7 @@ const nameMaxLength = 40;
 export const GovernanceStagesFieldItem: React.FC<
     IGovernanceStagesFieldItemProps
 > = (props) => {
-    const {
-        formPrefix,
-        daoId,
-        stagesCount,
-        onDelete,
-        index,
-        readOnly = false,
-    } = props;
+    const { formPrefix, daoId, onDelete, index, readOnly = false } = props;
 
     const { t } = useTranslations();
 
@@ -125,7 +114,7 @@ export const GovernanceStagesFieldItem: React.FC<
                 formPrefix={formPrefix}
                 readOnly={readOnly}
             />
-            {stagesCount > 1 && !readOnly && (
+            {!readOnly && (
                 <Dropdown.Container
                     constrainContentWidth={false}
                     customTrigger={

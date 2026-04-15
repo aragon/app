@@ -7,6 +7,7 @@ export {
     useParams,
     usePathname,
     useSearchParams,
+    useSelectedLayoutSegment,
 } from 'next/navigation-original';
 
 // override the default useRouter from next/navigation to enable the top loader

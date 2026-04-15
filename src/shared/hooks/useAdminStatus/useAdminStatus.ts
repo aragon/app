@@ -40,9 +40,12 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
         queryParams: { network },
     };
 
-    const { data: isAdminMember } = useMemberExists(memberExistsParams, {
-        enabled: memberAddress != null && adminPlugin != null,
-    });
+    const { data: isAdminMember, isPending } = useMemberExists(
+        memberExistsParams,
+        {
+            enabled: memberAddress != null && adminPlugin != null,
+        },
+    );
 
     const { isEnabled } = useFeatureFlags();
     const adminFeatureEnabled = isEnabled('governanceDesigner');
@@ -50,5 +53,6 @@ export const useAdminStatus = (params: IUseAdminStatusParams) => {
     return {
         isAdminMember: isAdminMember?.status === true && adminFeatureEnabled,
         adminPlugin,
+        isLoading: isPending,
     };
 };

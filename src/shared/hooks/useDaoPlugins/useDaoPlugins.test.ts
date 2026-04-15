@@ -50,17 +50,17 @@ describe('useDaoPlugins hook', () => {
 
         expect(result.current).toEqual([
             {
-                id: 'multisig',
-                uniqueId: `${plugins[0].address}-${plugins[0].slug}`,
-                label: 'Multisig',
-                meta: plugins[0],
-                props: {},
-            },
-            {
                 id: 'tokenVoting',
                 uniqueId: `${plugins[1].address}-${plugins[1].slug}`,
                 label: 'Token Voting',
                 meta: plugins[1],
+                props: {},
+            },
+            {
+                id: 'multisig',
+                uniqueId: `${plugins[0].address}-${plugins[0].slug}`,
+                label: 'Multisig',
+                meta: plugins[0],
                 props: {},
             },
         ]);

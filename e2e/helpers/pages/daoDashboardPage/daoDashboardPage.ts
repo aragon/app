@@ -10,29 +10,15 @@ export class DaoDashboardPage extends DaoPage {
         super({ ...params, path: 'dashboard' });
     }
 
-    readonly headerSection = () => this.page.getByRole('banner');
-
-    readonly daoName = () =>
-        this.headerSection().getByRole('heading', { level: 1 });
-
-    readonly daoAvatar = () => this.headerSection().getByRole('img').first();
-
-    readonly proposalsStat = () => this.page.getByText('Proposals').first();
-
-    readonly membersStat = () => this.page.getByText('Members').first();
-
-    readonly treasuryStat = () => this.page.getByText('Treasury').first();
-
-    readonly latestProposalsHeading = () =>
-        this.page.getByRole('heading', { name: 'Latest proposals' });
-
-    readonly membersHeading = () =>
-        this.page.getByRole('heading', { name: 'Members' });
+    readonly mainContent = () => this.page.getByRole('main');
 
     readonly assetsHeading = () =>
-        this.page.getByRole('heading', { name: 'Assets' });
+        this.page.getByRole('heading', { name: 'Assets', exact: true });
 
-    readonly contractCard = () => this.page.getByText('Contract');
+    readonly asideCard = () => this.page.getByRole('complementary');
 
-    readonly resourcesCard = () => this.page.getByText('Resources');
+    readonly contractCard = () =>
+        this.page
+            .getByRole('complementary')
+            .getByRole('heading', { name: 'Contract' });
 }

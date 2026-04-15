@@ -16,4 +16,6 @@ export class DaoMembersPage extends DaoPage {
     readonly memberLinks = () => this.page.getByRole('main').getByRole('link');
 
     readonly firstMember = () => this.memberLinks().first();
+
+    readonly asideCard = () => this.page.getByRole('complementary');
 }

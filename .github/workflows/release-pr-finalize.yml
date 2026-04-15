@@ -2,10 +2,8 @@ name: Release PR Finalize
 
 on:
   pull_request:
-    types: [labeled]
+    types: [closed]
     branches: [main]
-  pull_request_review:
-    types: [submitted]
 
 concurrency:
   group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
@@ -17,7 +15,9 @@ permissions:
 
 jobs:
   finalize:
-    if: startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/')
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
@@ -25,7 +25,6 @@ jobs:
         with:
           fetch-depth: 1
           sparse-checkout: |
-            .github/actions/pr-check-ready
             .github/actions/slack-notify
             .github/actions/extract-slack-ts
             .github/actions/gh-pr-get-body
@@ -33,7 +32,7 @@ jobs:
 
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v3.2.1
+        uses: 1password/load-secrets-action@v4.0.0
         with:
           export-env: false
         env:
@@ -42,40 +41,28 @@ jobs:
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
-      - name: Check label + approval
-        id: check
-        uses: ./.github/actions/pr-check-ready
-        with:
-          pr_number: ${{ github.event.pull_request.number }}
-          required_labels: release:ready
-          require_approval: "true"
-
-      - name: Checkout
-        if: steps.check.outputs.ready == 'true'
+      - name: Checkout release branch at tested SHA
         uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
-      - name: "Guar: no new changesets at finalize"
-        if: steps.check.outputs.ready == 'true'
+      - name: "Guard: no new changesets at finalize"
         shell: bash
         run: |
           set -euo pipefail
           if ls .changeset/*.md >/dev/null 2>&1; then
-            echo "Found .changeset/*.md at finalize. Policy: do not add new changesets to an existing release/hotfix. Cancel and start a new one." >&2
+            echo "Found .changeset/*.md at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
             ls -1 .changeset/*.md >&2 || true
             exit 1
           fi
 
       - name: Get version
-        if: steps.check.outputs.ready == 'true'
         id: version
         uses: martinbeentjes/npm-get-version-action@v1.3.1
 
       - name: Read changelog
-        if: steps.check.outputs.ready == 'true'
         id: changelog
         uses: ./.github/actions/read-changelog
         with:
@@ -83,7 +70,6 @@ jobs:
           path: ./CHANGELOG.md
 
       - name: Read PR body
-        if: steps.check.outputs.ready == 'true'
         id: pr
         uses: ./.github/actions/gh-pr-get-body
         with:
@@ -91,14 +77,12 @@ jobs:
           token: ${{ github.token }}
 
       - name: Extract Slack TS from PR body
-        if: steps.check.outputs.ready == 'true'
         id: ts
         uses: ./.github/actions/extract-slack-ts
         with:
           body: ${{ steps.pr.outputs.body }}
 
       - name: Build release notes (changelog + slack_ts marker)
-        if: steps.check.outputs.ready == 'true'
         id: notes
         uses: ./.github/actions/build-release-notes
         with:
@@ -106,19 +90,17 @@ jobs:
           slack_ts: ${{ steps.ts.outputs.ts }}
           path: release-notes.md
 
-      - name: Notify Slack - Release Ready
-        if: steps.check.outputs.ready == 'true' && steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+      - name: Notify Slack - Tagging and releasing
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
-            🏷️ *Release marked as verified and ready!*
-            Creating tag and GitHub Release...
+            🏷️ *PR merged! Creating tag and GitHub Release...*
 
-      - name: Create tag
-        if: steps.check.outputs.ready == 'true'
+      - name: Create tag on tested SHA
         id: tag
         uses: ./.github/actions/gh-ensure-tag
         with:
@@ -126,7 +108,6 @@ jobs:
           sha: ${{ github.event.pull_request.head.sha }}
 
       - name: Create GitHub Release
-        if: steps.check.outputs.ready == 'true'
         id: release
         uses: ./.github/actions/gh-ensure-release
         with:
@@ -135,13 +116,25 @@ jobs:
           notes_path: ${{ steps.notes.outputs.path }}
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
-      - name: Notify Slack - Release Created
-        if: steps.check.outputs.ready == 'true' && steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+      - name: Notify Slack - Release Created (in thread)
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            📦 *GitHub Release Created!*
+            *Release:* <https://github.com/aragon/app/releases/tag/v${{ steps.version.outputs.current-version }}|v${{ steps.version.outputs.current-version }}>
+
+            _Production build & deploy will start automatically..._
+
+      - name: Notify Slack - Release Created (new message)
+        if: ${{ !steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN }}
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
             📦 *GitHub Release Created!*
             *Release:* <https://github.com/aragon/app/releases/tag/v${{ steps.version.outputs.current-version }}|v${{ steps.version.outputs.current-version }}>

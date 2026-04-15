@@ -1,8 +1,11 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
+
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import {
+    type IFilterComponentPlugin,
     type IPluginFilterComponentProps,
     PluginFilterComponent,
 } from '@/shared/components/pluginFilterComponent';
@@ -12,6 +15,8 @@ import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type { IGetMemberListParams } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DaoMemberListDefault } from './daoMemberListDefault';
+
+export const featuredDelegatesTabId = 'featured-delegates';
 
 export interface IDaoMemberListContainerProps
     extends Pick<
@@ -33,6 +38,10 @@ export interface IDaoMemberListContainerProps
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Optional synthetic tab prepended before real plugin tabs (e.g. Featured delegates).
+     */
+    featuredDelegatesTab?: IFilterComponentPlugin<IDaoPlugin>;
 }
 
 export const daoMemberListFilterParam = 'members';
@@ -40,7 +49,16 @@ export const daoMemberListFilterParam = 'members';
 export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
     props,
 ) => {
-    const { initialParams, value, onValueChange, ...otherProps } = props;
+    const {
+        initialParams,
+        value,
+        onValueChange,
+        featuredDelegatesTab,
+        ...otherProps
+    } = props;
+
+    const searchParams = useSearchParams();
+    const urlParam = searchParams.get(daoMemberListFilterParam);
 
     const { activePlugin, setActivePlugin, plugins } =
         useDaoPluginFilterUrlParam({
@@ -50,6 +68,10 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
             includeLinkedAccounts: true,
             name: daoMemberListFilterParam,
             enableUrlUpdate: onValueChange == null,
+            fallbackValue:
+                featuredDelegatesTab != null
+                    ? featuredDelegatesTabId
+                    : undefined,
         });
 
     const processedPlugins = plugins?.map((plugin) => {
@@ -67,14 +89,27 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
         };
     });
 
+    const allPlugins: IFilterComponentPlugin<IDaoPlugin>[] | undefined =
+        featuredDelegatesTab != null
+            ? [featuredDelegatesTab, ...(processedPlugins ?? [])]
+            : processedPlugins;
+
+    // Pre-select the featured delegates tab when the URL param is absent or set to it.
+    const resolvedValue: IFilterComponentPlugin<IDaoPlugin> | undefined =
+        value ??
+        (featuredDelegatesTab != null &&
+        (urlParam == null || urlParam === featuredDelegatesTabId)
+            ? featuredDelegatesTab
+            : activePlugin);
+
     return (
         <PluginFilterComponent
             Fallback={DaoMemberListDefault}
             onValueChange={onValueChange ?? setActivePlugin}
-            plugins={processedPlugins}
+            plugins={allPlugins}
             searchParamName={daoMemberListFilterParam}
             slotId={GovernanceSlotId.GOVERNANCE_DAO_MEMBER_LIST}
-            value={value ?? activePlugin}
+            value={resolvedValue}
             {...otherProps}
         />
     );

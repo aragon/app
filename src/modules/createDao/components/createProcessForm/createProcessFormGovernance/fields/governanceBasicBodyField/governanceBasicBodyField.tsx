@@ -1,4 +1,4 @@
-import { Button, IconType, InputContainer } from '@aragon/gov-ui-kit';
+import { CardEmptyState, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
@@ -87,14 +87,21 @@ export const GovernanceBasicBodyField: React.FC<
         onBodyChange({ ...body, name: processName });
     }, [body, onBodyChange, processName, readOnly]);
 
+    const showFieldContext = body != null || readOnly;
+
     return (
         <InputContainer
-            helpText={t(
-                'app.createDao.createProcessForm.governance.basicBodyField.helpText',
-            )}
             id="basicBody"
             useCustomWrapper={true}
             {...bodyField}
+            helpText={
+                showFieldContext
+                    ? t(
+                          'app.createDao.createProcessForm.governance.basicBodyField.helpText',
+                      )
+                    : undefined
+            }
+            label={showFieldContext ? bodyField.label : undefined}
         >
             {body != null && (
                 <GovernanceBodyField
@@ -107,18 +114,23 @@ export const GovernanceBasicBodyField: React.FC<
                 />
             )}
             {body == null && !readOnly && (
-                <Button
-                    className="w-fit"
-                    iconLeft={IconType.PLUS}
-                    onClick={() => openSetupDialog()}
-                    size="md"
-                    type="button"
-                    variant="tertiary"
-                >
-                    {t(
-                        'app.createDao.createProcessForm.governance.basicBodyField.action.add',
+                <CardEmptyState
+                    className="border border-neutral-100"
+                    description={t(
+                        'app.createDao.createProcessForm.governance.basicBodyField.emptyState.description',
                     )}
-                </Button>
+                    heading={t(
+                        'app.createDao.createProcessForm.governance.basicBodyField.emptyState.heading',
+                    )}
+                    objectIllustration={{ object: 'USERS' }}
+                    primaryButton={{
+                        label: t(
+                            'app.createDao.createProcessForm.governance.basicBodyField.emptyState.cta',
+                        ),
+                        onClick: () => openSetupDialog(),
+                        iconLeft: IconType.PLUS,
+                    }}
+                />
             )}
         </InputContainer>
     );

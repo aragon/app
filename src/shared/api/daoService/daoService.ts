@@ -66,8 +66,8 @@ class DaoService extends AragonBackendService {
         daoId: string,
     ): { network: Network; address: string } => {
         const lastDash = daoId.lastIndexOf('-');
-        const network = daoId.substring(0, lastDash) as Network;
-        const address = daoId.substring(lastDash + 1);
+        const network = daoId.slice(0, lastDash) as Network;
+        const address = daoId.slice(lastDash + 1);
 
         return { network, address };
     };
