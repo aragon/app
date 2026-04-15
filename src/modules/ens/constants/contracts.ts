@@ -2,7 +2,7 @@
  * Address of the MemberRegistry contract.
  */
 export const memberRegistryAddress =
-    '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82';
+    '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82' as const;
 
 /**
  * ENS Reverse Registrar contract address on mainnet.

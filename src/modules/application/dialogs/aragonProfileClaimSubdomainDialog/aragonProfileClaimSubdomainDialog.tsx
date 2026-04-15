@@ -2,17 +2,22 @@
 
 import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useEnsAddress } from 'wagmi';
-import { ensChainId } from '@/modules/ens';
+import { useConnection, useEnsAddress, useReadContracts } from 'wagmi';
+import {
+    ensChainId,
+    memberRegistryAbi,
+    memberRegistryAddress,
+} from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { ensSubdomainSuffix } from '../../constants/aragonProfile';
 
 /** Maximum character length allowed for a subdomain label. */
-const subdomainMaxLength = 80;
+const subdomainMaxLength = 50;
 
 /**
  * Valid ENS label: lowercase alphanumeric and hyphens,
@@ -40,6 +45,31 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
+    const { address } = useConnection();
+
+    const { data: registryData, isLoading: isCheckingRegistration } =
+        useReadContracts({
+            contracts: [
+                {
+                    address: memberRegistryAddress,
+                    abi: memberRegistryAbi,
+                    functionName: 'isRegistered',
+                    args: [address!],
+                    chainId: ensChainId,
+                },
+                {
+                    address: memberRegistryAddress,
+                    abi: memberRegistryAbi,
+                    functionName: 'memberSubdomain',
+                    args: [address!],
+                    chainId: ensChainId,
+                },
+            ],
+            query: { enabled: address != null },
+        });
+
+    const isRegistered = registryData?.[0]?.result;
+    const existingSubdomain = registryData?.[1]?.result;
 
     const { control, handleSubmit, watch } = useForm<IFormData>({
         mode: 'onTouched',
@@ -84,7 +114,10 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                 ? `${subdomainDebounced}${ensSubdomainSuffix}`
                 : undefined,
             chainId: ensChainId,
-            query: { enabled: isValidForCheck },
+            query: {
+                enabled:
+                    isValidForCheck && !isCheckingRegistration && !isRegistered,
+            },
         });
 
     const isNameTaken = isValidForCheck && ensAddress != null;
@@ -102,14 +135,61 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const handleCancel = () => close(id);
 
-    const handleClaim = handleSubmit(({ subdomain: subdomainValue }) => {
-        open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TRANSACTION, {
-            stack: true,
-            params: { subdomain: subdomainValue },
-        });
+    const handleClaim = handleSubmit(({ subdomain }) => {
+        open(
+            ApplicationDialogId.ARAGON_PROFILE_SUBDOMAIN_REGISTER_TRANSACTION,
+            {
+                stack: true,
+                params: { subdomain },
+            },
+        );
     });
 
-    const isSubmitDisabled = isNameTaken || isCheckingAvailability;
+    const handleSetPrimaryEns = () => {
+        open(ApplicationDialogId.ARAGON_PROFILE_SET_PRIMARY_ENS_TRANSACTION, {
+            stack: true,
+            params: { subdomain: existingSubdomain! },
+        });
+    };
+
+    if (address != null && isRegistered) {
+        return (
+            <>
+                <Dialog.Header
+                    description={t(
+                        'app.application.aragonProfileClaimSubdomainDialog.alreadyRegistered.description',
+                    )}
+                    onClose={handleCancel}
+                    title={t(
+                        'app.application.aragonProfileClaimSubdomainDialog.alreadyRegistered.title',
+                    )}
+                />
+                <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
+                    <AragonProfilePreviewCard
+                        address={address}
+                        label={`${existingSubdomain}${ensSubdomainSuffix}`}
+                    />
+                </Dialog.Content>
+                <Dialog.Footer
+                    primaryAction={{
+                        label: t(
+                            'app.application.aragonProfileClaimSubdomainDialog.alreadyRegistered.action',
+                        ),
+                        onClick: handleSetPrimaryEns,
+                    }}
+                    secondaryAction={{
+                        label: t(
+                            'app.application.aragonProfileClaimSubdomainDialog.actions.cancel',
+                        ),
+                        onClick: handleCancel,
+                    }}
+                />
+            </>
+        );
+    }
+
+    const isSubmitDisabled =
+        isNameTaken || isCheckingAvailability || isCheckingRegistration;
 
     return (
         <>
@@ -141,7 +221,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
                     ),
                     onClick: handleClaim,
                     disabled: isSubmitDisabled,
-                    isLoading: isCheckingAvailability,
+                    isLoading: isCheckingAvailability || isCheckingRegistration,
                 }}
                 secondaryAction={{
                     label: t(

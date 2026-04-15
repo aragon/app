@@ -417,6 +417,11 @@
           "cancel": "Cancel",
           "claim": "Claim your ENS name"
         },
+        "alreadyRegistered": {
+          "action": "Set as primary ENS",
+          "description": "You have already claimed this ENS subname. Set it as your primary ENS name to use it across all apps.",
+          "title": "ENS subname already claimed"
+        },
         "fields": {
           "subdomain": {
             "error": {
@@ -430,10 +435,20 @@
         },
         "title": "Create your Aragon profile"
       },
-      "aragonProfileClaimSubdomainTransactionDialog": {
+      "aragonProfileSubdomainRegisterTransactionDialog": {
         "a11y": {
-          "description": "Confirm the onchain transactions to claim your ENS subname and set your primary ENS",
-          "title": "Create your Aragon profile transaction"
+          "description": "Confirm the onchain transaction to claim your ENS subname",
+          "title": "Claim your ENS subname transaction"
+        },
+        "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
+        "submit": "Confirm in wallet",
+        "title": "Create your Aragon profile",
+        "transactionInfo": "Claim ENS subname"
+      },
+      "aragonProfileSetPrimaryEnsTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to set your primary ENS name",
+          "title": "Set primary ENS transaction"
         },
         "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
         "submit": "Confirm in wallet",
@@ -441,10 +456,7 @@
           "label": "Add profile content"
         },
         "title": "Create your Aragon profile",
-        "transactionInfo": {
-          "register": "Claim ENS subname",
-          "setReverse": "Set primary ENS"
-        }
+        "transactionInfo": "Set primary ENS"
       },
       "aragonProfilePreviewCard": {
         "you": "You"

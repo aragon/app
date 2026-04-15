@@ -1,8 +1,9 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { AragonProfileClaimSubdomainDialog } from '../dialogs/aragonProfileClaimSubdomainDialog';
-import { AragonProfileClaimSubdomainTransactionDialog } from '../dialogs/aragonProfileClaimSubdomainTransactionDialog';
 import { AragonProfileDialog } from '../dialogs/aragonProfileDialog';
 import { AragonProfileIntroDialog } from '../dialogs/aragonProfileIntroDialog';
+import { AragonProfileSetPrimaryEnsTransactionDialog } from '../dialogs/aragonProfileSetPrimaryEnsTransactionDialog';
+import { AragonProfileSubdomainRegisterTransactionDialog } from '../dialogs/aragonProfileSubdomainRegisterTransactionDialog';
 import { AragonProfileUpdateTransactionDialog } from '../dialogs/aragonProfileUpdateTransactionDialog';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
 import { UserDialog } from '../dialogs/userDialog';
@@ -38,12 +39,19 @@ export const applicationDialogsDefinitions: Record<
         hiddenDescription:
             'app.application.aragonProfileClaimSubdomainDialog.a11y.description',
     },
-    [ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN_TRANSACTION]: {
-        Component: AragonProfileClaimSubdomainTransactionDialog,
+    [ApplicationDialogId.ARAGON_PROFILE_SUBDOMAIN_REGISTER_TRANSACTION]: {
+        Component: AragonProfileSubdomainRegisterTransactionDialog,
         hiddenTitle:
-            'app.application.aragonProfileClaimSubdomainTransactionDialog.a11y.title',
+            'app.application.aragonProfileSubdomainRegisterTransactionDialog.a11y.title',
         hiddenDescription:
-            'app.application.aragonProfileClaimSubdomainTransactionDialog.a11y.description',
+            'app.application.aragonProfileSubdomainRegisterTransactionDialog.a11y.description',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_SET_PRIMARY_ENS_TRANSACTION]: {
+        Component: AragonProfileSetPrimaryEnsTransactionDialog,
+        hiddenTitle:
+            'app.application.aragonProfileSetPrimaryEnsTransactionDialog.a11y.title',
+        hiddenDescription:
+            'app.application.aragonProfileSetPrimaryEnsTransactionDialog.a11y.description',
     },
     [ApplicationDialogId.ARAGON_PROFILE]: {
         Component: AragonProfileDialog,
