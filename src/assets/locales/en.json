@@ -1290,6 +1290,9 @@
           "assets": {
             "title": "Assets"
           },
+          "featuredDelegates": {
+            "title": "Featured delegates"
+          },
           "members": {
             "title": "Members"
           },
@@ -1663,6 +1666,9 @@
         }
       },
       "daoMembersPage": {
+        "featuredDelegates": {
+          "tab": "Featured delegates"
+        },
         "main": {
           "title": "Members"
         }

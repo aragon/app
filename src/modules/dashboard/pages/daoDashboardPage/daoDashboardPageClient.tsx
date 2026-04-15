@@ -8,6 +8,7 @@ import {
     formatterUtils,
     Link,
 } from '@aragon/gov-ui-kit';
+import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import {
     type Network,
     PluginInterfaceType,
@@ -31,6 +32,10 @@ export interface IDaoDashboardPageClientProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Featured delegates config from CMS.
+     */
+    featuredDelegates: IFeaturedDelegates[];
 }
 
 export const daoDashboardPageMembersFilterParam = 'members';
@@ -39,7 +44,7 @@ export const daoDashboardPageProposalsFilterParam = 'proposals';
 export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     props,
 ) => {
-    const { daoId } = props;
+    const { daoId, featuredDelegates } = props;
 
     const { t } = useTranslations();
 
@@ -99,7 +104,10 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                     {isOnboarding ? (
                         <DashboardOnboarding dao={dao} />
                     ) : (
-                        <DashboardOnboarded dao={dao} />
+                        <DashboardOnboarded
+                            dao={dao}
+                            featuredDelegates={featuredDelegates}
+                        />
                     )}
                 </Page.Main>
                 <Page.Aside>

@@ -98,6 +98,7 @@ describe('<DaoDashboardPageClient /> component', () => {
     ) => {
         const completeProps: IDaoDashboardPageClientProps = {
             daoId: 'dao-id',
+            featuredDelegates: [],
             ...props,
         };
 

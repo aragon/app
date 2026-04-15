@@ -42,6 +42,22 @@ describe('<PluginFilterComponent /> component', () => {
         expect(screen.getByTestId('component-mock')).toBeInTheDocument();
     });
 
+    it('renders renderContent without filters when it is the only supported plugin and no slot is registered', () => {
+        const plugins = [
+            generateFilterComponentPlugin({
+                renderContent: () => (
+                    <div data-testid="synthetic-content-mock" />
+                ),
+            }),
+        ];
+        getSlotComponentSpy.mockReturnValue(undefined);
+        render(createTestComponent({ plugins }));
+        expect(screen.queryByRole('group')).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId('synthetic-content-mock'),
+        ).toBeInTheDocument();
+    });
+
     it('renders a single component without filters when the fallback component is specified and plugins array has one element', () => {
         const plugins = [generateFilterComponentPlugin()];
         const registeredComponent = undefined;

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { SlotId } from '@/shared/utils/pluginRegistryUtils';
 import type { IPluginSingleComponentProps } from '../pluginSingleComponent';
 
@@ -18,6 +19,10 @@ export interface IFilterComponentPlugin<
      */
     label: string;
     /**
+     * Optional CSS class name applied to the tab toggle for this plugin.
+     */
+    className?: string;
+    /**
      * Metadata of the filter component plugin.
      */
     meta: TMeta;
@@ -25,6 +30,11 @@ export interface IFilterComponentPlugin<
      * Additional properties to be forwarded to the plugin component.
      */
     props: TProps;
+    /**
+     * When set, renders this node instead of the slot-based plugin component.
+     * Use for synthetic (non-plugin) tabs that don't have a registered slot component.
+     */
+    renderContent?: () => ReactNode;
 }
 
 export interface IPluginFilterComponentProps<

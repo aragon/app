@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import * as daoService from '@/shared/api/daoService';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
+    generateDao,
     generateDaoPlugin,
     generateFilterComponentPlugin,
+    generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import {
     DaoMembersPageClient,
@@ -18,15 +21,20 @@ jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
 }));
 
 describe('<DaoMembersPageClient /> component', () => {
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
 
     beforeEach(() => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
         useDaoPluginsSpy.mockReturnValue([
             generateFilterComponentPlugin({ meta: generateDaoPlugin() }),
         ]);
     });
 
     afterEach(() => {
+        useDaoSpy.mockReset();
         useDaoPluginsSpy.mockReset();
     });
 
@@ -37,6 +45,7 @@ describe('<DaoMembersPageClient /> component', () => {
             initialParams: {
                 queryParams: { daoId: 'test-id', pluginAddress: '0x123' },
             },
+            featuredDelegates: [],
             ...props,
         };
 

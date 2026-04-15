@@ -12,9 +12,9 @@ const getDefaultPriority = (typePriority: Record<string, number>) =>
 
 export interface ISortPluginsByDisplayOrderParams {
     /**
-     * Address of the root DAO. Plugins matching this address with `isSubPlugin: false`
-     * are classified as root-DAO plugins and sorted first. Plugins from linked accounts
-     * or with `daoAddress: undefined` are sorted into the secondary group.
+     * Address of the root DAO. Plugins matching this address are classified as
+     * root-DAO plugins and sorted first. Plugins from linked accounts or with
+     * `daoAddress: undefined` are sorted into the secondary group.
      */
     rootDaoAddress?: string;
     /**
@@ -28,7 +28,7 @@ export interface ISortPluginsByDisplayOrderParams {
 class PluginSortUtils {
     /**
      * Returns a new array of plugins sorted by display order:
-     * 1. Root-DAO plugins first, then sub-plugins and linked-account plugins.
+     * 1. Root-DAO plugins first, then linked-account plugins.
      * 2. Within each group, sorted by interface type priority.
      *
      * Does not mutate the input array.
@@ -43,10 +43,8 @@ class PluginSortUtils {
         const fallbackPriority = getDefaultPriority(typePriority);
 
         return [...plugins].sort((a, b) => {
-            const aIsRoot =
-                !a.meta.isSubPlugin && a.meta.daoAddress === rootDaoAddress;
-            const bIsRoot =
-                !b.meta.isSubPlugin && b.meta.daoAddress === rootDaoAddress;
+            const aIsRoot = a.meta.daoAddress === rootDaoAddress;
+            const bIsRoot = b.meta.daoAddress === rootDaoAddress;
 
             if (aIsRoot !== bIsRoot) {
                 return aIsRoot ? -1 : 1;
