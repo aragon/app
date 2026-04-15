@@ -1,6 +1,7 @@
 'use client';
 
 import { invariant } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import type { Address } from 'viem';
 import { encodeFunctionData } from 'viem';
@@ -10,6 +11,7 @@ import {
     ensReverseRegistrarAddress,
     memberRegistryAbi,
     memberRegistryAddress,
+    useEnsName,
 } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -48,6 +50,8 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
     const { address } = useConnection();
+    const queryClient = useQueryClient();
+    const { queryKey: ensNameQueryKey } = useEnsName(address);
 
     const [phase, setPhase] = useState<1 | 2>(1);
 
@@ -96,9 +100,13 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
 
     const handleRegisterSuccess = useCallback(() => setPhase(2), []);
 
-    const handleSetReverseSuccess = useCallback(() => {
+    const handleSetReverseSuccessClick = useCallback(() => {
         open(ApplicationDialogId.ARAGON_PROFILE);
     }, [open]);
+
+    const handleSetReverseSuccess = useCallback(() => {
+        void queryClient.invalidateQueries({ queryKey: ensNameQueryKey });
+    }, [queryClient.invalidateQueries, ensNameQueryKey]);
 
     const fullEnsName = `${subdomain}${ensSubdomainSuffix}`;
 
@@ -144,13 +152,14 @@ export const AragonProfileClaimSubdomainTransactionDialog: React.FC<
         <TransactionDialog
             key="set-reverse"
             {...sharedDialogProps}
+            onSuccess={handleSetReverseSuccess}
             prepareTransaction={prepareSetReverseTransaction}
             stepper={setReverseStepper}
             successLink={{
                 label: t(
                     'app.application.aragonProfileClaimSubdomainTransactionDialog.successLink.label',
                 ),
-                onClick: handleSetReverseSuccess,
+                onClick: handleSetReverseSuccessClick,
             }}
             transactionInfo={{
                 title: t(

@@ -96,12 +96,11 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
     );
 
     const handleSuccess = useCallback(() => {
-        queryClient.refetchQueries({
-            queryKey: ['ensRecords', ensName],
-            type: 'all',
+        void queryClient.invalidateQueries({
+            queryKey: ['ensRecords'],
         });
-        queryClient.refetchQueries({ queryKey: ['ensAvatar'], type: 'all' });
-    }, [ensName, queryClient]);
+        void queryClient.invalidateQueries({ queryKey: ['ensAvatar'] });
+    }, [queryClient]);
 
     const prepareTransaction = useCallback(async () => {
         const allUpdates = { ...updates };
