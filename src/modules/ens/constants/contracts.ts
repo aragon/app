@@ -4,17 +4,6 @@
 export const memberRegistryAddress =
     '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82';
 
-/** Minimal ABI for IMemberRegistry.register. */
-export const memberRegistryAbi = [
-    {
-        type: 'function',
-        name: 'register',
-        inputs: [{ name: 'subdomain', type: 'string' }],
-        outputs: [],
-        stateMutability: 'nonpayable',
-    },
-] as const;
-
 /**
  * ENS Reverse Registrar contract address on mainnet.
  * Source: https://docs.ens.domains/contract-api-reference/reverseregistrar

@@ -23,6 +23,7 @@ export {
     ensChainId,
     ensRecordKeys,
 } from './constants/ensConfig';
+export { memberRegistryAbi } from './constants/memberRegistryAbi';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';
