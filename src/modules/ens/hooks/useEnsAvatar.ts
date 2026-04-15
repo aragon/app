@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { normalize } from 'viem/ens';
 // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsAvatar (centralises chainId and cache)
 import { useEnsAvatar as useWagmiEnsAvatar } from 'wagmi';
-import { ENS_CACHE, ENS_CHAIN_ID } from '../constants/ensConfig';
+import { ensCache, ensChainId } from '../constants/ensConfig';
 import { logEnsError } from '../utils/logEnsError';
 
 /**
@@ -37,11 +37,11 @@ export function useEnsAvatar(name: string | null | undefined) {
 
     const result = useWagmiEnsAvatar({
         name: normalizedName,
-        chainId: ENS_CHAIN_ID,
+        chainId: ensChainId,
         query: {
             enabled: normalizedName != null,
-            staleTime: ENS_CACHE.staleTime,
-            gcTime: ENS_CACHE.gcTime,
+            staleTime: ensCache.staleTime,
+            gcTime: ensCache.gcTime,
         },
     });
 
@@ -53,7 +53,7 @@ export function useEnsAvatar(name: string | null | undefined) {
             hook: 'useEnsAvatar',
             stage: 'normalize',
             name,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
         });
     }, [normalizedError, name]);
 
@@ -65,7 +65,7 @@ export function useEnsAvatar(name: string | null | undefined) {
             hook: 'useEnsAvatar',
             stage: 'resolve',
             name: normalizedName,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
         });
     }, [result.error, normalizedName]);
 

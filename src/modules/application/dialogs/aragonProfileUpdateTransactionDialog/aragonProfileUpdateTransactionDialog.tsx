@@ -4,7 +4,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
-import { ENS_AVATAR_KEY, ensTransactionUtils } from '@/modules/ens';
+import { ensAvatarKey, ensTransactionUtils } from '@/modules/ens';
 import { Network } from '@/shared/api/daoService';
 import { usePinFile } from '@/shared/api/ipfsService/mutations';
 import {
@@ -110,7 +110,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
                 avatarUri != null,
                 'AragonProfileUpdateTransactionDialog: avatar pin returned empty CID.',
             );
-            allUpdates[ENS_AVATAR_KEY] = avatarUri;
+            allUpdates[ensAvatarKey] = avatarUri;
         }
         return await ensTransactionUtils.buildUpdateRecordsTransaction({
             ensName,

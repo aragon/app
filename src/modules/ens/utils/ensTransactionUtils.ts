@@ -3,7 +3,7 @@ import { namehash, normalize } from 'viem/ens';
 import { getEnsResolver } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
-import { ENS_CHAIN_ID } from '../constants/ensConfig';
+import { ensChainId } from '../constants/ensConfig';
 import { ensPublicResolverAbi } from './ensPublicResolverAbi';
 
 export interface IBuildUpdateRecordsTransactionParams {
@@ -36,7 +36,7 @@ class EnsTransactionUtils {
 
         const resolverAddress = await getEnsResolver(wagmiConfig, {
             name: normalizedName,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
         });
 
         const calls = entries.map(([key, value]) =>

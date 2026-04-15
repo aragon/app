@@ -3,7 +3,7 @@
 import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
 import { useEnsAddress } from 'wagmi';
-import { ENS_CHAIN_ID } from '@/modules/ens';
+import { ensChainId } from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -83,7 +83,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
             name: isValidForCheck
                 ? `${subdomainDebounced}${ensSubdomainSuffix}`
                 : undefined,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
             query: { enabled: isValidForCheck },
         });
 

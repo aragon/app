@@ -15,8 +15,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useConnection } from 'wagmi';
 import type { TEnsRecordKey } from '@/modules/ens';
 import {
-    ENS_AVATAR_KEY,
-    ENS_RECORD_KEYS,
+    ensAvatarKey,
+    ensRecordKeys,
     useEnsAvatar,
     useEnsName,
     useEnsRecords,
@@ -67,13 +67,13 @@ const socialKeys: SocialKey[] = [
 
 /** Maps form field names to their corresponding ENS text-record keys. */
 const fieldToEnsKey: Record<SocialKey | 'bio', string> = {
-    bio: ENS_RECORD_KEYS.description,
-    github: ENS_RECORD_KEYS.github,
-    twitter: ENS_RECORD_KEYS.twitter,
-    website: ENS_RECORD_KEYS.url,
-    email: ENS_RECORD_KEYS.email,
-    discord: ENS_RECORD_KEYS.discord,
-    telegram: ENS_RECORD_KEYS.telegram,
+    bio: ensRecordKeys.description,
+    github: ensRecordKeys.github,
+    twitter: ensRecordKeys.twitter,
+    website: ensRecordKeys.url,
+    email: ensRecordKeys.email,
+    discord: ensRecordKeys.discord,
+    telegram: ensRecordKeys.telegram,
 };
 
 /** Parameters for {@link AragonProfileDialog}. */
@@ -140,14 +140,14 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         }
 
         const values: IAragonProfileDialogFormData = {
-            bio: ensRecords[ENS_RECORD_KEYS.description] ?? '',
+            bio: ensRecords[ensRecordKeys.description] ?? '',
             avatar: ensAvatar ? { url: ensAvatar } : undefined,
-            github: ensRecords[ENS_RECORD_KEYS.github] ?? '',
-            twitter: ensRecords[ENS_RECORD_KEYS.twitter] ?? '',
-            website: ensRecords[ENS_RECORD_KEYS.url] ?? '',
-            email: ensRecords[ENS_RECORD_KEYS.email] ?? '',
-            discord: ensRecords[ENS_RECORD_KEYS.discord] ?? '',
-            telegram: ensRecords[ENS_RECORD_KEYS.telegram] ?? '',
+            github: ensRecords[ensRecordKeys.github] ?? '',
+            twitter: ensRecords[ensRecordKeys.twitter] ?? '',
+            website: ensRecords[ensRecordKeys.url] ?? '',
+            email: ensRecords[ensRecordKeys.email] ?? '',
+            discord: ensRecords[ensRecordKeys.discord] ?? '',
+            telegram: ensRecords[ensRecordKeys.telegram] ?? '',
         };
 
         reset(values);
@@ -192,7 +192,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         if (data.avatar?.file != null) {
             avatarFile = data.avatar.file;
         } else if (data.avatar == null && ensAvatar != null) {
-            updates[ENS_AVATAR_KEY] = '';
+            updates[ensAvatarKey] = '';
         }
 
         if (Object.keys(updates).length === 0 && avatarFile == null) {

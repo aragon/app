@@ -18,10 +18,10 @@
 
 export * from './constants/contracts';
 export {
-    ENS_AVATAR_KEY,
-    ENS_CACHE,
-    ENS_CHAIN_ID,
-    ENS_RECORD_KEYS,
+    ensAvatarKey,
+    ensCache,
+    ensChainId,
+    ensRecordKeys,
 } from './constants/ensConfig';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
