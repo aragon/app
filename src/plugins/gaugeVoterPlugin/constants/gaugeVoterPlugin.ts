@@ -29,12 +29,13 @@ export const gaugeVoterPlugin: IPluginInfo = {
         [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pageLinksLeft: (baseUrl, context) => [
+    pageLinks: (baseUrl, context) => [
         {
             label: 'app.plugins.gaugeVoter.meta.link.gauges',
             link: `${baseUrl}/${GaugeVoterPluginPages.GAUGES}`,
-            icon: IconType.APP_PROPOSALS,
+            icon: IconType.APP_GAUGE,
             lgHidden: context === 'dialog',
+            order: 250,
         },
     ],
 };

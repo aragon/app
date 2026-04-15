@@ -23,4 +23,8 @@ export interface INavigationLink {
      * Whether the route is hidden on lg screens.
      */
     lgHidden?: boolean;
+    /**
+     * Determines display order. Lower values appear first.
+     */
+    order?: number;
 }
