@@ -1226,32 +1226,6 @@
           "welcome": "Welcome"
         }
       },
-      "status": {
-        "statusMembersFileDownload": {
-          "label": "Reward distribution",
-          "helpText": "Generate the reward distribution JSON for a specific epoch based on gauge voting results.",
-          "button": "Generate distribution",
-          "downloadedFile": "Downloaded: {{fileName}}"
-        },
-        "statusMembersFileDownloadDialog": {
-          "title": "Generate reward distribution",
-          "description": "Select an epoch and enter the total reward amount to generate a reward distribution JSON based on gauge voting results.",
-          "epochIdLabel": "Epoch",
-          "epochIdHelpText": "Select an epoch to generate the reward distribution for.",
-          "epochOption": "Epoch {{epochId}}",
-          "epochSelectPlaceholder": "Select epoch",
-          "amountLabel": "Total reward amount",
-          "generate": "Generate",
-          "cancel": "Cancel",
-          "error": {
-            "default": "Failed to fetch reward distribution. Please try again.",
-            "epochWindowInvalid": "The epoch voting window is not valid.",
-            "epochVotingNotClosed": "Voting for this epoch has not closed yet.",
-            "epochWindowExpired": "The reward distribution window for this epoch has expired.",
-            "epochNoActiveVoters": "No active voters found for this epoch."
-          }
-        }
-      },
       "xmaquina": {
         "xmaquinaPageHeader": {
           "actions": {
