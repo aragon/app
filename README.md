@@ -142,6 +142,8 @@ The Aragon App is built using the following tools to ensure a seamless user expe
 
 For more technical information about the Aragon App, please check the [Aragon App Documentation](./docs/index.md).
 
+For plugin and slot integration, see the [Slot Integration Guide](./docs/slots/overview.md).
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

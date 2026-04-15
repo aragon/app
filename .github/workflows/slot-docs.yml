@@ -1,0 +1,25 @@
+# Validates that generated slot documentation is up to date with source code.
+# Triggers on PRs that touch slot enums, plugin registrations, or the docs themselves.
+
+name: Slot Docs
+
+on:
+  pull_request:
+    paths:
+      - 'src/modules/*/constants/moduleSlots.ts'
+      - 'src/modules/*/constants/moduleDaoSlots.ts'
+      - 'src/plugins/*/index.ts'
+      - 'docs/slots/**'
+      - 'scripts/generateSlotDocs.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+      - name: Validate slot docs are up to date
+        run: node scripts/generateSlotDocs.mjs --check
