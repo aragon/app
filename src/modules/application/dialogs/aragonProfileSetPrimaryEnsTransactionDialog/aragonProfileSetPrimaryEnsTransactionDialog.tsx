@@ -92,6 +92,16 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
         void queryClient.invalidateQueries({ queryKey: ensNameQueryKey });
     }, [queryClient.invalidateQueries, ensNameQueryKey]);
 
+    const transactionInfo = {
+        title: t(
+            'app.application.aragonProfileSetPrimaryEnsTransactionDialog.transactionInfo',
+        ),
+        ...(isPartOfTwoStepFlow && {
+            current: 2,
+            total: 2,
+        }),
+    };
+
     return (
         <TransactionDialog
             description={t(
@@ -114,17 +124,7 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
             title={t(
                 'app.application.aragonProfileSetPrimaryEnsTransactionDialog.title',
             )}
-            transactionInfo={
-                isPartOfTwoStepFlow
-                    ? {
-                          title: t(
-                              'app.application.aragonProfileSetPrimaryEnsTransactionDialog.transactionInfo',
-                          ),
-                          current: 2,
-                          total: 2,
-                      }
-                    : undefined
-            }
+            transactionInfo={transactionInfo}
         >
             <AragonProfilePreviewCard address={address} label={fullEnsName} />
         </TransactionDialog>

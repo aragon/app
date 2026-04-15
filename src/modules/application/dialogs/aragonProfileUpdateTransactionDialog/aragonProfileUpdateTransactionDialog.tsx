@@ -2,6 +2,7 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useCallback, useMemo } from 'react';
 import type { Address } from 'viem';
 import { ensAvatarKey, ensTransactionUtils } from '@/modules/ens';
@@ -60,6 +61,16 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
     const { t } = useTranslations();
     const { close } = useDialogContext();
     const queryClient = useQueryClient();
+
+    const { network, addressOrEns } = useParams<{
+        network?: string;
+        addressOrEns?: string;
+    }>();
+
+    const profileHref =
+        network != null && addressOrEns != null
+            ? `/dao/${network}/${addressOrEns}/members/${address}`
+            : undefined;
 
     const stepper = useStepper<
         ITransactionDialogStepMeta,
@@ -162,6 +173,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
                 label: t(
                     'app.application.aragonProfileUpdateTransactionDialog.successLink.label',
                 ),
+                href: profileHref,
             }}
             title={t(
                 'app.application.aragonProfileUpdateTransactionDialog.title',
