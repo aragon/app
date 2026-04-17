@@ -29,12 +29,13 @@ export const capitalDistributorPlugin: IPluginInfo = {
         [Network.AVAX_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.KATANA_MAINNET]: '0x0000000000000000000000000000000000000000',
     },
-    pageLinksRight: (baseUrl, context) => [
+    pageLinks: (baseUrl, context) => [
         {
             label: 'app.plugins.capitalDistributor.meta.link.rewards',
             link: `${baseUrl}/${CapitalDistributorPluginPages.REWARDS}`,
             icon: IconType.REWARDS,
             lgHidden: context === 'dialog',
+            order: 700,
         },
     ],
 };

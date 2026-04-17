@@ -14,6 +14,40 @@ permissions:
   contents: read
 
 jobs:
+  notify-start:
+    runs-on: ubuntu-latest
+    outputs:
+      slack-ts: ${{ steps.notify.outputs.ts }}
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/slack-notify
+
+      - name: Notify Slack - Staging Deploy Started
+        id: notify
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          message: |
+            ⏳ *Staging deploy started* (manual)
+            *Triggered by:* ${{ github.actor }}
+
   deploy:
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
@@ -38,7 +72,7 @@ jobs:
       environment: staging
 
   e2e-notify:
-    needs: [e2e, bv]
+    needs: [notify-start, e2e, bv]
     if: ${{ always() && (needs.e2e.result != 'skipped' || needs.bv.result != 'skipped') }}
     runs-on: ubuntu-latest
     steps:
@@ -61,14 +95,17 @@ jobs:
             .github/actions/slack-notify
 
       - name: Notify Slack — E2E results
-        if: steps.secrets.outputs.SLACK_BOT_TOKEN
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
         uses: ./.github/actions/slack-notify
         with:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
           message: |
             ${{ needs.e2e.outputs.result == 'passed' && '✅ Smoke tests on *staging* passed' || needs.e2e.outputs.result == 'flaky' && '⚠️ Smoke tests on *staging* completed with flaky tests' || needs.e2e.outputs.result == 'failed' && '❌ Smoke tests on *staging* failed' || '⏹️ Smoke tests on *staging* were cancelled' }}
             ${{ needs.e2e.outputs.summary }}
             ${{ needs.bv.outputs.result == 'passed' && '✅ BV tests on *staging* passed' || needs.bv.outputs.result == 'flaky' && '⚠️ BV tests on *staging* completed with flaky tests' || needs.bv.outputs.result == 'failed' && '❌ BV tests on *staging* failed' || '⏹️ BV tests on *staging* were cancelled' }}
             ${{ needs.bv.outputs.summary }}
-            <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View report>
+            <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html|View smoke report>  |  <https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.bv.outputs.report_artifact_id }}/index.html|View BV report>

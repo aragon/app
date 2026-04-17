@@ -52,6 +52,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Comment E2E results
+        env:
+          ARTIFACT_VIEWER_HOST: gh-artifact-viewer.aragonservices.in
         uses: thollander/actions-comment-pull-request@v3.0.1
         with:
           comment-tag: e2e-results
@@ -65,6 +67,7 @@ jobs:
             | Suite | smoke |
             | Playwright result | ${{ needs.e2e.outputs.result_label }} |
             | Summary | ${{ needs.e2e.outputs.summary }} |
+            | HTML report | [View report](https://${{ env.ARTIFACT_VIEWER_HOST }}/${{ github.repository }}/${{ needs.e2e.outputs.report_artifact_id }}/index.html) |
             | GitHub job | ${{ needs.e2e.result == 'success' && '✅ completed' || needs.e2e.result == 'failure' && '❌ workflow failed' || '⏹️ cancelled' }} |
 
             [View run #${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})

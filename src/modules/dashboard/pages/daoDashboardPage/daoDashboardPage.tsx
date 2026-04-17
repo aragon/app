@@ -1,3 +1,4 @@
+import { cmsService } from '@/shared/api/cmsService';
 import { Page } from '@/shared/components/page';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -22,11 +23,17 @@ export const DaoDashboardPage: React.FC<IDaoDashboardPageProps> = async (
         return null;
     }
 
-    const daoId = await daoUtils.resolveDaoId(daoPageParams);
+    const [daoId, featuredDelegates] = await Promise.all([
+        daoUtils.resolveDaoId(daoPageParams),
+        cmsService.getFeaturedDelegates(),
+    ]);
 
     return (
         <Page.Container>
-            <DaoDashboardPageClient daoId={daoId} />
+            <DaoDashboardPageClient
+                daoId={daoId}
+                featuredDelegates={featuredDelegates}
+            />
         </Page.Container>
     );
 };

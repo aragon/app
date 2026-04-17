@@ -19,4 +19,5 @@ Check the project specific processes and guidelines below:
 - [Plugin Encapsulation](./projectDocs/pluginEncapsulation.md)
 - [Project Structure](./projectDocs/projectStructure.md)
 - [Releases](./projectDocs/releases.md)
+- [Slot Integration Guide](./slots/overview.md)
 - [Testing](./projectDocs/testing.md)

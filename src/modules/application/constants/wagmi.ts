@@ -41,6 +41,9 @@ const wagmiAdapter = new WagmiAdapter({
 export const wagmiConfig = wagmiAdapter.wagmiConfig;
 
 // Lazy-initialize AppKit on first use (e.g. when ConnectWalletDialog opens).
+// Must be called at module level in the consumer file (not in render or useEffect)
+// because useAppKit/useAppKitState hooks require it before they execute, and
+// createAppKit triggers state updates that React forbids during render.
 let appKitInitialized = false;
 
 export const ensureAppKit = () => {

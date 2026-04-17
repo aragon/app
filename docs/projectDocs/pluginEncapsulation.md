@@ -1,5 +1,8 @@
 # Plugin Encapsulation
 
+> For a comprehensive reference of all available slots and step-by-step integration instructions, see the
+> [Slot Integration Guide](../slots/overview.md).
+
 To keep the logic of Plugins isolated, every service, component, utility, and type related to a specific Plugin is
 implemented under the `/plugins` folder. This allows us to easily add, change, and remove supported Plugins.
 
