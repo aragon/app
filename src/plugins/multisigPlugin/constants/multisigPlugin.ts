@@ -17,6 +17,7 @@ export const multisigPlugin: IPluginInfo = {
         [Network.ARBITRUM_MAINNET]:
             '0x7553E6Fb020c5740768cF289e603770AA09b7aE2',
         [Network.BASE_MAINNET]: '0xcDC4b0BC63AEfFf3a7826A19D101406C6322A585',
+        [Network.CITREA_MAINNET]: '0x7db8D2c9d0caf55DD6E6b94d0B9BA3Ef1D40b9Fa',
         [Network.ETHEREUM_MAINNET]:
             '0x8c278e37D0817210E18A7958524b7D0a1fAA6F7b',
         [Network.ETHEREUM_SEPOLIA]:

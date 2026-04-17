@@ -17,6 +17,7 @@ export const tokenPlugin: IPluginInfo = {
         [Network.ARBITRUM_MAINNET]:
             '0x1AeD2BEb470aeFD65B43f905Bd5371b1E4749d18',
         [Network.BASE_MAINNET]: '0x2532570DcFb749A7F976136CC05648ef2a0f60b0',
+        [Network.CITREA_MAINNET]: '0x9a28F7690A2b02829721171364F5bBF0590cAAB6',
         [Network.ETHEREUM_MAINNET]:
             '0xb7401cD221ceAFC54093168B814Cc3d42579287f',
         [Network.ETHEREUM_SEPOLIA]:
