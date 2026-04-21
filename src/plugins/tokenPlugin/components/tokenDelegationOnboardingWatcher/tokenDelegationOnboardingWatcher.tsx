@@ -17,12 +17,18 @@ export interface ITokenDelegationOnboardingWatcherProps {
      * The DAO to watch for delegation onboarding.
      */
     dao: IDao;
+    /**
+     * When true, suppress opening the onboarding dialog. The watcher still
+     * captures connection events; when `isPaused` flips false the dialog
+     * opens if all other conditions are met.
+     */
+    isPaused?: boolean;
 }
 
 export const TokenDelegationOnboardingWatcher: React.FC<
     ITokenDelegationOnboardingWatcherProps
 > = (props) => {
-    const { dao } = props;
+    const { dao, isPaused = false } = props;
 
     const daoPlugins =
         daoUtils.getDaoPlugins(dao, {
@@ -65,6 +71,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         if (
             !hasPendingConnection ||
             !shouldTrigger ||
+            isPaused ||
             tokenAddress == null ||
             tokenSymbol == null
         ) {
@@ -84,6 +91,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
         tokenAddress,
         tokenSymbol,
         shouldTrigger,
+        isPaused,
         dao.id,
         open,
     ]);
