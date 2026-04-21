@@ -57,6 +57,7 @@ export const applicationDialogsDefinitions: Record<
         Component: AragonProfileDialog,
         hiddenDescription:
             'app.application.aragonProfileDialog.a11y.description',
+        size: 'lg',
     },
     [ApplicationDialogId.ARAGON_PROFILE_UPDATE]: {
         Component: AragonProfileUpdateTransactionDialog,

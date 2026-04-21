@@ -133,4 +133,8 @@ export interface ITransactionDialogProps<
      * Fallback URL shown when the indexing step takes too long.
      */
     indexingFallbackUrl?: string;
+    /**
+     * When true, the cancel button in the dialog footer is permanently disabled.
+     */
+    disableCancel?: boolean;
 }

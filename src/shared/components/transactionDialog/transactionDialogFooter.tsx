@@ -54,6 +54,10 @@ export interface ITransactionDialogFooterProps<
      * Fallback URL if the indexing step moves to the proceed anyway state.
      */
     indexingFallbackUrl?: ITransactionDialogProps['indexingFallbackUrl'];
+    /**
+     * When true, the cancel button is permanently disabled.
+     */
+    disableCancel?: boolean;
 }
 
 const stepStateSubmitLabel: Partial<
@@ -95,6 +99,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         transactionType,
         indexingFallbackUrl,
         proposalSlug,
+        disableCancel,
     } = props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
@@ -151,9 +156,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     }, [displaySuccessLink, showProceedAnyway, setIsBlocked]);
 
     const isCancelDisabled =
-        (stepId === TransactionDialogStep.CONFIRM ||
+        disableCancel ||
+        ((stepId === TransactionDialogStep.CONFIRM ||
             stepId === TransactionDialogStep.INDEXING) &&
-        (isSuccessState || isPendingState);
+            (isSuccessState || isPendingState));
 
     const customSubmitLabel =
         stepId != null && state != null

@@ -51,7 +51,7 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
     const { subdomain, isPartOfTwoStepFlow } = location.params;
 
     const { t } = useTranslations();
-    const { open, close } = useDialogContext();
+    const { open } = useDialogContext();
     const { address } = useConnection();
     const queryClient = useQueryClient();
     const { queryKey: ensNameQueryKey } = useEnsName(address);
@@ -62,11 +62,6 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
     >({
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
-
-    const handleCancel = useCallback(
-        () => close(location.id),
-        [close, location.id],
-    );
 
     const fullEnsName = `${subdomain}${memberRegistrySubdomainSuffix}`;
 
@@ -107,8 +102,8 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
             description={t(
                 'app.application.aragonProfileSetPrimaryEnsTransactionDialog.description',
             )}
+            disableCancel={true}
             network={Network.ETHEREUM_MAINNET}
-            onCancelClick={handleCancel}
             onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}
             stepper={stepper}
