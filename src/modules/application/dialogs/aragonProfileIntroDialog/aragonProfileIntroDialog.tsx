@@ -47,9 +47,11 @@ export const AragonProfileIntroDialog: React.FC<
         <Dialog.Content>
             <EmptyState
                 description={t(
-                    'app.application.aragonProfileIntroDialog.description',
+                    `app.application.aragonProfileIntroDialog.description.${mode}`,
                 )}
-                heading={t('app.application.aragonProfileIntroDialog.title')}
+                heading={t(
+                    `app.application.aragonProfileIntroDialog.title.${mode}`,
+                )}
                 humanIllustration={{
                     body: 'ARAGON',
                     hairs: 'MIDDLE',

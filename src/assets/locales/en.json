@@ -471,8 +471,14 @@
           "create": "Create your profile",
           "edit": "Edit your profile"
         },
-        "description": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once.",
-        "title": "Create your Aragon profile"
+        "description": {
+          "create": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once.",
+          "edit": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once."
+        },
+        "title": {
+          "create": "Create your Aragon profile",
+          "edit": "Edit your Aragon profile"
+        }
       },
       "aragonProfileDialog": {
         "a11y": {
