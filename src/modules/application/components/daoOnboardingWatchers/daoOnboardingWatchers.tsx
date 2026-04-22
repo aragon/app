@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LockToVoteLockOnboardingWatcher } from '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher';
 import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher';
 import { TokenLockAndWrapOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher';
@@ -27,9 +27,9 @@ export interface IDaoOnboardingWatchersProps {
 
 /**
  * Wraps the Aragon Profile onboarding watcher and the per-plugin onboarding
- * watchers. Plugin watchers are paused while the profile flow is active so
- * that onboarding checks only activate once the user has closed or completed
- * the profile dialogs.
+ * watchers. Plugin watchers are paused while the profile check is in flight
+ * or while a profile dialog is open, so onboarding checks only activate once
+ * the user has closed or completed the profile dialogs.
  */
 export const DaoOnboardingWatchers: React.FC<IDaoOnboardingWatchersProps> = (
     props,
@@ -37,42 +37,21 @@ export const DaoOnboardingWatchers: React.FC<IDaoOnboardingWatchersProps> = (
     const { dao } = props;
 
     const { locations } = useDialogContext();
-    const [isProfileFlowActive, setIsProfileFlowActive] = useState(false);
+    const [isCheckPending, setIsCheckPending] = useState(false);
 
-    // Clear the flag whenever no profile dialog is in the stack. Covers the
-    // full-flow completion, cancellation mid-flow, and the optimistic-start
-    // case where the profile dialog never actually opened (already shown).
-    useEffect(() => {
-        if (!isProfileFlowActive) {
-            return;
-        }
-
-        const anyProfileDialogOpen = locations.some((location) =>
-            profileDialogIds.has(location.id),
-        );
-
-        if (!anyProfileDialogOpen) {
-            setIsProfileFlowActive(false);
-        }
-    }, [isProfileFlowActive, locations]);
+    const isProfileDialogOpen = locations.some((location) =>
+        profileDialogIds.has(location.id),
+    );
+    const isPaused = isCheckPending || isProfileDialogOpen;
 
     return (
         <>
             <AragonProfileOnboardingWatcher
-                onFlowStart={() => setIsProfileFlowActive(true)}
+                onCheckPendingChange={setIsCheckPending}
             />
-            <TokenDelegationOnboardingWatcher
-                dao={dao}
-                isPaused={isProfileFlowActive}
-            />
-            <TokenLockAndWrapOnboardingWatcher
-                dao={dao}
-                isPaused={isProfileFlowActive}
-            />
-            <LockToVoteLockOnboardingWatcher
-                dao={dao}
-                isPaused={isProfileFlowActive}
-            />
+            <TokenDelegationOnboardingWatcher dao={dao} isPaused={isPaused} />
+            <TokenLockAndWrapOnboardingWatcher dao={dao} isPaused={isPaused} />
+            <LockToVoteLockOnboardingWatcher dao={dao} isPaused={isPaused} />
         </>
     );
 };

@@ -10,11 +10,12 @@ import type { IAragonProfileIntroDialogParams } from '../../dialogs/aragonProfil
 
 export interface IAragonProfileOnboardingWatcherProps {
     /**
-     * Called synchronously in the wallet-connection callback. Used by the
-     * parent to pause sibling onboarding watchers in the same render, before
-     * their effects can open their own dialogs.
+     * Called with `true` on fresh wallet connection and with `false` once the
+     * ENS check settles (either a profile dialog has been opened or the
+     * address has already gone through onboarding). The parent combines this
+     * with the dialog stack to pause sibling onboarding watchers.
      */
-    onFlowStart: () => void;
+    onCheckPendingChange: (isPending: boolean) => void;
 }
 
 const storageKey = (address: string) =>
@@ -28,7 +29,7 @@ const storageKey = (address: string) =>
 export const AragonProfileOnboardingWatcher: React.FC<
     IAragonProfileOnboardingWatcherProps
 > = (props) => {
-    const { onFlowStart } = props;
+    const { onCheckPendingChange } = props;
 
     const { address } = useConnection();
     const { data: ensName, isLoading: ensIsLoading } = useEnsName(address);
@@ -39,7 +40,7 @@ export const AragonProfileOnboardingWatcher: React.FC<
     useWalletConnectionEvent({
         onConnected: () => {
             setHasPendingConnection(true);
-            onFlowStart();
+            onCheckPendingChange(true);
         },
     });
 
@@ -50,18 +51,25 @@ export const AragonProfileOnboardingWatcher: React.FC<
 
         setHasPendingConnection(false);
 
-        if (localStorage.getItem(storageKey(address)) === 'true') {
-            return;
+        if (localStorage.getItem(storageKey(address)) !== 'true') {
+            localStorage.setItem(storageKey(address), 'true');
+
+            const params: IAragonProfileIntroDialogParams = {
+                mode: ensName != null ? 'edit' : 'create',
+            };
+
+            open(ApplicationDialogId.ARAGON_PROFILE_INTRO, { params });
         }
 
-        localStorage.setItem(storageKey(address), 'true');
-
-        const params: IAragonProfileIntroDialogParams = {
-            mode: ensName != null ? 'edit' : 'create',
-        };
-
-        open(ApplicationDialogId.ARAGON_PROFILE_INTRO, { params });
-    }, [hasPendingConnection, address, ensIsLoading, ensName, open]);
+        onCheckPendingChange(false);
+    }, [
+        hasPendingConnection,
+        address,
+        ensIsLoading,
+        ensName,
+        open,
+        onCheckPendingChange,
+    ]);
 
     return null;
 };
