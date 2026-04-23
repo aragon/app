@@ -175,6 +175,22 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             ))}
                         </Page.AsideCard>
                     )}
+                    <Page.AsideCard
+                        className="flex flex-col gap-4"
+                        title={t(
+                            'app.dashboard.daoDashboardPage.aside.telegram.title',
+                        )}
+                    >
+                        <Link
+                            href={`https://t.me/MilosTestOnboardingBot?start=${daoId}`}
+                            isExternal={true}
+                            showUrl={false}
+                        >
+                            {t(
+                                'app.dashboard.daoDashboardPage.aside.telegram.label',
+                            )}
+                        </Link>
+                    </Page.AsideCard>
                 </Page.Aside>
             </Page.Content>
         </>

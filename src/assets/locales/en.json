@@ -1310,7 +1310,11 @@
             "launched": "Launched",
             "title": "Contract"
           },
-          "links": "Resources"
+          "links": "Resources",
+          "telegram": {
+            "title": "Telegram bot",
+            "label": "Get DAO notifications"
+          }
         },
         "main": {
           "assets": {
