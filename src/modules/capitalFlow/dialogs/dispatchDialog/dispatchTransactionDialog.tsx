@@ -1,6 +1,6 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { encodeFunctionData, type Hex } from 'viem';
+import { encodeFunctionData, type Hex, type TransactionReceipt } from 'viem';
 import { useConnection } from 'wagmi';
 import type { Network } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
@@ -31,6 +31,15 @@ export interface IDispatchTransactionDialogParams {
      * Only used when showBackButton is true.
      */
     routerSelectorParams?: IRouterSelectorDialogParams;
+    /**
+     * Invoked as soon as the broadcast transaction is confirmed (one receipt). The
+     * receiving side can use the tx hash to wire optimistic / indexer-lag UI without
+     * waiting for the user to click through the final success step.
+     */
+    onDispatchSuccess?: (params: {
+        txHash: string;
+        receipt: TransactionReceipt;
+    }) => void;
 }
 
 export interface IDispatchTransactionDialogProps
@@ -60,6 +69,7 @@ export const DispatchTransactionDialog: React.FC<
         network,
         showBackButton = false,
         routerSelectorParams,
+        onDispatchSuccess,
     } = location.params;
 
     const { address } = useConnection();
@@ -104,12 +114,23 @@ export const DispatchTransactionDialog: React.FC<
         }
     };
 
+    const handleReceipt = (receipt: TransactionReceipt) => {
+        if (onDispatchSuccess == null) {
+            return;
+        }
+        onDispatchSuccess({
+            txHash: receipt.transactionHash,
+            receipt,
+        });
+    };
+
     return (
         <TransactionDialog
             description={t(
                 'app.capitalFlow.dispatchTransactionDialog.description',
             )}
             network={network}
+            onSuccess={handleReceipt}
             prepareTransaction={prepareTransaction}
             stepper={stepper}
             submitLabel={t(

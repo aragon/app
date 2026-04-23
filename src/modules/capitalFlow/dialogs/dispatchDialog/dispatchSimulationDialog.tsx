@@ -32,6 +32,13 @@ export interface IDispatchSimulationDialogParams {
     network: Network;
     showBackButton?: boolean;
     routerSelectorParams?: IRouterSelectorDialogParams;
+    /**
+     * Forwarded to `DispatchTransactionDialog` on successful simulation →
+     * continue. Used by the Flow page to wire optimistic "waiting for
+     * indexer" UI as soon as the tx broadcasts, without each consumer having
+     * to open the transaction dialog directly.
+     */
+    onDispatchSuccess?: IDispatchTransactionDialogParams['onDispatchSuccess'];
 }
 
 export interface IDispatchSimulationDialogProps
@@ -52,6 +59,7 @@ export const DispatchSimulationDialog: React.FC<
         network,
         showBackButton = false,
         routerSelectorParams,
+        onDispatchSuccess,
     } = location.params;
 
     const { t } = useTranslations();
@@ -126,6 +134,7 @@ export const DispatchSimulationDialog: React.FC<
             network,
             showBackButton,
             routerSelectorParams,
+            onDispatchSuccess,
         };
 
         close(CapitalFlowDialogId.DISPATCH_SIMULATION);
