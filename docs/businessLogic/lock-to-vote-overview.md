@@ -1,20 +1,16 @@
 # Lock-to-Vote Overview
 
-## System Context
-
-This document provides a comprehensive overview of the Lock-to-Vote (L2V) feature, which is part of the larger Aragon DAO governance system. Lock-to-Vote is a governance plugin designed as an alternative to traditional Token Voting, optimized for scenarios requiring high-stakes, low-frequency governance decisions.
-
-### Core Concept
+Lock-to-Vote is a governance plugin designed as an alternative to traditional Token Voting, optimized for scenarios requiring high-stakes, low-frequency governance decisions.
 
 Lock-to-Vote is a governance mechanism where token holders **lock their ERC-20 tokens** in a dedicated LockManager contract to gain voting power. Unlike traditional snapshot-based voting, the LockManager contract directly determines voting power through locked token amounts, enabling the use of **any ERC-20 token** without requiring specialized governance capabilities (e.g., ERC20Votes) or token wrappers.
 
 ### Key Characteristics
 
-- **No pre-locking requirement**: Tokens do not need to be locked prior to proposal creation, allowing **on-demand voting** participation
-- **Direct voting power**: Voting power equals the amount of tokens locked (1:1 ratio)
-- **Token immobilization**: Locked tokens are unavailable for transfer, preventing **double voting**
-- **Flexible unlocking**: Tokens can be unlocked at any time, with voting power adjustments applied accordingly
-- **No delegation**: The system operates without delegation concepts - voting power is automatically derived from locked amounts
+- **Direct Locking**: Token holders deposit (**lock**) tokens into a dedicated LockManager contract. Their locked balance directly determines their voting power.
+- **Universal ERC-20 Support**: The LockManager itself tracks voting power over time. Because it does not rely on underlying token checkpoints, it enables the use of **any standard ERC-20 token** without needing specialized governance extensions (e.g., ERC20Votes) or wrapper contracts.
+- **On-Demand Power**: Tokens do not need to be locked prior to proposal creation. Users can lock and participate in **voting on proposals** purely on an as-needed basis.
+- **Double-Voting Prevention**: While tokens are locked in the manager, they cannot be transferred to other addresses. This prevents "double-voting" bypasses that might otherwise occur without a snapshot system.
+- **Unlocking**: Standard operation allows users to **unlock** their tokens to regain transfer control. Doing so drops their voting power to 0.
 
 ## Typical User Journey
 
@@ -26,38 +22,23 @@ Lock-to-Vote is a governance mechanism where token holders **lock their ERC-20 t
 
 4. **Additional Locking**: Users can lock more tokens to increase their voting power. To apply new voting power to existing votes, they must vote again
 
-5. **Proposal Execution**: When proposals are executed, users can unlock their tokens to regain transferability
+5. **Proposal Execution**: When proposals are executed, users can safely unlock their tokens to regain full liquidity
 
 6. **Mid-proposal Unlocking**: Users can unlock tokens while proposals are still active, but their voting power is immediately reduced across all active proposals where they have voted
 
 ## Benefits
 
-### Liquidity Flexibility vs. Token Wrapping
+- **Liquidity Flexibility (vs. Wrapping)**: In traditional snapshot voting (like Token Wrap), non-governance ERC-20s must be wrapped *prior* to a proposal's creation block to obtain voting power. The L2V "as-needed" locking mechanism avoids this commitment. Tokens remain liquid and freely usable in DeFi up until the very moment a user decides they want to vote.
+- **Optimized for High-Stakes Governance**: Because locking removes liquidity during the voting period itself, the LockToVote plugin is especially ideal for critical, high-stakes, or emergency governance decisions where skin-in-the-game is paramount.
 
-Unlike snapshot-based voting which requires non-governance ERC20s to be wrapped in advance, the lock-to-vote mechanism keeps tokens liquid until voting is needed. This allows tokens to remain available for DeFi activities and other uses until the moment voting participation is desired.
-
-### Optimized for High-Stakes Governance
-
-Due to the liquidity trade-off (tokens become temporarily illiquid during voting), Lock-to-Vote is ideal for:
-- Critical governance decisions
-- Emergency protocol changes
-- High-value treasury allocations
-- Constitutional amendments
-
-### Double Voting Prevention
-
-The locking mechanism ensures tokens cannot be used simultaneously across multiple proposals or voting contexts, providing clean vote counting and preventing manipulation through token reuse.
-
-## Similar Existing Features
+## Comparison with Existing Features
 
 ### Token Wrapping (Token Voting Variant)
+- **Timing Constraint**: Token Wrapping requires users to wrap their tokens into an ERC20Votes-compatible wrapper *before* a proposal's snapshot block in order to vote on it.
+- **Locking Flexibility**: With LockToVote, users can hold pure liquid ERC-20s when the proposal is created, lock them *during* the voting period, vote, and unlock them (subject to early unlock reductions).
+- **Delegation**: Token Wrapping often utilizes the delegation features of ERC20Votes. LockToVote has **no concept of delegation**.
 
-The existing token wrapping feature in standard Token Voting shares some conceptual overlap but differs significantly:
-
-- **Timing**: Token wrapping requires pre-wrapping before voting, while Lock-to-Vote allows on-demand locking
-- **Contract Architecture**: Token wrapping uses ERC20Wrapper contracts that mint governance tokens, while Lock-to-Vote uses a simple lock manager
-- **Reversibility**: Both allow unwrapping/unlocking, but Lock-to-Vote includes proposal activity guards
-- **Delegation**: Token wrapping may require delegation depending on token configuration, while Lock-to-Vote has no delegation
+*For more technical comparisons on how these flows are routed in the application, see [onboarding-conditions-lock-to-vote-token-wrap.md](./onboarding-conditions-lock-to-vote-token-wrap.md).*
 
 ### Gauge Voter (with Voting Escrow)
 
@@ -70,68 +51,79 @@ While Gauge Voter also involves locking mechanisms, it differs in several key as
 
 ## Technical Architecture
 
-### Core Components
+### Frontend
 
-- **LockManager Contract**: Holds locked tokens and tracks voting power per user
-- **LockToVote Plugin**: Aragon plugin implementing the governance logic
-- **Onboarding Flow**: Automated user guidance for initial token locking
-- **Voting Interface**: Proposal creation and voting UI components
+Unlike Voting Escrow (VE) locks and Token Wrapping — which are both implemented inside the Token Voting plugin (`src/plugins/tokenPlugin`) — Lock-to-Vote lives in its own dedicated plugin at `src/plugins/lockToVotePlugin`.
 
-### Contract Interactions
+### Smart Contracts
 
-```typescript
-// Lock Manager Functions
-getLockedBalance(account: address): uint256  // Query user's locked amount
-lockAndVote(proposalId: uint256, voteOption: uint8, amount: uint256): void  // Lock and vote in one transaction
-vote(proposalId: uint256, voteOption: uint8): void  // Vote with existing locked tokens
-unlock(): void  // Unlock tokens (subject to proposal guards)
+Lock-to-Vote is backed by two contracts with clearly separated responsibilities:
+
+- **`LockManagerERC20`** — Custodies the locked ERC-20 tokens and tracks each account's locked balance. It is the single source of truth for voting power and is the only contract users interact with to lock, vote, or unlock.
+- **`LockToVotePlugin`** — The Aragon governance plugin. It owns proposal state, voting settings (support threshold, min participation, min approval), and execution. It delegates voting-power lookups to the `LockManager` and is only called by the manager when relaying a vote.
+
+At deploy time the two contracts are paired: the plugin references its manager via `lockManager()` and the manager is bound to its plugin via `setPluginAddress(...)`.
+
+### Key Interfaces
+
+#### `ILockManager` — user-facing entry point
+
+```solidity
+// Query
+function token() external view returns (address);
+function getLockedBalance(address account) external view returns (uint256);
+function canVote(uint256 proposalId, address voter, IMajorityVoting.VoteOption voteOption) external view returns (bool);
+
+// Lock
+function lock() external;                       // Locks the full ERC-20 allowance granted to the manager
+function lock(uint256 amount) external;         // Locks an explicit amount
+
+// Lock + vote atomically
+function lockAndVote(uint256 proposalId, IMajorityVoting.VoteOption vote) external;
+function lockAndVote(uint256 proposalId, IMajorityVoting.VoteOption vote, uint256 amount) external;
+
+// Vote with already-locked balance
+function vote(uint256 proposalId, IMajorityVoting.VoteOption vote) external;
+
+// Release locks (gated by active proposals depending on mode)
+function unlock() external;
+
+// Plugin → manager lifecycle hooks
+function proposalCreated(uint256 proposalId) external;
+function proposalEnded(uint256 proposalId) external;
+function setPluginAddress(ILockToGovernBase plugin) external;
 ```
 
-### Plugin Structure
+#### `ILockToVote` — plugin-side voting surface
 
-The LockToVote plugin follows standard Aragon plugin architecture:
+```solidity
+function canVote(uint256 proposalId, address voter, IMajorityVoting.VoteOption voteOption) external view returns (bool);
 
-- **Settings**: Voting mode, token configuration, approval ratios
-- **Actions**: Proposal creation, voting, settings updates
-- **Components**: UI components for locking, voting, and member management
-- **Hooks**: Data fetching, permission checks, onboarding logic
+// Called by the LockManager to register / update a vote.
+// `votingPower` replaces (not adds to) any prior allocation and can only grow.
+function vote(uint256 proposalId, address voter, IMajorityVoting.VoteOption voteOption, uint256 votingPower) external;
 
-### Voting Modes
+// Wipes a voter's allocation from a proposal (used when unlocking mid-proposal).
+function clearVote(uint256 proposalId, address voter) external;
+```
 
-- **Standard**: Basic approval/rejection voting
-- **Vote Replacement**: Allows voters to change their vote during the voting period
+`ILockToVote` extends `ILockToGovernBase`, which exposes shared read methods: `lockManager()`, `token()`, `usedVotingPower(proposalId, voter)`, `minProposerVotingPower()`, and `isProposalOpen(proposalId)`.
 
-## Integration Points
+#### `IMajorityVoting` — tallying and execution
 
-### Onboarding Conditions
+Vote options are `None | Abstain | Yes | No`. The plugin exposes the standard majority-voting settings and checks:
 
-The system includes automated onboarding that triggers when:
-- User has token balance but no locked tokens
-- Guides through approval and locking process
-- Includes educational dialogs explaining the mechanism
+- `supportThresholdRatio()`, `minParticipationRatio()`, `minApprovalRatio()`
+- `isSupportThresholdReached(id)` / `isSupportThresholdReachedEarly(id)` — worst-case support used for early execution
+- `isMinVotingPowerReached(id)`, `isMinApprovalReached(id)`, `canExecute(id)`, `execute(id)`
+- `getVote(proposalId, account)` returns a `VoteEntry { voteOption, votingPower }`
 
-### Governance Workflow
+Every cast emits `VoteCast(proposalId, voter, voteOption, votingPower)`.
 
-Lock-to-Vote integrates with the standard Aragon governance flow:
-- Proposal creation through the LockToVote plugin
-- Voting period with locked token validation
-- Execution phase allowing token unlocking
-- Result enforcement based on approval thresholds
+### Interaction Flow
 
-### Security Considerations
-
-- **Unlock Guards**: Prevent unlocking during active voting periods where it would affect outcomes
-- **Double-spend Prevention**: Locked tokens cannot be used elsewhere
-- **Transparent Voting Power**: Voting power directly reflects locked amounts
-- **Emergency Mechanisms**: Allow protocol recovery even with locked tokens
-
-## Future Considerations
-
-The Lock-to-Vote mechanism provides a foundation for more advanced governance patterns:
-
-- **Quadratic Voting**: Could be extended with quadratic formulas on locked amounts
-- **Conviction Voting**: Time-locked tokens could accumulate conviction weight
-- **Liquid Democracy**: Could incorporate delegation while maintaining lock guarantees
-- **Cross-chain**: Lock managers could be extended to support cross-chain voting
-
-This overview supplements the detailed onboarding conditions document by providing the high-level context and user experience perspective of the Lock-to-Vote feature.
+1. User approves the `LockManager` for the ERC-20 (standard `approve`).
+2. User calls `lock` / `lockAndVote` on the manager — tokens move into the manager, balance is recorded.
+3. For a vote, the manager calls `ILockToVote.vote(proposalId, voter, option, votingPower)` on the plugin, which stores the allocation and emits `VoteCast`.
+4. On proposal creation / end, the plugin notifies the manager via `proposalCreated` / `proposalEnded` so it can track which locks are still encumbered.
+5. On `unlock`, the manager clears the user's allocations from any still-active proposals (via `clearVote`) before releasing the tokens.
