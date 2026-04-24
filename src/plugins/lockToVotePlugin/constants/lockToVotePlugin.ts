@@ -13,6 +13,7 @@ export const lockToVotePlugin: IPluginInfo = {
         description: 'This is the initial release of Lock To Vote.',
     },
     repositoryAddresses: {
+        [Network.CITREA_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ETHEREUM_MAINNET]:
             '0x0f4FBD2951Db08B45dE16e7519699159aE1b4bb7',
         [Network.ETHEREUM_SEPOLIA]:

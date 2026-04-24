@@ -16,6 +16,7 @@ export const sppPlugin: IPluginInfo = {
         [Network.ARBITRUM_MAINNET]:
             '0xe3B00403Cd8cBee7af01961c25220289a4Cc5753',
         [Network.BASE_MAINNET]: '0x3C13098D4e2FE9aCb2fCEb3EE4fBBe33405eD39D',
+        [Network.CITREA_MAINNET]: '0xc016d12087BAda6438a45246Ad758d58d0a2F844',
         [Network.ETHEREUM_MAINNET]:
             '0x421FF506E4DC17356965565688D62b55Bf2bf0a5',
         [Network.ETHEREUM_SEPOLIA]:
