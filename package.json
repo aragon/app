@@ -48,7 +48,7 @@
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.38.0",
-    "import-in-the-middle": "^2.0.6",
+    "import-in-the-middle": "^3.0.1",
     "isomorphic-dompurify": "^2.36.0",
     "jsdom": "^26.1.0",
     "luxon": "^3.7.2",
