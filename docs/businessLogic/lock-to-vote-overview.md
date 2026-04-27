@@ -2,8 +2,6 @@
 
 Lock-to-Vote is a governance plugin designed as an alternative to traditional Token Voting, optimized for scenarios requiring high-stakes, low-frequency governance decisions.
 
-Lock-to-Vote is a governance mechanism where token holders **lock their ERC-20 tokens** in a dedicated LockManager contract to gain voting power. Unlike traditional snapshot-based voting, the LockManager contract directly determines voting power through locked token amounts, enabling the use of **any ERC-20 token** without requiring specialized governance capabilities (e.g., ERC20Votes) or token wrappers.
-
 ### Key Characteristics
 
 - **Direct Locking**: Token holders deposit (**lock**) tokens into a dedicated LockManager contract. Their locked balance directly determines their voting power.
@@ -28,10 +26,19 @@ Lock-to-Vote is a governance mechanism where token holders **lock their ERC-20 t
 
 ## Benefits
 
-- **Liquidity Flexibility (vs. Wrapping)**: In traditional snapshot voting (like Token Wrap), non-governance ERC-20s must be wrapped *prior* to a proposal's creation block to obtain voting power. The L2V "as-needed" locking mechanism avoids this commitment. Tokens remain liquid and freely usable in DeFi up until the very moment a user decides they want to vote.
+- **No Governance Token Requirement (vs. Token Voting)**: Standard Token Voting requires an `ERC20Votes`-compatible token with built-in checkpointing and delegation. L2V works with **any plain ERC-20** — no governance extensions, no wrapper, no migration. DAOs can bolt governance onto an existing token without redeploying it.
+- **Skin-in-the-Game Commitment (vs. Token Voting)**: Snapshot-based Token Voting lets holders vote and then immediately sell — their recorded power is unaffected because the snapshot is already locked in. L2V requires tokens to be actually held (locked) during the voting window, so voting power correlates with a real, ongoing economic position rather than a single-block balance.
+- **Liquidity Flexibility (vs. Wrapping)**: In snapshot voting with non-governance tokens (Token Wrap), holders must wrap their tokens *prior* to a proposal's creation block to obtain voting power. The L2V "as-needed" locking mechanism avoids that pre-commitment. Tokens remain liquid and freely usable in DeFi up until the moment a user decides to vote.
 - **Optimized for High-Stakes Governance**: Because locking removes liquidity during the voting period itself, the LockToVote plugin is especially ideal for critical, high-stakes, or emergency governance decisions where skin-in-the-game is paramount.
 
 ## Comparison with Existing Features
+
+### Token Voting (Standard, non-wrapped)
+- **Token Requirement**: Standard Token Voting requires an `ERC20Votes`-compatible token (built-in checkpoints and delegation). LockToVote works with **any ERC-20** — the LockManager provides the voting-power accounting externally.
+- **Voting Power Source**: Token Voting reads balances at the proposal's **snapshot block** (creation block). LockToVote reads the **current locked balance** in the LockManager — there is no snapshot.
+- **Liquidity During Voting**: Token Voting leaves tokens fully transferable throughout the voting window (a voter can sell immediately after casting and still have their recorded vote count). LockToVote requires the voter's tokens to remain **locked and non-transferable** while their vote is active.
+- **Delegation**: Token Voting supports delegation via `ERC20Votes`. LockToVote has **no concept of delegation**.
+- **Use Case Fit**: Token Voting suits ongoing, low-friction governance where liquidity matters. LockToVote suits discrete, high-stakes decisions where an active economic commitment from voters is desirable.
 
 ### Token Wrapping (Token Voting Variant)
 - **Timing Constraint**: Token Wrapping requires users to wrap their tokens into an ERC20Votes-compatible wrapper *before* a proposal's snapshot block in order to vote on it.
