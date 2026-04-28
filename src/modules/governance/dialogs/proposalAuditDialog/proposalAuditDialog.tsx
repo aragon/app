@@ -44,7 +44,7 @@ function FindingItem({
     finding: IProposalAuditFinding;
     actionLabel: (index: number) => string;
 }) {
-    const severity = (finding.severity ?? 'info').toLowerCase();
+    const severity = finding.severity.toLowerCase();
     const variant = SEVERITY_VARIANT[severity] ?? 'neutral';
 
     return (
@@ -79,7 +79,7 @@ export const ProposalAuditDialog: React.FC<IProposalAuditDialogProps> = (
 
     const { t } = useTranslations();
 
-    const riskKey = (audit.riskLevel ?? 'low').toLowerCase();
+    const riskKey = audit.riskLevel.toLowerCase();
     const riskClass = RISK_CLASSES[riskKey] ?? RISK_CLASSES.low;
 
     return (
