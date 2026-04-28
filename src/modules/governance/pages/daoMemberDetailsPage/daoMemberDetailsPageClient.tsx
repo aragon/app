@@ -244,6 +244,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                 <Page.Main>
                     <DelegationSection
                         daoId={daoId}
+                        member={member}
                         title={t(
                             'app.governance.daoMemberDetailsPage.main.delegation.title',
                         )}

@@ -8,6 +8,7 @@ import {
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import type { IMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DelegationStatementCard } from '../delegationStatementCard';
 import { DelegationStatsCard } from '../delegationStatsCard/delegationStatsCard';
@@ -21,10 +22,14 @@ export interface IDelegationSectionProps {
      * Title of the section.
      */
     title: string;
+    /**
+     * Member to display the delegation section for.
+     */
+    member: IMember;
 }
 
 export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
-    const { daoId, title } = props;
+    const { daoId, title, member } = props;
 
     const bodiesWithDelegation = useDaoPlugins({
         daoId,
@@ -51,7 +56,11 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_DELEGATION_STATS}
                     {...plugin.props}
                 />
-                <DelegationStatsCard daoId={daoId} plugin={plugin.meta} />
+                <DelegationStatsCard
+                    daoId={daoId}
+                    memberAddress={member.address}
+                    plugin={plugin.meta}
+                />
                 <DelegationStatementCard tokenAddress={tokenAddress} />
             </div>
         );

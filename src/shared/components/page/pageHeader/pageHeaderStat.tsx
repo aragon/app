@@ -34,12 +34,18 @@ export const PageHeaderStat: React.FC<IPageHeaderStatProps> = (props) => {
             {...otherProps}
         >
             <div className="flex flex-row items-baseline gap-1">
-                <p className="text-2xl text-neutral-800">{parsedValue}</p>
+                <p className="text-lg text-neutral-800 md:text-xl">
+                    {parsedValue}
+                </p>
                 {suffix && (
-                    <p className="text-base text-neutral-500">{suffix}</p>
+                    <p className="overflow-hidden text-ellipsis text-neutral-500 text-xs md:text-sm">
+                        {suffix}
+                    </p>
                 )}
             </div>
-            <p className="text-neutral-500 text-sm">{label}</p>
+            <p className="overflow-hidden text-ellipsis text-neutral-500 text-xs md:text-sm">
+                {label}
+            </p>
         </div>
     );
 };

@@ -1764,6 +1764,9 @@
           "title": "Proposals"
         }
       },
+      "delegationStatsCard": {
+        "disclaimer": "Delegation is per voting body. Delegating here only applies to this voting body — manage each voting body separately."
+      },
       "efpCard": {
         "cta": "View on EFP",
         "followers": "Followers",
