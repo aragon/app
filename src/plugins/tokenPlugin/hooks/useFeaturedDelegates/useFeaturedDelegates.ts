@@ -62,6 +62,7 @@ export const useFeaturedDelegates = (params: IUseFeaturedDelegatesParams) => {
                     ens: null,
                     type: 'token-voting' as const,
                     votingPower: null,
+                    lastActive: null,
                     metrics: {
                         delegationCount: 0,
                         firstActivity: null,

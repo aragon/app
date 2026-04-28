@@ -6,5 +6,6 @@ export const generateMember = (member?: Partial<IMember>): IMember => ({
     ens: null,
     type: 'unknown',
     metrics: generateMemberMetrics(),
+    lastActive: null,
     ...member,
 });
