@@ -32,6 +32,7 @@ import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
 import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
+import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IUsePluginMemberStatsParams } from '../../types';
@@ -249,6 +250,13 @@ export const DaoMemberDetailsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
+                    <DelegationSection
+                        daoId={daoId}
+                        title={t(
+                            'app.governance.daoMemberDetailsPage.main.delegation.title',
+                        )}
+                    />
+
                     <Page.MainSection
                         title={t(
                             'app.governance.daoMemberDetailsPage.main.votingActivity.title',

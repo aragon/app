@@ -1669,6 +1669,9 @@
           }
         },
         "main": {
+          "delegation": {
+            "title": "Delegation"
+          },
           "daoMemberships": {
             "title": "Other DAO memberships"
           },

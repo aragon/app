@@ -67,6 +67,13 @@ export interface IPluginFilterComponentProps<
      */
     Fallback?: IPluginSingleComponentProps['Fallback'];
     /**
+     * When set, renders this node for the active plugin instead of the slot-based PluginSingleComponent.
+     * Receives the full active plugin record so callers have access to meta, id, and props.
+     */
+    renderContent?: (
+        plugin: IFilterComponentPlugin<TMeta, TProps>,
+    ) => ReactNode;
+    /**
      * Other properties passed to the loaded component.
      */
     [key: string]: unknown;
