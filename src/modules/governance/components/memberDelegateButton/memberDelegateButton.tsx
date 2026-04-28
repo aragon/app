@@ -2,6 +2,7 @@
 
 import { addressUtils, Button } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationOnboardingDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationOnboardingFormDialog/tokenDelegationOnboardingFormDialog.api';
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
@@ -40,7 +41,8 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address } = useConnection();
+    const { address, isConnected } = useConnection();
+    const { check: walletGuard } = useConnectedWalletGuard();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { data: currentDelegate } = useTokenCurrentDelegate({
@@ -57,7 +59,7 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
     );
     const isPassive = isOwnPage || isAlreadyDelegated;
 
-    const handleClick = () => {
+    const openDialog = (delegateAddress?: string) => {
         if (tokenAddress == null || tokenSymbol == null) {
             return;
         }
@@ -66,9 +68,20 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
             tokenAddress,
             tokenSymbol,
             daoId,
-            delegateAddress: isPassive ? undefined : memberAddress,
+            delegateAddress,
         };
         open(TokenPluginDialogId.DELEGATION_ONBOARDING, { params });
+    };
+
+    const handleClick = () => {
+        if (!isConnected) {
+            // Pre-populate with memberAddress after connecting: a non-connected user
+            // can't be on their own page, so delegating to this member is the right default.
+            walletGuard({ onSuccess: () => openDialog(memberAddress) });
+            return;
+        }
+
+        openDialog(isPassive ? undefined : memberAddress);
     };
 
     if (tokenAddress == null || tokenSymbol == null) {
