@@ -1,8 +1,11 @@
 'use client';
 
 import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRunProposalAudit } from '@/modules/governance/api/proposalAuditService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import type { IProposalAuditDialogParams } from '@/modules/governance/dialogs/proposalAuditDialog';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
@@ -77,8 +80,39 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
     const handleVoteClick = () =>
         canSubmitVote ? openTransactionDialog() : submitVoteGuard();
 
+    const queryClient = useQueryClient();
+    const { mutate: runAudit, isPending: isAuditRunning } =
+        useRunProposalAudit();
+
+    const openAuditDialog = (audit: IProposalAuditDialogParams['audit']) =>
+        open(GovernanceDialogId.PROPOSAL_AUDIT, { params: { audit } });
+
+    const handleAuditClick = () => {
+        if (proposal.audit) {
+            openAuditDialog(proposal.audit);
+            return;
+        }
+        runAudit(
+            { urlParams: { id: proposal.id } },
+            {
+                onSuccess: (audit) => {
+                    openAuditDialog(audit);
+                    void queryClient.invalidateQueries();
+                },
+            },
+        );
+    };
+
+    const auditLabel = proposal.audit
+        ? 'showAudit'
+        : isAuditRunning
+          ? 'auditing'
+          : 'runAudit';
+
+    const showAuditButton = proposal.audit != null || !proposal.executed.status;
+
     return (
-        <div className="w-full">
+        <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
             {voted ? (
                 voteTransactionHref != null ? (
                     <Button
@@ -114,6 +148,23 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
                     variant="primary"
                 >
                     {t(`app.plugins.multisig.multisigSubmitVote.${voteLabel}`)}
+                </Button>
+            )}
+            {showAuditButton && (
+                <Button
+                    className="w-full md:w-fit"
+                    disabled={isAuditRunning}
+                    iconLeft={
+                        proposal.audit
+                            ? IconType.RICHTEXT_LIST_UNORDERED
+                            : IconType.WARNING
+                    }
+                    isLoading={isAuditRunning}
+                    onClick={handleAuditClick}
+                    size="md"
+                    variant="secondary"
+                >
+                    {t(`app.plugins.multisig.multisigSubmitVote.${auditLabel}`)}
                 </Button>
             )}
         </div>

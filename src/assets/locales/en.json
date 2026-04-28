@@ -1936,6 +1936,15 @@
           "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
           "progress": "Listening to dApp"
         }
+      },
+      "proposalAuditDialog": {
+        "title": "Proposal security audit",
+        "riskLevel": "Risk level",
+        "summary": "Summary",
+        "findings": "Findings ({{count}})",
+        "noFindings": "No findings — nothing concerning surfaced.",
+        "recommendations": "Recommendations",
+        "tenderlyLink": "View Tenderly trace"
       }
     },
     "plugins": {
@@ -2619,7 +2628,10 @@
           "approve": "Approve proposal",
           "approved": "Approved",
           "veto": "Veto proposal",
-          "vetoed": "Vetoed"
+          "vetoed": "Vetoed",
+          "runAudit": "Run audit",
+          "auditing": "Running audit…",
+          "showAudit": "Show audit"
         },
         "multisigVoteList": {
           "entity": "Votes"
