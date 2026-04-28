@@ -3,7 +3,6 @@ import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { TokenCreateProposalSettingsForm } from './components/tokenCreateProposalSettingsForm';
-import { TokenMemberDelegationStats } from './components/tokenMemberDelegationStats';
 import { TokenMemberList } from './components/tokenMemberList';
 import { TokenMemberPanel } from './components/tokenMemberPanel';
 import { TokenProcessBodyField } from './components/tokenProcessBodyField';
@@ -41,11 +40,6 @@ export const initialiseTokenPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_PANEL,
             pluginId: tokenPlugin.id,
             component: TokenMemberPanel,
-        })
-        .registerSlotComponent({
-            slotId: GovernanceSlotId.GOVERNANCE_MEMBER_DELEGATION_STATS,
-            pluginId: tokenPlugin.id,
-            component: TokenMemberDelegationStats,
         })
         .registerSlotFunction({
             slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,

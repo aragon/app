@@ -5,13 +5,12 @@ import {
     type IFilterComponentPlugin,
     PluginFilterComponent,
 } from '@/shared/components/pluginFilterComponent';
-import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { IMember } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DelegationStatementCard } from '../delegationStatementCard';
-import { DelegationStatsCard } from '../delegationStatsCard/delegationStatsCard';
+import { DelegationStatsCard } from '../delegationStatsCard';
 
 export interface IDelegationSectionProps {
     /**
@@ -49,13 +48,6 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
 
         return (
             <div className="flex flex-col gap-4">
-                <PluginSingleComponent
-                    daoId={daoId}
-                    plugin={plugin.meta}
-                    pluginId={plugin.id}
-                    slotId={GovernanceSlotId.GOVERNANCE_MEMBER_DELEGATION_STATS}
-                    {...plugin.props}
-                />
                 <DelegationStatsCard
                     daoId={daoId}
                     memberAddress={member.address}
@@ -72,7 +64,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
             <PluginFilterComponent
                 plugins={bodiesWithDelegation}
                 renderContent={renderSelectedPlugin}
-                slotId={GovernanceSlotId.GOVERNANCE_MEMBER_DELEGATION_STATS}
+                slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
             />
         </Page.MainSection>
     );
