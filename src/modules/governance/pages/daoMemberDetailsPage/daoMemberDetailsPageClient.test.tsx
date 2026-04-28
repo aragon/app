@@ -245,7 +245,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('renders the formatted member stats', () => {
         render(createTestComponent());
         expect(
-            screen.getByText(/daoMemberDetailsPage.header.stat.latestActivity/),
+            screen.getByText(
+                /daoMemberDetailsPage.aside.details.latestActivity/,
+            ),
         ).toBeInTheDocument();
     });
 
@@ -393,10 +395,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
         render(createTestComponent());
 
-        expect(screen.getByText('3')).toBeInTheDocument();
         expect(
             screen.getByText(
-                /daoMemberDetailsPage.header.stat.latestActivityUnit \(unit=days\)/,
+                /3.*daoMemberDetailsPage.aside.details.latestActivityUnit \(unit=days\)/,
             ),
         ).toBeInTheDocument();
     });
