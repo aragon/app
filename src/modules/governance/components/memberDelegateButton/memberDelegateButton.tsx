@@ -55,7 +55,7 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
         currentDelegate,
         memberAddress,
     );
-    const isActive = address != null && !isOwnPage && !isAlreadyDelegated;
+    const isPassive = isOwnPage || isAlreadyDelegated;
 
     const handleClick = () => {
         if (tokenAddress == null || tokenSymbol == null) {
@@ -66,7 +66,7 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
             tokenAddress,
             tokenSymbol,
             daoId,
-            delegateAddress: isActive ? memberAddress : undefined,
+            delegateAddress: isPassive ? undefined : memberAddress,
         };
         open(TokenPluginDialogId.DELEGATION_ONBOARDING, { params });
     };
@@ -80,13 +80,13 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
             className={className}
             onClick={handleClick}
             size="md"
-            variant={isActive ? 'primary' : 'secondary'}
+            variant={isPassive ? 'secondary' : 'primary'}
         >
-            {isActive
-                ? t('app.governance.memberDelegateButton.delegate', {
+            {isPassive
+                ? t('app.governance.memberDelegateButton.manageDelegation')
+                : t('app.governance.memberDelegateButton.delegate', {
                       token: tokenSymbol,
-                  })
-                : t('app.governance.memberDelegateButton.manageDelegation')}
+                  })}
         </Button>
     );
 };
