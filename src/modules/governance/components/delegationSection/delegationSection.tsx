@@ -1,5 +1,5 @@
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import type { IDaoPlugin } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import {
     type IFilterComponentPlugin,
@@ -10,6 +10,7 @@ import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DelegationStatementCard } from '../delegationStatementCard';
+import { DelegationStatsCard } from '../delegationStatsCard/delegationStatsCard';
 
 export interface IDelegationSectionProps {
     /**
@@ -36,7 +37,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
     );
 
     const renderSelectedPlugin = (
-        plugin: IFilterComponentPlugin<IDaoPlugin<IPluginSettings>>,
+        plugin: IFilterComponentPlugin<IDaoPlugin>,
     ) => {
         const tokenAddress = (plugin.meta.settings as ITokenPluginSettings)
             ?.token?.address;
@@ -50,6 +51,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
                     slotId={GovernanceSlotId.GOVERNANCE_MEMBER_DELEGATION_STATS}
                     {...plugin.props}
                 />
+                <DelegationStatsCard daoId={daoId} plugin={plugin.meta} />
                 <DelegationStatementCard tokenAddress={tokenAddress} />
             </div>
         );

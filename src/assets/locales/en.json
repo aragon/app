@@ -1640,6 +1640,8 @@
             "address": "Address",
             "ens": "ENS",
             "firstActivity": "First activity",
+            "latestActivity": "Latest activity",
+            "latestActivityUnit": "{{unit}} ago",
             "title": "Details"
           },
           "efpCard": {
@@ -1662,10 +1664,6 @@
         "header": {
           "breadcrumb": {
             "members": "Members"
-          },
-          "stat": {
-            "latestActivity": "Latest activity",
-            "latestActivityUnit": "{{unit}} ago"
           }
         },
         "main": {

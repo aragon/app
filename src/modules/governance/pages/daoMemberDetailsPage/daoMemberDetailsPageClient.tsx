@@ -107,7 +107,8 @@ export const DaoMemberDetailsPageClient: React.FC<
         pluginId: bodyPlugin?.interfaceType ?? '',
     });
 
-    const { lastActivity, firstActivity } = member?.metrics ?? {};
+    const { lastActive } = member ?? {};
+    const { firstActivity } = member?.metrics ?? {};
 
     const { chainId, buildEntityUrl } = useDaoChain({ daoId });
 
@@ -116,7 +117,7 @@ export const DaoMemberDetailsPageClient: React.FC<
             ? bigIntUtils.safeParse(firstActivity)
             : undefined;
     const lastBlockNumber =
-        lastActivity != null ? bigIntUtils.safeParse(lastActivity) : undefined;
+        lastActive != null ? bigIntUtils.safeParse(lastActive) : undefined;
 
     const { data: firstBlock } = useBlock({
         chainId,
@@ -157,20 +158,11 @@ export const DaoMemberDetailsPageClient: React.FC<
     ];
 
     const suffixLabel = t(
-        'app.governance.daoMemberDetailsPage.header.stat.latestActivityUnit',
+        'app.governance.daoMemberDetailsPage.aside.details.latestActivityUnit',
         { unit },
     );
 
-    const stats = [
-        ...(pluginStats ?? []),
-        {
-            label: t(
-                'app.governance.daoMemberDetailsPage.header.stat.latestActivity',
-            ),
-            value: value ?? '-',
-            suffix: unit ? suffixLabel : undefined,
-        },
-    ];
+    const stats = pluginStats ?? [];
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -320,6 +312,15 @@ export const DaoMemberDetailsPageClient: React.FC<
                                 )}
                             >
                                 {formattedFirstActivity ?? '-'}
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                term={t(
+                                    'app.governance.daoMemberDetailsPage.aside.details.latestActivity',
+                                )}
+                            >
+                                {value && unit
+                                    ? `${value} ${suffixLabel}`
+                                    : '-'}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
