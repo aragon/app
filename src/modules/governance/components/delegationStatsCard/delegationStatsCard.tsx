@@ -2,6 +2,7 @@
 
 import { Card } from '@aragon/gov-ui-kit';
 import { Fragment } from 'react';
+import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import {
     type IPageHeaderStat,
@@ -11,6 +12,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IUsePluginMemberStatsParams } from '../../types';
+import { MemberDelegateButton } from '../memberDelegateButton';
 
 export interface IDelegationStatsCardProps {
     /**
@@ -25,17 +27,16 @@ export interface IDelegationStatsCardProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Optional action element displayed on the right side of the stats row (e.g. a delegate button).
-     */
-    action?: React.ReactNode;
 }
 
 export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
     props,
 ) => {
-    const { plugin, daoId, memberAddress, action } = props;
+    const { plugin, daoId, memberAddress } = props;
     const { t } = useTranslations();
+
+    const tokenSettings = plugin.settings as ITokenPluginSettings;
+    const { address: tokenAddress, symbol: tokenSymbol } = tokenSettings.token;
 
     const memberStatsParams = {
         daoId,
@@ -57,10 +58,10 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
     }
 
     return (
-        <Card className="p-6">
-            <div className="flex flex-col gap-2">
-                <div className="flex w-full items-start gap-6">
-                    <div className="flex min-w-px flex-1 items-center gap-4">
+        <Card className="p-4 md:p-6">
+            <div className="flex flex-col gap-3 md:gap-2">
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-6">
+                    <div className="flex min-w-px flex-1 items-center justify-around gap-3 md:justify-start md:gap-4">
                         {pluginStats.map((stat, index) => (
                             <Fragment key={stat.label}>
                                 {index > 0 && (
@@ -70,12 +71,20 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                             </Fragment>
                         ))}
                     </div>
-                    {action}
+                    <div className="w-full shrink-0 md:w-auto">
+                        <MemberDelegateButton
+                            className="w-full md:w-auto"
+                            daoId={daoId}
+                            memberAddress={memberAddress}
+                            tokenAddress={tokenAddress}
+                            tokenSymbol={tokenSymbol}
+                        />
+                    </div>
                 </div>
-                <div className="py-2">
+                <div className="hidden py-2 md:block">
                     <div className="h-px w-full bg-neutral-100" />
                 </div>
-                <p className="text-neutral-400 text-sm leading-normal">
+                <p className="text-center text-neutral-400 text-xs leading-normal md:text-left md:text-sm">
                     {t('app.governance.delegationStatsCard.disclaimer')}
                 </p>
             </div>

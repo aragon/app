@@ -31,4 +31,9 @@ export interface ITokenDelegationFormProps {
      * Callback for the cancel button. When provided, the cancel button is visible (Only in dialog mode).
      */
     onCancel?: () => void;
+    /**
+     * Pre-populate the delegate address input. When set, the form opens with "Someone else"
+     * selected and this address filled in.
+     */
+    initialDelegateAddress?: string;
 }

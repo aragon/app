@@ -11,4 +11,9 @@ export interface ITokenDelegationOnboardingDialogParams {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Address to pre-populate in the delegate input. When set, the form opens with
+     * "Someone else" selected and this address filled in.
+     */
+    delegateAddress?: string;
 }
