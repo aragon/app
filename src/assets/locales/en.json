@@ -1944,7 +1944,8 @@
         "findings": "Findings ({{count}})",
         "noFindings": "No findings — nothing concerning surfaced.",
         "recommendations": "Recommendations",
-        "tenderlyLink": "View Tenderly trace"
+        "tenderlyLink": "View Tenderly trace",
+        "actionIndex": "action #{{index}}"
       }
     },
     "plugins": {

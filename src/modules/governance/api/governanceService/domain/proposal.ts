@@ -96,7 +96,7 @@ export interface IProposal<
     hasSimulation: boolean;
     /**
      * Cached security audit produced by the backend audit pipeline. Present
-     * only after `POST /v2/proposal/:id/audit` has run successfully.
+     * only after `POST /v2/proposals/:id/audit` has run successfully.
      */
     audit?: IProposalAudit | null;
 }

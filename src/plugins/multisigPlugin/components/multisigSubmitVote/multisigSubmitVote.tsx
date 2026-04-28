@@ -2,6 +2,7 @@
 
 import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
+import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
 import { useRunProposalAudit } from '@/modules/governance/api/proposalAuditService';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
@@ -97,7 +98,15 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
             {
                 onSuccess: (audit) => {
                     openAuditDialog(audit);
-                    void queryClient.invalidateQueries();
+                    // Refresh only the proposal queries so the cached audit
+                    // surfaces on the next render — avoid invalidating
+                    // unrelated caches across the app.
+                    void queryClient.invalidateQueries({
+                        predicate: ({ queryKey }) =>
+                            queryKey[0] ===
+                                GovernanceServiceKey.PROPOSAL_BY_SLUG ||
+                            queryKey[0] === GovernanceServiceKey.PROPOSAL_LIST,
+                    });
                 },
             },
         );
@@ -109,7 +118,10 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
           ? 'auditing'
           : 'runAudit';
 
-    const showAuditButton = proposal.audit != null || !proposal.executed.status;
+    // Show the button when the proposal is still open OR when we already have
+    // a cached audit (executed proposals retain "Show audit" so members can
+    // review the audit post-execution). Hidden only on executed-without-audit.
+    const showAuditButton = !proposal.executed.status || proposal.audit != null;
 
     return (
         <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">

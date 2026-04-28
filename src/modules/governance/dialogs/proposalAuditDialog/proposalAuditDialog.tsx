@@ -10,7 +10,7 @@ import type {
 export interface IProposalAuditDialogParams {
     /**
      * Audit payload to render. Either a freshly-produced result from the
-     * `POST /v2/proposal/:id/audit` endpoint or the cached one persisted on
+     * `POST /v2/proposals/:id/audit` endpoint or the cached one persisted on
      * the Proposal document.
      */
     audit: IProposalAudit;
@@ -37,7 +37,13 @@ const SEVERITY_VARIANT: Record<
     critical: 'critical',
 };
 
-function FindingItem({ finding }: { finding: IProposalAuditFinding }) {
+function FindingItem({
+    finding,
+    actionLabel,
+}: {
+    finding: IProposalAuditFinding;
+    actionLabel: (index: number) => string;
+}) {
     const severity = (finding.severity ?? 'info').toLowerCase();
     const variant = SEVERITY_VARIANT[severity] ?? 'neutral';
 
@@ -50,7 +56,7 @@ function FindingItem({ finding }: { finding: IProposalAuditFinding }) {
                 </span>
                 {finding.actionIndex != null && (
                     <span className="text-neutral-500 text-sm">
-                        action #{finding.actionIndex}
+                        {actionLabel(finding.actionIndex)}
                     </span>
                 )}
             </div>
@@ -117,6 +123,12 @@ export const ProposalAuditDialog: React.FC<IProposalAuditDialogProps> = (
                         <ul className="flex flex-col gap-2">
                             {audit.findings.map((f, i) => (
                                 <FindingItem
+                                    actionLabel={(index) =>
+                                        t(
+                                            'app.governance.proposalAuditDialog.actionIndex',
+                                            { index: index + 1 },
+                                        )
+                                    }
                                     finding={f}
                                     key={`${f.category}-${i}`}
                                 />
