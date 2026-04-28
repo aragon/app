@@ -21,11 +21,9 @@ import { EfpCard } from '@/modules/governance/components/efpCard';
 import { MemberLinksCard } from '@/modules/governance/components/memberLinksCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
-import type { IPageHeaderStat } from '@/shared/components/page/pageHeader/pageHeaderStat';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -34,8 +32,6 @@ import { useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
-import type { IUsePluginMemberStatsParams } from '../../types';
 
 export interface IDaoMemberDetailsPageClientProps {
     /**
@@ -93,20 +89,6 @@ export const DaoMemberDetailsPageClient: React.FC<
     };
     const { data: member } = useMember(memberParams);
 
-    const memberStatsParams = {
-        daoId,
-        address,
-        plugin: bodyPlugin!,
-    };
-    const pluginStats = useSlotSingleFunction<
-        IUsePluginMemberStatsParams,
-        IPageHeaderStat[]
-    >({
-        params: memberStatsParams,
-        slotId: GovernanceSlotId.GOVERNANCE_MEMBER_STATS,
-        pluginId: bodyPlugin?.interfaceType ?? '',
-    });
-
     const { lastActive } = member ?? {};
     const { firstActivity } = member?.metrics ?? {};
 
@@ -161,8 +143,6 @@ export const DaoMemberDetailsPageClient: React.FC<
         'app.governance.daoMemberDetailsPage.aside.details.latestActivityUnit',
         { unit },
     );
-
-    const stats = pluginStats ?? [];
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -237,7 +217,6 @@ export const DaoMemberDetailsPageClient: React.FC<
                 }
                 breadcrumbs={pageBreadcrumbs}
                 description={ensRecords?.description ?? undefined}
-                stats={stats}
                 title={memberName}
             />
             <Page.Content>
