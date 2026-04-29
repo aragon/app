@@ -4,6 +4,7 @@ import type {
     Network,
 } from '@/shared/api/daoService';
 import type { IResource } from '@/shared/api/daoService/domain/resource';
+import type { IProposalAudit } from './proposalAudit';
 import type { IProposalExecution } from './proposalExecution';
 
 export interface IProposal<
@@ -93,4 +94,9 @@ export interface IProposal<
      *  Indicates whether a Tenderly simulation exists for this proposal.
      */
     hasSimulation: boolean;
+    /**
+     * Cached security audit produced by the backend audit pipeline. Present
+     * only after `POST /v2/proposals/:id/audit` has run successfully.
+     */
+    audit?: IProposalAudit | null;
 }

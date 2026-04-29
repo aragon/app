@@ -2,6 +2,7 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
+import { ProposalAuditDialog } from '../dialogs/proposalAuditDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
 import { SimulateActionsDialog } from '../dialogs/simulateActionsDialog';
@@ -36,6 +37,10 @@ export const governanceDialogsDefinitions: Record<
     },
     [GovernanceDialogId.SIMULATE_ACTIONS]: {
         Component: SimulateActionsDialog,
+        size: 'lg',
+    },
+    [GovernanceDialogId.PROPOSAL_AUDIT]: {
+        Component: ProposalAuditDialog,
         size: 'lg',
     },
 };
