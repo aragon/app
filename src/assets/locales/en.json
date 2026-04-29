@@ -1816,6 +1816,13 @@
           "title": "Not eligible to vote"
         }
       },
+      "permissionsDefinitionList": {
+        "or": "or",
+        "empty": {
+          "heading": "Not found",
+          "description": "Proposal creation eligibility settings not found for this process."
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",

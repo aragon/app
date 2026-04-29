@@ -171,8 +171,9 @@ export const DaoProcessDetailsPageClient: React.FC<
                             'app.settings.daoProcessDetailsPage.section.creationEligibility',
                         )}
                     >
-                        <Card className="px-6 py-3">
+                        <Card>
                             <PermissionsDefinitionList
+                                className="px-6 py-3"
                                 isLoading={isLoading}
                                 settings={settings}
                             />
