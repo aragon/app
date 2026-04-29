@@ -166,6 +166,12 @@ class TokenProposalUtils {
 
         return parsedVotingPower;
     };
+
+    getProposalTokenTotalSupply = (
+        proposal: ITokenProposal,
+    ): string | undefined => {
+        return proposal.settings.historicalTotalSupply;
+    };
 }
 
 export const tokenProposalUtils = new TokenProposalUtils();

@@ -49,7 +49,7 @@ export const LockToVoteProposalVotingSummary: React.FC<
         );
     }
 
-    const { supportThreshold, historicalTotalSupply } = proposal.settings;
+    const { supportThreshold } = proposal.settings;
     const { symbol, decimals } = proposal.settings.token;
 
     const status = lockToVoteProposalUtils.getProposalStatus(proposal);
@@ -68,7 +68,9 @@ export const LockToVoteProposalVotingSummary: React.FC<
     );
 
     const tokenTotalSupply = formatUnits(
-        bigIntUtils.safeParse(historicalTotalSupply),
+        bigIntUtils.safeParse(
+            lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
+        ),
         decimals,
     );
     const totalSupplyNumber = Number(tokenTotalSupply);

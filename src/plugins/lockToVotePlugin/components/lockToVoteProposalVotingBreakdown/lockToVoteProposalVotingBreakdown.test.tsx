@@ -15,9 +15,8 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
     ) => {
         const baseProposal = generateLockToVoteProposal({
             settings: generateLockToVotePluginSettings({
-                token: generateLockToVotePluginSettingsToken({
-                    totalSupply: '1',
-                }),
+                historicalTotalSupply: '1',
+                token: generateLockToVotePluginSettingsToken(),
             }),
         });
         const completeProps: ILockToVoteProposalVotingBreakdownProps = {
@@ -34,12 +33,12 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
 
     it('correctly displays the breakdown of the token proposal', () => {
         const settings = generateLockToVotePluginSettings({
+            historicalTotalSupply: '1000000',
             minParticipation: 200_000,
             supportThreshold: 500_000,
             token: generateLockToVotePluginSettingsToken({
                 decimals: 1,
                 symbol: 'TTT',
-                totalSupply: '1000000',
             }),
         });
         const votesByOption = [
