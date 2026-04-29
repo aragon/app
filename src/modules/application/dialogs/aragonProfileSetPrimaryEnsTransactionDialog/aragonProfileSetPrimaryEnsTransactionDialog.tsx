@@ -24,7 +24,6 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
-/** Required params for {@link AragonProfileSetPrimaryEnsTransactionDialog}. */
 export interface IAragonProfileSetPrimaryEnsTransactionDialogParams {
     /** ENS subdomain label, e.g. "alice". */
     subdomain: string;

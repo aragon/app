@@ -22,13 +22,11 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
-/** Required params for {@link AragonProfileSubdomainRegisterTransactionDialog}. */
 export interface IAragonProfileSubdomainRegisterTransactionDialogParams {
     /** ENS subdomain label to register, e.g. "alice". */
     subdomain: string;
 }
 
-/** Props for {@link AragonProfileSubdomainRegisterTransactionDialog}. */
 export interface IAragonProfileSubdomainRegisterTransactionDialogProps
     extends IDialogComponentProps<IAragonProfileSubdomainRegisterTransactionDialogParams> {}
 

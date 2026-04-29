@@ -4,7 +4,6 @@ import { Card, MemberAvatar, Tag } from '@aragon/gov-ui-kit';
 import type { Address } from 'viem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-/** Props for {@link AragonProfilePreviewCard}. */
 export interface IAragonProfilePreviewCardProps {
     /** Wallet address of the profile owner. */
     address?: Address;

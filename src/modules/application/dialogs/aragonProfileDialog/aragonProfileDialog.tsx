@@ -76,10 +76,8 @@ const fieldToEnsKey: Record<SocialKey | 'bio', string> = {
     telegram: ensRecordKeys.telegram,
 };
 
-/** Parameters for {@link AragonProfileDialog}. */
 export interface IAragonProfileDialogParams {}
 
-/** Props for {@link AragonProfileDialog}. */
 export interface IAragonProfileDialogProps
     extends IDialogComponentProps<IAragonProfileDialogParams> {}
 

@@ -42,7 +42,6 @@ export interface IAragonProfileUpdateTransactionDialogParams {
     avatarFile?: File;
 }
 
-/** Props for {@link AragonProfileUpdateTransactionDialog}. */
 export interface IAragonProfileUpdateTransactionDialogProps
     extends IDialogComponentProps<IAragonProfileUpdateTransactionDialogParams> {}
 

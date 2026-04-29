@@ -6,7 +6,6 @@ import type {
     SocialKey,
 } from './aragonProfileDialog';
 
-/** Props for {@link AragonProfileSocialFieldRow}. */
 export interface IAragonProfileSocialFieldRowProps {
     /** Form field name. */
     fieldName: SocialKey;

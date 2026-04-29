@@ -6,13 +6,11 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
-/** Required params for {@link AragonProfileIntroDialog}. */
 export interface IAragonProfileIntroDialogParams {
     /** Whether the user is creating a new profile or editing an existing one. */
     mode: 'create' | 'edit';
 }
 
-/** Props for {@link AragonProfileIntroDialog}. */
 export interface IAragonProfileIntroDialogProps
     extends IDialogComponentProps<IAragonProfileIntroDialogParams> {}
 

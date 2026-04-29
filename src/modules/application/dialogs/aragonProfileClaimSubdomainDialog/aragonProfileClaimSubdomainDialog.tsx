@@ -30,10 +30,8 @@ interface IFormData {
     subdomain: string;
 }
 
-/** Required params for {@link AragonProfileClaimSubdomainDialog}. */
 export interface IAragonProfileClaimSubdomainDialogParams {}
 
-/** Props for {@link AragonProfileClaimSubdomainDialog}. */
 export interface IAragonProfileClaimSubdomainDialogProps
     extends IDialogComponentProps<IAragonProfileClaimSubdomainDialogParams> {}
 
