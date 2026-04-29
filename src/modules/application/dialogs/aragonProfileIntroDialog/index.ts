@@ -5,3 +5,8 @@ export const AragonProfileIntroDialog = dynamic(() =>
         (mod) => mod.AragonProfileIntroDialog,
     ),
 );
+
+export type {
+    IAragonProfileIntroDialogParams,
+    IAragonProfileIntroDialogProps,
+} from './aragonProfileIntroDialog';

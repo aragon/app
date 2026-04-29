@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, IconType, InputText } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';

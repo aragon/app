@@ -5,3 +5,8 @@ export const AragonProfileClaimSubdomainDialog = dynamic(() =>
         (mod) => mod.AragonProfileClaimSubdomainDialog,
     ),
 );
+
+export type {
+    IAragonProfileClaimSubdomainDialogParams,
+    IAragonProfileClaimSubdomainDialogProps,
+} from './aragonProfileClaimSubdomainDialog';

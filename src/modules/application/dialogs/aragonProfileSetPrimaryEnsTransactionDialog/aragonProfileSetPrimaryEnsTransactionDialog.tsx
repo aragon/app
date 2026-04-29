@@ -8,9 +8,9 @@ import { useConnection } from 'wagmi';
 import {
     ensReverseRegistrarAbi,
     ensReverseRegistrarAddress,
+    memberRegistrySubdomainSuffix,
     useEnsName,
 } from '@/modules/ens';
-import { memberRegistrySubdomainSuffix } from '@/modules/ens/';
 import { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';

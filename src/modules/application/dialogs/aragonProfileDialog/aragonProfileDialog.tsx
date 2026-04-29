@@ -1,3 +1,5 @@
+'use client';
+
 import type { IInputFileAvatarValue } from '@aragon/gov-ui-kit';
 import {
     AlertCard,
