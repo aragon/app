@@ -238,7 +238,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                     >
                         {t('app.plugins.token.tokenDelegationForm.submit', {
                             tokenSymbol: delegationTokenSymbol ?? '',
-                        }).trim()}
+                        })}
                     </Button>
                     {footerInfo}
                 </div>

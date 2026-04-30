@@ -117,13 +117,11 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
-    const displayTokenName = tokenName?.trim();
-    const displayTokenSymbol = tokenSymbol?.trim();
     const tokenDescription =
-        displayTokenName && displayTokenSymbol
+        tokenName && tokenSymbol
             ? t('app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol', {
-                  tokenName: displayTokenName,
-                  tokenSymbol: displayTokenSymbol,
+                  tokenName,
+                  tokenSymbol,
               })
             : undefined;
 

@@ -63,8 +63,8 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     const underlyingToken = tokenPluginUtils.getUnderlyingToken(token);
     const titleToken =
         !votingEscrow && underlying != null ? underlyingToken : token;
-    const titleTokenName = titleToken.name?.trim();
-    const titleTokenSymbol = titleToken.symbol?.trim();
+    const titleTokenName = titleToken.name;
+    const titleTokenSymbol = titleToken.symbol;
     const cardTitle =
         visibleTabs.length === 1
             ? t(
