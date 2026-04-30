@@ -89,15 +89,12 @@ export const DaoMemberDetailsPageClient: React.FC<
     };
     const { data: member } = useMember(memberParams);
 
-    const { lastActive } = member ?? {};
-    const { firstActivity } = member?.metrics ?? {};
+    const { firstActive, lastActive } = member ?? {};
 
     const { chainId, buildEntityUrl } = useDaoChain({ daoId });
 
     const firstBlockNumber =
-        firstActivity != null
-            ? bigIntUtils.safeParse(firstActivity)
-            : undefined;
+        firstActive != null ? bigIntUtils.safeParse(firstActive) : undefined;
     const lastBlockNumber =
         lastActive != null ? bigIntUtils.safeParse(lastActive) : undefined;
 

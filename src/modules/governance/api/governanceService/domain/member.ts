@@ -16,6 +16,10 @@ export interface IMember {
      */
     type: string;
     /**
+     * Block number of the first activity of the member across all plugins.
+     */
+    firstActive: number | null;
+    /**
      * Block number of the last activity of the member across all plugins.
      */
     lastActive: number | null;
