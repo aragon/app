@@ -146,7 +146,6 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     // disable submit button if delegate address has not been changed, but also, disable while isMemberLoading to prevent
     // multiple button state changes during page refresh
     const isSubmitDisabled = isCurrentDelegateLoading || isDelegateUnchanged;
-    const delegationTokenSymbol = tokenSymbol?.trim();
 
     const footerInfo = (
         <FooterInfo
@@ -237,7 +236,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                         type={isConnected ? 'submit' : undefined}
                     >
                         {t('app.plugins.token.tokenDelegationForm.submit', {
-                            tokenSymbol: delegationTokenSymbol ?? '',
+                            tokenSymbol: tokenSymbol ?? '',
                         })}
                     </Button>
                     {footerInfo}
