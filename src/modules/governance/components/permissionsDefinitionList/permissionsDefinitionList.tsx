@@ -8,7 +8,10 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IPermissionCheckGuardResult } from '../../types';
 
 export interface IPermissionsDefinitionListProps
-    extends Pick<IPermissionCheckGuardResult, 'isLoading' | 'settings'> {
+    extends Pick<
+        IPermissionCheckGuardResult,
+        'isLoading' | 'settings' | 'isRestricted'
+    > {
     /**
      * Additional CSS classes to apply to the component.
      */
@@ -18,7 +21,7 @@ export interface IPermissionsDefinitionListProps
 export const PermissionsDefinitionList: React.FC<
     IPermissionsDefinitionListProps
 > = (props) => {
-    const { isLoading, settings, className } = props;
+    const { isLoading, settings, isRestricted, className } = props;
 
     const { t } = useTranslations();
 
@@ -31,7 +34,6 @@ export const PermissionsDefinitionList: React.FC<
             </div>
         );
     }
-
     const hasSettings = settings.length > 0;
     const hasSettingsGroups = settings.length > 1;
 
@@ -40,13 +42,28 @@ export const PermissionsDefinitionList: React.FC<
         return (
             <EmptyState
                 description={t(
-                    'app.governance.permissionsDefinitionList.empty.description',
+                    'app.governance.permissionsDefinitionList.emptyNotFound.description',
                 )}
                 heading={t(
-                    'app.governance.permissionsDefinitionList.empty.heading',
+                    'app.governance.permissionsDefinitionList.emptyNotFound.heading',
                 )}
                 isStacked={false}
                 objectIllustration={{ object: 'NOT_FOUND' }}
+            />
+        );
+    }
+
+    if (!isRestricted) {
+        return (
+            <EmptyState
+                description={t(
+                    'app.governance.permissionsDefinitionList.emptyUnrestricted.description',
+                )}
+                heading={t(
+                    'app.governance.permissionsDefinitionList.emptyUnrestricted.heading',
+                )}
+                isStacked={false}
+                objectIllustration={{ object: 'USERS' }}
             />
         );
     }
