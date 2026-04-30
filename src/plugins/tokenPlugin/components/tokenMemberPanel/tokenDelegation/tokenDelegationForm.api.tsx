@@ -20,6 +20,10 @@ export interface ITokenDelegationFormProps {
      */
     tokenAddress: string;
     /**
+     * Symbol of the token used by the plugin.
+     */
+    tokenSymbol?: string;
+    /**
      * ID of the DAO.
      */
     daoId: string;
