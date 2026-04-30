@@ -1816,6 +1816,17 @@
           "title": "Not eligible to vote"
         }
       },
+      "permissionsDefinitionList": {
+        "or": "or",
+        "emptyUnrestricted": {
+          "heading": "Unrestricted",
+          "description": "Proposal creation unrestricted. Anyone can create a proposal."
+        },
+        "emptyNotFound": {
+          "heading": "Not found",
+          "description": "Proposal creation eligibility settings not found for this process."
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",

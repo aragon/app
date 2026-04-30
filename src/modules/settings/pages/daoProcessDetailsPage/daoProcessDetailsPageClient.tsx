@@ -129,8 +129,13 @@ export const DaoProcessDetailsPageClient: React.FC<
 
     // Use fallback on server and first client render to ensure hydration match.
     // After mount, use actual slot result if available.
-    const fallback = { hasPermission: true, isLoading: false, settings: [] };
-    const { isLoading, settings } = isMounted
+    const fallback = {
+        hasPermission: true,
+        isLoading: false,
+        settings: [],
+        isRestricted: true,
+    };
+    const { isLoading, settings, isRestricted } = isMounted
         ? (slotResult ?? fallback)
         : fallback;
 
@@ -171,9 +176,11 @@ export const DaoProcessDetailsPageClient: React.FC<
                             'app.settings.daoProcessDetailsPage.section.creationEligibility',
                         )}
                     >
-                        <Card className="px-6 py-3">
+                        <Card>
                             <PermissionsDefinitionList
+                                className="px-6 py-3"
                                 isLoading={isLoading}
+                                isRestricted={isRestricted}
                                 settings={settings}
                             />
                         </Card>
