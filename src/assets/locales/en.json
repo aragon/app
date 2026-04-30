@@ -2842,7 +2842,7 @@
         "tokenMemberPanel": {
           "titleNoTokenMetadata": "Token",
           "tabs": {
-            "delegate": "Delegate",
+            "delegate": "Delegation",
             "wrap": "Wrap",
             "lock": "Lock"
           }
