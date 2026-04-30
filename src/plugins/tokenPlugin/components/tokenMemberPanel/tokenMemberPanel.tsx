@@ -61,10 +61,18 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
     });
 
     const underlyingToken = tokenPluginUtils.getUnderlyingToken(token);
-
     const titleToken =
         !votingEscrow && underlying != null ? underlyingToken : token;
-    const cardTitle = `${titleToken.name} (${titleToken.symbol})`;
+    const titleTokenName = titleToken.name?.trim();
+    const titleTokenSymbol = titleToken.symbol?.trim();
+    const cardTitle =
+        visibleTabs.length === 1
+            ? t(
+                  `app.plugins.token.tokenMemberPanel.tabs.${visibleTabs[0].value}`,
+              )
+            : titleTokenName && titleTokenSymbol
+              ? `${titleTokenName} (${titleTokenSymbol})`
+              : t('app.plugins.token.tokenMemberPanel.titleNoTokenMetadata');
 
     if (!visibleTabs.length) {
         return null;
@@ -103,6 +111,7 @@ export const TokenMemberPanel: React.FC<ITokenMemberPanelProps> = (props) => {
                     <TokenDelegationForm
                         daoId={daoId}
                         tokenAddress={plugin.settings.token.address}
+                        tokenSymbol={plugin.settings.token.symbol}
                     />
                 </Tabs.Content>
             </Tabs.Root>

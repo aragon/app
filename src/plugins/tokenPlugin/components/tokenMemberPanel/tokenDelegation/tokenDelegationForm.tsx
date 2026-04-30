@@ -31,7 +31,13 @@ import {
 export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     props,
 ) => {
-    const { tokenAddress, daoId, mode = 'panel', onCancel } = props;
+    const {
+        tokenAddress,
+        tokenSymbol,
+        daoId,
+        mode = 'panel',
+        onCancel,
+    } = props;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
@@ -140,6 +146,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
     // disable submit button if delegate address has not been changed, but also, disable while isMemberLoading to prevent
     // multiple button state changes during page refresh
     const isSubmitDisabled = isCurrentDelegateLoading || isDelegateUnchanged;
+    const delegationTokenSymbol = tokenSymbol?.trim();
 
     const footerInfo = (
         <FooterInfo
@@ -229,7 +236,9 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                         onClick={isConnected ? undefined : () => walletGuard()}
                         type={isConnected ? 'submit' : undefined}
                     >
-                        {t('app.plugins.token.tokenDelegationForm.submit')}
+                        {t('app.plugins.token.tokenDelegationForm.submit', {
+                            tokenSymbol: delegationTokenSymbol ?? '',
+                        }).trim()}
                     </Button>
                     {footerInfo}
                 </div>
