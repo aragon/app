@@ -119,12 +119,15 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
     const displayTokenName = tokenName?.trim();
     const displayTokenSymbol = tokenSymbol?.trim();
-    const hasTokenMetadata = Boolean(displayTokenName && displayTokenSymbol);
-    const tokenDefinition = hasTokenMetadata
-        ? `${displayTokenName} ($${displayTokenSymbol})`
-        : addressUtils.truncateAddress(tokenAddress);
+    const tokenDescription =
+        displayTokenName && displayTokenSymbol
+            ? t('app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol', {
+                  tokenName: displayTokenName,
+                  tokenSymbol: displayTokenSymbol,
+              })
+            : undefined;
 
-    const existingTokenProps = {
+    const tokenProps = {
         link: {
             href: buildEntityUrl({
                 type: ChainEntityType.TOKEN,
@@ -132,15 +135,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             }),
         },
         copyValue: tokenAddress,
-        ...(hasTokenMetadata && {
-            description: t(
-                'app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol',
-                {
-                    tokenName: displayTokenName,
-                    tokenSymbol: displayTokenSymbol,
-                },
-            ),
-        }),
+        description: tokenDescription,
     };
 
     const contractInfo = useDaoPluginInfo({
@@ -166,9 +161,9 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 )}
             <DefinitionList.Item
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
-                {...(isExisting ? existingTokenProps : {})}
+                {...tokenProps}
             >
-                {tokenDefinition}
+                {addressUtils.truncateAddress(tokenAddress)}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
