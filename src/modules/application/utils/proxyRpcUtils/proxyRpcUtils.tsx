@@ -159,6 +159,13 @@ export class ProxyRpcUtils {
     };
 
     private chainIdToRpcEndpoint = (chainId: string): string | undefined => {
+        // Allow per-chain RPC override for local development (e.g. Anvil fork).
+        // Usage: NEXT_SECRET_RPC_OVERRIDE_1=http://localhost:8545
+        const override = process.env[`NEXT_SECRET_RPC_OVERRIDE_${chainId}`];
+        if (override) {
+            return override;
+        }
+
         const network = this.chainIdToNetwork(chainId);
 
         if (!network) {

@@ -44,6 +44,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         network = Network.ETHEREUM_MAINNET,
         transactionType,
         indexingFallbackUrl,
+        disableCancel,
     } = props;
 
     const {
@@ -321,6 +322,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
             </Dialog.Content>
             <TransactionDialogFooter
                 activeStep={activeStepInfo}
+                disableCancel={disableCancel}
                 indexingFallbackUrl={indexingFallbackUrl}
                 onCancelClick={onCancelClick}
                 onError={handleTransactionError(activeStepInfo?.id)}

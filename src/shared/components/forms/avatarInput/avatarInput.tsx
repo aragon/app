@@ -18,6 +18,7 @@ const defaultMaxDimension = 1024;
 export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
     const {
         name,
+        label,
         helpText,
         fieldPrefix,
         defaultValue,
@@ -30,11 +31,13 @@ export const AvatarInput: React.FC<IAvatarInputProps> = (props) => {
 
     const fieldName = fieldPrefix ? `${fieldPrefix}.${name}` : name;
 
+    const defaultLabel = t('app.shared.avatarInput.label');
+
     const { ...avatarField } = useFormField<
         AvatarInputBaseForm,
         typeof fieldName
     >(fieldName, {
-        label: t('app.shared.avatarInput.label'),
+        label: label ?? defaultLabel,
         rules: {
             validate: (value) =>
                 value?.error

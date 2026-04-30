@@ -6,6 +6,10 @@ export interface IAvatarInputProps {
      */
     name: string;
     /**
+     * Label for the input. Defaults to the shared avatar label translation.
+     */
+    label?: string;
+    /**
      * Help text to display below the input.
      */
     helpText?: string;

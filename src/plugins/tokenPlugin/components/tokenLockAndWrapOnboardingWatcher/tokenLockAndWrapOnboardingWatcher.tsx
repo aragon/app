@@ -20,12 +20,18 @@ export interface ITokenLockAndWrapOnboardingWatcherProps {
      * The DAO to watch for lock/wrap onboarding.
      */
     dao: IDao;
+    /**
+     * When true, suppress opening the onboarding dialog. The watcher still
+     * captures connection events; when `isPaused` flips false the dialog
+     * opens if all other conditions are met.
+     */
+    isPaused?: boolean;
 }
 
 export const TokenLockAndWrapOnboardingWatcher: React.FC<
     ITokenLockAndWrapOnboardingWatcherProps
 > = (props) => {
-    const { dao } = props;
+    const { dao, isPaused = false } = props;
 
     const daoPlugins =
         daoUtils.getDaoPlugins(dao, {
@@ -65,7 +71,12 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
     });
 
     useEffect(() => {
-        if (eligiblePlugin == null || !hasPendingConnection || !shouldTrigger) {
+        if (
+            eligiblePlugin == null ||
+            !hasPendingConnection ||
+            !shouldTrigger ||
+            isPaused
+        ) {
             return;
         }
 
@@ -92,7 +103,14 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
             };
             open(TokenPluginDialogId.WRAP_ONBOARDING_INTRO, { params });
         }
-    }, [hasPendingConnection, shouldTrigger, eligiblePlugin, dao.id, open]);
+    }, [
+        hasPendingConnection,
+        shouldTrigger,
+        isPaused,
+        eligiblePlugin,
+        dao.id,
+        open,
+    ]);
 
     return null;
 };

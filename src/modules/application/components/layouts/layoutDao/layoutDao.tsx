@@ -4,9 +4,6 @@ import {
     QueryClient,
 } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { LockToVoteLockOnboardingWatcher } from '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher';
-import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher';
-import { TokenLockAndWrapOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoOptions, type IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -15,6 +12,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { errorUtils } from '@/shared/utils/errorUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { BannerDao } from '../../bannerDao';
+import { DaoOnboardingWatchers } from '../../daoOnboardingWatchers';
 import { ErrorBoundary } from '../../errorBoundary';
 import { NavigationDao } from '../../navigations/navigationDao';
 
@@ -66,9 +64,7 @@ export const LayoutDao: React.FC<ILayoutDaoProps> = async (props) => {
         <HydrationBoundary state={dehydrate(queryClient)}>
             <NavigationDao dao={dao} />
             <BannerDao dao={dao} />
-            <TokenDelegationOnboardingWatcher dao={dao} />
-            <TokenLockAndWrapOnboardingWatcher dao={dao} />
-            <LockToVoteLockOnboardingWatcher dao={dao} />
+            <DaoOnboardingWatchers dao={dao} />
             <ErrorBoundary>{children}</ErrorBoundary>
         </HydrationBoundary>
     );
