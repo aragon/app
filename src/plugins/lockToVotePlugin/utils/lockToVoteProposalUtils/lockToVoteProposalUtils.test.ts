@@ -509,19 +509,18 @@ describe('lockToVoteProposalUtils', () => {
             ).toEqual(historicalTotalSupply);
         });
 
-        it('returns the total supply of the token when having no historical total supply', () => {
-            const historicalTotalSupply = undefined;
+        it('returns undefined when historical total supply is missing — fail noisily rather than fall back to the underlying token', () => {
             const totalSupply = '123456';
             const token = generateTokenPluginSettingsToken({ totalSupply });
             const proposal = generateLockToVoteProposal({
                 settings: generateLockToVotePluginSettings({
-                    historicalTotalSupply,
+                    historicalTotalSupply: undefined,
                     token,
                 }),
             });
             expect(
                 lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
-            ).toEqual(totalSupply);
+            ).toBeUndefined();
         });
     });
 });

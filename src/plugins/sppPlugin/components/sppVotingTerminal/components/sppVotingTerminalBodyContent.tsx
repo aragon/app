@@ -63,7 +63,9 @@ export const SppVotingTerminalBodyContent: React.FC<
     const isExternalBody = plugin.interfaceType == null;
     const isVeto = sppStageUtils.isVeto(stage);
 
-    const pluginSettings = isExternalBody ? {} : plugin.settings;
+    const pluginSettings = isExternalBody
+        ? {}
+        : (subProposal?.settings ?? plugin.settings);
     const settings = useSlotSingleFunction<
         IUseGovernanceSettingsParams,
         IDefinitionSetting[]

@@ -61,9 +61,7 @@ class TokenSettingsUtils {
             historicalTotalSupply,
         } = settings;
 
-        const { symbol: tokenSymbol, totalSupply, decimals } = token;
-
-        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
+        const { symbol: tokenSymbol, decimals } = token;
 
         const parsedSupportThreshold = this.ratioToPercentage(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(
@@ -82,7 +80,7 @@ class TokenSettingsUtils {
         );
 
         const minParticipationToken = Math.round(
-            (Number(processedTotalSupply) * parsedMinParticipation) / 100,
+            (Number(historicalTotalSupply) * parsedMinParticipation) / 100,
         );
         const parsedMinParticipationToken = formatUnits(
             bigIntUtils.safeParse(minParticipationToken),

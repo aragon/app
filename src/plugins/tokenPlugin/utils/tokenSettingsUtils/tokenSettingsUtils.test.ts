@@ -72,12 +72,10 @@ describe('tokenSettings utils', () => {
             );
         });
 
-        it('correctly formats and displays the minimum participation token value', () => {
+        it('correctly formats and displays the minimum participation token value from historicalTotalSupply', () => {
             const settings = generateTokenPluginSettings({
-                token: generateTokenPluginSettingsToken({
-                    totalSupply: '200000',
-                    decimals: 2,
-                }),
+                historicalTotalSupply: '200000',
+                token: generateTokenPluginSettingsToken({ decimals: 2 }),
                 minParticipation: 200_000,
             });
             const result = tokenSettingsUtils.parseSettings({
@@ -92,6 +90,27 @@ describe('tokenSettings utils', () => {
             );
             expect(minimumParticipationTerm.definition).toMatch(
                 /tokenGovernanceSettings.participation \(participation=20\.00%,tokenValue=400,tokenSymbol=ETH\)/,
+            );
+        });
+
+        it('renders tokenValue=0 (fail-noisy) when historicalTotalSupply is absent — does not fall back to the underlying token total supply', () => {
+            const settings = generateTokenPluginSettings({
+                historicalTotalSupply: undefined,
+                token: generateTokenPluginSettingsToken({
+                    totalSupply: '200000',
+                    decimals: 2,
+                }),
+                minParticipation: 200_000,
+            });
+            const result = tokenSettingsUtils.parseSettings({
+                settings,
+                t: mockTranslations.tMock,
+            });
+
+            const [, minimumParticipationTerm] = result;
+
+            expect(minimumParticipationTerm.definition).toMatch(
+                /tokenGovernanceSettings.participation \(participation=20\.00%,tokenValue=0,tokenSymbol=ETH\)/,
             );
         });
 

@@ -132,12 +132,10 @@ class LockToVoteProposalUtils {
         return parsedVotingPower;
     };
 
-    getProposalTokenTotalSupply = (proposal: ILockToVoteProposal) => {
-        const { historicalTotalSupply, token } = proposal.settings;
-        // Fallback to the token total-supply as some plugins (e.g. lock-to-vote) do not use snapshot votes.
-        const totalSupply = historicalTotalSupply ?? token.totalSupply;
-
-        return totalSupply;
+    getProposalTokenTotalSupply = (
+        proposal: ILockToVoteProposal,
+    ): string | undefined => {
+        return proposal.settings.historicalTotalSupply;
     };
 }
 

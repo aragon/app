@@ -696,4 +696,32 @@ describe('tokenProposal utils', () => {
             expect(yesVotingPower).toEqual('0');
         });
     });
+
+    describe('getProposalTokenTotalSupply', () => {
+        it('returns the historical total supply when set', () => {
+            const historicalTotalSupply = '1000000';
+            const proposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({
+                    historicalTotalSupply,
+                }),
+            });
+            expect(
+                tokenProposalUtils.getProposalTokenTotalSupply(proposal),
+            ).toEqual(historicalTotalSupply);
+        });
+
+        it('returns undefined when historical total supply is missing — fail noisily rather than fall back to the underlying token', () => {
+            const totalSupply = '123456';
+            const token = generateTokenPluginSettingsToken({ totalSupply });
+            const proposal = generateTokenProposal({
+                settings: generateTokenPluginSettings({
+                    historicalTotalSupply: undefined,
+                    token,
+                }),
+            });
+            expect(
+                tokenProposalUtils.getProposalTokenTotalSupply(proposal),
+            ).toBeUndefined();
+        });
+    });
 });
