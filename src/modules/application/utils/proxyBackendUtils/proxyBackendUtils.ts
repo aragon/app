@@ -55,6 +55,19 @@ export class ProxyBackendUtils {
         return url;
     };
 
+    // Headers that must not be forwarded to the upstream server as per RFC 7230.
+    private readonly hopByHopHeaders = [
+        'connection',
+        'keep-alive',
+        'proxy-authenticate',
+        'proxy-authorization',
+        'te',
+        'trailers',
+        'transfer-encoding',
+        'upgrade',
+        'host',
+    ];
+
     private buildRequestOptions = async (
         request: NextRequest,
     ): Promise<RequestInit> => {
@@ -63,6 +76,10 @@ export class ProxyBackendUtils {
             method.toUpperCase() === 'POST' ? await request.text() : undefined;
 
         const processedHeaders = new Headers(headers);
+
+        for (const header of this.hopByHopHeaders) {
+            processedHeaders.delete(header);
+        }
 
         if (process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY) {
             processedHeaders.set(
