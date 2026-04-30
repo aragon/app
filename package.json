@@ -50,7 +50,7 @@
     "framer-motion": "^12.38.0",
     "import-in-the-middle": "^3.0.1",
     "isomorphic-dompurify": "^2.36.0",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.0.2",
     "luxon": "^3.7.2",
     "next": "^16.2.1",
     "nextjs-toploader": "^3.9.17",
