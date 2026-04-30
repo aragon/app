@@ -6,7 +6,7 @@ import { useEnsName } from '@/modules/ens';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
-import type { IAragonProfileIntroDialogParams } from '../../dialogs/aragonProfileIntroDialog/aragonProfileIntroDialog';
+import type { IAragonProfileIntroDialogParams } from '../../dialogs/aragonProfileIntroDialog';
 
 export interface IAragonProfileOnboardingWatcherProps {
     /**
@@ -32,7 +32,11 @@ export const AragonProfileOnboardingWatcher: React.FC<
     const { onCheckPendingChange } = props;
 
     const { address } = useConnection();
-    const { data: ensName, isLoading: ensIsLoading } = useEnsName(address);
+    const {
+        data: ensName,
+        isLoading: ensIsLoading,
+        isError: ensIsError,
+    } = useEnsName(address);
     const { open } = useDialogContext();
 
     const [hasPendingConnection, setHasPendingConnection] = useState(false);
@@ -46,6 +50,14 @@ export const AragonProfileOnboardingWatcher: React.FC<
 
     useEffect(() => {
         if (!hasPendingConnection || address == null || ensIsLoading) {
+            return;
+        }
+
+        // Skip and retry on next connection if ENS lookup failed — avoid
+        // misclassifying existing-profile users as new and suppressing future onboarding.
+        if (ensIsError) {
+            setHasPendingConnection(false);
+            onCheckPendingChange(false);
             return;
         }
 
@@ -69,6 +81,7 @@ export const AragonProfileOnboardingWatcher: React.FC<
         ensName,
         open,
         onCheckPendingChange,
+        ensIsError,
     ]);
 
     return null;

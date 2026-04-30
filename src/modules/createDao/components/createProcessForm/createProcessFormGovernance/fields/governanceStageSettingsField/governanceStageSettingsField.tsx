@@ -7,8 +7,10 @@ import {
 import { Duration } from 'luxon';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
-import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
-import type { ISetupStageSettingsDialogParams } from '@/modules/createDao/dialogs/setupStageSettingsDialog/setupStageSettingsDialog';
+import type {
+    ISetupStageSettingsDialogParams,
+    ISetupStageSettingsForm,
+} from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
