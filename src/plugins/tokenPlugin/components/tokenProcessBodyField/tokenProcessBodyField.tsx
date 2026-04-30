@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    addressUtils,
     ChainEntityType,
     DefinitionList,
     formatterUtils,
@@ -116,6 +117,12 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const displayTokenName = tokenName?.trim();
+    const displayTokenSymbol = tokenSymbol?.trim();
+    const hasTokenMetadata = Boolean(displayTokenName && displayTokenSymbol);
+    const tokenDefinition = hasTokenMetadata
+        ? `${displayTokenName} ($${displayTokenSymbol})`
+        : addressUtils.truncateAddress(tokenAddress);
 
     const existingTokenProps = {
         link: {
@@ -125,13 +132,15 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             }),
         },
         copyValue: tokenAddress,
-        description: t(
-            'app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol',
-            {
-                tokenName,
-                tokenSymbol,
-            },
-        ),
+        ...(hasTokenMetadata && {
+            description: t(
+                'app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol',
+                {
+                    tokenName: displayTokenName,
+                    tokenSymbol: displayTokenSymbol,
+                },
+            ),
+        }),
     };
 
     const contractInfo = useDaoPluginInfo({
@@ -159,7 +168,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
                 {...(isExisting ? existingTokenProps : {})}
             >
-                {tokenName} (${tokenSymbol})
+                {tokenDefinition}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item
