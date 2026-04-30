@@ -18,6 +18,7 @@ import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
 /** Maximum character length allowed for a subdomain label. */
 const subdomainMaxLength = 50;
+const subdomainMinLength = 3;
 
 /**
  * Valid ENS label: lowercase alphanumeric and hyphens,
@@ -89,6 +90,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
         rules: {
             required: true,
             maxLength: subdomainMaxLength,
+            minLength: subdomainMinLength,
             pattern: {
                 value: ensLabelPattern,
                 message: t(
@@ -102,7 +104,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     });
 
     const isValidForCheck =
-        subdomainDebounced.length > 0 &&
+        subdomainDebounced.length >= subdomainMinLength &&
         ensLabelPattern.test(subdomainDebounced) &&
         fieldAlert == null;
 

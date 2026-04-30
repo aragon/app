@@ -223,7 +223,10 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const primaryLabel = isDirty
         ? t('app.application.aragonProfileDialog.actions.updateProfile')
-        : t('app.application.aragonProfileDialog.actions.viewProfile');
+        : t(
+              // just confirm profile if outside the DAO context
+              `app.application.aragonProfileDialog.actions.${addressOrEns ? 'viewProfile' : 'confirmProfile'}`,
+          );
 
     return (
         <FormProvider {...formMethods}>
