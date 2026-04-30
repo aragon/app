@@ -62,10 +62,14 @@ export class ProxyBackendUtils {
         'proxy-authenticate',
         'proxy-authorization',
         'te',
+        'trailer',
         'trailers',
         'transfer-encoding',
         'upgrade',
         'host',
+        // Body is re-read as text so Node recomputes length; strip the
+        // original to prevent a stale value confusing undici.
+        'content-length',
     ];
 
     private buildRequestOptions = async (

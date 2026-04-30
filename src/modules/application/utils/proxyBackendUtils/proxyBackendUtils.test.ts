@@ -63,6 +63,25 @@ describe('proxyBackend utils', () => {
             expect(result.status).toEqual(204);
         });
 
+        it('does not forward hop-by-hop headers to upstream fetch', async () => {
+            const inboundHeaders = new Headers({
+                'transfer-encoding': 'chunked',
+                'keep-alive': 'timeout=5',
+                connection: 'keep-alive',
+                'content-type': 'text/plain',
+            });
+
+            await proxyBackendUtils.request(
+                generateNextRequest({ headers: inboundHeaders }),
+            );
+
+            const request = fetchSpy.mock.calls[0][1] as NextRequest;
+            expect(request.headers.get('transfer-encoding')).toBeNull();
+            expect(request.headers.get('keep-alive')).toBeNull();
+            expect(request.headers.get('connection')).toBeNull();
+            expect(request.headers.get('content-type')).toBe('text/plain');
+        });
+
         it('appends the authorization header when set', async () => {
             const apiKey = 'test-api-key-123';
             process.env.NEXT_SECRET_ARAGON_BACKEND_API_KEY = apiKey;
