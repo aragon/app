@@ -2802,7 +2802,7 @@
               "self": "Yourself"
             }
           },
-          "submit": "Delegate voting power",
+          "submit": "Delegate {{tokenSymbol}}",
           "submitDialog": "Delegate now",
           "cancel": "Cancel"
         },
@@ -2840,8 +2840,9 @@
           }
         },
         "tokenMemberPanel": {
+          "titleNoTokenMetadata": "Token",
           "tabs": {
-            "delegate": "Delegate",
+            "delegate": "Delegation",
             "wrap": "Wrap",
             "lock": "Lock"
           }
