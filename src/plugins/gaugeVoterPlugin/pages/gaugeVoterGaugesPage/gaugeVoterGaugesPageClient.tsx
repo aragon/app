@@ -1,11 +1,10 @@
 'use client';
 
-import { Link, Tabs } from '@aragon/gov-ui-kit';
+import { Link } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type { Address } from 'viem';
 import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
-import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -14,13 +13,11 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGauge, IGetGaugeListParams } from '../../api/gaugeVoterService';
 import { useEpochMetrics, useGaugeList } from '../../api/gaugeVoterService';
 import { GaugeVoterGaugeList } from '../../components/gaugeVoterGaugeList';
-import { GaugeVoterLockForm } from '../../components/gaugeVoterLockForm';
 import { GaugeVoterVotingStats } from '../../components/gaugeVoterVotingStats';
 import { GaugeVoterVotingTerminal } from '../../components/gaugeVoterVotingTerminal';
 import { GaugeVoterPluginPages } from '../../constants/gaugeVoterPlugin';
@@ -40,13 +37,6 @@ export interface IGaugeVoterGaugesPageClientProps {
      */
     initialParams: IGetGaugeListParams;
 }
-
-enum GaugeVoterLocksPanelTab {
-    DELEGATE = 'delegate',
-    LOCK = 'lock',
-}
-
-export const gaugeVoterLocksPanelFilterParam = 'locksPanel';
 
 export const GaugeVoterGaugesPageClient: React.FC<
     IGaugeVoterGaugesPageClientProps
@@ -233,21 +223,6 @@ export const GaugeVoterGaugesPageClient: React.FC<
                       (1000 * 60 * 60 * 24),
               );
 
-    const visibleLocksPanelTabs = [
-        { value: GaugeVoterLocksPanelTab.LOCK },
-        { value: GaugeVoterLocksPanelTab.DELEGATE },
-    ];
-
-    const [selectedLocksPanelTab, setSelectedLocksPanelTab] = useFilterUrlParam(
-        {
-            name: gaugeVoterLocksPanelFilterParam,
-            fallbackValue: GaugeVoterLocksPanelTab.LOCK,
-            validValues: visibleLocksPanelTabs.map((tab) => tab.value),
-        },
-    );
-
-    const cardTitle = token ? `${token.name} (${token.symbol})` : '';
-
     const { data: daoOverrides } = useDaoOverrides();
     const daoOverride = daoOverrides?.[dao.id];
     const isGaugesPageHidden = daoOverride?.navLinksToHide?.includes(
@@ -326,36 +301,6 @@ export const GaugeVoterGaugesPageClient: React.FC<
                             {name}
                         </Link>
                     ))}
-                </Page.AsideCard>
-                <Page.AsideCard title={cardTitle}>
-                    <Tabs.Root
-                        onValueChange={setSelectedLocksPanelTab}
-                        value={selectedLocksPanelTab}
-                    >
-                        <Tabs.List className="pb-4">
-                            {visibleLocksPanelTabs.map(({ value }) => (
-                                <Tabs.Trigger
-                                    key={value}
-                                    label={t(
-                                        `app.plugins.gaugeVoter.gaugeVoterGaugesPage.asideLocks.tabs.${value}`,
-                                    )}
-                                    value={value}
-                                />
-                            ))}
-                        </Tabs.List>
-                        <Tabs.Content value={GaugeVoterLocksPanelTab.LOCK}>
-                            <GaugeVoterLockForm
-                                daoId={dao.id}
-                                plugin={plugin.meta}
-                            />
-                        </Tabs.Content>
-                        <Tabs.Content value={GaugeVoterLocksPanelTab.DELEGATE}>
-                            <TokenDelegationForm
-                                daoId={dao.id}
-                                tokenAddress={token.address}
-                            />
-                        </Tabs.Content>
-                    </Tabs.Root>
                 </Page.AsideCard>
             </Page.Aside>
         </Page.Content>

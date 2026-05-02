@@ -2114,12 +2114,6 @@
           "asideStats": {
             "title": "Epoch {{epochId}}"
           },
-          "asideLocks": {
-            "tabs": {
-              "delegate": "Delegate",
-              "lock": "Lock"
-            }
-          },
           "main": {
             "title": "Gauges",
             "voteOnSelected": "Vote on {{count}} selected gauge",
