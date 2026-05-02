@@ -25,6 +25,7 @@ export const useGaugeVoterUserData = (
         pluginAddress,
         network,
         gaugeAddresses,
+        ivotesAdapterAddress,
         enabled = true,
         backendVotingPower,
         backendUsedVotingPower,
@@ -39,15 +40,6 @@ export const useGaugeVoterUserData = (
     const hasBackendVotingPower = backendVotingPower != null;
     const hasBackendUsedVotingPower = backendUsedVotingPower != null;
 
-    // Read ivotesAdapter address from the gauge voter contract (only if backend data not available)
-    const { data: ivotesAdapterAddress } = useReadContract({
-        abi: gaugeVoterAbi,
-        functionName: 'ivotesAdapter',
-        address: pluginAddress,
-        chainId,
-        query: { enabled: isEnabled && !hasBackendVotingPower },
-    });
-
     // Read user's total voting power from the ivotesAdapter (only if backend data not available)
     const {
         data: rpcTotalVotingPowerData,
@@ -60,8 +52,7 @@ export const useGaugeVoterUserData = (
         args: [userAddress as Hex],
         chainId,
         query: {
-            enabled:
-                isEnabled && !!ivotesAdapterAddress && !hasBackendVotingPower,
+            enabled: isEnabled && !hasBackendVotingPower,
         },
     });
 
