@@ -171,20 +171,22 @@ export const DaoProcessDetailsPageClient: React.FC<
                             )}
                         </FormProvider>
                     </Page.MainSection>
-                    <Page.MainSection
-                        title={t(
-                            'app.settings.daoProcessDetailsPage.section.creationEligibility',
-                        )}
-                    >
-                        <Card>
-                            <PermissionsDefinitionList
-                                className="px-6 py-3"
-                                isLoading={isLoading}
-                                isRestricted={isRestricted}
-                                settings={settings}
-                            />
-                        </Card>
-                    </Page.MainSection>
+                    {settings != null && settings.length > 0 && (
+                        <Page.MainSection
+                            title={t(
+                                'app.settings.daoProcessDetailsPage.section.creationEligibility',
+                            )}
+                        >
+                            <Card>
+                                <PermissionsDefinitionList
+                                    className="px-6 py-3"
+                                    isLoading={isLoading}
+                                    isRestricted={isRestricted}
+                                    settings={settings}
+                                />
+                            </Card>
+                        </Page.MainSection>
+                    )}
                     <Page.MainSection
                         title={t(
                             'app.settings.daoProcessDetailsPage.section.actions',

@@ -39,18 +39,7 @@ export const PermissionsDefinitionList: React.FC<
 
     if (!hasSettings) {
         // A special case when Safes are used (we still miss settings for Safe bodies).
-        return (
-            <EmptyState
-                description={t(
-                    'app.governance.permissionsDefinitionList.emptyNotFound.description',
-                )}
-                heading={t(
-                    'app.governance.permissionsDefinitionList.emptyNotFound.heading',
-                )}
-                isStacked={false}
-                objectIllustration={{ object: 'NOT_FOUND' }}
-            />
-        );
+        return null;
     }
 
     if (!isRestricted) {
