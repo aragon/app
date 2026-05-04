@@ -26,6 +26,16 @@ export const TokenMemberListDelegationCardEmptyState: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
+    const heading =
+        token.name && token.symbol
+            ? t(
+                  'app.plugins.token.tokenMemberList.delegationOnboardingCard.heading',
+                  { symbol: token.symbol },
+              )
+            : t(
+                  'app.plugins.token.tokenMemberList.delegationOnboardingCard.headingNoTokenMetadata',
+              );
+
     const handleSetUpDelegation = () => {
         const params: ITokenDelegationOnboardingDialogParams = {
             tokenAddress: token.address,
@@ -40,10 +50,7 @@ export const TokenMemberListDelegationCardEmptyState: React.FC<
             description={t(
                 'app.plugins.token.tokenMemberList.delegationOnboardingCard.description',
             )}
-            heading={t(
-                'app.plugins.token.tokenMemberList.delegationOnboardingCard.heading',
-                { symbol: token.symbol },
-            )}
+            heading={heading}
             humanIllustration={{
                 body: 'ELEVATING',
                 hairs: 'SHORT',

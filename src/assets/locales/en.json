@@ -2835,6 +2835,7 @@
           },
           "delegationOnboardingCard": {
             "heading": "Your {{symbol}} is undelegated",
+            "headingNoTokenMetadata": "Your tokens are undelegated",
             "description": "Delegate your voting power to yourself or to someone else.",
             "action": "Set up your delegation"
           }
