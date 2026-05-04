@@ -42,21 +42,20 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
 
     const renderSelectedPlugin = (
         plugin: IFilterComponentPlugin<IDaoPlugin>,
-    ) => {
-        const tokenAddress = (plugin.meta.settings as ITokenPluginSettings)
-            ?.token?.address;
-
-        return (
-            <div className="flex flex-col gap-4">
-                <DelegationStatsCard
-                    daoId={daoId}
-                    memberAddress={member.address}
-                    plugin={plugin.meta}
-                />
-                <DelegationStatementCard tokenAddress={tokenAddress} />
-            </div>
-        );
-    };
+    ) => (
+        <div className="flex flex-col gap-4">
+            <DelegationStatsCard
+                daoId={daoId}
+                memberAddress={member.address}
+                plugin={plugin.meta}
+            />
+            <DelegationStatementCard
+                daoId={daoId}
+                memberAddress={member.address}
+                plugin={plugin.meta}
+            />
+        </div>
+    );
 
     return bodiesWithDelegation == null ||
         bodiesWithDelegation.length === 0 ? null : (
