@@ -9,7 +9,7 @@ const MOCK_STATEMENT: IDelegateStatement = {
     type: 'statement',
     format: 'markdown',
     content:
-        'My goal is to be an active, transparent delegate — not a passive one. I will vote on every proposal, publish my reasoning publicly, and prioritize long-term protocol health over short-term incentives. Tokenholders who delegate to me can expect consistent participation and clear communication.',
+        'My goal is to be an active, transparent delegate — not a passive one. I will vote on every proposal, publish my reasoning publicly, and prioritize long-term protocol health over short-term incentives. Tokenholders who delegate to me can expect consistent participation and clear communication.\n\nI care about cross-chain liquidity, governance UX, and treasury discipline. I have spent five years contributing to DeFi protocols, leading audits on two L2 rollups, and maintaining open-source tooling for delegate discovery. Outside of voting I run a public office-hours channel where I walk through every upcoming proposal in plain language and take questions from the community before each vote opens.',
 };
 
 /**
