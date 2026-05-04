@@ -16,9 +16,11 @@ export interface IUseDelegateStatementCidParams {
     ensName: string | null | undefined;
     /**
      * Network the tokens are deployed on; selects the ENS-key shortname.
-     * All tokens passed in a single call must share the same network.
+     * All tokens passed in a single call must share the same network. Pass
+     * `undefined` while the DAO is loading — the hook stays disabled rather
+     * than guessing a default.
      */
-    network: Network;
+    network: Network | undefined;
     /**
      * Token contract addresses with delegation enabled on this profile's DAO.
      * Order is preserved in the returned record.
@@ -52,7 +54,10 @@ export const useDelegateStatementCid = (
 ) => {
     const { ensName, network, tokenAddresses } = params;
     const isValid =
-        ensName != null && ensName.length > 0 && tokenAddresses.length > 0;
+        ensName != null &&
+        ensName.length > 0 &&
+        network != null &&
+        tokenAddresses.length > 0;
 
     const result = useQuery<TDelegateStatementCidMap>({
         queryKey: [
@@ -62,7 +67,7 @@ export const useDelegateStatementCid = (
             ...tokenAddresses.map((address) => address.toLowerCase()),
         ],
         queryFn: async () => {
-            if (!isValid) {
+            if (!isValid || network == null) {
                 return {};
             }
 

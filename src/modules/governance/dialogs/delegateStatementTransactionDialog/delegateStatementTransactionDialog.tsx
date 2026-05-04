@@ -18,9 +18,12 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { IDelegateStatement } from '../../components/delegationStatementCard/delegateStatement.api';
 import type { IDelegateStatementTransactionDialogParams } from './delegateStatementTransactionDialog.api';
 import { delegateStatementTransactionDialogUtils } from './delegateStatementTransactionDialogUtils';
+
+const TELEMETRY_MODULE = 'delegateStatementTransactionDialog';
 
 export enum DelegateStatementTransactionStep {
     PIN_STATEMENT = 'PIN_STATEMENT',
@@ -55,7 +58,13 @@ export const DelegateStatementTransactionDialog: React.FC<
         data: pinJsonData,
         status: pinStatus,
         mutate: pinJson,
-    } = usePinJson({ onSuccess: stepper.nextStep });
+    } = usePinJson({
+        onSuccess: stepper.nextStep,
+        onError: (error) =>
+            monitoringUtils.logError(error, {
+                context: { module: TELEMETRY_MODULE, stage: 'pinStatement' },
+            }),
+    });
 
     const handlePinJson = useCallback(
         (params: ITransactionDialogActionParams) => {
@@ -77,10 +86,18 @@ export const DelegateStatementTransactionDialog: React.FC<
         );
         const { IpfsHash: cid } = pinJsonData;
 
-        const resolverAddress = await getEnsResolver(wagmiConfig, {
-            name: ensName,
-            chainId: mainnet.id,
-        });
+        let resolverAddress;
+        try {
+            resolverAddress = await getEnsResolver(wagmiConfig, {
+                name: ensName,
+                chainId: mainnet.id,
+            });
+        } catch (error) {
+            monitoringUtils.logError(error, {
+                context: { module: TELEMETRY_MODULE, stage: 'resolveEns' },
+            });
+            throw error;
+        }
 
         return delegateStatementTransactionDialogUtils.buildTransaction({
             resolverAddress,

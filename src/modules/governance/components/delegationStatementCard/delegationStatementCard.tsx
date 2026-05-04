@@ -4,7 +4,7 @@ import { addressUtils, Button, Card, CardEmptyState } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
 import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
-import { type IDaoPlugin, Network, useDao } from '@/shared/api/daoService';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useIpfsJson } from '@/shared/api/ipfsService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
@@ -15,9 +15,6 @@ import {
     type IDelegateStatement,
     isDelegateStatement,
 } from './delegateStatement.api';
-
-// Reference: ENS resolves on Ethereum mainnet; fall back to it while the DAO loads.
-const FALLBACK_NETWORK = Network.ETHEREUM_MAINNET;
 
 export interface IDelegationStatementCardProps {
     /**
@@ -50,7 +47,7 @@ export const DelegationStatementCard: React.FC<
 
     const { data: cidMap } = useDelegateStatementCid({
         ensName,
-        network: dao?.network ?? FALLBACK_NETWORK,
+        network: dao?.network,
         tokenAddresses: [tokenAddress],
     });
 
@@ -61,7 +58,7 @@ export const DelegationStatementCard: React.FC<
         validate: isDelegateStatement,
     });
 
-    if (ensName == null) {
+    if (ensName == null || dao == null) {
         return null;
     }
 
@@ -76,7 +73,7 @@ export const DelegationStatementCard: React.FC<
             memberAddress,
             daoId,
             ensName,
-            network: dao?.network ?? FALLBACK_NETWORK,
+            network: dao.network,
             existingCid: cid,
         };
         open(GovernanceDialogId.DELEGATE_STATEMENT_FORM, { params });
@@ -84,11 +81,15 @@ export const DelegationStatementCard: React.FC<
 
     if (statement != null) {
         return (
-            <Card className="flex flex-col gap-4 p-4 md:p-6">
+            <Card className="flex flex-col gap-2 p-4 md:gap-3 md:p-6">
+                <h3 className="font-normal text-lg text-neutral-800 leading-tight md:text-xl">
+                    {t('app.governance.delegationStatementCard.heading')}
+                </h3>
                 <SafeDocumentParser document={statement.content} />
                 {isOwner && (
-                    <div>
+                    <div className="pt-3 md:pt-6">
                         <Button
+                            className="w-full md:w-auto"
                             onClick={handleEditClick}
                             size="md"
                             variant="secondary"

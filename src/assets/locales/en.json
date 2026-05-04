@@ -1768,7 +1768,8 @@
         "disclaimer": "Delegation is per voting body. Delegating here only applies to this voting body — manage each voting body separately."
       },
       "delegationStatementCard": {
-        "editAction": "Edit delegate statement",
+        "editAction": "Edit your delegate details",
+        "heading": "Statement",
         "emptyState": {
           "action": "Set up delegate profile",
           "description": "Publish a delegate statement so token holders can understand your purpose and decide whether to delegate to you.",

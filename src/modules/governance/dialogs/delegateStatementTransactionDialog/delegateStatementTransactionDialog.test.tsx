@@ -11,6 +11,7 @@ import {
     generateReactQueryMutationResultSuccess,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { DelegateStatementTransactionDialog } from './delegateStatementTransactionDialog';
 import type { IDelegateStatementTransactionDialogParams } from './delegateStatementTransactionDialog.api';
 
@@ -47,9 +48,11 @@ const buildParams = (
 
 describe('<DelegateStatementTransactionDialog />', () => {
     const usePinJsonSpy = jest.spyOn(ipfsServiceMutations, 'usePinJson');
+    const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 
     afterEach(() => {
         usePinJsonSpy.mockReset();
+        logErrorSpy.mockReset();
         (TransactionDialog as unknown as jest.Mock).mockClear();
     });
 
@@ -117,6 +120,67 @@ describe('<DelegateStatementTransactionDialog />', () => {
         expect(typeof tx.data).toBe('string');
         expect(tx.data.startsWith('0x')).toBe(true);
         expect(tx.value).toBe(BigInt(0));
+    });
+
+    it('routes Pinata pin failures through monitoringUtils with stage="pinStatement"', () => {
+        usePinJsonSpy.mockImplementation(((options?: {
+            onError?: (e: Error) => void;
+        }) => {
+            options?.onError?.(new Error('Pinata 502'));
+            return generateReactQueryMutationResultIdle();
+        }) as never);
+
+        render(
+            <ReactQueryWrapper>
+                <DelegateStatementTransactionDialog
+                    location={{ id: 'tx', params: buildParams() }}
+                />
+            </ReactQueryWrapper>,
+        );
+
+        expect(logErrorSpy).toHaveBeenCalledWith(
+            expect.any(Error),
+            expect.objectContaining({
+                context: expect.objectContaining({
+                    module: 'delegateStatementTransactionDialog',
+                    stage: 'pinStatement',
+                }),
+            }),
+        );
+    });
+
+    it('routes ENS resolver lookup failures through monitoringUtils with stage="resolveEns"', async () => {
+        usePinJsonSpy.mockReturnValue(
+            generateReactQueryMutationResultSuccess({
+                data: { IpfsHash: 'bafyTest' },
+            }) as never,
+        );
+        const { getEnsResolver } = await import('wagmi/actions');
+        (getEnsResolver as jest.Mock).mockRejectedValue(
+            new Error('resolver lookup failed'),
+        );
+
+        render(
+            <ReactQueryWrapper>
+                <DelegateStatementTransactionDialog
+                    location={{ id: 'tx', params: buildParams() }}
+                />
+            </ReactQueryWrapper>,
+        );
+
+        const props = lastDialogProps();
+        await expect(props.prepareTransaction()).rejects.toThrow(
+            /resolver lookup failed/,
+        );
+        expect(logErrorSpy).toHaveBeenCalledWith(
+            expect.any(Error),
+            expect.objectContaining({
+                context: expect.objectContaining({
+                    module: 'delegateStatementTransactionDialog',
+                    stage: 'resolveEns',
+                }),
+            }),
+        );
     });
 
     it('targets Ethereum mainnet for the on-chain transaction regardless of token network', () => {
