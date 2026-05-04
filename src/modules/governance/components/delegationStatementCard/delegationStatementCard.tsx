@@ -1,6 +1,12 @@
 'use client';
 
-import { addressUtils, Button, Card, CardEmptyState } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    Button,
+    Card,
+    CardEmptyState,
+    Collapsible,
+} from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
 import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
@@ -85,10 +91,19 @@ export const DelegationStatementCard: React.FC<
                 <h3 className="font-normal text-lg text-neutral-800 leading-tight md:text-xl">
                     {t('app.governance.delegationStatementCard.heading')}
                 </h3>
-                <SafeDocumentParser
-                    document={statement.content}
-                    immediatelyRender={false}
-                />
+                <Collapsible
+                    buttonLabelClosed={t(
+                        'app.governance.delegationStatementCard.readMore',
+                    )}
+                    buttonLabelOpened={t(
+                        'app.governance.delegationStatementCard.readLess',
+                    )}
+                >
+                    <SafeDocumentParser
+                        document={statement.content}
+                        immediatelyRender={false}
+                    />
+                </Collapsible>
                 {isOwner && (
                     <div className="pt-3 md:pt-6">
                         <Button

@@ -1770,6 +1770,8 @@
       "delegationStatementCard": {
         "editAction": "Edit your delegate details",
         "heading": "Statement",
+        "readMore": "Read more",
+        "readLess": "Read less",
         "emptyState": {
           "action": "Set up delegate profile",
           "description": "Publish a delegate statement so token holders can understand your purpose and decide whether to delegate to you.",
