@@ -19,6 +19,7 @@ import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
+import { injectDelegateStatementMock } from '@/shared/constants/mocks/delegateStatementMock';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
 import { wagmiConfig } from '../../constants/wagmi';
@@ -68,6 +69,9 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
         featureFlagsSnapshot?.find((f) => f.key === 'useMocks')?.enabled ??
         false;
     fetchInterceptorUtils.intercept(useMocks);
+    if (useMocks) {
+        injectDelegateStatementMock(queryClient);
+    }
     initActionViewRegistry();
 
     return (
