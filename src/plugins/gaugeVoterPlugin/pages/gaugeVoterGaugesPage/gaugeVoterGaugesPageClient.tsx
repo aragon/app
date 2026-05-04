@@ -70,9 +70,9 @@ export const GaugeVoterGaugesPageClient: React.FC<
     }) as IFilterComponentPlugin<IGaugeVoterPlugin>[];
     const plugin = plugins[0];
 
-    // There are cases, e.g. Citrea, where a 3rd party locker contract is used. In this case `ivotesadapter` is a zero address, and there are no votingEscrow addresses in the plugin.
-    // In that case, `plugin.settings.token.address` is the address of the 3rd party IVotes adapter, and `plugin.settings.token.underlaying` is the address of the underlying token that is locked (into locker contract).
-    const isUsing3rdPartyLocker = plugin.meta.votingEscrow == null;
+    // There are cases, e.g. Citrea, where a 3rd party escrow contract is used. In this case `ivotesadapter` is a zero address, and there are no votingEscrow addresses in the plugin.
+    // In that case, `plugin.settings.token.address` is the address of the 3rd party IVotes adapter, and `plugin.settings.token.underlaying` is the address of the underlying token that is locked (into escrow contract).
+    const isUsing3rdPartyEscrow = plugin.meta.votingEscrow == null;
 
     // Fetch epoch metrics from backend (includes user voting power if connected)
     const epochMetricsParams = {
@@ -238,7 +238,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
                       (1000 * 60 * 60 * 24),
               );
 
-    const visibleLocksPanelTabs = isUsing3rdPartyLocker
+    const visibleLocksPanelTabs = isUsing3rdPartyEscrow
         ? [{ value: GaugeVoterLocksPanelTab.DELEGATE }]
         : [
               { value: GaugeVoterLocksPanelTab.LOCK },
