@@ -6,7 +6,7 @@ import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnecte
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationOnboardingDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationOnboardingFormDialog/tokenDelegationOnboardingFormDialog.api';
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
-import { Network, useDao } from '@/shared/api/daoService';
+import { type Network, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
@@ -48,7 +48,7 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
     const { data: currentDelegate } = useTokenCurrentDelegate({
         userAddress: address ?? undefined,
         tokenAddress,
-        network: dao?.network ?? Network.ETHEREUM_MAINNET,
+        network: dao?.network as Network,
         enabled: dao != null && address != null,
     });
 
