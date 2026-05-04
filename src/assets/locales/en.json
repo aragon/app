@@ -1788,6 +1788,18 @@
           "action": "Switch to Ethereum mainnet"
         }
       },
+      "delegateStatementTransactionDialog": {
+        "title": "Publish delegate statement",
+        "description": "Pin your statement to IPFS, then anchor the CID to your ENS record so token holders can find it.",
+        "submit": "Publish",
+        "successLinkLabel": "View profile",
+        "step": {
+          "PIN_STATEMENT": {
+            "label": "Pin statement to IPFS",
+            "errorLabel": "Pinning failed"
+          }
+        }
+      },
       "memberDelegateButton": {
         "delegate": "Delegate {{token}}",
         "manageDelegation": "Manage delegation"

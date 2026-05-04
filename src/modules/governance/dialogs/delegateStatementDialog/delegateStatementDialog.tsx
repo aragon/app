@@ -24,6 +24,7 @@ import {
     isDelegateStatement,
 } from '../../components/delegationStatementCard/delegateStatement.api';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
+import type { IDelegateStatementTransactionDialogParams } from '../delegateStatementTransactionDialog';
 import type { IDelegateStatementDialogParams } from './delegateStatementDialog.api';
 
 interface IDelegateStatementFormData {
@@ -43,9 +44,9 @@ export const DelegateStatementDialog: React.FC<
         'DelegateStatementDialog: required parameters must be set.',
     );
 
-    const { existingCid } = location.params;
+    const { existingCid, ensName, network, tokenAddress } = location.params;
 
-    const { close } = useDialogContext();
+    const { close, open } = useDialogContext();
     const { t } = useTranslations();
     const { chainId } = useConnection();
     const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
@@ -97,9 +98,17 @@ export const DelegateStatementDialog: React.FC<
         switchChain({ chainId: mainnet.id });
     };
 
-    const handleFormSubmit = () => {
-        // TODO: pin to IPFS via usePinJson, then setText(node, key, ipfs://<cid>)
-        // on the ENS public resolver. Implementation lives in the next phase.
+    const handleFormSubmit = (data: IDelegateStatementFormData) => {
+        const txParams: IDelegateStatementTransactionDialogParams = {
+            ensName,
+            network,
+            tokenAddress,
+            content: data.content,
+        };
+        close(GovernanceDialogId.DELEGATE_STATEMENT_FORM);
+        open(GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION, {
+            params: txParams,
+        });
     };
 
     return (

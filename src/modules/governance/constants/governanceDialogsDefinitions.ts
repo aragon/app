@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { DelegateStatementDialog } from '../dialogs/delegateStatementDialog';
+import { DelegateStatementTransactionDialog } from '../dialogs/delegateStatementTransactionDialog';
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
@@ -42,5 +43,8 @@ export const governanceDialogsDefinitions: Record<
     [GovernanceDialogId.DELEGATE_STATEMENT_FORM]: {
         Component: DelegateStatementDialog,
         size: 'lg',
+    },
+    [GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION]: {
+        Component: DelegateStatementTransactionDialog,
     },
 };

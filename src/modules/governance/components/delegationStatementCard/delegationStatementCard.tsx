@@ -75,6 +75,8 @@ export const DelegationStatementCard: React.FC<
             tokenAddress,
             memberAddress,
             daoId,
+            ensName,
+            network: dao?.network ?? FALLBACK_NETWORK,
             existingCid: cid,
         };
         open(GovernanceDialogId.DELEGATE_STATEMENT_FORM, { params });

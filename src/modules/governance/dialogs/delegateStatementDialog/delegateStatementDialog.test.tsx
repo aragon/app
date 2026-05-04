@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { mainnet, polygon } from 'viem/chains';
 import * as wagmi from 'wagmi';
+import { Network } from '@/shared/api/daoService';
 import * as ipfsService from '@/shared/api/ipfsService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
@@ -74,6 +75,8 @@ const buildParams = (
     tokenAddress: TOKEN_ADDRESS,
     memberAddress: MEMBER_ADDRESS,
     daoId: DAO_ID,
+    ensName: 'whomst.eth',
+    network: Network.ETHEREUM_MAINNET,
     existingCid: null,
     ...overrides,
 });
