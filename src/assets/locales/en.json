@@ -2115,6 +2115,7 @@
             "title": "Epoch {{epochId}}"
           },
           "asideLocks": {
+            "titleNoTokenMetadata": "Token",
             "tabs": {
               "delegate": "Delegate",
               "lock": "Lock"

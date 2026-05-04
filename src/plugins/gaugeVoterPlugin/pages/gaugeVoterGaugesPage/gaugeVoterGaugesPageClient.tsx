@@ -103,6 +103,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
         : true; // Fallback to true if no epoch metrics
 
     const { token } = plugin.meta.settings;
+    const tokenName = token.name;
     const tokenSymbol = token.symbol;
     const tokenDecimals = token.decimals ?? 18;
 
@@ -253,7 +254,16 @@ export const GaugeVoterGaugesPageClient: React.FC<
         },
     );
 
-    const cardTitle = token ? `${token.name} (${token.symbol})` : '';
+    const cardTitle =
+        visibleLocksPanelTabs.length === 1
+            ? t(
+                  `app.plugins.gaugeVoter.gaugeVoterGaugesPage.asideLocks.tabs.${visibleLocksPanelTabs[0].value}`,
+              )
+            : tokenName && tokenSymbol
+              ? `${tokenName} (${tokenSymbol})`
+              : t(
+                    'app.plugins.gaugeVoter.gaugeVoterGaugesPage.asideLocks.titleNoTokenMetadata',
+                );
 
     const { data: daoOverrides } = useDaoOverrides();
     const daoOverride = daoOverrides?.[dao.id];
