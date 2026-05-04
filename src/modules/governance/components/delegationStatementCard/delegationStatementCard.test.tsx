@@ -6,9 +6,11 @@ import { generateToken } from '@/modules/finance/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import * as ipfsService from '@/shared/api/ipfsService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
     generateDaoPlugin,
+    generateDialogContext,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import {
@@ -48,6 +50,7 @@ describe('<DelegationStatementCard />', () => {
         'useDelegateStatementCid',
     );
     const useIpfsJsonSpy = jest.spyOn(ipfsService, 'useIpfsJson');
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     const setHooks = (overrides?: {
         ensName?: string | null;
@@ -73,6 +76,7 @@ describe('<DelegationStatementCard />', () => {
             successWith({ [TOKEN_ADDRESS.toLowerCase()]: cid }),
         );
         useIpfsJsonSpy.mockReturnValue(successWith(statement));
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
     };
 
     afterEach(() => {
@@ -81,6 +85,7 @@ describe('<DelegationStatementCard />', () => {
         useEnsNameSpy.mockReset();
         useDelegateStatementCidSpy.mockReset();
         useIpfsJsonSpy.mockReset();
+        useDialogContextSpy.mockReset();
     });
 
     const createTestComponent = (

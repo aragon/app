@@ -6,8 +6,11 @@ import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, Network, useDao } from '@/shared/api/daoService';
 import { useIpfsJson } from '@/shared/api/ipfsService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { GovernanceDialogId } from '../../constants/governanceDialogId';
+import type { IDelegateStatementDialogParams } from '../../dialogs/delegateStatementDialog';
 import {
     type IDelegateStatement,
     isDelegateStatement,
@@ -37,6 +40,7 @@ export const DelegationStatementCard: React.FC<
     const { plugin, memberAddress, daoId } = props;
 
     const { t } = useTranslations();
+    const { open } = useDialogContext();
     const { address: connectedAddress } = useConnection();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { data: ensName } = useEnsName(memberAddress);
@@ -67,7 +71,13 @@ export const DelegationStatementCard: React.FC<
     );
 
     const handleEditClick = () => {
-        // TODO: open delegate-statement create/edit dialog when implemented.
+        const params: IDelegateStatementDialogParams = {
+            tokenAddress,
+            memberAddress,
+            daoId,
+            existingCid: cid,
+        };
+        open(GovernanceDialogId.DELEGATE_STATEMENT_FORM, { params });
     };
 
     if (statement != null) {
