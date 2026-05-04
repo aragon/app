@@ -170,7 +170,7 @@ describe('GaugeVoterLockUtils', () => {
             );
             const votingPower2 = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
-                mockSettings.votingEscrow.maxTime,
+                mockSettings.votingEscrow!.maxTime,
                 mockSettings,
             );
 
