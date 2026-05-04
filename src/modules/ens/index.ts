@@ -20,6 +20,16 @@ export {
     ENS_CHAIN_ID,
     ENS_RECORD_KEYS,
 } from './constants/ensConfig';
+export {
+    buildEnsDelegateKey,
+    type IBuildEnsDelegateKeyParams,
+    NETWORK_EIP3770_SHORTNAME,
+} from './constants/ensDelegateKey';
+export {
+    type IUseDelegateStatementCidParams,
+    type TDelegateStatementCidMap,
+    useDelegateStatementCid,
+} from './hooks/useDelegateStatementCid';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';
