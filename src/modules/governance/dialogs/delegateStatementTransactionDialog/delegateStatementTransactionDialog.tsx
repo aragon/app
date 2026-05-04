@@ -32,6 +32,18 @@ export enum DelegateStatementTransactionStep {
 export interface IDelegateStatementTransactionDialogProps
     extends IDialogComponentProps<IDelegateStatementTransactionDialogParams> {}
 
+/**
+ * Telemetry coverage:
+ * - Pinata pin failure → `monitoringUtils.logError` with `stage: 'pinStatement'`
+ *   (wired via `usePinJson` `onError`).
+ * - ENS resolver lookup failure → `monitoringUtils.logError` with
+ *   `stage: 'resolveEns'` (wired via the try/catch in `prepareTransaction`).
+ * - User wallet rejection + simulation revert → routed through `TransactionDialog`'s
+ *   internal Sentry instrumentation. The primitive does not currently expose an
+ *   `onError` callback to wrappers; explicit module-tagged events at this layer
+ *   would require an upstream change. Until then, those events surface as
+ *   wagmi-tagged exceptions in the global Sentry stream.
+ */
 export const DelegateStatementTransactionDialog: React.FC<
     IDelegateStatementTransactionDialogProps
 > = (props) => {

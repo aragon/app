@@ -96,6 +96,28 @@ describe('<DelegateStatementTransactionDialog />', () => {
         );
     });
 
+    it('propagates Pinata pin failure to customSteps state so TransactionDialog halts before the on-chain step', () => {
+        usePinJsonSpy.mockReturnValue({
+            ...generateReactQueryMutationResultIdle(),
+            status: 'error',
+            isError: true,
+            isIdle: false,
+            error: new Error('Pinata 502'),
+        } as never);
+
+        render(
+            <ReactQueryWrapper>
+                <DelegateStatementTransactionDialog
+                    location={{ id: 'tx', params: buildParams() }}
+                />
+            </ReactQueryWrapper>,
+        );
+
+        const props = lastDialogProps();
+        expect(props.customSteps?.[0].meta.state).toBe('error');
+        expect(props.customSteps?.[0].meta.errorLabel).toBeTruthy();
+    });
+
     it('encodes the setText call with the pinned CID once pinJson succeeds', async () => {
         const ipfsHash = 'bafyHashFromPinata';
         usePinJsonSpy.mockReturnValue(
