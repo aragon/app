@@ -85,7 +85,10 @@ export const DelegationStatementCard: React.FC<
                 <h3 className="font-normal text-lg text-neutral-800 leading-tight md:text-xl">
                     {t('app.governance.delegationStatementCard.heading')}
                 </h3>
-                <SafeDocumentParser document={statement.content} />
+                <SafeDocumentParser
+                    document={statement.content}
+                    immediatelyRender={false}
+                />
                 {isOwner && (
                     <div className="pt-3 md:pt-6">
                         <Button
