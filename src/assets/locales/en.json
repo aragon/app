@@ -972,6 +972,12 @@
             "error": "You must select at least one body.",
             "label": "Bodies"
           },
+          "existingCondition": {
+            "add": "Existing condition",
+            "addressRequired": "Address is required",
+            "basicNotSupported": "Adding existing conditions is only available in Advanced governance.",
+            "remove": "Remove condition"
+          },
           "mode": {
             "anyDescription": "Any address can create proposals",
             "anyLabel": "Anyone",

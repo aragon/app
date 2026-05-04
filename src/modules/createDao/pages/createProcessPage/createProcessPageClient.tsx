@@ -60,6 +60,7 @@ export const CreateProcessPageClient: React.FC<
             <WizardPage.Container
                 defaultValues={{
                     stages: [],
+                    existingProposalCreationConditions: [],
                 }}
                 finalStep={t('app.createDao.createProcessPage.finalStep')}
                 initialSteps={processedSteps}

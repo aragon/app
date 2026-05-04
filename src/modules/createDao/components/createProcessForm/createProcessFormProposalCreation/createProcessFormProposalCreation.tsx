@@ -1,7 +1,14 @@
-import { InputContainer, RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    IconType,
+    InputContainer,
+    RadioCard,
+    RadioGroup,
+} from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
@@ -9,8 +16,10 @@ import { BodyType } from '../../../types/enum';
 import {
     GovernanceType,
     type ICreateProcessFormData,
+    type ICreateProcessFormDataAdvanced,
     ProposalCreationMode,
 } from '../createProcessFormDefinitions';
+import { ExistingConditionCard } from './existingConditionCard';
 import { ProposalCreationSettingsDefault } from './proposalCreationSettingsDefault';
 
 export interface ICreateProcessFormProposalCreationProps {}
@@ -20,6 +29,11 @@ export const CreateProcessFormProposalCreation: React.FC<
 > = () => {
     const { t } = useTranslations();
     const { trigger } = useFormContext();
+    const { isEnabled } = useFeatureFlags();
+
+    const isExistingConditionEnabled = isEnabled(
+        'existingProposalCreationCondition',
+    );
 
     const governanceType = useWatch<ICreateProcessFormData, 'governanceType'>({
         name: 'governanceType',
@@ -32,6 +46,15 @@ export const CreateProcessFormProposalCreation: React.FC<
     const stages = useWatch<ICreateProcessFormData, 'stages'>({
         name: 'stages',
     });
+
+    const {
+        fields: existingConditionFields,
+        append: appendExistingCondition,
+        remove: removeExistingCondition,
+    } = useFieldArray<
+        ICreateProcessFormDataAdvanced,
+        'existingProposalCreationConditions'
+    >({ name: 'existingProposalCreationConditions' });
 
     const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) =>
         stageIndex != null
@@ -89,6 +112,11 @@ export const CreateProcessFormProposalCreation: React.FC<
         void trigger('proposalCreationMode');
     }, [trigger]);
 
+    const showExistingConditions =
+        isExistingConditionEnabled && isAdvancedGovernance;
+    const showBasicNotSupported =
+        isExistingConditionEnabled && !isAdvancedGovernance;
+
     return (
         <>
             <RadioGroup
@@ -144,6 +172,37 @@ export const CreateProcessFormProposalCreation: React.FC<
                         }
                     />
                 ))}
+                {showExistingConditions && (
+                    <>
+                        {existingConditionFields.map((field, index) => (
+                            <ExistingConditionCard
+                                formPrefix={`existingProposalCreationConditions.${index.toString()}`}
+                                key={field.id}
+                                onRemove={() => removeExistingCondition(index)}
+                            />
+                        ))}
+                        <Button
+                            className="self-start"
+                            iconLeft={IconType.PLUS}
+                            onClick={() =>
+                                appendExistingCondition({ address: '' })
+                            }
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.createDao.createProcessForm.proposalCreation.existingCondition.add',
+                            )}
+                        </Button>
+                    </>
+                )}
+                {showBasicNotSupported && (
+                    <p className="text-neutral-500 text-sm">
+                        {t(
+                            'app.createDao.createProcessForm.proposalCreation.existingCondition.basicNotSupported',
+                        )}
+                    </p>
+                )}
             </InputContainer>
         </>
     );

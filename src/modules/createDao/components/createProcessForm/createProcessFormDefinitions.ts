@@ -74,6 +74,13 @@ export interface ICreateProcessFormDataBasic
     body: ISetupBodyFormNew | ISetupBodyFormExisting;
 }
 
+export interface IExistingProposalCreationCondition {
+    /**
+     * Address of the existing condition contract.
+     */
+    address: string;
+}
+
 export interface ICreateProcessFormDataAdvanced
     extends ICreateProcessFormDataBase {
     /**
@@ -84,6 +91,10 @@ export interface ICreateProcessFormDataAdvanced
      * Stages of the process.
      */
     stages: ICreateProcessFormStage[];
+    /**
+     * Additional condition contract addresses to OR into the SPP proposal creation rule.
+     */
+    existingProposalCreationConditions: IExistingProposalCreationCondition[];
 }
 
 export type ICreateProcessFormData =
