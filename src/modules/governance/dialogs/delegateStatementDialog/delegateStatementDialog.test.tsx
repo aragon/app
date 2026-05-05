@@ -6,7 +6,7 @@ import * as ipfsService from '@/shared/api/ipfsService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDialogContext,
-    generateReactQueryResultSuccess,
+    generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { DelegateStatementDialog } from './delegateStatementDialog';
 import type { IDelegateStatementDialogParams } from './delegateStatementDialog.api';
@@ -61,9 +61,6 @@ jest.mock('@aragon/gov-ui-kit', () => {
     return { ...actual, Dialog };
 });
 
-const successWith = <TData,>(data: TData) =>
-    ({ ...generateReactQueryResultSuccess({}), data }) as never;
-
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111';
 const MEMBER_ADDRESS = '0x2222222222222222222222222222222222222222';
 const DAO_ID = 'dao-test';
@@ -109,7 +106,7 @@ describe('<DelegateStatementDialog />', () => {
             isPending: isSwitchingChain,
         } as unknown as ReturnType<typeof wagmi.useSwitchChain>);
         useIpfsJsonSpy.mockReturnValue(
-            successWith(
+            generateReactQueryResultSuccessWithData(
                 existingContent != null
                     ? {
                           version: 1,

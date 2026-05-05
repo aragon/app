@@ -12,16 +12,12 @@ import {
     generateDaoPlugin,
     generateDialogContext,
     generateReactQueryResultSuccess,
+    generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import {
     DelegationStatementCard,
     type IDelegationStatementCardProps,
 } from './delegationStatementCard';
-
-// generateReactQueryResultSuccess coerces null data to {} via ?? — bypass that
-// for hooks that legitimately resolve to null/undefined (no ENS, no statement, etc.).
-const successWith = <TData,>(data: TData) =>
-    ({ ...generateReactQueryResultSuccess({}), data }) as never;
 
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111';
 const MEMBER_ADDRESS = '0x2222222222222222222222222222222222222222';
@@ -71,11 +67,17 @@ describe('<DelegationStatementCard />', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
-        useEnsNameSpy.mockReturnValue(successWith(ensName));
-        useDelegateStatementCidSpy.mockReturnValue(
-            successWith({ [TOKEN_ADDRESS.toLowerCase()]: cid }),
+        useEnsNameSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(ensName),
         );
-        useIpfsJsonSpy.mockReturnValue(successWith(statement));
+        useDelegateStatementCidSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData({
+                [TOKEN_ADDRESS.toLowerCase()]: cid,
+            }),
+        );
+        useIpfsJsonSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(statement),
+        );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     };
 
