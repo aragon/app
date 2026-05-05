@@ -65,9 +65,15 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (
         slotId,
         pluginId: plugin.interfaceType,
         params: { plugin, ...otherParams },
-    }) ?? { hasPermission: true, isLoading: false, settings: [] };
+    }) ?? {
+        hasPermission: true,
+        isLoading: false,
+        settings: [],
+        isRestricted: true,
+    };
 
-    const { hasPermission, isLoading, settings } = checkPermissions;
+    const { hasPermission, isLoading, settings, isRestricted } =
+        checkPermissions;
 
     const handleDialogClose = useCallback(() => {
         onError?.();
@@ -108,6 +114,7 @@ export const PermissionCheckDialog: React.FC<IPermissionCheckDialogProps> = (
             <Dialog.Content className="pb-3">
                 <PermissionsDefinitionList
                     isLoading={isLoading}
+                    isRestricted={isRestricted}
                     settings={settings}
                 />
             </Dialog.Content>

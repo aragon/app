@@ -1816,6 +1816,13 @@
           "title": "Not eligible to vote"
         }
       },
+      "permissionsDefinitionList": {
+        "or": "or",
+        "emptyUnrestricted": {
+          "heading": "Unrestricted",
+          "description": "Anyone can create a proposal."
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
