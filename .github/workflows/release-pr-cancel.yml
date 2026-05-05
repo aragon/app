@@ -25,6 +25,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
 
       - name: Checkout
         uses: actions/checkout@v6.0.2
@@ -50,6 +51,25 @@ jobs:
         with:
           body: ${{ steps.pr.outputs.body }}
 
+      - name: Extract version from PR title
+        id: version
+        run: |
+          VERSION=$(echo "${PR_TITLE}" | sed -nE 's/^Release (v[0-9]+\.[0-9]+\.[0-9]+).*$/\1/p')
+          echo "name=${VERSION}" >> "$GITHUB_OUTPUT"
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+
+      - name: Linear — set stage to canceled
+        id: linear-cancel
+        if: steps.version.outputs.name != '' && steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
+        continue-on-error: true
+        uses: linear/linear-release-action@v0
+        with:
+          access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
+          command: update
+          version: ${{ steps.version.outputs.name }}
+          stage: canceled
+
       - name: Notify Slack (cancelled)
         if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
         uses: ./.github/actions/slack-notify
@@ -57,4 +77,5 @@ jobs:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
-          message: 🛑 *Release cancelled*
+          message: |
+            🛑 *Release cancelled*${{ steps.linear-cancel.outcome == 'success' && ' — Linear release moved to Canceled stage' || '' }}
