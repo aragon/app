@@ -149,8 +149,12 @@ export const useDaoPlugins = (
     });
 
     const daoOverride = daoOverrides?.[daoId];
+    // Apply visibility override only for plugin listings/navigation. When the
+    // caller is doing a direct lookup by `pluginAddress` (e.g. from an SPP
+    // sub-proposal that references a hidden body), keep the plugin so existing
+    // proposals continue to render.
     const plugins =
-        allPlugins != null
+        allPlugins != null && pluginAddress == null
             ? daoVisibilityUtils.filterHiddenPlugins(allPlugins, daoOverride)
             : allPlugins;
 
