@@ -60,13 +60,14 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
 
       - name: Linear — set stage to canceled
+        id: linear-cancel
         if: steps.version.outputs.name != '' && steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
         continue-on-error: true
         uses: linear/linear-release-action@v0
         with:
           access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: update
-          name: ${{ steps.version.outputs.name }}
+          version: ${{ steps.version.outputs.name }}
           stage: canceled
 
       - name: Notify Slack (cancelled)
@@ -76,4 +77,5 @@ jobs:
           slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           thread_ts: ${{ steps.ts.outputs.ts }}
-          message: 🛑 *Release cancelled* — Linear release moved to Canceled stage
+          message: |
+            🛑 *Release cancelled*${{ steps.linear-cancel.outcome == 'success' && ' — Linear release moved to Canceled stage' || '' }}

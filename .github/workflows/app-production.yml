@@ -140,16 +140,6 @@ jobs:
           ref: ${{ github.event.release.tag_name || inputs.tag }}
           fetch-depth: 0
 
-      - name: Linear — set stage to released
-        if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
-        continue-on-error: true
-        uses: linear/linear-release-action@v0
-        with:
-          access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
-          command: update
-          name: ${{ github.event.release.tag_name || inputs.tag }}
-          stage: released
-
       - name: Linear — complete release
         if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
         continue-on-error: true
@@ -157,7 +147,7 @@ jobs:
         with:
           access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: complete
-          name: ${{ github.event.release.tag_name || inputs.tag }}
+          version: ${{ github.event.release.tag_name || inputs.tag }}
 
   e2e:
     needs: deploy

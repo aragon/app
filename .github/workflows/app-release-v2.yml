@@ -103,6 +103,7 @@ jobs:
           access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: sync
           name: v${{ steps.package-version.outputs.current-version }}
+          version: v${{ steps.package-version.outputs.current-version }}
 
       - name: Linear — set stage to in_progress
         if: steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
@@ -111,7 +112,7 @@ jobs:
         with:
           access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: update
-          name: v${{ steps.package-version.outputs.current-version }}
+          version: v${{ steps.package-version.outputs.current-version }}
           stage: in_progress
 
       - name: Notify Slack
