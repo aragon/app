@@ -28,6 +28,10 @@ export interface IUseGaugeVoterUserDataParams {
      * If provided, RPC call for used voting power is skipped.
      */
     backendUsedVotingPower?: string;
+    /**
+     * Address of the ivotesAdapter contract (native or 3rd party).
+     */
+    ivotesAdapterAddress: string;
 }
 
 export interface IGaugeUserVote {
