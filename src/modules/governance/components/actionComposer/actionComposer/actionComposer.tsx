@@ -176,13 +176,14 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleImportActions = (actions: IExportedAction[]) => {
-        const parsedActions = actions.map((action) => {
-            return {
-                ...action,
-                value: BigInt(action.value),
-                daoId,
-            } as unknown as IProposalActionData;
-        });
+        const parsedActions = actions.map(
+            (action) =>
+                ({
+                    ...action,
+                    value: BigInt(action.value),
+                    daoId,
+                }) as unknown as IProposalActionData,
+        );
         onAddAction(parsedActions);
     };
 
