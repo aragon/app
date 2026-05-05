@@ -6,6 +6,7 @@ import {
     Card,
     CardEmptyState,
     Collapsible,
+    Heading,
 } from '@aragon/gov-ui-kit';
 import { useConnection } from 'wagmi';
 import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
@@ -88,9 +89,9 @@ export const DelegationStatementCard: React.FC<
     if (statement != null) {
         return (
             <Card className="flex flex-col gap-2 p-4 md:gap-3 md:p-6">
-                <h3 className="font-normal text-lg text-neutral-800 leading-tight md:text-xl">
+                <Heading size="h3">
                     {t('app.governance.delegationStatementCard.heading')}
-                </h3>
+                </Heading>
                 <Collapsible
                     buttonLabelClosed={t(
                         'app.governance.delegationStatementCard.readMore',
