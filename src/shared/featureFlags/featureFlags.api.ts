@@ -16,7 +16,8 @@ export type FeatureFlagKey =
     | 'gateAdvancedGovernance'
     | 'osxUpdates'
     | 'useMocks'
-    | 'enableAllPlugins';
+    | 'enableAllPlugins'
+    | 'aragonProfiles';
 
 /**
  * Feature flag definition structure.

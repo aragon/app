@@ -120,4 +120,14 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'aragonProfiles',
+        name: 'Aragon Profiles',
+        description:
+            'Enables Aragon Profile creation/edit flow (ENS subdomain claim via memberRegistry, primary ENS, profile records).',
+        defaultValue: false,
+        environments: {
+            local: true,
+        },
+    },
 ];
