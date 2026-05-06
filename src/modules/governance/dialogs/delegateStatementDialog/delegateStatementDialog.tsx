@@ -2,7 +2,6 @@
 
 import {
     AlertCard,
-    Button,
     Dialog,
     IconType,
     invariant,
@@ -11,7 +10,7 @@ import {
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
-import { useConnection, useSwitchChain } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useDelegateStatement } from '@/shared/api/delegateStatementService';
 import {
     type IDialogComponentProps,
@@ -45,7 +44,6 @@ export const DelegateStatementDialog: React.FC<
     const { close, open } = useDialogContext();
     const { t } = useTranslations();
     const { chainId } = useConnection();
-    const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
 
     const { data: existingStatement } = useDelegateStatement({
         cid: existingCid ?? null,
@@ -69,11 +67,7 @@ export const DelegateStatementDialog: React.FC<
         'content',
         {
             label: t('app.governance.delegateStatementDialog.content.label'),
-            rules: {
-                required: true,
-                validate: (value) =>
-                    typeof value === 'string' && value.trim().length > 0,
-            },
+            rules: { required: true },
             control,
         },
     );
@@ -85,13 +79,9 @@ export const DelegateStatementDialog: React.FC<
     const currentContent = watch('content');
     const isEmpty = currentContent.trim().length === 0;
     const isUnchanged = currentContent === initialContent;
-    const isSubmitDisabled = isEmpty || isUnchanged || !isOnMainnet;
+    const isSubmitDisabled = isEmpty || isUnchanged;
 
     const handleClose = () => close(GovernanceDialogId.DELEGATE_STATEMENT_FORM);
-
-    const handleSwitchToMainnet = () => {
-        switchChain({ chainId: mainnet.id });
-    };
 
     const handleFormSubmit = (data: IDelegateStatementFormData) => {
         const txParams: IDelegateStatementTransactionDialogParams = {
@@ -100,7 +90,6 @@ export const DelegateStatementDialog: React.FC<
             tokenAddress,
             content: data.content,
         };
-        close(GovernanceDialogId.DELEGATE_STATEMENT_FORM);
         open(GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION, {
             params: txParams,
         });
@@ -114,23 +103,13 @@ export const DelegateStatementDialog: React.FC<
             />
             <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
                 {!isOnMainnet && (
-                    <div className="flex flex-col gap-3">
+                    <div>
                         <AlertCard
                             message={t(
                                 'app.governance.delegateStatementDialog.mainnetSwitch.message',
                             )}
                             variant="warning"
                         />
-                        <Button
-                            disabled={isSwitchingChain}
-                            onClick={handleSwitchToMainnet}
-                            size="md"
-                            variant="secondary"
-                        >
-                            {t(
-                                'app.governance.delegateStatementDialog.mainnetSwitch.action',
-                            )}
-                        </Button>
                     </div>
                 )}
                 <TextAreaRichText

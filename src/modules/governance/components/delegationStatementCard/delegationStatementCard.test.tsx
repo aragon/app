@@ -5,6 +5,7 @@ import * as ensModule from '@/modules/ens';
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import * as delegateStatementService from '@/shared/api/delegateStatementService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
@@ -56,12 +57,14 @@ describe('<DelegationStatementCard />', () => {
         cid?: string | null;
         statement?: { content: string } | null;
         connectedAddress?: string | null;
+        dialogContext?: ReturnType<typeof generateDialogContext>;
     }) => {
         const {
             ensName = ENS_NAME,
             cid = null,
             statement = null,
             connectedAddress = null,
+            dialogContext = generateDialogContext(),
         } = overrides ?? {};
         useConnectionSpy.mockReturnValue({
             address: connectedAddress ?? undefined,
@@ -83,7 +86,7 @@ describe('<DelegationStatementCard />', () => {
                 typeof delegateStatementService.useDelegateStatement
             >,
         );
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useDialogContextSpy.mockReturnValue(dialogContext);
     };
 
     afterEach(() => {
@@ -175,14 +178,29 @@ describe('<DelegationStatementCard />', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('the empty-state CTA is wired to a handler (Wave 3 will open the dialog)', async () => {
-        setHooks({ connectedAddress: MEMBER_ADDRESS });
+    it('opens the delegate statement form from the empty state CTA', async () => {
+        const dialogContext = generateDialogContext();
+        setHooks({
+            connectedAddress: MEMBER_ADDRESS,
+            dialogContext,
+        });
         render(createTestComponent());
         const cta = screen.getByRole('button', {
             name: 'app.governance.delegationStatementCard.emptyState.action',
         });
-        // Clicking should not throw — the no-op handler is the Wave 2 stub.
         await userEvent.click(cta);
-        expect(cta).toBeInTheDocument();
+        expect(dialogContext.open).toHaveBeenCalledWith(
+            'DELEGATE_STATEMENT_FORM',
+            {
+                params: {
+                    tokenAddress: TOKEN_ADDRESS,
+                    memberAddress: MEMBER_ADDRESS,
+                    daoId: DAO_ID,
+                    ensName: ENS_NAME,
+                    network: Network.ETHEREUM_MAINNET,
+                    existingCid: null,
+                },
+            },
+        );
     });
 });

@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { mainnet, polygon } from 'viem/chains';
 import * as wagmi from 'wagmi';
 import { Network } from '@/shared/api/daoService';
@@ -57,8 +58,29 @@ jest.mock('@aragon/gov-ui-kit', () => {
             </div>
         ),
     };
+    const TextAreaRichText = (
+        props: React.ComponentProps<'textarea'> & {
+            helpText?: string;
+            immediatelyRender?: boolean;
+            valueFormat?: string;
+        },
+    ) => {
+        const {
+            helpText,
+            immediatelyRender: _immediatelyRender,
+            valueFormat: _valueFormat,
+            ...textareaProps
+        } = props;
+
+        return (
+            <div>
+                {helpText != null && <span>{helpText}</span>}
+                <textarea {...textareaProps} />
+            </div>
+        );
+    };
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return { ...actual, Dialog };
+    return { ...actual, Dialog, TextAreaRichText };
 });
 
 const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111';
@@ -80,7 +102,6 @@ const buildParams = (
 
 describe('<DelegateStatementDialog />', () => {
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useSwitchChainSpy = jest.spyOn(wagmi, 'useSwitchChain');
     const useDelegateStatementSpy = jest.spyOn(
         delegateStatementService,
         'useDelegateStatement',
@@ -90,24 +111,18 @@ describe('<DelegateStatementDialog />', () => {
     const setHooks = (overrides?: {
         chainId?: number;
         existingContent?: string | null;
-        switchChain?: jest.Mock;
-        isSwitchingChain?: boolean;
+        dialogContext?: ReturnType<typeof generateDialogContext>;
     }) => {
         const {
             chainId = mainnet.id,
             existingContent = null,
-            switchChain = jest.fn(),
-            isSwitchingChain = false,
+            dialogContext = generateDialogContext(),
         } = overrides ?? {};
         useConnectionSpy.mockReturnValue({
             address: MEMBER_ADDRESS,
             chainId,
             isConnected: true,
         } as unknown as ReturnType<typeof wagmi.useConnection>);
-        useSwitchChainSpy.mockReturnValue({
-            switchChain,
-            isPending: isSwitchingChain,
-        } as unknown as ReturnType<typeof wagmi.useSwitchChain>);
         useDelegateStatementSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
                 existingContent != null
@@ -122,12 +137,11 @@ describe('<DelegateStatementDialog />', () => {
                 typeof delegateStatementService.useDelegateStatement
             >,
         );
-        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useDialogContextSpy.mockReturnValue(dialogContext);
     };
 
     afterEach(() => {
         useConnectionSpy.mockReset();
-        useSwitchChainSpy.mockReset();
         useDelegateStatementSpy.mockReset();
         useDialogContextSpy.mockReset();
     });
@@ -176,11 +190,6 @@ describe('<DelegateStatementDialog />', () => {
                 'app.governance.delegateStatementDialog.mainnetSwitch.message',
             ),
         ).toBeInTheDocument();
-        expect(
-            screen.getByRole('button', {
-                name: 'app.governance.delegateStatementDialog.mainnetSwitch.action',
-            }),
-        ).toBeInTheDocument();
     });
 
     it('hides the mainnet-switch prompt when the wallet is already on mainnet', () => {
@@ -193,12 +202,32 @@ describe('<DelegateStatementDialog />', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('keeps the submit button disabled while the wallet is on a non-mainnet chain', () => {
-        setHooks({ chainId: polygon.id });
+    it('opens the transaction dialog from a non-mainnet wallet once the content changes', async () => {
+        const dialogContext = generateDialogContext();
+        setHooks({ chainId: polygon.id, dialogContext });
         createTestComponent();
+
+        await userEvent.type(screen.getByRole('textbox'), 'New statement');
+
         const submit = screen.getByRole('button', {
             name: 'app.governance.delegateStatementDialog.submit',
         });
-        expect(submit).toHaveAttribute('aria-disabled', 'true');
+
+        expect(submit).not.toHaveAttribute('aria-disabled', 'true');
+
+        await userEvent.click(submit);
+
+        expect(dialogContext.open).toHaveBeenCalledWith(
+            'DELEGATE_STATEMENT_TRANSACTION',
+            {
+                params: {
+                    ensName: 'whomst.eth',
+                    network: Network.ETHEREUM_MAINNET,
+                    tokenAddress: TOKEN_ADDRESS,
+                    content: 'New statement',
+                },
+            },
+        );
+        expect(dialogContext.close).not.toHaveBeenCalled();
     });
 });
