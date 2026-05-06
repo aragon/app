@@ -39,40 +39,40 @@
     "@reown/appkit": "^1.8.19",
     "@reown/appkit-adapter-wagmi": "^1.8.19",
     "@reown/walletkit": "^1.5.5",
-    "@sentry/core": "^10.46.0",
-    "@sentry/nextjs": "^10.46.0",
-    "@tanstack/react-query": "^5.95.2",
-    "@tanstack/react-query-devtools": "^5.95.2",
+    "@sentry/core": "^10.50.0",
+    "@sentry/nextjs": "^10.50.0",
+    "@tanstack/react-query": "^5.100.5",
+    "@tanstack/react-query-devtools": "^5.100.5",
     "@walletconnect/core": "^2.23.9",
     "@walletconnect/utils": "^2.23.9",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.38.0",
     "import-in-the-middle": "^3.0.1",
-    "isomorphic-dompurify": "^2.36.0",
-    "jsdom": "^26.1.0",
+    "isomorphic-dompurify": "^3.10.0",
+    "jsdom": "^29.1.0",
     "luxon": "^3.7.2",
-    "next": "^16.2.1",
+    "next": "^16.2.4",
     "nextjs-toploader": "^3.9.17",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-hook-form": "^7.72.1",
+    "react-hook-form": "^7.74.0",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.8.1",
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "ts-pattern": "^5.9.0",
-    "viem": "^2.47.6",
-    "wagmi": "^3.6.0"
+    "viem": "^2.48.4",
+    "wagmi": "^3.6.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.10",
+    "@biomejs/biome": "^2.4.13",
     "@changesets/changelog-github": "^0.6.0",
-    "@changesets/cli": "^2.30.0",
+    "@changesets/cli": "^2.31.0",
     "@hookform/devtools": "^4.4.0",
     "@playwright/test": "^1.59.1",
     "@synthetixio/synpress": "^4.1.2",
-    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.4",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
@@ -80,7 +80,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
-    "@types/node": "^24.12.0",
+    "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@walletconnect/types": "^2.23.9",
@@ -92,15 +92,15 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.3.0",
     "lint-staged": "^16.4.0",
-    "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.2",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^4.2.4",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.9",
     "turbo": "^2.9.6",
     "typescript": "^5.9.3",
-    "ultracite": "^7.4.0",
-    "vercel": "^50.37.3",
-    "webpack": "^5.105.4"
+    "ultracite": "^7.6.2",
+    "vercel": "^52.0.0",
+    "webpack": "^5.106.2"
   },
   "repository": {
     "type": "git",
@@ -119,7 +119,7 @@
   "engines": {
     "node": ">=24.13.0"
   },
-  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319",
+  "packageManager": "pnpm@10.33.3+sha512.a19744364a7e248b92657a4ca5973f9354d21caf982579674b1c539f32c7420c47138ad8b1254df07aba9bc782d9b3029e3db34d5dbff974326eb74dac8ff489",
   "pnpm": {
     "peerDependencyRules": {
       "allowedVersions": {
@@ -130,29 +130,27 @@
     },
     "overrides": {
       "isomorphic-dompurify>jsdom": "26.1.0",
-      "tar": "^7.5.11",
-      "undici": "^5.29.0",
-      "@vercel/blob>undici": "^6.24.0",
-      "ajv": "^8.18.0",
-      "minimatch@10": "^10.2.4",
+      "axios@>=1.0.0 <1.15.2": "^1.15.2",
+      "@vercel/node>undici": "^6.24.0",
+      "next>postcss": "^8.5.12",
+      "@hookform/devtools>uuid": "^14.0.0",
+      "@synthetixio/synpress-cache>esbuild": "^0.27.7",
+      "tsup>esbuild": "^0.27.7",
+      "@vercel/fun>@tootallnate/once": "^3.0.1",
+      "tar@<7.5.11": "^7.5.11",
+      "ajv@<8.18.0": "^8.18.0",
+      "minimatch@>=10.0.0 <10.2.4": "^10.2.4",
       "ws@>=8.0.0 <8.17.1": ">=8.17.1",
-      "axios@>=1.0.0 <=1.13.4": ">=1.13.5",
       "glob@>=10.2.0 <10.5.0": ">=10.5.0",
       "smol-toml@<1.6.1": ">=1.6.1",
       "srvx@<0.11.13": ">=0.11.13",
       "path-to-regexp@>=8.0.0 <8.4.0": ">=8.4.0",
-      "lodash@<=4.17.23": ">=4.18.0",
-      "defu@<=6.1.4": ">=6.1.5"
+      "lodash@<=4.17.23": ">=4.18.0"
     },
     "packageExtensions": {
       "@solana/codecs-strings@*": {
         "dependencies": {
           "fastestsmallesttextencoderdecoder": "^1.0.22"
-        }
-      },
-      "@walletconnect/jsonrpc-ws-connection@*": {
-        "dependencies": {
-          "utf-8-validate": "^5.0.10"
         }
       }
     }

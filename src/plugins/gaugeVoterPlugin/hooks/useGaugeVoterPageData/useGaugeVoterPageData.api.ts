@@ -16,6 +16,10 @@ export interface IUseGaugeVoterPageDataParams {
      */
     gaugeAddresses: Hex[];
     /**
+     * Address of the ivotesAdapter contract (native or 3rd party).
+     */
+    ivotesAdapterAddress: string;
+    /**
      * Gauge data from backend (for metadata and total votes).
      */
     gauges: IGauge[];

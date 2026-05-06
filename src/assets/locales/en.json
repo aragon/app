@@ -1860,6 +1860,13 @@
           "title": "Not eligible to vote"
         }
       },
+      "permissionsDefinitionList": {
+        "or": "or",
+        "emptyUnrestricted": {
+          "heading": "Unrestricted",
+          "description": "Anyone can create a proposal."
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
@@ -2159,6 +2166,7 @@
             "title": "Epoch {{epochId}}"
           },
           "asideLocks": {
+            "titleNoTokenMetadata": "Token",
             "tabs": {
               "delegate": "Delegate",
               "lock": "Lock"
@@ -2846,7 +2854,7 @@
               "self": "Yourself"
             }
           },
-          "submit": "Delegate voting power",
+          "submit": "Delegate {{tokenSymbol}}",
           "submitDialog": "Delegate now",
           "cancel": "Cancel"
         },
@@ -2879,13 +2887,15 @@
           },
           "delegationOnboardingCard": {
             "heading": "Your {{symbol}} is undelegated",
+            "headingNoTokenMetadata": "Your tokens are undelegated",
             "description": "Delegate your voting power to yourself or to someone else.",
             "action": "Set up your delegation"
           }
         },
         "tokenMemberPanel": {
+          "titleNoTokenMetadata": "Token",
           "tabs": {
-            "delegate": "Delegate",
+            "delegate": "Delegation",
             "wrap": "Wrap",
             "lock": "Lock"
           }

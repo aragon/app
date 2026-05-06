@@ -252,7 +252,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
             pluginSetupProcessor: '0xc3a857B614D5B79B936Ce6640E5351dF8fA262eD',
             globalExecutor: '0xC8837F6B124D8dF780f5CF9aF343b25643040110',
-            conditionFactory: '0x0000000000000000000000000000000000000000',
+            conditionFactory: '0x150D61DdC7a6Df80fE2d3F7b7f58B36B69B25fdB',
         },
     },
     [Network.ZKSYNC_MAINNET]: {

@@ -384,7 +384,7 @@
         }
     },
     "extends": [
-        "ultracite/core",
-        "ultracite/next"
+        "ultracite/biome/core",
+        "ultracite/biome/next"
     ]
 }

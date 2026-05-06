@@ -119,6 +119,36 @@ jobs:
       env: "production"
       ref: ${{ github.event.release.tag_name || inputs.tag }}
 
+  linear-release:
+    needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+
+      - name: Checkout
+        if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
+        uses: actions/checkout@v6.0.2
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          fetch-depth: 0
+
+      - name: Linear — complete release
+        if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
+        continue-on-error: true
+        uses: linear/linear-release-action@v0
+        with:
+          access_key: ${{ steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
+          command: complete
+          version: ${{ github.event.release.tag_name || inputs.tag }}
+
   e2e:
     needs: deploy
     if: ${{ !cancelled() && needs.deploy.result == 'success' }}

@@ -70,6 +70,10 @@ export const GaugeVoterGaugesPageClient: React.FC<
     }) as IFilterComponentPlugin<IGaugeVoterPlugin>[];
     const plugin = plugins[0];
 
+    // There are cases, e.g. Citrea, where a 3rd party escrow contract is used. In this case `ivotesadapter` is a zero address, and there are no votingEscrow addresses in the plugin.
+    // In that case, `plugin.settings.token.address` is the address of the 3rd party IVotes adapter, and `plugin.settings.token.underlaying` is the address of the underlying token that is locked (into escrow contract).
+    const isUsing3rdPartyEscrow = plugin.meta.votingEscrow == null;
+
     // Fetch epoch metrics from backend (includes user voting power if connected)
     const epochMetricsParams = {
         urlParams: {
@@ -99,6 +103,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
         : true; // Fallback to true if no epoch metrics
 
     const { token } = plugin.meta.settings;
+    const tokenName = token.name;
     const tokenSymbol = token.symbol;
     const tokenDecimals = token.decimals ?? 18;
 
@@ -119,6 +124,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
         epochTotalVotingPower,
         tokenDecimals,
         enabled: isUserConnected && !!plugin.meta.address,
+        ivotesAdapterAddress: plugin.meta.settings.token.address,
         // Pass backend user voting power if available (skips RPC calls for performance)
         backendVotingPower: epochMetrics?.memberVotingPower,
         backendUsedVotingPower: epochMetrics?.memberUsedVotingPower,
@@ -233,20 +239,31 @@ export const GaugeVoterGaugesPageClient: React.FC<
                       (1000 * 60 * 60 * 24),
               );
 
-    const visibleLocksPanelTabs = [
-        { value: GaugeVoterLocksPanelTab.LOCK },
-        { value: GaugeVoterLocksPanelTab.DELEGATE },
-    ];
+    const visibleLocksPanelTabs = isUsing3rdPartyEscrow
+        ? [{ value: GaugeVoterLocksPanelTab.DELEGATE }]
+        : [
+              { value: GaugeVoterLocksPanelTab.LOCK },
+              { value: GaugeVoterLocksPanelTab.DELEGATE },
+          ];
 
     const [selectedLocksPanelTab, setSelectedLocksPanelTab] = useFilterUrlParam(
         {
             name: gaugeVoterLocksPanelFilterParam,
-            fallbackValue: GaugeVoterLocksPanelTab.LOCK,
+            fallbackValue: visibleLocksPanelTabs[0].value,
             validValues: visibleLocksPanelTabs.map((tab) => tab.value),
         },
     );
 
-    const cardTitle = token ? `${token.name} (${token.symbol})` : '';
+    const cardTitle =
+        visibleLocksPanelTabs.length === 1
+            ? t(
+                  `app.plugins.gaugeVoter.gaugeVoterGaugesPage.asideLocks.tabs.${visibleLocksPanelTabs[0].value}`,
+              )
+            : tokenName && tokenSymbol
+              ? `${tokenName} (${tokenSymbol})`
+              : t(
+                    'app.plugins.gaugeVoter.gaugeVoterGaugesPage.asideLocks.titleNoTokenMetadata',
+                );
 
     const { data: daoOverrides } = useDaoOverrides();
     const daoOverride = daoOverrides?.[dao.id];
