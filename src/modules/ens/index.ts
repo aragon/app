@@ -15,16 +15,20 @@
  * const { data: ensRecords } = useEnsRecords(ensName);
  * ```
  */
+
+export * from './constants/contracts';
 export {
-    ENS_CACHE,
-    ENS_CHAIN_ID,
-    ENS_RECORD_KEYS,
+    ensAvatarKey,
+    ensCache,
+    ensChainId,
+    ensRecordKeys,
 } from './constants/ensConfig';
 export {
     buildEnsDelegateKey,
     type IBuildEnsDelegateKeyParams,
     NETWORK_EIP3770_SHORTNAME,
 } from './constants/ensDelegateKey';
+export { memberRegistryAbi } from './constants/memberRegistryAbi';
 export {
     type IUseDelegateStatementCidParams,
     type TDelegateStatementCidMap,
@@ -34,3 +38,5 @@ export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';
 export type { IEnsRecords, TEnsRecordKey } from './types';
+export type { IBuildUpdateRecordsTransactionParams } from './utils/ensTransactionUtils';
+export { ensTransactionUtils } from './utils/ensTransactionUtils';

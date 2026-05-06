@@ -1,8 +1,5 @@
 import classNames from 'classnames';
 
-/**
- * Props for the FooterInfo component.
- */
 export interface IFooterInfoProps {
     /**
      * The informational text to display.
