@@ -2,11 +2,12 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { mainnet } from 'viem/chains';
 import { getEnsResolver } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { Network } from '@/shared/api/daoService';
+import { DelegateStatementServiceKey } from '@/shared/api/delegateStatementService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import {
@@ -122,27 +123,32 @@ export const DelegateStatementTransactionDialog: React.FC<
 
     const handleSuccess = () => {
         queryClient.invalidateQueries({ queryKey: ['delegateStatementCid'] });
-        queryClient.invalidateQueries({ queryKey: ['ipfsJson'] });
+        queryClient.invalidateQueries({
+            queryKey: [DelegateStatementServiceKey.DELEGATE_STATEMENT],
+        });
     };
 
     const customSteps: ITransactionDialogStep<DelegateStatementTransactionStep>[] =
-        [
-            {
-                id: DelegateStatementTransactionStep.PIN_STATEMENT,
-                order: 0,
-                meta: {
-                    label: t(
-                        `app.governance.delegateStatementTransactionDialog.step.${DelegateStatementTransactionStep.PIN_STATEMENT}.label`,
-                    ),
-                    errorLabel: t(
-                        `app.governance.delegateStatementTransactionDialog.step.${DelegateStatementTransactionStep.PIN_STATEMENT}.errorLabel`,
-                    ),
-                    state: pinStatus,
-                    action: handlePinJson,
-                    auto: true,
+        useMemo(
+            () => [
+                {
+                    id: DelegateStatementTransactionStep.PIN_STATEMENT,
+                    order: 0,
+                    meta: {
+                        label: t(
+                            `app.governance.delegateStatementTransactionDialog.step.${DelegateStatementTransactionStep.PIN_STATEMENT}.label`,
+                        ),
+                        errorLabel: t(
+                            `app.governance.delegateStatementTransactionDialog.step.${DelegateStatementTransactionStep.PIN_STATEMENT}.errorLabel`,
+                        ),
+                        state: pinStatus,
+                        action: handlePinJson,
+                        auto: true,
+                    },
                 },
-            },
-        ];
+            ],
+            [t, pinStatus, handlePinJson],
+        );
 
     return (
         <TransactionDialog<DelegateStatementTransactionStep>

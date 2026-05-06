@@ -5,7 +5,7 @@ import * as ensModule from '@/modules/ens';
 import { generateToken } from '@/modules/finance/testUtils';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import * as daoService from '@/shared/api/daoService';
-import * as ipfsService from '@/shared/api/ipfsService';
+import * as delegateStatementService from '@/shared/api/delegateStatementService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDao,
@@ -45,7 +45,10 @@ describe('<DelegationStatementCard />', () => {
         ensModule,
         'useDelegateStatementCid',
     );
-    const useIpfsJsonSpy = jest.spyOn(ipfsService, 'useIpfsJson');
+    const useDelegateStatementSpy = jest.spyOn(
+        delegateStatementService,
+        'useDelegateStatement',
+    );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     const setHooks = (overrides?: {
@@ -71,12 +74,14 @@ describe('<DelegationStatementCard />', () => {
             generateReactQueryResultSuccessWithData(ensName),
         );
         useDelegateStatementCidSpy.mockReturnValue(
-            generateReactQueryResultSuccessWithData({
-                [TOKEN_ADDRESS.toLowerCase()]: cid,
-            }),
+            generateReactQueryResultSuccessWithData(cid),
         );
-        useIpfsJsonSpy.mockReturnValue(
-            generateReactQueryResultSuccessWithData(statement),
+        useDelegateStatementSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(
+                statement,
+            ) as unknown as ReturnType<
+                typeof delegateStatementService.useDelegateStatement
+            >,
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     };
@@ -86,7 +91,7 @@ describe('<DelegationStatementCard />', () => {
         useDaoSpy.mockReset();
         useEnsNameSpy.mockReset();
         useDelegateStatementCidSpy.mockReset();
-        useIpfsJsonSpy.mockReset();
+        useDelegateStatementSpy.mockReset();
         useDialogContextSpy.mockReset();
     });
 

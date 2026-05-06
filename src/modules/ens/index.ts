@@ -31,7 +31,6 @@ export {
 export { memberRegistryAbi } from './constants/memberRegistryAbi';
 export {
     type IUseDelegateStatementCidParams,
-    type TDelegateStatementCidMap,
     useDelegateStatementCid,
 } from './hooks/useDelegateStatementCid';
 export { useEnsAvatar } from './hooks/useEnsAvatar';

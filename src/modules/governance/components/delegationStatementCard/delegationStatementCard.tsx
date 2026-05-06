@@ -12,16 +12,12 @@ import { useConnection } from 'wagmi';
 import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
-import { useIpfsJson } from '@/shared/api/ipfsService';
+import { useDelegateStatement } from '@/shared/api/delegateStatementService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IDelegateStatementDialogParams } from '../../dialogs/delegateStatementDialog';
-import {
-    type IDelegateStatement,
-    isDelegateStatement,
-} from './delegateStatement.api';
 
 export interface IDelegationStatementCardProps {
     /**
@@ -52,18 +48,13 @@ export const DelegationStatementCard: React.FC<
     const tokenAddress = (plugin.settings as ITokenPluginSettings).token
         .address;
 
-    const { data: cidMap } = useDelegateStatementCid({
+    const { data: cid } = useDelegateStatementCid({
         ensName,
         network: dao?.network,
-        tokenAddresses: [tokenAddress],
+        tokenAddress,
     });
 
-    const cid = cidMap?.[tokenAddress.toLowerCase()] ?? null;
-
-    const { data: statement } = useIpfsJson<IDelegateStatement>({
-        cid,
-        validate: isDelegateStatement,
-    });
+    const { data: statement } = useDelegateStatement({ cid });
 
     if (ensName == null || dao == null) {
         return null;
@@ -81,7 +72,7 @@ export const DelegationStatementCard: React.FC<
             daoId,
             ensName,
             network: dao.network,
-            existingCid: cid,
+            existingCid: cid ?? null,
         };
         open(GovernanceDialogId.DELEGATE_STATEMENT_FORM, { params });
     };

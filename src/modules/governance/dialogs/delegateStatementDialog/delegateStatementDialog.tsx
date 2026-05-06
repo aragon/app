@@ -12,17 +12,13 @@ import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
 import { useConnection, useSwitchChain } from 'wagmi';
-import { useIpfsJson } from '@/shared/api/ipfsService';
+import { useDelegateStatement } from '@/shared/api/delegateStatementService';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    type IDelegateStatement,
-    isDelegateStatement,
-} from '../../components/delegationStatementCard/delegateStatement.api';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IDelegateStatementTransactionDialogParams } from '../delegateStatementTransactionDialog';
 import type { IDelegateStatementDialogParams } from './delegateStatementDialog.api';
@@ -51,9 +47,8 @@ export const DelegateStatementDialog: React.FC<
     const { chainId } = useConnection();
     const { switchChain, isPending: isSwitchingChain } = useSwitchChain();
 
-    const { data: existingStatement } = useIpfsJson<IDelegateStatement>({
+    const { data: existingStatement } = useDelegateStatement({
         cid: existingCid ?? null,
-        validate: isDelegateStatement,
     });
 
     const isOnMainnet = chainId === mainnet.id;

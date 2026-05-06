@@ -32,21 +32,6 @@ class IpfsUtils {
             : undefined;
     };
 
-    /**
-     * Builds the gateway URL used to fetch arbitrary JSON content (or any
-     * non-image resource) by CID. Strips the `ipfs://` prefix if present and
-     * does not append the image-resize params used by `cidToSrc`.
-     */
-    cidToJsonUrl = (cid?: string | null): string | undefined => {
-        const processedCid = cid?.startsWith(this.ipfsPrefix)
-            ? cid.replace(this.ipfsPrefix, '')
-            : cid;
-
-        return processedCid != null && processedCid.length > 0
-            ? `${this.ipfsGateway}/ipfs/${processedCid}`
-            : undefined;
-    };
-
     isUri = (value: string) => value.startsWith(this.ipfsPrefix);
 
     cidToUri = (cid?: string | null): string | undefined =>

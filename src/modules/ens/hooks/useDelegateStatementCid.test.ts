@@ -8,12 +8,9 @@ jest.mock('@/modules/application/constants/wagmi', () => ({
     wagmiConfig: { mocked: true },
 }));
 
-const TOKEN_A = '0x1111111111111111111111111111111111111111';
-const TOKEN_B = '0x2222222222222222222222222222222222222222';
-const TOKEN_C = '0x3333333333333333333333333333333333333333';
+const TOKEN_ADDRESS = '0x1111111111111111111111111111111111111111';
 const ENS_NAME = 'whomst.eth';
-const CID_A = 'bafyAaaa';
-const CID_B = 'bafyBbbb';
+const CID = 'bafyTestCid';
 
 describe('useDelegateStatementCid', () => {
     const getEnsTextSpy = jest.spyOn(wagmiActions, 'getEnsText');
@@ -22,57 +19,39 @@ describe('useDelegateStatementCid', () => {
         getEnsTextSpy.mockReset();
     });
 
-    it('issues one getEnsText call per token (multicall batches them) and returns CID per address', async () => {
-        getEnsTextSpy.mockImplementation((_config, args) => {
-            if (args.key.startsWith('eth.0x1111')) {
-                return Promise.resolve(CID_A);
-            }
-            if (args.key.startsWith('eth.0x2222')) {
-                return Promise.resolve(CID_B);
-            }
-            return Promise.resolve(null);
-        });
+    it('resolves to the CID stored on the ENS text record', async () => {
+        getEnsTextSpy.mockResolvedValue(CID);
 
         const { result } = renderHook(
             () =>
                 useDelegateStatementCid({
                     ensName: ENS_NAME,
                     network: Network.ETHEREUM_MAINNET,
-                    tokenAddresses: [TOKEN_A, TOKEN_B, TOKEN_C],
+                    tokenAddress: TOKEN_ADDRESS,
                 }),
             { wrapper: ReactQueryWrapper },
         );
 
         await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-        expect(getEnsTextSpy).toHaveBeenCalledTimes(3);
-        expect(result.current.data).toEqual({
-            [TOKEN_A.toLowerCase()]: CID_A,
-            [TOKEN_B.toLowerCase()]: CID_B,
-            [TOKEN_C.toLowerCase()]: null,
-        });
+        expect(result.current.data).toBe(CID);
+        expect(getEnsTextSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('returns null per token when getEnsText rejects rather than failing the whole query', async () => {
-        getEnsTextSpy
-            .mockResolvedValueOnce(CID_A)
-            .mockRejectedValueOnce(new Error('rpc broken'));
+    it('returns null when the text record is absent', async () => {
+        getEnsTextSpy.mockResolvedValue(null);
 
         const { result } = renderHook(
             () =>
                 useDelegateStatementCid({
                     ensName: ENS_NAME,
                     network: Network.ETHEREUM_MAINNET,
-                    tokenAddresses: [TOKEN_A, TOKEN_B],
+                    tokenAddress: TOKEN_ADDRESS,
                 }),
             { wrapper: ReactQueryWrapper },
         );
 
         await waitFor(() => expect(result.current.isSuccess).toBe(true));
-        expect(result.current.data).toEqual({
-            [TOKEN_A.toLowerCase()]: CID_A,
-            [TOKEN_B.toLowerCase()]: null,
-        });
+        expect(result.current.data).toBeNull();
     });
 
     it('skips the query entirely when ensName is null', () => {
@@ -81,23 +60,22 @@ describe('useDelegateStatementCid', () => {
                 useDelegateStatementCid({
                     ensName: null,
                     network: Network.ETHEREUM_MAINNET,
-                    tokenAddresses: [TOKEN_A],
+                    tokenAddress: TOKEN_ADDRESS,
                 }),
             { wrapper: ReactQueryWrapper },
         );
 
-        expect(result.current.isPending).toBe(true);
         expect(result.current.fetchStatus).toBe('idle');
         expect(getEnsTextSpy).not.toHaveBeenCalled();
     });
 
-    it('skips the query when tokenAddresses is empty', () => {
+    it('skips the query when network is undefined (DAO still loading)', () => {
         const { result } = renderHook(
             () =>
                 useDelegateStatementCid({
                     ensName: ENS_NAME,
-                    network: Network.ETHEREUM_MAINNET,
-                    tokenAddresses: [],
+                    network: undefined,
+                    tokenAddress: TOKEN_ADDRESS,
                 }),
             { wrapper: ReactQueryWrapper },
         );

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { mainnet, polygon } from 'viem/chains';
 import * as wagmi from 'wagmi';
 import { Network } from '@/shared/api/daoService';
-import * as ipfsService from '@/shared/api/ipfsService';
+import * as delegateStatementService from '@/shared/api/delegateStatementService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import {
     generateDialogContext,
@@ -81,7 +81,10 @@ const buildParams = (
 describe('<DelegateStatementDialog />', () => {
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useSwitchChainSpy = jest.spyOn(wagmi, 'useSwitchChain');
-    const useIpfsJsonSpy = jest.spyOn(ipfsService, 'useIpfsJson');
+    const useDelegateStatementSpy = jest.spyOn(
+        delegateStatementService,
+        'useDelegateStatement',
+    );
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     const setHooks = (overrides?: {
@@ -105,7 +108,7 @@ describe('<DelegateStatementDialog />', () => {
             switchChain,
             isPending: isSwitchingChain,
         } as unknown as ReturnType<typeof wagmi.useSwitchChain>);
-        useIpfsJsonSpy.mockReturnValue(
+        useDelegateStatementSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
                 existingContent != null
                     ? {
@@ -115,7 +118,9 @@ describe('<DelegateStatementDialog />', () => {
                           content: existingContent,
                       }
                     : null,
-            ),
+            ) as unknown as ReturnType<
+                typeof delegateStatementService.useDelegateStatement
+            >,
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     };
@@ -123,7 +128,7 @@ describe('<DelegateStatementDialog />', () => {
     afterEach(() => {
         useConnectionSpy.mockReset();
         useSwitchChainSpy.mockReset();
-        useIpfsJsonSpy.mockReset();
+        useDelegateStatementSpy.mockReset();
         useDialogContextSpy.mockReset();
     });
 

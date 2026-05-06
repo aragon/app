@@ -64,15 +64,39 @@ describe('delegateStatementTransactionDialogUtils.buildTransaction', () => {
         expect(decoded.args[0]).toBe(namehash(ENS_NAME));
     });
 
-    it('throws when the network has no agreed EIP-3770 shortname (publishing safety net)', () => {
-        expect(() =>
-            delegateStatementTransactionDialogUtils.buildTransaction({
-                resolverAddress: RESOLVER,
-                ensName: ENS_NAME,
-                network: Network.POLYGON_MAINNET,
-                tokenAddress: TOKEN_ADDRESS,
-                cid: CID,
-            }),
-        ).toThrow(/EIP-3770 shortname/);
+    it('uses the canonical EIP-3770 shortname for non-mainnet networks', () => {
+        const tx = delegateStatementTransactionDialogUtils.buildTransaction({
+            resolverAddress: RESOLVER,
+            ensName: ENS_NAME,
+            network: Network.POLYGON_MAINNET,
+            tokenAddress: TOKEN_ADDRESS,
+            cid: CID,
+        });
+
+        const decoded = decodeFunctionData({
+            abi: ensPublicResolverAbi,
+            data: tx.data,
+        });
+        expect(decoded.args[1]).toBe(
+            'matic.0x1234abcdef1234abcdef1234abcdef1234abcdef.delegate',
+        );
+    });
+
+    it('uses the generic "test" namespace for testnet networks', () => {
+        const tx = delegateStatementTransactionDialogUtils.buildTransaction({
+            resolverAddress: RESOLVER,
+            ensName: ENS_NAME,
+            network: Network.ETHEREUM_SEPOLIA,
+            tokenAddress: TOKEN_ADDRESS,
+            cid: CID,
+        });
+
+        const decoded = decodeFunctionData({
+            abi: ensPublicResolverAbi,
+            data: tx.data,
+        });
+        expect(decoded.args[1]).toBe(
+            'test.0x1234abcdef1234abcdef1234abcdef1234abcdef.delegate',
+        );
     });
 });
