@@ -83,11 +83,9 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
         setHasPendingConnection(false);
 
         if (
-            // Either GaugeVoter or TokenVoting with a votingEscrow token adapter.
-            eligiblePlugin.interfaceType === PluginInterfaceType.GAUGE_VOTER ||
-            (eligiblePlugin.interfaceType ===
-                PluginInterfaceType.TOKEN_VOTING &&
-                (eligiblePlugin as ITokenPlugin).votingEscrow != null)
+            // Either GaugeVoter with native votingEscrow or TokenVoting with a votingEscrow token adapter.
+            // GaugeVoter could be with a 3rd-party escrow, in which case votingEscrow === null and locking is not supported through our UI.
+            eligiblePlugin.votingEscrow != null
         ) {
             const params: IGaugeVoterLockOnboardingIntroDialogParams = {
                 plugin: eligiblePlugin as IGaugeVoterPlugin,

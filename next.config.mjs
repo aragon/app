@@ -146,6 +146,12 @@ const nextConfig = {
                 browser: './src/empty.ts',
             },
             'react-native': { browser: './src/empty.ts' },
+            // `@wagmi/core` Tempo Wallet connector does `import('accounts')` as
+            // an optional runtime dep with a `.catch()` fallback. Turbopack
+            // statically resolves it and fails the build. Stub it out — the
+            // code path is only hit when Tempo Wallet is actually used.
+            // See https://github.com/wevm/wagmi/issues/4906
+            accounts: './src/empty.ts',
         },
     },
 };

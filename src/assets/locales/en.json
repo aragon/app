@@ -1103,6 +1103,12 @@
             "error": "You must select at least one body.",
             "label": "Bodies"
           },
+          "existingCondition": {
+            "add": "Existing condition",
+            "addressRequired": "Address is required",
+            "basicNotSupported": "Adding existing conditions is only available in Advanced governance.",
+            "remove": "Remove condition"
+          },
           "mode": {
             "anyDescription": "Any address can create proposals",
             "anyLabel": "Anyone",
@@ -1947,6 +1953,13 @@
           "title": "Not eligible to vote"
         }
       },
+      "permissionsDefinitionList": {
+        "or": "or",
+        "emptyUnrestricted": {
+          "heading": "Unrestricted",
+          "description": "Anyone can create a proposal."
+        }
+      },
       "proposalExecutionStatus": {
         "buttons": {
           "execute": "Execute",
@@ -2246,6 +2259,7 @@
             "title": "Epoch {{epochId}}"
           },
           "asideLocks": {
+            "titleNoTokenMetadata": "Token",
             "tabs": {
               "delegate": "Delegate",
               "lock": "Lock"
@@ -2933,7 +2947,7 @@
               "self": "Yourself"
             }
           },
-          "submit": "Delegate voting power",
+          "submit": "Delegate {{tokenSymbol}}",
           "submitDialog": "Delegate now",
           "cancel": "Cancel"
         },
@@ -2966,13 +2980,15 @@
           },
           "delegationOnboardingCard": {
             "heading": "Your {{symbol}} is undelegated",
+            "headingNoTokenMetadata": "Your tokens are undelegated",
             "description": "Delegate your voting power to yourself or to someone else.",
             "action": "Set up your delegation"
           }
         },
         "tokenMemberPanel": {
+          "titleNoTokenMetadata": "Token",
           "tabs": {
-            "delegate": "Delegate",
+            "delegate": "Delegation",
             "wrap": "Wrap",
             "lock": "Lock"
           }

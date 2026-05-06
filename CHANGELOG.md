@@ -1,5 +1,25 @@
 # @aragon/app
 
+## 1.27.1
+
+### Patch Changes
+
+- [#1106](https://github.com/aragon/app/pull/1106) [`6da5128`](https://github.com/aragon/app/commit/6da5128016914519b36fcceec349cb235466f383) Thanks [@milosh86](https://github.com/milosh86)! - Fix empty card shown on process details page when anyone can create a proposal
+
+- [#1112](https://github.com/aragon/app/pull/1112) [`43a4b47`](https://github.com/aragon/app/commit/43a4b474808590713dee9ef91f87655895024d19) Thanks [@milosh86](https://github.com/milosh86)! - Allow gaugeVoter plugin to work with 3rd-party escrow contracts
+
+- [#1116](https://github.com/aragon/app/pull/1116) [`91c968a`](https://github.com/aragon/app/commit/91c968aa82d91389d6a20ded55454074d8164382) Thanks [@brickpop](https://github.com/brickpop)! - Set the Condition factory address for Citrea
+
+- [#1110](https://github.com/aragon/app/pull/1110) [`0a3e228`](https://github.com/aragon/app/commit/0a3e22885a48149d6bd106a90502f090971a6443) Thanks [@milosh86](https://github.com/milosh86)! - Strip hop-by-hop headers from proxied backend requests
+
+- [#1121](https://github.com/aragon/app/pull/1121) [`ebef184`](https://github.com/aragon/app/commit/ebef18486beabfdfe49999d7662436a6dd8f65d9) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix plugin visibility logic in useDaoPlugins hook
+
+- [#1108](https://github.com/aragon/app/pull/1108) [`af22692`](https://github.com/aragon/app/commit/af22692639c1720a66096653e6f1ce0ad6a3afaa) Thanks [@evanaronson](https://github.com/evanaronson)! - Improve formatting of token address, name, symbol, and support for when they are missing
+
+- [#1105](https://github.com/aragon/app/pull/1105) [`fed3069`](https://github.com/aragon/app/commit/fed3069e3f70b3705c389c5037aaaee3778cd231) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Pin SPP voting terminal Settings tab to the proposal snapshot so it agrees with the Breakdown tab on per-proposal settings (e.g. quorum threshold).
+
+- [#1120](https://github.com/aragon/app/pull/1120) [`fbe4eae`](https://github.com/aragon/app/commit/fbe4eaebebfe28353eaa978135da45f76b5efbbb) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update package dependencies and configuration files
+
 ## 1.27.0
 
 ### Minor Changes

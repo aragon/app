@@ -121,6 +121,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
+        key: 'existingProposalCreationCondition',
+        name: 'Existing proposal creation condition',
+        description:
+            'Allows adding existing condition contracts to the SPP proposal creation rule in the governance designer.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
+    {
         key: 'aragonProfiles',
         name: 'Aragon Profiles',
         description:

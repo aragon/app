@@ -43,8 +43,10 @@ export interface IGaugeVoterPluginSettingsEscrowSettings {
 export interface IGaugeVoterPluginSettingsToken extends IToken {
     /**
      * This is not a real ERC20 token, but an adapter contract with some of the interfaces supported (but not all).
+     *
+     * If a "token" is Aragon's `ivotesAdapter`, the type is `escrowAdapter`. Otherwise, if it's a 3rd party token adapter, the type is `unknown`.
      */
-    type: 'escrowAdapter';
+    type: 'escrowAdapter' | 'unknown';
     /**
      * The address of the underlying token contract.
      */
@@ -57,9 +59,9 @@ export interface IGaugeVoterPluginSettingsToken extends IToken {
 
 export interface IGaugeVoterPluginSettings extends IPluginSettings {
     /**
-     * The settings of the voting escrow.
+     * The settings of the voting escrow. Present only if Aragon's `ivotesAdapter` is used.
      */
-    votingEscrow: IGaugeVoterPluginSettingsEscrowSettings;
+    votingEscrow?: IGaugeVoterPluginSettingsEscrowSettings;
     /**
      * Structured token configuration returned by the backend.
      */
@@ -96,7 +98,7 @@ export interface IGaugeVoterPluginVotingEscrowAddresses {
 export interface IGaugeVoterPlugin
     extends IDaoPlugin<IGaugeVoterPluginSettings> {
     /**
-     * The voting escrow contract addresses.
+     * The voting escrow contract addresses. Present only if Aragon's `ivotesAdapter` is used.
      */
-    votingEscrow: IGaugeVoterPluginVotingEscrowAddresses;
+    votingEscrow?: IGaugeVoterPluginVotingEscrowAddresses;
 }
