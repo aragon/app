@@ -10,6 +10,8 @@ import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import { generateDialogContext } from '@/shared/testUtils';
 import { type IUserDialogProps, UserDialog } from './userDialog';
 
@@ -56,6 +58,15 @@ describe('<UserDialog /> component', () => {
         clipboardCopySpy.mockReset();
     });
 
+    const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
+        {
+            key: 'aragonProfiles',
+            name: 'Aragon Profiles',
+            description: 'Enables Aragon Profile creation/edit flow.',
+            enabled: true,
+        },
+    ];
+
     const createTestComponent = (props?: Partial<IUserDialogProps>) => {
         const completeProps: IUserDialogProps = {
             location: { id: 'test' },
@@ -64,7 +75,9 @@ describe('<UserDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <UserDialog {...completeProps} />
+                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                    <UserDialog {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };

@@ -6,6 +6,7 @@ import { TokenDelegationOnboardingWatcher } from '@/plugins/tokenPlugin/componen
 import { TokenLockAndWrapOnboardingWatcher } from '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { AragonProfileOnboardingWatcher } from '../aragonProfileOnboardingWatcher';
 
@@ -37,18 +38,23 @@ export const DaoOnboardingWatchers: React.FC<IDaoOnboardingWatchersProps> = (
     const { dao } = props;
 
     const { locations } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
+    const isAragonProfileEnabled = isEnabled('aragonProfiles');
     const [isCheckPending, setIsCheckPending] = useState(false);
 
     const isProfileDialogOpen = locations.some((location) =>
         profileDialogIds.has(location.id),
     );
-    const isPaused = isCheckPending || isProfileDialogOpen;
+    const isPaused =
+        isAragonProfileEnabled && (isCheckPending || isProfileDialogOpen);
 
     return (
         <>
-            <AragonProfileOnboardingWatcher
-                onCheckPendingChange={setIsCheckPending}
-            />
+            {isAragonProfileEnabled && (
+                <AragonProfileOnboardingWatcher
+                    onCheckPendingChange={setIsCheckPending}
+                />
+            )}
             <TokenDelegationOnboardingWatcher dao={dao} isPaused={isPaused} />
             <TokenLockAndWrapOnboardingWatcher dao={dao} isPaused={isPaused} />
             <LockToVoteLockOnboardingWatcher dao={dao} isPaused={isPaused} />

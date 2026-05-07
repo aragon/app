@@ -19,6 +19,7 @@ import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
@@ -30,6 +31,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { t } = useTranslations();
 
     const { close, open } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
+    const isAragonProfileEnabled = isEnabled('aragonProfiles');
     const { address, chainId } = useConnection();
     const disconnect = useDisconnect();
 
@@ -96,7 +99,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                         size="lg"
                     />
                     <div className="flex gap-2">
-                        {hasAragonProfile && (
+                        {hasAragonProfile && isAragonProfileEnabled && (
                             <Button
                                 iconLeft={IconType.PEN}
                                 onClick={handleEditAragonProfile}
@@ -146,7 +149,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                     >
                         {t('app.application.userDialog.myDaos')}
                     </Button>
-                    {!hasAragonProfile && (
+                    {!hasAragonProfile && isAragonProfileEnabled && (
                         <Button
                             className="w-full"
                             onClick={handleCreateAragonProfile}
@@ -159,7 +162,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                         </Button>
                     )}
                 </div>
-                {!hasAragonProfile && (
+                {!hasAragonProfile && isAragonProfileEnabled && (
                     <p className="text-center font-normal text-neutral-500 text-sm leading-normal">
                         {t('app.application.userDialog.description')}
                     </p>
