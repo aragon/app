@@ -24,9 +24,6 @@ import type { IGaugeVoterLockUnlockDialogParams } from '../../dialogs/gaugeVoter
 import type { IGaugeVoterPlugin } from '../../types';
 import { GaugeVoterLockFormChart } from './gaugeVoterLockFormChart';
 
-/**
- * Props for the GaugeVoterLockForm component.
- */
 export interface IGaugeVoterLockFormProps {
     /**
      * DAO plugin for the token locking.
