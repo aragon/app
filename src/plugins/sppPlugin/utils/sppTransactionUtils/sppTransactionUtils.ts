@@ -201,7 +201,11 @@ class SppTransactionUtils {
         pluginSetupData: IPluginInstallationSetupData[],
         safeConditionAddresses: Hex[],
     ): ITransactionRequest | undefined => {
-        const { stages, proposalCreationMode } = values;
+        const {
+            stages,
+            proposalCreationMode,
+            existingProposalCreationConditions = [],
+        } = values;
 
         const sppRuleConditionContract =
             sppSetupData.preparedSetupData.helpers[0];
@@ -228,11 +232,27 @@ class SppTransactionUtils {
                     : current;
             }, []);
 
-        const conditionAddresses = [
+        const customConditionAddresses = existingProposalCreationConditions
+            .map(({ address }) => address)
+            .filter((address) => address != null && address.length > 0);
+
+        const allConditionAddresses = [
             ...existingConditionAddresses,
             ...newConditionAddresses,
             ...safeConditionAddresses,
+            ...customConditionAddresses,
         ];
+
+        const seen = new Set<string>();
+        const conditionAddresses = allConditionAddresses.filter((address) => {
+            const key = address.toLowerCase();
+            if (seen.has(key)) {
+                return false;
+            }
+            seen.add(key);
+            return true;
+        });
+
         const conditionRules = permissionTransactionUtils.buildRuleConditions(
             conditionAddresses,
             [],

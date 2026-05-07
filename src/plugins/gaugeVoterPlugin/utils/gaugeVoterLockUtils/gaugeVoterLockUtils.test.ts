@@ -170,7 +170,7 @@ describe('GaugeVoterLockUtils', () => {
             );
             const votingPower2 = gaugeVoterLockUtils.calculateVotingPower(
                 amount,
-                mockSettings.votingEscrow.maxTime,
+                mockSettings.votingEscrow!.maxTime,
                 mockSettings,
             );
 
@@ -195,7 +195,7 @@ describe('GaugeVoterLockUtils', () => {
             const settingsWithBias: IGaugeVoterPluginSettings = {
                 ...mockSettings,
                 votingEscrow: {
-                    ...mockSettings.votingEscrow,
+                    ...mockSettings.votingEscrow!,
                     bias: 1e17, // Add bias
                 },
             };
@@ -412,7 +412,7 @@ describe('GaugeVoterLockUtils', () => {
 
             const minLockTime = gaugeVoterLockUtils.getMinLockTime(
                 lock,
-                mockSettings.votingEscrow,
+                mockSettings.votingEscrow!,
             );
 
             // minLockTime = epochStartAt + minLockTime from settings

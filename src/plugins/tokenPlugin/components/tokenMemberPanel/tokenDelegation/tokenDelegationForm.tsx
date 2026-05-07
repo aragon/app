@@ -33,6 +33,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
 ) => {
     const {
         tokenAddress,
+        tokenSymbol,
         daoId,
         mode = 'panel',
         onCancel,
@@ -242,7 +243,9 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                         onClick={isConnected ? undefined : () => walletGuard()}
                         type={isConnected ? 'submit' : undefined}
                     >
-                        {t('app.plugins.token.tokenDelegationForm.submit')}
+                        {t('app.plugins.token.tokenDelegationForm.submit', {
+                            tokenSymbol: tokenSymbol ?? '',
+                        })}
                     </Button>
                     {footerInfo}
                 </div>

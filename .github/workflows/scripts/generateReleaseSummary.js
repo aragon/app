@@ -12,9 +12,8 @@ const runGit = (command) => {
 };
 
 // Latest semver-like tag by version (not reachability).
-const detectLatestSemverTag = () => {
-    return runGit(`git tag --list "v*" --sort=-v:refname | head -n 1`);
-};
+const detectLatestSemverTag = () =>
+    runGit(`git tag --list "v*" --sort=-v:refname | head -n 1`);
 
 // If tags are created on release branches, the right "since last release cut" base on main
 // is the merge-base between main (HEAD) and the previous release tag commit.

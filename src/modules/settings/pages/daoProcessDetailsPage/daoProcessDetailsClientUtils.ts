@@ -58,7 +58,12 @@ export class DaoProcessDetailsClientUtils {
             allPlugins,
         );
 
-        return { governanceType: GovernanceType.ADVANCED, stages, ...base };
+        return {
+            governanceType: GovernanceType.ADVANCED,
+            stages,
+            existingProposalCreationConditions: [],
+            ...base,
+        };
     };
 
     bodyToFormDataDefault = <

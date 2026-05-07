@@ -77,8 +77,8 @@ class SimulationFlowVisualizationUtils {
      */
     sortTokenDeltas = (
         tokenDeltas: IAddressTokenDelta[],
-    ): IAddressTokenDelta[] => {
-        return [...tokenDeltas].sort((a, b) => {
+    ): IAddressTokenDelta[] =>
+        [...tokenDeltas].sort((a, b) => {
             const aNeg = a.amount.trim().startsWith('-');
             const bNeg = b.amount.trim().startsWith('-');
             if (aNeg !== bNeg) {
@@ -86,7 +86,6 @@ class SimulationFlowVisualizationUtils {
             }
             return 0;
         });
-    };
 }
 
 export const simulationFlowVisualizationUtils =

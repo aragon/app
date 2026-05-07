@@ -23,9 +23,8 @@ class ErrorUtils {
      * contains DOM element references (e.g., from React hydration errors
      * or Next.js metadata API errors).
      */
-    serialize = (error: unknown): ISerializedError => {
-        return this.serializeInternal(error, new WeakSet<object>(), 0);
-    };
+    serialize = (error: unknown): ISerializedError =>
+        this.serializeInternal(error, new WeakSet<object>(), 0);
 
     private serializeInternal = (
         error: unknown,

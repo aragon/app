@@ -29,6 +29,11 @@ export const GaugeVoterLockOnboardingLockTimeInfoDialog: React.FC<
     const { plugin, daoId } = location.params;
     const { token, votingEscrow } = plugin.settings;
 
+    invariant(
+        votingEscrow != null,
+        'GaugeVoterLockOnboardingLockTimeInfoDialog: votingEscrow must be set for lock functionality to work.',
+    );
+
     const { symbol: tokenSymbol } = token;
 
     const minLockDays = dateUtils.secondsToDuration(
