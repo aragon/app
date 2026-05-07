@@ -31,6 +31,7 @@ export const generateCreateProcessFormDataAdvanced = (
     ...generateCreateProcessFormDataBase(values),
     governanceType: GovernanceType.ADVANCED,
     stages: [],
+    existingProposalCreationConditions: [],
     ...values,
 });
 

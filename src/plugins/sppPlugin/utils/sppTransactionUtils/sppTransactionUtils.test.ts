@@ -678,6 +678,122 @@ describe('sppTransaction utils', () => {
 
             expect(result).toBeDefined();
         });
+
+        it('includes existingProposalCreationConditions in the condition rules', () => {
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+                existingProposalCreationConditions: [
+                    { address: '0xCustomA' },
+                    { address: '0xCustomB' },
+                ],
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: {
+                    helpers: ['0xSppRuleCondition'],
+                    permissions: [],
+                },
+            });
+
+            buildRuleConditionsSpy.mockReturnValueOnce([]);
+            encodeFunctionDataSpy.mockReturnValueOnce('0xData');
+
+            sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                [],
+                [],
+            );
+
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
+                ['0xCustomA', '0xCustomB'],
+                [],
+            );
+        });
+
+        it('skips empty existingProposalCreationConditions entries', () => {
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+                existingProposalCreationConditions: [
+                    { address: '' },
+                    { address: '0xCustomA' },
+                ],
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: {
+                    helpers: ['0xSppRuleCondition'],
+                    permissions: [],
+                },
+            });
+
+            buildRuleConditionsSpy.mockReturnValueOnce([]);
+            encodeFunctionDataSpy.mockReturnValueOnce('0xData');
+
+            sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                [],
+                [],
+            );
+
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
+                ['0xCustomA'],
+                [],
+            );
+        });
+
+        it('dedupes condition addresses across body, safe and custom sources case-insensitively', () => {
+            const newBody = generateSetupBodyFormNew({
+                canCreateProposal: true,
+            });
+            const stage = generateCreateProcessFormStage({ bodies: [newBody] });
+            const values = generateCreateProcessFormDataAdvanced({
+                stages: [stage],
+                proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
+                existingProposalCreationConditions: [
+                    { address: '0xnewcondition' },
+                    { address: '0xSafeCondition1' },
+                    { address: '0xCustomA' },
+                    { address: '0xCustomA' },
+                ],
+            });
+
+            const sppSetupData = generatePluginInstallationSetupData({
+                preparedSetupData: {
+                    helpers: ['0xSppRuleCondition'],
+                    permissions: [],
+                },
+            });
+
+            const pluginSetupData = [
+                generatePluginInstallationSetupData({
+                    preparedSetupData: {
+                        helpers: ['0xNewCondition'],
+                        permissions: [],
+                    },
+                }),
+            ];
+
+            const safeConditionAddresses = ['0xSafeCondition1'] as Viem.Hex[];
+
+            buildRuleConditionsSpy.mockReturnValueOnce([]);
+            encodeFunctionDataSpy.mockReturnValueOnce('0xData');
+
+            sppTransactionUtils['buildUpdateRulesTransaction'](
+                values,
+                sppSetupData,
+                pluginSetupData,
+                safeConditionAddresses,
+            );
+
+            expect(buildRuleConditionsSpy).toHaveBeenCalledWith(
+                ['0xNewCondition', '0xSafeCondition1', '0xCustomA'],
+                [],
+            );
+        });
     });
 
     describe('buildUpdateStagesTransaction', () => {
