@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-import { main } from '../../.agents/hooks/inject-rules.mjs'
+import { main } from '../../.agents/hooks/inject-rules.mjs';
 
-main({ defaultAdapter: 'claude' })
+main({ defaultAdapter: 'claude' });

@@ -1,7 +1,12 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
     testEnvironment: 'jsdom',
-    testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+    testPathIgnorePatterns: [
+        '/node_modules/',
+        '/e2e/',
+        '/\\.agents/hooks/',
+        '/\\.claude/hooks/',
+    ],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
     coveragePathIgnorePatterns: [
         '.d.ts',

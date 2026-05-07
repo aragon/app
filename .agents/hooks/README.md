@@ -70,6 +70,8 @@ node --test .agents/hooks/*.test.mjs .claude/hooks/*.test.mjs
 pnpm test:guardrails
 ```
 
+These tests intentionally use Node's built-in test runner, not Jest. The main repo Jest suite ignores `/.agents/hooks/` and `/.claude/hooks/` so the guardrails spike can use ESM `.mjs` tests without changing the application's Jest setup.
+
 ## Current limits
 
 - The only checked-in runtime adapter in this spike is Claude.

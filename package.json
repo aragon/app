@@ -14,7 +14,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:guardrails": "node --test .agents/hooks/*.test.mjs",
+    "test:guardrails": "node --test .agents/hooks/*.test.mjs .claude/hooks/*.test.mjs",
     "test:hooks": "pnpm test:guardrails",
     "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
     "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",

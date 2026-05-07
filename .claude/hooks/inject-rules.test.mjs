@@ -6,27 +6,27 @@
 // inject-rules-test-* dirs from a prior crashed run so /tmp doesn't bloat.
 // No test writes to the repo working tree, so `git status` stays clean.
 
-import { strict as assert } from 'node:assert/strict'
-import { buildAdditionalContext } from '../../.agents/hooks/inject-rules.mjs'
+import { strict as assert } from 'node:assert/strict';
+import { buildAdditionalContext } from '../../.agents/hooks/inject-rules.mjs';
 import {
     registerGuardrailsContractSuite,
     registerTmpCleanup,
-} from '../../.agents/hooks/inject-rules.test-helpers.mjs'
+} from '../../.agents/hooks/inject-rules.test-helpers.mjs';
 
-registerTmpCleanup()
+registerTmpCleanup();
 
 registerGuardrailsContractSuite({
     suiteName: 'buildAdditionalContext Claude contract',
     buildResult: buildAdditionalContext,
     assertHitOutput: (output, { ruleName, ruleBody }) => {
-        assert.equal(output.hookSpecificOutput.hookEventName, 'PreToolUse')
+        assert.equal(output.hookSpecificOutput.hookEventName, 'PreToolUse');
         assert.match(
             output.hookSpecificOutput.additionalContext,
             new RegExp(ruleBody),
-        )
+        );
         assert.match(
             output.hookSpecificOutput.additionalContext,
             new RegExp(`<rule-skill name="${ruleName}"`),
-        )
+        );
     },
-})
+});
