@@ -3,6 +3,7 @@ const config = {
     testEnvironment: 'jsdom',
     testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
+    maxWorkers: '70%',
     coveragePathIgnorePatterns: [
         '.d.ts',
         '.api.ts',
