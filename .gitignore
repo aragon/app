@@ -52,10 +52,18 @@ next-env.d.ts
 
 # IDE/AI
 .idea
-.claude
+.claude/**
+!.claude/hooks/
+!.claude/hooks/**
+!.claude/settings.json
 .vscode
 .zed
 .tempor
-.agents
+.agents/**
+!.agents/skills/
+!.agents/skills/rules/
+!.agents/skills/rules/**
+!.agents/hooks/
+!.agents/hooks/**
 .playwright-mcp
 .patches
