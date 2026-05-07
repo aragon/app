@@ -18,6 +18,8 @@ import { ExploreDaos } from '../../components/exploreDaos';
 import { ExploreNav } from '../../components/exploreNav';
 import { ExploreSection } from '../../components/exploreSection';
 
+export const exploreDaosSectionId = 'explore-daos-section';
+
 export interface IExploreDaosPageClientProps {
     /**
      * Initial parameters to use to fetch the list of DAOs.
@@ -157,6 +159,7 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                         </div>
                     </ExploreSection>
                     <ExploreSection
+                        id={exploreDaosSectionId}
                         title={t('app.explore.exploreDaosPage.section.daos')}
                     >
                         <Suspense fallback={null}>

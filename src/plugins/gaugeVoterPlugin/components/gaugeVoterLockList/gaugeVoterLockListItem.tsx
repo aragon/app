@@ -32,9 +32,6 @@ import {
     type TokenLockStatus,
 } from '../../utils/gaugeVoterLockUtils';
 
-/**
- * Props for the GaugeVoterLockListItem component.
- */
 export interface IGaugeVoterLockListItemProps {
     /**
      * VE lock to display.

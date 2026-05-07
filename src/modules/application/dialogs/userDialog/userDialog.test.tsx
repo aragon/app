@@ -10,6 +10,8 @@ import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import { generateDialogContext } from '@/shared/testUtils';
 import { type IUserDialogProps, UserDialog } from './userDialog';
 
@@ -56,6 +58,15 @@ describe('<UserDialog /> component', () => {
         clipboardCopySpy.mockReset();
     });
 
+    const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
+        {
+            key: 'aragonProfiles',
+            name: 'Aragon Profiles',
+            description: 'Enables Aragon Profile creation/edit flow.',
+            enabled: true,
+        },
+    ];
+
     const createTestComponent = (props?: Partial<IUserDialogProps>) => {
         const completeProps: IUserDialogProps = {
             location: { id: 'test' },
@@ -64,7 +75,9 @@ describe('<UserDialog /> component', () => {
 
         return (
             <GukModulesProvider>
-                <UserDialog {...completeProps} />
+                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                    <UserDialog {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };
@@ -106,27 +119,97 @@ describe('<UserDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders a disconnect action for the user which disconnects', async () => {
-        const disconnect = jest.fn();
-        const close = jest.fn();
+    it('always renders the logout icon button', () => {
         useConnectionSpy.mockReturnValue({
             address: '0x123',
         } as unknown as wagmi.UseConnectionReturnType);
-        useDisconnectSpy.mockReturnValue({
-            disconnect,
-        } as unknown as wagmi.UseDisconnectReturnType);
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+        render(createTestComponent());
+        expect(screen.getByTestId(IconType.LOGOUT)).toBeInTheDocument();
+    });
+
+    it('renders the edit icon button only when user has an ENS name', () => {
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent());
+        expect(screen.getByTestId(IconType.PEN)).toBeInTheDocument();
+        expect(screen.getByTestId(IconType.LOGOUT)).toBeInTheDocument();
+    });
+
+    it('renders My DAOs and Create Aragon profile buttons when user has no ENS name', () => {
+        const address = '0x95222290DD7278Aa3Ddd389Cc1E1d165CC4BAfe5';
+        useConnectionSpy.mockReturnValue({
+            address,
+        } as unknown as wagmi.UseConnectionReturnType);
+        render(createTestComponent());
+        expect(
+            screen.getByText(/app.application.userDialog.myDaos/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/app.application.userDialog.createAragonProfile/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(/app.application.userDialog.description/),
+        ).toBeInTheDocument();
+    });
+
+    it('renders only My DAOs button when user has an ENS name', () => {
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        render(createTestComponent());
+        expect(
+            screen.getByText(/app.application.userDialog.myDaos/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                /app.application.userDialog.createAragonProfile/,
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(/app.application.userDialog.description/),
+        ).not.toBeInTheDocument();
+    });
+
+    it('opens the Aragon profile dialog when clicking the edit icon button', async () => {
+        const open = jest.fn();
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         render(createTestComponent());
 
-        const logoutIcon = screen.getByTestId(IconType.LOGOUT);
-        expect(logoutIcon).toBeInTheDocument();
+        await userEvent.click(screen.getByTestId(IconType.PEN));
+        expect(open).toHaveBeenCalled();
+    });
 
-        const disconnectLink = screen.getByText(
-            /app.application.userDialog.disconnect/,
-        );
-        expect(disconnectLink).toBeInTheDocument();
+    it('disconnects when the logout icon button is clicked', async () => {
+        const disconnect = jest.fn();
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useEnsNameSpy.mockReturnValue({
+            data: 'name.eth',
+            isLoading: false,
+        } as ReturnType<typeof ensModule.useEnsName>);
+        useDisconnectSpy.mockReturnValue({
+            mutate: disconnect,
+        } as unknown as wagmi.UseDisconnectReturnType);
+        render(createTestComponent());
 
-        await userEvent.click(disconnectLink);
+        await userEvent.click(screen.getByTestId(IconType.LOGOUT));
         expect(disconnect).toHaveBeenCalled();
     });
 

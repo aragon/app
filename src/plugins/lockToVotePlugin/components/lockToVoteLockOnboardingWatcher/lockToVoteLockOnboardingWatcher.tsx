@@ -16,12 +16,18 @@ export interface ILockToVoteLockOnboardingWatcherProps {
      * The DAO to watch for lock onboarding.
      */
     dao: IDao;
+    /**
+     * When true, suppress opening the onboarding dialog. The watcher still
+     * captures connection events; when `isPaused` flips false the dialog
+     * opens if all other conditions are met.
+     */
+    isPaused?: boolean;
 }
 
 export const LockToVoteLockOnboardingWatcher: React.FC<
     ILockToVoteLockOnboardingWatcherProps
 > = (props) => {
-    const { dao } = props;
+    const { dao, isPaused = false } = props;
 
     const daoPlugins = daoUtils.getDaoPlugins(dao, {
         interfaceType: PluginInterfaceType.LOCK_TO_VOTE,
@@ -54,7 +60,8 @@ export const LockToVoteLockOnboardingWatcher: React.FC<
         if (
             lockToVotePlugin == null ||
             !hasPendingConnection ||
-            !shouldTrigger
+            !shouldTrigger ||
+            isPaused
         ) {
             return;
         }
@@ -66,7 +73,14 @@ export const LockToVoteLockOnboardingWatcher: React.FC<
             daoId: dao.id,
         };
         open(LockToVotePluginDialogId.LOCK_ONBOARDING_INTRO_L2V, { params });
-    }, [hasPendingConnection, shouldTrigger, lockToVotePlugin, dao.id, open]);
+    }, [
+        hasPendingConnection,
+        shouldTrigger,
+        isPaused,
+        lockToVotePlugin,
+        dao.id,
+        open,
+    ]);
 
     return null;
 };

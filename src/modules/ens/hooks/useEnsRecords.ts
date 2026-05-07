@@ -3,11 +3,7 @@ import { useEffect } from 'react';
 import { normalize } from 'viem/ens';
 import { getEnsText } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import {
-    ENS_CACHE,
-    ENS_CHAIN_ID,
-    ENS_PROFILE_KEYS,
-} from '../constants/ensConfig';
+import { ensCache, ensChainId, ensProfileKeys } from '../constants/ensConfig';
 import type { IEnsRecords } from '../types';
 import { logEnsError } from '../utils/logEnsError';
 
@@ -27,7 +23,7 @@ export function useEnsRecords(name: string | null | undefined) {
     const isValid = name != null && name.length > 0;
 
     const result = useQuery<IEnsRecords>({
-        queryKey: ['ensRecords', name, ENS_PROFILE_KEYS],
+        queryKey: ['ensRecords', name, ensProfileKeys],
         queryFn: async () => {
             if (!isValid) {
                 return {};
@@ -36,17 +32,17 @@ export function useEnsRecords(name: string | null | undefined) {
             const normalizedName = normalize(name);
 
             const settled = await Promise.allSettled(
-                ENS_PROFILE_KEYS.map((key) =>
+                ensProfileKeys.map((key) =>
                     getEnsText(wagmiConfig, {
                         name: normalizedName,
                         key,
-                        chainId: ENS_CHAIN_ID,
+                        chainId: ensChainId,
                     }),
                 ),
             );
 
             return Object.fromEntries(
-                ENS_PROFILE_KEYS.map((key, i) => {
+                ensProfileKeys.map((key, i) => {
                     const entry = settled[i];
                     const value =
                         entry.status === 'fulfilled'
@@ -57,8 +53,8 @@ export function useEnsRecords(name: string | null | undefined) {
             );
         },
         enabled: isValid,
-        staleTime: ENS_CACHE.staleTime,
-        gcTime: ENS_CACHE.gcTime,
+        staleTime: ensCache.staleTime,
+        gcTime: ensCache.gcTime,
     });
 
     useEffect(() => {
@@ -68,7 +64,7 @@ export function useEnsRecords(name: string | null | undefined) {
         logEnsError(result.error, {
             hook: 'useEnsRecords',
             name,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
         });
     }, [result.error, name]);
 
