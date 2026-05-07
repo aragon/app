@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { isAddress } from 'viem';
 // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
 import { useEnsName as useWagmiEnsName } from 'wagmi';
-import { ENS_CACHE, ENS_CHAIN_ID } from '../constants/ensConfig';
+import { ensCache, ensChainId } from '../constants/ensConfig';
 import { logEnsError } from '../utils/logEnsError';
 
 /**
@@ -22,11 +22,11 @@ export function useEnsName(address: string | undefined) {
 
     const result = useWagmiEnsName({
         address: validAddress,
-        chainId: ENS_CHAIN_ID,
+        chainId: ensChainId,
         query: {
             enabled: validAddress != null,
-            staleTime: ENS_CACHE.staleTime,
-            gcTime: ENS_CACHE.gcTime,
+            staleTime: ensCache.staleTime,
+            gcTime: ensCache.gcTime,
         },
     });
 
@@ -37,7 +37,7 @@ export function useEnsName(address: string | undefined) {
         logEnsError(result.error, {
             hook: 'useEnsName',
             address: validAddress,
-            chainId: ENS_CHAIN_ID,
+            chainId: ensChainId,
         });
     }, [result.error, validAddress]);
 

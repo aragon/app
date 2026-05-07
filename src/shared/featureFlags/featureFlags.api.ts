@@ -17,7 +17,8 @@ export type FeatureFlagKey =
     | 'osxUpdates'
     | 'useMocks'
     | 'enableAllPlugins'
-    | 'existingProposalCreationCondition';
+    | 'existingProposalCreationCondition'
+    | 'aragonProfiles';
 
 /**
  * Feature flag definition structure.

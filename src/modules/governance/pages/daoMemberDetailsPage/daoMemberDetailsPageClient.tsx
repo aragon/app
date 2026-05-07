@@ -10,7 +10,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useBlock } from 'wagmi';
 import {
-    ENS_RECORD_KEYS,
+    ensRecordKeys,
     useEnsAvatar,
     useEnsName,
     useEnsRecords,
@@ -175,9 +175,9 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsRecords(ensName);
     const memberLinks = {
-        github: ensRecords?.[ENS_RECORD_KEYS.github],
-        twitter: ensRecords?.[ENS_RECORD_KEYS.twitter],
-        url: ensRecords?.[ENS_RECORD_KEYS.url],
+        github: ensRecords?.[ensRecordKeys.github],
+        twitter: ensRecords?.[ensRecordKeys.twitter],
+        url: ensRecords?.[ensRecordKeys.url],
     };
 
     if (member == null || dao == null || bodyPlugin == null) {

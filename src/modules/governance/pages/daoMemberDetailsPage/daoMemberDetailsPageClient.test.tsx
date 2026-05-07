@@ -11,7 +11,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
-import { ENS_RECORD_KEYS } from '@/modules/ens';
+import { ensRecordKeys } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
@@ -256,10 +256,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         } as ReturnType<typeof ensModule.useEnsName>);
         useEnsRecordsSpy.mockReturnValue({
             data: {
-                [ENS_RECORD_KEYS.description]: 'Delegate bio',
-                [ENS_RECORD_KEYS.url]: 'example.com',
-                [ENS_RECORD_KEYS.twitter]: 'member_handle',
-                [ENS_RECORD_KEYS.github]: 'member-dev',
+                [ensRecordKeys.description]: 'Delegate bio',
+                [ensRecordKeys.url]: 'example.com',
+                [ensRecordKeys.twitter]: 'member_handle',
+                [ensRecordKeys.github]: 'member-dev',
             },
             isLoading: false,
         } as unknown as ReturnType<typeof ensModule.useEnsRecords>);
@@ -294,10 +294,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         } as ReturnType<typeof ensModule.useEnsName>);
         useEnsRecordsSpy.mockReturnValue({
             data: {
-                [ENS_RECORD_KEYS.description]: 'Delegate bio',
-                [ENS_RECORD_KEYS.url]: null,
-                [ENS_RECORD_KEYS.twitter]: null,
-                [ENS_RECORD_KEYS.github]: null,
+                [ensRecordKeys.description]: 'Delegate bio',
+                [ensRecordKeys.url]: null,
+                [ensRecordKeys.twitter]: null,
+                [ensRecordKeys.github]: null,
             },
             isLoading: false,
         } as unknown as ReturnType<typeof ensModule.useEnsRecords>);

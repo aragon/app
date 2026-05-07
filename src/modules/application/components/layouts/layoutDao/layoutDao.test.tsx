@@ -27,26 +27,9 @@ jest.mock('../../bannerDao', () => ({
     BannerDao: () => <div data-testid="banner-mock" />,
 }));
 
-jest.mock(
-    '@/plugins/tokenPlugin/components/tokenDelegationOnboardingWatcher',
-    () => ({
-        TokenDelegationOnboardingWatcher: () => null,
-    }),
-);
-
-jest.mock(
-    '@/plugins/tokenPlugin/components/tokenLockAndWrapOnboardingWatcher',
-    () => ({
-        TokenLockAndWrapOnboardingWatcher: () => null,
-    }),
-);
-
-jest.mock(
-    '@/plugins/lockToVotePlugin/components/lockToVoteLockOnboardingWatcher',
-    () => ({
-        LockToVoteLockOnboardingWatcher: () => null,
-    }),
-);
+jest.mock('../../daoOnboardingWatchers', () => ({
+    DaoOnboardingWatchers: () => null,
+}));
 
 describe('<LayoutDao /> component', () => {
     const fetchQuerySpy = jest.spyOn(QueryClient.prototype, 'fetchQuery');

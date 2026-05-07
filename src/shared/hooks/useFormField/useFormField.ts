@@ -5,6 +5,7 @@ import {
     type Noop,
     useController,
 } from 'react-hook-form';
+import { match } from 'ts-pattern';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import {
     sanitizePlainText,
@@ -73,11 +74,16 @@ export const useFormField = <
         }
 
         const alertMessageKey = `app.shared.formField.error.${error.type}`;
-        const alertValue =
-            error.type === 'min'
-                ? (rules?.min as number | undefined)?.toString()
-                : (rules?.max as number | undefined)?.toString();
-        const alertMessageParams = { name: label ?? name, value: alertValue };
+        const alertValue = match(error.type)
+            .with('min', () => rules?.min)
+            .with('max', () => rules?.max)
+            .with('minLength', () => rules?.minLength)
+            .with('maxLength', () => rules?.maxLength)
+            .otherwise(() => undefined);
+        const alertMessageParams = {
+            name: label ?? name,
+            value: alertValue?.toString(),
+        };
 
         const alertMessage =
             error.message != null && error.message.length > 0
