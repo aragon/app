@@ -45,9 +45,10 @@ export const DelegateStatementDialog: React.FC<
     const { t } = useTranslations();
     const { chainId } = useConnection();
 
-    const { data: existingStatement } = useDelegateStatement({
-        cid: existingCid ?? null,
-    });
+    const { data: existingStatement } = useDelegateStatement(
+        { cid: existingCid ?? '' },
+        { enabled: existingCid != null && existingCid.length > 0 },
+    );
 
     const isOnMainnet = chainId === mainnet.id;
     const initialContent = existingStatement?.content ?? '';

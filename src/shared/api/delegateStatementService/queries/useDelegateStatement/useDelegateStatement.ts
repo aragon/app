@@ -6,24 +6,16 @@ import { delegateStatementServiceKeys } from '../../delegateStatementServiceKeys
 
 const IPFS_URI_PREFIX = 'ipfs://';
 
-const stripIpfsPrefix = (cid: string | null | undefined): string => {
-    if (cid == null) {
-        return '';
-    }
-    return cid.startsWith(IPFS_URI_PREFIX)
-        ? cid.slice(IPFS_URI_PREFIX.length)
-        : cid;
-};
+const stripIpfsPrefix = (cid: string): string =>
+    cid.startsWith(IPFS_URI_PREFIX) ? cid.slice(IPFS_URI_PREFIX.length) : cid;
 
 export interface IUseDelegateStatementParams {
     /**
      * Identifier of the pinned statement. Accepts either a bare CID
      * (`Qm...` or `bafy...`) or an `ipfs://`-prefixed URI as returned by
-     * the ENS text record. The hook is disabled when nullish or empty so
-     * callers can pass the result of `useDelegateStatementCid` directly
-     * without an extra guard.
+     * the ENS text record.
      */
-    cid: string | null | undefined;
+    cid: string;
 }
 
 export const useDelegateStatement = (
@@ -31,21 +23,13 @@ export const useDelegateStatement = (
     options?: QueryOptions<IDelegateStatement>,
 ) => {
     const normalizedCid = stripIpfsPrefix(params.cid);
-    const isEnabled = normalizedCid.length > 0;
 
     return useQuery<IDelegateStatement>({
         queryKey: delegateStatementServiceKeys.delegateStatement(normalizedCid),
-        queryFn: () => {
-            if (!isEnabled) {
-                throw new Error(
-                    'useDelegateStatement queryFn ran without a CID',
-                );
-            }
-            return delegateStatementService.getDelegateStatement({
+        queryFn: () =>
+            delegateStatementService.getDelegateStatement({
                 urlParams: { cid: normalizedCid },
-            });
-        },
-        enabled: isEnabled,
+            }),
         staleTime: Number.POSITIVE_INFINITY,
         ...options,
     });

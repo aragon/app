@@ -44,19 +44,11 @@ describe('useDelegateStatement query', () => {
         });
     });
 
-    it('skips the query entirely when cid is null', () => {
+    it('skips the query when caller passes enabled false', () => {
         const { result } = renderHook(
-            () => useDelegateStatement({ cid: null }),
+            () => useDelegateStatement({ cid: '' }, { enabled: false }),
             { wrapper: ReactQueryWrapper },
         );
-        expect(result.current.fetchStatus).toBe('idle');
-        expect(getDelegateStatementSpy).not.toHaveBeenCalled();
-    });
-
-    it('skips the query entirely when cid is an empty string', () => {
-        const { result } = renderHook(() => useDelegateStatement({ cid: '' }), {
-            wrapper: ReactQueryWrapper,
-        });
         expect(result.current.fetchStatus).toBe('idle');
         expect(getDelegateStatementSpy).not.toHaveBeenCalled();
     });

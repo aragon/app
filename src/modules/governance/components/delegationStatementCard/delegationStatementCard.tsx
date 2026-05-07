@@ -54,7 +54,10 @@ export const DelegationStatementCard: React.FC<
         tokenAddress,
     });
 
-    const { data: statement } = useDelegateStatement({ cid });
+    const { data: statement } = useDelegateStatement(
+        { cid: cid ?? '' },
+        { enabled: cid != null && cid.length > 0 },
+    );
 
     if (ensName == null || dao == null) {
         return null;
