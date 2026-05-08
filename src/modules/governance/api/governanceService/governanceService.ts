@@ -2,6 +2,7 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
@@ -37,31 +38,35 @@ class GovernanceService extends AragonBackendService {
     };
 
     /**
-     * Demo routing: for select plugins, fetch members through the
-     * aragon-subdomain BFF instead of the legacy backend.
-     * Remove once the subdomain covers all governance types.
+     * Networks whose token-voting member queries are served by the
+     * aragon-subdomain BFF. Expand as more networks are indexed by Envio.
      */
-    private static readonly SUBDOMAIN_TOKEN_BY_PLUGIN: Record<string, string> =
-        {
-            '0x9b7b2dea1eeb65a10d8b8df5113d99cd58c3f9cf':
-                '0x0a830e9f2baa2ebaf8d33c0806283dea9c08952f',
-        };
+    private static readonly SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
+        Network.ETHEREUM_MAINNET,
+    ]);
 
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
-        const pluginAddress = params.queryParams?.pluginAddress?.toLowerCase();
-        const tokenAddress =
-            pluginAddress != null
-                ? GovernanceService.SUBDOMAIN_TOKEN_BY_PLUGIN[pluginAddress]
-                : undefined;
+        const queryParams = params.queryParams;
+        const pluginAddress = queryParams?.pluginAddress?.toLowerCase();
+        const tokenAddress = queryParams?.tokenAddress?.toLowerCase();
+        const network = queryParams?.network;
+        const interfaceType = queryParams?.pluginInterfaceType;
 
-        if (tokenAddress && pluginAddress) {
+        const useSubdomain =
+            pluginAddress != null &&
+            tokenAddress != null &&
+            network != null &&
+            GovernanceService.SUBDOMAIN_NETWORKS.has(network) &&
+            interfaceType === PluginInterfaceType.TOKEN_VOTING;
+
+        if (useSubdomain) {
             const query = new URLSearchParams({
                 pluginAddress,
                 tokenAddress,
-                page: String(params.queryParams?.page ?? 1),
-                pageSize: String(params.queryParams?.pageSize ?? 10),
+                page: String(queryParams?.page ?? 1),
+                pageSize: String(queryParams?.pageSize ?? 10),
             });
             const response = await fetch(
                 `/api/subdomain/members?${query.toString()}`,
@@ -74,9 +79,28 @@ class GovernanceService extends AragonBackendService {
             return (await response.json()) as IPaginatedResponse<TMember>;
         }
 
+        // Strip routing-only fields before forwarding to the legacy backend so
+        // we don't introduce unknown query params that the backend may reject.
+        const hasRoutingFields =
+            queryParams != null &&
+            (queryParams.network !== undefined ||
+                queryParams.pluginInterfaceType !== undefined ||
+                queryParams.tokenAddress !== undefined);
+
+        let legacyParams = params;
+        if (hasRoutingFields && queryParams != null) {
+            const {
+                network: _network,
+                pluginInterfaceType: _pluginInterfaceType,
+                tokenAddress: _tokenAddress,
+                ...rest
+            } = queryParams;
+            legacyParams = { ...params, queryParams: rest };
+        }
+
         const result = await this.request<IPaginatedResponse<TMember>>(
             this.urls.members,
-            params,
+            legacyParams,
         );
 
         return result;

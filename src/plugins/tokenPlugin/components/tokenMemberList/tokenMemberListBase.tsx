@@ -68,14 +68,19 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // backend queries the correct DAO.
     const apiParams = useMemo(() => {
         const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
-
-        if (resolvedDaoId === daoId) {
-            return initialParams;
-        }
+        const routingParams = {
+            network: dao?.network,
+            pluginInterfaceType: plugin.interfaceType,
+            tokenAddress: plugin.settings.token.address,
+        };
 
         return {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, daoId: resolvedDaoId },
+            queryParams: {
+                ...initialParams.queryParams,
+                ...routingParams,
+                daoId: resolvedDaoId,
+            },
         };
     }, [initialParams, plugin, dao, daoId]);
 

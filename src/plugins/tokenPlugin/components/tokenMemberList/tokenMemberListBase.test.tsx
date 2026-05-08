@@ -330,13 +330,22 @@ describe('<TokenMemberListBase />', () => {
     });
 
     describe('linked-account daoId resolution', () => {
-        it('passes the original params to useMemberListData for non-linked-account plugins', () => {
+        it('augments params with subdomain routing fields for non-linked-account plugins', () => {
             const initialParams = {
                 queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
             };
             resolvePluginDaoIdSpy.mockReturnValue('dao-id');
             render(createTestComponent({ initialParams }));
-            expect(useMemberListDataSpy).toHaveBeenCalledWith(initialParams);
+            expect(useMemberListDataSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    queryParams: expect.objectContaining({
+                        daoId: 'dao-id',
+                        pluginAddress: '0x123',
+                        pluginInterfaceType: expect.any(String),
+                        tokenAddress: expect.any(String),
+                    }),
+                }),
+            );
         });
 
         it('passes the resolved daoId to useMemberListData for linked-account plugins', () => {

@@ -1,4 +1,4 @@
-import { Network } from '@/shared/api/daoService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
     generateMember,
     generateProposal,
@@ -8,9 +8,11 @@ import { governanceService } from './governanceService';
 
 describe('governance service', () => {
     const requestSpy = jest.spyOn(governanceService, 'request');
+    const fetchSpy = jest.spyOn(global, 'fetch');
 
     afterEach(() => {
         requestSpy.mockReset();
+        fetchSpy.mockReset();
     });
 
     it('getMemberList fetches the members of the specified DAO', async () => {
@@ -30,6 +32,135 @@ describe('governance service', () => {
             params,
         );
         expect(result).toEqual(members);
+    });
+
+    it('getMemberList strips subdomain routing fields when falling through to the legacy backend', async () => {
+        const members = [generateMember({ address: '0xabc' })];
+        const params = {
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: '0x123',
+                network: Network.POLYGON_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                tokenAddress: '0xtoken',
+            },
+        };
+
+        requestSpy.mockResolvedValue(members);
+        await governanceService.getMemberList(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].members,
+            {
+                queryParams: {
+                    daoId: 'dao-id-test',
+                    pluginAddress: '0x123',
+                },
+            },
+        );
+    });
+
+    it.each([
+        [
+            'non-mainnet network',
+            {
+                network: Network.POLYGON_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                tokenAddress: '0xtoken',
+            },
+        ],
+        [
+            'non-token-voting interface type',
+            {
+                network: Network.ETHEREUM_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+                tokenAddress: '0xtoken',
+            },
+        ],
+        [
+            'missing tokenAddress',
+            {
+                network: Network.ETHEREUM_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            },
+        ],
+    ])('getMemberList routes to the legacy backend when %s', async (_label, routingFields) => {
+        requestSpy.mockResolvedValue([]);
+        await governanceService.getMemberList({
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: '0x123',
+                ...routingFields,
+            },
+        });
+
+        expect(fetchSpy).not.toHaveBeenCalled();
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].members,
+            expect.objectContaining({
+                queryParams: expect.objectContaining({
+                    pluginAddress: '0x123',
+                }),
+            }),
+        );
+    });
+
+    it('getMemberList routes to the subdomain endpoint for token-voting plugins on Ethereum mainnet', async () => {
+        const members = [generateMember({ address: '0x123' })];
+        const responseBody = {
+            data: members,
+            metadata: {
+                page: 1,
+                pageSize: 10,
+                totalPages: 1,
+                totalRecords: 1,
+            },
+        };
+        fetchSpy.mockResolvedValue({
+            ok: true,
+            json: async () => responseBody,
+        } as Response);
+
+        const result = await governanceService.getMemberList({
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: '0xPlugin',
+                tokenAddress: '0xToken',
+                network: Network.ETHEREUM_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                page: 2,
+                pageSize: 25,
+            },
+        });
+
+        expect(requestSpy).not.toHaveBeenCalled();
+        expect(fetchSpy).toHaveBeenCalledTimes(1);
+        const calledUrl = (fetchSpy.mock.calls[0]![0] as string) ?? '';
+        expect(calledUrl).toContain('/api/subdomain/members?');
+        expect(calledUrl).toContain('pluginAddress=0xplugin');
+        expect(calledUrl).toContain('tokenAddress=0xtoken');
+        expect(calledUrl).toContain('page=2');
+        expect(calledUrl).toContain('pageSize=25');
+        expect(result).toEqual(responseBody);
+    });
+
+    it('getMemberList throws when the subdomain endpoint returns a non-ok response', async () => {
+        fetchSpy.mockResolvedValue({
+            ok: false,
+            status: 500,
+        } as Response);
+
+        await expect(
+            governanceService.getMemberList({
+                queryParams: {
+                    daoId: 'dao-id-test',
+                    pluginAddress: '0xPlugin',
+                    tokenAddress: '0xToken',
+                    network: Network.ETHEREUM_MAINNET,
+                    pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                },
+            }),
+        ).rejects.toThrow('Subdomain members request failed: 500');
     });
 
     it('getMember fetches the member of the specified DAO by address', async () => {

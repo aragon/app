@@ -2,7 +2,7 @@ import type {
     IOrderedRequest,
     IPaginatedRequest,
 } from '@/shared/api/aragonBackendService';
-import type { Network } from '@/shared/api/daoService';
+import type { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     IRequestQueryParams,
     IRequestUrlParams,
@@ -54,6 +54,21 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * Address of the plugin to fetch the members for.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin. Used to route token-voting member queries to the
+     * subdomain endpoint when the plugin is on a supported network.
+     */
+    network?: Network;
+    /**
+     * Interface type of the plugin. Used together with `network` and
+     * `tokenAddress` to decide whether to serve the request from the subdomain.
+     */
+    pluginInterfaceType?: PluginInterfaceType;
+    /**
+     * Address of the governance token, when the plugin is token-voting. Required
+     * for the subdomain routing path.
+     */
+    tokenAddress?: string;
 }
 
 export interface IGetMemberListParams
