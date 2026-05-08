@@ -36,9 +36,44 @@ class GovernanceService extends AragonBackendService {
         votes: '/v2/votes',
     };
 
+    /**
+     * Demo routing: for select plugins, fetch members through the
+     * aragon-subdomain BFF instead of the legacy backend.
+     * Remove once the subdomain covers all governance types.
+     */
+    private static readonly SUBDOMAIN_TOKEN_BY_PLUGIN: Record<string, string> =
+        {
+            '0x9b7b2dea1eeb65a10d8b8df5113d99cd58c3f9cf':
+                '0x0a830e9f2baa2ebaf8d33c0806283dea9c08952f',
+        };
+
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
+        const pluginAddress = params.queryParams?.pluginAddress?.toLowerCase();
+        const tokenAddress =
+            pluginAddress != null
+                ? GovernanceService.SUBDOMAIN_TOKEN_BY_PLUGIN[pluginAddress]
+                : undefined;
+
+        if (tokenAddress && pluginAddress) {
+            const query = new URLSearchParams({
+                pluginAddress,
+                tokenAddress,
+                page: String(params.queryParams?.page ?? 1),
+                pageSize: String(params.queryParams?.pageSize ?? 10),
+            });
+            const response = await fetch(
+                `/api/subdomain/members?${query.toString()}`,
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Subdomain members request failed: ${response.status}`,
+                );
+            }
+            return (await response.json()) as IPaginatedResponse<TMember>;
+        }
+
         const result = await this.request<IPaginatedResponse<TMember>>(
             this.urls.members,
             params,

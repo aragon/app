@@ -1,10 +1,10 @@
 export interface IMemberMetrics {
     /**
-     * Block number of the first activity of the member.
+     * Unix-seconds timestamp of the member's first observed activity.
      */
-    firstActivity: number | null;
+    firstActivityTimestamp: number | null;
     /**
-     * Block number of the latest activity of the member.
+     * Unix-seconds timestamp of the member's most recent observed activity.
      */
-    lastActivity: number | null;
+    lastActivityTimestamp: number | null;
 }

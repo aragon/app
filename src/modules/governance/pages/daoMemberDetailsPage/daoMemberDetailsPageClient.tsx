@@ -8,7 +8,6 @@ import {
     formatterUtils,
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
-import { useBlock } from 'wagmi';
 import {
     ensRecordKeys,
     useEnsAvatar,
@@ -26,7 +25,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
@@ -106,35 +104,18 @@ export const DaoMemberDetailsPageClient: React.FC<
         pluginId: bodyPlugin?.interfaceType ?? '',
     });
 
-    const { lastActivity, firstActivity } = member?.metrics ?? {};
+    const { firstActivityTimestamp, lastActivityTimestamp } =
+        member?.metrics ?? {};
 
-    const { chainId, buildEntityUrl } = useDaoChain({ daoId });
-
-    const firstBlockNumber =
-        firstActivity != null
-            ? bigIntUtils.safeParse(firstActivity)
-            : undefined;
-    const lastBlockNumber =
-        lastActivity != null ? bigIntUtils.safeParse(lastActivity) : undefined;
-
-    const { data: firstBlock } = useBlock({
-        chainId,
-        blockNumber: firstBlockNumber,
-        query: { enabled: !!firstBlockNumber },
-    });
-    const { data: lastBlock } = useBlock({
-        chainId,
-        blockNumber: lastBlockNumber,
-        query: { enabled: !!lastBlockNumber },
-    });
+    const { buildEntityUrl } = useDaoChain({ daoId });
 
     const parsedFirstActivity =
-        firstBlock?.timestamp != null
-            ? Number(firstBlock.timestamp) * 1000
+        firstActivityTimestamp != null
+            ? firstActivityTimestamp * 1000
             : undefined;
     const parsedLatestActivity =
-        lastBlock?.timestamp != null
-            ? Number(lastBlock.timestamp) * 1000
+        lastActivityTimestamp != null
+            ? lastActivityTimestamp * 1000
             : undefined;
 
     const formattedFirstActivity = formatterUtils.formatDate(
