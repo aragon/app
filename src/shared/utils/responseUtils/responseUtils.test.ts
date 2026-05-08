@@ -195,7 +195,7 @@ describe('responseUtils.safeJsonParse', () => {
             expect(monitoringUtils.logError).not.toHaveBeenCalled();
         });
 
-        it('should handle error responses with invalid JSON', async () => {
+        it('should not log when invalid JSON comes from a non-OK response (caller surfaces a typed error)', async () => {
             const invalidErrorJson = 'Server Error';
             const response = new Response(invalidErrorJson, {
                 status: 500,
@@ -204,19 +204,20 @@ describe('responseUtils.safeJsonParse', () => {
             const result = await responseUtils.safeJsonParse(response);
 
             expect(result).toBeNull();
-            expect(monitoringUtils.logError).toHaveBeenCalledTimes(1);
-            const calls = (monitoringUtils.logError as jest.Mock).mock
-                .calls as [Error, { context: Record<string, unknown> }][];
-            expect(calls[0][0].name).toBe('SyntaxError');
-            expect(calls[0][1]).toEqual({
-                context: {
-                    errorType: 'json_parse_error',
-                    status: 500,
-                    url: '',
-                    contentType: 'application/json',
-                    bodyPreview: invalidErrorJson.slice(0, 100),
-                },
+            expect(monitoringUtils.logError).not.toHaveBeenCalled();
+        });
+
+        it('should not log when invalid JSON comes from an HTML 502 response', async () => {
+            const htmlBody =
+                '<html><head><title>502 Bad Gateway</title></head></html>';
+            const response = new Response(htmlBody, {
+                status: 502,
+                headers: { 'content-type': 'text/html' },
             });
+            const result = await responseUtils.safeJsonParse(response);
+
+            expect(result).toBeNull();
+            expect(monitoringUtils.logError).not.toHaveBeenCalled();
         });
     });
 
