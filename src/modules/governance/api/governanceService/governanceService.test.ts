@@ -84,6 +84,15 @@ describe('governance service', () => {
                 pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
             },
         ],
+        [
+            'governance token wraps an underlying (VE / wrapped)',
+            {
+                network: Network.ETHEREUM_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+                tokenAddress: '0xtoken',
+                tokenUnderlying: '0xunderlying',
+            },
+        ],
     ])('getMemberList routes to the legacy backend when %s', async (_label, routingFields) => {
         requestSpy.mockResolvedValue([]);
         await governanceService.getMemberList({

@@ -72,6 +72,9 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             network: dao?.network,
             pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
             tokenAddress: membership.token.address,
+            tokenUnderlying:
+                (membership.token as { underlying?: string | null })
+                    .underlying ?? null,
         },
     };
     const { data: memberList } = useMemberList(initialParams, {

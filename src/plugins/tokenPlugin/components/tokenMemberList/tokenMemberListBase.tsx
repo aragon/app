@@ -68,10 +68,18 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // backend queries the correct DAO.
     const apiParams = useMemo(() => {
         const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+        // `underlying` is only on ITokenPluginSettingsToken; lock-to-vote tokens
+        // don't carry it. Read defensively — when absent the value is `null`,
+        // which the routing predicate treats as "plain ERC-20".
+        const tokenUnderlying =
+            (plugin.settings.token as { underlying?: string | null })
+                .underlying ?? null;
+
         const routingParams = {
             network: dao?.network,
             pluginInterfaceType: plugin.interfaceType,
             tokenAddress: plugin.settings.token.address,
+            tokenUnderlying,
         };
 
         return {

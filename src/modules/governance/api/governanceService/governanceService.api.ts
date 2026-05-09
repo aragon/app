@@ -69,6 +69,13 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * for the subdomain routing path.
      */
     tokenAddress?: string;
+    /**
+     * Address of the underlying token when the governance token is a wrapped
+     * or voting-escrow adapter. Used to disqualify these plugins from the
+     * subdomain routing path (Envio only indexes plain ERC-20 delegations).
+     * `null` / `undefined` means the governance token is a plain ERC-20.
+     */
+    tokenUnderlying?: string | null;
 }
 
 export interface IGetMemberListParams

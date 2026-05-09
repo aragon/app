@@ -53,13 +53,19 @@ class GovernanceService extends AragonBackendService {
         const tokenAddress = queryParams?.tokenAddress?.toLowerCase();
         const network = queryParams?.network;
         const interfaceType = queryParams?.pluginInterfaceType;
+        const tokenUnderlying = queryParams?.tokenUnderlying;
 
+        // The subdomain Envio indexer only covers plain ERC-20 token-voting
+        // governance tokens. Wrapped/VE-adapter tokens (where the governance
+        // token wraps an underlying) are not indexed and must keep using the
+        // legacy backend until Envio supports them.
         const useSubdomain =
             pluginAddress != null &&
             tokenAddress != null &&
             network != null &&
             GovernanceService.SUBDOMAIN_NETWORKS.has(network) &&
-            interfaceType === PluginInterfaceType.TOKEN_VOTING;
+            interfaceType === PluginInterfaceType.TOKEN_VOTING &&
+            tokenUnderlying == null;
 
         if (useSubdomain) {
             const query = new URLSearchParams({
@@ -85,7 +91,8 @@ class GovernanceService extends AragonBackendService {
             queryParams != null &&
             (queryParams.network !== undefined ||
                 queryParams.pluginInterfaceType !== undefined ||
-                queryParams.tokenAddress !== undefined);
+                queryParams.tokenAddress !== undefined ||
+                queryParams.tokenUnderlying !== undefined);
 
         let legacyParams = params;
         if (hasRoutingFields && queryParams != null) {
@@ -93,6 +100,7 @@ class GovernanceService extends AragonBackendService {
                 network: _network,
                 pluginInterfaceType: _pluginInterfaceType,
                 tokenAddress: _tokenAddress,
+                tokenUnderlying: _tokenUnderlying,
                 ...rest
             } = queryParams;
             legacyParams = { ...params, queryParams: rest };
