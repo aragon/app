@@ -2,6 +2,10 @@ import type { IDialogComponentDefinitions } from '@/shared/components/dialogProv
 import { AragonProfileClaimSubdomainDialog } from '../dialogs/aragonProfileClaimSubdomainDialog';
 import { AragonProfileDialog } from '../dialogs/aragonProfileDialog';
 import { AragonProfileIntroDialog } from '../dialogs/aragonProfileIntroDialog';
+import { AragonProfileReleaseAlertDialog } from '../dialogs/aragonProfileReleaseAlertDialog';
+import { AragonProfileReleaseTransactionDialog } from '../dialogs/aragonProfileReleaseTransactionDialog';
+import { AragonProfileRenameDialog } from '../dialogs/aragonProfileRenameDialog';
+import { AragonProfileRenameTransactionDialog } from '../dialogs/aragonProfileRenameTransactionDialog';
 import { AragonProfileSetPrimaryEnsTransactionDialog } from '../dialogs/aragonProfileSetPrimaryEnsTransactionDialog';
 import { AragonProfileSubdomainRegisterTransactionDialog } from '../dialogs/aragonProfileSubdomainRegisterTransactionDialog';
 import { AragonProfileUpdateTransactionDialog } from '../dialogs/aragonProfileUpdateTransactionDialog';
@@ -63,5 +67,33 @@ export const applicationDialogsDefinitions: Record<
         Component: AragonProfileUpdateTransactionDialog,
         hiddenDescription:
             'app.application.aragonProfileUpdateTransactionDialog.a11y.description',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_RELEASE_ALERT]: {
+        Component: AragonProfileReleaseAlertDialog,
+        hiddenTitle:
+            'app.application.aragonProfileReleaseAlertDialog.a11y.title',
+        hiddenDescription:
+            'app.application.aragonProfileReleaseAlertDialog.a11y.description',
+        variant: 'critical',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_RELEASE_TRANSACTION]: {
+        Component: AragonProfileReleaseTransactionDialog,
+        hiddenTitle:
+            'app.application.aragonProfileReleaseTransactionDialog.a11y.title',
+        hiddenDescription:
+            'app.application.aragonProfileReleaseTransactionDialog.a11y.description',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_RENAME]: {
+        Component: AragonProfileRenameDialog,
+        hiddenTitle: 'app.application.aragonProfileRenameDialog.a11y.title',
+        hiddenDescription:
+            'app.application.aragonProfileRenameDialog.a11y.description',
+    },
+    [ApplicationDialogId.ARAGON_PROFILE_RENAME_TRANSACTION]: {
+        Component: AragonProfileRenameTransactionDialog,
+        hiddenTitle:
+            'app.application.aragonProfileRenameTransactionDialog.a11y.title',
+        hiddenDescription:
+            'app.application.aragonProfileRenameTransactionDialog.a11y.description',
     },
 };

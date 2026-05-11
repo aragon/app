@@ -217,11 +217,23 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         ensName?.endsWith(memberRegistrySubdomainSuffix) ?? false;
 
     const handleRemoveAragonName = () => {
-        // TODO(APP-661): open warning + release transaction dialogs
+        if (ensName == null) {
+            return;
+        }
+        open(ApplicationDialogId.ARAGON_PROFILE_RELEASE_ALERT, {
+            params: { ensName },
+            stack: true,
+        });
     };
 
     const handleChangeAragonName = () => {
-        // TODO(APP-661): open rename + transaction dialogs
+        if (ensName == null) {
+            return;
+        }
+        open(ApplicationDialogId.ARAGON_PROFILE_RENAME, {
+            params: { currentEnsName: ensName },
+            stack: true,
+        });
     };
 
     const handleViewProfile = () => {
