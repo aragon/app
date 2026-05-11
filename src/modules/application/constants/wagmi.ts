@@ -65,9 +65,7 @@ export const ensureAppKit = () => {
             '18388be9ac2d02726dbac9777c96efaac06d744b2f6d580fccdd4127a6d01fd1', // Rabby
         ],
         features: {
-            email: false,
-            socials: false,
-            analytics: true,
+            analytics: false,
             legalCheckbox: true,
         },
         themeVariables: {

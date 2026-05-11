@@ -31,7 +31,10 @@ class ProxyUtils {
         // List of hosts to allow to embed the App in an `iframe`. For now, we
         // only have Common Ground app as a one-off experiment. If we get more
         // similar requests, let's move this to an environment variable.
-        const allowedInFrameHosts = ['https://app.cg'];
+        const allowedInFrameHosts = [
+            'https://app.cg',
+            'https://verify.walletconnect.org',
+        ];
         const allowedInFrameHostsNonProd = ['https://vercel.live'];
 
         const scriptSrc = isProd
