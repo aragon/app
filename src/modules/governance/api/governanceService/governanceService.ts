@@ -2,6 +2,7 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
@@ -36,12 +37,78 @@ class GovernanceService extends AragonBackendService {
         votes: '/v2/votes',
     };
 
+    /**
+     * Networks whose token-voting member queries are served by the
+     * aragon-subdomain BFF. Expand as more networks are indexed by Envio.
+     */
+    private static readonly SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
+        Network.ETHEREUM_MAINNET,
+    ]);
+
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
+        const queryParams = params.queryParams;
+        const pluginAddress = queryParams?.pluginAddress?.toLowerCase();
+        const tokenAddress = queryParams?.tokenAddress?.toLowerCase();
+        const network = queryParams?.network;
+        const interfaceType = queryParams?.pluginInterfaceType;
+        const tokenUnderlying = queryParams?.tokenUnderlying;
+
+        // The subdomain Envio indexer only covers plain ERC-20 token-voting
+        // governance tokens. Wrapped/VE-adapter tokens (where the governance
+        // token wraps an underlying) are not indexed and must keep using the
+        // legacy backend until Envio supports them.
+        const useSubdomain =
+            pluginAddress != null &&
+            tokenAddress != null &&
+            network != null &&
+            GovernanceService.SUBDOMAIN_NETWORKS.has(network) &&
+            interfaceType === PluginInterfaceType.TOKEN_VOTING &&
+            tokenUnderlying == null;
+
+        if (useSubdomain) {
+            const query = new URLSearchParams({
+                pluginAddress,
+                tokenAddress,
+                page: String(queryParams?.page ?? 1),
+                pageSize: String(queryParams?.pageSize ?? 10),
+            });
+            const response = await fetch(
+                `/api/subdomain/members?${query.toString()}`,
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Subdomain members request failed: ${response.status}`,
+                );
+            }
+            return (await response.json()) as IPaginatedResponse<TMember>;
+        }
+
+        // Strip routing-only fields before forwarding to the legacy backend so
+        // we don't introduce unknown query params that the backend may reject.
+        const hasRoutingFields =
+            queryParams != null &&
+            (queryParams.network !== undefined ||
+                queryParams.pluginInterfaceType !== undefined ||
+                queryParams.tokenAddress !== undefined ||
+                queryParams.tokenUnderlying !== undefined);
+
+        let legacyParams = params;
+        if (hasRoutingFields && queryParams != null) {
+            const {
+                network: _network,
+                pluginInterfaceType: _pluginInterfaceType,
+                tokenAddress: _tokenAddress,
+                tokenUnderlying: _tokenUnderlying,
+                ...rest
+            } = queryParams;
+            legacyParams = { ...params, queryParams: rest };
+        }
+
         const result = await this.request<IPaginatedResponse<TMember>>(
             this.urls.members,
-            params,
+            legacyParams,
         );
 
         return result;

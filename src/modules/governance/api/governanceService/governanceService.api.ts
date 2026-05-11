@@ -2,7 +2,7 @@ import type {
     IOrderedRequest,
     IPaginatedRequest,
 } from '@/shared/api/aragonBackendService';
-import type { Network } from '@/shared/api/daoService';
+import type { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     IRequestQueryParams,
     IRequestUrlParams,
@@ -54,6 +54,28 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * Address of the plugin to fetch the members for.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin. Used to route token-voting member queries to the
+     * subdomain endpoint when the plugin is on a supported network.
+     */
+    network?: Network;
+    /**
+     * Interface type of the plugin. Used together with `network` and
+     * `tokenAddress` to decide whether to serve the request from the subdomain.
+     */
+    pluginInterfaceType?: PluginInterfaceType;
+    /**
+     * Address of the governance token, when the plugin is token-voting. Required
+     * for the subdomain routing path.
+     */
+    tokenAddress?: string;
+    /**
+     * Address of the underlying token when the governance token is a wrapped
+     * or voting-escrow adapter. Used to disqualify these plugins from the
+     * subdomain routing path (Envio only indexes plain ERC-20 delegations).
+     * `null` / `undefined` means the governance token is a plain ERC-20.
+     */
+    tokenUnderlying?: string | null;
 }
 
 export interface IGetMemberListParams
