@@ -9,9 +9,10 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useDisconnect } from '@reown/appkit/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useConnection, useDisconnect } from 'wagmi';
+import { useConnection } from 'wagmi';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
 import { exploreDaosSectionId } from '@/modules/explore/pages/exploreDaosPage';
@@ -34,7 +35,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { isEnabled } = useFeatureFlags();
     const isAragonProfileEnabled = isEnabled('aragonProfiles');
     const { address, chainId } = useConnection();
-    const disconnect = useDisconnect();
+    const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -62,7 +63,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             params: { mode: 'edit' },
         });
 
-    const handleDisconnect = () => disconnect.mutate();
+    const handleDisconnect = () => void disconnect();
 
     const handleMyDaosClick = () => {
         router.push(

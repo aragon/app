@@ -6,13 +6,15 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Navigation } from '@/shared/components/navigation';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 
 export const ExploreNav: React.FC = () => {
-    const { address, isConnected } = useConnection();
+    const { address } = useConnection();
+    const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const walletUser = isMounted && address != null ? { address } : undefined;

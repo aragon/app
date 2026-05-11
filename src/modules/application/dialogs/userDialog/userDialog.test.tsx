@@ -5,6 +5,7 @@ import {
     GukModulesProvider,
     IconType,
 } from '@aragon/gov-ui-kit';
+import * as AppKit from '@reown/appkit/react';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as wagmi from 'wagmi';
@@ -26,7 +27,7 @@ describe('<UserDialog /> component', () => {
         'useDialogContext',
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
-    const useDisconnectSpy = jest.spyOn(wagmi, 'useDisconnect');
+    const useDisconnectSpy = jest.spyOn(AppKit, 'useDisconnect');
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
@@ -36,9 +37,9 @@ describe('<UserDialog /> component', () => {
         useConnectionSpy.mockReturnValue(
             {} as unknown as wagmi.UseConnectionReturnType,
         );
-        useDisconnectSpy.mockReturnValue(
-            {} as unknown as wagmi.UseDisconnectReturnType,
-        );
+        useDisconnectSpy.mockReturnValue({
+            disconnect: jest.fn(),
+        } as unknown as ReturnType<typeof AppKit.useDisconnect>);
         useEnsNameSpy.mockReturnValue({
             data: null,
             isLoading: false,
@@ -205,8 +206,8 @@ describe('<UserDialog /> component', () => {
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
         useDisconnectSpy.mockReturnValue({
-            mutate: disconnect,
-        } as unknown as wagmi.UseDisconnectReturnType);
+            disconnect,
+        } as unknown as ReturnType<typeof AppKit.useDisconnect>);
         render(createTestComponent());
 
         await userEvent.click(screen.getByTestId(IconType.LOGOUT));

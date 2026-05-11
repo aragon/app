@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import type { Route } from 'next';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
@@ -77,7 +78,8 @@ const resolveDisplayDao = (
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, targetDaoAddress, exitPath } = props;
 
-    const { address, isConnected } = useConnection();
+    const { address } = useConnection();
+    const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const { t } = useTranslations();

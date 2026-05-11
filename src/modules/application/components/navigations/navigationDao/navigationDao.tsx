@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -42,7 +43,8 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { t } = useTranslations();
-    const { address, isConnected } = useConnection();
+    const { address } = useConnection();
+    const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected;
     const { open } = useDialogContext();

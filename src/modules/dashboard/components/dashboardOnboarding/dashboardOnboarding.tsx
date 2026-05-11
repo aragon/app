@@ -3,6 +3,7 @@
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import { useConnection } from 'wagmi';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import type { ICreateProcessDetailsDialogParams } from '@/modules/createDao/dialogs/createProcessDetailsDialog';
 import { useEnsName } from '@/modules/ens';
@@ -27,7 +28,8 @@ export const DashboardOnboarding: React.FC<IDashboardOnboardingProps> = (
     const { dao } = props;
 
     const { open } = useDialogContext();
-    const { address, isConnected } = useConnection();
+    const { address } = useConnection();
+    const isConnected = useWalletConnected();
     const { data: ensName } = useEnsName(address);
 
     const {
