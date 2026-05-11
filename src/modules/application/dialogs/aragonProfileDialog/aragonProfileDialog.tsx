@@ -5,6 +5,7 @@ import {
     AlertCard,
     Button,
     Dialog,
+    Dropdown,
     IconType,
     InputContainer,
     InputText,
@@ -19,6 +20,7 @@ import type { TEnsRecordKey } from '@/modules/ens';
 import {
     ensAvatarKey,
     ensRecordKeys,
+    memberRegistrySubdomainSuffix,
     useEnsAvatar,
     useEnsName,
     useEnsRecords,
@@ -211,6 +213,17 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         });
     });
 
+    const isAragonName =
+        ensName?.endsWith(memberRegistrySubdomainSuffix) ?? false;
+
+    const handleRemoveAragonName = () => {
+        // TODO(APP-661): open warning + release transaction dialogs
+    };
+
+    const handleChangeAragonName = () => {
+        // TODO(APP-661): open rename + transaction dialogs
+    };
+
     const handleViewProfile = () => {
         if (network == null || addressOrEns == null || address == null) {
             close();
@@ -238,16 +251,53 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 title={t('app.application.aragonProfileDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <InputText
-                    disabled
-                    helpText={t(
-                        'app.application.aragonProfileDialog.fields.ensName.helpText',
+                <div className="flex items-end gap-2">
+                    <div className="grow">
+                        <InputText
+                            disabled
+                            helpText={t(
+                                'app.application.aragonProfileDialog.fields.ensName.helpText',
+                            )}
+                            label={t(
+                                'app.application.aragonProfileDialog.fields.ensName.label',
+                            )}
+                            value={ensName ?? ''}
+                        />
+                    </div>
+                    {isAragonName && (
+                        <Dropdown.Container
+                            align="end"
+                            constrainContentWidth={false}
+                            customTrigger={
+                                <Button
+                                    iconLeft={IconType.DOTS_VERTICAL}
+                                    size="lg"
+                                    variant="tertiary"
+                                />
+                            }
+                            size="md"
+                        >
+                            <Dropdown.Item
+                                icon={IconType.PEN}
+                                iconPosition="left"
+                                onClick={handleChangeAragonName}
+                            >
+                                {t(
+                                    'app.application.aragonProfileDialog.actions.changeAragonName',
+                                )}
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                                icon={IconType.REMOVE}
+                                iconPosition="left"
+                                onClick={handleRemoveAragonName}
+                            >
+                                {t(
+                                    'app.application.aragonProfileDialog.actions.removeAragonName',
+                                )}
+                            </Dropdown.Item>
+                        </Dropdown.Container>
                     )}
-                    label={t(
-                        'app.application.aragonProfileDialog.fields.ensName.label',
-                    )}
-                    value={ensName ?? ''}
-                />
+                </div>
 
                 <AvatarInput
                     label={t(

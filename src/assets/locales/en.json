@@ -515,7 +515,9 @@
           "cancel": "Cancel",
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
-          "confirmProfile": "Confirm your profile"
+          "confirmProfile": "Confirm your profile",
+          "removeAragonName": "Remove Aragon name",
+          "changeAragonName": "Change Aragon name"
         }
       }
     },
