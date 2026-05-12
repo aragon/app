@@ -62,6 +62,9 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
     } = location.params;
     const { data: delegateEnsName } = useEnsName(delegate);
     const { data: delegateEnsAvatar } = useEnsAvatar(delegateEnsName);
+    const { data: delegateDisplayName } = useEnsName(delegate, {
+        shortenAragonName: true,
+    });
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -102,7 +105,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
             <MemberDataListItem.Structure
                 address={delegate}
                 avatarSrc={delegateEnsAvatar ?? undefined}
-                ensName={delegateEnsName ?? undefined}
+                ensName={delegateDisplayName ?? undefined}
                 isDelegate={true}
             />
         </TransactionDialog>

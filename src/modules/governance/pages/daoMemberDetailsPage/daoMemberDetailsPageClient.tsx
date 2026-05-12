@@ -144,6 +144,9 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: displayName } = useEnsName(address, {
+        shortenAragonName: true,
+    });
     const memberLinks = {
         github: ensRecords?.[ensRecordKeys.github],
         twitter: ensRecords?.[ensRecordKeys.twitter],
@@ -155,7 +158,7 @@ export const DaoMemberDetailsPageClient: React.FC<
     }
 
     const truncatedAddress = addressUtils.truncateAddress(address);
-    const memberName = ensName ?? truncatedAddress;
+    const memberName = displayName ?? truncatedAddress;
 
     const addressUrl = buildEntityUrl({
         type: ChainEntityType.ADDRESS,

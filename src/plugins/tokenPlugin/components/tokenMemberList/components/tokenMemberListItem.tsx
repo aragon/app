@@ -39,6 +39,9 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { data: ensName } = useEnsName(member.address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
+    const { data: displayName } = useEnsName(member.address, {
+        shortenAragonName: true,
+    });
 
     return (
         <MemberDataListItem.Structure
@@ -46,7 +49,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
             avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
             delegationCount={member.metrics.delegationCount}
-            ensName={ensName ?? undefined}
+            ensName={displayName ?? undefined}
             href={daoUtils.getDaoUrl(dao, `members/${member.address}`)}
             isDelegate={isDelegate}
             key={member.address}

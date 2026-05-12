@@ -251,6 +251,33 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('shows the shortened aragon name in the header but keeps the full ENS in the aside', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ address }),
+            }),
+        );
+        useEnsNameSpy.mockImplementation(
+            (_address, options) =>
+                ({
+                    data: options?.shortenAragonName
+                        ? 'alice'
+                        : 'alice.aragonx.eth',
+                    isLoading: false,
+                }) as ReturnType<typeof ensModule.useEnsName>,
+        );
+
+        render(createTestComponent({ address }));
+
+        expect(
+            screen.getByRole('heading', { level: 1, name: 'alice' }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'alice.aragonx.eth' }),
+        ).toBeInTheDocument();
+    });
+
     it('renders bio and ENS links when records are present', () => {
         useEnsNameSpy.mockReturnValue({
             data: 'member.eth',
