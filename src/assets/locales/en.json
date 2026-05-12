@@ -1363,14 +1363,14 @@
           "welcome": "Welcome"
         }
       },
-      "status": {
-        "statusMembersFileDownload": {
+      "gaugeDistributions": {
+        "gaugeDistributionsMembersFileDownload": {
           "label": "Reward distribution",
           "helpText": "Generate the reward distribution JSON for a specific epoch based on gauge voting results.",
           "button": "Generate distribution",
           "downloadedFile": "Downloaded: {{fileName}}"
         },
-        "statusMembersFileDownloadDialog": {
+        "gaugeDistributionsMembersFileDownloadDialog": {
           "title": "Generate reward distribution",
           "description": "Select an epoch and enter the total reward amount to generate a reward distribution JSON based on gauge voting results.",
           "epochIdLabel": "Epoch",

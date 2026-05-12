@@ -2,8 +2,8 @@ import { initialiseAragonDemo } from './aragonDemo';
 import { initialiseAragonDemoPolicies } from './aragonDemoPolicies';
 import { initialiseBoundless } from './boundless';
 import { initialiseCryptex } from './cryptex';
+import { initialiseGaugeDistributions } from './gaugeDistributions';
 import { initialiseKatana } from './katana';
-import { initialiseStatus } from './status';
 import { initialiseXmaquina } from './xmaquina';
 
 export const initialiseDaos = () => {
@@ -13,5 +13,5 @@ export const initialiseDaos = () => {
     initialiseXmaquina();
     initialiseAragonDemoPolicies();
     initialiseKatana();
-    initialiseStatus();
+    initialiseGaugeDistributions();
 };
