@@ -24,6 +24,7 @@ import type { Translations } from '@/shared/utils/translationsUtils';
 import { ensureAppKit, wagmiConfig } from '../../constants/wagmi';
 import { fetchInterceptorUtils } from '../../utils/fetchInterceptorUtils';
 import { queryClientUtils } from '../../utils/queryClientUtils';
+import { DesyncWatcher } from '../desyncWatcher';
 import { providersDialogs } from './providersDialogs';
 
 // Boot AppKit before any descendant renders. AppKit and wagmi must share the
@@ -91,6 +92,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                     initialSnapshot={featureFlagsSnapshot}
                                 >
                                     <DialogProvider>
+                                        <DesyncWatcher />
                                         {children}
                                         <DialogRoot
                                             dialogs={providersDialogs}
