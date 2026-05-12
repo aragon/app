@@ -45,6 +45,7 @@ import {
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
+import { ProposalAuditSection } from '../../components/proposalAuditButton';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
@@ -300,6 +301,14 @@ export const DaoProposalDetailsPageClient: React.FC<
                             status={proposalStatus}
                         />
                     </Page.MainSection>
+                    {proposal.hasActions && (
+                        <Page.MainSection title="Audit">
+                            <ProposalAuditSection
+                                daoId={daoId}
+                                proposal={proposal}
+                            />
+                        </Page.MainSection>
+                    )}
                     <Page.MainSection
                         title={t(
                             'app.governance.daoProposalDetailsPage.main.actions.header',

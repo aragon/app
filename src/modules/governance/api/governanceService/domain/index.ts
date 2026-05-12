@@ -13,5 +13,9 @@ export type {
     IProposalActionUpdatePluginMetadataObject,
 } from './proposalActionUpdatePluginMetadata';
 export type { IProposalActionWithdrawToken } from './proposalActionWithdrawToken';
+export type {
+    IProposalAudit,
+    IProposalAuditFinding,
+} from './proposalAudit';
 export type { IProposalExecution } from './proposalExecution';
 export type { IVote } from './vote';

@@ -1,8 +1,8 @@
 'use client';
 
 import { Button, ChainEntityType, IconType } from '@aragon/gov-ui-kit';
-import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
@@ -78,7 +78,7 @@ export const MultisigSubmitVote: React.FC<IMultisigSubmitVoteProps> = (
         canSubmitVote ? openTransactionDialog() : submitVoteGuard();
 
     return (
-        <div className="w-full">
+        <div className="flex w-full flex-col gap-3 md:flex-row md:flex-wrap md:items-center">
             {voted ? (
                 voteTransactionHref != null ? (
                     <Button
