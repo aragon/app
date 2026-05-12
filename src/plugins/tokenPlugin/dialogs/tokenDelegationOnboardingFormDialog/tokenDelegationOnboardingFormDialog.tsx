@@ -21,7 +21,7 @@ export const TokenDelegationOnboardingFormDialog: React.FC<
         'TokenDelegationOnboardingFormDialog: required parameters must be set.',
     );
 
-    const { tokenAddress, daoId } = location.params;
+    const { tokenAddress, daoId, delegateAddress } = location.params;
 
     const { close } = useDialogContext();
     const { t } = useTranslations();
@@ -41,6 +41,7 @@ export const TokenDelegationOnboardingFormDialog: React.FC<
             <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
                 <TokenDelegationForm
                     daoId={daoId}
+                    initialDelegateAddress={delegateAddress}
                     mode="dialog"
                     onCancel={handleCancel}
                     tokenAddress={tokenAddress}

@@ -23,7 +23,16 @@ export {
     ensChainId,
     ensRecordKeys,
 } from './constants/ensConfig';
+export {
+    buildEnsDelegateKey,
+    type IBuildEnsDelegateKeyParams,
+    NETWORK_EIP3770_SHORTNAME,
+} from './constants/ensDelegateKey';
 export { memberRegistryAbi } from './constants/memberRegistryAbi';
+export {
+    type IUseDelegateStatementCidParams,
+    useDelegateStatementCid,
+} from './hooks/useDelegateStatementCid';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsRecords } from './hooks/useEnsRecords';
