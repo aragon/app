@@ -78,3 +78,31 @@ export interface IGetRewardDistributionParams
         IGetRewardDistributionUrlParams,
         IGetRewardDistributionQueryParams
     > {}
+
+export interface IGetGaugeRewardDistributionUrlParams {
+    /**
+     * GaugeVoter plugin address.
+     */
+    pluginAddress: Hex;
+    /**
+     * Network of the DAO.
+     */
+    network: Network;
+    /**
+     * Epoch ID to compute the per-gauge reward distribution for.
+     */
+    epochId: number;
+}
+
+export interface IGetGaugeRewardDistributionQueryParams {
+    /**
+     * Total amount to distribute across gauges.
+     */
+    rewardTotalAmount: string;
+}
+
+export interface IGetGaugeRewardDistributionParams
+    extends IRequestUrlQueryParams<
+        IGetGaugeRewardDistributionUrlParams,
+        IGetGaugeRewardDistributionQueryParams
+    > {}

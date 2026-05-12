@@ -14,7 +14,7 @@ import { rewardUtils } from '@/daos/katana/utils/rewardUtils';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import {
     useEpochMetrics,
-    useRewardDistribution,
+    useGaugeRewardDistribution,
 } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
@@ -116,7 +116,7 @@ export const GaugeDistributionsMembersFileDownloadDialog: React.FC<
         [totalAmount, tokenDecimals],
     );
 
-    const rewardDistribution = useRewardDistribution(
+    const rewardDistribution = useGaugeRewardDistribution(
         {
             urlParams: {
                 pluginAddress: gaugePluginAddress as Hex,
@@ -152,8 +152,8 @@ export const GaugeDistributionsMembersFileDownloadDialog: React.FC<
                 return;
             }
 
-            const rewardJson = rewardUtils.toRewardJson({
-                owners: result.data.owners,
+            const rewardJson = rewardUtils.toGaugeRewardJson({
+                gauges: result.data.gaugeRewards,
             });
 
             const blob = new Blob([JSON.stringify(rewardJson, null, 2)], {
