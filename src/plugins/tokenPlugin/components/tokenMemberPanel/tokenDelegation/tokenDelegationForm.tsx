@@ -37,6 +37,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
         daoId,
         mode = 'panel',
         onCancel,
+        initialDelegateAddress,
     } = props;
 
     const { open } = useDialogContext();
@@ -53,6 +54,13 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
         });
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
+        if (initialDelegateAddress != null) {
+            return {
+                selection: TokenDelegationSelection.OTHER,
+                delegate: initialDelegateAddress,
+            };
+        }
+
         const hasExistingDelegate =
             currentDelegate != null &&
             !addressUtils.isAddressEqual(currentDelegate, zeroAddress);
@@ -71,7 +79,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                     : TokenDelegationSelection.OTHER,
             delegate: defaultDelegate,
         };
-    }, [address, currentDelegate]);
+    }, [address, currentDelegate, initialDelegateAddress]);
 
     const { handleSubmit, reset, control } = useForm<ITokenDelegationFormData>({
         mode: 'onTouched',

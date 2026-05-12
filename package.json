@@ -39,34 +39,34 @@
     "@reown/appkit": "^1.8.19",
     "@reown/appkit-adapter-wagmi": "^1.8.19",
     "@reown/walletkit": "^1.5.5",
-    "@sentry/core": "^10.50.0",
-    "@sentry/nextjs": "^10.50.0",
-    "@tanstack/react-query": "^5.100.5",
-    "@tanstack/react-query-devtools": "^5.100.5",
+    "@sentry/core": "^10.51.0",
+    "@sentry/nextjs": "^10.51.0",
+    "@tanstack/react-query": "^5.100.9",
+    "@tanstack/react-query-devtools": "^5.100.9",
     "@walletconnect/core": "^2.23.9",
     "@walletconnect/utils": "^2.23.9",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.38.0",
     "import-in-the-middle": "^3.0.1",
-    "isomorphic-dompurify": "^3.10.0",
-    "jsdom": "^29.1.0",
+    "isomorphic-dompurify": "^3.12.0",
+    "jsdom": "^29.1.1",
     "luxon": "^3.7.2",
-    "next": "^16.2.4",
+    "next": "^16.2.6",
     "nextjs-toploader": "^3.9.17",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-hook-form": "^7.74.0",
+    "react-hook-form": "^7.75.0",
     "react-use-measure": "^2.1.7",
     "recharts": "^3.8.1",
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "ts-pattern": "^5.9.0",
-    "viem": "^2.48.4",
-    "wagmi": "^3.6.5"
+    "viem": "^2.48.8",
+    "wagmi": "^3.6.9"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.13",
+    "@biomejs/biome": "^2.4.14",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.31.0",
     "@hookform/devtools": "^4.4.0",
@@ -92,14 +92,14 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.3.0",
     "lint-staged": "^16.4.0",
-    "postcss": "^8.5.12",
+    "postcss": "^8.5.14",
     "tailwindcss": "^4.2.4",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.9",
-    "turbo": "^2.9.6",
+    "turbo": "^2.9.9",
     "typescript": "^5.9.3",
-    "ultracite": "^7.6.2",
-    "vercel": "^52.0.0",
+    "ultracite": "^7.6.3",
+    "vercel": "^52.2.1",
     "webpack": "^5.106.2"
   },
   "repository": {
@@ -119,40 +119,5 @@
   "engines": {
     "node": ">=24.13.0"
   },
-  "packageManager": "pnpm@10.33.3+sha512.a19744364a7e248b92657a4ca5973f9354d21caf982579674b1c539f32c7420c47138ad8b1254df07aba9bc782d9b3029e3db34d5dbff974326eb74dac8ff489",
-  "pnpm": {
-    "peerDependencyRules": {
-      "allowedVersions": {
-        "@playwright/test": ">=1.48.2",
-        "playwright-core": ">=1.48.2",
-        "ws": ">=7.5.0"
-      }
-    },
-    "overrides": {
-      "isomorphic-dompurify>jsdom": "26.1.0",
-      "axios@>=1.0.0 <1.15.2": "^1.15.2",
-      "@vercel/node>undici": "^6.24.0",
-      "next>postcss": "^8.5.12",
-      "@hookform/devtools>uuid": "^14.0.0",
-      "@synthetixio/synpress-cache>esbuild": "^0.27.7",
-      "tsup>esbuild": "^0.27.7",
-      "@vercel/fun>@tootallnate/once": "^3.0.1",
-      "tar@<7.5.11": "^7.5.11",
-      "ajv@<8.18.0": "^8.18.0",
-      "minimatch@>=10.0.0 <10.2.4": "^10.2.4",
-      "ws@>=8.0.0 <8.17.1": ">=8.17.1",
-      "glob@>=10.2.0 <10.5.0": ">=10.5.0",
-      "smol-toml@<1.6.1": ">=1.6.1",
-      "srvx@<0.11.13": ">=0.11.13",
-      "path-to-regexp@>=8.0.0 <8.4.0": ">=8.4.0",
-      "lodash@<=4.17.23": ">=4.18.0"
-    },
-    "packageExtensions": {
-      "@solana/codecs-strings@*": {
-        "dependencies": {
-          "fastestsmallesttextencoderdecoder": "^1.0.22"
-        }
-      }
-    }
-  }
+  "packageManager": "pnpm@11.1.0+sha512.0c44e842e5686b2c061a81adda8b2258bd8818e9704b2cf2c63d56b931a7b2e910092e085027003b96ca3911ab56a07f6df5abaed2be9925034cdd686a535b14"
 }

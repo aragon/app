@@ -14,7 +14,8 @@ class ResponseUtils {
      * Safely parses a response as JSON, handling empty responses and various status codes.
      * @returns The parsed JSON data, or null if:
      *   - Response has no-content status (204, 205, 304)
-     *   - JSON parsing fails (error logged to monitoring)
+     *   - JSON parsing fails on a non-OK response (silent — the caller surfaces a typed error)
+     *   - JSON parsing fails on an OK response (error logged to monitoring)
      */
     async safeJsonParse(response: Response): Promise<JsonValue | null> {
         // Treat standard no-content statuses as empty bodies
@@ -31,6 +32,13 @@ class ResponseUtils {
         try {
             return (await response.json()) as JsonValue;
         } catch (error) {
+            // For non-OK responses (e.g., 5xx with HTML body) skip logging the parse-error
+            // log: the caller turns the failure into a typed error and decides
+            // whether to surface it. Logging here would double-count.
+            if (!response.ok) {
+                return null;
+            }
+
             const contentType = response.headers.get('content-type') ?? '';
 
             let text = '';

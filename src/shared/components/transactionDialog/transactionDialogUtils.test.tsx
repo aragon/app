@@ -43,10 +43,14 @@ describe('transactionDialog utils', () => {
             ).toBeFalsy();
         });
 
-        it('returns true when error matches one of the ignore error list', () => {
-            const error = new Error(
-                'User rejected the request. stack: "Error: [...]',
-            );
+        it.each([
+            { message: 'User rejected the request. stack: "Error: [...]' },
+            { message: 'Signing aborted by user. Details: ...' },
+            { message: 'User denied transaction signature.' },
+        ])('returns true when error message contains "$message"', ({
+            message,
+        }) => {
+            const error = new Error(message);
             expect(
                 transactionDialogUtils['shouldIgnoreError'](error),
             ).toBeTruthy();

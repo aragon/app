@@ -59,6 +59,25 @@ export const generateReactQueryResultSuccess = <TData, TError>(
     status: 'success',
 });
 
+/**
+ * Companion to `generateReactQueryResultSuccess` that preserves the `data`
+ * argument verbatim — no `?? {}` fallback. Use when the hook under test
+ * legitimately resolves to `null` / `undefined` (e.g. ENS lookups, optional
+ * IPFS fetches) and would otherwise get coerced to `{}`.
+ */
+export const generateReactQueryResultSuccessWithData = <
+    TData,
+    TError = unknown,
+>(
+    data: TData,
+): QueryObserverSuccessResult<TData, TError> & {
+    queryKey: readonly unknown[];
+} => ({
+    ...generateReactQueryResultSuccess<TData, TError>({}),
+    data,
+    queryKey: [],
+});
+
 export const generateReactQueryResultError = <TData, TError>(
     result?: Partial<QueryObserverLoadingErrorResult<TData, TError>>,
 ): QueryObserverLoadingErrorResult<TData, TError> => ({
