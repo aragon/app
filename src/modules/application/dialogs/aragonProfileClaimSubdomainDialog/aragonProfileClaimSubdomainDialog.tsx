@@ -2,7 +2,7 @@
 
 import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useConnection, useEnsAddress, useReadContracts } from 'wagmi';
+import { useEnsAddress, useReadContracts } from 'wagmi';
 import {
     ensChainId,
     memberRegistryAbi,
@@ -15,6 +15,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 /** Maximum character length allowed for a subdomain label. */
 const subdomainMaxLength = 50;
@@ -44,7 +45,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { data: registryData, isLoading: isCheckingRegistration } =
         useReadContracts({

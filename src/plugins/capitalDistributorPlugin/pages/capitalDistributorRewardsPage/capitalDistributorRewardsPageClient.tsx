@@ -1,8 +1,8 @@
 'use client';
 
 import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -32,7 +32,7 @@ export const CapitalDistributorRewardsPageClient: React.FC<
 > = (props) => {
     const { dao, initialParams } = props;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
     const { open } = useDialogContext();
 

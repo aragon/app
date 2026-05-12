@@ -6,7 +6,7 @@ import { useAppKitAccount } from '@reown/appkit/react';
  * to agree with the AppKit modal — AppKit's store is the same one the modal
  * renders against, so the two cannot drift apart.
  *
- * Address and chainId reads should stay on wagmi (`useConnection`/`useAccount`),
+ * Address and chainId reads should stay on wagmi (`useWalletAccount`),
  * since web3 operations need the wagmi connector identity.
  */
 export const useWalletConnected = (): boolean => {

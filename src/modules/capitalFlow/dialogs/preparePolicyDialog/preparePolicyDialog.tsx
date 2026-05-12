@@ -6,7 +6,7 @@ import {
     type TransactionReceipt,
     zeroAddress,
 } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
@@ -83,7 +83,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
     );
     const { daoId, values, pluginAddress } = location.params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(address != null, 'PreparePolicyDialog: user must be connected.');
 
     const { t } = useTranslations();

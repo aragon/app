@@ -1,6 +1,6 @@
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useMember } from '@/modules/governance/api/governanceService';
 import { useCanCreateProposal } from '@/modules/governance/api/governanceService/queries/useCanCreateProposal';
 import type {
@@ -25,7 +25,7 @@ export const useTokenPermissionCheckProposalCreation = (
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId, useConnectedUserInfo = true } = params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });

@@ -6,7 +6,7 @@ import {
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type {
     IGetMemberListParams,
@@ -69,7 +69,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
-    const { address: connectedAddress } = useConnection();
+    const { address: connectedAddress } = useWalletAccount();
 
     // Always use the parent DAO for the UI context (member URLs, etc.).
     // The parent DAO is server-side prefetched → always a cache hit.

@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWhitelistedAddresses } from '@/shared/api/cmsService/queries/useWhitelistedAddresses';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import type {
@@ -12,7 +12,7 @@ export const useWhitelistValidation = (
 ): IWhitelistValidationResult => {
     const { plugins } = params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data } = useWhitelistedAddresses();
     const { isEnabled } = useFeatureFlags();
 

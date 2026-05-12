@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDao } from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -45,7 +45,7 @@ export const TokenDelegationOnboardingWatcher: React.FC<
                 true,
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { open } = useDialogContext();
 
     const token = delegationPlugin

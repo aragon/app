@@ -12,7 +12,6 @@ import {
 import { useDisconnect } from '@reown/appkit/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useConnection } from 'wagmi';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
 import { exploreDaosSectionId } from '@/modules/explore/pages/exploreDaosPage';
@@ -23,6 +22,7 @@ import {
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IUserDialogProps extends IDialogComponentProps {}
 
@@ -34,7 +34,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { close, open } = useDialogContext();
     const { isEnabled } = useFeatureFlags();
     const isAragonProfileEnabled = isEnabled('aragonProfiles');
-    const { address, chainId } = useConnection();
+    const { address, chainId } = useWalletAccount();
     const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);

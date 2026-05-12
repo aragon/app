@@ -11,8 +11,8 @@ import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zeroAddress } from 'viem';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
@@ -41,7 +41,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { chainId } = useDaoChain({ daoId });
 

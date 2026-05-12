@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -18,7 +18,7 @@ export const CryptexPageHeader: React.FC<ICryptexPageHeaderProps> = (props) => {
     const { dao, className, ...otherProps } = props;
     const [isLightMode, setIsLightMode] = useState(true);
     const [isShimLightMode, setIsShimLightMode] = useState(false);
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: ensName } = useEnsName(address);
 
     const { t } = useTranslations();

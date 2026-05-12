@@ -2,6 +2,7 @@
 
 import { useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 import { useEffect } from 'react';
+// biome-ignore lint/style/noRestrictedImports: DesyncWatcher is the only sanctioned consumer of wagmi's `useConnection` — it needs both stores' raw `isConnected` to detect divergence
 import { useConnection } from 'wagmi';
 
 // AppKit's account controller initializes with the status 'disconnected' and only

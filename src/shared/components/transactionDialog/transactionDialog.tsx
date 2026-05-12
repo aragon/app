@@ -2,11 +2,11 @@ import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
-    useConnection,
     useSendTransaction,
     useSwitchChain,
     useWaitForTransactionReceipt,
 } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -66,7 +66,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
 
-    const { chainId, address } = useConnection();
+    const { chainId, address } = useWalletAccount();
     const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({
         network,
     });

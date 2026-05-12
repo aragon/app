@@ -1,7 +1,8 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { type Hex, keccak256, toBytes } from 'viem';
-import { useConnection, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -71,7 +72,7 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { id: chainId } = networkDefinitions[dao.network];
 
