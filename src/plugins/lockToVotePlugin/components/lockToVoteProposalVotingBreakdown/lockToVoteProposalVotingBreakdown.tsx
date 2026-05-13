@@ -1,8 +1,16 @@
 'use client';
 
-import { ProposalVoting } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    ProposalVoting,
+    ProposalVotingTab,
+    Spinner,
+    Tabs,
+} from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
-import { formatUnits } from 'viem';
+import { formatUnits, type Hex } from 'viem';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useTokenTotalSupply } from '@/shared/hooks/useTokenTotalSupply';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { VoteOption } from '../../../tokenPlugin/types';
 import { tokenSettingsUtils } from '../../../tokenPlugin/utils/tokenSettingsUtils';
@@ -32,8 +40,17 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold } = proposal.settings;
 
-    const totalSupply =
-        lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal);
+    const { chainId } = useDaoChain({ network: proposal.network });
+
+    const {
+        data: totalSupply,
+        error,
+        isLoading,
+    } = useTokenTotalSupply({
+        chainId: chainId as number,
+        address: proposal.settings.token.address as Hex,
+    });
+
     const yesVotes = lockToVoteProposalUtils.getOptionVotingPower(
         proposal,
         VoteOption.YES,
@@ -46,6 +63,18 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
         proposal,
         VoteOption.ABSTAIN,
     );
+
+    if (isLoading) {
+        return <Spinner />;
+    }
+
+    if (error) {
+        return (
+            <Tabs.Content value={ProposalVotingTab.BREAKDOWN}>
+                <AlertInline message={error} variant="critical" />
+            </Tabs.Content>
+        );
+    }
 
     return (
         <ProposalVoting.BreakdownToken

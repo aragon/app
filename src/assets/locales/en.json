@@ -3595,6 +3595,9 @@
         "version": "v{{version}}",
         "versionEnv": "v{{version}} ({{env}})"
       },
+      "useTokenTotalSupply": {
+        "error": "Failed to load RPC data, please try again or contact support."
+      },
       "wizard": {
         "footer": {
           "next": "Next"
