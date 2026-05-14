@@ -1,0 +1,15 @@
+{
+    "$schema": "https://unpkg.com/@changesets/config@3.0.5/schema.json",
+    "access": "public",
+    "baseBranch": "main",
+    "changedFilePatterns": ["src/**"],
+    "changelog": [
+        "@changesets/changelog-github",
+        { "repo": "aragon/aragon-subdomain" }
+    ],
+    "commit": false,
+    "fixed": [],
+    "ignore": [],
+    "linked": [],
+    "updateInternalDependencies": "patch"
+}

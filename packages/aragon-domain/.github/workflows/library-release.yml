@@ -1,0 +1,76 @@
+name: Library Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          GPG_PASSPHRASE: op://kv_aragon-subdomain_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_aragon-subdomain_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-subdomain_infra/GITHUB_PAT/credential
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT_TRIGGER_WORKFLOW }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v7.0.0
+        with:
+          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
+          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+      - name: Update version and changelog
+        # Run prettier on CHANGELOG.md file (used for Github release notes) to remove automatic formatting applied by
+        # changeset as Github does not support soft line breaks.
+        # (See https://github.com/changesets/changesets/issues/1452, https://github.com/orgs/community/discussions/10981)
+        run: |
+          pnpm changeset version
+          pnpx prettier --write CHANGELOG.md --print-width 9999999 --ignore-path
+        env:
+          GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT_TRIGGER_WORKFLOW }}
+      - name: Create tag
+        run: pnpm changeset tag
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+      - name: Commit changes
+        run: |
+          git add --all
+          git commit -am "Publish v${{ steps.package-version.outputs.current-version}}"
+          git push --follow-tags
+      - name: Read changelog updates
+        id: read-changelog
+        uses: actions/github-script@v9.0.0
+        env:
+          version: "${{ steps.package-version.outputs.current-version }}"
+          path: ./CHANGELOG.md
+        with:
+          script: |
+            const readChangelog = require('./.github/workflows/scripts/readChangelog.js');
+            readChangelog({ github, context, core });
+      - name: Create release
+        uses: softprops/action-gh-release@v3.0.0
+        with:
+          prerelease: false
+          tag_name: "v${{ steps.package-version.outputs.current-version}}"
+          body: ${{ steps.read-changelog.outputs.changes }}
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT_TRIGGER_WORKFLOW }}

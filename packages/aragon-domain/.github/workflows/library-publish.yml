@@ -1,0 +1,41 @@
+name: Library Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets from OP
+        id: load-secrets
+        uses: 1password/load-secrets-action@v4.0.0
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          NPM_TOKEN: op://kv_aragon-subdomain_infra/NPM_TOKEN/credential
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # Make sure to checkout the main branch with the bumped version on the package.json file as Github does the
+          # checkout of the commit SHA that triggered the publish workflow by default
+          ref: main
+      - name: Build library
+        run: pnpm build
+      - name: Publish library
+        run: |
+          pnpm config set npmAuthToken ${{ steps.load-secrets.outputs.NPM_TOKEN }}
+          pnpm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ steps.load-secrets.outputs.NPM_TOKEN }}
