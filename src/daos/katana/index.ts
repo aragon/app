@@ -1,29 +1,11 @@
 import { CapitalFlowDaoSlotId } from '@/modules/capitalFlow/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { CapitalDistributorTestMembersFileDownload } from './components/capitalDistributorTestMembersFileDownload';
-import {
-    katanaCDDemo,
-    katanaEmissionsTest,
-    katanaVKatManagement,
-} from './constants';
+import { katanaEmissionsTest, katanaVKatManagement } from './constants';
 import { useKatanaVotingEscrowAddress } from './hooks/useKatanaVotingEscrowAddress';
 
 export const initialiseKatana = () => {
     pluginRegistryUtils
-        .registerPlugin(katanaCDDemo)
-
-        .registerSlotComponent({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_MEMBERS_FILE_DOWNLOAD,
-            pluginId: katanaCDDemo.id,
-            component: CapitalDistributorTestMembersFileDownload,
-        })
-
-        .registerSlotFunction({
-            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
-            pluginId: katanaCDDemo.id,
-            function: useKatanaVotingEscrowAddress,
-        })
-
         .registerPlugin(katanaEmissionsTest)
 
         .registerSlotComponent({
