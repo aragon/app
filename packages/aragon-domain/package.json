@@ -13,8 +13,8 @@
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "watch": "tsc --watch",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch --passWithNoTests",
     "type-check": "tsc --noEmit",
     "changeset": "changeset"
   },
