@@ -258,6 +258,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
                 <TextArea
                     id="aragon-profile-bio"
+                    inputClassName="!min-h-24"
                     isOptional
                     maxLength={160}
                     {...bioField}
