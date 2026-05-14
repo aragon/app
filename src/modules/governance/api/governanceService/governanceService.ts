@@ -1,3 +1,5 @@
+import { lockToVoteProposalUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteProposalUtils';
+import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import {
     AragonBackendService,
     type IPaginatedResponse,
@@ -5,7 +7,7 @@ import {
 import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
-} from './../../types';
+} from '../../types';
 import type {
     IMember,
     IProposal,
@@ -23,6 +25,8 @@ import type {
     IGetProposalListParams,
     IGetVoteListParams,
 } from './governanceService.api';
+import { collectTokenAddresses } from './utils/collectTokenAddresses';
+import { fetchTokensTotalSupply } from './utils/fetchTokensTotalSupply';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -74,18 +78,63 @@ class GovernanceService extends AragonBackendService {
             params,
         );
 
-        return result;
+        const addresses = Array.from(
+            new Set(result.data.flatMap(collectTokenAddresses)),
+        );
+        const tokensTotalSupply =
+            addresses.length === 0 || result.data.length === 0
+                ? {}
+                : await fetchTokensTotalSupply(
+                      result.data[0].network,
+                      addresses,
+                  );
+
+        return {
+            ...result,
+            data: result.data.map((proposal) =>
+                this.attachTotalSupply(proposal, tokensTotalSupply),
+            ),
+        };
     };
 
     getProposalBySlug = async <TProposal extends IProposal = IProposal>(
         params: IGetProposalBySlugParams,
     ): Promise<TProposal> => {
-        const result = await this.request<TProposal>(
+        const proposal = await this.request<TProposal>(
             this.urls.proposalBySlug,
             params,
         );
 
-        return result;
+        const addresses = collectTokenAddresses(proposal);
+        const tokensTotalSupply =
+            addresses.length === 0
+                ? {}
+                : await fetchTokensTotalSupply(proposal.network, addresses);
+
+        return this.attachTotalSupply(proposal, tokensTotalSupply);
+    };
+
+    private attachTotalSupply = <TProposal extends IProposal>(
+        proposal: TProposal,
+        tokensTotalSupply: Record<string, string>,
+    ): TProposal => {
+        if (lockToVoteProposalUtils.isLockToVoteProposal(proposal)) {
+            return { ...proposal, tokensTotalSupply };
+        }
+
+        if (sppProposalUtils.isSppProposal(proposal)) {
+            return {
+                ...proposal,
+                tokensTotalSupply,
+                subProposals: proposal.subProposals.map((sub) =>
+                    lockToVoteProposalUtils.isLockToVoteProposal(sub)
+                        ? { ...sub, tokensTotalSupply }
+                        : sub,
+                ),
+            };
+        }
+
+        return proposal;
     };
 
     getProposalActions = async <

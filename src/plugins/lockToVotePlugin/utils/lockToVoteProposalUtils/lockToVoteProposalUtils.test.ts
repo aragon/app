@@ -1,6 +1,9 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { generateProposal } from '@/modules/governance/testUtils';
+import { generateSppStagePlugin } from '@/plugins/sppPlugin/testUtils';
 import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { timeUtils } from '@/test/utils';
 import {
     type ITokenProposalOptionVotes,
@@ -197,13 +200,29 @@ describe('lockToVoteProposalUtils', () => {
             getTotalVotesSpy.mockRestore();
         });
 
+        const buildProposalWithSupply = (
+            settings: Parameters<typeof generateLockToVotePluginSettings>[0],
+            totalSupply: string | undefined,
+        ) => {
+            const fullSettings = generateLockToVotePluginSettings(settings);
+            return generateLockToVoteProposal({
+                settings: fullSettings,
+                tokensTotalSupply:
+                    totalSupply !== undefined
+                        ? {
+                              [fullSettings.token.address.toLowerCase()]:
+                                  totalSupply,
+                          }
+                        : {},
+            });
+        };
+
         it('returns true when total votes is greater than min participation required', () => {
-            const settings = generateLockToVotePluginSettings({
-                minParticipation: 150_000,
-                historicalTotalSupply: '1000',
-            }); // 15%
+            const proposal = buildProposalWithSupply(
+                { minParticipation: 150_000 }, // 15%
+                '1000',
+            );
             const totalVotes = BigInt('200'); // 20% of total-supply
-            const proposal = generateLockToVoteProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(
                 lockToVoteProposalUtils.isMinParticipationReached(proposal),
@@ -211,12 +230,11 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns true when total votes is equal to min participation required', () => {
-            const settings = generateLockToVotePluginSettings({
-                minParticipation: 500_000,
-                historicalTotalSupply: '1000',
-            }); // 50%
+            const proposal = buildProposalWithSupply(
+                { minParticipation: 500_000 }, // 50%
+                '1000',
+            );
             const totalVotes = BigInt('500'); // 50% of total-supply
-            const proposal = generateLockToVoteProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(
                 lockToVoteProposalUtils.isMinParticipationReached(proposal),
@@ -224,12 +242,11 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns false when total votes is less than min participation required', () => {
-            const settings = generateLockToVotePluginSettings({
-                minParticipation: 300_000,
-                historicalTotalSupply: '1000',
-            }); // 30%
+            const proposal = buildProposalWithSupply(
+                { minParticipation: 300_000 }, // 30%
+                '1000',
+            );
             const totalVotes = BigInt('290'); // 29% of total-supply
-            const proposal = generateLockToVoteProposal({ settings });
             getTotalVotesSpy.mockReturnValue(totalVotes);
             expect(
                 lockToVoteProposalUtils.isMinParticipationReached(proposal),
@@ -237,21 +254,24 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns false when total supply is set to zero', () => {
-            const settings = generateLockToVotePluginSettings({
-                historicalTotalSupply: '0',
-            });
-            const proposal = generateLockToVoteProposal({ settings });
+            const proposal = buildProposalWithSupply({}, '0');
+            expect(
+                lockToVoteProposalUtils.isMinParticipationReached(proposal),
+            ).toBeFalsy();
+        });
+
+        it('returns false when tokensTotalSupply has no entry for the proposal token', () => {
+            const proposal = buildProposalWithSupply({}, undefined);
             expect(
                 lockToVoteProposalUtils.isMinParticipationReached(proposal),
             ).toBeFalsy();
         });
 
         it('supports decimal values for the min-participation setting', () => {
-            const settings = generateLockToVotePluginSettings({
-                minParticipation: 5000,
-                historicalTotalSupply: '1000',
-            }); // 0.5%
-            const proposal = generateLockToVoteProposal({ settings });
+            const proposal = buildProposalWithSupply(
+                { minParticipation: 5000 }, // 0.5%
+                '1000',
+            );
             getTotalVotesSpy.mockReturnValueOnce(BigInt('5')); // 0.5% of total-supply
             expect(
                 lockToVoteProposalUtils.isMinParticipationReached(proposal),
@@ -497,31 +517,83 @@ describe('lockToVoteProposalUtils', () => {
     });
 
     describe('getProposalTokenTotalSupply', () => {
-        it('returns the historical total supply when set', () => {
-            const historicalTotalSupply = '1000000';
+        it('returns the supply for the proposal token from tokensTotalSupply', () => {
+            const tokenAddress = '0xAaBbCc';
             const proposal = generateLockToVoteProposal({
                 settings: generateLockToVotePluginSettings({
-                    historicalTotalSupply,
+                    token: generateTokenPluginSettingsToken({
+                        address: tokenAddress,
+                    }),
                 }),
+                tokensTotalSupply: {
+                    [tokenAddress.toLowerCase()]: '1000000',
+                },
             });
             expect(
                 lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
-            ).toEqual(historicalTotalSupply);
+            ).toEqual('1000000');
         });
 
-        it('returns the total supply of the token when having no historical total supply', () => {
-            const historicalTotalSupply = undefined;
-            const totalSupply = '123456';
-            const token = generateTokenPluginSettingsToken({ totalSupply });
-            const proposal = generateLockToVoteProposal({
-                settings: generateLockToVotePluginSettings({
-                    historicalTotalSupply,
-                    token,
-                }),
-            });
+        it('returns undefined when tokensTotalSupply has no entry for the token', () => {
+            const proposal = generateLockToVoteProposal();
             expect(
                 lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
-            ).toEqual(totalSupply);
+            ).toBeUndefined();
+        });
+    });
+
+    describe('isLockToVoteProposal', () => {
+        it('returns true when the proposal interface is lock-to-vote', () => {
+            const proposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+            });
+            expect(
+                lockToVoteProposalUtils.isLockToVoteProposal(proposal),
+            ).toBeTruthy();
+        });
+
+        it('returns false for other plugin interfaces', () => {
+            const multisigProposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+            });
+            const tokenProposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            });
+            expect(
+                lockToVoteProposalUtils.isLockToVoteProposal(multisigProposal),
+            ).toBeFalsy();
+            expect(
+                lockToVoteProposalUtils.isLockToVoteProposal(tokenProposal),
+            ).toBeFalsy();
+        });
+    });
+
+    describe('isLockToVoteStagePlugin', () => {
+        it('returns true for an internal stage plugin with lock-to-vote interface', () => {
+            const plugin = generateSppStagePlugin({
+                interfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+            });
+            expect(
+                lockToVoteProposalUtils.isLockToVoteStagePlugin(plugin),
+            ).toBeTruthy();
+        });
+
+        it('returns false for non-LTV internal stage plugins', () => {
+            const plugin = generateSppStagePlugin({
+                interfaceType: PluginInterfaceType.MULTISIG,
+            });
+            expect(
+                lockToVoteProposalUtils.isLockToVoteStagePlugin(plugin),
+            ).toBeFalsy();
+        });
+
+        it('returns false for external stage plugins (no interfaceType)', () => {
+            const externalPlugin = generateSppStagePlugin({
+                interfaceType: undefined,
+            });
+            expect(
+                lockToVoteProposalUtils.isLockToVoteStagePlugin(externalPlugin),
+            ).toBeFalsy();
         });
     });
 });
