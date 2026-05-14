@@ -1,4 +1,3 @@
-import 'server-only';
 import type { Network } from '@/shared/api/daoService';
 import {
     networkDefinitions,
@@ -14,8 +13,12 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
 };
 
 /**
- * Server-only: resolves the upstream RPC URL for a given network. The returned URL embeds the
- * provider API key as a path segment — it is a secret and must never be exposed to the client.
+ * Resolves the upstream RPC URL for a given network. The returned URL embeds the provider API
+ * key (`process.env.NEXT_SECRET_*`) as a path segment — it is a secret and must never be sent
+ * to the client. Callers MUST gate invocation behind `process.env.NEXT_RUNTIME` (build-time-
+ * folded by Next.js) so the bundler tree-shakes this module out of the client chunk; we don't
+ * apply `'server-only'` because Turbopack's import tracer follows the dynamic-import path used
+ * by the dispatcher and would falsely report a client-side import.
  *
  * Resolution order:
  * 1. Local-dev override `NEXT_SECRET_RPC_OVERRIDE_<chainId>` (e.g. Anvil fork).

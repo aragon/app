@@ -19,6 +19,10 @@ export interface IParseLockToVoteSettingsParams {
      */
     settings: ILockToVotePluginSettings;
     /**
+     * Total supply of the token (fresh value, fetched in real-time).
+     */
+    realTimeTotalSupply: string;
+    /**
      * Defines if the voting is to veto or not.
      */
     isVeto?: boolean;
@@ -38,7 +42,7 @@ class LockToVoteSettingsUtils {
     parseSettings = (
         params: IParseLockToVoteSettingsParams,
     ): IDefinitionSetting[] => {
-        const { settings, isVeto, t } = params;
+        const { settings, isVeto, t, realTimeTotalSupply } = params;
         const {
             supportThreshold,
             minParticipation,
@@ -46,12 +50,9 @@ class LockToVoteSettingsUtils {
             minProposerVotingPower,
             votingMode,
             token,
-            historicalTotalSupply,
         } = settings;
 
-        const { symbol: tokenSymbol, totalSupply, decimals } = token;
-
-        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
+        const { symbol: tokenSymbol, decimals } = token;
 
         const parsedSupportThreshold = this.ratioToPercentage(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(
@@ -70,7 +71,7 @@ class LockToVoteSettingsUtils {
         );
 
         const minParticipationToken = Math.round(
-            (Number(processedTotalSupply) * parsedMinParticipation) / 100,
+            (Number(realTimeTotalSupply) * parsedMinParticipation) / 100,
         );
         const parsedMinParticipationToken = formatUnits(
             bigIntUtils.safeParse(minParticipationToken),

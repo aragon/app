@@ -60,6 +60,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
             daoId,
             settings: proposal.settings,
             pluginAddress: proposal.pluginAddress,
+            proposal,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: proposal.pluginInterfaceType,
