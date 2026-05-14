@@ -1,25 +1,48 @@
 {
-  "name": "aragon-subdomain",
+  "name": "@aragon/aragon-subdomain",
   "version": "0.1.0",
   "description": "Aragon governance business logic package — domain model, use cases, and infrastructure adapters",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "license": "GPL-3.0",
+  "author": "Aragon Association",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "watch": "tsc --watch",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "type-check": "tsc --noEmit",
+    "changeset": "changeset"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aragon/aragon-subdomain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aragon/aragon-subdomain/issues"
+  },
+  "homepage": "https://github.com/aragon/aragon-subdomain#readme",
   "dependencies": {
     "ddd-core-ts": "^1.0.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.8.8",
     "jest": "^29.7.0",
+    "prettier": "^3.3.3",
     "ts-jest": "^29.2.0",
     "typescript": "^5.4.0"
-  }
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.33.0"
 }

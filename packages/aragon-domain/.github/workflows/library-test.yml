@@ -1,0 +1,38 @@
+name: Library test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          fetch-depth: 0
+      - name: Build library
+        run: pnpm build
+      - name: Run tests
+        run: pnpm test
+      - name: Check types
+        run: pnpm type-check
+      - name: Check changeset
+        if: github.event_name == 'pull_request'
+        run: pnpm changeset status --since origin/main
