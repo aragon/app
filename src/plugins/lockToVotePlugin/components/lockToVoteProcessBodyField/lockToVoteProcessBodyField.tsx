@@ -114,6 +114,20 @@ export const LockToVoteProcessBodyField = (
         },
     );
 
+    const minParticipationToken = Math.round(
+        (Number(totalSupply ?? 0) * minParticipation) / 100,
+    );
+    const parsedMinParticipationToken = formatUnits(
+        bigIntUtils.safeParse(minParticipationToken),
+        tokenDecimals,
+    );
+    const formattedMinParticipationToken = formatterUtils.formatNumber(
+        parsedMinParticipationToken,
+        {
+            format: NumberFormat.TOKEN_AMOUNT_SHORT,
+        },
+    );
+
     const voteChangeLabel =
         votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT
             ? 'enabled'
@@ -223,12 +237,21 @@ export const LockToVoteProcessBodyField = (
                     'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationTerm',
                 )}
             >
-                {t(
-                    'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinition',
-                    {
-                        minParticipation: formattedMinParticipation,
-                    },
-                )}
+                {minParticipationToken === 0
+                    ? t(
+                          'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinitionNoToken',
+                          {
+                              minParticipation: formattedMinParticipation,
+                          },
+                      )
+                    : t(
+                          'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinition',
+                          {
+                              minParticipation: formattedMinParticipation,
+                              tokenValue: formattedMinParticipationToken,
+                              tokenSymbol,
+                          },
+                      )}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (
                 <DefinitionList.Item
