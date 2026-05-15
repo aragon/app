@@ -1,5 +1,3 @@
-import type { IProposal } from '../../governance/api/governanceService';
-
 export interface IUseGovernanceSettingsParams<TSettings = unknown> {
     /**
      * ID of the DAO to parse the settings for.
@@ -17,8 +15,4 @@ export interface IUseGovernanceSettingsParams<TSettings = unknown> {
      * Defines if the voting is to veto or not.
      */
     isVeto?: boolean;
-    /**
-     * Proposal to display the settings for.
-     */
-    proposal?: IProposal;
 }
