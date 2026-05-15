@@ -146,6 +146,15 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         return [paginatedEntry ?? connectedUserMember, ...rest];
     }, [memberList, connectedUserMember]);
 
+    // Pinned connected user not in the paginated response (live single-fetch sees
+    // them, `/v2/members` doesn't) pushes the rendered count above `itemsCount`
+    // from the API. Surface the larger of the two so the "X of Y" counter matches
+    // what's actually on screen.
+    const adjustedItemsCount = Math.max(
+        itemsCount ?? 0,
+        mergedMemberList?.length ?? 0,
+    );
+
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
@@ -157,7 +166,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     return (
         <DataListRoot
             entityLabel={t('app.governance.daoMemberList.entity')}
-            itemsCount={itemsCount}
+            itemsCount={adjustedItemsCount}
             onLoadMore={onLoadMore}
             pageSize={pageSize}
             state={state}
