@@ -2,8 +2,8 @@ import type { IDefinitionSetting } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoChain } from '../../../../shared/hooks/useDaoChain';
-import { useTokenTotalSupply } from '../../../../shared/hooks/useTokenTotalSupply';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useTokenTotalSupply } from '@/shared/hooks/useTokenTotalSupply';
 import type { ILockToVotePluginSettings } from '../../types';
 import { lockToVoteSettingsUtils } from '../../utils/lockToVoteSettingsUtils';
 

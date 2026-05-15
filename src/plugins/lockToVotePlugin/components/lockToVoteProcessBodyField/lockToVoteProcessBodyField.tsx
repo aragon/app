@@ -7,7 +7,7 @@ import {
     NumberFormat,
     Tag,
 } from '@aragon/gov-ui-kit';
-import { formatUnits } from 'viem';
+import { formatUnits, type Hex } from 'viem';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -22,6 +22,7 @@ import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { useTokenTotalSupply } from '@/shared/hooks/useTokenTotalSupply';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
@@ -67,7 +68,7 @@ export const LockToVoteProcessBodyField = (
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const { buildEntityUrl, chainId } = useDaoChain({ network: dao?.network });
 
     const { membership, governance } = body;
 
@@ -86,14 +87,21 @@ export const LockToVoteProcessBodyField = (
         name: tokenName,
         symbol: tokenSymbol,
         decimals: tokenDecimals,
-        totalSupply,
     } = membership.token;
+
+    const { data: totalSupply } = useTokenTotalSupply({
+        chainId: chainId as number,
+        address: tokenAddress as Hex,
+        enabled: chainId != null && tokenAddress != null,
+    });
+
     const { votingMode, supportThreshold, minParticipation, minDuration } =
         governance;
 
     const parsedTotalSupply =
-        totalSupply &&
-        formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals);
+        totalSupply != null
+            ? formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals)
+            : undefined;
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
@@ -189,7 +197,7 @@ export const LockToVoteProcessBodyField = (
                     )}
                 </DefinitionList.Item>
             )}
-            {formattedSupply && Number(formattedSupply) > 0 && (
+            {totalSupply && Number(totalSupply) > 0 && (
                 <DefinitionList.Item
                     term={t(
                         'app.plugins.lockToVote.lockToVoteProcessBodyField.supplyTerm',
