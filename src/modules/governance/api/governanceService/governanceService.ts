@@ -125,7 +125,6 @@ class GovernanceService extends AragonBackendService {
         if (sppProposalUtils.isSppProposal(proposal)) {
             return {
                 ...proposal,
-                tokensTotalSupply,
                 subProposals: proposal.subProposals.map((sub) =>
                     lockToVoteProposalUtils.isLockToVoteProposal(sub)
                         ? { ...sub, tokensTotalSupply }

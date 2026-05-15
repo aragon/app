@@ -23,12 +23,11 @@ describe('useTokenTotalSupply hook', () => {
         );
 
         expect(result.current.data).toEqual(totalSupply);
-        expect(result.current.error).toBeUndefined();
         expect(result.current.isError).toBeFalsy();
         expect(result.current.isLoading).toBeFalsy();
     });
 
-    it('returns error message when errored', () => {
+    it('returns error flag when errored', () => {
         useReadContractSpy.mockReturnValue({
             data: undefined,
             isError: true,
@@ -40,7 +39,6 @@ describe('useTokenTotalSupply hook', () => {
         );
 
         expect(result.current.data).toBeUndefined();
-        expect(result.current.error).toMatch(/useTokenTotalSupply\.error/);
         expect(result.current.isError).toBeTruthy();
         expect(result.current.isLoading).toBeFalsy();
     });
@@ -57,7 +55,6 @@ describe('useTokenTotalSupply hook', () => {
         );
 
         expect(result.current.data).toBeUndefined();
-        expect(result.current.error).toBeUndefined();
         expect(result.current.isError).toBeFalsy();
         expect(result.current.isLoading).toBeTruthy();
     });

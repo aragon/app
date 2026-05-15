@@ -25,11 +25,4 @@ export interface ISppProposal extends IProposal<ISppPluginSettings> {
      * Results of the process bodies.
      */
     results?: ISppProposalBodyResult[];
-    /**
-     * Live ERC-20 totalSupply values for lock-to-vote bodies in this SPP's stages, keyed by
-     * lowercased token address. Populated by the api service layer when the SPP contains lock-to-
-     * vote bodies — consumers reading stage-body supplies before a sub-proposal exists look here.
-     * Values are stringified bigints for SSR-safe React Query hydration.
-     */
-    tokensTotalSupply?: Record<string, string>;
 }

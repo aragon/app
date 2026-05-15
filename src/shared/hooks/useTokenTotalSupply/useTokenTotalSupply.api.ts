@@ -22,10 +22,6 @@ export interface IUseTokenTotalSupplyResult {
      */
     data: bigint | undefined;
     /**
-     * Human-readable error message when the total supply fetch fails, otherwise undefined.
-     */
-    error: string | undefined;
-    /**
      * Defines if an error occurred while fetching the total supply.
      */
     isError: boolean;

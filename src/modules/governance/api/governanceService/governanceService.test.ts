@@ -180,7 +180,7 @@ describe('governance service', () => {
         });
     });
 
-    it('getProposalBySlug merges tokensTotalSupply onto SPP parent + only LTV sub-proposals (non-LTV subs untouched)', async () => {
+    it('getProposalBySlug merges tokensTotalSupply onto LTV sub-proposals only (non-LTV subs and SPP parent untouched)', async () => {
         const tokenAddress = '0xBbBb';
         const ltvSub = {
             ...generateLockToVoteProposal({
@@ -236,9 +236,10 @@ describe('governance service', () => {
                 proposalParams,
             );
 
-        expect(result.tokensTotalSupply).toEqual({
-            [tokenAddress.toLowerCase()]: '5000',
-        });
+        expect(
+            (result as ISppProposal & { tokensTotalSupply?: unknown })
+                .tokensTotalSupply,
+        ).toBeUndefined();
         const [decoratedLtvSub, decoratedMultisigSub] = result.subProposals as [
             ILockToVoteProposal,
             (typeof result.subProposals)[number],
