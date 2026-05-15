@@ -1,5 +1,5 @@
 {
-    "$schema": "https://v2-9-14.turborepo.dev/schema.json",
+    "$schema": "./node_modules/turbo/schema.json",
     "globalPassThroughEnv": [
         "ANALYZE",
         "ARAGON_BACKEND_URL",
