@@ -1,6 +1,5 @@
 {
-    "$schema": "https://turbo.build/schema.json",
-    "concurrency": "70%",
+    "$schema": "./node_modules/turbo/schema.json",
     "globalPassThroughEnv": [
         "ANALYZE",
         "ARAGON_BACKEND_URL",
