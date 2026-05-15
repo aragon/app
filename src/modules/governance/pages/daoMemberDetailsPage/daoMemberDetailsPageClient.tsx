@@ -28,7 +28,7 @@ import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
-import { useMember } from '../../api/governanceService';
+import { type IMember, useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
@@ -153,9 +153,22 @@ export const DaoMemberDetailsPageClient: React.FC<
         url: ensRecords?.[ensRecordKeys.url],
     };
 
-    if (member == null || dao == null || bodyPlugin == null) {
+    if (dao == null || bodyPlugin == null) {
         return null;
     }
+
+    const fallbackMember: IMember = {
+        address,
+        ens: null,
+        type: '',
+        firstActive: null,
+        lastActive: null,
+        metrics: {
+            firstActivity: null,
+            lastActivity: null,
+        },
+    };
+    const memberData = member ?? fallbackMember;
 
     const truncatedAddress = addressUtils.truncateAddress(address);
     const memberName = displayName ?? truncatedAddress;
@@ -223,7 +236,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                 <Page.Main>
                     <DelegationSection
                         daoId={daoId}
-                        member={member}
+                        member={memberData}
                         title={t(
                             'app.governance.daoMemberDetailsPage.main.delegation.title',
                         )}

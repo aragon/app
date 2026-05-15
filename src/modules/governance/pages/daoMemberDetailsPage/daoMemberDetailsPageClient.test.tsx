@@ -167,12 +167,18 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         expect(avatar).toBeInTheDocument();
     });
 
-    it('returns empty container on member fetch error', () => {
+    it('renders the page with a fallback member when useMember has no data', () => {
+        const address = '0x1234567890123456789012345678901234567890';
         useMemberSpy.mockReturnValue(
             generateReactQueryResultError({ error: new Error() }),
         );
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
+        render(createTestComponent({ address }));
+        expect(
+            screen.getByRole('heading', {
+                level: 1,
+                name: addressUtils.truncateAddress(address),
+            }),
+        ).toBeInTheDocument();
     });
 
     it('supports member address and ens copy', async () => {
