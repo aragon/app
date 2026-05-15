@@ -40,7 +40,7 @@ export const TokenMemberListItem: React.FC<ITokenMemberListItemProps> = (
     const { data: ensName } = useEnsName(member.address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: displayName } = useEnsName(member.address, {
-        shortenAragonName: true,
+        stripAragonRegistrySuffix: true,
     });
 
     return (

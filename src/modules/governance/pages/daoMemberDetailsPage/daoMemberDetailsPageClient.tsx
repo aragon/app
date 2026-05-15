@@ -145,7 +145,7 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsRecords(ensName);
     const { data: displayName } = useEnsName(address, {
-        shortenAragonName: true,
+        stripAragonRegistrySuffix: true,
     });
     const memberLinks = {
         github: ensRecords?.[ensRecordKeys.github],

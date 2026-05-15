@@ -10,10 +10,11 @@ export interface IUseEnsNameOptions {
     /**
      * When true and the resolved ENS is an Aragon member-registry subdomain
      * (e.g. `alice.aragonx.eth`), the hook returns just the subdomain (`alice`).
-     * Used on member surfaces (list items, delegation card, profile header)
+     * Used on member-facing surfaces: member list items (token + default),
+     * delegation card, and profile header (title and breadcrumb).
      * Anywhere else, leave this off so the full ENS is shown.
      */
-    shortenAragonName?: boolean;
+    stripAragonRegistrySuffix?: boolean;
 }
 
 /**
@@ -32,7 +33,7 @@ export function useEnsName(
     address: string | undefined,
     options?: IUseEnsNameOptions,
 ) {
-    const { shortenAragonName = false } = options ?? {};
+    const { stripAragonRegistrySuffix = false } = options ?? {};
 
     const validAddress =
         address != null && isAddress(address) ? address : undefined;
@@ -59,7 +60,7 @@ export function useEnsName(
     }, [result.error, validAddress]);
 
     const data =
-        shortenAragonName &&
+        stripAragonRegistrySuffix &&
         result.data?.endsWith(memberRegistrySubdomainSuffix)
             ? result.data.slice(0, -memberRegistrySubdomainSuffix.length)
             : result.data;

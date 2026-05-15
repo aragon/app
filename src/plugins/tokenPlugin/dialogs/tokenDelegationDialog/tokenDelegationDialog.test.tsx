@@ -132,7 +132,7 @@ describe('<TokenDelegationDialog /> component', () => {
         useEnsNameSpy.mockImplementation(
             (_address, options) =>
                 ({
-                    data: options?.shortenAragonName
+                    data: options?.stripAragonRegistrySuffix
                         ? 'alice'
                         : 'alice.aragonx.eth',
                     isLoading: false,

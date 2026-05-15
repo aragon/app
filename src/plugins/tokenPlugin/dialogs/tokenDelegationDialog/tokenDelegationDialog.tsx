@@ -63,7 +63,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
     const { data: delegateEnsName } = useEnsName(delegate);
     const { data: delegateEnsAvatar } = useEnsAvatar(delegateEnsName);
     const { data: delegateDisplayName } = useEnsName(delegate, {
-        shortenAragonName: true,
+        stripAragonRegistrySuffix: true,
     });
 
     const { t } = useTranslations();

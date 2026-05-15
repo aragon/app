@@ -24,10 +24,10 @@ describe('useEnsName hook', () => {
         expect(result.current.data).toBe('alice.aragonx.eth');
     });
 
-    it('strips the aragon subdomain suffix when shortenAragonName is set', () => {
+    it('strips the aragon subdomain suffix when stripAragonRegistrySuffix is set', () => {
         mockEnsResult('alice.aragonx.eth');
         const { result } = renderHook(() =>
-            useEnsName(validAddress, { shortenAragonName: true }),
+            useEnsName(validAddress, { stripAragonRegistrySuffix: true }),
         );
         expect(result.current.data).toBe('alice');
     });
@@ -35,7 +35,7 @@ describe('useEnsName hook', () => {
     it('returns the ENS name as-is when it is not an aragon subdomain', () => {
         mockEnsResult('alice.eth');
         const { result } = renderHook(() =>
-            useEnsName(validAddress, { shortenAragonName: true }),
+            useEnsName(validAddress, { stripAragonRegistrySuffix: true }),
         );
         expect(result.current.data).toBe('alice.eth');
     });
@@ -43,7 +43,7 @@ describe('useEnsName hook', () => {
     it('passes through null when no ENS is resolved', () => {
         mockEnsResult(null);
         const { result } = renderHook(() =>
-            useEnsName(validAddress, { shortenAragonName: true }),
+            useEnsName(validAddress, { stripAragonRegistrySuffix: true }),
         );
         expect(result.current.data).toBeNull();
     });

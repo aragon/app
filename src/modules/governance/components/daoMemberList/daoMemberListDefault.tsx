@@ -199,13 +199,16 @@ const EnsAwareMemberItem: React.FC<{
     const { member, href, onClick } = props;
     const { data: ensName } = useEnsName(member.address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
+    const { data: displayName } = useEnsName(member.address, {
+        stripAragonRegistrySuffix: true,
+    });
 
     return (
         <MemberDataListItem.Structure
             address={member.address}
             avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
-            ensName={ensName ?? undefined}
+            ensName={displayName ?? undefined}
             href={href}
             onClick={onClick}
         />
