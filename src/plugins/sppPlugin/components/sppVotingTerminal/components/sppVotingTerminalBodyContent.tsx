@@ -75,7 +75,6 @@ export const SppVotingTerminalBodyContent: React.FC<
             settings: pluginSettings,
             isVeto,
             pluginAddress: plugin.address,
-            proposal,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
         pluginId: plugin.interfaceType ?? 'external',

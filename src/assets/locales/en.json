@@ -2471,6 +2471,7 @@
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minimumParticipation": "Minimum participation",
           "no": "Disabled",
+          "participationNoToken": "≥ {{participation}}",
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalDuration": "Proposal duration",

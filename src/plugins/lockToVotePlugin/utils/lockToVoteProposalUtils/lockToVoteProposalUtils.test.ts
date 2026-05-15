@@ -32,9 +32,7 @@ describe('lockToVoteProposalUtils', () => {
         it('returns executed status when proposal has been executed', () => {
             const proposal = generateLockToVoteProposal({
                 executed: { status: true },
-                settings: generateLockToVotePluginSettings({
-                    historicalTotalSupply: '0',
-                }),
+                settings: generateLockToVotePluginSettings(),
             });
             expect(lockToVoteProposalUtils.getProposalStatus(proposal)).toEqual(
                 ProposalStatus.EXECUTED,
@@ -287,7 +285,6 @@ describe('lockToVoteProposalUtils', () => {
         it('returns true when the amount of yes votes is greater than the support required', () => {
             const settings = generateLockToVotePluginSettings({
                 supportThreshold: 500_000,
-                historicalTotalSupply: '0',
             }); // 50%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '510' }, // 51%
@@ -306,7 +303,6 @@ describe('lockToVoteProposalUtils', () => {
         it('returns false when the amount of yes votes is equal to the support required', () => {
             const settings = generateLockToVotePluginSettings({
                 supportThreshold: 600_000,
-                historicalTotalSupply: '0',
             }); // 60%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '600' }, // 60%
@@ -324,7 +320,6 @@ describe('lockToVoteProposalUtils', () => {
         it('returns false when the amount of yes votes is less than the support required', () => {
             const settings = generateLockToVotePluginSettings({
                 supportThreshold: 400_000,
-                historicalTotalSupply: '0',
             }); // 40%
             const votesByOption = [
                 { type: VoteOption.YES, totalVotingPower: '380' }, // 38%
@@ -340,9 +335,7 @@ describe('lockToVoteProposalUtils', () => {
         });
 
         it('returns false when no one voted yet', () => {
-            const settings = generateLockToVotePluginSettings({
-                historicalTotalSupply: '0',
-            });
+            const settings = generateLockToVotePluginSettings();
             expect(
                 lockToVoteProposalUtils.isSupportReached(
                     generateLockToVoteProposal({ settings }),

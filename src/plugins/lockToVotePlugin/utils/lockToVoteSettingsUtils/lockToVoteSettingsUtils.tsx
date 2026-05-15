@@ -19,9 +19,10 @@ export interface IParseLockToVoteSettingsParams {
      */
     settings: ILockToVotePluginSettings;
     /**
-     * Total supply of the token (fresh value, fetched in real-time).
+     * Total supply of the token (fresh value, fetched in real-time). If not
+     * present, only show percentage without token value.
      */
-    realTimeTotalSupply: string;
+    realTimeTotalSupply?: string;
     /**
      * Defines if the voting is to veto or not.
      */
@@ -42,7 +43,7 @@ class LockToVoteSettingsUtils {
     parseSettings = (
         params: IParseLockToVoteSettingsParams,
     ): IDefinitionSetting[] => {
-        const { settings, isVeto, t, realTimeTotalSupply } = params;
+        const { settings, isVeto, t, realTimeTotalSupply = '0' } = params;
         const {
             supportThreshold,
             minParticipation,
@@ -121,14 +122,22 @@ class LockToVoteSettingsUtils {
                 term: t(
                     'app.plugins.lockToVote.lockToVoteGovernanceSettings.minimumParticipation',
                 ),
-                definition: t(
-                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.participation',
-                    {
-                        participation: formattedMinParticipation,
-                        tokenValue: formattedMinParticipationToken,
-                        tokenSymbol,
-                    },
-                ),
+                definition:
+                    minParticipationToken === 0
+                        ? t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.participationNoToken',
+                              {
+                                  participation: formattedMinParticipation,
+                              },
+                          )
+                        : t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.participation',
+                              {
+                                  participation: formattedMinParticipation,
+                                  tokenValue: formattedMinParticipationToken,
+                                  tokenSymbol,
+                              },
+                          ),
             },
             {
                 term: t(
