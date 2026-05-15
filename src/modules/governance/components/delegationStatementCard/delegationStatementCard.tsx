@@ -8,7 +8,7 @@ import {
     Collapsible,
     Heading,
 } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDelegateStatementCid, useEnsName } from '@/modules/ens';
 import type { ITokenPluginSettings } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
@@ -41,7 +41,7 @@ export const DelegationStatementCard: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address: connectedAddress } = useConnection();
+    const { address: connectedAddress } = useWalletAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { data: ensName } = useEnsName(memberAddress);
 
