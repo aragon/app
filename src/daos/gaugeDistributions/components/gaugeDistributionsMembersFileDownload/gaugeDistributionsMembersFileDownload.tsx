@@ -7,12 +7,12 @@ import { PluginInterfaceType } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { StatusDialogId } from '../../constants/statusDialogId';
-import type { IStatusMembersFileDownloadDialogParams } from '../../dialogs/statusMembersFileDownloadDialog';
-import type { IStatusMembersFileDownloadProps } from './statusMembersFileDownload.api';
+import { GaugeDistributionsDialogId } from '../../constants/gaugeDistributionsDialogId';
+import type { IGaugeDistributionsMembersFileDownloadDialogParams } from '../../dialogs/gaugeDistributionsMembersFileDownloadDialog';
+import type { IGaugeDistributionsMembersFileDownloadProps } from './gaugeDistributionsMembersFileDownload.api';
 
-export const StatusMembersFileDownload: React.FC<
-    IStatusMembersFileDownloadProps
+export const GaugeDistributionsMembersFileDownload: React.FC<
+    IGaugeDistributionsMembersFileDownloadProps
 > = (props) => {
     const { dao, asset } = props;
 
@@ -37,14 +37,14 @@ export const StatusMembersFileDownload: React.FC<
             return;
         }
 
-        const params: IStatusMembersFileDownloadDialogParams = {
+        const params: IGaugeDistributionsMembersFileDownloadDialogParams = {
             gaugePluginAddress,
             network: dao.network,
             asset,
             onDownload: setDownloadedFileName,
         };
 
-        open(StatusDialogId.MEMBERS_FILE_DOWNLOAD, {
+        open(GaugeDistributionsDialogId.MEMBERS_FILE_DOWNLOAD, {
             params,
             disableOutsideClick: true,
         });
@@ -52,16 +52,20 @@ export const StatusMembersFileDownload: React.FC<
 
     return (
         <InputContainer
-            helpText={t('app.daos.status.statusMembersFileDownload.helpText')}
-            id="status-members-file"
-            label={t('app.daos.status.statusMembersFileDownload.label')}
+            helpText={t(
+                'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.helpText',
+            )}
+            id="gauge-distributions-members-file"
+            label={t(
+                'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.label',
+            )}
             useCustomWrapper={true}
         >
             {downloadedFileName && (
                 <Card className="border border-neutral-100 px-6 py-2 shadow-neutral-sm">
                     <p className="text-neutral-400 text-sm">
                         {t(
-                            'app.daos.status.statusMembersFileDownload.downloadedFile',
+                            'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.downloadedFile',
                             {
                                 fileName: downloadedFileName,
                             },
@@ -77,7 +81,9 @@ export const StatusMembersFileDownload: React.FC<
                 size="md"
                 variant="tertiary"
             >
-                {t('app.daos.status.statusMembersFileDownload.button')}
+                {t(
+                    'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownload.button',
+                )}
             </Button>
         </InputContainer>
     );

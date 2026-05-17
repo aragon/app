@@ -1,9 +1,9 @@
 import { tokenRewardDialogsDefinitions } from './cryptex/constants/cryptexDialogsDefinitions';
+import { gaugeDistributionsDialogsDefinitions } from './gaugeDistributions/constants/gaugeDistributionsDialogsDefinitions';
 import { katanaDialogsDefinitions } from './katana/constants/katanaDialogsDefinitions';
-import { statusDialogsDefinitions } from './status/constants/statusDialogsDefinitions';
 
 export const daosDialogsDefinitions = {
+    ...gaugeDistributionsDialogsDefinitions,
     ...katanaDialogsDefinitions,
-    ...statusDialogsDefinitions,
     ...tokenRewardDialogsDefinitions,
 };

@@ -1,4 +1,7 @@
-import type { IRewardDistributionOwner } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import type {
+    IGaugeRewardDistributionEntry,
+    IRewardDistributionOwner,
+} from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 
 export interface IToRewardJsonParams {
     /**
@@ -7,9 +10,17 @@ export interface IToRewardJsonParams {
     owners: IRewardDistributionOwner[];
 }
 
+export interface IToGaugeRewardJsonParams {
+    /**
+     * List of gauges with their pre-computed reward amounts from the
+     * per-gauge reward distribution API.
+     */
+    gauges: IGaugeRewardDistributionEntry[];
+}
+
 export interface IRewardJsonEntry {
     /**
-     * Address of the user receiving the reward.
+     * Address receiving the reward (owner or gauge contract).
      */
     address: string;
     /**
@@ -19,6 +30,6 @@ export interface IRewardJsonEntry {
 }
 
 /**
- * List of owner address and reward amount pairs (in wei).
+ * List of address and reward amount pairs (in wei).
  */
 export type IRewardJson = IRewardJsonEntry[];

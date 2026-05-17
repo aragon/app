@@ -14,17 +14,17 @@ import { rewardUtils } from '@/daos/katana/utils/rewardUtils';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import {
     useEpochMetrics,
-    useRewardDistribution,
+    useGaugeRewardDistribution,
 } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import type { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { StatusDialogId } from '../../constants/statusDialogId';
-import { statusMinEpochId } from '../../constants/statusMinEpochId';
+import { GaugeDistributionsDialogId } from '../../constants/gaugeDistributionsDialogId';
+import { gaugeDistributionsMinEpochId } from '../../constants/gaugeDistributionsMinEpochId';
 
-export interface IStatusMembersFileDownloadDialogParams {
+export interface IGaugeDistributionsMembersFileDownloadDialogParams {
     /**
      * Address of the gauge voter plugin.
      */
@@ -43,17 +43,17 @@ export interface IStatusMembersFileDownloadDialogParams {
     onDownload?: (fileName: string) => void;
 }
 
-export interface IStatusMembersFileDownloadDialogProps
-    extends IDialogComponentProps<IStatusMembersFileDownloadDialogParams> {}
+export interface IGaugeDistributionsMembersFileDownloadDialogProps
+    extends IDialogComponentProps<IGaugeDistributionsMembersFileDownloadDialogParams> {}
 
-export const StatusMembersFileDownloadDialog: React.FC<
-    IStatusMembersFileDownloadDialogProps
+export const GaugeDistributionsMembersFileDownloadDialog: React.FC<
+    IGaugeDistributionsMembersFileDownloadDialogProps
 > = (props) => {
     const { location } = props;
 
     invariant(
         location.params != null,
-        'StatusMembersFileDownloadDialog: params must be defined',
+        'GaugeDistributionsMembersFileDownloadDialog: params must be defined',
     );
 
     const { gaugePluginAddress, network, asset } = location.params;
@@ -90,7 +90,9 @@ export const StatusMembersFileDownloadDialog: React.FC<
         const epochs: number[] = [];
 
         const firstEpoch =
-            statusMinEpochId > currentEpochId ? 1 : statusMinEpochId;
+            gaugeDistributionsMinEpochId > currentEpochId
+                ? 1
+                : gaugeDistributionsMinEpochId;
 
         for (
             let i = currentEpochId;
@@ -114,7 +116,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
         [totalAmount, tokenDecimals],
     );
 
-    const rewardDistribution = useRewardDistribution(
+    const rewardDistribution = useGaugeRewardDistribution(
         {
             urlParams: {
                 pluginAddress: gaugePluginAddress as Hex,
@@ -150,8 +152,8 @@ export const StatusMembersFileDownloadDialog: React.FC<
                 return;
             }
 
-            const rewardJson = rewardUtils.toRewardJson({
-                owners: result.data.owners,
+            const rewardJson = rewardUtils.toGaugeRewardJson({
+                gauges: result.data.gaugeRewards,
             });
 
             const blob = new Blob([JSON.stringify(rewardJson, null, 2)], {
@@ -159,7 +161,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
             });
             const url = URL.createObjectURL(blob);
             const anchor = document.createElement('a');
-            const fileName = `status-reward-distribution-epoch-${result.data.epoch}.json`;
+            const fileName = `gauge-reward-distribution-epoch-${result.data.epoch}.json`;
             anchor.href = url;
             anchor.download = fileName;
             anchor.click();
@@ -170,37 +172,40 @@ export const StatusMembersFileDownloadDialog: React.FC<
     };
 
     const handleClose = () => {
-        close(StatusDialogId.MEMBERS_FILE_DOWNLOAD);
+        close(GaugeDistributionsDialogId.MEMBERS_FILE_DOWNLOAD);
     };
 
     const selectedEpochLabel =
         epochId !== ''
-            ? t('app.daos.status.statusMembersFileDownloadDialog.epochOption', {
-                  epochId,
-              })
+            ? t(
+                  'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.epochOption',
+                  {
+                      epochId,
+                  },
+              )
             : t(
-                  'app.daos.status.statusMembersFileDownloadDialog.epochSelectPlaceholder',
+                  'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.epochSelectPlaceholder',
               );
 
     return (
         <>
             <Dialog.Header
                 description={t(
-                    'app.daos.status.statusMembersFileDownloadDialog.description',
+                    'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.description',
                 )}
                 title={t(
-                    'app.daos.status.statusMembersFileDownloadDialog.title',
+                    'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.title',
                 )}
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 py-2">
                     <InputContainer
                         helpText={t(
-                            'app.daos.status.statusMembersFileDownloadDialog.epochIdHelpText',
+                            'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.epochIdHelpText',
                         )}
                         id="epoch-select"
                         label={t(
-                            'app.daos.status.statusMembersFileDownloadDialog.epochIdLabel',
+                            'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.epochIdLabel',
                         )}
                         useCustomWrapper={true}
                     >
@@ -220,7 +225,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
                                         selected={epochId === String(epoch)}
                                     >
                                         {t(
-                                            'app.daos.status.statusMembersFileDownloadDialog.epochOption',
+                                            'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.epochOption',
                                             { epochId: epoch },
                                         )}
                                     </DropdownItem>
@@ -230,7 +235,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
                     </InputContainer>
                     <InputNumber
                         label={t(
-                            'app.daos.status.statusMembersFileDownloadDialog.amountLabel',
+                            'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.amountLabel',
                         )}
                         min={0}
                         onChange={setTotalAmount}
@@ -241,7 +246,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
                     {rewardDistribution.isError && (
                         <p className="text-critical-600 text-sm">
                             {t(
-                                `app.daos.status.statusMembersFileDownloadDialog.error.${errorKey}`,
+                                `app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.error.${errorKey}`,
                             )}
                         </p>
                     )}
@@ -250,7 +255,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
             <Dialog.Footer
                 primaryAction={{
                     label: t(
-                        'app.daos.status.statusMembersFileDownloadDialog.generate',
+                        'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.generate',
                     ),
                     onClick: handleGenerate,
                     disabled: !isFormValid,
@@ -258,7 +263,7 @@ export const StatusMembersFileDownloadDialog: React.FC<
                 }}
                 secondaryAction={{
                     label: t(
-                        'app.daos.status.statusMembersFileDownloadDialog.cancel',
+                        'app.daos.gaugeDistributions.gaugeDistributionsMembersFileDownloadDialog.cancel',
                     ),
                     onClick: handleClose,
                 }}
