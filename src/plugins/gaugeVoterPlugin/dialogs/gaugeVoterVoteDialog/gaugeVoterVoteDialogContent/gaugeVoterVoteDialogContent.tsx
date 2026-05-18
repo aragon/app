@@ -7,17 +7,11 @@ export interface IGaugeVoteAllocation {
      */
     gauge: IGauge;
     /**
-     * Percentage value (0-100) to allocate.
+     * Relative weight allocated to this gauge (scaled by 10^WEIGHT_PRECISION). The contract
+     * normalizes weights against the sum, so absolute magnitudes are irrelevant — only the
+     * ratio between gauges matters.
      */
-    percentage: number;
-    /**
-     * Votes previously applied.
-     */
-    existingVotes: bigint;
-    /**
-     * Votes previously applied, formatted.
-     */
-    formattedExistingVotes: string;
+    weight: bigint;
 }
 
 export interface IGaugeVoterVoteDialogContentProps {
@@ -25,6 +19,10 @@ export interface IGaugeVoterVoteDialogContentProps {
      * The vote allocations to display.
      */
     voteAllocations: IGaugeVoteAllocation[];
+    /**
+     * Sum of all weights — used to compute per-row share display.
+     */
+    totalWeight: bigint;
     /**
      * Total voting power available to the user.
      */
@@ -34,13 +32,9 @@ export interface IGaugeVoterVoteDialogContentProps {
      */
     tokenSymbol?: string;
     /**
-     * Whether the user has modified allocations.
+     * Handler for updating vote weight.
      */
-    hasModified: boolean;
-    /**
-     * Handler for updating vote percentage.
-     */
-    onUpdatePercentage: (gaugeAddress: string, newPercentage: number) => void;
+    onUpdateWeight: (gaugeAddress: string, weight: bigint) => void;
     /**
      * Handler for removing a gauge.
      */
@@ -52,10 +46,10 @@ export const GaugeVoterVoteDialogContent: React.FC<
 > = (props) => {
     const {
         voteAllocations,
+        totalWeight,
         totalVotingPower,
         tokenSymbol,
-        hasModified,
-        onUpdatePercentage,
+        onUpdateWeight,
         onRemoveGauge,
     } = props;
 
@@ -63,18 +57,16 @@ export const GaugeVoterVoteDialogContent: React.FC<
         <div className="flex flex-col gap-4">
             {voteAllocations.map((allocation) => (
                 <GaugeVoterVoteDialogItem
-                    existingVotes={allocation.existingVotes}
-                    formattedExistingVotes={allocation.formattedExistingVotes}
                     gaugeAddress={allocation.gauge.address}
                     gaugeAvatar={allocation.gauge.avatar}
                     gaugeName={allocation.gauge.name}
-                    hasModified={hasModified}
                     key={allocation.gauge.address}
                     onRemove={onRemoveGauge}
-                    onUpdatePercentage={onUpdatePercentage}
-                    percentage={allocation.percentage}
+                    onUpdateWeight={onUpdateWeight}
                     tokenSymbol={tokenSymbol}
                     totalVotingPower={totalVotingPower}
+                    totalWeight={totalWeight}
+                    weight={allocation.weight}
                 />
             ))}
         </div>

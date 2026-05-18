@@ -7,6 +7,7 @@ import {
     NumberFormat,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo, useState } from 'react';
+import { parseUnits } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -24,6 +25,9 @@ import {
     type IGaugeVoteAllocation,
 } from './gaugeVoterVoteDialogContent';
 import { GaugeVoterVoteDialogFooter } from './gaugeVoterVoteDialogFooter';
+
+const WEIGHT_PRECISION = 2;
+const EQUAL_DEFAULT_WEIGHT = parseUnits('1', WEIGHT_PRECISION);
 
 export interface IGaugeVoterVoteDialogParams {
     /**
@@ -104,49 +108,47 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
         IGaugeVoteAllocation[]
     >(
         gauges.map((gauge) => {
-            // Find existing votes for this gauge
             const existingVote = gaugeVotes.find(
                 (gv) => gv.gaugeAddress === gauge.address,
             );
             const existingVotesValue = existingVote?.votes ?? BigInt(0);
 
-            // Calculate percentage from existing votes
             const existingPercentage =
                 existingVotesValue > 0 && totalVotingPower > 0
                     ? (Number(existingVotesValue) / totalVotingPower) * 100
                     : 0;
 
+            const initialWeight =
+                existingPercentage > 0
+                    ? parseUnits(
+                          Math.round(existingPercentage).toString(),
+                          WEIGHT_PRECISION,
+                      )
+                    : EQUAL_DEFAULT_WEIGHT;
+
             return {
                 gauge,
-                percentage: Math.round(existingPercentage), // Round to whole number
-                existingVotes: existingVotesValue,
-                formattedExistingVotes: existingVote?.formattedVotes ?? '0',
+                weight: initialWeight,
             };
         }),
     );
 
-    const totalPercentageUsed = useMemo(
+    const totalWeight = useMemo(
         () =>
             voteAllocations.reduce(
-                (sum, allocation) => sum + allocation.percentage,
-                0,
+                (sum, allocation) => sum + allocation.weight,
+                BigInt(0),
             ),
         [voteAllocations],
     );
 
-    const [hasModified, setHasModified] = useState(false);
-
-    const handleUpdateVotePercentage = (
-        gaugeAddress: string,
-        newPercentage: number,
-    ) => {
-        setHasModified(true);
+    const handleUpdateWeight = (gaugeAddress: string, newWeight: bigint) => {
         setVoteAllocations((prev) =>
             prev.map((allocation) =>
                 allocation.gauge.address === gaugeAddress
                     ? {
                           ...allocation,
-                          percentage: Math.max(0, Math.min(100, newPercentage)),
+                          weight: newWeight < BigInt(0) ? BigInt(0) : newWeight,
                       }
                     : allocation,
             ),
@@ -162,7 +164,6 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
         onRemoveGauge?.(gaugeAddress);
     };
 
-    // Close dialog when all gauges are removed
     useEffect(() => {
         if (voteAllocations.length === 0) {
             close(GaugeVoterPluginDialogId.VOTE_GAUGES);
@@ -170,40 +171,33 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
     }, [voteAllocations.length, close]);
 
     const handleEqualize = () => {
-        setHasModified(true);
-        const evenPercentage = Math.floor(100 / voteAllocations.length);
-        const remainder = 100 - evenPercentage * voteAllocations.length;
-
         setVoteAllocations((prev) =>
-            prev.map((allocation, index) => ({
+            prev.map((allocation) => ({
                 ...allocation,
-                percentage:
-                    index === 0 ? evenPercentage + remainder : evenPercentage,
+                weight: EQUAL_DEFAULT_WEIGHT,
             })),
         );
     };
 
     const resetAllocation = () => {
-        setHasModified(true);
         setVoteAllocations((prev) =>
-            prev.map((allocation) => ({ ...allocation, percentage: 0 })),
+            prev.map((allocation) => ({ ...allocation, weight: BigInt(0) })),
         );
     };
 
     const canSubmit = useMemo(
         () =>
-            totalPercentageUsed > 0 &&
-            totalPercentageUsed === 100 &&
+            totalWeight > BigInt(0) &&
             voteAllocations.length > 0 &&
             totalVotingPower > 0,
-        [totalPercentageUsed, voteAllocations.length, totalVotingPower],
+        [totalWeight, voteAllocations.length, totalVotingPower],
     );
 
     const handleSubmit = () => {
         const votes: IGaugeVote[] = voteAllocations
-            .filter((allocation) => allocation.percentage > 0)
+            .filter((allocation) => allocation.weight > BigInt(0))
             .map((allocation) => ({
-                weight: BigInt(allocation.percentage),
+                weight: allocation.weight,
                 gauge: allocation.gauge.address,
             }));
 
@@ -240,11 +234,11 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
             />
             <Dialog.Content className="flex flex-col gap-6 py-6">
                 <GaugeVoterVoteDialogContent
-                    hasModified={hasModified}
                     onRemoveGauge={handleRemoveGauge}
-                    onUpdatePercentage={handleUpdateVotePercentage}
+                    onUpdateWeight={handleUpdateWeight}
                     tokenSymbol={tokenSymbol}
                     totalVotingPower={totalVotingPower}
+                    totalWeight={totalWeight}
                     voteAllocations={voteAllocations}
                 />
             </Dialog.Content>
@@ -267,7 +261,6 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
                     onEqualize={handleEqualize}
                     onReset={resetAllocation}
                     tokenSymbol={tokenSymbol}
-                    totalPercentageUsed={totalPercentageUsed}
                     totalVotingPower={formattedTotalVotingPower}
                 />
             </Dialog.Footer>

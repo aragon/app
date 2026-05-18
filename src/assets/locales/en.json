@@ -2325,10 +2325,10 @@
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power across your selected gauges.",
-            "used": "used"
+            "description": "Split your voting power between the gauges by setting their weights. The bigger a gauge's weight compared to the others, the bigger its share."
           },
           "footer": {
+            "allocationNotice": "100% of your voting power will be allocated as follows",
             "yourVotes": "YOUR VOTES"
           },
           "title": "Vote"
