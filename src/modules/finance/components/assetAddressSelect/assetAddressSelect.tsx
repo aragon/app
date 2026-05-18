@@ -16,6 +16,7 @@ import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AssetAddressSelectAddButton } from './assetAddressSelectAddButton';
+import { getAssetAddressSelectEmptyState } from './assetAddressSelectEmptyState';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
 export interface IAssetAddressSelectProps<
@@ -56,15 +57,13 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
 
     const { t } = useTranslations();
 
-    const {
-        onLoadMore,
-        state,
-        pageSize,
-        itemsCount,
-        errorState,
-        emptyState,
-        assetList,
-    } = useAssetListData(initialParams);
+    const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
+        useAssetListData(initialParams);
+
+    const emptyState = getAssetAddressSelectEmptyState({
+        t,
+        searchValue,
+    });
 
     const filteredAssets = useMemo(() => {
         if (!(hasSearch && searchValue)) {
@@ -96,12 +95,12 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
                     searchValue={searchValue}
                 />
             ) : null}
+            {filteredAssets.length > 0 && <AssetAddressSelectAddButton />}
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}
                 SkeletonElement={AssetDataListItem.Skeleton}
             >
-                <AssetAddressSelectAddButton />
                 {filteredAssets.map((asset, index) => (
                     <AssetAddressSelectItem
                         asset={asset}

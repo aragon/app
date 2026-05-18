@@ -1580,8 +1580,9 @@
           "label": "Add address"
         },
         "emptyState": {
-          "description": "This will show the DAO's onchain assets when available.",
-          "heading": "No assets found"
+          "addByAddress": "Add by address",
+          "description": "Search for another token or add by address",
+          "heading": "No results for \"{{search}}\""
         },
         "entity": "Assets",
         "errorState": {
