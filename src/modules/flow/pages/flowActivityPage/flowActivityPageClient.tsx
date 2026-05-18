@@ -1,6 +1,10 @@
 'use client';
 
 import { FlowActivityFeed } from '../../components/flowActivityFeed/flowActivityFeed';
+import {
+    FlowActivityPageSkeleton,
+    FlowLoadError,
+} from '../../components/flowSkeletons';
 import { useFlowData } from '../../hooks';
 
 export interface IFlowActivityPageClientProps {
@@ -12,7 +16,14 @@ export const FlowActivityPageClient: React.FC<IFlowActivityPageClientProps> = (
     props,
 ) => {
     const { network, addressOrEns } = props;
-    const data = useFlowData({ network, addressOrEns });
+    const { data, isError } = useFlowData({ network, addressOrEns });
+
+    if (data == null) {
+        if (isError) {
+            return <FlowLoadError />;
+        }
+        return <FlowActivityPageSkeleton />;
+    }
 
     return (
         <div className="flex flex-col gap-6">

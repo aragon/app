@@ -5,6 +5,10 @@ import { FlowKpiRow } from '../../components/flowKpiRow/flowKpiRow';
 import { FlowLede } from '../../components/flowLede/flowLede';
 import { FlowOrchestratorsSection } from '../../components/flowOrchestrators';
 import { FlowPoliciesSection } from '../../components/flowPoliciesSection';
+import {
+    FlowLoadError,
+    FlowOverviewPageSkeleton,
+} from '../../components/flowSkeletons';
 import { useFlowData } from '../../hooks';
 
 export interface IFlowOverviewPageClientProps {
@@ -16,7 +20,14 @@ export const FlowOverviewPageClient: React.FC<IFlowOverviewPageClientProps> = (
     props,
 ) => {
     const { network, addressOrEns } = props;
-    const data = useFlowData({ network, addressOrEns });
+    const { data, isError } = useFlowData({ network, addressOrEns });
+
+    if (data == null) {
+        if (isError) {
+            return <FlowLoadError />;
+        }
+        return <FlowOverviewPageSkeleton />;
+    }
 
     return (
         <div className="flex flex-col gap-8">

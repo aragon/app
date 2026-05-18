@@ -14,6 +14,10 @@ import {
     FlowWaitingForIndexerBadge,
 } from '../../components/flowPrimitives';
 import { FlowRecipientsTable } from '../../components/flowRecipientsTable/flowRecipientsTable';
+import {
+    FlowLoadError,
+    FlowPolicyDetailPageSkeleton,
+} from '../../components/flowSkeletons';
 import { FlowDialogId } from '../../constants/flowDialogId';
 import type { IConfirmDispatchDialogParams } from '../../dialogs/confirmDispatchDialog';
 import { useFlowDataContext } from '../../providers/flowDataProvider';
@@ -35,25 +39,24 @@ export const FlowPolicyDetailPageClient: React.FC<
     IFlowPolicyDetailPageClientProps
 > = (props) => {
     const { network, addressOrEns, policyId } = props;
-    const { data, dispatchPolicy, getPendingDispatch, isEnvioLoading } =
+    const { data, dispatchPolicy, getPendingDispatch, isError } =
         useFlowDataContext();
     const { open } = useDialogContext();
     const decodedPolicyId = decodeURIComponent(policyId);
+    const base = `/dao/${network}/${addressOrEns}/flow`;
+
+    if (data == null) {
+        if (isError) {
+            return <FlowLoadError />;
+        }
+        return <FlowPolicyDetailPageSkeleton />;
+    }
+
     const policy = data.policies.find(
         (p) => p.id === decodedPolicyId || p.id === policyId,
     );
-    const base = `/dao/${network}/${addressOrEns}/flow`;
 
     if (policy == null) {
-        if (isEnvioLoading) {
-            return (
-                <div className="flex flex-col gap-4">
-                    <div className="h-8 w-64 animate-pulse rounded-md bg-neutral-100" />
-                    <div className="h-40 animate-pulse rounded-xl bg-neutral-50" />
-                    <div className="h-64 animate-pulse rounded-xl bg-neutral-50" />
-                </div>
-            );
-        }
         return (
             <div className="flex flex-col items-start gap-3 rounded-xl border border-neutral-100 bg-neutral-0 p-6">
                 <h1 className="font-semibold text-neutral-800 text-xl leading-tight">
@@ -67,7 +70,7 @@ export const FlowPolicyDetailPageClient: React.FC<
                     className="font-normal text-primary-400 text-sm leading-tight hover:text-primary-600"
                     href={base}
                 >
-                    ← Back to Flow overview
+                    ← Back to overview
                 </Link>
             </div>
         );
