@@ -20,7 +20,6 @@ import type {
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { getMockFlowData } from '../mocks/mockFlowData';
 import type { IFlowDaoData } from '../types';
 import { useEnvioFlowData } from './useEnvioFlowData';
 
@@ -53,16 +52,28 @@ export interface IFlowPendingDispatch {
 }
 
 export interface IFlowDataContext {
-    data: IFlowDaoData;
     /**
-     * `true` while the Envio-backed snapshot is still being resolved. Consumers
-     * that render data-coupled UI (policy detail page, recipient detail page)
-     * should show a skeleton instead of "not found" until this flips to false.
-     * Always `false` when the Envio feature flag is off (mock-only mode).
+     * DAO identifier the provider was mounted with — exposed so deeper
+     * components (e.g. the "Add automation" button on the overview page) can
+     * trigger DAO-scoped actions without threading props through every
+     * section.
      */
-    isEnvioLoading: boolean;
-    /** `true` once we've swapped the mock snapshot for the live Envio one. */
-    hasEnvioData: boolean;
+    daoId: string;
+    /**
+     * Live Envio-backed snapshot, or `null` while the first query is still in
+     * flight / has errored. Page clients should render a skeleton / error
+     * state when this is `null` and defer rendering data-coupled UI until a
+     * non-null snapshot is available.
+     */
+    data: IFlowDaoData | null;
+    /**
+     * `true` while the Envio-backed snapshot is still being resolved for the
+     * very first time. Flips to `false` as soon as `data` becomes non-null
+     * (further background refetches do not toggle this flag).
+     */
+    isLoading: boolean;
+    /** `true` when the Envio query failed and we have no snapshot to fall back on. */
+    isError: boolean;
     /**
      * Broadcasts a real on-chain `dispatch()` transaction via the shared
      * `DispatchTransactionDialog`. The flow page's `ConfirmDispatchDialog` calls
@@ -94,10 +105,10 @@ export interface IFlowDataProviderProps {
     network: string;
     addressOrEns: string;
     /**
-     * DAO identifier (e.g. `ethereum-sepolia-0xabc…`) — required when the
-     * `NEXT_PUBLIC_FLOW_USE_ENVIO` flag is on so the provider can resolve DAO
-     * metadata + linked accounts via the REST API. Falls back to mock data
-     * when the flag is off or the indexer query fails.
+     * DAO identifier (e.g. `ethereum-sepolia-0xabc…`) — required so the
+     * provider can resolve DAO metadata + linked accounts via the REST API.
+     * Consumers render a skeleton while the Envio snapshot is loading and an
+     * error state when the indexer query fails.
      */
     daoId?: string;
     children?: ReactNode;
@@ -117,10 +128,11 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
         isUrgent: pendingDispatches.length > 0,
     });
 
-    const [data, setData] = useState<IFlowDaoData>(() =>
-        getMockFlowData(network, addressOrEns),
-    );
-    const [hasEnvioData, setHasEnvioData] = useState(false);
+    // Cache the last non-null snapshot so the UI doesn't flicker back to a
+    // skeleton while a background refetch is in flight. `envioResult.data`
+    // briefly goes undefined on some refetch transitions — pinning the last
+    // good snapshot keeps pages stable until the new one arrives.
+    const [data, setData] = useState<IFlowDaoData | null>(null);
     const [toasts, setToasts] = useState<IFlowToast[]>([]);
 
     const queryClient = useQueryClient();
@@ -128,32 +140,30 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
     const { check: checkWalletConnected } = useConnectedWalletGuard();
 
     useEffect(() => {
-        if (envioResult.enabled) {
-            return;
-        }
-        setData(getMockFlowData(network, addressOrEns));
-        setHasEnvioData(false);
-    }, [envioResult.enabled, network, addressOrEns]);
-
-    useEffect(() => {
-        if (!envioResult.enabled) {
-            return;
-        }
         if (envioResult.data) {
             setData(envioResult.data);
-            setHasEnvioData(true);
         }
-    }, [envioResult.enabled, envioResult.data]);
+    }, [envioResult.data]);
+
+    // Reset the snapshot whenever the DAO identity changes so we don't bleed
+    // stale data across routes (e.g. navigating between two DAOs). The
+    // concatenated key keeps the dep list compact while still re-running the
+    // reset any time the caller swaps DAO.
+    const daoIdentityKey = `${network}:${addressOrEns}:${daoId ?? ''}`;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: reset is keyed on daoIdentityKey by design
+    useEffect(() => {
+        setData(null);
+    }, [daoIdentityKey]);
 
     useEffect(() => {
-        if (envioResult.enabled && envioResult.isError) {
+        if (envioResult.isError) {
             // biome-ignore lint/suspicious/noConsole: surface Envio query failures to aid debugging
             console.warn(
-                '[FlowDataProvider] Envio query failed, keeping previous snapshot.',
+                '[FlowDataProvider] Envio query failed.',
                 envioResult.error,
             );
         }
-    }, [envioResult.enabled, envioResult.isError, envioResult.error]);
+    }, [envioResult.isError, envioResult.error]);
 
     const pushToast = useCallback((toast: Omit<IFlowToast, 'id'>) => {
         const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -220,6 +230,15 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
     const dispatchPolicy = useCallback(
         (policyId: string) => {
             const currentData = dataRef.current;
+            if (currentData == null) {
+                pushToast({
+                    tone: 'error',
+                    title: 'Flow data still loading',
+                    description:
+                        'Wait for the indexer snapshot to load and try again.',
+                });
+                return;
+            }
             // Orchestrators live on their own list but, on-chain, a multi-dispatch
             // plugin exposes the same `dispatch()` entrypoint as a leaf router,
             // so the same transaction dialog works for both. Resolve leaf first,
@@ -311,6 +330,9 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
         if (pendingDispatches.length === 0) {
             return;
         }
+        if (data == null) {
+            return;
+        }
         const indexedHashes = new Set<string>();
         for (const policy of data.policies) {
             for (const dispatch of policy.dispatches) {
@@ -342,7 +364,7 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
                 description: `${pending.policyName} is now reflected in the feed.`,
             });
         }
-    }, [data.policies, pendingDispatches, pushToast]);
+    }, [data, pendingDispatches, pushToast]);
 
     // Hard timeout — if the indexer is unusually far behind, stop spinning and tell
     // the operator to come back later. We run a single interval while any pending
@@ -383,14 +405,22 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
         [pendingDispatches],
     );
 
-    const isEnvioLoading =
-        envioResult.enabled && !hasEnvioData && !envioResult.isError;
+    // Only surface the spinner on the *initial* load — once we have a snapshot
+    // cached we keep showing it and let React-Query refetch silently. This
+    // avoids the skeleton flashing every time the indexer polls. When the
+    // feature flag is off the indexer query never runs, so we report
+    // `isLoading=false` and leave `data=null`; callers render an empty state.
+    const isLoading =
+        envioResult.enabled && data == null && !envioResult.isError;
+    const isError = envioResult.isError && data == null;
 
+    const resolvedDaoId = daoId ?? '';
     const value = useMemo<IFlowDataContext>(
         () => ({
+            daoId: resolvedDaoId,
             data,
-            isEnvioLoading,
-            hasEnvioData,
+            isLoading,
+            isError,
             dispatchPolicy,
             pendingDispatches,
             getPendingDispatch,
@@ -398,9 +428,10 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             dismissToast,
         }),
         [
+            resolvedDaoId,
             data,
-            isEnvioLoading,
-            hasEnvioData,
+            isLoading,
+            isError,
             dispatchPolicy,
             pendingDispatches,
             getPendingDispatch,

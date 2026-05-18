@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useDao } from '@/shared/api/daoService';
+import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -48,13 +49,16 @@ export const FlowTopbar: React.FC<IFlowTopbarProps> = (props) => {
         >
             <div className="mx-auto flex w-full max-w-[1280px] items-center justify-between gap-4 px-4 py-3 md:px-6">
                 <div className="flex min-w-0 items-center gap-3">
+                    {/* "Aragon Flow" wordmark: AragonLogo renders the brand
+                     * "Aragon" wordmark in `text-primary-400` (currentColor
+                     * on the SVG paths), and we append a matching "Flow"
+                     * suffix so the pair reads as a single product name. */}
                     <Link
-                        className="flex items-center gap-2 text-primary-400 hover:text-primary-600"
+                        aria-label="Aragon Flow"
+                        className="flex items-center gap-2 hover:opacity-80"
                         href={`/dao/${network}/${addressOrEns}/flow`}
                     >
-                        <span className="inline-flex size-7 items-center justify-center rounded-md bg-primary-400 font-semibold text-neutral-0 text-sm leading-none">
-                            F
-                        </span>
+                        <AragonLogo size="sm" variant="primary" />
                         <span className="font-semibold text-base text-neutral-800 leading-none">
                             Flow
                         </span>
