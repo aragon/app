@@ -231,6 +231,58 @@ describe('<DaoMemberListDefault /> component', () => {
         expect(memberNames).toHaveLength(1);
     });
 
+    it('keeps real members visible when the pinned user is missing from the paginated response', () => {
+        // Regression for a backend indexer gap: live `/v2/members/:address`
+        // returns the connected user, but `/v2/members` doesn't include them
+        // yet. The user must be pinned without evicting any real member, and
+        // the rendered list grows by one above the API's `itemsCount`.
+        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
+        const userMember = generateMember({
+            address: userAddress,
+            ens: 'you.eth',
+        });
+        const otherMember = generateMember({
+            address: '0x9999999999999999999999999999999999999999',
+            ens: 'other.eth',
+        });
+
+        useConnectionSpy.mockReturnValue({
+            address: userAddress,
+        } as unknown as wagmi.UseConnectionReturnType);
+        mockEnsNameByAddress({
+            [userAddress]: 'you.eth',
+            [otherMember.address]: 'other.eth',
+        });
+
+        useMemberExistsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { status: true } }),
+        );
+
+        useMemberListDataSpy.mockReturnValue({
+            memberList: [otherMember],
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: 1,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: userMember }),
+        );
+
+        render(createTestComponent());
+
+        const headings = screen.getAllByRole('heading');
+        const memberNames = headings
+            .map((h) => h.textContent)
+            .filter((t) => t === 'you.eth' || t === 'other.eth');
+        expect(memberNames).toHaveLength(2);
+        expect(memberNames[0]).toBe('you.eth');
+        expect(memberNames[1]).toBe('other.eth');
+    });
+
     it('deduplicates pinned user from the paginated list', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const userMember = generateMember({
