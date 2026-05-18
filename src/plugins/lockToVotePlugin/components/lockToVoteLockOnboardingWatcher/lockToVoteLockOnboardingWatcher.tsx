@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { LockToVotePluginDialogId } from '@/plugins/lockToVotePlugin/constants/lockToVotePluginDialogId';
 import type { ILockToVoteLockOnboardingIntroDialogParams } from '@/plugins/lockToVotePlugin/dialogs/lockToVoteLockOnboardingIntroDialog/lockToVoteLockOnboardingIntroDialog';
 import { useLockToVoteLockOnboardingCheck } from '@/plugins/lockToVotePlugin/hooks/useLockToVoteLockOnboardingCheck';
@@ -40,7 +40,7 @@ export const LockToVoteLockOnboardingWatcher: React.FC<
     const lockManagerAddress = lockToVotePlugin?.lockManagerAddress;
     const tokenAddress = lockToVotePlugin?.settings.token.address;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { open } = useDialogContext();
 
     const { shouldTrigger } = useLockToVoteLockOnboardingCheck({

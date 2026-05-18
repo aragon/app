@@ -1,7 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
 import { zeroAddress } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     type IGetMemberParams,
     useMember,
@@ -21,7 +21,7 @@ export const useTokenPinnedMembers = (
     params: IUseTokenPinnedMembersParams,
 ): IUseTokenPinnedMembersResult => {
     const { daoId, pluginAddress, token, enableDelegation = false } = params;
-    const { address: connectedAddress } = useConnection();
+    const { address: connectedAddress } = useWalletAccount();
 
     const delegateQueryEnabled = enableDelegation && connectedAddress != null;
 

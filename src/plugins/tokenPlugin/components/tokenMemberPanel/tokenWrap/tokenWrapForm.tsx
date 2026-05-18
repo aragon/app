@@ -7,8 +7,8 @@ import {
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
 import {
     AssetInput,
@@ -58,7 +58,7 @@ export const TokenWrapForm: React.FC<ITokenWrapFormProps> = (props) => {
     const { open } = useDialogContext();
     const { t } = useTranslations();
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const { openIfNeeded } = useOpenDelegationOnboardingIfNeeded({

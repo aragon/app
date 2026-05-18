@@ -10,7 +10,7 @@ import {
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { mainnet } from 'viem/chains';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDelegateStatement } from '@/shared/api/delegateStatementService';
 import {
     type IDialogComponentProps,
@@ -43,7 +43,7 @@ export const DelegateStatementDialog: React.FC<
 
     const { close, open } = useDialogContext();
     const { t } = useTranslations();
-    const { chainId } = useConnection();
+    const { chainId } = useWalletAccount();
 
     const { data: existingStatement } = useDelegateStatement(
         { cid: existingCid ?? '' },
