@@ -1575,6 +1575,22 @@
         "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
       },
+      "assetAddressSelect": {
+        "addButton": {
+          "label": "Add address"
+        },
+        "emptyState": {
+          "description": "This will show the DAO's onchain assets when available.",
+          "heading": "No assets found"
+        },
+        "entity": "Assets",
+        "errorState": {
+          "description": "There was an error loading the assets. Try again later.",
+          "heading": "Error loading assets"
+        },
+        "groupTab": "All assets",
+        "searchPlaceholder": "Search assets..."
+      },
       "assetListStats": {
         "daos": "DAOs",
         "note": "Aggregate treasury data across all linked accounts coming soon.",
