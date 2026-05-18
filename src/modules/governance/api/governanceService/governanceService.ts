@@ -1,3 +1,4 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import { lockToVoteProposalUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteProposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
 import {
@@ -81,6 +82,12 @@ class GovernanceService extends AragonBackendService {
         const addresses = Array.from(
             new Set(result.data.flatMap(collectTokenAddresses)),
         );
+
+        invariant(
+            result.data.every((p) => p.network === result.data[0]?.network),
+            'GovernanceService.getProposalList: all proposals must share the same network',
+        );
+
         const tokensTotalSupply =
             addresses.length === 0 || result.data.length === 0
                 ? {}

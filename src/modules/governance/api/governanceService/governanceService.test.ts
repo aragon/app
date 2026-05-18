@@ -130,6 +130,45 @@ describe('governance service', () => {
         });
     });
 
+    it('getProposalList throws when proposals in the page have different networks', async () => {
+        const tokenAddress = '0xAaaa';
+        const proposals = generatePaginatedResponse<ILockToVoteProposal>({
+            data: [
+                generateLockToVoteProposal({
+                    id: '0',
+                    network: Network.ETHEREUM_MAINNET,
+                    pluginInterfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+                    settings: generateLockToVotePluginSettings({
+                        token: generateLockToVotePluginSettingsToken({
+                            address: tokenAddress,
+                        }),
+                    }),
+                }),
+                generateLockToVoteProposal({
+                    id: '1',
+                    network: Network.BASE_MAINNET,
+                    pluginInterfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+                    settings: generateLockToVotePluginSettings({
+                        token: generateLockToVotePluginSettingsToken({
+                            address: tokenAddress,
+                        }),
+                    }),
+                }),
+            ],
+        });
+        const params = {
+            queryParams: { daoId: 'dao-id-test', pluginAddress: '0x123' },
+        };
+        requestSpy.mockResolvedValue(proposals);
+
+        await expect(
+            governanceService.getProposalList<ILockToVoteProposal>(params),
+        ).rejects.toThrow(
+            'GovernanceService.getProposalList: all proposals must share the same network',
+        );
+        expect(fetchTokensTotalSupplySpy).not.toHaveBeenCalled();
+    });
+
     it('getProposalBySlug fetches the proposal with the correct slug and incremental ID', async () => {
         const proposal = generateProposal({ id: '001', incrementalId: 1 });
         const proposalParams = {
