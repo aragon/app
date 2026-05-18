@@ -26,6 +26,9 @@ const subdomainMinLength = 3;
  */
 const ensLabelPattern = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
 
+/** Allowed characters for an ENS label, ignoring position constraints. */
+const ensLabelAllowedCharsPattern = /^[a-z0-9-]+$/;
+
 interface IFormData {
     /** ENS subdomain label to claim, e.g. "alice". */
     subdomain: string;
@@ -91,11 +94,18 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
             required: true,
             maxLength: subdomainMaxLength,
             minLength: subdomainMinLength,
-            pattern: {
-                value: ensLabelPattern,
-                message: t(
-                    'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidFormat',
-                ),
+            validate: (value) => {
+                if (!ensLabelAllowedCharsPattern.test(value)) {
+                    return t(
+                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidChars',
+                    );
+                }
+                if (!ensLabelPattern.test(value)) {
+                    return t(
+                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidBoundary',
+                    );
+                }
+                return true;
             },
         },
         sanitizeOnBlur: true,

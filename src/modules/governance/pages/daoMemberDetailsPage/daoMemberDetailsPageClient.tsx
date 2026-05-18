@@ -28,7 +28,7 @@ import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
-import { useMember } from '../../api/governanceService';
+import { type IMember, useMember } from '../../api/governanceService';
 import { DaoProposalList } from '../../components/daoProposalList';
 import { DelegationSection } from '../../components/delegationSection';
 import { VoteList } from '../../components/voteList';
@@ -144,18 +144,34 @@ export const DaoMemberDetailsPageClient: React.FC<
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
     const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: displayName } = useEnsName(address, {
+        stripAragonRegistrySuffix: true,
+    });
     const memberLinks = {
         github: ensRecords?.[ensRecordKeys.github],
         twitter: ensRecords?.[ensRecordKeys.twitter],
         url: ensRecords?.[ensRecordKeys.url],
     };
 
-    if (member == null || dao == null || bodyPlugin == null) {
+    if (dao == null || bodyPlugin == null) {
         return null;
     }
 
+    const fallbackMember: IMember = {
+        address,
+        ens: null,
+        type: '',
+        firstActive: null,
+        lastActive: null,
+        metrics: {
+            firstActivity: null,
+            lastActivity: null,
+        },
+    };
+    const memberData = member ?? fallbackMember;
+
     const truncatedAddress = addressUtils.truncateAddress(address);
-    const memberName = ensName ?? truncatedAddress;
+    const memberName = displayName ?? truncatedAddress;
 
     const addressUrl = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
@@ -220,7 +236,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                 <Page.Main>
                     <DelegationSection
                         daoId={daoId}
-                        member={member}
+                        member={memberData}
                         title={t(
                             'app.governance.daoMemberDetailsPage.main.delegation.title',
                         )}

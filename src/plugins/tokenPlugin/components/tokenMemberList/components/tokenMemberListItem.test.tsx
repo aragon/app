@@ -76,6 +76,22 @@ describe('<TokenMemberListItem /> component', () => {
         expect(screen.getByText(ensName)).toBeInTheDocument();
     });
 
+    it('shows the shortened aragon name when the member has an aragon subdomain', () => {
+        const member = generateTokenMember({ address: '0x123' });
+        useEnsNameSpy.mockImplementation(
+            (_address, options) =>
+                ({
+                    data: options?.stripAragonRegistrySuffix
+                        ? 'alice'
+                        : 'alice.aragonx.eth',
+                    isLoading: false,
+                }) as ReturnType<typeof ensModule.useEnsName>,
+        );
+        render(createTestComponent({ member }));
+        expect(screen.getByText('alice')).toBeInTheDocument();
+        expect(screen.queryByText('alice.aragonx.eth')).not.toBeInTheDocument();
+    });
+
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {
         const token = generateTokenPluginSettingsToken({ decimals: 6 });
         const pluginSettings = generateTokenPluginSettings({ token });

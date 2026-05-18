@@ -2,8 +2,20 @@ import { useEffect } from 'react';
 import { isAddress } from 'viem';
 // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
 import { useEnsName as useWagmiEnsName } from 'wagmi';
+import { memberRegistrySubdomainSuffix } from '../constants/contracts';
 import { ensCache, ensChainId } from '../constants/ensConfig';
 import { logEnsError } from '../utils/logEnsError';
+
+export interface IUseEnsNameOptions {
+    /**
+     * When true and the resolved ENS is an Aragon member-registry subdomain
+     * (e.g. `alice.aragonx.eth`), the hook returns just the subdomain (`alice`).
+     * Used on member-facing surfaces: member list items (token + default),
+     * delegation card, and profile header (title and breadcrumb).
+     * Anywhere else, leave this off so the full ENS is shown.
+     */
+    stripAragonRegistrySuffix?: boolean;
+}
 
 /**
  * Resolves the primary ENS name for a given Ethereum address.
@@ -15,8 +27,14 @@ import { logEnsError } from '../utils/logEnsError';
  * All calls are auto-batched into a single multicall RPC request via viem's `batch.multicall`.
  *
  * @param address - Hex Ethereum address (`0x…`) or `undefined` to skip.
+ * @param options - Optional behaviour flags (see `IUseEnsNameOptions`).
  */
-export function useEnsName(address: string | undefined) {
+export function useEnsName(
+    address: string | undefined,
+    options?: IUseEnsNameOptions,
+) {
+    const { stripAragonRegistrySuffix = false } = options ?? {};
+
     const validAddress =
         address != null && isAddress(address) ? address : undefined;
 
@@ -41,5 +59,11 @@ export function useEnsName(address: string | undefined) {
         });
     }, [result.error, validAddress]);
 
-    return result;
+    const data =
+        stripAragonRegistrySuffix &&
+        result.data?.endsWith(memberRegistrySubdomainSuffix)
+            ? result.data.slice(0, -memberRegistrySubdomainSuffix.length)
+            : result.data;
+
+    return { ...result, data };
 }

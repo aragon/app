@@ -53,12 +53,14 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const handleCreateAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
             stack: true,
+            disableOutsideClick: true,
             params: { mode: 'create' },
         });
 
     const handleEditAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
             stack: true,
+            disableOutsideClick: true,
             params: { mode: 'edit' },
         });
 
@@ -142,7 +144,6 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 <div className="flex flex-col gap-3">
                     <Button
                         className="w-full"
-                        iconRight={IconType.LINK_EXTERNAL}
                         onClick={handleMyDaosClick}
                         size="md"
                         variant="tertiary"
