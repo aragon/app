@@ -364,6 +364,7 @@
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
+          "flow": "Capital flow",
           "members": "Members",
           "proposals": "Proposals",
           "settings": "Settings",

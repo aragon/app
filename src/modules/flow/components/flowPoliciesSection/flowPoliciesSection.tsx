@@ -1,8 +1,9 @@
 'use client';
 
 import classNames from 'classnames';
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { useAddAutomationAction } from '../../hooks/useAddAutomationAction';
+import { useFlowDataContext } from '../../providers/flowDataProvider';
 import type { IFlowGroupedPolicies, IFlowPolicy } from '../../types';
 import { FlowPolicyCard } from '../flowPolicyCard/flowPolicyCard';
 
@@ -72,7 +73,14 @@ export const FlowPoliciesSection: React.FC<IFlowPoliciesSectionProps> = (
     }, [pills, selected]);
 
     const active = pills.find((p) => p.id === selected) ?? pills[0];
-    const addAutomationHref = `/dao/${network}/${addressOrEns}/settings/automations`;
+
+    // Mirror the Settings > Automations "Add automation" action — opens the
+    // wizard details dialog, then routes into `/create/{plugin}/policy`.
+    // The DAO id lives on the FlowDataProvider so we can grab it from context
+    // without threading a prop through every section.
+    const { daoId } = useFlowDataContext();
+    const { startAddAutomation, isReady: isAddAutomationReady } =
+        useAddAutomationAction({ daoId });
 
     return (
         <section className="flex flex-col gap-3">
@@ -111,14 +119,14 @@ export const FlowPoliciesSection: React.FC<IFlowPoliciesSectionProps> = (
                         </div>
                     )}
                 </div>
-                <Link
-                    className="inline-flex items-center gap-1 rounded-full border border-neutral-100 bg-neutral-0 px-3 py-1.5 font-semibold text-neutral-700 text-sm leading-tight hover:border-primary-200 hover:text-primary-400"
-                    href={addAutomationHref}
-                    rel="noopener"
-                    target="_blank"
+                <button
+                    className="inline-flex items-center gap-1 rounded-full border border-neutral-100 bg-neutral-0 px-3 py-1.5 font-semibold text-neutral-700 text-sm leading-tight hover:border-primary-200 hover:text-primary-400 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={!isAddAutomationReady}
+                    onClick={startAddAutomation}
+                    type="button"
                 >
-                    + Add automation ↗
-                </Link>
+                    + Add automation
+                </button>
             </div>
 
             {active && active.policies.length > 0 ? (

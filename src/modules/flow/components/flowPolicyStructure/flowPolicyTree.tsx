@@ -192,7 +192,7 @@ export const FlowPolicyTree: React.FC<IFlowPolicyTreeProps> = (props) => {
         >
             <div className="flex flex-col gap-1">
                 <h3 className="font-semibold text-base text-neutral-800 leading-tight">
-                    Flow tree
+                    Policy tree
                 </h3>
                 <p className="font-normal text-neutral-500 text-sm leading-snug">
                     Source → routers → recipients. Hover a node to trace its

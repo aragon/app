@@ -83,7 +83,7 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
     return (
         <div className="flex flex-col gap-1">
             <h1 className="font-semibold text-2xl text-neutral-800 leading-tight md:text-3xl">
-                {dao.name} · Flow
+                {dao.name}
             </h1>
             <p className="font-normal text-base text-neutral-500 leading-relaxed md:text-lg">
                 {narrativeParts.join(' · ')}.

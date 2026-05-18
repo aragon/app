@@ -1,6 +1,10 @@
 'use client';
 
 import { FlowRecipientsTable } from '../../components/flowRecipientsTable/flowRecipientsTable';
+import {
+    FlowLoadError,
+    FlowRecipientsPageSkeleton,
+} from '../../components/flowSkeletons';
 import { useFlowData } from '../../hooks';
 
 export interface IFlowRecipientsPageClientProps {
@@ -12,7 +16,14 @@ export const FlowRecipientsPageClient: React.FC<
     IFlowRecipientsPageClientProps
 > = (props) => {
     const { network, addressOrEns } = props;
-    const data = useFlowData({ network, addressOrEns });
+    const { data, isError } = useFlowData({ network, addressOrEns });
+
+    if (data == null) {
+        if (isError) {
+            return <FlowLoadError />;
+        }
+        return <FlowRecipientsPageSkeleton />;
+    }
 
     return (
         <div className="flex flex-col gap-6">
