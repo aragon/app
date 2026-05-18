@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import type * as Navigation from '@/shared/components/navigation';
 import {
@@ -53,10 +54,15 @@ describe('<NavigationDao /> component', () => {
         'useDialogContext',
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
+    const useWalletConnectedSpy = jest.spyOn(
+        UseWalletConnected,
+        'useWalletConnected',
+    );
 
     beforeEach(() => {
         usePathnameSpy.mockReturnValue('');
         useConnectionSpy.mockReturnValue({} as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(false);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
     });
 
@@ -65,6 +71,7 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useConnectionSpy.mockReset();
+        useWalletConnectedSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
@@ -162,8 +169,8 @@ describe('<NavigationDao /> component', () => {
         const address = '0x097d5e2325C2a98d3Adb0FE771ef66584698c59e';
         useConnectionSpy.mockReturnValue({
             address,
-            isConnected: true,
         } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(true);
         render(createTestComponent());
         const button = screen.getByText(address);
         expect(button).toBeInTheDocument();

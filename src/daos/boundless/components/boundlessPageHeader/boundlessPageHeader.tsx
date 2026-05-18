@@ -2,7 +2,7 @@
 
 import classNames from 'classnames';
 import { useMemo } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -17,7 +17,7 @@ export const BoundlessPageHeader: React.FC<IBoundlessPageHeaderProps> = (
     props,
 ) => {
     const { dao, className, ...otherProps } = props;
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: ensName } = useEnsName(address);
 
     const { t } = useTranslations();

@@ -51,12 +51,14 @@ describe('<DaoMemberDetailsPage /> component', () => {
         getDaoSpy.mockReset();
     });
 
+    const validAddress = '0x1234567890123456789012345678901234567890';
+
     const createTestComponent = async (
         props?: Partial<IDaoMemberDetailsPageProps>,
     ) => {
         const completeProps: IDaoMemberDetailsPageProps = {
             params: Promise.resolve({
-                address: 'test-address',
+                address: validAddress,
                 addressOrEns: 'test.dao.eth',
                 network: Network.ETHEREUM_MAINNET,
             }),
@@ -79,7 +81,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
         const params = {
             addressOrEns: 'test.dao.eth',
             network: Network.ETHEREUM_SEPOLIA,
-            address: 'test-address',
+            address: validAddress,
             pluginAddress: dao.plugins[0].address,
         };
         const expectedDaoId = 'test-dao-id';
@@ -104,16 +106,15 @@ describe('<DaoMemberDetailsPage /> component', () => {
         expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
 
-    it('renders error with a link to proposal list page on fetch proposal error', async () => {
+    it('renders error with a link to the members page when the address is not a valid hex address', async () => {
         const daoEns = 'test.dao.eth';
         const daoNetwork = Network.ETHEREUM_MAINNET;
         const params = {
             addressOrEns: daoEns,
             network: daoNetwork,
-            address: '',
+            address: 'not-an-address',
         };
 
-        fetchQuerySpy.mockResolvedValueOnce({}).mockRejectedValueOnce('error');
         render(await createTestComponent({ params: Promise.resolve(params) }));
         const errorLink = screen.getByRole('link', {
             name: /daoMemberDetailsPage.error.action/,
@@ -122,5 +123,13 @@ describe('<DaoMemberDetailsPage /> component', () => {
         expect(errorLink.getAttribute('href')).toEqual(
             `/dao/${daoNetwork}/${daoEns}/members`,
         );
+    });
+
+    it('still renders the page client component when the member prefetch fails', async () => {
+        fetchQuerySpy
+            .mockResolvedValueOnce({})
+            .mockRejectedValueOnce(new Error('not found'));
+        render(await createTestComponent());
+        expect(screen.getByTestId('page-client-mock')).toBeInTheDocument();
     });
 });

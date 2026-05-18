@@ -5,7 +5,7 @@ import {
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -52,7 +52,7 @@ export const SppReportProposalResultDialog: React.FC<
         'SppReportProposalResultDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(
         address != null,
         'SppReportProposalResultDialog: external wallet must be connected.',

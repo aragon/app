@@ -127,4 +127,26 @@ describe('<TokenDelegationDialog /> component', () => {
             }),
         );
     });
+
+    it('shows the shortened aragon name when the delegate has an aragon subdomain', () => {
+        useEnsNameSpy.mockImplementation(
+            (_address, options) =>
+                ({
+                    data: options?.stripAragonRegistrySuffix
+                        ? 'alice'
+                        : 'alice.aragonx.eth',
+                    isLoading: false,
+                }) as ReturnType<typeof ensModule.useEnsName>,
+        );
+
+        render(createTestComponent({ location }));
+
+        expect(getDelegateProps()).toEqual(
+            expect.objectContaining({
+                address: location.params.delegate,
+                ensName: 'alice',
+                isDelegate: true,
+            }),
+        );
+    });
 });

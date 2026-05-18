@@ -1,4 +1,4 @@
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useMemberExists } from '@/modules/governance/api/governanceService';
 import type {
     IPermissionCheckGuardParams,
@@ -17,7 +17,7 @@ export const useMultisigPermissionCheckProposalCreation = (
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId } = params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
 
     const { onlyListed } = plugin.settings;

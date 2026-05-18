@@ -9,8 +9,8 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { Route } from 'next';
-import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Link } from '@/shared/components/link';
@@ -23,6 +23,7 @@ import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
+import { useWalletAccount } from '../../../hooks/useWalletAccount';
 
 export interface INavigationWizardProps extends INavigationContainerProps {
     /**
@@ -77,9 +78,10 @@ const resolveDisplayDao = (
 export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const { name, dao, targetDaoAddress, exitPath } = props;
 
-    const { address, isConnected } = useConnection();
+    const { address } = useWalletAccount();
+    const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
-    const effectiveIsConnected = isMounted && isConnected;
+    const effectiveIsConnected = isMounted && isConnected && address != null;
     const { t } = useTranslations();
     const { open } = useDialogContext();
 

@@ -1,0 +1,3 @@
+export enum GaugeDistributionsDialogId {
+    MEMBERS_FILE_DOWNLOAD = 'GAUGE_DISTRIBUTIONS_MEMBERS_FILE_DOWNLOAD',
+}

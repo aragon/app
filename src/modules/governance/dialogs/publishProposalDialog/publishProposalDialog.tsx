@@ -4,7 +4,7 @@ import {
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -36,7 +36,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
         'PublishProposalDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(
         address != null,
         'PublishProposalDialog: user must be connected.',

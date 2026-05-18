@@ -1,7 +1,7 @@
 'use client';
 
 import { DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import {
@@ -23,7 +23,7 @@ export const CapitalDistributorRewardsStats: React.FC<
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const claimableCampaignParams = {
         queryParams: {

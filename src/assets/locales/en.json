@@ -424,7 +424,8 @@
         "fields": {
           "subdomain": {
             "error": {
-              "invalidFormat": "Only lowercase letters, numbers, and hyphens are allowed.",
+              "invalidBoundary": "Username must start and end with letters or numbers.",
+              "invalidChars": "Only lowercase letters, numbers, and hyphens are allowed.",
               "nameTaken": "This name is already taken. Please choose a different one."
             },
             "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App.",
@@ -1363,14 +1364,14 @@
           "welcome": "Welcome"
         }
       },
-      "status": {
-        "statusMembersFileDownload": {
+      "gaugeDistributions": {
+        "gaugeDistributionsMembersFileDownload": {
           "label": "Reward distribution",
           "helpText": "Generate the reward distribution JSON for a specific epoch based on gauge voting results.",
           "button": "Generate distribution",
           "downloadedFile": "Downloaded: {{fileName}}"
         },
-        "statusMembersFileDownloadDialog": {
+        "gaugeDistributionsMembersFileDownloadDialog": {
           "title": "Generate reward distribution",
           "description": "Select an epoch and enter the total reward amount to generate a reward distribution JSON based on gauge voting results.",
           "epochIdLabel": "Epoch",
@@ -3607,6 +3608,7 @@
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },
+        "networkBadge": "On {{network}}",
         "step": {
           "APPROVE": {
             "addon": "Wallet",

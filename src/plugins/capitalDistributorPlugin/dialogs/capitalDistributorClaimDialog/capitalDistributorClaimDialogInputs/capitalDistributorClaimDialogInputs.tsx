@@ -1,5 +1,5 @@
 import { addressUtils, InputText } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
 import { useSanctionedAddresses } from '@/shared/api/cmsService';
 import type { Network } from '@/shared/api/daoService';
@@ -25,7 +25,7 @@ export const CapitalDistributorClaimDialogInputs: React.FC<
     const { plugin, network } = props;
 
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { data: sanctionedAddresses } = useSanctionedAddresses();
 

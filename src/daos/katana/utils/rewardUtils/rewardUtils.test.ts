@@ -1,4 +1,7 @@
-import type { IRewardDistributionOwner } from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
+import type {
+    IGaugeRewardDistributionEntry,
+    IRewardDistributionOwner,
+} from '@/plugins/gaugeVoterPlugin/api/gaugeVoterService';
 import { rewardUtils } from './rewardUtils';
 
 const generateOwner = (
@@ -8,6 +11,15 @@ const generateOwner = (
     votingPower: '100',
     rewardAmount: '1000',
     tokenIds: [],
+    ...data,
+});
+
+const generateGauge = (
+    data?: Partial<IGaugeRewardDistributionEntry>,
+): IGaugeRewardDistributionEntry => ({
+    gauge: '0xgauge',
+    votingPower: '100',
+    rewardAmount: '1000',
     ...data,
 });
 
@@ -79,6 +91,38 @@ describe('reward utils', () => {
 
         it('returns empty array when owners is empty', () => {
             const result = rewardUtils.toRewardJson({ owners: [] });
+
+            expect(result).toEqual([]);
+        });
+    });
+
+    describe('toGaugeRewardJson', () => {
+        it('returns correct reward amounts for each gauge', () => {
+            const gauges = [
+                generateGauge({ gauge: '0xg1', rewardAmount: '500' }),
+                generateGauge({ gauge: '0xg2', rewardAmount: '500' }),
+            ];
+
+            const result = rewardUtils.toGaugeRewardJson({ gauges });
+
+            expect(result).toEqual([
+                { address: '0xg1', amount: '500' },
+                { address: '0xg2', amount: '500' },
+            ]);
+        });
+
+        it('preserves rewardAmount as-is from the gauge entry', () => {
+            const gauges = [
+                generateGauge({ gauge: '0xg1', rewardAmount: '3333' }),
+            ];
+
+            const result = rewardUtils.toGaugeRewardJson({ gauges });
+
+            expect(result).toEqual([{ address: '0xg1', amount: '3333' }]);
+        });
+
+        it('returns empty array when gauges is empty', () => {
+            const result = rewardUtils.toGaugeRewardJson({ gauges: [] });
 
             expect(result).toEqual([]);
         });
