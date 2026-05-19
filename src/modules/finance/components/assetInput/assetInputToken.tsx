@@ -21,8 +21,10 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
             className={classNames('flex items-center gap-x-1.5', className)}
             {...otherProps}
         >
-            {token && <Avatar size="xs" src={token.logo} />}
-            {token ? token.symbol : t('app.finance.assetInput.token.trigger')}
+            {token && <Avatar size="xs" src={token.logo || undefined} />}
+            {token
+                ? token.symbol || 'NA'
+                : t('app.finance.assetInput.token.trigger')}
         </div>
     );
 };

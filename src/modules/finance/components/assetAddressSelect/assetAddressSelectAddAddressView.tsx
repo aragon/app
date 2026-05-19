@@ -10,8 +10,8 @@ import { type Hex, isAddress } from 'viem';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useToken } from '@/shared/hooks/useToken';
+import { useDaoChain } from '../../../../shared/hooks/useDaoChain';
 import { AssetAddressSelectBackButton } from './assetAddressSelectBackButton';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
@@ -49,8 +49,7 @@ export const AssetAddressSelectAddAddressView: React.FC<
     const { network, initialAddress, onBack, onAssetClick } = props;
 
     const { t } = useTranslations();
-
-    const chainId = networkDefinitions[network].id;
+    const { chainId } = useDaoChain({ network });
 
     const [searchValue, setSearchValue] = useState<string | undefined>(
         initialAddress,
@@ -62,9 +61,8 @@ export const AssetAddressSelectAddAddressView: React.FC<
             : undefined;
 
     const { data: tokenData, isLoading } = useToken({
-        address: resolvedAddress ?? ('0x' as Hex),
+        address: resolvedAddress,
         chainId,
-        enabled: resolvedAddress != null,
     });
 
     const asset: IAsset | undefined =
