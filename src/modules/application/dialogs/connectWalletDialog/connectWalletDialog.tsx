@@ -55,6 +55,7 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
     // Force "Connect" view; we don't want to see other modal views, which might happen if AppKit state gets out of sync with wagmi store.
     const handleConnectClick = () => {
         if (daoNetwork) {
+            // clean up localStorage state for previous network if it exists!
             void switchNetwork(daoNetwork);
         }
         void openWeb3Modal({ view: 'Connect' });
