@@ -69,7 +69,7 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
         useAssetListData(initialParams);
-    console.log('state', assetList);
+
     const handleOpenAddAddress = () => setMode('addAddress');
     const handleBack = () => {
         setPendingAddress(undefined);
