@@ -1,7 +1,6 @@
 import { createPublicClient, erc20Abi, type Hex, http } from 'viem';
 import { readContracts } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
-import { resolveServerRpcUrl } from '@/modules/application/utils/proxyRpcUtils/resolveServerRpcUrl';
 import type { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
@@ -12,6 +11,9 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
  * Runs on both the server and the client:
  * - Client: uses `@wagmi/core` `readContracts` (multicall-batched via `wagmiConfig`).
  * - Server: builds a viem public client against the upstream RPC URL via `proxyRpcUtils`.
+ *   The server branch is gated by `process.env.NEXT_RUNTIME === 'nodejs'` (build-time-folded
+ *   by Next.js) and dynamically imports `resolveServerRpcUrl`, so the server-only module is
+ *   tree-shaken out of the client chunk.
  *
  * Throws on any RPC failure (`allowFailure: false`) so the caller can surface `Page.Error`.
  */
@@ -23,11 +25,10 @@ export const fetchTokensTotalSupply = async (
         return {};
     }
 
-    const isServer = typeof window === 'undefined';
-
-    const totals = isServer
-        ? await fetchOnServer(network, addresses)
-        : await fetchOnClient(network, addresses);
+    const totals =
+        process.env.NEXT_RUNTIME === 'nodejs'
+            ? await fetchOnServer(network, addresses)
+            : await fetchOnClient(network, addresses);
 
     return addresses.reduce<Record<string, string>>(
         (accumulator, address, index) => {
@@ -57,10 +58,13 @@ const fetchOnClient = (
     });
 };
 
-const fetchOnServer = (
+const fetchOnServer = async (
     network: Network,
     addresses: Hex[],
 ): Promise<bigint[]> => {
+    const { resolveServerRpcUrl } = await import(
+        '@/modules/application/utils/proxyRpcUtils/resolveServerRpcUrl'
+    );
     const rpcUrl = resolveServerRpcUrl(network);
 
     if (rpcUrl == null) {
