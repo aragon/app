@@ -29,6 +29,9 @@ importers:
 
   .:
     dependencies:
+      '@aragon/aragon-subdomain':
+        specifier: 0.0.0-20260519095332
+        version: 0.0.0-20260519095332
       '@aragon/gov-ui-kit':
         specifier: ^2.1.0
         version: 2.1.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.2.4))(@tanstack/react-query@5.100.5(react@19.2.5))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.74.0(react@19.2.5))(react@19.2.5)(tailwindcss@4.2.4)(viem@2.48.4(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.5(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.5)(@tanstack/react-query@5.100.5(react@19.2.5))(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)(typescript@5.9.3)(viem@2.48.4(typescript@5.9.3)(zod@3.25.76)))
@@ -71,9 +74,6 @@ importers:
       '@walletconnect/utils':
         specifier: ^2.23.9
         version: 2.23.9(@vercel/blob@2.3.0)(typescript@5.9.3)(zod@3.25.76)
-      aragon-subdomain:
-        specifier: link:../aragon-subdomain
-        version: link:../aragon-subdomain
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -261,6 +261,10 @@ packages:
   '@alloc/quick-lru@5.2.0':
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
+
+  '@aragon/aragon-subdomain@0.0.0-20260519095332':
+    resolution: {integrity: sha512-1FC2eBJu5waoJXtRTDHwW2dKxBYBcehdfB+lN3pCJsC9+a5m5C+bbLh0TktC+uKl0LqktmLXXC7fsFRKIyK4qg==}
+    engines: {node: '>=22.0.0', pnpm: '>=10.0.0'}
 
   '@aragon/gov-ui-kit@2.1.0':
     resolution: {integrity: sha512-LdCCTCWtpK7zjcAkT/Ox2DJvX5u2WuX/E3Y/hUcznd8mI5oRdcKq7wHlDVWDtBNnf2jm5zu5XFfwhAPh9yevkA==}
@@ -4591,6 +4595,9 @@ packages:
   big.js@6.2.2:
     resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
+  bignumber.js@11.0.0:
+    resolution: {integrity: sha512-pkOSwKRi2HLwEbmTNf7C0M9lw3Z5dXQ1irbanJvySh/nJQBcFsMxF+g5o2JEn5BPFmfAqYalrhOwoFdLJXohEg==}
+
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
@@ -6001,6 +6008,9 @@ packages:
 
   js-sha3@0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
+
+  js-sha3@0.9.3:
+    resolution: {integrity: sha512-BcJPCQeLg6WjEx3FE591wVAevlli8lxsxm9/FzV4HXkV49TmBH38Yvrpce6fjbADGMKFrBMGTqrVz3qPIZ88Gg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -8150,6 +8160,9 @@ packages:
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
 
+  zod@3.23.0:
+    resolution: {integrity: sha512-OFLT+LTocvabn6q76BTwVB0hExEBS0IduTr3cqZyMqEDbOnYmcU+y0tUAYbND4uwclpBGi4I4UUBGzylWpjLGA==}
+
   zod@3.24.4:
     resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
 
@@ -8204,6 +8217,15 @@ snapshots:
   '@adraffy/ens-normalize@1.11.1': {}
 
   '@alloc/quick-lru@5.2.0': {}
+
+  '@aragon/aragon-subdomain@0.0.0-20260519095332':
+    dependencies:
+      bignumber.js: 11.0.0
+      ddd-core-ts: 0.1.1
+      graphql: 16.13.2
+      graphql-request: 7.4.0(graphql@16.13.2)
+      js-sha3: 0.9.3
+      zod: 3.23.0
 
   '@aragon/gov-ui-kit@2.1.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.2.4))(@tanstack/react-query@5.100.5(react@19.2.5))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.74.0(react@19.2.5))(react@19.2.5)(tailwindcss@4.2.4)(viem@2.48.4(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.5(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.5)(@tanstack/react-query@5.100.5(react@19.2.5))(@types/react@19.2.14)(immer@11.1.4)(react@19.2.5)(typescript@5.9.3)(viem@2.48.4(typescript@5.9.3)(zod@3.25.76)))':
     dependencies:
@@ -13758,6 +13780,8 @@ snapshots:
 
   big.js@6.2.2: {}
 
+  bignumber.js@11.0.0: {}
+
   binary-extensions@2.3.0: {}
 
   binary@0.3.0:
@@ -15377,6 +15401,8 @@ snapshots:
   joycon@3.1.1: {}
 
   js-sha3@0.8.0: {}
+
+  js-sha3@0.9.3: {}
 
   js-tokens@4.0.0: {}
 
@@ -17611,6 +17637,8 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   zod@3.22.4: {}
+
+  zod@3.23.0: {}
 
   zod@3.24.4: {}
 

@@ -1,4 +1,4 @@
-import { EnvioClient, MemberController } from 'aragon-subdomain';
+import { EnvioClient, MemberController } from '@aragon/aragon-subdomain';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**

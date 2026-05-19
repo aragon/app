@@ -31,6 +31,7 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
+    "@aragon/aragon-subdomain": "0.0.0-20260519095332",
     "@aragon/gov-ui-kit": "^2.1.0",
     "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.6.0",
@@ -45,7 +46,6 @@
     "@tanstack/react-query-devtools": "^5.100.5",
     "@walletconnect/core": "^2.23.9",
     "@walletconnect/utils": "^2.23.9",
-    "aragon-subdomain": "link:../aragon-subdomain",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.38.0",
