@@ -37,7 +37,7 @@ describe('<AssetAddressSelectDefault /> component', () => {
 
         return (
             <GukModulesProvider>
-                <AssetAddressSelect.Default {...completeProps} />
+                <AssetAddressSelect {...completeProps} />
             </GukModulesProvider>
         );
     };

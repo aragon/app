@@ -15,6 +15,8 @@ import type {
 import { useAssetListData } from '@/modules/finance/hooks/useAssetListData';
 import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { AssetAddressSelectAddAddressView } from './assetAddressSelectAddAddressView';
 import { AssetAddressSelectAddButton } from './assetAddressSelectAddButton';
 import { getAssetAddressSelectEmptyState } from './assetAddressSelectEmptyState';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
@@ -48,21 +50,30 @@ export interface IAssetAddressSelectProps<
     children?: ReactNode;
 }
 
+type AssetAddressSelectMode = 'list' | 'addAddress';
+
 export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
     props,
 ) => {
     const { initialParams, hidePagination, hasSearch, children, onAssetClick } =
         props;
     const [searchValue, setSearchValue] = useState<string>();
+    const [mode, setMode] = useState<AssetAddressSelectMode>('list');
 
     const { t } = useTranslations();
+
+    const { network } = daoUtils.parseDaoId(initialParams.queryParams.daoId);
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
         useAssetListData(initialParams);
 
+    const handleOpenAddAddress = () => setMode('addAddress');
+    const handleBack = () => setMode('list');
+
     const emptyState = getAssetAddressSelectEmptyState({
         t,
         searchValue,
+        onAddByAddressClick: handleOpenAddAddress,
     });
 
     const filteredAssets = useMemo(() => {
@@ -77,6 +88,16 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
             return [tokenName, tokenSymbol].includes(searchValue.toLowerCase());
         });
     }, [assetList, searchValue, hasSearch]);
+
+    if (mode === 'addAddress') {
+        return (
+            <AssetAddressSelectAddAddressView
+                network={network}
+                onAssetClick={onAssetClick}
+                onBack={handleBack}
+            />
+        );
+    }
 
     return (
         <DataListRoot
@@ -95,7 +116,9 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
                     searchValue={searchValue}
                 />
             ) : null}
-            {filteredAssets.length > 0 && <AssetAddressSelectAddButton />}
+            {filteredAssets.length > 0 && (
+                <AssetAddressSelectAddButton onClick={handleOpenAddAddress} />
+            )}
             <DataListContainer
                 emptyState={emptyState}
                 errorState={errorState}

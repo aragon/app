@@ -1576,6 +1576,9 @@
         "searchPlaceholder": "Search assets..."
       },
       "assetAddressSelect": {
+        "addAddressView": {
+          "placeholder": "Paste 0x contract address..."
+        },
         "addButton": {
           "label": "Add address"
         },
