@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Shared guardrails loader: discovers rule-skills under shared and local
-// roots, matches their `applies-to` globs against the file being edited,
+// roots, matches their `globs` field against the file being edited,
 // and emits matched rule content in the shape an adapter asks for.
 //
 // Spec: .agents/skills/rules/README.md
@@ -116,7 +116,7 @@ export const collectRules = ({
 
             rules.push({
                 name: meta.name || entry.replace(/\.md$/, ''),
-                applies: meta['applies-to'],
+                globs: meta.globs,
                 body,
                 source: relative(repoRoot, fullPath),
             });
@@ -140,7 +140,7 @@ export const buildRuleMatch = (payload, opts = {}) => {
 
     const relPath = relative(repoRoot, canonicalize(filePath));
     const rules = collectRules({ ...opts, repoRoot });
-    const matches = rules.filter((rule) => pathMatches(relPath, rule.applies));
+    const matches = rules.filter((rule) => pathMatches(relPath, rule.globs));
     if (matches.length === 0) {
         return null;
     }

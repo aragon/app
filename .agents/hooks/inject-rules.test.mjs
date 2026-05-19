@@ -7,7 +7,13 @@
 // No test writes to the repo working tree, so `git status` stays clean.
 
 import { strict as assert } from 'node:assert/strict';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import {
+    existsSync,
+    mkdirSync,
+    mkdtempSync,
+    rmSync,
+    writeFileSync,
+} from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, it } from 'node:test';
@@ -35,10 +41,10 @@ registerTmpCleanup();
 describe('parseFrontmatter', () => {
     it('extracts kebab-case and hyphenated keys', () => {
         const { meta, body } = parseFrontmatter(
-            '---\nname: foo\napplies-to: src/**\nkind: rule\n---\nbody here',
+            '---\nname: foo\nglobs: src/**\nkind: rule\n---\nbody here',
         );
         assert.equal(meta.name, 'foo');
-        assert.equal(meta['applies-to'], 'src/**');
+        assert.equal(meta.globs, 'src/**');
         assert.equal(meta.kind, 'rule');
         assert.equal(body, 'body here');
     });
@@ -81,14 +87,14 @@ describe('globToRegex / pathMatches', () => {
         assert.ok(!globToRegex('src/**/*.test.ts').test('src/a/bXtestXts'));
     });
 
-    it('treats applies-to as comma-separated globs', () => {
+    it('treats globs field as comma-separated patterns', () => {
         const globs = 'src/**/queries/**, src/**/mutations/**';
         assert.ok(pathMatches('src/x/queries/a.ts', globs));
         assert.ok(pathMatches('src/x/mutations/a.ts', globs));
         assert.ok(!pathMatches('src/x/components/a.tsx', globs));
     });
 
-    it('returns false for empty or missing applies-to', () => {
+    it('returns false for empty or missing globs', () => {
         assert.equal(pathMatches('src/x.ts', undefined), false);
         assert.equal(pathMatches('src/x.ts', ''), false);
     });
@@ -97,7 +103,7 @@ describe('globToRegex / pathMatches', () => {
 describe('canonicalize', () => {
     it('returns a real existing path unchanged in shape', () => {
         const real = canonicalize(DEFAULT_REPO_ROOT);
-        assert.ok(real.endsWith('app-next'));
+        assert.ok(existsSync(real));
     });
 
     it('handles a non-existent file under an existing parent', () => {
@@ -124,19 +130,19 @@ describe('collectRules', () => {
     it('discovers rule files with kind: rule', () => {
         writeFileSync(
             join(ruleDir, 'foo.md'),
-            '---\nname: foo\napplies-to: src/foo/**\nkind: rule\n---\nfoo body',
+            '---\nname: foo\nglobs: src/foo/**\nkind: rule\n---\nfoo body',
         );
         const rules = collectRules({ repoRoot: tmp, ruleRoots: ['rules'] });
         assert.equal(rules.length, 1);
         assert.equal(rules[0].name, 'foo');
-        assert.equal(rules[0].applies, 'src/foo/**');
+        assert.equal(rules[0].globs, 'src/foo/**');
         assert.equal(rules[0].body.trim(), 'foo body');
     });
 
     it('skips README.md', () => {
         writeFileSync(
             join(ruleDir, 'README.md'),
-            '---\nname: readme\nkind: rule\napplies-to: **\n---\nx',
+            '---\nname: readme\nkind: rule\nglobs: **\n---\nx',
         );
         const rules = collectRules({ repoRoot: tmp, ruleRoots: ['rules'] });
         assert.equal(rules.length, 0);
@@ -145,7 +151,7 @@ describe('collectRules', () => {
     it('skips files without kind: rule', () => {
         writeFileSync(
             join(ruleDir, 'cmd.md'),
-            '---\nname: cmd\nkind: command\napplies-to: **\n---\nx',
+            '---\nname: cmd\nkind: command\nglobs: **\n---\nx',
         );
         writeFileSync(join(ruleDir, 'plain.md'), '# no frontmatter');
         const rules = collectRules({ repoRoot: tmp, ruleRoots: ['rules'] });
@@ -165,11 +171,11 @@ describe('collectRules', () => {
         mkdirSync(dir2);
         writeFileSync(
             join(ruleDir, 'shared.md'),
-            '---\nname: shared\napplies-to: src/**\nkind: rule\n---\nshared',
+            '---\nname: shared\nglobs: src/**\nkind: rule\n---\nshared',
         );
         writeFileSync(
             join(dir2, 'local.md'),
-            '---\nname: local\napplies-to: src/**\nkind: rule\n---\nlocal',
+            '---\nname: local\nglobs: src/**\nkind: rule\n---\nlocal',
         );
         const rules = collectRules({
             repoRoot: tmp,
@@ -193,7 +199,7 @@ describe('buildRuleMatch', () => {
         mkdirSync(ruleDir);
         writeFileSync(
             join(ruleDir, 'q.md'),
-            '---\nname: q\napplies-to: src/**/api/**\nkind: rule\n---\nquery rule body',
+            '---\nname: q\nglobs: src/**/api/**\nkind: rule\n---\nquery rule body',
         );
         mkdirSync(join(tmp, 'src', 'shared', 'api'), { recursive: true });
     });

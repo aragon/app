@@ -39,7 +39,7 @@ export const registerGuardrailsContractSuite = ({
             mkdirSync(ruleDir);
             writeFileSync(
                 join(ruleDir, 'q.md'),
-                '---\nname: q\napplies-to: src/**/api/**\nkind: rule\n---\nquery rule body',
+                '---\nname: q\nglobs: src/**/api/**\nkind: rule\n---\nquery rule body',
             );
             mkdirSync(join(tmp, 'src', 'shared', 'api'), { recursive: true });
         });

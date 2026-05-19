@@ -1,7 +1,7 @@
 ---
 name: query-and-cache
 description: TanStack Query conventions — query key factories, cache invalidation, prefetch parity, server vs client reads.
-applies-to: src/**/api/**, src/**/queries/**, src/**/mutations/**
+globs: src/**/api/**, src/**/queries/**, src/**/mutations/**
 kind: rule
 ---
 

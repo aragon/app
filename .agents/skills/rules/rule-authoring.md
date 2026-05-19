@@ -1,7 +1,7 @@
 ---
 name: rule-authoring
 description: How to author or revise a rule-skill — fires when editing files inside the rule folders themselves.
-applies-to: .agents/skills/rules/**, .claude/skills/rules/**
+globs: .agents/skills/rules/**, .claude/skills/rules/**
 kind: rule
 ---
 
@@ -22,7 +22,7 @@ A rule-skill is documentation that loads when relevant — onboarding-grade cont
 - **Canon pointers** (1-3 example files) — let pattern recognition do the heavy lifting.
 - **Non-obvious knowledge** — silent-failure modes, intentional inconsistencies, conventions the type system doesn't enforce, cross-file invariants invisible from any single file. This is the load-bearing content.
 - **Light reference structure** (folder layouts, registration grammar) where it serves orientation.
-- **Narrow `applies-to` glob** — a rule's blast radius is its glob. `src/plugins/*/index.ts` beats `src/plugins/**`.
+- **Narrow `globs` field** — a rule's blast radius is its glob. `src/plugins/*/index.ts` beats `src/plugins/**`.
 
 What to avoid:
 
@@ -47,7 +47,7 @@ Don't write rules speculatively — empty rules atrophy and the routing cost out
 ---
 name: short-kebab-id
 description: One sentence; what the rule covers.
-applies-to: src/some/narrow/path/**, src/another/specific/glob/**
+globs: src/some/narrow/path/**, src/another/specific/glob/**
 kind: rule
 ---
 ```

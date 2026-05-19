@@ -1,7 +1,7 @@
 ---
 name: plugin-slot-registration
 description: Plugin index.ts wiring — registry chain, slot kinds, and the silent-failure modes that aren't visible from a single file.
-applies-to: src/plugins/*/index.ts
+globs: src/plugins/*/index.ts
 kind: rule
 ---
 

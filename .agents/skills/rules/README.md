@@ -2,7 +2,9 @@
 
 Prescriptive, path-scoped guardrails that ride on the universal `skills` primitive but are *constraints* on the agent's work, not invocable capabilities. Discriminated from workflow skills by `kind: rule` in frontmatter.
 
-Each rule-skill is a single Markdown file with frontmatter declaring which paths it applies to. The shared loader at `.agents/hooks/inject-rules.mjs` walks both folders below, matches each rule's `applies-to` glob against the file the agent is about to edit, and emits one agent-agnostic rule stream lazily for whichever adapter is calling it.
+Each rule-skill is a single Markdown file with frontmatter declaring which paths it applies to. The shared loader at `.agents/hooks/inject-rules.mjs` walks both folders below, matches each rule's `globs` field against the file the agent is about to edit, and emits one agent-agnostic rule stream lazily for whichever adapter is calling it.
+
+The frontmatter field is named `globs` to match the convention emerging across agent runtimes (Cursor's `.cursor/rules/` reads `globs:` natively). Our rules live at a different path, so we don't conflict with any harness's native loader — but a contributor who copies a rule to a runtime-conventional location gets pickup for free.
 
 ## MVP in plain English
 
@@ -12,7 +14,7 @@ The flow is:
 
 1. The agent is about to edit a file.
 2. The loader checks the file path.
-3. Any rule whose `applies-to` glob matches that path is loaded.
+3. Any rule whose `globs` field matches that path is loaded.
 4. Those matched rules are injected as extra context just in time.
 
 So instead of saying "remember all conventions all the time," we say "load the few conventions that matter for this file."
@@ -69,7 +71,7 @@ pnpm test:guardrails
 ---
 name: query-and-cache
 description: One-line summary of what the rule covers.
-applies-to: src/**/api/**, src/**/queries/**
+globs: src/**/api/**, src/**/queries/**
 kind: rule
 ---
 ```
@@ -78,7 +80,7 @@ kind: rule
 |---|---|---|
 | `name` | yes | Short, kebab-case identifier. |
 | `description` | yes | One sentence. Surfaces when the agent enumerates available rules. |
-| `applies-to` | yes | Comma-separated globs, paths relative to repo root. `**` is recursive, `*` is single-segment. |
+| `globs` | yes | Comma-separated globs, paths relative to repo root. `**` is recursive, `*` is single-segment. |
 | `kind` | yes | Must be `rule` for the hook to pick it up. Distinguishes from `kind: command` workflow skills. |
 
 ## Authoring guidance
@@ -88,7 +90,7 @@ A rule-skill is documentation that loads when relevant — onboarding-grade cont
 - **Canon pointers.** Name 1-3 reference files in the codebase that show the pattern. Lean on the model's pattern recognition for what's clearly derivable from those examples.
 - **Non-obvious knowledge.** Encode the things that *aren't* visible from any single file: silent-failure modes, intentional inconsistencies, cross-file invariants, conventions the type system doesn't enforce. This is the load-bearing content.
 - **Light reference structure** (folder layouts, frontmatter schemas, registration grammar) — fine when it serves orientation.
-- **Narrow glob.** A rule's blast radius is its `applies-to`. Prefer `src/plugins/*/index.ts` over `src/plugins/**`. Multiple narrow rules beat one mega-rule.
+- **Narrow glob.** A rule's blast radius is its `globs` field. Prefer `src/plugins/*/index.ts` over `src/plugins/**`. Multiple narrow rules beat one mega-rule.
 - **Bottom-up authorship.** The right time to write or update a rule is when a code review catches a domain mistake or a new contributor stumbles. Don't pre-write rules speculatively.
 
 What to avoid:
