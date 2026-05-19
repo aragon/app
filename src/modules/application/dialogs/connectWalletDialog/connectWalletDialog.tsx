@@ -44,18 +44,18 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
     const isConnected = useWalletConnected();
     const { t } = useTranslations();
 
-    // DAO routes are scoped by `/dao/[network]/...` — pin the wallet prompt to
-    // that network so MetaMask doesn't ask for permission on a stale chain
-    // (e.g. whatever was last persisted in AppKit's `active_caip_network_id`).
     const { network: networkParam } = useParams<{ network?: Network }>();
-    const daoNetwork = networkParam
-        ? networkDefinitions[networkParam as Network]
-        : undefined;
 
     // Force "Connect" view; we don't want to see other modal views, which might happen if AppKit state gets out of sync with wagmi store.
     const handleConnectClick = () => {
+        // DAO routes are scoped by `/dao/[network]/...` — pin the wallet prompt to
+        // that network so MetaMask doesn't ask for permission on a stale chain
+        // (e.g. whatever was last persisted in AppKit's `active_caip_network_id`).
+        const daoNetwork = networkParam
+            ? networkDefinitions[networkParam as Network]
+            : undefined;
+
         if (daoNetwork) {
-            // clean up localStorage state for previous network if it exists!
             void switchNetwork(daoNetwork);
         }
         void openWeb3Modal({ view: 'Connect' });
