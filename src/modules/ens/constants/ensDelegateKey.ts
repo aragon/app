@@ -9,18 +9,14 @@ import { Network } from '@/shared/api/daoService';
  *
  * Mainnets use their canonical EIP-3770 shortname so records align with the
  * convention any third-party tool would recognise. Testnets all share the
- * generic `test` namespace rather than their canonical shortnames (`sep`,
- * `zksync-sepolia`). Two reasons:
+ * generic `test` namespace rather than their canonical shortnames (`sep`).
+ * Two reasons:
  * 1. ENS records live on mainnet regardless of the token's chain. Writing
  *    `sep.<token>.delegate` against a real ENS name pollutes the canonical
  *    Sepolia namespace with throwaway QA data.
  * 2. ENS hasn't ratified a cross-chain convention. If they pick a different
  *    shape later, we want the migration surface to be QA-only — no real
  *    production records to rewrite.
- *
- * Cross-testnet collision (the same token address on Sepolia and zkSync
- * Sepolia from the same publisher) is possible but inconsequential — testnet
- * deployments are throwaway.
  *
  * Citrea and Katana are not yet on the canonical EIP-3770 list (Citrea
  * mainnet is not live as of 2026-05; Katana is a recent L2 without an
@@ -43,7 +39,6 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.CITREA_MAINNET]: 'citrea',
     [Network.KATANA_MAINNET]: 'katana',
     [Network.ETHEREUM_SEPOLIA]: 'test',
-    [Network.ZKSYNC_SEPOLIA]: 'test',
 };
 
 export interface IBuildEnsDelegateKeyParams {

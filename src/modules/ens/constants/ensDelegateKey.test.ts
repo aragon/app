@@ -26,7 +26,6 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
 
     it.each([
         { network: Network.ETHEREUM_SEPOLIA },
-        { network: Network.ZKSYNC_SEPOLIA },
     ])('maps testnet $network to the generic "test" namespace', ({
         network,
     }) => {

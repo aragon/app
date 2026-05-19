@@ -253,8 +253,8 @@ describe('proxyRpc utils', () => {
             expect(testClass['chainIdToNetwork']('137')).toEqual(
                 Network.POLYGON_MAINNET,
             );
-            expect(testClass['chainIdToNetwork']('300')).toEqual(
-                Network.ZKSYNC_SEPOLIA,
+            expect(testClass['chainIdToNetwork']('324')).toEqual(
+                Network.ZKSYNC_MAINNET,
             );
         });
 
