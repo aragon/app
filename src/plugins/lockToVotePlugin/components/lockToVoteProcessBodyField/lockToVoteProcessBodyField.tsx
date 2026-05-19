@@ -7,7 +7,7 @@ import {
     NumberFormat,
     Tag,
 } from '@aragon/gov-ui-kit';
-import { formatUnits, type Hex } from 'viem';
+import { formatUnits } from 'viem';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -91,9 +91,8 @@ export const LockToVoteProcessBodyField = (
     } = membership.token;
 
     const { data: totalSupply } = useTokenTotalSupply({
-        chainId: chainId as number,
-        address: tokenAddress as Hex,
-        enabled: chainId != null && tokenAddress != null,
+        chainId,
+        address: tokenAddress,
     });
 
     const { votingMode, supportThreshold, minParticipation, minDuration } =

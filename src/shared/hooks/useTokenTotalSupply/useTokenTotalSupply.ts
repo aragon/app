@@ -1,4 +1,4 @@
-import { erc20Abi } from 'viem';
+import { erc20Abi, type Hex } from 'viem';
 import { useReadContract } from 'wagmi';
 import type {
     IUseTokenTotalSupplyParams,
@@ -12,10 +12,10 @@ export const useTokenTotalSupply = (
 
     const { data, isError, isLoading } = useReadContract({
         chainId,
-        address,
+        address: address as Hex | undefined,
         abi: erc20Abi,
         functionName: 'totalSupply',
-        query: { enabled },
+        query: { enabled: enabled && address != null && chainId != null },
     });
 
     return { data, isError, isLoading };
