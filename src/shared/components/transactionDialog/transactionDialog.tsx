@@ -1,4 +1,9 @@
-import { ChainEntityType, Dialog, IconType, Tag } from '@aragon/gov-ui-kit';
+import {
+    AlertCard,
+    ChainEntityType,
+    Dialog,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -318,14 +323,17 @@ export const TransactionDialog = <TCustomStepId extends string>(
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
                     {isCrossNetworkTransaction &&
                         transactionNetworkName != null && (
-                            <Tag
-                                className="self-start"
-                                label={t(
-                                    'app.shared.transactionDialog.networkBadge',
-                                    { network: transactionNetworkName },
+                            <AlertCard
+                                message={t(
+                                    'app.shared.transactionDialog.networkAlert.title',
                                 )}
-                                variant="warning"
-                            />
+                                variant="info"
+                            >
+                                {t(
+                                    'app.shared.transactionDialog.networkAlert.body',
+                                    { transactionNetworkName },
+                                )}
+                            </AlertCard>
                         )}
                     {children}
                     <TransactionStatus.Container

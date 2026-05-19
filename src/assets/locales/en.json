@@ -3608,7 +3608,10 @@
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },
-        "networkBadge": "On {{network}}",
+        "networkAlert": {
+          "body": "This transaction must be on {{transactionNetworkName}}.",
+          "title": "Change network"
+        },
         "step": {
           "APPROVE": {
             "addon": "Wallet",
