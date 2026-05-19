@@ -24,6 +24,10 @@ jest.mock('./transactionDialogFooter', () => ({
     TransactionDialogFooter: () => <div data-testid="footer-mock" />,
 }));
 
+jest.mock('next/navigation', () => ({
+    useParams: jest.fn(() => ({})),
+}));
+
 jest.mock('@tanstack/react-query', () => ({
     __esModule: true,
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),

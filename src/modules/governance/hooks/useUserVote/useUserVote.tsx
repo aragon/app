@@ -1,4 +1,4 @@
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
 import {
     type IProposal,
@@ -25,7 +25,7 @@ export const useUserVote = <TVote extends IVote = IVote>(
     const { proposal, network } = params;
     const { id, pluginAddress } = proposal;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const voteListParams = { proposalId: id, pluginAddress, address, network };
     const { data: voteListData } = useVoteList<TVote>(

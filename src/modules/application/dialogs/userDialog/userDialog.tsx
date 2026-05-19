@@ -9,9 +9,9 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useDisconnect } from '@reown/appkit/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useConnection, useDisconnect } from 'wagmi';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
 import { exploreDaosSectionId } from '@/modules/explore/pages/exploreDaosPage';
@@ -22,6 +22,7 @@ import {
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IUserDialogProps extends IDialogComponentProps {}
 
@@ -33,8 +34,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { close, open } = useDialogContext();
     const { isEnabled } = useFeatureFlags();
     const isAragonProfileEnabled = isEnabled('aragonProfiles');
-    const { address, chainId } = useConnection();
-    const disconnect = useDisconnect();
+    const { address, chainId } = useWalletAccount();
+    const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -53,16 +54,18 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const handleCreateAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
             stack: true,
+            disableOutsideClick: true,
             params: { mode: 'create' },
         });
 
     const handleEditAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
             stack: true,
+            disableOutsideClick: true,
             params: { mode: 'edit' },
         });
 
-    const handleDisconnect = () => disconnect.mutate();
+    const handleDisconnect = () => void disconnect();
 
     const handleMyDaosClick = () => {
         router.push(
@@ -142,7 +145,6 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 <div className="flex flex-col gap-3">
                     <Button
                         className="w-full"
-                        iconRight={IconType.LINK_EXTERNAL}
                         onClick={handleMyDaosClick}
                         size="md"
                         variant="tertiary"

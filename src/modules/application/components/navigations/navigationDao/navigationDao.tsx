@@ -10,8 +10,8 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useConnection } from 'wagmi';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -25,6 +25,7 @@ import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { useWalletAccount } from '../../../hooks/useWalletAccount';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
 
@@ -42,9 +43,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const { t } = useTranslations();
-    const { address, isConnected } = useConnection();
+    const { address } = useWalletAccount();
+    const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
-    const effectiveIsConnected = isMounted && isConnected;
+    const effectiveIsConnected = isMounted && isConnected && address != null;
     const { open } = useDialogContext();
 
     const { buildEntityUrl } = useDaoChain({ network: dao.network });

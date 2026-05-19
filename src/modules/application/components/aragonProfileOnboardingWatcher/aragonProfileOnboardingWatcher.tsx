@@ -1,12 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useConnection } from 'wagmi';
 import { useEnsName } from '@/modules/ens';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useWalletConnectionEvent } from '@/shared/hooks/useWalletConnectionEvent';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import type { IAragonProfileIntroDialogParams } from '../../dialogs/aragonProfileIntroDialog';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IAragonProfileOnboardingWatcherProps {
     /**
@@ -31,7 +31,7 @@ export const AragonProfileOnboardingWatcher: React.FC<
 > = (props) => {
     const { onCheckPendingChange } = props;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const {
         data: ensName,
         isLoading: ensIsLoading,

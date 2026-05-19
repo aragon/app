@@ -3,7 +3,6 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useConnection } from 'wagmi';
 import {
     memberRegistryAbi,
     memberRegistryAddress,
@@ -21,6 +20,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IAragonProfileSubdomainRegisterTransactionDialogParams {
     /** ENS subdomain label to register, e.g. "alice". */
@@ -42,7 +42,7 @@ export const AragonProfileSubdomainRegisterTransactionDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const stepper = useStepper<
         ITransactionDialogStepMeta,

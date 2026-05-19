@@ -3,7 +3,7 @@
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { formatUnits } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -60,7 +60,7 @@ export const LockToVoteLockUnlockDialog: React.FC<
         'LockToVoteLockUnlockDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(
         address != null,
         'LockToVoteLockUnlockDialog: user must be connected to perform the action',

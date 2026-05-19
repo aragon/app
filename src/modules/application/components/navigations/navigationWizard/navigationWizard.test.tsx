@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
+import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import { generateDao, generateDialogContext } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -38,6 +39,10 @@ describe('<NavigationWizard /> component', () => {
         'useDialogContext',
     );
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
+    const useWalletConnectedSpy = jest.spyOn(
+        UseWalletConnected,
+        'useWalletConnected',
+    );
     const confirmSpy = jest.spyOn(window, 'confirm');
 
     beforeEach(() => {
@@ -48,8 +53,8 @@ describe('<NavigationWizard /> component', () => {
         } as unknown as AppRouterInstance);
         useConnectionSpy.mockReturnValue({
             address: '0x123',
-            isConnected: true,
         } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(true);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         confirmSpy.mockReset();
     });
@@ -58,6 +63,7 @@ describe('<NavigationWizard /> component', () => {
         cidToSrcSpy.mockReset();
         useRouterSpy.mockReset();
         useConnectionSpy.mockReset();
+        useWalletConnectedSpy.mockReset();
         useDialogContextSpy.mockReset();
         confirmSpy.mockReset();
     });
@@ -113,8 +119,8 @@ describe('<NavigationWizard /> component', () => {
         const open = jest.fn();
         useConnectionSpy.mockReturnValue({
             address,
-            isConnected: true,
         } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(true);
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
         render(createTestComponent());
@@ -131,8 +137,8 @@ describe('<NavigationWizard /> component', () => {
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         useConnectionSpy.mockReturnValue({
             address: null,
-            isConnected: false,
         } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(false);
 
         render(createTestComponent());
 

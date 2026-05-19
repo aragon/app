@@ -193,11 +193,10 @@ describe('<TokenMemberListBase />', () => {
         render(createTestComponent());
 
         const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(2);
+        expect(memberElements).toHaveLength(paginatedMembers.length + 1);
         expect(memberElements[0].textContent).toBe(userAddress);
-        expect(memberElements[1].textContent).toBe(
-            '0x9999999999999999999999999999999999999999',
-        );
+        expect(memberElements[1].textContent).toBe(paginatedMembers[0].address);
+        expect(memberElements[2].textContent).toBe(paginatedMembers[1].address);
     });
 
     it('pins the delegate to the top when user has a valid delegate', () => {
@@ -259,13 +258,15 @@ describe('<TokenMemberListBase />', () => {
         render(createTestComponent({ enableDelegation: true }));
 
         const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(2);
+        expect(memberElements).toHaveLength(paginatedMembers.length + 2);
         expect(memberElements[0].textContent).toBe(userAddress);
         expect(memberElements[1].textContent).toBe(delegateAddr);
         expect(memberElements[1].getAttribute('data-is-delegate')).toBe('true');
+        expect(memberElements[2].textContent).toBe(paginatedMembers[0].address);
+        expect(memberElements[3].textContent).toBe(paginatedMembers[1].address);
     });
 
-    it('keeps the rendered member count aligned with the backend page size', () => {
+    it('renders pinned user and delegate alongside the paginated members without dropping any', () => {
         const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
         const delegateAddr = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd';
         const paginatedMembers = [
@@ -324,9 +325,69 @@ describe('<TokenMemberListBase />', () => {
         render(createTestComponent({ enableDelegation: true }));
 
         const memberElements = screen.getAllByTestId('member-mock');
-        expect(memberElements).toHaveLength(paginatedMembers.length);
+        expect(memberElements).toHaveLength(paginatedMembers.length + 2);
         expect(memberElements[0].textContent).toBe(userAddress);
         expect(memberElements[1].textContent).toBe(delegateAddr);
+        expect(memberElements[2].textContent).toBe(paginatedMembers[0].address);
+        expect(memberElements[3].textContent).toBe(paginatedMembers[1].address);
+    });
+
+    it('keeps real members visible and bumps the counter when the pinned user is missing from the paginated response', () => {
+        // Regression for a backend indexer gap: live `/v2/members/:address`
+        // sees the connected user with VP > 0 (they delegated on-chain), but
+        // `/v2/members` doesn't include them yet. The pinning must not evict
+        // a real member, and the "X of Y" counter must reflect what's rendered.
+        const userAddress = '0x1234567890abcdef1234567890abcdef12345678';
+        const paginatedMembers = [
+            generateTokenMember({
+                address: '0x9999999999999999999999999999999999999999',
+                votingPower: '5000',
+            }),
+            generateTokenMember({
+                address: '0x8888888888888888888888888888888888888888',
+                votingPower: '4000',
+            }),
+        ];
+        const userMember = generateTokenMember({
+            address: userAddress,
+            votingPower: '100',
+        });
+
+        useConnectionSpy.mockReturnValue({
+            address: userAddress,
+        } as unknown as wagmi.UseConnectionReturnType);
+
+        useMemberListDataSpy.mockReturnValue({
+            memberList: paginatedMembers,
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: paginatedMembers.length,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        useMemberSpy.mockImplementation((params) => {
+            if (params.urlParams.address === userAddress) {
+                return generateReactQueryResultSuccess({ data: userMember });
+            }
+            return generateReactQueryResultSuccess({
+                data: undefined as unknown as ITokenMember,
+            });
+        });
+
+        render(createTestComponent());
+
+        const memberElements = screen.getAllByTestId('member-mock');
+        expect(memberElements).toHaveLength(paginatedMembers.length + 1);
+        expect(memberElements[0].textContent).toBe(userAddress);
+        expect(memberElements.map((el) => el.textContent)).toEqual(
+            expect.arrayContaining([
+                userAddress,
+                paginatedMembers[0].address,
+                paginatedMembers[1].address,
+            ]),
+        );
     });
 
     describe('linked-account daoId resolution', () => {

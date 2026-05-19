@@ -1,8 +1,9 @@
 'use client';
 
 import { addressUtils, Button } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationOnboardingDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationOnboardingFormDialog/tokenDelegationOnboardingFormDialog.api';
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
@@ -41,7 +42,8 @@ export const MemberDelegateButton: React.FC<IMemberDelegateButtonProps> = (
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address, isConnected } = useConnection();
+    const { address } = useWalletAccount();
+    const isConnected = useWalletConnected();
     const { check: walletGuard } = useConnectedWalletGuard();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 

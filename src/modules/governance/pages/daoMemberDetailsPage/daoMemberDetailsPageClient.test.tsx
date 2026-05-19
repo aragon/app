@@ -167,12 +167,18 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         expect(avatar).toBeInTheDocument();
     });
 
-    it('returns empty container on member fetch error', () => {
+    it('renders the page with a fallback member when useMember has no data', () => {
+        const address = '0x1234567890123456789012345678901234567890';
         useMemberSpy.mockReturnValue(
             generateReactQueryResultError({ error: new Error() }),
         );
-        const { container } = render(createTestComponent());
-        expect(container).toBeEmptyDOMElement();
+        render(createTestComponent({ address }));
+        expect(
+            screen.getByRole('heading', {
+                level: 1,
+                name: addressUtils.truncateAddress(address),
+            }),
+        ).toBeInTheDocument();
     });
 
     it('supports member address and ens copy', async () => {
@@ -248,6 +254,33 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             screen.getByText(
                 /daoMemberDetailsPage.aside.details.latestActivity/,
             ),
+        ).toBeInTheDocument();
+    });
+
+    it('shows the shortened aragon name in the header but keeps the full ENS in the aside', () => {
+        const address = '0x1234567890123456789012345678901234567890';
+        useMemberSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateMember({ address }),
+            }),
+        );
+        useEnsNameSpy.mockImplementation(
+            (_address, options) =>
+                ({
+                    data: options?.stripAragonRegistrySuffix
+                        ? 'alice'
+                        : 'alice.aragonx.eth',
+                    isLoading: false,
+                }) as ReturnType<typeof ensModule.useEnsName>,
+        );
+
+        render(createTestComponent({ address }));
+
+        expect(
+            screen.getByRole('heading', { level: 1, name: 'alice' }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', { name: 'alice.aragonx.eth' }),
         ).toBeInTheDocument();
     });
 
