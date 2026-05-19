@@ -2,12 +2,14 @@
 
 import {
     AssetDataListItem,
+    addressUtils,
     DataListContainer,
     DataListFilter,
     DataListPagination,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type Hex, isAddress } from 'viem';
 import type {
     IAsset,
     IGetAssetListParams,
@@ -59,6 +61,7 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
         props;
     const [searchValue, setSearchValue] = useState<string>();
     const [mode, setMode] = useState<AssetAddressSelectMode>('list');
+    const [pendingAddress, setPendingAddress] = useState<Hex | undefined>();
 
     const { t } = useTranslations();
 
@@ -66,9 +69,12 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
 
     const { onLoadMore, state, pageSize, itemsCount, errorState, assetList } =
         useAssetListData(initialParams);
-
+    console.log('state', assetList);
     const handleOpenAddAddress = () => setMode('addAddress');
-    const handleBack = () => setMode('list');
+    const handleBack = () => {
+        setPendingAddress(undefined);
+        setMode('list');
+    };
 
     const emptyState = getAssetAddressSelectEmptyState({
         t,
@@ -81,17 +87,39 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
             return assetList;
         }
 
-        return assetList.filter(({ token }) => {
-            const tokenName = token.name.toLowerCase();
-            const tokenSymbol = token.symbol.toLowerCase();
+        const lowerSearch = searchValue.toLowerCase();
+        const searchIsAddress = isAddress(searchValue);
 
-            return [tokenName, tokenSymbol].includes(searchValue.toLowerCase());
+        return assetList.filter(({ token }) => {
+            const nameHit = token.name.toLowerCase().includes(lowerSearch);
+            const symbolHit = token.symbol.toLowerCase().includes(lowerSearch);
+            const addrHit =
+                searchIsAddress &&
+                addressUtils.isAddressEqual(token.address, searchValue);
+            return nameHit || symbolHit || addrHit;
         });
     }, [assetList, searchValue, hasSearch]);
+
+    useEffect(() => {
+        if (mode !== 'list') {
+            return;
+        }
+        if (!searchValue || !isAddress(searchValue)) {
+            return;
+        }
+        if (filteredAssets.length > 0) {
+            return;
+        }
+
+        setPendingAddress(searchValue as Hex);
+        setSearchValue(undefined);
+        setMode('addAddress');
+    }, [mode, searchValue, filteredAssets.length]);
 
     if (mode === 'addAddress') {
         return (
             <AssetAddressSelectAddAddressView
+                initialAddress={pendingAddress}
                 network={network}
                 onAssetClick={onAssetClick}
                 onBack={handleBack}

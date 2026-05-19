@@ -81,6 +81,21 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         );
     });
 
+    it('pre-fills the input and enables useToken on first render when initialAddress is set', () => {
+        const initialAddress =
+            '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0' as `0x${string}`;
+
+        render(createTestComponent({ initialAddress }));
+
+        expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe(
+            initialAddress,
+        );
+
+        const firstCall = useTokenSpy.mock.calls[0];
+        expect(firstCall?.[0].enabled).toBe(true);
+        expect(firstCall?.[0].address).toBe(initialAddress);
+    });
+
     it('renders the resolved row using token data when useToken returns', async () => {
         useTokenSpy.mockReturnValue({
             data: {

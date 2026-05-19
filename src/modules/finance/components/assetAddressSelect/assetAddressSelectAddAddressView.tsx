@@ -21,6 +21,12 @@ export interface IAssetAddressSelectAddAddressViewProps {
      */
     network: Network;
     /**
+     * Optional address used to pre-fill the input — typically forwarded from the main search bar
+     * when the user pasted an address that didn't match anything in the list. When set, `useToken`
+     * is enabled on first render and the row resolves immediately.
+     */
+    initialAddress?: Hex;
+    /**
      * Callback fired when the user clicks the back button.
      */
     onBack: () => void;
@@ -40,13 +46,15 @@ export interface IAssetAddressSelectAddAddressViewProps {
 export const AssetAddressSelectAddAddressView: React.FC<
     IAssetAddressSelectAddAddressViewProps
 > = (props) => {
-    const { network, onBack, onAssetClick } = props;
+    const { network, initialAddress, onBack, onAssetClick } = props;
 
     const { t } = useTranslations();
 
     const chainId = networkDefinitions[network].id;
 
-    const [searchValue, setSearchValue] = useState<string>();
+    const [searchValue, setSearchValue] = useState<string | undefined>(
+        initialAddress,
+    );
 
     const resolvedAddress: Hex | undefined =
         searchValue != null && isAddress(searchValue)
