@@ -33,12 +33,74 @@ export interface IParseLockToVoteSettingsParams {
     t: TranslationFunction;
 }
 
+export interface IFormatMinParticipationParams {
+    /**
+     * Minimum participation expressed as a percentage in the [0, 100] range.
+     */
+    minParticipationPercentage: number;
+    /**
+     * Total token supply used to derive the absolute token amount required to
+     * meet the participation threshold. Accepts a stringified or numeric value;
+     * `undefined`/`null` is treated as `0` so callers can pass live RPC results.
+     */
+    totalSupply: string | number | bigint | null | undefined;
+    /**
+     * Token decimals used to format the absolute token amount.
+     */
+    decimals: number;
+}
+
+export interface IFormatMinParticipationResult {
+    /**
+     * Absolute token amount (in base units) corresponding to the participation
+     * percentage applied to `totalSupply`. `0` when supply is unknown.
+     */
+    minParticipationToken: number;
+    /**
+     * Participation percentage formatted via `NumberFormat.PERCENTAGE_LONG`.
+     */
+    formattedMinParticipation: string | null;
+    /**
+     * Absolute token amount formatted via `NumberFormat.TOKEN_AMOUNT_SHORT`.
+     */
+    formattedMinParticipationToken: string | null;
+}
+
 class LockToVoteSettingsUtils {
     ratioToPercentage = (percentage: number) =>
         tokenSettingsUtils.ratioToPercentage(percentage);
 
     percentageToRatio = (percentage: number) =>
         tokenSettingsUtils.percentageToRatio(percentage);
+
+    formatMinParticipation = (
+        params: IFormatMinParticipationParams,
+    ): IFormatMinParticipationResult => {
+        const { minParticipationPercentage, totalSupply, decimals } = params;
+
+        const formattedMinParticipation = formatterUtils.formatNumber(
+            minParticipationPercentage / 100,
+            { format: NumberFormat.PERCENTAGE_LONG },
+        );
+
+        const minParticipationToken = Math.round(
+            (Number(totalSupply ?? 0) * minParticipationPercentage) / 100,
+        );
+        const parsedMinParticipationToken = formatUnits(
+            bigIntUtils.safeParse(minParticipationToken),
+            decimals,
+        );
+        const formattedMinParticipationToken = formatterUtils.formatNumber(
+            parsedMinParticipationToken,
+            { format: NumberFormat.TOKEN_AMOUNT_SHORT },
+        );
+
+        return {
+            minParticipationToken,
+            formattedMinParticipation,
+            formattedMinParticipationToken,
+        };
+    };
 
     parseSettings = (
         params: IParseLockToVoteSettingsParams,
@@ -63,27 +125,16 @@ class LockToVoteSettingsUtils {
             },
         );
 
-        const parsedMinParticipation = this.ratioToPercentage(minParticipation);
-        const formattedMinParticipation = formatterUtils.formatNumber(
-            parsedMinParticipation / 100,
-            {
-                format: NumberFormat.PERCENTAGE_LONG,
-            },
-        );
-
-        const minParticipationToken = Math.round(
-            (Number(realTimeTotalSupply) * parsedMinParticipation) / 100,
-        );
-        const parsedMinParticipationToken = formatUnits(
-            bigIntUtils.safeParse(minParticipationToken),
+        const {
+            minParticipationToken,
+            formattedMinParticipation,
+            formattedMinParticipationToken,
+        } = this.formatMinParticipation({
+            minParticipationPercentage:
+                this.ratioToPercentage(minParticipation),
+            totalSupply: realTimeTotalSupply,
             decimals,
-        );
-        const formattedMinParticipationToken = formatterUtils.formatNumber(
-            parsedMinParticipationToken,
-            {
-                format: NumberFormat.TOKEN_AMOUNT_SHORT,
-            },
-        );
+        });
 
         const duration = dateUtils.secondsToDuration(minDuration);
         const formattedDuration = t(

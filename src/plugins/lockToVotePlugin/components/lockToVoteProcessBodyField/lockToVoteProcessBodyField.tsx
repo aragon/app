@@ -27,6 +27,7 @@ import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DaoLockToVoteVotingMode } from '../../types';
+import { lockToVoteSettingsUtils } from '../../utils/lockToVoteSettingsUtils';
 import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance/lockToVoteSetupGovernance.api';
 
 export interface ILockToVoteProcessBodyFieldProps {
@@ -107,26 +108,15 @@ export const LockToVoteProcessBodyField = (
         fallback: '0',
     });
 
-    const formattedMinParticipation = formatterUtils.formatNumber(
-        minParticipation / 100,
-        {
-            format: NumberFormat.PERCENTAGE_LONG,
-        },
-    );
-
-    const minParticipationToken = Math.round(
-        (Number(totalSupply ?? 0) * minParticipation) / 100,
-    );
-    const parsedMinParticipationToken = formatUnits(
-        bigIntUtils.safeParse(minParticipationToken),
-        tokenDecimals,
-    );
-    const formattedMinParticipationToken = formatterUtils.formatNumber(
-        parsedMinParticipationToken,
-        {
-            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-        },
-    );
+    const {
+        minParticipationToken,
+        formattedMinParticipation,
+        formattedMinParticipationToken,
+    } = lockToVoteSettingsUtils.formatMinParticipation({
+        minParticipationPercentage: minParticipation,
+        totalSupply,
+        decimals: tokenDecimals,
+    });
 
     const voteChangeLabel =
         votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT
