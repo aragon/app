@@ -8,5 +8,6 @@ export const generateLockToVoteProposal = (
     ...generateProposal(),
     settings: generateLockToVotePluginSettings(),
     metrics: { votesByOption: [] },
+    tokensTotalSupply: {},
     ...proposal,
 });

@@ -1,5 +1,5 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import { isAddress } from 'viem';
 // biome-ignore lint/style/noRestrictedImports: authorised wrapper over wagmi's useEnsName (centralises chainId and cache)
 import { useEnsName as useWagmiEnsName } from 'wagmi';
 import { memberRegistrySubdomainSuffix } from '../constants/contracts';
@@ -36,7 +36,9 @@ export function useEnsName(
     const { stripAragonRegistrySuffix = false } = options ?? {};
 
     const validAddress =
-        address != null && isAddress(address) ? address : undefined;
+        address != null && addressUtils.isAddress(address)
+            ? addressUtils.getChecksum(address)
+            : undefined;
 
     const result = useWagmiEnsName({
         address: validAddress,

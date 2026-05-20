@@ -1,4 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
+import type { IProposal } from '@/modules/governance/api/governanceService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     type ISppProposal,
@@ -27,6 +29,9 @@ interface IGetBodyStatusLabelDataParams {
 }
 
 class SppProposalUtils {
+    isSppProposal = (proposal: IProposal): proposal is ISppProposal =>
+        proposal.pluginInterfaceType === PluginInterfaceType.SPP;
+
     getProposalStatus = (proposal: ISppProposal): ProposalStatus => {
         const { executed, settings, startDate, hasActions } = proposal;
         const { stages } = settings;

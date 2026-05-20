@@ -6,7 +6,6 @@ export enum Network {
     ARBITRUM_MAINNET = 'arbitrum-mainnet',
     CITREA_MAINNET = 'citrea-mainnet',
     ZKSYNC_MAINNET = 'zksync-mainnet',
-    ZKSYNC_SEPOLIA = 'zksync-sepolia',
     PEAQ_MAINNET = 'peaq-mainnet',
     OPTIMISM_MAINNET = 'optimism-mainnet',
     CHILIZ_MAINNET = 'chiliz-mainnet',

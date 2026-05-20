@@ -25,7 +25,7 @@ describe('lockToVoteSettings utils', () => {
             );
         });
 
-        it('correctly formats and displays the minimum participation', () => {
+        it('correctly formats and displays the minimum participation without realTimeTotalSupply', () => {
             const settings = generateLockToVotePluginSettings({
                 minParticipation: 123_456,
             });
@@ -40,20 +40,20 @@ describe('lockToVoteSettings utils', () => {
                 /lockToVoteGovernanceSettings.minimumParticipation/,
             );
             expect(minimumParticipationTerm.definition).toMatch(
-                /lockToVoteGovernanceSettings.participation \(participation=12\.35%,tokenValue=0,tokenSymbol=ETH\)/,
+                /lockToVoteGovernanceSettings.participationNoToken \(participation=12\.35%\)/,
             );
         });
 
-        it('correctly formats and displays the minimum participation token value', () => {
+        it('correctly formats and displays the minimum participation with realTimeTotalSupply', () => {
             const settings = generateLockToVotePluginSettings({
                 token: generateLockToVotePluginSettingsToken({
-                    totalSupply: '200000',
                     decimals: 2,
                 }),
                 minParticipation: 200_000,
             });
             const result = lockToVoteSettingsUtils.parseSettings({
                 settings,
+                realTimeTotalSupply: '200000',
                 t: mockTranslations.tMock,
             });
 

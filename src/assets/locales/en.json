@@ -2321,16 +2321,19 @@
           },
           "action": {
             "cancel": "Cancel",
-            "equalize": "Equalize",
-            "reset": "Reset",
+            "equalize": "Distribute evenly",
+            "reset": "Clear all",
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power across your selected gauges.",
-            "used": "used"
+            "description": "Set weights to split your voting power across gauges. A gauge with weight 2 receives twice as much of your voting power as a gauge with weight 1.",
+            "header": {
+              "votingPower": "Voting power",
+              "weights": "Weights"
+            }
           },
           "footer": {
-            "yourVotes": "YOUR VOTES"
+            "totalVotingPower": "TOTAL VOTING POWER"
           },
           "title": "Vote"
         },
@@ -2515,6 +2518,7 @@
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minimumParticipation": "Minimum participation",
           "no": "Disabled",
+          "participationNoToken": "≥ {{participation}}",
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalDuration": "Proposal duration",
@@ -2588,7 +2592,8 @@
           "distributionTerm": "Members",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
-          "minParticipationDefinition": "≥ {{minParticipation}}",
+          "minParticipationDefinition": "≥ {{minParticipation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "minParticipationDefinitionNoToken": "≥ {{minParticipation}}",
           "minParticipationTerm": "Minimum participation",
           "proposalDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "proposalDurationTerm": "Proposal duration",
