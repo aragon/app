@@ -2,11 +2,12 @@
 
 import {
     AssetDataListItem,
+    addressUtils,
     DataListFilter,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { type Hex, isAddress } from 'viem';
+import type { Hex } from 'viem';
 import type { IAsset } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -56,7 +57,7 @@ export const AssetAddressSelectAddAddressView: React.FC<
     );
 
     const resolvedAddress: Hex | undefined =
-        searchValue != null && isAddress(searchValue)
+        searchValue != null && addressUtils.isAddress(searchValue)
             ? (searchValue as Hex)
             : undefined;
 

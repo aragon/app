@@ -9,7 +9,7 @@ import {
     DataListRoot,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import { type Hex, isAddress } from 'viem';
+import type { Hex } from 'viem';
 import type {
     IAsset,
     IGetAssetListParams,
@@ -88,7 +88,7 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
         }
 
         const lowerSearch = searchValue.toLowerCase();
-        const searchIsAddress = isAddress(searchValue);
+        const searchIsAddress = addressUtils.isAddress(searchValue);
 
         return assetList.filter(({ token }) => {
             const nameHit = token.name.toLowerCase().includes(lowerSearch);
@@ -104,7 +104,7 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
         if (mode !== 'list') {
             return;
         }
-        if (!searchValue || !isAddress(searchValue)) {
+        if (!searchValue || !addressUtils.isAddress(searchValue)) {
             return;
         }
         if (filteredAssets.length > 0) {
