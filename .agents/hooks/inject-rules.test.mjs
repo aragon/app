@@ -277,6 +277,11 @@ describe('parseCliArgs', () => {
         assert.equal(result.filePath, '/tmp/example.ts');
         assert.deepEqual(result.ruleRoots, ['rules', 'local']);
     });
+
+    it('leaves adapter unset when no --adapter flag is passed so main can fall back to defaultAdapter', () => {
+        const result = parseCliArgs(['--tool', 'Edit', '--file', '/tmp/x.ts']);
+        assert.equal(result.adapter, undefined);
+    });
 });
 
 describe('trigger tools', () => {

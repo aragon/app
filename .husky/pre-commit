@@ -3,3 +3,7 @@
 # Stage 1: Fast lint/format of staged files only
 echo "🔍 Running lint-staged (staged files only)..."
 pnpm lint-staged
+
+# Stage 2: Drain guardrail event buffer into the shared, tracked hits file.
+# Silent no-op when the buffer is empty; never blocks the commit.
+pnpm guardrails:record

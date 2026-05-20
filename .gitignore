@@ -68,5 +68,8 @@ next-env.d.ts
 !.agents/skills/rules/**
 !.agents/hooks/
 !.agents/hooks/**
+!.agents/metrics/
+!.agents/metrics/hits.jsonl
+!.agents/metrics/README.md
 .playwright-mcp
 .patches
