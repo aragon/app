@@ -38,6 +38,9 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
+    const { data: displayName } = useEnsName(address, {
+        stripAragonRegistrySuffix: true,
+    });
     const { data: ensAvatar } = useEnsAvatar(ensName);
 
     const formattedAddress = addressUtils.truncateAddress(address);
@@ -121,7 +124,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 {hasAragonProfile ? (
                     <div className="flex flex-col gap-1">
                         <p className="font-normal text-neutral-800 text-xl leading-tight">
-                            {ensName}
+                            {displayName}
                         </p>
                         <Clipboard copyValue={address}>
                             <Link
