@@ -1,5 +1,7 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { generateProposal } from '@/modules/governance/testUtils';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     generateSppPluginSettings,
@@ -228,6 +230,28 @@ describe('SppProposalUtils', () => {
             );
 
             expect(sppProposalUtils.areAllStagesAccepted(proposal)).toBeFalsy();
+        });
+    });
+
+    describe('isSppProposal', () => {
+        it('returns true when the proposal interface is spp', () => {
+            const proposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.SPP,
+            });
+            expect(sppProposalUtils.isSppProposal(proposal)).toBeTruthy();
+        });
+
+        it('returns false for other plugin interfaces', () => {
+            const multisigProposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+            });
+            const ltvProposal = generateProposal({
+                pluginInterfaceType: PluginInterfaceType.LOCK_TO_VOTE,
+            });
+            expect(
+                sppProposalUtils.isSppProposal(multisigProposal),
+            ).toBeFalsy();
+            expect(sppProposalUtils.isSppProposal(ltvProposal)).toBeFalsy();
         });
     });
 });

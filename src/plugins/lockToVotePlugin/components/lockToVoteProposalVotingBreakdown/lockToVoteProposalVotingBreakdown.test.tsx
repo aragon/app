@@ -13,13 +13,7 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
     const createTestComponent = (
         props?: Partial<ILockToVoteProposalVotingBreakdownProps>,
     ) => {
-        const baseProposal = generateLockToVoteProposal({
-            settings: generateLockToVotePluginSettings({
-                token: generateLockToVotePluginSettingsToken({
-                    totalSupply: '1',
-                }),
-            }),
-        });
+        const baseProposal = generateLockToVoteProposal();
         const completeProps: ILockToVoteProposalVotingBreakdownProps = {
             proposal: baseProposal,
             ...props,
@@ -33,13 +27,14 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
     };
 
     it('correctly displays the breakdown of the token proposal', () => {
+        const tokenAddress = '0xToken';
         const settings = generateLockToVotePluginSettings({
             minParticipation: 200_000,
             supportThreshold: 500_000,
             token: generateLockToVotePluginSettingsToken({
+                address: tokenAddress,
                 decimals: 1,
                 symbol: 'TTT',
-                totalSupply: '1000000',
             }),
         });
         const votesByOption = [
@@ -49,6 +44,9 @@ describe('<LockToVoteProposalVotingBreakdown /> component', () => {
         const proposal = generateLockToVoteProposal({
             settings,
             metrics: { votesByOption },
+            tokensTotalSupply: {
+                [tokenAddress.toLowerCase()]: '1000000',
+            },
         });
         render(createTestComponent({ proposal }));
         expect(screen.getByRole('tabpanel')).toBeInTheDocument();
