@@ -1923,9 +1923,6 @@
         "content": {
           "label": "Statement",
           "helpText": "Markdown is supported. Token holders will read this on your delegate profile."
-        },
-        "mainnetSwitch": {
-          "message": "Delegate statements are anchored on ENS, which lives on Ethereum mainnet. Switch your wallet to mainnet to publish."
         }
       },
       "delegateStatementTransactionDialog": {

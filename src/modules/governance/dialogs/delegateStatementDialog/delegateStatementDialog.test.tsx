@@ -1,7 +1,5 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mainnet, polygon } from 'viem/chains';
-import * as wagmi from 'wagmi';
 import { Network } from '@/shared/api/daoService';
 import * as delegateStatementService from '@/shared/api/delegateStatementService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
@@ -101,7 +99,6 @@ const buildParams = (
 });
 
 describe('<DelegateStatementDialog />', () => {
-    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
     const useDelegateStatementSpy = jest.spyOn(
         delegateStatementService,
         'useDelegateStatement',
@@ -109,20 +106,13 @@ describe('<DelegateStatementDialog />', () => {
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
 
     const setHooks = (overrides?: {
-        chainId?: number;
         existingContent?: string | null;
         dialogContext?: ReturnType<typeof generateDialogContext>;
     }) => {
         const {
-            chainId = mainnet.id,
             existingContent = null,
             dialogContext = generateDialogContext(),
         } = overrides ?? {};
-        useConnectionSpy.mockReturnValue({
-            address: MEMBER_ADDRESS,
-            chainId,
-            isConnected: true,
-        } as unknown as ReturnType<typeof wagmi.useConnection>);
         useDelegateStatementSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
                 existingContent != null
@@ -141,7 +131,6 @@ describe('<DelegateStatementDialog />', () => {
     };
 
     afterEach(() => {
-        useConnectionSpy.mockReset();
         useDelegateStatementSpy.mockReset();
         useDialogContextSpy.mockReset();
     });
@@ -182,29 +171,9 @@ describe('<DelegateStatementDialog />', () => {
         expect(submit).toHaveAttribute('aria-disabled', 'true');
     });
 
-    it('shows a mainnet-switch prompt when the wallet is on a non-mainnet chain', () => {
-        setHooks({ chainId: polygon.id });
-        createTestComponent();
-        expect(
-            screen.getByText(
-                'app.governance.delegateStatementDialog.mainnetSwitch.message',
-            ),
-        ).toBeInTheDocument();
-    });
-
-    it('hides the mainnet-switch prompt when the wallet is already on mainnet', () => {
-        setHooks({ chainId: mainnet.id });
-        createTestComponent();
-        expect(
-            screen.queryByText(
-                'app.governance.delegateStatementDialog.mainnetSwitch.message',
-            ),
-        ).not.toBeInTheDocument();
-    });
-
-    it('opens the transaction dialog from a non-mainnet wallet once the content changes', async () => {
+    it('opens the transaction dialog once the content changes', async () => {
         const dialogContext = generateDialogContext();
-        setHooks({ chainId: polygon.id, dialogContext });
+        setHooks({ dialogContext });
         createTestComponent();
 
         await userEvent.type(screen.getByRole('textbox'), 'New statement');

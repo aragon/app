@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AlertCard,
     Dialog,
     IconType,
     invariant,
@@ -9,8 +8,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { mainnet } from 'viem/chains';
-import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDelegateStatement } from '@/shared/api/delegateStatementService';
 import {
     type IDialogComponentProps,
@@ -43,14 +40,12 @@ export const DelegateStatementDialog: React.FC<
 
     const { close, open } = useDialogContext();
     const { t } = useTranslations();
-    const { chainId } = useWalletAccount();
 
     const { data: existingStatement } = useDelegateStatement(
         { cid: existingCid ?? '' },
         { enabled: existingCid != null && existingCid.length > 0 },
     );
 
-    const isOnMainnet = chainId === mainnet.id;
     const initialContent = existingStatement?.content ?? '';
 
     const defaultValues = useMemo<IDelegateStatementFormData>(
@@ -103,16 +98,6 @@ export const DelegateStatementDialog: React.FC<
                 title={t('app.governance.delegateStatementDialog.title')}
             />
             <Dialog.Content className="flex w-full flex-col gap-4 pt-4 pb-6">
-                {!isOnMainnet && (
-                    <div>
-                        <AlertCard
-                            message={t(
-                                'app.governance.delegateStatementDialog.mainnetSwitch.message',
-                            )}
-                            variant="warning"
-                        />
-                    </div>
-                )}
                 <TextAreaRichText
                     helpText={t(
                         'app.governance.delegateStatementDialog.content.helpText',
