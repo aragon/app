@@ -133,13 +133,22 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
             merged.push(member);
         }
 
-        return merged.slice(0, memberList.length);
+        return merged;
     }, [memberList, connectedUserMember, delegateMember, hasValidDelegate]);
+
+    // Pinned members that aren't yet indexed in the backend's paginated response
+    // (live single-fetch sees them, but `/v2/members` doesn't) push the rendered
+    // count above `itemsCount` from the API. Surface the larger of the two so the
+    // "X of Y" counter matches what's actually on screen and never shrinks below it.
+    const adjustedItemsCount = Math.max(
+        itemsCount ?? 0,
+        mergedMemberList?.length ?? 0,
+    );
 
     return (
         <DataListRoot
             entityLabel={t('app.plugins.token.tokenMemberList.entity')}
-            itemsCount={itemsCount}
+            itemsCount={adjustedItemsCount}
             onLoadMore={onLoadMore}
             pageSize={pageSize}
             state={state}

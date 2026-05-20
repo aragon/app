@@ -28,20 +28,28 @@ class ProxyUtils {
         const isProd = env === 'production' || env === 'staging';
         const isLocal = env === 'local';
 
-        // List of hosts to allow to embed the App in an `iframe`. For now, we
-        // only have Common Ground app as a one-off experiment. If we get more
-        // similar requests, let's move this to an environment variable.
-        const allowedInFrameHosts = ['https://app.cg'];
-        const allowedInFrameHostsNonProd = ['https://vercel.live'];
+        // Hosts allowed to embed THIS app in an iframe → frame-ancestors.
+        // Currently only Common Ground (one-off experiment).
+        const iframeEmbedders = ['https://app.cg'];
+        const iframeEmbeddersNonProd: string[] = [];
+
+        // Third-party iframes THIS app is allowed to render → frame-src.
+        // WalletConnect's verify.walletconnect.org is loaded as a child iframe
+        // by the WC SDK to attest origin/session when the user scans the QR.
+        const embeddableHosts = ['https://verify.walletconnect.org'];
+        const embeddableHostsNonProd = ['https://vercel.live'];
 
         const scriptSrc = isProd
             ? `'strict-dynamic'`
             : isLocal
               ? `'unsafe-eval'`
               : 'https://vercel.live';
+        const frameAncestors = isProd
+            ? iframeEmbedders.join(' ')
+            : [...iframeEmbedders, ...iframeEmbeddersNonProd].join(' ');
         const frameSrc = isProd
-            ? allowedInFrameHosts.join(' ')
-            : [...allowedInFrameHosts, ...allowedInFrameHostsNonProd].join(' ');
+            ? embeddableHosts.join(' ')
+            : [...embeddableHosts, ...embeddableHostsNonProd].join(' ');
         const fontSrc = isProd ? '' : ' https://vercel.live';
 
         const policies = [
@@ -54,7 +62,7 @@ class ProxyUtils {
             "object-src 'self'",
             "base-uri 'self'",
             "form-action 'self'",
-            `frame-ancestors ${frameSrc}`,
+            `frame-ancestors ${frameAncestors}`,
             `frame-src ${frameSrc}`,
             'upgrade-insecure-requests',
         ];

@@ -10,6 +10,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     CampaignPayoutType,
     type ICapitalDistributorCreateCampaignFormData,
@@ -31,6 +32,12 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
 > = (props) => {
     const { fieldPrefix, daoId } = props;
     const { t } = useTranslations();
+
+    const escrowResolverRegistered =
+        pluginRegistryUtils.getSlotFunction({
+            slotId: CapitalFlowDaoSlotId.CAPITAL_DISTRIBUTOR_VOTING_ESCROW_ADDRESS,
+            pluginId: daoId,
+        }) != null;
 
     const escrowAddress = useSlotSingleFunction<
         ICapitalDistributorVotingEscrowAddressParams,
@@ -54,6 +61,10 @@ export const CapitalDistributorCampaignPayoutField: React.FC<
     >({
         name: `${fieldPrefix}.payoutType`,
     });
+
+    if (!escrowResolverRegistered) {
+        return null;
+    }
 
     const showError =
         payoutType === CampaignPayoutType.VE_LOCK_ENCODER &&

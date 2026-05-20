@@ -4,7 +4,8 @@ import {
     formatterUtils,
 } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
-import { useConnection, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
@@ -39,7 +40,7 @@ export const useTokenPermissionCheckVoteSubmission = (
 ): IPermissionCheckGuardResult => {
     const { plugin, proposal } = params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
 
     const { symbol: tokenSymbol } = plugin.settings.token;

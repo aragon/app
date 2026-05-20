@@ -4,19 +4,13 @@ import { Button, Card, IconType, InputContainer } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    cryptex,
-    cryptexTokenVotingPluginAddress,
-    tokenVotingRewardsTest,
-    tokenVotingRewardsTestTokenVotingPluginAddress,
-} from '../../constants';
+import { cryptex, cryptexTokenVotingPluginAddress } from '../../constants';
 import { CryptexDialogId } from '../../constants/cryptexDialogId';
 import type { ICryptexMembersFileDownloadDialogParams } from '../../dialogs/cryptexMembersFileDownloadDialog';
 import type { ICryptexMembersFileDownloadProps } from './cryptexMembersFileDownload.api';
 
 const tokenVotingPluginAddresses: Record<string, `0x${string}`> = {
     [cryptex.id]: cryptexTokenVotingPluginAddress,
-    [tokenVotingRewardsTest.id]: tokenVotingRewardsTestTokenVotingPluginAddress,
 };
 
 export const CryptexMembersFileDownload: React.FC<

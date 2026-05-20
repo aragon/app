@@ -187,10 +187,11 @@
                         "paths": {
                             "wagmi": {
                                 "importNames": [
+                                    "useConnection",
                                     "useEnsAvatar",
                                     "useEnsName"
                                 ],
-                                "message": "Import ENS hooks from @/modules/ens instead. They provide consistent chainId, caching, monitoring, and app-level wrappers. Add biome-ignore with reason if direct wagmi access is needed."
+                                "message": "Import ENS hooks from @/modules/ens, wallet account state (address/chainId) from @/modules/application/hooks/useWalletAccount, and connection-gating from @/modules/application/hooks/useWalletConnected. Add biome-ignore with reason if direct wagmi access is needed."
                             }
                         }
                     }

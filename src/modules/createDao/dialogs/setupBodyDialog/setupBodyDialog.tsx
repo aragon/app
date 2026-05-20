@@ -1,6 +1,6 @@
 import { addressUtils, invariant } from '@aragon/gov-ui-kit';
 import { useMemo } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { daoProcessDetailsClientUtils } from '@/modules/settings/pages/daoProcessDetailsPage';
 import { useDao } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -33,7 +33,7 @@ export const SetupBodyDialog: React.FC<ISetupBodyDialogProps> = (props) => {
     const { onSubmit, initialValues, isSubPlugin, daoId } = location.params;
 
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 

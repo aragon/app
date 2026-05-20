@@ -6,7 +6,7 @@ import {
     MemberDataListItem,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type {
     IGetMemberListParams,
@@ -69,7 +69,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     const { daoId } = initialParams.queryParams;
 
     const { t } = useTranslations();
-    const { address: connectedAddress } = useConnection();
+    const { address: connectedAddress } = useWalletAccount();
 
     // Always use the parent DAO for the UI context (member URLs, etc.).
     // The parent DAO is server-side prefetched → always a cache hit.
@@ -146,6 +146,15 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
         return [paginatedEntry ?? connectedUserMember, ...rest];
     }, [memberList, connectedUserMember]);
 
+    // Pinned connected user not in the paginated response (live single-fetch sees
+    // them, `/v2/members` doesn't) pushes the rendered count above `itemsCount`
+    // from the API. Surface the larger of the two so the "X of Y" counter matches
+    // what's actually on screen.
+    const adjustedItemsCount = Math.max(
+        itemsCount ?? 0,
+        mergedMemberList?.length ?? 0,
+    );
+
     const processedLayoutClassNames =
         layoutClassNames ?? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3';
 
@@ -157,7 +166,7 @@ export const DaoMemberListDefault: React.FC<IDaoMemberListDefaultProps> = (
     return (
         <DataListRoot
             entityLabel={t('app.governance.daoMemberList.entity')}
-            itemsCount={itemsCount}
+            itemsCount={adjustedItemsCount}
             onLoadMore={onLoadMore}
             pageSize={pageSize}
             state={state}
@@ -199,13 +208,16 @@ const EnsAwareMemberItem: React.FC<{
     const { member, href, onClick } = props;
     const { data: ensName } = useEnsName(member.address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
+    const { data: displayName } = useEnsName(member.address, {
+        stripAragonRegistrySuffix: true,
+    });
 
     return (
         <MemberDataListItem.Structure
             address={member.address}
             avatarSrc={ensAvatar ?? undefined}
             className="min-w-0"
-            ensName={ensName ?? undefined}
+            ensName={displayName ?? undefined}
             href={href}
             onClick={onClick}
         />

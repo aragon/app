@@ -3,8 +3,8 @@
 import classNames from 'classnames';
 import Image from 'next/image';
 import { useMemo } from 'react';
-import { useConnection } from 'wagmi';
 import { twkEverett } from '@/daos/xmaquina/assets/fonts/twkEverett';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsName } from '@/modules/ens';
 import { Carousel } from '@/shared/components/carousel';
 import { Container } from '@/shared/components/container';
@@ -21,7 +21,7 @@ export const XmaquinaPageHeader: React.FC<IXmaquinaPageHeaderProps> = (
     props,
 ) => {
     const { dao, className, ...otherProps } = props;
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: ensName } = useEnsName(address);
 
     const { t } = useTranslations();

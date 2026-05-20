@@ -4,7 +4,9 @@ import type { TransactionStatusState } from '../transactionStatus';
 
 export class TransactionDialogUtils {
     private ignoreErrors = [
-        'User rejected the request', // Error caused by user rejecting the transaction on their wallet
+        'User rejected the request', // Standard wallet rejection (MetaMask, WalletConnect, …)
+        'Signing aborted by user', // Opera wallet rejection
+        'User denied transaction signature', // Older wallet variants
     ];
 
     queryToStepState = (

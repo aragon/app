@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { governanceService } from '@/modules/governance/api/governanceService';
 import type { IDaoProposalPageParams } from '@/modules/governance/types';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoService } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -43,7 +44,11 @@ class GovernanceMetadataUtils {
                 type: 'article',
             });
         } catch (error: unknown) {
-            monitoringUtils.logError(error);
+            // Suppress notFound: the page renders an empty/404 state for arbitrary URLs
+            // (bots, stale links) — these aren't bugs and would flood Sentry.
+            if (!AragonBackendServiceError.isNotFoundError(error)) {
+                monitoringUtils.logError(error);
+            }
 
             return metadataUtils.buildMetadata({
                 title: 'Proposal not found',

@@ -2,7 +2,7 @@
 
 import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useConnection, useEnsAddress, useReadContracts } from 'wagmi';
+import { useEnsAddress, useReadContracts } from 'wagmi';
 import {
     ensChainId,
     memberRegistryAbi,
@@ -15,6 +15,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 /** Maximum character length allowed for a subdomain label. */
 const subdomainMaxLength = 50;
@@ -25,6 +26,9 @@ const subdomainMinLength = 3;
  * must not start or end with a hyphen.
  */
 const ensLabelPattern = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
+
+/** Allowed characters for an ENS label, ignoring position constraints. */
+const ensLabelAllowedCharsPattern = /^[a-z0-9-]+$/;
 
 interface IFormData {
     /** ENS subdomain label to claim, e.g. "alice". */
@@ -44,7 +48,7 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { data: registryData, isLoading: isCheckingRegistration } =
         useReadContracts({
@@ -91,11 +95,18 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
             required: true,
             maxLength: subdomainMaxLength,
             minLength: subdomainMinLength,
-            pattern: {
-                value: ensLabelPattern,
-                message: t(
-                    'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidFormat',
-                ),
+            validate: (value) => {
+                if (!ensLabelAllowedCharsPattern.test(value)) {
+                    return t(
+                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidChars',
+                    );
+                }
+                if (!ensLabelPattern.test(value)) {
+                    return t(
+                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidBoundary',
+                    );
+                }
+                return true;
             },
         },
         sanitizeOnBlur: true,

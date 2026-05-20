@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import type { Hex } from 'viem';
-import { useConnection, useSimulateContract } from 'wagmi';
+import { useSimulateContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { LockToVotePluginDialogId } from '../../constants/lockToVotePluginDialogId';
@@ -36,7 +37,7 @@ export const useUnlockGuard = (params: IUseUnlockGuardParams) => {
     const { lockManagerAddress } = plugin;
 
     const { open } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { id: chainId } = networkDefinitions[token.network];
 

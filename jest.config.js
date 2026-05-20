@@ -8,6 +8,7 @@ const config = {
         '/\\.claude/hooks/',
     ],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
+    maxWorkers: '70%',
     coveragePathIgnorePatterns: [
         '.d.ts',
         '.api.ts',
