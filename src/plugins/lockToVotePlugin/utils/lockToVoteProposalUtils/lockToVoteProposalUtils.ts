@@ -1,13 +1,22 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import type { IProposal } from '@/modules/governance/api/governanceService';
+import type {
+    ISppStagePlugin,
+    ISppStagePluginInternal,
+} from '@/plugins/sppPlugin/types';
 import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUtils';
+import { type IDaoPlugin, PluginInterfaceType } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
 import {
     type ITokenProposalOptionVotes,
     VoteOption,
 } from '../../../tokenPlugin/types';
-import type { ILockToVoteProposal } from '../../types';
+import type {
+    ILockToVotePluginSettings,
+    ILockToVoteProposal,
+} from '../../types';
 
 class LockToVoteProposalUtils {
     getProposalStatus = (proposal: ILockToVoteProposal): ProposalStatus => {
@@ -132,12 +141,21 @@ class LockToVoteProposalUtils {
         return parsedVotingPower;
     };
 
-    getProposalTokenTotalSupply = (proposal: ILockToVoteProposal) => {
-        const { historicalTotalSupply, token } = proposal.settings;
-        // Fallback to the token total-supply as some plugins (e.g. lock-to-vote) do not use snapshot votes.
-        const totalSupply = historicalTotalSupply ?? token.totalSupply;
+    isLockToVoteProposal = (
+        proposal: IProposal,
+    ): proposal is ILockToVoteProposal =>
+        proposal.pluginInterfaceType === PluginInterfaceType.LOCK_TO_VOTE;
 
-        return totalSupply;
+    isLockToVoteStagePlugin = (
+        plugin: ISppStagePlugin,
+    ): plugin is ISppStagePluginInternal &
+        IDaoPlugin<ILockToVotePluginSettings> =>
+        plugin.interfaceType === PluginInterfaceType.LOCK_TO_VOTE;
+
+    getProposalTokenTotalSupply = (proposal: ILockToVoteProposal) => {
+        const tokenAddress = proposal.settings.token.address.toLowerCase();
+
+        return proposal.tokensTotalSupply[tokenAddress];
     };
 }
 

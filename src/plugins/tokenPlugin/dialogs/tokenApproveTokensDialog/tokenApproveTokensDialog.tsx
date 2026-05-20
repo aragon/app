@@ -2,7 +2,7 @@
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -68,7 +68,7 @@ export const TokenApproveTokensDialog: React.FC<
         transactionInfo,
     } = location.params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(
         address != null,
         'TokenApproveTokensDialog: user must be connected.',

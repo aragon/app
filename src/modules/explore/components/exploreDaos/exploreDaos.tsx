@@ -2,7 +2,7 @@
 
 import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -22,7 +22,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
     const { initialParams } = props;
 
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const [daoFilter, setDaoFilter] = useFilterUrlParam({
         name: exploreDaoFilterParam,

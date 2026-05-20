@@ -2,8 +2,8 @@ import { Button, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { formatUnits, parseUnits } from 'viem';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     AssetInput,
     type IAssetInputFormData,
@@ -66,7 +66,7 @@ export const GaugeVoterLockForm: React.FC<IGaugeVoterLockFormProps> = (
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 

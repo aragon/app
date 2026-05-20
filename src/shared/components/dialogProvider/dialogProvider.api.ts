@@ -20,7 +20,7 @@ export interface IDialogLocationOptions<
      */
     disableOutsideClick?: boolean;
     /**
-     * Determines whether interactions with elements outside of the dialog will be disabled.
+     * Determines whether interactions with elements outside the dialog will be disabled.
      */
     modal?: IDialogRootProps['modal'];
     /**

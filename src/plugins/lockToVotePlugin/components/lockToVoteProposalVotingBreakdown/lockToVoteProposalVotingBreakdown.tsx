@@ -32,8 +32,6 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
     const { symbol, decimals } = proposal.settings.token;
     const { minParticipation, supportThreshold } = proposal.settings;
 
-    const totalSupply =
-        lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal);
     const yesVotes = lockToVoteProposalUtils.getOptionVotingPower(
         proposal,
         VoteOption.YES,
@@ -47,6 +45,13 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
         VoteOption.ABSTAIN,
     );
 
+    const tokenTotalSupply = formatUnits(
+        bigIntUtils.safeParse(
+            lockToVoteProposalUtils.getProposalTokenTotalSupply(proposal),
+        ),
+        decimals,
+    );
+
     return (
         <ProposalVoting.BreakdownToken
             isVeto={isVeto}
@@ -57,10 +62,7 @@ export const LockToVoteProposalVotingBreakdown: React.FC<
                 supportThreshold,
             )}
             tokenSymbol={symbol}
-            tokenTotalSupply={formatUnits(
-                bigIntUtils.safeParse(totalSupply),
-                decimals,
-            )}
+            tokenTotalSupply={tokenTotalSupply}
             totalAbstain={abstainVotes}
             totalNo={noVotes}
             totalYes={yesVotes}

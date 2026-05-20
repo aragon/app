@@ -9,9 +9,9 @@ import {
     MemberAvatar,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import { useDisconnect } from '@reown/appkit/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useConnection, useDisconnect } from 'wagmi';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
 import { exploreDaosSectionId } from '@/modules/explore/pages/exploreDaosPage';
@@ -22,6 +22,7 @@ import {
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IUserDialogProps extends IDialogComponentProps {}
 
@@ -33,8 +34,8 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { close, open } = useDialogContext();
     const { isEnabled } = useFeatureFlags();
     const isAragonProfileEnabled = isEnabled('aragonProfiles');
-    const { address, chainId } = useConnection();
-    const disconnect = useDisconnect();
+    const { address, chainId } = useWalletAccount();
+    const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
@@ -64,7 +65,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             params: { mode: 'edit' },
         });
 
-    const handleDisconnect = () => disconnect.mutate();
+    const handleDisconnect = () => void disconnect();
 
     const handleMyDaosClick = () => {
         router.push(

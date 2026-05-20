@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { erc20Abi, type Hex } from 'viem';
-import { useConnection, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
@@ -21,7 +22,7 @@ export const useTokenCheckTokenAllowance = (
     const { spender, token } = props;
 
     const queryClient = useQueryClient();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { id: chainId } = networkDefinitions[token.network];
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { invariant } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -45,7 +45,7 @@ export const CapitalDistributorClaimDialog: React.FC<
     );
     const { campaign, plugin, network } = location.params;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
     const { open } = useDialogContext();
 

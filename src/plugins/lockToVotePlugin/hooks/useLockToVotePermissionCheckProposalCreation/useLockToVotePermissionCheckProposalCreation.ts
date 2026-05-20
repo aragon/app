@@ -2,7 +2,8 @@
 
 import { formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { formatUnits, type Hex } from 'viem';
-import { useConnection, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
@@ -32,7 +33,7 @@ export const useLockToVotePermissionCheckProposalCreation = (
     params: ILockToVotePermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult => {
     const { plugin, daoId, useConnectedUserInfo = true } = params;
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { t } = useTranslations();
 
     const { lockedAmount, isLoading: isLoadingLockToVoteData } =

@@ -1,6 +1,6 @@
 'use client';
 
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { TokenMemberListBase } from '@/plugins/tokenPlugin/components/tokenMemberList/tokenMemberListBase';
 import { useLockToVoteLockOnboardingCheck } from '../../hooks/useLockToVoteLockOnboardingCheck';
@@ -22,7 +22,7 @@ export const LockToVoteMemberList: React.FC<ILockToVoteMemberListProps> = (
     const { token } = plugin.settings;
     const { daoId } = initialParams.queryParams;
 
-    const { address: userAddress } = useConnection();
+    const { address: userAddress } = useWalletAccount();
 
     const { shouldTrigger: showLockCard } = useLockToVoteLockOnboardingCheck({
         lockManagerAddress: plugin.lockManagerAddress,
