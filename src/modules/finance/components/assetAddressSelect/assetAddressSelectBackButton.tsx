@@ -20,9 +20,9 @@ export const AssetAddressSelectBackButton: React.FC<
             className={classNames(
                 'group flex w-full items-center gap-3 rounded-xl bg-transparent px-4 py-3 text-base text-neutral-500 leading-tight transition-colors',
                 // Default bg transparent; hover/focus use neutral-800 @ 4%, active @ 8%
-                'hover:bg-neutral-800/4 active:bg-neutral-800/8',
-                'focus-visible:bg-neutral-800/4 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-200 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-0',
+                'focus-ring-primary hover:bg-neutral-800/4 active:bg-neutral-800/8',
                 'md:gap-4 md:px-6 md:py-5 md:text-lg',
+
                 className,
             )}
             type={type}

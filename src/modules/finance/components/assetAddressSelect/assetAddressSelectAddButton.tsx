@@ -18,8 +18,7 @@ export const AssetAddressSelectAddButton: React.FC<
             className={classNames(
                 'group flex w-full cursor-pointer items-center gap-3 rounded-xl bg-transparent px-4 py-3 text-base text-primary-400 leading-tight transition-colors',
                 // Default bg is transparent; hover/focus use primary-400 @ 4%, active @ 8%
-                'hover:bg-primary-400/4 active:bg-primary-400/8',
-                'focus-visible:bg-primary-400/4 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-primary-200 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-0',
+                'focus-ring-primary hover:bg-primary-400/4 active:bg-primary-400/8',
                 'md:gap-4 md:px-6 md:py-5 md:text-lg',
                 className,
             )}
