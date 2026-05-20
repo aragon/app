@@ -116,7 +116,10 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
             <div className="flex flex-col gap-3 px-8">
                 <div className="flex items-start justify-between">
                     {memberProfileHref != null ? (
-                        <RouterLink href={memberProfileHref}>
+                        <RouterLink
+                            href={memberProfileHref}
+                            onClick={() => close(id)}
+                        >
                             {avatar}
                         </RouterLink>
                     ) : (
