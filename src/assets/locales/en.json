@@ -386,7 +386,7 @@
           "title": "Connected user"
         },
         "createAragonProfile": "Create profile",
-        "description": "Create an profile on ENS so members can recognize you by name across Aragon and other ENS-compatible apps.",
+        "description": "Create a profile on ENS so members can recognize you by name across Aragon and other ENS-compatible apps.",
         "myDaos": "My DAOs"
       },
       "aragonProfileUpdateTransactionDialog": {
@@ -404,7 +404,7 @@
         "successLink": {
           "label": "View your profile"
         },
-        "title": "Update your Aragon profile",
+        "title": "Update your profile",
         "you": "You"
       },
       "aragonProfileClaimSubdomainDialog": {
@@ -440,7 +440,7 @@
           "description": "Confirm the transaction to claim your Aragon name",
           "title": "Claim your Aragon name transaction"
         },
-        "description": "To create your Aragon profile, confirm the transactions on Ethereum Mainnet in your wallet.",
+        "description": "To claim your Aragon name, confirm these transactions on Ethereum Mainnet in your wallet.",
         "submit": "Confirm in wallet",
         "title": "Claim your Aragon name",
         "transactionInfo": "Claim Aragon name"
@@ -464,7 +464,7 @@
       "aragonProfileIntroDialog": {
         "a11y": {
           "description": "Introduction to creating your Aragon profile with an ENS subname",
-          "title": "Create your Aragon profile"
+          "title": "Create your profile"
         },
         "cancel": "Cancel",
         "cta": {
@@ -473,18 +473,18 @@
         },
         "description": {
           "create": "Aragon profiles are built on ENS. Claim an Aragon name, set it as your primary ENS, and add your profile details. Aragon and other ENS-compatible apps will use this as your display name.",
-          "edit": "Aragon profiles use your primary ENS. Changes you make here update your ENS records so they can appear in Aragon and other ENS-compatible apps."
+          "edit": "Aragon profiles use your primary ENS. Changes you make here update your ENS records so they appear in Aragon and other ENS-compatible apps."
         },
         "title": {
-          "create": "Create your Aragon profile",
-          "edit": "Edit your Aragon profile"
+          "create": "Create your profile",
+          "edit": "Edit your profile"
         }
       },
       "aragonProfileDialog": {
         "a11y": {
-          "description": "Update your Aragon profile"
+          "description": "Update your profile"
         },
-        "title": "Edit your Aragon profile",
+        "title": "Edit your profile",
         "description": "Add profile details that could help DAO members recognize you.",
         "fields": {
           "ensName": {
@@ -1913,7 +1913,7 @@
         "emptyState": {
           "action": "Add delegate statement",
           "description": "Explain how you plan to participate in governance for this token so token holders can decide whether to delegate to you.",
-          "heading": "No delegate statement yet"
+          "heading": "You don't have a delegate statement"
         }
       },
       "delegateStatementDialog": {
@@ -1922,12 +1922,12 @@
         "submit": "Save",
         "content": {
           "label": "Statement",
-          "helpText": "Explain your role, priorities, and voting approach for this token. Markdown formatting is supported."
+          "helpText": "Explain your role, priorities, and approach to voting with this token. Markdown formatting is supported."
         }
       },
       "delegateStatementTransactionDialog": {
         "title": "Publish delegate statement",
-        "description": "Aragon will upload your statement to IPFS and update your ENS record so it can be resolved on your profile.",
+        "description": "To push your delegate statement to IPFS and update your ENS record, confirm the transaction on Ethereum mainnet.",
         "submit": "Publish",
         "successLinkLabel": "View profile",
         "step": {
