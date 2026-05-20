@@ -47,6 +47,7 @@ export const AssetAddressSelectItem: React.FC<IAssetAddressSelectItemProps> = (
             onClick={() => onAssetClick?.(asset)}
             symbol={token.symbol || 'UNKNOWN'}
             target={processedTarget}
+            variant="select"
         />
     );
 };
