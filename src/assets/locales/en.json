@@ -2321,16 +2321,19 @@
           },
           "action": {
             "cancel": "Cancel",
-            "equalize": "Equalize",
-            "reset": "Reset",
+            "equalize": "Distribute evenly",
+            "reset": "Clear all",
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power across your selected gauges.",
-            "used": "used"
+            "description": "Set weights to split your voting power across gauges. A gauge with weight 2 receives twice as much of your voting power as a gauge with weight 1.",
+            "header": {
+              "votingPower": "Voting power",
+              "weights": "Weights"
+            }
           },
           "footer": {
-            "yourVotes": "YOUR VOTES"
+            "totalVotingPower": "TOTAL VOTING POWER"
           },
           "title": "Vote"
         },

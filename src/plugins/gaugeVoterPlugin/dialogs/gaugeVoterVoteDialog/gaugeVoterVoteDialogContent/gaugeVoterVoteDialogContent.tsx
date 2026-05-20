@@ -1,3 +1,4 @@
+import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IGauge } from '../../../api/gaugeVoterService/domain';
 import { GaugeVoterVoteDialogItem } from '../gaugeVoterVoteDialogItem';
 
@@ -7,17 +8,11 @@ export interface IGaugeVoteAllocation {
      */
     gauge: IGauge;
     /**
-     * Percentage value (0-100) to allocate.
+     * Relative weight allocated to this gauge (scaled by 10^WEIGHT_PRECISION). The contract
+     * normalizes weights against the sum, so absolute magnitudes are irrelevant — only the
+     * ratio between gauges matters.
      */
-    percentage: number;
-    /**
-     * Votes previously applied.
-     */
-    existingVotes: bigint;
-    /**
-     * Votes previously applied, formatted.
-     */
-    formattedExistingVotes: string;
+    weight: bigint;
 }
 
 export interface IGaugeVoterVoteDialogContentProps {
@@ -34,18 +29,50 @@ export interface IGaugeVoterVoteDialogContentProps {
      */
     tokenSymbol?: string;
     /**
-     * Whether the user has modified allocations.
+     * Handler for updating vote weight.
      */
-    hasModified: boolean;
-    /**
-     * Handler for updating vote percentage.
-     */
-    onUpdatePercentage: (gaugeAddress: string, newPercentage: number) => void;
+    onUpdateWeight: (gaugeAddress: string, weight: bigint) => void;
     /**
      * Handler for removing a gauge.
      */
     onRemoveGauge: (gaugeAddress: string) => void;
 }
+
+const SHARE_DECIMALS = 2;
+const SHARE_TOTAL_QUANTA = BigInt(10 ** (SHARE_DECIMALS + 2));
+
+const computeHamiltonShares = (weights: bigint[]): number[] => {
+    const totalWeight = weights.reduce((sum, w) => sum + w, BigInt(0));
+    if (totalWeight === BigInt(0)) {
+        return weights.map(() => 0);
+    }
+
+    const scaled = weights.map((w) => w * SHARE_TOTAL_QUANTA);
+    const floors = scaled.map((sw) => sw / totalWeight);
+    const remainders = scaled.map((sw) => sw % totalWeight);
+
+    const sumFloors = floors.reduce((s, f) => s + f, BigInt(0));
+    const leftover = Number(SHARE_TOTAL_QUANTA - sumFloors);
+
+    const ranked = remainders
+        .map((r, i) => ({ r, i }))
+        .sort((a, b) => {
+            if (a.r > b.r) {
+                return -1;
+            }
+            if (a.r < b.r) {
+                return 1;
+            }
+            return 0;
+        });
+
+    const adjusted = [...floors];
+    for (let k = 0; k < leftover; k++) {
+        adjusted[ranked[k].i] += BigInt(1);
+    }
+
+    return adjusted.map((q) => Number(q) / 10 ** SHARE_DECIMALS);
+};
 
 export const GaugeVoterVoteDialogContent: React.FC<
     IGaugeVoterVoteDialogContentProps
@@ -54,29 +81,50 @@ export const GaugeVoterVoteDialogContent: React.FC<
         voteAllocations,
         totalVotingPower,
         tokenSymbol,
-        hasModified,
-        onUpdatePercentage,
+        onUpdateWeight,
         onRemoveGauge,
     } = props;
 
+    const { t } = useTranslations();
+
+    const displayShares = computeHamiltonShares(
+        voteAllocations.map((a) => a.weight),
+    );
+    const anyWeightSet = displayShares.some((s) => s > 0);
+
     return (
-        <div className="flex flex-col gap-4">
-            {voteAllocations.map((allocation) => (
-                <GaugeVoterVoteDialogItem
-                    existingVotes={allocation.existingVotes}
-                    formattedExistingVotes={allocation.formattedExistingVotes}
-                    gaugeAddress={allocation.gauge.address}
-                    gaugeAvatar={allocation.gauge.avatar}
-                    gaugeName={allocation.gauge.name}
-                    hasModified={hasModified}
-                    key={allocation.gauge.address}
-                    onRemove={onRemoveGauge}
-                    onUpdatePercentage={onUpdatePercentage}
-                    percentage={allocation.percentage}
-                    tokenSymbol={tokenSymbol}
-                    totalVotingPower={totalVotingPower}
-                />
-            ))}
+        <div className="flex flex-col gap-2">
+            <div className="hidden gap-3 pr-4 md:flex md:items-center md:justify-end">
+                <span className="w-32 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
+                    {t(
+                        'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.votingPower',
+                    )}
+                </span>
+                <span className="w-40 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
+                    {t(
+                        'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.weights',
+                    )}
+                </span>
+                <span aria-hidden="true" className="w-9" />
+            </div>
+            <div className="flex flex-col gap-4">
+                {voteAllocations.map((allocation, index) => (
+                    <GaugeVoterVoteDialogItem
+                        displayShare={
+                            anyWeightSet ? displayShares[index] : null
+                        }
+                        gaugeAddress={allocation.gauge.address}
+                        gaugeAvatar={allocation.gauge.avatar}
+                        gaugeName={allocation.gauge.name}
+                        key={allocation.gauge.address}
+                        onRemove={onRemoveGauge}
+                        onUpdateWeight={onUpdateWeight}
+                        tokenSymbol={tokenSymbol}
+                        totalVotingPower={totalVotingPower}
+                        weight={allocation.weight}
+                    />
+                ))}
+            </div>
         </div>
     );
 };

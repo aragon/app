@@ -8,6 +8,11 @@ import {
     InputNumber,
     NumberFormat,
 } from '@aragon/gov-ui-kit';
+import { formatUnits, parseUnits } from 'viem';
+
+const WEIGHT_PRECISION = 2;
+
+const WEIGHT_MAX = 1000;
 
 export interface IGaugeVoterVoteDialogItemProps {
     /**
@@ -23,17 +28,14 @@ export interface IGaugeVoterVoteDialogItemProps {
      */
     gaugeAvatar?: string | null;
     /**
-     * The current percentage allocation for this gauge.
+     * The current relative weight for this gauge (scaled by 10^WEIGHT_PRECISION).
      */
-    percentage: number;
+    weight: bigint;
     /**
-     * The user's existing votes for this gauge (BigInt).
+     * This row's share as a percentage (e.g. 33.34), already adjusted by Hamilton's
+     * largest-remainder method so the set sums to 100. `null` means no share line.
      */
-    existingVotes: bigint;
-    /**
-     * The user's existing votes for this gauge (formatted string).
-     */
-    formattedExistingVotes: string;
+    displayShare: number | null;
     /**
      * Total voting power available to the user.
      */
@@ -43,13 +45,9 @@ export interface IGaugeVoterVoteDialogItemProps {
      */
     tokenSymbol?: string;
     /**
-     * Whether the user has modified allocations.
+     * Handler for updating the vote weight.
      */
-    hasModified: boolean;
-    /**
-     * Handler for updating the vote percentage.
-     */
-    onUpdatePercentage: (gaugeAddress: string, newPercentage: number) => void;
+    onUpdateWeight: (gaugeAddress: string, weight: bigint) => void;
     /**
      * Handler for removing this gauge from the vote list.
      */
@@ -63,13 +61,11 @@ export const GaugeVoterVoteDialogItem: React.FC<
         gaugeAddress,
         gaugeName,
         gaugeAvatar,
-        percentage,
-        existingVotes,
-        formattedExistingVotes,
+        weight,
+        displayShare,
         totalVotingPower,
         tokenSymbol,
-        hasModified,
-        onUpdatePercentage,
+        onUpdateWeight,
         onRemove,
     } = props;
 
@@ -81,17 +77,14 @@ export const GaugeVoterVoteDialogItem: React.FC<
         </span>
     );
 
-    // Calculate display votes based on whether user has modified allocations
-    const calculatedVotes = (percentage / 100) * totalVotingPower;
-    const displayVotes = hasModified
-        ? formatterUtils.formatNumber(calculatedVotes, {
-              format: NumberFormat.TOKEN_AMOUNT_SHORT,
-          })
-        : formattedExistingVotes;
+    const calculatedVotes =
+        displayShare != null ? (displayShare / 100) * totalVotingPower : 0;
+    const displayVotes = formatterUtils.formatNumber(calculatedVotes, {
+        format: NumberFormat.TOKEN_AMOUNT_SHORT,
+    });
 
-    // Only show token amount if there are votes (either existing or newly allocated)
-    const hasVotes = hasModified ? calculatedVotes > 0 : existingVotes > 0;
-    const showTokenAmount = hasVotes && displayVotes && displayVotes !== '0';
+    const showTokenAmount =
+        weight > BigInt(0) && displayVotes && displayVotes !== '0';
 
     return (
         <DataList.Item className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
@@ -122,21 +115,39 @@ export const GaugeVoterVoteDialogItem: React.FC<
                 />
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
-                {showTokenAmount && (
-                    <span className="text-base text-neutral-800">
-                        {displayVotes} {tokenSymbol}
-                    </span>
-                )}
+                <div className="flex flex-col items-end md:w-32">
+                    {displayShare != null && (
+                        <span className="font-semibold text-base text-neutral-800">
+                            {displayShare.toFixed(2)}%
+                        </span>
+                    )}
+                    {showTokenAmount && (
+                        <span className="text-neutral-500 text-sm">
+                            {displayVotes} {tokenSymbol}
+                        </span>
+                    )}
+                </div>
 
                 <InputNumber
-                    className="w-full md:max-w-40 md:flex-initial"
-                    max={100}
+                    className="w-full md:w-40 md:flex-initial"
+                    max={WEIGHT_MAX}
                     min={0}
-                    onChange={(value) =>
-                        onUpdatePercentage(gaugeAddress, Number(value))
-                    }
-                    suffix="%"
-                    value={percentage.toString()}
+                    onChange={(value) => {
+                        const parsed = parseUnits(
+                            value || '0',
+                            WEIGHT_PRECISION,
+                        );
+                        const capped =
+                            parsed >
+                            parseUnits(String(WEIGHT_MAX), WEIGHT_PRECISION)
+                                ? parseUnits(
+                                      String(WEIGHT_MAX),
+                                      WEIGHT_PRECISION,
+                                  )
+                                : parsed;
+                        onUpdateWeight(gaugeAddress, capped);
+                    }}
+                    value={formatUnits(weight, WEIGHT_PRECISION)}
                 />
 
                 <Button
