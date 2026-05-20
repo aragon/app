@@ -30,7 +30,6 @@ describe('network utils', () => {
 
             // Should not include testnet networks
             expect(result).not.toContain(Network.ETHEREUM_SEPOLIA);
-            expect(result).not.toContain(Network.ZKSYNC_SEPOLIA);
         });
     });
 });

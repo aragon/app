@@ -22,10 +22,12 @@ import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { useTokenTotalSupply } from '@/shared/hooks/useTokenTotalSupply';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { dateUtils } from '@/shared/utils/dateUtils';
 import { DaoLockToVoteVotingMode } from '../../types';
+import { lockToVoteSettingsUtils } from '../../utils/lockToVoteSettingsUtils';
 import type { ILockToVoteSetupGovernanceForm } from '../lockToVoteSetupGovernance/lockToVoteSetupGovernance.api';
 
 export interface ILockToVoteProcessBodyFieldProps {
@@ -67,7 +69,7 @@ export const LockToVoteProcessBodyField = (
     const { data: dao } = useDao({ urlParams: daoUrlParams });
 
     const { t } = useTranslations();
-    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const { buildEntityUrl, chainId } = useDaoChain({ network: dao?.network });
 
     const { membership, governance } = body;
 
@@ -86,25 +88,35 @@ export const LockToVoteProcessBodyField = (
         name: tokenName,
         symbol: tokenSymbol,
         decimals: tokenDecimals,
-        totalSupply,
     } = membership.token;
+
+    const { data: totalSupply, isLoading: isTotalSupplyLoading } =
+        useTokenTotalSupply({
+            chainId,
+            address: tokenAddress,
+        });
+
     const { votingMode, supportThreshold, minParticipation, minDuration } =
         governance;
 
     const parsedTotalSupply =
-        totalSupply &&
-        formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals);
+        totalSupply != null
+            ? formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals)
+            : undefined;
     const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
         format: NumberFormat.TOKEN_AMOUNT_LONG,
         fallback: '0',
     });
 
-    const formattedMinParticipation = formatterUtils.formatNumber(
-        minParticipation / 100,
-        {
-            format: NumberFormat.PERCENTAGE_LONG,
-        },
-    );
+    const {
+        minParticipationToken,
+        formattedMinParticipation,
+        formattedMinParticipationToken,
+    } = lockToVoteSettingsUtils.formatMinParticipation({
+        minParticipationPercentage: minParticipation,
+        totalSupply,
+        decimals: tokenDecimals,
+    });
 
     const voteChangeLabel =
         votingMode === DaoLockToVoteVotingMode.VOTE_REPLACEMENT
@@ -189,15 +201,16 @@ export const LockToVoteProcessBodyField = (
                     )}
                 </DefinitionList.Item>
             )}
-            {formattedSupply && Number(formattedSupply) > 0 && (
-                <DefinitionList.Item
-                    term={t(
-                        'app.plugins.lockToVote.lockToVoteProcessBodyField.supplyTerm',
-                    )}
-                >
-                    {formattedSupply} (${tokenSymbol})
-                </DefinitionList.Item>
-            )}
+
+            <DefinitionList.Item
+                term={t(
+                    'app.plugins.lockToVote.lockToVoteProcessBodyField.supplyTerm',
+                )}
+            >
+                {totalSupply != null && Number(totalSupply) > 0
+                    ? `${formattedSupply} ($${tokenSymbol})`
+                    : '-'}
+            </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
                     'app.plugins.lockToVote.lockToVoteProcessBodyField.supportTerm',
@@ -215,12 +228,23 @@ export const LockToVoteProcessBodyField = (
                     'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationTerm',
                 )}
             >
-                {t(
-                    'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinition',
-                    {
-                        minParticipation: formattedMinParticipation,
-                    },
-                )}
+                {isTotalSupplyLoading
+                    ? '-'
+                    : minParticipationToken === 0
+                      ? t(
+                            'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinitionNoToken',
+                            {
+                                minParticipation: formattedMinParticipation,
+                            },
+                        )
+                      : t(
+                            'app.plugins.lockToVote.lockToVoteProcessBodyField.minParticipationDefinition',
+                            {
+                                minParticipation: formattedMinParticipation,
+                                tokenValue: formattedMinParticipationToken,
+                                tokenSymbol,
+                            },
+                        )}
             </DefinitionList.Item>
             {!isAdvancedGovernance && (
                 <DefinitionList.Item

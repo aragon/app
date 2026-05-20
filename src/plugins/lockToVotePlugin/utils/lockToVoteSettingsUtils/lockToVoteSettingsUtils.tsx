@@ -19,6 +19,11 @@ export interface IParseLockToVoteSettingsParams {
      */
     settings: ILockToVotePluginSettings;
     /**
+     * Total supply of the token (fresh value, fetched in real-time). If not
+     * present, only show percentage without token value.
+     */
+    realTimeTotalSupply?: string;
+    /**
      * Defines if the voting is to veto or not.
      */
     isVeto?: boolean;
@@ -28,6 +33,39 @@ export interface IParseLockToVoteSettingsParams {
     t: TranslationFunction;
 }
 
+export interface IFormatMinParticipationParams {
+    /**
+     * Minimum participation expressed as a percentage in the [0, 100] range.
+     */
+    minParticipationPercentage: number;
+    /**
+     * Total token supply used to derive the absolute token amount required to
+     * meet the participation threshold. Accepts a stringified or numeric value;
+     * `undefined`/`null` is treated as `0` so callers can pass live RPC results.
+     */
+    totalSupply: string | number | bigint | null | undefined;
+    /**
+     * Token decimals used to format the absolute token amount.
+     */
+    decimals: number;
+}
+
+export interface IFormatMinParticipationResult {
+    /**
+     * Absolute token amount (in base units) corresponding to the participation
+     * percentage applied to `totalSupply`. `0` when supply is unknown.
+     */
+    minParticipationToken: number;
+    /**
+     * Participation percentage formatted via `NumberFormat.PERCENTAGE_LONG`.
+     */
+    formattedMinParticipation: string | null;
+    /**
+     * Absolute token amount formatted via `NumberFormat.TOKEN_AMOUNT_SHORT`.
+     */
+    formattedMinParticipationToken: string | null;
+}
+
 class LockToVoteSettingsUtils {
     ratioToPercentage = (percentage: number) =>
         tokenSettingsUtils.ratioToPercentage(percentage);
@@ -35,10 +73,39 @@ class LockToVoteSettingsUtils {
     percentageToRatio = (percentage: number) =>
         tokenSettingsUtils.percentageToRatio(percentage);
 
+    formatMinParticipation = (
+        params: IFormatMinParticipationParams,
+    ): IFormatMinParticipationResult => {
+        const { minParticipationPercentage, totalSupply, decimals } = params;
+
+        const formattedMinParticipation = formatterUtils.formatNumber(
+            minParticipationPercentage / 100,
+            { format: NumberFormat.PERCENTAGE_LONG },
+        );
+
+        const minParticipationToken = Math.round(
+            (Number(totalSupply ?? 0) * minParticipationPercentage) / 100,
+        );
+        const parsedMinParticipationToken = formatUnits(
+            bigIntUtils.safeParse(minParticipationToken),
+            decimals,
+        );
+        const formattedMinParticipationToken = formatterUtils.formatNumber(
+            parsedMinParticipationToken,
+            { format: NumberFormat.TOKEN_AMOUNT_SHORT },
+        );
+
+        return {
+            minParticipationToken,
+            formattedMinParticipation,
+            formattedMinParticipationToken,
+        };
+    };
+
     parseSettings = (
         params: IParseLockToVoteSettingsParams,
     ): IDefinitionSetting[] => {
-        const { settings, isVeto, t } = params;
+        const { settings, isVeto, t, realTimeTotalSupply = '0' } = params;
         const {
             supportThreshold,
             minParticipation,
@@ -46,12 +113,9 @@ class LockToVoteSettingsUtils {
             minProposerVotingPower,
             votingMode,
             token,
-            historicalTotalSupply,
         } = settings;
 
-        const { symbol: tokenSymbol, totalSupply, decimals } = token;
-
-        const processedTotalSupply = historicalTotalSupply ?? totalSupply;
+        const { symbol: tokenSymbol, decimals } = token;
 
         const parsedSupportThreshold = this.ratioToPercentage(supportThreshold);
         const formattedApproveThreshold = formatterUtils.formatNumber(
@@ -61,27 +125,16 @@ class LockToVoteSettingsUtils {
             },
         );
 
-        const parsedMinParticipation = this.ratioToPercentage(minParticipation);
-        const formattedMinParticipation = formatterUtils.formatNumber(
-            parsedMinParticipation / 100,
-            {
-                format: NumberFormat.PERCENTAGE_LONG,
-            },
-        );
-
-        const minParticipationToken = Math.round(
-            (Number(processedTotalSupply) * parsedMinParticipation) / 100,
-        );
-        const parsedMinParticipationToken = formatUnits(
-            bigIntUtils.safeParse(minParticipationToken),
+        const {
+            minParticipationToken,
+            formattedMinParticipation,
+            formattedMinParticipationToken,
+        } = this.formatMinParticipation({
+            minParticipationPercentage:
+                this.ratioToPercentage(minParticipation),
+            totalSupply: realTimeTotalSupply,
             decimals,
-        );
-        const formattedMinParticipationToken = formatterUtils.formatNumber(
-            parsedMinParticipationToken,
-            {
-                format: NumberFormat.TOKEN_AMOUNT_SHORT,
-            },
-        );
+        });
 
         const duration = dateUtils.secondsToDuration(minDuration);
         const formattedDuration = t(
@@ -120,14 +173,22 @@ class LockToVoteSettingsUtils {
                 term: t(
                     'app.plugins.lockToVote.lockToVoteGovernanceSettings.minimumParticipation',
                 ),
-                definition: t(
-                    'app.plugins.lockToVote.lockToVoteGovernanceSettings.participation',
-                    {
-                        participation: formattedMinParticipation,
-                        tokenValue: formattedMinParticipationToken,
-                        tokenSymbol,
-                    },
-                ),
+                definition:
+                    minParticipationToken === 0
+                        ? t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.participationNoToken',
+                              {
+                                  participation: formattedMinParticipation,
+                              },
+                          )
+                        : t(
+                              'app.plugins.lockToVote.lockToVoteGovernanceSettings.participation',
+                              {
+                                  participation: formattedMinParticipation,
+                                  tokenValue: formattedMinParticipationToken,
+                                  tokenSymbol,
+                              },
+                          ),
             },
             {
                 term: t(

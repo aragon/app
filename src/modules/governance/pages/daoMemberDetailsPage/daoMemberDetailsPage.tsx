@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
-import { isAddress } from 'viem';
+// biome-ignore lint/style/noRestrictedImports: server component cannot use the gov-ui-kit client shim; called with { strict: false } below.
+import { getAddress, isAddress } from 'viem';
 import { daoOverridesOptions } from '@/shared/api/cmsService';
 import { daoService } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -22,19 +23,26 @@ export const DaoMemberDetailsPage: React.FC<
     IDaoMemberDetailsPageProps
 > = async (props) => {
     const { params } = props;
-    const { address, addressOrEns, network } = await params;
+    const { address: rawAddress, addressOrEns, network } = await params;
 
-    if (!isAddress(address)) {
+    if (!isAddress(rawAddress, { strict: false })) {
         const errorNamespace = 'app.governance.daoMemberDetailsPage.error';
         const actionLink = `/dao/${network}/${addressOrEns}/members`;
 
         return (
             <Page.Error
                 actionLink={actionLink}
-                error={{ name: 'InvalidAddress', message: address }}
+                error={{ name: 'InvalidAddress', message: rawAddress }}
                 errorNamespace={errorNamespace}
             />
         );
+    }
+
+    const address = getAddress(rawAddress);
+
+    if (address !== rawAddress) {
+        const canonicalUrl = `/dao/${network}/${addressOrEns}/members/${address}`;
+        return <RedirectToUrl url={canonicalUrl} />;
     }
 
     const daoId = await daoUtils.resolveDaoId({ addressOrEns, network });

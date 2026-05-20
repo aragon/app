@@ -8,7 +8,6 @@ import {
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
 import type { IMember } from '../../api/governanceService';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { DelegationStatementCard } from '../delegationStatementCard';
 import { DelegationStatsCard } from '../delegationStatsCard';
 
@@ -66,7 +65,6 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
             <PluginFilterComponent
                 plugins={bodiesWithDelegation}
                 renderContent={renderSelectedPlugin}
-                slotId={GovernanceSlotId.GOVERNANCE_MEMBER_PANEL}
             />
         </Page.MainSection>
     );
