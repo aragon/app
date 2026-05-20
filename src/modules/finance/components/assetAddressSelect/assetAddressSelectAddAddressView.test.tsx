@@ -57,17 +57,17 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         expect(onBack).toHaveBeenCalled();
     });
 
-    it('does not enable useToken when input is not a valid address', async () => {
+    it('does not pass an address to useToken when input is not a valid address', async () => {
         render(createTestComponent());
 
         const user = userEvent.setup();
         await user.type(screen.getByRole('searchbox'), 'not-an-address');
 
         const lastCall = useTokenSpy.mock.calls.at(-1);
-        expect(lastCall?.[0].enabled).toBe(false);
+        expect(lastCall?.[0]?.address).toBeUndefined();
     });
 
-    it('enables useToken with the typed address when input is a valid address', async () => {
+    it('passes the typed address to useToken when input is a valid address', async () => {
         render(createTestComponent());
 
         const validAddress = '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0';
@@ -75,13 +75,12 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         await user.type(screen.getByRole('searchbox'), validAddress);
 
         const lastCall = useTokenSpy.mock.calls.at(-1);
-        expect(lastCall?.[0].enabled).toBe(true);
-        expect(lastCall?.[0].address.toLowerCase()).toBe(
+        expect(lastCall?.[0]?.address?.toLowerCase()).toBe(
             validAddress.toLowerCase(),
         );
     });
 
-    it('pre-fills the input and enables useToken on first render when initialAddress is set', () => {
+    it('pre-fills the input and resolves immediately on first render when initialAddress is set', () => {
         const initialAddress =
             '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0' as `0x${string}`;
 
@@ -92,8 +91,7 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         );
 
         const firstCall = useTokenSpy.mock.calls[0];
-        expect(firstCall?.[0].enabled).toBe(true);
-        expect(firstCall?.[0].address).toBe(initialAddress);
+        expect(firstCall?.[0]?.address).toBe(initialAddress);
     });
 
     it('renders the resolved row using token data when useToken returns', async () => {

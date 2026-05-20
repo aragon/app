@@ -227,10 +227,9 @@ describe('<AssetAddressSelect /> component', () => {
             screen.getByText('app.finance.assetAddressSelect.groupTab'),
         ).toBeInTheDocument();
 
-        // useToken was called with the unlisted address and enabled.
+        // useToken was called with the unlisted address.
         const lastTokenCall = useTokenSpy.mock.calls.at(-1);
-        expect(lastTokenCall?.[0].enabled).toBe(true);
-        expect(lastTokenCall?.[0].address.toLowerCase()).toBe(
+        expect(lastTokenCall?.[0]?.address?.toLowerCase()).toBe(
             unlistedAddress.toLowerCase(),
         );
     });
