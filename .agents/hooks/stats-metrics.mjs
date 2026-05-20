@@ -8,7 +8,7 @@
 //   - what is the total token cost
 
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -18,7 +18,10 @@ const percentile = (sorted, p) => {
     if (sorted.length === 0) {
         return 0;
     }
-    const idx = Math.min(sorted.length - 1, Math.ceil((p / 100) * sorted.length) - 1);
+    const idx = Math.min(
+        sorted.length - 1,
+        Math.ceil((p / 100) * sorted.length) - 1,
+    );
     return sorted[Math.max(0, idx)];
 };
 
@@ -73,7 +76,9 @@ const main = () => {
         byRule.set(event.rule, bucket);
     }
 
-    const allElapsed = events.map((event) => event.elapsed_ms).sort((a, b) => a - b);
+    const allElapsed = events
+        .map((event) => event.elapsed_ms)
+        .sort((a, b) => a - b);
     const totalBytes = events.reduce((sum, event) => sum + event.bytes, 0);
 
     const byDay = new Map();
@@ -88,7 +93,9 @@ const main = () => {
     );
 
     process.stdout.write('Per-rule:\n');
-    const ruleRows = [...byRule.entries()].sort((a, b) => b[1].hits - a[1].hits);
+    const ruleRows = [...byRule.entries()].sort(
+        (a, b) => b[1].hits - a[1].hits,
+    );
     for (const [name, bucket] of ruleRows) {
         const sorted = bucket.elapsed.sort((a, b) => a - b);
         const p50 = percentile(sorted, 50);
