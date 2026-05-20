@@ -26,14 +26,17 @@ export const PluginFilterComponent = <
         ...otherProps
     } = props;
 
-    const supportedPlugins = plugins.filter(
-        (plugin) =>
-            plugin.renderContent != null ||
-            pluginRegistryUtils.getSlotComponent({
-                slotId,
-                pluginId: plugin.id,
-            }) != null,
-    );
+    const supportedPlugins =
+        slotId == null
+            ? plugins
+            : plugins.filter(
+                  (plugin) =>
+                      plugin.renderContent != null ||
+                      pluginRegistryUtils.getSlotComponent({
+                          slotId,
+                          pluginId: plugin.id,
+                      }) != null,
+              );
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -81,6 +84,10 @@ export const PluginFilterComponent = <
 
         if (plugin.renderContent != null) {
             return plugin.renderContent();
+        }
+
+        if (slotId == null) {
+            return null;
         }
 
         return (

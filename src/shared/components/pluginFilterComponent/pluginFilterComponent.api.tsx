@@ -42,9 +42,10 @@ export interface IPluginFilterComponentProps<
     TProps extends object = object,
 > {
     /**
-     * Id of the slot component to load.
+     * Id of the slot component to load. Required when using slot-based rendering; omit when
+     * all plugins provide their own renderContent.
      */
-    slotId: SlotId;
+    slotId?: SlotId;
     /**
      * Plugin definitions to load the component from.
      */
