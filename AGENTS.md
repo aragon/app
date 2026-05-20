@@ -2,7 +2,7 @@
 
 Next.js 15 + React 19 + TypeScript plugin-based DAO governance platform. Node >=22, pnpm.
 
-This file is the team-shared agent entry point. A mirror at `CLAUDE.md` covers tools that follow the CLAUDE.md convention. Personal/IC-local agent context lives under `.claude/` (gitignored) and **supplements** — never replaces — what's here.
+This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGENTS.md` so Claude Code picks up the same content. Personal/IC-local agent context lives under `.claude/` (gitignored) and **supplements** — never replaces — what's here.
 
 ## Where things live
 
