@@ -55,10 +55,15 @@ next-env.d.ts
 
 # IDE/AI
 .idea
-.claude
+.claude/**
+!.claude/settings.json
+!.claude/shared/
+!.claude/shared/**
 .vscode
 .zed
 .tempor
-.agents
+.agents/**
+!.agents/shared/
+!.agents/shared/**
 .playwright-mcp
 .patches

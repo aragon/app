@@ -1,7 +1,12 @@
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
     testEnvironment: 'jsdom',
-    testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
+    testPathIgnorePatterns: [
+        '/node_modules/',
+        '/e2e/',
+        '/\\.agents/shared/hooks/',
+        '/\\.claude/shared/hooks/',
+    ],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
     maxWorkers: '70%',
     coveragePathIgnorePatterns: [
