@@ -115,21 +115,21 @@ export const GaugeVoterVoteDialogItem: React.FC<
                 />
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
-                <div className="flex flex-col items-end">
-                    {showTokenAmount && (
-                        <span className="text-base text-neutral-800">
-                            {displayVotes} {tokenSymbol}
+                <div className="flex flex-col items-end md:w-32">
+                    {displayShare != null && (
+                        <span className="font-semibold text-base text-neutral-800">
+                            {displayShare.toFixed(2)}%
                         </span>
                     )}
-                    {displayShare != null && (
+                    {showTokenAmount && (
                         <span className="text-neutral-500 text-sm">
-                            {displayShare.toFixed(2)}%
+                            {displayVotes} {tokenSymbol}
                         </span>
                     )}
                 </div>
 
                 <InputNumber
-                    className="w-full md:max-w-40 md:flex-initial"
+                    className="w-full md:w-40 md:flex-initial"
                     max={WEIGHT_MAX}
                     min={0}
                     onChange={(value) => {
