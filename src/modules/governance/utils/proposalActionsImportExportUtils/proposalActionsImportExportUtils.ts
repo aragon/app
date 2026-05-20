@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import { formatUnits, isAddress, isHex, zeroAddress } from 'viem';
+import { formatUnits, isHex, zeroAddress } from 'viem';
 import {
     type IProposalAction,
     ProposalActionType,
@@ -441,7 +441,10 @@ class ProposalActionsImportExportUtils {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidFormat';
         }
 
-        if (typeof actionObj.to !== 'string' || !isAddress(actionObj.to)) {
+        if (
+            typeof actionObj.to !== 'string' ||
+            !addressUtils.isAddress(actionObj.to)
+        ) {
             return 'app.governance.createProposalForm.actionsImportExport.errors.invalidAddress';
         }
 
