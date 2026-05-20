@@ -93,8 +93,8 @@ export const GaugeVoterVoteDialogContent: React.FC<
     const anyWeightSet = displayShares.some((s) => s > 0);
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="hidden gap-3 px-4 md:flex md:items-center md:justify-end">
+        <div className="flex flex-col gap-1">
+            <div className="hidden gap-3 pr-4 md:flex md:items-center md:justify-end">
                 <span className="w-32 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
                     {t(
                         'app.plugins.gaugeVoter.gaugeVoterVoteDialog.content.header.votingPower',
@@ -107,20 +107,24 @@ export const GaugeVoterVoteDialogContent: React.FC<
                 </span>
                 <span aria-hidden="true" className="w-9" />
             </div>
-            {voteAllocations.map((allocation, index) => (
-                <GaugeVoterVoteDialogItem
-                    displayShare={anyWeightSet ? displayShares[index] : null}
-                    gaugeAddress={allocation.gauge.address}
-                    gaugeAvatar={allocation.gauge.avatar}
-                    gaugeName={allocation.gauge.name}
-                    key={allocation.gauge.address}
-                    onRemove={onRemoveGauge}
-                    onUpdateWeight={onUpdateWeight}
-                    tokenSymbol={tokenSymbol}
-                    totalVotingPower={totalVotingPower}
-                    weight={allocation.weight}
-                />
-            ))}
+            <div className="flex flex-col gap-4">
+                {voteAllocations.map((allocation, index) => (
+                    <GaugeVoterVoteDialogItem
+                        displayShare={
+                            anyWeightSet ? displayShares[index] : null
+                        }
+                        gaugeAddress={allocation.gauge.address}
+                        gaugeAvatar={allocation.gauge.avatar}
+                        gaugeName={allocation.gauge.name}
+                        key={allocation.gauge.address}
+                        onRemove={onRemoveGauge}
+                        onUpdateWeight={onUpdateWeight}
+                        tokenSymbol={tokenSymbol}
+                        totalVotingPower={totalVotingPower}
+                        weight={allocation.weight}
+                    />
+                ))}
+            </div>
         </div>
     );
 };
