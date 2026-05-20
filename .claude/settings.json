@@ -6,7 +6,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "node .claude/hooks/inject-rules.mjs"
+                        "command": "node .claude/shared/hooks/inject-rules.mjs"
                     }
                 ]
             }

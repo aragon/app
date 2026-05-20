@@ -11,8 +11,13 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const SHARED = resolve(REPO_ROOT, '.agents/metrics/hits.jsonl');
+const REPO_ROOT = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '..',
+    '..',
+    '..',
+);
+const SHARED = resolve(REPO_ROOT, '.agents/shared/metrics/hits.jsonl');
 
 const percentile = (sorted, p) => {
     if (sorted.length === 0) {

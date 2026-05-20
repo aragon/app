@@ -4,8 +4,8 @@ const config = {
     testPathIgnorePatterns: [
         '/node_modules/',
         '/e2e/',
-        '/\\.agents/hooks/',
-        '/\\.claude/hooks/',
+        '/\\.agents/shared/hooks/',
+        '/\\.claude/shared/hooks/',
     ],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
     maxWorkers: '70%',

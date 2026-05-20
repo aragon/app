@@ -7,11 +7,11 @@
 // No test writes to the repo working tree, so `git status` stays clean.
 
 import { strict as assert } from 'node:assert/strict';
-import { buildAdditionalContext } from '../../.agents/hooks/inject-rules.mjs';
+import { buildAdditionalContext } from '../../../.agents/shared/hooks/inject-rules.mjs';
 import {
     registerGuardrailsContractSuite,
     registerTmpCleanup,
-} from '../../.agents/hooks/inject-rules.test-helpers.mjs';
+} from '../../../.agents/shared/hooks/inject-rules.test-helpers.mjs';
 
 registerTmpCleanup();
 

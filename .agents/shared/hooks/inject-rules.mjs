@@ -3,7 +3,7 @@
 // roots, matches their `globs` field against the file being edited,
 // and emits matched rule content in the shape an adapter asks for.
 //
-// Spec: .agents/skills/rules/README.md
+// Spec: .agents/shared/skills/rules/README.md
 
 import {
     appendFileSync,
@@ -16,7 +16,7 @@ import {
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-const BUFFER_RELATIVE = '.agents/metrics/.buffer.jsonl';
+const BUFFER_RELATIVE = '.agents/local/metrics/.buffer.jsonl';
 
 export const logEvents = (match, { tool, adapter, elapsed_ms, repoRoot }) => {
     try {
@@ -60,12 +60,9 @@ export const canonicalize = (path) => {
 };
 
 export const DEFAULT_REPO_ROOT = canonicalize(
-    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..'),
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..'),
 );
-export const DEFAULT_RULE_ROOTS = [
-    '.agents/skills/rules',
-    '.claude/skills/rules',
-];
+export const DEFAULT_RULE_ROOTS = ['.agents/shared/skills/rules'];
 export const TRIGGER_TOOLS = new Set(['Edit', 'Write', 'MultiEdit']);
 
 export const parseFrontmatter = (content) => {

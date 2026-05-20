@@ -2,7 +2,7 @@
 
 Prescriptive, path-scoped guardrails that ride on the universal `skills` primitive but are *constraints* on the agent's work, not invocable capabilities. Discriminated from workflow skills by `kind: rule` in frontmatter.
 
-Each rule-skill is a single Markdown file with frontmatter declaring which paths it applies to. The shared loader at `.agents/hooks/inject-rules.mjs` walks both folders below, matches each rule's `globs` field against the file the agent is about to edit, and emits one agent-agnostic rule stream lazily for whichever adapter is calling it.
+Each rule-skill is a single Markdown file with frontmatter declaring which paths it applies to. The shared loader at `.agents/shared/hooks/inject-rules.mjs` walks the rules folder, matches each rule's `globs` field against the file the agent is about to edit, and emits one agent-agnostic rule stream lazily for whichever adapter is calling it.
 
 The frontmatter field is named `globs` to match the convention emerging across agent runtimes (Cursor's `.cursor/rules/` reads `globs:` natively). Our rules live at a different path, so we don't conflict with any harness's native loader — but a contributor who copies a rule to a runtime-conventional location gets pickup for free.
 
@@ -40,28 +40,23 @@ This is deliberately narrow. It proves four things, and no more:
 
 It does **not** claim that every runtime already supports the same local hook mechanism. The point of the spike is that the reusable core is small and testable, even if adapters differ.
 
-## Folders
+## Folder
 
-| Folder | Layer | Tracked |
-|---|---|---|
-| `.agents/skills/rules/` | Shared (commons) | ✓ checked-in |
-| `.claude/skills/rules/` | Local (IC-specific) | gitignored, optional |
-
-The loader merges results additively. Local rules never override shared rules, never appear in PRs, and don't risk breaking other contributors' flows.
+Rules live at `.agents/shared/skills/rules/` and are always checked in. By design there is no per-IC override layer — a rule that's worth firing on every PR is by definition a shared convention, not a personal preference. Personal agent customizations belong elsewhere (`.claude/CLAUDE.md`, IC settings), not in the rule stream.
 
 ## Proof this spike works
 
 If someone asks "is this just a concept doc?" the concrete proof is:
 
-- shared rule files exist in `.agents/skills/rules/`
-- the shared loader exists in `.agents/hooks/inject-rules.mjs`
-- the Claude adapter exists in `.claude/hooks/inject-rules.mjs`
+- shared rule files exist in `.agents/shared/skills/rules/`
+- the shared loader exists in `.agents/shared/hooks/inject-rules.mjs`
+- the Claude adapter exists in `.claude/shared/hooks/inject-rules.mjs`
 - tests prove the generic and Claude paths carry the same injected rule content
 
 Verification commands:
 
 ```sh
-node --test .agents/hooks/*.test.mjs .claude/hooks/*.test.mjs
+node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs
 pnpm test:guardrails
 ```
 
@@ -112,17 +107,17 @@ It only fires for `Edit`, `Write`, and `MultiEdit`. Failures are silent (exit 0)
 
 ### Current adapters
 
-- **Claude Code:** `.claude/hooks/inject-rules.mjs` calls the shared loader on `PreToolUse` and asks for Claude-shaped hook output.
-- **Any other agent or script:** call `.agents/hooks/inject-rules.mjs` directly and consume the same `additionalContext` stream in a different transport shape.
+- **Claude Code:** `.claude/shared/hooks/inject-rules.mjs` calls the shared loader on `PreToolUse` and asks for Claude-shaped hook output.
+- **Any other agent or script:** call `.agents/shared/hooks/inject-rules.mjs` directly and consume the same `additionalContext` stream in a different transport shape.
 
-The intent is agnosticism, not lock-in: the guardrails logic lives in `.agents/`, while agent-specific hook plumbing stays in that agent's local/config surface. Codex and Claude are the current standard-setters, but the rule stream should remain portable beyond them; only the final proprietary wrapper should change.
+The intent is agnosticism, not lock-in: the guardrails logic lives in `.agents/shared/`, while agent-specific hook plumbing stays in that agent's local/config surface. Codex and Claude are the current standard-setters, but the rule stream should remain portable beyond them; only the final proprietary wrapper should change.
 
-For the executable side of the spike, see `.agents/hooks/README.md`.
+For the executable side of the spike, see `.agents/shared/hooks/README.md`.
 
 To inspect what would fire for a path, run the hook directly:
 
 ```sh
-node .agents/hooks/inject-rules.mjs \
+node .agents/shared/hooks/inject-rules.mjs \
   --file "$PWD/src/shared/api/daoService/queries/useDao.ts"
 ```
 
@@ -130,7 +125,7 @@ To inspect the Claude adapter output specifically:
 
 ```sh
 echo '{"tool_name":"Edit","tool_input":{"file_path":"'"$PWD"'/src/shared/api/daoService/queries/useDao.ts"}}' \
-  | node .claude/hooks/inject-rules.mjs
+  | node .claude/shared/hooks/inject-rules.mjs
 ```
 
 Empty output = no rules matched. JSON output with `additionalContext` = those rules will be injected.

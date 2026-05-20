@@ -2,8 +2,8 @@
 // Drains the local guardrail buffer into the shared, tracked hits file.
 // Called from .husky/pre-commit so each developer's events land in their PR.
 //
-// - Reads .agents/metrics/.buffer.jsonl (gitignored, per-developer exhaust)
-// - Appends to .agents/metrics/hits.jsonl (tracked, team-shared)
+// - Reads .agents/local/metrics/.buffer.jsonl (gitignored, per-developer exhaust)
+// - Appends to .agents/shared/metrics/hits.jsonl (tracked, team-shared)
 // - Truncates the buffer
 // - Stages the shared file so it joins the in-flight commit
 //
@@ -20,9 +20,14 @@ import {
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const BUFFER = resolve(REPO_ROOT, '.agents/metrics/.buffer.jsonl');
-const SHARED = resolve(REPO_ROOT, '.agents/metrics/hits.jsonl');
+const REPO_ROOT = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    '..',
+    '..',
+    '..',
+);
+const BUFFER = resolve(REPO_ROOT, '.agents/local/metrics/.buffer.jsonl');
+const SHARED = resolve(REPO_ROOT, '.agents/shared/metrics/hits.jsonl');
 
 const main = () => {
     if (!existsSync(BUFFER) || statSync(BUFFER).size === 0) {
