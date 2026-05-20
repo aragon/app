@@ -116,10 +116,36 @@ describe('<GaugeVoterVoteDialog /> component', () => {
         }
     });
 
-    it('shows 33.33% share for each gauge under default-equal weights with three gauges', () => {
+    it('renders Hamilton-rounded shares for three equal weights so they sum to 100% (33.34 + 33.33 + 33.33)', () => {
         render(createTestComponent());
-        const shareLines = screen.getAllByText('33.33%');
-        expect(shareLines).toHaveLength(3);
+        expect(screen.getByText('33.34%')).toBeInTheDocument();
+        expect(screen.getAllByText('33.33%')).toHaveLength(2);
+    });
+
+    it('renders Hamilton-rounded shares for adversarial weights [1000, 1, …] so leftover lands on the smaller row (99.90 + 0.10)', async () => {
+        render(
+            createTestComponent({
+                location: {
+                    id: 'test',
+                    params: {
+                        gauges: [gaugeA, gaugeB],
+                        pluginAddress:
+                            '0x0000000000000000000000000000000000000001',
+                        network: Network.ETHEREUM_MAINNET,
+                        totalVotingPower: 1000,
+                        tokenSymbol: 'TKN',
+                        gaugeVotes: [],
+                    },
+                },
+            }),
+        );
+        const inputs = screen.getAllByRole('textbox');
+        await userEvent.clear(inputs[0]);
+        await userEvent.type(inputs[0], '1000');
+        await userEvent.clear(inputs[1]);
+        await userEvent.type(inputs[1], '1');
+        expect(screen.getByText('99.90%')).toBeInTheDocument();
+        expect(screen.getByText('0.10%')).toBeInTheDocument();
     });
 
     it('pre-populates inputs from existing votes as integer percentage equivalents', () => {

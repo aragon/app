@@ -238,7 +238,6 @@ export const GaugeVoterVoteDialog: React.FC<IGaugeVoterVoteDialogProps> = (
                     onUpdateWeight={handleUpdateWeight}
                     tokenSymbol={tokenSymbol}
                     totalVotingPower={totalVotingPower}
-                    totalWeight={totalWeight}
                     voteAllocations={voteAllocations}
                 />
             </Dialog.Content>

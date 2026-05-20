@@ -32,9 +32,10 @@ export interface IGaugeVoterVoteDialogItemProps {
      */
     weight: bigint;
     /**
-     * Sum of all weights — used to compute this row's share.
+     * This row's share as a percentage (e.g. 33.34), already adjusted by Hamilton's
+     * largest-remainder method so the set sums to 100. `null` means no share line.
      */
-    totalWeight: bigint;
+    displayShare: number | null;
     /**
      * Total voting power available to the user.
      */
@@ -61,7 +62,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
         gaugeName,
         gaugeAvatar,
         weight,
-        totalWeight,
+        displayShare,
         totalVotingPower,
         tokenSymbol,
         onUpdateWeight,
@@ -76,13 +77,8 @@ export const GaugeVoterVoteDialogItem: React.FC<
         </span>
     );
 
-    const shareBps =
-        totalWeight > BigInt(0)
-            ? (weight * BigInt(10_000)) / totalWeight
-            : BigInt(0);
-    const sharePercent = Number(shareBps) / 100;
-
-    const calculatedVotes = (sharePercent / 100) * totalVotingPower;
+    const calculatedVotes =
+        displayShare != null ? (displayShare / 100) * totalVotingPower : 0;
     const displayVotes = formatterUtils.formatNumber(calculatedVotes, {
         format: NumberFormat.TOKEN_AMOUNT_SHORT,
     });
@@ -125,9 +121,9 @@ export const GaugeVoterVoteDialogItem: React.FC<
                             {displayVotes} {tokenSymbol}
                         </span>
                     )}
-                    {totalWeight > BigInt(0) && (
+                    {displayShare != null && (
                         <span className="text-neutral-500 text-sm">
-                            {sharePercent.toFixed(2)}%
+                            {displayShare.toFixed(2)}%
                         </span>
                     )}
                 </div>

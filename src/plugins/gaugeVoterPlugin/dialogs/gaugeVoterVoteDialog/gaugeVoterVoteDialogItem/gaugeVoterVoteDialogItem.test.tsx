@@ -15,7 +15,7 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
             gaugeName: 'Test Gauge',
             gaugeAvatar: null,
             weight: BigInt(100),
-            totalWeight: BigInt(300),
+            displayShare: 33.33,
             totalVotingPower: 1000,
             tokenSymbol: 'TKN',
             onUpdateWeight: jest.fn(),
@@ -36,24 +36,23 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
     });
 
     it.each([
-        { weight: BigInt(100), totalWeight: BigInt(300), expected: '33.33%' },
-        { weight: BigInt(150), totalWeight: BigInt(300), expected: '50.00%' },
-        { weight: BigInt(0), totalWeight: BigInt(300), expected: '0.00%' },
-        { weight: BigInt(100), totalWeight: BigInt(100), expected: '100.00%' },
-    ])('computes share $expected from weight $weight / totalWeight $totalWeight', ({
-        weight,
-        totalWeight,
+        { displayShare: 33.33, expected: '33.33%' },
+        { displayShare: 50, expected: '50.00%' },
+        { displayShare: 0, expected: '0.00%' },
+        { displayShare: 100, expected: '100.00%' },
+    ])('renders the displayShare $displayShare as $expected', ({
+        displayShare,
         expected,
     }) => {
-        render(createTestComponent({ weight, totalWeight }));
+        render(createTestComponent({ displayShare }));
         expect(screen.getByText(expected)).toBeInTheDocument();
     });
 
-    it('hides the share line when totalWeight is zero', () => {
+    it('hides the share line when displayShare is null', () => {
         render(
             createTestComponent({
                 weight: BigInt(0),
-                totalWeight: BigInt(0),
+                displayShare: null,
             }),
         );
         expect(screen.queryByText(/%/)).not.toBeInTheDocument();
@@ -70,7 +69,7 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
         render(
             createTestComponent({
                 weight: BigInt(0),
-                totalWeight: BigInt(0),
+                displayShare: 0,
                 onUpdateWeight,
             }),
         );
