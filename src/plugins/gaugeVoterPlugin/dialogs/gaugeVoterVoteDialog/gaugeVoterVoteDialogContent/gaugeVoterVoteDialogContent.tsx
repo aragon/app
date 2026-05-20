@@ -93,7 +93,7 @@ export const GaugeVoterVoteDialogContent: React.FC<
     const anyWeightSet = displayShares.some((s) => s > 0);
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
             <div className="hidden gap-3 pr-4 md:flex md:items-center md:justify-end">
                 <span className="w-32 pr-2 text-right font-semibold text-neutral-500 text-xs uppercase">
                     {t(
