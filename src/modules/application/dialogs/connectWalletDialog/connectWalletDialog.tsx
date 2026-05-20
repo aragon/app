@@ -1,13 +1,20 @@
 import { AvatarIcon, Dialog, IconType, Link } from '@aragon/gov-ui-kit';
-import { useAppKit, useAppKitState } from '@reown/appkit/react';
+import {
+    useAppKit,
+    useAppKitNetwork,
+    useAppKitState,
+} from '@reown/appkit/react';
+import { useParams } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
+import type { Network } from '@/shared/api/daoService';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
 export interface IConnectWalletDialogParams {
     /**
@@ -33,11 +40,26 @@ export const ConnectWalletDialog: React.FC<IConnectWalletDialogProps> = (
     const { close, updateOptions } = useDialogContext();
     const { open: openWeb3Modal } = useAppKit();
     const { open: isAppKitModalOpen } = useAppKitState();
+    const { switchNetwork } = useAppKitNetwork();
     const isConnected = useWalletConnected();
     const { t } = useTranslations();
 
+    const { network: networkParam } = useParams<{ network?: Network }>();
+
     // Force "Connect" view; we don't want to see other modal views, which might happen if AppKit state gets out of sync with wagmi store.
-    const handleConnectClick = () => openWeb3Modal({ view: 'Connect' });
+    const handleConnectClick = () => {
+        // DAO routes are scoped by `/dao/[network]/...` — pin the wallet prompt to
+        // that network so MetaMask doesn't ask for permission on a stale chain
+        // (e.g. whatever was last persisted in AppKit's `active_caip_network_id`).
+        const daoNetwork = networkParam
+            ? networkDefinitions[networkParam as Network]
+            : undefined;
+
+        if (daoNetwork) {
+            void switchNetwork(daoNetwork);
+        }
+        void openWeb3Modal({ view: 'Connect' });
+    };
 
     // Custom close callback to trigger onError property when dialog is closed and user is not connected
     const handleDialogClose = useCallback(() => {
