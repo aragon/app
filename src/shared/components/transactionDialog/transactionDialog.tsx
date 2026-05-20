@@ -5,7 +5,6 @@ import {
     IconType,
 } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
     useSendTransaction,
@@ -78,9 +77,10 @@ export const TransactionDialog = <TCustomStepId extends string>(
         network,
     });
 
-    const { network: daoNetworkParam } = useParams<{ network?: string }>();
     const isCrossNetworkTransaction =
-        daoNetworkParam != null && daoNetworkParam !== network;
+        chainId != null &&
+        requiredChainId != null &&
+        chainId !== requiredChainId;
     const transactionNetworkName = networkDefinitions[network]?.name;
 
     const handleTransactionError = useCallback(
