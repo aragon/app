@@ -1582,6 +1582,9 @@
         "addButton": {
           "label": "Add address"
         },
+        "backButton": {
+          "label": "All assets"
+        },
         "emptyState": {
           "addByAddress": "Add by address",
           "description": "Search for another token or add by address",
@@ -1592,7 +1595,6 @@
           "description": "There was an error loading the assets. Try again later.",
           "heading": "Error loading assets"
         },
-        "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
       },
       "assetListStats": {

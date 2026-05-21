@@ -99,9 +99,7 @@ export const AssetAddressSelectAddAddressView: React.FC<
                 )}
                 searchValue={searchValue}
             />
-            <AssetAddressSelectBackButton onClick={onBack}>
-                {t('app.finance.assetAddressSelect.groupTab')}
-            </AssetAddressSelectBackButton>
+            <AssetAddressSelectBackButton onClick={onBack} />
             {showSkeleton && <AssetDataListItem.Skeleton />}
             {showResult && (
                 <AssetAddressSelectItem
