@@ -1,15 +1,21 @@
-import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
+import {
+    AlertCard,
+    ChainEntityType,
+    Dialog,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
-    useConnection,
     useSendTransaction,
     useSwitchChain,
     useWaitForTransactionReceipt,
 } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import {
     type ITransactionStatusStepMetaAddon,
@@ -66,10 +72,16 @@ export const TransactionDialog = <TCustomStepId extends string>(
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
 
-    const { chainId, address } = useConnection();
+    const { chainId, address } = useWalletAccount();
     const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({
         network,
     });
+
+    const isCrossNetworkTransaction =
+        chainId != null &&
+        requiredChainId != null &&
+        chainId !== requiredChainId;
+    const transactionNetworkName = networkDefinitions[network]?.name;
 
     const handleTransactionError = useCallback(
         (stepId?: string) =>
@@ -309,6 +321,20 @@ export const TransactionDialog = <TCustomStepId extends string>(
             <Dialog.Header description={description} title={title} />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
+                    {isCrossNetworkTransaction &&
+                        transactionNetworkName != null && (
+                            <AlertCard
+                                message={t(
+                                    'app.shared.transactionDialog.networkAlert.title',
+                                )}
+                                variant="info"
+                            >
+                                {t(
+                                    'app.shared.transactionDialog.networkAlert.body',
+                                    { transactionNetworkName },
+                                )}
+                            </AlertCard>
+                        )}
                     {children}
                     <TransactionStatus.Container
                         steps={steps}

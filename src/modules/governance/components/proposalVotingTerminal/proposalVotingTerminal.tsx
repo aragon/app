@@ -4,7 +4,7 @@ import {
     ProposalStatus,
     ProposalVoting,
 } from '@aragon/gov-ui-kit';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsName } from '@/modules/ens';
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import type { IUseGovernanceSettingsParams } from '@/modules/settings/types';
@@ -38,7 +38,7 @@ export const ProposalVotingTerminal: React.FC<IProposalVotingTerminalProps> = (
 ) => {
     const { proposal, status, daoId } = props;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: pluginEnsName } = useEnsName(proposal.pluginAddress);
 
     const { network } = daoUtils.parseDaoId(daoId);

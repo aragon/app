@@ -4,7 +4,7 @@ import {
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -78,7 +78,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
         'VoteDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
     const { vote, proposal, isVeto, daoId, plugin, target } = location.params;

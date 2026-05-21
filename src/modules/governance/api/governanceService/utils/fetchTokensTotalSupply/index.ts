@@ -1,0 +1,1 @@
+export { fetchTokensTotalSupply } from './fetchTokensTotalSupply';

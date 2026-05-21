@@ -31,9 +31,13 @@ export const AragonProfileIntroDialog: React.FC<
 
     const handleCta = () => {
         if (mode === 'edit') {
-            open(ApplicationDialogId.ARAGON_PROFILE);
+            open(ApplicationDialogId.ARAGON_PROFILE, {
+                disableOutsideClick: true,
+            });
         } else {
-            open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN);
+            open(ApplicationDialogId.ARAGON_PROFILE_CLAIM_SUBDOMAIN, {
+                disableOutsideClick: true,
+            });
         }
     };
 

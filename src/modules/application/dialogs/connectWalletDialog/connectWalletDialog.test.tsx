@@ -1,8 +1,11 @@
 import * as AppKit from '@reown/appkit/react';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as Wagmi from 'wagmi';
+import * as NextNavigation from 'next/navigation';
+import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { generateDialogContext } from '@/shared/testUtils';
 import {
     ConnectWalletDialog,
@@ -16,7 +19,12 @@ describe('<ConnectWalletDialog /> component', () => {
     );
     const useAppKitSpy = jest.spyOn(AppKit, 'useAppKit');
     const useAppKitStateSpy = jest.spyOn(AppKit, 'useAppKitState');
-    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useAppKitNetworkSpy = jest.spyOn(AppKit, 'useAppKitNetwork');
+    const useParamsSpy = jest.spyOn(NextNavigation, 'useParams');
+    const useWalletConnectedSpy = jest.spyOn(
+        UseWalletConnected,
+        'useWalletConnected',
+    );
 
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
@@ -27,14 +35,23 @@ describe('<ConnectWalletDialog /> component', () => {
             initialized: true,
             connectingWallet: undefined,
         });
-        useConnectionSpy.mockReturnValue({} as Wagmi.UseConnectionReturnType);
+        useAppKitNetworkSpy.mockReturnValue({
+            switchNetwork: jest.fn(),
+            caipNetwork: undefined,
+            chainId: undefined,
+            caipNetworkId: undefined,
+        });
+        useParamsSpy.mockReturnValue({});
+        useWalletConnectedSpy.mockReturnValue(false);
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
         useAppKitSpy.mockReset();
         useAppKitStateSpy.mockReset();
-        useConnectionSpy.mockReset();
+        useAppKitNetworkSpy.mockReset();
+        useParamsSpy.mockReset();
+        useWalletConnectedSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -84,7 +101,7 @@ describe('<ConnectWalletDialog /> component', () => {
         expect(close).toHaveBeenCalled();
     });
 
-    it('renders a connect button to trigger the wallet connection', async () => {
+    it('renders a connect button that opens the AppKit Connect view', async () => {
         const openWeb3Modal = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useAppKitSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
@@ -95,6 +112,63 @@ describe('<ConnectWalletDialog /> component', () => {
         expect(connectButton).toBeInTheDocument();
 
         await userEvent.click(connectButton);
-        expect(openWeb3Modal).toHaveBeenCalled();
+        expect(openWeb3Modal).toHaveBeenCalledWith({ view: 'Connect' });
+    });
+
+    it('pins the AppKit active network to the DAO network from the URL before opening the modal', async () => {
+        const openWeb3Modal = jest.fn();
+        const switchNetwork = jest.fn();
+        useAppKitSpy.mockReturnValue({ open: openWeb3Modal, close: jest.fn() });
+        useAppKitNetworkSpy.mockReturnValue({
+            switchNetwork,
+            caipNetwork: undefined,
+            chainId: undefined,
+            caipNetworkId: undefined,
+        });
+        useParamsSpy.mockReturnValue({ network: Network.ETHEREUM_MAINNET });
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /connectWalletDialog.action.connect/,
+            }),
+        );
+        expect(switchNetwork).toHaveBeenCalledWith(
+            networkDefinitions[Network.ETHEREUM_MAINNET],
+        );
+        expect(openWeb3Modal).toHaveBeenCalledWith({ view: 'Connect' });
+    });
+
+    it('does not switch network when no DAO network is in the URL', async () => {
+        const switchNetwork = jest.fn();
+        useAppKitNetworkSpy.mockReturnValue({
+            switchNetwork,
+            caipNetwork: undefined,
+            chainId: undefined,
+            caipNetworkId: undefined,
+        });
+        useParamsSpy.mockReturnValue({});
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /connectWalletDialog.action.connect/,
+            }),
+        );
+        expect(switchNetwork).not.toHaveBeenCalled();
+    });
+
+    it('closes the dialog and calls onSuccess when the wallet connects', () => {
+        const close = jest.fn();
+        const onSuccess = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
+        useWalletConnectedSpy.mockReturnValue(true);
+        render(
+            createTestComponent({
+                location: { id: 'test', params: { onSuccess } },
+            }),
+        );
+        expect(onSuccess).toHaveBeenCalledTimes(1);
+        expect(close).toHaveBeenCalledWith('test');
     });
 });

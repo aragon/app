@@ -15,7 +15,6 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useConnection } from 'wagmi';
 import type { TEnsRecordKey } from '@/modules/ens';
 import {
     ensAvatarKey,
@@ -33,6 +32,7 @@ import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
 
 /** Form field names that correspond to social network ENS text records. */
@@ -93,7 +93,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const router = useRouter();
     const { network, addressOrEns } = useParams<{
@@ -320,6 +320,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
                 <TextArea
                     id="aragon-profile-bio"
+                    inputClassName="!min-h-24"
                     isOptional
                     maxLength={160}
                     {...bioField}

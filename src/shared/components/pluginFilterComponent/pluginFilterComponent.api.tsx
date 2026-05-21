@@ -42,9 +42,10 @@ export interface IPluginFilterComponentProps<
     TProps extends object = object,
 > {
     /**
-     * Id of the slot component to load.
+     * Id of the slot component to load. Required when using slot-based rendering; omit when
+     * all plugins provide their own renderContent.
      */
-    slotId: SlotId;
+    slotId?: SlotId;
     /**
      * Plugin definitions to load the component from.
      */
@@ -66,6 +67,13 @@ export interface IPluginFilterComponentProps<
      * Fallback component rendered if no components is registered with the specified slot and plugin IDs
      */
     Fallback?: IPluginSingleComponentProps['Fallback'];
+    /**
+     * When set, renders this node for the active plugin instead of the slot-based PluginSingleComponent.
+     * Receives the full active plugin record so callers have access to meta, id, and props.
+     */
+    renderContent?: (
+        plugin: IFilterComponentPlugin<TMeta, TProps>,
+    ) => ReactNode;
     /**
      * Other properties passed to the loaded component.
      */

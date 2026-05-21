@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { match } from 'ts-pattern';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GaugeVoterPluginDialogId } from '@/plugins/gaugeVoterPlugin/constants/gaugeVoterPluginDialogId';
 import type { IGaugeVoterLockOnboardingIntroDialogParams } from '@/plugins/gaugeVoterPlugin/dialogs/gaugeVoterLockOnboardingIntroDialog/gaugeVoterLockOnboardingIntroDialog';
 import type { IGaugeVoterPlugin } from '@/plugins/gaugeVoterPlugin/types';
@@ -52,7 +52,7 @@ export const TokenLockAndWrapOnboardingWatcher: React.FC<
             .otherwise(() => false),
     ) as IGaugeVoterPlugin | ITokenPlugin | undefined;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { open } = useDialogContext();
     const network = dao.network;
 

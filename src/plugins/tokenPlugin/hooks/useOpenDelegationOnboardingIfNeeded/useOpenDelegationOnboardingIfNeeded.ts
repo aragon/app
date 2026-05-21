@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { zeroAddress } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { TokenPluginDialogId } from '../../constants/tokenPluginDialogId';
@@ -41,7 +41,7 @@ export const useOpenDelegationOnboardingIfNeeded = (
     const { tokenAddress, tokenSymbol, network, daoId } = params;
 
     const { open } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const {
         data: delegate,

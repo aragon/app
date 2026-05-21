@@ -11,8 +11,8 @@ import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zeroAddress } from 'viem';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { TokenPluginDialogId } from '@/plugins/tokenPlugin/constants/tokenPluginDialogId';
 import type { ITokenDelegationDialogParams } from '@/plugins/tokenPlugin/dialogs/tokenDelegationDialog';
 import { useTokenCurrentDelegate } from '@/plugins/tokenPlugin/hooks/useTokenCurrentDelegate';
@@ -37,11 +37,12 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
         daoId,
         mode = 'panel',
         onCancel,
+        initialDelegateAddress,
     } = props;
 
     const { open } = useDialogContext();
     const { t } = useTranslations();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const { chainId } = useDaoChain({ daoId });
 
@@ -53,6 +54,13 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
         });
 
     const defaultValues: ITokenDelegationFormData = useMemo(() => {
+        if (initialDelegateAddress != null) {
+            return {
+                selection: TokenDelegationSelection.OTHER,
+                delegate: initialDelegateAddress,
+            };
+        }
+
         const hasExistingDelegate =
             currentDelegate != null &&
             !addressUtils.isAddressEqual(currentDelegate, zeroAddress);
@@ -71,7 +79,7 @@ export const TokenDelegationForm: React.FC<ITokenDelegationFormProps> = (
                     : TokenDelegationSelection.OTHER,
             delegate: defaultDelegate,
         };
-    }, [address, currentDelegate]);
+    }, [address, currentDelegate, initialDelegateAddress]);
 
     const { handleSubmit, reset, control } = useForm<ITokenDelegationFormData>({
         mode: 'onTouched',
