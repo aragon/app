@@ -43,7 +43,7 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         render(createTestComponent());
         expect(screen.getByRole('searchbox')).toBeInTheDocument();
         expect(
-            screen.getByText('app.finance.assetAddressSelect.groupTab'),
+            screen.getByText('app.finance.assetAddressSelect.backButton.label'),
         ).toBeInTheDocument();
     });
 
@@ -51,7 +51,7 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         const onBack = jest.fn();
         render(createTestComponent({ onBack }));
         screen
-            .getByText('app.finance.assetAddressSelect.groupTab')
+            .getByText('app.finance.assetAddressSelect.backButton.label')
             .closest('button')!
             .click();
         expect(onBack).toHaveBeenCalled();

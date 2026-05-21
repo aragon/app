@@ -190,7 +190,9 @@ describe('<AssetAddressSelect /> component', () => {
         // The list still renders the matched asset; sub-screen back button is not present.
         expect(screen.getAllByText(/wstETH/).length).toBeGreaterThan(0);
         expect(
-            screen.queryByText('app.finance.assetAddressSelect.groupTab'),
+            screen.queryByText(
+                'app.finance.assetAddressSelect.backButton.label',
+            ),
         ).not.toBeInTheDocument();
     });
 
@@ -224,7 +226,7 @@ describe('<AssetAddressSelect /> component', () => {
 
         // BackButton (sub-screen marker) is now visible.
         expect(
-            screen.getByText('app.finance.assetAddressSelect.groupTab'),
+            screen.getByText('app.finance.assetAddressSelect.backButton.label'),
         ).toBeInTheDocument();
 
         // useToken was called with the unlisted address.
