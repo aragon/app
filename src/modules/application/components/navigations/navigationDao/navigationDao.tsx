@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
+import { useEnsName } from '@/modules/ens';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -44,6 +45,9 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
+    const { data: displayName } = useEnsName(address, {
+        stripAragonRegistrySuffix: true,
+    });
     const isConnected = useWalletConnected();
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
@@ -70,7 +74,10 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
         open(dialog);
     };
 
-    const walletUser = isMounted && address != null ? { address } : undefined;
+    const walletUser =
+        isMounted && address != null
+            ? { address, name: displayName ?? undefined }
+            : undefined;
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
     return (
