@@ -1,4 +1,4 @@
-import { Avatar } from '@aragon/gov-ui-kit';
+import { Avatar, addressUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -23,7 +23,7 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
         >
             {token && <Avatar size="xs" src={token.logo || undefined} />}
             {token
-                ? token.symbol || 'NA'
+                ? token.symbol || addressUtils.truncateAddress(token.address)
                 : t('app.finance.assetInput.token.trigger')}
         </div>
     );
