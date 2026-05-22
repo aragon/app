@@ -7,6 +7,7 @@ import {
     DataListFilter,
     DataListPagination,
     DataListRoot,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import type { Hex } from 'viem';
@@ -20,7 +21,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { AssetAddressSelectAddAddressView } from './assetAddressSelectAddAddressView';
 import { AssetAddressSelectAddButton } from './assetAddressSelectAddButton';
-import { getAssetAddressSelectEmptyState } from './assetAddressSelectEmptyState';
 import { AssetAddressSelectItem } from './assetAddressSelectItem';
 
 export interface IAssetAddressSelectProps<
@@ -76,12 +76,6 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
         setMode('list');
     };
 
-    const emptyState = getAssetAddressSelectEmptyState({
-        t,
-        searchValue,
-        onAddByAddressClick: handleOpenAddAddress,
-    });
-
     const filteredAssets = useMemo(() => {
         if (!(hasSearch && searchValue)) {
             return assetList;
@@ -126,6 +120,18 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
             />
         );
     }
+
+    const emptyState = {
+        heading: t('app.finance.assetAddressSelect.emptyState.heading', {
+            search: searchValue ?? '',
+        }),
+        description: t('app.finance.assetAddressSelect.emptyState.description'),
+        primaryButton: {
+            label: t('app.finance.assetAddressSelect.emptyState.addByAddress'),
+            iconLeft: IconType.PLUS,
+            onClick: handleOpenAddAddress,
+        },
+    };
 
     return (
         <DataListRoot
