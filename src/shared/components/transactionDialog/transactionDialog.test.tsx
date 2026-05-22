@@ -363,6 +363,38 @@ describe('<TransactionDialog /> component', () => {
         );
     });
 
+    it('shows the switch-network alert when the connected chain does not match the required transaction chain', () => {
+        const network = Network.BASE_MAINNET;
+
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[Network.ETHEREUM_MAINNET].id,
+        } as unknown as Wagmi.UseConnectionReturnType);
+
+        render(createTestComponent({ network }));
+
+        expect(
+            screen.getByText(
+                /Switch network|app\.shared\.transactionDialog\.networkAlert\.title/,
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('does not show the switch-network alert when the connected chain already matches the required transaction chain', () => {
+        const network = Network.ETHEREUM_MAINNET;
+
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[network].id,
+        } as unknown as Wagmi.UseConnectionReturnType);
+
+        render(createTestComponent({ network }));
+
+        expect(
+            screen.queryByText(
+                /Switch network|app\.shared\.transactionDialog\.networkAlert\.title/,
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it('does not send the transaction when transaction is not set at approve step', () => {
         const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({

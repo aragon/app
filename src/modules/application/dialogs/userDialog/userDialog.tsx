@@ -10,7 +10,7 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { useDisconnect } from '@reown/appkit/react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import { exploreDaoFilterParam } from '@/modules/explore/components/exploreDaos/exploreDaos';
@@ -20,6 +20,7 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { Link as RouterLink } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
@@ -38,6 +39,9 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     const { disconnect } = useDisconnect();
 
     const { data: ensName } = useEnsName(address);
+    const { data: displayName } = useEnsName(address, {
+        stripAragonRegistrySuffix: true,
+    });
     const { data: ensAvatar } = useEnsAvatar(ensName);
 
     const formattedAddress = addressUtils.truncateAddress(address);
@@ -50,6 +54,10 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     });
 
     const router = useRouter();
+    const { network, addressOrEns } = useParams<{
+        network?: string;
+        addressOrEns?: string;
+    }>();
 
     const handleCreateAragonProfile = () =>
         open(ApplicationDialogId.ARAGON_PROFILE_INTRO, {
@@ -86,6 +94,19 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
     }
 
     const hasAragonProfile = ensName != null;
+    const memberProfileHref =
+        network != null && addressOrEns != null
+            ? `/dao/${network}/${addressOrEns}/members/${address}`
+            : undefined;
+    const avatar = (
+        <MemberAvatar
+            address={address}
+            avatarSrc={ensAvatar ?? undefined}
+            ensName={ensName ?? undefined}
+            responsiveSize={{ sm: 'xl' }}
+            size="lg"
+        />
+    );
 
     return (
         <Dialog.Content
@@ -94,13 +115,16 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
         >
             <div className="flex flex-col gap-3 px-8">
                 <div className="flex items-start justify-between">
-                    <MemberAvatar
-                        address={address}
-                        avatarSrc={ensAvatar ?? undefined}
-                        ensName={ensName ?? undefined}
-                        responsiveSize={{ sm: 'xl' }}
-                        size="lg"
-                    />
+                    {memberProfileHref != null ? (
+                        <RouterLink
+                            href={memberProfileHref}
+                            onClick={() => close(id)}
+                        >
+                            {avatar}
+                        </RouterLink>
+                    ) : (
+                        avatar
+                    )}
                     <div className="flex gap-2">
                         {hasAragonProfile && isAragonProfileEnabled && (
                             <Button
@@ -121,7 +145,7 @@ export const UserDialog: React.FC<IUserDialogProps> = (props) => {
                 {hasAragonProfile ? (
                     <div className="flex flex-col gap-1">
                         <p className="font-normal text-neutral-800 text-xl leading-tight">
-                            {ensName}
+                            {displayName}
                         </p>
                         <Clipboard copyValue={address}>
                             <Link

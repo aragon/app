@@ -38,6 +38,8 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
         (plugin) =>
             (plugin.meta.settings as ITokenPluginSettings)?.token?.hasDelegate,
     );
+    const hasMultipleDelegationBodies =
+        bodiesWithDelegation != null && bodiesWithDelegation.length > 1;
 
     const renderSelectedPlugin = (
         plugin: IFilterComponentPlugin<IDaoPlugin>,
@@ -45,6 +47,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
         <div className="flex flex-col gap-4">
             <DelegationStatsCard
                 daoId={daoId}
+                displayDisclaimer={hasMultipleDelegationBodies}
                 memberAddress={member.address}
                 plugin={plugin.meta}
             />

@@ -27,12 +27,16 @@ export interface IDelegationStatsCardProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Whether to display the message clarifying delegation scope.
+     */
+    displayDisclaimer?: boolean;
 }
 
 export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
     props,
 ) => {
-    const { plugin, daoId, memberAddress } = props;
+    const { plugin, daoId, memberAddress, displayDisclaimer = false } = props;
     const { t } = useTranslations();
 
     const tokenSettings = plugin.settings as ITokenPluginSettings;
@@ -81,12 +85,16 @@ export const DelegationStatsCard: React.FC<IDelegationStatsCardProps> = (
                         />
                     </div>
                 </div>
-                <div className="hidden py-2 md:block">
-                    <div className="h-px w-full bg-neutral-100" />
-                </div>
-                <p className="text-center text-neutral-400 text-xs leading-normal md:text-left md:text-sm">
-                    {t('app.governance.delegationStatsCard.disclaimer')}
-                </p>
+                {displayDisclaimer && (
+                    <>
+                        <div className="hidden py-2 md:block">
+                            <div className="h-px w-full bg-neutral-100" />
+                        </div>
+                        <p className="text-center text-neutral-400 text-xs leading-normal md:text-left md:text-sm">
+                            {t('app.governance.delegationStatsCard.disclaimer')}
+                        </p>
+                    </>
+                )}
             </div>
         </Card>
     );
