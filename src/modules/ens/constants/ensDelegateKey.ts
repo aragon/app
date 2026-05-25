@@ -38,7 +38,7 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.PEAQ_MAINNET]: 'PEAQ',
     [Network.CITREA_MAINNET]: 'citrea',
     [Network.KATANA_MAINNET]: 'katana',
-    [Network.ETHEREUM_SEPOLIA]: 'sep',
+    [Network.ETHEREUM_SEPOLIA]: 'test',
 };
 
 export interface IBuildEnsDelegateKeyParams {
