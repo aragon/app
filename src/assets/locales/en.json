@@ -1577,6 +1577,10 @@
       },
       "assetAddressSelect": {
         "addAddressView": {
+          "notATokenState": {
+            "description": "This address didn't return ERC20 token data. Double-check the address and the selected network.",
+            "heading": "Not a recognized token"
+          },
           "placeholder": "Paste 0x contract address..."
         },
         "addButton": {

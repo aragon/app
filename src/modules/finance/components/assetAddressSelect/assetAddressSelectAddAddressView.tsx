@@ -3,6 +3,7 @@
 import {
     AssetDataListItem,
     addressUtils,
+    CardEmptyState,
     DataListFilter,
     DataListRoot,
 } from '@aragon/gov-ui-kit';
@@ -32,17 +33,20 @@ export interface IAssetAddressSelectAddAddressViewProps {
      */
     onBack: () => void;
     /**
-     * Callback fired when the user selects the resolved row. Receives a best-effort `IAsset`:
-     * for ERC20 contracts the name/symbol/decimals come from the on-chain reads; otherwise
-     * the row is indicated as Unknown but still selectable.
+     * Callback fired when the user selects the resolved row. Receives an `IAsset` built from the
+     * on-chain ERC20 reads. Name and symbol fall back to `Unknown`/`UNKNOWN` when empty; the row
+     * is only selectable when `decimals` is available, since downstream `parseUnits` calls depend
+     * on it.
      */
     onAssetClick?: (asset: IAsset) => void;
 }
 
 /**
  * Sub-screen rendered inside `AssetAddressSelect` when the user opts to add an asset by address.
- * Attempts to resolve the pasted address on the fly. Name and symbol are grabbed via the token's
- * ERC20 reads; if not available, the row is indicated as Unknown but still selectable.
+ * Resolves the pasted address against the ERC20 interface and only surfaces a selectable row when
+ * the contract responds with token data (specifically `decimals`). Addresses that don't resolve as
+ * ERC20 render a "not a recognized token" empty state instead of a selectable row with guessed
+ * defaults.
  */
 export const AssetAddressSelectAddAddressView: React.FC<
     IAssetAddressSelectAddAddressViewProps
@@ -67,24 +71,26 @@ export const AssetAddressSelectAddAddressView: React.FC<
     });
 
     const asset: IAsset | undefined =
-        resolvedAddress != null
+        resolvedAddress != null && tokenData != null
             ? {
                   amount: '0',
                   token: {
                       address: resolvedAddress,
                       network,
-                      name: tokenData?.name ?? '',
-                      symbol: tokenData?.symbol ?? '',
-                      decimals: tokenData?.decimals ?? 0,
+                      name: tokenData.name || 'Unknown',
+                      symbol: tokenData.symbol || 'UNKNOWN',
+                      decimals: tokenData.decimals,
                       logo: '',
                       priceUsd: '0',
-                      totalSupply: tokenData?.totalSupply ?? null,
+                      totalSupply: tokenData.totalSupply,
                   },
               }
             : undefined;
 
     const showSkeleton = resolvedAddress != null && isLoading;
     const showResult = asset != null && !isLoading;
+    const showInvalidToken =
+        resolvedAddress != null && !isLoading && tokenData == null;
 
     return (
         <DataListRoot
@@ -105,6 +111,18 @@ export const AssetAddressSelectAddAddressView: React.FC<
                 <AssetAddressSelectItem
                     asset={asset}
                     onAssetClick={onAssetClick}
+                />
+            )}
+            {showInvalidToken && (
+                <CardEmptyState
+                    description={t(
+                        'app.finance.assetAddressSelect.addAddressView.notATokenState.description',
+                    )}
+                    heading={t(
+                        'app.finance.assetAddressSelect.addAddressView.notATokenState.heading',
+                    )}
+                    isStacked={false}
+                    objectIllustration={{ object: 'NOT_FOUND' }}
                 />
             )}
         </DataListRoot>

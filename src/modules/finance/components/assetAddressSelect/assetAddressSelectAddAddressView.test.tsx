@@ -116,4 +116,27 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
 
         expect(screen.getByText('Wrapped stETH')).toBeInTheDocument();
     });
+
+    it('renders the not-a-token empty state when useToken resolves with no data', async () => {
+        useTokenSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+            isError: true,
+        });
+
+        render(createTestComponent());
+
+        const user = userEvent.setup();
+        await user.type(
+            screen.getByRole('searchbox'),
+            '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+        );
+
+        expect(
+            screen.getByText(
+                'app.finance.assetAddressSelect.addAddressView.notATokenState.heading',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    });
 });

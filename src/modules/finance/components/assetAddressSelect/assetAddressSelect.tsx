@@ -158,10 +158,10 @@ export const AssetAddressSelect: React.FC<IAssetAddressSelectProps> = (
                 errorState={errorState}
                 SkeletonElement={AssetDataListItem.Skeleton}
             >
-                {filteredAssets.map((asset, index) => (
+                {filteredAssets.map((asset) => (
                     <AssetAddressSelectItem
                         asset={asset}
-                        key={`${asset.token.address}-${index.toString()}`}
+                        key={asset.token.address}
                         onAssetClick={onAssetClick}
                     />
                 ))}

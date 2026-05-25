@@ -43,9 +43,9 @@ export const AssetAddressSelectItem: React.FC<IAssetAddressSelectItemProps> = (
             href={processedEntityUrl}
             key={token.address}
             logoSrc={token.logo}
-            name={token.name || 'Unknown'}
+            name={token.name}
             onClick={() => onAssetClick?.(asset)}
-            symbol={token.symbol || 'UNKNOWN'}
+            symbol={token.symbol}
             target={processedTarget}
             variant="select"
         />
