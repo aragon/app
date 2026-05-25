@@ -100,7 +100,7 @@
     "tailwindcss": "^4.2.4",
     "tailwindcss-fluid-type": "^2.0.7",
     "ts-jest": "^29.4.9",
-    "turbo": "^2.9.10",
+    "turbo": "^2.9.14",
     "typescript": "^5.9.3",
     "ultracite": "^7.6.4",
     "vercel": "^52.2.1",
