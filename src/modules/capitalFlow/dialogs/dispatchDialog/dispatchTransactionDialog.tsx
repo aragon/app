@@ -2,6 +2,10 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData, type Hex, type TransactionReceipt } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+// LMM_DEMO_HACK: detect Lido Money Machine demo policies and route them to
+// the Anvil-fork dispatch flow instead of wagmi.  Production DAOs always
+// take the original code path below.
+import { useIsLmmDemoDao } from '@/modules/flow/demo/lmmDemoConfig';
 import type { Network } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
 import {
@@ -17,6 +21,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
 import type { IRouterSelectorDialogParams } from '../routerSelectorDialog';
+import { LmmDemoDispatchDialog } from './lmmDemoDispatchDialog';
 
 export interface IDispatchTransactionDialogParams {
     policy: IDaoPolicy;
@@ -60,6 +65,28 @@ export const DispatchTransactionDialog: React.FC<
 > = (props) => {
     const { location } = props;
 
+    invariant(
+        location.params != null,
+        'DispatchTransactionDialog: required parameters must be set.',
+    );
+    const { policy } = location.params;
+
+    // Route to the Anvil-fork demo dispatch flow when the policy belongs to
+    // the LMM demo DAO.  `useIsLmmDemoDao` returns `undefined` until the
+    // manifest has loaded — in that case we proceed with the production
+    // wagmi flow rather than block the dialog.  All hooks below this branch
+    // are inside `ProductionDispatchDialog` to keep the hook order stable.
+    const isLmmDemo = useIsLmmDemoDao(policy.daoAddress);
+    if (isLmmDemo === true) {
+        return <LmmDemoDispatchDialog {...props} />;
+    }
+    return <ProductionDispatchDialog {...props} />;
+};
+
+const ProductionDispatchDialog: React.FC<IDispatchTransactionDialogProps> = (
+    props,
+) => {
+    const { location } = props;
     invariant(
         location.params != null,
         'DispatchTransactionDialog: required parameters must be set.',

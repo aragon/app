@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useFlowDataContext } from '../../providers/flowDataProvider';
 import type {
+    IFlowEmbeddedStrategy,
     IFlowOrchestrator,
     IFlowOrchestratorLeg,
     IFlowOrchestratorRun,
@@ -55,7 +56,9 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
     const pendingDispatch = getPendingDispatch(orchestrator.id);
     const isDispatching = pendingDispatch != null;
     const isArchived = orchestrator.status === 'paused';
-    const hasChain = orchestrator.chain.some((child) => child != null);
+    const hasEmbedded = (orchestrator.embeddedStrategies?.length ?? 0) > 0;
+    const hasChain =
+        hasEmbedded || orchestrator.chain.some((child) => child != null);
 
     const handleDispatch = () => {
         dispatchPolicy(orchestrator.id);
@@ -111,11 +114,17 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
                 </div>
             </div>
 
-            <FlowChainDiagram
-                addressOrEns={addressOrEns}
-                network={network}
-                orchestrator={orchestrator}
-            />
+            {hasEmbedded ? (
+                <FlowEmbeddedChainDiagram
+                    strategies={orchestrator.embeddedStrategies ?? []}
+                />
+            ) : (
+                <FlowChainDiagram
+                    addressOrEns={addressOrEns}
+                    network={network}
+                    orchestrator={orchestrator}
+                />
+            )}
 
             <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -278,6 +287,119 @@ const ChainArrow: React.FC = () => (
 );
 
 // ---------------------------------------------------------------------------
+// Embedded-strategy chain (Dispatcher-owned strategies)
+// ---------------------------------------------------------------------------
+
+interface IFlowEmbeddedChainDiagramProps {
+    strategies: IFlowEmbeddedStrategy[];
+}
+
+/**
+ * Render the dispatcher's embedded strategy chain.  Each chip exposes the
+ * strategy kind + key per-leg chips: budget kind (Stream/Full),
+ * gate kind (PriceFloor) and epoch length where present.  Falls through
+ * gracefully when an LMM dispatcher hasn't finished initializing all of
+ * its sub-components yet.
+ */
+const FlowEmbeddedChainDiagram: React.FC<IFlowEmbeddedChainDiagramProps> = ({
+    strategies,
+}) => (
+    <div className="flex flex-wrap items-stretch gap-2 rounded-lg border border-neutral-100 bg-neutral-50 p-3">
+        {strategies.map((s, index) => (
+            <EmbeddedStrategyChip
+                key={s.id}
+                showArrow={index < strategies.length - 1}
+                strategy={s}
+            />
+        ))}
+    </div>
+);
+
+const STRATEGY_KIND_TONE: Record<IFlowEmbeddedStrategy['kind'], string> = {
+    wrap: 'border-primary-200 bg-primary-50',
+    univ2Liquidity: 'border-violet-200 bg-violet-50',
+    gatedCowSwap: 'border-cyan-200 bg-cyan-50',
+    cowSwap: 'border-cyan-200 bg-cyan-50',
+    transfer: 'border-neutral-200 bg-neutral-0',
+    epochTransfer: 'border-warning-200 bg-warning-50',
+    burn: 'border-critical-200 bg-critical-50',
+    unknown: 'border-neutral-200 bg-neutral-0',
+};
+
+const EmbeddedStrategyChip: React.FC<{
+    strategy: IFlowEmbeddedStrategy;
+    showArrow: boolean;
+}> = ({ strategy, showArrow }) => {
+    const seconds = strategy.epochProvider?.epochLength;
+    const epochLabel = formatEpochLength(seconds);
+    return (
+        <>
+            <div
+                className={classNames(
+                    'flex flex-col gap-1 rounded-lg border px-2.5 py-1.5 text-xs',
+                    STRATEGY_KIND_TONE[strategy.kind],
+                )}
+            >
+                <div className="flex items-center gap-1.5">
+                    <span className="font-semibold text-neutral-800 leading-tight">
+                        {strategy.label}
+                    </span>
+                    {strategy.paused && (
+                        <span className="inline-flex items-center rounded-full bg-warning-200 px-1.5 py-0 font-semibold text-[10px] text-warning-800 leading-tight">
+                            Paused
+                        </span>
+                    )}
+                </div>
+                <div className="flex flex-wrap items-center gap-1">
+                    {strategy.budget && (
+                        <span className="inline-flex items-center rounded-full border border-neutral-100 bg-neutral-0 px-1.5 py-0 font-normal text-[10px] text-neutral-600 leading-tight">
+                            {strategy.budget.kind === 'streamUntil'
+                                ? 'Stream'
+                                : strategy.budget.kind === 'full'
+                                  ? 'Full'
+                                  : strategy.budget.kind === 'required'
+                                    ? 'Required'
+                                    : 'Budget'}
+                        </span>
+                    )}
+                    {strategy.gate && (
+                        <span className="inline-flex items-center rounded-full border border-neutral-100 bg-neutral-0 px-1.5 py-0 font-normal text-[10px] text-neutral-600 leading-tight">
+                            {strategy.gate.kind === 'priceFloor'
+                                ? 'PriceFloor'
+                                : 'Gate'}
+                        </span>
+                    )}
+                    {epochLabel && (
+                        <span className="inline-flex items-center rounded-full border border-neutral-100 bg-neutral-0 px-1.5 py-0 font-normal text-[10px] text-neutral-600 leading-tight">
+                            Epoch {epochLabel}
+                        </span>
+                    )}
+                </div>
+            </div>
+            {showArrow && <ChainArrow />}
+        </>
+    );
+};
+
+const formatEpochLength = (seconds?: string): string | undefined => {
+    if (seconds == null) {
+        return undefined;
+    }
+    const n = Number(seconds);
+    if (!Number.isFinite(n) || n <= 0) {
+        return undefined;
+    }
+    if (n >= 86_400) {
+        const d = n / 86_400;
+        return `${Number.isInteger(d) ? d : d.toFixed(1)}d`;
+    }
+    if (n >= 3600) {
+        return `${Math.round(n / 3600)}h`;
+    }
+    return `${Math.round(n / 60)}m`;
+};
+
+// ---------------------------------------------------------------------------
 // Run row (vertical list of legs)
 // ---------------------------------------------------------------------------
 
@@ -319,13 +441,18 @@ interface IRunLegProps {
 const RunLeg: React.FC<IRunLegProps> = ({ leg, network, addressOrEns }) => {
     const href = `/dao/${network}/${addressOrEns}/flow/policies/${leg.policyId}`;
     const isFailed = leg.status === 'failed';
+    const isSkipped = leg.status === 'skipped';
     return (
         <li className="flex items-center gap-2 text-sm">
             <span
                 aria-hidden={true}
                 className={classNames(
                     'size-1.5 shrink-0 rounded-full',
-                    isFailed ? 'bg-critical-500' : 'bg-success-500',
+                    isFailed
+                        ? 'bg-critical-500'
+                        : isSkipped
+                          ? 'bg-warning-500'
+                          : 'bg-success-500',
                 )}
             />
             <Link

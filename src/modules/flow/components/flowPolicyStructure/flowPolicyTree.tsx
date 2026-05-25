@@ -1,10 +1,16 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
+import type { Address } from 'viem';
+// LMM_DEMO_HACK: route multi-dispatch policies to the vendored React Flow
+// topology when the demo flag is set + the manifest matches.  Falls through
+// to the legacy SVG tree for every other policy.
+import { LMM_DEMO_MODE, useLmmManifest } from '../../demo/lmmDemoConfig';
 import type {
     IFlowPolicy,
     IFlowPolicySubRouter,
     IFlowRecipient,
 } from '../../types';
+import { LmmPolicyTopology } from '../lidoMoneyMachine/LmmPolicyTopology';
 
 export interface IFlowPolicyTreeProps {
     policy: IFlowPolicy;
@@ -170,6 +176,47 @@ const nodeTypeLabel: Record<NodeType, string> = {
 
 export const FlowPolicyTree: React.FC<IFlowPolicyTreeProps> = (props) => {
     const { policy, className } = props;
+
+    // LMM_DEMO_HACK: when the manifest is loaded and this is the LMM demo
+    // multi-dispatch policy, render the rich React Flow topology vendored
+    // from Jordi's preview-lib instead of the SVG tree.  Production DAOs
+    // (and any non-multi-dispatch demo policy) fall through to the legacy
+    // tree below.
+    const { manifest } = useLmmManifest();
+    const isLmmDispatcher =
+        LMM_DEMO_MODE &&
+        manifest != null &&
+        policy.strategy === 'Multi-dispatch' &&
+        policy.address.toLowerCase() === manifest.lmm.dispatcher.toLowerCase();
+    if (isLmmDispatcher && manifest) {
+        return (
+            <div
+                className={classNames(
+                    'flex flex-col gap-2 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:p-6',
+                    className,
+                )}
+            >
+                <div className="flex flex-col gap-1">
+                    <h3 className="font-semibold text-base text-neutral-800 leading-tight">
+                        Capital flow topology
+                    </h3>
+                    <p className="font-normal text-neutral-500 text-sm leading-snug">
+                        Live view of the dispatcher → strategy → budget chain as
+                        it currently exists on chain.
+                    </p>
+                </div>
+                <LmmPolicyTopology
+                    lidoDaoAddress={
+                        // No "Lido DAO" wrapper in the demo manifest; pass
+                        // undefined so the topology renders without the
+                        // parent crown node.
+                        undefined
+                    }
+                    pluginAddress={manifest.lmm.dispatcher as Address}
+                />
+            </div>
+        );
+    }
 
     const root = buildTree(policy);
     const { cols, rows } = layoutTree(root);

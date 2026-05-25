@@ -24,6 +24,8 @@ import {
     FLOW_EVENT_KIND_LABEL,
     FLOW_EVENT_KIND_TONE,
     FLOW_FAILED_COLOR,
+    FLOW_SKIPPED_COLOR,
+    FLOW_SWAP_COLOR,
     getFlowMarkerColor,
     type IFlowTimelineMarker,
 } from './flowEventStyles';
@@ -89,7 +91,10 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
 
         for (const dispatch of historicSorted) {
             const ts = new Date(dispatch.at).getTime();
-            if (dispatch.status !== 'failed') {
+            // Only successful dispatches contribute to the cumulative curve —
+            // both `failed` and `skipped` outcomes show up as timeline markers
+            // but leave the running total untouched.
+            if (dispatch.status !== 'failed' && dispatch.status !== 'skipped') {
                 cumulative += dispatch.amount;
             }
             points.push({ timestamp: ts, historic: cumulative });
@@ -99,23 +104,48 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
         points.push({ timestamp: endTs, historic: historicEnd });
 
         const dispatchMarkers: IFlowTimelineMarker[] = historicSorted.map(
-            (dispatch) => ({
-                id: `dispatch-${dispatch.id}`,
-                timestamp: new Date(dispatch.at).getTime(),
-                kind:
-                    dispatch.status === 'failed'
-                        ? 'dispatchFailed'
-                        : 'dispatchOk',
-                label:
-                    dispatch.status === 'failed'
-                        ? 'Failed dispatch'
-                        : 'Dispatch',
-                detail: `${formatFlowAmount(dispatch.amount, dispatch.token)} ${dispatch.token} · ${formatShortDate(dispatch.at)}${
-                    dispatch.status === 'failed' && dispatch.failureReason
-                        ? ` · ${dispatch.failureReason}`
-                        : ''
-                }`,
-            }),
+            (dispatch) => {
+                const isSwap =
+                    dispatch.tokenIn != null && dispatch.amountIn != null;
+                let kind: IFlowTimelineMarker['kind'];
+                let label: string;
+                if (dispatch.status === 'failed') {
+                    kind = 'dispatchFailed';
+                    label = 'Failed dispatch';
+                } else if (dispatch.status === 'skipped') {
+                    kind = 'dispatchSkipped';
+                    label = 'Skipped dispatch';
+                } else if (isSwap) {
+                    kind = 'dispatchSwap';
+                    label = 'Swap dispatch';
+                } else {
+                    kind = 'dispatchOk';
+                    label = 'Dispatch';
+                }
+                // Compose a tooltip line that pairs IN→OUT for swap dispatches
+                // and falls back to the single-leg form otherwise.
+                let detail: string;
+                if (isSwap && dispatch.amountIn != null && dispatch.tokenIn) {
+                    const inLeg = `${formatFlowAmount(dispatch.amountIn, dispatch.tokenIn)} ${dispatch.tokenIn}`;
+                    const outLeg = `${formatFlowAmount(dispatch.amount, dispatch.token)} ${dispatch.token}`;
+                    detail = `${inLeg} → ${outLeg} · ${formatShortDate(dispatch.at)}`;
+                } else {
+                    detail = `${formatFlowAmount(dispatch.amount, dispatch.token)} ${dispatch.token} · ${formatShortDate(dispatch.at)}`;
+                }
+                if (dispatch.status === 'failed' && dispatch.failureReason) {
+                    detail += ` · ${dispatch.failureReason}`;
+                }
+                if (dispatch.status === 'skipped' && dispatch.skippedReason) {
+                    detail += ` · ${dispatch.skippedReason}`;
+                }
+                return {
+                    id: `dispatch-${dispatch.id}`,
+                    timestamp: new Date(dispatch.at).getTime(),
+                    kind,
+                    label,
+                    detail,
+                };
+            },
         );
 
         const eventMarkers: IFlowTimelineMarker[] = policy.events
@@ -148,7 +178,18 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
     const hasFailedDispatch = policy.dispatches.some(
         (d) => d.status === 'failed',
     );
-    const hasOkDispatch = policy.dispatches.some((d) => d.status !== 'failed');
+    const hasSkippedDispatch = policy.dispatches.some(
+        (d) => d.status === 'skipped',
+    );
+    const hasSwapDispatch = policy.dispatches.some(
+        (d) =>
+            d.status !== 'failed' &&
+            d.status !== 'skipped' &&
+            d.tokenIn != null,
+    );
+    const hasOkDispatch = policy.dispatches.some(
+        (d) => d.status !== 'failed' && d.status !== 'skipped',
+    );
 
     return (
         <div
@@ -179,6 +220,16 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
                         color={FLOW_FAILED_COLOR}
                         dim={!hasFailedDispatch}
                         label="Failed dispatch"
+                    />
+                    <LegendChip
+                        color={FLOW_SKIPPED_COLOR}
+                        dim={!hasSkippedDispatch}
+                        label="Skipped dispatch"
+                    />
+                    <LegendChip
+                        color={FLOW_SWAP_COLOR}
+                        dim={!hasSwapDispatch}
+                        label="Swap dispatch"
                     />
                     {(
                         [
@@ -288,7 +339,8 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
             <p className="font-normal text-neutral-500 text-xs leading-tight">
                 Line shows cumulative {policy.verb} over time — hover for the
                 exact value. Dots on the timeline below mark individual
-                dispatches (red for failed) and lifecycle events.
+                dispatches (cyan for swaps, amber for skipped, red for failed)
+                and lifecycle events.
             </p>
         </div>
     );

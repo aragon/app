@@ -1,6 +1,14 @@
 import type { FlowEventKind } from '../../types';
 
 export const FLOW_FAILED_COLOR = '#dc2626';
+// Skipped dispatches (gate closed, etc) — a softer warm grey so they read
+// as "neither success nor failure" but stay distinguishable from on-time
+// dispatches.  Used by the timeline marker and the cumulative tooltip.
+export const FLOW_SKIPPED_COLOR = '#a16207';
+// Swap dispatch markers — slightly heavier accent than `dispatchOk` so the
+// chart legend can call out swap legs (relevant for the LMM demo where
+// gated CowSwap dispatches are the main flow).
+export const FLOW_SWAP_COLOR = '#0891b2';
 
 /**
  * Human-readable labels for lifecycle events. Shared between the big policy
@@ -38,7 +46,12 @@ export const FLOW_EVENT_KIND_TONE: Record<FlowEventKind, string> = {
     dispatchFailed: FLOW_FAILED_COLOR,
 };
 
-export type FlowMarkerKind = 'dispatchOk' | 'dispatchFailed' | FlowEventKind;
+export type FlowMarkerKind =
+    | 'dispatchOk'
+    | 'dispatchFailed'
+    | 'dispatchSkipped'
+    | 'dispatchSwap'
+    | FlowEventKind;
 
 export interface IFlowTimelineMarker {
     id: string;
@@ -57,6 +70,12 @@ export const getFlowMarkerColor = (
     }
     if (kind === 'dispatchFailed') {
         return FLOW_FAILED_COLOR;
+    }
+    if (kind === 'dispatchSkipped') {
+        return FLOW_SKIPPED_COLOR;
+    }
+    if (kind === 'dispatchSwap') {
+        return FLOW_SWAP_COLOR;
     }
     return FLOW_EVENT_KIND_TONE[kind];
 };

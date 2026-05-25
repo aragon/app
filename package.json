@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@aragon/gov-ui-kit": "^2.6.0",
+    "@dagrejs/dagre": "^3.0.0",
     "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.6.0",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -50,6 +51,7 @@
     "@tanstack/react-query-devtools": "^5.101.0",
     "@walletconnect/core": "^2.23.9",
     "@walletconnect/utils": "^2.23.9",
+    "@xyflow/react": "^12.10.2",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
     "framer-motion": "^12.40.0",
