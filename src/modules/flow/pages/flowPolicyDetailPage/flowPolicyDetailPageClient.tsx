@@ -18,7 +18,13 @@ import {
     FlowLoadError,
     FlowPolicyDetailPageSkeleton,
 } from '../../components/flowSkeletons';
+// LMM_DEMO_HACK: the policy header in demo mode exposes a "More actions ▾"
+// dropdown that wraps the Anvil cheat actions (warp time, top up balances,
+// etc).  Renders to `null` outside demo mode.
+import { LmmCheatsMenu } from '../../components/lidoMoneyMachine/LmmCheatsMenu';
 import { FlowDialogId } from '../../constants/flowDialogId';
+import { LmmDemoBanner } from '../../demo/LmmDemoBanner';
+import { LMM_DEMO_MODE } from '../../demo/lmmDemoConfig';
 import type { IConfirmDispatchDialogParams } from '../../dialogs/confirmDispatchDialog';
 import { useFlowDataContext } from '../../providers/flowDataProvider';
 import type { IFlowPolicy } from '../../types';
@@ -104,6 +110,7 @@ export const FlowPolicyDetailPageClient: React.FC<
 
     return (
         <div className="flex flex-col gap-6">
+            <LmmDemoBanner />
             <header className="flex flex-col gap-4">
                 <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="flex min-w-0 flex-col gap-2">
@@ -138,6 +145,7 @@ export const FlowPolicyDetailPageClient: React.FC<
                             >
                                 Edit ↗
                             </Link>
+                            {LMM_DEMO_MODE && <LmmCheatsMenu />}
                         </div>
                     </div>
                     <div className="flex flex-col items-end gap-1">

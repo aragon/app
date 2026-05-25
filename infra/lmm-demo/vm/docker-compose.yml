@@ -1,0 +1,130 @@
+# Lido Money Machine demo — VM stack
+#
+# Five services: anvil (mainnet fork), postgres + envio + hasura (indexer),
+# caddy (TLS + CORS proxy).  All ports are internal except caddy:443.
+#
+# Designed for a single VM (Hetzner CX22, DO 2vCPU/4GB or similar).
+#
+# Bring up:
+#   cp .env.vm.example .env
+#   # edit .env: MAINNET_RPC, DOMAIN, optionally FORK_BLOCK
+#   docker compose up -d
+#   ./init-demo.sh        # one-shot: clones dao-launchpad@f/lido-demo, runs just demo-up
+#
+# Tear down:
+#   docker compose down -v   # WARNING: drops anvil state + indexer DB
+#
+# Daily ops:
+#   docker compose logs -f anvil    # follow fork
+#   docker compose exec anvil cast block latest --rpc-url http://localhost:8545
+#   curl https://$DOMAIN/manifest.json | jq .
+
+name: lmm-demo
+
+services:
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:latest
+    restart: unless-stopped
+    # --silent keeps logs sane; --auto-impersonate lets Jordi's scripts sign as any address;
+    # --state + --state-interval gives us crash-safety (anvil writes state every 30s);
+    # --chain-id 1 keeps mainnet contract checks happy (Lido stETH/wstETH/Curve/LDO).
+    entrypoint: ["anvil"]
+    command:
+      - "--fork-url=${MAINNET_RPC}"
+      - "--chain-id=1"
+      - "--auto-impersonate"
+      - "--host=0.0.0.0"
+      - "--port=8545"
+      - "--state=/data/anvil.json"
+      - "--state-interval=30"
+      - "--silent"
+    volumes:
+      - lmm-data:/data
+    expose:
+      - "8545"
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: envio
+    volumes:
+      - lmm-pg:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d envio"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  envio:
+    # The capital-flow-indexer image is built locally from the indexer repo,
+    # mounted in by the host (see HOST_INDEXER_PATH in .env).  `envio start`
+    # connects to postgres + our anvil RPC.  See infra/lmm-demo/README.md
+    # for build instructions.
+    image: node:22-bookworm-slim
+    restart: unless-stopped
+    working_dir: /indexer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      anvil:
+        condition: service_started
+    environment:
+      ENVIO_PG_HOST: postgres
+      ENVIO_PG_PORT: "5432"
+      ENVIO_PG_USER: postgres
+      ENVIO_PG_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      ENVIO_PG_DATABASE: envio
+      # Anvil RPC, used by handlers for token metadata eth_calls
+      ENVIO_DEMO_RPC_URL: http://anvil:8545
+    volumes:
+      - ${HOST_INDEXER_PATH:-../../../../capital-flow-indexer}:/indexer
+    command: ["sh", "-c", "corepack enable && cd /indexer && pnpm install --frozen-lockfile && pnpm codegen && pnpm start"]
+    expose:
+      - "8080"
+
+  hasura:
+    image: hasura/graphql-engine:v2.42.0
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-changeme}@postgres:5432/envio
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_DEV_MODE: "false"
+      # The console is open without auth on the VM — caddy will proxy /graphql
+      # publicly (we want unauthenticated reads), but the admin UI should be
+      # protected.  Set HASURA_GRAPHQL_ADMIN_SECRET via .env for that.
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-changeme}
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - anvil
+      - hasura
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+      # Manifest is written by init-demo.sh into the anvil volume; caddy serves it static.
+      - lmm-data:/srv/lmm:ro
+
+volumes:
+  lmm-data:
+  lmm-pg:
+  caddy-data:
+  caddy-config:

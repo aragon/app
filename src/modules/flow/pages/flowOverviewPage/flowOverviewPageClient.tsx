@@ -9,6 +9,7 @@ import {
     FlowLoadError,
     FlowOverviewPageSkeleton,
 } from '../../components/flowSkeletons';
+import { LmmDemoBanner } from '../../demo/LmmDemoBanner';
 import { useFlowData } from '../../hooks';
 
 export interface IFlowOverviewPageClientProps {
@@ -31,6 +32,7 @@ export const FlowOverviewPageClient: React.FC<IFlowOverviewPageClientProps> = (
 
     return (
         <div className="flex flex-col gap-8">
+            <LmmDemoBanner />
             <FlowLede data={data} />
             <FlowKpiRow data={data} />
 

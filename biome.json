@@ -377,6 +377,66 @@
                     }
                 }
             }
+        },
+        {
+            "includes": [
+                "src/modules/flow/components/lidoMoneyMachine/**",
+                "src/shared/lidoPreview/**"
+            ],
+            "linter": {
+                "rules": {
+                    "a11y": {
+                        "useKeyWithClickEvents": "off",
+                        "useSemanticElements": "off",
+                        "useAriaPropsForRole": "off",
+                        "noNoninteractiveElementInteractions": "off",
+                        "noStaticElementInteractions": "off"
+                    },
+                    "correctness": {
+                        "noUnusedVariables": "warn",
+                        "useSingleJsDocAsterisk": "off",
+                        "useExhaustiveDependencies": "warn"
+                    },
+                    "style": {
+                        "useConsistentTypeDefinitions": "off",
+                        "useBlockStatements": "off",
+                        "useTemplate": "off",
+                        "noRestrictedImports": "off"
+                    },
+                    "suspicious": {
+                        "useAwait": "off",
+                        "noConsole": "off"
+                    },
+                    "complexity": {
+                        "useOptionalChain": "off"
+                    }
+                }
+            },
+            "css": {
+                "linter": {
+                    "enabled": false
+                }
+            },
+            "assist": {
+                "actions": {
+                    "source": {
+                        "useSortedAttributes": "off",
+                        "organizeImports": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": [
+                "src/shared/lidoPreview/**"
+            ],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "useDefaultSwitchClause": "off"
+                    }
+                }
+            }
         }
     ],
     "assist": {

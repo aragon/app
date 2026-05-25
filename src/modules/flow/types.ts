@@ -89,9 +89,13 @@ export interface IFlowDispatch {
     proposalSlug?: string;
     /**
      * Outcome of the dispatch. When omitted defaults to a successful dispatch.
+     * `skipped` = the strategy reverted (e.g. gate closed) and the dispatcher
+     * recorded a `StrategyFailed` event without moving any money.
      */
-    status?: 'ok' | 'failed';
+    status?: 'ok' | 'failed' | 'skipped';
     failureReason?: string;
+    /** Decoded revert reason when `status === 'skipped'`. */
+    skippedReason?: string;
 }
 
 export type FlowEventKind =
@@ -281,7 +285,60 @@ export interface IFlowOrchestratorLeg {
     amountIn?: number;
     tokenIn?: FlowTokenSymbol;
     recipientsCount: number;
-    status: 'ok' | 'failed';
+    status: 'ok' | 'failed' | 'skipped';
+}
+
+/**
+ * Embedded strategy of a DispatcherPlugin — surfaced when the dispatcher
+ * itself owns the strategy code (Lido demo: Wrap / UniV2 / GatedCowSwap)
+ * rather than fanning out to separately-installed plugin policies.  This is
+ * additional to `IFlowOrchestrator.chain` (which remains the source of truth
+ * for legacy multi-routers) and is rendered as a horizontal chip chain on
+ * the dispatcher card.
+ */
+export type FlowEmbeddedStrategyKind =
+    | 'wrap'
+    | 'univ2Liquidity'
+    | 'gatedCowSwap'
+    | 'cowSwap'
+    | 'transfer'
+    | 'epochTransfer'
+    | 'burn'
+    | 'unknown';
+
+export interface IFlowEmbeddedBudget {
+    kind: 'streamUntil' | 'full' | 'required' | 'unknown';
+    /** Floor reserve, raw token base units (string to avoid bigint JSON). */
+    floorEpochs?: string;
+    /** Target epoch for `StreamUntilBudget` strategies. */
+    targetEpoch?: string;
+}
+
+export interface IFlowEmbeddedGate {
+    kind: 'priceFloor' | 'unknown';
+    threshold?: string;
+    /** Max acceptable oracle staleness, seconds. */
+    maxStaleness?: string;
+}
+
+export interface IFlowEmbeddedEpoch {
+    /** Epoch length in seconds. */
+    epochLength?: string;
+}
+
+export interface IFlowEmbeddedStrategy {
+    /** Stable id — strategy contract address. */
+    id: string;
+    address: string;
+    kind: FlowEmbeddedStrategyKind;
+    /** Position in the dispatcher's strategy array (display order). */
+    index: number;
+    paused: boolean;
+    /** Optional human label derived from `kind` (falls back to the kind). */
+    label: string;
+    budget?: IFlowEmbeddedBudget;
+    gate?: IFlowEmbeddedGate;
+    epochProvider?: IFlowEmbeddedEpoch;
 }
 
 /**
@@ -310,6 +367,13 @@ export interface IFlowOrchestrator {
      * `null` so the diagram can show `[?]` placeholders without collapsing the chain.
      */
     chain: Array<IFlowPolicy | null>;
+    /**
+     * When the dispatcher owns its strategies inline (Lido Money Machine
+     * pattern), the embedded chain is surfaced here in execution order.  When
+     * present, the dispatcher card renders this list instead of (or in
+     * addition to) `chain`.
+     */
+    embeddedStrategies?: IFlowEmbeddedStrategy[];
     runs: IFlowOrchestratorRun[];
     lastRunAt?: string;
     totalRuns: number;

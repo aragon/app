@@ -25,15 +25,18 @@ import {
     PolicyStrategyType,
 } from '@/shared/api/daoService';
 import type {
+    EnvioEmbeddedStrategyKind,
     EnvioStrategyType,
     IEnvioExecutionTransfer,
     IEnvioPolicy,
     IEnvioPolicyEvent,
     IEnvioPolicyExecution,
     IEnvioRecipientAggregate,
+    IEnvioStrategy,
     IFlowDaoDataResponse,
 } from '@/shared/api/flowIndexer';
 import type {
+    FlowEmbeddedStrategyKind,
     FlowEventKind,
     FlowPolicyStatus,
     FlowPolicyStrategy,
@@ -42,6 +45,7 @@ import type {
     IFlowDao,
     IFlowDaoData,
     IFlowDispatch,
+    IFlowEmbeddedStrategy,
     IFlowEvent,
     IFlowGroupedPolicies,
     IFlowOrchestrator,
@@ -134,6 +138,16 @@ const STRATEGY_LABEL: Record<EnvioStrategyType, FlowPolicyStrategy> = {
     multiClaimer: 'Multi-dispatch',
     uniswapRouter: 'Uniswap swap',
     cowSwapRouter: 'CoW swap',
+    // LMM_DEMO_HACK: embedded strategies surface as Policy-level types on the
+    // indexer side too (the orphan-strategy fallback path), so map them to the
+    // closest end-user-friendly label.  Production traffic will not encounter
+    // these — they always live inside a `multiDispatch` policy.
+    wrapStrategy: 'Router',
+    univ2LiquidityStrategy: 'Uniswap swap',
+    gatedCowSwapStrategy: 'CoW swap',
+    transferStrategy: 'Router',
+    epochTransferStrategy: 'Stream',
+    burnStrategy: 'Burn',
 };
 
 const STRATEGY_VERB: Record<EnvioStrategyType, string> = {
@@ -145,6 +159,12 @@ const STRATEGY_VERB: Record<EnvioStrategyType, string> = {
     multiClaimer: 'claimed',
     uniswapRouter: 'swapped',
     cowSwapRouter: 'swapped',
+    wrapStrategy: 'wrapped',
+    univ2LiquidityStrategy: 'added as liquidity',
+    gatedCowSwapStrategy: 'swapped',
+    transferStrategy: 'transferred',
+    epochTransferStrategy: 'streamed',
+    burnStrategy: 'burnt',
 };
 
 const EVENT_KIND: Record<IEnvioPolicyEvent['kind'], FlowEventKind> = {
@@ -154,6 +174,14 @@ const EVENT_KIND: Record<IEnvioPolicyEvent['kind'], FlowEventKind> = {
     SETTINGS_UPDATED: 'settingsUpdated',
     FAILSAFE_UPDATED: 'settingsUpdated',
     STRATEGY_FAILED: 'dispatchFailed',
+    STRATEGY_PAUSED: 'paused',
+    STRATEGY_UNPAUSED: 'resumed',
+    TARGET_EPOCH_UPDATED: 'settingsUpdated',
+    FLOOR_EPOCHS_UPDATED: 'settingsUpdated',
+    EPOCH_LENGTH_UPDATED: 'settingsUpdated',
+    GATE_THRESHOLD_UPDATED: 'settingsUpdated',
+    GATE_STALENESS_UPDATED: 'settingsUpdated',
+    COWSWAP_SETTINGS_UPDATED: 'settingsUpdated',
 };
 
 const EVENT_TITLE: Record<IEnvioPolicyEvent['kind'], string> = {
@@ -163,6 +191,14 @@ const EVENT_TITLE: Record<IEnvioPolicyEvent['kind'], string> = {
     SETTINGS_UPDATED: 'Settings updated',
     FAILSAFE_UPDATED: 'Failsafe map updated',
     STRATEGY_FAILED: 'Strategy failed',
+    STRATEGY_PAUSED: 'Strategy paused',
+    STRATEGY_UNPAUSED: 'Strategy unpaused',
+    TARGET_EPOCH_UPDATED: 'Target epoch updated',
+    FLOOR_EPOCHS_UPDATED: 'Floor epochs updated',
+    EPOCH_LENGTH_UPDATED: 'Epoch length updated',
+    GATE_THRESHOLD_UPDATED: 'Gate threshold updated',
+    GATE_STALENESS_UPDATED: 'Gate staleness updated',
+    COWSWAP_SETTINGS_UPDATED: 'CoW swap settings updated',
 };
 
 const isOrchestratorStrategyType = (type: EnvioStrategyType): boolean =>
@@ -259,8 +295,20 @@ interface ITokenTotal {
  * Filters out transfers that should never contribute to recipient-facing totals:
  * `unknown` opaque calls and `swapIn` internal legs (vault → swap router).
  */
+// Internal legs that aren't real "money to recipient" moves.  Used to filter
+// out approve/wrap/addLiquidity/swap-presign + Uniswap V3 pre-swap from the
+// Recipients aggregate and from dispatch-amount math.
+const INTERNAL_TRANSFER_KINDS: ReadonlySet<string> = new Set([
+    'unknown',
+    'swapIn',
+    'wrap',
+    'univ2AddLiquidity',
+    'swapPresign',
+    'approve',
+]);
+
 const isOutboundTransfer = (t: IEnvioExecutionTransfer): boolean =>
-    t.decodedFrom !== 'unknown' && t.decodedFrom !== 'swapIn';
+    !INTERNAL_TRANSFER_KINDS.has(t.decodedFrom);
 
 const sumOutboundByToken = (
     transfers: readonly IEnvioExecutionTransfer[],
@@ -306,6 +354,36 @@ const pickDominantOutboundToken = (
         }
     }
     return best;
+};
+
+interface IPrimarySwapOrder {
+    sellSymbol: FlowTokenSymbol;
+    buySymbol: FlowTokenSymbol;
+    sellAmountNum: number;
+    buyAmountNum: number;
+}
+
+/**
+ * Picks the "primary" CowSwap order for an execution.  In practice every
+ * GatedCowSwap dispatch emits exactly one CowSwapOrderPosted event, so we
+ * grab the first one we see.  Returns null when no orders are attached.
+ */
+const pickPrimarySwapOrder = (
+    swapOrders: IEnvioPolicyExecution['swapOrders'],
+): IPrimarySwapOrder | null => {
+    if (!swapOrders || swapOrders.length === 0) {
+        return null;
+    }
+    const order = swapOrders[0];
+    return {
+        sellSymbol: order.sellToken.symbol as FlowTokenSymbol,
+        buySymbol: order.buyToken.symbol as FlowTokenSymbol,
+        sellAmountNum: normaliseAmount(
+            order.sellAmount,
+            order.sellToken.decimals,
+        ),
+        buyAmountNum: normaliseAmount(order.buyAmount, order.buyToken.decimals),
+    };
 };
 
 const pickSwapInLeg = (
@@ -366,12 +444,43 @@ const mapExecutionToDispatch = (
     );
     const proposal = lookupProposal(proposalMap, execution.txHash);
 
+    // CowSwap swap orders posted in the same execution.  When present, prefer
+    // them as the authoritative source of IN/OUT amounts — the dispatcher's
+    // calldata only sees the IGPv2Settlement.setPreSignature, not the actual
+    // sell/buy legs.  We aggregate over all orders in the execution (in
+    // practice there's exactly one per dispatch for the demo).
+    const cowOrder = pickPrimarySwapOrder(execution.swapOrders);
+
     // Swap strategies: OUT transfers come from the AMM pool (not our calldata)
     // so the indexer can't see them. We surface the IN leg as the dispatch's
     // primary amount/token — it's the only number we actually know — and keep
     // the REST-derived OUT symbol as a display-only chip so the card still
     // reads "X WETH → MERC" rather than "0 USDC".
     const isSwap = isSwapStrategyType(strategyType);
+
+    if (cowOrder) {
+        return {
+            id: execution.id,
+            at: isoFromSeconds(execution.blockTimestamp),
+            amount: cowOrder.sellAmountNum,
+            token: cowOrder.sellSymbol,
+            amountIn: cowOrder.sellAmountNum,
+            tokenIn: cowOrder.sellSymbol,
+            amountOut: cowOrder.buyAmountNum,
+            tokenOut: cowOrder.buySymbol ?? fallbackOutSymbol,
+            recipientsCount: uniqueRecipients.size || execution.transferCount,
+            topRecipients: buildTopRecipients(execution, addressBook),
+            txHash: execution.txHash,
+            proposalId: proposal?.proposalId,
+            proposalSlug: proposal?.slug,
+            // Surface skip/skippedReason on the dispatch shape so the chart
+            // can render a "skipped" marker.  IFlowDispatch is extended in
+            // ../types to carry these optional fields.
+            status: execution.skipped ? 'skipped' : 'ok',
+            skippedReason: execution.skippedReason ?? undefined,
+        };
+    }
+
     if (isSwap && swapIn) {
         return {
             id: execution.id,
@@ -455,13 +564,24 @@ const deriveCooldown = (
     policy: IEnvioPolicy,
     restPolicy: IDaoPolicy | undefined,
 ): IFlowCooldown | null => {
+    if (!policy.lastDispatchAt) {
+        return null;
+    }
+
+    // 1. Preferred: derive from StreamUntilBudget on one of the embedded
+    //    strategies.  The dispatcher's "next firing time" is bounded by the
+    //    fastest stream — pick the smallest epochLength × floorEpochs.
+    const streamCooldown = deriveStreamCooldownFromStrategies(policy);
+    if (streamCooldown) {
+        return streamCooldown;
+    }
+
+    // 2. Fallback: legacy REST-driven cooldown for single-dispatch routers
+    //    whose policy.strategy.source carries the streamBalance metadata.
     if (
         restPolicy?.strategy.source?.type !==
         PolicyStrategySourceType.STREAM_BALANCE
     ) {
-        return null;
-    }
-    if (!policy.lastDispatchAt) {
         return null;
     }
     const epochSeconds = restPolicy.strategy.source.epochInterval;
@@ -472,6 +592,43 @@ const deriveCooldown = (
     return {
         readyAt: new Date(readyAtMs).toISOString(),
         totalMs: epochSeconds * 1000,
+    };
+};
+
+const deriveStreamCooldownFromStrategies = (
+    policy: IEnvioPolicy,
+): IFlowCooldown | null => {
+    const strategies = policy.strategies;
+    if (!strategies || strategies.length === 0 || !policy.lastDispatchAt) {
+        return null;
+    }
+    let bestSeconds: number | undefined;
+    for (const s of strategies) {
+        const budget = s.budget;
+        const epochProvider = s.epochProvider;
+        if (!budget || budget.kind !== 'STREAM_UNTIL') {
+            continue;
+        }
+        if (!epochProvider?.epochLength) {
+            continue;
+        }
+        const epochLength = Number(epochProvider.epochLength);
+        const floorEpochs = budget.floorEpochs ? Number(budget.floorEpochs) : 1;
+        if (!Number.isFinite(epochLength) || epochLength <= 0) {
+            continue;
+        }
+        const cooldownSeconds = epochLength * Math.max(1, floorEpochs);
+        if (bestSeconds == null || cooldownSeconds < bestSeconds) {
+            bestSeconds = cooldownSeconds;
+        }
+    }
+    if (bestSeconds == null) {
+        return null;
+    }
+    const readyAtMs = toMillis(policy.lastDispatchAt) + bestSeconds * 1000;
+    return {
+        readyAt: new Date(readyAtMs).toISOString(),
+        totalMs: bestSeconds * 1000,
     };
 };
 
@@ -821,6 +978,87 @@ const mapPolicy = (params: {
 };
 
 // ---------------------------------------------------------------------------
+// Embedded strategy chain (LMM Money Machine pattern)
+// ---------------------------------------------------------------------------
+
+const EMBEDDED_STRATEGY_KIND_MAP: Record<
+    EnvioEmbeddedStrategyKind,
+    FlowEmbeddedStrategyKind
+> = {
+    WRAP: 'wrap',
+    UNIV2_LIQUIDITY: 'univ2Liquidity',
+    GATED_COWSWAP: 'gatedCowSwap',
+    COWSWAP: 'cowSwap',
+    TRANSFER: 'transfer',
+    EPOCH_TRANSFER: 'epochTransfer',
+    BURN: 'burn',
+    UNKNOWN: 'unknown',
+};
+
+const EMBEDDED_STRATEGY_LABEL: Record<FlowEmbeddedStrategyKind, string> = {
+    wrap: 'Wrap',
+    univ2Liquidity: 'UniV2 Liquidity',
+    gatedCowSwap: 'Gated CoW swap',
+    cowSwap: 'CoW swap',
+    transfer: 'Transfer',
+    epochTransfer: 'Epoch transfer',
+    burn: 'Burn',
+    unknown: 'Strategy',
+};
+
+const mapEmbeddedStrategies = (
+    strategies: IEnvioStrategy[] | undefined,
+): IFlowEmbeddedStrategy[] | undefined => {
+    if (!strategies || strategies.length === 0) {
+        return undefined;
+    }
+    const mapped = strategies
+        .slice()
+        .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+        .map((s, i): IFlowEmbeddedStrategy => {
+            const kind = EMBEDDED_STRATEGY_KIND_MAP[s.kind] ?? 'unknown';
+            return {
+                id: s.id,
+                address: s.address.toLowerCase(),
+                kind,
+                index: s.index ?? i,
+                paused: s.paused,
+                label: EMBEDDED_STRATEGY_LABEL[kind],
+                budget: s.budget
+                    ? {
+                          kind:
+                              s.budget.kind === 'STREAM_UNTIL'
+                                  ? 'streamUntil'
+                                  : s.budget.kind === 'FULL'
+                                    ? 'full'
+                                    : s.budget.kind === 'REQUIRED'
+                                      ? 'required'
+                                      : 'unknown',
+                          floorEpochs: s.budget.floorEpochs ?? undefined,
+                          targetEpoch: s.budget.targetEpoch ?? undefined,
+                      }
+                    : undefined,
+                gate: s.gate
+                    ? {
+                          kind:
+                              s.gate.kind === 'PRICE_FLOOR'
+                                  ? 'priceFloor'
+                                  : 'unknown',
+                          threshold: s.gate.threshold ?? undefined,
+                          maxStaleness: s.gate.maxStaleness ?? undefined,
+                      }
+                    : undefined,
+                epochProvider: s.epochProvider
+                    ? {
+                          epochLength: s.epochProvider.epochLength ?? undefined,
+                      }
+                    : undefined,
+            };
+        });
+    return mapped;
+};
+
+// ---------------------------------------------------------------------------
 // Orchestrator synthesis (Multi-dispatch)
 // ---------------------------------------------------------------------------
 
@@ -935,6 +1173,7 @@ const buildOrchestrator = (params: {
             ? isoFromSeconds(uninstallEvent.blockTimestamp)
             : undefined,
         chain,
+        embeddedStrategies: mapEmbeddedStrategies(envioPolicy.strategies),
         runs,
         lastRunAt: runs[0]?.at,
         totalRuns: runs.length,

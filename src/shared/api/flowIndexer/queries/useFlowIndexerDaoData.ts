@@ -11,7 +11,72 @@ import type { IFlowDaoDataResponse } from '../flowIndexerTypes';
  * that's exactly how the indexer keys `Dao.id`.
  */
 
+// Reusable execution fragment.  Inlined as a GraphQL fragment string because
+// Envio/Hasura supports `fragment ... on Type { ... }` natively and using one
+// in two places (lastExecution + executions) keeps the query short.
+const EXECUTION_FIELDS = /* GraphQL */ `
+    fragment ExecutionFields on PolicyExecution {
+        id
+        kind
+        blockNumber
+        blockTimestamp
+        txHash
+        logIndex
+        transferCount
+        decodedTransferCount
+        strategyIndex
+        skipped
+        skippedReason
+        strategy {
+            id
+            address
+            kind
+            index
+        }
+        transfers(order_by: { actionIndex: asc }) {
+            id
+            amount
+            to
+            decodedFrom
+            actionIndex
+            token {
+                id
+                address
+                symbol
+                decimals
+            }
+        }
+        swapOrders(order_by: { postedAt: asc }) {
+            id
+            orderUid
+            sellAmount
+            buyAmount
+            validTo
+            feeAmount
+            postedAt
+            sellToken {
+                id
+                address
+                symbol
+                decimals
+            }
+            buyToken {
+                id
+                address
+                symbol
+                decimals
+            }
+            strategy {
+                id
+                address
+                kind
+            }
+        }
+    }
+`;
+
 const FLOW_DAO_DATA_QUERY = /* GraphQL */ `
+    ${EXECUTION_FIELDS}
     query FlowDaoData($daoIds: [String!]!, $executionLimit: Int!) {
         Policy(where: { dao_id: { _in: $daoIds } }, order_by: { installedAt: desc }) {
             id
@@ -29,54 +94,49 @@ const FLOW_DAO_DATA_QUERY = /* GraphQL */ `
                 id
                 address
                 chainId
+                name
+                description
+                avatarUrl
             }
             lastExecution {
-                id
-                kind
-                blockNumber
-                blockTimestamp
-                txHash
-                logIndex
-                transferCount
-                decodedTransferCount
-                transfers(order_by: { actionIndex: asc }) {
-                    id
-                    amount
-                    to
-                    decodedFrom
-                    actionIndex
-                    token {
-                        id
-                        address
-                        symbol
-                        decimals
-                    }
-                }
+                ...ExecutionFields
             }
             executions(
                 order_by: { blockTimestamp: desc }
                 limit: $executionLimit
             ) {
+                ...ExecutionFields
+            }
+            strategies(order_by: { index: asc }) {
                 id
+                address
                 kind
-                blockNumber
-                blockTimestamp
-                txHash
-                logIndex
-                transferCount
-                decodedTransferCount
-                transfers(order_by: { actionIndex: asc }) {
+                index
+                paused
+                configJson
+                budget {
                     id
-                    amount
-                    to
-                    decodedFrom
-                    actionIndex
-                    token {
-                        id
-                        address
-                        symbol
-                        decimals
-                    }
+                    address
+                    kind
+                    floorEpochs
+                    targetEpoch
+                    epochProviderAddress
+                    initializedAt
+                }
+                gate {
+                    id
+                    address
+                    kind
+                    threshold
+                    maxStaleness
+                    oracle
+                    baseToken
+                    quoteToken
+                }
+                epochProvider {
+                    id
+                    address
+                    epochLength
                 }
             }
             events(order_by: { blockTimestamp: desc }, limit: 25) {
