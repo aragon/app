@@ -423,17 +423,20 @@
         },
         "fields": {
           "subdomain": {
-            "error": {
-              "invalidBoundary": "Name can’t start or end with a hyphen.",
-              "invalidChars": "Use only lowercase letters, numbers, and hyphens.",
-              "nameTaken": "This name is already taken."
-            },
             "helpText": "This ENS name points to your connected wallet. Set it as your primary ENS so Aragon and other ENS-compatible apps can show it instead of your address.",
             "label": "Aragon name",
             "placeholder": "username"
           }
         },
         "title": "Claim your Aragon name"
+      },
+      "ensSubdomainField": {
+        "error": {
+          "invalidBoundary": "Name can’t start or end with a hyphen.",
+          "invalidChars": "Use only lowercase letters, numbers, and hyphens.",
+          "nameTaken": "This name is already taken.",
+          "sameAsCurrent": "Choose a name that differs from your current Aragon name."
+        }
       },
       "aragonProfileSubdomainRegisterTransactionDialog": {
         "a11y": {
@@ -555,11 +558,6 @@
         "description": "Choose a new Aragon name. All your profile records will be moved to the new name.",
         "fields": {
           "subdomain": {
-            "error": {
-              "invalidFormat": "Only lowercase letters, numbers, and hyphens are allowed.",
-              "nameTaken": "This name is already taken. Please choose a different one.",
-              "sameAsCurrent": "Choose a name that differs from your current Aragon name."
-            },
             "helpText": "Your records will be moved to this new name.",
             "label": "New ENS subname",
             "placeholder": "yourname"

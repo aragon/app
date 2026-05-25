@@ -1,29 +1,13 @@
 'use client';
 
-import {
-    Dialog,
-    InputText,
-    invariant,
-    useDebouncedValue,
-} from '@aragon/gov-ui-kit';
+import { Dialog, InputText, invariant } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useEnsAddress } from 'wagmi';
-import { ensChainId, memberRegistrySubdomainSuffix } from '@/modules/ens';
+import { memberRegistrySubdomainSuffix } from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
-
-/** Maximum character length allowed for a subdomain label. */
-const subdomainMaxLength = 50;
-const subdomainMinLength = 3;
-
-/**
- * Valid ENS label: lowercase alphanumeric and hyphens,
- * must not start or end with a hyphen.
- */
-const ensLabelPattern = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
+import { useEnsSubdomainField } from '../../hooks/useEnsSubdomainField';
 
 interface IFormData {
     /** New ENS subdomain label, e.g. "alice". */
@@ -55,70 +39,20 @@ export const AragonProfileRenameDialog: React.FC<
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
 
-    const { control, handleSubmit, watch } = useForm<IFormData>({
+    const { control, handleSubmit } = useForm<IFormData>({
         mode: 'onTouched',
         defaultValues: { subdomain: '' },
     });
 
-    const subdomain = watch('subdomain');
-    const [subdomainDebounced] = useDebouncedValue(subdomain, { delay: 500 });
-
-    const { alert: fieldAlert, ...fieldProps } = useFormField<
-        IFormData,
-        'subdomain'
-    >('subdomain', {
-        label: t(
-            'app.application.aragonProfileRenameDialog.fields.subdomain.label',
-        ),
-        rules: {
-            required: true,
-            maxLength: subdomainMaxLength,
-            minLength: subdomainMinLength,
-            pattern: {
-                value: ensLabelPattern,
-                message: t(
-                    'app.application.aragonProfileRenameDialog.fields.subdomain.error.invalidFormat',
-                ),
-            },
-            validate: (value) =>
-                value === currentSubdomain
-                    ? t(
-                          'app.application.aragonProfileRenameDialog.fields.subdomain.error.sameAsCurrent',
-                      )
-                    : true,
-        },
-        sanitizeOnBlur: true,
-        trimOnBlur: true,
-        control,
-    });
-
-    const isValidForCheck =
-        subdomainDebounced.length >= subdomainMinLength &&
-        ensLabelPattern.test(subdomainDebounced) &&
-        subdomainDebounced !== currentSubdomain &&
-        fieldAlert == null;
-
-    const { data: ensAddress, isLoading: isCheckingAvailability } =
-        useEnsAddress({
-            name: isValidForCheck
-                ? `${subdomainDebounced}${memberRegistrySubdomainSuffix}`
-                : undefined,
-            chainId: ensChainId,
-            query: { enabled: isValidForCheck },
+    const { fieldProps, isCheckingAvailability, isNameTaken } =
+        useEnsSubdomainField<IFormData, 'subdomain'>({
+            control,
+            name: 'subdomain',
+            label: t(
+                'app.application.aragonProfileRenameDialog.fields.subdomain.label',
+            ),
+            currentSubdomain,
         });
-
-    const isNameTaken = isValidForCheck && ensAddress != null;
-
-    const availabilityAlert = isNameTaken
-        ? {
-              message: t(
-                  'app.application.aragonProfileRenameDialog.fields.subdomain.error.nameTaken',
-              ),
-              variant: 'critical' as const,
-          }
-        : undefined;
-
-    const composedAlert = fieldAlert ?? availabilityAlert;
 
     const handleCancel = () => close(location.id);
 
@@ -143,13 +77,9 @@ export const AragonProfileRenameDialog: React.FC<
             <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
                 <InputText
                     {...fieldProps}
-                    addon={memberRegistrySubdomainSuffix}
-                    addonPosition="right"
-                    alert={composedAlert}
                     helpText={t(
                         'app.application.aragonProfileRenameDialog.fields.subdomain.helpText',
                     )}
-                    maxLength={subdomainMaxLength}
                     placeholder={t(
                         'app.application.aragonProfileRenameDialog.fields.subdomain.placeholder',
                     )}
