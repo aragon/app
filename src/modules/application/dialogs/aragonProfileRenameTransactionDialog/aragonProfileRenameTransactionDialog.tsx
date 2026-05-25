@@ -3,7 +3,7 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     memberRegistryAbi,
     memberRegistryAddress,
@@ -42,7 +42,7 @@ export const AragonProfileRenameTransactionDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const newEnsName = `${subdomain}${memberRegistrySubdomainSuffix}`;
 

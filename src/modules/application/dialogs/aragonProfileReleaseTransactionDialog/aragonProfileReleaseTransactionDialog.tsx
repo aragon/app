@@ -4,7 +4,7 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     memberRegistryAbi,
     memberRegistryAddress,
@@ -42,7 +42,7 @@ export const AragonProfileReleaseTransactionDialog: React.FC<
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const queryClient = useQueryClient();
     const { queryKey: ensNameQueryKey } = useEnsName(address);
 
