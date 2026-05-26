@@ -64,7 +64,7 @@ export const AragonProfileRenameTransactionDialog: React.FC<
                 to: memberRegistryAddress,
                 data: encodeFunctionData({
                     abi: memberRegistryAbi,
-                    functionName: 'rename',
+                    functionName: 'move',
                     args: [subdomain],
                 }),
                 value: BigInt(0),
