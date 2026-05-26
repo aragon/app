@@ -134,7 +134,7 @@ describe('<TokenDelegationDialog /> component', () => {
                 ({
                     data: options?.stripAragonRegistrySuffix
                         ? 'alice'
-                        : 'alice.aragonx.eth',
+                        : 'alice.aragon.eth',
                     isLoading: false,
                 }) as ReturnType<typeof ensModule.useEnsName>,
         );
