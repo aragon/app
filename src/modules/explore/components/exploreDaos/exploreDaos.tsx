@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoList } from '../daoList';
@@ -23,6 +24,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
 
     const { t } = useTranslations();
     const { address } = useWalletAccount();
+    const isMounted = useIsMounted();
 
     const [daoFilter, setDaoFilter] = useFilterUrlParam({
         name: exploreDaoFilterParam,
@@ -69,7 +71,7 @@ export const ExploreDaos: React.FC<IExploreDaosProps> = (props) => {
                         value="all"
                     />
                     <Toggle
-                        disabled={address == null}
+                        disabled={!isMounted || address == null}
                         label={t('app.explore.exploreDao.filter.member')}
                         value="member"
                     />

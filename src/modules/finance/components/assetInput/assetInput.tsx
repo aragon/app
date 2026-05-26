@@ -299,19 +299,22 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
                 </ToggleGroup>
             )}
             {assetField.value?.amount && !hideMax && (
-                <div className="flex items-center gap-x-1 self-end pr-4">
+                <div className="flex items-center self-end pr-4">
                     <button
-                        className="cursor-pointer text-primary-400 hover:text-primary-600"
+                        className="flex cursor-pointer gap-x-1 text-primary-400 hover:text-primary-600"
                         onClick={handleMaxAmount}
                         type="button"
                     >
                         {t('app.finance.assetInput.maxButtonLabel')}
+                        <span className="text-neutral-500">
+                            {formatterUtils.formatNumber(
+                                assetField.value.amount,
+                                {
+                                    format: NumberFormat.TOKEN_AMOUNT_SHORT,
+                                },
+                            )}
+                        </span>
                     </button>
-                    <span className="text-neutral-500">
-                        {formatterUtils.formatNumber(assetField.value.amount, {
-                            format: NumberFormat.TOKEN_AMOUNT_SHORT,
-                        })}
-                    </span>
                 </div>
             )}
         </div>

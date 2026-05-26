@@ -1,4 +1,4 @@
-import { Avatar } from '@aragon/gov-ui-kit';
+import { Avatar, addressUtils } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -21,8 +21,10 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
             className={classNames('flex items-center gap-x-1.5', className)}
             {...otherProps}
         >
-            {token && <Avatar size="xs" src={token.logo} />}
-            {token ? token.symbol : t('app.finance.assetInput.token.trigger')}
+            {token && <Avatar size="xs" src={token.logo || undefined} />}
+            {token
+                ? token.symbol || addressUtils.truncateAddress(token.address)
+                : t('app.finance.assetInput.token.trigger')}
         </div>
     );
 };
