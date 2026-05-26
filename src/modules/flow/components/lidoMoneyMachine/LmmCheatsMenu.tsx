@@ -9,12 +9,9 @@
 import { useMemo, useState } from 'react';
 import { createPublicClient, http, type PublicClient, parseEther } from 'viem';
 import { mainnet } from 'viem/chains';
-import {
-    LMM_DEMO_MODE,
-    LMM_RPC_URL,
-    useLmmManifest,
-} from '@/modules/flow/demo/lmmDemoConfig';
+import { LMM_DEMO_MODE, LMM_RPC_URL } from '@/modules/flow/demo/lmmDemoConfig';
 import { assertForkRpc } from '@/modules/flow/demo/safety';
+import { useLmmManifest } from '@/modules/flow/demo/useLmmManifest';
 import { type ActionItem, ActionsMenu } from './ActionsMenu';
 import {
     type ActionContext,
@@ -61,7 +58,7 @@ export const LmmCheatsMenu: React.FC = () => {
             rpc: LMM_RPC_URL,
             publicClient: getPublicClient(),
             dao: manifest.lmm.dao,
-            dispatcher: manifest.lmm.dispatcher,
+            dispatcher: manifest.lmm.dispatcherPlugin,
             addresses,
         };
     }, [manifest]);

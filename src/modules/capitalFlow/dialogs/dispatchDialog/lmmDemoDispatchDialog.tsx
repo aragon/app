@@ -20,13 +20,10 @@ import {
     deriveAddressesFromManifest,
     dispatchAction,
 } from '@/modules/flow/components/lidoMoneyMachine/actions';
-import { StepsView } from '@/modules/flow/components/lidoMoneyMachine/StepsView';
-import {
-    LMM_DEMO_MODE,
-    LMM_RPC_URL,
-    useLmmManifest,
-} from '@/modules/flow/demo/lmmDemoConfig';
+import { LmmSimulationCards } from '@/modules/flow/components/lidoMoneyMachine/LmmSimulationCards';
+import { LMM_DEMO_MODE, LMM_RPC_URL } from '@/modules/flow/demo/lmmDemoConfig';
 import { assertForkRpc } from '@/modules/flow/demo/safety';
+import { useLmmManifest } from '@/modules/flow/demo/useLmmManifest';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import {
     type FlowGraph,
@@ -91,7 +88,7 @@ export const LmmDemoDispatchDialog: React.FC<
         const run = async () => {
             try {
                 const publicClient = getPublicClient();
-                const dispatcher = manifest.lmm.dispatcher as Address;
+                const dispatcher = manifest.lmm.dispatcherPlugin as Address;
                 const dao = manifest.lmm.dao as Address;
                 const addresses = deriveAddressesFromManifest(
                     manifest as unknown as Parameters<
@@ -209,11 +206,7 @@ export const LmmDemoDispatchDialog: React.FC<
                             </div>
                         </div>
                     )}
-                    {flow && (
-                        <div className="rounded-lg border border-neutral-100 bg-neutral-0 p-2">
-                            <StepsView flow={flow} />
-                        </div>
-                    )}
+                    {flow && <LmmSimulationCards flow={flow} />}
                     {txError && (
                         <div className="rounded-lg border border-critical-200 bg-critical-50 px-3 py-2 font-normal text-critical-800 text-sm leading-snug">
                             Dispatch failed: {txError}

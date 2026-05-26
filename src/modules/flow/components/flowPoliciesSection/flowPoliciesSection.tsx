@@ -1,7 +1,7 @@
 'use client';
 
 import classNames from 'classnames';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAddAutomationAction } from '../../hooks/useAddAutomationAction';
 import { useFlowDataContext } from '../../providers/flowDataProvider';
 import type { IFlowGroupedPolicies, IFlowPolicy } from '../../types';
@@ -61,18 +61,15 @@ export const FlowPoliciesSection: React.FC<IFlowPoliciesSectionProps> = (
         [groupedPolicies],
     );
 
-    const defaultPill = pills[0]?.id ?? 'active';
-    const [selected, setSelected] = useState<PillId>(defaultPill);
-
-    // If the bucket the user is currently on becomes empty (e.g. dispatch moved a policy
-    // out of "Not yet dispatched"), fall back to the first available pill.
-    useEffect(() => {
-        if (!pills.some((p) => p.id === selected)) {
-            setSelected(pills[0]?.id ?? 'active');
-        }
-    }, [pills, selected]);
-
-    const active = pills.find((p) => p.id === selected) ?? pills[0];
+    // `selectedRaw` is what the user explicitly clicked.  `active` is the
+    // pill we actually render — derived from `pills`, with a fallback to the
+    // first available bucket when the user's previous selection is no longer
+    // in the list (e.g. dispatch moved a policy out of "Not yet dispatched").
+    // Keeping this purely derived avoids the setState-in-useEffect loop that
+    // fired when `pills` was reference-unstable from upstream refetches.
+    const [selectedRaw, setSelected] = useState<PillId>('active');
+    const active = pills.find((p) => p.id === selectedRaw) ?? pills[0];
+    const selected = active?.id ?? selectedRaw;
 
     // Mirror the Settings > Automations "Add automation" action — opens the
     // wizard details dialog, then routes into `/create/{plugin}/policy`.

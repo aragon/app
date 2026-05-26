@@ -150,7 +150,7 @@ export const FlowPolicyCard: React.FC<IFlowPolicyCardProps> = (props) => {
                     <FlowStrategyChip strategy={policy.strategy} />
                     <Link
                         aria-label={`Edit ${policy.name} in DAO settings`}
-                        className="inline-flex items-center gap-1 rounded-full border border-neutral-100 px-2 py-0.5 font-normal text-neutral-500 text-xs leading-tight hover:border-primary-200 hover:text-primary-400"
+                        className="inline-flex items-center gap-1 font-normal text-neutral-500 text-xs leading-tight hover:text-primary-500"
                         href={editHref}
                         onClick={(e) => e.stopPropagation()}
                         rel="noopener"

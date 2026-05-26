@@ -114,7 +114,22 @@ export function toReactFlowGraph(topology: TopologyGraph): ReactFlowGraph {
         visitPlugin(topology.root, 'root', addNode, addEdge);
     }
 
-    return { nodes, edges };
+    // Edges can collide when their source/target are nodes that got
+    // deduplicated by `(kind, address)`.  Concrete case: a single
+    // StreamUntilBudget shared between two strategies (UniV2 `budgetB` +
+    // GatedCowSwap `budget` in the LMM deployment) produces the same
+    // `${budgetId}->${epochProviderId}` edge twice — first emit wins, just
+    // like the node dedup contract above.
+    const seenEdgeIds = new Set<string>();
+    const dedupedEdges = edges.filter((e) => {
+        if (seenEdgeIds.has(e.id)) {
+            return false;
+        }
+        seenEdgeIds.add(e.id);
+        return true;
+    });
+
+    return { nodes, edges: dedupedEdges };
 }
 
 function visitPlugin(

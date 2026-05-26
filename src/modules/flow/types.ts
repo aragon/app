@@ -403,6 +403,15 @@ export interface IFlowDaoData {
      * chain of sub-policies + a list of runs grouped by transaction hash.
      */
     orchestrators: IFlowOrchestrator[];
+    /**
+     * Mirror of each orchestrator as an `IFlowPolicy` (same shape leaf policies use).
+     * Lets the policy detail page resolve `/flow/policies/<orchestratorId>` without
+     * polluting the leaf-only `policies` list (KPI / Policies-section consumers
+     * still iterate `policies` to avoid double-counting orchestrators alongside
+     * their inline `FlowMultiDispatchCard`). The detail page itself falls back
+     * to this array when a policy id can't be found in `policies`.
+     */
+    orchestratorPolicies: IFlowPolicy[];
     recipients: IFlowRecipientAggregate[];
 }
 

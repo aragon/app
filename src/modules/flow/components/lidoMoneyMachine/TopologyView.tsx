@@ -173,6 +173,7 @@ export function TopologyView({
     topology,
     status,
     lidoDaoAddress,
+    initialSelectedNodeAddress,
 }: {
     topology: TopologyGraph;
     status?: StatusSnapshot;
@@ -181,6 +182,11 @@ export function TopologyView({
      *  → strategies.  This is deployment-knowledge from the UI's manifest,
      *  not something the generic inspect step can derive. */
     lidoDaoAddress?: string;
+    /** Deep-link target.  Matched case-insensitively against `data.address`
+     *  on every node; first match wins and is presented as the open
+     *  NodeDetails sidebar.  Used by the dashboard orchestrator chip click
+     *  to land the user directly on the strategy they tapped. */
+    initialSelectedNodeAddress?: string;
 }) {
     const [selected, setSelected] = useState<GraphNode | null>(null);
 
@@ -217,10 +223,25 @@ export function TopologyView({
         };
     }, [topology, status, lidoDaoAddress]);
 
-    // Close any open details when the topology changes.
+    // Close any open details when the topology changes, then re-apply the
+    // deep-link selection if one was requested.  Looked up against
+    // `data.address` (the only stable identifier we can derive from a
+    // strategy chip URL — node ids are path-based and not user-meaningful).
+    // `byId` is a fresh Map per topology re-layout, so depending on it
+    // implicitly covers topology changes too.
     useEffect(() => {
-        setSelected(null);
-    }, [topology]);
+        if (initialSelectedNodeAddress == null) {
+            setSelected(null);
+            return;
+        }
+        const target = initialSelectedNodeAddress.toLowerCase();
+        const match = Array.from(byId.values()).find(
+            (n) =>
+                typeof n.data.address === 'string' &&
+                (n.data.address as string).toLowerCase() === target,
+        );
+        setSelected(match ?? null);
+    }, [initialSelectedNodeAddress, byId]);
 
     return (
         <div className="topology">

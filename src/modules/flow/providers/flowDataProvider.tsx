@@ -20,6 +20,12 @@ import type {
 import type { Network } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+// LMM_DEMO_HACK: skip the Tenderly review step + wallet-connect guard for
+// dispatches against the LMM demo DAO — those go to a local Anvil fork via
+// the demo dispatch dialog and have their own (lido/preview) simulator, so
+// the production Tenderly call would just fail / mislead the user.
+import { LMM_DEMO_MODE } from '../demo/lmmDemoConfig';
+import { isLmmDemoDao } from '../demo/useLmmManifest';
 import type { IFlowDaoData } from '../types';
 import { useEnvioFlowData } from './useEnvioFlowData';
 
@@ -292,6 +298,27 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             // directly on networks where Tenderly isn't wired in.
             const supportsTenderly =
                 networkDefinitions[typedNetwork]?.tenderlySupport ?? false;
+
+            // LMM demo dispatches go to a private Anvil fork (no real chain
+            // RPC), so:
+            //   - Tenderly can't see those contracts → skip the review step.
+            //   - The wallet-connect guard is irrelevant → anvil impersonates.
+            // `LmmDemoDispatchDialog` (mounted by `DispatchTransactionDialog`)
+            // already runs the lido/preview simulator and renders the per-leg
+            // breakdown.  Open it directly.
+            const isLmmDispatch =
+                LMM_DEMO_MODE && isLmmDemoDao(matchingRestPolicy.daoAddress);
+            if (isLmmDispatch) {
+                const txParams: IDispatchTransactionDialogParams = {
+                    policy: matchingRestPolicy,
+                    network: typedNetwork,
+                    onDispatchSuccess,
+                };
+                open(CapitalFlowDialogId.DISPATCH_TRANSACTION, {
+                    params: txParams,
+                });
+                return;
+            }
 
             // `DispatchTransactionDialog` invariants on a connected wallet,
             // so route unconnected users through the connect-wallet dialog

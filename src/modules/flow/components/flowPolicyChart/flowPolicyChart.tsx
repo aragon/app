@@ -254,7 +254,16 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
             </div>
 
             <div className="h-[280px] w-full">
-                <ResponsiveContainer height="100%" width="100%">
+                {/* `initialDimension` overrides recharts' default `{-1,-1}` —
+                 *  without it the first paint logs a "width(-1)/height(-1)"
+                 *  dev warning before the ResizeObserver fires.  We know the
+                 *  container is 280px tall, so seed that height; the real
+                 *  width is filled in on the next frame. */}
+                <ResponsiveContainer
+                    height="100%"
+                    initialDimension={{ width: 0, height: 280 }}
+                    width="100%"
+                >
                     <ComposedChart
                         data={data}
                         margin={{ top: 16, right: 16, left: 0, bottom: 0 }}
@@ -402,7 +411,11 @@ const TimelineBand: React.FC<ITimelineBandProps> = ({
 
     return (
         <div className="h-[56px] w-full">
-            <ResponsiveContainer height="100%" width="100%">
+            <ResponsiveContainer
+                height="100%"
+                initialDimension={{ width: 0, height: 56 }}
+                width="100%"
+            >
                 <ScatterChart
                     margin={{ top: 4, right: 16, left: 56, bottom: 16 }}
                 >

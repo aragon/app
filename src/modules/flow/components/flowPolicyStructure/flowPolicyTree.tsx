@@ -4,7 +4,8 @@ import type { Address } from 'viem';
 // LMM_DEMO_HACK: route multi-dispatch policies to the vendored React Flow
 // topology when the demo flag is set + the manifest matches.  Falls through
 // to the legacy SVG tree for every other policy.
-import { LMM_DEMO_MODE, useLmmManifest } from '../../demo/lmmDemoConfig';
+import { LMM_DEMO_MODE } from '../../demo/lmmDemoConfig';
+import { useLmmManifest } from '../../demo/useLmmManifest';
 import type {
     IFlowPolicy,
     IFlowPolicySubRouter,
@@ -14,6 +15,10 @@ import { LmmPolicyTopology } from '../lidoMoneyMachine/LmmPolicyTopology';
 
 export interface IFlowPolicyTreeProps {
     policy: IFlowPolicy;
+    /** Optional address to pre-select in the LMM topology.  Threaded through
+     *  from the policy-detail page's `?node=` search param so a chip click on
+     *  the dashboard orchestrator card lands on the right node. */
+    selectedNodeAddress?: string;
     className?: string;
 }
 
@@ -175,7 +180,7 @@ const nodeTypeLabel: Record<NodeType, string> = {
 };
 
 export const FlowPolicyTree: React.FC<IFlowPolicyTreeProps> = (props) => {
-    const { policy, className } = props;
+    const { policy, selectedNodeAddress, className } = props;
 
     // LMM_DEMO_HACK: when the manifest is loaded and this is the LMM demo
     // multi-dispatch policy, render the rich React Flow topology vendored
@@ -187,7 +192,8 @@ export const FlowPolicyTree: React.FC<IFlowPolicyTreeProps> = (props) => {
         LMM_DEMO_MODE &&
         manifest != null &&
         policy.strategy === 'Multi-dispatch' &&
-        policy.address.toLowerCase() === manifest.lmm.dispatcher.toLowerCase();
+        policy.address.toLowerCase() ===
+            manifest.lmm.dispatcherPlugin.toLowerCase();
     if (isLmmDispatcher && manifest) {
         return (
             <div
@@ -212,7 +218,8 @@ export const FlowPolicyTree: React.FC<IFlowPolicyTreeProps> = (props) => {
                         // parent crown node.
                         undefined
                     }
-                    pluginAddress={manifest.lmm.dispatcher as Address}
+                    pluginAddress={manifest.lmm.dispatcherPlugin as Address}
+                    selectedNodeAddress={selectedNodeAddress}
                 />
             </div>
         );

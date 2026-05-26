@@ -36,8 +36,8 @@ export const assertForkRpc = (rpcUrl: string = LMM_RPC_URL): void => {
         host === allowed.toLowerCase()
             ? true
             : // Subdomain match — only when the allowlist entry starts with a
-              // dot (".aragon-team.xyz" would match "lmm-demo.aragon-team.xyz").
-              // We intentionally do NOT do open-ended suffix matching to keep
+              // dot (".aragon.in" would match "tests.aragon.in").  We
+              // intentionally do NOT do open-ended suffix matching to keep
               // the rule list explicit.
               allowed.startsWith('.') && host.endsWith(allowed.toLowerCase()),
     );

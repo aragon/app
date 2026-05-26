@@ -7,16 +7,15 @@ import { assertForkRpc, manifestFingerprintCheck } from './safety';
 
 const FAKE_MANIFEST: LmmManifest = {
     chainId: 1,
-    aragon: {
-        daoFactory: '0x1111111111111111111111111111111111111111',
-        pluginSetupProcessor: '0x2222222222222222222222222222222222222222',
-    },
     lmm: {
         dao: '0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-        dispatcher: '0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
-        strategies: [],
+        dispatcherPlugin: '0xBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
+        strategies: {
+            wrap: '0xC1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1C1',
+            uniV2: '0xC2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2C2',
+            cowSwap: '0xC3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3C3',
+        },
     },
-    metadata: { name: 'LMM demo', description: '' },
 };
 
 describe('flow/demo/safety', () => {
