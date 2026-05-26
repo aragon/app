@@ -1,8 +1,8 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     encodeAbiParameters,
     encodeFunctionData,
     type Hex,
-    isAddress,
     keccak256,
     parseEventLogs,
     type TransactionReceipt,
@@ -119,14 +119,17 @@ class PluginTransactionUtils {
             network: dao.network,
             plugin,
         });
-        if (pluginSetupRepo == null || !isAddress(pluginSetupRepo)) {
+        if (
+            pluginSetupRepo == null ||
+            !addressUtils.isAddress(pluginSetupRepo)
+        ) {
             throw new Error(
                 `Plugin repository address not found for interface type: ${plugin.interfaceType}`,
             );
         }
 
         const pluginSetupRef = {
-            pluginSetupRepo,
+            pluginSetupRepo: pluginSetupRepo as Hex,
             versionTag,
         };
         const setupPayload = {
