@@ -4,11 +4,11 @@ export interface IUseTokenParams {
     /**
      * Address of the token contract.
      */
-    address: Hex;
+    address?: Hex;
     /**
      * Chain ID of the token contract.
      */
-    chainId: number;
+    chainId?: number;
     /**
      * Flag to enable or disable the query.
      * @default true
