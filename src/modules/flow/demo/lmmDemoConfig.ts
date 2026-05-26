@@ -1,11 +1,11 @@
-// LMM_DEMO_HACK: demo-mode flags + manifest loader for the Lido Money Machine
-// demo.  Everything in this file is a *temporary* short-circuit around the
-// production Aragon backend / wagmi pipeline; remove the imports of this
-// module to drop demo mode entirely.
+// LMM_DEMO_HACK: demo-mode flags + manifest *type/URL* config for the Lido
+// Money Machine demo.  This module must stay free of React imports — it's
+// reached from the server-component graph via `lmmDaoOverride.ts → useDao.ts`,
+// and Next 16 / Turbopack rejects RSC modules that pull in useEffect/useState.
+// The React hooks that consume this config live in `./useLmmManifest`.
 //
 // See `docs/lido-mmd-production-readiness.md` for the removal checklist.
 
-import { useEffect, useState } from 'react';
 import type { Address } from 'viem';
 
 /** `1` when the build should expose the LMM demo affordances. */
@@ -13,10 +13,23 @@ export const LMM_DEMO_MODE: boolean =
     process.env.NEXT_PUBLIC_LMM_DEMO_MODE === '1' ||
     process.env.NEXT_PUBLIC_LMM_DEMO_MODE === 'true';
 
+// LMM_DEMO_HACK: refuse to start a production build with demo mode on.
+// `NEXT_PUBLIC_ENV=production` only ships from the Production scope of the
+// Vercel project; if someone copies the preview env vars by mistake we'd
+// rather hard-fail the build than render a demo banner over a real DAO.
+if (LMM_DEMO_MODE && process.env.NEXT_PUBLIC_ENV === 'production') {
+    throw new Error(
+        '[lmm-demo] refusing to evaluate with NEXT_PUBLIC_LMM_DEMO_MODE=1 ' +
+            'on a NEXT_PUBLIC_ENV=production build. Unset the demo flag in ' +
+            'the production Vercel scope (it should only live on Preview).',
+    );
+}
+
 /**
  * URL the front-end fetches at boot to discover the demo DAO's addresses.
  * Produced by `just demo-up` in dao-launchpad@f/lido-demo and served by the
- * VM caddy at `https://<DOMAIN>/manifest.json`.  For local-first dev we
+ * VM's host nginx (fronted by Cloudflare) at `https://<host>/manifest.json` —
+ * see `infra/lmm-demo/vm/nginx.lmm-demo.conf`.  For local-first dev we
  * default to the dev server's `/lmm-manifest.json` (a symlink to
  * `dao-launchpad/lido/preview/script/demo/manifest.json`).
  */
@@ -48,179 +61,157 @@ export const LMM_RPC_URL: string =
 export const LMM_RPC_ALLOWLIST = [
     'localhost',
     '127.0.0.1',
-    // Production demo VM — adjust per environment.
-    'lmm-demo.aragon-team.xyz',
+    // Aragon demo VM (Cloudflare → host nginx → docker anvil).  See
+    // infra/lmm-demo/vm/vm-README.md.  Add new hostnames here as new
+    // demo VMs spin up; assertForkRpc() blocks anything not in this list.
+    'tests.aragon.in',
 ];
 
 // ---------------------------------------------------------------------------
 // Manifest shape
 // ---------------------------------------------------------------------------
 
+/**
+ * Real shape of `manifest.json` as emitted by `just demo-up` in
+ * dao-launchpad@f/lido-demo.  Keep this aligned with `script/demo/demo.just`
+ * — every key that the override layer or the cheats menu reads must show up
+ * here (or under `[k: string]: unknown` for forward-compat duck-typing in
+ * `deriveAddressesFromManifest`).
+ */
 export interface LmmManifest {
     /** Chain id the demo was deployed on (1 = anvil mainnet fork). */
     chainId: number;
-    /** Aragon OSx + Capital Router deployment addresses. */
-    aragon: {
-        daoFactory: Address;
-        pluginSetupProcessor: Address;
-    };
-    /** The Lido Money Machine DAO + its plugins. */
+    /** Anvil fork's HEAD block at deploy time.  Informational. */
+    blockNumber?: number;
+    /** Anvil fork's HEAD timestamp at deploy time.  Informational. */
+    timestamp?: number;
+    /** Anvil RPC URL the demo was deployed against.  Informational only —
+     * the app reads its RPC from NEXT_PUBLIC_LMM_RPC_URL, not from here. */
+    rpcUrl?: string;
+
+    /** The Lido Money Machine DAO + its plugin surface. */
     lmm: {
         dao: Address;
         /** Top-level dispatcher plugin (multi-dispatch policy). */
-        dispatcher: Address;
-        /** Embedded strategies, in dispatch order. */
-        strategies: Array<{
-            address: Address;
-            kind: 'WRAP' | 'UNIV2_LIQUIDITY' | 'GATED_COWSWAP' | string;
-            label: string;
-        }>;
-        /** Optional: budget/gate/epoch addresses for each strategy. */
-        primitives?: {
-            budgets?: Array<{ address: Address; kind: string }>;
-            gates?: Array<{ address: Address; kind: string }>;
-            epochProviders?: Array<{ address: Address }>;
+        dispatcherPlugin: Address;
+        /** Auxiliary primitives.  All optional — only the strategies need to
+         * be present for the override layer to render a policy. */
+        epochProvider?: Address;
+        factory?: Address;
+        gate?: Address;
+        /** Embedded strategies.  Object with named keys (NOT an array); see
+         * `getLmmStrategies()` below for the canonical ordered list. */
+        strategies: {
+            wrap: Address;
+            uniV2: Address;
+            cowSwap: Address;
+        };
+        budgets?: {
+            ldo?: Address;
+            stETH?: Address;
+            wstEthStream?: Address;
         };
     };
-    /** Hardcoded DAO metadata served by the manifest (no IPFS for the demo). */
-    metadata: {
-        name: string;
-        description: string;
+
+    /** Lido + mainnet token addresses (real mainnet — readable on the fork). */
+    lido?: {
+        agent?: Address;
+        ldo?: Address;
+        stETH?: Address;
+        uniV2Router?: Address;
+        usdc?: Address;
+        weth?: Address;
+        wstETH?: Address;
+    };
+
+    /** Mock CowSwap settlement contract (deployed alongside the demo DAO). */
+    cowSwap?: { mock?: boolean; settlement?: Address };
+    /** Mock price oracle (used by GatedCowSwap's price-floor gate). */
+    oracle?: { address?: Address; mock?: boolean; seededPairs?: string };
+    /** Demo-only addresses + parameters used by the cheats menu. */
+    demo?: {
+        deployer?: Address;
+        epochLengthSeconds?: number;
+        floorEpochs?: number;
+        initialOffsetEpochs?: number;
+        initialStEthAmount?: string;
+        stEthWhale?: Address;
+    };
+    /** Capital Router factory + plugin-repo deployment addresses. */
+    cr?: {
+        budgetFactory?: Address;
+        dispatcherPluginRepo?: Address;
+        dispatcherPluginSetup?: Address;
+    };
+
+    /**
+     * Optional DAO metadata.  `just demo-up` does NOT emit this key today —
+     * see `LMM_DEFAULT_METADATA` below for the fallback that the override
+     * layer uses when it's absent.  Future demos can write `metadata` to
+     * override the defaults without touching app code.
+     */
+    metadata?: {
+        name?: string;
+        description?: string;
         avatarUrl?: string;
         links?: Array<{ label: string; url: string }>;
     };
     /**
-     * Fingerprint of the deployment.  We compare this against the indexer's
+     * Fingerprint of the deployment.  Compared against the indexer's
      * Dao.address on load — mismatches signal a stale manifest or wrong
      * indexer endpoint.  See safety.ts → manifestFingerprintCheck().
      */
     fingerprint?: string;
 }
 
-// ---------------------------------------------------------------------------
-// React hook: load + cache the manifest
-// ---------------------------------------------------------------------------
-
-interface ManifestState {
-    manifest: LmmManifest | undefined;
-    error: Error | undefined;
-    loading: boolean;
-}
-
-let cachedManifest: LmmManifest | undefined;
-let inflight: Promise<LmmManifest> | undefined;
-
-const fetchManifest = (): Promise<LmmManifest> => {
-    if (cachedManifest) {
-        return Promise.resolve(cachedManifest);
-    }
-    if (inflight) {
-        return inflight;
-    }
-
-    inflight = fetch(LMM_MANIFEST_URL, { cache: 'no-store' })
-        .then((r) => {
-            if (!r.ok) {
-                throw new Error(
-                    `manifest ${r.status} from ${LMM_MANIFEST_URL}`,
-                );
-            }
-            return r.json() as Promise<LmmManifest>;
-        })
-        .then((m) => {
-            cachedManifest = m;
-            inflight = undefined;
-            return m;
-        })
-        .catch((e) => {
-            inflight = undefined;
-            throw e;
-        });
-    return inflight;
-};
-
-export const useLmmManifest = (): ManifestState => {
-    const [state, setState] = useState<ManifestState>(() => ({
-        manifest: cachedManifest,
-        error: undefined,
-        loading: !cachedManifest && LMM_DEMO_MODE,
-    }));
-
-    useEffect(() => {
-        if (!LMM_DEMO_MODE) {
-            return;
-        }
-        if (cachedManifest) {
-            setState({
-                manifest: cachedManifest,
-                error: undefined,
-                loading: false,
-            });
-            return;
-        }
-        let cancelled = false;
-        fetchManifest()
-            .then((manifest) => {
-                if (!cancelled) {
-                    setState({ manifest, error: undefined, loading: false });
-                }
-            })
-            .catch((error: unknown) => {
-                if (!cancelled) {
-                    setState({
-                        manifest: undefined,
-                        error:
-                            error instanceof Error
-                                ? error
-                                : new Error(String(error)),
-                        loading: false,
-                    });
-                }
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    return state;
-};
-
-/** Synchronous read of the cached manifest (use after `useLmmManifest()` resolves). */
-export const getCachedLmmManifest = (): LmmManifest | undefined =>
-    cachedManifest;
-
 /**
- * True when a DAO address points at the LMM demo DAO from the cached manifest.
- * Falls back to `false` when the manifest hasn't loaded yet — callers should
- * gate this with `useLmmManifest()` to wait for the load.
+ * Canonical strategy order for the LMM demo dispatcher: `wrap → uniV2 → cowSwap`.
+ * Mirrors the dispatch pipeline in the foundry deploy script — every consumer
+ * that needs an ordered list of strategies should call this helper rather
+ * than enumerating the `lmm.strategies` object directly (object property
+ * iteration order is not guaranteed across runtimes).
  */
-export const isLmmDemoDao = (daoAddress: string | undefined): boolean => {
-    if (!LMM_DEMO_MODE || !daoAddress) {
-        return false;
-    }
-    const m = cachedManifest;
-    if (!m) {
-        return false;
-    }
-    return daoAddress.toLowerCase() === m.lmm.dao.toLowerCase();
-};
+export const getLmmStrategies = (
+    manifest: LmmManifest,
+): Array<{
+    address: Address;
+    kind: 'WRAP' | 'UNIV2_LIQUIDITY' | 'GATED_COWSWAP';
+    label: string;
+}> => [
+    {
+        address: manifest.lmm.strategies.wrap,
+        kind: 'WRAP',
+        label: 'Wrap stETH → wstETH',
+    },
+    {
+        address: manifest.lmm.strategies.uniV2,
+        kind: 'UNIV2_LIQUIDITY',
+        label: 'Provide wstETH/LDO liquidity',
+    },
+    {
+        address: manifest.lmm.strategies.cowSwap,
+        kind: 'GATED_COWSWAP',
+        label: 'Buyback LDO via CowSwap',
+    },
+];
 
-/**
- * Variant for components that want to react to manifest loading.
- * Returns `undefined` while the manifest is still loading.
- */
-export const useIsLmmDemoDao = (
-    daoAddress: string | undefined,
-): boolean | undefined => {
-    const { manifest, loading } = useLmmManifest();
-    if (!LMM_DEMO_MODE) {
-        return false;
-    }
-    if (loading) {
-        return undefined;
-    }
-    if (!manifest || !daoAddress) {
-        return false;
-    }
-    return daoAddress.toLowerCase() === manifest.lmm.dao.toLowerCase();
-};
+// ---------------------------------------------------------------------------
+// Defaults for missing manifest.metadata.
+//
+// `just demo-up` (dao-launchpad@f/lido-demo) does not emit `metadata` today.
+// We fill in human-friendly defaults so the override layer can still
+// synthesise an IDao without crashing.  Production demos can override by
+// writing the `metadata` block into the manifest themselves.
+// ---------------------------------------------------------------------------
+
+export const LMM_DEFAULT_METADATA = {
+    name: 'Lido Money Machine',
+    description:
+        'Capital Router demo on a forked Ethereum mainnet (anvil).  Routes incoming stETH through a wrap → LP-provide → CowSwap buyback pipeline, with each leg metered by its own budget and price-floor gate.',
+    avatarUrl: undefined as string | undefined,
+    links: [] as Array<{ label: string; url: string }>,
+} as const;
+
+// ---------------------------------------------------------------------------
+// React hooks + mutable client cache: see `./useLmmManifest`
+// ---------------------------------------------------------------------------

@@ -1,4 +1,14 @@
+'use client';
+
 import classNames from 'classnames';
+// LMM_DEMO_HACK: the legacy "Structure breakdown" panel below assumes the
+// classic multi-router shape (source vault / allowance / model / sub-router
+// rows).  The LMM Money Machine dispatcher renders its full topology + live
+// status via `LmmPolicyTopology` (mounted from `FlowPolicyTree`), so the
+// breakdown block degrades into a row of em-dashes and a list of bare
+// strategy addresses.  Hide it for the LMM dispatcher; keep it for every
+// other multi-dispatch / multi-router policy.
+import { useIsLmmDispatcherPolicy } from '../../demo/useLmmManifest';
 import type { IFlowPolicy, IFlowPolicySubRouter } from '../../types';
 import {
     FlowAddressLabel,
@@ -9,19 +19,34 @@ import { FlowPolicyTree } from './flowPolicyTree';
 
 export interface IFlowPolicyStructureProps {
     policy: IFlowPolicy;
+    /** Optional address to pre-select in the rich LMM topology (used by the
+     *  dashboard orchestrator chip deep-link).  No-op for non-LMM policies. */
+    selectedNodeAddress?: string;
     className?: string;
 }
 
 export const FlowPolicyStructure: React.FC<IFlowPolicyStructureProps> = (
     props,
 ) => {
-    const { policy, className } = props;
+    const { policy, selectedNodeAddress, className } = props;
+    const isLmmDispatcher = useIsLmmDispatcherPolicy(policy.address);
 
     if (
         policy.strategy !== 'Multi-dispatch' ||
         policy.schema.subRouters == null
     ) {
         return null;
+    }
+
+    if (isLmmDispatcher) {
+        return (
+            <section className={classNames('flex flex-col gap-4', className)}>
+                <FlowPolicyTree
+                    policy={policy}
+                    selectedNodeAddress={selectedNodeAddress}
+                />
+            </section>
+        );
     }
 
     return (

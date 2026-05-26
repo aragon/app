@@ -52,6 +52,7 @@ import type {
     IFlowOrchestratorLeg,
     IFlowOrchestratorRun,
     IFlowPolicy,
+    IFlowPolicySubRouter,
     IFlowRecipient,
     IFlowRecipientAggregate,
     IFlowSwapPair,
@@ -973,8 +974,54 @@ const mapPolicy = (params: {
                         ? `${r.pct.toFixed(1)}%`
                         : `slot ${i + 1}`,
             })),
+            // Multi-dispatch orchestrators are rendered through `FlowPolicyStructure`
+            // → `FlowPolicyTree`, which short-circuits to `LmmPolicyTopology` for the
+            // demo dispatcher (driven by `useLmmManifest`, not by this array).  But
+            // `FlowPolicyStructure` still gates rendering on `subRouters != null`,
+            // so we have to surface a non-null array for orchestrators — empty is
+            // fine since the topology view derives its graph from `inspect()`.
+            // For pre-LMM orchestrators (multiRouter / multiClaimer) we still
+            // honour whatever the REST policy declared.
+            subRouters: isOrchestratorStrategyType(strategyType)
+                ? buildSubRouterStubs(envioPolicy, restPolicy)
+                : undefined,
         },
     };
+};
+
+/**
+ * Lightweight `IFlowPolicySubRouter[]` builder for orchestrator policies.
+ * Prefers REST `strategy.subRouters` (the legacy multi-router shape — addresses
+ * point at sibling Policy entities) and falls back to envio `Policy.strategies`
+ * (the LMM embedded shape — addresses point at sub-contracts that are NOT
+ * separately installed via PSP).  Either way every entry has at least an `id`
+ * + a `title`, which is enough for the SVG tree fallback; the rich topology
+ * view (`LmmPolicyTopology`) builds its own nodes from on-chain `inspect()`.
+ */
+const buildSubRouterStubs = (
+    envioPolicy: IEnvioPolicy,
+    restPolicy: IDaoPolicy | undefined,
+): IFlowPolicySubRouter[] => {
+    const restSubRouters = restPolicy?.strategy.subRouters ?? [];
+    if (restSubRouters.length > 0) {
+        return restSubRouters.map((address) => ({
+            id: address.toLowerCase(),
+            title: shortenAddress(address),
+            subtitle: 'Sub-router',
+        }));
+    }
+    const embedded = envioPolicy.strategies ?? [];
+    return embedded
+        .slice()
+        .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+        .map((s) => {
+            const kind = EMBEDDED_STRATEGY_KIND_MAP[s.kind] ?? 'unknown';
+            return {
+                id: s.id,
+                title: EMBEDDED_STRATEGY_LABEL[kind],
+                subtitle: shortenAddress(s.address),
+            };
+        });
 };
 
 // ---------------------------------------------------------------------------
@@ -1355,8 +1402,11 @@ export const buildFlowDataFromEnvio = (
         policiesByAddress.set(p.address.toLowerCase(), p);
     }
 
-    // Pass 2: split into orchestrators vs leaves.
+    // Pass 2: split into orchestrators vs leaves.  Orchestrators get a paired
+    // `IFlowPolicy` mirror so the policy-detail route can resolve their id —
+    // see `IFlowDaoData.orchestratorPolicies`.
     const orchestrators: IFlowOrchestrator[] = [];
+    const orchestratorPolicies: IFlowPolicy[] = [];
     const leafPolicies: IFlowPolicy[] = [];
     for (const envioPolicy of indexerData.Policy) {
         if (isOrchestratorStrategyType(envioPolicy.strategyType)) {
@@ -1370,6 +1420,12 @@ export const buildFlowDataFromEnvio = (
                     proposalByTxHash,
                 }),
             );
+            const mirror = policiesByAddress.get(
+                envioPolicy.pluginAddress.toLowerCase(),
+            );
+            if (mirror) {
+                orchestratorPolicies.push(mirror);
+            }
         } else {
             const mapped = policiesByAddress.get(
                 envioPolicy.pluginAddress.toLowerCase(),
@@ -1410,6 +1466,7 @@ export const buildFlowDataFromEnvio = (
         policies,
         groupedPolicies,
         orchestrators,
+        orchestratorPolicies,
         recipients: mapRecipientsAggregate(
             indexerData.RecipientAggregate,
             indexerData.Policy,

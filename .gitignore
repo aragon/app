@@ -31,6 +31,9 @@
 # local anvil fork state
 anvil-*
 
+# LMM_DEMO_HACK: local-only symlink to dao-launchpad/lido/script/demo/manifest.json
+/public/lmm-manifest.json
+
 # IDE
 .cursor
 

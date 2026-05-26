@@ -49,8 +49,15 @@ const dispatcherAbiWithErrors = [
 ] as const;
 
 // anvil[0] private key — same one PrepareDemo + every operator script use.
-const ANVIL_DEPLOYER_KEY: Hex =
-    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
+// Public test key (well-known across foundry/hardhat/anvil tooling); kept
+// behind an env override so a future demo can rotate it if the host swaps
+// the deployer.  The default matches `anvil --auto-impersonate` defaults.
+// LMM_DEMO_HACK: this constant is reachable from a production import chain
+// (dispatchTransactionDialog → LmmDemoDispatchDialog → here), but the
+// dialog is now `next/dynamic` so it never lands in the production bundle
+// while LMM_DEMO_MODE=0.
+const ANVIL_DEPLOYER_KEY: Hex = (process.env.NEXT_PUBLIC_LMM_DEPLOYER_KEY ??
+    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80') as Hex;
 
 const ERC20_TRANSFER_ABI = parseAbi([
     'function transfer(address,uint256) returns (bool)',

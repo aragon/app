@@ -1,6 +1,7 @@
 # Lido MMD demo — live status
 
-> Living doc for the `money-machine-dashboard` branch.  Update the table
+> Living doc for the `money-mchine-dashboard` branch (note: typo in the
+> branch name is preserved deliberately).  Update the table
 > below whenever a chunk lands so parallel agents (UI polish, indexer
 > follow-ups, infra) can grab the next unlocked task without re-reading
 > the whole plan.
@@ -9,7 +10,7 @@
 
 | Repo                       | Branch                       | Purpose                                       |
 | -------------------------- | ---------------------------- | --------------------------------------------- |
-| `aragon/app`               | `money-machine-dashboard`    | UI + demo override layer                      |
+| `aragon/app`               | `money-mchine-dashboard`     | UI + demo override layer (note: branch name has a typo, kept for git history continuity) |
 | `aragon/capital-flow-indexer` | branch in this workspace | Envio handlers + schema for the new CR primitives |
 | `aragon/dao-launchpad`     | `f/lido-demo`                | Forge/Anvil deployment, preview lib + UI (vendored) |
 
@@ -17,7 +18,7 @@
 
 | Track / task                                                                                         | Owner agent | State         | Notes |
 | ---------------------------------------------------------------------------------------------------- | ----------- | ------------- | ----- |
-| VM stack: docker-compose (anvil persistent, envio + postgres + hasura, caddy), Caddyfile, init-demo.sh, vm-README.md | demo-infra  | **done**      | `infra/lmm-demo/vm/`. Persistent anvil via `--state`, caddy serves manifest from shared volume. |
+| VM stack: docker-compose (anvil persistent, envio + postgres + hasura), nginx.lmm-demo.conf snippet for host nginx, init-demo.sh, vm-README.md | demo-infra  | **done**      | `infra/lmm-demo/vm/`. Persistent anvil via `--state`. Cloudflare Flexible-SSL fronts host nginx (no TLS on VM); nginx alias serves manifest from `/srv/lmm/`. |
 | `capital-flow-indexer` ABIs                                                                          | indexer     | **done**      | DAOFactory / DAO / PSP-InstallationApplied + Dispatcher/Strategies/Budgets/Gate/Epoch/CowSwap/MockOracle. |
 | `capital-flow-indexer` schema                                                                        | indexer     | **done**      | `Strategy`, `Budget`, `Gate`, `EpochProvider`, `SwapOrder` types; `PolicyExecution.strategyIndex/strategy/skipped/skippedReason`. |
 | `capital-flow-indexer` EventHandlers                                                                 | indexer     | **done**      | DAOCreated/MetadataSet/InstallationApplied/DispatchHandled/StrategyFailed/CowSwapOrderPosted/PriceFloorGate.*/StreamUntilBudget.*/EpochProvider.*. |
@@ -44,7 +45,7 @@
 
 1. Read the row above + the related `LMM_DEMO_HACK` comments in code.
 2. Update the `State` cell to `claimed by <agent name>` before editing.
-3. Mark `done` when the change merges into `money-machine-dashboard`.
+3. Mark `done` when the change merges into `money-mchine-dashboard`.
 4. If the task spawns follow-ups, add them as new rows so others can
    pick them up.
 

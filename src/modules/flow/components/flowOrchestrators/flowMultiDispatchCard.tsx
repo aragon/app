@@ -51,6 +51,12 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
 ) => {
     const { orchestrator, network, addressOrEns, className } = props;
     const editHref = `/dao/${network}/${addressOrEns}/settings/automations/${orchestrator.address}`;
+    // Orchestrators resolve through `data.orchestratorPolicies` on the policy
+    // detail route, which renders the rich `LmmPolicyTopology` graph + chart +
+    // history.  See `IFlowDaoData.orchestratorPolicies` for the lookup contract.
+    const detailHref = `/dao/${network}/${addressOrEns}/flow/policies/${encodeURIComponent(
+        orchestrator.id,
+    )}`;
 
     const { dispatchPolicy, getPendingDispatch } = useFlowDataContext();
     const pendingDispatch = getPendingDispatch(orchestrator.id);
@@ -73,10 +79,6 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
         0,
         orchestrator.runs.length - visibleRuns.length,
     );
-    // Orchestrators don't have a dedicated detail page yet — the policy detail route only
-    // knows about leaf policies, and the data it would render would be a subset of what's
-    // already on the card (name, chain diagram, runs). Surface everything inline here
-    // and skip the navigation to avoid a "Policy not found" dead-end.
 
     return (
         <article
@@ -89,22 +91,30 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
             )}
         >
             <div className="flex items-start justify-between gap-3">
-                <div className="flex min-w-0 flex-col gap-1">
+                <Link
+                    aria-label={`Open ${orchestrator.name} detail page`}
+                    className="-mx-1 -my-0.5 flex min-w-0 flex-col gap-1 rounded-md px-1 py-0.5 hover:bg-neutral-50"
+                    href={detailHref}
+                >
                     <div className="flex items-center gap-2">
                         <FlowStatusDot status={orchestrator.status} />
-                        <h3 className="truncate font-semibold text-base text-neutral-800 leading-tight">
+                        <h3 className="truncate font-semibold text-base text-neutral-800 leading-tight hover:text-primary-500">
                             {orchestrator.name}
                         </h3>
                     </div>
                     <p className="line-clamp-2 font-normal text-neutral-500 text-sm leading-snug">
                         {orchestrator.description}
                     </p>
-                </div>
+                </Link>
                 <div className="flex flex-col items-end gap-1.5">
                     <FlowStrategyChip strategy={orchestrator.strategy} />
+                    {/* Quiet text link instead of an outlined pill — the chip
+                     *  next to it (when present) already carries the visual
+                     *  weight, and a second rounded shape next to it read as
+                     *  noise on the card header. */}
                     <Link
                         aria-label={`Edit ${orchestrator.name} in DAO settings`}
-                        className="inline-flex items-center gap-1 rounded-full border border-neutral-100 px-2 py-0.5 font-normal text-neutral-500 text-xs leading-tight hover:border-primary-200 hover:text-primary-400"
+                        className="inline-flex items-center gap-1 font-normal text-neutral-500 text-xs leading-tight hover:text-primary-500"
                         href={editHref}
                         rel="noopener"
                         target="_blank"
@@ -116,6 +126,9 @@ export const FlowMultiDispatchCard: React.FC<IFlowMultiDispatchCardProps> = (
 
             {hasEmbedded ? (
                 <FlowEmbeddedChainDiagram
+                    addressOrEns={addressOrEns}
+                    network={network}
+                    orchestratorId={orchestrator.id}
                     strategies={orchestrator.embeddedStrategies ?? []}
                 />
             ) : (
@@ -292,6 +305,13 @@ const ChainArrow: React.FC = () => (
 
 interface IFlowEmbeddedChainDiagramProps {
     strategies: IFlowEmbeddedStrategy[];
+    /** Route base for the per-strategy deep-link.  Each chip routes to
+     *  `/dao/{network}/{addressOrEns}/flow/policies/{orchestratorId}?node={strategyAddress}`
+     *  so the dispatcher detail page can auto-select the matching topology
+     *  node + open NodeDetails on it. */
+    orchestratorId: string;
+    network: string;
+    addressOrEns: string;
 }
 
 /**
@@ -303,11 +323,17 @@ interface IFlowEmbeddedChainDiagramProps {
  */
 const FlowEmbeddedChainDiagram: React.FC<IFlowEmbeddedChainDiagramProps> = ({
     strategies,
+    orchestratorId,
+    network,
+    addressOrEns,
 }) => (
     <div className="flex flex-wrap items-stretch gap-2 rounded-lg border border-neutral-100 bg-neutral-50 p-3">
         {strategies.map((s, index) => (
             <EmbeddedStrategyChip
+                addressOrEns={addressOrEns}
                 key={s.id}
+                network={network}
+                orchestratorId={orchestratorId}
                 showArrow={index < strategies.length - 1}
                 strategy={s}
             />
@@ -329,16 +355,30 @@ const STRATEGY_KIND_TONE: Record<IFlowEmbeddedStrategy['kind'], string> = {
 const EmbeddedStrategyChip: React.FC<{
     strategy: IFlowEmbeddedStrategy;
     showArrow: boolean;
-}> = ({ strategy, showArrow }) => {
+    orchestratorId: string;
+    network: string;
+    addressOrEns: string;
+}> = ({ strategy, showArrow, orchestratorId, network, addressOrEns }) => {
     const seconds = strategy.epochProvider?.epochLength;
     const epochLabel = formatEpochLength(seconds);
+    // Deep-link into the dispatcher detail page with the matching topology
+    // node pre-selected.  The dispatcher page reads `?node=` via
+    // `useSearchParams()` and threads the address down to TopologyView,
+    // which opens NodeDetails on the matching node.  Strategy address is
+    // the only stable identifier we can derive from the chip — topology
+    // node ids are path-based and not user-meaningful.
+    const href = `/dao/${network}/${addressOrEns}/flow/policies/${encodeURIComponent(
+        orchestratorId,
+    )}?node=${strategy.address}`;
     return (
         <>
-            <div
+            <Link
+                aria-label={`Open ${strategy.label} in dispatcher topology`}
                 className={classNames(
-                    'flex flex-col gap-1 rounded-lg border px-2.5 py-1.5 text-xs',
+                    'flex flex-col gap-1 rounded-lg border px-2.5 py-1.5 text-xs transition-shadow hover:shadow-neutral-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-200',
                     STRATEGY_KIND_TONE[strategy.kind],
                 )}
+                href={href}
             >
                 <div className="flex items-center gap-1.5">
                     <span className="font-semibold text-neutral-800 leading-tight">
@@ -375,7 +415,7 @@ const EmbeddedStrategyChip: React.FC<{
                         </span>
                     )}
                 </div>
-            </div>
+            </Link>
             {showArrow && <ChainArrow />}
         </>
     );

@@ -1,8 +1,4 @@
-import {
-    FLOW_ACTIVE_STATUSES,
-    type FlowTokenSymbol,
-    type IFlowDaoData,
-} from '../../types';
+import type { FlowTokenSymbol, IFlowDaoData } from '../../types';
 import { formatFlowAmount, formatRelative } from '../../utils/flowFormatters';
 
 export interface IFlowLedeProps {
@@ -16,9 +12,6 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
     const { dao, policies } = data;
 
     const readyPolicies = policies.filter((p) => p.status === 'ready');
-    const activePolicies = policies.filter((p) =>
-        FLOW_ACTIVE_STATUSES.includes(p.status),
-    );
 
     const pendingByToken = readyPolicies.reduce<
         Partial<Record<FlowTokenSymbol, number>>
@@ -63,10 +56,6 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
     if (readyPolicies.length > 0) {
         narrativeParts.push(
             `${pendingSummary || `${readyPolicies.length}`} ready to dispatch across ${readyPolicies.length} polic${readyPolicies.length === 1 ? 'y' : 'ies'}`,
-        );
-    } else {
-        narrativeParts.push(
-            `${activePolicies.length} active automation${activePolicies.length === 1 ? '' : 's'}`,
         );
     }
     if (nextReady != null) {

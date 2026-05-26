@@ -1,6 +1,7 @@
 # Lido Money Machine — production readiness checklist
 
-The MVP shipped on `money-machine-dashboard` (and any branch that includes
+The MVP shipped on `money-mchine-dashboard` (note: branch name has a typo
+which is preserved for git history continuity) — and any branch that includes
 `infra/lmm-demo/`, `src/modules/flow/demo/`, `src/modules/flow/components/lidoMoneyMachine/`,
 or `src/shared/lidoPreview/`) is **demo-only**.  This document is the
 delta between the demo branch and a real production rollout that talks to
@@ -17,7 +18,7 @@ rg LMM_DEMO_HACK app/src capital-flow-indexer/src
 
 | Area                                | MVP                                                                           | Production                                                                                                       |
 | ----------------------------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Data source**                     | Local Envio at `localhost:8080` / VM Hasura behind Caddy                      | Aragon-hosted Envio (single endpoint for all flow data).                                                          |
+| **Data source**                     | Local Envio at `localhost:8080` / VM Hasura behind host nginx + Cloudflare    | Aragon-hosted Envio (single endpoint for all flow data).                                                          |
 | **DAO query override**              | `useDao`, `useDaoByEns`, `useDaoPolicies`, `useDaoPermissions` short-circuit  | Remove `tryLmmDao*Override()` calls; the Aragon Backend Service must return the LMM DAO + dispatcher policy.     |
 | **Synthetic policy**                | `buildPoliciesFromManifest()` synthesizes one `IDaoPolicy`                    | Backend service emits the real policy + sub-strategies; mapper consumes them like any other multi-dispatch.      |
 | **Dispatch tx flow**                | `LmmDemoDispatchDialog` writes via viem against Anvil                          | `ProductionDispatchDialog` (wagmi `useSendTransaction`) — keep the routing branch but force it to the prod path. |

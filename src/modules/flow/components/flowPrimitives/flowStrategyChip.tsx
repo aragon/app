@@ -8,6 +8,13 @@ export interface IFlowStrategyChipProps {
 
 export const FlowStrategyChip: React.FC<IFlowStrategyChipProps> = (props) => {
     const { strategy, className } = props;
+    // Multi-dispatch orchestrators are rendered inside the dedicated
+    // "Orchestrators" section / on their own detail route — the strategy chip
+    // would only restate that context, so hide it everywhere instead of
+    // sprinkling `strategy !== 'Multi-dispatch'` guards at each call site.
+    if (strategy === 'Multi-dispatch') {
+        return null;
+    }
     return (
         <span
             className={classNames(

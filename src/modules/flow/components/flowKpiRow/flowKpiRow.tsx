@@ -1,9 +1,5 @@
 import classNames from 'classnames';
-import {
-    FLOW_ACTIVE_STATUSES,
-    type FlowTokenSymbol,
-    type IFlowDaoData,
-} from '../../types';
+import type { FlowTokenSymbol, IFlowDaoData } from '../../types';
 import { formatFlowAmount } from '../../utils/flowFormatters';
 
 export interface IFlowKpiRowProps {
@@ -36,14 +32,9 @@ const deltaClasses: Record<'up' | 'down' | 'flat', string> = {
 
 export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
     const { data } = props;
+    // Per-dispatch / per-recipient totals stay scoped to leaf policies because
+    // every orchestrator run is already accounted for via its child legs.
     const { policies } = data;
-
-    const total = policies.length;
-    const active = policies.filter((p) =>
-        FLOW_ACTIVE_STATUSES.includes(p.status),
-    ).length;
-    const paused = policies.filter((p) => p.status === 'paused').length;
-    const awaiting = policies.filter((p) => p.status === 'awaiting').length;
 
     const readyPolicies = policies.filter((p) => p.status === 'ready');
     const readyCount = readyPolicies.length;
@@ -115,11 +106,6 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
 
     const items: IKpiItem[] = [
         {
-            label: 'Active automations',
-            value: `${active} / ${total}`,
-            hint: `${paused} paused · ${awaiting} awaiting`,
-        },
-        {
             label: 'Ready to dispatch',
             value: `${readyCount}`,
             hint: pendingSummary,
@@ -147,7 +133,7 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
     ];
 
     return (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-4">
             {items.map((item) => (
                 <div
                     className={classNames(

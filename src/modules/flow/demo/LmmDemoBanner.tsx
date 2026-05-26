@@ -5,11 +5,75 @@
 'use client';
 
 import classNames from 'classnames';
-import { LMM_DEMO_MODE, LMM_RPC_URL, useLmmManifest } from './lmmDemoConfig';
+import { useEffect, useState } from 'react';
+import {
+    LMM_DEMO_MODE,
+    LMM_FLOW_INDEXER_ENDPOINT,
+    LMM_RPC_URL,
+    type LmmManifest,
+} from './lmmDemoConfig';
+import { manifestFingerprintCheck } from './safety';
+import { useLmmManifest } from './useLmmManifest';
+
+const FINGERPRINT_QUERY =
+    'query LmmDaoFingerprint($addr: String!) { Dao(where: { address: { _eq: $addr } }, limit: 1) { address } }';
+
+type FingerprintState =
+    | { status: 'unknown' }
+    | { status: 'ok' }
+    | { status: 'mismatch'; indexerDao: string };
+
+const useFingerprint = (
+    manifest: LmmManifest | undefined,
+): FingerprintState => {
+    const [state, setState] = useState<FingerprintState>({ status: 'unknown' });
+    useEffect(() => {
+        if (!LMM_DEMO_MODE || !manifest) {
+            return;
+        }
+        let cancelled = false;
+        const run = async () => {
+            try {
+                const res = await fetch(LMM_FLOW_INDEXER_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    cache: 'no-store',
+                    body: JSON.stringify({
+                        query: FINGERPRINT_QUERY,
+                        variables: { addr: manifest.lmm.dao.toLowerCase() },
+                    }),
+                });
+                if (!res.ok) {
+                    return;
+                }
+                const body = (await res.json()) as {
+                    data?: { Dao?: Array<{ address: string }> };
+                };
+                const indexerDao = body.data?.Dao?.[0]?.address;
+                if (cancelled) {
+                    return;
+                }
+                if (manifestFingerprintCheck(manifest, indexerDao)) {
+                    setState({ status: 'ok' });
+                } else if (indexerDao) {
+                    setState({ status: 'mismatch', indexerDao });
+                }
+            } catch {
+                // Network errors are non-fatal here — banner is informational.
+            }
+        };
+        void run();
+        return () => {
+            cancelled = true;
+        };
+    }, [manifest]);
+    return state;
+};
 
 export const LmmDemoBanner: React.FC<{ className?: string }> = (props) => {
     const { className } = props;
     const { manifest, error } = useLmmManifest();
+    const fingerprint = useFingerprint(manifest);
     if (!LMM_DEMO_MODE) {
         return null;
     }
@@ -33,13 +97,23 @@ export const LmmDemoBanner: React.FC<{ className?: string }> = (props) => {
                     <span className="text-warning-800">
                         DAO {manifest.lmm.dao.slice(0, 6)}…
                         {manifest.lmm.dao.slice(-4)} · dispatcher{' '}
-                        {manifest.lmm.dispatcher.slice(0, 6)}…
-                        {manifest.lmm.dispatcher.slice(-4)}
+                        {manifest.lmm.dispatcherPlugin.slice(0, 6)}…
+                        {manifest.lmm.dispatcherPlugin.slice(-4)}
                     </span>
                 )}
                 {error && (
                     <span className="text-critical-700">
                         Manifest failed to load: {error.message}
+                    </span>
+                )}
+                {fingerprint.status === 'mismatch' && (
+                    <span className="text-critical-700">
+                        Fingerprint mismatch: indexer's first DAO is{' '}
+                        {fingerprint.indexerDao.slice(0, 6)}…
+                        {fingerprint.indexerDao.slice(-4)} but the manifest
+                        points at {manifest?.lmm.dao.slice(0, 6)}…
+                        {manifest?.lmm.dao.slice(-4)}. Re-run `just demo-up` or
+                        re-sync the indexer.
                     </span>
                 )}
             </div>

@@ -143,7 +143,15 @@ export const FlowSparkline: React.FC<IFlowSparklineProps> = (props) => {
             style={{ height: `${height}px` }}
         >
             <div style={{ height: `${areaHeight}px` }}>
-                <ResponsiveContainer height="100%" width="100%">
+                {/* Seed `initialDimension` so recharts' first render doesn't
+                 *  log a width(-1)/height(-1) dev warning before its
+                 *  ResizeObserver fires.  The container is exactly
+                 *  `areaHeight` tall; width is filled in on the next frame. */}
+                <ResponsiveContainer
+                    height="100%"
+                    initialDimension={{ width: 0, height: areaHeight }}
+                    width="100%"
+                >
                     <ComposedChart
                         data={data}
                         margin={{ top: 2, right: 0, left: 0, bottom: 2 }}
@@ -181,7 +189,11 @@ export const FlowSparkline: React.FC<IFlowSparklineProps> = (props) => {
                 </ResponsiveContainer>
             </div>
             <div style={{ height: `${timelineHeight}px` }}>
-                <ResponsiveContainer height="100%" width="100%">
+                <ResponsiveContainer
+                    height="100%"
+                    initialDimension={{ width: 0, height: timelineHeight }}
+                    width="100%"
+                >
                     <ScatterChart
                         margin={{ top: 2, right: 0, left: 0, bottom: 2 }}
                     >

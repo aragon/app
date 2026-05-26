@@ -1,11 +1,13 @@
 import { invariant } from '@aragon/gov-ui-kit';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { encodeFunctionData, type Hex, type TransactionReceipt } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 // LMM_DEMO_HACK: detect Lido Money Machine demo policies and route them to
 // the Anvil-fork dispatch flow instead of wagmi.  Production DAOs always
 // take the original code path below.
-import { useIsLmmDemoDao } from '@/modules/flow/demo/lmmDemoConfig';
+import { LMM_DEMO_MODE } from '@/modules/flow/demo/lmmDemoConfig';
+import { useIsLmmDemoDao } from '@/modules/flow/demo/useLmmManifest';
 import type { Network } from '@/shared/api/daoService';
 import type { IDaoPolicy } from '@/shared/api/daoService/domain/daoPolicy';
 import {
@@ -21,7 +23,20 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
 import type { IRouterSelectorDialogParams } from '../routerSelectorDialog';
-import { LmmDemoDispatchDialog } from './lmmDemoDispatchDialog';
+
+// LMM_DEMO_HACK: lazy-load the demo dialog so its imports (anvil deployer
+// key, vendored preview-lib, viem/private-key signing) never land in the
+// production bundle when LMM_DEMO_MODE=0.  `ssr: false` keeps it
+// client-only, matching the original eager import.
+const LmmDemoDispatchDialog = LMM_DEMO_MODE
+    ? dynamic(
+          () =>
+              import('./lmmDemoDispatchDialog').then(
+                  (m) => m.LmmDemoDispatchDialog,
+              ),
+          { ssr: false },
+      )
+    : null;
 
 export interface IDispatchTransactionDialogParams {
     policy: IDaoPolicy;
@@ -73,12 +88,21 @@ export const DispatchTransactionDialog: React.FC<
 
     // Route to the Anvil-fork demo dispatch flow when the policy belongs to
     // the LMM demo DAO.  `useIsLmmDemoDao` returns `undefined` until the
-    // manifest has loaded — in that case we proceed with the production
-    // wagmi flow rather than block the dialog.  All hooks below this branch
-    // are inside `ProductionDispatchDialog` to keep the hook order stable.
+    // manifest has loaded — when demo mode is on, we wait (show nothing)
+    // rather than briefly mount the production wagmi flow.  All hooks
+    // below this branch are inside `ProductionDispatchDialog` to keep
+    // the hook order stable.
     const isLmmDemo = useIsLmmDemoDao(policy.daoAddress);
-    if (isLmmDemo === true) {
-        return <LmmDemoDispatchDialog {...props} />;
+    if (LMM_DEMO_MODE && LmmDemoDispatchDialog != null) {
+        if (isLmmDemo === undefined) {
+            // Manifest still loading — render nothing so a demo DAO never
+            // briefly opens the production wallet dialog while the
+            // manifest fetch is in flight.
+            return null;
+        }
+        if (isLmmDemo) {
+            return <LmmDemoDispatchDialog {...props} />;
+        }
     }
     return <ProductionDispatchDialog {...props} />;
 };

@@ -23,6 +23,8 @@ import {
     PolicyStrategyType,
 } from '@/shared/api/daoService/domain';
 import {
+    getLmmStrategies,
+    LMM_DEFAULT_METADATA,
     LMM_DEMO_MODE,
     LMM_FLOW_INDEXER_ENDPOINT,
     LMM_MANIFEST_URL,
@@ -37,6 +39,36 @@ import {
 let cachedManifest: LmmManifest | undefined;
 let inflightManifest: Promise<LmmManifest> | undefined;
 
+// LMM_DEMO_HACK: SSR + relative URL → read from public/ via fs (local dev,
+// symlink works).  SSR + absolute URL → fetch (production VM exposes manifest
+// at https://<DOMAIN>/manifest.json via nginx).  Browser → fetch always,
+// regardless of relative/absolute.
+//
+// Without the fs branch Node.js fetch throws on relative URLs during SSR,
+// the override silently fails and the page falls through to the Aragon
+// backend → 404 → "DAO not found".
+const fetchManifestRaw = async (): Promise<string> => {
+    const isSSR = typeof window === 'undefined';
+    const isRelative = !LMM_MANIFEST_URL.startsWith('http');
+
+    if (isSSR && isRelative) {
+        const { readFile } = await import('node:fs/promises');
+        const { join } = await import('node:path');
+        const filePath = join(
+            process.cwd(),
+            'public',
+            LMM_MANIFEST_URL.replace(/^\//, ''),
+        );
+        return readFile(filePath, 'utf-8');
+    }
+
+    const r = await fetch(LMM_MANIFEST_URL, { cache: 'no-store' });
+    if (!r.ok) {
+        throw new Error(`manifest fetch ${r.status} from ${LMM_MANIFEST_URL}`);
+    }
+    return r.text();
+};
+
 const loadManifest = (): Promise<LmmManifest> => {
     if (cachedManifest) {
         return Promise.resolve(cachedManifest);
@@ -44,15 +76,8 @@ const loadManifest = (): Promise<LmmManifest> => {
     if (inflightManifest) {
         return inflightManifest;
     }
-    inflightManifest = fetch(LMM_MANIFEST_URL, { cache: 'no-store' })
-        .then((r) => {
-            if (!r.ok) {
-                throw new Error(
-                    `manifest fetch ${r.status} from ${LMM_MANIFEST_URL}`,
-                );
-            }
-            return r.json() as Promise<LmmManifest>;
-        })
+    inflightManifest = fetchManifestRaw()
+        .then((raw) => JSON.parse(raw) as LmmManifest)
         .then((m) => {
             cachedManifest = m;
             inflightManifest = undefined;
@@ -157,11 +182,19 @@ const buildIDaoFromManifest = (
         id: `${network}-${address.toLowerCase()}`,
         address: address.toLowerCase(),
         network,
-        name: envio?.name ?? manifest.metadata.name,
-        description: envio?.description ?? manifest.metadata.description,
+        name:
+            envio?.name ?? manifest.metadata?.name ?? LMM_DEFAULT_METADATA.name,
+        description:
+            envio?.description ??
+            manifest.metadata?.description ??
+            LMM_DEFAULT_METADATA.description,
         ens: null,
         subdomain: null,
-        avatar: envio?.avatarUrl ?? manifest.metadata.avatarUrl ?? null,
+        avatar:
+            envio?.avatarUrl ??
+            manifest.metadata?.avatarUrl ??
+            LMM_DEFAULT_METADATA.avatarUrl ??
+            null,
         version: '1.4.0', // OSx version on the demo fork; updated by Foundry
         isSupported: true,
         plugins: [buildDispatcherAsIDaoPlugin(manifest)],
@@ -170,10 +203,15 @@ const buildIDaoFromManifest = (
             members: 0,
             tvlUSD: '0',
         },
-        links: (manifest.metadata.links ?? []).map((l) => ({
-            name: l.label,
-            url: l.url,
-        })),
+        links: (manifest.metadata?.links ?? LMM_DEFAULT_METADATA.links).map(
+            (l) => ({
+                name: l.label,
+                url: l.url,
+            }),
+        ),
+        // LMM demo never has linked accounts; emit an empty (but explicit)
+        // array so downstream `dao.linkedAccounts ?? []` patterns don't churn.
+        linkedAccounts: [],
         blockTimestamp: 0,
         transactionHash: '0x',
     };
@@ -183,7 +221,7 @@ const buildDispatcherAsIDaoPlugin = (manifest: LmmManifest): IDaoPlugin => ({
     name: 'Capital Dispatcher',
     description:
         'Multi-dispatch Capital Router plugin (Lido Money Machine demo)',
-    address: manifest.lmm.dispatcher,
+    address: manifest.lmm.dispatcherPlugin,
     daoAddress: manifest.lmm.dao,
     subdomain: 'capital-dispatcher',
     interfaceType: PluginInterfaceType.CAPITAL_DISTRIBUTOR,
@@ -209,12 +247,12 @@ const buildPoliciesFromManifest = (manifest: LmmManifest): IDaoPolicy[] => {
             'Routes incoming stETH through a wrap → LP-provide → CowSwap buyback pipeline, ' +
             'with each leg metered by its own budget and price-floor gate.',
         policyKey: 'lmm-dispatcher',
-        address: manifest.lmm.dispatcher,
+        address: manifest.lmm.dispatcherPlugin,
         daoAddress: manifest.lmm.dao,
         interfaceType: PolicyInterfaceType.ROUTER,
         strategy: {
             type: PolicyStrategyType.MULTI_DISPATCH,
-            subRouters: manifest.lmm.strategies.map((s) => s.address),
+            subRouters: getLmmStrategies(manifest).map((s) => s.address),
         },
         release: '1',
         build: '1',
@@ -259,9 +297,12 @@ export const tryLmmDaoByEnsOverride = async (
         return undefined;
     }
     // The LMM demo doesn't register a real ENS; we accept the manifest's
-    // metadata.name as an ENS-ish slug (lowercased) so URLs like
+    // metadata.name (or LMM_DEFAULT_METADATA.name when the manifest omits it)
+    // as an ENS-ish slug (lowercased) so URLs like
     // /<network>/<lmm-money-machine>/* resolve to the demo DAO.
-    const slug = manifest.metadata.name.toLowerCase().replace(/\s+/g, '-');
+    const slug = (manifest.metadata?.name ?? LMM_DEFAULT_METADATA.name)
+        .toLowerCase()
+        .replace(/\s+/g, '-');
     if (ens.toLowerCase() !== slug) {
         return undefined;
     }
@@ -310,7 +351,7 @@ export const tryLmmDaoPermissionsOverride = async (
     } satisfies IPaginatedResponse<IDaoPermission>;
 };
 
-// Used by lmmDemoConfig.useIsLmmDemoDao via a cached synchronous check.
+// Used by useLmmManifest.useIsLmmDemoDao via a cached synchronous check.
 export const isLmmDemoDaoSync = (daoAddress: string | undefined): boolean => {
     if (!LMM_DEMO_MODE || !daoAddress || !cachedManifest) {
         return false;

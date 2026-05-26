@@ -9,7 +9,11 @@
 import { useEffect, useMemo } from 'react';
 import { useProposalList } from '@/modules/governance/api/governanceService';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
-import type { IDaoPolicy, Network } from '@/shared/api/daoService';
+import type {
+    IDaoPolicy,
+    ILinkedAccountSummary,
+    Network,
+} from '@/shared/api/daoService';
 import { useDao, useDaoPolicies } from '@/shared/api/daoService';
 import {
     flowIndexerKeys,
@@ -57,6 +61,13 @@ const getChainIdForNetwork = (network: string): number | null => {
     return def?.id ?? null;
 };
 
+// Stable reference for `dao.linkedAccounts ?? <empty>` — without this, each
+// render creates a new `[]` literal, which busts the downstream `useMemo`
+// deps that consume it (daoIds, addressBook, the IFlowDaoData itself) and
+// triggers the queryKey churn that produces the setData-loop in the parent
+// FlowDataProvider when a DAO has no linked accounts (e.g. the LMM demo DAO).
+const EMPTY_LINKED_ACCOUNTS: readonly ILinkedAccountSummary[] = [];
+
 /**
  * Composes the list of `chainId:address` keys the indexer understands for a DAO + its
  * linked accounts. Addresses are lower-cased to match how the indexer normalises them.
@@ -100,7 +111,7 @@ export const useEnvioFlowData = (
     );
 
     const chainId = getChainIdForNetwork(network);
-    const linkedAccounts = dao?.linkedAccounts ?? [];
+    const linkedAccounts = dao?.linkedAccounts ?? EMPTY_LINKED_ACCOUNTS;
     const daoIds = useMemo(
         () =>
             dao

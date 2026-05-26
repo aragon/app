@@ -1,23 +1,24 @@
 # Lido Money Machine demo — VM stack
 #
-# Five services: anvil (mainnet fork), postgres + envio + hasura (indexer),
-# caddy (TLS + CORS proxy).  All ports are internal except caddy:443.
-#
-# Designed for a single VM (Hetzner CX22, DO 2vCPU/4GB or similar).
+# Four services: anvil (mainnet fork), postgres + envio + hasura (indexer).
+# TLS termination + CORS + path routing happen on the host nginx (configured
+# separately — see ./nginx.lmm-demo.conf for a drop-in snippet).  Cloudflare
+# fronts the host nginx in Flexible mode (TLS terminates at CF edge; CF talks
+# to origin :80 over plain HTTP).
 #
 # Bring up:
 #   cp .env.vm.example .env
-#   # edit .env: MAINNET_RPC, DOMAIN, optionally FORK_BLOCK
+#   $EDITOR .env   # MAINNET_RPC + POSTGRES_PASSWORD + HASURA_ADMIN_SECRET
 #   docker compose up -d
-#   ./init-demo.sh        # one-shot: clones dao-launchpad@f/lido-demo, runs just demo-up
+#   ./init-demo.sh
 #
 # Tear down:
 #   docker compose down -v   # WARNING: drops anvil state + indexer DB
 #
 # Daily ops:
-#   docker compose logs -f anvil    # follow fork
+#   docker compose logs -f anvil
 #   docker compose exec anvil cast block latest --rpc-url http://localhost:8545
-#   curl https://$DOMAIN/manifest.json | jq .
+#   curl https://tests.aragon.in/manifest.json | jq .
 
 name: lmm-demo
 
@@ -40,8 +41,10 @@ services:
       - "--silent"
     volumes:
       - lmm-data:/data
-    expose:
-      - "8545"
+    # Bind to loopback only — host nginx proxies /rpc to here.  We never want
+    # 8545 exposed publicly (UFW already blocks it, but defense in depth).
+    ports:
+      - "127.0.0.1:8545:8545"
 
   postgres:
     image: postgres:17-alpine
@@ -79,8 +82,21 @@ services:
       ENVIO_PG_USER: postgres
       ENVIO_PG_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       ENVIO_PG_DATABASE: envio
-      # Anvil RPC, used by handlers for token metadata eth_calls
+      # Anvil RPC, used by handlers for token metadata eth_calls AND (via
+      # config.yaml's `rpc.for: sync` directive on chain-id 1) as the primary
+      # data-source — HyperSync is intentionally bypassed for the LMM fork.
       ENVIO_DEMO_RPC_URL: http://anvil:8545
+      # Block at which Envio starts indexing chain-id 1.  Init-demo.sh writes
+      # the actual fork-block (manifest.blockNumber - 5) into /srv/lmm/.env
+      # after every `just demo-up`; we read it from there via env_file.  The
+      # default here is the bootstrap value used before init-demo.sh has run
+      # for the first time.
+      ENVIO_DEMO_START_BLOCK: ${ENVIO_DEMO_START_BLOCK:-25179300}
+    env_file:
+      # Optional override file written by init-demo.sh; safe to be missing on
+      # first boot (compose treats a missing env_file as empty).
+      - path: /srv/lmm/.env.indexer
+        required: false
     volumes:
       - ${HOST_INDEXER_PATH:-../../../../capital-flow-indexer}:/indexer
     command: ["sh", "-c", "corepack enable && cd /indexer && pnpm install --frozen-lockfile && pnpm codegen && pnpm start"]
@@ -97,34 +113,14 @@ services:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:${POSTGRES_PASSWORD:-changeme}@postgres:5432/envio
       HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
       HASURA_GRAPHQL_DEV_MODE: "false"
-      # The console is open without auth on the VM — caddy will proxy /graphql
-      # publicly (we want unauthenticated reads), but the admin UI should be
-      # protected.  Set HASURA_GRAPHQL_ADMIN_SECRET via .env for that.
+      # Anonymous reads use the `public` role.  Mutations / admin console
+      # require HASURA_GRAPHQL_ADMIN_SECRET, which we never proxy publicly.
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-changeme}
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
-    expose:
-      - "8080"
-
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    depends_on:
-      - anvil
-      - hasura
+    # Loopback-only — host nginx proxies /graphql to here.
     ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      DOMAIN: ${DOMAIN}
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-      - caddy-config:/config
-      # Manifest is written by init-demo.sh into the anvil volume; caddy serves it static.
-      - lmm-data:/srv/lmm:ro
+      - "127.0.0.1:8080:8080"
 
 volumes:
   lmm-data:
   lmm-pg:
-  caddy-data:
-  caddy-config:
