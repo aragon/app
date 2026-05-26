@@ -22,7 +22,7 @@ import {
     memberRegistrySubdomainSuffix,
     useEnsAvatar,
     useEnsName,
-    useEnsRecords,
+    useEnsProfileRecords,
 } from '@/modules/ens';
 import {
     type IDialogComponentProps,
@@ -103,7 +103,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
-    const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: ensRecords } = useEnsProfileRecords(ensName);
 
     const formMethods = useForm<IAragonProfileDialogFormData>({
         mode: 'onTouched',

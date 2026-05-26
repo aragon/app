@@ -58,7 +58,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useBlockSpy = jest.spyOn(wagmi, 'useBlock');
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
-    const useEnsRecordsSpy = jest.spyOn(ensModule, 'useEnsRecords');
+    const useEnsProfileRecordsSpy = jest.spyOn(
+        ensModule,
+        'useEnsProfileRecords',
+    );
 
     const defaultPlugin = generateDaoPlugin({ isBody: true });
 
@@ -85,10 +88,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             data: null,
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsAvatar>);
-        useEnsRecordsSpy.mockReturnValue({
+        useEnsProfileRecordsSpy.mockReturnValue({
             data: {},
             isLoading: false,
-        } as ReturnType<typeof ensModule.useEnsRecords>);
+        } as ReturnType<typeof ensModule.useEnsProfileRecords>);
     });
 
     afterEach(() => {
@@ -99,7 +102,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useBlockSpy.mockReset();
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
-        useEnsRecordsSpy.mockReset();
+        useEnsProfileRecordsSpy.mockReset();
         (DaoList as jest.Mock).mockClear();
     });
 
@@ -289,7 +292,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             data: 'member.eth',
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
-        useEnsRecordsSpy.mockReturnValue({
+        useEnsProfileRecordsSpy.mockReturnValue({
             data: {
                 [ensRecordKeys.description]: 'Delegate bio',
                 [ensRecordKeys.url]: 'example.com',
@@ -297,7 +300,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 [ensRecordKeys.github]: 'member-dev',
             },
             isLoading: false,
-        } as unknown as ReturnType<typeof ensModule.useEnsRecords>);
+        } as unknown as ReturnType<typeof ensModule.useEnsProfileRecords>);
 
         render(createTestComponent());
 
@@ -327,7 +330,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             data: 'member.eth',
             isLoading: false,
         } as ReturnType<typeof ensModule.useEnsName>);
-        useEnsRecordsSpy.mockReturnValue({
+        useEnsProfileRecordsSpy.mockReturnValue({
             data: {
                 [ensRecordKeys.description]: 'Delegate bio',
                 [ensRecordKeys.url]: null,
@@ -335,7 +338,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 [ensRecordKeys.github]: null,
             },
             isLoading: false,
-        } as unknown as ReturnType<typeof ensModule.useEnsRecords>);
+        } as unknown as ReturnType<typeof ensModule.useEnsProfileRecords>);
 
         render(createTestComponent());
 
