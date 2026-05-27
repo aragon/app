@@ -520,8 +520,11 @@
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
           "confirmProfile": "Confirm your profile",
-          "removeAragonName": "Remove Aragon name",
-          "changeAragonName": "Change Aragon name"
+          "removeAragonName": "Delete your Aragon profile"
+        },
+        "dangerZone": {
+          "title": "Delete Aragon profile",
+          "description": "Once you remove your Aragon profile it's released and can be claimed by someone else. This can't be undone."
         }
       },
       "aragonProfileReleaseAlertDialog": {

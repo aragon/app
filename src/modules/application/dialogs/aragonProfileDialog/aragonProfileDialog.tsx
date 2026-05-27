@@ -5,7 +5,6 @@ import {
     AlertCard,
     Button,
     Dialog,
-    Dropdown,
     IconType,
     InputContainer,
     InputText,
@@ -226,16 +225,6 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         });
     };
 
-    const handleChangeAragonName = () => {
-        if (ensName == null) {
-            return;
-        }
-        open(ApplicationDialogId.ARAGON_PROFILE_RENAME, {
-            params: { currentEnsName: ensName },
-            stack: true,
-        });
-    };
-
     const handleViewProfile = () => {
         if (network == null || addressOrEns == null || address == null) {
             close();
@@ -263,55 +252,16 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 title={t('app.application.aragonProfileDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <div className="flex items-end gap-2">
-                    <div className="grow">
-                        <InputText
-                            disabled
-                            helpText={t(
-                                'app.application.aragonProfileDialog.fields.ensName.helpText',
-                            )}
-                            label={t(
-                                'app.application.aragonProfileDialog.fields.ensName.label',
-                            )}
-                            value={ensName ?? ''}
-                        />
-                    </div>
-                    {isAragonName && (
-                        <Dropdown.Container
-                            align="end"
-                            constrainContentWidth={false}
-                            customTrigger={
-                                <Button
-                                    iconLeft={IconType.DOTS_VERTICAL}
-                                    size="lg"
-                                    variant="tertiary"
-                                />
-                            }
-                            size="md"
-                        >
-                            <Dropdown.Item
-                                disabled={true}
-                                hidden={true}
-                                icon={IconType.PEN}
-                                iconPosition="left"
-                                onClick={handleChangeAragonName}
-                            >
-                                {t(
-                                    'app.application.aragonProfileDialog.actions.changeAragonName',
-                                )}
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                                icon={IconType.REMOVE}
-                                iconPosition="left"
-                                onClick={handleRemoveAragonName}
-                            >
-                                {t(
-                                    'app.application.aragonProfileDialog.actions.removeAragonName',
-                                )}
-                            </Dropdown.Item>
-                        </Dropdown.Container>
+                <InputText
+                    disabled
+                    helpText={t(
+                        'app.application.aragonProfileDialog.fields.ensName.helpText',
                     )}
-                </div>
+                    label={t(
+                        'app.application.aragonProfileDialog.fields.ensName.label',
+                    )}
+                    value={ensName ?? ''}
+                />
 
                 <AvatarInput
                     label={t(
@@ -384,6 +334,31 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                         </Link>
                     </div>
                 </AlertCard>
+
+                {isAragonName && (
+                    <InputContainer
+                        className="[&_label_div_p]:text-critical-800"
+                        helpText={t(
+                            'app.application.aragonProfileDialog.dangerZone.description',
+                        )}
+                        id="aragon-profile-danger-zone"
+                        label={t(
+                            'app.application.aragonProfileDialog.dangerZone.title',
+                        )}
+                        useCustomWrapper
+                    >
+                        <Button
+                            className="w-fit"
+                            onClick={handleRemoveAragonName}
+                            size="md"
+                            variant="critical"
+                        >
+                            {t(
+                                'app.application.aragonProfileDialog.actions.removeAragonName',
+                            )}
+                        </Button>
+                    </InputContainer>
+                )}
             </Dialog.Content>
 
             <Dialog.Footer
