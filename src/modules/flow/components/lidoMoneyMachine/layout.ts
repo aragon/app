@@ -55,32 +55,62 @@ export function layout(
     //
     // `ranker: 'tight-tree'` only fixes rank *assignment*; dagre's order
     // phase still uses barycenter to minimise crossings, which is free to
-    // mirror a sibling row.  In the wiring view the user expects strategies
-    // ordered left→right by on-chain index (`[0]`, `[1]`, `[2]`), which
-    // `toReactFlowGraph` emits as `composes`-edge labels.
+    // mirror a sibling row.  In the wiring view the user expects every
+    // node to sit under the strategy that uses it, ordered left→right by
+    // on-chain index (`composes [0]`, `[1]`, `[2]` — emitted by
+    // `toReactFlowGraph` as edge labels).
     //
-    // We rebuild the cross-axis coordinate per rank by sorting nodes that
-    // carry a `[N]` order index, preserving the rank's existing extent so
-    // the layout doesn't visually jump.
+    // Two-phase fix:
+    //   1. Read `[N]` labels off every edge → that pins strategies.
+    //   2. Propagate orders downstream along outgoing edges (min over all
+    //      ordered ancestors) so budgets/gates/providers inherit their
+    //      parent strategy's column.  A node reached by both `[0]` and
+    //      `[2]` ends up under `[0]` — intentional: shared infra hugs the
+    //      leftmost user.
+    // Then we rebuild the cross-axis coordinate per rank by sorting all
+    // ordered nodes, preserving the rank's existing extent so the layout
+    // doesn't visually jump compared to dagre's default.
     const horizontal = rankdir === 'LR';
-    const orderByTarget = new Map<string, number>();
+    const orderByNode = new Map<string, number>();
     for (const e of graph.edges) {
-        if (e.type !== 'composes' && !(e.label && /^\[\d+\]$/.test(e.label))) {
-            continue;
-        }
         const m = (e.label ?? '').match(/^\[(\d+)\]$/);
         if (m) {
-            orderByTarget.set(e.target, Number(m[1]));
+            const n = Number(m[1]);
+            const cur = orderByNode.get(e.target);
+            if (cur == null || n < cur) {
+                orderByNode.set(e.target, n);
+            }
         }
     }
 
-    if (orderByTarget.size > 0) {
+    // BFS-style propagation: keep relaxing min(order) along edges until no
+    // more updates.  Bounded by node count so we can't loop on a pathological
+    // cycle (graph is a DAG by construction, but defence in depth is cheap).
+    let safety = graph.nodes.length + 1;
+    let changed = true;
+    while (changed && safety > 0) {
+        safety -= 1;
+        changed = false;
+        for (const e of graph.edges) {
+            const src = orderByNode.get(e.source);
+            if (src == null) {
+                continue;
+            }
+            const tgt = orderByNode.get(e.target);
+            if (tgt == null || src < tgt) {
+                orderByNode.set(e.target, src);
+                changed = true;
+            }
+        }
+    }
+
+    if (orderByNode.size > 0) {
         const buckets = new Map<
             number,
             Array<{ id: string; cross: number; order: number }>
         >();
         for (const n of graph.nodes) {
-            const order = orderByTarget.get(n.id);
+            const order = orderByNode.get(n.id);
             if (order == null) {
                 continue;
             }
@@ -98,7 +128,11 @@ export function layout(
             const crosses = list
                 .map((entry) => entry.cross)
                 .sort((a, b) => a - b);
-            list.sort((a, b) => a.order - b.order);
+            // Stable order: primary by inherited strategy index, secondary by
+            // dagre's original cross-axis position so siblings within the same
+            // order bucket (e.g. two budgets for the same leg) keep dagre's
+            // crossing-minimising arrangement.
+            list.sort((a, b) => a.order - b.order || a.cross - b.cross);
             list.forEach((entry, i) => {
                 const target = crosses[i];
                 if (target == null) {
