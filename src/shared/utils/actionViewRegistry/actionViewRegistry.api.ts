@@ -42,7 +42,7 @@ export interface IActionViewDescriptor {
     /**
      * Custom React component to render the action in create/edit mode, i.e. create proposal page.
      */
-    componentCreate: ActionViewCreateComponent;
+    componentCreate?: ActionViewCreateComponent;
     /**
      * Custom React component to render the action in read mode, i.e. proposal details page.
      */
@@ -50,7 +50,7 @@ export interface IActionViewDescriptor {
     /**
      *  Action composer item.
      */
-    getItem: (params: {
+    getItem?: (params: {
         contractAddress: string;
         t: TranslationFunction;
     }) => IActionComposerInputItem;

@@ -1897,7 +1897,32 @@
             "expandAll": "Expand all",
             "header": "Actions",
             "lastSimulationError": "There was an error getting the last simulation data. Please try again later.",
-            "simulationError": "There was an error simulating the actions. Please try again later."
+            "simulationError": "There was an error simulating the actions. Please try again later.",
+            "nested": {
+              "createProposal": {
+                "metadataName": "Name",
+                "metadataAvatar": "Avatar",
+                "metadataDescription": "Description",
+                "metadataLinks": "Links",
+                "startDate": "Start date",
+                "endDate": "End date",
+                "allowFailureMap": "Allow failure map",
+                "approveProposal": "Approve on creation",
+                "tryExecution": "Try execution",
+                "tryEarlyExecution": "Try early execution",
+                "voteOption": "Vote on creation",
+                "voteOptionNone": "None",
+                "voteOptionAbstain": "Abstain",
+                "voteOptionYes": "Yes",
+                "voteOptionNo": "No",
+                "yes": "Yes",
+                "no": "No"
+              },
+              "execute": {
+                "callId": "Call ID",
+                "allowFailureMap": "Allow failure map"
+              }
+            }
           },
           "description": {
             "header": "Proposal",

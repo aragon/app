@@ -29,7 +29,6 @@ import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
     actionSimulationServiceKeys,
@@ -42,7 +41,7 @@ import {
     useProposalActions,
     useProposalBySlug,
 } from '../../api/governanceService';
-import type { IProposalActionData } from '../../components/createProposalForm';
+import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
@@ -325,46 +324,14 @@ export const DaoProposalDetailsPageClient: React.FC<
                         >
                             <ProposalActions.Container emptyStateDescription="">
                                 {normalizedProposalActions.map(
-                                    (action, index) => {
-                                        const fnSelector =
-                                            proposalActionUtils.actionToFunctionSelector(
-                                                action,
-                                            );
-                                        const customActionView =
-                                            actionViewRegistry.getViewBySelector(
-                                                fnSelector,
-                                            );
-
-                                        return customActionView ? (
-                                            <ProposalActions.Item<IProposalActionData>
-                                                action={
-                                                    {
-                                                        ...action,
-                                                        daoId,
-                                                    } as IProposalActionData
-                                                }
-                                                actionFunctionSelector={
-                                                    fnSelector
-                                                }
-                                                CustomComponent={
-                                                    customActionView.componentDetails
-                                                }
-                                                chainId={chainId}
-                                                key={index}
-                                                readOnly={true}
-                                            />
-                                        ) : (
-                                            <ProposalActions.Item
-                                                action={action}
-                                                actionFunctionSelector={
-                                                    fnSelector
-                                                }
-                                                chainId={chainId}
-                                                key={index}
-                                                readOnly={true}
-                                            />
-                                        );
-                                    },
+                                    (action, index) => (
+                                        <ProposalActionsItem
+                                            action={action}
+                                            chainId={chainId}
+                                            daoId={daoId}
+                                            key={index}
+                                        />
+                                    ),
                                 )}
                             </ProposalActions.Container>
                             <ProposalActions.Footer

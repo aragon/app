@@ -16,9 +16,15 @@ export class ActionViewRegistry {
             return this;
         }
 
-        if (!(descriptor.functionSelector || descriptor.permissionId)) {
+        if (
+            !(
+                descriptor.functionSelector ||
+                descriptor.permissionId ||
+                descriptor.componentDetails
+            )
+        ) {
             throw new Error(
-                `ActionViewRegistry: action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector or permissionId`,
+                `ActionViewRegistry: action view "${descriptor.actionType}" must provide at least one matching criterion: functionSelector, permissionId, or componentDetails (for actionType-only resolution)`,
             );
         }
 
@@ -41,6 +47,19 @@ export class ActionViewRegistry {
         return this.views.find((view) => view.functionSelector === selector);
     };
 
+    getViewByActionType = (
+        actionType?: string,
+    ): IActionViewDescriptor | undefined => {
+        if (!actionType) {
+            return;
+        }
+
+        return this.views.find(
+            (view) =>
+                view.actionType === actionType && view.componentDetails != null,
+        );
+    };
+
     getViewsByPermissionId = (permissionId: string): IActionViewDescriptor[] =>
         this.views.filter((view) => view.permissionId === permissionId);
 
@@ -56,9 +75,14 @@ export class ActionViewRegistry {
             ? groupDescriptor.getGroup({ contractAddress, t })
             : undefined;
         const views = this.getViewsByPermissionId(permissionId);
-        const items = views.map((view) => view.getItem({ contractAddress, t }));
+        const items = views
+            .map((view) => view.getItem?.({ contractAddress, t }))
+            .filter((view) => view != null);
         const components = views.reduce(
-            (acc, cur) => ({ ...acc, [cur.actionType]: cur.componentCreate }),
+            (acc, cur) =>
+                cur.componentCreate
+                    ? { ...acc, [cur.actionType]: cur.componentCreate }
+                    : acc,
             {},
         );
 
