@@ -524,7 +524,7 @@
         },
         "dangerZone": {
           "title": "Delete Aragon profile",
-          "description": "Once you remove your Aragon profile it's released and can be claimed by someone else. This can't be undone."
+          "description": "Once you delete your Aragon profile it's released and can be claimed by someone else. This can't be undone."
         }
       },
       "aragonProfileReleaseAlertDialog": {
