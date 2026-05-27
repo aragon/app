@@ -23,7 +23,7 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 
 export interface IAragonProfileReleaseTransactionDialogParams {
-    /** Full Aragon ENS name being released, e.g. "alice.aragonx.eth". */
+    /** Full Aragon ENS name being released, e.g. "alice.aragon.eth". */
     ensName: string;
 }
 

@@ -19,13 +19,13 @@ describe('useEnsName hook', () => {
     });
 
     it('returns the full ENS name by default', () => {
-        mockEnsResult('alice.aragonx.eth');
+        mockEnsResult('alice.aragon.eth');
         const { result } = renderHook(() => useEnsName(validAddress));
-        expect(result.current.data).toBe('alice.aragonx.eth');
+        expect(result.current.data).toBe('alice.aragon.eth');
     });
 
     it('strips the aragon subdomain suffix when stripAragonRegistrySuffix is set', () => {
-        mockEnsResult('alice.aragonx.eth');
+        mockEnsResult('alice.aragon.eth');
         const { result } = renderHook(() =>
             useEnsName(validAddress, { stripAragonRegistrySuffix: true }),
         );

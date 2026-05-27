@@ -272,7 +272,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 ({
                     data: options?.stripAragonRegistrySuffix
                         ? 'alice'
-                        : 'alice.aragonx.eth',
+                        : 'alice.aragon.eth',
                     isLoading: false,
                 }) as ReturnType<typeof ensModule.useEnsName>,
         );
@@ -283,7 +283,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             screen.getByRole('heading', { level: 1, name: 'alice' }),
         ).toBeInTheDocument();
         expect(
-            screen.getByRole('link', { name: 'alice.aragonx.eth' }),
+            screen.getByRole('link', { name: 'alice.aragon.eth' }),
         ).toBeInTheDocument();
     });
 

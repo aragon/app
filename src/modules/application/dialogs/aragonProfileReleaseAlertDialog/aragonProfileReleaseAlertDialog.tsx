@@ -7,7 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
 export interface IAragonProfileReleaseAlertDialogParams {
-    /** Full Aragon ENS name being released, e.g. "alice.aragonx.eth". */
+    /** Full Aragon ENS name being released, e.g. "alice.aragon.eth". */
     ensName: string;
 }
 

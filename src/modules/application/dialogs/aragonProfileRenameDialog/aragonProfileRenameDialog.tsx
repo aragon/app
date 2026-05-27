@@ -15,7 +15,7 @@ interface IFormData {
 }
 
 export interface IAragonProfileRenameDialogParams {
-    /** Current Aragon ENS name, e.g. "alice.aragonx.eth". */
+    /** Current Aragon ENS name, e.g. "alice.aragon.eth". */
     currentEnsName: string;
 }
 
