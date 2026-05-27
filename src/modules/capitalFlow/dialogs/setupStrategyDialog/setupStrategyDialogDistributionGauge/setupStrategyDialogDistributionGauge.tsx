@@ -71,6 +71,7 @@ export const SetupStrategyDialogDistributionGauge: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionGauge"
                 hideAmount={true}

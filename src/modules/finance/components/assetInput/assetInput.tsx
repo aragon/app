@@ -86,6 +86,12 @@ export interface IAssetInputProps {
      * Configuration for percentage selection feature.
      */
     percentageSelection?: IAssetInputPercentageSelectionConfig;
+    /**
+     * Disables max amount validation. This allows an arbitrary amount to be set.
+     * Max validation is still needed in certain cases like token locking/wrapping.
+     * @default false
+     */
+    disableMaxValidation?: boolean;
 }
 
 const valuePercentages = ['0', '25', '50', '75', '100'] as const;
@@ -101,6 +107,7 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
         hideAmount,
         minAmount,
         percentageSelection,
+        disableMaxValidation = false,
     } = props;
 
     const { t } = useTranslations();
@@ -128,7 +135,9 @@ export const AssetInput: React.FC<IAssetInputProps> = (props) => {
             ? undefined
             : {
                   required: true,
-                  max: assetField.value?.amount,
+                  max: disableMaxValidation
+                      ? undefined
+                      : assetField.value?.amount,
                   min: minAmount,
                   validate: (value) => Number.parseFloat(value ?? '') > 0,
               },
