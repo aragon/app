@@ -61,23 +61,85 @@ const filterLabels: Record<HistoryFilter, string> = {
     failed: 'Failed',
 };
 
+// Human-readable label per orchestrator-leg strategy kind.  Single-dispatch
+// routers and non-orchestrator strategies leave `legKind` undefined and
+// fall back to the policy.verb-driven title below.
+const LEG_KIND_LABEL: Record<
+    NonNullable<IFlowPolicy['dispatches'][number]['legKind']>,
+    string
+> = {
+    WRAP: 'Wrap',
+    UNIV2_LIQUIDITY: 'UniV2 LP',
+    GATED_COWSWAP: 'CowSwap',
+    COWSWAP: 'CowSwap',
+    TRANSFER: 'Transfer',
+    EPOCH_TRANSFER: 'Epoch transfer',
+    BURN: 'Burn',
+    UNKNOWN: 'Strategy',
+};
+
+const legDescription = (
+    kind: IFlowPolicy['dispatches'][number]['legKind'],
+): string => {
+    switch (kind) {
+        case 'WRAP':
+            return 'stETH wrapped into wstETH (held by DAO)';
+        case 'UNIV2_LIQUIDITY':
+            return 'Liquidity added to UniV2 pair (LP tokens to DAO)';
+        case 'GATED_COWSWAP':
+        case 'COWSWAP':
+            return 'CowSwap order pre-signed (off-chain fill)';
+        case 'BURN':
+            return 'Tokens burned';
+        case 'TRANSFER':
+        case 'EPOCH_TRANSFER':
+            return 'Transferred to recipients';
+        default:
+            return 'No recipients';
+    }
+};
+
 const buildRows = (policy: IFlowPolicy): IHistoryRow[] => {
     const rows: IHistoryRow[] = [];
     for (const dispatch of policy.dispatches) {
         const isFailed = dispatch.status === 'failed';
+        const isSkipped = dispatch.status === 'skipped';
+        // Multi-dispatch leg context: prefix the row title with the leg
+        // index + kind ("#0 · Wrap leg") so a single orchestrator dispatch
+        // that lands as 3 rows is visually disambiguated.  Falls back to
+        // the policy.verb form for single-dispatch routers where legKind
+        // is absent.
+        const hasLegContext = dispatch.legKind != null;
+        const legLabel = dispatch.legKind
+            ? LEG_KIND_LABEL[dispatch.legKind]
+            : undefined;
+        const titleBase = isFailed
+            ? 'Dispatch failed'
+            : isSkipped
+              ? 'Dispatch skipped'
+              : hasLegContext && legLabel
+                ? `#${dispatch.legIndex ?? '?'} · ${legLabel}`
+                : `${policy.verb.charAt(0).toUpperCase()}${policy.verb.slice(1)}`;
         rows.push({
             id: `d-${dispatch.id}`,
             kind: 'dispatch',
             at: dispatch.at,
             timestamp: new Date(dispatch.at).getTime(),
-            title: isFailed
-                ? 'Dispatch failed'
-                : `${policy.verb.charAt(0).toUpperCase()}${policy.verb.slice(1)}`,
+            title: titleBase,
             description: isFailed
                 ? (dispatch.failureReason ?? 'Dispatch reverted.')
-                : dispatch.recipientsCount === 0
-                  ? 'No recipients'
-                  : `${dispatch.recipientsCount} recipient${dispatch.recipientsCount === 1 ? '' : 's'}`,
+                : isSkipped
+                  ? (dispatch.skippedReason ?? 'Strategy was skipped.')
+                  : dispatch.recipientsCount === 0
+                    ? hasLegContext
+                        ? // Orchestrator legs: tokens stay inside the pipeline
+                          // (wrap consumed → wstETH back to DAO; UniV2 → LP
+                          // tokens back to DAO; CowSwap → off-chain fill).
+                          // Describe what the leg did instead of "no
+                          // recipients", which would read as a defect.
+                          legDescription(dispatch.legKind)
+                        : 'No recipients'
+                    : `${dispatch.recipientsCount} recipient${dispatch.recipientsCount === 1 ? '' : 's'}`,
             amount: dispatch.amount,
             tokenSymbol: dispatch.token,
             recipientsCount: dispatch.recipientsCount,
@@ -202,25 +264,32 @@ export const FlowPolicyHistory: React.FC<IFlowPolicyHistoryProps> = (props) => {
                                 </span>
                             )}
                         </div>
-                        {row.amount != null && row.tokenSymbol != null && (
-                            <span className="flex items-center gap-2">
-                                <span
-                                    className={classNames(
-                                        'font-semibold text-sm tabular-nums leading-tight',
-                                        row.failed
-                                            ? 'text-critical-800 line-through'
-                                            : 'text-neutral-800',
-                                    )}
-                                >
-                                    {formatFlowAmount(
-                                        row.amount,
-                                        row.tokenSymbol,
-                                    )}{' '}
-                                    {row.tokenSymbol}
+                        {row.amount != null &&
+                            row.tokenSymbol != null &&
+                            // Sentinel from `envioFlowMapper.ts` — orchestrator
+                            // legs without a meaningful headline (CowSwap leg
+                            // that hasn't surfaced its SwapOrder, etc.) ship
+                            // `token: ''` so we render leg name + description
+                            // without a misleading "0 USDC" amount + chip.
+                            row.tokenSymbol !== '' && (
+                                <span className="flex items-center gap-2">
+                                    <span
+                                        className={classNames(
+                                            'font-semibold text-sm tabular-nums leading-tight',
+                                            row.failed
+                                                ? 'text-critical-800 line-through'
+                                                : 'text-neutral-800',
+                                        )}
+                                    >
+                                        {formatFlowAmount(
+                                            row.amount,
+                                            row.tokenSymbol,
+                                        )}{' '}
+                                        {row.tokenSymbol}
+                                    </span>
+                                    <FlowTokenChip token={row.tokenSymbol} />
                                 </span>
-                                <FlowTokenChip token={row.tokenSymbol} />
-                            </span>
-                        )}
+                            )}
                         {row.proposalId != null && (
                             <span className="font-normal text-primary-400 text-xs leading-tight">
                                 {row.proposalId}

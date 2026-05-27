@@ -375,7 +375,7 @@ function strategyKindLabel(kind: string): string {
             return 'Lido · Wrap stETH → wstETH';
         case 'strategy.dispatch.lido.univ2-liquidity':
             return 'Lido · UniV2 LP';
-        case 'strategy.dispatch.lido.gated-cow-swap':
+        case 'strategy.dispatch.lido.gated-cowswap':
             return 'Lido · Gated CoW swap';
         case 'strategy.unknown':
             return 'Unknown';

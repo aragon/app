@@ -407,6 +407,131 @@ const pickSwapInLeg = (
     return { symbol, amount: totalAmount };
 };
 
+/**
+ * "Leg-input" headline picker for orchestrator strategies (Lido Money
+ * Machine and similar).  When a leg only emits internal actions —
+ * `wrap`, `univ2AddLiquidity`, `swapPresign` — there are no outbound
+ * transfers to surface as the dispatch headline.  Falling back to
+ * "0 USDC" in that case is the existing bug we're fixing; instead,
+ * pick the dominant (largest-raw-amount) internal transfer and treat
+ * its token/amount as the headline so History rows read
+ * "100 stETH · Wrap leg" instead of "0 USDC · 2 recipients".
+ *
+ * Skips `approve` (allowance, not consumption) and `swapPresign`
+ * (CowSwap orders carry sell/buy amounts on `SwapOrder`, picked up by
+ * the cowOrder branch already).  Returns null when no eligible
+ * internal transfer is found — the caller keeps its existing fallback.
+ */
+const LEG_INPUT_KINDS: ReadonlySet<string> = new Set([
+    'wrap',
+    'univ2AddLiquidity',
+]);
+
+/**
+ * Sum every leg-input transfer (wrap, univ2AddLiquidity) across all
+ * executions of an orchestrator policy where the token symbol matches
+ * `headlineSymbol`.  Used to compute the orchestrator's "X stETH ran
+ * through the machine" KPI without conflating units (we'd otherwise
+ * be summing stETH + wstETH + LDO together).
+ */
+const sumLegInputForSymbol = (
+    policy: IEnvioPolicy,
+    headlineSymbol: FlowTokenSymbol,
+): number => {
+    let total = 0;
+    for (const execution of policy.executions) {
+        for (const t of execution.transfers) {
+            if (!LEG_INPUT_KINDS.has(t.decodedFrom)) {
+                continue;
+            }
+            if (t.token.symbol !== headlineSymbol) {
+                continue;
+            }
+            total += normaliseAmount(t.amount, t.token.decimals);
+        }
+    }
+    return total;
+};
+
+const pickLegInputTransfer = (
+    transfers: readonly IEnvioExecutionTransfer[],
+): ITokenTotal | null => {
+    const byToken = new Map<string, ITokenTotal>();
+    for (const t of transfers) {
+        if (!LEG_INPUT_KINDS.has(t.decodedFrom)) {
+            continue;
+        }
+        const current = byToken.get(t.token.id) ?? {
+            symbol: t.token.symbol,
+            decimals: t.token.decimals,
+            amount: 0,
+            rawAmount: BIG_ZERO,
+        };
+        let asBig = BIG_ZERO;
+        try {
+            asBig = BigInt(t.amount);
+        } catch {
+            asBig = BIG_ZERO;
+        }
+        current.rawAmount += asBig;
+        current.amount += normaliseAmount(t.amount, t.token.decimals);
+        byToken.set(t.token.id, current);
+    }
+    let best: ITokenTotal | null = null;
+    for (const entry of byToken.values()) {
+        if (!best || entry.rawAmount > best.rawAmount) {
+            best = entry;
+        }
+    }
+    return best;
+};
+
+// ---------------------------------------------------------------------------
+// Orchestrator (multi-dispatch) currency
+// ---------------------------------------------------------------------------
+
+/**
+ * Best-effort guess for the orchestrator's "headline currency" — the token
+ * the user thinks the machine is *moving*, not the dominant outbound token of
+ * any one leg.  Used to label the chart on an orchestrator policy detail page
+ * so a never-dispatched LMM-style chain doesn't render "0 USDC" by default.
+ *
+ * Today this only handles leg-0 = WRAP, where the answer is mechanically
+ * fixed: a wstETH-output wrap strategy unwraps stETH (the Lido wstETH /
+ * stETH pair is the only deployed wrap target).  Other leg-0 kinds would
+ * need the budget's underlying ERC-20 symbol, which is not exposed by the
+ * indexer's `Budget` entity today — those fall through to the caller's
+ * existing dominant-outbound heuristic.
+ *
+ * When the strategy set grows beyond Lido we should either (a) extend the
+ * indexer schema with `Budget.token`, or (b) parse a richer `configJson`
+ * with an explicit `inputToken` field on every strategy.
+ */
+const pickOrchestratorInputToken = (
+    envioPolicy: IEnvioPolicy,
+): FlowTokenSymbol | undefined => {
+    const sortedStrategies = (envioPolicy.strategies ?? [])
+        .filter((s) => s.index != null)
+        .sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+    const leg0 = sortedStrategies[0] ?? envioPolicy.strategies?.[0];
+    if (!leg0) {
+        return undefined;
+    }
+
+    if (leg0.kind === 'WRAP') {
+        // configJson shape from capital-flow-indexer/src/multiDispatchBackfill.ts:
+        //   { wstETH: '0x...' } — the OUTPUT.  Input is the underlying.
+        // Lido wstETH is the only on-chain wrap target Capital Router supports
+        // today; its underlying is stETH.  We don't need to inspect the
+        // address because there's no ambiguity yet.
+        return 'stETH' as FlowTokenSymbol;
+    }
+
+    // UNIV2_LIQUIDITY / GATED_COWSWAP / TRANSFER / EPOCH_TRANSFER / BURN /
+    // UNKNOWN — input lives on the budget contract; not in Hasura yet.
+    return undefined;
+};
+
 // ---------------------------------------------------------------------------
 // Executions → IFlowDispatch
 // ---------------------------------------------------------------------------
@@ -459,6 +584,17 @@ const mapExecutionToDispatch = (
     // reads "X WETH → MERC" rather than "0 USDC".
     const isSwap = isSwapStrategyType(strategyType);
 
+    // Multi-dispatch leg context — `execution.strategy.kind` carries the
+    // sub-strategy kind (WRAP / UNIV2_LIQUIDITY / GATED_COWSWAP / …), and
+    // `execution.strategyIndex` is its position in the orchestrator's
+    // strategy list.  Both null for legacy single-dispatch routers; the
+    // consumer treats absence as "no leg context, render normally".
+    const legIndex =
+        execution.strategyIndex != null && execution.strategyIndex >= 0
+            ? execution.strategyIndex
+            : undefined;
+    const legKind = execution.strategy?.kind;
+
     if (cowOrder) {
         return {
             id: execution.id,
@@ -479,6 +615,8 @@ const mapExecutionToDispatch = (
             // ../types to carry these optional fields.
             status: execution.skipped ? 'skipped' : 'ok',
             skippedReason: execution.skippedReason ?? undefined,
+            legIndex,
+            legKind,
         };
     }
 
@@ -498,6 +636,70 @@ const mapExecutionToDispatch = (
             txHash: execution.txHash,
             proposalId: proposal?.proposalId,
             proposalSlug: proposal?.slug,
+            legIndex,
+            legKind,
+        };
+    }
+
+    // Orchestrator leg fallback: no outbound transfer, no cowOrder, no
+    // swap-in — but there may still be a `wrap` / `univ2AddLiquidity`
+    // transfer carrying the leg's input amount.  Without this branch the
+    // history row falls back to "0 USDC" for every Wrap and UniV2 leg of
+    // the LMM dispatcher.  See `pickLegInputTransfer` for the picker.
+    //
+    // NOTE: we deliberately DO NOT populate `tokenIn`/`amountIn` here.
+    // The chart treats `tokenIn != null && amountIn != null` as the
+    // "swap dispatch" sigil — surfacing the leg-input under those keys
+    // would mislabel every wrap/LP dispatch as a Uniswap-style swap on
+    // the timeline.  The leg-input *is* the headline amount for the row,
+    // so `amount` + `token` carry it on their own.
+    const legInput = pickLegInputTransfer(execution.transfers);
+    if (legInput) {
+        return {
+            id: execution.id,
+            at: isoFromSeconds(execution.blockTimestamp),
+            amount: legInput.amount,
+            token: legInput.symbol,
+            // Recipients aren't meaningful for these legs — the produced
+            // tokens land back on the vault, not on an external address.
+            // Show 0 so the History description says "No recipients" rather
+            // than echoing the action count.
+            recipientsCount: 0,
+            topRecipients: [],
+            txHash: execution.txHash,
+            proposalId: proposal?.proposalId,
+            proposalSlug: proposal?.slug,
+            status: execution.skipped ? 'skipped' : 'ok',
+            skippedReason: execution.skippedReason ?? undefined,
+            legIndex,
+            legKind,
+        };
+    }
+
+    // CowSwap-style leg that ran successfully but produced no SwapOrder
+    // entity yet (either the on-chain `CowSwapOrderPosted` event hasn't
+    // been ingested, or this is a `setPreSignature(false)` cancellation).
+    // Falling through to the generic `dominantOut ?? 0 USDC` fallback
+    // would print a misleading "0 USDC" row — surface a sentinel instead
+    // and let the History/Chart skip the amount block for these.
+    if (legKind === 'GATED_COWSWAP' || legKind === 'COWSWAP') {
+        return {
+            id: execution.id,
+            at: isoFromSeconds(execution.blockTimestamp),
+            // `0` + empty token string is the agreed sentinel — UI checks
+            // `dispatch.token === ''` to suppress the amount + chip block
+            // for "pre-signed without a fill" rows.
+            amount: 0,
+            token: '' as FlowTokenSymbol,
+            recipientsCount: 0,
+            topRecipients: [],
+            txHash: execution.txHash,
+            proposalId: proposal?.proposalId,
+            proposalSlug: proposal?.slug,
+            status: execution.skipped ? 'skipped' : 'ok',
+            skippedReason: execution.skippedReason ?? undefined,
+            legIndex,
+            legKind,
         };
     }
 
@@ -515,6 +717,8 @@ const mapExecutionToDispatch = (
         txHash: execution.txHash,
         proposalId: proposal?.proposalId,
         proposalSlug: proposal?.slug,
+        legIndex,
+        legKind,
     };
 };
 
@@ -823,18 +1027,44 @@ const mapPolicy = (params: {
         ? pickSwapInLeg(lastExecution.transfers)
         : null;
 
+    // For orchestrator (multi-dispatch) policies, prefer the headline input
+    // token of leg 0 over the dominant-outbound heuristic.  The latter picks
+    // the largest outbound transfer across all legs (e.g. wstETH after a
+    // WRAP), which is misleading on a "Lido Money Machine"-style chain where
+    // the user thinks of the machine as a stETH pipeline.  Empty for non-
+    // orchestrators and for orchestrators we can't classify yet — both fall
+    // through to the existing dominant logic + USDC tail fallback.
+    const orchestratorToken = isOrchestratorStrategyType(strategyType)
+        ? pickOrchestratorInputToken(envioPolicy)
+        : undefined;
+
     const policyToken =
-        isSwap && dominantAll == null
+        orchestratorToken ??
+        (isSwap && dominantAll == null
             ? ((swapInAll?.symbol as FlowTokenSymbol) ??
               (swapPair?.in as FlowTokenSymbol) ??
               ('USDC' as FlowTokenSymbol))
             : ((dominantAll?.symbol as FlowTokenSymbol) ??
               (dominantLast?.symbol as FlowTokenSymbol) ??
-              ('USDC' as FlowTokenSymbol));
-    const policyTotalDistributed =
-        isSwap && dominantAll == null
-            ? (swapInAll?.amount ?? 0)
-            : (dominantAll?.amount ?? 0);
+              ('USDC' as FlowTokenSymbol)));
+
+    // Orchestrator (multi-dispatch) total: there are no outbound transfers
+    // we can dominant-sum across (every leg's tokens stay internal to the
+    // pipeline), so fall back to summing the "leg-input" transfers for the
+    // headline token only — e.g. for LMM that's the stETH consumed by the
+    // Wrap leg across every dispatch.  Mixing wstETH/LDO amounts into the
+    // same headline would conflate units, so we keep it strictly to the
+    // token chosen by `pickOrchestratorInputToken`.
+    const isOrchestrator = isOrchestratorStrategyType(strategyType);
+    const orchestratorHeadlineTotal = isOrchestrator
+        ? sumLegInputForSymbol(envioPolicy, policyToken)
+        : 0;
+
+    const policyTotalDistributed = isOrchestrator
+        ? orchestratorHeadlineTotal
+        : isSwap && dominantAll == null
+          ? (swapInAll?.amount ?? 0)
+          : (dominantAll?.amount ?? 0);
 
     const cooldown = deriveCooldown(envioPolicy, restPolicy);
     const dispatches = envioPolicy.executions.map((execution) =>

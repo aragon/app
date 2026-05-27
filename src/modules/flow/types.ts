@@ -96,6 +96,24 @@ export interface IFlowDispatch {
     failureReason?: string;
     /** Decoded revert reason when `status === 'skipped'`. */
     skippedReason?: string;
+    /**
+     * Multi-dispatch / orchestrator context — present when this dispatch is
+     * a single leg of an orchestrator's `dispatch()` call (e.g. the LMM
+     * dispatcher firing Wrap → UniV2 LP → CowSwap in sequence).  Each leg
+     * lands as its own IFlowDispatch row; consumers use these fields to
+     * label rows by leg ("#0 · Wrap leg") and to filter the cumulative
+     * chart to legs that share the orchestrator's headline token.
+     */
+    legIndex?: number;
+    legKind?:
+        | 'WRAP'
+        | 'UNIV2_LIQUIDITY'
+        | 'GATED_COWSWAP'
+        | 'COWSWAP'
+        | 'TRANSFER'
+        | 'EPOCH_TRANSFER'
+        | 'BURN'
+        | 'UNKNOWN';
 }
 
 export type FlowEventKind =
