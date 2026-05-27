@@ -140,6 +140,10 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         defaultValue: false,
         environments: {
             local: true,
+            development: true,
+            preview: true,
+            staging: true,
+            production: true,
         },
     },
 ];
