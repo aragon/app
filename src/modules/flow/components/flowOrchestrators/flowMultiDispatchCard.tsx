@@ -31,8 +31,10 @@ export interface IFlowMultiDispatchCardProps {
 
 const cardBorderByStatus: Record<IFlowOrchestrator['status'], string> = {
     ready: 'border-primary-200',
-    live: 'border-success-200',
-    cooldown: 'border-warning-200',
+    // Live cards used `border-success-200` (mint).  Neutral keeps the card
+    // grid quiet; status colour lives only in the `FlowStatusDot`.
+    live: 'border-neutral-200',
+    cooldown: 'border-neutral-200',
     awaiting: 'border-neutral-200',
     paused: 'border-warning-300',
     never: 'border-neutral-100',
@@ -341,13 +343,18 @@ const FlowEmbeddedChainDiagram: React.FC<IFlowEmbeddedChainDiagramProps> = ({
     </div>
 );
 
+// LMM_DEMO_HACK: STRATEGY_KIND_TONE used to ship per-kind pastel tints
+// (`primary-50` wrap / `violet-50` UniV2 / `cyan-50` CowSwap).  We
+// neutralized those so the embedded chain reads as a single chain of
+// equal chips; the strategy *label* carries enough semantic weight
+// without competing pastel backgrounds.
 const STRATEGY_KIND_TONE: Record<IFlowEmbeddedStrategy['kind'], string> = {
-    wrap: 'border-primary-200 bg-primary-50',
-    univ2Liquidity: 'border-violet-200 bg-violet-50',
-    gatedCowSwap: 'border-cyan-200 bg-cyan-50',
-    cowSwap: 'border-cyan-200 bg-cyan-50',
+    wrap: 'border-neutral-200 bg-neutral-0',
+    univ2Liquidity: 'border-neutral-200 bg-neutral-0',
+    gatedCowSwap: 'border-neutral-200 bg-neutral-0',
+    cowSwap: 'border-neutral-200 bg-neutral-0',
     transfer: 'border-neutral-200 bg-neutral-0',
-    epochTransfer: 'border-warning-200 bg-warning-50',
+    epochTransfer: 'border-neutral-200 bg-neutral-0',
     burn: 'border-critical-200 bg-critical-50',
     unknown: 'border-neutral-200 bg-neutral-0',
 };
@@ -492,7 +499,7 @@ const RunLeg: React.FC<IRunLegProps> = ({ leg, network, addressOrEns }) => {
                         ? 'bg-critical-500'
                         : isSkipped
                           ? 'bg-warning-500'
-                          : 'bg-success-500',
+                          : 'bg-primary-400',
                 )}
             />
             <Link

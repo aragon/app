@@ -232,7 +232,7 @@ export const FlowPolicyDetailPageClient: React.FC<
                             </>
                         ) : (
                             <>
-                                <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-success-100 px-3 py-1.5 font-semibold text-sm text-success-800 leading-tight">
+                                <span className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-neutral-100 px-3 py-1.5 font-semibold text-neutral-700 text-sm leading-tight">
                                     {policy.pending != null
                                         ? `${formatFlowAmount(policy.pending.amount, policy.pending.token)} ${policy.pending.token} claimable`
                                         : 'Claim window open'}
@@ -295,8 +295,9 @@ const dispatchDisabledReason = (policy: IFlowPolicy, nowMs: number): string => {
 const StatusBadge: React.FC<{ policy: IFlowPolicy }> = ({ policy }) => {
     const toneByStatus: Record<string, string> = {
         ready: 'bg-primary-100 text-primary-800',
-        live: 'bg-success-100 text-success-800',
-        cooldown: 'bg-warning-100 text-warning-800',
+        // Neutralised — was success-100/text-success-800.
+        live: 'bg-neutral-100 text-neutral-700',
+        cooldown: 'bg-neutral-100 text-neutral-700',
         awaiting: 'bg-neutral-100 text-neutral-700',
         paused: 'bg-warning-100 text-warning-800',
         never: 'bg-neutral-100 text-neutral-500',

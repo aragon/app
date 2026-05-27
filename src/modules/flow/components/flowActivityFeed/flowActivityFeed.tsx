@@ -3,6 +3,8 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { useFlowNow } from '../../providers/flowDataProvider';
+import { getAllPolicies } from '../../providers/flowSelectors';
 import type {
     FlowEventKind,
     FlowPolicyStrategy,
@@ -67,12 +69,45 @@ const eventTypeLabel: Record<FlowEventKind, string> = {
 const shortTx = (hash: string): string =>
     hash.length > 14 ? `${hash.slice(0, 10)}…${hash.slice(-4)}` : hash;
 
+// LMM_DEMO_HACK: synthetic-policy-installed (shared family).  Orchestrator
+// legs (Wrap, UniV2 LP, CowSwap) move value to contracts, not to a
+// `recipient` row — `recipientsCount` is legitimately 0 there, but the
+// generic "No recipients yet" copy is wrong.  Describe the leg instead so
+// the Activity feed reads as informative for the LMM demo and as a
+// strict no-op for production policies.
+const describeLeg = (
+    legIndex: number | undefined,
+    legKind: IFlowPolicy['dispatches'][number]['legKind'],
+): string | undefined => {
+    if (legKind == null) {
+        return undefined;
+    }
+    const idx = legIndex != null ? `#${legIndex} · ` : '';
+    switch (legKind) {
+        case 'WRAP':
+            return `${idx}stETH wrapped into wstETH (held by DAO)`;
+        case 'UNIV2_LIQUIDITY':
+            return `${idx}Liquidity added to UniV2 pair`;
+        case 'GATED_COWSWAP':
+        case 'COWSWAP':
+            return `${idx}CowSwap order pre-signed`;
+        case 'EPOCH_TRANSFER':
+            return `${idx}Epoch transfer`;
+        case 'BURN':
+            return `${idx}Burned`;
+        case 'TRANSFER':
+            return undefined; // fall through to recipient summary
+        default:
+            return `${idx}${legKind}`;
+    }
+};
+
 const buildRecipientLabel = (
     policy: IFlowPolicy,
     dispatch: IFlowPolicy['dispatches'][number],
-): string => {
+): string | undefined => {
     if (dispatch.recipientsCount === 0) {
-        return 'No recipients yet';
+        return describeLeg(dispatch.legIndex, dispatch.legKind);
     }
     if (dispatch.recipientsCount === 1) {
         const top = dispatch.topRecipients[0];
@@ -87,7 +122,10 @@ const buildRecipientLabel = (
 
 const buildRows = (data: IFlowDaoData, policyId?: string): IActivityRow[] => {
     const rows: IActivityRow[] = [];
-    for (const policy of data.policies) {
+    // Walk leaves + orchestrator mirrors so the LMM dispatcher's lifecycle
+    // events (installed, settings updated) and per-leg dispatches show up
+    // in the feed.  See `getAllPolicies` for the merge rules.
+    for (const policy of getAllPolicies(data)) {
         if (policyId != null && policy.id !== policyId) {
             continue;
         }
@@ -148,6 +186,7 @@ export const FlowActivityFeed: React.FC<IFlowActivityFeedProps> = (props) => {
         className,
     } = props;
 
+    const now = useFlowNow();
     const allRows = useMemo(() => buildRows(data, policyId), [data, policyId]);
 
     const [policyFilter, setPolicyFilter] = useState<string>('all');
@@ -199,7 +238,7 @@ export const FlowActivityFeed: React.FC<IFlowActivityFeedProps> = (props) => {
                             value={policyFilter}
                         >
                             <option value="all">All policies</option>
-                            {data.policies.map((p) => (
+                            {getAllPolicies(data).map((p) => (
                                 <option key={p.id} value={p.id}>
                                     {p.name}
                                 </option>
@@ -222,7 +261,7 @@ export const FlowActivityFeed: React.FC<IFlowActivityFeedProps> = (props) => {
                 {rows.map((row) => (
                     <li className={classNames(ROW_GRID, 'py-3')} key={row.id}>
                         <span className="font-normal text-neutral-500 text-sm tabular-nums leading-tight">
-                            {formatRelative(row.at)}
+                            {formatRelative(row.at, now)}
                         </span>
                         <span className="font-semibold text-neutral-700 text-sm uppercase leading-tight tracking-wide">
                             {row.typeLabel}
@@ -286,7 +325,7 @@ const DetailCell: React.FC<{ row: IActivityRow }> = ({ row }) => {
         return (
             <span className="flex min-w-0 items-center gap-2">
                 <span className="font-semibold text-neutral-800 text-sm tabular-nums leading-tight">
-                    {formatFlowAmount(row.amount, row.token)} {row.token}
+                    {formatFlowAmount(row.amount, row.token)}
                 </span>
                 <FlowTokenChip token={row.token} />
             </span>

@@ -2,6 +2,7 @@
 
 import classNames from 'classnames';
 import { useMemo, useState } from 'react';
+import { useFlowNow } from '../../providers/flowDataProvider';
 import type { FlowEventKind, IFlowPolicy } from '../../types';
 import {
     formatFlowAmount,
@@ -36,7 +37,9 @@ const eventTone: Record<FlowEventKind, string> = {
     policyInstalled: 'bg-neutral-100 text-neutral-700',
     policyUninstalled: 'bg-critical-100 text-critical-800',
     paused: 'bg-warning-100 text-warning-800',
-    resumed: 'bg-success-100 text-success-800',
+    // Neutralise "Resumed" — was mint-green; matches the rest of the
+    // monochromatic /flow surface.
+    resumed: 'bg-neutral-100 text-neutral-700',
     settingsUpdated: 'bg-neutral-100 text-neutral-700',
     proposalApplied: 'bg-primary-100 text-primary-800',
     recipientsUpdated: 'bg-info-100 text-info-800',
@@ -166,6 +169,7 @@ const buildRows = (policy: IFlowPolicy): IHistoryRow[] => {
 export const FlowPolicyHistory: React.FC<IFlowPolicyHistoryProps> = (props) => {
     const { policy, className } = props;
     const [filter, setFilter] = useState<HistoryFilter>('all');
+    const now = useFlowNow();
 
     const rows = useMemo(() => buildRows(policy), [policy]);
     const filtered = useMemo(() => {
@@ -244,7 +248,7 @@ export const FlowPolicyHistory: React.FC<IFlowPolicyHistoryProps> = (props) => {
                         key={row.id}
                     >
                         <span className="w-20 shrink-0 font-normal text-neutral-500 text-sm tabular-nums leading-tight">
-                            {formatRelative(row.at)}
+                            {formatRelative(row.at, now)}
                         </span>
                         <TypeTag failed={row.failed} kind={row.kind} />
                         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -284,8 +288,7 @@ export const FlowPolicyHistory: React.FC<IFlowPolicyHistoryProps> = (props) => {
                                         {formatFlowAmount(
                                             row.amount,
                                             row.tokenSymbol,
-                                        )}{' '}
-                                        {row.tokenSymbol}
+                                        )}
                                     </span>
                                     <FlowTokenChip token={row.tokenSymbol} />
                                 </span>

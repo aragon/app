@@ -1,365 +1,269 @@
-// Vendored from dao-launchpad@f/lido-demo:lido/preview/ui/src — do not edit by hand.
-// See infra/lmm-demo/README.md → "Updating vendored libs" for the refresh procedure.
-// Adapted: imports rewritten to use the in-tree @/shared/lidoPreview vendoring
-// of @aragon/lido-preview, with .ts/.tsx extensions stripped for moduleResolution=bundler.
+// LMM_DEMO_HACK: live state column rendered as three plain `Card`s with
+// white headers — no `Accordion`, no gradient, no resizable chrome.  The
+// sidebar lives to the right of the topology graph and stays compact on
+// large viewports.
+//
+// Production removal: drop this whole file with the rest of the LMM
+// demo surface.  See docs/lido-mmd-status.md `live-snapshot-rpc` — the
+// indexer-emitted snapshot entity will feed an equivalent gov-ui-kit
+// Card cluster.
 
-// Live-status view.  Mirrors `just demo-status` but grouped into cards and
-// without the awk-formatted ASCII boxes.  Data comes from `useStatus` —
-// every value is a fresh on-chain read keyed by the inspected topology,
-// plus a `simulate()` result that fuels the "next dispatch" card.
-
+import { Card, DefinitionList } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { formatAmount, shortAddress } from './format';
-import type { StatusSnapshot, StatusState } from './useStatus';
+import type { StatusSnapshot } from './useStatus';
 
-export function StatusView({
-    state,
-    onRefresh,
-}: {
-    state: StatusState;
-    onRefresh: () => void;
-}) {
-    if (state.kind === 'idle') {
-        return <div className="hint">Inspecting…</div>;
-    }
-    if (state.kind === 'loading') {
-        return <div className="hint">Loading live state…</div>;
-    }
-    if (state.kind === 'error') {
+export interface IStatusViewProps {
+    snapshot?: StatusSnapshot;
+}
+
+// Compact grid: term column gets ~40% of the row, value column the rest.
+// `text-xs` everywhere so the sidebar can host 12+ rows without dwarfing
+// the topology column on the left.  `*:!whitespace-normal` lets long
+// descriptions (settlement addr, price · threshold) wrap to two lines
+// instead of being truncated to "ora...".
+const ROW_PADDING =
+    '!py-1.5 !px-3 !gap-x-3 !grid-cols-[minmax(7rem,2fr)_minmax(0,3fr)] !text-xs [&_dt]:!text-xs [&_dt]:leading-tight [&_dd]:!text-xs [&_dd]:leading-tight [&_p]:!whitespace-normal [&_p]:!text-[11px] [&_p]:!leading-snug';
+
+export const StatusView: React.FC<IStatusViewProps> = ({ snapshot }) => {
+    if (snapshot == null) {
         return (
-            <div className="error">
-                Status fetch failed: {state.message}
-                <div style={{ marginTop: 8 }}>
-                    <button onClick={onRefresh} type="button">
-                        Retry
-                    </button>
-                </div>
+            <div className="flex flex-col gap-2">
+                <Card className="border border-neutral-100 px-3 py-2">
+                    <p className="font-normal text-neutral-500 text-xs">
+                        Loading live state…
+                    </p>
+                </Card>
             </div>
         );
     }
-
-    const snap = state.snapshot;
     return (
-        <div className="status">
-            <div className="status-toolbar">
-                <span className="status-meta">
-                    @ block {snap.block.toString()} · LMM DAO{' '}
-                    {shortAddress(snap.dao)}
-                    {state.refreshing && (
-                        <span className="status-refreshing">
-                            {' '}
-                            · refreshing…
-                        </span>
-                    )}
-                    {state.refreshError && (
-                        <span
-                            className="status-refresh-error"
-                            onClick={onRefresh}
-                            role="button"
-                            title={`${state.refreshError} (click to retry)`}
-                        >
-                            {' '}
-                            · refresh failed
-                        </span>
-                    )}
-                </span>
-            </div>
-            <div className="status-grid">
-                <LmmDaoCard snap={snap} />
-                {snap.lp && <LidoDaoCard snap={snap} />}
-                <BudgetsCard snap={snap} />
-                {snap.stream && <StreamCard snap={snap} />}
-                {snap.gate && <GateCard snap={snap} />}
-                {snap.cowSwap && <CowSwapCard snap={snap} />}
-            </div>
+        <div className="flex flex-col gap-2">
+            <SectionHeader
+                subtitle={`block ${snapshot.block.toString()} · LMM DAO ${shortAddress(snapshot.dao)}`}
+                title="Live state"
+            />
+            <SectionCard title="Balances">
+                <BalancesSection snapshot={snapshot} />
+            </SectionCard>
+            <SectionCard title="Per-dispatch budgets">
+                <BudgetsSection snapshot={snapshot} />
+            </SectionCard>
+            <SectionCard title="Execution conditions">
+                <ConditionsSection snapshot={snapshot} />
+            </SectionCard>
         </div>
     );
-}
+};
 
-// --- Cards -----------------------------------------------------------------
-
-function Card({
+const SectionHeader: React.FC<{ title: string; subtitle: string }> = ({
     title,
-    hint,
+    subtitle,
+}) => (
+    <div className="flex flex-col gap-0.5 px-1">
+        <span className="font-semibold text-neutral-800 text-sm leading-tight">
+            {title}
+        </span>
+        <span className="font-normal text-neutral-500 text-xs leading-tight">
+            {subtitle}
+        </span>
+    </div>
+);
+
+const SectionCard: React.FC<{ title: string; children: ReactNode }> = ({
+    title,
     children,
-}: {
-    title: string;
-    hint?: string;
-    children: ReactNode;
-}) {
-    return (
-        <article className="status-card">
-            <header>
-                <h4>{title}</h4>
-                {hint && <span className="status-hint">{hint}</span>}
-            </header>
-            {children}
-        </article>
-    );
-}
+}) => (
+    <Card className="flex flex-col overflow-hidden border border-neutral-100 bg-neutral-0">
+        <header className="flex items-center justify-between gap-2 border-neutral-100 border-b bg-neutral-0 px-3 py-2">
+            <span className="font-semibold text-neutral-700 text-xs uppercase leading-tight tracking-wide">
+                {title}
+            </span>
+        </header>
+        <div className="py-1">{children}</div>
+    </Card>
+);
 
-function LmmDaoCard({ snap }: { snap: StatusSnapshot }) {
-    return (
-        <Card hint={shortAddress(snap.dao)} title="LMM DAO">
-            <dl className="kv">
-                {snap.balances.map((b) => (
-                    <Row
-                        k={tokenName(b.token)}
-                        key={b.token.address}
-                        v={
-                            <Amount
-                                amount={b.amount}
-                                decimals={b.token.decimals}
-                                muted={b.amount === 0n}
-                                token={b.token.symbol ?? null}
-                            />
-                        }
+// --- Sections --------------------------------------------------------------
+
+const BalancesSection: React.FC<{ snapshot: StatusSnapshot }> = ({
+    snapshot,
+}) => (
+    <DefinitionList.Container className="px-0">
+        {snapshot.balances.map((b) => (
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                key={b.token.address}
+                term={tokenName(b.token)}
+            >
+                <Amount
+                    amount={b.amount}
+                    decimals={b.token.decimals}
+                    token={b.token.symbol ?? null}
+                />
+            </DefinitionList.Item>
+        ))}
+        {snapshot.lp && (
+            <DefinitionList.Item className={ROW_PADDING} term="LP · UniV2">
+                {snapshot.lp.pair ? (
+                    <Amount
+                        amount={snapshot.lp.recipientBalance}
+                        decimals={18}
+                        token="LP"
                     />
-                ))}
-            </dl>
-        </Card>
-    );
-}
+                ) : (
+                    <span className="font-normal text-neutral-500 text-xs">
+                        Pair not deployed yet
+                    </span>
+                )}
+            </DefinitionList.Item>
+        )}
+    </DefinitionList.Container>
+);
 
-// The LP recipient on the demo deployment is the Lido Agent, so the LP
-// tokens minted by UniV2 land in the Lido DAO's vault — not in the LMM.
-// Surfacing them under a separate card keeps the LMM card honest about
-// what the LMM actually holds.
-function LidoDaoCard({ snap }: { snap: StatusSnapshot }) {
-    const lp = snap.lp!;
+const BudgetsSection: React.FC<{ snapshot: StatusSnapshot }> = ({
+    snapshot,
+}) => (
+    <DefinitionList.Container className="px-0">
+        {snapshot.budgets.map((b, i) => (
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                description={budgetKindShort(b.budgetKind)}
+                key={`${b.strategyAddress}-${i}`}
+                term={b.label}
+            >
+                <Amount
+                    amount={b.amount}
+                    decimals={b.token.decimals}
+                    token={b.token.symbol ?? null}
+                />
+            </DefinitionList.Item>
+        ))}
+        {snapshot.stream && (
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                description={`epoch ${snapshot.stream.currentEpoch.toString()} → ${snapshot.stream.targetEpoch.toString()}`}
+                term="Stream rem."
+            >
+                <span className="font-mono text-neutral-800 text-xs tabular-nums">
+                    {snapshot.stream.remaining.toString()} ep · floor{' '}
+                    {snapshot.stream.floorEpochs}
+                </span>
+            </DefinitionList.Item>
+        )}
+    </DefinitionList.Container>
+);
+
+const ConditionsSection: React.FC<{ snapshot: StatusSnapshot }> = ({
+    snapshot,
+}) => {
+    const items: ReactNode[] = [];
+    if (snapshot.gate) {
+        const g = snapshot.gate;
+        const PRICE_DECIMALS = 6;
+        const age =
+            g.updatedAt !== null
+                ? Math.max(0, Number(snapshot.blockTimestamp - g.updatedAt))
+                : null;
+        const stale =
+            age !== null && g.maxStaleness > 0n && BigInt(age) > g.maxStaleness;
+        items.push(
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                description={
+                    g.price !== null
+                        ? `price ${formatAmount(g.price, PRICE_DECIMALS)} · threshold ${formatAmount(g.threshold, PRICE_DECIMALS)}${stale ? ' · oracle stale' : ''}`
+                        : 'oracle unreachable'
+                }
+                key="gate"
+                term="Buyback gate"
+            >
+                <StatusPill on={g.passes} />
+            </DefinitionList.Item>,
+        );
+        if (age !== null) {
+            items.push(
+                <DefinitionList.Item
+                    className={ROW_PADDING}
+                    description={`max staleness ${g.maxStaleness.toString()}s`}
+                    key="gate-age"
+                    term="Oracle age"
+                >
+                    <span className="font-mono text-neutral-800 text-xs tabular-nums">
+                        {age}s ago
+                    </span>
+                </DefinitionList.Item>,
+            );
+        }
+    }
+    if (snapshot.cowSwap) {
+        const cs = snapshot.cowSwap;
+        items.push(
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                description={`settlement ${shortAddress(cs.settlement)}`}
+                key="cowswap-orders"
+                term="CowSwap orders"
+            >
+                <span className="font-mono text-neutral-800 text-xs tabular-nums">
+                    {cs.ordersPlaced !== null
+                        ? cs.ordersPlaced.toString()
+                        : '—'}
+                </span>
+            </DefinitionList.Item>,
+            <DefinitionList.Item
+                className={ROW_PADDING}
+                key="cowswap-allowance"
+                term="CowSwap allow."
+            >
+                <Amount
+                    amount={cs.allowance}
+                    decimals={cs.allowanceToken.decimals}
+                    token={cs.allowanceToken.symbol ?? null}
+                />
+            </DefinitionList.Item>,
+        );
+    }
+    if (items.length === 0) {
+        return (
+            <p className="px-3 py-2 font-normal text-neutral-500 text-xs">
+                No execution conditions configured for this dispatcher.
+            </p>
+        );
+    }
     return (
-        <Card hint="LP (UniV2 LDO/wstETH)" title="Lido DAO">
-            {lp.pair ? (
-                <dl className="kv">
-                    <Row
-                        k="Held"
-                        v={
-                            <Amount
-                                amount={lp.recipientBalance}
-                                decimals={18}
-                                muted={lp.recipientBalance === 0n}
-                                token="LP"
-                            />
-                        }
-                    />
-                </dl>
-            ) : (
-                <p className="muted balances-empty">
-                    Pair not deployed yet — the strategy needs the pair to
-                    exist.
-                </p>
-            )}
-        </Card>
+        <DefinitionList.Container className="px-0">
+            {items}
+        </DefinitionList.Container>
     );
-}
+};
 
-function BudgetsCard({ snap }: { snap: StatusSnapshot }) {
-    return (
-        <Card
-            hint="budget() reading for each strategy"
-            title="Budgets per dispatch"
-        >
-            <dl className="kv">
-                {snap.budgets.map((b, i) => (
-                    <Row
-                        k={
-                            <span>
-                                {b.label}{' '}
-                                <span className="muted small">
-                                    ({budgetKindShort(b.budgetKind)})
-                                </span>
-                            </span>
-                        }
-                        key={`${b.strategyAddress}-${i}`}
-                        v={
-                            <Amount
-                                amount={b.amount}
-                                decimals={b.token.decimals}
-                                muted={b.amount === 0n}
-                                token={b.token.symbol ?? null}
-                            />
-                        }
-                    />
-                ))}
-            </dl>
-        </Card>
-    );
-}
+// --- Atoms -----------------------------------------------------------------
 
-function StreamCard({ snap }: { snap: StatusSnapshot }) {
-    const s = snap.stream!;
-    return (
-        <Card hint="StreamUntilBudget — operator-paced" title="Stream (wstETH)">
-            <dl className="kv">
-                <Row k="Token" v={tokenName(s.token)} />
-                <Row
-                    k="Current epoch"
-                    v={<Mono>{s.currentEpoch.toString()}</Mono>}
-                />
-                <Row
-                    k="Target epoch"
-                    v={<Mono>{s.targetEpoch.toString()}</Mono>}
-                />
-                <Row
-                    k="Remaining"
-                    v={
-                        <span>
-                            <Mono>{s.remaining.toString()}</Mono> ep{' '}
-                            <span className="muted small">
-                                {s.remaining < BigInt(s.floorEpochs)
-                                    ? '(below floor → constant drain)'
-                                    : '(above floor → drain grows as epochs tick)'}
-                            </span>
-                        </span>
-                    }
-                />
-                <Row k="Floor" v={<Mono>{s.floorEpochs} ep</Mono>} />
-            </dl>
-        </Card>
-    );
-}
-
-function GateCard({ snap }: { snap: StatusSnapshot }) {
-    const g = snap.gate!;
-    // Staleness is decided by the gate against `block.timestamp`, not the
-    // host wallclock — after a Warp the two diverge, and using Date.now()
-    // here would tell the user "fresh" while the gate actually fails closed.
-    const age =
-        g.updatedAt !== null
-            ? Math.max(0, Number(snap.blockTimestamp - g.updatedAt))
-            : null;
-    const stale =
-        age !== null && g.maxStaleness > 0n && BigInt(age) > g.maxStaleness;
-    // The oracle returns the price scaled to tokenB's decimals (USDC = 6 in
-    // the demo: 3_000_000_000 reads "$3000.00").  We don't fetch TokenInfo
-    // for tokenB at inspect time, so hardcode 6 here — TODO: generalise via
-    // `erc20.decimals()` if a non-USDC pair ever ships.
-    const PRICE_DECIMALS = 6;
-    return (
-        <Card hint="PriceFloorGate" title="Buyback gate">
-            <dl className="kv">
-                <Row
-                    k="Status"
-                    v={
-                        <span
-                            className={g.passes ? 'pill-open' : 'pill-closed'}
-                        >
-                            {g.passes ? 'open' : 'closed'}
-                        </span>
-                    }
-                />
-                <Row
-                    k="Price"
-                    v={
-                        g.price !== null ? (
-                            <span>
-                                <Mono>
-                                    {formatAmount(g.price, PRICE_DECIMALS)}
-                                </Mono>{' '}
-                                <span className="muted small">
-                                    threshold{' '}
-                                    <Mono>
-                                        {formatAmount(
-                                            g.threshold,
-                                            PRICE_DECIMALS,
-                                        )}
-                                    </Mono>
-                                </span>
-                            </span>
-                        ) : (
-                            <span className="muted">unreadable</span>
-                        )
-                    }
-                />
-                <Row
-                    k="Updated"
-                    v={
-                        age !== null ? (
-                            <span className={stale ? 'warn' : undefined}>
-                                {age}s ago{' '}
-                                <span className="muted small">
-                                    {stale
-                                        ? '(stale — gate fails closed)'
-                                        : `(stale at ${g.maxStaleness.toString()}s)`}
-                                </span>
-                            </span>
-                        ) : (
-                            <span className="muted">—</span>
-                        )
-                    }
-                />
-            </dl>
-        </Card>
-    );
-}
-
-function CowSwapCard({ snap }: { snap: StatusSnapshot }) {
-    const cs = snap.cowSwap!;
-    return (
-        <Card
-            hint={`settlement ${shortAddress(cs.settlement)}`}
-            title="CowSwap"
-        >
-            <dl className="kv">
-                <Row
-                    k="Orders placed"
-                    v={
-                        cs.ordersPlaced !== null ? (
-                            <Mono>{cs.ordersPlaced.toString()}</Mono>
-                        ) : (
-                            <span className="muted">—</span>
-                        )
-                    }
-                />
-                <Row
-                    k="Allowance"
-                    v={
-                        <Amount
-                            amount={cs.allowance}
-                            decimals={cs.allowanceToken.decimals}
-                            muted={cs.allowance === 0n}
-                            token={cs.allowanceToken.symbol ?? null}
-                        />
-                    }
-                />
-            </dl>
-        </Card>
-    );
-}
-
-// --- Small UI atoms --------------------------------------------------------
-
-function Row({ k, v }: { k: ReactNode; v: ReactNode }) {
-    return (
-        <>
-            <dt>{k}</dt>
-            <dd>{v}</dd>
-        </>
-    );
-}
-
-function Amount({
-    amount,
-    decimals,
-    token,
-    muted,
-}: {
+const Amount: React.FC<{
     amount: bigint;
     decimals: number | null;
     token: string | null;
-    muted?: boolean;
-}) {
-    return (
-        <span className={muted ? 'muted' : undefined}>
-            <Mono>{formatAmount(amount, decimals, 4)}</Mono>
-            {token && <span className="muted small"> {token}</span>}
-        </span>
-    );
-}
+}> = ({ amount, decimals, token }) => (
+    <span className="font-mono text-neutral-800 text-xs tabular-nums">
+        {formatAmount(amount, decimals, 4)}
+        {token && (
+            <span className="ml-1 font-normal text-neutral-500">{token}</span>
+        )}
+    </span>
+);
 
-function Mono({ children }: { children: ReactNode }) {
-    return <code className="mono">{children}</code>;
-}
+const StatusPill: React.FC<{ on: boolean }> = ({ on }) => (
+    <span
+        className={
+            on
+                ? 'inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-1.5 py-0 font-semibold text-[10px] text-primary-800 uppercase tracking-wide'
+                : 'inline-flex items-center rounded-full border border-neutral-200 bg-neutral-50 px-1.5 py-0 font-semibold text-[10px] text-neutral-700 uppercase tracking-wide'
+        }
+    >
+        {on ? 'open' : 'closed'}
+    </span>
+);
 
 function tokenName(t: { symbol: string | null; address: string }): string {
     return t.symbol ?? shortAddress(t.address);

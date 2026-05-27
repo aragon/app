@@ -1,4 +1,12 @@
+'use client';
+
 import classNames from 'classnames';
+import { useFlowDataContext } from '../../providers/flowDataProvider';
+import {
+    derivePolicyStatus,
+    getAllPolicies,
+    summariseLmmLegs,
+} from '../../providers/flowSelectors';
 import type { FlowTokenSymbol, IFlowDaoData } from '../../types';
 import { formatFlowAmount } from '../../utils/flowFormatters';
 
@@ -12,7 +20,7 @@ interface IKpiItem {
     hint?: string;
     deltaLabel?: string;
     deltaTone?: 'up' | 'down' | 'flat';
-    tone?: 'default' | 'critical' | 'success' | 'primary';
+    tone?: 'default' | 'critical' | 'primary';
 }
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
@@ -20,24 +28,54 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const toneClasses: Record<NonNullable<IKpiItem['tone']>, string> = {
     default: 'border-neutral-100',
     critical: 'border-critical-200 bg-critical-50',
-    success: 'border-success-200 bg-success-50',
-    primary: 'border-primary-200 bg-primary-50',
+    // Neutral primary tint — matches the gov-ui-kit highlight without the
+    // saturated blue background of the previous `primary-50` variant.
+    primary: 'border-primary-200',
 };
 
 const deltaClasses: Record<'up' | 'down' | 'flat', string> = {
-    up: 'text-success-700',
+    up: 'text-neutral-700',
     down: 'text-critical-700',
     flat: 'text-neutral-500',
 };
 
 export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
     const { data } = props;
-    // Per-dispatch / per-recipient totals stay scoped to leaf policies because
-    // every orchestrator run is already accounted for via its child legs.
-    const { policies } = data;
+    const { now, liveSnapshot } = useFlowDataContext();
 
-    const readyPolicies = policies.filter((p) => p.status === 'ready');
+    // Iterate both leaves AND orchestrator mirrors so KPI numbers no longer
+    // ignore the LMM dispatcher (and any future multi-router orchestrator).
+    const allPolicies = getAllPolicies(data);
+
+    // LMM_DEMO_HACK: pending-from-live.  Merge the live RPC snapshot's
+    // per-leg budgets into the dispatcher policy's pending view so
+    // `Ready to dispatch` reports the real on-chain queue.  Otherwise
+    // the orchestrator looks empty until the indexer surfaces an
+    // execution.  See providers/flowSelectors.ts → summariseLmmLegs.
+    const lmmAggregate = summariseLmmLegs(liveSnapshot?.snapshot ?? null);
+    const lmmDispatcher = liveSnapshot?.dispatcherAddress;
+
+    const readyPolicies = allPolicies.filter((p) => {
+        // Treat the LMM orchestrator as "ready" whenever any leg has
+        // non-zero pending budget — even before the first dispatch.
+        const isLmmOrchestrator =
+            lmmDispatcher != null &&
+            p.address.toLowerCase() === lmmDispatcher.toLowerCase();
+        const pending = isLmmOrchestrator ? lmmAggregate.dominant : p.pending;
+        return derivePolicyStatus(p, now, pending).status === 'ready';
+    });
     const readyCount = readyPolicies.length;
+
+    // Ready-summary subtext: prefer the per-leg breakdown from the live
+    // snapshot ("100 stETH + 36.4 LDO") over the per-policy pending,
+    // since for orchestrators every leg consumes a different token.
+    const formatLeg = (amount: number, token: FlowTokenSymbol): string =>
+        `${formatFlowAmount(amount, token)} ${token}`;
+    const lmmSubtitleParts = lmmAggregate.legs
+        .filter((l) => l.amount > 0)
+        .slice(0, 2)
+        .map((l) => formatLeg(l.amount, l.token));
+
     const pendingByToken = readyPolicies.reduce<
         Partial<Record<FlowTokenSymbol, number>>
     >((acc, policy) => {
@@ -48,16 +86,22 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
             (acc[policy.pending.token] ?? 0) + policy.pending.amount;
         return acc;
     }, {});
+    const flatPendingSubtitleParts = Object.entries(pendingByToken).map(
+        ([token, amount]) =>
+            formatLeg(amount as number, token as FlowTokenSymbol),
+    );
+    const subtitleParts =
+        lmmSubtitleParts.length > 0
+            ? lmmSubtitleParts
+            : flatPendingSubtitleParts;
     const pendingSummary =
-        Object.entries(pendingByToken)
-            .map(
-                ([token, amount]) =>
-                    `${formatFlowAmount(amount as number, token as FlowTokenSymbol)} ${token}`,
-            )
-            .join(' · ') || 'no queued amounts';
+        subtitleParts.length > 0
+            ? subtitleParts.join(' + ')
+            : readyCount === 0
+              ? 'nothing queued'
+              : 'no queued amounts';
 
-    const now = Date.now();
-    const dispatches7d = policies.reduce(
+    const dispatches7d = allPolicies.reduce(
         (sum, policy) =>
             sum +
             policy.dispatches.filter(
@@ -67,7 +111,7 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
             ).length,
         0,
     );
-    const dispatchesPrev7d = policies.reduce(
+    const dispatchesPrev7d = allPolicies.reduce(
         (sum, policy) =>
             sum +
             policy.dispatches.filter((d) => {
@@ -88,7 +132,7 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
             ? 'same as prev 7d'
             : `${dispatchesDelta > 0 ? '+' : ''}${dispatchesDelta} vs prev 7d`;
 
-    const failed7d = policies.reduce(
+    const failed7d = allPolicies.reduce(
         (sum, policy) =>
             sum +
             policy.dispatches.filter(
@@ -98,7 +142,7 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
             ).length,
         0,
     );
-    const failedEver = policies.reduce(
+    const failedEver = allPolicies.reduce(
         (sum, policy) =>
             sum + policy.dispatches.filter((d) => d.status === 'failed').length,
         0,
@@ -128,7 +172,7 @@ export const FlowKpiRow: React.FC<IFlowKpiRowProps> = (props) => {
                   label: 'Failed · 7d',
                   value: '0',
                   hint: 'All operational',
-                  tone: 'success',
+                  tone: 'default',
               },
     ];
 

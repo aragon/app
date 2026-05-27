@@ -4,7 +4,7 @@
 // to), we drive `dispatch()` directly against the Anvil fork via viem +
 // `--auto-impersonate`.  See `infra/lmm-demo/README.md` for the threat model.
 
-import { Dialog } from '@aragon/gov-ui-kit';
+import { AlertCard, AlertInline, Dialog } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -187,10 +187,12 @@ export const LmmDemoDispatchDialog: React.FC<
             <Dialog.Header description={description} title={title} />
             <Dialog.Content>
                 <div className="flex flex-col gap-4 pb-3 md:pb-4">
-                    <div className="rounded-lg border border-warning-200 bg-warning-50 px-3 py-2 font-normal text-warning-800 text-xs leading-snug">
-                        Demo mode · all writes go to {LMM_RPC_URL}. Real chains
-                        are not touched.
-                    </div>
+                    <AlertCard
+                        message={`Demo mode — all writes go to ${LMM_RPC_URL}.`}
+                        variant="warning"
+                    >
+                        Real chains are not touched.
+                    </AlertCard>
 
                     {phase === 'preparing' && (
                         <div className="rounded-lg border border-neutral-100 bg-neutral-0 px-3 py-3 font-normal text-neutral-500 text-sm">
@@ -198,24 +200,23 @@ export const LmmDemoDispatchDialog: React.FC<
                         </div>
                     )}
                     {simError && (
-                        <div className="rounded-lg border border-critical-200 bg-critical-50 px-3 py-2 font-normal text-critical-800 text-sm leading-snug">
-                            Simulation failed: {simError}
-                            <div className="mt-1 font-normal text-critical-600 text-xs leading-snug">
-                                Dispatch may still succeed on chain, but the
-                                preview can't show what'll happen.
-                            </div>
-                        </div>
+                        <AlertInline
+                            message={`Simulation failed: ${simError}`}
+                            variant="critical"
+                        />
                     )}
                     {flow && <LmmSimulationCards flow={flow} />}
                     {txError && (
-                        <div className="rounded-lg border border-critical-200 bg-critical-50 px-3 py-2 font-normal text-critical-800 text-sm leading-snug">
-                            Dispatch failed: {txError}
-                        </div>
+                        <AlertInline
+                            message={`Dispatch failed: ${txError}`}
+                            variant="critical"
+                        />
                     )}
                     {phase === 'success' && txHash && (
-                        <div className="rounded-lg border border-success-200 bg-success-50 px-3 py-2 font-normal text-sm text-success-800 leading-snug">
-                            Dispatch confirmed. Tx hash: {txHash.slice(0, 10)}…
-                        </div>
+                        <AlertInline
+                            message={`Dispatch confirmed. Tx hash: ${txHash.slice(0, 10)}…`}
+                            variant="info"
+                        />
                     )}
                 </div>
             </Dialog.Content>

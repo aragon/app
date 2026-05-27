@@ -46,6 +46,11 @@ rg LMM_DEMO_HACK app/src capital-flow-indexer/src
 | **`FlowPolicyTree` MULTI_DISPATCH** | Renders `LmmPolicyTopology` for the demo DAO; SVG tree elsewhere   | Render `LmmPolicyTopology` for every multi-dispatch policy once preview-lib supports prod naming.    |
 | **Recipients aggregate**            | Reads `RecipientAggregate` from envio                              | Keep — already production-shaped.                                                                   |
 | **Activity feed**                   | Reads `PolicyExecution`/`PolicyEvent`                              | Keep.                                                                                               |
+| **Effective `now` clock**           | `useFlowNow()` returns `chainNowMs` (Anvil) when demo is on        | `useFlowNow()` becomes a no-op (returns `Date.now()`); `chain-now` hack drops out of the bundle.    |
+| **Orchestrator live snapshot**      | `useLmmLiveSnapshot()` polls Anvil to fill `liveSnapshot`          | Indexer emits `OrchestratorSnapshot`; `FlowDataProvider` reads it from the regular query.            |
+| **Destinations table**              | `flowRecipientsTable` falls back to manifest-derived rows          | Indexer emits `recipient` on `ExecutionTransfer`; the table merges them automatically.               |
+| **Money-flow graph**                | `buildMoneyFlowGraph()` derives edges from in-browser `simulate()` | Indexer materialises `MoneyFlowEdge` (or directional `ExecutionTransfer`); React Flow renders that.  |
+| **Live state Card**                 | `StatusView` reads `liveSnapshot` directly                          | Bind `StatusView` props to the indexed snapshot; component itself stays.                             |
 
 ## Cleanup checklist (one-shot)
 

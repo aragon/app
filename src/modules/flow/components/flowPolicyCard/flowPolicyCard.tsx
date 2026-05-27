@@ -42,8 +42,10 @@ export interface IFlowPolicyCardProps {
 
 const cardStatusBorder: Record<FlowPolicyStatus, string> = {
     ready: 'border-primary-200',
-    live: 'border-success-200',
-    cooldown: 'border-warning-200',
+    // Neutralise live + cooldown card borders so card grids on /flow read
+    // monochromatic — the dot in the header carries the status hue.
+    live: 'border-neutral-200',
+    cooldown: 'border-neutral-200',
     awaiting: 'border-neutral-200',
     paused: 'border-warning-300',
     never: 'border-neutral-100',
@@ -306,7 +308,7 @@ const PolicyCardFooter: React.FC<IPolicyCardFooterProps> = (props) => {
     // Pull-based strategies (Claimer) can't be pushed from the UI.
     if (!isDispatchableStrategy(policy.strategy)) {
         return (
-            <FooterChip tone="success">
+            <FooterChip tone="neutral">
                 {policy.statusLabel || 'Open for claims'}
             </FooterChip>
         );
@@ -422,11 +424,10 @@ const CooldownFooter: React.FC<{
 };
 
 const FooterChip: React.FC<{
-    tone: 'success' | 'warning' | 'neutral';
+    tone: 'warning' | 'neutral';
     children: React.ReactNode;
 }> = ({ tone, children }) => {
     const toneClass = {
-        success: 'bg-success-100 text-success-800',
         warning: 'bg-warning-100 text-warning-800',
         neutral: 'bg-neutral-100 text-neutral-700',
     }[tone];
