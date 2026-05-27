@@ -2,7 +2,7 @@
  * Address of the MemberRegistry contract.
  */
 export const memberRegistryAddress =
-    '0x2292A7275b73c5bFA4A8aB5aFbbd997de94Bea82' as const;
+    '0xC7Fcf977a072e991a62A7308d52E048E7692153e' as const;
 /**
  * Subdomain suffix for member ENS names.
  */
