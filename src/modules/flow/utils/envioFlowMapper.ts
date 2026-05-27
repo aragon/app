@@ -679,10 +679,48 @@ const mapExecutionToDispatch = (
     // CowSwap-style leg that ran successfully but produced no SwapOrder
     // entity yet (either the on-chain `CowSwapOrderPosted` event hasn't
     // been ingested, or this is a `setPreSignature(false)` cancellation).
-    // Falling through to the generic `dominantOut ?? 0 USDC` fallback
-    // would print a misleading "0 USDC" row — surface a sentinel instead
-    // and let the History/Chart skip the amount block for these.
     if (legKind === 'GATED_COWSWAP' || legKind === 'COWSWAP') {
+        // Best-effort sellAmount for the destinations + history rows when
+        // the `SwapOrder` join is missing.  The dispatch's calldata always
+        // contains an `ERC20.approve(wstETH, relayer, sellAmount)` (the
+        // dispatcher needs to grant the relayer allowance before the
+        // pre-sign), and `setPreSignature(orderUid, signed)` itself.  The
+        // indexer decodes the approve into a transfer with
+        // `decodedFrom = 'approve'` carrying the *actual* sellAmount,
+        // while `swapPresign` is just a marker (amount = 0n by design —
+        // see capital-flow-indexer/src/actionDecoder.ts setPreSignature
+        // branch).  Pick the largest non-zero `approve` — `useSafeApproval`
+        // emits two approves per dispatch, the first to 0, then to
+        // sellAmount, so picking the max ignores the reset hop.
+        const approves = execution.transfers.filter(
+            (t) => t.decodedFrom === 'approve',
+        );
+        let bestApprove: { amount: number; symbol: string } | null = null;
+        for (const t of approves) {
+            const v = normaliseAmount(t.amount, t.token.decimals);
+            if (v > 0 && (bestApprove == null || v > bestApprove.amount)) {
+                bestApprove = { amount: v, symbol: t.token.symbol };
+            }
+        }
+        if (bestApprove != null) {
+            return {
+                id: execution.id,
+                at: isoFromSeconds(execution.blockTimestamp),
+                amount: bestApprove.amount,
+                token: bestApprove.symbol as FlowTokenSymbol,
+                amountIn: bestApprove.amount,
+                tokenIn: bestApprove.symbol as FlowTokenSymbol,
+                recipientsCount: 0,
+                topRecipients: [],
+                txHash: execution.txHash,
+                proposalId: proposal?.proposalId,
+                proposalSlug: proposal?.slug,
+                status: execution.skipped ? 'skipped' : 'ok',
+                skippedReason: execution.skippedReason ?? undefined,
+                legIndex,
+                legKind,
+            };
+        }
         return {
             id: execution.id,
             at: isoFromSeconds(execution.blockTimestamp),
