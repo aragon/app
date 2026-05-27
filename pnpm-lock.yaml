@@ -32,8 +32,8 @@ importers:
   .:
     dependencies:
       '@aragon/gov-ui-kit':
-        specifier: ^2.5.0
-        version: 2.5.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.3.0))(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react-hook-form@7.76.0(react@19.2.6))(react@19.2.6)(tailwindcss@4.3.0)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.15(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.10)(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react@19.2.14)(immer@11.1.8)(react@19.2.6)(typescript@5.9.3)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76)))
+        specifier: 0.0.0-20260526124752
+        version: 0.0.0-20260526124752(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.3.0))(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react-hook-form@7.76.0(react@19.2.6))(react@19.2.6)(tailwindcss@4.3.0)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.15(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.10)(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react@19.2.14)(immer@11.1.8)(react@19.2.6)(typescript@5.9.3)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76)))
       '@floating-ui/react':
         specifier: ^0.27.19
         version: 0.27.19(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -252,8 +252,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@aragon/gov-ui-kit@2.5.0':
-    resolution: {integrity: sha512-TgJGkRTgxmhqK2d4AZix4E+etDD9/wC1/pPo8TZAtkfkfTPTd0AbKFuJDhR/y8XRVIz4h9tVp1WmxPdCZKHnrg==}
+  '@aragon/gov-ui-kit@0.0.0-20260526124752':
+    resolution: {integrity: sha512-ltEV+mjncRxBwA+Gz3TNPrjiWNF/c04Gz/qGcwQAPjA0d2q+izRrbi5CWJEcD885GZYV1EBF/U5WC0EqHhhXnA==}
     engines: {node: '>=22.0.0', pnpm: '>=10.0.0'}
     peerDependencies:
       '@tailwindcss/typography': ^0.5.0
@@ -8195,7 +8195,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@aragon/gov-ui-kit@2.5.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.3.0))(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react-hook-form@7.76.0(react@19.2.6))(react@19.2.6)(tailwindcss@4.3.0)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.15(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.10)(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react@19.2.14)(immer@11.1.8)(react@19.2.6)(typescript@5.9.3)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76)))':
+  '@aragon/gov-ui-kit@0.0.0-20260526124752(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.3.0))(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react-hook-form@7.76.0(react@19.2.6))(react@19.2.6)(tailwindcss@4.3.0)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.15(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.100.10)(@tanstack/react-query@5.100.10(react@19.2.6))(@types/react@19.2.14)(immer@11.1.8)(react@19.2.6)(typescript@5.9.3)(viem@2.49.3(typescript@5.9.3)(zod@3.25.76)))':
     dependencies:
       '@radix-ui/react-accordion': 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@radix-ui/react-alert-dialog': 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
