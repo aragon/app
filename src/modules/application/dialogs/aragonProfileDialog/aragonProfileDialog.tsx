@@ -290,6 +290,8 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                             size="md"
                         >
                             <Dropdown.Item
+                                disabled={true}
+                                hidden={true}
                                 icon={IconType.PEN}
                                 iconPosition="left"
                                 onClick={handleChangeAragonName}
