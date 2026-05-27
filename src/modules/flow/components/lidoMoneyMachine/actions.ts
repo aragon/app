@@ -178,6 +178,35 @@ export async function warpAction(
     });
 }
 
+/** Stamp `updatedAt = block.timestamp` on every oracle pair the LMM demo
+ *  reads from.  Use after `warpAction` so the staleness check (max age
+ *  3600s) doesn't trip the UniV2 LP and CowSwap legs — they short-circuit
+ *  to no-op when the oracle hasn't been refreshed since the last warp.
+ *
+ *  Idempotent: calling it without a preceding warp just bumps `updatedAt`
+ *  to the current head block, which is already the case.  Safe to chain
+ *  liberally.  Does NOT change any prices — see `setEthPrice` for that. */
+export async function refreshOracle(ctx: ActionContext): Promise<void> {
+    const wallet = deployerWallet(ctx.rpc);
+    // Three pairs that the demo's price-floor gate + UniV2 LP read from.
+    // Each `refresh()` call writes `updatedAt = block.timestamp` for that
+    // specific (sell, buy) entry — pairs are stored separately, so all of
+    // them need touching individually.  Order doesn't matter.
+    const pairs: [Address, Address][] = [
+        [ctx.addresses.weth, ctx.addresses.usdc],
+        [ctx.addresses.wstETH, ctx.addresses.ldo],
+        [ctx.addresses.ldo, ctx.addresses.wstETH],
+    ];
+    for (const [sell, buy] of pairs) {
+        await send(ctx.publicClient, wallet, {
+            address: ctx.addresses.mockOracle,
+            abi: mockPriceOracleAbi,
+            functionName: 'refresh',
+            args: [sell, buy],
+        });
+    }
+}
+
 export async function topUpStEth(
     ctx: ActionContext,
     amount: bigint,

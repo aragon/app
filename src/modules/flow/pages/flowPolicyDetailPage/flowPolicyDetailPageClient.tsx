@@ -47,7 +47,7 @@ export const FlowPolicyDetailPageClient: React.FC<
     IFlowPolicyDetailPageClientProps
 > = (props) => {
     const { network, addressOrEns, policyId } = props;
-    const { data, dispatchPolicy, getPendingDispatch, isError } =
+    const { data, dispatchPolicy, getPendingDispatch, isError, chainNowMs } =
         useFlowDataContext();
     const { open } = useDialogContext();
     const decodedPolicyId = decodeURIComponent(policyId);
@@ -129,10 +129,14 @@ export const FlowPolicyDetailPageClient: React.FC<
     // Mirrors FlowPolicyCard: we allow manual dispatch for every non-claimer,
     // non-archived router regardless of whether it's already "live" — the only
     // hard gates are a live cooldown and an in-flight tx we haven't confirmed.
+    // LMM_DEMO_HACK: `chainNowMs` overrides Date.now() when the anvil fork
+    // has been warped via the cheats menu, so warping past the cooldown
+    // actually unlocks the Dispatch button — see useLmmChainNow.
+    const nowMs = chainNowMs ?? Date.now();
     const cooldownActive =
         policy.status === 'cooldown' &&
         policy.cooldown != null &&
-        new Date(policy.cooldown.readyAt).getTime() > Date.now();
+        new Date(policy.cooldown.readyAt).getTime() > nowMs;
     const dispatchDisabled = cooldownActive || isDispatching;
     const dispatchLabel = isDispatching
         ? 'Dispatching…'
@@ -222,7 +226,7 @@ export const FlowPolicyDetailPageClient: React.FC<
                                 </Button>
                                 <span className="text-right font-normal text-neutral-500 text-xs leading-snug">
                                     {dispatchDisabled
-                                        ? dispatchDisabledReason(policy)
+                                        ? dispatchDisabledReason(policy, nowMs)
                                         : 'Dispatches the pending amount to all recipients.'}
                                 </span>
                             </>
@@ -275,9 +279,9 @@ export const FlowPolicyDetailPageClient: React.FC<
     );
 };
 
-const dispatchDisabledReason = (policy: IFlowPolicy): string => {
+const dispatchDisabledReason = (policy: IFlowPolicy, nowMs: number): string => {
     if (policy.status === 'cooldown') {
-        return `Cooldown · ready ${policy.cooldown != null ? formatRelative(policy.cooldown.readyAt) : ''}.`;
+        return `Cooldown · ready ${policy.cooldown != null ? formatRelative(policy.cooldown.readyAt, nowMs) : ''}.`;
     }
     if (policy.status === 'paused') {
         return 'Paused for review. Resume via a governance proposal.';

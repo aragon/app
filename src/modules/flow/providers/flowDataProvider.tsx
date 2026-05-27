@@ -25,6 +25,7 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 // the demo dispatch dialog and have their own (lido/preview) simulator, so
 // the production Tenderly call would just fail / mislead the user.
 import { LMM_DEMO_MODE } from '../demo/lmmDemoConfig';
+import { useLmmChainNow } from '../demo/useLmmChainNow';
 import { isLmmDemoDao } from '../demo/useLmmManifest';
 import type { IFlowDaoData } from '../types';
 import { useEnvioFlowData } from './useEnvioFlowData';
@@ -103,6 +104,14 @@ export interface IFlowDataContext {
     getPendingDispatch: (policyId: string) => IFlowPendingDispatch | undefined;
     toasts: IFlowToast[];
     dismissToast: (id: string) => void;
+    /**
+     * LMM demo only: latest known anvil HEAD block timestamp in ms.
+     * `undefined` outside demo mode, before the first poll, or when the
+     * fork's clock is within ~1m of the host wall-clock (no warp applied).
+     * Consumers comparing against `cooldown.readyAt` should fall back to
+     * `Date.now()` on undefined.  See `useLmmChainNow` for the rationale.
+     */
+    chainNowMs?: number;
 }
 
 const FlowDataContext = createContext<IFlowDataContext | null>(null);
@@ -133,6 +142,10 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
         daoId: daoId ?? '',
         isUrgent: pendingDispatches.length > 0,
     });
+
+    // LMM_DEMO_HACK: see useLmmChainNow — overrides Date.now() for cooldown
+    // gating when the anvil fork has been warped via the cheats menu.
+    const { chainNowMs } = useLmmChainNow();
 
     // Cache the last non-null snapshot so the UI doesn't flicker back to a
     // skeleton while a background refetch is in flight. `envioResult.data`
@@ -360,8 +373,17 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
         if (data == null) {
             return;
         }
+        // Orchestrator (multi-dispatch) policies live in `data.orchestratorPolicies`,
+        // not `data.policies` — see envioFlowMapper.ts split.  Both expose
+        // `.dispatches`, so a multi-dispatch tx is invisible to this dismiss
+        // effect unless we walk both lists.  Without this the loader spins until
+        // the 60s hard timeout for every orchestrator dispatch.
         const indexedHashes = new Set<string>();
-        for (const policy of data.policies) {
+        const allPolicies = [
+            ...data.policies,
+            ...(data.orchestratorPolicies ?? []),
+        ];
+        for (const policy of allPolicies) {
             for (const dispatch of policy.dispatches) {
                 if (dispatch.txHash) {
                     indexedHashes.add(dispatch.txHash.toLowerCase());
@@ -453,6 +475,7 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             getPendingDispatch,
             toasts,
             dismissToast,
+            chainNowMs,
         }),
         [
             resolvedDaoId,
@@ -464,6 +487,7 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             getPendingDispatch,
             toasts,
             dismissToast,
+            chainNowMs,
         ],
     );
 

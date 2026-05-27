@@ -286,10 +286,19 @@ interface IPolicyCardFooterProps {
 const PolicyCardFooter: React.FC<IPolicyCardFooterProps> = (props) => {
     const { policy, onDispatch, isDispatching = false } = props;
 
+    // LMM_DEMO_HACK: when the anvil fork has been warped past the cooldown
+    // via the cheats menu we want the Dispatch button to unlock immediately.
+    // The mapper's cooldown.readyAt is computed off the on-chain
+    // lastDispatchAt + epoch length, so comparing against chain time
+    // (anvil HEAD timestamp) rather than wall-clock time is what matches
+    // the on-chain enforcement.  Undefined in production / when no warp.
+    const { chainNowMs } = useFlowDataContext();
+    const nowMs = chainNowMs ?? Date.now();
+
     // Archived policies never dispatch again — show an uninstall chip instead.
     if (policy.status === 'paused') {
         const uninstalledLabel = policy.uninstalledAt
-            ? `Archived · uninstalled ${formatRelative(policy.uninstalledAt)}`
+            ? `Archived · uninstalled ${formatRelative(policy.uninstalledAt, nowMs)}`
             : 'Archived · uninstalled';
         return <FooterChip tone="warning">{uninstalledLabel}</FooterChip>;
     }
@@ -308,7 +317,7 @@ const PolicyCardFooter: React.FC<IPolicyCardFooterProps> = (props) => {
     const cooldownActive =
         policy.status === 'cooldown' &&
         policy.cooldown != null &&
-        new Date(policy.cooldown.readyAt).getTime() > Date.now();
+        new Date(policy.cooldown.readyAt).getTime() > nowMs;
 
     const pending = policy.pending;
     const dispatchLabel = pending

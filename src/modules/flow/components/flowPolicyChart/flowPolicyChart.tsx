@@ -93,8 +93,20 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
             const ts = new Date(dispatch.at).getTime();
             // Only successful dispatches contribute to the cumulative curve —
             // both `failed` and `skipped` outcomes show up as timeline markers
-            // but leave the running total untouched.
-            if (dispatch.status !== 'failed' && dispatch.status !== 'skipped') {
+            // but leave the running total untouched.  Additionally for
+            // orchestrator (multi-dispatch) policies the cumulative MUST be
+            // single-token: every leg lands here with potentially different
+            // tokens (stETH for Wrap, wstETH+LDO for UniV2, wstETH for
+            // CowSwap), so we only fold legs whose token matches the
+            // policy headline.  Single-token policies effectively no-op
+            // this check because `dispatch.token === policy.token` for
+            // every row.
+            const matchesHeadlineToken = dispatch.token === policy.token;
+            if (
+                matchesHeadlineToken &&
+                dispatch.status !== 'failed' &&
+                dispatch.status !== 'skipped'
+            ) {
                 cumulative += dispatch.amount;
             }
             points.push({ timestamp: ts, historic: cumulative });
@@ -107,6 +119,11 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
             (dispatch) => {
                 const isSwap =
                     dispatch.tokenIn != null && dispatch.amountIn != null;
+                // Sentinel from `envioFlowMapper.ts` for CowSwap legs that
+                // ran but haven't produced a SwapOrder yet — render as a
+                // generic "Dispatch" marker with a leg-aware tooltip so we
+                // never echo "0 " back to the user.
+                const isSentinel = dispatch.token === '';
                 let kind: IFlowTimelineMarker['kind'];
                 let label: string;
                 if (dispatch.status === 'failed') {
@@ -115,6 +132,13 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
                 } else if (dispatch.status === 'skipped') {
                     kind = 'dispatchSkipped';
                     label = 'Skipped dispatch';
+                } else if (isSentinel) {
+                    kind = 'dispatchOk';
+                    label =
+                        dispatch.legKind === 'GATED_COWSWAP' ||
+                        dispatch.legKind === 'COWSWAP'
+                            ? 'CowSwap pre-sign'
+                            : 'Dispatch';
                 } else if (isSwap) {
                     kind = 'dispatchSwap';
                     label = 'Swap dispatch';
@@ -125,7 +149,13 @@ export const FlowPolicyChart: React.FC<IFlowPolicyChartProps> = (props) => {
                 // Compose a tooltip line that pairs IN→OUT for swap dispatches
                 // and falls back to the single-leg form otherwise.
                 let detail: string;
-                if (isSwap && dispatch.amountIn != null && dispatch.tokenIn) {
+                if (isSentinel) {
+                    detail = `${label} · ${formatShortDate(dispatch.at)}`;
+                } else if (
+                    isSwap &&
+                    dispatch.amountIn != null &&
+                    dispatch.tokenIn
+                ) {
                     const inLeg = `${formatFlowAmount(dispatch.amountIn, dispatch.tokenIn)} ${dispatch.tokenIn}`;
                     const outLeg = `${formatFlowAmount(dispatch.amount, dispatch.token)} ${dispatch.token}`;
                     detail = `${inLeg} → ${outLeg} · ${formatShortDate(dispatch.at)}`;

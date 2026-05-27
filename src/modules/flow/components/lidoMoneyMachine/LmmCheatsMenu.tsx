@@ -17,6 +17,7 @@ import {
     type ActionContext,
     deriveAddressesFromManifest,
     dispatchAction,
+    refreshOracle,
     setEthPrice,
     setTargetEpoch,
     settleCowSwap,
@@ -97,16 +98,32 @@ export const LmmCheatsMenu: React.FC = () => {
             {
                 key: 'warp-1d',
                 label: 'Warp +1 day',
-                description: 'Advance the fork clock by 24h, mine 1 block.',
-                run: runAction('warp-1d', () => warpAction(ctx, 24 * 60 * 60)),
+                description:
+                    'Advance the fork clock by 24h, mine 1 block, refresh oracle.',
+                // Chain refresh after the warp so the staleness check (max
+                // 3600s) doesn't no-op the UniV2 LP + CowSwap legs on the
+                // next dispatch — see actions.ts → refreshOracle.
+                run: runAction('warp-1d', async () => {
+                    await warpAction(ctx, 24 * 60 * 60);
+                    await refreshOracle(ctx);
+                }),
             },
             {
                 key: 'warp-7d',
                 label: 'Warp +7 days',
-                description: 'Advance the fork clock by 7 days.',
-                run: runAction('warp-7d', () =>
-                    warpAction(ctx, 7 * 24 * 60 * 60),
-                ),
+                description:
+                    'Advance the fork clock by 7 days + refresh oracle.',
+                run: runAction('warp-7d', async () => {
+                    await warpAction(ctx, 7 * 24 * 60 * 60);
+                    await refreshOracle(ctx);
+                }),
+            },
+            {
+                key: 'refresh-oracle',
+                label: 'Refresh oracle (only)',
+                description:
+                    'Re-stamp updatedAt on every oracle pair without touching prices.',
+                run: runAction('refresh-oracle', () => refreshOracle(ctx)),
             },
         ],
         [
