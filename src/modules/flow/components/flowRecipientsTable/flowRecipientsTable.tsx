@@ -3,6 +3,8 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { useLmmManifest } from '../../demo/useLmmManifest';
+import { useFlowDataContext } from '../../providers/flowDataProvider';
 import type {
     FlowTokenSymbol,
     IFlowDaoData,
@@ -133,17 +135,147 @@ const formatAmounts = (
     return parts.length === 0 ? '—' : parts.join(' · ');
 };
 
+// ---------------------------------------------------------------------------
+// LMM_DEMO_HACK: destinations-from-manifest
+//
+// Orchestrator policies don't have a 1:1 "recipient list" the way leaf
+// routers do — every leg sends value to a different sink (DAO self,
+// UniV2 pool, CowSwap settlement, buyback recipient).  We synthesise the
+// destination rows from the manifest (`lmm-manifest.json` → `lmm.dao`,
+// `lido.agent`, `cowSwap.settlement`) and accumulate per-destination
+// totals from `policy.dispatches` filtered by `legKind` (already emitted
+// by the indexer via `execution.strategy.kind` — see
+// envioFlowMapper.mapExecutionToDispatch).
+//
+// We deliberately don't traverse `orchestrator.runs[]` here: for the LMM
+// demo the orchestrator's `subRouters` are *strategy contract addresses*,
+// not indexer `Policy` rows, so `runs` is empty.  The legs we need are
+// the dispatcher policy's own dispatches.
+//
+// Production removal: emit explicit `recipient` on `ExecutionTransfer` for
+// the synthetic destinations (LP recipient, CowSwap settlement) from the
+// indexer side.  See lido-mmd-status.md `destinations-from-manifest`.
+// ---------------------------------------------------------------------------
+
+type LegKind = NonNullable<IFlowPolicy['dispatches'][number]['legKind']>;
+
+interface ILmmDestinationSeed {
+    address: string;
+    name: string;
+    role: IFlowRecipient['role'];
+    group: string;
+    legKinds: LegKind[];
+}
+
+const buildDestinationsRows = (
+    policy: IFlowPolicy,
+    seeds: ILmmDestinationSeed[],
+): IRecipientRow[] => {
+    if (seeds.length === 0) {
+        return [];
+    }
+    return seeds.map((seed) => {
+        const matching = policy.dispatches.filter(
+            (d) =>
+                d.legKind != null &&
+                seed.legKinds.includes(d.legKind) &&
+                d.status !== 'failed',
+        );
+        const amountsByToken: Partial<Record<FlowTokenSymbol, number>> = {};
+        let lastReceivedAt: string | undefined;
+        for (const d of matching) {
+            if (d.amount > 0) {
+                amountsByToken[d.token] =
+                    (amountsByToken[d.token] ?? 0) + d.amount;
+            }
+            if (d.amountIn != null && d.tokenIn && d.amountIn > 0) {
+                amountsByToken[d.tokenIn] =
+                    (amountsByToken[d.tokenIn] ?? 0) + d.amountIn;
+            }
+            if (
+                lastReceivedAt == null ||
+                new Date(d.at).getTime() > new Date(lastReceivedAt).getTime()
+            ) {
+                lastReceivedAt = d.at;
+            }
+        }
+        return {
+            address: seed.address,
+            name: seed.name,
+            role: seed.role,
+            group: seed.group,
+            fromPolicies: [policy.name],
+            amountsByToken,
+            lastReceivedAt,
+            dispatchCount: matching.length,
+        };
+    });
+};
+
+const useLmmDestinationSeeds = (
+    policy: IFlowPolicy | undefined,
+): ILmmDestinationSeed[] => {
+    const { liveSnapshot } = useFlowDataContext();
+    const { manifest } = useLmmManifest();
+    if (
+        policy == null ||
+        manifest == null ||
+        liveSnapshot?.dispatcherAddress == null ||
+        policy.address.toLowerCase() !==
+            liveSnapshot.dispatcherAddress.toLowerCase()
+    ) {
+        return [];
+    }
+    const seeds: ILmmDestinationSeed[] = [];
+    seeds.push({
+        address: manifest.lmm.dao,
+        name: 'LMM DAO (self · wstETH)',
+        role: 'dao',
+        group: 'Wrap leg',
+        legKinds: ['WRAP'],
+    });
+    const lpRecipient =
+        // Lido Agent is the LP recipient on the demo deployment — see
+        // dao-launchpad/lido/preview/script/demo.  Manifest exposes it
+        // as `lido.agent`.
+        manifest.lido?.agent ?? manifest.lmm.dao;
+    seeds.push({
+        address: lpRecipient,
+        name: 'Lido Agent (UniV2 LP)',
+        role: 'linkedaccount',
+        group: 'UniV2 LP leg',
+        legKinds: ['UNIV2_LIQUIDITY'],
+    });
+    const cowSwap = manifest.cowSwap?.settlement;
+    if (cowSwap) {
+        seeds.push({
+            address: cowSwap,
+            name: 'CowSwap settlement',
+            role: 'router',
+            group: 'Buyback leg',
+            legKinds: ['GATED_COWSWAP', 'COWSWAP'],
+        });
+    }
+    return seeds;
+};
+
 export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
     props,
 ) => {
     const { data, variant = 'full', limit, policy, className } = props;
 
+    const lmmSeeds = useLmmDestinationSeeds(policy);
+    const isDestinationsVariant = variant === 'policy' && lmmSeeds.length > 0;
+
     const allRows = useMemo(() => {
         if (variant === 'policy' && policy != null) {
+            if (lmmSeeds.length > 0) {
+                return buildDestinationsRows(policy, lmmSeeds);
+            }
             return buildPolicyRows(policy);
         }
         return buildGlobalRows(data);
-    }, [data, variant, policy]);
+    }, [data, variant, policy, lmmSeeds]);
 
     const [query, setQuery] = useState('');
 
@@ -162,12 +294,13 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
         );
     }, [allRows, variant, limit, query]);
 
-    const title =
-        variant === 'policy'
-            ? 'Recipients'
-            : variant === 'preview'
-              ? 'Top recipients'
-              : 'Recipients';
+    const title = isDestinationsVariant
+        ? 'Destinations'
+        : variant === 'policy'
+          ? 'Recipients'
+          : variant === 'preview'
+            ? 'Top recipients'
+            : 'Recipients';
 
     return (
         <section
@@ -203,20 +336,28 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
                 <table className="w-full min-w-[620px] border-collapse text-left">
                     <thead>
                         <tr className="border-neutral-100 border-b font-normal text-neutral-500 text-xs uppercase tracking-wide">
-                            <th className="py-2 pr-4 font-normal">Recipient</th>
+                            <th className="py-2 pr-4 font-normal">
+                                {isDestinationsVariant
+                                    ? 'Destination'
+                                    : 'Recipient'}
+                            </th>
                             {variant === 'policy' ? (
                                 <>
                                     <th className="py-2 pr-4 font-normal">
-                                        Total received
+                                        {isDestinationsVariant
+                                            ? 'Cumulative routed'
+                                            : 'Total received'}
                                     </th>
                                     <th className="py-2 pr-4 font-normal">
-                                        Last received
+                                        Last routed
                                     </th>
                                     <th className="py-2 pr-4 font-normal">
-                                        # dispatches
+                                        # legs
                                     </th>
                                     <th className="py-2 pr-4 font-normal">
-                                        Share
+                                        {isDestinationsVariant
+                                            ? 'Role'
+                                            : 'Share'}
                                     </th>
                                 </>
                             ) : (
@@ -278,10 +419,12 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
                                             {row.dispatchCount ?? 0}
                                         </td>
                                         <td className="py-3 pr-4 font-normal text-neutral-700 text-sm tabular-nums">
-                                            {row.ratio ??
-                                                (row.pct != null
-                                                    ? `${row.pct}%`
-                                                    : '—')}
+                                            {isDestinationsVariant
+                                                ? row.group
+                                                : (row.ratio ??
+                                                  (row.pct != null
+                                                      ? `${row.pct}%`
+                                                      : '—'))}
                                         </td>
                                     </>
                                 ) : (
@@ -312,7 +455,9 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
                                     className="py-6 text-center font-normal text-neutral-500 text-sm"
                                     colSpan={5}
                                 >
-                                    No recipients match the current filters.
+                                    {isDestinationsVariant
+                                        ? 'No destinations have received funds yet — the orchestrator hasn’t dispatched.'
+                                        : 'No recipients match the current filters.'}
                                 </td>
                             </tr>
                         )}

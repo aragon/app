@@ -3,14 +3,17 @@
 // Adapted: imports rewritten to use the in-tree @/shared/lidoPreview vendoring
 // of @aragon/lido-preview, with .ts/.tsx extensions stripped for moduleResolution=bundler.
 
+import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import {
     Background,
     Controls,
     type Edge,
     MiniMap,
     type Node,
+    Panel,
     ReactFlow,
 } from '@xyflow/react';
+import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import type { Address } from 'viem';
@@ -19,10 +22,14 @@ import {
     type TopologyGraph,
     toReactFlowGraph,
 } from '@/shared/lidoPreview';
+import type { LmmManifest } from '../../demo/lmmDemoConfig';
+import { buildMoneyFlowGraph } from './buildMoneyFlowGraph';
 import { formatAmount, shortAddress } from './format';
 import { layout } from './layout';
 import { NodeDetails } from './NodeDetails';
 import type { StatusSnapshot } from './useStatus';
+
+export type TopologyMode = 'wiring' | 'moneyFlow';
 
 // --- Live-value helpers (read from `status` and format for a node label) ---
 
@@ -90,15 +97,6 @@ function budgetAmountAndToken(
     const tok = tokenLabel(token);
     const line = liveBudgetLineForBudget(status, budgetAddress, token);
     return line ? `${line} ${tok}` : tok;
-}
-
-function gateStateLabel(
-    status: StatusSnapshot | undefined,
-): string | undefined {
-    if (!status?.gate) {
-        return undefined;
-    }
-    return `gate ${status.gate.passes ? 'open' : 'closed'}`;
 }
 
 /** Per-strategy "would fire" pill, sourced from the simulator's prediction.
@@ -174,6 +172,7 @@ export function TopologyView({
     status,
     lidoDaoAddress,
     initialSelectedNodeAddress,
+    manifest,
 }: {
     topology: TopologyGraph;
     status?: StatusSnapshot;
@@ -187,10 +186,14 @@ export function TopologyView({
      *  NodeDetails sidebar.  Used by the dashboard orchestrator chip click
      *  to land the user directly on the strategy they tapped. */
     initialSelectedNodeAddress?: string;
+    /** Optional LMM manifest — when present the Money Flow toggle and node
+     *  labels can render friendly names for known addresses. */
+    manifest?: LmmManifest;
 }) {
     const [selected, setSelected] = useState<GraphNode | null>(null);
+    const [mode, setMode] = useState<TopologyMode>('wiring');
 
-    const { nodes, edges, byId } = useMemo(() => {
+    const wiring = useMemo(() => {
         const raw = toReactFlowGraph(topology);
         if (lidoDaoAddress) {
             const lidoId = 'lido-dao';
@@ -211,7 +214,7 @@ export function TopologyView({
                 type: 'owns',
             });
         }
-        const laidOut = layout(raw);
+        const laidOut = layout(raw, { rankdir: 'TB' });
         const map = new Map<string, GraphNode>();
         for (const n of laidOut.nodes) {
             map.set(n.id, n);
@@ -222,6 +225,31 @@ export function TopologyView({
             byId: map,
         };
     }, [topology, status, lidoDaoAddress]);
+
+    const moneyFlow = useMemo(() => {
+        const raw = buildMoneyFlowGraph(status?.nextDispatch ?? null, manifest);
+        if (raw.nodes.length === 0) {
+            return { nodes: [], edges: [], byId: new Map<string, GraphNode>() };
+        }
+        const laidOut = layout(raw, { rankdir: 'LR', ranksep: 140 });
+        const map = new Map<string, GraphNode>();
+        for (const n of laidOut.nodes) {
+            map.set(n.id, n as GraphNode);
+        }
+        return {
+            nodes: laidOut.nodes.map(toMoneyFlowReactFlowNode),
+            edges: laidOut.edges.map(toReactFlowEdge),
+            byId: map,
+        };
+    }, [status?.nextDispatch, manifest]);
+
+    const isMoneyFlow = mode === 'moneyFlow';
+    const moneyFlowEmpty = isMoneyFlow && moneyFlow.nodes.length === 0;
+    const moneyFlowSkipReason = isMoneyFlow
+        ? status?.nextDispatchError
+        : undefined;
+    const view = isMoneyFlow ? moneyFlow : wiring;
+    const { nodes, edges, byId } = view;
 
     // Close any open details when the topology changes, then re-apply the
     // deep-link selection if one was requested.  Looked up against
@@ -243,12 +271,28 @@ export function TopologyView({
         setSelected(match ?? null);
     }, [initialSelectedNodeAddress, byId]);
 
+    const modeToggle = (
+        <Panel position="top-left">
+            <div className="rounded-xl bg-neutral-0/95 shadow-neutral-sm backdrop-blur-sm">
+                <ToggleGroup
+                    isMultiSelect={false}
+                    onChange={(v) => v != null && setMode(v as TopologyMode)}
+                    value={mode}
+                >
+                    <Toggle label="Wiring" value="wiring" />
+                    <Toggle label="Money flow" value="moneyFlow" />
+                </ToggleGroup>
+            </div>
+        </Panel>
+    );
+
     return (
-        <div className="topology">
+        <div className="topology relative">
             <ReactFlow
-                edges={edges}
+                edges={moneyFlowEmpty ? [] : edges}
                 fitView
-                nodes={nodes}
+                key={mode}
+                nodes={moneyFlowEmpty ? [] : nodes}
                 nodesConnectable={false}
                 onNodeClick={(_event, node) => {
                     const original = byId.get(node.id);
@@ -259,11 +303,28 @@ export function TopologyView({
                 onPaneClick={() => setSelected(null)}
                 proOptions={{ hideAttribution: true }}
             >
+                {modeToggle}
                 <Background gap={20} />
-                <Controls position="bottom-right" />
-                <MiniMap pannable position="top-right" zoomable />
+                {!moneyFlowEmpty && <Controls position="bottom-right" />}
+                {!moneyFlowEmpty && (
+                    <MiniMap pannable position="top-right" zoomable />
+                )}
+                {moneyFlowEmpty && (
+                    <Panel
+                        className="pointer-events-none flex flex-col items-center gap-1 px-6 py-4 text-center"
+                        position="bottom-center"
+                    >
+                        <span className="font-semibold text-neutral-700 text-sm leading-tight">
+                            No flow available
+                        </span>
+                        <span className="font-normal text-neutral-500 text-xs leading-snug">
+                            {moneyFlowSkipReason ??
+                                'simulate() did not return any executed legs — wait for the live snapshot to refresh.'}
+                        </span>
+                    </Panel>
+                )}
             </ReactFlow>
-            {selected && (
+            {selected && !isMoneyFlow && (
                 <NodeDetails
                     node={selected}
                     onClose={() => setSelected(null)}
@@ -272,6 +333,34 @@ export function TopologyView({
             )}
         </div>
     );
+}
+
+// --- Money-flow node renderer --------------------------------------------
+
+function toMoneyFlowReactFlowNode(node: GraphNode): Node {
+    const label = (node.data as { label?: string }).label ?? node.type;
+    const reason = (node.data as { reason?: string }).reason;
+    const skipped = node.type === 'money-step-skipped';
+    // Reuse the wiring graph's `.rf-*` palette so the toggle doesn't read as
+    // two unrelated graphs: DAO node = `.rf-dao`, address/contract nodes =
+    // `.rf-recipient`, skipped steps = `.rf-strategy-unknown` (dashed
+    // neutral).  Skip the dedicated `.rf-money-*` classes from earlier
+    // revisions — they were never declared in `styles.css`.
+    const sharedClass =
+        node.type === 'money-dao'
+            ? 'rf-dao'
+            : skipped
+              ? 'rf-strategy-unknown'
+              : 'rf-recipient';
+    return {
+        id: node.id,
+        type: 'default',
+        position: node.position,
+        data: {
+            label: reason ? `${label}\n${reason}` : label,
+        },
+        className: classNames('rf-node', sharedClass),
+    };
 }
 
 // --- Conversion from our typed GraphNode to React Flow's Node --------------

@@ -41,6 +41,22 @@
 | Vercel preview env vars                                                                              | demo-infra  | **done**      | Example values in `infra/lmm-demo/vercel.env.example`; deployer needs to paste them into the Vercel preview-branch env. |
 | E2E smoke + production-DAO regression                                                                | qa          | **done**      | `pnpm test` → 1620/1620 passing; `pnpm lint:check` → 0 errors, 3 vendored-code warnings; new `flow/demo/safety.test.ts` covers the RPC allowlist + fingerprint check. Manual rehearsal still recommended once the VM is up (see runbook in `infra/lmm-demo/README.md`). |
 
+## Dashboard polish hacks (Phase 1–7)
+
+Every workaround landed by the "LMM demo dashboard polish" pass is tagged
+`LMM_DEMO_HACK: <slug>` in code so the prod cleanup `grep` stays cheap.
+The table below maps each slug to where it lives, what it does in the
+demo, and what should replace it in production.
+
+| Slug                       | Where                                                                                                  | What it does in demo                                                                                          | Prod replacement                                                                                                          | Priority |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `live-snapshot-rpc`        | `src/modules/flow/demo/useLmmLiveSnapshot.ts`, `flowDataProvider.tsx`                                  | Polls Anvil directly via `inspect()`+`useStatus`; exposes legs/budgets/gate via `FlowDataContext.liveSnapshot` | Emit an `OrchestratorSnapshot` entity from `capital-flow-indexer` and consume it through the regular flow query           | high     |
+| `pending-from-live`        | `src/modules/flow/providers/flowSelectors.ts` (`selectPolicyPending`)                                  | Merges `pending.amount` from `liveSnapshot.budget()` reads into the selector output                           | Same entity as above; selector falls back to indexer-computed pending                                                     | high     |
+| `chain-now`                | `src/modules/flow/demo/useLmmChainNow.ts`, `flowDataProvider.tsx`, `useFlowNow`                        | Replaces `Date.now()` with the fork's latest-block timestamp so cooldown pills/chart match Anvil              | No-op outside demo (`useFlowNow` already returns `Date.now()` when `chainNowMs` is null)                                  | low      |
+| `destinations-from-manifest` | `src/modules/flow/components/flowRecipientsTable/flowRecipientsTable.tsx`                              | Synthesises destination rows (DAO, LP recipient, CowSwap settlement, LDO buyback) from `lmm-manifest.json`    | Emit a `recipient` (or `flowDirection`) column on `ExecutionTransfer` so the table can read destinations from the indexer | medium   |
+| `synthetic-policy-installed` | `src/modules/flow/utils/envioFlowMapper.ts` (`mapPolicy`)                                              | Always injects an `INSTALLED` event so the chart shows the marker even if the handler missed it               | Indexer guarantees a `PolicyInstalled` event per policy; remove the synthetic event                                       | low      |
+| `money-flow-from-simulate` | `src/modules/flow/components/lidoMoneyMachine/buildMoneyFlowGraph.ts`, `TopologyView.tsx`              | Builds the "Money flow" graph from the in-browser `simulate()` predictor instead of indexed transfers         | Materialise `MoneyFlowEdge` (or `ExecutionTransfer` w/ direction) and render from the GraphQL response                    | medium   |
+
 ## How to claim a task
 
 1. Read the row above + the related `LMM_DEMO_HACK` comments in code.

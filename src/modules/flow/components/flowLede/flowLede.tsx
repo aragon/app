@@ -1,3 +1,11 @@
+'use client';
+
+import { useFlowDataContext } from '../../providers/flowDataProvider';
+import {
+    derivePolicyStatus,
+    getAllPolicies,
+    summariseLmmLegs,
+} from '../../providers/flowSelectors';
 import type { FlowTokenSymbol, IFlowDaoData } from '../../types';
 import { formatFlowAmount, formatRelative } from '../../utils/flowFormatters';
 
@@ -9,9 +17,22 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
 export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
     const { data } = props;
-    const { dao, policies } = data;
+    const { dao } = data;
+    const { now, liveSnapshot } = useFlowDataContext();
 
-    const readyPolicies = policies.filter((p) => p.status === 'ready');
+    // Iterate every policy (leaves + orchestrator mirrors) so the lede
+    // talks about the orchestrator the same way it talks about leaves.
+    const allPolicies = getAllPolicies(data);
+    const lmmAggregate = summariseLmmLegs(liveSnapshot?.snapshot ?? null);
+    const lmmDispatcher = liveSnapshot?.dispatcherAddress;
+
+    const readyPolicies = allPolicies.filter((p) => {
+        const isLmmOrchestrator =
+            lmmDispatcher != null &&
+            p.address.toLowerCase() === lmmDispatcher.toLowerCase();
+        const pending = isLmmOrchestrator ? lmmAggregate.dominant : p.pending;
+        return derivePolicyStatus(p, now, pending).status === 'ready';
+    });
 
     const pendingByToken = readyPolicies.reduce<
         Partial<Record<FlowTokenSymbol, number>>
@@ -24,15 +45,25 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
         return acc;
     }, {});
 
-    const pendingSummary = Object.entries(pendingByToken)
-        .map(
-            ([token, amount]) =>
-                `${formatFlowAmount(amount as number, token as FlowTokenSymbol)} ${token}`,
-        )
-        .join(' + ');
+    const lmmSubtitleParts = lmmAggregate.legs
+        .filter((l) => l.amount > 0)
+        .slice(0, 2)
+        .map((l) => `${formatFlowAmount(l.amount, l.token)} ${l.token}`);
+    const flatPendingParts = Object.entries(pendingByToken).map(
+        ([token, amount]) =>
+            `${formatFlowAmount(amount as number, token as FlowTokenSymbol)} ${token}`,
+    );
+    const pendingSummary =
+        lmmSubtitleParts.length > 0
+            ? lmmSubtitleParts.join(' + ')
+            : flatPendingParts.join(' + ');
 
-    const cooldownPolicies = policies
-        .filter((p) => p.cooldown != null && p.status !== 'ready')
+    const cooldownPolicies = allPolicies
+        .filter(
+            (p) =>
+                p.cooldown != null &&
+                derivePolicyStatus(p, now).status !== 'ready',
+        )
         .map((p) => p.cooldown!)
         .sort(
             (a, b) =>
@@ -40,8 +71,7 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
         );
     const nextReady = cooldownPolicies[0];
 
-    const now = Date.now();
-    const failed7d = policies.reduce(
+    const failed7d = allPolicies.reduce(
         (sum, policy) =>
             sum +
             policy.dispatches.filter(
@@ -60,7 +90,7 @@ export const FlowLede: React.FC<IFlowLedeProps> = (props) => {
     }
     if (nextReady != null) {
         narrativeParts.push(
-            `next autonomous dispatch ${formatRelative(nextReady.readyAt)}`,
+            `next autonomous dispatch ${formatRelative(nextReady.readyAt, now)}`,
         );
     }
     if (failed7d > 0) {

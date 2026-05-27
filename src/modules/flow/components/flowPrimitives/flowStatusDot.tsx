@@ -12,8 +12,11 @@ export interface IFlowStatusDotProps {
 
 const statusToClass: Record<FlowPolicyStatus, string> = {
     ready: 'bg-primary-400',
-    live: 'bg-success-500',
-    cooldown: 'bg-warning-400',
+    // `live` used to read as `success-500` (green); recolour to primary so
+    // the dashboard stays monochromatic and the "Ready" / "Live" pair
+    // forms a single highlight ramp.
+    live: 'bg-primary-300',
+    cooldown: 'bg-neutral-300',
     awaiting: 'bg-neutral-400',
     paused: 'bg-warning-600',
     never: 'bg-neutral-300',

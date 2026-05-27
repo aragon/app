@@ -26,6 +26,10 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 // the production Tenderly call would just fail / mislead the user.
 import { LMM_DEMO_MODE } from '../demo/lmmDemoConfig';
 import { useLmmChainNow } from '../demo/useLmmChainNow';
+import {
+    type IUseLmmLiveSnapshotResult,
+    useLmmLiveSnapshot,
+} from '../demo/useLmmLiveSnapshot';
 import { isLmmDemoDao } from '../demo/useLmmManifest';
 import type { IFlowDaoData } from '../types';
 import { useEnvioFlowData } from './useEnvioFlowData';
@@ -112,6 +116,19 @@ export interface IFlowDataContext {
      * `Date.now()` on undefined.  See `useLmmChainNow` for the rationale.
      */
     chainNowMs?: number;
+    /**
+     * "Effective now" in ms.  Equals `chainNowMs` when the LMM fork is
+     * warped, `Date.now()` everywhere else.  Always defined — consumers
+     * should prefer this over reading `chainNowMs` directly so they
+     * stay correct outside demo mode.
+     */
+    now: number;
+    /**
+     * LMM demo only: live RPC snapshot of the orchestrator's per-leg
+     * budget/gate/cowSwap/simulate state.  `null` outside demo mode or
+     * while the first read is in flight.  See `useLmmLiveSnapshot`.
+     */
+    liveSnapshot: IUseLmmLiveSnapshotResult | null;
 }
 
 const FlowDataContext = createContext<IFlowDataContext | null>(null);
@@ -146,6 +163,13 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
     // LMM_DEMO_HACK: see useLmmChainNow — overrides Date.now() for cooldown
     // gating when the anvil fork has been warped via the cheats menu.
     const { chainNowMs } = useLmmChainNow();
+
+    // LMM_DEMO_HACK: lift the orchestrator's live RPC snapshot to the
+    // provider so KPI / Activity / Topology / Detail share one inspect()
+    // result instead of each mounting their own.  Returns EMPTY outside
+    // demo mode — non-demo consumers should never see a non-null
+    // `liveSnapshot.snapshot`.
+    const liveSnapshot = useLmmLiveSnapshot();
 
     // Cache the last non-null snapshot so the UI doesn't flicker back to a
     // skeleton while a background refetch is in flight. `envioResult.data`
@@ -464,6 +488,11 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
     const isError = envioResult.isError && data == null;
 
     const resolvedDaoId = daoId ?? '';
+    // `now` is recomputed inside the memo so it stays stable across renders
+    // that don't touch `chainNowMs`.  Outside demo mode this is always
+    // `Date.now()` at memo build time — consumers that need a tick-driven
+    // clock should still call `useState`/`setInterval` directly.
+    const now = chainNowMs ?? Date.now();
     const value = useMemo<IFlowDataContext>(
         () => ({
             daoId: resolvedDaoId,
@@ -476,6 +505,8 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             toasts,
             dismissToast,
             chainNowMs,
+            now,
+            liveSnapshot,
         }),
         [
             resolvedDaoId,
@@ -488,6 +519,8 @@ export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
             toasts,
             dismissToast,
             chainNowMs,
+            now,
+            liveSnapshot,
         ],
     );
 
@@ -507,3 +540,11 @@ export const useFlowDataContext = (): IFlowDataContext => {
     }
     return ctx;
 };
+
+/**
+ * Convenience hook that returns the provider's "effective now" — chain time
+ * when the LMM fork is warped, wall time otherwise.  Components consuming
+ * relative timestamps should prefer this over calling `Date.now()` directly
+ * so the LMM demo's warped clock propagates through the UI consistently.
+ */
+export const useFlowNow = (): number => useFlowDataContext().now;

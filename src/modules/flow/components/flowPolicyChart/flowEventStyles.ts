@@ -36,10 +36,14 @@ export const FLOW_EVENT_KIND_LABEL: Record<FlowEventKind, string> = {
  * - governance / config: settings (indigo), proposal (violet), recipients (pink)
  */
 export const FLOW_EVENT_KIND_TONE: Record<FlowEventKind, string> = {
-    policyInstalled: '#10b981',
+    // Neutral installed marker (was emerald #10b981) — keeps the chart
+    // monochromatic so the user's eye lands on the dispatched markers
+    // instead of the lifecycle column.  Aligns with `flowStatusDot`'s
+    // neutralisation and the Aragon palette in general.
+    policyInstalled: '#475569',
     policyUninstalled: '#991b1b',
     paused: '#f59e0b',
-    resumed: '#84cc16',
+    resumed: '#3b82f6',
     settingsUpdated: '#6366f1',
     proposalApplied: '#a855f7',
     recipientsUpdated: '#ec4899',

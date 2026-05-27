@@ -1076,7 +1076,44 @@ const mapPolicy = (params: {
             proposalByTxHash,
         ),
     );
-    const events = envioPolicy.events.map((e) => mapEvent(e, proposalByTxHash));
+    // LMM_DEMO_HACK: synthetic-policy-installed.  The indexer's `INSTALLED`
+    // event is emitted by the `PolicyInstalled` topic, but the LMM dispatcher
+    // plugin replays a custom `Initialized` topic on first deploy and the
+    // current `capital-flow-indexer` registers only one of the two — so the
+    // chart loses its leftmost lifecycle marker whenever any other event
+    // (e.g. `STRATEGY_PAUSED`) lands first.  We always inject a synthetic
+    // `policyInstalled` row here so the chart and history always carry the
+    // install marker, regardless of which other events accompanied it.
+    // Production replacement: emit a canonical `INSTALLED` row from the
+    // indexer for every plugin install — see lido-mmd-status.md
+    // `synthetic-policy-installed`.
+    const mappedEvents = envioPolicy.events.map((e) =>
+        mapEvent(e, proposalByTxHash),
+    );
+    const hasInstalledEvent = mappedEvents.some(
+        (e) => e.kind === 'policyInstalled',
+    );
+    const events: IFlowEvent[] = hasInstalledEvent
+        ? mappedEvents
+        : [
+              ...mappedEvents,
+              {
+                  id: `${envioPolicy.id}-installed`,
+                  kind: 'policyInstalled' as FlowEventKind,
+                  at: isoFromSeconds(envioPolicy.installedAt),
+                  title: 'Policy installed',
+                  description: `Installed at block ${envioPolicy.installBlockNumber}.`,
+                  txHash: envioPolicy.installTxHash,
+                  proposalId: lookupProposal(
+                      proposalByTxHash,
+                      envioPolicy.installTxHash,
+                  )?.proposalId,
+                  proposalSlug: lookupProposal(
+                      proposalByTxHash,
+                      envioPolicy.installTxHash,
+                  )?.slug,
+              },
+          ];
     // The current on-chain plugin ABI doesn't emit dedicated failure events, so we have no
     // real-time signal for a failed dispatch. Keep the hook for future failure events.
     const recentFailure = false;
@@ -1168,21 +1205,7 @@ const mapPolicy = (params: {
                 ? `Recipients (${recipients.length})`
                 : 'No recipients yet',
         dispatches,
-        events:
-            events.length > 0
-                ? events
-                : [
-                      {
-                          id: `${envioPolicy.id}-installed`,
-                          kind: 'policyInstalled',
-                          at: isoFromSeconds(envioPolicy.installedAt),
-                          title: 'Policy installed',
-                          description: `Installed at block ${envioPolicy.installBlockNumber}.`,
-                          txHash: installTxHash,
-                          proposalId: installAttribution?.proposalId,
-                          proposalSlug: installAttribution?.slug,
-                      },
-                  ],
+        events,
         schema: {
             source: restPolicy?.strategy.source?.type ?? '—',
             allowance: {
