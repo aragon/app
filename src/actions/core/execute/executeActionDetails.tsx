@@ -31,7 +31,7 @@ export const ExecuteActionDetails: React.FC<IExecuteActionDetailsProps> = (
             ?.value?.toString() as string | undefined) ?? '';
 
     return (
-        <div className="flex flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-6">
             <DefinitionList.Container>
                 {callId !== '' && (
                     <DefinitionList.Item

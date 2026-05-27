@@ -43,11 +43,16 @@ export const CreateProposalActionDetails: React.FC<
 
     const inputData = action.inputData;
     const parameters = inputData?.parameters ?? [];
-    const metadata = action.metadata;
-
+    const metadata = action.metadata || {
+        name: 'Test Proposal',
+        description: 'Test Description',
+        avatar: 'https://example.com/avatar.png',
+        links: [{ href: 'https://example.com', label: 'Example Link' }],
+    };
+    console.log('inputData', inputData);
     const renderParameterValue = (name: string, value: unknown) => {
         const rawValue = value?.toString() ?? '';
-
+        console.log('PARAMS', name, value);
         if (isDateParameter(name) && rawValue !== '') {
             return formatterUtils.formatDate(Number(rawValue) * 1000, {
                 format: DateFormat.YEAR_MONTH_DAY,
@@ -75,7 +80,7 @@ export const CreateProposalActionDetails: React.FC<
         `app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.${name.replace(/^_/, '')}`;
 
     return (
-        <div className="flex flex-col gap-y-6">
+        <div className="flex w-full flex-col gap-y-6">
             <DefinitionList.Container>
                 {metadata != null && (
                     <>
