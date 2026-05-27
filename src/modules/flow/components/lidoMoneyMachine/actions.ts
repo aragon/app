@@ -63,6 +63,10 @@ const ERC20_TRANSFER_ABI = parseAbi([
     'function transfer(address,uint256) returns (bool)',
 ]);
 
+const ERC20_ALLOWANCE_ABI = parseAbi([
+    'function allowance(address owner, address spender) view returns (uint256)',
+]);
+
 const DAO_EXECUTE_ABI = parseAbi([
     'function execute(bytes32 callId, (address to, uint256 value, bytes data)[] actions, uint256 allowFailureMap) returns (bytes[], uint256)',
 ]);
@@ -348,6 +352,32 @@ export async function settleCowSwap(
             buyAmount,
         ],
     });
+}
+
+/** Auto-sized variant of `settleCowSwap`: reads the wstETH allowance the
+ *  DAO granted to the mock settlement contract (i.e. the size of the
+ *  *currently presigned* order — the dispatcher rewrites it on every
+ *  dispatch) and fills exactly that.  This avoids the brittle
+ *  `parseEther('1')` fixture that fails the moment the stream's
+ *  per-dispatch budget drops below 1 wstETH (typical:  ~0.96 after the
+ *  first epoch).  `buyAmount` keeps the demo's nominal 1 wstETH ≈ 3000
+ *  LDO ratio (the mock doesn't enforce minBuyAmount).  Returns null when
+ *  there's no pending order so the caller can show a soft message. */
+export async function settleCowSwapAuto(
+    ctx: ActionContext,
+): Promise<{ hash: Hex; sellAmount: bigint; buyAmount: bigint } | null> {
+    const allowance = (await ctx.publicClient.readContract({
+        address: ctx.addresses.wstETH,
+        abi: ERC20_ALLOWANCE_ABI,
+        functionName: 'allowance',
+        args: [ctx.dao, ctx.addresses.mockCowSwap],
+    })) as bigint;
+    if (allowance === 0n) {
+        return null;
+    }
+    const buyAmount = allowance * 3000n;
+    const hash = await settleCowSwap(ctx, allowance, buyAmount);
+    return { hash, sellAmount: allowance, buyAmount };
 }
 
 // ---- Manifest → addresses adapter -----------------------------------------

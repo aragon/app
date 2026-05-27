@@ -184,13 +184,15 @@ const buildDestinationsRows = (
         const amountsByToken: Partial<Record<FlowTokenSymbol, number>> = {};
         let lastReceivedAt: string | undefined;
         for (const d of matching) {
-            if (d.amount > 0) {
+            // Count `amount`/`token` (the dispatch's headline value) — not
+            // `amountIn`/`tokenIn`, which the swap/cow paths populate as a
+            // duplicate of the same number and would otherwise double-count.
+            // For non-swap legs (wrap/uniV2 leg-input fallback) `amountIn` is
+            // intentionally undefined, so this branch is the single source of
+            // truth across all leg kinds.
+            if (d.amount > 0 && d.token !== '') {
                 amountsByToken[d.token] =
                     (amountsByToken[d.token] ?? 0) + d.amount;
-            }
-            if (d.amountIn != null && d.tokenIn && d.amountIn > 0) {
-                amountsByToken[d.tokenIn] =
-                    (amountsByToken[d.tokenIn] ?? 0) + d.amountIn;
             }
             if (
                 lastReceivedAt == null ||
@@ -231,7 +233,7 @@ const useLmmDestinationSeeds = (
         address: manifest.lmm.dao,
         name: 'LMM DAO (self · wstETH)',
         role: 'dao',
-        group: 'Wrap leg',
+        group: 'Wrap',
         legKinds: ['WRAP'],
     });
     const lpRecipient =
@@ -243,7 +245,7 @@ const useLmmDestinationSeeds = (
         address: lpRecipient,
         name: 'Lido Agent (UniV2 LP)',
         role: 'linkedaccount',
-        group: 'UniV2 LP leg',
+        group: 'UniV2 LP',
         legKinds: ['UNIV2_LIQUIDITY'],
     });
     const cowSwap = manifest.cowSwap?.settlement;
@@ -252,7 +254,7 @@ const useLmmDestinationSeeds = (
             address: cowSwap,
             name: 'CowSwap settlement',
             role: 'router',
-            group: 'Buyback leg',
+            group: 'Buyback',
             legKinds: ['GATED_COWSWAP', 'COWSWAP'],
         });
     }
@@ -351,9 +353,11 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
                                     <th className="py-2 pr-4 font-normal">
                                         Last routed
                                     </th>
-                                    <th className="py-2 pr-4 font-normal">
-                                        # legs
-                                    </th>
+                                    {!isDestinationsVariant && (
+                                        <th className="py-2 pr-4 font-normal">
+                                            # dispatches
+                                        </th>
+                                    )}
                                     <th className="py-2 pr-4 font-normal">
                                         {isDestinationsVariant
                                             ? 'Role'
@@ -415,9 +419,11 @@ export const FlowRecipientsTable: React.FC<IFlowRecipientsTableProps> = (
                                                   )
                                                 : '—'}
                                         </td>
-                                        <td className="py-3 pr-4 font-normal text-neutral-700 text-sm tabular-nums">
-                                            {row.dispatchCount ?? 0}
-                                        </td>
+                                        {!isDestinationsVariant && (
+                                            <td className="py-3 pr-4 font-normal text-neutral-700 text-sm tabular-nums">
+                                                {row.dispatchCount ?? 0}
+                                            </td>
+                                        )}
                                         <td className="py-3 pr-4 font-normal text-neutral-700 text-sm tabular-nums">
                                             {isDestinationsVariant
                                                 ? row.group

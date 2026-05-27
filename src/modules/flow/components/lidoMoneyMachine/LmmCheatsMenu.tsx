@@ -20,7 +20,7 @@ import {
     refreshOracle,
     setEthPrice,
     setTargetEpoch,
-    settleCowSwap,
+    settleCowSwapAuto,
     topUpLdo,
     topUpStEth,
     warpAction,
@@ -166,10 +166,21 @@ export const LmmCheatsMenu: React.FC = () => {
                 key: 'settle-cowswap',
                 label: 'Settle CoW order (mock)',
                 description:
-                    'Simulate the settlement contract executing the pending order.',
-                run: runAction('settle-cowswap', () =>
-                    settleCowSwap(ctx, parseEther('1'), parseEther('3000')),
-                ),
+                    'Fills the pending presigned order (sell-side = current wstETH allowance).',
+                // Sizes the fill from the *current* on-chain allowance the
+                // DAO granted to the settlement contract (= the size of
+                // the latest presigned order).  Hardcoding `parseEther('1')`
+                // here used to revert with `transfer amount exceeds
+                // allowance` after the stream's per-dispatch budget
+                // dropped below 1 wstETH — see commit history.
+                run: runAction('settle-cowswap', async () => {
+                    const result = await settleCowSwapAuto(ctx);
+                    if (result === null) {
+                        console.warn(
+                            '[lmm-demo] settle-cowswap: no pending order (allowance is 0). Run a dispatch first.',
+                        );
+                    }
+                }),
             },
         ],
     ];

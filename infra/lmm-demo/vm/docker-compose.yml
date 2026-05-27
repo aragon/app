@@ -92,10 +92,18 @@ services:
       # default here is the bootstrap value used before init-demo.sh has run
       # for the first time.
       ENVIO_DEMO_START_BLOCK: ${ENVIO_DEMO_START_BLOCK:-25179300}
+      # Envio talks to Hasura's admin /v1/metadata endpoint at boot to
+      # track tables and grant SELECT to the `public` role so the host
+      # nginx proxy can expose anonymous reads via /graphql.  Without
+      # these three vars envio defaults to localhost:8080 + secret
+      # "testing", which fails inside docker.
+      HASURA_GRAPHQL_ENDPOINT: http://hasura:8080/v1/metadata
+      HASURA_GRAPHQL_ROLE: admin
+      HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-changeme}
     env_file:
       # Optional override file written by init-demo.sh; safe to be missing on
       # first boot (compose treats a missing env_file as empty).
-      - path: /srv/lmm/.env.indexer
+      - path: ${MANIFEST_OUTPUT_DIR:-/srv/lmm}/.env.indexer
         required: false
     volumes:
       - ${HOST_INDEXER_PATH:-../../../../capital-flow-indexer}:/indexer
@@ -117,6 +125,11 @@ services:
       # require HASURA_GRAPHQL_ADMIN_SECRET, which we never proxy publicly.
       HASURA_GRAPHQL_ADMIN_SECRET: ${HASURA_ADMIN_SECRET:-changeme}
       HASURA_GRAPHQL_UNAUTHORIZED_ROLE: "public"
+      # Disable Hasura's own CORS middleware — host nginx owns the only
+      # set of Access-Control-* headers.  Without this, Hasura echoes
+      # `Origin: ...` + `credentials: true` on top of nginx's `*`, and
+      # browsers reject the response on duplicate/conflicting headers.
+      HASURA_GRAPHQL_DISABLE_CORS: "true"
     # Loopback-only — host nginx proxies /graphql to here.
     ports:
       - "127.0.0.1:8080:8080"
