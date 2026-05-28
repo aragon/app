@@ -10,9 +10,7 @@ for (const dao of SMOKE_DAOS) {
         }).navigate();
 
         await expect.soft(proposals.pageTitle()).toBeVisible();
-        await expect
-            .soft(proposals.firstProposal())
-            .toBeVisible({ timeout: 30_000 });
+        await expect.soft(proposals.firstProposal()).toBeVisible();
         await expect.soft(proposals.asideCard()).toBeVisible();
     });
 }
