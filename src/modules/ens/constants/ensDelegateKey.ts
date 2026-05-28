@@ -28,14 +28,14 @@ import { Network } from '@/shared/api/daoService';
  */
 export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.ETHEREUM_MAINNET]: 'eth',
-    [Network.POLYGON_MAINNET]: 'matic',
+    [Network.POLYGON_MAINNET]: 'pol',
     [Network.BASE_MAINNET]: 'base',
     [Network.ARBITRUM_MAINNET]: 'arb1',
     [Network.OPTIMISM_MAINNET]: 'oeth',
     [Network.AVAX_MAINNET]: 'avax',
     [Network.ZKSYNC_MAINNET]: 'zksync',
-    [Network.CHILIZ_MAINNET]: 'chz',
-    [Network.PEAQ_MAINNET]: 'peaq',
+    [Network.CHILIZ_MAINNET]: 'chzmainnet',
+    [Network.PEAQ_MAINNET]: 'PEAQ',
     [Network.CITREA_MAINNET]: 'citrea',
     [Network.KATANA_MAINNET]: 'katana',
     [Network.ETHEREUM_SEPOLIA]: 'test',

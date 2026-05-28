@@ -9,7 +9,7 @@ import { logEnsError } from '../utils/logEnsError';
 export interface IUseEnsNameOptions {
     /**
      * When true and the resolved ENS is an Aragon member-registry subdomain
-     * (e.g. `alice.aragonx.eth`), the hook returns just the subdomain (`alice`).
+     * (e.g. `alice.aragon.eth`), the hook returns just the subdomain (`alice`).
      * Used on member-facing surfaces: member list items (token + default),
      * delegation card, and profile header (title and breadcrumb).
      * Anywhere else, leave this off so the full ENS is shown.

@@ -76,6 +76,7 @@ export const TransferAssetForm: React.FC<ITransferAssetFormProps> = (props) => {
         >
             <AssetInput
                 disableAssetField={disableAssetField}
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix={fieldPrefix}
             />

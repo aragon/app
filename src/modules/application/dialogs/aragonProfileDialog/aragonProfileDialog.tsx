@@ -18,9 +18,10 @@ import type { TEnsRecordKey } from '@/modules/ens';
 import {
     ensAvatarKey,
     ensRecordKeys,
+    memberRegistrySubdomainSuffix,
     useEnsAvatar,
     useEnsName,
-    useEnsRecords,
+    useEnsProfileRecords,
 } from '@/modules/ens';
 import {
     type IDialogComponentProps,
@@ -101,7 +102,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
-    const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: ensRecords } = useEnsProfileRecords(ensName);
 
     const formMethods = useForm<IAragonProfileDialogFormData>({
         mode: 'onTouched',
@@ -210,6 +211,19 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
             },
         });
     });
+
+    const isAragonName =
+        ensName?.endsWith(memberRegistrySubdomainSuffix) ?? false;
+
+    const handleRemoveAragonName = () => {
+        if (ensName == null) {
+            return;
+        }
+        open(ApplicationDialogId.ARAGON_PROFILE_RELEASE_ALERT, {
+            params: { ensName },
+            stack: true,
+        });
+    };
 
     const handleViewProfile = () => {
         if (network == null || addressOrEns == null || address == null) {
@@ -320,6 +334,31 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                         </Link>
                     </div>
                 </AlertCard>
+
+                {isAragonName && (
+                    <InputContainer
+                        className="[&_label_div_p]:text-critical-800"
+                        helpText={t(
+                            'app.application.aragonProfileDialog.dangerZone.description',
+                        )}
+                        id="aragon-profile-danger-zone"
+                        label={t(
+                            'app.application.aragonProfileDialog.dangerZone.title',
+                        )}
+                        useCustomWrapper
+                    >
+                        <Button
+                            className="w-fit"
+                            onClick={handleRemoveAragonName}
+                            size="md"
+                            variant="critical"
+                        >
+                            {t(
+                                'app.application.aragonProfileDialog.actions.removeAragonName',
+                            )}
+                        </Button>
+                    </InputContainer>
+                )}
             </Dialog.Content>
 
             <Dialog.Footer

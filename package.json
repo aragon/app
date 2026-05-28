@@ -12,6 +12,7 @@
     "build:analyze": "next experimental-analyze",
     "start": "next start",
     "test": "jest",
+    "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
@@ -35,7 +36,7 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aragon/gov-ui-kit": "^2.5.0",
+    "@aragon/gov-ui-kit": "^2.5.1",
     "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.6.0",
     "@radix-ui/react-dialog": "^1.1.15",
@@ -71,7 +72,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.15",
-    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/changelog-github": "^0.7.0",
     "@changesets/cli": "^2.31.0",
     "@hookform/devtools": "^4.4.0",
     "@playwright/test": "^1.60.0",

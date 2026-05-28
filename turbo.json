@@ -57,6 +57,12 @@
             "dependsOn": [
                 "type-check"
             ]
+        },
+        "test:changed": {
+            "cache": false,
+            "dependsOn": [
+                "type-check"
+            ]
         }
     }
 }
