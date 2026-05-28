@@ -1,151 +1,115 @@
 'use client';
 
 import {
-    Avatar,
-    DateFormat,
+    Collapsible,
     DefinitionList,
-    formatterUtils,
+    InputContainer,
+    type IProposalAction,
     type IProposalActionComponentProps,
     Link,
 } from '@aragon/gov-ui-kit';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { NestedActionsList } from '@/modules/governance/components/nestedActionsList';
+import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { ICoreActionCreateProposal } from '../types/coreActionCreateProposal';
 
 export interface ICreateProposalActionDetailsProps
     extends IProposalActionComponentProps<
         IProposalActionData<IProposalAction>
     > {}
 
-const skippedParameterNames = new Set(['_actions', '_metadata']);
-
-const voteOptionLabels: Record<string, string> = {
-    '0': 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.voteOptionNone',
-    '1': 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.voteOptionAbstain',
-    '2': 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.voteOptionYes',
-    '3': 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.voteOptionNo',
-};
-
-const isDateParameter = (name: string) =>
-    name === '_startDate' || name === '_endDate';
-
-const isBooleanParameter = (name: string) =>
-    name === '_tryEarlyExecution' ||
-    name === '_tryExecution' ||
-    name === '_approveProposal';
-
 export const CreateProposalActionDetails: React.FC<
     ICreateProposalActionDetailsProps
 > = (props) => {
     const { action, chainId } = props;
+    const { inputData } = action as unknown as ICoreActionCreateProposal;
+
     const { t } = useTranslations();
 
-    const inputData = action.inputData;
     const parameters = inputData?.parameters ?? [];
-    const metadata = action.metadata || {
-        name: 'Test Proposal',
-        description: 'Test Description',
-        avatar: 'https://example.com/avatar.png',
-        links: [{ href: 'https://example.com', label: 'Example Link' }],
-    };
-    console.log('inputData', inputData);
-    const renderParameterValue = (name: string, value: unknown) => {
-        const rawValue = value?.toString() ?? '';
-        console.log('PARAMS', name, value);
-        if (isDateParameter(name) && rawValue !== '') {
-            return formatterUtils.formatDate(Number(rawValue) * 1000, {
-                format: DateFormat.YEAR_MONTH_DAY,
-            });
-        }
-
-        if (isBooleanParameter(name)) {
-            const isTrue = rawValue === 'true' || rawValue === '1';
-            return t(
-                isTrue
-                    ? 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.yes'
-                    : 'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.no',
-            );
-        }
-
-        if (name === '_voteOption') {
-            const labelKey = voteOptionLabels[rawValue];
-            return labelKey ? t(labelKey) : rawValue;
-        }
-
-        return rawValue;
-    };
-
-    const labelKeyFor = (name: string) =>
-        `app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.${name.replace(/^_/, '')}`;
+    const metadata = inputData?.proposalMetadata;
 
     return (
         <div className="flex w-full flex-col gap-y-6">
-            <DefinitionList.Container>
-                {metadata != null && (
-                    <>
-                        <DefinitionList.Item
-                            term={t(
-                                'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.metadataName',
-                            )}
-                        >
-                            {metadata.name}
-                        </DefinitionList.Item>
-                        {metadata.avatar != null && (
-                            <DefinitionList.Item
-                                term={t(
-                                    'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.metadataAvatar',
-                                )}
-                            >
-                                <Avatar size="md" src={metadata.avatar} />
-                            </DefinitionList.Item>
+            {metadata != null && (
+                <DefinitionList.Container>
+                    <DefinitionList.Item
+                        term={t(
+                            'app.actions.core.createProposalActionDetails.metadataTitle',
                         )}
+                    >
+                        {metadata.title}
+                    </DefinitionList.Item>
+                    <DefinitionList.Item
+                        term={t(
+                            'app.actions.core.createProposalActionDetails.metadataSummary',
+                        )}
+                    >
+                        {metadata.summary}
+                    </DefinitionList.Item>
+                    {metadata.description != null && (
                         <DefinitionList.Item
                             term={t(
-                                'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.metadataDescription',
+                                'app.actions.core.createProposalActionDetails.metadataDescription',
                             )}
                         >
-                            {metadata.description}
+                            <Collapsible
+                                buttonLabelClosed={t(
+                                    'app.actions.core.createProposalActionDetails.readMore',
+                                )}
+                                buttonLabelOpened={t(
+                                    'app.actions.core.createProposalActionDetails.readLess',
+                                )}
+                                collapsedPixels={120}
+                            >
+                                <SafeDocumentParser
+                                    document={metadata.description}
+                                    immediatelyRender={false}
+                                />
+                            </Collapsible>
                         </DefinitionList.Item>
-                        {metadata.links.length > 0 && (
+                    )}
+                    {metadata.resources != null &&
+                        metadata.resources.length > 0 && (
                             <DefinitionList.Item
                                 term={t(
-                                    'app.governance.daoProposalDetailsPage.main.actions.nested.createProposal.metadataLinks',
+                                    'app.actions.core.createProposalActionDetails.metadataResources',
                                 )}
                             >
                                 <div className="flex flex-col gap-3">
-                                    {metadata.links.map((link) => (
+                                    {metadata.resources.map((resource) => (
                                         <Link
-                                            href={link.href}
+                                            href={resource.url}
                                             isExternal={true}
-                                            key={link.href}
+                                            key={resource.url}
                                             showUrl={true}
                                         >
-                                            {link.label}
+                                            {resource.name}
                                         </Link>
                                     ))}
                                 </div>
                             </DefinitionList.Item>
                         )}
-                    </>
+                </DefinitionList.Container>
+            )}
+            <InputContainer
+                helpText={t(
+                    'app.actions.core.createProposalActionDetails.actionsHelpText',
                 )}
-                {parameters
-                    .filter((param) => !skippedParameterNames.has(param.name))
-                    .map((param) => (
-                        <DefinitionList.Item
-                            key={param.name}
-                            term={t(labelKeyFor(param.name))}
-                        >
-                            {renderParameterValue(param.name, param.value)}
-                        </DefinitionList.Item>
-                    ))}
-            </DefinitionList.Container>
-            <NestedActionsList
-                chainId={chainId}
-                daoId={action.daoId}
-                outerParams={parameters}
-                rawActions={inputData?.actions}
-            />
+                id="createProposalActions"
+                label={t(
+                    'app.actions.core.createProposalActionDetails.actionsLabel',
+                )}
+                useCustomWrapper={true}
+            >
+                <NestedActionsList
+                    chainId={chainId}
+                    daoId={action.daoId}
+                    outerParams={parameters}
+                    rawActions={inputData?.actions}
+                />
+            </InputContainer>
         </div>
     );
 };
