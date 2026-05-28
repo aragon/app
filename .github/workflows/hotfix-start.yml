@@ -57,7 +57,7 @@ jobs:
 
       - name: Load secrets
         id: load-secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -125,7 +125,7 @@ jobs:
           base_ref: ${{ steps.ctx.outputs.tag }}
 
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v7.0.0
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
         with:
           gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
           passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
@@ -256,7 +256,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -295,7 +295,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -332,7 +332,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:

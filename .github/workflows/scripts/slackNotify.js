@@ -1,6 +1,15 @@
 const https = require('node:https');
 const fs = require('node:fs');
 
+// Strip Unicode control characters (incl. newlines) to neutralize log/output injection
+// when echoing values that originate from process args, env, or remote responses.
+const sanitizeForLog = (value) => String(value ?? '').replace(/\p{Cc}/gu, ' ');
+
+// Slack message timestamps are strictly `seconds.microseconds`. Reject anything else
+// before writing to GITHUB_OUTPUT so a poisoned API response cannot inject extra keys.
+const isValidSlackTs = (ts) =>
+    typeof ts === 'string' && /^\d{10,}\.\d{1,10}$/.test(ts);
+
 // Convert GitHub Markdown to Slack mrkdwn
 const markdownToMrkdwn = (text) => {
     return (
@@ -88,11 +97,17 @@ if (require.main === module) {
     }
 
     console.log(
-        `Sending Slack notification: "${message}"${threadTs ? ` (Thread: ${threadTs})` : ''}`,
+        `Sending Slack notification: "${sanitizeForLog(message)}"${threadTs ? ` (Thread: ${sanitizeForLog(threadTs)})` : ''}`,
     );
 
     postMessage(token, channel, markdownToMrkdwn(message), threadTs)
         .then((ts) => {
+            if (!isValidSlackTs(ts)) {
+                console.error(
+                    `Slack returned an invalid ts: ${sanitizeForLog(ts)}`,
+                );
+                process.exit(1);
+            }
             console.log(`Message sent. TS: ${ts}`);
             const outputFile = process.env.GITHUB_OUTPUT;
             if (outputFile) {
@@ -102,7 +117,10 @@ if (require.main === module) {
             }
         })
         .catch((err) => {
-            console.error('Failed to send Slack message:', err);
+            console.error(
+                'Failed to send Slack message:',
+                sanitizeForLog(err && err.message ? err.message : err),
+            );
             process.exit(1);
         });
 }

@@ -1,27 +1,39 @@
-const { execSync } = require('node:child_process');
+const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 
-// Helper to run git commands
-const runGit = (command) => {
+// Run git via execFile (no shell) so user-controlled inputs (BASE_REF, tag names)
+// cannot be interpreted as shell metacharacters. Inputs are still validated below.
+const runGit = (args) => {
     try {
-        return execSync(command).toString().trim();
+        return execFileSync('git', args, {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            maxBuffer: 64 * 1024 * 1024,
+        })
+            .toString()
+            .trim();
     } catch (error) {
-        console.error(`Failed to run git command: ${command}`, error);
+        console.error(`Failed to run git ${args.join(' ')}`, error.message);
         return '';
     }
 };
 
+// Allow only characters valid in git refs we accept here: tags, SHAs, branch names.
+const GIT_REF_RE = /^[A-Za-z0-9._/-]{1,255}$/;
+const isSafeGitRef = (ref) => typeof ref === 'string' && GIT_REF_RE.test(ref);
+
 // Latest semver-like tag by version (not reachability).
-const detectLatestSemverTag = () =>
-    runGit(`git tag --list "v*" --sort=-v:refname | head -n 1`);
+const detectLatestSemverTag = () => {
+    const out = runGit(['tag', '--list', 'v*', '--sort=-v:refname']);
+    return out.split('\n')[0]?.trim() ?? '';
+};
 
 // If tags are created on release branches, the right "since last release cut" base on main
 // is the merge-base between main (HEAD) and the previous release tag commit.
 const detectReleaseCutBaseFromTag = (tag, headRef = 'HEAD') => {
-    if (!tag) {
+    if (!tag || !isSafeGitRef(tag) || !isSafeGitRef(headRef)) {
         return '';
     }
-    return runGit(`git merge-base "${tag}" "${headRef}"`);
+    return runGit(['merge-base', tag, headRef]);
 };
 
 // Helper to fetch Linear issue details
@@ -83,6 +95,9 @@ const generateSummary = async ({ core }) => {
         } else {
             console.log('No tags found. Using full history.');
         }
+    } else if (!isSafeGitRef(baseRef)) {
+        console.error(`Refusing unsafe BASE_REF: ${baseRef}`);
+        process.exit(1);
     } else if (/^v\d+\.\d+\.\d+/.test(baseRef)) {
         // If a tag was passed explicitly, convert to merge-base (same logic as auto-detect).
         const cutBase = detectReleaseCutBaseFromTag(baseRef, 'HEAD');
@@ -92,12 +107,20 @@ const generateSummary = async ({ core }) => {
         }
     }
 
-    // Use range or full history
+    // `baseRef` at this point is either empty, a commit SHA we produced, or a value
+    // that passed isSafeGitRef. Re-check defensively before handing it to git.
+    if (baseRef && !isSafeGitRef(baseRef)) {
+        console.error(`Refusing unsafe resolved base ref: ${baseRef}`);
+        process.exit(1);
+    }
+
+    // Pass the rev range as a single argv element. With execFile there is no shell
+    // expansion, so the `..HEAD` suffix is interpreted by git itself.
     const range = baseRef ? `${baseRef}..HEAD` : 'HEAD';
     console.log(`Generating release summary for range: ${range}`);
 
     // 1. Get stats from Git
-    const log = runGit(`git log ${range} --pretty=format:"%s"`);
+    const log = runGit(['log', range, '--pretty=format:%s']);
     const lines = log.split('\n').filter(Boolean);
 
     const categories = {
@@ -201,5 +224,8 @@ if (require.main === module) {
             }
         },
     };
-    generateSummary({ core });
+    generateSummary({ core }).catch((err) => {
+        console.error('Failed to generate release summary:', err);
+        process.exit(1);
+    });
 }
