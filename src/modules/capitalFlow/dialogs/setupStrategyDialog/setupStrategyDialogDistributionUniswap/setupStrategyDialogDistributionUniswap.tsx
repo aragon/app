@@ -60,6 +60,7 @@ export const SetupStrategyDialogDistributionUniswap: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionUniswap"
                 hideAmount={true}

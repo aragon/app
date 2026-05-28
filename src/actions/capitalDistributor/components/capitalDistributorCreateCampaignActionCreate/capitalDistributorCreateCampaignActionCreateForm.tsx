@@ -232,6 +232,7 @@ export const CapitalDistributorCreateCampaignActionCreateForm: React.FC<
                 useCustomWrapper={true}
             >
                 <AssetInput
+                    disableMaxValidation={true}
                     fetchAssetsParams={{
                         queryParams: { daoId, onlyParent: true },
                     }}
