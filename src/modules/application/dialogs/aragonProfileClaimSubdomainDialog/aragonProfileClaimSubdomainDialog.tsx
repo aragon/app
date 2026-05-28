@@ -1,8 +1,8 @@
 'use client';
 
-import { Dialog, InputText, useDebouncedValue } from '@aragon/gov-ui-kit';
+import { Dialog, InputText } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useEnsAddress, useReadContracts } from 'wagmi';
+import { useReadContracts } from 'wagmi';
 import {
     ensChainId,
     memberRegistryAbi,
@@ -12,23 +12,10 @@ import {
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useEnsSubdomainField } from '../../hooks/useEnsSubdomainField';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
-
-/** Maximum character length allowed for a subdomain label. */
-const subdomainMaxLength = 50;
-const subdomainMinLength = 3;
-
-/**
- * Valid ENS label: lowercase alphanumeric and hyphens,
- * must not start or end with a hyphen.
- */
-const ensLabelPattern = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/;
-
-/** Allowed characters for an ENS label, ignoring position constraints. */
-const ensLabelAllowedCharsPattern = /^[a-z0-9-]+$/;
 
 interface IFormData {
     /** ENS subdomain label to claim, e.g. "alice". */
@@ -74,75 +61,20 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
     const isRegistered = registryData?.[0]?.result;
     const existingSubdomain = registryData?.[1]?.result;
 
-    const { control, handleSubmit, watch } = useForm<IFormData>({
+    const { control, handleSubmit } = useForm<IFormData>({
         mode: 'onTouched',
         defaultValues: { subdomain: '' },
     });
 
-    const subdomain = watch('subdomain');
-    const [subdomainDebounced] = useDebouncedValue(subdomain, {
-        delay: 500,
-    });
-
-    const { alert: fieldAlert, ...fieldProps } = useFormField<
-        IFormData,
-        'subdomain'
-    >('subdomain', {
-        label: t(
-            'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.label',
-        ),
-        rules: {
-            required: true,
-            maxLength: subdomainMaxLength,
-            minLength: subdomainMinLength,
-            validate: (value) => {
-                if (!ensLabelAllowedCharsPattern.test(value)) {
-                    return t(
-                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidChars',
-                    );
-                }
-                if (!ensLabelPattern.test(value)) {
-                    return t(
-                        'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.invalidBoundary',
-                    );
-                }
-                return true;
-            },
-        },
-        sanitizeOnBlur: true,
-        trimOnBlur: true,
-        control,
-    });
-
-    const isValidForCheck =
-        subdomainDebounced.length >= subdomainMinLength &&
-        ensLabelPattern.test(subdomainDebounced) &&
-        fieldAlert == null;
-
-    const { data: ensAddress, isLoading: isCheckingAvailability } =
-        useEnsAddress({
-            name: isValidForCheck
-                ? `${subdomainDebounced}${memberRegistrySubdomainSuffix}`
-                : undefined,
-            chainId: ensChainId,
-            query: {
-                enabled:
-                    isValidForCheck && !isCheckingRegistration && !isRegistered,
-            },
+    const { fieldProps, isCheckingAvailability, isNameTaken } =
+        useEnsSubdomainField<IFormData, 'subdomain'>({
+            control,
+            name: 'subdomain',
+            label: t(
+                'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.label',
+            ),
+            availabilityCheckEnabled: !isCheckingRegistration && !isRegistered,
         });
-
-    const isNameTaken = isValidForCheck && ensAddress != null;
-
-    const availabilityAlert = isNameTaken
-        ? {
-              message: t(
-                  'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.error.nameTaken',
-              ),
-              variant: 'critical' as const,
-          }
-        : undefined;
-
-    const composedAlert = fieldAlert ?? availabilityAlert;
 
     const handleCancel = () => close(id);
 
@@ -213,13 +145,9 @@ export const AragonProfileClaimSubdomainDialog: React.FC<
             <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
                 <InputText
                     {...fieldProps}
-                    addon={memberRegistrySubdomainSuffix}
-                    addonPosition="right"
-                    alert={composedAlert}
                     helpText={t(
                         'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.helpText',
                     )}
-                    maxLength={subdomainMaxLength}
                     placeholder={t(
                         'app.application.aragonProfileClaimSubdomainDialog.fields.subdomain.placeholder',
                     )}

@@ -78,7 +78,7 @@ describe('delegateStatementTransactionDialogUtils.buildTransaction', () => {
             data: tx.data,
         });
         expect(decoded.args[1]).toBe(
-            'matic.0x1234abcdef1234abcdef1234abcdef1234abcdef.delegate',
+            'pol.0x1234abcdef1234abcdef1234abcdef1234abcdef.delegate',
         );
     });
 

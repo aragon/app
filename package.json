@@ -12,6 +12,7 @@
     "build:analyze": "next experimental-analyze",
     "start": "next start",
     "test": "jest",
+    "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
