@@ -1,14 +1,11 @@
 const https = require('node:https');
 const fs = require('node:fs');
 
-// Strip Unicode control characters (incl. newlines) to neutralize log/output injection
-// when echoing values that originate from process args, env, or remote responses.
-const sanitizeForLog = (value) => String(value ?? '').replace(/\p{Cc}/gu, ' ');
-
-// Slack message timestamps are strictly `seconds.microseconds`. Reject anything else
-// before writing to GITHUB_OUTPUT so a poisoned API response cannot inject extra keys.
+// Slack message timestamps are strictly `seconds.microseconds` with exactly 6
+// fractional digits (e.g. `1234567890.123456`). Reject anything else before
+// writing to GITHUB_OUTPUT so a poisoned API response cannot inject extra keys.
 const isValidSlackTs = (ts) =>
-    typeof ts === 'string' && /^\d{10,}\.\d{1,10}$/.test(ts);
+    typeof ts === 'string' && /^\d{10}\.\d{6}$/.test(ts);
 
 // Convert GitHub Markdown to Slack mrkdwn
 const markdownToMrkdwn = (text) => {
@@ -96,19 +93,15 @@ if (require.main === module) {
         process.exit(1);
     }
 
-    console.log(
-        `Sending Slack notification: "${sanitizeForLog(message)}"${threadTs ? ` (Thread: ${sanitizeForLog(threadTs)})` : ''}`,
-    );
+    console.log('Sending Slack notification.');
 
     postMessage(token, channel, markdownToMrkdwn(message), threadTs)
         .then((ts) => {
             if (!isValidSlackTs(ts)) {
-                console.error(
-                    `Slack returned an invalid ts: ${sanitizeForLog(ts)}`,
-                );
+                console.error('Slack returned an invalid ts.');
                 process.exit(1);
             }
-            console.log(`Message sent. TS: ${ts}`);
+            console.log('Message sent.');
             const outputFile = process.env.GITHUB_OUTPUT;
             if (outputFile) {
                 fs.appendFileSync(outputFile, `ts=${ts}\n`);
@@ -116,11 +109,8 @@ if (require.main === module) {
                 console.log(`::set-output name=ts::${ts}`);
             }
         })
-        .catch((err) => {
-            console.error(
-                'Failed to send Slack message:',
-                sanitizeForLog(err && err.message ? err.message : err),
-            );
+        .catch(() => {
+            console.error('Failed to send Slack message.');
             process.exit(1);
         });
 }
