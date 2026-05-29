@@ -41,20 +41,20 @@
     "@number-flow/react": "^0.6.0",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-toggle-group": "^1.1.11",
-    "@reown/appkit": "^1.8.19",
-    "@reown/appkit-adapter-wagmi": "^1.8.19",
+    "@reown/appkit": "^1.8.20",
+    "@reown/appkit-adapter-wagmi": "^1.8.20",
     "@reown/walletkit": "^1.5.5",
     "@sentry/core": "^10.53.1",
     "@sentry/nextjs": "^10.53.1",
-    "@tanstack/react-query": "^5.100.10",
-    "@tanstack/react-query-devtools": "^5.100.10",
+    "@tanstack/react-query": "^5.100.11",
+    "@tanstack/react-query-devtools": "^5.100.11",
     "@walletconnect/core": "^2.23.9",
     "@walletconnect/utils": "^2.23.9",
     "classnames": "^2.5.1",
     "deepmerge-ts": "^7.1.5",
-    "framer-motion": "^12.38.0",
+    "framer-motion": "^12.40.0",
     "import-in-the-middle": "^3.0.1",
-    "isomorphic-dompurify": "^3.13.0",
+    "isomorphic-dompurify": "^3.14.0",
     "jsdom": "^29.1.1",
     "luxon": "^3.7.2",
     "next": "^16.2.6",
@@ -67,7 +67,7 @@
     "require-in-the-middle": "^8.0.1",
     "server-only": "^0.0.1",
     "ts-pattern": "^5.9.0",
-    "viem": "^2.49.3",
+    "viem": "^2.50.4",
     "wagmi": "^3.6.15"
   },
   "devDependencies": {
@@ -86,7 +86,7 @@
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.1",
     "@types/node": "^24.12.4",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@walletconnect/types": "^2.23.9",
     "babel-plugin-react-compiler": "^1.0.0",
@@ -97,15 +97,15 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^30.4.1",
     "lint-staged": "^17.0.5",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.15",
     "tailwindcss": "^4.3.0",
     "tailwindcss-fluid-type": "^2.0.7",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.11",
     "turbo": "^2.9.14",
     "typescript": "^5.9.3",
     "ultracite": "^7.7.0",
     "vercel": "^52.2.1",
-    "webpack": "^5.106.2"
+    "webpack": "^5.107.0"
   },
   "repository": {
     "type": "git",
@@ -124,5 +124,5 @@
   "engines": {
     "node": ">=24.13.0"
   },
-  "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215"
+  "packageManager": "pnpm@11.4.0+sha512.f0febc7e37552ab485494a914241b338e0b3580b93d54ce31f00933015880863129038a1b4ae4e414a0ee63ac35bf21197e990172c4a68256450b5636310968f"
 }

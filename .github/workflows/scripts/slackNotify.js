@@ -1,6 +1,12 @@
 const https = require('node:https');
 const fs = require('node:fs');
 
+// Slack message timestamps are strictly `seconds.microseconds` with exactly 6
+// fractional digits (e.g. `1234567890.123456`). Reject anything else before
+// writing to GITHUB_OUTPUT so a poisoned API response cannot inject extra keys.
+const isValidSlackTs = (ts) =>
+    typeof ts === 'string' && /^\d{10}\.\d{6}$/.test(ts);
+
 // Convert GitHub Markdown to Slack mrkdwn
 const markdownToMrkdwn = (text) => {
     return (
@@ -87,13 +93,15 @@ if (require.main === module) {
         process.exit(1);
     }
 
-    console.log(
-        `Sending Slack notification: "${message}"${threadTs ? ` (Thread: ${threadTs})` : ''}`,
-    );
+    console.log('Sending Slack notification.');
 
     postMessage(token, channel, markdownToMrkdwn(message), threadTs)
         .then((ts) => {
-            console.log(`Message sent. TS: ${ts}`);
+            if (!isValidSlackTs(ts)) {
+                console.error('Slack returned an invalid ts.');
+                process.exit(1);
+            }
+            console.log('Message sent.');
             const outputFile = process.env.GITHUB_OUTPUT;
             if (outputFile) {
                 fs.appendFileSync(outputFile, `ts=${ts}\n`);
@@ -101,8 +109,8 @@ if (require.main === module) {
                 console.log(`::set-output name=ts::${ts}`);
             }
         })
-        .catch((err) => {
-            console.error('Failed to send Slack message:', err);
+        .catch(() => {
+            console.error('Failed to send Slack message.');
             process.exit(1);
         });
 }
