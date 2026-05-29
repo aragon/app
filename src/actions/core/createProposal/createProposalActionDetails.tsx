@@ -2,7 +2,9 @@
 
 import {
     Collapsible,
+    DateFormat,
     DefinitionList,
+    formatterUtils,
     InputContainer,
     type IProposalAction,
     type IProposalActionComponentProps,
@@ -27,72 +29,109 @@ export const CreateProposalActionDetails: React.FC<
 
     const { t } = useTranslations();
 
-    const parameters = inputData?.parameters ?? [];
-    const metadata = inputData?.proposalMetadata;
+    const parameters = inputData.parameters ?? [];
+    const metadata = inputData.proposalMetadata;
+
+    const startDateParam = parameters.find(
+        (param) => param.name === '_startDate',
+    );
+    const endDateParam = parameters.find((param) => param.name === '_endDate');
+
+    const formattedStartDate = startDateParam
+        ? startDateParam.value === '0'
+            ? t('app.actions.core.createProposalActionDetails.startTimeNotSet')
+            : formatterUtils.formatDate(Number(startDateParam.value) * 1000, {
+                  format: DateFormat.YEAR_MONTH_DAY_TIME,
+              })
+        : undefined;
+
+    const formattedEndDate = endDateParam
+        ? endDateParam.value === '0'
+            ? t('app.actions.core.createProposalActionDetails.endTimeNotSet')
+            : formatterUtils.formatDate(Number(endDateParam.value) * 1000, {
+                  format: DateFormat.YEAR_MONTH_DAY_TIME,
+              })
+        : undefined;
 
     return (
         <div className="flex w-full flex-col gap-y-6">
-            {metadata != null && (
-                <DefinitionList.Container>
-                    <DefinitionList.Item
-                        term={t(
-                            'app.actions.core.createProposalActionDetails.metadataTitle',
-                        )}
-                    >
-                        {metadata.title}
-                    </DefinitionList.Item>
-                    <DefinitionList.Item
-                        term={t(
-                            'app.actions.core.createProposalActionDetails.metadataSummary',
-                        )}
-                    >
-                        {metadata.summary}
-                    </DefinitionList.Item>
-                    {metadata.description != null && (
+            <DefinitionList.Container>
+                {metadata != null && (
+                    <>
                         <DefinitionList.Item
                             term={t(
-                                'app.actions.core.createProposalActionDetails.metadataDescription',
+                                'app.actions.core.createProposalActionDetails.metadataTitle',
                             )}
                         >
-                            <Collapsible
-                                buttonLabelClosed={t(
-                                    'app.actions.core.createProposalActionDetails.readMore',
-                                )}
-                                buttonLabelOpened={t(
-                                    'app.actions.core.createProposalActionDetails.readLess',
-                                )}
-                                collapsedPixels={120}
-                            >
-                                <SafeDocumentParser
-                                    document={metadata.description}
-                                    immediatelyRender={false}
-                                />
-                            </Collapsible>
+                            {metadata.title}
                         </DefinitionList.Item>
-                    )}
-                    {metadata.resources != null &&
-                        metadata.resources.length > 0 && (
+                        <DefinitionList.Item
+                            term={t(
+                                'app.actions.core.createProposalActionDetails.metadataSummary',
+                            )}
+                        >
+                            {metadata.summary}
+                        </DefinitionList.Item>
+                        {metadata.description != null && (
                             <DefinitionList.Item
                                 term={t(
-                                    'app.actions.core.createProposalActionDetails.metadataResources',
+                                    'app.actions.core.createProposalActionDetails.metadataDescription',
                                 )}
                             >
-                                <div className="flex flex-col gap-3">
-                                    {metadata.resources.map((resource) => (
-                                        <Link
-                                            href={resource.url}
-                                            isExternal={true}
-                                            key={resource.url}
-                                            showUrl={true}
-                                        >
-                                            {resource.name}
-                                        </Link>
-                                    ))}
-                                </div>
+                                <Collapsible
+                                    buttonLabelClosed={t(
+                                        'app.actions.core.createProposalActionDetails.readMore',
+                                    )}
+                                    buttonLabelOpened={t(
+                                        'app.actions.core.createProposalActionDetails.readLess',
+                                    )}
+                                    collapsedPixels={120}
+                                >
+                                    <SafeDocumentParser
+                                        document={metadata.description}
+                                        immediatelyRender={false}
+                                    />
+                                </Collapsible>
                             </DefinitionList.Item>
                         )}
-                </DefinitionList.Container>
-            )}
+                        {metadata.resources != null &&
+                            metadata.resources.length > 0 && (
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.actions.core.createProposalActionDetails.metadataResources',
+                                    )}
+                                >
+                                    <div className="flex flex-col gap-3">
+                                        {metadata.resources.map((resource) => (
+                                            <Link
+                                                href={resource.url}
+                                                isExternal={true}
+                                                key={resource.url}
+                                                showUrl={true}
+                                            >
+                                                {resource.name}
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </DefinitionList.Item>
+                            )}
+                    </>
+                )}
+                <DefinitionList.Item
+                    term={t(
+                        'app.actions.core.createProposalActionDetails.startTimeTerm',
+                    )}
+                >
+                    {formattedStartDate}
+                </DefinitionList.Item>
+                <DefinitionList.Item
+                    term={t(
+                        'app.actions.core.createProposalActionDetails.endTimeTerm',
+                    )}
+                >
+                    {formattedEndDate}
+                </DefinitionList.Item>
+            </DefinitionList.Container>
             <InputContainer
                 helpText={t(
                     'app.actions.core.createProposalActionDetails.actionsHelpText',
