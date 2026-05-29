@@ -21,7 +21,8 @@ export default defineConfig({
                   { outputFolder: './playwright-report', open: 'on-failure' },
               ],
           ],
-    timeout: 60_000,
+    // Proposals navigate waits up to PROPOSALS_API_TIMEOUT for API + list render.
+    timeout: 90_000,
     expect: { timeout: process.env.CI ? 15_000 : 10_000 },
     use: {
         baseURL,
