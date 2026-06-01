@@ -38,7 +38,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         environments: {
             local: true,
             development: true,
-            preview: false,
+            preview: true,
         },
     },
     {
