@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+// LMM_DEMO_HACK: see app/src/modules/flow/demo/lmmDemoConfig.ts.
+import { tryLmmDaoPoliciesOverride } from '@/modules/flow/demo/lmmDaoOverride';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { daoService } from '../../daoService';
 import type { IGetDaoPoliciesParams } from '../../daoService.api';
@@ -10,7 +12,15 @@ export const daoPoliciesOptions = (
     options?: QueryOptions<IDaoPolicy[]>,
 ): SharedQueryOptions<IDaoPolicy[]> => ({
     queryKey: daoServiceKeys.daoPolicies(params),
-    queryFn: () => daoService.getDaoPolicies(params),
+    queryFn: async () => {
+        const override = await tryLmmDaoPoliciesOverride(
+            params.urlParams.daoAddress,
+        );
+        if (override) {
+            return override;
+        }
+        return daoService.getDaoPolicies(params);
+    },
     ...options,
 });
 

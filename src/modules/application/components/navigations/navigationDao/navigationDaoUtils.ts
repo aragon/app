@@ -108,6 +108,20 @@ class NavigationDaoUtils {
                 hidden: isPageContext,
                 order: 600,
             },
+            // Flow POC — only surface the Capital flow entry point inside the
+            // DAO navigation dialog (desktop dropdown + mobile sheet), and only
+            // when the Envio-backed POC is enabled. We deliberately keep it out
+            // of the page-level horizontal nav to avoid cluttering the main
+            // rail while the feature is still in preview.
+            {
+                label: 'app.application.navigationDao.link.flow',
+                link: `${baseUrl}/flow`,
+                icon: IconType.APP_TRANSACTIONS,
+                hidden:
+                    isPageContext ||
+                    process.env.NEXT_PUBLIC_FLOW_USE_ENVIO !== 'true',
+                order: 650,
+            },
         ];
     };
 

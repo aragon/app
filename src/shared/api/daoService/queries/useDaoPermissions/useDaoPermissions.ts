@@ -1,4 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
+// LMM_DEMO_HACK: see app/src/modules/flow/demo/lmmDemoConfig.ts.
+import { tryLmmDaoPermissionsOverride } from '@/modules/flow/demo/lmmDaoOverride';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type {
     InfiniteQueryOptions,
@@ -21,7 +23,15 @@ export const daoPermissionsOptions = (
 > => ({
     queryKey: daoServiceKeys.daoPermissions(params),
     initialPageParam: params,
-    queryFn: ({ pageParam }) => daoService.getDaoPermissions(pageParam),
+    queryFn: async ({ pageParam }) => {
+        const override = await tryLmmDaoPermissionsOverride(
+            pageParam.urlParams.daoAddress,
+        );
+        if (override) {
+            return override;
+        }
+        return daoService.getDaoPermissions(pageParam);
+    },
     getNextPageParam: daoService.getNextPageParams,
     ...options,
 });
