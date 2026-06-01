@@ -16,7 +16,10 @@ import {
 import { formatUnits, type Hex, zeroAddress, zeroHash } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import {
+    type TranslationFunction,
+    useTranslations,
+} from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useToken } from '@/shared/hooks/useToken';
 import type { ICapitalDistributorActionCreateCampaign } from '../../types/capitalDistributorActionCreateCampaign';
@@ -27,8 +30,27 @@ export interface ICapitalDistributorCreateCampaignActionDetailsProps
         IProposalActionData<IProposalAction>
     > {}
 
+// merkleRoot is a 32-byte hash, not an address, so addressUtils.truncateAddress
+// (which only truncates valid 20-byte addresses) leaves it untouched.
 const truncateHex = (value: string): string =>
     value.length > 18 ? `${value.slice(0, 10)}...${value.slice(-8)}` : value;
+
+const formatScheduleTime = (
+    timestampSeconds: number,
+    t: TranslationFunction,
+): string => {
+    if (timestampSeconds === 0) {
+        return t(
+            'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.schedule.openEnded',
+        );
+    }
+
+    const formatted = formatterUtils.formatDate(timestampSeconds * 1000, {
+        format: DateFormat.YEAR_MONTH_DAY_TIME,
+    });
+
+    return formatted ?? '';
+};
 
 export const CapitalDistributorCreateCampaignActionDetails: React.FC<
     ICapitalDistributorCreateCampaignActionDetailsProps
@@ -40,13 +62,17 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
     const { daoId, inputData } = typedAction;
     const { totalAmount, claimersCount, token, metadata } = inputData ?? {};
 
-    const fallback =
+    // merkleRoot, actionEncoderId and the schedule times are never hydrated by
+    // the backend, so they're always read from the decoded calldata; payoutToken
+    // is read from here only when the backend couldn't resolve the token.
+    const decodedInputData =
         capitalDistributorActionParser.parseCreateCampaignInputData(
             action.inputData?.parameters ?? [],
         );
 
-    const payoutTokenAddress = token?.address ?? fallback.payoutToken;
-    const { merkleRoot, actionEncoderId, startTime, endTime } = fallback;
+    const payoutTokenAddress = token?.address ?? decodedInputData.payoutToken;
+    const { merkleRoot, actionEncoderId, startTime, endTime } =
+        decodedInputData;
 
     const { t } = useTranslations();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -95,20 +121,6 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                   format: NumberFormat.FIAT_TOTAL_SHORT,
               })
             : null;
-
-    const formatScheduleTime = (timestampSeconds: number): string => {
-        if (timestampSeconds === 0) {
-            return t(
-                'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.schedule.openEnded',
-            );
-        }
-
-        const formatted = formatterUtils.formatDate(timestampSeconds * 1000, {
-            format: DateFormat.YEAR_MONTH_DAY_TIME,
-        });
-
-        return formatted ?? '';
-    };
 
     const { title, description, resources } = metadata ?? {};
 
@@ -212,14 +224,14 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.startTimeTerm',
                 )}
             >
-                {formatScheduleTime(startTime)}
+                {formatScheduleTime(startTime, t)}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.endTimeTerm',
                 )}
             >
-                {formatScheduleTime(endTime)}
+                {formatScheduleTime(endTime, t)}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );
