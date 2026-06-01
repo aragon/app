@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import * as financeService from '@/modules/finance/api/financeService';
 import * as daoService from '@/shared/api/daoService';
+import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
+import * as useDaoExecutePermission from '@/shared/hooks/useDaoExecutePermission';
 import * as useDaoFilterUrlParam from '@/shared/hooks/useDaoFilterUrlParam';
 import {
     generateDao,
@@ -52,6 +54,10 @@ describe('<DaoTransactionsPageClient /> component', () => {
         'useTransactionList',
     );
     const useAssetListSpy = jest.spyOn(financeService, 'useAssetList');
+    const useDaoExecutePermissionSpy = jest.spyOn(
+        useDaoExecutePermission,
+        'useDaoExecutePermission',
+    );
 
     const featureFlagSnapshot: FeatureFlagSnapshot[] = [
         {
@@ -122,6 +128,10 @@ describe('<DaoTransactionsPageClient /> component', () => {
                 ],
             },
         } as unknown as ReturnType<typeof financeService.useAssetList>);
+        useDaoExecutePermissionSpy.mockReturnValue({
+            hasPermission: false,
+            isLoading: false,
+        });
     });
 
     afterEach(() => {
@@ -207,5 +217,46 @@ describe('<DaoTransactionsPageClient /> component', () => {
         expect(
             screen.queryByTestId('all-assets-stats'),
         ).not.toBeInTheDocument();
+    });
+
+    it('hides the new transaction button when the wallet lacks execute permission', () => {
+        useDaoExecutePermissionSpy.mockReturnValue({
+            hasPermission: false,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('link', {
+                name: /daoTransactionsPage.main.newTransaction/,
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('shows the new transaction button linking to the execute wizard when the wallet has execute permission', () => {
+        const dao = generateDao({
+            network: Network.ETHEREUM_MAINNET,
+            address: '0xdao',
+            ens: null,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        useDaoExecutePermissionSpy.mockReturnValue({
+            hasPermission: true,
+            isLoading: false,
+        });
+
+        render(createTestComponent());
+
+        const button = screen.getByRole('link', {
+            name: /daoTransactionsPage.main.newTransaction/,
+        });
+        expect(button).toBeInTheDocument();
+        expect(button).toHaveAttribute(
+            'href',
+            `/dao/${dao.network}/${dao.address}/create/execute`,
+        );
     });
 });

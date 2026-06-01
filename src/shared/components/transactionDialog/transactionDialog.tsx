@@ -51,6 +51,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         transactionType,
         indexingFallbackUrl,
         disableCancel,
+        completeOnSubmit = false,
     } = props;
 
     const {
@@ -244,11 +245,19 @@ export const TransactionDialog = <TCustomStepId extends string>(
             TransactionDialogStep,
         ) as TransactionDialogStep[];
 
-        const filteredSteps = transactionType
-            ? stepKeys
-            : stepKeys.filter(
-                  (step) => step !== TransactionDialogStep.INDEXING,
-              );
+        const filteredSteps = stepKeys.filter((step) => {
+            // Without an indexing transaction type, the INDEXING step is never shown.
+            if (step === TransactionDialogStep.INDEXING) {
+                return transactionType != null;
+            }
+
+            // In submit-only mode the flow completes on send, so there is no CONFIRM step.
+            if (step === TransactionDialogStep.CONFIRM) {
+                return !completeOnSubmit;
+            }
+
+            return true;
+        });
 
         return filteredSteps.map((stepId, index) => ({
             id: stepId,
@@ -266,6 +275,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         }));
     }, [
         transactionType,
+        completeOnSubmit,
         customSteps,
         t,
         transactionStepStates,
@@ -310,11 +320,13 @@ export const TransactionDialog = <TCustomStepId extends string>(
     }, [waitTxError, transaction, handleTransactionError]);
 
     useEffect(() => {
-        if (waitTxStatus === 'success') {
+        // In submit-only mode we complete on send (APPROVE), so we must not advance or fire
+        // onSuccess on a late (or never-arriving) receipt — see useSendTransaction's onSuccess.
+        if (!completeOnSubmit && waitTxStatus === 'success') {
             onSuccessRef.current?.(txReceipt);
             nextStep();
         }
-    }, [waitTxStatus, nextStep, txReceipt]);
+    }, [completeOnSubmit, waitTxStatus, nextStep, txReceipt]);
 
     return (
         <>
@@ -348,6 +360,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
             </Dialog.Content>
             <TransactionDialogFooter
                 activeStep={activeStepInfo}
+                completeOnSubmit={completeOnSubmit}
                 disableCancel={disableCancel}
                 indexingFallbackUrl={indexingFallbackUrl}
                 onCancelClick={onCancelClick}
