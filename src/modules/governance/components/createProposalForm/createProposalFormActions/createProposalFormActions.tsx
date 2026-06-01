@@ -110,8 +110,9 @@ export const CreateProposalFormActions: React.FC<
         ...stableWatchActions?.[index],
         // `fieldId` is our own stable id (assigned in handleAddAction) and is the React key for the
         // item. It lives in the form values, so it survives RHF regenerating the field array `id`
-        // when the decoder re-encodes calldata on each keystroke. Fall back to RHF's `id` only for
-        // legacy actions added before this field existed.
+        // when the decoder re-encodes calldata on each keystroke. Every action enters the array via
+        // handleAddAction (which assigns a `fieldId`), so the `field.id` fallback is purely defensive
+        // — it just guarantees a key if some future path adds an action without going through it.
         fieldId: field.fieldId ?? field.id,
     }));
 
