@@ -45,6 +45,7 @@ export const ProposalListStats: React.FC<IProposalListStatsProps> = (props) => {
         daoId,
         type: PluginType.PROCESS,
         includeLinkedAccounts: true,
+        visibleOnly: true,
     });
     const buttonUrl = daoUtils.getDaoUrl(dao, 'settings#governance');
 

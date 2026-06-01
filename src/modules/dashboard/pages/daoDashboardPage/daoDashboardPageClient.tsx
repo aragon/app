@@ -60,7 +60,8 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     });
 
     const processPlugins =
-        useDaoPlugins({ daoId, type: PluginType.PROCESS }) ?? [];
+        useDaoPlugins({ daoId, type: PluginType.PROCESS, visibleOnly: true }) ??
+        [];
 
     if (dao == null) {
         return null;

@@ -34,6 +34,7 @@ export const DelegationSection: React.FC<IDelegationSectionProps> = (props) => {
         type: PluginType.BODY,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        visibleOnly: true,
     })?.filter(
         (plugin) =>
             (plugin.meta.settings as ITokenPluginSettings)?.token?.hasDelegate,

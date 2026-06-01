@@ -32,7 +32,14 @@ export const useTokenNormalizeActions = (
             const plugin = daoPlugins.find(({ meta }) =>
                 addressUtils.isAddressEqual(action.to, meta.address),
             );
-            const { token } = (plugin?.meta as IDaoPlugin<ITokenPluginSettings>)
+
+            // The action may target a plugin that is hidden, uninstalled, or
+            // external/unknown. Render the raw action instead of crashing.
+            if (plugin == null) {
+                return action;
+            }
+
+            const { token } = (plugin.meta as IDaoPlugin<ITokenPluginSettings>)
                 .settings;
 
             return tokenActionUtils.normalizeChangeSettingsAction({
