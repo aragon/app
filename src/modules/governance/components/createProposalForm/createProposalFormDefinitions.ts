@@ -10,6 +10,12 @@ export type IProposalActionData<
      */
     id?: string;
     /**
+     * Stable client-side id used as the React key of the rendered action item. Owned by the form
+     * (not react-hook-form), so it survives the field array id being regenerated when the action
+     * decoder re-encodes calldata on every keystroke. Whitelisted out of submit and export payloads.
+     */
+    fieldId?: string;
+    /**
      * ID of the DAO.
      */
     daoId: string;

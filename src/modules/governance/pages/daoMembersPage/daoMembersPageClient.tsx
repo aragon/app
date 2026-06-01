@@ -78,12 +78,14 @@ export const DaoMembersPageClient: React.FC<IDaoMembersPageClientProps> = (
         };
     }, [featuredDelegatesInfo, daoId, t]);
 
-    // Get all real body plugins to determine the active one for the aside.
+    // Resolve the active body for the aside. Must match the visible member-list
+    // tabs, so hidden bodies are excluded here too.
     const allBodyPlugins = useDaoPlugins({
         daoId,
         type: PluginType.BODY,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        visibleOnly: true,
     });
 
     const activeAsidePlugin = useMemo(() => {

@@ -442,17 +442,20 @@
         },
         "fields": {
           "subdomain": {
-            "error": {
-              "invalidBoundary": "Name can’t start or end with a hyphen.",
-              "invalidChars": "Use only lowercase letters, numbers, and hyphens.",
-              "nameTaken": "This name is already taken."
-            },
             "helpText": "This ENS name points to your connected wallet. Set it as your primary ENS so Aragon and other ENS-compatible apps can show it instead of your address.",
             "label": "Aragon name",
             "placeholder": "username"
           }
         },
         "title": "Claim your Aragon name"
+      },
+      "ensSubdomainField": {
+        "error": {
+          "invalidBoundary": "Name can’t start or end with a hyphen.",
+          "invalidChars": "Use only lowercase letters, numbers, and hyphens.",
+          "nameTaken": "This name is already taken.",
+          "sameAsCurrent": "Choose a name that differs from your current Aragon name."
+        }
       },
       "aragonProfileSubdomainRegisterTransactionDialog": {
         "a11y": {
@@ -535,8 +538,67 @@
           "cancel": "Cancel",
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
-          "confirmProfile": "Confirm your profile"
+          "confirmProfile": "Confirm your profile",
+          "removeAragonName": "Delete your Aragon profile"
+        },
+        "dangerZone": {
+          "title": "Delete Aragon profile",
+          "description": "Once you delete your Aragon profile it's released and can be claimed by someone else. This can't be undone."
         }
+      },
+      "aragonProfileReleaseAlertDialog": {
+        "a11y": {
+          "description": "Confirm removing your Aragon name",
+          "title": "Remove your Aragon name"
+        },
+        "title": "Remove your Aragon name?",
+        "description": "This will remove {{ensName}} and permanently delete all profile records linked to it, including your bio, avatar, socials, and delegation records. This action cannot be undone.",
+        "actions": {
+          "confirm": "Remove Aragon name",
+          "cancel": "Cancel"
+        }
+      },
+      "aragonProfileReleaseTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to remove your Aragon name",
+          "title": "Remove Aragon name transaction"
+        },
+        "title": "Remove your Aragon name",
+        "description": "Confirm the onchain transaction in your wallet to remove your Aragon name.",
+        "submit": "Confirm in wallet",
+        "successLink": {
+          "label": "Done"
+        },
+        "transactionInfo": "Remove Aragon name"
+      },
+      "aragonProfileRenameDialog": {
+        "a11y": {
+          "description": "Choose a new Aragon name to move all your profile records to",
+          "title": "Change your Aragon name"
+        },
+        "title": "Change your Aragon name",
+        "description": "Choose a new Aragon name. All your profile records will be moved to the new name.",
+        "fields": {
+          "subdomain": {
+            "helpText": "Your records will be moved to this new name.",
+            "label": "New ENS subname",
+            "placeholder": "yourname"
+          }
+        },
+        "actions": {
+          "submit": "Change Aragon name",
+          "cancel": "Cancel"
+        }
+      },
+      "aragonProfileRenameTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to change your Aragon name",
+          "title": "Rename Aragon name transaction"
+        },
+        "title": "Change your Aragon name",
+        "description": "Confirm the onchain transaction in your wallet to move your profile records to the new name.",
+        "submit": "Confirm in wallet",
+        "transactionInfo": "Rename Aragon name"
       }
     },
     "capitalFlow": {

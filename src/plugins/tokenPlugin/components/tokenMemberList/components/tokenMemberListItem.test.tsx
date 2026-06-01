@@ -83,13 +83,13 @@ describe('<TokenMemberListItem /> component', () => {
                 ({
                     data: options?.stripAragonRegistrySuffix
                         ? 'alice'
-                        : 'alice.aragonx.eth',
+                        : 'alice.aragon.eth',
                     isLoading: false,
                 }) as ReturnType<typeof ensModule.useEnsName>,
         );
         render(createTestComponent({ member }));
         expect(screen.getByText('alice')).toBeInTheDocument();
-        expect(screen.queryByText('alice.aragonx.eth')).not.toBeInTheDocument();
+        expect(screen.queryByText('alice.aragon.eth')).not.toBeInTheDocument();
     });
 
     it('retrieves the plugin settings to parse the member voting power using the decimals of the governance token', () => {

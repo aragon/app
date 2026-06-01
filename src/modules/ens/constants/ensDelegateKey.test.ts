@@ -7,15 +7,16 @@ import {
 describe('NETWORK_EIP3770_SHORTNAME', () => {
     it.each([
         { network: Network.ETHEREUM_MAINNET, expected: 'eth' },
-        { network: Network.POLYGON_MAINNET, expected: 'matic' },
+        { network: Network.POLYGON_MAINNET, expected: 'pol' },
         { network: Network.BASE_MAINNET, expected: 'base' },
         { network: Network.ARBITRUM_MAINNET, expected: 'arb1' },
         { network: Network.OPTIMISM_MAINNET, expected: 'oeth' },
         { network: Network.AVAX_MAINNET, expected: 'avax' },
         { network: Network.ZKSYNC_MAINNET, expected: 'zksync' },
-        { network: Network.CHILIZ_MAINNET, expected: 'chz' },
-        { network: Network.PEAQ_MAINNET, expected: 'peaq' },
+        { network: Network.CHILIZ_MAINNET, expected: 'chzmainnet' },
+        { network: Network.PEAQ_MAINNET, expected: 'PEAQ' },
         { network: Network.CITREA_MAINNET, expected: 'citrea' },
+        { network: Network.HEMI_MAINNET, expected: 'hemi' },
         { network: Network.KATANA_MAINNET, expected: 'katana' },
     ])('maps mainnet $network to canonical EIP-3770 shortname "$expected"', ({
         network,
@@ -67,11 +68,11 @@ describe('buildEnsDelegateKey', () => {
     });
 
     it.each([
-        { network: Network.POLYGON_MAINNET, prefix: 'matic' },
+        { network: Network.POLYGON_MAINNET, prefix: 'pol' },
         { network: Network.BASE_MAINNET, prefix: 'base' },
         { network: Network.ARBITRUM_MAINNET, prefix: 'arb1' },
         { network: Network.OPTIMISM_MAINNET, prefix: 'oeth' },
-        { network: Network.PEAQ_MAINNET, prefix: 'peaq' },
+        { network: Network.PEAQ_MAINNET, prefix: 'PEAQ' },
     ])('builds the key with the network shortname for $network', ({
         network,
         prefix,

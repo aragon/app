@@ -49,6 +49,7 @@ export const SetupStrategyDialogDistributionStream: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionStream"
                 hideAmount={true}

@@ -19,7 +19,7 @@ import { logEnsError } from '../utils/logEnsError';
  *
  * @param name - ENS name to look up (e.g. `"vitalik.eth"`), or `null`/`undefined` to skip.
  */
-export function useEnsRecords(name: string | null | undefined) {
+export function useEnsProfileRecords(name: string | null | undefined) {
     const isValid = name != null && name.length > 0;
 
     const result = useQuery<IEnsRecords>({
@@ -62,7 +62,7 @@ export function useEnsRecords(name: string | null | undefined) {
             return;
         }
         logEnsError(result.error, {
-            hook: 'useEnsRecords',
+            hook: 'useEnsProfileRecords',
             name,
             chainId: ensChainId,
         });

@@ -18,25 +18,21 @@ import { Network } from '@/shared/api/daoService';
  *    shape later, we want the migration surface to be QA-only — no real
  *    production records to rewrite.
  *
- * Citrea and Katana are not yet on the canonical EIP-3770 list (Citrea
- * mainnet is not live as of 2026-05; Katana is a recent L2 without an
- * assigned shortname). The values here mirror the chain name and will be
- * reconciled to the canonical shortname when one is published.
- *
  * Adding a network: extend the Network enum first; TypeScript will require a
  * corresponding entry here at compile time.
  */
 export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.ETHEREUM_MAINNET]: 'eth',
-    [Network.POLYGON_MAINNET]: 'matic',
+    [Network.POLYGON_MAINNET]: 'pol',
     [Network.BASE_MAINNET]: 'base',
     [Network.ARBITRUM_MAINNET]: 'arb1',
     [Network.OPTIMISM_MAINNET]: 'oeth',
     [Network.AVAX_MAINNET]: 'avax',
     [Network.ZKSYNC_MAINNET]: 'zksync',
-    [Network.CHILIZ_MAINNET]: 'chz',
-    [Network.PEAQ_MAINNET]: 'peaq',
+    [Network.CHILIZ_MAINNET]: 'chzmainnet',
+    [Network.PEAQ_MAINNET]: 'PEAQ',
     [Network.CITREA_MAINNET]: 'citrea',
+    [Network.HEMI_MAINNET]: 'hemi',
     [Network.KATANA_MAINNET]: 'katana',
     [Network.ETHEREUM_SEPOLIA]: 'test',
 };

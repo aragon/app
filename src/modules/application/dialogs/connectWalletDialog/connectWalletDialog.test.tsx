@@ -40,6 +40,8 @@ describe('<ConnectWalletDialog /> component', () => {
             caipNetwork: undefined,
             chainId: undefined,
             caipNetworkId: undefined,
+            approvedCaipNetworkIds: undefined,
+            supportsAllNetworks: false,
         });
         useParamsSpy.mockReturnValue({});
         useWalletConnectedSpy.mockReturnValue(false);
@@ -124,6 +126,8 @@ describe('<ConnectWalletDialog /> component', () => {
             caipNetwork: undefined,
             chainId: undefined,
             caipNetworkId: undefined,
+            approvedCaipNetworkIds: undefined,
+            supportsAllNetworks: false,
         });
         useParamsSpy.mockReturnValue({ network: Network.ETHEREUM_MAINNET });
         render(createTestComponent());
@@ -146,6 +150,8 @@ describe('<ConnectWalletDialog /> component', () => {
             caipNetwork: undefined,
             chainId: undefined,
             caipNetworkId: undefined,
+            approvedCaipNetworkIds: undefined,
+            supportsAllNetworks: false,
         });
         useParamsSpy.mockReturnValue({});
         render(createTestComponent());

@@ -60,6 +60,7 @@ export const SetupStrategyDialogDistributionDexSwap: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionDexSwap"
                 hideAmount={true}

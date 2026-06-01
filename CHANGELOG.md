@@ -1,5 +1,55 @@
 # @aragon/app
 
+## 1.28.0
+
+### Minor Changes
+
+- [#1143](https://github.com/aragon/app/pull/1143) [`b4f77d4`](https://github.com/aragon/app/commit/b4f77d4377c65d0bc2c1286ed6dc9447a81071ff) Thanks [@milosh86](https://github.com/milosh86)! - Add new asset address select component allowing users to pick a token from the DAO list or enter a custom address
+
+- [#1147](https://github.com/aragon/app/pull/1147) [`e4dfa7b`](https://github.com/aragon/app/commit/e4dfa7b3a2a1e1ea7c485117a2dbe3433390ee3f) Thanks [@milosh86](https://github.com/milosh86)! - Add release and rename actions for Aragon names in the profile dialog
+
+- [#1081](https://github.com/aragon/app/pull/1081) [`58eda73`](https://github.com/aragon/app/commit/58eda73bd14c9eb447b3c1985bc359f8c0a698ea) Thanks [@milosh86](https://github.com/milosh86)! - Implement member.dao.eth subdomain claiming and edit of ENS records for your primary ENS
+
+- [#1117](https://github.com/aragon/app/pull/1117) [`8ce3ab4`](https://github.com/aragon/app/commit/8ce3ab4c99fc941ed75b094b1fc12536e323efe1) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add support for existing proposal creation conditions in governance process
+
+- [#1132](https://github.com/aragon/app/pull/1132) [`a2cb3f3`](https://github.com/aragon/app/commit/a2cb3f33fb42182eb27fde0a81163a9e50cf29e8) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Flatten and cleanup test DAO scenarios for gauges
+
+- [#1133](https://github.com/aragon/app/pull/1133) [`d568a0e`](https://github.com/aragon/app/commit/d568a0e01e8c2fdd0a6cdc8fa700afc87c157715) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Hide ".aragon.eth" from the member data list item and member profile headers
+
+- [#1124](https://github.com/aragon/app/pull/1124) [`a556a41`](https://github.com/aragon/app/commit/a556a41bf7416e77e255c070b49f1fa29d8e6631) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Implement shared guardrail skills system for agents
+
+### Patch Changes
+
+- [#1139](https://github.com/aragon/app/pull/1139) [`7de4a22`](https://github.com/aragon/app/commit/7de4a2239ce29514e71ca6f2dc4a8d945052cc7f) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove zkSync Sepolia network support from the app.
+
+- [#1133](https://github.com/aragon/app/pull/1133) [`d568a0e`](https://github.com/aragon/app/commit/d568a0e01e8c2fdd0a6cdc8fa700afc87c157715) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Render the member profile page for any valid address, falling back to ENS and address-only when the backend has no record (fixes featured delegates linking to non-indexed addresses)
+
+- [#1130](https://github.com/aragon/app/pull/1130) [`14ac981`](https://github.com/aragon/app/commit/14ac981cde14a404d21881cab341b80e0d29983f) Thanks [@evanaronson](https://github.com/evanaronson)! - Set focus to WalletConnect dialog to allow wallet search to work
+
+- [#1126](https://github.com/aragon/app/pull/1126) [`f523fef`](https://github.com/aragon/app/commit/f523fefd22f663a48507569ef3dc05f7906bf147) Thanks [@milosh86](https://github.com/milosh86)! - Fix sentry errors (APP-NEXT-1JH, APP-NEXT-1Z6, APP-NEXT-27P)
+
+- [#1137](https://github.com/aragon/app/pull/1137) [`91efc98`](https://github.com/aragon/app/commit/91efc9869f6aedfbd958b83f6ef00b2212ac00bc) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Replace the sum-to-100 gauge vote dialog with relative integer weights so decimal inputs no longer silently disable 'Submit'
+
+- [#1141](https://github.com/aragon/app/pull/1141) [`7b8c631`](https://github.com/aragon/app/commit/7b8c631ae9f6908f3aa7a708c06e24f91af5b564) Thanks [@evanaronson](https://github.com/evanaronson)! - Additional polish to Aragon Names and profiles
+
+- [#1133](https://github.com/aragon/app/pull/1133) [`d568a0e`](https://github.com/aragon/app/commit/d568a0e01e8c2fdd0a6cdc8fa700afc87c157715) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Polish Aragon Profiles UX: remove external link icon from "My DAOs", prevent profile creation dialogs from closing on outside click, improve username error message when starting or ending with a hyphen, indicate transaction network when it differs from the current DAO, and reduce the bio field height
+
+- [#1140](https://github.com/aragon/app/pull/1140) [`c00f6e9`](https://github.com/aragon/app/commit/c00f6e99d65524c0508c0e3565afbfc58a5ca948) Thanks [@milosh86](https://github.com/milosh86)! - Fix AppKit excess network approval prompts
+
+- [#1131](https://github.com/aragon/app/pull/1131) [`0fdf355`](https://github.com/aragon/app/commit/0fdf35553f06f3cd94790b2f25524bd1a6dcd56f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove .npmrc file, upgrade pnpm to 11, update package dependencies
+
+- [#1133](https://github.com/aragon/app/pull/1133) [`d568a0e`](https://github.com/aragon/app/commit/d568a0e01e8c2fdd0a6cdc8fa700afc87c157715) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix DAO members list when the connected user isn't in the paginated backend response yet: pinning no longer evicts a real member from the token/lock-to-vote list, and the "X of Y" counter now reflects the rendered cards in admin/multisig lists.
+
+- [#1136](https://github.com/aragon/app/pull/1136) [`89bef84`](https://github.com/aragon/app/commit/89bef84d0c6f16c6b1be75e760abd77cc6a4ce93) Thanks [@milosh86](https://github.com/milosh86)! - Set slotId prop of PluginFilterComponent as an optional prop
+
+- [#1138](https://github.com/aragon/app/pull/1138) [`2462d5f`](https://github.com/aragon/app/commit/2462d5f9b1a7a611cc58065356c4718ddb082d40) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix "Something went wrong" on the DAO member page for valid but non-checksummed addresses by normalizing to EIP-55 and redirecting to the canonical URL.
+
+- [#1129](https://github.com/aragon/app/pull/1129) [`a594f6e`](https://github.com/aragon/app/commit/a594f6e2e59be94f237b8437292991bb82298d50) Thanks [@milosh86](https://github.com/milosh86)! - Fix wallet connection by syncing state with AppKit and initializing AppKit early in providers
+
+- [#1129](https://github.com/aragon/app/pull/1129) [`a594f6e`](https://github.com/aragon/app/commit/a594f6e2e59be94f237b8437292991bb82298d50) Thanks [@milosh86](https://github.com/milosh86)! - Fix slow WC QR code generation
+
+- [#1134](https://github.com/aragon/app/pull/1134) [`b67fd57`](https://github.com/aragon/app/commit/b67fd5739fc3d7a020c2e1be6523dcef0fbb7756) Thanks [@milosh86](https://github.com/milosh86)! - Fetch real-time token total supply for LTV participation and settings
+
 ## 1.27.1
 
 ### Patch Changes

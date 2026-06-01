@@ -40,7 +40,7 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@v0.4
+        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app_infra"
@@ -60,7 +60,7 @@ jobs:
         run: pnpm run setup ${{ inputs.env }}
 
       - name: Setup env file secrets
-        uses: aragon/github-templates/steps/credential-retrieval@v0.4
+        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "kv_app_${{ inputs.env }}"

@@ -48,6 +48,15 @@ export interface IUseDaoPluginsParams {
      * Only returns plugins with full execute permissions when set to true.
      */
     hasExecute?: boolean;
+    /**
+     * Applies CMS visibility overrides (hides plugins listed in the DAO
+     * override's `pluginsToHide`). Visibility is presentation-only: set this to
+     * `true` ONLY for plugin listings, navigation, and create-flow pickers.
+     * Address/slug/type lookups that read settings or render existing proposals
+     * must leave this `false` so hidden plugins still resolve.
+     * @default false
+     */
+    visibleOnly?: boolean;
 }
 
 export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
@@ -132,6 +141,7 @@ export const useDaoPlugins = (
         interfaceType,
         slug,
         hasExecute,
+        visibleOnly,
     } = params;
 
     const { isEnabled } = useFeatureFlags();
@@ -149,12 +159,12 @@ export const useDaoPlugins = (
     });
 
     const daoOverride = daoOverrides?.[daoId];
-    // Apply visibility override only for plugin listings/navigation. When the
-    // caller is doing a direct lookup by `pluginAddress` (e.g. from an SPP
-    // sub-proposal that references a hidden body), keep the plugin so existing
-    // proposals continue to render.
+    // Visibility is presentation-only: filtering happens exclusively when the
+    // caller opts in via `visibleOnly` (listings, navigation, create-flow
+    // pickers). Lookups by address/slug/type keep the full canonical list so
+    // existing proposals targeting hidden plugins still resolve and render.
     const plugins =
-        allPlugins != null && pluginAddress == null
+        allPlugins != null && visibleOnly
             ? daoVisibilityUtils.filterHiddenPlugins(allPlugins, daoOverride)
             : allPlugins;
 

@@ -1,11 +1,16 @@
 import type { MetaMask } from '@synthetixio/synpress/playwright';
-import { connectToDapp } from '../../utils/metamaskUtils';
+import {
+    approveOptionalMetaMaskNotifications,
+    connectToDapp,
+} from '../../utils/metamaskUtils';
 import { BasePage } from '../page';
 
 export class WalletConnectionPage extends BasePage {
     async connectWallet(metamask: MetaMask) {
         await this.openConnectDialog();
         await this.openWeb3ConnectDialog();
+        // ConnectWalletDialog switches network before opening AppKit.
+        await approveOptionalMetaMaskNotifications(metamask);
         await this.approveTermsOfCondition();
         await this.selectWallet('MetaMask');
 

@@ -13,7 +13,7 @@ import {
     ensRecordKeys,
     useEnsAvatar,
     useEnsName,
-    useEnsRecords,
+    useEnsProfileRecords,
 } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useEfpStats } from '@/modules/governance/api/efpService';
@@ -143,7 +143,7 @@ export const DaoMemberDetailsPageClient: React.FC<
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
-    const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: ensRecords } = useEnsProfileRecords(ensName);
     const { data: displayName } = useEnsName(address, {
         stripAragonRegistrySuffix: true,
     });
