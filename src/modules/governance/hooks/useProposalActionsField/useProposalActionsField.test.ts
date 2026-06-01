@@ -19,11 +19,10 @@ describe('useProposalActionsField hook', () => {
             wrapper: FormWrapper,
         });
 
-        expect(result.current.actions).toHaveLength(0);
         expect(result.current.actionsMerged).toHaveLength(0);
     });
 
-    it('appends actions and exposes them through actions and actionsMerged', () => {
+    it('appends actions and exposes them through actionsMerged', () => {
         const { result } = renderHook(() => useProposalActionsField(), {
             wrapper: FormWrapper,
         });
@@ -35,7 +34,6 @@ describe('useProposalActionsField hook', () => {
             ]);
         });
 
-        expect(result.current.actions).toHaveLength(2);
         expect(result.current.actionsMerged).toHaveLength(2);
     });
 
@@ -47,12 +45,12 @@ describe('useProposalActionsField hook', () => {
         act(() => {
             result.current.handleAddAction([generateAction()]);
         });
-        expect(result.current.actions).toHaveLength(1);
+        expect(result.current.actionsMerged).toHaveLength(1);
 
         act(() => {
             result.current.handleRemoveAllActions();
         });
-        expect(result.current.actions).toHaveLength(0);
+        expect(result.current.actionsMerged).toHaveLength(0);
     });
 
     it('disables moveUp on the first action and moveDown on the last action', () => {

@@ -69,7 +69,6 @@ export const CreateProposalFormActions: React.FC<
     const { prepareActions } = useCreateProposalFormContext();
 
     const {
-        actions,
         actionsMerged,
         handleAddAction,
         handleRemoveAllActions,
@@ -160,7 +159,7 @@ export const CreateProposalFormActions: React.FC<
     const showActionComposer =
         (!hasConditionalPermissions || allowedActions != null) &&
         targetDao != null;
-    const hasActions = actions.length > 0;
+    const hasActions = actionsMerged.length > 0;
 
     return (
         <div className="flex flex-col gap-y-10">

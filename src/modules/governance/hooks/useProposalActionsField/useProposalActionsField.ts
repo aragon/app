@@ -105,11 +105,8 @@ export const useProposalActionsField = () => {
 
     return {
         /**
-         * Raw RHF field array entries — use for length checks (e.g. `hasActions`).
-         */
-        actions,
-        /**
-         * Field entries merged with watched values, ready for rendering.
+         * Field entries merged with their watched form values, ready for
+         * rendering. Use its `length` for emptiness checks.
          */
         actionsMerged,
         /**

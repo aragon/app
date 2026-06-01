@@ -26,7 +26,6 @@ export const CreateExecuteActionsFormActions: React.FC<
     const { chainId } = useDaoChain({ daoId });
 
     const {
-        actions,
         actionsMerged,
         handleAddAction,
         handleRemoveAllActions,
@@ -71,8 +70,7 @@ export const CreateExecuteActionsFormActions: React.FC<
     };
 
     const showActionComposer = dao != null;
-    // TODO: is actions relaly needed? can we use mergedActions?
-    const hasActions = actions.length > 0;
+    const hasActions = actionsMerged.length > 0;
 
     return (
         <div className="flex flex-col gap-y-10">
