@@ -30,11 +30,6 @@ export interface ICapitalDistributorCreateCampaignActionDetailsProps
         IProposalActionData<IProposalAction>
     > {}
 
-// merkleRoot is a 32-byte hash, not an address, so addressUtils.truncateAddress
-// (which only truncates valid 20-byte addresses) leaves it untouched.
-const truncateHex = (value: string): string =>
-    value.length > 18 ? `${value.slice(0, 10)}...${value.slice(-8)}` : value;
-
 const formatScheduleTime = (
     timestampSeconds: number,
     t: TranslationFunction,
@@ -216,7 +211,7 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 )}
             >
                 <Clipboard copyValue={merkleRoot}>
-                    {truncateHex(merkleRoot)}
+                    {addressUtils.truncateHash(merkleRoot)}
                 </Clipboard>
             </DefinitionList.Item>
             <DefinitionList.Item
