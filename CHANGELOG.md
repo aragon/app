@@ -1,5 +1,21 @@
 # @aragon/app
 
+## 1.29.0
+
+### Minor Changes
+
+- [#1149](https://github.com/aragon/app/pull/1149) [`ee9d5c0`](https://github.com/aragon/app/commit/ee9d5c0108cfad849862127ac4e0b30d3d66e6ae) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support Hemi network
+
+### Patch Changes
+
+- [#1162](https://github.com/aragon/app/pull/1162) [`dbf6244`](https://github.com/aragon/app/commit/dbf6244514877dd43e0098f0e2ec3d49449467ae) Thanks [@milosh86](https://github.com/milosh86)! - Keep input focus when editing decoded proposal action fields (fix unstable array form field IDs)
+
+- [#1159](https://github.com/aragon/app/pull/1159) [`e2311de`](https://github.com/aragon/app/commit/e2311de850f6ad69c3446879783479bfc805ade6) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update deps and fix code scanning issues
+
+- [#1161](https://github.com/aragon/app/pull/1161) [`88201bb`](https://github.com/aragon/app/commit/88201bbaf04d3760ef3a40f8378fae97e24d8244) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix crash when rendering proposal actions that target governance plugins hidden via CMS. Plugin visibility is now presentation-only: lookups always see the full plugin list, and hiding is applied only at listings via the new `visibleOnly` option
+
+- [#1160](https://github.com/aragon/app/pull/1160) [`505923c`](https://github.com/aragon/app/commit/505923c7bb494ad47ba995a79b2f04a14220aea6) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Improve E2E reliability against staging.
+
 ## 1.28.0
 
 ### Minor Changes
