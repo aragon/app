@@ -11,7 +11,6 @@ import { sanctionedAddressesOptions } from '@/shared/api/cmsService';
 import { whitelistedAddressesOptions } from '@/shared/api/cmsService/queries/useWhitelistedAddresses';
 import { translations } from '@/shared/constants/translations';
 import { featureFlags } from '@/shared/featureFlags';
-import { DebugPanelLazy } from '../../debugPanel/lazyDebugPanel';
 import { ErrorBoundary } from '../../errorBoundary';
 import { Footer } from '../../footer';
 import { Providers } from '../../providers';
@@ -44,10 +43,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
         requestHeaders.get('cookie'),
     );
 
-    const isDebugPanelEnabled =
-        featureFlagsSnapshot.find((f) => f.key === 'debugPanel')?.enabled ??
-        false;
-
     const queryClient = new QueryClient();
     await Promise.all([
         queryClient.prefetchQuery(sanctionedAddressesOptions()),
@@ -73,7 +68,6 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                 >
                     <ErrorBoundary>
                         <div className="flex grow flex-col">{children}</div>
-                        {isDebugPanelEnabled && <DebugPanelLazy />}
                     </ErrorBoundary>
                     <Footer />
                 </Providers>
