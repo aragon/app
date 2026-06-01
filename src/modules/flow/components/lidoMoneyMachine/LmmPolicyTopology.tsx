@@ -12,7 +12,6 @@
 import classNames from 'classnames';
 import type { Address } from 'viem';
 import { LMM_RPC_URL } from '@/modules/flow/demo/lmmDemoConfig';
-import { useLmmManifest } from '@/modules/flow/demo/useLmmManifest';
 import { useFlowDataContext } from '@/modules/flow/providers/flowDataProvider';
 import { StatusPanel } from './StatusPanel';
 import { TopologyView } from './TopologyView';
@@ -34,7 +33,6 @@ interface ILmmPolicyTopologyProps {
 export const LmmPolicyTopology: React.FC<ILmmPolicyTopologyProps> = (props) => {
     const { lidoDaoAddress, selectedNodeAddress, className } = props;
     const { liveSnapshot } = useFlowDataContext();
-    const { manifest } = useLmmManifest();
     const topology = liveSnapshot?.topology ?? null;
     const statusSnapshot = liveSnapshot?.snapshot ?? undefined;
     const error = liveSnapshot?.error;
@@ -83,7 +81,6 @@ export const LmmPolicyTopology: React.FC<ILmmPolicyTopologyProps> = (props) => {
                 <TopologyView
                     initialSelectedNodeAddress={selectedNodeAddress}
                     lidoDaoAddress={lidoDaoAddress}
-                    manifest={manifest}
                     status={statusSnapshot}
                     topology={topology}
                 />
