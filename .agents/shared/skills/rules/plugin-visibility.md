@@ -17,7 +17,7 @@ CMS "hidden" plugins (`IDaoOverride.pluginsToHide`) are a **presentation** conce
 ## The invariant
 
 - **Lookups use the full list.** Resolving a plugin by `pluginAddress`, `slug`, `interfaceType`, or `type` to read its `.settings`/metadata, render an existing proposal/action, run a guard, submit a vote, or count plugins → call `useDaoPlugins` WITHOUT `visibleOnly`. A hidden plugin must still resolve.
-- **Listings & create-pickers use `visibleOnly: true`.** Rendering a set of plugins to the user, or a picker for CREATING new proposals/actions (action composer, process picker, `selectPluginDialog`) → pass `visibleOnly: true`. Hidden plugins must not be offered for new work.
+- **Listings & create-pickers use `visibleOnly: true`.** Rendering a set of plugins to the user — plugin filter tabs (any `useDaoPluginFilterUrlParam` consumer feeding `PluginFilterComponent`), a body/process selector for the aside, or a picker for CREATING new proposals/actions (action composer, process picker, `selectPluginDialog`) → pass `visibleOnly: true`. `useDaoPluginFilterUrlParam` forwards params straight to `useDaoPlugins`, so it inherits the same `false` default — every filter-tab caller must opt in explicitly. Hidden plugins must not be offered for new work.
 - **Never filter-then-find.** If you filter by visibility (`visibleOnly: true` or `filterHiddenPlugins(list)`) and then `list.find(byAddress)`, a hidden target resolves to `undefined` and reading `.settings` crashes with `TypeError: Cannot read properties of undefined (reading 'settings')`. This was a real production bug in the normalize hooks (APP-793).
 
 ## Null-safety

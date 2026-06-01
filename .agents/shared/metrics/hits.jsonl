@@ -10,3 +10,4 @@
 {"ts":"2026-06-01T12:25:51.007Z","tool":"Edit","file":"src/plugins/tokenPlugin/hooks/useTokenNormalizeActions/useTokenNormalizeActions.test.tsx","rule":"plugin-visibility","bytes":2079,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-06-01T12:25:57.415Z","tool":"Edit","file":"src/plugins/lockToVotePlugin/hooks/useLockToVoteNormalizeActions/useLockToVoteNormalizeActions.test.tsx","rule":"plugin-visibility","bytes":2079,"elapsed_ms":0,"adapter":"claude"}
 {"ts":"2026-06-01T12:42:55.186Z","tool":"Edit","file":"src/shared/api/cmsService/queries/useDaoOverrides/useDaoOverrides.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-01T16:02:39.999Z","tool":"Edit","file":".agents/shared/skills/rules/plugin-visibility.md","rule":"rule-authoring","bytes":2654,"elapsed_ms":1,"adapter":"claude"}
