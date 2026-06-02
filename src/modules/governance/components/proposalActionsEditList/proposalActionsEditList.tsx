@@ -43,7 +43,7 @@ export const ProposalActionsEditList: React.FC<
         props;
 
     const expandedActions = actionsMerged
-        .map((action) => action.id)
+        .map((action) => action.fieldId)
         .filter((id): id is string => id != null);
 
     return (
@@ -65,8 +65,8 @@ export const ProposalActionsEditList: React.FC<
                         chainId={chainId}
                         editMode={true}
                         formPrefix={`actions.${index.toString()}`}
-                        key={action.id}
-                        value={action.id}
+                        key={action.fieldId}
+                        value={action.fieldId}
                     />
                 ))}
             </ProposalActions.Container>

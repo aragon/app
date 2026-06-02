@@ -36,7 +36,12 @@ export const useProposalActionsField = () => {
     const actionsMerged = actions.map((field, index) => ({
         ...field,
         ...stableWatchActions?.[index],
-        id: field.id,
+        // `fieldId` is our own stable id (assigned in handleAddAction) and is the React key for the
+        // item. It lives in the form values, so it survives RHF regenerating the field array `id`
+        // when the decoder re-encodes calldata on each keystroke. Every action enters the array via
+        // handleAddAction (which assigns a `fieldId`), so the `field.id` fallback is purely defensive
+        // — it just guarantees a key if some future path adds an action without going through it.
+        fieldId: field.fieldId ?? field.id,
     }));
 
     /**
@@ -72,7 +77,14 @@ export const useProposalActionsField = () => {
     };
 
     const handleAddAction = (newActions: IProposalActionData[]) => {
-        append(newActions);
+        // Assign a stable `fieldId` used as the React key of the rendered action item. Without it
+        // the key would fall back to RHF's field array id, which is regenerated whenever the decoder
+        // writes re-encoded calldata to `actions.N.data`, remounting the item and dropping focus.
+        const actionsWithId = newActions.map((action) => ({
+            ...action,
+            fieldId: action.fieldId ?? crypto.randomUUID(),
+        }));
+        append(actionsWithId);
     };
 
     const handleRemoveAllActions = useCallback(() => {
