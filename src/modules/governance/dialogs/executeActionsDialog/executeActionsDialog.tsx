@@ -1,17 +1,39 @@
-import { invariant } from '@aragon/gov-ui-kit';
+import { Dialog, DialogFooter, IconType, invariant } from '@aragon/gov-ui-kit';
+import { useMutation } from '@tanstack/react-query';
+import { useCallback, useEffect, useState } from 'react';
+import { useSendTransaction } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import {
-    type ITransactionDialogStepMeta,
-    TransactionDialog,
-    TransactionDialogStep,
-} from '@/shared/components/transactionDialog';
+    type ITransactionStatusStep,
+    TransactionStatus,
+    type TransactionStatusState,
+} from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IExecuteActionsDialogProps } from './executeActionsDialog.api';
 import { executeActionsDialogUtils } from './executeActionsDialogUtils';
 
+// Steps of the execute-actions flow: build the transaction, then dispatch it to the wallet.
+enum ExecuteActionsStep {
+    PREPARE = 'PREPARE',
+    SUBMIT = 'SUBMIT',
+}
+
+// Delay the auto-prepare to avoid a double mutation under React StrictMode in development
+// (see https://github.com/TanStack/query/issues/5341).
+const autoPrepareDelay = 100;
+
+/**
+ * Dialog to execute actions directly on the DAO.
+ *
+ * Unlike the generic `TransactionDialog`, this is a deliberately light, fire-and-forget flow: it
+ * prepares the transaction, dispatches it to the wallet, and completes immediately, without
+ * waiting for the signature, rejection, or an on-chain receipt. The transaction is typically sent
+ * to a Safe, where signing is asynchronous and can take a long time.
+ */
 export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     props,
 ) => {
@@ -28,14 +50,20 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const { daoId, actions, prepareActions } = location.params;
 
     const { t } = useTranslations();
+    const { close } = useDialogContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const stepper = useStepper<
-        ITransactionDialogStepMeta,
-        TransactionDialogStep
-    >({ initialActiveStep: TransactionDialogStep.PREPARE });
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
-    const handlePrepareTransaction = async () => {
+    const monitorError = useCallback(
+        (error: unknown) =>
+            transactionDialogUtils.monitorTransactionError(error, {
+                from: address,
+            }),
+        [address],
+    );
+
+    const prepareTransaction = useCallback(async () => {
         invariant(
             dao != null,
             'ExecuteActionsDialog: DAO must be defined to prepare the transaction.',
@@ -50,21 +78,123 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
             dao,
             preparedActions,
         });
-    };
+    }, [dao, actions, prepareActions]);
+
+    const {
+        mutate: prepare,
+        status: prepareStatus,
+        data: transaction,
+    } = useMutation({
+        mutationFn: prepareTransaction,
+        onError: monitorError,
+    });
+
+    const { mutate: sendTransaction } = useSendTransaction();
+
+    // Auto-prepare the transaction once the DAO is loaded.
+    useEffect(() => {
+        if (dao == null || prepareStatus !== 'idle') {
+            return;
+        }
+
+        const timeout = setTimeout(() => prepare(), autoPrepareDelay);
+        return () => clearTimeout(timeout);
+    }, [dao, prepareStatus, prepare]);
+
+    const handleSend = useCallback(() => {
+        if (transaction == null) {
+            return;
+        }
+
+        // Fire-and-forget: dispatch to the wallet and complete immediately, without awaiting the
+        // signature, rejection, or receipt. Errors are still reported to monitoring.
+        sendTransaction(transaction, { onError: monitorError });
+        setIsSubmitted(true);
+    }, [transaction, sendTransaction, monitorError]);
+
+    const isPreparing = prepareStatus === 'pending';
+    const isReady = prepareStatus === 'success';
+
+    const submitState: TransactionStatusState = isSubmitted
+        ? 'success'
+        : 'idle';
+
+    const steps: ITransactionStatusStep[] = [
+        {
+            id: ExecuteActionsStep.PREPARE,
+            order: 0,
+            meta: {
+                label: t(
+                    'app.governance.executeActionsDialog.step.prepare.label',
+                ),
+                errorLabel: t(
+                    'app.governance.executeActionsDialog.step.prepare.errorLabel',
+                ),
+                state: prepareStatus,
+            },
+        },
+        {
+            id: ExecuteActionsStep.SUBMIT,
+            order: 1,
+            meta: {
+                label: t(
+                    'app.governance.executeActionsDialog.step.submit.label',
+                ),
+                state: submitState,
+                addon: {
+                    label: t(
+                        'app.governance.executeActionsDialog.step.submit.addon',
+                    ),
+                    icon: IconType.BLOCKCHAIN_WALLET,
+                },
+            },
+        },
+    ];
+
+    const primaryAction = isSubmitted
+        ? {
+              label: t('app.governance.executeActionsDialog.button.success'),
+              href: daoUtils.getDaoUrl(dao, 'transactions'),
+              onClick: () => close(),
+          }
+        : prepareStatus === 'error'
+          ? {
+                label: t('app.shared.transactionDialog.footer.retry'),
+                iconLeft: IconType.RELOAD,
+                onClick: () => prepare(),
+            }
+          : {
+                label: t('app.governance.executeActionsDialog.button.submit'),
+                onClick: handleSend,
+                isLoading: isPreparing,
+                disabled: !isReady,
+            };
 
     return (
-        <TransactionDialog
-            completeOnSubmit={true}
-            description={t('app.governance.executeActionsDialog.description')}
-            network={dao?.network}
-            prepareTransaction={handlePrepareTransaction}
-            stepper={stepper}
-            submitLabel={t('app.governance.executeActionsDialog.button.submit')}
-            successLink={{
-                label: t('app.governance.executeActionsDialog.button.success'),
-                href: daoUtils.getDaoUrl(dao, 'transactions'),
-            }}
-            title={t('app.governance.executeActionsDialog.title')}
-        />
+        <>
+            <Dialog.Header
+                description={t(
+                    'app.governance.executeActionsDialog.description',
+                )}
+                title={t('app.governance.executeActionsDialog.title')}
+            />
+            <Dialog.Content>
+                <div className="flex flex-col gap-6 pb-3 md:pb-4">
+                    <TransactionStatus.Container steps={steps}>
+                        {steps.map((step) => (
+                            <TransactionStatus.Step key={step.id} {...step} />
+                        ))}
+                    </TransactionStatus.Container>
+                </div>
+            </Dialog.Content>
+            <DialogFooter
+                primaryAction={primaryAction}
+                secondaryAction={{
+                    label: t('app.shared.transactionDialog.footer.cancel'),
+                    onClick: () => close(),
+                    disabled: isSubmitted,
+                }}
+            />
+        </>
     );
 };

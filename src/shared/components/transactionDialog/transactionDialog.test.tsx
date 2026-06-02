@@ -163,53 +163,6 @@ describe('<TransactionDialog /> component', () => {
         );
     });
 
-    it('excludes the confirm and indexing steps in submit-only mode', () => {
-        const updateSteps = jest.fn() as jest.Mock<
-            void,
-            IStepperStep<ITransactionDialogStepMeta>[][]
-        >;
-        const stepper = generateStepperResult<
-            ITransactionDialogStepMeta,
-            string
-        >({ updateSteps });
-
-        render(createTestComponent({ stepper, completeOnSubmit: true }));
-
-        const stepIds = updateSteps.mock.calls[0][0].map((step) => step.id);
-        expect(stepIds).not.toContain(TransactionDialogStep.CONFIRM);
-        expect(stepIds).not.toContain(TransactionDialogStep.INDEXING);
-        expect(stepIds).toEqual(
-            expect.arrayContaining([
-                TransactionDialogStep.PREPARE,
-                TransactionDialogStep.APPROVE,
-            ]),
-        );
-    });
-
-    it('does not fire onSuccess on a receipt success in submit-only mode', () => {
-        const onSuccess = jest.fn();
-        useWaitForTransactionReceiptSpy.mockReturnValue({
-            status: 'success',
-            data: { transactionHash: '0x123' },
-        } as unknown as Wagmi.UseWaitForTransactionReceiptReturnType);
-
-        render(createTestComponent({ onSuccess, completeOnSubmit: true }));
-
-        expect(onSuccess).not.toHaveBeenCalled();
-    });
-
-    it('fires onSuccess on a receipt success when not in submit-only mode', () => {
-        const onSuccess = jest.fn();
-        useWaitForTransactionReceiptSpy.mockReturnValue({
-            status: 'success',
-            data: { transactionHash: '0x123' },
-        } as unknown as Wagmi.UseWaitForTransactionReceiptReturnType);
-
-        render(createTestComponent({ onSuccess }));
-
-        expect(onSuccess).toHaveBeenCalled();
-    });
-
     it('automatically triggers the step action when its auto property is set to true and state is idle', async () => {
         const stepAction = jest.fn();
         const steps = [

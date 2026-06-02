@@ -2052,6 +2052,16 @@
           "success": "View transactions"
         },
         "description": "To execute these actions on the DAO, confirm the onchain transaction in your wallet.",
+        "step": {
+          "prepare": {
+            "errorLabel": "Unable to prepare transaction",
+            "label": "Prepare transaction"
+          },
+          "submit": {
+            "addon": "Wallet",
+            "label": "Send to wallet"
+          }
+        },
         "title": "Execute transaction"
       },
       "executeCheckDialog": {
