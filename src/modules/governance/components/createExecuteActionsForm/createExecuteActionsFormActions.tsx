@@ -1,6 +1,5 @@
 import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
-import { useDao, useDaoPermissions } from '@/shared/api/daoService';
+import { useAllDaoPermissions, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useProposalActionsField } from '../../hooks/useProposalActionsField';
@@ -32,26 +31,9 @@ export const CreateExecuteActionsFormActions: React.FC<
         getArrayControls,
     } = useProposalActionsField();
 
-    // TODO: implement useAllDaoPermissions
-    const {
-        data: daoPermissionsData,
-        hasNextPage,
-        fetchNextPage,
-        isFetchingNextPage,
-    } = useDaoPermissions({
+    const { data: daoPermissions } = useAllDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: dao!.address },
-        queryParams: { pageSize: 50 },
     });
-
-    useEffect(() => {
-        if (hasNextPage && !isFetchingNextPage) {
-            void fetchNextPage();
-        }
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-    const daoPermissions = daoPermissionsData?.pages.flatMap(
-        (page) => page.data,
-    );
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
     const { components: permissionActionComponents } =

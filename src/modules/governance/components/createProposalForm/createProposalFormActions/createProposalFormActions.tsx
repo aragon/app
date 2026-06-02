@@ -1,9 +1,9 @@
 import { addressUtils, type ProposalActionComponent } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
-import { useDao, useDaoPermissions } from '@/shared/api/daoService';
+import { useAllDaoPermissions, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -82,26 +82,11 @@ export const CreateProposalFormActions: React.FC<
         },
         { enabled: hasConditionalPermissions },
     );
-    const {
-        data: daoPermissionsData,
-        hasNextPage,
-        fetchNextPage,
-        isFetchingNextPage,
-    } = useDaoPermissions({
+    const { data: daoPermissions } = useAllDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
-        queryParams: { pageSize: 50 },
     });
 
-    useEffect(() => {
-        if (hasNextPage && !isFetchingNextPage) {
-            void fetchNextPage();
-        }
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
     const allowedActions = allowedActionsData?.pages.flatMap(
-        (page) => page.data,
-    );
-    const daoPermissions = daoPermissionsData?.pages.flatMap(
         (page) => page.data,
     );
 
