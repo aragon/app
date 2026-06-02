@@ -58,6 +58,11 @@ export interface ITransactionDialogFooterProps<
      * When true, the cancel button is permanently disabled.
      */
     disableCancel?: boolean;
+    /**
+     * When true, the dialog completes on transaction submission (APPROVE) instead of waiting
+     * for an on-chain receipt, so the success link is shown on the APPROVE step.
+     */
+    completeOnSubmit?: boolean;
 }
 
 const stepStateSubmitLabel: Partial<
@@ -100,6 +105,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         indexingFallbackUrl,
         proposalSlug,
         disableCancel,
+        completeOnSubmit,
     } = props;
 
     // For two step transactions we move from first to second step automatically on success, so in those cases
@@ -140,9 +146,11 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const isSuccessState = state === 'success';
     const isPendingState = state === 'pending';
 
-    const successStep = transactionType
-        ? TransactionDialogStep.INDEXING
-        : TransactionDialogStep.CONFIRM;
+    const successStep = completeOnSubmit
+        ? TransactionDialogStep.APPROVE
+        : transactionType
+          ? TransactionDialogStep.INDEXING
+          : TransactionDialogStep.CONFIRM;
 
     const displaySuccessLink = stepId === successStep && isSuccessState;
 
@@ -159,7 +167,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
         disableCancel ||
         ((stepId === TransactionDialogStep.CONFIRM ||
             stepId === TransactionDialogStep.INDEXING) &&
-            (isSuccessState || isPendingState));
+            (isSuccessState || isPendingState)) ||
+        (completeOnSubmit &&
+            stepId === TransactionDialogStep.APPROVE &&
+            isSuccessState);
 
     const customSubmitLabel =
         stepId != null && state != null

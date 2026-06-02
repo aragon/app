@@ -178,6 +178,40 @@ describe('<TransactionDialogFooter /> component', () => {
         expect(link.getAttribute('href')).toEqual(successLink.href);
     });
 
+    it('renders the success link on the approve step in submit-only mode', () => {
+        const successLink = {
+            label: 'View transactions',
+            href: '/dao/transactions',
+        };
+        const activeStep = {
+            id: TransactionDialogStep.APPROVE,
+            meta: { state: 'success' },
+        } as unknown as ITransactionDialogStep;
+        render(
+            createTestComponent({
+                successLink,
+                activeStep,
+                completeOnSubmit: true,
+            }),
+        );
+        const link = screen.getByRole('link', { name: successLink.label });
+        expect(link).toBeInTheDocument();
+        expect(link.getAttribute('href')).toEqual(successLink.href);
+    });
+
+    it('disables the cancel button on the approve step success in submit-only mode', () => {
+        const activeStep = {
+            id: TransactionDialogStep.APPROVE,
+            meta: { state: 'success' },
+        } as unknown as ITransactionDialogStep;
+        render(createTestComponent({ activeStep, completeOnSubmit: true }));
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            }),
+        ).toBeDisabled();
+    });
+
     it('supports success href to be a function to build the link based on the transaction receipt', () => {
         const txReceipt = { from: '0x123' } as unknown as TransactionReceipt;
         const href = ({ receipt }: { receipt?: TransactionReceipt }) =>

@@ -137,4 +137,12 @@ export interface ITransactionDialogProps<
      * When true, the cancel button in the dialog footer is permanently disabled.
      */
     disableCancel?: boolean;
+    /**
+     * When true, the dialog completes as soon as the transaction is submitted to the wallet,
+     * without waiting for an on-chain receipt. Useful for wallets that don't return an
+     * immediate receipt (e.g. Safe or WalletConnect-connected DAOs). Drops the CONFIRM and
+     * INDEXING steps so the flow is just PREPARE → APPROVE.
+     * @default false
+     */
+    completeOnSubmit?: boolean;
 }
