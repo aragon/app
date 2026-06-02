@@ -66,6 +66,7 @@ export const DaoMemberListContainer: React.FC<IDaoMemberListContainerProps> = (
             type: PluginType.BODY,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
+            visibleOnly: true,
             name: daoMemberListFilterParam,
             enableUrlUpdate: onValueChange == null,
             fallbackValue:

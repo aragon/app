@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -221,7 +221,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:

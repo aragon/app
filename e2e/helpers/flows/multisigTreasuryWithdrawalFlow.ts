@@ -3,14 +3,23 @@ import type { MetaMask } from '@synthetixio/synpress/playwright';
 import { getAddress } from 'viem';
 import type { BvMultisigTreasuryDao } from '../constants/bvDaos';
 import {
+    ACCORDION_VISIBILITY_TIMEOUT,
+    ARAGON_PROFILE_DISMISS_TIMEOUT,
     MEMBER_GATE_API_TIMEOUT,
+    PLUGIN_SELECT_DIALOG_TIMEOUT,
+    PROPOSAL_CREATED_NAV_TIMEOUT,
     PROPOSAL_FORM_ELEMENT_TIMEOUT,
     PUBLISH_DIALOG_TIMEOUT,
+    UI_DIALOG_TIMEOUT,
+    UI_FIELD_VALUE_TIMEOUT,
+    UI_STEP_TIMEOUT,
 } from '../constants/timeouts';
 import { DaoProposalDetailPage } from '../pages/daoProposalDetailPage/daoProposalDetailPage';
 import { DaoProposalsPage } from '../pages/daoProposalsPage/daoProposalsPage';
 import { WalletConnectionPage } from '../shared/walletConnectionPage/walletConnectionPage';
 import {
+    approveOptionalMetaMaskNotifications,
+    getConnectedWalletAddress,
     signTransactionInDappDialog,
     switchNetwork,
 } from '../utils/metamaskUtils';
@@ -41,7 +50,10 @@ async function advanceFromActionsStepSkippingSimulation(
             }),
         })
         .last();
-    await actionsFooterMenu.waitFor({ state: 'visible', timeout: 15_000 });
+    await actionsFooterMenu.waitFor({
+        state: 'visible',
+        timeout: UI_STEP_TIMEOUT,
+    });
     await page
         .locator('button[type="submit"][form="createProposalWizard"]')
         .filter({ hasText: 'Skip simulation' })
@@ -68,7 +80,27 @@ export async function ensureBvDaoSession(
     });
     await walletPage.navigate();
     await walletPage.connectWallet(metamask);
+    await approveOptionalMetaMaskNotifications(metamask);
     await switchNetwork(page, metamask, dao.network);
+
+    const walletAddress = await getConnectedWalletAddress(page);
+    // AragonProfileOnboardingWatcher — once per address after connect
+    await page.evaluate((addr) => {
+        localStorage.setItem(
+            `aragon-profile-onboarding:${addr.toLowerCase()}`,
+            'true',
+        );
+    }, walletAddress);
+    await page
+        .getByRole('dialog')
+        .filter({
+            has: page.getByRole('heading', {
+                name: /your profile|Aragon name/i,
+            }),
+        })
+        .getByRole('button', { name: 'Cancel', exact: true })
+        .click({ timeout: ARAGON_PROFILE_DISMISS_TIMEOUT })
+        .catch(() => undefined);
 }
 
 /**
@@ -76,8 +108,9 @@ export async function ensureBvDaoSession(
  * "New Proposal" button on the proposals page. Without this, clicking
  * the button may race against the member-check and fail.
  */
-export async function waitForProposalsMemberGate(page: Page): Promise<void> {
-    await page.waitForResponse(
+/** Call before navigating to proposals — the exists check fires during page load. */
+export function waitForProposalsMemberGate(page: Page) {
+    return page.waitForResponse(
         (res) =>
             /\/v2\/members\/[^/]+\/[^/]+\/exists(?:\?|$)/.test(res.url()) &&
             res.ok(),
@@ -97,9 +130,10 @@ export async function openMultisigProposalWizard(page: Page): Promise<void> {
         .click();
 
     try {
-        await page
-            .getByRole('dialog')
-            .waitFor({ state: 'visible', timeout: 10_000 });
+        await page.getByRole('dialog').waitFor({
+            state: 'visible',
+            timeout: PLUGIN_SELECT_DIALOG_TIMEOUT,
+        });
     } catch {
         // Single-process DAOs skip the plugin selection dialog
         // and navigate straight to the create URL.
@@ -151,24 +185,24 @@ export async function fillMultisigNativeWithdrawProposal(
     const actionSearch = page.getByPlaceholder(
         /Search by action, contract name, or address/i,
     );
-    await expect(actionSearch).toBeVisible({ timeout: 15_000 });
+    await expect(actionSearch).toBeVisible({ timeout: UI_STEP_TIMEOUT });
     await actionSearch.fill('Transfer');
     const transferOption = page.getByRole('option', {
         name: 'Transfer',
         exact: true,
     });
-    await expect(transferOption).toBeVisible({ timeout: 15_000 });
+    await expect(transferOption).toBeVisible({ timeout: UI_STEP_TIMEOUT });
     await transferOption.click();
 
     const assetTrigger = wizardForm.getByRole('button', {
         name: 'Select',
         exact: true,
     });
-    await expect(assetTrigger).toBeVisible({ timeout: 20_000 });
+    await expect(assetTrigger).toBeVisible({ timeout: UI_DIALOG_TIMEOUT });
     await assetTrigger.click();
 
     const assetDialog = page.getByRole('dialog', { name: 'Select an asset' });
-    await expect(assetDialog).toBeVisible({ timeout: 20_000 });
+    await expect(assetDialog).toBeVisible({ timeout: UI_DIALOG_TIMEOUT });
     await expect(
         assetDialog.getByText(/ETH|Ether|Ethereum/i).first(),
     ).toBeVisible({ timeout: PROPOSAL_FORM_ELEMENT_TIMEOUT });
@@ -176,17 +210,21 @@ export async function fillMultisigNativeWithdrawProposal(
         .getByText(/^(Ether|Ethereum|ETH)$/)
         .first()
         .click();
-    await expect(assetDialog).toBeHidden({ timeout: 15_000 });
+    await expect(assetDialog).toBeHidden({ timeout: UI_STEP_TIMEOUT });
 
-    await expect(
-        wizardForm.getByRole('button', { name: 'Max', exact: true }),
-    ).toBeVisible({ timeout: PUBLISH_DIALOG_TIMEOUT });
+    // AssetInput labels the button "Max {balance}" (e.g. "Max 0.51"), not "Max" alone.
+    const maxAmountButton = wizardForm.getByRole('button', { name: /^Max\b/ });
+    await expect(maxAmountButton).toBeVisible({
+        timeout: PUBLISH_DIALOG_TIMEOUT,
+    });
 
     const amountField = wizardForm.getByRole('spinbutton');
-    await expect(amountField).toBeEnabled({ timeout: 15_000 });
+    await expect(amountField).toBeEnabled({ timeout: UI_STEP_TIMEOUT });
     await amountField.fill(amountEth);
     await amountField.blur();
-    await expect(amountField).toHaveValue(amountEth, { timeout: 10_000 });
+    await expect(amountField).toHaveValue(amountEth, {
+        timeout: UI_FIELD_VALUE_TIMEOUT,
+    });
 
     const recipientField = wizardForm.getByPlaceholder(/ENS or 0x/i);
     await recipientField.click();
@@ -199,7 +237,7 @@ export async function fillMultisigNativeWithdrawProposal(
         wizardForm
             .getByText(new RegExp(checksummedReceiver.slice(0, 6), 'i'))
             .first(),
-    ).toBeVisible({ timeout: 20_000 });
+    ).toBeVisible({ timeout: UI_DIALOG_TIMEOUT });
     await page
         .getByRole('heading', { name: 'Add actions', exact: true })
         .click();
@@ -243,7 +281,9 @@ export async function expectProposalActionsDecoded(page: Page): Promise<void> {
         .locator('button[aria-expanded="false"]')
         .first();
     if (
-        await accordionTrigger.isVisible({ timeout: 5000 }).catch(() => false)
+        await accordionTrigger
+            .isVisible({ timeout: ACCORDION_VISIBILITY_TIMEOUT })
+            .catch(() => false)
     ) {
         await accordionTrigger.click();
     }
@@ -277,8 +317,9 @@ export async function createAndPublishMultisigWithdrawProposal(
         network: dao.network,
         address: dao.address,
     });
+    const memberGate = waitForProposalsMemberGate(page);
     await proposals.navigate();
-    await waitForProposalsMemberGate(page);
+    await memberGate.catch(() => undefined);
     await openMultisigProposalWizard(page);
 
     const proposalTitle = `${titlePrefix} ${Date.now()}`;
@@ -289,7 +330,9 @@ export async function createAndPublishMultisigWithdrawProposal(
     });
 
     await signTransactionInDappDialog(page, metamask);
-    await page.waitForURL(/\/proposals/, { timeout: 60_000 });
+    await page.waitForURL(/\/proposals/, {
+        timeout: PROPOSAL_CREATED_NAV_TIMEOUT,
+    });
 
     return { title: proposalTitle, url: page.url() };
 }

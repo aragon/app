@@ -11,8 +11,10 @@ import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useDaoPlugins } from './useDaoPlugins';
 
+const useDaoOverridesMock = jest.fn(() => ({ data: undefined }));
+
 jest.mock('@/shared/api/cmsService', () => ({
-    useDaoOverrides: () => ({ data: undefined }),
+    useDaoOverrides: () => useDaoOverridesMock(),
 }));
 
 describe('useDaoPlugins hook', () => {
@@ -22,6 +24,7 @@ describe('useDaoPlugins hook', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         getDaoPluginsSpy.mockReset();
+        useDaoOverridesMock.mockReturnValue({ data: undefined });
     });
 
     it('retrieves the DAO plugins and returns them as tab-plugins', () => {
@@ -91,6 +94,62 @@ describe('useDaoPlugins hook', () => {
             type,
             pluginAddress,
         });
+    });
+
+    it('hides plugins listed in the DAO override when visibleOnly is true', () => {
+        const hiddenPlugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            address: '0xhidden',
+            slug: 'token',
+        });
+        const visiblePlugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.MULTISIG,
+            address: '0xvisible',
+            slug: 'multi',
+        });
+        const plugins = [hiddenPlugin, visiblePlugin];
+        const dao = generateDao({ id: 'test', plugins });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        useDaoOverridesMock.mockReturnValue({
+            data: { test: { pluginsToHide: [{ address: '0xhidden' }] } },
+        } as never);
+
+        const { result } = renderHook(
+            () => useDaoPlugins({ daoId: dao.id, visibleOnly: true }),
+            { wrapper: FeatureFlagsProvider },
+        );
+
+        expect(result.current?.map((plugin) => plugin.meta.address)).toEqual([
+            '0xvisible',
+        ]);
+    });
+
+    it('keeps hidden plugins in the canonical list when visibleOnly is not set', () => {
+        const hiddenPlugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.TOKEN_VOTING,
+            address: '0xhidden',
+            slug: 'token',
+        });
+        const plugins = [hiddenPlugin];
+        const dao = generateDao({ id: 'test', plugins });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        getDaoPluginsSpy.mockReturnValue(plugins);
+        useDaoOverridesMock.mockReturnValue({
+            data: { test: { pluginsToHide: [{ address: '0xhidden' }] } },
+        } as never);
+
+        const { result } = renderHook(() => useDaoPlugins({ daoId: dao.id }), {
+            wrapper: FeatureFlagsProvider,
+        });
+
+        expect(result.current?.map((plugin) => plugin.meta.address)).toEqual([
+            '0xhidden',
+        ]);
     });
 
     it('filters the plugins by those with full execute when hasExecute is true', () => {

@@ -2,10 +2,19 @@ import type { BrowserContext, Page } from '@playwright/test';
 import type { MetaMask } from '@synthetixio/synpress/playwright';
 import { parseEther } from 'viem';
 import {
+    MM_NETWORK_SWITCH_ACTION_NAMES,
+    MM_PRIMARY_ACTION_NAMES,
+    MM_PRIMARY_ACTION_REGEX,
+} from '../constants/metamaskActions';
+import {
     GOVERNANCE_DIALOG_TIMEOUT,
+    GOVERNANCE_SIGN_CLICK_TIMEOUT,
     MM_CONFIRM_ACTION_TIMEOUT,
     MM_CONFIRM_NOTIFICATION_TIMEOUT,
     MM_NOTIFICATION_TIMEOUT,
+    MM_OPTIONAL_NOTIFICATION_TIMEOUT,
+    SIGN_TRANSACTION_TIMEOUT,
+    UI_DIALOG_TIMEOUT,
     VIEW_PROPOSAL_TIMEOUT,
 } from '../constants/timeouts';
 
@@ -52,10 +61,15 @@ export async function getMetaMaskActionPage(
 /** Confirms the pending MetaMask notification by trying common button labels. */
 async function clickMetaMaskConfirmAction(
     actionPage: Page,
-    { timeout = MM_CONFIRM_ACTION_TIMEOUT }: { timeout?: number } = {},
+    {
+        timeout = MM_CONFIRM_ACTION_TIMEOUT,
+        preferredNames = MM_PRIMARY_ACTION_NAMES,
+    }: {
+        timeout?: number;
+        preferredNames?: readonly string[];
+    } = {},
 ) {
-    const exactNames = ['Confirm', 'Sign', 'Approve', 'Sign transaction'];
-    for (const name of exactNames) {
+    for (const name of preferredNames) {
         const btn = actionPage.getByRole('button', { name, exact: true });
         if (await btn.isVisible().catch(() => false)) {
             await btn.click();
@@ -64,10 +78,49 @@ async function clickMetaMaskConfirmAction(
     }
     const fallback = actionPage
         .getByRole('button')
-        .filter({ hasText: /^(Confirm|Sign|Approve)$/i })
+        .filter({ hasText: MM_PRIMARY_ACTION_REGEX })
         .first();
     await fallback.waitFor({ state: 'visible', timeout });
     await fallback.click();
+}
+
+/**
+ * Approves any MetaMask notification already open (e.g. network switch from AppKit
+ * before the Connect popup). No-op when no notification is present.
+ */
+export async function approveOptionalMetaMaskNotifications(
+    metamask: MetaMask,
+    {
+        timeout = MM_OPTIONAL_NOTIFICATION_TIMEOUT,
+        maxRounds = 2,
+        preferredNames = MM_NETWORK_SWITCH_ACTION_NAMES,
+    }: {
+        timeout?: number;
+        maxRounds?: number;
+        preferredNames?: readonly string[];
+    } = {},
+) {
+    const extensionId = metamask.extensionId;
+    if (!extensionId) {
+        return;
+    }
+
+    for (let round = 0; round < maxRounds; round++) {
+        try {
+            const actionPage = await getMetaMaskActionPage(
+                metamask.context,
+                extensionId,
+                timeout,
+            );
+            await clickMetaMaskConfirmAction(actionPage, {
+                timeout,
+                preferredNames,
+            });
+            await metamask.page.waitForTimeout(400);
+        } catch {
+            return;
+        }
+    }
 }
 
 /**
@@ -130,7 +183,7 @@ export async function signTransactionInDappDialog(
     page: Page,
     metamask: MetaMask,
     {
-        signTimeout = 40_000,
+        signTimeout = SIGN_TRANSACTION_TIMEOUT,
         viewProposalTimeout = VIEW_PROPOSAL_TIMEOUT,
     }: { signTimeout?: number; viewProposalTimeout?: number } = {},
 ) {
@@ -186,7 +239,11 @@ export async function switchNetwork(
                 params: [{ chainId: cId }],
             });
         }, chainId),
-        getMetaMaskActionPage(metamask.context, extensionId, 5000)
+        getMetaMaskActionPage(
+            metamask.context,
+            extensionId,
+            MM_OPTIONAL_NOTIFICATION_TIMEOUT,
+        )
             .then((actionPage) => clickMetaMaskConfirmAction(actionPage))
             .catch(() => undefined),
     ]);
@@ -254,7 +311,7 @@ export async function confirmGovernanceTransactionDialog(
 
     for (let round = 0; round < maxRounds; round++) {
         if (await viewProposalCta.isVisible().catch(() => false)) {
-            await viewProposalCta.click({ timeout: 20_000 });
+            await viewProposalCta.click({ timeout: UI_DIALOG_TIMEOUT });
             return;
         }
 
@@ -267,7 +324,7 @@ export async function confirmGovernanceTransactionDialog(
                 state: 'visible',
                 timeout: viewProposalTimeout,
             });
-            await viewProposalCta.click({ timeout: 20_000 });
+            await viewProposalCta.click({ timeout: UI_DIALOG_TIMEOUT });
             return;
         }
 
@@ -280,7 +337,7 @@ export async function confirmGovernanceTransactionDialog(
                 .getByRole('button', { name, exact: true });
             if (await btn.isVisible().catch(() => false)) {
                 await page.bringToFront();
-                await btn.click({ timeout: 90_000 });
+                await btn.click({ timeout: GOVERNANCE_SIGN_CLICK_TIMEOUT });
                 clicked = true;
                 await confirmTransaction(metamask);
                 break;
@@ -297,7 +354,7 @@ export async function confirmGovernanceTransactionDialog(
         state: 'visible',
         timeout: viewProposalTimeout,
     });
-    await viewProposalCta.click({ timeout: 20_000 });
+    await viewProposalCta.click({ timeout: UI_DIALOG_TIMEOUT });
 }
 
 /**
