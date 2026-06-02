@@ -37,7 +37,6 @@ export const CreateExecuteActionsPageClient: React.FC<
 
     useExecutePermissionCheckGuard({ daoId });
 
-    // TODO: prepareActions logic is duplicated with the same logic in create proposal wizard! can we extract it into a reusable piece?
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
 
