@@ -43,10 +43,10 @@ describe('useExecutePermissionCheckGuard hook', () => {
             chainId: 1,
             isReconnecting: false,
         });
-        useConnectedWalletGuardSpy.mockReturnValue({
-            check: jest.fn(),
+        useConnectedWalletGuardSpy.mockImplementation((params) => ({
+            check: jest.fn().mockImplementation(() => params?.onSuccess?.()),
             result: true,
-        });
+        }));
         useDaoExecutePermissionSpy.mockReturnValue({
             hasPermission: true,
             isLoading: false,
@@ -80,10 +80,10 @@ describe('useExecutePermissionCheckGuard hook', () => {
                 data: generateDao({ address: daoAddress, network: daoNetwork }),
             }),
         );
-        useConnectedWalletGuardSpy.mockReturnValue({
-            check: jest.fn(),
+        useConnectedWalletGuardSpy.mockImplementation((params) => ({
+            check: jest.fn().mockImplementation(() => params?.onSuccess?.()),
             result: true,
-        });
+        }));
         useDaoExecutePermissionSpy.mockReturnValue({
             hasPermission: false,
             isLoading: false,

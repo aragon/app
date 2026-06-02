@@ -31,9 +31,6 @@ const executePermissionId = keccak256(
 /**
  * Checks on-chain whether the connected wallet holds EXECUTE_PERMISSION on the
  * DAO itself (`dao.hasPermission(dao, wallet, EXECUTE_PERMISSION, "0x")`).
- *
- * Reads directly from the DAO contract on the DAO's chain so a freshly granted
- * permission (e.g. to a Safe) is reflected without indexer lag.
  */
 export const useDaoExecutePermission = (
     params: IUseDaoExecutePermissionParams,
