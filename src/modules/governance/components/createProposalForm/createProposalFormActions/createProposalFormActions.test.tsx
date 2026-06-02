@@ -7,8 +7,6 @@ import {
     generateDao,
     generateDaoPlugin,
     generateDialogContext,
-    generatePaginatedResponse,
-    generateReactQueryInfiniteResultSuccess,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -20,7 +18,10 @@ import {
 
 describe('<CreateProposalFormActions /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useDaoPermissionsSpy = jest.spyOn(daoService, 'useDaoPermissions');
+    const useAllDaoPermissionsSpy = jest.spyOn(
+        daoService,
+        'useAllDaoPermissions',
+    );
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const useCreateProposalFormContextSpy = jest.spyOn(
         CreateProposalProvider,
@@ -32,13 +33,8 @@ describe('<CreateProposalFormActions /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
-        useDaoPermissionsSpy.mockReturnValue(
-            generateReactQueryInfiniteResultSuccess({
-                data: {
-                    pages: [generatePaginatedResponse({ data: [] })],
-                    pageParams: [],
-                },
-            }),
+        useAllDaoPermissionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: [] }),
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
@@ -50,7 +46,7 @@ describe('<CreateProposalFormActions /> component', () => {
 
     afterEach(() => {
         useDaoSpy.mockReset();
-        useDaoPermissionsSpy.mockReset();
+        useAllDaoPermissionsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         getDaoPluginsSpy.mockReset();
