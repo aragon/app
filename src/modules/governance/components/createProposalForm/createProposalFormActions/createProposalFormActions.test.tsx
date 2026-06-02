@@ -34,7 +34,9 @@ describe('<CreateProposalFormActions /> component', () => {
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
         useAllDaoPermissionsSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: [] }),
+            generateReactQueryResultSuccess({
+                data: [],
+            }) as unknown as ReturnType<typeof daoService.useAllDaoPermissions>,
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
