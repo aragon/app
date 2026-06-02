@@ -51,9 +51,12 @@ export const initCapitalDistributorActionViews = () => {
                     inputData: {
                         function: createCampaignAbi.name,
                         contract: PluginContractName.CAPITAL_DISTRIBUTOR,
-                        // @ts-expect-error - ABI inputs have readonly tuple types that don't match the expected mutable array
                         parameters: createCampaignAbi.inputs.map((param) => ({
                             ...param,
+                            components:
+                                'components' in param
+                                    ? [...param.components]
+                                    : undefined,
                             value: '',
                         })),
                     },
