@@ -1,6 +1,26 @@
 {
   "app": {
     "actions": {
+      "core": {
+        "createProposalActionDetails": {
+          "metadataTitle": "Title",
+          "metadataSummary": "Summary",
+          "metadataDescription": "Description",
+          "metadataResources": "Resources",
+          "startTimeTerm": "Start time",
+          "endTimeTerm": "End time",
+          "startTimeNotSet": "Not set",
+          "endTimeNotSet": "Not set",
+          "readMore": "Read more",
+          "readLess": "Read less",
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed after the proposal passes."
+        },
+        "executeActionDetails": {
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed."
+        }
+      },
       "gaugeRegistrar": {
         "composer": {
           "contractName": "Gauge Registrar",
