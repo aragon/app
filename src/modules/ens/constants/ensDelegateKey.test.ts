@@ -16,6 +16,7 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         { network: Network.CHILIZ_MAINNET, expected: 'chzmainnet' },
         { network: Network.PEAQ_MAINNET, expected: 'PEAQ' },
         { network: Network.CITREA_MAINNET, expected: 'citrea' },
+        { network: Network.HEMI_MAINNET, expected: 'hemi' },
         { network: Network.KATANA_MAINNET, expected: 'katana' },
     ])('maps mainnet $network to canonical EIP-3770 shortname "$expected"', ({
         network,

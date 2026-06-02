@@ -70,6 +70,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
         includeSubPlugins: false,
         includeLinkedAccounts: true,
         hasExecute: fullExecuteOnly,
+        visibleOnly: true,
     })!;
 
     const processedDaoPlugins = daoPlugins.filter(

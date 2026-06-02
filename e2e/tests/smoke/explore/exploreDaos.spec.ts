@@ -1,4 +1,8 @@
-import { ExplorePage } from '@e2e/helpers';
+import {
+    EXPLORE_SEARCH_API_TIMEOUT,
+    EXPLORE_SEARCH_UI_TIMEOUT,
+    ExplorePage,
+} from '@e2e/helpers';
 import { expect, test } from '@playwright/test';
 
 test.describe('Explore page', () => {
@@ -25,13 +29,25 @@ test.describe('Explore page', () => {
         await expect(explore.daoCards().first()).toBeVisible();
     });
 
-    test('search filters the DAO list', async () => {
+    test('search filters the DAO list', async ({ page }) => {
         const cards = explore.daoCards();
         await expect(cards.first()).toBeVisible();
         const countBefore = await cards.count();
 
+        // DaoList debounces search by 500ms — wait for the filtered API response.
+        const searchResponse = page.waitForResponse(
+            (res) =>
+                res.url().includes('/v2/daos') &&
+                res.url().includes('search=aragon') &&
+                res.ok(),
+            { timeout: EXPLORE_SEARCH_API_TIMEOUT },
+        );
         await explore.searchInput().fill('aragon');
-        await expect(cards.first()).toBeVisible();
+        await searchResponse;
+
+        await expect(cards.first()).toBeVisible({
+            timeout: EXPLORE_SEARCH_UI_TIMEOUT,
+        });
 
         const countAfter = await cards.count();
         expect(countAfter).toBeGreaterThan(0);

@@ -20,7 +20,7 @@ export class BasePage {
         this.path = params.path;
     }
 
-    navigate = async () => {
+    async navigate() {
         try {
             this.response = await this.page.goto(this.path, {
                 waitUntil: 'domcontentloaded',
@@ -34,7 +34,7 @@ export class BasePage {
             this.vercelError = true;
         }
         return this;
-    };
+    }
 
     isVercelError = () => this.vercelError;
 
