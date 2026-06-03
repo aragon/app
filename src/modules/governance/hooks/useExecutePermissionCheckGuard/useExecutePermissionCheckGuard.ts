@@ -37,13 +37,14 @@ export const useExecutePermissionCheckGuard = (
         if (!hasPermission) {
             const transactionsUrl = daoUtils.getDaoUrl(dao, 'transactions');
             if (transactionsUrl != null) {
-                router.push(transactionsUrl);
+                router.replace(transactionsUrl);
             }
         }
     }, [dao, hasPermission, isLoading, router]);
 
     const { check: checkWalletConnected } = useConnectedWalletGuard({
         onSuccess: checkPermission,
+        onError: checkPermission,
     });
 
     useEffect(() => {

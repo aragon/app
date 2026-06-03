@@ -15,9 +15,9 @@ export const useRouter = () => {
     const routerInstance = useRouterWithTopLoader();
 
     // Memoize the router to ensure referential stability - temp hack until a fix is applied to nextjs-toploader package
-    // eslint-disable-next-line react-hooks/exhaustive-deps, @typescript-eslint/unbound-method
+    // biome-ignore lint/correctness/useExhaustiveDependencies: memoize on stable methods instead of the unstable routerInstance reference
     return useMemo(
         () => routerInstance,
-        [routerInstance.push, routerInstance.replace, routerInstance],
+        [routerInstance.push, routerInstance.replace],
     );
 };
