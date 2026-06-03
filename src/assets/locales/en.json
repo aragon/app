@@ -242,6 +242,25 @@
           "title": "Upload members file",
           "description": "Please wait, depending on the number of recipients, this may take a while to complete."
         },
+        "capitalDistributorCreateCampaignActionDetails": {
+          "titleTerm": "Title",
+          "descriptionTerm": "Description",
+          "resourcesTerm": "Resources",
+          "totalAmountTerm": "Total to distribute",
+          "claimersTerm": "Recipients",
+          "assetTerm": "Asset",
+          "payoutTypeTerm": "Payout type",
+          "merkleRootTerm": "Merkle root",
+          "startTimeTerm": "Start",
+          "endTimeTerm": "End",
+          "schedule": {
+            "openEnded": "Open-ended"
+          },
+          "payoutType": {
+            "default": "Default",
+            "veLockEncoder": "Voting escrow lock"
+          }
+        },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "asset": {
             "helpText": "Select the token to distribute in this campaign.",
