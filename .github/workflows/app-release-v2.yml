@@ -32,7 +32,7 @@ jobs:
           LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: |
