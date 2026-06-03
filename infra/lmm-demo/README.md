@@ -209,6 +209,11 @@ LMM DAO with the Money Machine dispatcher rendered as the only
 multi-dispatch policy.  Click into the policy to see the React Flow
 topology, the cheats menu, and the demo-mode banner.
 
+> **Presenting?** Once the stack is up, follow
+> [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md) — a state-by-state "what to show, where"
+> walkthrough (fund → gate → dispatch → settle → replay) that mirrors the
+> Demo ▾ dropdown ordering.
+
 ### 4. Trigger dispatches
 
 * **From the UI** — open the policy detail page → "Dispatch now" → the

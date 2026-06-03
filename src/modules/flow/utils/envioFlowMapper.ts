@@ -26,8 +26,13 @@ import {
 } from '@/shared/api/daoService';
 import type {
     EnvioEmbeddedStrategyKind,
+    EnvioFlowEdgeRole,
+    EnvioFlowStepStatus,
+    EnvioProvenance,
     EnvioStrategyType,
     IEnvioExecutionTransfer,
+    IEnvioFlowEdge,
+    IEnvioFlowStep,
     IEnvioPolicy,
     IEnvioPolicyEvent,
     IEnvioPolicyExecution,
@@ -35,6 +40,13 @@ import type {
     IEnvioStrategy,
     IFlowDaoDataResponse,
 } from '@/shared/api/flowIndexer';
+import type {
+    FlowFidelity,
+    FlowIndexedEdgeRole,
+    FlowIndexedStatus,
+    IFlowIndexedEdge,
+    IFlowIndexedStep,
+} from '../canvas/flowGraphTypes';
 import type {
     FlowEmbeddedStrategyKind,
     FlowEventKind,
@@ -1397,6 +1409,211 @@ const mapEmbeddedStrategies = (
 };
 
 // ---------------------------------------------------------------------------
+// Indexed provenance graph (FlowStep / FlowEdge) → IFlowIndexedStep
+// ---------------------------------------------------------------------------
+
+/**
+ * Collapse the indexer's six-level provenance onto the three-level fidelity the
+ * canvas styles by (solid `real` / dashed `~estimated` / ghost `opaque`).
+ * Mirrors `flowDynamics.fidelityOf` for the uppercase Envio enum.
+ */
+const fidelityOfProvenance = (p: EnvioProvenance): FlowFidelity => {
+    if (p === 'OPAQUE') {
+        return 'opaque';
+    }
+    if (p === 'ESTIMATED_VIA_QUOTER' || p === 'ESTIMATED_VIA_ORACLE') {
+        return 'estimated';
+    }
+    return 'real';
+};
+
+const FLOW_EDGE_ROLE_MAP: Record<EnvioFlowEdgeRole, FlowIndexedEdgeRole> = {
+    VAULT_OUT: 'vaultOut',
+    VAULT_IN: 'vaultIn',
+    EXTERNAL: 'external',
+};
+
+const FLOW_STEP_STATUS_MAP: Record<EnvioFlowStepStatus, FlowIndexedStatus> = {
+    EXECUTED: 'executed',
+    NO_OP: 'noOp',
+    SKIPPED_PAUSED: 'skippedPaused',
+    SKIPPED_GATED: 'skippedGated',
+    FAILED: 'failed',
+    OPAQUE: 'opaque',
+};
+
+const mapFlowEdge = (edge: IEnvioFlowEdge): IFlowIndexedEdge => {
+    const fidelity = fidelityOfProvenance(edge.provenance);
+    return {
+        role: FLOW_EDGE_ROLE_MAP[edge.role],
+        token: edge.token.symbol as FlowTokenSymbol,
+        to: edge.to,
+        // Opaque amounts are unknown until settled — never fabricate a number.
+        amount:
+            fidelity === 'opaque'
+                ? null
+                : normaliseAmount(edge.amount, edge.token.decimals),
+        fidelity,
+        pending: edge.pending,
+    };
+};
+
+const mapFlowStep = (step: IEnvioFlowStep): IFlowIndexedStep => ({
+    address: (step.strategy?.address ?? '').toLowerCase(),
+    index: step.index,
+    kind: EMBEDDED_STRATEGY_KIND_MAP[step.kind] ?? 'unknown',
+    status: FLOW_STEP_STATUS_MAP[step.status] ?? 'opaque',
+    reason: step.reason ?? undefined,
+    pending: step.pending,
+    edges: step.edges.map(mapFlowEdge),
+});
+
+/**
+ * Group every indexer `FlowStep` by dispatcher plugin address, preserving the
+ * incoming newest-first order. Used by the orchestrator builder to attach
+ * per-run steps + the latest-per-strategy composite without a second query.
+ */
+const groupFlowStepsByDispatcher = (
+    flowSteps: readonly IEnvioFlowStep[],
+): Map<string, IEnvioFlowStep[]> => {
+    const byDispatcher = new Map<string, IEnvioFlowStep[]>();
+    for (const step of flowSteps) {
+        const key = step.dispatcher.pluginAddress.toLowerCase();
+        const list = byDispatcher.get(key);
+        if (list) {
+            list.push(step);
+        } else {
+            byDispatcher.set(key, [step]);
+        }
+    }
+    return byDispatcher;
+};
+
+/** Strategy-kind → end-user strategy label, so FlowStep-derived legs feed the
+ *  workbench's buyback/swap classification the same way child-policy legs did. */
+const KIND_TO_STRATEGY_LABEL: Record<
+    FlowEmbeddedStrategyKind,
+    FlowPolicyStrategy
+> = {
+    wrap: 'Router',
+    univ2Liquidity: 'Uniswap swap',
+    gatedCowSwap: 'CoW swap',
+    cowSwap: 'CoW swap',
+    transfer: 'Router',
+    epochTransfer: 'Stream',
+    burn: 'Burn',
+    unknown: 'Router',
+};
+
+const INDEXED_STATUS_TO_LEG: Record<
+    FlowIndexedStatus,
+    IFlowOrchestratorLeg['status']
+> = {
+    executed: 'ok',
+    opaque: 'ok',
+    noOp: 'skipped',
+    skippedGated: 'skipped',
+    skippedPaused: 'skipped',
+    failed: 'failed',
+};
+
+/**
+ * Derive a presentational `IFlowOrchestratorLeg` from an indexed step. Amounts
+ * come straight from the provenance-tagged edges (real settled values) — no
+ * approve/wrap heuristics. `out` is the vault-in (or external) edge; `in` is
+ * the first vault-out edge.
+ */
+const legFromIndexedStep = (step: IFlowIndexedStep): IFlowOrchestratorLeg => {
+    const out =
+        step.edges.find((e) => e.role === 'vaultIn') ??
+        step.edges.find((e) => e.role === 'external');
+    const input = step.edges.find((e) => e.role === 'vaultOut');
+    const recipients = new Set(
+        step.edges.filter((e) => e.role === 'external').map((e) => e.to),
+    );
+    return {
+        policyId: step.address || `idx:${step.index}`,
+        policyName: EMBEDDED_STRATEGY_LABEL[step.kind],
+        strategy: KIND_TO_STRATEGY_LABEL[step.kind],
+        amountOut: out?.amount ?? 0,
+        tokenOut: (out?.token ?? input?.token ?? '?') as FlowTokenSymbol,
+        amountIn: input?.amount ?? undefined,
+        tokenIn: input?.token as FlowTokenSymbol | undefined,
+        recipientsCount: recipients.size,
+        status: INDEXED_STATUS_TO_LEG[step.status],
+    };
+};
+
+/**
+ * Reconstruct an orchestrator's runs directly from its provenance-tagged
+ * `FlowStep`s — the dispatcher emits one per executed/skipped leg, all sharing
+ * the dispatch tx hash. This is the authoritative path (real amounts, correct
+ * even when the dispatcher owns its strategies inline with no child policies)
+ * and supersedes the child-dispatch heuristic reconstruction.
+ *
+ * `flowSteps` arrive newest-first; returns runs newest-first, each carrying its
+ * `indexedSteps` (index-sorted) for the canvas, plus the latest-per-strategy
+ * composite for the default live view.
+ */
+const buildRunsFromFlowSteps = (
+    flowSteps: readonly IEnvioFlowStep[],
+): { runs: IFlowOrchestratorRun[]; latestIndexedSteps: IFlowIndexedStep[] } => {
+    const byTx = new Map<
+        string,
+        { at: string; ts: number; steps: IEnvioFlowStep[] }
+    >();
+    for (const step of flowSteps) {
+        const entry = byTx.get(step.txHash);
+        const ts = Number(step.blockTimestamp);
+        if (entry) {
+            entry.steps.push(step);
+            if (ts > entry.ts) {
+                entry.ts = ts;
+                entry.at = isoFromSeconds(step.blockTimestamp);
+            }
+        } else {
+            byTx.set(step.txHash, {
+                at: isoFromSeconds(step.blockTimestamp),
+                ts,
+                steps: [step],
+            });
+        }
+    }
+
+    const runs: IFlowOrchestratorRun[] = Array.from(byTx.entries())
+        .map(([txHash, entry]) => {
+            const indexedSteps = entry.steps
+                .map(mapFlowStep)
+                .sort((a, b) => a.index - b.index);
+            return {
+                id: `run-${txHash}`,
+                at: entry.at,
+                ts: entry.ts,
+                txHash,
+                legs: indexedSteps.map(legFromIndexedStep),
+                indexedSteps,
+            };
+        })
+        .sort((a, b) => b.ts - a.ts)
+        .map(({ ts: _ts, ...run }) => run);
+
+    // Latest step per strategy (steps are newest-first) → full-pipeline overview.
+    const latestByStrategy = new Map<string, IEnvioFlowStep>();
+    for (const step of flowSteps) {
+        const key =
+            step.strategy?.address?.toLowerCase() ?? `idx:${step.index}`;
+        if (!latestByStrategy.has(key)) {
+            latestByStrategy.set(key, step);
+        }
+    }
+    const latestIndexedSteps = Array.from(latestByStrategy.values())
+        .map(mapFlowStep)
+        .sort((a, b) => a.index - b.index);
+
+    return { runs, latestIndexedSteps };
+};
+
+// ---------------------------------------------------------------------------
 // Orchestrator synthesis (Multi-dispatch)
 // ---------------------------------------------------------------------------
 
@@ -1405,9 +1622,16 @@ const buildOrchestrator = (params: {
     restPolicy: IDaoPolicy | undefined;
     policiesByAddress: Map<string, IFlowPolicy>;
     proposalByTxHash: ProposalByTxHash | undefined;
+    /** Provenance-tagged steps for THIS dispatcher, newest-first. */
+    flowSteps: readonly IEnvioFlowStep[];
 }): IFlowOrchestrator => {
-    const { envioPolicy, restPolicy, policiesByAddress, proposalByTxHash } =
-        params;
+    const {
+        envioPolicy,
+        restPolicy,
+        policiesByAddress,
+        proposalByTxHash,
+        flowSteps,
+    } = params;
 
     const subRouterAddresses = (restPolicy?.strategy.subRouters ?? []).map(
         (a) => a.toLowerCase(),
@@ -1416,11 +1640,18 @@ const buildOrchestrator = (params: {
         (addr) => policiesByAddress.get(addr) ?? null,
     );
 
+    // Preferred path: reconstruct runs from the dispatcher's own provenance
+    // FlowSteps (real amounts; correct for inline-strategy dispatchers with no
+    // child policies). Falls back to child-dispatch grouping for legacy
+    // multi-routers that fan out to separate plugins and emit no FlowSteps.
+    const indexed =
+        flowSteps.length > 0 ? buildRunsFromFlowSteps(flowSteps) : null;
+
     // Group child-policy dispatches by transaction hash. Since `multiDispatch` triggers all
     // its children inside a single tx, the shared `txHash` lets us reconstruct the "run"
     // without any parent-pointer in the indexer.
     const runsByTxHash = new Map<string, IFlowOrchestratorRun>();
-    for (const child of chain) {
+    for (const child of indexed ? [] : chain) {
         if (!child) {
             continue;
         }
@@ -1465,9 +1696,12 @@ const buildOrchestrator = (params: {
         }
     }
 
-    const runs = Array.from(runsByTxHash.values()).sort(
-        (a, b) => new Date(b.at).getTime() - new Date(a.at).getTime(),
-    );
+    const runs =
+        indexed?.runs ??
+        Array.from(runsByTxHash.values()).sort(
+            (a, b) => new Date(b.at).getTime() - new Date(a.at).getTime(),
+        );
+    const latestIndexedSteps = indexed?.latestIndexedSteps;
 
     const installTxHash = envioPolicy.installTxHash;
     const installAttribution = lookupProposal(proposalByTxHash, installTxHash);
@@ -1513,6 +1747,7 @@ const buildOrchestrator = (params: {
         chain,
         embeddedStrategies: mapEmbeddedStrategies(envioPolicy.strategies),
         runs,
+        latestIndexedSteps,
         lastRunAt: runs[0]?.at,
         totalRuns: runs.length,
     };
@@ -1667,6 +1902,12 @@ export const buildFlowDataFromEnvio = (
         addressBook = EMPTY_FLOW_ADDRESS_BOOK,
     } = params;
 
+    // Index every dispatcher's provenance FlowSteps by plugin address so each
+    // orchestrator gets its own (real-amount) run reconstruction.
+    const flowStepsByDispatcher = groupFlowStepsByDispatcher(
+        indexerData.FlowStep ?? [],
+    );
+
     // Envio keys policies by (chainId:pluginAddress). REST keys by pluginAddress. Join on
     // lowercase plugin address.
     const restByPlugin = new Map<string, IDaoPolicy>();
@@ -1709,6 +1950,10 @@ export const buildFlowDataFromEnvio = (
                     ),
                     policiesByAddress,
                     proposalByTxHash,
+                    flowSteps:
+                        flowStepsByDispatcher.get(
+                            envioPolicy.pluginAddress.toLowerCase(),
+                        ) ?? [],
                 }),
             );
             const mirror = policiesByAddress.get(

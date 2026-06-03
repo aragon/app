@@ -5,6 +5,7 @@ export * from './pages/flowActivityPage';
 export * from './pages/flowOverviewPage';
 export * from './pages/flowPolicyDetailPage';
 export * from './pages/flowRecipientsPage';
+export * from './pages/flowWorkbenchPage';
 export {
     FlowDataProvider,
     useFlowDataContext,

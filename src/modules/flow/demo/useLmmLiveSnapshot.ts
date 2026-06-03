@@ -54,6 +54,18 @@ export interface IUseLmmLiveSnapshotResult {
     error?: string;
 }
 
+// Cadence for re-running inspect().  inspect() bakes MUTABLE per-strategy
+// state (notably each strategy's `lastEpoch` / `lastDispatchedEpoch` and the
+// stream budget's `targetEpoch`) into the topology alongside the immutable
+// structure.  The simulator (`simulate()` inside useStatus) compares the
+// *frozen* `lastEpoch` against the *fresh* current epoch it reads each poll —
+// so once a dispatch burns the epoch slot, the legs keep reporting "would
+// fire" (canvas draws arrows + sums) forever, because nothing re-reads
+// `lastEpoch`.  A page reload re-ran inspect() and "fixed" it, which is the
+// bug the demo hit.  Re-inspecting on the snapshot cadence keeps those fields
+// live so the canvas flips to "already dispatched" within one tick.
+const INSPECT_POLL_MS = 5000;
+
 // One PublicClient per session — Anvil's fork RPC is the same across renders.
 let cachedClient: PublicClient | undefined;
 const getClient = (): PublicClient => {
@@ -66,6 +78,17 @@ const getClient = (): PublicClient => {
     });
     return cachedClient;
 };
+
+/**
+ * Stable comparison key for a topology — JSON with bigints stringified.
+ * Used to skip React state churn when a re-inspect returns structurally and
+ * value-identical data, while still detecting mutable-field changes (epochs,
+ * budgets, gate config) that must reach the simulator.
+ */
+const topologyKey = (topology: TopologyGraph): string =>
+    JSON.stringify(topology, (_key, value) =>
+        typeof value === 'bigint' ? value.toString() : value,
+    );
 
 const EMPTY: IUseLmmLiveSnapshotResult = {
     dispatcherAddress: undefined,
@@ -101,10 +124,21 @@ export const useLmmLiveSnapshot = (): IUseLmmLiveSnapshotResult => {
         const run = async (): Promise<void> => {
             try {
                 const result = await inspect(getClient(), dispatcher);
-                if (!cancelled) {
-                    setTopology(result);
-                    setInspectError(undefined);
+                if (cancelled) {
+                    return;
                 }
+                setInspectError(undefined);
+                // Only push a new topology object when the (re-inspected)
+                // mutable state actually changed — otherwise the steady-state
+                // poll would churn the topology reference every tick and reset
+                // every topology-keyed effect downstream. When `lastEpoch`
+                // (etc.) advances after a dispatch, the key differs and the
+                // fresh topology flows into the simulator.
+                setTopology((prev) =>
+                    prev && topologyKey(prev) === topologyKey(result)
+                        ? prev
+                        : result,
+                );
             } catch (e) {
                 if (!cancelled) {
                     setInspectError(e instanceof Error ? e.message : String(e));
@@ -113,8 +147,24 @@ export const useLmmLiveSnapshot = (): IUseLmmLiveSnapshotResult => {
             }
         };
         void run();
+        // Re-inspect on the poll cadence so the topology's mutable epoch state
+        // stays live (see INSPECT_POLL_MS). Pauses while the tab is hidden and
+        // snaps to a fresh read on re-show, mirroring useStatus's poller.
+        const handle = window.setInterval(() => {
+            if (!document.hidden) {
+                void run();
+            }
+        }, INSPECT_POLL_MS);
+        const onVisibility = () => {
+            if (!document.hidden) {
+                void run();
+            }
+        };
+        document.addEventListener('visibilitychange', onVisibility);
         return () => {
             cancelled = true;
+            window.clearInterval(handle);
+            document.removeEventListener('visibilitychange', onVisibility);
         };
     }, [dispatcher]);
 

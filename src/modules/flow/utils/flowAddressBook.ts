@@ -66,6 +66,23 @@ const BURN_ADDRESSES: Record<string, string> = {
     '0x000000000000000000000000000000000000dead': 'Burn address',
 };
 
+/**
+ * Well-known protocol addresses (DAO-agnostic) that the indexer doesn't name on
+ * its own — e.g. parent treasuries that receive a flow's proceeds. Generic
+ * registry, not per-flow: any flow whose output lands here renders the friendly
+ * name instead of a raw address. Extend as more are encountered.
+ */
+const WELL_KNOWN_ADDRESSES: Record<
+    string,
+    { label: string; role: FlowAddressRole }
+> = {
+    // Lido DAO Aragon Agent (mainnet treasury / sweep authority).
+    '0x3e40d73eb977dc6a537af587d48316fee66e9c8c': {
+        label: 'Lido Agent',
+        role: 'linkedaccount',
+    },
+};
+
 export interface IFlowAddressBookSourceDao {
     address: string;
     name?: string | null;
@@ -101,13 +118,18 @@ export const buildFlowAddressBook = (
 ): IFlowAddressBook => {
     const entries = new Map<string, IFlowAddressBookEntry>();
 
-    // Burn addresses take the lowest precedence so a DAO that happens to use a
-    // burn address for some reason still wins.
+    // Burn + well-known protocol addresses take the lowest precedence so a DAO's
+    // own labels (REST policies / linked accounts) always win on a collision.
     for (const [addr, label] of Object.entries(BURN_ADDRESSES)) {
         entries.set(normalizeAddress(addr), {
             label,
             role: 'burn',
         });
+    }
+    for (const [addr, { label, role }] of Object.entries(
+        WELL_KNOWN_ADDRESSES,
+    )) {
+        entries.set(normalizeAddress(addr), { label, role });
     }
 
     // REST policies — each plugin address gets a label like "Salary stream". We

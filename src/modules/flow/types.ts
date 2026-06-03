@@ -1,3 +1,5 @@
+import type { IFlowIndexedStep } from './canvas/flowGraphTypes';
+
 export type FlowPolicyStatus =
     | 'ready'
     | 'live'
@@ -292,6 +294,13 @@ export interface IFlowOrchestratorRun {
     at: string;
     txHash: string;
     legs: IFlowOrchestratorLeg[];
+    /**
+     * Provenance-tagged steps for this run, normalised from the indexer's
+     * `FlowStep`/`FlowEdge`. When present the workbench canvas projects these
+     * (real settled amounts) instead of reconstructing legs heuristically.
+     * One entry per executed/skipped leg — a subset when legs were skipped.
+     */
+    indexedSteps?: IFlowIndexedStep[];
 }
 
 export interface IFlowOrchestratorLeg {
@@ -393,6 +402,13 @@ export interface IFlowOrchestrator {
      */
     embeddedStrategies?: IFlowEmbeddedStrategy[];
     runs: IFlowOrchestratorRun[];
+    /**
+     * Latest indexed step per strategy across all runs — the composite the
+     * default "live" canvas view projects so the full pipeline always renders
+     * each leg's most recent real amounts, even when individual runs skipped
+     * legs. Empty until the dispatcher has produced any `FlowStep`.
+     */
+    latestIndexedSteps?: IFlowIndexedStep[];
     lastRunAt?: string;
     totalRuns: number;
 }

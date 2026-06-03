@@ -1,0 +1,83 @@
+/* ============================================================================
+   Flow Workbench — minimal canvas-only stylesheet.
+
+   The workbench chrome (header, rail, inspector, history, buttons, cards, tags)
+   is built with gov-ui-kit components + Tailwind utilities on kit tokens — NOT
+   here. This file carries only what Tailwind/kit can't express cleanly:
+   the dotted grid backdrop, two keyframe animations, and the icon-sizing rule
+   for `<MmIcon>` (which sizes a gov-ui-kit `<Icon>` via a px wrapper span).
+   ============================================================================ */
+
+/* MmIcon: let a px-sized wrapper span drive the kit <Icon>'s svg dimensions. */
+.mm-ic svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Dotted-grid canvas backdrop. */
+.mm-grid {
+    position: absolute;
+    inset: -200px;
+    background-image: radial-gradient(
+        circle,
+        var(--color-neutral-200, #cbd2d9) 1.2px,
+        transparent 1.2px
+    );
+    background-size: 26px 26px;
+    opacity: 0.5;
+}
+
+/* Travelling-dot glow on active edges. */
+.mm-flow-dot {
+    filter: drop-shadow(0 0 5px rgba(0, 59, 245, 0.55));
+}
+
+/* Selected-node accumulating/firing/blocked pulse — uses the node's
+   `--mm-pulse` colour set inline per tone. */
+.mm-pulse::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: inherit;
+    border: 2px solid var(--mm-pulse, currentColor);
+    opacity: 0;
+    pointer-events: none;
+    animation: mm-node-pulse 2.1s ease-out infinite;
+}
+@keyframes mm-node-pulse {
+    0% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    70% {
+        opacity: 0;
+        transform: scale(1.045);
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* Live-badge blink. */
+.mm-blink {
+    animation: mm-blink 1.8s ease-out infinite;
+}
+@keyframes mm-blink {
+    0% {
+        box-shadow: 0 0 0 0 rgba(116, 175, 7, 0.5);
+    }
+    70% {
+        box-shadow: 0 0 0 7px rgba(116, 175, 7, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(116, 175, 7, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mm-pulse::after,
+    .mm-blink {
+        animation: none;
+    }
+}

@@ -292,6 +292,7 @@ const univ2FactoryAbi = parseAbi([
 const univ2PairAbi = parseAbi([
     'function getReserves() view returns (uint112,uint112,uint32)',
     'function token0() view returns (address)',
+    'function totalSupply() view returns (uint256)',
 ]);
 const univ2RouterAbi = parseAbi(['function factory() view returns (address)']);
 const oraclePriceAbi = parseAbi([
@@ -434,6 +435,30 @@ registerPredictor({
             amountB = budgetB.amount;
         }
 
+        // LP minted is deterministic from the pair's totalSupply + reserves:
+        // min(amountA·ts/reserveA, amountB·ts/reserveB). We can estimate it
+        // pre-dispatch (the actual mint lands on-chain), so the canvas can show
+        // the LP coming back to the recipient instead of a one-way arrow.
+        let lpEstimate: bigint | undefined;
+        try {
+            const totalSupply = await ctx.client.readContract({
+                address: pair,
+                abi: univ2PairAbi,
+                functionName: 'totalSupply',
+            });
+            if (totalSupply > 0n) {
+                const lpA = (amountA * totalSupply) / reserveA;
+                const lpB = (amountB * totalSupply) / reserveB;
+                lpEstimate = lpA < lpB ? lpA : lpB;
+            }
+        } catch {
+            // Leave undefined → opaque LP (still shown as a pending return).
+        }
+        // The pair is a standard 18-decimal UNI-V2 ERC20.
+        const lpToken = { address: pair, symbol: 'UNI-V2', decimals: 18 };
+        const lpToVault =
+            node.lpRecipient.toLowerCase() === ctx.vault.toLowerCase();
+
         return {
             status: 'executed',
             budget: {
@@ -441,7 +466,19 @@ registerPredictor({
                 token: budgetA.token,
                 provenance: budgetA.provenance,
             },
-            transfers: [],
+            transfers: lpToVault
+                ? []
+                : [
+                      {
+                          from: ctx.vault,
+                          to: node.lpRecipient,
+                          token: lpToken,
+                          amount: lpEstimate ?? 0n,
+                          provenance: lpEstimate
+                              ? ('estimated-via-oracle' as const)
+                              : ('opaque' as const),
+                      },
+                  ],
             externalCalls: [
                 {
                     to: node.router,
@@ -460,12 +497,25 @@ registerPredictor({
                             provenance: 'estimated-via-oracle',
                         },
                     ],
-                    // LP minted to lpRecipient (NOT the DAO) — no `produces` on the vault.
-                    produces: [],
+                    // LP minted back to the DAO loops in as a `produces`; LP to a
+                    // third party is modelled as a transfer (handled above).
+                    produces: lpToVault
+                        ? [
+                              {
+                                  token: lpToken,
+                                  amount: lpEstimate ?? 0n,
+                                  provenance: lpEstimate
+                                      ? 'estimated-via-oracle'
+                                      : 'opaque',
+                              },
+                          ]
+                        : [],
                 },
             ],
             notes: [
-                `LP tokens minted to ${node.lpRecipient}, not the DAO`,
+                lpToVault
+                    ? `LP tokens minted back to the DAO vault${lpEstimate ? '' : ' (amount settles on-chain)'}`
+                    : `LP tokens minted to ${node.lpRecipient}, not the DAO`,
                 amountA < budgetA.amount
                     ? `${budgetA.amount - amountA} ${budgetA.token.symbol ?? 'A'} stays in the DAO (B was binding)`
                     : amountB < budgetB.amount
@@ -568,7 +618,20 @@ registerPredictor({
                         minBuy.amount
                     } ${node.targetToken.symbol ?? '?'} (off-chain fill)`,
                     consumes: [],
-                    produces: [],
+                    // The buyback lands back in the DAO when the solver fills.
+                    // We can estimate the minimum buy via the oracle, so the
+                    // canvas shows the buyback returning (estimated) rather than
+                    // a one-way sell arrow.
+                    produces:
+                        minBuy.amount > 0n
+                            ? [
+                                  {
+                                      token: node.targetToken,
+                                      amount: minBuy.amount,
+                                      provenance: minBuy.provenance,
+                                  },
+                              ]
+                            : [],
                 },
             ],
             notes: [

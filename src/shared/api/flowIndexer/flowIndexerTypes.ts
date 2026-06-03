@@ -226,7 +226,87 @@ export interface IEnvioRecipientAggregate {
     dao: Pick<IEnvioDao, 'id' | 'address'>;
 }
 
+// ---------------------------------------------------------------------------
+// Provenance-tagged flow graph (FlowStep / FlowEdge / SwapFill)
+// ---------------------------------------------------------------------------
+
+/**
+ * How the indexer classifies an amount's trustworthiness. Aligned 1:1 with
+ * `enum Provenance` in `capital-flow-indexer/schema.graphql` and with the
+ * vendored `lido-preview` Provenance. The app collapses these to a
+ * three-level {@link FlowFidelity} (`real` / `estimated` / `opaque`).
+ */
+export type EnvioProvenance =
+    | 'DETERMINISTIC'
+    | 'ONCHAIN_EVENT'
+    | 'SETTLED'
+    | 'ESTIMATED_VIA_QUOTER'
+    | 'ESTIMATED_VIA_ORACLE'
+    | 'OPAQUE';
+
+/**
+ * Role of a {@link IEnvioFlowEdge} — lets the canvas infer topology without
+ * re-decoding calldata:
+ *   VAULT_OUT — vault → strategy/router (budget spent, swap sell, LP input).
+ *   VAULT_IN  — produced back to the vault (wrap output, LP minted, swap fill).
+ *   EXTERNAL  — vault → a real recipient (transfer/native to a non-vault addr).
+ */
+export type EnvioFlowEdgeRole = 'VAULT_OUT' | 'VAULT_IN' | 'EXTERNAL';
+
+export interface IEnvioFlowEdge {
+    id: string;
+    role: EnvioFlowEdgeRole;
+    token: IEnvioToken;
+    from: string;
+    to: string;
+    /** Raw units. `0` + provenance `OPAQUE` while still unknown (LP pre-Mint). */
+    amount: string;
+    provenance: EnvioProvenance;
+    /** `decodedFrom` plus `wrapOut` | `univ2LpMinted` | `swapFill`. */
+    decodedFrom: string;
+    seq: number;
+    pending: boolean;
+}
+
+export type EnvioFlowStepStatus =
+    | 'EXECUTED'
+    | 'NO_OP'
+    | 'SKIPPED_PAUSED'
+    | 'SKIPPED_GATED'
+    | 'FAILED'
+    | 'OPAQUE';
+
+/**
+ * Per-leg provenance node the workbench canvas PROJECTS (rather than
+ * reconstructing the graph with heuristics). One per DispatchHandled leg
+ * (EXECUTED / NO_OP) and one per StrategyFailed leg (SKIPPED_* / FAILED).
+ */
+export interface IEnvioFlowStep {
+    id: string;
+    index: number;
+    kind: EnvioEmbeddedStrategyKind;
+    status: EnvioFlowStepStatus;
+    reason?: string | null;
+    /** Weakest provenance across this step's edges. */
+    provenance: EnvioProvenance;
+    /** True while any edge amount is still unsettled (CoW order awaiting fill). */
+    pending: boolean;
+    blockTimestamp: string;
+    txHash: string;
+    /** `${chainId}:${pluginAddress}` of the dispatcher policy. */
+    dispatcher: { id: string; pluginAddress: string };
+    strategy?: IEnvioStrategyRef | null;
+    execution?: { id: string; txHash: string } | null;
+    edges: IEnvioFlowEdge[];
+}
+
 export interface IFlowDaoDataResponse {
     Policy: IEnvioPolicy[];
     RecipientAggregate: IEnvioRecipientAggregate[];
+    /**
+     * Provenance-tagged flow steps for every dispatcher in the DAO set, newest
+     * first. Grouped client-side by dispatcher + `txHash` into orchestrator
+     * runs (see `envioFlowMapper.ts`). Empty until a dispatcher has run.
+     */
+    FlowStep: IEnvioFlowStep[];
 }

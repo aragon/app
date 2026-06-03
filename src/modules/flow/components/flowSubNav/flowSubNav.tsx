@@ -17,6 +17,9 @@ interface IFlowTab {
     href: (base: string) => string;
 }
 
+/** Dashboard-vision sub-tabs. The Dashboard ⇄ Canvas and Workbench ⇄ Focus
+ *  switches live in the topbar (next to the wallet); this row is only the
+ *  dashboard sections and is hidden entirely on the canvas single-pager. */
 const FLOW_TABS: IFlowTab[] = [
     {
         key: 'overview',
@@ -45,6 +48,12 @@ export const FlowSubNav: React.FC<IFlowSubNavProps> = (props) => {
     const { network, addressOrEns, className } = props;
     const pathname = usePathname() ?? '';
     const base = `/dao/${network}/${addressOrEns}/flow`;
+
+    // Canvas is a full-bleed single-pager — its layout switch is in the topbar,
+    // so there's no sub-nav row to show here.
+    if (pathname.startsWith(`${base}/workbench`)) {
+        return null;
+    }
 
     return (
         <div

@@ -175,6 +175,52 @@ const FLOW_DAO_DATA_QUERY = /* GraphQL */ `
                 address
             }
         }
+        FlowStep(
+            where: { dispatcher: { dao_id: { _in: $daoIds } } }
+            order_by: { blockTimestamp: desc }
+            limit: $executionLimit
+        ) {
+            id
+            index
+            kind
+            status
+            reason
+            provenance
+            pending
+            blockTimestamp
+            txHash
+            dispatcher {
+                id
+                pluginAddress
+            }
+            strategy {
+                id
+                address
+                kind
+                index
+            }
+            execution {
+                id
+                txHash
+            }
+            edges(order_by: { seq: asc }) {
+                id
+                role
+                from
+                to
+                amount
+                provenance
+                decodedFrom
+                seq
+                pending
+                token {
+                    id
+                    address
+                    symbol
+                    decimals
+                }
+            }
+        }
     }
 `;
 
