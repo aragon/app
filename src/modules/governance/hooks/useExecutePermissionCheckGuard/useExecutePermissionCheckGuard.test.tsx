@@ -29,7 +29,7 @@ describe('useExecutePermissionCheckGuard hook', () => {
         'useDaoExecutePermission',
     );
 
-    const mockRouter = { push: jest.fn() };
+    const mockRouter = { replace: jest.fn() };
 
     beforeEach(() => {
         useRouterSpy.mockReturnValue(
@@ -59,7 +59,7 @@ describe('useExecutePermissionCheckGuard hook', () => {
         useWalletAccountSpy.mockReset();
         useConnectedWalletGuardSpy.mockReset();
         useDaoExecutePermissionSpy.mockReset();
-        mockRouter.push.mockReset();
+        mockRouter.replace.mockReset();
     });
 
     it('prompts to connect the wallet when disconnected', () => {
@@ -69,7 +69,7 @@ describe('useExecutePermissionCheckGuard hook', () => {
         renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
 
         expect(check).toHaveBeenCalled();
-        expect(mockRouter.push).not.toHaveBeenCalled();
+        expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 
     it('redirects to the transactions page when connected but not permitted', () => {
@@ -91,7 +91,31 @@ describe('useExecutePermissionCheckGuard hook', () => {
 
         renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
 
-        expect(mockRouter.push).toHaveBeenCalledWith(
+        expect(mockRouter.replace).toHaveBeenCalledWith(
+            `/dao/${daoNetwork}/${daoAddress}/transactions`,
+        );
+    });
+
+    it('redirects to the transactions page when not connected (connecting canceled)', () => {
+        const daoNetwork = Network.ETHEREUM_MAINNET;
+        const daoAddress = '0x12345';
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateDao({ address: daoAddress, network: daoNetwork }),
+            }),
+        );
+        useConnectedWalletGuardSpy.mockImplementation((params) => ({
+            check: jest.fn().mockImplementation(() => params?.onError?.()),
+            result: false,
+        }));
+        useDaoExecutePermissionSpy.mockReturnValue({
+            hasPermission: false,
+            isLoading: false,
+        });
+
+        renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
+
+        expect(mockRouter.replace).toHaveBeenCalledWith(
             `/dao/${daoNetwork}/${daoAddress}/transactions`,
         );
     });
@@ -104,13 +128,13 @@ describe('useExecutePermissionCheckGuard hook', () => {
 
         renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
 
-        expect(mockRouter.push).not.toHaveBeenCalled();
+        expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 
     it('does not redirect when connected and permitted', () => {
         renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
 
-        expect(mockRouter.push).not.toHaveBeenCalled();
+        expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 
     it('does not redirect when connected but the DAO has not loaded yet', () => {
@@ -126,6 +150,6 @@ describe('useExecutePermissionCheckGuard hook', () => {
 
         renderHook(() => useExecutePermissionCheckGuard({ daoId: 'dao-id' }));
 
-        expect(mockRouter.push).not.toHaveBeenCalled();
+        expect(mockRouter.replace).not.toHaveBeenCalled();
     });
 });
