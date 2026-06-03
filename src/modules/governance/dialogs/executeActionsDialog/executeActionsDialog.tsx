@@ -45,7 +45,6 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     );
 
     const { address } = useWalletAccount();
-    invariant(address != null, 'ExecuteActionsDialog: user must be connected.');
 
     const { daoId, actions, prepareActions } = location.params;
 
