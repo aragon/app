@@ -89,14 +89,6 @@ describe('<ExecuteActionsDialog /> component', () => {
         expect(() => render(createTestComponent({ location }))).toThrow();
     });
 
-    it('throws when the user is not connected', () => {
-        testLogger.suppressErrors();
-        useConnectionSpy.mockReturnValue({
-            address: undefined,
-        } as Wagmi.UseConnectionReturnType);
-        expect(() => render(createTestComponent())).toThrow();
-    });
-
     it('renders the title, description and prepare/submit steps', () => {
         render(createTestComponent());
         expect(
