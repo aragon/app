@@ -35,6 +35,15 @@ import { MmIcon } from './mmIcon';
 const GATE_OPEN_USD = 3200;
 const GATE_CLOSED_USD = 2800;
 
+// Demo epoch cadence: 1h per epoch (EpochProvider.epochLength at deploy). One
+// "advance epoch" warps the fork clock by exactly one epoch so the stream's
+// per-epoch slot re-arms and a fresh slice can be dispatched.
+const EPOCH_SECONDS = 60 * 60;
+// How far ahead the Fast Track action pushes the stream's targetEpoch. Must sit
+// comfortably above the StreamUntilBudget floor so the stream leaves its floored
+// regime (`balance / floorEpochs`) and meters `balance / (target − current)`.
+const STREAM_HORIZON_EPOCHS = 24;
+
 interface IDemoAction {
     key: string;
     label: string;
@@ -107,11 +116,15 @@ const ACTION_GROUPS: { heading: string; actions: IDemoAction[] }[] = [
         heading: '4 · Advance time',
         actions: [
             {
-                key: 'skip-epoch',
-                label: 'Skip an epoch',
-                description: 'Bump the stream target epoch by one.',
+                key: 'advance-epoch',
+                label: 'Advance one epoch',
+                description:
+                    'Warp the fork clock one epoch (1h) + refresh oracle — re-arms the per-epoch stream slot.',
                 icon: 'clock',
-                run: (ctx) => setTargetEpoch(ctx, 1),
+                run: async (ctx) => {
+                    await warpAction(ctx, EPOCH_SECONDS);
+                    await refreshOracle(ctx);
+                },
             },
             {
                 key: 'warp-1d',
@@ -132,6 +145,19 @@ const ACTION_GROUPS: { heading: string; actions: IDemoAction[] }[] = [
                     await warpAction(ctx, 7 * 24 * 60 * 60);
                     await refreshOracle(ctx);
                 },
+            },
+        ],
+    },
+    {
+        heading: '5 · Governance (Fast Track)',
+        actions: [
+            {
+                key: 'extend-stream-horizon',
+                label: `Extend stream horizon · +${STREAM_HORIZON_EPOCHS} epochs`,
+                description:
+                    'Push the stream targetEpoch into the future via dao.execute() signed by the Lido Agent — models a Lido Fast Track proposal so the stream meters again.',
+                icon: 'settings',
+                run: (ctx) => setTargetEpoch(ctx, STREAM_HORIZON_EPOCHS),
             },
         ],
     },

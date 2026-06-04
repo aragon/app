@@ -474,6 +474,13 @@ const StrategyModule: React.FC<{
                         <Pill tone={state.tone}>{state.label}</Pill>
                     </span>
                 </span>
+                {node.params && node.params.length > 0 && (
+                    <span className="truncate pl-[38px] text-[11px] text-neutral-400">
+                        {node.params
+                            .map((p) => `${p.label} ${p.value}`)
+                            .join(' · ')}
+                    </span>
+                )}
             </button>
 
             {node.inputs.length > 0 && (

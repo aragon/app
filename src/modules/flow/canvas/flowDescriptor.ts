@@ -14,6 +14,7 @@ import type { IFlowEmbeddedStrategy, IFlowOrchestrator } from '../types';
 import type {
     IFlowMachineDescriptor,
     IFlowStepDescriptor,
+    IFlowStrategyParam,
     IFlowSubInputDescriptor,
 } from './flowGraphTypes';
 import {
@@ -29,6 +30,10 @@ export interface IToDescriptorOptions {
     sourceAddress?: string;
     /** Terminal recipient hint, resolved from real recipient data by the caller. */
     recipient?: { address: string; label: string };
+    /** Optional per-strategy display params (slippage, target token, …), keyed
+     *  by lowercased strategy address. Sourced outside the indexer taxonomy
+     *  (e.g. the live topology) by the caller; merged onto the matching step. */
+    paramsByAddress?: Map<string, IFlowStrategyParam[]>;
 }
 
 /** Humanize an epoch-denominated reserve into a duration when the epoch length
@@ -137,7 +142,15 @@ export const toFlowMachineDescriptor = (
     if (embedded == null || embedded.length === 0) {
         return null;
     }
-    const steps = [...embedded].sort((a, b) => a.index - b.index).map(toStep);
+    const steps = [...embedded]
+        .sort((a, b) => a.index - b.index)
+        .map((strategy) => {
+            const step = toStep(strategy);
+            const params = options.paramsByAddress?.get(
+                strategy.address.toLowerCase(),
+            );
+            return params && params.length > 0 ? { ...step, params } : step;
+        });
 
     return {
         id: orchestrator.id,

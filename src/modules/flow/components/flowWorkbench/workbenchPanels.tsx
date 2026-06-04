@@ -192,6 +192,29 @@ const StrategyInspector: React.FC<{
                     ))}
                 </>
             )}
+
+            {node.params && node.params.length > 0 && (
+                <>
+                    <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                        Parameters
+                    </div>
+                    <div className="flex flex-col gap-1">
+                        {node.params.map((p) => (
+                            <div
+                                className="flex items-center justify-between gap-3 text-sm"
+                                key={p.label}
+                            >
+                                <span className="text-neutral-500">
+                                    {p.label}
+                                </span>
+                                <span className="num font-semibold text-neutral-700">
+                                    {p.value}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 };

@@ -73,9 +73,18 @@ export const MEANINGFUL_AMOUNT_EPS = 1e-9;
 const isMeaningful = (amount: number | null | undefined): boolean =>
     amount == null || Math.abs(amount) > MEANINGFUL_AMOUNT_EPS;
 
-const strategyHeight = (inputCount: number, hasBadge: boolean): number =>
+// Extra height for the compact params line shown under the header when a
+// strategy carries config params (slippage, target token, …).
+const STRATEGY_PARAMS_H = 18;
+
+const strategyHeight = (
+    inputCount: number,
+    hasBadge: boolean,
+    hasParams: boolean,
+): number =>
     STRATEGY_HEADER_H +
     (hasBadge ? STRATEGY_BADGE_H : 0) +
+    (hasParams ? STRATEGY_PARAMS_H : 0) +
     inputCount * STRATEGY_INPUT_H +
     (inputCount > 0 ? 6 : 0);
 
@@ -160,10 +169,15 @@ export const buildFlowGraph = (params: IBuildFlowGraphParams): IFlowGraph => {
             state,
             badge,
             inputs,
+            params: step.params,
             x: 0,
             y: 0,
             w: STRATEGY_W,
-            h: strategyHeight(inputs.length, badge != null),
+            h: strategyHeight(
+                inputs.length,
+                badge != null,
+                (step.params?.length ?? 0) > 0,
+            ),
         });
     }
 

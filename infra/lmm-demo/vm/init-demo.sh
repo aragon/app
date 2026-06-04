@@ -119,12 +119,18 @@ EOF
 mv -f "${MANIFEST_OUTPUT_DIR}/.env.indexer.tmp" "${MANIFEST_OUTPUT_DIR}/.env.indexer"
 
 # Bounce envio so it picks up the new start_block.  Anvil + postgres + hasura
-# stay up; only the indexer container is restarted.  envio's config-hash diff
+# stay up; only the indexer container is recreated.  envio's config-hash diff
 # would have wiped the DB anyway on the next run because config.yaml's start
 # block changed — but doing it explicitly keeps the log story clean.
-if docker compose -f "$COMPOSE_FILE" ps --status running --services 2>/dev/null | grep -q '^envio$'; then
-	log "restarting envio container to apply new start_block"
-	docker compose -f "$COMPOSE_FILE" restart envio
+#
+# IMPORTANT: use `up -d --force-recreate`, NOT `restart`.  `docker compose
+# restart` reuses the existing container and does NOT re-read `env_file`, so the
+# ENVIO_DEMO_START_BLOCK we just wrote into ${MANIFEST_OUTPUT_DIR}/.env.indexer
+# would be ignored and envio would keep indexing from its boot-time start_block.
+# Recreating forces the new env_file value to take effect.
+if docker compose -f "$COMPOSE_FILE" ps --services 2>/dev/null | grep -q '^envio$'; then
+	log "recreating envio container to apply new start_block"
+	docker compose -f "$COMPOSE_FILE" up -d --force-recreate envio
 fi
 
 log "done.  LMM DAO: $(jq -r .lmm.dao script/demo/manifest.json)"

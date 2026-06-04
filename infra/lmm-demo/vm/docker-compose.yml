@@ -29,6 +29,19 @@ services:
     # --silent keeps logs sane; --auto-impersonate lets Jordi's scripts sign as any address;
     # --state + --state-interval gives us crash-safety (anvil writes state every 30s);
     # --chain-id 1 keeps mainnet contract checks happy (Lido stETH/wstETH/Curve/LDO).
+    #
+    # Memory safety: when forking mainnet, anvil caches every account/storage slot
+    # and block it serves, and that cache is unbounded.  The real OOM trigger was
+    # a bad indexer start_block (~60k blocks back, see the envio service note):
+    # envio replayed tens of thousands of historical blocks through the fork,
+    # ballooning anvil to >12GB and OOM-killing the host.  That is fixed at the
+    # source (envio now indexes only forkBlock-5 -> tip, a handful of blocks), so
+    # we deliberately do NOT use --prune-history / --transaction-block-keeper here:
+    # those drop historical in-memory state/receipts, and envio's handlers do
+    # eth_calls at the event's block height for token metadata and read receipts
+    # across the demo's deployment blocks — pruning could make it miss or mis-read
+    # DAO events.  Correctness wins; memory is instead bounded by `mem_limit`,
+    # which OOM-kills *only* this container (auto-restart) instead of the whole VM.
     entrypoint: ["anvil"]
     command:
       - "--fork-url=${MAINNET_RPC}"
@@ -39,6 +52,10 @@ services:
       - "--state=/data/anvil.json"
       - "--state-interval=30"
       - "--silent"
+    # Hard cap (host has 15Gi). With the correct start_block anvil sits well under
+    # this; the cap is a safety net against another runaway, not the expected use.
+    mem_limit: 6g
+    mem_reservation: 1g
     volumes:
       - lmm-data:/data
     # Bind to loopback only — host nginx proxies /rpc to here.  We never want
@@ -49,6 +66,8 @@ services:
   postgres:
     image: postgres:17-alpine
     restart: unless-stopped
+    mem_limit: 2g
+    mem_reservation: 256m
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
@@ -70,6 +89,8 @@ services:
     # for build instructions.
     image: node:22-bookworm-slim
     restart: unless-stopped
+    mem_limit: 4g
+    mem_reservation: 512m
     working_dir: /indexer
     depends_on:
       postgres:
@@ -86,12 +107,18 @@ services:
       # config.yaml's `rpc.for: sync` directive on chain-id 1) as the primary
       # data-source — HyperSync is intentionally bypassed for the LMM fork.
       ENVIO_DEMO_RPC_URL: http://anvil:8545
-      # Block at which Envio starts indexing chain-id 1.  Init-demo.sh writes
-      # the actual fork-block (manifest.blockNumber - 5) into /srv/lmm/.env
-      # after every `just demo-up`; we read it from there via env_file.  The
-      # default here is the bootstrap value used before init-demo.sh has run
-      # for the first time.
-      ENVIO_DEMO_START_BLOCK: ${ENVIO_DEMO_START_BLOCK:-25179300}
+      # NOTE: ENVIO_DEMO_START_BLOCK is intentionally NOT set here.
+      #
+      # init-demo.sh pins the real fork-block (manifest.blockNumber - 5) into
+      # ${MANIFEST_OUTPUT_DIR}/.env.indexer, which is loaded via `env_file` below.
+      # Docker Compose gives `environment:` HIGHER precedence than `env_file:`, so
+      # if we also declared ENVIO_DEMO_START_BLOCK here it would SHADOW the pinned
+      # value — which is exactly what happened: envio fell back to the bootstrap
+      # default (~25.18M) and replayed ~60k mainnet blocks through the anvil fork,
+      # OOM-killing the host.  Leaving it out lets `.env.indexer` win.  The
+      # first-boot bootstrap default lives in config.yaml as
+      # `start_block: ${ENVIO_DEMO_START_BLOCK:-25179300}`, used only when
+      # .env.indexer does not yet exist.
       # Envio talks to Hasura's admin /v1/metadata endpoint at boot to
       # track tables and grant SELECT to the `public` role so the host
       # nginx proxy can expose anonymous reads via /graphql.  Without
@@ -114,6 +141,8 @@ services:
   hasura:
     image: hasura/graphql-engine:v2.42.0
     restart: unless-stopped
+    mem_limit: 1g
+    mem_reservation: 256m
     depends_on:
       postgres:
         condition: service_healthy

@@ -22,6 +22,7 @@ import {
 } from '../../components/flowWorkbench/buildWorkbenchModel';
 import { FlowFocus } from '../../components/flowWorkbench/flowFocus';
 import type { IWorkbenchModel } from '../../components/flowWorkbench/workbenchModel';
+import { strategyParamsByAddress } from '../../demo/strategyParams';
 import { useLmmManifest } from '../../demo/useLmmManifest';
 import { useFlowDataContext } from '../../providers/flowDataProvider';
 import { buildFlowAddressBook } from '../../utils/flowAddressBook';
@@ -107,6 +108,15 @@ export const FlowWorkbenchPageClient: React.FC<
         return buildRecipientHint(data);
     }, [data, orchestrator, daoAddress]);
 
+    // Strategy config params (slippage, target token, oracle staleness) live
+    // only on the inspected topology, not in the indexer taxonomy. Project them
+    // to display pairs keyed by strategy address so the descriptor can carry
+    // them onto each step. Empty outside demo mode (no topology).
+    const strategyParams = useMemo(
+        () => strategyParamsByAddress(liveSnapshot?.topology ?? null),
+        [liveSnapshot?.topology],
+    );
+
     const descriptor = useMemo(() => {
         if (!(data && orchestrator)) {
             return null;
@@ -116,8 +126,9 @@ export const FlowWorkbenchPageClient: React.FC<
             recipient: recipient
                 ? { address: recipient.address ?? '', label: recipient.label }
                 : undefined,
+            paramsByAddress: strategyParams,
         });
-    }, [data, orchestrator, recipient]);
+    }, [data, orchestrator, recipient, strategyParams]);
 
     // Live RPC overlay applies generically by address — only when the live
     // snapshot's dispatcher is the selected orchestrator. Powers the forward

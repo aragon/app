@@ -200,12 +200,27 @@ const readingsForStep = (
                     b.strategyAddress.toLowerCase() ===
                     descriptorStep.address.toLowerCase(),
             );
-            return budget
-                ? {
-                      token: tokenSymbol(budget.token),
-                      reading: toNumber(budget.amount, budget.token.decimals),
-                  }
-                : {};
+            if (!budget) {
+                return {};
+            }
+            const reading = {
+                token: tokenSymbol(budget.token),
+                reading: toNumber(budget.amount, budget.token.decimals),
+            };
+            // Stream-until budgets meter a per-epoch slice; give that slice
+            // context with the live burn-down runway (epochs left to the
+            // target, or the floored-drain note once the target is passed). The
+            // `reading` above already IS the per-epoch slice (`budget()`).
+            const stream = snapshot.stream;
+            if (input.kind === 'streamUntil' && stream) {
+                const remaining = Number(stream.remaining);
+                const detail =
+                    remaining > 0
+                        ? `streams a slice / epoch · ${remaining} epoch${remaining === 1 ? '' : 's'} to target`
+                        : `past target · capped at balance ÷ ${stream.floorEpochs}/epoch`;
+                return { ...reading, detail };
+            }
+            return reading;
         }
         if (input.role === 'gate') {
             const gate = snapshot.gate;

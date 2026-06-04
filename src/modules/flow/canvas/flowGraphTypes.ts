@@ -128,6 +128,9 @@ export interface IFlowGraphNode {
     badge?: string;
     /** Hanging "parts" beneath a strategy node. Empty for source/recipient. */
     inputs: IFlowSubInput[];
+    /** Static config parameters (slippage, target token, …) for a strategy node,
+     *  shown on the card + inspector. Copied from the descriptor step. */
+    params?: IFlowStrategyParam[];
     /** Vault balances for the `source` node. */
     balances?: IFlowVaultBalance[];
     /** Net token deltas to the vault after a dispatch (vault `source` node). */
@@ -187,6 +190,14 @@ export interface IFlowSubInputDescriptor {
     note?: string;
 }
 
+/** A single display-ready config parameter for a strategy (e.g. "Max slippage"
+ *  → "0.50%"). Generic label/value pairs so the canvas renders them without any
+ *  per-strategy knowledge; producers decide what to surface. */
+export interface IFlowStrategyParam {
+    label: string;
+    value: string;
+}
+
 export interface IFlowStepDescriptor {
     index: number;
     address: string;
@@ -195,6 +206,9 @@ export interface IFlowStepDescriptor {
     subtitle?: string;
     paused: boolean;
     inputs: IFlowSubInputDescriptor[];
+    /** Optional static config parameters (slippage, target token, …) surfaced
+     *  on the card/inspector. Empty/undefined when none are known. */
+    params?: IFlowStrategyParam[];
 }
 
 export interface IFlowMachineDescriptor {
