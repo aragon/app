@@ -127,6 +127,9 @@ const nextConfig = {
         ];
     },
     images: {
+        // 30 days — IPFS content is immutable (CID-addressed); kept below 1 year because the TTL is global
+        // and mutable hosts (CMS logos, token icons) share the optimizer with no invalidation mechanism.
+        minimumCacheTTL: 2_592_000,
         remotePatterns: [
             {
                 protocol: 'https',
