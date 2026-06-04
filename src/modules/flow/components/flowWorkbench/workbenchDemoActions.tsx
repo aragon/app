@@ -191,7 +191,6 @@ export const WorkbenchDemoActions: React.FC = () => {
     return (
         <Dropdown.Container
             align="end"
-            constrainContentWidth={false}
             customTrigger={
                 <Button
                     iconLeft={IconType.SETTINGS}
@@ -205,38 +204,42 @@ export const WorkbenchDemoActions: React.FC = () => {
             onOpenChange={setOpen}
             open={open}
         >
-            <div className="px-2 pt-1 pb-0.5 font-semibold text-neutral-500 text-xs">
-                Demo controls · Anvil fork
-            </div>
-            {ACTION_GROUPS.map((group) => (
-                <div key={group.heading}>
-                    <div className="px-2 pt-2 pb-0.5 font-semibold text-[11px] text-neutral-400 uppercase tracking-[0.06em]">
-                        {group.heading}
-                    </div>
-                    {group.actions.map((action) => (
-                        <Dropdown.Item
-                            disabled={busyKey != null}
-                            key={action.key}
-                            onClick={run(action)}
-                        >
-                            <span className="flex w-full items-center gap-2.5 text-left">
-                                <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
-                                    <MmIcon name={action.icon} size={15} />
-                                </span>
-                                <span className="flex min-w-0 flex-col">
-                                    <span className="font-semibold text-neutral-800 text-sm">
-                                        {action.label}
-                                        {busyKey === action.key && ' …'}
-                                    </span>
-                                    <span className="text-neutral-400 text-xs">
-                                        {action.description}
-                                    </span>
-                                </span>
-                            </span>
-                        </Dropdown.Item>
-                    ))}
+            {/* Fixed width so the long action descriptions wrap inside the menu
+                instead of stretching it across the canvas. */}
+            <div className="w-[320px]">
+                <div className="px-2 pt-1 pb-0.5 font-semibold text-neutral-500 text-xs">
+                    Demo controls · Anvil fork
                 </div>
-            ))}
+                {ACTION_GROUPS.map((group) => (
+                    <div key={group.heading}>
+                        <div className="px-2 pt-2 pb-0.5 font-semibold text-[11px] text-neutral-400 uppercase tracking-[0.06em]">
+                            {group.heading}
+                        </div>
+                        {group.actions.map((action) => (
+                            <Dropdown.Item
+                                disabled={busyKey != null}
+                                key={action.key}
+                                onClick={run(action)}
+                            >
+                                <span className="flex w-full items-start gap-2.5 whitespace-normal text-left">
+                                    <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-600">
+                                        <MmIcon name={action.icon} size={15} />
+                                    </span>
+                                    <span className="flex min-w-0 flex-col">
+                                        <span className="whitespace-normal break-words font-semibold text-neutral-800 text-sm">
+                                            {action.label}
+                                            {busyKey === action.key && ' …'}
+                                        </span>
+                                        <span className="whitespace-normal break-words text-neutral-400 text-xs leading-snug">
+                                            {action.description}
+                                        </span>
+                                    </span>
+                                </span>
+                            </Dropdown.Item>
+                        ))}
+                    </div>
+                ))}
+            </div>
         </Dropdown.Container>
     );
 };

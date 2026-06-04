@@ -231,6 +231,12 @@ const edgeColor = (edge: IFlowGraphEdge, replaying: boolean): string => {
     if (replaying) {
         return 'var(--color-neutral-200)';
     }
+    // Settle-phase flows (e.g. the CoW buyback that lands when the order is
+    // settled, not at dispatch) read in a distinct warm hue — clearly NOT the
+    // blue "happens now" dispatch flow.
+    if (edge.trigger === 'settle') {
+        return 'var(--color-warning-500)';
+    }
     if (edge.fidelity === 'opaque') {
         return 'var(--color-primary-200)';
     }
@@ -346,59 +352,70 @@ const SubChip: React.FC<{ sub: IFlowSubInput; muted: boolean }> = ({
     const display = getSubInputDisplay(sub.role, sub.kind);
     const closed = sub.role === 'gate' && sub.status === 'closed';
     const open = sub.role === 'gate' && sub.status === 'open';
+    const showEpoch = sub.role === 'epoch' && sub.epoch != null;
+    const hasValues = sub.reading != null || showEpoch || sub.detail != null;
     return (
+        // Stacked, not crammed onto one line: row 1 icon + title (+ status),
+        // row 2 the static description (note), row 3 the live values (budget
+        // amount, epoch #, gate now-vs-floor). Rows 2/3 are indented to line up
+        // under the title.
         <div
             className={classNames(
-                'flex items-center gap-2 rounded-lg border px-[9px] py-1.5',
+                'flex flex-col gap-1 rounded-lg border px-[9px] py-1.5',
                 closed && 'border-critical-200 bg-critical-100',
                 open && 'border-success-200 bg-success-100',
                 !(closed || open) && 'border-neutral-100 bg-neutral-50',
                 muted && 'opacity-50',
             )}
         >
-            <span
-                className={classNames(
-                    'flex size-5 shrink-0 items-center justify-center rounded border bg-neutral-0',
-                    closed && 'border-critical-200 text-critical-600',
-                    open && 'border-success-200 text-success-700',
-                    !(closed || open) && 'border-neutral-100 text-neutral-400',
-                )}
-            >
-                <MmIcon name={display.icon} size={14} />
-            </span>
-            <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5 font-semibold text-neutral-600 text-xs">
+            <div className="flex items-center gap-2">
+                <span
+                    className={classNames(
+                        'flex size-5 shrink-0 items-center justify-center rounded border bg-neutral-0',
+                        closed && 'border-critical-200 text-critical-600',
+                        open && 'border-success-200 text-success-700',
+                        !(closed || open) &&
+                            'border-neutral-100 text-neutral-400',
+                    )}
+                >
+                    <MmIcon name={display.icon} size={14} />
+                </span>
+                <span className="min-w-0 flex-1 truncate font-semibold text-neutral-600 text-xs">
                     {sub.label}
-                    {closed && <Pill tone="critical">closed</Pill>}
-                    {open && <Pill tone="success">open</Pill>}
+                </span>
+                {closed && <Pill tone="critical">closed</Pill>}
+                {open && <Pill tone="success">open</Pill>}
+            </div>
+            {sub.note && (
+                <div className="pl-7 text-[11px] text-neutral-400 leading-[1.35]">
+                    {sub.note}
                 </div>
-                {sub.note && (
-                    <div className="mt-px text-[11px] text-neutral-400 leading-[1.35]">
-                        {sub.note}
-                    </div>
-                )}
-                {sub.detail && (
-                    <div
-                        className={classNames(
-                            'mt-px text-[11px] leading-[1.35]',
-                            closed ? 'text-critical-700' : 'text-neutral-400',
-                        )}
-                    >
-                        {sub.detail}
-                    </div>
-                )}
-            </div>
-            <div className="flex shrink-0 flex-col items-end gap-px">
-                {sub.reading != null && (
-                    <Amount amount={sub.reading} token={sub.token} />
-                )}
-                {sub.role === 'epoch' && sub.epoch != null && (
-                    <span className="num font-semibold text-[11px] text-neutral-500">
-                        #{sub.epoch.toLocaleString('en-US')}
-                        {sub.epochLength ? ` · ${sub.epochLength}` : ''}
-                    </span>
-                )}
-            </div>
+            )}
+            {hasValues && (
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pl-7">
+                    {sub.reading != null && (
+                        <Amount amount={sub.reading} token={sub.token} />
+                    )}
+                    {showEpoch && (
+                        <span className="num font-semibold text-[11px] text-neutral-500">
+                            #{sub.epoch?.toLocaleString('en-US')}
+                            {sub.epochLength ? ` · ${sub.epochLength}` : ''}
+                        </span>
+                    )}
+                    {sub.detail && (
+                        <span
+                            className={classNames(
+                                'text-[11px] leading-[1.35]',
+                                closed
+                                    ? 'text-critical-700'
+                                    : 'text-neutral-500',
+                            )}
+                        >
+                            {sub.detail}
+                        </span>
+                    )}
+                </div>
+            )}
         </div>
     );
 };
@@ -648,6 +665,7 @@ const EdgeLabel: React.FC<{
             edge.fidelity === 'estimated' && 'border-info-200',
             edge.fidelity === 'opaque' && 'border-primary-200 border-dashed',
             edge.fidelity === 'real' && 'border-neutral-200',
+            edge.trigger === 'settle' && 'border-warning-300 border-dashed',
             edge.blocked && 'border-critical-300',
             replaying && 'opacity-45',
         )}
@@ -660,6 +678,14 @@ const EdgeLabel: React.FC<{
         />
         {edge.perEpoch && (
             <span className="font-semibold text-neutral-400">/epoch</span>
+        )}
+        {edge.trigger === 'settle' && (
+            <span className="inline-flex items-center gap-[3px] font-semibold text-warning-700">
+                <span className="text-warning-500">
+                    <MmIcon name="clock" size={11} />
+                </span>
+                on settle
+            </span>
         )}
         {edge.blocked && (
             <span className="inline-flex items-center gap-[3px] font-semibold text-critical-700">

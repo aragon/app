@@ -43,6 +43,7 @@ import type {
     IFlowSubInput,
 } from './flowGraphTypes';
 import { layoutFlowGraph } from './layoutFlowGraph';
+import { outputsSettleAsync } from './primitiveRegistry';
 
 const STRATEGY_W = 240;
 const SOURCE_W = 252;
@@ -50,7 +51,9 @@ const RECIPIENT_W = 200;
 
 const STRATEGY_HEADER_H = 60;
 const STRATEGY_BADGE_H = 28;
-const STRATEGY_INPUT_H = 58;
+// Sub-input chips stack up to 3 rows (title / description / live values), so
+// reserve enough vertical space that legs don't crowd the one below.
+const STRATEGY_INPUT_H = 74;
 const SOURCE_BASE_H = 72;
 const SOURCE_BALANCE_H = 32;
 const SOURCE_NET_H = 28;
@@ -239,6 +242,11 @@ export const buildFlowGraph = (params: IBuildFlowGraphParams): IFlowGraph => {
 
             // returns / distributes: leg → vault (loop) or → external recipient.
             // Dust / zero outputs draw no edge (and no inspector row) either.
+            // A leg whose outputs settle out-of-band (e.g. CoW buyback fill)
+            // tags those edges `settle`: they render in a distinct phase and
+            // don't animate as part of the dispatch "now". An explicit per-flow
+            // trigger (from indexed `pending`) wins over the kind default.
+            const settlesAsync = outputsSettleAsync(step.kind);
             const stepOutputs: IFlowNodeOutput[] = [];
             (dyn.outs ?? []).forEach((outflow, i) => {
                 if (!isMeaningful(outflow.amount)) {
@@ -249,6 +257,9 @@ export const buildFlowGraph = (params: IBuildFlowGraphParams): IFlowGraph => {
                     hasExternal = true;
                     externalProducers.add(step.address);
                 }
+                const trigger =
+                    outflow.trigger ?? (settlesAsync ? 'settle' : 'dispatch');
+                const settles = trigger === 'settle';
                 edges.push({
                     id: `out-${step.address}-${outflow.token}-${i}`,
                     source: step.address,
@@ -258,8 +269,11 @@ export const buildFlowGraph = (params: IBuildFlowGraphParams): IFlowGraph => {
                     amount: outflow.amount,
                     fidelity: outflow.fidelity,
                     perEpoch: outflow.perEpoch,
-                    flowing: flowingOut && isMeaningful(outflow.amount),
+                    // Settle-phase outputs don't animate as the dispatch "now".
+                    flowing:
+                        flowingOut && isMeaningful(outflow.amount) && !settles,
                     blocked,
+                    trigger,
                 });
                 stepOutputs.push({
                     token: outflow.token,

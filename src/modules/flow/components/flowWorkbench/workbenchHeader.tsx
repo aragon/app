@@ -10,20 +10,12 @@
 
 import { Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
 import { MmIcon } from './mmIcon';
-import { fmtAmount, Switch } from './mmPrimitives';
+import { Switch } from './mmPrimitives';
 import type {
     INextRun,
-    ITokenAmount,
     IWorkbenchModel,
     IWorkbenchStats,
 } from './workbenchModel';
-
-const joinTokens = (items: ITokenAmount[]): string =>
-    items.length === 0
-        ? '—'
-        : items
-              .map((t) => `${fmtAmount(t.amount) ?? '·'} ${t.token}`)
-              .join(' · ');
 
 interface IFlowSelectorProps {
     dao: string;
@@ -99,6 +91,9 @@ export const FlowSelector: React.FC<IFlowSelectorProps> = (props) => {
 export const CumulativeStats: React.FC<{ stats: IWorkbenchStats }> = ({
     stats,
 }) => {
+    // KPIs only. Per-token "moved / back" lives in the TOKEN THROUGHPUT table
+    // below (out = moved, back = buybacks), which scales to any token set — so
+    // we no longer cram multi-token blobs ("Total moved" / "Buybacks") here.
     const items: { label: string; value: string; accent?: boolean }[] = [
         {
             label: 'Dispatches',
@@ -109,11 +104,7 @@ export const CumulativeStats: React.FC<{ stats: IWorkbenchStats }> = ({
             value: `${Math.round(stats.successRate * 100)}%`,
             accent: true,
         },
-        { label: 'Total moved', value: joinTokens(stats.totalMoved) },
     ];
-    if (stats.buybacks.length > 0) {
-        items.push({ label: 'Buybacks', value: joinTokens(stats.buybacks) });
-    }
     return (
         <div className="grid grid-cols-2 gap-x-5 gap-y-3">
             {items.map((it) => (

@@ -86,6 +86,21 @@ const FALLBACK: IPrimitiveDisplay = {
     icon: 'blockchain-smartcontract',
 };
 
+// Strategies whose OUTPUTS land out-of-band (asynchronously) rather than at
+// dispatch time — e.g. a CowSwap order is presigned during `dispatch()` but the
+// buy-side fill only arrives later, when a solver settles it. The canvas renders
+// such outputs as a distinct "settle" phase instead of folding them into the
+// immediate dispatch flow. Keyed by generic kind — no per-flow hardcode; a leg's
+// FEED (vault → leg) is always a dispatch-time commit regardless.
+const OUTPUTS_SETTLE_ASYNC: Partial<Record<StrategyKind, boolean>> = {
+    gatedCowSwap: true,
+    cowSwap: true,
+};
+
+/** Whether a strategy's produced outputs settle out-of-band (async). */
+export const outputsSettleAsync = (kind: string): boolean =>
+    OUTPUTS_SETTLE_ASYNC[kind as StrategyKind] ?? false;
+
 /** Strategy display, falling back to the generic `unknown` entry. */
 export const getStrategyDisplay = (kind: string): IPrimitiveDisplay =>
     STRATEGY[kind as StrategyKind] ?? STRATEGY.unknown;

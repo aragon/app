@@ -164,6 +164,9 @@ export interface IFlowGraphEdge {
     flowing?: boolean;
     /** Render the edge as blocked (gate closed / would-not-fire). */
     blocked?: boolean;
+    /** When this movement happens — `settle` outputs (CoW fill) render in a
+     *  distinct phase style and don't animate as part of the dispatch "now". */
+    trigger?: FlowEdgeTrigger;
     note?: string;
 }
 
@@ -226,6 +229,10 @@ export interface IFlowMachineDescriptor {
  * descriptor by `address` (preferred) or `index`.
  * ------------------------------------------------------------------------- */
 
+/** When a flow materialises: at `dispatch()` time, or out-of-band later when the
+ *  strategy's order settles (e.g. a CowSwap solver fill). Default `dispatch`. */
+export type FlowEdgeTrigger = 'dispatch' | 'settle';
+
 export interface IFlowEdgeFlow {
     token: string;
     /** `null` for opaque outputs (e.g. LP minted, swap fill pre-settlement). */
@@ -237,6 +244,9 @@ export interface IFlowEdgeFlow {
     external?: boolean;
     /** Output only: the external recipient address, when known. */
     to?: string;
+    /** When this flow happens — `settle` for outputs that land out-of-band
+     *  (CoW fill). Defaults to `dispatch` when unset. */
+    trigger?: FlowEdgeTrigger;
 }
 
 /** Live reading for one hanging input, positionally matched to the

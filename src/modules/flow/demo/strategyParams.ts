@@ -56,7 +56,7 @@ export const strategyParamsByAddress = (
     topology: TopologyGraph | null,
 ): Map<string, IFlowStrategyParam[]> => {
     const map = new Map<string, IFlowStrategyParam[]>();
-    if (!topology || topology.root.kind !== 'plugin.dispatch') {
+    if (topology?.root.kind !== 'plugin.dispatch') {
         return map;
     }
     for (const node of topology.root.strategies) {

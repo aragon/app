@@ -861,7 +861,7 @@ const deriveStreamCooldownFromStrategies = (
     for (const s of strategies) {
         const budget = s.budget;
         const epochProvider = s.epochProvider;
-        if (!budget || budget.kind !== 'STREAM_UNTIL') {
+        if (budget?.kind !== 'STREAM_UNTIL') {
             continue;
         }
         if (!epochProvider?.epochLength) {

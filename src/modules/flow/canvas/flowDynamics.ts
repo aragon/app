@@ -38,6 +38,13 @@ const tokenSymbol = (token: TokenInfo): string =>
 const toNumber = (amount: bigint, decimals: number | null): number =>
     Number(amount) / 10 ** (decimals ?? 18);
 
+/** Format an oracle price/threshold (quote-token scale, 6dp) as a whole-dollar
+ *  string, e.g. 3_200_000_000n → "3,200". */
+const fmtPrice = (value: bigint): string =>
+    (Number(value) / 1e6).toLocaleString('en-US', {
+        maximumFractionDigits: 0,
+    });
+
 const fidelityOf = (p: Provenance): FlowFidelity => {
     if (p === 'opaque' || p === 'downstream-of-opaque') {
         return 'opaque';
@@ -227,21 +234,25 @@ const readingsForStep = (
             if (!gate) {
                 return {};
             }
-            // The gate fails for TWO distinct reasons: the price is below the
-            // floor, OR the oracle reading is too old (`block.timestamp >
-            // updatedAt + maxStaleness`). Distinguish them so a stale-but-fine
-            // price isn't mislabelled "below floor": if the live price is at/above
-            // the threshold yet the gate still fails, it's staleness.
+            // Surface the actual numbers so you can see WHAT must happen: the
+            // live oracle price vs the floor it must clear. Quote scale = the
+            // gate's quote-token decimals (the LMM oracle quotes in USDC, 6dp —
+            // matching the vendored TopologyView's `formatAmount(price, 6, 2)`).
+            const floor = `$${fmtPrice(gate.threshold)}`;
+            const now = gate.price != null ? `$${fmtPrice(gate.price)}` : '—';
+            // The gate fails for TWO distinct reasons: price below floor, OR the
+            // oracle reading is too old. If the live price clears the floor yet
+            // the gate still fails, it's staleness — say so; otherwise show the
+            // now-vs-floor comparison (the numbers make below-floor self-evident).
             const belowFloor =
                 gate.price != null && gate.price < gate.threshold;
-            const reason = gate.passes
-                ? 'price above floor'
-                : belowFloor
-                  ? 'price below floor'
-                  : 'oracle price stale — refresh it';
+            const detail =
+                gate.passes || belowFloor
+                    ? `now ${now} · floor ${floor}`
+                    : `oracle stale · floor ${floor}`;
             return {
                 status: gate.passes ? 'open' : 'closed',
-                detail: reason,
+                detail,
             };
         }
         // epoch
