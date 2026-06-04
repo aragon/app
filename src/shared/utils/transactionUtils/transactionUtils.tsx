@@ -22,25 +22,33 @@ class TransactionUtils {
             ? transactions[0]
             : this.buildExecutorTransaction(transactions, network);
 
-    private buildExecutorTransaction = (
+    /**
+     * Encodes an array of transactions into a single `execute(callId, actions, allowFailureMap)`
+     * call targeting the given contract (a DAO or executor). Uses `allowFailureMap = 0` so any
+     * sub-action revert reverts the whole batch.
+     * @param transactions - Transactions to batch into the execute call.
+     * @param target - Address of the contract exposing `execute` (e.g. the DAO itself).
+     */
+    buildExecuteTransaction = (
         transactions: ITransactionRequest[],
-        network: Network,
+        target: Hex,
     ): ITransactionRequest => {
-        const { globalExecutor } = networkDefinitions[network].addresses;
-
         const transactionData = encodeFunctionData({
             abi: globalExecutorAbi,
             functionName: 'execute',
             args: [zeroHash, transactions, BigInt(0)],
         });
 
-        const transaction = {
-            to: globalExecutor,
-            data: transactionData,
-            value: BigInt(0),
-        };
+        return { to: target, data: transactionData, value: BigInt(0) };
+    };
 
-        return transaction;
+    private buildExecutorTransaction = (
+        transactions: ITransactionRequest[],
+        network: Network,
+    ): ITransactionRequest => {
+        const { globalExecutor } = networkDefinitions[network].addresses;
+
+        return this.buildExecuteTransaction(transactions, globalExecutor);
     };
 }
 

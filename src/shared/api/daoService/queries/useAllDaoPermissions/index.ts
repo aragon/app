@@ -1,0 +1,1 @@
+export { useAllDaoPermissions } from './useAllDaoPermissions';

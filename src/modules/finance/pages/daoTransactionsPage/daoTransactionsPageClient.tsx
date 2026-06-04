@@ -10,8 +10,10 @@ import { useDao } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoExecutePermission } from '@/shared/hooks/useDaoExecutePermission';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
+import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IGetTransactionListParams } from '../../api/financeService';
 import {
     TransactionList,
@@ -48,6 +50,8 @@ export const DaoTransactionsPageClient: React.FC<
         queryParams: { onlyParent: activeOption?.onlyParent },
     });
 
+    const { hasPermission } = useDaoExecutePermission({ dao });
+
     const allTransactionsSelected = activeOption?.isAll ?? false;
     const selectedDaoId = activeOption?.daoId ?? id;
 
@@ -79,7 +83,16 @@ export const DaoTransactionsPageClient: React.FC<
 
     return (
         <Page.Content>
-            <Page.Main title={t('app.finance.daoTransactionsPage.main.title')}>
+            <Page.Main
+                action={{
+                    label: t(
+                        'app.finance.daoTransactionsPage.main.newTransaction',
+                    ),
+                    href: daoUtils.getDaoUrl(dao, 'create/execute'),
+                    hidden: !hasPermission,
+                }}
+                title={t('app.finance.daoTransactionsPage.main.title')}
+            >
                 <TransactionList.Container
                     daoId={id}
                     initialParams={initialParams}

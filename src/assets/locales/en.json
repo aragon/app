@@ -1736,6 +1736,7 @@
           "summary": "All assets"
         },
         "main": {
+          "newTransaction": "New transaction",
           "title": "Transactions"
         }
       },
@@ -1819,6 +1820,16 @@
         },
         "rawCalldataFunction": "Unknown",
         "removeAllActions": "Remove all actions"
+      },
+      "createExecuteActionsPage": {
+        "steps": {
+          "ACTIONS": {
+            "description": "Add the actions to execute directly on the DAO. They will run in the order listed on this page.",
+            "name": "Add actions",
+            "title": "Add actions"
+          }
+        },
+        "submitLabel": "Execute"
       },
       "createProposalForm": {
         "actions": {
@@ -2074,6 +2085,24 @@
         "following": "Following",
         "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum."
       },
+      "executeActionsDialog": {
+        "button": {
+          "submit": "Execute",
+          "success": "View transactions"
+        },
+        "description": "To execute these actions on the DAO, confirm the onchain transaction in your wallet.",
+        "step": {
+          "prepare": {
+            "errorLabel": "Unable to prepare transaction",
+            "label": "Prepare transaction"
+          },
+          "submit": {
+            "addon": "Wallet",
+            "label": "Send to wallet"
+          }
+        },
+        "title": "Execute transaction"
+      },
       "executeCheckDialog": {
         "a11y": {
           "description": "Checking if user has the permission to execute the proposal."
@@ -2093,6 +2122,16 @@
       },
       "layoutWizardCreateDao": {
         "name": "Create DAO"
+      },
+      "layoutWizardCreateExecuteActions": {
+        "error": {
+          "action": "View transactions",
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
+        },
+        "name": "Execute transaction"
       },
       "layoutWizardCreateProposal": {
         "error": {
