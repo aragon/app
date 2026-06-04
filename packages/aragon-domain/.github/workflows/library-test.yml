@@ -29,7 +29,9 @@ jobs:
           fetch-depth: 0
       - name: Build library
         run: pnpm build
-      - name: Run tests
+      - name: Lint
+        run: pnpm lint:ci
+      - name: Run tests with coverage (fails below 100%)
         run: pnpm test
       - name: Check types
         run: pnpm type-check

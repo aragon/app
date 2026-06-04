@@ -1,2 +1,7 @@
+/** biome-ignore-all assist/source/organizeImports: Sorting by category instead */
+
 // Aragon Subdomain — public API
-// Exports will be added as domain objects, use cases, and controllers are implemented.
+export { AragonController as AragonSubdomain } from './infrastructure/controllers/AragonController/AragonController';
+
+// Infrastructure
+export { EnvioClient } from './infrastructure/stores/EnvioClient';

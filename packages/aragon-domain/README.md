@@ -1,76 +1,34 @@
 # Aragon Subdomain
 
-Business logic package for the Aragon governance platform. Encapsulates all domain logic, application use cases, and infrastructure adapters for governance membership, voting power, delegation, and permissions.
+Shared business-logic package for the Aragon governance platform. It is the single home for everything a frontend consumer needs that *isn't* raw on-chain data — membership rules, voting-power math, delegation logic, permission checks, ENS profile enrichment. Paired with [`aragon-indexer`](../aragon-indexer) (which provides only deterministic, indexed on-chain state), it lets any frontend consumer stay thin.
 
-Part of the broader [Envio migration plan](https://www.notion.so/aragonorg/Plan-POC-to-use-Envio-as-backend-32e6b18349dc8084a1d9f8886539c8ad) to replace the existing `app-backend` with Envio-based indexing and a shared business logic layer.
+Today the package ships one capability — looking up the ENS text records attached to a member's `.aragon.eth` subdomain — with the rest of the surface area arriving as the Envio migration progresses.
 
-## Purpose
+> **About the name.** "Subdomain" here is the DDD sense — a bounded subdomain of the Aragon business domain — and it happens to overlap with the ENS `.aragon.eth` subdomains that the first use case reads. The package is not limited to ENS work; that's just what ships first.
 
-Currently, business logic is fragmented between `app-backend` (Node.js backend) and `app` (Next.js frontend). This package consolidates all governance business logic into a single importable package that can be consumed by:
+## How it fits in
 
-- **Next.js BFF** (`app/src/app/api/`) — thin API routes that delegate to this package
-- **Utility services** — cron jobs, storage services that execute application logic from here
-- **Frontend** — domain rules (e.g., delegation validation) imported directly
+```
+On-chain events → Envio (aragon-indexer) → aragon-subdomain → Frontend consumers
+```
+
+`aragon-indexer` indexes raw on-chain state. `aragon-subdomain` queries that indexed data, pulls non-deterministic data from other sources, applies domain rules, and returns clean DTOs. Consumers (the App Next.js BFF, an MCP server, future mobile app, etc) call into a single `AragonSubdomain` controller.
 
 ## Architecture
 
-Built with Domain-Driven Design using [`ddd-core-ts`](https://github.com/asciiman/ddd-core-ts). Three layers with inward-pointing dependencies:
+Built with Domain-Driven Design on top of [`ddd-core-ts`](https://github.com/asciiman/ddd-core-ts). Three layers, dependencies point inward:
 
-| Layer | Purpose | Dependencies |
-|-------|---------|--------------|
-| **Domain** | Pure business logic, value objects, aggregates, store interfaces | None |
-| **Use Cases** | Application logic, orchestrates domain objects and I/O | Domain only |
-| **Infrastructure** | Adapters for Envio, ENS, RPC, token pricing | Domain + Use Cases |
+| Layer | Purpose | Depends on |
+|-------|---------|------------|
+| **Domain** | Pure business logic — value objects, aggregates, store interfaces | Nothing |
+| **Use Cases** | Application logic that orchestrates domain objects and I/O | Domain |
+| **Infrastructure** | Adapters for Envio and other external systems; the public controller | Domain + Use Cases |
 
-## Domain Model
+Validation is done with [`zod`](https://zod.dev) inside domain value objects, and the Envio adapter talks to the indexer through [`graphql-request`](https://github.com/jasonkuhrt/graphql-request).
 
-Based on the [Aragon Governance Membership Domain Model](https://www.figma.com/board/WTlB4By8MoKhh5BJ58dpVE/Aragon-Governance---Membership-Domain-Model).
+## Quick start
 
-### Domain Objects (planned)
-
-| Domain Area | Objects | Description |
-|-------------|---------|-------------|
-| **Member** | `Member`, `MemberMetrics`, `MemberFilter` | Core member identity and activity |
-| **Membership** | `Membership`, `GovernanceType`, `GovernanceTypeResolver` | Plugin membership aggregation |
-| **Voting Power** | `VotingPower`, `ERC20VotingPower`, `VEVotingPower` | VP calculation per governance type |
-| **Delegation** | `Delegation`, `DelegationRules` | Delegation relationships and validation |
-| **Lock** | `VELock`, `LockLifecycle`, `LockFilter` | VE lock positions and state machine |
-| **Permission** | `ProposalCreationPermission`, `MembershipPermission` | Governance permission rules |
-
-### Use Cases (planned)
-
-| Use Case | Description |
-|----------|-------------|
-| `GetMembership` | List members for a plugin (routes by governance type) |
-| `GetERC20Membership` | ERC20-specific: query delegates, enrich with metrics |
-| `GetVEMembership` | VE-specific: calculate VP from locks, group by delegate |
-| `GetMemberDetail` | Single member: governance data + metrics + balance |
-| `GetMemberLocks` | VE lock history for a member |
-| `CheckMemberExists` | Boolean membership check |
-| `CheckProposalCreationPermission` | Can this member create a proposal? |
-| `GetDaosByMember` | Cross-DAO membership lookup |
-
-### Infrastructure Adapters (planned)
-
-| Adapter | Purpose |
-|---------|---------|
-| Envio GraphQL/SQL client | Query indexed on-chain state |
-| ENS resolver | Name resolution |
-| On-chain balance/VP reader | Real-time token balance and voting power via RPC |
-| Token price provider | USD pricing for token balances |
-
-## Data Flow
-
-```
-On-chain events → Envio (envio-testing/) → aragon-subdomain → Next.js BFF → Frontend
-```
-
-- **Envio** indexes raw on-chain state (delegations, locks, plugin installations)
-- **aragon-subdomain** queries Envio data, applies business logic (VP calculation, membership aggregation, permission checks), enriches with external data (ENS, token prices)
-- **Next.js BFF** provides thin API routes that call aragon-subdomain use cases
-- **Frontend** renders the results
-
-## Quick Start
+Requires Node 24+ and pnpm 10+.
 
 ```bash
 pnpm install
@@ -78,11 +36,61 @@ pnpm run build
 pnpm run test
 ```
 
-## Related Projects
+## Usage
 
-| Package | Path | Role |
-|---------|------|------|
-| `envio-testing` | `/envio-testing` | Envio indexer for on-chain event data |
-| `app-backend` | `/app-backend` | Legacy backend (being replaced) |
-| `app` | `/app` | Next.js frontend |
-| `ve-governance-indexer` | `/ve-governance-indexer` | Production VE governance indexer (reference) |
+```ts
+import { AragonSubdomain, EnvioClient } from '@aragon/aragon-subdomain';
+
+const envioClient = new EnvioClient({ /* ... */ });
+const aragon = AragonSubdomain.load(envioClient);
+
+const records = await aragon.getMemberProfileTextRecords({
+  subdomain: 'alice.aragon.eth',
+});
+// → [{ key: 'avatar', value: 'ipfs://…' }, …]
+// Returns [] if the subdomain is unknown, has no resolver, or has no records.
+```
+
+## Roadmap
+
+This package is the target for the [Envio migration](https://www.notion.so/aragonorg/Plan-POC-to-use-Envio-as-backend-32e6b18349dc8084a1d9f8886539c8ad), which moves governance business logic out of `app-backend` and `app` and into a shared library. Upcoming areas, in rough order:
+
+- **Membership** — list members for a plugin, routed by governance type (ERC20 vs. VE)
+- **Voting power** — VP calculation per governance type, including VE locks
+- **Delegation** — delegation relationships and validation rules
+- **Permissions** — proposal-creation and membership permission checks
+- **Member detail** — single-member views enriched with balances and ENS metadata
+
+Scope is tracked against the [Aragon Governance Membership Domain Model](https://www.figma.com/board/WTlB4By8MoKhh5BJ58dpVE/Aragon-Governance---Membership-Domain-Model).
+
+## Development
+
+### Publishing a snapshot release to npm
+
+Snapshot releases let you test unreleased changes from a branch on npm without cutting a real version. The flow uses [Changesets](https://github.com/changesets/changesets) and a manually-dispatched GitHub Actions workflow.
+
+1. **Add a changeset locally** describing the change:
+
+   ```bash
+   pnpm changeset
+   ```
+
+   Pick the bump type and write a short summary. Commit the generated file under `.changeset/` and push your branch.
+
+2. **Run the snapshot workflow.** On GitHub, go to *Actions → Library Snapshot → Run workflow* and select your branch. The workflow builds the package, runs `pnpm changeset version --snapshot`, and publishes to npm under a per-run dist-tag (`snapshot-<run-id>`).
+
+3. **Install the snapshot** in a consumer — the exact command also appears in the workflow run's summary:
+
+   ```bash
+   pnpm add @aragon/aragon-subdomain@snapshot-<run-id>
+   ```
+
+Each run gets its own dist-tag, so multiple in-flight branches can publish snapshots in parallel without colliding. The workflow won't publish anything if no changesets are pending.
+
+## Related projects
+
+| Package | Path | Relationship |
+|---------|------|--------------|
+| `aragon-indexer` | `/aragon-indexer` | Upstream — Envio indexer this package queries |
+| `app` | `/app` | Consumer — Next.js frontend and BFF |
+| `app-backend` | `/app-backend` | Consumer being replaced as logic moves here |
