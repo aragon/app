@@ -1,5 +1,5 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
-import { AssetSelectionDialog } from '../dialogs/assetSelectionDialog/assetSelectionDialog';
+import { AssetSelectionDialog } from '../dialogs/assetSelectionDialog';
 import { FinanceDialogId } from './financeDialogId';
 
 export const financeDialogsDefinitions: Record<
