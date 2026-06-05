@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSendTransaction } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import {
@@ -50,9 +51,18 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
+    const { setIsBlocked } = useBlockNavigationContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    // Once the transaction is submitted, unblock navigation so that clicking the success link does
+    // not trigger the confirm-exit guard of the still-dirty wizard form behind the dialog.
+    useEffect(() => {
+        if (isSubmitted) {
+            setIsBlocked(false);
+        }
+    }, [isSubmitted, setIsBlocked]);
 
     const monitorError = useCallback(
         (error: unknown) =>

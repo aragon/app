@@ -1736,7 +1736,7 @@
           "summary": "All assets"
         },
         "main": {
-          "newTransaction": "New transaction",
+          "newTransaction": "Execution",
           "title": "Transactions"
         }
       },
@@ -2088,7 +2088,7 @@
       "executeActionsDialog": {
         "button": {
           "submit": "Execute",
-          "success": "View transactions"
+          "success": "Done"
         },
         "description": "To execute these actions on the DAO, confirm the onchain transaction in your wallet.",
         "step": {
