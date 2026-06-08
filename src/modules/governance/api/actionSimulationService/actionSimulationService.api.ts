@@ -10,8 +10,9 @@ export interface ISimulateActionsUrlParams {
      */
     network: Network;
     /**
-     * Address the actions are simulated from (the `from` address): the governance plugin
-     * for proposals, the DAO itself for direct execution.
+     * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
+     * `from` address): the governance plugin for proposals, the connected wallet for direct
+     * execution.
      */
     from: string;
 }

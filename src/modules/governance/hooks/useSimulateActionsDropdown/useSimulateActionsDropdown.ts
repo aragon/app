@@ -46,6 +46,11 @@ export const useSimulateActionsDropdown = (
     const { network } = daoUtils.parseDaoId(daoId);
     const { tenderlySupport } = networkDefinitions[network];
 
+    const getActions = () =>
+        (getValues('actions') as
+            | ICreateProposalFormData['actions']
+            | undefined) ?? [];
+
     const handleSimulate = async () => {
         // Prevent running simulation if the form is invalid or there is no `from` address.
         const isValid = await trigger();
@@ -53,13 +58,9 @@ export const useSimulateActionsDropdown = (
             return;
         }
 
-        const actions =
-            (getValues('actions') as
-                | ICreateProposalFormData['actions']
-                | undefined) ?? [];
         const processedActions =
             await proposalActionPreparationUtils.prepareActions({
-                actions,
+                actions: getActions(),
                 prepareActions,
             });
 
@@ -72,12 +73,7 @@ export const useSimulateActionsDropdown = (
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
     };
 
-    const actions =
-        (getValues('actions') as
-            | ICreateProposalFormData['actions']
-            | undefined) ?? [];
-
-    if (!(actions.length > 0 && tenderlySupport && from != null)) {
+    if (getActions().length === 0 || tenderlySupport == null || from == null) {
         return undefined;
     }
 
