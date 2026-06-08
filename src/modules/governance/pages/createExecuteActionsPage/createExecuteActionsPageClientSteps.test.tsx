@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
+import * as useWalletAccount from '@/modules/application/hooks/useWalletAccount';
 import type { IWizardPageStepProps } from '@/shared/components/wizards/wizardPage';
 import * as useSimulateActionsDropdown from '../../hooks/useSimulateActionsDropdown';
 import {
@@ -42,15 +43,25 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
         useSimulateActionsDropdown,
         'useSimulateActionsDropdown',
     );
+    const useWalletAccountSpy = jest.spyOn(
+        useWalletAccount,
+        'useWalletAccount',
+    );
 
     beforeEach(() => {
         useWatchSpy.mockReturnValue([]);
         useSimulateActionsDropdownSpy.mockReturnValue(undefined);
+        useWalletAccountSpy.mockReturnValue({
+            address: '0xwallet',
+            chainId: 1,
+            isReconnecting: false,
+        });
     });
 
     afterEach(() => {
         useWatchSpy.mockReset();
         useSimulateActionsDropdownSpy.mockReset();
+        useWalletAccountSpy.mockReset();
     });
 
     const createTestComponent = (

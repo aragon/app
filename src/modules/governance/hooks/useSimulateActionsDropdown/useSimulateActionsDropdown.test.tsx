@@ -60,6 +60,16 @@ describe('useSimulateActionsDropdown hook', () => {
         expect(result.current).toBeUndefined();
     });
 
+    it('returns undefined when the from address is missing', () => {
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({
+                getValues: jest.fn().mockReturnValue([action]),
+            }),
+        );
+        const { result } = renderTestHook({ from: undefined });
+        expect(result.current).toBeUndefined();
+    });
+
     it('returns undefined when the network is not supported by Tenderly', () => {
         useFormContextSpy.mockReturnValue(
             generateFormContext({

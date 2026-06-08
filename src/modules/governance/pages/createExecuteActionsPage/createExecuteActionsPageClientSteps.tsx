@@ -1,7 +1,7 @@
 import { useWatch } from 'react-hook-form';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { WizardPage } from '../../../../shared/components/wizards/wizardPage';
-import { daoUtils } from '../../../../shared/utils/daoUtils';
 import {
     CreateExecuteActionsForm,
     type IExecuteActionsFormData,
@@ -25,15 +25,18 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
 > = (props) => {
     const { daoId } = props;
     const { t } = useTranslations();
+    const { address } = useWalletAccount();
 
     const actions = useWatch<
         Record<string, IExecuteActionsFormData['actions']>
     >({ name: 'actions' });
     const [actionsStep] = createExecuteActionsWizardSteps;
 
+    // Direct execution: the connected wallet is the account that calls `DAO.execute`, so the
+    // actions are simulated from it (mirrors the proposal flow simulating from the plugin).
     const simulateDropdownItems = useSimulateActionsDropdown({
         daoId,
-        from: daoUtils.parseDaoId(daoId).address,
+        from: address,
         formId: createExecuteActionsWizardId,
     });
 

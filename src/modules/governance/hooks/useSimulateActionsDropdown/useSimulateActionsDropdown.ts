@@ -16,10 +16,11 @@ export interface IUseSimulateActionsDropdownParams {
      */
     daoId: string;
     /**
-     * Address the actions are simulated from (the `from` address): the governance plugin
-     * for proposals, the DAO itself for direct execution.
+     * Address that calls `DAO.execute` and the actions are therefore simulated from (the `from`
+     * address): the governance plugin for proposals, the connected wallet for direct execution.
+     * When `undefined` (e.g. no connected wallet) the dropdown is not rendered.
      */
-    from: string;
+    from?: string;
     /**
      * ID of the wizard form to submit when skipping simulation or continuing after it.
      */
@@ -46,9 +47,9 @@ export const useSimulateActionsDropdown = (
     const { tenderlySupport } = networkDefinitions[network];
 
     const handleSimulate = async () => {
-        // Prevent running simulation if the form is invalid.
+        // Prevent running simulation if the form is invalid or there is no `from` address.
         const isValid = await trigger();
-        if (!isValid) {
+        if (!isValid || from == null) {
             return;
         }
 
@@ -76,7 +77,7 @@ export const useSimulateActionsDropdown = (
             | ICreateProposalFormData['actions']
             | undefined) ?? [];
 
-    if (!(actions.length > 0 && tenderlySupport)) {
+    if (!(actions.length > 0 && tenderlySupport && from != null)) {
         return undefined;
     }
 
