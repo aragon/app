@@ -56,13 +56,27 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
-    // Once the transaction is submitted, unblock navigation so that clicking the success link does
-    // not trigger the confirm-exit guard of the still-dirty wizard form behind the dialog.
+    const { mutate: sendTransaction, status: sendStatus } =
+        useSendTransaction();
+
+    // A rejection that comes back straight away (e.g. an RPC issue or an instant wallet reject)
+    // flips the send mutation to "error"; surface that instead of the optimistic success state.
+    const sendFailed = sendStatus === 'error';
+
+    const submitState: TransactionStatusState = sendFailed
+        ? 'error'
+        : isSubmitted
+          ? 'success'
+          : 'idle';
+
+    // Once the transaction is successfully submitted, unblock navigation so that clicking the
+    // success link does not trigger the confirm-exit guard of the still-dirty wizard form behind
+    // the dialog.
     useEffect(() => {
-        if (isSubmitted) {
+        if (submitState === 'success') {
             setIsBlocked(false);
         }
-    }, [isSubmitted, setIsBlocked]);
+    }, [submitState, setIsBlocked]);
 
     const monitorError = useCallback(
         (error: unknown) =>
@@ -98,8 +112,6 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         onError: monitorError,
     });
 
-    const { mutate: sendTransaction } = useSendTransaction();
-
     // Auto-prepare the transaction once the DAO is loaded.
     useEffect(() => {
         if (dao == null || prepareStatus !== 'idle') {
@@ -124,10 +136,6 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const isPreparing = prepareStatus === 'pending';
     const isReady = prepareStatus === 'success';
 
-    const submitState: TransactionStatusState = isSubmitted
-        ? 'success'
-        : 'idle';
-
     const steps: ITransactionStatusStep[] = [
         {
             id: ExecuteActionsStep.PREPARE,
@@ -149,6 +157,9 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
                 label: t(
                     'app.governance.executeActionsDialog.step.submit.label',
                 ),
+                errorLabel: t(
+                    'app.governance.executeActionsDialog.step.submit.errorLabel',
+                ),
                 state: submitState,
                 addon: {
                     label: t(
@@ -160,24 +171,30 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         },
     ];
 
-    const primaryAction = isSubmitted
+    const primaryAction = sendFailed
         ? {
-              label: t('app.governance.executeActionsDialog.button.success'),
-              href: daoUtils.getDaoUrl(dao, 'transactions'),
-              onClick: () => close(),
+              label: t('app.shared.transactionDialog.footer.retry'),
+              iconLeft: IconType.RELOAD,
+              onClick: handleSend,
           }
-        : prepareStatus === 'error'
+        : isSubmitted
           ? {
-                label: t('app.shared.transactionDialog.footer.retry'),
-                iconLeft: IconType.RELOAD,
-                onClick: () => prepare(),
+                label: t('app.governance.executeActionsDialog.button.success'),
+                href: daoUtils.getDaoUrl(dao, 'transactions'),
+                onClick: () => close(),
             }
-          : {
-                label: t('app.governance.executeActionsDialog.button.submit'),
-                onClick: handleSend,
-                isLoading: isPreparing,
-                disabled: !isReady,
-            };
+          : prepareStatus === 'error'
+            ? {
+                  label: t('app.shared.transactionDialog.footer.retry'),
+                  iconLeft: IconType.RELOAD,
+                  onClick: () => prepare(),
+              }
+            : {
+                  label: t('app.governance.executeActionsDialog.button.submit'),
+                  onClick: handleSend,
+                  isLoading: isPreparing,
+                  disabled: !isReady,
+              };
 
     return (
         <>
@@ -201,7 +218,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
                 secondaryAction={{
                     label: t('app.shared.transactionDialog.footer.cancel'),
                     onClick: () => close(),
-                    disabled: isSubmitted,
+                    disabled: submitState === 'success',
                 }}
             />
         </>
