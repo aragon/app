@@ -77,7 +77,7 @@ export const useSimulateActionsDropdown = (
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
     };
 
-    if (getActions().length === 0 || tenderlySupport == null || from == null) {
+    if (getActions().length === 0 || !tenderlySupport || from == null) {
         return undefined;
     }
 
