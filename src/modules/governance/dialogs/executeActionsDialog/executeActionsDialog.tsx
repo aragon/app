@@ -1,6 +1,7 @@
 import { Dialog, DialogFooter, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
+import { match } from 'ts-pattern';
 import { useSendTransaction } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
@@ -171,30 +172,32 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         },
     ];
 
-    const primaryAction = sendFailed
-        ? {
-              label: t('app.shared.transactionDialog.footer.retry'),
-              iconLeft: IconType.RELOAD,
-              onClick: handleSend,
-          }
-        : isSubmitted
-          ? {
-                label: t('app.governance.executeActionsDialog.button.success'),
-                href: daoUtils.getDaoUrl(dao, 'transactions'),
-                onClick: () => close(),
-            }
-          : prepareStatus === 'error'
-            ? {
-                  label: t('app.shared.transactionDialog.footer.retry'),
-                  iconLeft: IconType.RELOAD,
-                  onClick: () => prepare(),
-              }
-            : {
-                  label: t('app.governance.executeActionsDialog.button.submit'),
-                  onClick: handleSend,
-                  isLoading: isPreparing,
-                  disabled: !isReady,
-              };
+    const primaryAction = match({
+        sendFailed,
+        isSubmitted,
+        prepareFailed: prepareStatus === 'error',
+    })
+        .with({ sendFailed: true }, () => ({
+            label: t('app.shared.transactionDialog.footer.retry'),
+            iconLeft: IconType.RELOAD,
+            onClick: handleSend,
+        }))
+        .with({ isSubmitted: true }, () => ({
+            label: t('app.governance.executeActionsDialog.button.success'),
+            href: daoUtils.getDaoUrl(dao, 'transactions'),
+            onClick: () => close(),
+        }))
+        .with({ prepareFailed: true }, () => ({
+            label: t('app.shared.transactionDialog.footer.retry'),
+            iconLeft: IconType.RELOAD,
+            onClick: () => prepare(),
+        }))
+        .otherwise(() => ({
+            label: t('app.governance.executeActionsDialog.button.submit'),
+            onClick: handleSend,
+            isLoading: isPreparing,
+            disabled: !isReady,
+        }));
 
     return (
         <>
