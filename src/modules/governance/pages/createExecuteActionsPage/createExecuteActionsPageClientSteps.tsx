@@ -32,8 +32,6 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
     >({ name: 'actions' });
     const [actionsStep] = createExecuteActionsWizardSteps;
 
-    // Direct execution: the connected wallet is the account that calls `DAO.execute`, so the
-    // actions are simulated from it (mirrors the proposal flow simulating from the plugin).
     const simulateDropdownItems = useSimulateActionsDropdown({
         daoId,
         from: address,

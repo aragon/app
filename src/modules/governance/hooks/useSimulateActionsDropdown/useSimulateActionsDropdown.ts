@@ -52,9 +52,13 @@ export const useSimulateActionsDropdown = (
             | undefined) ?? [];
 
     const handleSimulate = async () => {
-        // Prevent running simulation if the form is invalid or there is no `from` address.
+        if (from == null) {
+            return;
+        }
+
+        // Prevent running simulation if the form is invalid.
         const isValid = await trigger();
-        if (!isValid || from == null) {
+        if (!isValid) {
             return;
         }
 
