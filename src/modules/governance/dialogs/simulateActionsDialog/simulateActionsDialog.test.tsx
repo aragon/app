@@ -86,7 +86,7 @@ describe('<SimulateActionsDialog /> component', () => {
             params: {
                 network:
                     'ethereum' as unknown as ISimulateActionsDialogParams['network'],
-                pluginAddress: '0xplugin',
+                from: '0xplugin',
                 actions: [{ to: '0xto', data: '0xdata', value: BigInt(0) }],
                 ...params,
             },

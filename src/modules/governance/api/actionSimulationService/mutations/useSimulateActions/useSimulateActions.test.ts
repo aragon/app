@@ -20,7 +20,7 @@ describe('useSimulateActions mutation', () => {
         const params = {
             urlParams: {
                 network: Network.ETHEREUM_MAINNET,
-                pluginAddress: '0x123',
+                from: '0x123',
             },
             body: { actions: [{ to: '0x456', data: '0x000', value: '0' }] },
         };

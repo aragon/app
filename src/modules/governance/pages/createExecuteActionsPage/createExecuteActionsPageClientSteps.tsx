@@ -1,12 +1,15 @@
 import { useWatch } from 'react-hook-form';
 import { useTranslations } from '../../../../shared/components/translationsProvider';
 import { WizardPage } from '../../../../shared/components/wizards/wizardPage';
+import { daoUtils } from '../../../../shared/utils/daoUtils';
 import {
     CreateExecuteActionsForm,
     type IExecuteActionsFormData,
 } from '../../components/createExecuteActionsForm';
+import { useSimulateActionsDropdown } from '../../hooks/useSimulateActionsDropdown';
 import {
     CreateExecuteActionsWizardStep,
+    createExecuteActionsWizardId,
     createExecuteActionsWizardSteps,
 } from './createExecuteActionsPageDefinitions';
 
@@ -28,12 +31,19 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
     >({ name: 'actions' });
     const [actionsStep] = createExecuteActionsWizardSteps;
 
+    const simulateDropdownItems = useSimulateActionsDropdown({
+        daoId,
+        from: daoUtils.parseDaoId(daoId).address,
+        formId: createExecuteActionsWizardId,
+    });
+
     return (
         <WizardPage.Step
             description={t(
                 `app.governance.createExecuteActionsPage.steps.${CreateExecuteActionsWizardStep.ACTIONS}.description`,
             )}
             disableNext={actions?.length ? undefined : true}
+            nextDropdownItems={simulateDropdownItems}
             title={t(
                 `app.governance.createExecuteActionsPage.steps.${CreateExecuteActionsWizardStep.ACTIONS}.title`,
             )}

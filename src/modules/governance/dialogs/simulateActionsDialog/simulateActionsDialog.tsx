@@ -16,9 +16,10 @@ export interface ISimulateActionsDialogParams {
      */
     network: Network;
     /**
-     * Address of the plugin on which the proposal is created.
+     * Address the actions are simulated from (the `from` address): the governance plugin
+     * on which the proposal is created, or the DAO itself for direct execution.
      */
-    pluginAddress: string;
+    from: string;
     /**
      * List of actions to simulate.
      */
@@ -41,7 +42,7 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         location.params != null,
         'SimulateActionsDialog: params must be set for the dialog to work correctly',
     );
-    const { actions, network, pluginAddress, formId } = location.params;
+    const { actions, network, from, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -59,14 +60,14 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
             return;
         }
 
-        const urlParams = { network, pluginAddress };
+        const urlParams = { network, from };
         const processedActions = actions.map(({ to, data, value }) => ({
             to,
             data,
             value: value.toString(),
         }));
         simulateActions({ urlParams, body: { actions: processedActions } });
-    }, [actions, network, pluginAddress, status, simulateActions]);
+    }, [actions, network, from, status, simulateActions]);
 
     const hasSimulationFailed = isError || data?.status === 'failed';
     const lastSimulation =

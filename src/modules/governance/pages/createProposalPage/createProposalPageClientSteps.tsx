@@ -1,23 +1,17 @@
 'use client';
 
-import { useFormContext, useWatch } from 'react-hook-form';
-import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
 } from '../../components/createProposalForm';
-import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
-import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
-import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
+import { useSimulateActionsDropdown } from '../../hooks/useSimulateActionsDropdown';
 import {
     CreateProposalWizardStep,
     createProposalWizardId,
@@ -44,14 +38,11 @@ export const CreateProposalPageClientSteps: React.FC<
     const { steps, daoId, pluginAddress } = props;
 
     const { t } = useTranslations();
-    const { open } = useDialogContext();
-    const { trigger, getValues } = useFormContext();
 
     const addActions = useWatch<ICreateProposalFormData>({
         name: 'addActions',
         defaultValue: true,
     });
-    const { prepareActions } = useCreateProposalFormContext();
 
     const [metadataStep, actionsStep, settingsStep] = steps;
 
@@ -64,60 +55,11 @@ export const CreateProposalPageClientSteps: React.FC<
     const hideSettingsStep =
         pluginRegistryUtils.getSlotComponent({ slotId, pluginId }) == null;
 
-    const handleSimulateActions = async () => {
-        // Prevent running simulation if form is invalid.
-        const isValid = await trigger();
-        if (!isValid) {
-            return;
-        }
-
-        const actions =
-            (getValues('actions') as
-                | ICreateProposalFormData['actions']
-                | undefined) ?? [];
-        const processedActions =
-            await publishProposalDialogUtils.prepareActions({
-                actions,
-                prepareActions,
-            });
-
-        const { network } = daoUtils.parseDaoId(daoId);
-
-        const params: ISimulateActionsDialogParams = {
-            network,
-            pluginAddress,
-            actions: processedActions,
-            formId: createProposalWizardId,
-        };
-        open(GovernanceDialogId.SIMULATE_ACTIONS, { params });
-    };
-
-    const getActionStepDropdownItems = () => {
-        const labelBase =
-            'app.governance.createProposalPage.createProposalPageClientSteps';
-
-        const { network } = daoUtils.parseDaoId(daoId);
-        const { tenderlySupport } = networkDefinitions[network];
-
-        const actions =
-            (getValues('actions') as
-                | ICreateProposalFormData['actions']
-                | undefined) ?? [];
-        const dropdownItems = [
-            {
-                label: t(`${labelBase}.simulate`),
-                onClick: handleSimulateActions,
-            },
-            {
-                label: t(`${labelBase}.skipSimulation`),
-                formId: createProposalWizardId,
-            },
-        ];
-
-        return actions.length > 0 && tenderlySupport
-            ? dropdownItems
-            : undefined;
-    };
+    const simulateDropdownItems = useSimulateActionsDropdown({
+        daoId,
+        from: pluginAddress,
+        formId: createProposalWizardId,
+    });
 
     return (
         <>
@@ -137,7 +79,7 @@ export const CreateProposalPageClientSteps: React.FC<
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.description`,
                 )}
                 hidden={addActions === false}
-                nextDropdownItems={getActionStepDropdownItems()}
+                nextDropdownItems={simulateDropdownItems}
                 title={t(
                     `app.governance.createProposalPage.steps.${CreateProposalWizardStep.ACTIONS}.title`,
                 )}

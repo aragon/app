@@ -10,9 +10,10 @@ export interface ISimulateActionsUrlParams {
      */
     network: Network;
     /**
-     * Address of the plugin to simulate the actions for. Used as `from` address.
+     * Address the actions are simulated from (the `from` address): the governance plugin
+     * for proposals, the DAO itself for direct execution.
      */
-    pluginAddress: string;
+    from: string;
 }
 
 export interface ISimulateActionsItem {

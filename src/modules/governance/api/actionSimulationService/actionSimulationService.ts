@@ -8,8 +8,7 @@ import type { ISimulationResult } from './domain';
 
 class ActionSimulationService extends AragonBackendService {
     private urls = {
-        simulateActions:
-            '/v2/simulations/:network/plugin/:pluginAddress/simulate',
+        simulateActions: '/v2/simulations/:network/plugin/:from/simulate',
         simulateProposal: '/v2/simulations/proposal/:proposalId',
         getLastSimulation: '/v2/simulations/proposal/:proposalId',
     };
