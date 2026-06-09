@@ -1,5 +1,15 @@
 # @aragon/app
 
+## 1.30.0
+
+### Minor Changes
+
+- [#1164](https://github.com/aragon/app/pull/1164) [`12d9f42`](https://github.com/aragon/app/commit/12d9f428efae8fd39d8ceffa5074f4b14d9dcd48) Thanks [@milosh86](https://github.com/milosh86)! - Add execute actions flow for users with execute permission to directly submit DAO transactions without creating a proposal
+
+- [#1158](https://github.com/aragon/app/pull/1158) [`4d9e97c`](https://github.com/aragon/app/commit/4d9e97cd1aba7c74231d46a96981f779d2346508) Thanks [@milosh86](https://github.com/milosh86)! - Show nested sub-actions decoded for `createProposal` and `execute` wrapper actions in the proposal details view
+
+- [#1153](https://github.com/aragon/app/pull/1153) [`4434dab`](https://github.com/aragon/app/commit/4434dab0b2773f1eddc7e3c295431accead199d6) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add proposal read view for createCampaign capital distributor actions
+
 ## 1.29.0
 
 ### Minor Changes
