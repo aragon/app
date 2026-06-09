@@ -145,4 +145,27 @@ describe('<ExecuteActionsDialog /> component', () => {
             }),
         ).toBeInTheDocument();
     });
+
+    it('surfaces an error and offers a retry when the wallet rejects the transaction straight away', () => {
+        useSendTransactionSpy.mockReturnValue({
+            mutate: jest.fn(),
+            status: 'error',
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        useMutationSpy.mockReturnValue({
+            mutate: jest.fn(),
+            status: 'success',
+            data: { to: '0x1', value: BigInt(0), data: '0x' },
+        } as unknown as ReactQuery.UseMutationResult);
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/executeActionsDialog.step.submit.errorLabel/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.retry/,
+            }),
+        ).toBeInTheDocument();
+    });
 });

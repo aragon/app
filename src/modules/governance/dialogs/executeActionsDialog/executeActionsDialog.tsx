@@ -1,9 +1,11 @@
 import { Dialog, DialogFooter, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
+import { match } from 'ts-pattern';
 import { useSendTransaction } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
+import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import {
@@ -50,9 +52,32 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
+    const { setIsBlocked } = useBlockNavigationContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
+
+    const { mutate: sendTransaction, status: sendStatus } =
+        useSendTransaction();
+
+    // A rejection that comes back straight away (e.g. an RPC issue or an instant wallet reject)
+    // flips the send mutation to "error"; surface that instead of the optimistic success state.
+    const sendFailed = sendStatus === 'error';
+
+    const submitState: TransactionStatusState = sendFailed
+        ? 'error'
+        : isSubmitted
+          ? 'success'
+          : 'idle';
+
+    // Once the transaction is successfully submitted, unblock navigation so that clicking the
+    // success link does not trigger the confirm-exit guard of the still-dirty wizard form behind
+    // the dialog.
+    useEffect(() => {
+        if (submitState === 'success') {
+            setIsBlocked(false);
+        }
+    }, [submitState, setIsBlocked]);
 
     const monitorError = useCallback(
         (error: unknown) =>
@@ -88,8 +113,6 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         onError: monitorError,
     });
 
-    const { mutate: sendTransaction } = useSendTransaction();
-
     // Auto-prepare the transaction once the DAO is loaded.
     useEffect(() => {
         if (dao == null || prepareStatus !== 'idle') {
@@ -114,10 +137,6 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const isPreparing = prepareStatus === 'pending';
     const isReady = prepareStatus === 'success';
 
-    const submitState: TransactionStatusState = isSubmitted
-        ? 'success'
-        : 'idle';
-
     const steps: ITransactionStatusStep[] = [
         {
             id: ExecuteActionsStep.PREPARE,
@@ -139,6 +158,9 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
                 label: t(
                     'app.governance.executeActionsDialog.step.submit.label',
                 ),
+                errorLabel: t(
+                    'app.governance.executeActionsDialog.step.submit.errorLabel',
+                ),
                 state: submitState,
                 addon: {
                     label: t(
@@ -150,24 +172,32 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         },
     ];
 
-    const primaryAction = isSubmitted
-        ? {
-              label: t('app.governance.executeActionsDialog.button.success'),
-              href: daoUtils.getDaoUrl(dao, 'transactions'),
-              onClick: () => close(),
-          }
-        : prepareStatus === 'error'
-          ? {
-                label: t('app.shared.transactionDialog.footer.retry'),
-                iconLeft: IconType.RELOAD,
-                onClick: () => prepare(),
-            }
-          : {
-                label: t('app.governance.executeActionsDialog.button.submit'),
-                onClick: handleSend,
-                isLoading: isPreparing,
-                disabled: !isReady,
-            };
+    const primaryAction = match({
+        sendFailed,
+        isSubmitted,
+        prepareFailed: prepareStatus === 'error',
+    })
+        .with({ sendFailed: true }, () => ({
+            label: t('app.shared.transactionDialog.footer.retry'),
+            iconLeft: IconType.RELOAD,
+            onClick: handleSend,
+        }))
+        .with({ isSubmitted: true }, () => ({
+            label: t('app.governance.executeActionsDialog.button.success'),
+            href: daoUtils.getDaoUrl(dao, 'transactions'),
+            onClick: () => close(),
+        }))
+        .with({ prepareFailed: true }, () => ({
+            label: t('app.shared.transactionDialog.footer.retry'),
+            iconLeft: IconType.RELOAD,
+            onClick: () => prepare(),
+        }))
+        .otherwise(() => ({
+            label: t('app.governance.executeActionsDialog.button.submit'),
+            onClick: handleSend,
+            isLoading: isPreparing,
+            disabled: !isReady,
+        }));
 
     return (
         <>
@@ -191,7 +221,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
                 secondaryAction={{
                     label: t('app.shared.transactionDialog.footer.cancel'),
                     onClick: () => close(),
-                    disabled: isSubmitted,
+                    disabled: submitState === 'success',
                 }}
             />
         </>
