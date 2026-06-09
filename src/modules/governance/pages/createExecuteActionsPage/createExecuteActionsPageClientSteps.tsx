@@ -35,6 +35,7 @@ export const CreateExecuteActionsPageClientSteps: React.FC<
     const simulateDropdownItems = useSimulateActionsDropdown({
         daoId,
         from: address,
+        isDirectExecute: true,
         formId: createExecuteActionsWizardId,
     });
 

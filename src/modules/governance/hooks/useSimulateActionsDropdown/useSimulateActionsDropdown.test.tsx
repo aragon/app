@@ -120,7 +120,7 @@ describe('useSimulateActionsDropdown hook', () => {
         );
         prepareActionsSpy.mockResolvedValue(preparedActions);
 
-        const { result } = renderTestHook({ from: '0xdao', formId: 'execId' });
+        const { result } = renderTestHook({ from: '0xfrom', formId: 'execId' });
         await result.current?.[0].onClick?.();
 
         await waitFor(() =>
@@ -129,7 +129,44 @@ describe('useSimulateActionsDropdown hook', () => {
                 {
                     params: {
                         network: 'ethereum-mainnet',
-                        from: '0xdao',
+                        from: '0xfrom',
+                        actions: preparedActions,
+                        formId: 'execId',
+                    },
+                },
+            ),
+        );
+    });
+
+    it('opens the simulate dialog with the DAO address for direct execution', async () => {
+        const open = jest.fn();
+        const preparedActions = [
+            { to: '0xto', data: '0xdata' as const, value: '0' },
+        ];
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({
+                getValues: jest.fn().mockReturnValue([action]),
+                trigger: jest.fn().mockResolvedValue(true),
+            }),
+        );
+        prepareActionsSpy.mockResolvedValue(preparedActions);
+
+        const { result } = renderTestHook({
+            from: '0xwallet',
+            isDirectExecute: true,
+            formId: 'execId',
+        });
+        await result.current?.[0].onClick?.();
+
+        await waitFor(() =>
+            expect(open).toHaveBeenCalledWith(
+                GovernanceDialogId.SIMULATE_ACTIONS,
+                {
+                    params: {
+                        network: 'ethereum-mainnet',
+                        from: '0xwallet',
+                        daoAddress: '0xdao',
                         actions: preparedActions,
                         formId: 'execId',
                     },

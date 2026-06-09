@@ -3,35 +3,38 @@ import { generateSimulationResult } from '@/modules/governance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { actionSimulationService } from '../../actionSimulationService';
-import { useSimulateActions } from './useSimulateActions';
+import { useSimulateDirectExecuteActions } from './useSimulateDirectExecuteActions';
 
-describe('useSimulateActions mutation', () => {
-    const simulateActionsSpy = jest.spyOn(
+describe('useSimulateDirectExecuteActions mutation', () => {
+    const simulateDirectExecuteActionsSpy = jest.spyOn(
         actionSimulationService,
-        'simulateActions',
+        'simulateDirectExecuteActions',
     );
 
     afterEach(() => {
-        simulateActionsSpy.mockReset();
+        simulateDirectExecuteActionsSpy.mockReset();
     });
 
-    it('simulates actions and returns the result', async () => {
+    it('simulates direct-execute actions and returns the result', async () => {
         const simulationResult = generateSimulationResult();
         const params = {
             urlParams: {
                 network: Network.ETHEREUM_MAINNET,
-                from: '0x123',
+                daoAddress: '0xdao',
             },
-            body: { actions: [{ to: '0x456', data: '0x000', value: '0' }] },
+            body: {
+                from: '0xwallet',
+                actions: [{ to: '0x456', data: '0x000', value: '0' }],
+            },
         };
-        simulateActionsSpy.mockResolvedValue(simulationResult);
-        const { result } = renderHook(() => useSimulateActions(), {
+        simulateDirectExecuteActionsSpy.mockResolvedValue(simulationResult);
+        const { result } = renderHook(() => useSimulateDirectExecuteActions(), {
             wrapper: ReactQueryWrapper,
         });
         act(() => result.current.mutate(params));
         await waitFor(() =>
             expect(result.current.data).toEqual(simulationResult),
         );
-        expect(simulateActionsSpy).toHaveBeenCalledWith(params);
+        expect(simulateDirectExecuteActionsSpy).toHaveBeenCalledWith(params);
     });
 });

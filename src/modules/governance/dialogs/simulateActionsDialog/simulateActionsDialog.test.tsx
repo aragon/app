@@ -49,8 +49,8 @@ jest.mock('@/shared/components/dialogProvider', () => ({
     useDialogContext: jest.fn(),
 }));
 
-jest.mock('../../api/actionSimulationService', () => ({
-    useSimulateActions: () => ({
+jest.mock('../../api/actionSimulationService', () => {
+    const simulation = {
         mutate: jest.fn(),
         isError: false,
         isPending: false,
@@ -60,8 +60,13 @@ jest.mock('../../api/actionSimulationService', () => ({
             runAt: 123,
             url: 'https://tenderly.co/simulation/123',
         },
-    }),
-}));
+    };
+
+    return {
+        useSimulateProposalActions: () => simulation,
+        useSimulateDirectExecuteActions: () => simulation,
+    };
+});
 
 describe('<SimulateActionsDialog /> component', () => {
     const useDialogContextMock =

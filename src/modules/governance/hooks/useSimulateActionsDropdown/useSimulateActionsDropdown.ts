@@ -22,6 +22,11 @@ export interface IUseSimulateActionsDropdownParams {
      */
     from?: string;
     /**
+     * Whether the actions are run through direct execution (simulated against the DAO from the
+     * connected wallet) rather than a governance plugin. Defaults to `false`.
+     */
+    isDirectExecute?: boolean;
+    /**
      * ID of the wizard form to submit when skipping simulation or continuing after it.
      */
     formId: string;
@@ -36,14 +41,14 @@ export interface IUseSimulateActionsDropdownParams {
 export const useSimulateActionsDropdown = (
     params: IUseSimulateActionsDropdownParams,
 ): IWizardPageStepDropdownItem[] | undefined => {
-    const { daoId, from, formId } = params;
+    const { daoId, from, isDirectExecute, formId } = params;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { trigger, getValues } = useFormContext();
     const { prepareActions } = useCreateProposalFormContext();
 
-    const { network } = daoUtils.parseDaoId(daoId);
+    const { network, address: daoAddress } = daoUtils.parseDaoId(daoId);
     const { tenderlySupport } = networkDefinitions[network];
 
     const getActions = () =>
@@ -73,6 +78,7 @@ export const useSimulateActionsDropdown = (
             from,
             actions: processedActions,
             formId,
+            ...(isDirectExecute ? { daoAddress } : {}),
         };
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
     };

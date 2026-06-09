@@ -4,17 +4,16 @@ import type {
     IRequestUrlParams,
 } from '@/shared/api/httpService';
 
-export interface ISimulateActionsUrlParams {
+export interface ISimulateProposalActionsUrlParams {
     /**
      * Network to simulate the actions on.
      */
     network: Network;
     /**
-     * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
-     * `from` address): the governance plugin for proposals, the connected wallet for direct
-     * execution.
+     * Address of the governance plugin that calls `DAO.execute` and that the actions are therefore
+     * simulated from.
      */
-    from: string;
+    pluginAddress: string;
 }
 
 export interface ISimulateActionsItem {
@@ -32,17 +31,46 @@ export interface ISimulateActionsItem {
     value: string;
 }
 
-export interface ISimulateActionsBody {
+export interface ISimulateProposalActionsBody {
     /**
      * List of actions to simulate.
      */
     actions: ISimulateActionsItem[];
 }
 
-export interface ISimulateActionsParams
+export interface ISimulateProposalActionsParams
     extends IRequestUrlBodyParams<
-        ISimulateActionsUrlParams,
-        ISimulateActionsBody
+        ISimulateProposalActionsUrlParams,
+        ISimulateProposalActionsBody
+    > {}
+
+export interface ISimulateDirectExecuteActionsBody {
+    /**
+     * Address of the connected wallet (EOA) that calls `DAO.execute` and that the actions are
+     * therefore simulated from.
+     */
+    from: string;
+    /**
+     * List of actions to simulate.
+     */
+    actions: ISimulateActionsItem[];
+}
+
+export interface ISimulateDirectExecuteActionsUrlParams {
+    /**
+     * Network to simulate the actions on.
+     */
+    network: Network;
+    /**
+     * Address of the DAO the actions are executed on.
+     */
+    daoAddress: string;
+}
+
+export interface ISimulateDirectExecuteActionsParams
+    extends IRequestUrlBodyParams<
+        ISimulateDirectExecuteActionsUrlParams,
+        ISimulateDirectExecuteActionsBody
     > {}
 
 export interface ISimulateProposalUrlParams {
