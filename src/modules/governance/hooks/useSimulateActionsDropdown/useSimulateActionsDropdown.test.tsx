@@ -1,8 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import type { PropsWithChildren } from 'react';
 import * as ReactHookForm from 'react-hook-form';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, generateFormContext } from '@/shared/testUtils';
-import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
+import { CreateProposalFormProvider } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 import {
@@ -16,13 +17,16 @@ describe('useSimulateActionsDropdown hook', () => {
     const useFormContextSpy = jest.spyOn(ReactHookForm, 'useFormContext');
     const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useCreateProposalFormContextSpy = jest.spyOn(
-        CreateProposalProvider,
-        'useCreateProposalFormContext',
-    );
     const prepareActionsSpy = jest.spyOn(
         proposalActionPreparationUtils,
         'prepareActions',
+    );
+    const createWrapper = (props: PropsWithChildren) => (
+        <CreateProposalFormProvider
+            value={{ prepareActions: {}, addPrepareAction: jest.fn() }}
+        >
+            {props.children}
+        </CreateProposalFormProvider>
     );
 
     beforeEach(() => {
@@ -33,30 +37,27 @@ describe('useSimulateActionsDropdown hook', () => {
         );
         useWatchSpy.mockReturnValue([action]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useCreateProposalFormContextSpy.mockReturnValue({
-            prepareActions: {},
-            addPrepareAction: jest.fn(),
-        });
     });
 
     afterEach(() => {
         useFormContextSpy.mockReset();
         useWatchSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useCreateProposalFormContextSpy.mockReset();
         prepareActionsSpy.mockReset();
     });
 
     const renderTestHook = (
         params?: Partial<IUseSimulateActionsDropdownParams>,
     ) =>
-        renderHook(() =>
-            useSimulateActionsDropdown({
-                daoId: 'ethereum-mainnet-0xdao',
-                from: '0xfrom',
-                formId: 'wizardId',
-                ...params,
-            }),
+        renderHook(
+            () =>
+                useSimulateActionsDropdown({
+                    daoId: 'ethereum-mainnet-0xdao',
+                    from: '0xfrom',
+                    formId: 'wizardId',
+                    ...params,
+                }),
+            { wrapper: createWrapper },
         );
 
     it('returns undefined when there are no actions', () => {
