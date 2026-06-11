@@ -141,6 +141,24 @@ describe('useNetworkSwitch hook', () => {
             expect(onSend).toHaveBeenCalledTimes(1);
         });
 
+        it('calls onSend directly when wallet chain is undefined', () => {
+            useWalletAccountSpy.mockReturnValue({
+                address: undefined,
+                chainId: undefined,
+                isReconnecting: false,
+            });
+
+            const { result } = renderHook(() =>
+                useNetworkSwitch({ network: Network.ETHEREUM_MAINNET }),
+            );
+
+            const onSend = jest.fn();
+            result.current.withNetworkSwitch(onSend);
+
+            expect(switchChainMutate).not.toHaveBeenCalled();
+            expect(onSend).toHaveBeenCalledTimes(1);
+        });
+
         it('calls switchChain with onSuccess when chains differ', () => {
             useDaoChainSpy.mockReturnValue({
                 chainId: polygonChainId,

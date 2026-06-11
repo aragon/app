@@ -7,10 +7,8 @@ import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
-import {
-    NetworkSwitchAlert,
-    useNetworkSwitch,
-} from '@/shared/hooks/useNetworkSwitch';
+import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
+import { NetworkSwitchAlert } from '../networkSwitchAlert';
 import {
     type ITransactionStatusStepMetaAddon,
     TransactionStatus,

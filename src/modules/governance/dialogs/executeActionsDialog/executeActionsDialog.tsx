@@ -7,6 +7,7 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
 import { useBlockNavigationContext } from '@/shared/components/blockNavigationContext';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { NetworkSwitchAlert } from '@/shared/components/networkSwitchAlert';
 import { transactionDialogUtils } from '@/shared/components/transactionDialog/transactionDialogUtils';
 import {
     type ITransactionStatusStep,
@@ -14,10 +15,7 @@ import {
     type TransactionStatusState,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import {
-    NetworkSwitchAlert,
-    useNetworkSwitch,
-} from '@/shared/hooks/useNetworkSwitch';
+import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IExecuteActionsDialogProps } from './executeActionsDialog.api';
 import { executeActionsDialogUtils } from './executeActionsDialogUtils';

@@ -3737,6 +3737,10 @@
       "governanceBodyInfo": {
         "external": "External address"
       },
+      "networkSwitchAlert": {
+        "body": "Switch to {{networkName}} in your wallet.",
+        "title": "Switch network"
+      },
       "page": {
         "header": {
           "readLess": "Read less",
@@ -3774,10 +3778,6 @@
           "cancel": "Cancel",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
-        },
-        "networkAlert": {
-          "body": "Switch to {{transactionNetworkName}} in your wallet.",
-          "title": "Switch network"
         },
         "step": {
           "APPROVE": {

@@ -1,11 +1,11 @@
 import { AlertCard } from '@aragon/gov-ui-kit';
-import { useTranslations } from '@/shared/components/translationsProvider';
+import { useTranslations } from '../translationsProvider';
 
 export interface INetworkSwitchAlertProps {
     /** Whether the wallet's current chain differs from the required chain. */
     isCrossNetworkTransaction: boolean;
     /** Human-readable name of the required network. */
-    networkName: string | undefined;
+    networkName?: string;
 }
 
 export const NetworkSwitchAlert: React.FC<INetworkSwitchAlertProps> = (
@@ -21,12 +21,10 @@ export const NetworkSwitchAlert: React.FC<INetworkSwitchAlertProps> = (
 
     return (
         <AlertCard
-            message={t('app.shared.transactionDialog.networkAlert.title')}
+            message={t('app.shared.networkSwitchAlert.title')}
             variant="info"
         >
-            {t('app.shared.transactionDialog.networkAlert.body', {
-                transactionNetworkName: networkName,
-            })}
+            {t('app.shared.networkSwitchAlert.body', { networkName })}
         </AlertCard>
     );
 };
