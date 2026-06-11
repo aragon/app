@@ -15,6 +15,10 @@ inputs:
     description: Slack thread ts to reply in
     required: false
     default: ""
+  update_ts:
+    description: Slack message ts to EDIT (chat.update) instead of posting a new message
+    required: false
+    default: ""
 
 outputs:
   ts:
@@ -30,6 +34,7 @@ runs:
         SLACK_BOT_TOKEN: ${{ inputs.slack_bot_token }}
         SLACK_CHANNEL_ID: ${{ inputs.slack_channel_id }}
         SLACK_THREAD_TS: ${{ inputs.thread_ts }}
+        SLACK_UPDATE_TS: ${{ inputs.update_ts }}
         MESSAGE: ${{ inputs.message }}
       run: |
         set -euo pipefail

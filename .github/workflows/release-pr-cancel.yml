@@ -25,6 +25,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
           LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
 
       - name: Checkout
@@ -79,3 +80,31 @@ jobs:
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
             🛑 *Release cancelled*${{ steps.linear-cancel.outcome == 'success' && ' — Linear release moved to Canceled stage' || '' }}
+
+      # Reflect the lifecycle status in the head message itself (chat.update).
+      # Re-uses the changelog from the PR body (minus the slack_ts marker) so the
+      # rich head is preserved while only the status line changes.
+      - name: Strip slack_ts marker from PR body (clean changelog)
+        id: changelog
+        env:
+          BODY: ${{ steps.pr.outputs.body }}
+        run: |
+          CLEAN="$(printf '%s' "$BODY" | sed '/<!-- slack_ts:/d')"
+          {
+            echo 'text<<CHANGELOG_EOF'
+            echo "$CLEAN"
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update head message — Cancelled
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && steps.ts.outputs.ts
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          update_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            🛑 *Release ${{ steps.version.outputs.name || 'PR' }} — Cancelled* ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            *PR:* <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>
+
+            ${{ steps.changelog.outputs.text }}
