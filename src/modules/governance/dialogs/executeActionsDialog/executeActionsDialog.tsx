@@ -14,6 +14,10 @@ import {
     type TransactionStatusState,
 } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import {
+    NetworkSwitchAlert,
+    useNetworkSwitch,
+} from '@/shared/hooks/useNetworkSwitch';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IExecuteActionsDialogProps } from './executeActionsDialog.api';
 import { executeActionsDialogUtils } from './executeActionsDialogUtils';
@@ -54,6 +58,12 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const { close } = useDialogContext();
     const { setIsBlocked } = useBlockNavigationContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const {
+        isCrossNetworkTransaction,
+        networkName,
+        switchChainStatus,
+        withNetworkSwitch,
+    } = useNetworkSwitch({ daoId });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -68,7 +78,9 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         ? 'error'
         : isSubmitted
           ? 'success'
-          : 'idle';
+          : isCrossNetworkTransaction
+            ? switchChainStatus
+            : 'idle';
 
     // Once the transaction is successfully submitted, unblock navigation so that clicking the
     // success link does not trigger the confirm-exit guard of the still-dirty wizard form behind
@@ -128,11 +140,11 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
             return;
         }
 
-        // Fire-and-forget: dispatch to the wallet and complete immediately, without awaiting the
-        // signature, rejection, or receipt. Errors are still reported to monitoring.
-        sendTransaction(transaction, { onError: monitorError });
-        setIsSubmitted(true);
-    }, [transaction, sendTransaction, monitorError]);
+        withNetworkSwitch(() => {
+            sendTransaction(transaction, { onError: monitorError });
+            setIsSubmitted(true);
+        });
+    }, [transaction, sendTransaction, monitorError, withNetworkSwitch]);
 
     const isPreparing = prepareStatus === 'pending';
     const isReady = prepareStatus === 'success';
@@ -209,6 +221,10 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
             />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
+                    <NetworkSwitchAlert
+                        isCrossNetworkTransaction={isCrossNetworkTransaction}
+                        networkName={networkName}
+                    />
                     <TransactionStatus.Container steps={steps}>
                         {steps.map((step) => (
                             <TransactionStatus.Step key={step.id} {...step} />
