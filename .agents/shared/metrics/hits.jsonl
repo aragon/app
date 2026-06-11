@@ -27,3 +27,7 @@
 {"ts":"2026-06-09T11:56:43.815Z","tool":"Edit","file":"src/modules/governance/api/actionSimulationService/actionSimulationService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-06-09T11:57:24.436Z","tool":"Edit","file":"src/modules/governance/api/actionSimulationService/actionSimulationService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-06-09T11:57:39.250Z","tool":"Edit","file":"src/modules/governance/api/actionSimulationService/actionSimulationService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-06-10T10:35:58.886Z","tool":"Write","file":".agents/shared/skills/rules/dialog-conventions.md","rule":"rule-authoring","bytes":2654,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-06-10T10:36:11.062Z","tool":"Edit","file":"src/modules/finance/dialogs/assetSelectionDialog/index.ts","rule":"dialog-conventions","bytes":3499,"elapsed_ms":2,"adapter":"generic"}
+{"ts":"2026-06-10T10:36:11.106Z","tool":"Edit","file":"src/modules/finance/constants/financeDialogsDefinitions.ts","rule":"dialog-conventions","bytes":3499,"elapsed_ms":1,"adapter":"generic"}
+{"ts":"2026-06-10T10:36:11.149Z","tool":"Edit","file":"src/plugins/tokenPlugin/index.ts","rule":"plugin-slot-registration","bytes":3795,"elapsed_ms":1,"adapter":"generic"}

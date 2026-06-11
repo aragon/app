@@ -1,15 +1,30 @@
-export {
-    DispatchDialog,
-    type IDispatchDialogParams,
-    type IDispatchDialogProps,
+import dynamic from 'next/dynamic';
+
+export const DispatchDialog = dynamic(() =>
+    import('./dispatchDialog').then((mod) => mod.DispatchDialog),
+);
+
+export const DispatchSimulationDialog = dynamic(() =>
+    import('./dispatchSimulationDialog').then(
+        (mod) => mod.DispatchSimulationDialog,
+    ),
+);
+
+export const DispatchTransactionDialog = dynamic(() =>
+    import('./dispatchTransactionDialog').then(
+        (mod) => mod.DispatchTransactionDialog,
+    ),
+);
+
+export type {
+    IDispatchDialogParams,
+    IDispatchDialogProps,
 } from './dispatchDialog';
-export {
-    DispatchSimulationDialog,
-    type IDispatchSimulationDialogParams,
-    type IDispatchSimulationDialogProps,
+export type {
+    IDispatchSimulationDialogParams,
+    IDispatchSimulationDialogProps,
 } from './dispatchSimulationDialog';
-export {
-    DispatchTransactionDialog,
-    type IDispatchTransactionDialogParams,
-    type IDispatchTransactionDialogProps,
+export type {
+    IDispatchTransactionDialogParams,
+    IDispatchTransactionDialogProps,
 } from './dispatchTransactionDialog';
