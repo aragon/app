@@ -11,7 +11,10 @@ import {
 } from './useSimulateActionsDropdown';
 
 describe('useSimulateActionsDropdown hook', () => {
+    const action = { to: '0xto', data: '0xdata', value: '0' };
+
     const useFormContextSpy = jest.spyOn(ReactHookForm, 'useFormContext');
+    const useWatchSpy = jest.spyOn(ReactHookForm, 'useWatch');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const useCreateProposalFormContextSpy = jest.spyOn(
         CreateProposalProvider,
@@ -23,7 +26,12 @@ describe('useSimulateActionsDropdown hook', () => {
     );
 
     beforeEach(() => {
-        useFormContextSpy.mockReturnValue(generateFormContext());
+        useFormContextSpy.mockReturnValue(
+            generateFormContext({
+                getValues: jest.fn().mockReturnValue([action]),
+            }),
+        );
+        useWatchSpy.mockReturnValue([action]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
@@ -33,12 +41,11 @@ describe('useSimulateActionsDropdown hook', () => {
 
     afterEach(() => {
         useFormContextSpy.mockReset();
+        useWatchSpy.mockReset();
         useDialogContextSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         prepareActionsSpy.mockReset();
     });
-
-    const action = { to: '0xto', data: '0xdata', value: '0' };
 
     const renderTestHook = (
         params?: Partial<IUseSimulateActionsDropdownParams>,
@@ -53,37 +60,25 @@ describe('useSimulateActionsDropdown hook', () => {
         );
 
     it('returns undefined when there are no actions', () => {
-        useFormContextSpy.mockReturnValue(
-            generateFormContext({ getValues: jest.fn().mockReturnValue([]) }),
-        );
+        useWatchSpy.mockReturnValue([]);
         const { result } = renderTestHook();
         expect(result.current).toBeUndefined();
     });
 
     it('returns undefined when the from address is missing', () => {
-        useFormContextSpy.mockReturnValue(
-            generateFormContext({
-                getValues: jest.fn().mockReturnValue([action]),
-            }),
-        );
         const { result } = renderTestHook({ from: undefined });
         expect(result.current).toBeUndefined();
     });
 
     it('returns undefined when the network is not supported by Tenderly', () => {
-        useFormContextSpy.mockReturnValue(
-            generateFormContext({
-                getValues: jest.fn().mockReturnValue([action]),
-            }),
-        );
         const { result } = renderTestHook({ daoId: 'citrea-mainnet-0xdao' });
         expect(result.current).toBeUndefined();
     });
 
-    it('returns the simulate and skip-simulation items when actions exist on a supported network', () => {
+    it('returns the simulate and skip-simulation items when watched actions exist on a supported network', () => {
         useFormContextSpy.mockReturnValue(
             generateFormContext({
-                getValues: jest.fn().mockReturnValue([action]),
+                getValues: jest.fn().mockReturnValue([]),
             }),
         );
         const { result } = renderTestHook({ formId: 'wizardId' });

@@ -1,11 +1,13 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardPageStepDropdownItem } from '@/shared/components/wizards/wizardPage';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { ICreateProposalFormData } from '../../components/createProposalForm';
-import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
+import {
+    type ICreateProposalFormData,
+    useCreateProposalFormContext,
+} from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
@@ -50,11 +52,10 @@ export const useSimulateActionsDropdown = (
 
     const { network, address: daoAddress } = daoUtils.parseDaoId(daoId);
     const { tenderlySupport } = networkDefinitions[network];
-
-    const getActions = () =>
-        (getValues('actions') as
-            | ICreateProposalFormData['actions']
-            | undefined) ?? [];
+    const watchedActions =
+        useWatch<Record<string, ICreateProposalFormData['actions']>>({
+            name: 'actions',
+        }) ?? [];
 
     const handleSimulate = async () => {
         if (from == null) {
@@ -67,9 +68,14 @@ export const useSimulateActionsDropdown = (
             return;
         }
 
+        const actionsToSimulate =
+            (getValues('actions') as
+                | ICreateProposalFormData['actions']
+                | undefined) ?? [];
+
         const processedActions =
             await proposalActionPreparationUtils.prepareActions({
-                actions: getActions(),
+                actions: actionsToSimulate,
                 prepareActions,
             });
 
@@ -83,7 +89,7 @@ export const useSimulateActionsDropdown = (
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
     };
 
-    if (getActions().length === 0 || !tenderlySupport || from == null) {
+    if (watchedActions.length === 0 || !tenderlySupport || from == null) {
         return undefined;
     }
 
