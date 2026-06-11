@@ -4,10 +4,8 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IWizardPageStepDropdownItem } from '@/shared/components/wizards/wizardPage';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    type ICreateProposalFormData,
-    useCreateProposalFormContext,
-} from '../../components/createProposalForm';
+import type { ICreateProposalFormData } from '../../components/createProposalForm';
+import { useCreateProposalFormContext } from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { ISimulateActionsDialogParams } from '../../dialogs/simulateActionsDialog';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';

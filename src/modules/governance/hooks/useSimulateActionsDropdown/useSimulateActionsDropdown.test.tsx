@@ -2,7 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import * as ReactHookForm from 'react-hook-form';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import { generateDialogContext, generateFormContext } from '@/shared/testUtils';
-import * as CreateProposalProvider from '../../components/createProposalForm';
+import * as CreateProposalProvider from '../../components/createProposalForm/createProposalFormProvider';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 import {
