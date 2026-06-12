@@ -27,6 +27,15 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
     disconnect: jest.fn(),
 }));
 
+// jsdom does not implement elementFromPoint, which TipTap's placeholder viewport
+// tracking relies on when mounting the editor.
+if (
+    typeof document !== 'undefined' &&
+    typeof document.elementFromPoint !== 'function'
+) {
+    document.elementFromPoint = () => null;
+}
+
 // Allow spying on library functions
 jest.mock('react-hook-form', () => ({
     __esModule: true,
