@@ -109,6 +109,47 @@ jobs:
           TS="${{ steps.ts.outputs.ts || steps.notify-new.outputs.ts }}"
           echo "ts=$TS" >> "$GITHUB_OUTPUT"
 
+  # CI Gate ping — runs in PARALLEL with `deploy` (NOT in its needs), so a skip
+  # here can never block the deploy. The actual pause is the `production`
+  # Environment's Required-reviewers rule on the deploy job (configure it in repo
+  # Settings → Environments → production). Until that's set, prod won't pause and
+  # this message is informational; once set, the gate works with the team ping + link.
+  notify-gate:
+    needs: [validate, notify-start]
+    if: ${{ !cancelled() && needs.notify-start.outputs.slack-ts != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/workflows/scripts/slackNotify.js
+            .github/actions/slack-notify
+
+      - name: Notify Slack — waiting for CI Gate
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN != ''
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          message: |
+            ⏸️ *Waiting CI Gate — deploy to production* ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            *Tag:* `${{ github.event.release.tag_name || inputs.tag }}`
+            Approve the deploy: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|here>
+
   deploy:
     needs: [validate, notify-start]
     if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
@@ -209,6 +250,7 @@ jobs:
           OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
           SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout
         uses: actions/checkout@v6.0.3
@@ -232,3 +274,41 @@ jobs:
             *Production:* <https://app.aragon.org|app.aragon.org>
 
             If there are issues with the release, use hotfix or rollback.
+
+      # Mark the lifecycle complete in the head message itself (chat.update).
+      # Re-reads the changelog from the release body (minus the slack_ts marker)
+      # so the rich head is preserved while the status flips to Completed.
+      - name: Build changelog block for head message
+        id: changelog
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          # Only release events carry a changelog; manual workflow_dispatch has
+          # none. Emit a SELF-SEPARATING block (leading blank line) only when
+          # there's content, so the head message has no dangling empty section
+          # on dispatch.
+          BODY=""
+          if [ "$EVENT_NAME" = "release" ]; then
+            BODY="$(gh release view "$TAG" --json body -q .body 2>/dev/null | sed '/<!-- slack_ts:/d' || echo "")"
+          fi
+          {
+            echo 'text<<CHANGELOG_EOF'
+            if [ -n "$(printf '%s' "$BODY" | tr -d '[:space:]')" ]; then
+              printf '\n\n%s\n' "$BODY"
+            fi
+            echo 'CHANGELOG_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Update head message — Completed (production)
+        if: steps.secrets.outputs.SLACK_BOT_TOKEN && needs.notify-start.outputs.slack-ts
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          update_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          message: |
+            🎉 *Release ${{ github.event.release.tag_name || inputs.tag }} — Completed (production)* ✅ ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            *Production:* <https://app.aragon.org|app.aragon.org>${{ steps.changelog.outputs.text }}

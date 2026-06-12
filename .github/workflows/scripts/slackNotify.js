@@ -20,13 +20,16 @@ const markdownToMrkdwn = (text) => {
     );
 };
 
-const postMessage = (token, channel, text, threadTs) =>
+// Posts a new message, or edits an existing one when `updateTs` is set
+// (chat.update) — used to reflect lifecycle status (started → cancelled →
+// completed) in the release's head message rather than only as thread replies.
+const sendMessage = (token, channel, text, threadTs, updateTs) =>
     new Promise((resolve, reject) => {
-        const payload = {
-            channel,
-            text,
-        };
-        if (threadTs) {
+        const isUpdate = Boolean(updateTs);
+        const payload = isUpdate
+            ? { channel, ts: updateTs, text }
+            : { channel, text };
+        if (!isUpdate && threadTs) {
             payload.thread_ts = threadTs;
         }
 
@@ -35,7 +38,7 @@ const postMessage = (token, channel, text, threadTs) =>
         const options = {
             hostname: 'slack.com',
             port: 443,
-            path: '/api/chat.postMessage',
+            path: isUpdate ? '/api/chat.update' : '/api/chat.postMessage',
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -79,6 +82,7 @@ if (require.main === module) {
     const token = process.env.SLACK_BOT_TOKEN;
     const channel = process.env.SLACK_CHANNEL_ID;
     const threadTs = process.env.SLACK_THREAD_TS;
+    const updateTs = process.env.SLACK_UPDATE_TS;
 
     // Get message from args (3rd arg)
     const message = process.argv[2];
@@ -95,7 +99,7 @@ if (require.main === module) {
 
     console.log('Sending Slack notification.');
 
-    postMessage(token, channel, markdownToMrkdwn(message), threadTs)
+    sendMessage(token, channel, markdownToMrkdwn(message), threadTs, updateTs)
         .then((ts) => {
             if (!isValidSlackTs(ts)) {
                 console.error('Slack returned an invalid ts.');
