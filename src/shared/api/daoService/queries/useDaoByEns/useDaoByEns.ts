@@ -1,4 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+// LMM_DEMO_HACK: see app/src/modules/flow/demo/lmmDemoConfig.ts.
+import { tryLmmDaoByEnsOverride } from '@/modules/flow/demo/lmmDaoOverride';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { daoService } from '../../daoService';
 import type { IGetDaoByEnsParams } from '../../daoService.api';
@@ -10,7 +12,16 @@ export const daoByEnsOptions = (
     options?: QueryOptions<IDao>,
 ): SharedQueryOptions<IDao> => ({
     queryKey: daoServiceKeys.daoByEns(params),
-    queryFn: () => daoService.getDaoByEns(params),
+    queryFn: async () => {
+        const override = await tryLmmDaoByEnsOverride(
+            params.urlParams.network,
+            params.urlParams.ens,
+        );
+        if (override) {
+            return override;
+        }
+        return daoService.getDaoByEns(params);
+    },
     ...options,
 });
 

@@ -1,0 +1,550 @@
+'use client';
+
+import { useQueryClient } from '@tanstack/react-query';
+import {
+    createContext,
+    type ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
+import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { CapitalFlowDialogId } from '@/modules/capitalFlow/constants/capitalFlowDialogId';
+import type {
+    IDispatchSimulationDialogParams,
+    IDispatchTransactionDialogParams,
+} from '@/modules/capitalFlow/dialogs/dispatchDialog';
+import type { Network } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+// LMM_DEMO_HACK: skip the Tenderly review step + wallet-connect guard for
+// dispatches against the LMM demo DAO — those go to a local Anvil fork via
+// the demo dispatch dialog and have their own (lido/preview) simulator, so
+// the production Tenderly call would just fail / mislead the user.
+import { LMM_DEMO_MODE } from '../demo/lmmDemoConfig';
+import { useLmmChainNow } from '../demo/useLmmChainNow';
+import {
+    type IUseLmmLiveSnapshotResult,
+    useLmmLiveSnapshot,
+} from '../demo/useLmmLiveSnapshot';
+import { isLmmDemoDao } from '../demo/useLmmManifest';
+import type { IFlowDaoData } from '../types';
+import { useEnvioFlowData } from './useEnvioFlowData';
+
+const TOAST_DURATION_MS = 4000;
+/**
+ * If the indexer hasn't surfaced a dispatch within this window we give up on the
+ * optimistic "pending" state and tell the user to refresh manually — otherwise the
+ * badge could sit forever if Envio fell behind.
+ */
+const PENDING_DISPATCH_TIMEOUT_MS = 60_000;
+
+export interface IFlowToast {
+    id: string;
+    tone: 'success' | 'info' | 'error' | 'warning';
+    title: string;
+    description?: string;
+}
+
+/**
+ * One entry per "in-flight" dispatch: the user signed the tx, the wallet returned a
+ * hash, but the indexer hasn't yet produced an execution we can render. We keep this
+ * outside `data` so the Envio snapshot stays the source of truth for everything else.
+ */
+export interface IFlowPendingDispatch {
+    policyId: string;
+    policyAddress: string;
+    policyName: string;
+    txHash: string;
+    startedAt: number;
+}
+
+export interface IFlowDataContext {
+    /**
+     * DAO identifier the provider was mounted with — exposed so deeper
+     * components (e.g. the "Add automation" button on the overview page) can
+     * trigger DAO-scoped actions without threading props through every
+     * section.
+     */
+    daoId: string;
+    /**
+     * Live Envio-backed snapshot, or `null` while the first query is still in
+     * flight / has errored. Page clients should render a skeleton / error
+     * state when this is `null` and defer rendering data-coupled UI until a
+     * non-null snapshot is available.
+     */
+    data: IFlowDaoData | null;
+    /**
+     * `true` while the Envio-backed snapshot is still being resolved for the
+     * very first time. Flips to `false` as soon as `data` becomes non-null
+     * (further background refetches do not toggle this flag).
+     */
+    isLoading: boolean;
+    /** `true` when the Envio query failed and we have no snapshot to fall back on. */
+    isError: boolean;
+    /**
+     * Broadcasts a real on-chain `dispatch()` transaction via the shared
+     * `DispatchTransactionDialog`. The flow page's `ConfirmDispatchDialog` calls
+     * this after the user reviews the pending amount + recipients.
+     *
+     * Intended flow:
+     * 1. Close the review dialog (dialog stack replace).
+     * 2. User signs the tx in their wallet.
+     * 3. Once a receipt arrives we push an entry onto `pendingDispatches` and
+     *    flip the indexer to urgent polling — the UI shows a "waiting for
+     *    indexer" badge until a matching `txHash` appears in Envio.
+     */
+    dispatchPolicy: (policyId: string) => void;
+    /** All in-flight dispatches, keyed by policy id. */
+    pendingDispatches: IFlowPendingDispatch[];
+    /**
+     * Convenience lookup used by cards / detail pages to decide whether to render
+     * the "waiting for indexer" badge. Returns the pending entry if the policy has
+     * an unresolved dispatch, otherwise `undefined`.
+     */
+    getPendingDispatch: (policyId: string) => IFlowPendingDispatch | undefined;
+    toasts: IFlowToast[];
+    dismissToast: (id: string) => void;
+    /**
+     * LMM demo only: latest known anvil HEAD block timestamp in ms.
+     * `undefined` outside demo mode, before the first poll, or when the
+     * fork's clock is within ~1m of the host wall-clock (no warp applied).
+     * Consumers comparing against `cooldown.readyAt` should fall back to
+     * `Date.now()` on undefined.  See `useLmmChainNow` for the rationale.
+     */
+    chainNowMs?: number;
+    /**
+     * "Effective now" in ms.  Equals `chainNowMs` when the LMM fork is
+     * warped, `Date.now()` everywhere else.  Always defined — consumers
+     * should prefer this over reading `chainNowMs` directly so they
+     * stay correct outside demo mode.
+     */
+    now: number;
+    /**
+     * LMM demo only: live RPC snapshot of the orchestrator's per-leg
+     * budget/gate/cowSwap/simulate state.  `null` outside demo mode or
+     * while the first read is in flight.  See `useLmmLiveSnapshot`.
+     */
+    liveSnapshot: IUseLmmLiveSnapshotResult | null;
+}
+
+const FlowDataContext = createContext<IFlowDataContext | null>(null);
+
+export interface IFlowDataProviderProps {
+    network: string;
+    addressOrEns: string;
+    /**
+     * DAO identifier (e.g. `ethereum-sepolia-0xabc…`) — required so the
+     * provider can resolve DAO metadata + linked accounts via the REST API.
+     * Consumers render a skeleton while the Envio snapshot is loading and an
+     * error state when the indexer query fails.
+     */
+    daoId?: string;
+    children?: ReactNode;
+}
+
+export const FlowDataProvider: React.FC<IFlowDataProviderProps> = (props) => {
+    const { network, addressOrEns, daoId, children } = props;
+
+    const [pendingDispatches, setPendingDispatches] = useState<
+        IFlowPendingDispatch[]
+    >([]);
+
+    const envioResult = useEnvioFlowData({
+        network,
+        addressOrEns,
+        daoId: daoId ?? '',
+        isUrgent: pendingDispatches.length > 0,
+    });
+
+    // LMM_DEMO_HACK: see useLmmChainNow — overrides Date.now() for cooldown
+    // gating when the anvil fork has been warped via the cheats menu.
+    const { chainNowMs } = useLmmChainNow();
+
+    // LMM_DEMO_HACK: lift the orchestrator's live RPC snapshot to the
+    // provider so KPI / Activity / Topology / Detail share one inspect()
+    // result instead of each mounting their own.  Returns EMPTY outside
+    // demo mode — non-demo consumers should never see a non-null
+    // `liveSnapshot.snapshot`.
+    const liveSnapshot = useLmmLiveSnapshot();
+
+    // Cache the last non-null snapshot so the UI doesn't flicker back to a
+    // skeleton while a background refetch is in flight. `envioResult.data`
+    // briefly goes undefined on some refetch transitions — pinning the last
+    // good snapshot keeps pages stable until the new one arrives.
+    const [data, setData] = useState<IFlowDaoData | null>(null);
+    const [toasts, setToasts] = useState<IFlowToast[]>([]);
+
+    const queryClient = useQueryClient();
+    const { open } = useDialogContext();
+    const { check: checkWalletConnected } = useConnectedWalletGuard();
+
+    useEffect(() => {
+        if (envioResult.data) {
+            setData(envioResult.data);
+        }
+    }, [envioResult.data]);
+
+    // Reset the snapshot whenever the DAO identity changes so we don't bleed
+    // stale data across routes (e.g. navigating between two DAOs). The
+    // concatenated key keeps the dep list compact while still re-running the
+    // reset any time the caller swaps DAO.
+    const daoIdentityKey = `${network}:${addressOrEns}:${daoId ?? ''}`;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: reset is keyed on daoIdentityKey by design
+    useEffect(() => {
+        setData(null);
+    }, [daoIdentityKey]);
+
+    useEffect(() => {
+        if (envioResult.isError) {
+            // biome-ignore lint/suspicious/noConsole: surface Envio query failures to aid debugging
+            console.warn(
+                '[FlowDataProvider] Envio query failed.',
+                envioResult.error,
+            );
+        }
+    }, [envioResult.isError, envioResult.error]);
+
+    const pushToast = useCallback((toast: Omit<IFlowToast, 'id'>) => {
+        const id = `toast-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+        const entry: IFlowToast = { id, ...toast };
+        setToasts((current) => [...current, entry]);
+        setTimeout(() => {
+            setToasts((current) => current.filter((t) => t.id !== id));
+        }, TOAST_DURATION_MS);
+    }, []);
+
+    const dismissToast = useCallback((id: string) => {
+        setToasts((current) => current.filter((t) => t.id !== id));
+    }, []);
+
+    /**
+     * Keep the latest rest policies + network in a ref so we can read them from the
+     * `dispatchPolicy` callback without invalidating its identity every time the
+     * REST query refetches.
+     */
+    const restPoliciesRef = useRef(envioResult.restPolicies);
+    useEffect(() => {
+        restPoliciesRef.current = envioResult.restPolicies;
+    }, [envioResult.restPolicies]);
+
+    const dataRef = useRef(data);
+    useEffect(() => {
+        dataRef.current = data;
+    }, [data]);
+
+    const indexerQueryKey = envioResult.indexerQueryKey;
+    const indexerQueryKeyRef = useRef(indexerQueryKey);
+    useEffect(() => {
+        indexerQueryKeyRef.current = indexerQueryKey;
+    }, [indexerQueryKey]);
+
+    const markDispatchPending = useCallback(
+        (entry: Omit<IFlowPendingDispatch, 'startedAt'>) => {
+            const startedAt = Date.now();
+            setPendingDispatches((current) => {
+                const deduped = current.filter(
+                    (p) =>
+                        p.txHash.toLowerCase() !== entry.txHash.toLowerCase(),
+                );
+                return [...deduped, { ...entry, startedAt }];
+            });
+
+            // Kick the indexer ahead of the next urgent tick so there's no perceived
+            // lag between "tx confirmed in wallet" and "waiting for indexer" badge.
+            if (indexerQueryKeyRef.current) {
+                void queryClient.invalidateQueries({
+                    queryKey: indexerQueryKeyRef.current,
+                });
+            }
+
+            pushToast({
+                tone: 'info',
+                title: 'Dispatch submitted',
+                description: `${entry.policyName} — waiting for the indexer to pick it up.`,
+            });
+        },
+        [pushToast, queryClient],
+    );
+
+    const dispatchPolicy = useCallback(
+        (policyId: string) => {
+            const currentData = dataRef.current;
+            if (currentData == null) {
+                pushToast({
+                    tone: 'error',
+                    title: 'Flow data still loading',
+                    description:
+                        'Wait for the indexer snapshot to load and try again.',
+                });
+                return;
+            }
+            // Orchestrators live on their own list but, on-chain, a multi-dispatch
+            // plugin exposes the same `dispatch()` entrypoint as a leaf router,
+            // so the same transaction dialog works for both. Resolve leaf first,
+            // then fall back to orchestrator — ids are unique across both lists.
+            const flowPolicy =
+                currentData.policies.find((p) => p.id === policyId) ??
+                currentData.orchestrators.find((o) => o.id === policyId);
+
+            if (flowPolicy == null) {
+                pushToast({
+                    tone: 'error',
+                    title: 'Policy not available',
+                    description:
+                        'Refresh the page and try again — the indexer snapshot is out of sync.',
+                });
+                return;
+            }
+
+            const restPolicies = restPoliciesRef.current;
+            const matchingRestPolicy = restPolicies.find(
+                (p) =>
+                    p.address.toLowerCase() ===
+                    flowPolicy.address.toLowerCase(),
+            );
+
+            if (matchingRestPolicy == null) {
+                pushToast({
+                    tone: 'error',
+                    title: 'Dispatch unavailable',
+                    description:
+                        'Policy metadata is still indexing. Try again in a minute.',
+                });
+                return;
+            }
+
+            const typedNetwork = network as Network;
+            const onDispatchSuccess: IDispatchTransactionDialogParams['onDispatchSuccess'] =
+                ({ txHash }) => {
+                    markDispatchPending({
+                        policyId: flowPolicy.id,
+                        policyAddress: flowPolicy.address,
+                        policyName: flowPolicy.name,
+                        txHash,
+                    });
+                };
+
+            // Mirror the `DispatchPanel` (transactions page) route so manual
+            // Flow dispatches go through the same review → simulate → sign
+            // wizard: show the Tenderly simulation first when the network
+            // supports it, and fall back to opening the transaction dialog
+            // directly on networks where Tenderly isn't wired in.
+            const supportsTenderly =
+                networkDefinitions[typedNetwork]?.tenderlySupport ?? false;
+
+            // LMM demo dispatches go to a private Anvil fork (no real chain
+            // RPC), so:
+            //   - Tenderly can't see those contracts → skip the review step.
+            //   - The wallet-connect guard is irrelevant → anvil impersonates.
+            // `LmmDemoDispatchDialog` (mounted by `DispatchTransactionDialog`)
+            // already runs the lido/preview simulator and renders the per-leg
+            // breakdown.  Open it directly.
+            const isLmmDispatch =
+                LMM_DEMO_MODE && isLmmDemoDao(matchingRestPolicy.daoAddress);
+            if (isLmmDispatch) {
+                const txParams: IDispatchTransactionDialogParams = {
+                    policy: matchingRestPolicy,
+                    network: typedNetwork,
+                    onDispatchSuccess,
+                };
+                open(CapitalFlowDialogId.DISPATCH_TRANSACTION, {
+                    params: txParams,
+                });
+                return;
+            }
+
+            // `DispatchTransactionDialog` invariants on a connected wallet,
+            // so route unconnected users through the connect-wallet dialog
+            // first and only open the dispatch flow once they're connected.
+            checkWalletConnected({
+                onSuccess: () => {
+                    if (supportsTenderly) {
+                        const simulationParams: IDispatchSimulationDialogParams =
+                            {
+                                policy: matchingRestPolicy,
+                                network: typedNetwork,
+                                onDispatchSuccess,
+                            };
+                        open(CapitalFlowDialogId.DISPATCH_SIMULATION, {
+                            params: simulationParams,
+                        });
+                        return;
+                    }
+
+                    const txParams: IDispatchTransactionDialogParams = {
+                        policy: matchingRestPolicy,
+                        network: typedNetwork,
+                        onDispatchSuccess,
+                    };
+                    open(CapitalFlowDialogId.DISPATCH_TRANSACTION, {
+                        params: txParams,
+                    });
+                },
+            });
+        },
+        [network, open, pushToast, markDispatchPending, checkWalletConnected],
+    );
+
+    // Resolve pending dispatches whose tx hash has landed in the Envio snapshot.
+    useEffect(() => {
+        if (pendingDispatches.length === 0) {
+            return;
+        }
+        if (data == null) {
+            return;
+        }
+        // Orchestrator (multi-dispatch) policies live in `data.orchestratorPolicies`,
+        // not `data.policies` — see envioFlowMapper.ts split.  Both expose
+        // `.dispatches`, so a multi-dispatch tx is invisible to this dismiss
+        // effect unless we walk both lists.  Without this the loader spins until
+        // the 60s hard timeout for every orchestrator dispatch.
+        const indexedHashes = new Set<string>();
+        const allPolicies = [
+            ...data.policies,
+            ...(data.orchestratorPolicies ?? []),
+        ];
+        for (const policy of allPolicies) {
+            for (const dispatch of policy.dispatches) {
+                if (dispatch.txHash) {
+                    indexedHashes.add(dispatch.txHash.toLowerCase());
+                }
+            }
+        }
+
+        const resolved: IFlowPendingDispatch[] = [];
+        const stillPending: IFlowPendingDispatch[] = [];
+        for (const pending of pendingDispatches) {
+            if (indexedHashes.has(pending.txHash.toLowerCase())) {
+                resolved.push(pending);
+            } else {
+                stillPending.push(pending);
+            }
+        }
+
+        if (resolved.length === 0) {
+            return;
+        }
+
+        setPendingDispatches(stillPending);
+        for (const pending of resolved) {
+            pushToast({
+                tone: 'success',
+                title: 'Dispatch confirmed',
+                description: `${pending.policyName} is now reflected in the feed.`,
+            });
+        }
+    }, [data, pendingDispatches, pushToast]);
+
+    // Hard timeout — if the indexer is unusually far behind, stop spinning and tell
+    // the operator to come back later. We run a single interval while any pending
+    // entry exists; no interval when the queue is empty.
+    useEffect(() => {
+        if (pendingDispatches.length === 0) {
+            return;
+        }
+
+        const intervalId = setInterval(() => {
+            const now = Date.now();
+            setPendingDispatches((current) => {
+                const timedOut = current.filter(
+                    (p) => now - p.startedAt > PENDING_DISPATCH_TIMEOUT_MS,
+                );
+                if (timedOut.length === 0) {
+                    return current;
+                }
+                for (const pending of timedOut) {
+                    pushToast({
+                        tone: 'warning',
+                        title: 'Indexer is lagging',
+                        description: `${pending.policyName} dispatch is taking longer than expected — refresh in a moment.`,
+                    });
+                }
+                return current.filter(
+                    (p) => now - p.startedAt <= PENDING_DISPATCH_TIMEOUT_MS,
+                );
+            });
+        }, 1000);
+
+        return () => clearInterval(intervalId);
+    }, [pendingDispatches.length, pushToast]);
+
+    const getPendingDispatch = useCallback(
+        (policyId: string): IFlowPendingDispatch | undefined =>
+            pendingDispatches.find((p) => p.policyId === policyId),
+        [pendingDispatches],
+    );
+
+    // Only surface the spinner on the *initial* load — once we have a snapshot
+    // cached we keep showing it and let React-Query refetch silently. This
+    // avoids the skeleton flashing every time the indexer polls. When the
+    // feature flag is off the indexer query never runs, so we report
+    // `isLoading=false` and leave `data=null`; callers render an empty state.
+    const isLoading =
+        envioResult.enabled && data == null && !envioResult.isError;
+    const isError = envioResult.isError && data == null;
+
+    const resolvedDaoId = daoId ?? '';
+    // `now` is recomputed inside the memo so it stays stable across renders
+    // that don't touch `chainNowMs`.  Outside demo mode this is always
+    // `Date.now()` at memo build time — consumers that need a tick-driven
+    // clock should still call `useState`/`setInterval` directly.
+    const now = chainNowMs ?? Date.now();
+    const value = useMemo<IFlowDataContext>(
+        () => ({
+            daoId: resolvedDaoId,
+            data,
+            isLoading,
+            isError,
+            dispatchPolicy,
+            pendingDispatches,
+            getPendingDispatch,
+            toasts,
+            dismissToast,
+            chainNowMs,
+            now,
+            liveSnapshot,
+        }),
+        [
+            resolvedDaoId,
+            data,
+            isLoading,
+            isError,
+            dispatchPolicy,
+            pendingDispatches,
+            getPendingDispatch,
+            toasts,
+            dismissToast,
+            chainNowMs,
+            now,
+            liveSnapshot,
+        ],
+    );
+
+    return (
+        <FlowDataContext.Provider value={value}>
+            {children}
+        </FlowDataContext.Provider>
+    );
+};
+
+export const useFlowDataContext = (): IFlowDataContext => {
+    const ctx = useContext(FlowDataContext);
+    if (ctx == null) {
+        throw new Error(
+            'useFlowDataContext: must be used inside <FlowDataProvider>.',
+        );
+    }
+    return ctx;
+};
+
+/**
+ * Convenience hook that returns the provider's "effective now" — chain time
+ * when the LMM fork is warped, wall time otherwise.  Components consuming
+ * relative timestamps should prefer this over calling `Date.now()` directly
+ * so the LMM demo's warped clock propagates through the UI consistently.
+ */
+export const useFlowNow = (): number => useFlowDataContext().now;

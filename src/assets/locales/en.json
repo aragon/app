@@ -403,6 +403,7 @@
         "link": {
           "assets": "Assets",
           "dashboard": "Dashboard",
+          "flow": "Capital flow",
           "members": "Members",
           "proposals": "Proposals",
           "settings": "Settings",
@@ -745,6 +746,10 @@
         "submitLabel": "Publish policy"
       },
       "dispatchDialog": {
+        "a11y": {
+          "description": "Choose how to dispatch this policy",
+          "title": "Dispatch policy"
+        },
         "backButton": "Back",
         "description": "You can dispatch this policy by confirming the transactions using your connected wallet.",
         "dispatchAllButton": "Dispatch all",
@@ -768,6 +773,10 @@
         "unnamedSubRouter": "Unnamed sub-router"
       },
       "dispatchSimulationDialog": {
+        "a11y": {
+          "description": "Review the dispatch simulation before confirming the transaction",
+          "title": "Dispatch simulation"
+        },
         "backButton": "Back",
         "cancel": "Cancel",
         "continue": "Continue to dispatch",
@@ -795,6 +804,10 @@
         "title": "Automated transactions"
       },
       "dispatchTransactionDialog": {
+        "a11y": {
+          "description": "Review and submit the dispatch transaction in your wallet",
+          "title": "Dispatch transaction"
+        },
         "description": "To dispatch this router, confirm the onchain transaction in your wallet.",
         "dispatchButton": "Dispatch",
         "successButton": "Done",
