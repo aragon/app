@@ -91,16 +91,8 @@ const nextConfig = {
             {
                 source: '/:path*',
                 headers: [
-                    // Allow embedding only within Safe{Wallet} so the app can run
-                    // as a Safe App (auto-connects via the Safe connector). All
-                    // other origins are still blocked from framing (clickjacking).
-                    // X-Frame-Options is intentionally dropped: it cannot express
-                    // an external allowlist, and browsers that honour it would
-                    // override frame-ancestors and block Safe.
-                    {
-                        key: 'Content-Security-Policy',
-                        value: "frame-ancestors 'self' https://app.safe.global",
-                    },
+                    // Do not allow usage of application inside iframes
+                    { key: 'X-Frame-Options', value: 'DENY' },
                     // Enforce HTTPS access
                     {
                         key: 'Strict-Transport-Security',
@@ -116,12 +108,6 @@ const nextConfig = {
                     // Allow browsers to proactively perform domain name resolution on extenal resources (links, CSS, ..)
                     { key: 'X-DNS-Prefetch-Control', value: 'on' },
                 ],
-            },
-            // The Safe App registry fetches the manifest cross-origin, so it
-            // must be readable from any origin.
-            {
-                source: '/manifest.json',
-                headers: [{ key: 'Access-Control-Allow-Origin', value: '*' }],
             },
             // CORS headers for api routes
             {
