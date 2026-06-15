@@ -34,7 +34,7 @@ export const FlowSelector: React.FC<IFlowSelectorProps> = (props) => {
             constrainContentWidth={false}
             customTrigger={
                 <Button
-                    className="max-w-[300px]"
+                    className="min-w-0 flex-1 justify-between"
                     iconLeft={IconType.APP_ASSETS}
                     iconRight={IconType.CHEVRON_DOWN}
                     size="md"
@@ -91,9 +91,10 @@ export const FlowSelector: React.FC<IFlowSelectorProps> = (props) => {
 export const CumulativeStats: React.FC<{ stats: IWorkbenchStats }> = ({
     stats,
 }) => {
-    // KPIs only. Per-token "moved / back" lives in the TOKEN THROUGHPUT table
-    // below (out = moved, back = buybacks), which scales to any token set — so
-    // we no longer cram multi-token blobs ("Total moved" / "Buybacks") here.
+    // Three equal-weight KPIs (oracle-net pattern): dispatches, success rate
+    // and how long the flow has been active. Per-token "moved / back" lives in
+    // the TOKEN THROUGHPUT table below (out = moved, back = buybacks), which
+    // scales to any token set — so we don't cram multi-token blobs here.
     const items: { label: string; value: string; accent?: boolean }[] = [
         {
             label: 'Dispatches',
@@ -104,9 +105,13 @@ export const CumulativeStats: React.FC<{ stats: IWorkbenchStats }> = ({
             value: `${Math.round(stats.successRate * 100)}%`,
             accent: true,
         },
+        {
+            label: 'Active since',
+            value: `${stats.activeSinceDays}d`,
+        },
     ];
     return (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-3">
+        <div className="grid grid-cols-3 gap-x-4 gap-y-3">
             {items.map((it) => (
                 <div className="flex min-w-0 flex-col gap-px" key={it.label}>
                     <span className="font-semibold text-neutral-500 text-xs">
@@ -158,6 +163,20 @@ export const NextRunSummary: React.FC<{ nextRun: INextRun }> = ({
     </div>
 );
 
+/**
+ * Borderless "Auto" keeper toggle — sits next to the next-run / epoch line.
+ * Disabled for now; hover explains the keeper service isn't available yet.
+ */
+export const AutoToggle: React.FC = () => (
+    <div
+        className="flex shrink-0 items-center gap-1.5"
+        title="Auto-dispatch (keeper service) — not available yet"
+    >
+        <span className="font-semibold text-neutral-400 text-xs">Auto</span>
+        <Switch disabled label="Auto-dispatch" on={false} />
+    </div>
+);
+
 interface IDispatchControlsProps {
     /** Opens the simulate-&-dispatch modal (where the dispatch is confirmed). */
     onSimulate: () => void;
@@ -170,39 +189,27 @@ interface IDispatchControlsProps {
 
 export const DispatchControls: React.FC<IDispatchControlsProps> = (props) => {
     const { onSimulate, canDispatch = true, dispatchReason } = props;
+    // Simulate first (shows the plan + net outcome), then confirm the dispatch
+    // from inside that modal. Disabled (reason on hover) when nothing would
+    // move — a disabled <button> swallows hover, so the title lives on the
+    // wrapper span. Full-width; the Demo button stacks beneath it.
     return (
-        <div className="flex items-center gap-3">
-            <div
-                className="inline-flex h-10 items-center gap-2.5 rounded-full border border-neutral-200 bg-neutral-50 pr-2.5 pl-3.5"
-                title="Auto-dispatch (keeper service) — coming soon"
+        <span
+            className="block"
+            title={canDispatch ? undefined : dispatchReason}
+        >
+            <Button
+                className="w-full"
+                disabled={!canDispatch}
+                onClick={onSimulate}
+                size="md"
+                variant="primary"
             >
-                <span className="inline-flex items-center gap-2 whitespace-nowrap font-semibold text-neutral-500 text-sm">
-                    <MmIcon
-                        name="reload"
-                        size={15}
-                        style={{ color: 'var(--color-neutral-400)' }}
-                    />
-                    Auto-dispatch
+                <span className="inline-flex items-center gap-2">
+                    <MmIcon name="bolt" size={16} />
+                    Simulate &amp; dispatch
                 </span>
-                <Switch disabled label="Auto-dispatch" on={false} />
-            </div>
-            {/* One entry point: simulate first (shows the plan + net outcome),
-                then confirm the dispatch from inside that modal. Disabled (with
-                the reason on hover) when nothing would actually move. A disabled
-                <button> swallows hover, so the title lives on a wrapper span. */}
-            <span title={canDispatch ? undefined : dispatchReason}>
-                <Button
-                    disabled={!canDispatch}
-                    onClick={onSimulate}
-                    size="md"
-                    variant="primary"
-                >
-                    <span className="inline-flex items-center gap-2">
-                        <MmIcon name="bolt" size={16} />
-                        Simulate &amp; dispatch
-                    </span>
-                </Button>
-            </span>
-        </div>
+            </Button>
+        </span>
     );
 };

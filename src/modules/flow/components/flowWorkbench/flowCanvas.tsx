@@ -23,14 +23,12 @@ import type {
     IFlowSubInput,
 } from '../../canvas/flowGraphTypes';
 import {
-    getRecipientDisplay,
-    getSourceDisplay,
     getStrategyDisplay,
     getSubInputDisplay,
 } from '../../canvas/primitiveRegistry';
 import { MmIcon } from './mmIcon';
 import { Amount, Pill } from './mmPrimitives';
-import { MM_STATES, toneAccentBorder, toneChip, tonePulseVar } from './tone';
+import { MM_STATES, toneChip, tonePulseVar } from './tone';
 
 const REDUCED =
     typeof window !== 'undefined' &&
@@ -288,8 +286,22 @@ const usePanZoom = (
         if (!(cw && ch)) {
             return null;
         }
-        const k = clampK(Math.min(cw / stageW, ch / stageH, 1));
-        return { k, x: (cw - stageW * k) / 2, y: (ch - stageH * k) / 2 };
+        // Reserve room for the floating panels so auto-fit (on load / flow
+        // switch) never frames the node cards underneath the left control
+        // column or the bottom history bar — the canvas bleeds under them, the
+        // content doesn't land there.
+        const INSET_LEFT = 400;
+        const INSET_RIGHT = 32;
+        const INSET_TOP = 24;
+        const INSET_BOTTOM = 80;
+        const availW = Math.max(1, cw - INSET_LEFT - INSET_RIGHT);
+        const availH = Math.max(1, ch - INSET_TOP - INSET_BOTTOM);
+        const k = clampK(Math.min(availW / stageW, availH / stageH, 1));
+        return {
+            k,
+            x: INSET_LEFT + (availW - stageW * k) / 2,
+            y: INSET_TOP + (availH - stageH * k) / 2,
+        };
     }, [ref, stageW, stageH]);
 
     const reset = useCallback(() => {
@@ -355,10 +367,9 @@ const SubChip: React.FC<{ sub: IFlowSubInput; muted: boolean }> = ({
     const showEpoch = sub.role === 'epoch' && sub.epoch != null;
     const hasValues = sub.reading != null || showEpoch || sub.detail != null;
     return (
-        // Stacked, not crammed onto one line: row 1 icon + title (+ status),
-        // row 2 the static description (note), row 3 the live values (budget
-        // amount, epoch #, gate now-vs-floor). Rows 2/3 are indented to line up
-        // under the title.
+        // A SUB-card of the strategy above it — intentionally smaller and more
+        // muted (compact rounded-lg, tinted state wash, small bordered icon) so
+        // it reads as a part of the bigger strategy card, not a peer.
         <div
             className={classNames(
                 'flex flex-col gap-1 rounded-lg border px-[9px] py-1.5',
@@ -383,16 +394,16 @@ const SubChip: React.FC<{ sub: IFlowSubInput; muted: boolean }> = ({
                 <span className="min-w-0 flex-1 truncate font-semibold text-neutral-600 text-xs">
                     {sub.label}
                 </span>
-                {closed && <Pill tone="critical">closed</Pill>}
-                {open && <Pill tone="success">open</Pill>}
+                {closed && <Pill tone="critical">Closed</Pill>}
+                {open && <Pill tone="success">Open</Pill>}
             </div>
             {sub.note && (
-                <div className="pl-7 text-[11px] text-neutral-400 leading-[1.35]">
+                <div className="text-[11px] text-neutral-400 leading-[1.35] first-letter:uppercase">
                     {sub.note}
                 </div>
             )}
             {hasValues && (
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pl-7">
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
                     {sub.reading != null && (
                         <Amount amount={sub.reading} token={sub.token} />
                     )}
@@ -403,16 +414,16 @@ const SubChip: React.FC<{ sub: IFlowSubInput; muted: boolean }> = ({
                         </span>
                     )}
                     {sub.detail && (
-                        <span
+                        <div
                             className={classNames(
-                                'text-[11px] leading-[1.35]',
+                                'text-[11px] leading-[1.35] first-letter:uppercase',
                                 closed
                                     ? 'text-critical-700'
                                     : 'text-neutral-500',
                             )}
                         >
                             {sub.detail}
-                        </span>
+                        </div>
                     )}
                 </div>
             )}
@@ -445,8 +456,7 @@ const StrategyModule: React.FC<{
         >
             <button
                 className={classNames(
-                    'relative flex w-full flex-col gap-1.5 rounded-2xl border border-neutral-200 border-l-[3px] bg-neutral-0 px-3.5 py-3 text-left shadow-neutral-md transition-shadow',
-                    toneAccentBorder[state.tone],
+                    'relative flex w-full flex-col gap-1.5 rounded-2xl border border-neutral-200 bg-neutral-0 px-3.5 py-3 text-left shadow-neutral-md transition-shadow',
                     selected
                         ? 'border-primary-400 ring-[3px] ring-primary-100'
                         : 'hover:shadow-neutral-lg',
@@ -462,6 +472,9 @@ const StrategyModule: React.FC<{
                 }
                 type="button"
             >
+                {/* Icon + title + tags share one line (tags next to the name,
+                    not below). Everything else stacks full-width beneath — same
+                    rhythm as the DAO vault card. */}
                 <span className="flex items-center gap-2">
                     <span
                         className={classNames(
@@ -474,16 +487,6 @@ const StrategyModule: React.FC<{
                     <span className="min-w-0 flex-1 truncate font-semibold text-[15px] text-neutral-900">
                         {node.title}
                     </span>
-                </span>
-                <span className="flex items-center justify-between gap-2 pl-[38px]">
-                    {node.subtitle && (
-                        <span className="min-w-0 flex-1 truncate text-[11px] text-neutral-500">
-                            {node.subtitle}
-                        </span>
-                    )}
-                    {/* Status + (optional) reason badge sit together in the
-                        header — keeping the card↔sub-node connector below clean
-                        and the badge the same size as the status pill. */}
                     <span className="flex shrink-0 items-center gap-1.5">
                         {node.badge && (
                             <Pill tone={state.tone}>{node.badge}</Pill>
@@ -491,8 +494,13 @@ const StrategyModule: React.FC<{
                         <Pill tone={state.tone}>{state.label}</Pill>
                     </span>
                 </span>
+                {node.subtitle && (
+                    <span className="truncate text-[11px] text-neutral-500">
+                        {node.subtitle}
+                    </span>
+                )}
                 {node.params && node.params.length > 0 && (
-                    <span className="truncate pl-[38px] text-[11px] text-neutral-400">
+                    <span className="truncate text-[11px] text-neutral-400">
                         {node.params
                             .map((p) => `${p.label} ${p.value}`)
                             .join(' · ')}
@@ -538,8 +546,8 @@ const NetToVault: React.FC<{ net?: IFlowNetEntry[] }> = ({ net }) => {
         return null;
     }
     return (
-        <div className="flex flex-col gap-1 border-neutral-100 border-t pt-2">
-            <span className="font-semibold text-[10px] text-neutral-400 uppercase tracking-wide">
+        <div className="mt-1.5 flex flex-col gap-0.5 text-sm">
+            <span className="mb-0.5 font-semibold text-[10px] text-neutral-400 uppercase tracking-[0.06em]">
                 Net this dispatch
             </span>
             {net.map((entry) => {
@@ -547,20 +555,20 @@ const NetToVault: React.FC<{ net?: IFlowNetEntry[] }> = ({ net }) => {
                 const pending = entry.opaque && entry.delta === 0;
                 return (
                     <div
-                        className="flex items-baseline justify-between gap-2.5"
+                        className="flex items-baseline justify-between gap-2.5 py-0.5"
                         key={entry.token}
                     >
-                        <span className="font-semibold text-neutral-500 text-xs">
+                        <span className="text-neutral-500 text-xs">
                             {entry.token}
                         </span>
                         {pending ? (
-                            <span className="font-semibold text-neutral-400 text-xs">
-                                pending
+                            <span className="font-semibold text-sm text-warning-700">
+                                On fill
                             </span>
                         ) : (
                             <span
                                 className={classNames(
-                                    'num font-semibold text-xs',
+                                    'num font-semibold text-sm',
                                     positive
                                         ? 'text-success-700'
                                         : 'text-critical-700',
@@ -588,11 +596,10 @@ const EndpointCard: React.FC<{
     onSelect: (id: string) => void;
 }> = ({ node, selected, onSelect }) => {
     const isSource = node.kind === 'source';
-    const display = isSource ? getSourceDisplay() : getRecipientDisplay();
     return (
         <button
             className={classNames(
-                'absolute z-[3] flex flex-col gap-2 rounded-2xl border border-neutral-200 bg-neutral-0 p-3.5 text-left shadow-neutral-sm transition-shadow hover:shadow-neutral-md',
+                'absolute z-[3] flex flex-col gap-2 rounded-2xl border border-neutral-200 bg-neutral-0 px-3.5 py-3 text-left shadow-neutral-md transition-shadow hover:shadow-neutral-lg',
                 selected && 'border-primary-400 ring-[3px] ring-primary-100',
             )}
             onClick={() => onSelect(node.id)}
@@ -600,33 +607,34 @@ const EndpointCard: React.FC<{
                 left: node.x,
                 top: node.y,
                 width: node.w,
-                // Render at the full layout height so the hub's spokes always
-                // anchor on the card, never below it.
-                minHeight: node.h,
+                // Source is the hub: render at the full layout height so its
+                // spokes always anchor on the card. Recipients size to content.
+                minHeight: isSource ? node.h : undefined,
             }}
             type="button"
         >
-            <div className="flex items-center gap-2 font-semibold text-neutral-900 text-sm">
-                <span className="text-neutral-500">
-                    <MmIcon name={display.icon} size={16} />
+            {/* No icon on endpoint cards (vault / recipient) — only strategies
+                carry the tinted icon chip, keeping the hierarchy clean. */}
+            <div className="flex items-center gap-2">
+                <span className="min-w-0 flex-1 truncate font-semibold text-neutral-900 text-sm">
+                    {node.title}
                 </span>
-                <span className="min-w-0 flex-1 truncate">{node.title}</span>
+                <Pill tone={isSource ? 'neutral' : 'primary'}>
+                    {isSource ? 'DAO vault' : 'Recipient'}
+                </Pill>
             </div>
-            <Pill
-                className="self-start"
-                tone={isSource ? 'neutral' : 'primary'}
-            >
-                {isSource ? 'DAO vault · funds & receives' : 'Recipient'}
-            </Pill>
             {isSource ? (
                 <>
-                    <div className="flex flex-col gap-1.5">
+                    <div className="mt-1 flex flex-col gap-0.5 text-sm">
+                        <span className="mb-0.5 font-semibold text-[10px] text-neutral-400 uppercase tracking-[0.06em]">
+                            Balances
+                        </span>
                         {(node.balances ?? []).map((b) => (
                             <div
-                                className="flex items-baseline justify-between gap-2.5 rounded-lg bg-neutral-50 px-[9px] py-[5px]"
+                                className="flex items-baseline justify-between gap-2.5 py-0.5"
                                 key={b.token}
                             >
-                                <span className="font-semibold text-neutral-500 text-xs">
+                                <span className="text-neutral-500 text-xs">
                                     {b.token}
                                 </span>
                                 <Amount
@@ -641,7 +649,7 @@ const EndpointCard: React.FC<{
                 </>
             ) : (
                 node.address && (
-                    <div className="mono rounded-lg bg-neutral-50 px-[9px] py-[5px] text-neutral-600 text-xs">
+                    <div className="mono text-neutral-600 text-xs">
                         {node.address.length > 12
                             ? `${node.address.slice(0, 6)}…${node.address.slice(-4)}`
                             : node.address}
@@ -731,7 +739,11 @@ export const FlowCanvas: React.FC<IFlowCanvasProps> = (props) => {
             return;
         }
         const rect = el.getBoundingClientRect();
-        const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+        // Dampened, magnitude-aware zoom: trackpads fire many small-delta events
+        // and mouse wheels a few large ones — scaling by deltaY (clamped) keeps
+        // both smooth instead of a fixed 12% jump per tick.
+        const clamped = Math.max(-40, Math.min(40, e.deltaY));
+        const factor = Math.exp(-clamped * 0.005);
         zoomAt(factor, e.clientX - rect.left, e.clientY - rect.top);
     };
     const onPointerDown = (e: React.PointerEvent) => {

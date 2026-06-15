@@ -121,25 +121,28 @@ export const Amount: React.FC<IAmountProps> = (props) => {
     const opaque = fidelity === 'opaque' || amount == null;
 
     if (opaque) {
+        // Settled-on-fill amounts (e.g. CowSwap) — only knowable post-execution.
+        // Yellow (warning) marks them apart from estimated (blue) and real
+        // (black); no "pending" word — the "on fill" tag carries the meaning.
         const val = /LP/.test(token ?? '') ? 'LP' : (token ?? '?');
         return (
             <span
                 className={classNames(
-                    'inline-flex items-baseline gap-1 whitespace-nowrap text-neutral-400',
+                    'inline-flex items-baseline gap-1 whitespace-nowrap text-warning-700',
                     className,
                 )}
-                title="opaque output — amount not knowable pre-execution"
+                title="settled on fill — amount not knowable pre-execution"
             >
                 <span
                     className={classNames(
-                        'font-semibold text-neutral-500 italic',
+                        'font-semibold text-warning-800 italic',
                         valSize,
                     )}
                 >
                     {val}
                 </span>
-                <span className="rounded-full border border-neutral-300 border-dashed px-[5px] font-semibold text-[0.74em] text-neutral-400">
-                    pending
+                <span className="rounded-full bg-warning-100 px-[5px] font-semibold text-[0.74em] text-warning-800">
+                    on fill
                 </span>
             </span>
         );

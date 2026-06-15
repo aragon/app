@@ -8,7 +8,6 @@
 
 import { Card } from '@aragon/gov-ui-kit';
 import type { IFlowDescription } from './buildWorkbenchModel';
-import { MmIcon } from './mmIcon';
 import { fmtAmount } from './mmPrimitives';
 import type { ITokenFlow } from './workbenchModel';
 
@@ -22,8 +21,7 @@ export const FlowDescriptionCard: React.FC<IFlowDescriptionCardProps> = ({
     className,
 }) => (
     <Card className={`border border-neutral-100 p-3.5 ${className ?? ''}`}>
-        <div className="mb-1.5 flex items-center gap-1.5 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
-            <MmIcon name="info" size={13} />
+        <div className="mb-1.5 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
             What this flow does
         </div>
         <div className="mb-1 font-semibold text-neutral-900 text-sm">
@@ -47,12 +45,12 @@ export const TokenFlowList: React.FC<ITokenFlowListProps> = ({ flows }) => {
         );
     }
     return (
-        <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between text-[11px] text-neutral-400">
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between text-neutral-400 text-xs">
                 <span>Token</span>
                 <span className="flex items-center gap-3">
-                    <span className="w-20 text-right">↑ out</span>
-                    <span className="w-20 text-right">↓ back</span>
+                    <span className="w-20 text-right">↑ Out</span>
+                    <span className="w-20 text-right">↓ Back</span>
                 </span>
             </div>
             {flows.map((f) => {
@@ -62,13 +60,13 @@ export const TokenFlowList: React.FC<ITokenFlowListProps> = ({ flows }) => {
                         : (fmtAmount(f.inAmount) ?? '—');
                 return (
                     <div
-                        className="flex items-center justify-between gap-3 border-neutral-100 border-t pt-1.5 text-sm"
+                        className="flex items-center justify-between gap-3 py-0.5 text-sm"
                         key={f.token}
                     >
                         <span className="font-semibold text-neutral-700">
                             {f.token}
                         </span>
-                        <span className="flex items-center gap-3 text-xs">
+                        <span className="flex items-center gap-3 text-sm">
                             <span className="num w-20 text-right text-neutral-500">
                                 {f.outAmount > 0
                                     ? (fmtAmount(f.outAmount) ?? '—')

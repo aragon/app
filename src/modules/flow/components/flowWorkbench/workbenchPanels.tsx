@@ -19,7 +19,12 @@ import {
 import { MmIcon } from './mmIcon';
 import { Amount, Pill } from './mmPrimitives';
 import { MM_STATES, type MmTone, toneChip } from './tone';
-import type { IHistoryRun, INextRun, RunStatus } from './workbenchModel';
+import type {
+    IHistoryLeg,
+    IHistoryRun,
+    INextRun,
+    RunStatus,
+} from './workbenchModel';
 
 const truncateAddress = (address?: string): string =>
     address && address.length > 12
@@ -118,7 +123,7 @@ const StrategyInspector: React.FC<{
             </div>
 
             {node.inputs.length > 0 && (
-                <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                <div className="mt-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                     Inputs
                 </div>
             )}
@@ -164,7 +169,7 @@ const StrategyInspector: React.FC<{
 
             {node.outputs && node.outputs.length > 0 && (
                 <>
-                    <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                    <div className="mt-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                         Output
                     </div>
                     {node.outputs.map((out) => (
@@ -195,7 +200,7 @@ const StrategyInspector: React.FC<{
 
             {node.params && node.params.length > 0 && (
                 <>
-                    <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                    <div className="mt-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                         Parameters
                     </div>
                     <div className="flex flex-col gap-1">
@@ -246,7 +251,7 @@ const EndpointInspector: React.FC<{ node: IFlowGraphNode }> = ({ node }) => {
 
             {isSource && node.balances && node.balances.length > 0 && (
                 <>
-                    <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                    <div className="mt-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                         Balances
                     </div>
                     {node.balances.map((b) => (
@@ -262,7 +267,7 @@ const EndpointInspector: React.FC<{ node: IFlowGraphNode }> = ({ node }) => {
 
             {!isSource && node.address && (
                 <>
-                    <div className="mt-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                    <div className="mt-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                         Address
                     </div>
                     <InspectorRow
@@ -281,7 +286,7 @@ export const Inspector: React.FC<IInspectorProps> = (props) => {
     return (
         <Card className="flex flex-col gap-1 border border-neutral-100 p-4">
             <div className="flex items-center justify-between">
-                <span className="font-semibold text-neutral-500 text-xs uppercase tracking-[0.07em]">
+                <span className="font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                     Inspector
                 </span>
                 {node && (
@@ -320,7 +325,7 @@ const STATE_SWATCH: [label: string, className: string][] = [
 export const Legend: React.FC = () => (
     <Card className="flex flex-col gap-3 border border-neutral-100 p-3.5">
         <div>
-            <div className="mb-[7px] font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+            <div className="mb-[7px] font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                 Node state
             </div>
             <div className="flex flex-wrap gap-x-3.5 gap-y-2">
@@ -341,7 +346,7 @@ export const Legend: React.FC = () => (
             </div>
         </div>
         <div>
-            <div className="mb-[7px] font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+            <div className="mb-[7px] font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                 Data fidelity
             </div>
             <div className="flex flex-wrap gap-x-3.5 gap-y-2">
@@ -364,69 +369,57 @@ export const Legend: React.FC = () => (
 
 /* ------------------------------------------------------------- HistoryStrip */
 
-const RUN_STATUS_TONE: Record<RunStatus, MmTone> = {
-    ok: 'success',
-    partial: 'warning',
-    failed: 'critical',
+/** Static status indicator dot — green / amber / red, no full column. */
+const RUN_STATUS_DOT: Record<RunStatus, string> = {
+    ok: 'bg-success-500',
+    partial: 'bg-warning-500',
+    failed: 'bg-critical-500',
 };
 
-const legTone = (leg: { failed?: boolean; skipped?: boolean }): MmTone => {
-    if (leg.failed) {
-        return 'critical';
+/** One run's legs as a compact plain-text summary (no tag blobs). */
+const legSummary = (legs?: IHistoryLeg[]): string => {
+    if (!legs || legs.length === 0) {
+        return 'All legs ok';
     }
-    if (leg.skipped) {
-        return 'warning';
-    }
-    return 'success';
+    return legs
+        .map((lg) => {
+            const detail = lg.detail ?? lg.reason;
+            return detail ? `${lg.kind} ${detail}` : lg.kind;
+        })
+        .join(' · ');
 };
 
 export interface IHistoryStripProps {
     history: IHistoryRun[];
     activeRun: string | null;
     onSelect: (run: string) => void;
-    onClear: () => void;
     /** When provided, renders a collapse chevron in the header (Focus layout). */
     onCollapse?: () => void;
 }
 
 export const HistoryStrip: React.FC<IHistoryStripProps> = (props) => {
-    const { history, activeRun, onSelect, onClear, onCollapse } = props;
+    const { history, activeRun, onSelect, onCollapse } = props;
     return (
-        <div className="flex max-h-[340px] min-h-0 flex-shrink-0 flex-col border-neutral-100 border-t bg-neutral-0">
-            <div className="flex flex-shrink-0 items-center justify-between border-neutral-100 border-b px-[18px] py-3">
+        <div className="flex max-h-[340px] min-h-0 flex-shrink-0 flex-col bg-neutral-0">
+            <div className="flex flex-shrink-0 items-center justify-between px-[18px] py-3">
                 <div className="flex items-center gap-2 font-semibold text-neutral-800 text-sm">
-                    <MmIcon
-                        name="app-transactions"
-                        size={16}
-                        style={{ color: 'var(--color-neutral-400)' }}
-                    />
                     Dispatch history
                     <span className="rounded-full bg-neutral-100 px-[7px] py-px font-semibold text-neutral-500 text-xs">
                         {history.length}
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
-                    {activeRun != null && (
-                        <button
-                            className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 py-[5px] font-semibold text-neutral-600 text-xs hover:bg-neutral-200"
-                            onClick={onClear}
-                            type="button"
-                        >
-                            <MmIcon name="close" size={12} />
-                            Exit replay
-                        </button>
-                    )}
-                    {onCollapse && (
-                        <button
-                            className="flex size-7 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100"
-                            onClick={onCollapse}
-                            title="Collapse history"
-                            type="button"
-                        >
-                            <MmIcon name="chevron-down" size={14} />
-                        </button>
-                    )}
-                </div>
+                {/* Exiting replay lives on the ReplayBanner ("Back to live") — no
+                    duplicate control here. */}
+                {onCollapse && (
+                    <button
+                        className="flex size-7 items-center justify-center rounded-lg text-neutral-500 hover:bg-neutral-100"
+                        onClick={onCollapse}
+                        title="Collapse history"
+                        type="button"
+                    >
+                        <MmIcon name="chevron-down" size={14} />
+                    </button>
+                )}
             </div>
             {history.length === 0 ? (
                 <div className="p-[18px] text-neutral-500 text-sm">
@@ -434,59 +427,73 @@ export const HistoryStrip: React.FC<IHistoryStripProps> = (props) => {
                 </div>
             ) : (
                 <div className="overflow-y-auto">
-                    {history.map((h) => (
-                        <button
-                            className={classNames(
-                                'grid w-full grid-cols-[56px_96px_1fr_96px_132px_80px] items-center gap-4 border-neutral-100 border-b px-5 py-3.5 text-left hover:bg-neutral-50',
-                                activeRun === h.run &&
-                                    'bg-primary-50 shadow-[inset_3px_0_0_var(--color-primary-500)]',
-                            )}
-                            key={h.run}
-                            onClick={() => onSelect(h.run)}
-                            type="button"
-                        >
-                            <span className="num font-semibold text-neutral-700 text-sm">
-                                {h.label}
-                            </span>
-                            <span>
-                                <Pill tone={RUN_STATUS_TONE[h.status]}>
-                                    {h.status}
-                                </Pill>
-                            </span>
-                            <span className="flex min-w-0 flex-wrap gap-1.5">
-                                {h.legs && h.legs.length > 0 ? (
-                                    h.legs.map((lg) => (
-                                        <Pill
-                                            dot
-                                            key={`${lg.kind}:${lg.detail ?? lg.reason ?? ''}`}
-                                            tone={legTone(lg)}
-                                        >
-                                            {lg.kind}
-                                            {(lg.detail || lg.reason) && (
-                                                <span className="font-normal text-neutral-500">
-                                                    {lg.detail ?? lg.reason}
-                                                </span>
-                                            )}
-                                        </Pill>
-                                    ))
-                                ) : (
-                                    <Pill dot tone="success">
-                                        all legs ok
-                                    </Pill>
+                    {/* Column header matches the cumulative table header style.
+                        The replay column is an icon per row — no header label. */}
+                    <div className="grid grid-cols-[64px_1fr_92px_120px_36px] items-center gap-4 px-5 py-2 text-neutral-400 text-xs">
+                        <span>Run</span>
+                        <span>Activity</span>
+                        <span>When</span>
+                        <span>Tx</span>
+                        <span />
+                    </div>
+                    {history.map((h) => {
+                        const isActive = activeRun === h.run;
+                        return (
+                            <div
+                                className={classNames(
+                                    'grid w-full grid-cols-[64px_1fr_92px_120px_36px] items-center gap-4 px-5 py-2.5 text-left',
+                                    isActive
+                                        ? 'bg-primary-50'
+                                        : 'hover:bg-neutral-50',
                                 )}
-                            </span>
-                            <span className="num text-neutral-500 text-xs">
-                                {h.at}
-                            </span>
-                            <span className="flex items-center gap-1.5 text-neutral-500 text-xs">
-                                <span className="mono">{h.tx}</span>
-                                <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
-                            </span>
-                            <span className="text-right font-semibold text-primary-600 text-xs">
-                                {activeRun === h.run ? 'Replaying' : 'Replay'}
-                            </span>
-                        </button>
-                    ))}
+                                key={h.run}
+                            >
+                                <span className="flex items-center gap-2">
+                                    <span
+                                        className={classNames(
+                                            'size-2 shrink-0 rounded-full',
+                                            RUN_STATUS_DOT[h.status],
+                                        )}
+                                        title={h.status}
+                                    />
+                                    <span className="num font-semibold text-neutral-700 text-sm">
+                                        {h.label}
+                                    </span>
+                                </span>
+                                <span className="num min-w-0 truncate text-neutral-600 text-xs">
+                                    {legSummary(h.legs)}
+                                </span>
+                                <span className="num text-neutral-500 text-xs">
+                                    {h.at}
+                                </span>
+                                <button
+                                    className="mono inline-flex min-w-0 items-center gap-1.5 text-primary-500 text-xs hover:text-primary-600 hover:underline"
+                                    onClick={() => onSelect(h.run)}
+                                    title="View transaction"
+                                    type="button"
+                                >
+                                    <span className="truncate">{h.tx}</span>
+                                    <Icon
+                                        icon={IconType.LINK_EXTERNAL}
+                                        size="sm"
+                                    />
+                                </button>
+                                <button
+                                    className={classNames(
+                                        'flex items-center justify-end',
+                                        isActive
+                                            ? 'text-primary-500'
+                                            : 'text-neutral-400 hover:text-primary-600',
+                                    )}
+                                    onClick={() => onSelect(h.run)}
+                                    title={isActive ? 'Replaying' : 'Replay'}
+                                    type="button"
+                                >
+                                    <MmIcon name="reload" size={15} />
+                                </button>
+                            </div>
+                        );
+                    })}
                 </div>
             )}
         </div>
@@ -611,52 +618,55 @@ export const SimulateModal: React.FC<ISimulateModalProps> = (props) => {
                                 )}
                             </div>
                             <div className="min-w-0 flex-1 pb-4">
+                                {/* No "will fire" badge for standard execution —
+                                    the filled dot already signals it. Skips show
+                                    a single inline alert below instead. */}
                                 <div className="flex items-center gap-2 text-neutral-500">
                                     <span className="font-semibold text-neutral-900 text-sm">
                                         {s.kind}
                                     </span>
-                                    <Pill
-                                        tone={
-                                            s.willFire ? 'primary' : 'critical'
-                                        }
-                                    >
-                                        {s.willFire ? 'will fire' : 'skipped'}
-                                    </Pill>
                                 </div>
-                                <div
-                                    className={classNames(
-                                        'mt-1.5 flex flex-wrap items-center gap-2 text-sm',
-                                        !s.willFire && 'opacity-55',
-                                    )}
-                                >
-                                    {s.ins.map((io) => (
-                                        <FidelityAmount
-                                            amount={io.amount}
-                                            fidelity={io.fidelity}
-                                            key={io.token}
-                                            token={io.token}
+                                {/* A firing step shows what moves; a skipped
+                                    step shows only WHY (no opaque "on fill"
+                                    placeholder amounts for something that won't
+                                    run). */}
+                                {s.willFire ? (
+                                    <div className="mt-1.5 flex flex-wrap items-center gap-2 text-sm">
+                                        {s.ins.map((io) => (
+                                            <FidelityAmount
+                                                amount={io.amount}
+                                                fidelity={io.fidelity}
+                                                key={io.token}
+                                                token={io.token}
+                                            />
+                                        ))}
+                                        <MmIcon
+                                            name="chevron-right"
+                                            size={14}
+                                            style={{
+                                                color: 'var(--color-neutral-300)',
+                                            }}
                                         />
-                                    ))}
-                                    <MmIcon
-                                        name="chevron-right"
-                                        size={14}
-                                        style={{
-                                            color: 'var(--color-neutral-300)',
-                                        }}
-                                    />
-                                    {s.outs.map((io) => (
-                                        <FidelityAmount
-                                            amount={io.amount}
-                                            fidelity={io.fidelity}
-                                            key={io.token}
-                                            token={io.token}
-                                        />
-                                    ))}
-                                </div>
-                                {s.skipReason && (
-                                    <div className="mt-1.5 flex items-center gap-1.5 rounded-lg bg-critical-100 px-2.5 py-[5px] text-critical-700 text-xs">
-                                        <MmIcon name="critical" size={14} />
-                                        <span>{s.skipReason}</span>
+                                        {s.outs.map((io) => (
+                                            <FidelityAmount
+                                                amount={io.amount}
+                                                fidelity={io.fidelity}
+                                                key={io.token}
+                                                token={io.token}
+                                            />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs">
+                                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-critical-100 px-2 py-0.5 font-semibold text-critical-700">
+                                            <MmIcon name="critical" size={12} />
+                                            Skipped
+                                        </span>
+                                        {s.skipReason && (
+                                            <span className="text-neutral-500">
+                                                {s.skipReason}
+                                            </span>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -666,7 +676,7 @@ export const SimulateModal: React.FC<ISimulateModalProps> = (props) => {
 
                 {nextRun.net.length > 0 && (
                     <div className="mt-1 rounded-xl border border-neutral-100 bg-neutral-50 p-3.5">
-                        <div className="mb-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                        <div className="mb-2 font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]">
                             Net to the DAO vault
                         </div>
                         <div className="flex flex-col gap-1.5">
@@ -683,8 +693,8 @@ export const SimulateModal: React.FC<ISimulateModalProps> = (props) => {
                                             {entry.token}
                                         </span>
                                         {pending ? (
-                                            <span className="font-semibold text-neutral-400 text-sm">
-                                                pending
+                                            <span className="font-semibold text-sm text-warning-700">
+                                                on fill
                                             </span>
                                         ) : (
                                             <span

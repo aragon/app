@@ -27,16 +27,6 @@ export const MM_STATES: Record<
     skipped: { label: 'Skipped', tone: 'neutral' },
 };
 
-/** Left accent bar (node module) — directional border colour. */
-export const toneAccentBorder: Record<MmTone, string> = {
-    neutral: 'border-l-neutral-400',
-    info: 'border-l-info-500',
-    primary: 'border-l-primary-500',
-    critical: 'border-l-critical-500',
-    success: 'border-l-success-600',
-    warning: 'border-l-warning-500',
-};
-
 /** Soft chip / badge surface — background + strong text. */
 export const toneChip: Record<MmTone, string> = {
     neutral: 'bg-neutral-100 text-neutral-700',

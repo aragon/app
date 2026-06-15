@@ -26,6 +26,7 @@ import { MmIcon } from './mmIcon';
 import { LiveBadge } from './mmPrimitives';
 import { WorkbenchDemoActions } from './workbenchDemoActions';
 import {
+    AutoToggle,
     CumulativeStats,
     DispatchControls,
     FlowSelector,
@@ -40,7 +41,11 @@ import {
 } from './workbenchPanels';
 
 const GLASS =
-    'rounded-2xl border border-neutral-100 bg-neutral-0/85 shadow-neutral-xl backdrop-blur-md';
+    'rounded-2xl border border-neutral-100 bg-neutral-0/85 shadow-neutral-md backdrop-blur-md';
+
+/** Shared eyebrow heading — one uniform style across every panel. */
+const EYEBROW =
+    'font-semibold text-neutral-500 text-xs uppercase tracking-[0.06em]';
 
 export interface IFlowFocusProps {
     model: IWorkbenchModel;
@@ -133,9 +138,10 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                 )}
             </div>
 
-            {/* top-left: flow selector + live badge, with the flow description
-                stacked beneath it */}
-            <div className="absolute top-4 left-4 z-20 flex w-[360px] flex-col gap-3">
+            {/* left column: the single control center — flow selector, the
+                dispatch bar (moved off the canvas centre to give the working
+                area air), the flow description, then cumulative stats. */}
+            <div className="absolute top-3 left-3 z-20 flex max-h-[calc(100%-5.5rem)] w-[368px] flex-col gap-3 overflow-y-auto px-1 pt-1 pb-3">
                 <div className={`flex items-center gap-2.5 p-2 ${GLASS}`}>
                     <FlowSelector
                         dao={model.dao}
@@ -145,25 +151,15 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                     />
                     {model.isLive && <LiveBadge />}
                 </div>
-                {description && (
-                    <FlowDescriptionCard
-                        className={GLASS}
-                        description={description}
-                    />
-                )}
-            </div>
-
-            {/* top-center: next-run + dispatch controls */}
-            <div className="absolute top-4 left-1/2 z-20 -translate-x-1/2">
-                <div
-                    className={`flex items-center gap-3.5 px-3.5 py-2.5 ${GLASS}`}
-                >
-                    {model.nextRun && (
-                        <NextRunSummary nextRun={model.nextRun} />
-                    )}
-                    {model.nextRun && (
-                        <span className="h-[30px] w-px flex-shrink-0 bg-neutral-200" />
-                    )}
+                <div className={`flex flex-col gap-2.5 px-3.5 py-2.5 ${GLASS}`}>
+                    <div className="flex items-center justify-between gap-2">
+                        {model.nextRun ? (
+                            <NextRunSummary nextRun={model.nextRun} />
+                        ) : (
+                            <span />
+                        )}
+                        <AutoToggle />
+                    </div>
                     <DispatchControls
                         canDispatch={canDispatch}
                         dispatchReason={dispatchReason}
@@ -171,32 +167,19 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                     />
                     <WorkbenchDemoActions />
                 </div>
-                {runForBanner && (
-                    <div className="mt-3 flex justify-center">
-                        <ReplayBanner
-                            onClear={onClearReplay}
-                            run={runForBanner}
-                        />
-                    </div>
+                {description && (
+                    <FlowDescriptionCard
+                        className={GLASS}
+                        description={description}
+                    />
                 )}
-            </div>
-
-            {/* right column: this-flow stats + inspector */}
-            <div className="absolute top-4 right-4 bottom-4 z-20 flex w-[380px] flex-col gap-3.5 overflow-y-auto">
                 {model.stats && (
                     <Card className={`flex-shrink-0 p-4 ${GLASS}`}>
-                        <div className="mb-3 flex items-center justify-between">
-                            <span className="font-semibold text-neutral-500 text-xs uppercase tracking-[0.07em]">
-                                Cumulative
-                            </span>
-                            <span className="text-neutral-400 text-xs">
-                                {model.stats.activeSinceDays}d
-                            </span>
-                        </div>
+                        <div className={`mb-3 ${EYEBROW}`}>Cumulative</div>
                         <CumulativeStats stats={model.stats} />
                         {model.stats.tokenFlows.length > 0 && (
-                            <div className="mt-3.5 border-neutral-100 border-t pt-3">
-                                <div className="mb-2 font-semibold text-neutral-400 text-xs uppercase tracking-[0.06em]">
+                            <div className="mt-4">
+                                <div className={`mb-2 ${EYEBROW}`}>
                                     Token throughput
                                 </div>
                                 <TokenFlowList flows={model.stats.tokenFlows} />
@@ -204,6 +187,10 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                         )}
                     </Card>
                 )}
+            </div>
+
+            {/* right column: inspector for the selected node only */}
+            <div className="absolute top-3 right-3 bottom-3 z-20 flex w-[388px] flex-col gap-3.5 overflow-y-auto px-1 pt-1 pb-2">
                 {selectedNode && (
                     <Inspector
                         node={selectedNode}
@@ -213,8 +200,13 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                 )}
             </div>
 
-            {/* bottom-left: collapsible dispatch history */}
-            <div className="absolute bottom-4 left-4 z-20">
+            {/* bottom-left: replay bar rides above the collapsible history —
+                the whole stack grows upward from the bottom, so the bar tracks
+                the history as it expands/collapses. */}
+            <div className="absolute bottom-4 left-4 z-20 flex flex-col items-start gap-3">
+                {runForBanner && (
+                    <ReplayBanner onClear={onClearReplay} run={runForBanner} />
+                )}
                 {historyOpen ? (
                     <div
                         className={`w-[880px] max-w-[calc(100vw-2rem)] overflow-hidden ${GLASS}`}
@@ -222,13 +214,15 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                         <HistoryStrip
                             activeRun={activeRun}
                             history={model.history}
-                            onClear={onClearReplay}
                             onCollapse={() => setHistoryOpen(false)}
-                            onSelect={(run) =>
-                                run === activeRun
-                                    ? onClearReplay()
-                                    : onReplay(run)
-                            }
+                            onSelect={(run) => {
+                                if (run === activeRun) {
+                                    onClearReplay();
+                                } else {
+                                    onReplay(run);
+                                    setHistoryOpen(false);
+                                }
+                            }}
                         />
                     </div>
                 ) : (
@@ -237,7 +231,6 @@ export const FlowFocus: React.FC<IFlowFocusProps> = (props) => {
                         onClick={() => setHistoryOpen(true)}
                         type="button"
                     >
-                        <MmIcon name="app-transactions" size={15} />
                         History
                         <span className="rounded-full bg-neutral-100 px-[7px] py-px text-neutral-500 text-xs">
                             {model.history.length}

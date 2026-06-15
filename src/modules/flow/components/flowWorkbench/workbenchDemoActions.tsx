@@ -193,10 +193,11 @@ export const WorkbenchDemoActions: React.FC = () => {
             align="end"
             customTrigger={
                 <Button
+                    className="w-full justify-between"
                     iconLeft={IconType.SETTINGS}
                     iconRight={IconType.CHEVRON_DOWN}
                     size="md"
-                    variant="tertiary"
+                    variant="secondary"
                 >
                     Demo
                 </Button>

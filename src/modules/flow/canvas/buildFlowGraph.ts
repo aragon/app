@@ -45,7 +45,7 @@ import type {
 import { layoutFlowGraph } from './layoutFlowGraph';
 import { outputsSettleAsync } from './primitiveRegistry';
 
-const STRATEGY_W = 240;
+const STRATEGY_W = 288;
 const SOURCE_W = 252;
 const RECIPIENT_W = 200;
 
