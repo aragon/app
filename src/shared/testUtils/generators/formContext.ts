@@ -37,6 +37,7 @@ export const generateFormContext = (
     unregister: jest.fn(),
     register: jest.fn(),
     setFocus: jest.fn(),
+    resetDefaultValues: jest.fn(),
     control: {} as Control,
     formState: generateFormContextState(values?.formState),
     subscribe: jest.fn(),
