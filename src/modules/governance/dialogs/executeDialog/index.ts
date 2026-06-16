@@ -1,5 +1,10 @@
-export {
-    ExecuteDialog,
-    type IExecuteDialogParams,
-    type IExecuteDialogProps,
+import dynamic from 'next/dynamic';
+
+export const ExecuteDialog = dynamic(() =>
+    import('./executeDialog').then((mod) => mod.ExecuteDialog),
+);
+
+export type {
+    IExecuteDialogParams,
+    IExecuteDialogProps,
 } from './executeDialog';

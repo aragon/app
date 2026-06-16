@@ -5,7 +5,7 @@ import {
     type ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -49,7 +49,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         'ExecuteDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(address != null, 'ExecuteDialog: user must be connected.');
 
     const { t } = useTranslations();

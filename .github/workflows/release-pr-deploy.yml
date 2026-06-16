@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -32,7 +32,7 @@ jobs:
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -102,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -151,7 +151,7 @@ jobs:
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
@@ -221,7 +221,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -230,7 +230,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: |

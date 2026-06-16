@@ -1,9 +1,11 @@
 import { governanceService } from '@/modules/governance/api/governanceService';
 import { generateProposal } from '@/modules/governance/testUtils';
+import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoService, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { governanceMetadataUtils } from './governanceMetadataUtils';
 
 describe('governanceMetadata utils', () => {
@@ -14,12 +16,14 @@ describe('governanceMetadata utils', () => {
         'getProposalBySlug',
     );
     const resolveDaoIdSpy = jest.spyOn(daoUtils, 'resolveDaoId');
+    const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 
     afterEach(() => {
         getDaoSpy.mockReset();
         cidToSrcSpy.mockReset();
         getProposalBySlugSpy.mockReset();
         resolveDaoIdSpy.mockReset();
+        logErrorSpy.mockReset();
     });
 
     describe('generateProposalMetadata', () => {
@@ -66,6 +70,44 @@ describe('governanceMetadata utils', () => {
                 type: 'article',
                 images: [ipfsUrl],
             });
+        });
+
+        it('does not log to monitoring when the proposal is not found', async () => {
+            const notFoundError = new AragonBackendServiceError(
+                AragonBackendServiceError.notFoundCode,
+                'Resource not found',
+                404,
+            );
+            resolveDaoIdSpy.mockResolvedValue('test-dao-id');
+            getProposalBySlugSpy.mockRejectedValue(notFoundError);
+
+            const metadata =
+                await governanceMetadataUtils.generateProposalMetadata({
+                    params: Promise.resolve({
+                        addressOrEns: 'test.dao.eth',
+                        network: Network.ETHEREUM_MAINNET,
+                        proposalSlug: 'unknown',
+                    }),
+                });
+
+            expect(metadata.title).toEqual('Proposal not found');
+            expect(logErrorSpy).not.toHaveBeenCalled();
+        });
+
+        it('logs to monitoring when an unexpected error occurs', async () => {
+            const error = new Error('boom');
+            resolveDaoIdSpy.mockResolvedValue('test-dao-id');
+            getProposalBySlugSpy.mockRejectedValue(error);
+
+            await governanceMetadataUtils.generateProposalMetadata({
+                params: Promise.resolve({
+                    addressOrEns: 'test.dao.eth',
+                    network: Network.ETHEREUM_MAINNET,
+                    proposalSlug: 'p',
+                }),
+            });
+
+            expect(logErrorSpy).toHaveBeenCalledWith(error);
         });
     });
 });

@@ -1,7 +1,8 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect } from 'react';
 import { type Hex, keccak256, toBytes } from 'viem';
-import { useConnection, useReadContract } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
@@ -10,10 +11,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { permissionManagerAbi } from '@/shared/utils/permissionTransactionUtils/abi/permissionManagerAbi';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import { daoAbi } from './daoAbi';
 
 export interface IExecuteCheckDialogParams {
     /**
@@ -71,12 +72,12 @@ export const ExecuteCheckDialog: React.FC<IExecuteCheckDialogProps> = (
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const { id: chainId } = networkDefinitions[dao.network];
 
     const { isLoading, error, data } = useReadContract({
-        abi: [daoAbi],
+        abi: permissionManagerAbi,
         address: dao.address as Hex,
         functionName: 'hasPermission',
         args: [

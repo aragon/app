@@ -1,5 +1,5 @@
 {
-    "$schema": "https://turbo.build/schema.json",
+    "$schema": "./node_modules/turbo/schema.json",
     "globalPassThroughEnv": [
         "ANALYZE",
         "ARAGON_BACKEND_URL",
@@ -54,6 +54,12 @@
             "outputs": [
                 "coverage/**"
             ],
+            "dependsOn": [
+                "type-check"
+            ]
+        },
+        "test:changed": {
+            "cache": false,
             "dependsOn": [
                 "type-check"
             ]

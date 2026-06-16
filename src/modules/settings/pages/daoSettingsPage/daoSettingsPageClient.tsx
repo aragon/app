@@ -62,6 +62,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
         daoId,
         type: PluginType.PROCESS,
         includeLinkedAccounts: true,
+        visibleOnly: true,
     })!;
 
     const { data: policies = [] } = useDaoPolicies(

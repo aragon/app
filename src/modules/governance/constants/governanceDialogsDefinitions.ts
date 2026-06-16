@@ -1,4 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { DelegateStatementDialog } from '../dialogs/delegateStatementDialog';
+import { DelegateStatementTransactionDialog } from '../dialogs/delegateStatementTransactionDialog';
+import { ExecuteActionsDialog } from '../dialogs/executeActionsDialog';
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
@@ -15,6 +18,7 @@ export const governanceDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [GovernanceDialogId.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
+    [GovernanceDialogId.EXECUTE_ACTIONS]: { Component: ExecuteActionsDialog },
     [GovernanceDialogId.EXECUTE]: { Component: ExecuteDialog },
     [GovernanceDialogId.VOTE]: { Component: VoteDialog },
     [GovernanceDialogId.SELECT_PLUGIN]: { Component: SelectPluginDialog },
@@ -37,5 +41,12 @@ export const governanceDialogsDefinitions: Record<
     [GovernanceDialogId.SIMULATE_ACTIONS]: {
         Component: SimulateActionsDialog,
         size: 'lg',
+    },
+    [GovernanceDialogId.DELEGATE_STATEMENT_FORM]: {
+        Component: DelegateStatementDialog,
+        size: 'lg',
+    },
+    [GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION]: {
+        Component: DelegateStatementTransactionDialog,
     },
 };

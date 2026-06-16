@@ -18,7 +18,7 @@ export const ensCache = {
 /**
  * ENS text-record keys fetched for member profiles.
  * To add a new record (e.g. Farcaster) add one entry here and read it from
- * `useEnsRecords` where needed.
+ * `useEnsProfileRecords` where needed.
  */
 export const ensRecordKeys = {
     description: 'description',
@@ -30,7 +30,7 @@ export const ensRecordKeys = {
     telegram: 'org.telegram',
 } as const;
 
-/** Ordered list of record keys used by `useEnsRecords` to fetch in a single query. */
+/** Ordered list of record keys used by `useEnsProfileRecords` to fetch in a single query. */
 export const ensProfileKeys = Object.values(ensRecordKeys);
 
 /** ENS text-record key used for the profile avatar URL. */

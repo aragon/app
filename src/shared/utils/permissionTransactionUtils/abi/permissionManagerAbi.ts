@@ -37,4 +37,16 @@ export const permissionManagerAbi = [
         outputs: [],
         stateMutability: 'nonpayable',
     },
+    {
+        type: 'function',
+        inputs: [
+            { name: '_where', internalType: 'address', type: 'address' },
+            { name: '_who', internalType: 'address', type: 'address' },
+            { name: '_permissionId', internalType: 'bytes32', type: 'bytes32' },
+            { name: '_data', internalType: 'bytes', type: 'bytes' },
+        ],
+        name: 'hasPermission',
+        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+        stateMutability: 'view',
+    },
 ] as const;

@@ -3,7 +3,7 @@
 import { invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { zeroAddress } from 'viem';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -48,7 +48,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         'TokenDelegationDialog: required parameters must be set.',
     );
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     invariant(
         address != null,
         'TokenDelegationDialog: user must be connected.',
@@ -62,6 +62,9 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
     } = location.params;
     const { data: delegateEnsName } = useEnsName(delegate);
     const { data: delegateEnsAvatar } = useEnsAvatar(delegateEnsName);
+    const { data: delegateDisplayName } = useEnsName(delegate, {
+        stripAragonRegistrySuffix: true,
+    });
 
     const { t } = useTranslations();
     const router = useRouter();
@@ -102,7 +105,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
             <MemberDataListItem.Structure
                 address={delegate}
                 avatarSrc={delegateEnsAvatar ?? undefined}
-                ensName={delegateEnsName ?? undefined}
+                ensName={delegateDisplayName ?? undefined}
                 isDelegate={true}
             />
         </TransactionDialog>

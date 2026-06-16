@@ -49,6 +49,12 @@ jest.mock('../../components/proposalExecutionStatus', () => ({
     ),
 }));
 
+jest.mock('../../components/proposalActionsItem', () => ({
+    ProposalActionsItem: ({ action }: { action: { type: string } }) => (
+        <div data-testid="proposal-actions-item">{action.type}</div>
+    ),
+}));
+
 describe('<DaoProposalDetailsPageClient /> component', () => {
     const useProposalSpy = jest.spyOn(governanceService, 'useProposalBySlug');
     const useProposalActionsSpy = jest.spyOn(
@@ -323,6 +329,52 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
     it('renders the proposal voting terminal', () => {
         render(createTestComponent());
         expect(screen.getByTestId('voting-terminal-mock')).toBeInTheDocument();
+    });
+
+    it('renders a ProposalActionsItem per decoded top-level action including CreateProposal wrappers', () => {
+        const createProposalAction = {
+            type: 'CreateProposal',
+            from: '0x0',
+            to: '0xaaa',
+            data: '0x',
+            value: '0',
+            inputData: {
+                function: 'createProposal',
+                contract: 'TokenPlugin',
+                parameters: [],
+                actions: [
+                    {
+                        type: 'Foo',
+                        from: '0x0',
+                        to: '0xbbb',
+                        data: '0x',
+                        value: '0',
+                        inputData: null,
+                    },
+                ],
+            },
+        };
+        useProposalActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: {
+                    decoding: false,
+                    actions: [createProposalAction],
+                    rawActions: [
+                        {
+                            to: '0xaaa',
+                            value: '0',
+                            data: '0x',
+                        },
+                    ],
+                },
+            }),
+        );
+
+        render(createTestComponent());
+
+        const items = screen.getAllByTestId('proposal-actions-item');
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveTextContent('CreateProposal');
     });
 
     describe('Action simulation behavior', () => {

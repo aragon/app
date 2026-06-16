@@ -14,6 +14,7 @@ export const lockToVotePlugin: IPluginInfo = {
     },
     repositoryAddresses: {
         [Network.CITREA_MAINNET]: '0x0000000000000000000000000000000000000000',
+        [Network.HEMI_MAINNET]: '0x0000000000000000000000000000000000000000',
         [Network.ETHEREUM_MAINNET]:
             '0x0f4FBD2951Db08B45dE16e7519699159aE1b4bb7',
         [Network.ETHEREUM_SEPOLIA]:
@@ -23,7 +24,6 @@ export const lockToVotePlugin: IPluginInfo = {
         [Network.ARBITRUM_MAINNET]:
             '0xe92eF55cCbB3ac48f54f2FcDC4c49379CB01C57F',
         [Network.ZKSYNC_MAINNET]: '0xd0f0Bc285F4D27417ECd8C027BB6746690ba72b2',
-        [Network.ZKSYNC_SEPOLIA]: '0x8e9E356D9a0a99a88b22C1913D3891985959b3A8',
         [Network.PEAQ_MAINNET]: '0x077F72D7676483D9778439AA8d58dbDf8DD80a82',
         [Network.OPTIMISM_MAINNET]:
             '0x306E4339aE3bd3ba7Fd1BB32c8b4d3A5cd90f379',

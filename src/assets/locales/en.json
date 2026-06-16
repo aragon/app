@@ -1,6 +1,26 @@
 {
   "app": {
     "actions": {
+      "core": {
+        "createProposalActionDetails": {
+          "metadataTitle": "Title",
+          "metadataSummary": "Summary",
+          "metadataDescription": "Description",
+          "metadataResources": "Resources",
+          "startTimeTerm": "Start time",
+          "endTimeTerm": "End time",
+          "startTimeNotSet": "Not set",
+          "endTimeNotSet": "Not set",
+          "readMore": "Read more",
+          "readLess": "Read less",
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed after the proposal passes."
+        },
+        "executeActionDetails": {
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed."
+        }
+      },
       "gaugeRegistrar": {
         "composer": {
           "contractName": "Gauge Registrar",
@@ -222,6 +242,25 @@
           "title": "Upload members file",
           "description": "Please wait, depending on the number of recipients, this may take a while to complete."
         },
+        "capitalDistributorCreateCampaignActionDetails": {
+          "titleTerm": "Title",
+          "descriptionTerm": "Description",
+          "resourcesTerm": "Resources",
+          "totalAmountTerm": "Total to distribute",
+          "claimersTerm": "Recipients",
+          "assetTerm": "Asset",
+          "payoutTypeTerm": "Payout type",
+          "merkleRootTerm": "Merkle root",
+          "startTimeTerm": "Start",
+          "endTimeTerm": "End",
+          "schedule": {
+            "openEnded": "Open-ended"
+          },
+          "payoutType": {
+            "default": "Default",
+            "veLockEncoder": "Voting escrow lock"
+          }
+        },
         "capitalDistributorCreateCampaignActionCreateForm": {
           "asset": {
             "helpText": "Select the token to distribute in this campaign.",
@@ -385,15 +424,15 @@
           "description": "Information about the connected user",
           "title": "Connected user"
         },
-        "createAragonProfile": "Create Aragon profile",
-        "description": "Claim your Aragon profile with a dedicated ENS name to stand out in the Aragon experience.",
+        "createAragonProfile": "Create profile",
+        "description": "Create a profile on ENS so members can recognize you by name across Aragon and other ENS-compatible apps.",
         "myDaos": "My DAOs"
       },
       "aragonProfileUpdateTransactionDialog": {
         "a11y": {
           "description": "Update your Aragon profile transaction"
         },
-        "description": "To update your Aragon profile, confirm the onchain transaction in your wallet.",
+        "description": "To update your ENS profile, confirm the transaction on Ethereum mainnet.",
         "step": {
           "PIN_AVATAR": {
             "errorLabel": "Avatar upload failed",
@@ -404,57 +443,61 @@
         "successLink": {
           "label": "View your profile"
         },
-        "title": "Update your Aragon profile",
+        "title": "Update your profile",
         "you": "You"
       },
       "aragonProfileClaimSubdomainDialog": {
         "a11y": {
-          "description": "Enter a subdomain label to claim your Aragon profile ENS name",
-          "title": "Claim your ENS subname"
+          "description": "Enter a name to claim your Aragon name",
+          "title": "Claim your Aragon name"
         },
         "actions": {
           "cancel": "Cancel",
-          "claim": "Claim your ENS name"
+          "claim": "Claim name"
         },
         "alreadyRegistered": {
           "action": "Set as primary ENS",
-          "description": "You have already claimed this ENS subname. Set it as your primary ENS name to use it across all apps.",
-          "title": "ENS subname already claimed"
+          "description": "You already claimed this Aragon name. Set it as your primary ENS so Aragon and other ENS-compatible apps can show it instead of your address.",
+          "title": "Aragon name already claimed"
         },
         "fields": {
           "subdomain": {
-            "error": {
-              "invalidFormat": "Only lowercase letters, numbers, and hyphens are allowed.",
-              "nameTaken": "This name is already taken. Please choose a different one."
-            },
-            "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App.",
-            "label": "ENS subname",
-            "placeholder": "yourname"
+            "helpText": "This ENS name points to your connected wallet. Set it as your primary ENS so Aragon and other ENS-compatible apps can show it instead of your address.",
+            "label": "Aragon name",
+            "placeholder": "username"
           }
         },
-        "title": "Create your Aragon profile"
+        "title": "Claim your Aragon name"
+      },
+      "ensSubdomainField": {
+        "error": {
+          "invalidBoundary": "Name can’t start or end with a hyphen.",
+          "invalidChars": "Use only lowercase letters, numbers, and hyphens.",
+          "nameTaken": "This name is already taken.",
+          "sameAsCurrent": "Choose a name that differs from your current Aragon name."
+        }
       },
       "aragonProfileSubdomainRegisterTransactionDialog": {
         "a11y": {
-          "description": "Confirm the onchain transaction to claim your ENS subname",
-          "title": "Claim your ENS subname transaction"
+          "description": "Confirm the transaction to claim your Aragon name",
+          "title": "Claim your Aragon name transaction"
         },
-        "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
+        "description": "To claim your Aragon name, confirm these transactions on Ethereum Mainnet in your wallet.",
         "submit": "Confirm in wallet",
-        "title": "Create your Aragon profile",
-        "transactionInfo": "Claim ENS subname"
+        "title": "Claim your Aragon name",
+        "transactionInfo": "Claim Aragon name"
       },
       "aragonProfileSetPrimaryEnsTransactionDialog": {
         "a11y": {
           "description": "Confirm the onchain transaction to set your primary ENS name",
           "title": "Set primary ENS transaction"
         },
-        "description": "To create your Aragon profile, confirm the onchain transactions in your wallet.",
+        "description": "To set your Aragon name as your primary ENS, confirm the transactions on Ethereum Mainnet in your wallet.",
         "submit": "Confirm in wallet",
         "successLink": {
-          "label": "Add profile content"
+          "label": "Add profile details"
         },
-        "title": "Create your Aragon profile",
+        "title": "Set primary ENS",
         "transactionInfo": "Set primary ENS"
       },
       "aragonProfilePreviewCard": {
@@ -463,32 +506,32 @@
       "aragonProfileIntroDialog": {
         "a11y": {
           "description": "Introduction to creating your Aragon profile with an ENS subname",
-          "title": "Create your Aragon profile"
+          "title": "Create your profile"
         },
         "cancel": "Cancel",
         "cta": {
-          "create": "Create your profile",
-          "edit": "Edit your profile"
+          "create": "Create profile",
+          "edit": "Edit profile"
         },
         "description": {
-          "create": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once.",
-          "edit": "Create your profile, activate your tokens, and set your delegation. Once done, you can participate in your DAOs. Remember, the Aragon profile is global and only needs to be set up once."
+          "create": "Aragon profiles are built on ENS. Claim an Aragon name, set it as your primary ENS, and add your profile details. Aragon and other ENS-compatible apps will use this as your display name.",
+          "edit": "Aragon profiles use your primary ENS. Changes you make here update your ENS records so they appear in Aragon and other ENS-compatible apps."
         },
         "title": {
-          "create": "Create your Aragon profile",
-          "edit": "Edit your Aragon profile"
+          "create": "Create your profile",
+          "edit": "Edit your profile"
         }
       },
       "aragonProfileDialog": {
         "a11y": {
-          "description": "Update your Aragon profile"
+          "description": "Update your profile"
         },
-        "title": "Update your Aragon profile",
-        "description": "Add more content to your profile so DAO members can recognise you.",
+        "title": "Edit your profile",
+        "description": "Add profile details that could help DAO members recognize you.",
         "fields": {
           "ensName": {
-            "label": "ENS name",
-            "helpText": "Your unique username linked to your address for receiving funds and identifying you in the Aragon App."
+            "label": "Aragon name",
+            "helpText": "You will be identified by this name across Aragon and other ENS-compatible apps."
           },
           "avatar": {
             "label": "Avatar"
@@ -498,25 +541,84 @@
           },
           "socials": {
             "discord": "Discord",
-            "email": "E-Mail",
+            "email": "Email",
             "github": "GitHub",
-            "label": "Add socials",
+            "label": "Links",
             "telegram": "Telegram",
             "twitter": "X",
             "website": "Website"
           }
         },
         "alert": {
-          "description": "Note that any changes you make here will apply to your primary ENS name, which means they will also be reflected in other DApps.",
-          "title": "Primary ENS imported",
-          "viewEns": "View ENS DApp"
+          "description": "Changes are saved to your primary ENS profile and may appear in other ENS-compatible apps.",
+          "title": "Editing your primary ENS",
+          "viewEns": "Open ENS"
         },
         "actions": {
           "cancel": "Cancel",
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
-          "confirmProfile": "Confirm your profile"
+          "confirmProfile": "Confirm your profile",
+          "removeAragonName": "Delete your Aragon profile"
+        },
+        "dangerZone": {
+          "title": "Delete Aragon profile",
+          "description": "Once you delete your Aragon profile it's released and can be claimed by someone else. This can't be undone."
         }
+      },
+      "aragonProfileReleaseAlertDialog": {
+        "a11y": {
+          "description": "Confirm removing your Aragon name",
+          "title": "Remove your Aragon name"
+        },
+        "title": "Remove your Aragon name?",
+        "description": "This will remove {{ensName}} and permanently delete all profile records linked to it, including your bio, avatar, socials, and delegation records. This action cannot be undone.",
+        "actions": {
+          "confirm": "Remove Aragon name",
+          "cancel": "Cancel"
+        }
+      },
+      "aragonProfileReleaseTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to remove your Aragon name",
+          "title": "Remove Aragon name transaction"
+        },
+        "title": "Remove your Aragon name",
+        "description": "Confirm the onchain transaction in your wallet to remove your Aragon name.",
+        "submit": "Confirm in wallet",
+        "successLink": {
+          "label": "Done"
+        },
+        "transactionInfo": "Remove Aragon name"
+      },
+      "aragonProfileRenameDialog": {
+        "a11y": {
+          "description": "Choose a new Aragon name to move all your profile records to",
+          "title": "Change your Aragon name"
+        },
+        "title": "Change your Aragon name",
+        "description": "Choose a new Aragon name. All your profile records will be moved to the new name.",
+        "fields": {
+          "subdomain": {
+            "helpText": "Your records will be moved to this new name.",
+            "label": "New ENS subname",
+            "placeholder": "yourname"
+          }
+        },
+        "actions": {
+          "submit": "Change Aragon name",
+          "cancel": "Cancel"
+        }
+      },
+      "aragonProfileRenameTransactionDialog": {
+        "a11y": {
+          "description": "Confirm the onchain transaction to change your Aragon name",
+          "title": "Rename Aragon name transaction"
+        },
+        "title": "Change your Aragon name",
+        "description": "Confirm the onchain transaction in your wallet to move your profile records to the new name.",
+        "submit": "Confirm in wallet",
+        "transactionInfo": "Rename Aragon name"
       }
     },
     "capitalFlow": {
@@ -1363,14 +1465,14 @@
           "welcome": "Welcome"
         }
       },
-      "status": {
-        "statusMembersFileDownload": {
+      "gaugeDistributions": {
+        "gaugeDistributionsMembersFileDownload": {
           "label": "Reward distribution",
           "helpText": "Generate the reward distribution JSON for a specific epoch based on gauge voting results.",
           "button": "Generate distribution",
           "downloadedFile": "Downloaded: {{fileName}}"
         },
-        "statusMembersFileDownloadDialog": {
+        "gaugeDistributionsMembersFileDownloadDialog": {
           "title": "Generate reward distribution",
           "description": "Select an epoch and enter the total reward amount to generate a reward distribution JSON based on gauge voting results.",
           "epochIdLabel": "Epoch",
@@ -1574,6 +1676,32 @@
         "groupTab": "All assets",
         "searchPlaceholder": "Search assets..."
       },
+      "assetAddressSelect": {
+        "addAddressView": {
+          "notATokenState": {
+            "description": "This address didn't return ERC20 token data. Double-check the address and the selected network.",
+            "heading": "Not a recognized token"
+          },
+          "placeholder": "Paste 0x contract address..."
+        },
+        "addButton": {
+          "label": "Add address"
+        },
+        "backButton": {
+          "label": "All assets"
+        },
+        "emptyState": {
+          "addByAddress": "Add by address",
+          "description": "Search for another token or add by address",
+          "heading": "No results for \"{{search}}\""
+        },
+        "entity": "Assets",
+        "errorState": {
+          "description": "There was an error loading the assets. Try again later.",
+          "heading": "Error loading assets"
+        },
+        "searchPlaceholder": "Search assets..."
+      },
       "assetListStats": {
         "daos": "DAOs",
         "note": "Aggregate treasury data across all linked accounts coming soon.",
@@ -1608,6 +1736,7 @@
           "summary": "All assets"
         },
         "main": {
+          "newTransaction": "Execution",
           "title": "Transactions"
         }
       },
@@ -1691,6 +1820,16 @@
         },
         "rawCalldataFunction": "Unknown",
         "removeAllActions": "Remove all actions"
+      },
+      "createExecuteActionsPage": {
+        "steps": {
+          "ACTIONS": {
+            "description": "Add the actions to execute directly on the DAO. They will run in the order listed on this page.",
+            "name": "Add actions",
+            "title": "Add actions"
+          }
+        },
+        "submitLabel": "Execute"
       },
       "createProposalForm": {
         "actions": {
@@ -1777,6 +1916,8 @@
             "address": "Address",
             "ens": "ENS",
             "firstActivity": "First activity",
+            "latestActivity": "Latest activity",
+            "latestActivityUnit": "{{unit}} ago",
             "title": "Details"
           },
           "efpCard": {
@@ -1799,13 +1940,12 @@
         "header": {
           "breadcrumb": {
             "members": "Members"
-          },
-          "stat": {
-            "latestActivity": "Latest activity",
-            "latestActivityUnit": "{{unit}} ago"
           }
         },
         "main": {
+          "delegation": {
+            "title": "Delegation"
+          },
           "daoMemberships": {
             "title": "Other DAO memberships"
           },
@@ -1900,11 +2040,69 @@
           "title": "Proposals"
         }
       },
+      "delegationStatsCard": {
+        "disclaimer": "Delegation differs by token. You are viewing delegation statistics for the selected token."
+      },
+      "delegationStatementCard": {
+        "editAction": "Edit delegate statement",
+        "heading": "Delegate statement",
+        "readMore": "Read more",
+        "readLess": "Read less",
+        "emptyState": {
+          "action": "Add delegate statement",
+          "description": "Explain how you plan to participate in governance for this token so token holders can decide whether to delegate to you.",
+          "heading": "You don't have a delegate statement"
+        }
+      },
+      "delegateStatementDialog": {
+        "title": "Delegate statement",
+        "cancel": "Cancel",
+        "submit": "Save",
+        "content": {
+          "label": "Statement",
+          "helpText": "Explain your role, priorities, and approach to voting with this token. Markdown formatting is supported."
+        }
+      },
+      "delegateStatementTransactionDialog": {
+        "title": "Publish delegate statement",
+        "description": "To push your delegate statement to IPFS and update your ENS record, confirm the transaction on Ethereum mainnet.",
+        "submit": "Publish",
+        "successLinkLabel": "View profile",
+        "step": {
+          "PIN_STATEMENT": {
+            "label": "Pin statement to IPFS",
+            "errorLabel": "Pinning failed"
+          }
+        }
+      },
+      "memberDelegateButton": {
+        "delegate": "Delegate {{token}}",
+        "manageDelegation": "Manage delegation"
+      },
       "efpCard": {
         "cta": "View on EFP",
         "followers": "Followers",
         "following": "Following",
         "info": "The Ethereum Follow Protocol is an onchain social graph for Ethereum."
+      },
+      "executeActionsDialog": {
+        "button": {
+          "submit": "Execute",
+          "success": "Done"
+        },
+        "description": "To execute these actions on the DAO, confirm the onchain transaction in your wallet.",
+        "step": {
+          "prepare": {
+            "errorLabel": "Unable to prepare transaction",
+            "label": "Prepare transaction"
+          },
+          "submit": {
+            "addon": "Wallet",
+            "errorLabel": "Wallet rejected the transaction",
+            "label": "Send to wallet"
+          }
+        },
+        "title": "Execute transaction"
       },
       "executeCheckDialog": {
         "a11y": {
@@ -1925,6 +2123,16 @@
       },
       "layoutWizardCreateDao": {
         "name": "Create DAO"
+      },
+      "layoutWizardCreateExecuteActions": {
+        "error": {
+          "action": "View transactions",
+          "notFound": {
+            "description": "We couldn't find the DAO you're looking for.",
+            "title": "DAO not found"
+          }
+        },
+        "name": "Execute transaction"
       },
       "layoutWizardCreateProposal": {
         "error": {
@@ -2277,16 +2485,19 @@
           },
           "action": {
             "cancel": "Cancel",
-            "equalize": "Equalize",
-            "reset": "Reset",
+            "equalize": "Distribute evenly",
+            "reset": "Clear all",
             "submit": "Submit votes"
           },
           "content": {
-            "description": "Proportionally distribute your voting power across your selected gauges.",
-            "used": "used"
+            "description": "Set weights to split your voting power across gauges. A gauge with weight 2 receives twice as much of your voting power as a gauge with weight 1.",
+            "header": {
+              "votingPower": "Voting power",
+              "weights": "Weights"
+            }
           },
           "footer": {
-            "yourVotes": "YOUR VOTES"
+            "totalVotingPower": "TOTAL VOTING POWER"
           },
           "title": "Vote"
         },
@@ -2471,6 +2682,7 @@
           "duration": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "minimumParticipation": "Minimum participation",
           "no": "Disabled",
+          "participationNoToken": "≥ {{participation}}",
           "participation": "≥ {{participation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
           "proposalAccess": "Members with ≥ {{balance}} {{symbol}} voting power or balance",
           "proposalDuration": "Proposal duration",
@@ -2544,7 +2756,8 @@
           "distributionTerm": "Members",
           "enabled": "Enabled",
           "holders": "{{count}} token holders",
-          "minParticipationDefinition": "≥ {{minParticipation}}",
+          "minParticipationDefinition": "≥ {{minParticipation}}  (≥ {{tokenValue}} {{tokenSymbol}})",
+          "minParticipationDefinitionNoToken": "≥ {{minParticipation}}",
           "minParticipationTerm": "Minimum participation",
           "proposalDurationDefinition": "{{days}} days {{hours}} hours {{minutes}} minutes",
           "proposalDurationTerm": "Proposal duration",
@@ -3516,8 +3729,8 @@
         "error": {
           "max": "{{name}} must be less than {{value}}.",
           "min": "{{name}} must be greater than {{value}}.",
-          "minLength": "{{name}} must be at least {{value}} characters long.",
-          "maxLength": "{{name}} must be less than {{value}} characters long.",
+          "minLength": "{{name}} must be at least {{value}} characters.",
+          "maxLength": "{{name}} must be {{value}} characters or fewer.",
           "pattern": "Invalid {{name}} format.",
           "required": "{{name}} is mandatory.",
           "validate": "{{name}} is invalid."
@@ -3563,6 +3776,10 @@
           "cancel": "Cancel",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
+        },
+        "networkAlert": {
+          "body": "Switch to {{transactionNetworkName}} in your wallet.",
+          "title": "Switch network"
         },
         "step": {
           "APPROVE": {

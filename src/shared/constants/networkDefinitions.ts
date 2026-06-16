@@ -5,6 +5,7 @@ import {
     base,
     chiliz,
     citrea,
+    hemi,
     katana,
     mainnet,
     optimism,
@@ -12,7 +13,6 @@ import {
     polygon,
     sepolia,
     zksync,
-    zksyncSepoliaTestnet,
 } from 'viem/chains';
 import { Network } from '@/shared/api/daoService';
 import type { IContractVersionInfo } from '../types';
@@ -293,6 +293,25 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
         },
     },
+    [Network.HEMI_MAINNET]: {
+        ...hemi,
+        name: 'Hemi',
+        logo: '/networks/hemi.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/hemi/',
+        },
+        order: 11,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: false,
+        addresses: {
+            dao: '0x458112b8f2B9C69c889800d138f306Bfa0d143d7',
+            daoFactory: '0xF4F964d5d9D612322E0da27D3a4E934BC3ADDF1A',
+            pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
+            globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
+            conditionFactory: '0x62BD83766EdA81dba2F8B7DbCc72500BD46CbADD',
+        },
+    },
     [Network.PEAQ_MAINNET]: {
         ...peaq,
         name: 'Peaq',
@@ -301,7 +320,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.PEAQ,
             rpcUrl: 'https://wiser-dimensional-knowledge.peaq-mainnet.quiknode.pro/',
         },
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         beta: true,
         tenderlySupport: true,
@@ -331,25 +350,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             daoFactory: '0xB815791c233807D39b7430127975244B36C19C8e',
             pluginSetupProcessor: '0xC24188a73dc09aA7C721f96Ad8857B469C01dC9f',
             globalExecutor: '0x7a20760b89EF507759DD2c5A0d1f1657614341A9',
-            conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
-        },
-    },
-    [Network.ZKSYNC_SEPOLIA]: {
-        ...zksyncSepoliaTestnet,
-        name: 'zkSync Sepolia',
-        logo: 'https://assets.coingecko.com/coins/images/38043/large/ZKTokenBlack.png',
-        privateRpcConfig: {
-            rpcProvider: RpcProvider.ALCHEMY,
-            rpcUrl: 'https://zksync-sepolia.g.alchemy.com/v2/',
-        },
-        order: 12,
-        protocolVersion: latestProtocolVersion,
-        tenderlySupport: true,
-        addresses: {
-            dao: '0x39e836A6c32163733929B213965e3feC0007914a',
-            daoFactory: '0xee321f16f7F0a0F0d8b850E70c4eAde4A288ECd7',
-            pluginSetupProcessor: '0xe2Ef39f1be2269644cBfa9b70003A143bF1fdf4d',
-            globalExecutor: '0x0ED69b3b690e10Fb509FA1b081C1b74EF3FeB36D',
             conditionFactory: '0x988B0e1542d5e9494897778ebc444E9FfDa58Ddb',
         },
     },

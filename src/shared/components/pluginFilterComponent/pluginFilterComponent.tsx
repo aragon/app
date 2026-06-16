@@ -2,7 +2,10 @@ import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { PluginSingleComponent } from '../pluginSingleComponent';
-import type { IPluginFilterComponentProps } from './pluginFilterComponent.api';
+import type {
+    IFilterComponentPlugin,
+    IPluginFilterComponentProps,
+} from './pluginFilterComponent.api';
 
 export const pluginFilterComponentFilterParam = 'plugin';
 
@@ -19,17 +22,21 @@ export const PluginFilterComponent = <
         onValueChange,
         searchParamName = pluginFilterComponentFilterParam,
         Fallback,
+        renderContent,
         ...otherProps
     } = props;
 
-    const supportedPlugins = plugins.filter(
-        (plugin) =>
-            plugin.renderContent != null ||
-            pluginRegistryUtils.getSlotComponent({
-                slotId,
-                pluginId: plugin.id,
-            }) != null,
-    );
+    const supportedPlugins =
+        slotId == null
+            ? plugins
+            : plugins.filter(
+                  (plugin) =>
+                      plugin.renderContent != null ||
+                      pluginRegistryUtils.getSlotComponent({
+                          slotId,
+                          pluginId: plugin.id,
+                      }) != null,
+              );
 
     // The components renders null if there is no fallback specified for the slot-id AND the slot has no supported plugins.
     const hasNoContent = Fallback == null && !supportedPlugins.length;
@@ -68,6 +75,33 @@ export const PluginFilterComponent = <
         (plugin) => plugin.uniqueId === activePlugin,
     );
 
+    const getPluginContent = (
+        plugin: IFilterComponentPlugin<TMeta, TProps>,
+    ) => {
+        if (renderContent != null) {
+            return renderContent(plugin);
+        }
+
+        if (plugin.renderContent != null) {
+            return plugin.renderContent();
+        }
+
+        if (slotId == null) {
+            return null;
+        }
+
+        return (
+            <PluginSingleComponent
+                Fallback={Fallback}
+                plugin={plugin.meta}
+                pluginId={plugin.id}
+                slotId={slotId}
+                {...plugin.props}
+                {...otherProps}
+            />
+        );
+    };
+
     if (hasNoContent) {
         return null;
     }
@@ -76,21 +110,7 @@ export const PluginFilterComponent = <
         const singlePlugin =
             supportedPlugins.length === 1 ? supportedPlugins[0] : plugins[0];
 
-        if (singlePlugin.renderContent != null) {
-            return singlePlugin.renderContent();
-        }
-
-        const { id, props } = singlePlugin;
-
-        return (
-            <PluginSingleComponent
-                Fallback={Fallback}
-                pluginId={id}
-                slotId={slotId}
-                {...props}
-                {...otherProps}
-            />
-        );
+        return getPluginContent(singlePlugin);
     }
 
     return (
@@ -110,18 +130,7 @@ export const PluginFilterComponent = <
                 ))}
             </ToggleGroup>
 
-            {activePluginRecord != null &&
-                (activePluginRecord.renderContent != null ? (
-                    activePluginRecord.renderContent()
-                ) : (
-                    <PluginSingleComponent
-                        Fallback={Fallback}
-                        pluginId={activePluginRecord.id}
-                        slotId={slotId}
-                        {...activePluginRecord.props}
-                        {...otherProps}
-                    />
-                ))}
+            {activePluginRecord != null && getPluginContent(activePluginRecord)}
         </div>
     );
 };

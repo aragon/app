@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Load secrets
         id: load-secrets
-        uses: 1password/load-secrets-action@v4.0.0
+        uses: 1password/load-secrets-action@92467eb28f72e8255933372f1e0707c567ce2259 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -30,9 +30,12 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
           LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+          # Code-owner team Slack group (same key as backend, app vault). Used to
+          # @-mention the release team in the head message when a release starts.
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v6.0.2
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -46,7 +49,7 @@ jobs:
           ref: ${{ inputs.base_commit || 'main' }}
 
       - name: Import GPG key
-        uses: crazy-max/ghaction-import-gpg@v7.0.0
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
         with:
           gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
           passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
@@ -77,7 +80,7 @@ jobs:
 
       - name: Get package version
         id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
 
       - name: Commit changes
         run: |
@@ -123,7 +126,7 @@ jobs:
           slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
-            🚀 *Release v${{ steps.package-version.outputs.current-version }} Started*
+            🚀 *Release v${{ steps.package-version.outputs.current-version }} — Started* ${{ steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
             *PR:* ${{ steps.create-pr.outputs.url }}
 
             ${{ steps.release-summary.outputs.summary }}

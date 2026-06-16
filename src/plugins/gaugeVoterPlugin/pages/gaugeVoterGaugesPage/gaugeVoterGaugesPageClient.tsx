@@ -1,10 +1,10 @@
 'use client';
 
 import { Link, Tabs } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
-import { useConnection } from 'wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { TokenDelegationForm } from '@/plugins/tokenPlugin/components/tokenMemberPanel/tokenDelegation';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import { type IDao, PluginInterfaceType } from '@/shared/api/daoService';
@@ -53,7 +53,7 @@ export const GaugeVoterGaugesPageClient: React.FC<
 > = (props) => {
     const { dao, initialParams } = props;
 
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const { open } = useDialogContext();
     const { t } = useTranslations();
     const { check: checkWalletConnection } = useConnectedWalletGuard();
@@ -150,54 +150,81 @@ export const GaugeVoterGaugesPageClient: React.FC<
         });
     };
 
-    const handleRemoveGauge = (gaugeAddress: string) => {
+    const handleRemoveGauge = useCallback((gaugeAddress: string) => {
         setSelectedGauges((prev) =>
             prev.filter((address) => address !== gaugeAddress),
         );
-    };
+    }, []);
+
+    // Tracks a click on "Vote on selected" that hasn't yet been satisfied: wallet may still be
+    // connecting and/or user voting data may still be loading. The effect below opens the dialog
+    // once both connection and data are ready, so the dialog never opens with a stale 0 value
+    // (which happens if you naively fire onSuccess immediately when isConnected flips — the
+    // useGaugeVoterPageData fetch hasn't returned at that point).
+    const [voteRequested, setVoteRequested] = useState(false);
 
     const handleVoteClick = () => {
-        checkWalletConnection({
-            onSuccess: () => {
-                if (selectedCount === 0) {
-                    return;
-                }
-
-                const selectedGaugeList = gauges
-                    .filter((gauge) => selectedGauges.includes(gauge.address))
-                    .filter(
-                        (gauge) => !votedGaugeAddresses.includes(gauge.address),
-                    );
-
-                const votedGaugeList = gauges.filter((gauge) =>
-                    votedGaugeAddresses.includes(gauge.address),
-                );
-
-                const allGaugesToVote = [
-                    ...votedGaugeList,
-                    ...selectedGaugeList,
-                ];
-
-                const voteParams: IGaugeVoterVoteDialogParams = {
-                    gauges: allGaugesToVote,
-                    pluginAddress: plugin.meta.address,
-                    network: dao.network,
-                    onRemoveGauge: handleRemoveGauge,
-                    totalVotingPower: votingPower.value,
-                    tokenSymbol,
-                    gaugeVotes: gaugeVotes.map((gv) => ({
-                        gaugeAddress: gv.gaugeAddress,
-                        votes: gv.votes,
-                        formattedVotes: gv.formattedVotes,
-                    })),
-                    onSuccess: () => setSelectedGauges([]),
-                };
-                open(GaugeVoterPluginDialogId.VOTE_GAUGES, {
-                    params: voteParams,
-                });
-            },
-        });
+        setVoteRequested(true);
+        checkWalletConnection({ onError: () => setVoteRequested(false) });
     };
+
+    useEffect(() => {
+        if (!voteRequested) {
+            return;
+        }
+        if (!isUserConnected || isUserDataLoading) {
+            return;
+        }
+        if (votingPower.value === 0) {
+            return;
+        }
+        if (selectedCount === 0) {
+            setVoteRequested(false);
+            return;
+        }
+
+        const selectedGaugeList = gauges
+            .filter((gauge) => selectedGauges.includes(gauge.address))
+            .filter((gauge) => !votedGaugeAddresses.includes(gauge.address));
+
+        const votedGaugeList = gauges.filter((gauge) =>
+            votedGaugeAddresses.includes(gauge.address),
+        );
+
+        const allGaugesToVote = [...votedGaugeList, ...selectedGaugeList];
+
+        const voteParams: IGaugeVoterVoteDialogParams = {
+            gauges: allGaugesToVote,
+            pluginAddress: plugin.meta.address,
+            network: dao.network,
+            onRemoveGauge: handleRemoveGauge,
+            totalVotingPower: votingPower.value,
+            tokenSymbol,
+            gaugeVotes: gaugeVotes.map((gv) => ({
+                gaugeAddress: gv.gaugeAddress,
+                votes: gv.votes,
+                formattedVotes: gv.formattedVotes,
+            })),
+            onSuccess: () => setSelectedGauges([]),
+        };
+        open(GaugeVoterPluginDialogId.VOTE_GAUGES, { params: voteParams });
+        setVoteRequested(false);
+    }, [
+        voteRequested,
+        isUserConnected,
+        isUserDataLoading,
+        votingPower.value,
+        selectedCount,
+        gauges,
+        selectedGauges,
+        votedGaugeAddresses,
+        plugin.meta.address,
+        dao.network,
+        tokenSymbol,
+        gaugeVotes,
+        open,
+        handleRemoveGauge,
+    ]);
 
     const handleViewDetails = (gauge: IGauge) => {
         const selectedIndex = gauges.findIndex(

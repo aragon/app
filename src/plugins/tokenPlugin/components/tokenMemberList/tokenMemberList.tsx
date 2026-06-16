@@ -1,7 +1,7 @@
 'use client';
 
 import { match } from 'ts-pattern';
-import { useConnection } from 'wagmi';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useTokenDelegationOnboardingCheck } from '../../hooks/useTokenDelegationOnboardingCheck';
 import { useTokenLockAndWrapOnboardingCheck } from '../../hooks/useTokenLockAndWrapOnboardingCheck';
@@ -19,7 +19,7 @@ export const TokenMemberList: React.FC<ITokenMemberListProps> = (props) => {
     const { token } = plugin.settings;
     const { daoId } = initialParams.queryParams;
 
-    const { address: userAddress } = useConnection();
+    const { address: userAddress } = useWalletAccount();
 
     const { shouldTrigger: showLockOrWrapCard } =
         useTokenLockAndWrapOnboardingCheck({

@@ -30,6 +30,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
         daoId: dao.id,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        visibleOnly: true,
     });
 
     return (

@@ -33,6 +33,7 @@ export const SetupStrategyDialogDistributionFixed: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionFixed"
                 hideAmount={true}

@@ -14,14 +14,14 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useConnection } from 'wagmi';
 import type { TEnsRecordKey } from '@/modules/ens';
 import {
     ensAvatarKey,
     ensRecordKeys,
+    memberRegistrySubdomainSuffix,
     useEnsAvatar,
     useEnsName,
-    useEnsRecords,
+    useEnsProfileRecords,
 } from '@/modules/ens';
 import {
     type IDialogComponentProps,
@@ -31,6 +31,7 @@ import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
 
 /** Form field names that correspond to social network ENS text records. */
@@ -91,7 +92,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const { t } = useTranslations();
     const { close, open } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
 
     const router = useRouter();
     const { network, addressOrEns } = useParams<{
@@ -101,7 +102,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
     const { data: ensName } = useEnsName(address);
     const { data: ensAvatar } = useEnsAvatar(ensName);
-    const { data: ensRecords } = useEnsRecords(ensName);
+    const { data: ensRecords } = useEnsProfileRecords(ensName);
 
     const formMethods = useForm<IAragonProfileDialogFormData>({
         mode: 'onTouched',
@@ -211,6 +212,19 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         });
     });
 
+    const isAragonName =
+        ensName?.endsWith(memberRegistrySubdomainSuffix) ?? false;
+
+    const handleRemoveAragonName = () => {
+        if (ensName == null) {
+            return;
+        }
+        open(ApplicationDialogId.ARAGON_PROFILE_RELEASE_ALERT, {
+            params: { ensName },
+            stack: true,
+        });
+    };
+
     const handleViewProfile = () => {
         if (network == null || addressOrEns == null || address == null) {
             close();
@@ -258,6 +272,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
 
                 <TextArea
                     id="aragon-profile-bio"
+                    inputClassName="!min-h-24"
                     isOptional
                     maxLength={160}
                     {...bioField}
@@ -319,6 +334,31 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                         </Link>
                     </div>
                 </AlertCard>
+
+                {isAragonName && (
+                    <InputContainer
+                        className="[&_label_div_p]:text-critical-800"
+                        helpText={t(
+                            'app.application.aragonProfileDialog.dangerZone.description',
+                        )}
+                        id="aragon-profile-danger-zone"
+                        label={t(
+                            'app.application.aragonProfileDialog.dangerZone.title',
+                        )}
+                        useCustomWrapper
+                    >
+                        <Button
+                            className="w-fit"
+                            onClick={handleRemoveAragonName}
+                            size="md"
+                            variant="critical"
+                        >
+                            {t(
+                                'app.application.aragonProfileDialog.actions.removeAragonName',
+                            )}
+                        </Button>
+                    </InputContainer>
+                )}
             </Dialog.Content>
 
             <Dialog.Footer

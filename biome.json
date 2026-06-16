@@ -187,10 +187,17 @@
                         "paths": {
                             "wagmi": {
                                 "importNames": [
+                                    "useConnection",
                                     "useEnsAvatar",
                                     "useEnsName"
                                 ],
-                                "message": "Import ENS hooks from @/modules/ens instead. They provide consistent chainId, caching, monitoring, and app-level wrappers. Add biome-ignore with reason if direct wagmi access is needed."
+                                "message": "Import ENS hooks from @/modules/ens, wallet account state (address/chainId) from @/modules/application/hooks/useWalletAccount, and connection-gating from @/modules/application/hooks/useWalletConnected. Add biome-ignore with reason if direct wagmi access is needed."
+                            },
+                            "viem": {
+                                "importNames": [
+                                    "isAddress"
+                                ],
+                                "message": "Use addressUtils.isAddress from @aragon/gov-ui-kit instead. Viem's isAddress defaults to strict EIP-55 checksum validation, which rejects otherwise valid mixed-case addresses (e.g. links shared from other tools). If you must use viem directly (e.g. inside a server component, where the gov-ui-kit client shim breaks), biome-ignore this line and pass { strict: false } explicitly."
                             }
                         }
                     }

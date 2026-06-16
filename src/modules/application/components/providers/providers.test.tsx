@@ -2,6 +2,7 @@ import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import type { Translations } from '@/shared/utils/translationsUtils';
+import * as desyncWatcherModule from '../desyncWatcher';
 import { type IProvidersProps, Providers } from './providers';
 
 jest.mock('@/shared/components/translationsProvider', () => ({
@@ -49,6 +50,18 @@ jest.mock('@tanstack/react-query', () => ({
 }));
 
 describe('<Providers /> component', () => {
+    const desyncWatcherSpy = jest.spyOn(desyncWatcherModule, 'DesyncWatcher');
+
+    beforeEach(() => {
+        desyncWatcherSpy.mockImplementation(() => (
+            <div data-testid="desync-watcher-mock" />
+        ));
+    });
+
+    afterEach(() => {
+        desyncWatcherSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IProvidersProps>) => {
         const completeProps: IProvidersProps = {
             translations: {} as Translations,
@@ -90,5 +103,10 @@ describe('<Providers /> component', () => {
         expect(
             screen.getByTestId('feature-flags-provider-mock'),
         ).toBeInTheDocument();
+    });
+
+    it('mounts the desync watcher', () => {
+        render(createTestComponent());
+        expect(screen.getByTestId('desync-watcher-mock')).toBeInTheDocument();
     });
 });

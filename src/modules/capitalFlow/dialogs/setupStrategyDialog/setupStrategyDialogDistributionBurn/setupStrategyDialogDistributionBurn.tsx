@@ -32,6 +32,7 @@ export const SetupStrategyDialogDistributionBurn: React.FC<
             </div>
 
             <AssetInput
+                disableMaxValidation={true}
                 fetchAssetsParams={fetchAssetsParams}
                 fieldPrefix="distributionBurn"
                 hideAmount={true}

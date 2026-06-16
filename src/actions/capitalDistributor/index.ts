@@ -3,6 +3,7 @@ import { keccak256, toBytes, toFunctionSelector } from 'viem';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
 import { actionViewRegistry } from '@/shared/utils/actionViewRegistry';
 import { CapitalDistributorCreateCampaignActionCreate } from './components/capitalDistributorCreateCampaignActionCreate';
+import { CapitalDistributorCreateCampaignActionDetails } from './components/capitalDistributorCreateCampaignActionDetails';
 import { CapitalDistributorEndCampaignActionCreate } from './components/capitalDistributorEndCampaignActionCreate';
 import { CapitalDistributorPauseCampaignActionCreate } from './components/capitalDistributorPauseCampaignActionCreate';
 import { CapitalDistributorResumeCampaignActionCreate } from './components/capitalDistributorResumeCampaignActionCreate';
@@ -35,6 +36,7 @@ export const initCapitalDistributorActionViews = () => {
             permissionId: campaignCreatorPermissionId,
             functionSelector: toFunctionSelector(createCampaignAbi),
             componentCreate: CapitalDistributorCreateCampaignActionCreate,
+            componentDetails: CapitalDistributorCreateCampaignActionDetails,
             getItem: ({ contractAddress, t }) => ({
                 id: `${contractAddress}-${CapitalDistributorActionType.CREATE_CAMPAIGN}`,
                 name: t(
@@ -51,9 +53,12 @@ export const initCapitalDistributorActionViews = () => {
                     inputData: {
                         function: createCampaignAbi.name,
                         contract: PluginContractName.CAPITAL_DISTRIBUTOR,
-                        // @ts-expect-error - ABI inputs have readonly tuple types that don't match the expected mutable array
                         parameters: createCampaignAbi.inputs.map((param) => ({
                             ...param,
+                            components:
+                                'components' in param
+                                    ? [...param.components]
+                                    : undefined,
                             value: '',
                         })),
                     },

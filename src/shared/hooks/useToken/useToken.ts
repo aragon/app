@@ -8,7 +8,7 @@ export const useToken = (params: IUseTokenParams): IUseTokenResult => {
 
     const { data, isLoading, isError } = useReadContracts({
         allowFailure: false,
-        query: { enabled },
+        query: { enabled: enabled && address != null && chainId != null },
         contracts: [
             { chainId, address, abi: erc20Abi, functionName: 'name' },
             { chainId, address, abi: erc20Abi, functionName: 'symbol' },

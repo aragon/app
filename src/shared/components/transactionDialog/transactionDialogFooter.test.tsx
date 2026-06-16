@@ -238,6 +238,13 @@ describe('<TransactionDialogFooter /> component', () => {
             jest.useFakeTimers();
         });
 
+        // Restore real timers so the RTL cleanup unmount and subsequent tests
+        // don't run under leaked fake timers (improper teardown).
+        afterEach(() => {
+            jest.clearAllTimers();
+            jest.useRealTimers();
+        });
+
         it('changes the cancel button text to "Proceed anyway" after 14 seconds in the indexing step', () => {
             const activeStep = {
                 id: TransactionDialogStep.INDEXING,

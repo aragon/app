@@ -56,6 +56,7 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
             type: PluginType.BODY,
             includeSubPlugins: true,
             includeLinkedAccounts: true,
+            visibleOnly: true,
             name: daoDashboardPageMembersFilterParam,
             // Don't pollute the URL with a plugin address when featured delegates are shown.
             enableUrlUpdate: !featuredDelegatesInfo.hasFeaturedDelegates,
@@ -69,6 +70,7 @@ export const DashboardOnboarded: React.FC<IDashboardOnboardedProps> = (
         type: PluginType.PROCESS,
         includeGroupFilter: true,
         includeLinkedAccounts: true,
+        visibleOnly: true,
         name: daoDashboardPageProposalsFilterParam,
     });
 

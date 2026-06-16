@@ -2,10 +2,16 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
-import type { IEpochMetrics, IGauge, IRewardDistribution } from './domain';
+import type {
+    IEpochMetrics,
+    IGauge,
+    IGaugeRewardDistribution,
+    IRewardDistribution,
+} from './domain';
 import type {
     IGetEpochMetricsParams,
     IGetGaugeListParams,
+    IGetGaugeRewardDistributionParams,
     IGetRewardDistributionParams,
 } from './gaugeVoterService.api';
 
@@ -15,6 +21,8 @@ class GaugeVoterService extends AragonBackendService {
         epochMetrics: '/v2/gauge/epochMetrics/:pluginAddress/:network',
         rewardDistribution:
             '/v2/gauge/rewards/:pluginAddress/:network/:epochId',
+        gaugeRewardDistribution:
+            '/v2/gauge/gaugeRewards/:pluginAddress/:network/:epochId',
     };
 
     /**
@@ -55,6 +63,21 @@ class GaugeVoterService extends AragonBackendService {
     ): Promise<IRewardDistribution> => {
         const result = await this.request<IRewardDistribution>(
             this.urls.rewardDistribution,
+            params,
+        );
+        return result;
+    };
+
+    /**
+     * Computes the per-gauge reward distribution for a given epoch.
+     * Splits the total amount across gauges proportionally to their
+     * voting power share in the closed epoch.
+     */
+    getGaugeRewardDistribution = async (
+        params: IGetGaugeRewardDistributionParams,
+    ): Promise<IGaugeRewardDistribution> => {
+        const result = await this.request<IGaugeRewardDistribution>(
+            this.urls.gaugeRewardDistribution,
             params,
         );
         return result;

@@ -1,7 +1,7 @@
 export interface ICidToSrcOptions {
     /**
      * Size of the image to be loaded, used to optimise the loading of the image.
-     * @default 80
+     * @default 256
      */
     size?: number;
 }

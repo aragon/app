@@ -4,7 +4,6 @@ import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
-import { useConnection } from 'wagmi';
 import {
     ensReverseRegistrarAbi,
     ensReverseRegistrarAddress,
@@ -23,6 +22,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 export interface IAragonProfileSetPrimaryEnsTransactionDialogParams {
     /** ENS subdomain label, e.g. "alice". */
@@ -51,7 +51,7 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { address } = useConnection();
+    const { address } = useWalletAccount();
     const queryClient = useQueryClient();
     const { queryKey: ensNameQueryKey } = useEnsName(address);
 

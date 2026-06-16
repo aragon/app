@@ -44,7 +44,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                 } = dialogDefinition;
 
                 const isAlertDialog = 'variant' in otherDialogProps;
-                const { disableOutsideClick, onClose } = location;
+                const { disableOutsideClick, modal, onClose } = location;
 
                 const handleInteractOutside = (event: Event) => {
                     // Only handle interaction for the topmost dialog
@@ -66,7 +66,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                 const DialogWrapper = isAlertDialog
                     ? DialogAlert.Root
                     : Dialog.Root;
-
+                const modalProps = isAlertDialog ? {} : { modal };
                 const processedHiddenTitle = hiddenTitle
                     ? t(hiddenTitle)
                     : undefined;
@@ -83,6 +83,7 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                         hiddenDescription={processedHiddenDescription}
                         hiddenTitle={processedHiddenTitle}
                         key={`${location.id}-${String(index)}`}
+                        {...modalProps}
                         onInteractOutside={handleInteractOutside}
                         onOpenChange={onOpenChange}
                         open={true}

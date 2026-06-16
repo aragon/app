@@ -21,10 +21,16 @@ import { Link } from '@/shared/components/link';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
-import { wagmiConfig } from '../../constants/wagmi';
+import { ensureAppKit, wagmiConfig } from '../../constants/wagmi';
 import { fetchInterceptorUtils } from '../../utils/fetchInterceptorUtils';
 import { queryClientUtils } from '../../utils/queryClientUtils';
+import { DesyncWatcher } from '../desyncWatcher';
 import { providersDialogs } from './providersDialogs';
+
+// Boot AppKit before any descendant renders. AppKit and wagmi must share the
+// same reconnect cycle on cold load, otherwise a WalletConnect session
+// surviving a failed wagmi reconnect leaves the two stores out of sync.
+ensureAppKit();
 
 export interface IProvidersProps {
     /**
@@ -86,6 +92,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                     initialSnapshot={featureFlagsSnapshot}
                                 >
                                     <DialogProvider>
+                                        <DesyncWatcher />
                                         {children}
                                         <DialogRoot
                                             dialogs={providersDialogs}

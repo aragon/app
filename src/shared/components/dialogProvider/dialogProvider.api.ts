@@ -20,6 +20,10 @@ export interface IDialogLocationOptions<
      */
     disableOutsideClick?: boolean;
     /**
+     * Determines whether interactions with elements outside the dialog will be disabled.
+     */
+    modal?: IDialogRootProps['modal'];
+    /**
      * Callback triggered instead of the default close function.
      */
     onClose?: () => void;

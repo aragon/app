@@ -12,7 +12,7 @@
  * const { data: ensAvatar } = useEnsAvatar(ensName);
  *
  * // On a detail page
- * const { data: ensRecords } = useEnsRecords(ensName);
+ * const { data: ensRecords } = useEnsProfileRecords(ensName);
  * ```
  */
 
@@ -23,10 +23,19 @@ export {
     ensChainId,
     ensRecordKeys,
 } from './constants/ensConfig';
+export {
+    buildEnsDelegateKey,
+    type IBuildEnsDelegateKeyParams,
+    NETWORK_EIP3770_SHORTNAME,
+} from './constants/ensDelegateKey';
 export { memberRegistryAbi } from './constants/memberRegistryAbi';
+export {
+    type IUseDelegateStatementCidParams,
+    useDelegateStatementCid,
+} from './hooks/useDelegateStatementCid';
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
-export { useEnsRecords } from './hooks/useEnsRecords';
+export { useEnsProfileRecords } from './hooks/useEnsProfileRecords';
 export type { IEnsRecords, TEnsRecordKey } from './types';
 export type { IBuildUpdateRecordsTransactionParams } from './utils/ensTransactionUtils';
 export { ensTransactionUtils } from './utils/ensTransactionUtils';

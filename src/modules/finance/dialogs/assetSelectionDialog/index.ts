@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
-export const PublishProposalDialog = dynamic(() =>
+export const AssetSelectionDialog = dynamic(() =>
     import('./assetSelectionDialog').then((mod) => mod.AssetSelectionDialog),
 );
 export type {
