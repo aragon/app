@@ -9,10 +9,14 @@ import {
 import type { ReactNode } from 'react';
 import type {
     IGetTransactionListParams,
-    ITransaction,
+    ITransactionExecution,
 } from '@/modules/finance/api/financeService';
 import { useTransactionListData } from '@/modules/finance/hooks/useTransactionListData';
-import type { IDaoPlugin, IPluginSettings } from '@/shared/api/daoService';
+import type {
+    IDao,
+    IDaoPlugin,
+    IPluginSettings,
+} from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { TransactionListItem } from './transactionListItem';
 
@@ -28,9 +32,13 @@ export interface ITransactionListDefaultProps<
      */
     plugin?: IDaoPlugin<TSettings>;
     /**
+     * DAO the transactions belong to.
+     */
+    dao?: IDao;
+    /**
      * Callback called on transaction click.
      */
-    onTransactionClick?: (transaction: ITransaction) => void;
+    onTransactionClick?: (transaction: ITransactionExecution) => void;
     /**
      * Hides the pagination when set to true.
      */
@@ -44,7 +52,7 @@ export interface ITransactionListDefaultProps<
 export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, children, onTransactionClick } =
+    const { initialParams, hidePagination, children, onTransactionClick, dao } =
         props;
 
     const { t } = useTranslations();
@@ -74,6 +82,7 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
             >
                 {transactionList?.map((transaction, index) => (
                     <TransactionListItem
+                        dao={dao}
                         index={index}
                         key={`${transaction.transactionHash}-${index.toString()}`}
                         onTransactionClick={onTransactionClick}

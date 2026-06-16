@@ -1,12 +1,12 @@
 import { DateTime } from 'luxon';
 import { TransactionSide } from '@/modules/finance/api/financeService/domain/enum';
-import type { ITransaction } from '@/modules/finance/api/financeService/domain/transaction';
+import type { ITransactionTransfer } from '@/modules/finance/api/financeService/domain/transaction';
 import { Network } from '@/shared/api/daoService';
 import { generateToken } from './token';
 
 export const generateTransaction = (
-    transaction?: Partial<ITransaction>,
-): ITransaction => ({
+    transaction?: Partial<ITransactionTransfer>,
+): ITransactionTransfer => ({
     network: Network.ETHEREUM_MAINNET,
     blockNumber: 0,
     blockTimestamp: DateTime.now().toMillis(),

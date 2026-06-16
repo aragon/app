@@ -1,5 +1,9 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
-import type { IRequestQueryParams } from '@/shared/api/httpService';
+import type { Network } from '@/shared/api/daoService';
+import type {
+    IRequestQueryParams,
+    IRequestUrlParams,
+} from '@/shared/api/httpService';
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**
@@ -39,3 +43,17 @@ export interface IGetTransactionListQueryParams extends IPaginatedRequest {
 
 export interface IGetTransactionListParams
     extends IRequestQueryParams<IGetTransactionListQueryParams> {}
+
+export interface IGetTransactionActionsUrlParams {
+    /**
+     * Network identifier for the execution transaction.
+     */
+    network: Network;
+    /**
+     * ID of the execution transaction.
+     */
+    id: string;
+}
+
+export interface IGetTransactionActionsParams
+    extends IRequestUrlParams<IGetTransactionActionsUrlParams> {}
