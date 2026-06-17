@@ -131,6 +131,11 @@ export const SppVotingTerminalBodyContent: React.FC<
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
+                                    brandId={
+                                        plugin.interfaceType == null
+                                            ? plugin.brandId
+                                            : undefined
+                                    }
                                     daoId={daoId}
                                     externalAddress={
                                         isExternalBody
