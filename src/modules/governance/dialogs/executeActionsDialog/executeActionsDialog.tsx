@@ -57,6 +57,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const { setIsBlocked } = useBlockNavigationContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const {
+        requiredChainId,
         isCrossNetworkTransaction,
         networkName,
         switchChainStatus,
@@ -82,12 +83,15 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
 
     // Once the transaction is successfully submitted, unblock navigation so that clicking the
     // success link does not trigger the confirm-exit guard of the still-dirty wizard form behind
-    // the dialog.
+    // the dialog. The submitted state is optimistic, so re-block if the send later fails (e.g. the
+    // user rejects in the wallet) to keep the guard active for the still-dirty form.
     useEffect(() => {
-        if (submitState === 'success') {
+        if (sendFailed) {
+            setIsBlocked(true);
+        } else if (submitState === 'success') {
             setIsBlocked(false);
         }
-    }, [submitState, setIsBlocked]);
+    }, [sendFailed, submitState, setIsBlocked]);
 
     const monitorError = useCallback(
         (error: unknown) =>
@@ -139,10 +143,21 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         }
 
         withNetworkSwitch(() => {
-            sendTransaction(transaction, { onError: monitorError });
+            // Pin the send to the required chain so wagmi rejects (instead of silently signing) if
+            // the wallet is still on the wrong chain after the switch.
+            sendTransaction(
+                { ...transaction, chainId: requiredChainId },
+                { onError: monitorError },
+            );
             setIsSubmitted(true);
         });
-    }, [transaction, sendTransaction, monitorError, withNetworkSwitch]);
+    }, [
+        transaction,
+        requiredChainId,
+        sendTransaction,
+        monitorError,
+        withNetworkSwitch,
+    ]);
 
     const isPreparing = prepareStatus === 'pending';
     const isReady = prepareStatus === 'success';

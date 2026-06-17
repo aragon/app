@@ -11,6 +11,8 @@ export interface IUseNetworkSwitchParams {
 }
 
 export interface IUseNetworkSwitchReturn {
+    /** Chain ID the transaction must be sent on, for pinning the send to the correct chain. */
+    requiredChainId: number | undefined;
     /** Whether the wallet's current chain differs from the required chain. */
     isCrossNetworkTransaction: boolean;
     /** Human-readable name of the required network (e.g. "Ethereum"), for UI alerts. */

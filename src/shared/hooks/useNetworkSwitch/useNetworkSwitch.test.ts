@@ -183,6 +183,32 @@ describe('useNetworkSwitch hook', () => {
         });
     });
 
+    describe('requiredChainId', () => {
+        it('returns the chain id resolved from the network', () => {
+            const { result } = renderHook(() =>
+                useNetworkSwitch({ network: Network.ETHEREUM_MAINNET }),
+            );
+
+            expect(result.current.requiredChainId).toBe(ethereumChainId);
+        });
+
+        it('returns undefined when the chain cannot be resolved', () => {
+            useDaoChainSpy.mockReturnValue({
+                chainId: undefined,
+                network: undefined,
+                networkDefinition: undefined,
+                buildEntityUrl: jest.fn(),
+                isLoading: true,
+            });
+
+            const { result } = renderHook(() =>
+                useNetworkSwitch({ daoId: 'loading-dao' }),
+            );
+
+            expect(result.current.requiredChainId).toBeUndefined();
+        });
+    });
+
     describe('switchChainStatus', () => {
         it('reflects the wagmi mutation status', () => {
             useSwitchChainSpy.mockReturnValue({

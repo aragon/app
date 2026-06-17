@@ -49,24 +49,27 @@ jest.mock('@/shared/components/dialogProvider', () => ({
     useDialogContext: jest.fn(),
 }));
 
-jest.mock('../../api/actionSimulationService', () => {
-    const simulation = {
-        mutate: jest.fn(),
+const mockProposalMutate = jest.fn();
+const mockDirectExecuteMutate = jest.fn();
+
+// Status is kept at 'idle' so the dialog's request-mapping effect runs and we can assert which
+// mutation is invoked with which request shape.
+jest.mock('../../api/actionSimulationService', () => ({
+    useSimulateProposalActions: () => ({
+        mutate: mockProposalMutate,
         isError: false,
         isPending: false,
-        status: 'success',
-        data: {
-            status: 'success',
-            runAt: 123,
-            url: 'https://tenderly.co/simulation/123',
-        },
-    };
-
-    return {
-        useSimulateProposalActions: () => simulation,
-        useSimulateDirectExecuteActions: () => simulation,
-    };
-});
+        status: 'idle',
+        data: undefined,
+    }),
+    useSimulateDirectExecuteActions: () => ({
+        mutate: mockDirectExecuteMutate,
+        isError: false,
+        isPending: false,
+        status: 'idle',
+        data: undefined,
+    }),
+}));
 
 describe('<SimulateActionsDialog /> component', () => {
     const useDialogContextMock =
@@ -81,6 +84,8 @@ describe('<SimulateActionsDialog /> component', () => {
     afterEach(() => {
         useDialogContextMock.mockReset();
         useTranslationsMock.mockReset();
+        mockProposalMutate.mockClear();
+        mockDirectExecuteMutate.mockClear();
     });
 
     const createLocation = (
@@ -100,6 +105,43 @@ describe('<SimulateActionsDialog /> component', () => {
     const renderComponent = (
         location: IDialogLocation<ISimulateActionsDialogParams>,
     ) => render(<SimulateActionsDialog location={location} />);
+
+    it('simulates via the direct-execute mutation with the from address in the body when daoAddress is set', () => {
+        useDialogContextMock.mockReturnValue({ close: jest.fn() });
+
+        const location = createLocation({
+            from: '0xwallet',
+            daoAddress: '0xdao',
+        });
+        renderComponent(location);
+
+        expect(mockDirectExecuteMutate).toHaveBeenCalledWith({
+            urlParams: { network: 'ethereum', daoAddress: '0xdao' },
+            body: {
+                from: '0xwallet',
+                actions: [{ to: '0xto', data: '0xdata', value: '0' }],
+            },
+        });
+        expect(mockProposalMutate).not.toHaveBeenCalled();
+    });
+
+    it('simulates via the proposal mutation with the from address as pluginAddress when daoAddress is not set', () => {
+        useDialogContextMock.mockReturnValue({ close: jest.fn() });
+
+        const location = createLocation({
+            from: '0xplugin',
+            daoAddress: undefined,
+        });
+        renderComponent(location);
+
+        expect(mockProposalMutate).toHaveBeenCalledWith({
+            urlParams: { network: 'ethereum', pluginAddress: '0xplugin' },
+            body: {
+                actions: [{ to: '0xto', data: '0xdata', value: '0' }],
+            },
+        });
+        expect(mockDirectExecuteMutate).not.toHaveBeenCalled();
+    });
 
     it('closes only itself after requesting wizard form submit (does not call close() without id)', () => {
         const close = jest.fn();

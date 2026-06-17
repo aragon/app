@@ -66,6 +66,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
     const { address } = useWalletAccount();
     const { buildEntityUrl } = useDaoChain({ network });
     const {
+        requiredChainId,
         isCrossNetworkTransaction,
         networkName: transactionNetworkName,
         switchChainStatus,
@@ -128,9 +129,14 @@ export const TransactionDialog = <TCustomStepId extends string>(
                 new Error('TransactionDialog: transaction must be defined.'),
             );
         } else {
-            sendTransaction(transaction, { onError: errorHandler });
+            // Pin the send to the required chain so wagmi rejects (instead of silently signing) if
+            // the wallet is still on the wrong chain after the switch.
+            sendTransaction(
+                { ...transaction, chainId: requiredChainId },
+                { onError: errorHandler },
+            );
         }
-    }, [transaction, sendTransaction, handleTransactionError]);
+    }, [transaction, requiredChainId, sendTransaction, handleTransactionError]);
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);

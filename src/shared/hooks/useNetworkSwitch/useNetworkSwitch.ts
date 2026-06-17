@@ -40,6 +40,7 @@ export const useNetworkSwitch = (
     );
 
     return {
+        requiredChainId,
         isCrossNetworkTransaction,
         networkName,
         switchChainStatus,
