@@ -1,5 +1,21 @@
 # @aragon/app
 
+## 1.31.0
+
+### Minor Changes
+
+- [#1180](https://github.com/aragon/app/pull/1180) [`909dd9b`](https://github.com/aragon/app/commit/909dd9b9d723bc2e128f3bcd68190e59a7b7ffab) Thanks [@milosh86](https://github.com/milosh86)! - Enable the app to run inside Safe{Wallet} as a Safe App
+
+- [#1171](https://github.com/aragon/app/pull/1171) [`8032855`](https://github.com/aragon/app/commit/8032855f987d023e143cf3d7c194592febad1127) Thanks [@milosh86](https://github.com/milosh86)! - Add optional action simulation to the direct execute actions flow
+
+### Patch Changes
+
+- [#1171](https://github.com/aragon/app/pull/1171) [`8032855`](https://github.com/aragon/app/commit/8032855f987d023e143cf3d7c194592febad1127) Thanks [@milosh86](https://github.com/milosh86)! - Unblock navigation after submitting the execute actions transaction and update execute flow copies
+
+- [#1178](https://github.com/aragon/app/pull/1178) [`6ff6eb4`](https://github.com/aragon/app/commit/6ff6eb465859d70fa53c9e2238df9996d81e697c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
+- [#1169](https://github.com/aragon/app/pull/1169) [`a270445`](https://github.com/aragon/app/commit/a270445cd1ff54b938756defb4156ded5378149f) Thanks [@milosh86](https://github.com/milosh86)! - Improve performance with image cache TTL, ISR revalidation, dynamic dialog imports and font cleanup
+
 ## 1.30.0
 
 ### Minor Changes
@@ -245,6 +261,7 @@
 - [#986](https://github.com/aragon/app/pull/986) [`fb29e63`](https://github.com/aragon/app/commit/fb29e63531257a90e55800799e7dadbd3544183b) Thanks [@milosh86](https://github.com/milosh86)! - Add campaign creation basic view
 
 - [#994](https://github.com/aragon/app/pull/994) [`75259e0`](https://github.com/aragon/app/commit/75259e0b5b71e6126811c2343a2c225f830d0500) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Upgrade wagmi from v2.19.5 to v3.4.2, update viem to 2.45.2, and remove all v3 deprecations
+
     - **wagmi v3**: Connector dependencies are now optional peer dependencies, giving more control over the dependency tree
     - **Removed overrides**: Eliminated `@reown/appkit` version override and `@wagmi/connectors` pin that are no longer needed
     - **useBalance migration**: Replaced deprecated `useBalance({ token })` with `useReadContract({ abi: erc20Abi, functionName: 'balanceOf' })` for ERC20 token balance fetching
