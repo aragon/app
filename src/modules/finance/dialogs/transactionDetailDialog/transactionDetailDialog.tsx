@@ -135,10 +135,7 @@ export const TransactionDetailDialog: React.FC<
                         />
                     ))}
                 </ProposalActions.Container>
-                <ProposalActions.Footer
-                    dropdownAlignment="start"
-                    dropdownItems={actionsDropdownItems}
-                />
+                <ProposalActions.Footer dropdownItems={actionsDropdownItems} />
             </ProposalActions.Root>
         </TransactionDetail.Root>
     );
