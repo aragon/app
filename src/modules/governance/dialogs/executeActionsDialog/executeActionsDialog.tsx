@@ -62,6 +62,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         networkName,
         switchChainStatus,
         withNetworkSwitch,
+        isLoading: isChainLoading,
     } = useNetworkSwitch({ daoId });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
@@ -220,7 +221,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         .otherwise(() => ({
             label: t('app.governance.executeActionsDialog.button.submit'),
             onClick: handleSend,
-            isLoading: isPreparing,
+            isLoading: isPreparing || isChainLoading,
             disabled: !isReady,
         }));
 
