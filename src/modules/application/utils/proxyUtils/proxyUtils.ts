@@ -30,7 +30,7 @@ class ProxyUtils {
 
         // Hosts allowed to embed THIS app in an iframe → frame-ancestors.
         // Currently only Common Ground (one-off experiment).
-        const iframeEmbedders = ['https://app.cg'];
+        const iframeEmbedders = ['https://app.cg', 'https://app.safe.global'];
         const iframeEmbeddersNonProd: string[] = [];
 
         // Third-party iframes THIS app is allowed to render → frame-src.
