@@ -1,16 +1,17 @@
 import { type MutationOptions, useMutation } from '@tanstack/react-query';
 import { actionSimulationService } from '../../actionSimulationService';
-import type { ISimulateActionsParams } from '../../actionSimulationService.api';
+import type { ISimulateDirectExecuteActionsParams } from '../../actionSimulationService.api';
 import type { ISimulationResult } from '../../domain';
 
-export const useSimulateActions = (
+export const useSimulateDirectExecuteActions = (
     options?: MutationOptions<
         ISimulationResult,
         unknown,
-        ISimulateActionsParams
+        ISimulateDirectExecuteActionsParams
     >,
 ) =>
     useMutation({
-        mutationFn: (params) => actionSimulationService.simulateActions(params),
+        mutationFn: (params) =>
+            actionSimulationService.simulateDirectExecuteActions(params),
         ...options,
     });

@@ -1,24 +1,39 @@
 import { AragonBackendService } from '@/shared/api/aragonBackendService';
 import type {
     IGetLastSimulationParams,
-    ISimulateActionsParams,
+    ISimulateDirectExecuteActionsParams,
+    ISimulateProposalActionsParams,
     ISimulateProposalParams,
 } from './actionSimulationService.api';
 import type { ISimulationResult } from './domain';
 
 class ActionSimulationService extends AragonBackendService {
     private urls = {
-        simulateActions:
+        simulateProposalActions:
             '/v2/simulations/:network/plugin/:pluginAddress/simulate',
+        simulateDirectExecuteActions:
+            '/v2/simulations/:network/dao/:daoAddress/simulate',
         simulateProposal: '/v2/simulations/proposal/:proposalId',
         getLastSimulation: '/v2/simulations/proposal/:proposalId',
     };
 
-    simulateActions = async (
-        params: ISimulateActionsParams,
+    simulateProposalActions = async (
+        params: ISimulateProposalActionsParams,
     ): Promise<ISimulationResult> => {
         const result = await this.request<ISimulationResult>(
-            this.urls.simulateActions,
+            this.urls.simulateProposalActions,
+            params,
+            { method: 'POST' },
+        );
+
+        return result;
+    };
+
+    simulateDirectExecuteActions = async (
+        params: ISimulateDirectExecuteActionsParams,
+    ): Promise<ISimulationResult> => {
+        const result = await this.request<ISimulationResult>(
+            this.urls.simulateDirectExecuteActions,
             params,
             { method: 'POST' },
         );

@@ -1,22 +1,14 @@
-import {
-    AlertCard,
-    ChainEntityType,
-    Dialog,
-    IconType,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-    useSendTransaction,
-    useSwitchChain,
-    useWaitForTransactionReceipt,
-} from 'wagmi';
+import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
+import { NetworkSwitchAlert } from '../networkSwitchAlert';
 import {
     type ITransactionStatusStepMetaAddon,
     TransactionStatus,
@@ -65,23 +57,21 @@ export const TransactionDialog = <TCustomStepId extends string>(
         activeStep != null ? steps[activeStepIndex] : undefined;
 
     const { t } = useTranslations();
-    const { mutate: switchChain, status: switchChainStatus } = useSwitchChain();
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     const { updateOptions } = useDialogContext();
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
 
-    const { chainId, address } = useWalletAccount();
-    const { chainId: requiredChainId, buildEntityUrl } = useDaoChain({
-        network,
-    });
-
-    const isCrossNetworkTransaction =
-        chainId != null &&
-        requiredChainId != null &&
-        chainId !== requiredChainId;
-    const transactionNetworkName = networkDefinitions[network]?.name;
+    const { address } = useWalletAccount();
+    const { buildEntityUrl } = useDaoChain({ network });
+    const {
+        requiredChainId,
+        isCrossNetworkTransaction,
+        networkName: transactionNetworkName,
+        switchChainStatus,
+        withNetworkSwitch,
+    } = useNetworkSwitch({ network });
 
     const handleTransactionError = useCallback(
         (stepId?: string) =>
@@ -139,28 +129,24 @@ export const TransactionDialog = <TCustomStepId extends string>(
                 new Error('TransactionDialog: transaction must be defined.'),
             );
         } else {
-            sendTransaction(transaction, { onError: errorHandler });
+            // Pin the send to the required chain so wagmi rejects (instead of silently signing) if
+            // the wallet is still on the wrong chain after the switch.
+            sendTransaction(
+                { ...transaction, chainId: requiredChainId },
+                { onError: errorHandler },
+            );
         }
-    }, [transaction, sendTransaction, handleTransactionError]);
-
-    const handleSwitchNetwork = useCallback(
-        () =>
-            switchChain(
-                { chainId: requiredChainId! },
-                { onSuccess: handleSendTransaction },
-            ),
-        [switchChain, requiredChainId, handleSendTransaction],
-    );
+    }, [transaction, requiredChainId, sendTransaction, handleTransactionError]);
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
         handleSendTransaction();
     }, [updateActiveStep, handleSendTransaction]);
 
-    const approveStepAction =
-        requiredChainId === chainId
-            ? handleSendTransaction
-            : handleSwitchNetwork;
+    const approveStepAction = useCallback(
+        () => withNetworkSwitch(handleSendTransaction),
+        [withNetworkSwitch, handleSendTransaction],
+    );
     const transactionStepActions: Record<TransactionDialogStep, () => void> =
         useMemo(
             () => ({
@@ -178,10 +164,9 @@ export const TransactionDialog = <TCustomStepId extends string>(
             ],
         );
 
-    const approveStepStatus =
-        chainId === requiredChainId
-            ? approveTransactionStatus
-            : switchChainStatus;
+    const approveStepStatus = isCrossNetworkTransaction
+        ? switchChainStatus
+        : approveTransactionStatus;
     const indexingStepStatus = transactionStatus?.isProcessed
         ? 'success'
         : isIndexing
@@ -321,20 +306,10 @@ export const TransactionDialog = <TCustomStepId extends string>(
             <Dialog.Header description={description} title={title} />
             <Dialog.Content>
                 <div className="flex flex-col gap-6 pb-3 md:pb-4">
-                    {isCrossNetworkTransaction &&
-                        transactionNetworkName != null && (
-                            <AlertCard
-                                message={t(
-                                    'app.shared.transactionDialog.networkAlert.title',
-                                )}
-                                variant="info"
-                            >
-                                {t(
-                                    'app.shared.transactionDialog.networkAlert.body',
-                                    { transactionNetworkName },
-                                )}
-                            </AlertCard>
-                        )}
+                    <NetworkSwitchAlert
+                        isCrossNetworkTransaction={isCrossNetworkTransaction}
+                        networkName={transactionNetworkName}
+                    />
                     {children}
                     <TransactionStatus.Container
                         steps={steps}

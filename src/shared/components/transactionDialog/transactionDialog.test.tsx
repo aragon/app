@@ -374,7 +374,7 @@ describe('<TransactionDialog /> component', () => {
 
         expect(
             screen.getByText(
-                /Switch network|app\.shared\.transactionDialog\.networkAlert\.title/,
+                /Switch network|app\.shared\.networkSwitchAlert\.title/,
             ),
         ).toBeInTheDocument();
     });
@@ -390,7 +390,7 @@ describe('<TransactionDialog /> component', () => {
 
         expect(
             screen.queryByText(
-                /Switch network|app\.shared\.transactionDialog\.networkAlert\.title/,
+                /Switch network|app\.shared\.networkSwitchAlert\.title/,
             ),
         ).not.toBeInTheDocument();
     });
