@@ -3,13 +3,11 @@ import * as Wagmi from 'wagmi';
 import * as WalletAccount from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import * as DaoChain from '@/shared/hooks/useDaoChain';
 import { useNetworkSwitch } from './useNetworkSwitch';
 
 describe('useNetworkSwitch hook', () => {
     const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
     const useWalletAccountSpy = jest.spyOn(WalletAccount, 'useWalletAccount');
-    const useDaoChainSpy = jest.spyOn(DaoChain, 'useDaoChain');
 
     const switchChainMutate = jest.fn();
 
@@ -27,20 +25,11 @@ describe('useNetworkSwitch hook', () => {
             chainId: ethereumChainId,
             isReconnecting: false,
         });
-
-        useDaoChainSpy.mockReturnValue({
-            chainId: ethereumChainId,
-            network: Network.ETHEREUM_MAINNET,
-            networkDefinition: networkDefinitions[Network.ETHEREUM_MAINNET],
-            buildEntityUrl: jest.fn(),
-            isLoading: false,
-        });
     });
 
     afterEach(() => {
         useSwitchChainSpy.mockReset();
         useWalletAccountSpy.mockReset();
-        useDaoChainSpy.mockReset();
         switchChainMutate.mockReset();
     });
 
@@ -54,14 +43,6 @@ describe('useNetworkSwitch hook', () => {
         });
 
         it('returns true when wallet chain differs from required chain', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: polygonChainId,
-                network: Network.POLYGON_MAINNET,
-                networkDefinition: networkDefinitions[Network.POLYGON_MAINNET],
-                buildEntityUrl: jest.fn(),
-                isLoading: false,
-            });
-
             const { result } = renderHook(() =>
                 useNetworkSwitch({ network: Network.POLYGON_MAINNET }),
             );
@@ -82,22 +63,6 @@ describe('useNetworkSwitch hook', () => {
 
             expect(result.current.isCrossNetworkTransaction).toBe(false);
         });
-
-        it('returns false when required chain is undefined', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: undefined,
-                network: undefined,
-                networkDefinition: undefined,
-                buildEntityUrl: jest.fn(),
-                isLoading: true,
-            });
-
-            const { result } = renderHook(() =>
-                useNetworkSwitch({ daoId: 'loading-dao' }),
-            );
-
-            expect(result.current.isCrossNetworkTransaction).toBe(false);
-        });
     });
 
     describe('networkName', () => {
@@ -109,22 +74,6 @@ describe('useNetworkSwitch hook', () => {
             expect(result.current.networkName).toBe(
                 networkDefinitions[Network.ETHEREUM_MAINNET].name,
             );
-        });
-
-        it('returns undefined when network definition is unavailable', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: undefined,
-                network: undefined,
-                networkDefinition: undefined,
-                buildEntityUrl: jest.fn(),
-                isLoading: true,
-            });
-
-            const { result } = renderHook(() =>
-                useNetworkSwitch({ daoId: 'loading-dao' }),
-            );
-
-            expect(result.current.networkName).toBeUndefined();
         });
     });
 
@@ -160,14 +109,6 @@ describe('useNetworkSwitch hook', () => {
         });
 
         it('calls switchChain with onSuccess when chains differ', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: polygonChainId,
-                network: Network.POLYGON_MAINNET,
-                networkDefinition: networkDefinitions[Network.POLYGON_MAINNET],
-                buildEntityUrl: jest.fn(),
-                isLoading: false,
-            });
-
             const { result } = renderHook(() =>
                 useNetworkSwitch({ network: Network.POLYGON_MAINNET }),
             );
@@ -191,22 +132,6 @@ describe('useNetworkSwitch hook', () => {
 
             expect(result.current.requiredChainId).toBe(ethereumChainId);
         });
-
-        it('returns undefined when the chain cannot be resolved', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: undefined,
-                network: undefined,
-                networkDefinition: undefined,
-                buildEntityUrl: jest.fn(),
-                isLoading: true,
-            });
-
-            const { result } = renderHook(() =>
-                useNetworkSwitch({ daoId: 'loading-dao' }),
-            );
-
-            expect(result.current.requiredChainId).toBeUndefined();
-        });
     });
 
     describe('switchChainStatus', () => {
@@ -221,32 +146,6 @@ describe('useNetworkSwitch hook', () => {
             );
 
             expect(result.current.switchChainStatus).toBe('pending');
-        });
-    });
-
-    describe('isLoading', () => {
-        it('returns true when resolving chain via daoId and DAO is loading', () => {
-            useDaoChainSpy.mockReturnValue({
-                chainId: undefined,
-                network: undefined,
-                networkDefinition: undefined,
-                buildEntityUrl: jest.fn(),
-                isLoading: true,
-            });
-
-            const { result } = renderHook(() =>
-                useNetworkSwitch({ daoId: 'loading-dao' }),
-            );
-
-            expect(result.current.isLoading).toBe(true);
-        });
-
-        it('returns false when network is provided directly', () => {
-            const { result } = renderHook(() =>
-                useNetworkSwitch({ network: Network.ETHEREUM_MAINNET }),
-            );
-
-            expect(result.current.isLoading).toBe(false);
         });
     });
 });

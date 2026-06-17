@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useSwitchChain } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type {
     IUseNetworkSwitchParams,
     IUseNetworkSwitchReturn,
@@ -10,24 +10,20 @@ import type {
 export const useNetworkSwitch = (
     params: IUseNetworkSwitchParams,
 ): IUseNetworkSwitchReturn => {
+    const { network } = params;
+
     const { mutate: switchChain, status: switchChainStatus } = useSwitchChain();
     const { chainId: walletChainId } = useWalletAccount();
-    const {
-        chainId: requiredChainId,
-        networkDefinition,
-        isLoading,
-    } = useDaoChain(params);
+
+    const { id: requiredChainId, name: networkName } =
+        networkDefinitions[network];
 
     const isCrossNetworkTransaction =
-        walletChainId != null &&
-        requiredChainId != null &&
-        walletChainId !== requiredChainId;
-
-    const networkName = networkDefinition?.name;
+        walletChainId != null && walletChainId !== requiredChainId;
 
     const withNetworkSwitch = useCallback(
         (onSend: () => void) => {
-            if (isCrossNetworkTransaction && requiredChainId != null) {
+            if (isCrossNetworkTransaction) {
                 switchChain(
                     { chainId: requiredChainId },
                     { onSuccess: onSend },
@@ -45,6 +41,5 @@ export const useNetworkSwitch = (
         networkName,
         switchChainStatus,
         withNetworkSwitch,
-        isLoading,
     };
 };

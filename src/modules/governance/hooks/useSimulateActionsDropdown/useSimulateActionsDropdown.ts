@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -55,7 +56,7 @@ export const useSimulateActionsDropdown = (
             name: 'actions',
         }) ?? [];
 
-    const handleSimulate = async () => {
+    const handleSimulate = useCallback(async () => {
         if (from == null) {
             return;
         }
@@ -85,20 +86,39 @@ export const useSimulateActionsDropdown = (
             ...(isDirectExecute ? { daoAddress } : {}),
         };
         open(GovernanceDialogId.SIMULATE_ACTIONS, { params: dialogParams });
-    };
+    }, [
+        from,
+        trigger,
+        getValues,
+        prepareActions,
+        network,
+        formId,
+        isDirectExecute,
+        daoAddress,
+        open,
+    ]);
 
-    if (watchedActions.length === 0 || !tenderlySupport || from == null) {
-        return undefined;
-    }
+    return useMemo(() => {
+        if (watchedActions.length === 0 || !tenderlySupport || from == null) {
+            return undefined;
+        }
 
-    return [
-        {
-            label: t('app.governance.simulateActionsDialog.simulate'),
-            onClick: handleSimulate,
-        },
-        {
-            label: t('app.governance.simulateActionsDialog.skipSimulation'),
-            formId,
-        },
-    ];
+        return [
+            {
+                label: t('app.governance.simulateActionsDialog.simulate'),
+                onClick: handleSimulate,
+            },
+            {
+                label: t('app.governance.simulateActionsDialog.skipSimulation'),
+                formId,
+            },
+        ];
+    }, [
+        watchedActions.length,
+        tenderlySupport,
+        from,
+        t,
+        handleSimulate,
+        formId,
+    ]);
 };

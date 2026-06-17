@@ -72,7 +72,7 @@ describe('<ExecuteActionsDialog /> component', () => {
         params?: Partial<IExecuteActionsDialogParams>,
     ): IDialogLocation<IExecuteActionsDialogParams> => ({
         id: 'test',
-        params: { daoId: 'test', actions: [], ...params },
+        params: { daoId: `${network}-0x123`, actions: [], ...params },
     });
 
     const createTestComponent = (

@@ -56,14 +56,14 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
     const { close } = useDialogContext();
     const { setIsBlocked } = useBlockNavigationContext();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { network } = daoUtils.parseDaoId(daoId);
     const {
         requiredChainId,
         isCrossNetworkTransaction,
         networkName,
         switchChainStatus,
         withNetworkSwitch,
-        isLoading: isChainLoading,
-    } = useNetworkSwitch({ daoId });
+    } = useNetworkSwitch({ network });
 
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -221,7 +221,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         .otherwise(() => ({
             label: t('app.governance.executeActionsDialog.button.submit'),
             onClick: handleSend,
-            isLoading: isPreparing || isChainLoading,
+            isLoading: isPreparing,
             disabled: !isReady,
         }));
 
