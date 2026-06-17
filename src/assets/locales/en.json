@@ -3052,7 +3052,7 @@
           "approve": "Approve proposal",
           "approved": "Approved",
           "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
-          "helpTextSafe": "If you are an owner of this Safe, you can connect with WalletConnect to vote on this proposal. For a smoother experience, open the Aragon App inside Safe{Wallet} by clicking \"Add custom Safe App\".",
+          "helpTextSafe": "To approve this proposal from the Safe{Wallet} UI, add Aragon as a custom Safe App or connect directly with a WalletConnect QR code.",
           "veto": "Veto proposal",
           "vetoed": "Vetoed"
         },
