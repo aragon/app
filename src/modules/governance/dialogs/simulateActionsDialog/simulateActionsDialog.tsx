@@ -6,7 +6,10 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useSimulateActions } from '../../api/actionSimulationService';
+import {
+    useSimulateDirectExecuteActions,
+    useSimulateProposalActions,
+} from '../../api/actionSimulationService';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import type { IProposalCreateAction } from '../publishProposalDialog';
 
@@ -16,9 +19,17 @@ export interface ISimulateActionsDialogParams {
      */
     network: Network;
     /**
-     * Address of the plugin on which the proposal is created.
+     * Address that calls `DAO.execute` and that the actions are therefore simulated from (the
+     * `from` address): the governance plugin for proposals, the connected wallet for direct
+     * execution.
      */
-    pluginAddress: string;
+    from: string;
+    /**
+     * Address of the DAO the actions are executed on. Set only for direct execution, in which case
+     * the actions are simulated against the DAO from the connected wallet (`from`) instead of a
+     * governance plugin.
+     */
+    daoAddress?: string;
     /**
      * List of actions to simulate.
      */
@@ -41,32 +52,53 @@ export const SimulateActionsDialog: React.FC<ISimulateActionsDialogProps> = (
         location.params != null,
         'SimulateActionsDialog: params must be set for the dialog to work correctly',
     );
-    const { actions, network, pluginAddress, formId } = location.params;
+    const { actions, network, from, daoAddress, formId } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
-    const {
-        mutate: simulateActions,
-        isError,
-        isPending,
-        status,
-        data,
-    } = useSimulateActions();
+    const proposalSimulation = useSimulateProposalActions();
+    const directExecuteSimulation = useSimulateDirectExecuteActions();
+
+    const isDirectExecute = daoAddress != null;
+    const activeSimulation = isDirectExecute
+        ? directExecuteSimulation
+        : proposalSimulation;
+
+    const { isError, isPending, status, data } = activeSimulation;
 
     useEffect(() => {
         if (status !== 'idle') {
             return;
         }
 
-        const urlParams = { network, pluginAddress };
         const processedActions = actions.map(({ to, data, value }) => ({
             to,
             data,
             value: value.toString(),
         }));
-        simulateActions({ urlParams, body: { actions: processedActions } });
-    }, [actions, network, pluginAddress, status, simulateActions]);
+
+        if (isDirectExecute) {
+            directExecuteSimulation.mutate({
+                urlParams: { network, daoAddress },
+                body: { from, actions: processedActions },
+            });
+        } else {
+            proposalSimulation.mutate({
+                urlParams: { network, pluginAddress: from },
+                body: { actions: processedActions },
+            });
+        }
+    }, [
+        actions,
+        network,
+        from,
+        isDirectExecute,
+        status,
+        directExecuteSimulation.mutate,
+        proposalSimulation.mutate,
+        daoAddress,
+    ]);
 
     const hasSimulationFailed = isError || data?.status === 'failed';
     const lastSimulation =
