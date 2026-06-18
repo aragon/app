@@ -1,14 +1,19 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import type { ITransactionExecution } from '@/modules/finance/api/financeService';
+import * as financeService from '@/modules/finance/api/financeService';
 import { TransactionSide } from '@/modules/finance/api/financeService';
 import {
     generateToken,
     generateTransaction,
 } from '@/modules/finance/testUtils';
 import { PluginInterfaceType } from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
+import {
+    generateDao,
+    generateDaoPlugin,
+    generatePaginatedResponse,
+    generateReactQueryInfiniteResultSuccess,
+} from '@/shared/testUtils';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
 import { type ITransactionListDefaultProps, TransactionList } from '.';
 
@@ -17,13 +22,62 @@ describe('<TransactionList.Default /> component', () => {
         useTransactionListData,
         'useTransactionListData',
     );
+    const useTransactionListSpy = jest.spyOn(
+        financeService,
+        'useTransactionList',
+    );
+    let transactionTypeAvailability = {
+        received: 1,
+        sent: 1,
+        executions: 1,
+    };
+
+    const mockAvailabilityQuery = (
+        itemsCount: number,
+    ): ReturnType<typeof financeService.useTransactionList> =>
+        generateReactQueryInfiniteResultSuccess({
+            data: {
+                pages: [
+                    generatePaginatedResponse({
+                        metadata: {
+                            page: 1,
+                            pageSize: 1,
+                            totalPages: itemsCount > 0 ? 1 : 0,
+                            totalRecords: itemsCount,
+                        },
+                    }),
+                ],
+                pageParams: [],
+            },
+        });
+
+    const mockTransactionTypeAvailability = (
+        received = 1,
+        sent = 1,
+        executions = 1,
+    ) => {
+        transactionTypeAvailability = { received, sent, executions };
+    };
 
     beforeEach(() => {
         useTransactionListDataSpy.mockImplementation(jest.fn());
+        mockTransactionTypeAvailability();
+        useTransactionListSpy.mockImplementation((params) => {
+            const { side, type } = params.queryParams;
+            const itemsCount =
+                type === 'execution'
+                    ? transactionTypeAvailability.executions
+                    : side === TransactionSide.DEPOSIT
+                      ? transactionTypeAvailability.received
+                      : transactionTypeAvailability.sent;
+
+            return mockAvailabilityQuery(itemsCount);
+        });
     });
 
     afterEach(() => {
         useTransactionListDataSpy.mockReset();
+        useTransactionListSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -40,24 +94,6 @@ describe('<TransactionList.Default /> component', () => {
             </GukModulesProvider>
         );
     };
-
-    const generateExecutionTransaction = (
-        transaction?: Partial<ITransactionExecution>,
-    ): ITransactionExecution => ({
-        network: generateTransaction().network,
-        blockNumber: 0,
-        blockTimestamp: 1_700_000_000,
-        fromAddress: '0x0000000000000000000000000000000000000000',
-        toAddress: '0x0000000000000000000000000000000000000000',
-        value: '0',
-        side: TransactionSide.EXECUTION,
-        type: 'execution',
-        transactionHash: '0x0000000000000000000000000000000000000000',
-        id: 'execution-id',
-        source: 'router',
-        actionCount: 2,
-        ...transaction,
-    });
 
     it('renders the transaction list with multiple items when data is available', () => {
         const transactions = [
@@ -93,6 +129,49 @@ describe('<TransactionList.Default /> component', () => {
         });
     });
 
+    it('does not render type filters when only one transaction type is available', () => {
+        mockTransactionTypeAvailability(0, 0, 2);
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [],
+            state: 'idle' as const,
+            pageSize: 10,
+            itemsCount: 2,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('radio', { name: 'Executions' }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('filters the transaction query by the selected type', async () => {
+        const user = userEvent.setup();
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [],
+            state: 'idle' as const,
+            pageSize: 10,
+            itemsCount: 0,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent());
+        await user.click(
+            screen.getByRole('radio', {
+                name: 'app.finance.transactionList.typeFilter.received',
+            }),
+        );
+
+        expect(useTransactionListDataSpy).toHaveBeenLastCalledWith({
+            queryParams: { side: TransactionSide.DEPOSIT },
+        });
+    });
+
     it('does not render the token price in usd', () => {
         const transaction = generateTransaction({
             token: generateToken({ symbol: 'AAA' }),
@@ -116,7 +195,8 @@ describe('<TransactionList.Default /> component', () => {
     });
 
     it('renders execution transactions with source and action count', () => {
-        const transaction = generateExecutionTransaction({
+        const transaction = generateTransaction({
+            side: TransactionSide.EXECUTION,
             source: 'router',
             actionCount: 3,
         });
@@ -139,7 +219,8 @@ describe('<TransactionList.Default /> component', () => {
     });
 
     it('renders execution source using the DAO plugin name', () => {
-        const transaction = generateExecutionTransaction({
+        const transaction = generateTransaction({
+            side: TransactionSide.EXECUTION,
             source: 'tokenvoting',
         });
         const dao = generateDao({
@@ -174,7 +255,8 @@ describe('<TransactionList.Default /> component', () => {
             transactionHash: '0x1',
             token: generateToken({ symbol: 'ABC' }),
         });
-        const executionTransaction = generateExecutionTransaction({
+        const executionTransaction = generateTransaction({
+            side: TransactionSide.EXECUTION,
             transactionHash: '0x2',
         });
         const onTransactionClick = jest.fn();

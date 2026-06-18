@@ -4,6 +4,7 @@ import type {
     IRequestQueryParams,
     IRequestUrlParams,
 } from '@/shared/api/httpService';
+import type { TransactionTransferSide } from './domain';
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**
@@ -39,6 +40,14 @@ export interface IGetTransactionListQueryParams extends IPaginatedRequest {
      * Used to differentiate between "All Transactions" (parent + linked accounts) and "Parent DAO" tab (parent only).
      */
     onlyParent?: boolean;
+    /**
+     * Optional transfer direction filter.
+     */
+    side?: TransactionTransferSide;
+    /**
+     * Optional transaction type filter.
+     */
+    type?: 'execution';
 }
 
 export interface IGetTransactionListParams
