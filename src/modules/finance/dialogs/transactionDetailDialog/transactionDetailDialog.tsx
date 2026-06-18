@@ -11,7 +11,6 @@ import {
     type ITransactionExecution,
     useTransactionActions,
 } from '@/modules/finance/api/financeService';
-import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
@@ -23,8 +22,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
-
-const emptyActions: IProposalAction[] = [];
+import {
+    getTransactionActions,
+    getTransactionActionsRefetchInterval,
+} from './transactionDetailDialogUtils';
 
 export interface ITransactionDetailDialogParams {
     /**
@@ -63,12 +64,11 @@ export const TransactionDetailDialog: React.FC<
             },
         },
         {
-            refetchInterval: ({ state }) =>
-                state.data?.decoding ? 2000 : false,
+            refetchInterval: getTransactionActionsRefetchInterval,
         },
     );
 
-    const actions = actionData?.actions ?? emptyActions;
+    const actions = getTransactionActions(actionData, transaction.fromAddress);
     const normalizedActions = proposalActionUtils.normalizeActions(
         actions,
         dao,
@@ -123,7 +123,10 @@ export const TransactionDetailDialog: React.FC<
             />
             <ProposalActions.Root
                 actionsCount={actionCount}
-                isLoading={isLoading || actionData?.decoding}
+                isLoading={
+                    isLoading ||
+                    (actionData?.decoding && actionData.rawActions == null)
+                }
             >
                 <ProposalActions.Container emptyStateDescription="">
                     {normalizedActions.map((action, index) => (
