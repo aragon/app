@@ -137,6 +137,12 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         },
     };
 
+    const isFilterAvailabilityLoading = [
+        receivedTransactions,
+        sentTransactions,
+        executionTransactions,
+    ].some((query) => query.isPending);
+
     const visibleTypeFilters = dataListUtils.getVisibleFilters(
         transactionListTypeFilters,
         filterAvailability,
@@ -145,6 +151,8 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
     const availableTransactionTypes = visibleTypeFilters.filter(
         (filter) => filter !== TransactionListTypeFilter.ALL,
     );
+    const showTypeFilters =
+        !isFilterAvailabilityLoading && availableTransactionTypes.length > 1;
 
     const [activeTypeFilter, setActiveTypeFilter] = useFilterUrlParam({
         fallbackValue: TransactionListTypeFilter.ALL,
@@ -178,7 +186,7 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
             pageSize={pageSize}
             state={state}
         >
-            {availableTransactionTypes.length > 1 && (
+            {showTypeFilters && (
                 <ToggleGroup
                     isMultiSelect={false}
                     onChange={(value) => {

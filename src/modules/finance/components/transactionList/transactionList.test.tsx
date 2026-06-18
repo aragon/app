@@ -12,6 +12,7 @@ import {
     generateDao,
     generateDaoPlugin,
     generatePaginatedResponse,
+    generateReactQueryInfiniteResultLoading,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
 import * as useTransactionListData from '../../hooks/useTransactionListData';
@@ -145,6 +146,29 @@ describe('<TransactionList.Default /> component', () => {
 
         expect(
             screen.queryByRole('radio', { name: 'Executions' }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('does not render type filters while availability is still loading', () => {
+        useTransactionListSpy.mockImplementation(() =>
+            generateReactQueryInfiniteResultLoading(),
+        );
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [],
+            state: 'initialLoading' as const,
+            pageSize: 10,
+            itemsCount: 0,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.queryByRole('radio', {
+                name: 'app.finance.transactionList.typeFilter.received',
+            }),
         ).not.toBeInTheDocument();
     });
 
