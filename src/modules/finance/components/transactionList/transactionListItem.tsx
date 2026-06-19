@@ -8,7 +8,7 @@ import {
     TransactionStatus,
     type TransactionTransferType,
 } from '@aragon/gov-ui-kit';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -18,6 +18,7 @@ import {
     TransactionSide,
     type TransactionTransferSide,
 } from '../../api/financeService';
+import { transactionExecutionUtils } from '../../utils/transactionExecutionUtils';
 
 export interface ITransactionListItemProps {
     /**
@@ -71,25 +72,14 @@ const buildTransferProps = (
     type: transactionSideToDataListType[transaction.side],
 });
 
-const getSourcePlugin = (
-    source: string | undefined,
-    dao: IDao | undefined,
-): IDaoPlugin | undefined =>
-    daoUtils
-        .getDaoPlugins(dao)
-        ?.find(
-            (plugin) =>
-                plugin.processKey === source ||
-                plugin.slug === source ||
-                plugin.subdomain === source ||
-                plugin.interfaceType === source,
-        );
-
 const getExecutionLabel = (
     transaction: ITransactionExecution,
     dao: IDao | undefined,
 ) => {
-    const sourcePlugin = getSourcePlugin(transaction.source, dao);
+    const sourcePlugin = transactionExecutionUtils.getSourcePlugin(
+        transaction.source,
+        dao,
+    );
 
     if (sourcePlugin != null) {
         return daoUtils.getPluginName(sourcePlugin);

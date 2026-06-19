@@ -31,9 +31,9 @@ import { TransactionListItem } from './transactionListItem';
 
 enum TransactionListTypeFilter {
     ALL = 'all',
+    EXECUTIONS = 'executions',
     RECEIVED = 'received',
     SENT = 'sent',
-    EXECUTIONS = 'executions',
 }
 
 export const transactionListTypeFilterParam = 'transactiontype';
