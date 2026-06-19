@@ -8,7 +8,11 @@ import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
+// APP-946 hotfix import (remove in APP-957)
+import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IPermissionCheckDialogParams } from '../../dialogs/permissionCheckDialog';
+// APP-946 hotfix import (remove in APP-957)
+import { useCitreaCoreProposalCreationOverride } from '../useCitreaCoreProposalCreationOverride';
 
 export interface IUsePermissionCheckGuardParams
     extends Omit<IPermissionCheckDialogParams, 'plugin'> {
@@ -46,6 +50,26 @@ export const usePermissionCheckGuard = (
         pluginId: plugin?.interfaceType ?? '',
         params: { plugin: plugin as IDaoPlugin, daoId, proposal },
     }) ?? { hasPermission: true };
+
+    // --- APP-946 temporary hotfix START (remove in APP-957:
+    // https://linear.app/aragon/issue/APP-957) ---
+    // Gate the Citrea "core" process proposal creation by Core Team Safe
+    // ownership. No-op for every other DAO/process/slot. On removal: delete this
+    // block, the two imports above (GovernanceSlotId,
+    // useCitreaCoreProposalCreationOverride), and restore
+    // `result: isConnected && hasPermission` in the return below.
+    const citreaOverride = useCitreaCoreProposalCreationOverride({
+        daoId,
+        plugin,
+    });
+    const isProposalCreationSlot =
+        slotId ===
+        GovernanceSlotId.GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION;
+    const effectiveHasPermission =
+        isProposalCreationSlot && citreaOverride.isActive
+            ? citreaOverride.hasPermission
+            : hasPermission;
+    // --- APP-946 temporary hotfix END ---
 
     const checkUserPermission = useCallback(
         (functionParams?: Partial<IUsePermissionCheckGuardParams>) => {
@@ -100,5 +124,9 @@ export const usePermissionCheckGuard = (
         ],
     );
 
-    return { check: checkFunction, result: isConnected && hasPermission };
+    return {
+        check: checkFunction,
+        // APP-946 hotfix (remove in APP-957): restore `isConnected && hasPermission`.
+        result: isConnected && effectiveHasPermission,
+    };
 };
