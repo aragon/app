@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    addressUtils,
     TransactionType as DataListTransactionType,
     type ITransactionDataListItemProps,
     TransactionDataListItem,
@@ -90,9 +91,15 @@ const getExecutionLabel = (
 ) => {
     const sourcePlugin = getSourcePlugin(transaction.source, dao);
 
-    return sourcePlugin != null
-        ? daoUtils.getPluginName(sourcePlugin)
-        : (transaction.source ?? transaction.fromAddress);
+    if (sourcePlugin != null) {
+        return daoUtils.getPluginName(sourcePlugin);
+    }
+
+    const label = transaction.source ?? transaction.fromAddress;
+
+    return addressUtils.isAddress(label)
+        ? addressUtils.truncateAddress(label)
+        : label;
 };
 
 const buildExecutionProps = (

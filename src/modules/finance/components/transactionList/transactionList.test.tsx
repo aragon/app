@@ -1,4 +1,4 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { addressUtils, GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as financeService from '@/modules/finance/api/financeService';
@@ -271,6 +271,31 @@ describe('<TransactionList.Default /> component', () => {
 
         expect(screen.getByText('Token Voting')).toBeInTheDocument();
         expect(screen.queryByText('tokenvoting')).not.toBeInTheDocument();
+    });
+
+    it('truncates the execution source when it is a raw address', () => {
+        const source = '0x1234567890123456789012345678901234567890';
+        const transaction = generateTransaction({
+            side: TransactionSide.EXECUTION,
+            source,
+        });
+
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [transaction],
+            state: 'idle' as const,
+            pageSize: 10,
+            itemsCount: 1,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(addressUtils.truncateAddress(source)),
+        ).toBeInTheDocument();
+        expect(screen.queryByText(source)).not.toBeInTheDocument();
     });
 
     it('calls the transaction click handler only for execution rows', async () => {
