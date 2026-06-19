@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    addressUtils,
     type IProposalActionsFooterDropdownItem,
     invariant,
     ProposalActions,
@@ -85,7 +86,12 @@ export const TransactionDetailDialog: React.FC<
             ? daoUtils.getDaoUrl(dao, `proposals/${proposalSlug}`)
             : undefined;
     const executedByAddress = actionData?.executedBy ?? transaction.fromAddress;
-    const executedByLabel = actionData?.source ?? transaction.source;
+    const executedBySource = actionData?.source ?? transaction.source;
+    // gov-ui-kit truncates and links the `address` itself when no `label` is set, so
+    // only pass a label for a human-readable source (e.g. a plugin/process name).
+    const executedByLabel = addressUtils.isAddress(executedBySource)
+        ? undefined
+        : executedBySource;
     const actionsDropdownItems: IProposalActionsFooterDropdownItem[] =
         normalizedActions.length > 0
             ? [
