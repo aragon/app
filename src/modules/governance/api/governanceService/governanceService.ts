@@ -60,10 +60,10 @@ class GovernanceService extends AragonBackendService {
         const interfaceType = queryParams?.pluginInterfaceType;
         const tokenUnderlying = queryParams?.tokenUnderlying;
 
-        // The subdomain Envio indexer only covers plain ERC-20 token-voting
-        // governance tokens. Wrapped/VE-adapter tokens (where the governance
-        // token wraps an underlying) are not indexed and must keep using the
-        // legacy backend until Envio supports them.
+        // The aragon-subdomain only covers plain ERC-20 token-voting
+        // governance tokens. Wrapped/VE-adapter tokens are not yet indexed
+        // and must keep using the legacy backend until the aragon-subdomain
+        // supports them.
         const useSubdomain =
             pluginAddress != null &&
             tokenAddress != null &&

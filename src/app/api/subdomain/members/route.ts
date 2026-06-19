@@ -1,4 +1,4 @@
-import { EnvioClient, MemberController } from '@aragon/aragon-subdomain';
+import { AragonSubdomain, EnvioClient } from '@aragon/aragon-subdomain';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
@@ -11,7 +11,7 @@ const endpoint =
     process.env.ENVIO_GRAPHQL_ENDPOINT ?? 'http://localhost:8080/v1/graphql';
 const apiToken = process.env.ENVIO_API_TOKEN;
 
-const controller = MemberController.load(new EnvioClient(endpoint, apiToken));
+const controller = AragonSubdomain.load(new EnvioClient(endpoint, apiToken));
 
 export const GET = async (req: NextRequest) => {
     const params = req.nextUrl.searchParams;
