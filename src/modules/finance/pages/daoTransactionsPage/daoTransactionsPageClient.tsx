@@ -6,7 +6,9 @@ import {
     useTransactionList,
 } from '@/modules/finance/api/financeService';
 import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
+import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -37,6 +39,7 @@ export const DaoTransactionsPageClient: React.FC<
     const { id, initialParams } = props;
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
+    const { open } = useDialogContext();
     const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
     const { activeOption } = useDaoFilterUrlParam({
@@ -94,8 +97,14 @@ export const DaoTransactionsPageClient: React.FC<
                 title={t('app.finance.daoTransactionsPage.main.title')}
             >
                 <TransactionList.Container
+                    dao={dao}
                     daoId={id}
                     initialParams={initialParams}
+                    onTransactionClick={(transaction) =>
+                        open(FinanceDialogId.TRANSACTION_DETAIL, {
+                            params: { dao, transaction },
+                        })
+                    }
                 />
             </Page.Main>
             <Page.Aside>

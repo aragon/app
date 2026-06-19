@@ -1,3 +1,4 @@
+import { Network } from '@/shared/api/daoService';
 import {
     generateAsset,
     generateToken,
@@ -50,5 +51,33 @@ describe('finance service', () => {
             params,
         );
         expect(result).toEqual(transactions);
+    });
+
+    it('getTransactionActions fetches the decoded actions of the specified execution transaction', async () => {
+        const params = {
+            urlParams: {
+                network: Network.ETHEREUM_SEPOLIA,
+                id: 'execution-id',
+            },
+        };
+        const actions = {
+            source: 'router',
+            actionCount: 1,
+            executedBy: '0x123',
+            transactionHash: '0xabc',
+            blockTimestamp: 1_700_000_000,
+            decoding: false,
+            actions: [],
+            rawActions: [],
+        };
+
+        requestSpy.mockResolvedValue(actions);
+        const result = await financeService.getTransactionActions(params);
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            financeService['urls'].transactionActions,
+            params,
+        );
+        expect(result).toEqual(actions);
     });
 });

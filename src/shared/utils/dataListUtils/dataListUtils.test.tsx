@@ -1,6 +1,35 @@
 import { dataListUtils } from './dataListUtils';
 
 describe('dataList utils', () => {
+    describe('getVisibleFilters', () => {
+        const filters = ['all', 'received', 'sent', 'executions'];
+
+        it('returns always-visible and available filters', () => {
+            const result = dataListUtils.getVisibleFilters(
+                filters,
+                {
+                    received: { itemsCount: 0 },
+                    sent: { itemsCount: 2 },
+                    executions: { itemsCount: 1 },
+                },
+                ['all'],
+            );
+
+            expect(result).toEqual(['all', 'sent', 'executions']);
+        });
+
+        it('keeps filters visible while availability is pending or failed', () => {
+            const result = dataListUtils.getVisibleFilters(filters, {
+                all: { itemsCount: 0 },
+                received: { isPending: true },
+                sent: { isError: true },
+                executions: { itemsCount: 0 },
+            });
+
+            expect(result).toEqual(['received', 'sent']);
+        });
+    });
+
     describe('queryToDataListState', () => {
         it('returns fetchinNextPage state when query is fetching next page', () => {
             const state = dataListUtils.queryToDataListState({

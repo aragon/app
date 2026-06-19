@@ -1763,7 +1763,13 @@
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
         },
-        "groupTab": "All transactions"
+        "groupTab": "All transactions",
+        "typeFilter": {
+          "all": "All",
+          "executions": "Executions",
+          "received": "Received",
+          "sent": "Sent"
+        }
       },
       "transactionListStats": {
         "daos": "DAOs",
