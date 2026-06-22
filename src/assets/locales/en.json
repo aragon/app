@@ -1763,7 +1763,13 @@
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
         },
-        "groupTab": "All transactions"
+        "groupTab": "All transactions",
+        "typeFilter": {
+          "all": "All",
+          "executions": "Executions",
+          "received": "Received",
+          "sent": "Sent"
+        }
       },
       "transactionListStats": {
         "daos": "DAOs",
@@ -1886,10 +1892,6 @@
         }
       },
       "createProposalPage": {
-        "createProposalPageClientSteps": {
-          "simulate": "Simulate actions",
-          "skipSimulation": "Skip simulation"
-        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -2220,6 +2222,8 @@
           "success": "Continue"
         },
         "error": "There was an error simulating the actions. Please try again later.",
+        "simulate": "Simulate actions",
+        "skipSimulation": "Skip simulation",
         "title": "Simulate actions"
       },
       "verifySmartContractDialog": {
@@ -3740,6 +3744,10 @@
       "governanceBodyInfo": {
         "external": "External address"
       },
+      "networkSwitchAlert": {
+        "body": "Switch to {{networkName}} in your wallet.",
+        "title": "Switch network"
+      },
       "page": {
         "header": {
           "readLess": "Read less",
@@ -3777,10 +3785,6 @@
           "cancel": "Cancel",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
-        },
-        "networkAlert": {
-          "body": "Switch to {{transactionNetworkName}} in your wallet.",
-          "title": "Switch network"
         },
         "step": {
           "APPROVE": {
