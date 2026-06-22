@@ -1,18 +1,16 @@
-# Aragon Subdomain
+# Aragon Domain
 
 Shared business-logic package for the Aragon governance platform. It is the single home for everything a frontend consumer needs that *isn't* raw on-chain data — membership rules, voting-power math, delegation logic, permission checks, ENS profile enrichment. Paired with [`aragon-indexer`](../aragon-indexer) (which provides only deterministic, indexed on-chain state), it lets any frontend consumer stay thin.
 
 Today the package ships one capability — looking up the ENS text records attached to a member's `.aragon.eth` subdomain — with the rest of the surface area arriving as the Envio migration progresses.
 
-> **About the name.** "Subdomain" here is the DDD sense — a bounded subdomain of the Aragon business domain — and it happens to overlap with the ENS `.aragon.eth` subdomains that the first use case reads. The package is not limited to ENS work; that's just what ships first.
-
 ## How it fits in
 
 ```
-On-chain events → Envio (aragon-indexer) → aragon-subdomain → Frontend consumers
+On-chain events → Envio (aragon-indexer) → aragon-domain → Frontend consumers
 ```
 
-`aragon-indexer` indexes raw on-chain state. `aragon-subdomain` queries that indexed data, pulls non-deterministic data from other sources, applies domain rules, and returns clean DTOs. Consumers (the App Next.js BFF, an MCP server, future mobile app, etc) call into a single `AragonSubdomain` controller.
+`aragon-indexer` indexes raw on-chain state. `aragon-domain` queries that indexed data, pulls non-deterministic data from other sources, applies domain rules, and returns clean DTOs. Consumers (the App Next.js BFF, an MCP server, future mobile app, etc) call into a single `AragonDomain` controller.
 
 ## Architecture
 
@@ -43,10 +41,10 @@ pnpm run test
 ## Usage
 
 ```ts
-import { AragonSubdomain, EnvioClient } from '@aragon/aragon-subdomain';
+import { AragonDomain, EnvioClient } from '@aragon/aragon-domain';
 
 const envioClient = new EnvioClient({ /* ... */ });
-const aragon = AragonSubdomain.load(envioClient);
+const aragon = AragonDomain.load(envioClient);
 
 const records = await aragon.getMemberProfileTextRecords({
   subdomain: 'alice.aragon.eth',
@@ -86,7 +84,7 @@ Snapshot releases let you test unreleased changes from a branch on npm without c
 3. **Install the snapshot** in a consumer — the exact command also appears in the workflow run's summary:
 
    ```bash
-   pnpm add @aragon/aragon-subdomain@snapshot-<run-id>
+   pnpm add @aragon/aragon-domain@snapshot-<run-id>
    ```
 
 Each run gets its own dist-tag, so multiple in-flight branches can publish snapshots in parallel without colliding. The workflow won't publish anything if no changesets are pending.

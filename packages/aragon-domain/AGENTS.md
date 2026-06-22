@@ -1,4 +1,4 @@
-# AGENTS.md — Aragon Subdomain
+# AGENTS.md — Aragon Domain
 
 Business logic package between the Envio indexer (`aragon-indexer/`) and the Next.js BFF. Built on [`ddd-core-ts`](https://github.com/asciiman/ddd-core-ts).
 
@@ -20,7 +20,7 @@ src/
 Dependencies flow inward: Infrastructure → Use Cases → Domain.
 
 - **Path alias:** `@/*` resolves to `src/*` (see `tsconfig.json`). Always import as `@/domain/...`, never relative.
-- **Public surface:** `src/index.ts` exports `AragonSubdomain` (the controller) and `EnvioClient`. That's the entire consumer-facing API.
+- **Public surface:** `src/index.ts` exports `AragonDomain` (the controller) and `EnvioClient`. That's the entire consumer-facing API.
 - **Scripts:** `pnpm run build | test | lint | type-check`. Lint auto-formats via biome.
 
 Today the domain implements only `MemberProfile` (ENS text records on `.aragon.eth` subdomains). Other concepts (`Member`, `Membership`, `VotingPower`, `Delegation`, `Lock`, etc.) are planned — see `ENVIO_MIGRATION_PLAN.md`. Do not assume they exist.

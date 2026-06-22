@@ -8,7 +8,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "aragon/aragon-subdomain"
+      "repo": "aragon/aragon-domain"
     }
   ],
   "commit": false,

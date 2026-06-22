@@ -1,4 +1,4 @@
-# @aragon/aragon-subdomain
+# @aragon/aragon-domain
 
 ## 0.2.0
 

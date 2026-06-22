@@ -18,9 +18,9 @@ jobs:
           export-env: false
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          GPG_PASSPHRASE: op://kv_aragon-subdomain_infra/arabot-1_SIGN_CERTS/credential
-          GPG_PRIVATE_KEY: op://kv_aragon-subdomain_infra/arabot-1_SIGN_CERTS/private_key
-          ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-subdomain_infra/GITHUB_PAT/credential
+          GPG_PASSPHRASE: op://kv_aragon-domain_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_aragon-domain_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-domain_infra/GITHUB_PAT/credential
       - name: Checkout actions
         uses: actions/checkout@v6.0.2
         with:

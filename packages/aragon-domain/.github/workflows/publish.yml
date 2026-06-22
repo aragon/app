@@ -1,6 +1,6 @@
 name: Publish
 
-# Registered as the npm Trusted Publisher for @aragon/aragon-subdomain. The
+# Registered as the npm Trusted Publisher for @aragon/aragon-domain. The
 # publish steps run INLINE in this file (no reusable workflow) so the workflow
 # identity in the OIDC token always matches the registered publisher — npm
 # rejects the token exchange (404) if a reusable/called workflow runs the
@@ -55,7 +55,7 @@ jobs:
           export-env: false
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-          ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-subdomain_infra/GITHUB_PAT/credential
+          ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-domain_infra/GITHUB_PAT/credential
       - name: Checkout actions
         uses: actions/checkout@v6.0.2
         with:
@@ -105,7 +105,7 @@ jobs:
             echo "Install with:"
             echo ""
             echo '```bash'
-            echo "pnpm add @aragon/aragon-subdomain@snapshot-${{ github.run_id }}"
+            echo "pnpm add @aragon/aragon-domain@snapshot-${{ github.run_id }}"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Write no-op to summary

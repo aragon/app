@@ -1,5 +1,5 @@
 {
-  "name": "@aragon/aragon-subdomain",
+  "name": "@aragon/aragon-domain",
   "version": "0.2.0",
   "description": "Aragon governance business logic package — domain model, use cases, and infrastructure adapters",
   "main": "dist/index.js",
@@ -30,12 +30,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/aragon/aragon-subdomain.git"
+    "url": "git+https://github.com/aragon/aragon-domain.git"
   },
   "bugs": {
-    "url": "https://github.com/aragon/aragon-subdomain/issues"
+    "url": "https://github.com/aragon/aragon-domain/issues"
   },
-  "homepage": "https://github.com/aragon/aragon-subdomain#readme",
+  "homepage": "https://github.com/aragon/aragon-domain#readme",
   "dependencies": {
     "bignumber.js": "11.1.2",
     "ddd-core-ts": "0.1.1",

@@ -1,13 +1,13 @@
 import assert from 'node:assert';
-import { AragonSubdomain, EnvioClient } from '../src';
+import { AragonDomain, EnvioClient } from '../src';
 
 /**
- * Builds an AragonSubdomain backed by an EnvioClient whose `query`
+ * Builds an AragonDomain backed by an EnvioClient whose `query`
  * method is replaced with a FIFO queue of canned responses. The
  * underlying GraphQLClient is constructed but never used at the
  * network layer.
  */
-function buildController(responses: unknown[]): AragonSubdomain {
+function buildController(responses: unknown[]): AragonDomain {
   const envio = new EnvioClient('https://unused.example.invalid');
   const queue = [...responses];
   vi.spyOn(envio, 'query').mockImplementation(async () => {
@@ -16,10 +16,10 @@ function buildController(responses: unknown[]): AragonSubdomain {
     }
     return queue.shift() as never;
   });
-  return AragonSubdomain.load(envio);
+  return AragonDomain.load(envio);
 }
 
-describe('AragonSubdomain', () => {
+describe('AragonDomain', () => {
   describe('getMemberProfileTextRecords', () => {
     it('returns the live text records as a DTO list', async () => {
       const controller = buildController([
