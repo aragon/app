@@ -1,13 +1,51 @@
-name: Library Snapshot
+name: Publish
 
+# Registered as the npm Trusted Publisher for @aragon/aragon-subdomain. The
+# publish steps run INLINE in this file (no reusable workflow) so the workflow
+# identity in the OIDC token always matches the registered publisher — npm
+# rejects the token exchange (404) if a reusable/called workflow runs the
+# publish instead. Auth is OIDC trusted publishing; no long-lived NPM_TOKEN.
+#   - release event            -> stable publish (`latest`), gated by approval
+#   - manual workflow_dispatch  -> snapshot publish (snapshot-<run-id> tag)
 on:
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
-  contents: write
+  id-token: write # required for OIDC trusted publishing
+  contents: read
 
 jobs:
   release:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    # Human approval gate: the `npm-publish` environment is configured in
+    # repo Settings → Environments with @aragon/app-team as required reviewers,
+    # so every stable release publish must be approved before this job runs.
+    environment: npm-publish
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          # Make sure to checkout the main branch with the bumped version on the package.json file as Github does the
+          # checkout of the commit SHA that triggered the publish workflow by default
+          ref: main
+      - name: Build library
+        run: pnpm build
+      - name: Publish library
+        # Authenticated via OIDC trusted publishing (id-token). No auth token.
+        # --provenance emits a signed build-provenance attestation.
+        run: pnpm publish --access public --provenance
+
+  snapshot:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets from OP
@@ -18,7 +56,6 @@ jobs:
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
           ARABOT_PAT_TRIGGER_WORKFLOW: op://kv_aragon-subdomain_infra/GITHUB_PAT/credential
-          NPM_TOKEN: op://kv_aragon-subdomain_infra/NPM_TOKEN/credential
       - name: Checkout actions
         uses: actions/checkout@v6.0.2
         with:
@@ -42,7 +79,7 @@ jobs:
           GITHUB_TOKEN: ${{ steps.load-secrets.outputs.ARABOT_PAT_TRIGGER_WORKFLOW }}
       - name: Get package version
         id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1
       - name: Detect snapshot change
         id: detect
         run: |
@@ -53,11 +90,9 @@ jobs:
           fi
       - name: Publish snapshot
         if: steps.detect.outputs.changed == 'true'
-        run: |
-          pnpm config set npmAuthToken ${{ steps.load-secrets.outputs.NPM_TOKEN }}
-          pnpm publish --access public --tag snapshot-${{ github.run_id }} --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ steps.load-secrets.outputs.NPM_TOKEN }}
+        # Authenticated via OIDC trusted publishing (id-token). No auth token.
+        # --provenance emits a signed build-provenance attestation.
+        run: pnpm publish --access public --tag snapshot-${{ github.run_id }} --no-git-checks --provenance
       - name: Write snapshot version to summary
         if: steps.detect.outputs.changed == 'true'
         run: |
