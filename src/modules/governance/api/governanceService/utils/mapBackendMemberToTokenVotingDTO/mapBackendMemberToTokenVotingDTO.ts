@@ -16,7 +16,7 @@ export const mapBackendMemberToTokenVotingDTO = (
     member: ITokenMember,
 ): TokenVotingMemberDTO => ({
     address: member.address,
-    ens: null,
+    ens: member.ens,
     votingPower: member.votingPower,
     metrics: {
         firstActivityTimestamp: member.metrics.firstActivityTimestamp,
