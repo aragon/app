@@ -1,8 +1,8 @@
 'use client';
 
 import { useAppKitAccount } from '@reown/appkit/react';
-import { setUser } from '@sentry/nextjs';
 import { useEffect } from 'react';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 
 /**
  * Attaches the connected wallet address as the Sentry user id so that errors stop
@@ -15,11 +15,9 @@ export const SentryUserSync: React.FC = () => {
     const { address, isConnected } = useAppKitAccount({ namespace: 'eip155' });
 
     useEffect(() => {
-        if (isConnected && address != null) {
-            setUser({ id: address });
-        } else {
-            setUser(null);
-        }
+        monitoringUtils.identifyUser(
+            isConnected && address != null ? address : null,
+        );
     }, [address, isConnected]);
 
     return null;

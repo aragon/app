@@ -66,12 +66,24 @@ describe('monitoring utils', () => {
             expect(result).not.toBeNull();
         });
 
-        it('keeps expected wallet behaviour but tags it expected (not hidden)', () => {
+        it('keeps expected wallet behaviour, tags it expected and demotes to info', () => {
             const result = monitoringUtils.beforeSend(
                 buildEvent('Error: User rejected the request'),
             );
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toEqual('expected');
+            expect(result?.level).toEqual('info');
+        });
+
+        it('treats non-actionable ENS gateway failures as expected/info', () => {
+            const result = monitoringUtils.beforeSend(
+                buildEvent(
+                    'ContractFunctionExecutionError: The contract function "resolveWithGateways" reverted',
+                ),
+            );
+            expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toEqual('expected');
+            expect(result?.level).toEqual('info');
         });
 
         it('keeps unhandled wallet rejections (EIP-1193 code 4001) tagged expected', () => {

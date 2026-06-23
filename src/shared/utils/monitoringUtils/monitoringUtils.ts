@@ -9,6 +9,7 @@ import {
     captureException,
     captureMessage,
     captureRequestError,
+    setUser,
     withServerActionInstrumentation,
 } from '@sentry/nextjs';
 
@@ -67,6 +68,19 @@ class MonitoringUtils {
      * serialized payload instead.
      */
     private expectedProviderErrorCodes = [4001, 4100, 4900, 4901];
+
+    /**
+     * Non-actionable failures from infrastructure outside our control that belongs to the
+     * user, not our backend: mainly ENS off-chain (CCIP) gateways returning malformed
+     * data when resolving a user's ENS avatar/name. We can't fix someone else's gateway and
+     * it only degrades an avatar, so — like expected user behaviour — these are kept at
+     * `info` level (searchable for investigation) but never alerted on.
+     */
+    private nonActionableExternalPatterns = [
+        'resolveWithGateways', // ENS forward resolution via off-chain gateway
+        'reverseWithGateways', // ENS reverse resolution via off-chain gateway
+        'OffchainLookupError', // viem CCIP-read lookup failure
+    ];
 
     /**
      * Objectively zero-signal noise injected by the user's environment, not our code:
@@ -132,6 +146,11 @@ class MonitoringUtils {
         const noiseClass = this.classifyNoise(event, message, hint);
         if (noiseClass != null) {
             event.tags = { ...event.tags, noise_class: noiseClass };
+            // Expected/non-actionable events are kept for investigation but demoted to
+            // `info` so they read as non-bugs and stay out of error-level alerts.
+            if (noiseClass === 'expected') {
+                event.level = 'info';
+            }
         }
 
         return event;
@@ -140,6 +159,14 @@ class MonitoringUtils {
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
         captureException(error, { extra: context });
+    };
+
+    /**
+     * Attaches (or clears) the current user so events become searchable by `user.id`.
+     * Pass the connected wallet address, or null on disconnect.
+     */
+    identifyUser = (id: string | null) => {
+        setUser(id == null ? null : { id });
     };
 
     logMessage = (name: string, params?: ILogMessageParams) => {
@@ -156,9 +183,13 @@ class MonitoringUtils {
         message: string,
         hint?: EventHint,
     ): SentryNoiseClass | undefined => {
-        // Expected user/wallet behaviour: kept for investigation, out of alerts.
+        // Expected user/wallet behaviour and non-actionable external (ENS gateway)
+        // failures: kept for investigation, demoted to info, out of alerts.
         if (
             this.expectedErrorPatterns.some((pattern) =>
+                message.includes(pattern),
+            ) ||
+            this.nonActionableExternalPatterns.some((pattern) =>
                 message.includes(pattern),
             ) ||
             this.hasExpectedProviderErrorCode(hint, event)
