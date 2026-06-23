@@ -21,11 +21,19 @@ export class AragonBackendService extends HttpService {
         TParams extends IRequestQueryParams<object>,
         TData = unknown,
     >(
-        lastPage: IPaginatedResponse<TData>,
+        lastPage: IPaginatedResponse<TData> | null,
         _allPages: IPaginatedResponse<TData>[],
         previousParams: TParams,
     ): TParams | undefined => {
-        const { page, totalPages } = lastPage.metadata;
+        // A page can be null/empty (e.g. a failed or skipped fetch); treat it as the end
+        // of the list instead of throwing on `lastPage.metadata`.
+        const metadata = lastPage?.metadata;
+
+        if (metadata == null) {
+            return;
+        }
+
+        const { page, totalPages } = metadata;
 
         if (page >= totalPages) {
             return;

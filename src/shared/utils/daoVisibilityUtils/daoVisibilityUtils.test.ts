@@ -4,6 +4,17 @@ import { daoVisibilityUtils } from './daoVisibilityUtils';
 
 describe('daoVisibilityUtils', () => {
     describe('filterHiddenPlugins', () => {
+        it('returns an empty array when plugins is undefined', () => {
+            expect(
+                daoVisibilityUtils.filterHiddenPlugins(undefined, undefined),
+            ).toEqual([]);
+            expect(
+                daoVisibilityUtils.filterHiddenPlugins(undefined, {
+                    pluginsToHide: [{ address: '0xAAA', name: 'Plugin A' }],
+                }),
+            ).toEqual([]);
+        });
+
         it('returns all plugins when override is undefined', () => {
             const plugins = [
                 generateDaoPlugin({ address: '0xAAA' }),

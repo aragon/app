@@ -35,3 +35,7 @@
 {"ts":"2026-06-23T12:49:35.098Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":0,"adapter":"claude"}
 {"ts":"2026-06-23T12:49:49.841Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-06-23T12:50:57.800Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T13:21:20.049Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T13:21:32.293Z","tool":"Edit","file":"src/shared/utils/daoVisibilityUtils/daoVisibilityUtils.ts","rule":"plugin-visibility","bytes":2379,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T13:21:53.621Z","tool":"Edit","file":"src/shared/utils/daoVisibilityUtils/daoVisibilityUtils.test.ts","rule":"plugin-visibility","bytes":2379,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T13:22:34.983Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendService.client.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}

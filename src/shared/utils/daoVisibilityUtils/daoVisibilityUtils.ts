@@ -10,20 +10,22 @@ class DaoVisibilityUtils {
      * Comparison is case-insensitive.
      */
     filterHiddenPlugins = (
-        plugins: IDaoPlugin[],
+        plugins: IDaoPlugin[] | undefined,
         override: IDaoOverride | undefined,
     ): IDaoPlugin[] => {
+        // A DAO may have no plugins array yet — guard against the undefined case.
+        const visiblePlugins = plugins ?? [];
         const hiddenPlugins = override?.pluginsToHide;
 
         if (hiddenPlugins == null || hiddenPlugins.length === 0) {
-            return plugins;
+            return visiblePlugins;
         }
 
         const hiddenSet = new Set(
             hiddenPlugins.map((plugin) => plugin.address.toLowerCase()),
         );
 
-        return plugins.filter(
+        return visiblePlugins.filter(
             (plugin) => !hiddenSet.has(plugin.address.toLowerCase()),
         );
     };
