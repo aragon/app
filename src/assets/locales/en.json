@@ -1765,10 +1765,10 @@
         },
         "groupTab": "All transactions",
         "typeFilter": {
-          "all": "All",
+          "all": "All transactions",
           "executions": "Executions",
-          "received": "Received",
-          "sent": "Sent"
+          "received": "Deposits",
+          "sent": "Withdrawals"
         }
       },
       "transactionListStats": {

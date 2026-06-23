@@ -1,17 +1,19 @@
 'use client';
 
 import {
-    addressUtils,
     type IProposalActionsFooterDropdownItem,
     invariant,
     ProposalActions,
     TransactionDetail,
     TransactionDetailSummary,
 } from '@aragon/gov-ui-kit';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 import {
     type ITransactionExecution,
     useTransactionActions,
 } from '@/modules/finance/api/financeService';
+import { transactionExecutionUtils } from '@/modules/finance/utils/transactionExecutionUtils';
 import { ProposalActionsItem } from '@/modules/governance/components/proposalActionsItem';
 import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
@@ -57,6 +59,16 @@ export const TransactionDetailDialog: React.FC<
     const { t } = useTranslations();
     const { close } = useDialogContext();
 
+    const pathname = usePathname();
+    const initialPathnameRef = useRef(pathname);
+
+    // Close the dialog when navigating away (e.g. clicking the proposal link).
+    useEffect(() => {
+        if (pathname !== initialPathnameRef.current) {
+            close(location.id);
+        }
+    }, [pathname, close, location.id]);
+
     const { data: actionData, isLoading } = useTransactionActions(
         {
             urlParams: {
@@ -87,11 +99,23 @@ export const TransactionDetailDialog: React.FC<
             : undefined;
     const executedByAddress = actionData?.executedBy ?? transaction.fromAddress;
     const executedBySource = actionData?.source ?? transaction.source;
-    // gov-ui-kit truncates and links the `address` itself when no `label` is set, so
-    // only pass a label for a human-readable source (e.g. a plugin/process name).
-    const executedByLabel = addressUtils.isAddress(executedBySource)
-        ? undefined
-        : executedBySource;
+    const sourcePlugin = transactionExecutionUtils.getSourcePlugin(
+        executedBySource,
+        dao,
+    );
+    const sourcePluginName =
+        sourcePlugin != null ? daoUtils.getPluginName(sourcePlugin) : undefined;
+    // Always show the executor as the (truncated, linked) address with the resolved
+    // plugin name and version below it. gov-ui-kit truncates and links the address
+    // itself when no `label` is set.
+    const executedByHelptext =
+        sourcePlugin?.release && sourcePlugin?.build
+            ? t('app.shared.daoPluginInfo.pluginVersionInfo', {
+                  name: sourcePluginName,
+                  release: sourcePlugin.release,
+                  build: sourcePlugin.build,
+              })
+            : sourcePluginName;
     const actionsDropdownItems: IProposalActionsFooterDropdownItem[] =
         normalizedActions.length > 0
             ? [
@@ -118,7 +142,7 @@ export const TransactionDetailDialog: React.FC<
                 }
                 executedBy={{
                     address: executedByAddress,
-                    label: executedByLabel,
+                    helptext: executedByHelptext,
                 }}
                 proposalHref={proposalHref}
                 proposalId={proposalSlug?.toUpperCase()}
