@@ -22,6 +22,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 
 /** Steps that precede the main on-chain transaction in the update flow. */
@@ -128,6 +129,18 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
         });
     }, [ensName, updates, pinFileData]);
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                ensName,
+                updates,
+                avatarFileName: avatarFile?.name,
+                avatarFileSize: avatarFile?.size,
+                avatarFileLastModified: avatarFile?.lastModified,
+            }),
+        [ensName, updates, avatarFile],
+    );
+
     const customSteps = useMemo<
         ITransactionDialogStep<AragonProfileUpdateStep>[]
     >(
@@ -160,6 +173,7 @@ export const AragonProfileUpdateTransactionDialog: React.FC<
             description={t(
                 'app.application.aragonProfileUpdateTransactionDialog.description',
             )}
+            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             onCancelClick={handleCancel}
             onSuccess={handleSuccess}

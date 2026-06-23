@@ -2,6 +2,7 @@
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
@@ -14,6 +15,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { lockToVoteLockUnlockDialogUtils } from './lockToVoteLockUnlockDialogUtils';
 
 export interface ILockToVoteLockUnlockDialogParams {
@@ -97,6 +99,18 @@ export const LockToVoteLockUnlockDialog: React.FC<
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                action,
+                amount,
+                lockManagerAddress,
+                tokenAddress: token.address,
+                network,
+            }),
+        [action, amount, lockManagerAddress, token.address, network],
+    );
+
     const transactionInfo = showTransactionInfo
         ? {
               title: t(
@@ -115,6 +129,7 @@ export const LockToVoteLockUnlockDialog: React.FC<
             description={t(
                 `app.plugins.lockToVote.lockToVoteLockUnlockDialog.${action}.description`,
             )}
+            intentId={intentId}
             network={network}
             onSuccess={onSuccess}
             prepareTransaction={handlePrepareTransaction}

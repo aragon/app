@@ -147,10 +147,20 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
     const namespace =
         translationNamespace ?? 'app.governance.publishProposalDialog';
 
-    // Override the dialog's auto-derived identity: proposal calldata embeds a now-relative end date,
-    // so a calldata-derived id would drift on every re-open. Derive a stable one from the content.
+    // Stable identity for resume on re-open. Hash an explicit whitelist of the proposal's content
+    // fields (not the whole object, and not the prepared calldata which embeds a now-relative end
+    // date) so no future/volatile field can make the id drift between re-opens.
     const intentId = useMemo(
-        () => buildIntentId({ daoId, plugin: plugin.address, proposal }),
+        () =>
+            buildIntentId({
+                daoId,
+                plugin: plugin.address,
+                title: proposal.title,
+                summary: proposal.summary,
+                resources: proposal.resources,
+                body: proposal.body,
+                actions: proposal.actions,
+            }),
         [daoId, plugin.address, proposal],
     );
 

@@ -1,5 +1,5 @@
 import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { IPublishProposalDialogParams } from '@/modules/governance/dialogs/publishProposalDialog';
@@ -16,6 +16,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { prepareDaoContractsUpdateDialogUtils } from './prepareDaoContractsUpdateDialogUtils';
 
 export interface IPrepareDaoContractsUpdateDialogParams {
@@ -123,11 +124,22 @@ export const PrepareDaoContractsUpdateDialog: React.FC<
         'app.settings.prepareDaoContractsUpdateDialog.transactionInfoTitle',
     );
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                type: 'prepareDaoContractsUpdate',
+                daoId,
+                pluginAddress: plugin.address,
+            }),
+        [daoId, plugin.address],
+    );
+
     return (
         <TransactionDialog
             description={t(
                 'app.settings.prepareDaoContractsUpdateDialog.description',
             )}
+            intentId={intentId}
             network={dao.network}
             onSuccess={handlePublishUpdateProposal}
             prepareTransaction={handlePrepareTransaction}

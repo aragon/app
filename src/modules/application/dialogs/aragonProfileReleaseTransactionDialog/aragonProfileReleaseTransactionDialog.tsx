@@ -2,7 +2,7 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { encodeFunctionData } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
@@ -20,6 +20,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 
 export interface IAragonProfileReleaseTransactionDialogParams {
@@ -58,6 +59,11 @@ export const AragonProfileReleaseTransactionDialog: React.FC<
         [close, location.id],
     );
 
+    const intentId = useMemo(
+        () => buildIntentId({ type: 'aragonProfileRelease', ensName, address }),
+        [ensName, address],
+    );
+
     const prepareTransaction = useCallback(
         () =>
             Promise.resolve({
@@ -83,6 +89,7 @@ export const AragonProfileReleaseTransactionDialog: React.FC<
             description={t(
                 'app.application.aragonProfileReleaseTransactionDialog.description',
             )}
+            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             onCancelClick={handleCancel}
             onSuccess={handleSuccess}

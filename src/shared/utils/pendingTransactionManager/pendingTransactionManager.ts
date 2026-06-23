@@ -4,6 +4,7 @@ import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import {
     type IPendingTransactionState,
+    type PendingTransactionListener,
     PendingTransactionStatus,
 } from './pendingTransactionManager.api';
 
@@ -25,9 +26,16 @@ export const buildIntentId = (parts: unknown): string =>
 // reload too. Exported for tests; the app uses the shared `pendingTransactionManager` instance.
 export class PendingTransactionManager {
     private states = new Map<string, IPendingTransactionState>();
-    private listeners = new Set<() => void>();
+    private listeners = new Set<PendingTransactionListener>();
     // Sends started this session have a live wallet promise; hydrated ones don't.
     private liveSends = new Set<string>();
+    // Bumped on each send so a late resolution from a superseded send() is ignored.
+    private attempts = new Map<string, number>();
+    // Last request per intent, kept so a resumed dialog can re-send after a rejection.
+    private requests = new Map<
+        string,
+        ITransactionRequest & { chainId: number }
+    >();
 
     constructor() {
         this.hydrate();
@@ -37,26 +45,35 @@ export class PendingTransactionManager {
         intentId: string,
         request: ITransactionRequest & { chainId: number },
     ): void => {
-        this.liveSends.add(intentId);
+        this.requests.set(intentId, request);
+        const attempt = (this.attempts.get(intentId) ?? 0) + 1;
+        this.attempts.set(intentId, attempt);
         this.update(intentId, { status: PendingTransactionStatus.PENDING });
+
+        // Ignore a resolution from an earlier send() that lands after a newer one for this action.
+        const apply = (state: IPendingTransactionState) => {
+            if (this.attempts.get(intentId) === attempt) {
+                this.update(intentId, state);
+            }
+        };
 
         sendTransaction(wagmiConfig, request)
             .then((hash) =>
-                this.update(intentId, {
-                    status: PendingTransactionStatus.SUBMITTED,
-                    hash,
-                }),
+                apply({ status: PendingTransactionStatus.SUBMITTED, hash }),
             )
             .catch((error: unknown) =>
-                this.update(intentId, {
-                    status: PendingTransactionStatus.FAILED,
-                    error,
-                }),
+                apply({ status: PendingTransactionStatus.FAILED, error }),
             );
     };
 
     get = (intentId: string): IPendingTransactionState | undefined =>
         this.states.get(intentId);
+
+    // The request to re-send when resuming an action whose dialog skipped prepare.
+    getRequest = (
+        intentId: string,
+    ): (ITransactionRequest & { chainId: number }) | undefined =>
+        this.requests.get(intentId);
 
     // PENDING with no live promise = reloaded mid-sign; outcome unknown, so the dialog starts fresh.
     isInterrupted = (intentId: string): boolean =>
@@ -65,13 +82,15 @@ export class PendingTransactionManager {
 
     clear = (intentId: string): void => {
         this.liveSends.delete(intentId);
+        this.attempts.delete(intentId);
+        this.requests.delete(intentId);
         if (this.states.delete(intentId)) {
             this.persist();
-            this.emit();
+            this.emit(intentId);
         }
     };
 
-    subscribe = (listener: () => void): (() => void) => {
+    subscribe = (listener: PendingTransactionListener): (() => void) => {
         this.listeners.add(listener);
 
         return () => {
@@ -83,14 +102,21 @@ export class PendingTransactionManager {
         intentId: string,
         state: IPendingTransactionState,
     ): void => {
+        // A PENDING update is a this-session send, so its outcome is awaited here (not interrupted).
+        if (state.status === PendingTransactionStatus.PENDING) {
+            this.liveSends.add(intentId);
+        }
         this.states.set(intentId, state);
         this.persist();
-        this.emit();
+        this.emit(intentId, state);
     };
 
-    private emit = (): void => {
+    private emit = (
+        intentId?: string,
+        state?: IPendingTransactionState,
+    ): void => {
         for (const listener of this.listeners) {
-            listener();
+            listener(intentId, state);
         }
     };
 
@@ -121,8 +147,12 @@ export class PendingTransactionManager {
             const stored = raw
                 ? (JSON.parse(raw) as Record<string, IPendingTransactionState>)
                 : {};
+            const valid = Object.values(PendingTransactionStatus);
             for (const [id, state] of Object.entries(stored)) {
-                this.states.set(id, state);
+                // Ignore a status written by an older build that no longer exists.
+                if (valid.includes(state.status)) {
+                    this.states.set(id, state);
+                }
             }
         } catch {
             // start empty on unreadable storage

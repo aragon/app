@@ -103,6 +103,7 @@ describe('<TransactionDialog /> component', () => {
         const completeProps: ITransactionDialogProps = {
             title: 'title',
             description: 'description',
+            intentId: 'intent',
             submitLabel: 'submit',
             stepper: generateStepperResult(),
             prepareTransaction: jest.fn(),
@@ -435,6 +436,8 @@ describe('<TransactionDialog /> component', () => {
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
         expect(managerSendSpy).not.toHaveBeenCalled();
+        // Nothing to send and nothing to re-send -> surfaced, not a silent no-op.
+        expect(monitorTransactionErrorSpy).toHaveBeenCalled();
     });
 
     it('confirmation action step retries sending the transaction and updates active step', () => {

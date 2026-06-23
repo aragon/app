@@ -5,6 +5,7 @@ import {
     type ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -17,6 +18,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IProposal } from '../../api/governanceService';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { executeDialogUtils } from './executeDialogUtils';
@@ -72,10 +74,23 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
 
     const slug = proposalUtils.getProposalSlug(proposal, dao);
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                daoId,
+                network,
+                pluginAddress,
+                proposalIndex,
+                transactionType: TransactionType.PROPOSAL_EXECUTE,
+            }),
+        [daoId, network, pluginAddress, proposalIndex],
+    );
+
     return (
         <TransactionDialog
             description={t('app.governance.executeDialog.description')}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            intentId={intentId}
             network={network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

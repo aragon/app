@@ -1,5 +1,5 @@
 import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import type { TransactionReceipt } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
@@ -16,6 +16,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import {
     type IPluginUninstallSetupData,
     pluginTransactionUtils,
@@ -61,6 +62,16 @@ export const PreparePluginUninstallationDialog: React.FC<
     const hasProposalDialogBeenOpened = useRef(false);
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                action: 'preparePluginUninstallation',
+                daoId,
+                uninstallPlugin: uninstallPlugin.address,
+            }),
+        [daoId, uninstallPlugin.address],
+    );
 
     const initialStep = TransactionDialogStep.PREPARE;
     const stepper = useStepper<
@@ -171,6 +182,7 @@ export const PreparePluginUninstallationDialog: React.FC<
             description={t(
                 'app.settings.preparePluginUninstallationDialog.description',
             )}
+            intentId={intentId}
             network={dao?.network}
             onSuccess={handlePrepareUninstallationSuccess}
             prepareTransaction={handlePrepareTransaction}

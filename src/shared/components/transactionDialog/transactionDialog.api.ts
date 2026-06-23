@@ -82,11 +82,11 @@ export interface ITransactionDialogProps<
      */
     description: string;
     /**
-     * Stable identity of the action (e.g. a hash of the proposal content). When provided, the send
-     * is routed through the pending-transaction manager so it survives the dialog closing and can be
-     * resumed on re-open. When omitted, the dialog uses the default in-component send.
+     * Stable identity of the action, used to resume an in-flight send when the dialog is re-opened.
+     * Derive it from the action's defining inputs (`buildIntentId`) so it is the same across re-opens
+     * and available before `prepare` runs — that is what makes resume deterministic.
      */
-    intentId?: string;
+    intentId: string;
     /**
      * Label for the submit button used as fallback when the specific step state label is not set.
      */

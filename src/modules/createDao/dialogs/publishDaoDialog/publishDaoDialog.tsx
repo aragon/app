@@ -16,6 +16,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { ICreateDaoFormData } from '../../components/createDaoForm';
 import { publishDaoDialogUtils } from './publishDaoDialogUtils';
 
@@ -147,6 +148,20 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         ? handlePinFile
         : handlePinData;
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                ...values,
+                // The avatar object carries a volatile blob url; hash only the file's stable identity
+                // so the id doesn't drift across re-opens.
+                avatar: values.avatar?.file
+                    ? `${values.avatar.file.name}:${values.avatar.file.size}`
+                    : null,
+                connectedAddress: address,
+            }),
+        [values, address],
+    );
+
     const customSteps: ITransactionDialogStep<PublishDaoStep>[] = useMemo(
         () => [
             {
@@ -172,6 +187,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         <TransactionDialog<PublishDaoStep>
             customSteps={customSteps}
             description={t('app.createDao.publishDaoDialog.description')}
+            intentId={intentId}
             network={network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

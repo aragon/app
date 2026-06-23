@@ -1,7 +1,7 @@
 'use client';
 
 import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { encodeFunctionData } from 'viem';
 import {
     memberRegistryAbi,
@@ -18,6 +18,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
@@ -70,6 +71,17 @@ export const AragonProfileSubdomainRegisterTransactionDialog: React.FC<
         [subdomain],
     );
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                type: 'aragonProfileSubdomainRegister',
+                to: memberRegistryAddress,
+                subdomain,
+                account: address,
+            }),
+        [subdomain, address],
+    );
+
     const handleSuccess = useCallback(() => {
         open(ApplicationDialogId.ARAGON_PROFILE_SET_PRIMARY_ENS_TRANSACTION, {
             params: { subdomain, isPartOfTwoStepFlow: true },
@@ -81,6 +93,7 @@ export const AragonProfileSubdomainRegisterTransactionDialog: React.FC<
             description={t(
                 'app.application.aragonProfileSubdomainRegisterTransactionDialog.description',
             )}
+            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             onCancelClick={handleCancel}
             onSuccess={handleSuccess}

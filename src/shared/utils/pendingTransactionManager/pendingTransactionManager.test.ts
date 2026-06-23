@@ -1,3 +1,4 @@
+import type { Hex } from 'viem';
 import * as wagmiActions from 'wagmi/actions';
 import {
     buildIntentId,
@@ -77,6 +78,42 @@ describe('pendingTransactionManager', () => {
                 error,
             });
         });
+
+        it('ignores a stale resolution from a superseded send for the same intent', async () => {
+            let resolveFirst!: (hash: Hex) => void;
+            const firstSend = new Promise<Hex>((resolve) => {
+                resolveFirst = resolve;
+            });
+            sendTransactionSpy.mockReturnValueOnce(firstSend);
+            sendTransactionSpy.mockResolvedValueOnce('0xnew');
+            const manager = new PendingTransactionManager();
+
+            manager.send('id', request); // attempt 1 — still pending
+            manager.send('id', request); // attempt 2 — resolves to 0xnew
+            await flushPromises();
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xnew',
+            });
+
+            resolveFirst('0xold'); // the superseded send resolves late
+            await flushPromises();
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xnew',
+            });
+        });
+
+        it('keeps the request so a resumed action can re-send, and drops it on clear', () => {
+            sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
+            const manager = new PendingTransactionManager();
+
+            manager.send('id', request);
+            expect(manager.getRequest('id')).toBe(request);
+
+            manager.clear('id');
+            expect(manager.getRequest('id')).toBeUndefined();
+        });
     });
 
     describe('clear', () => {
@@ -152,6 +189,16 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
             });
+        });
+
+        it('drops a hydrated record whose status is no longer a known status', () => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({ id: { status: 'OBSOLETE' } }),
+            );
+            const manager = new PendingTransactionManager();
+
+            expect(manager.get('id')).toBeUndefined();
         });
     });
 });

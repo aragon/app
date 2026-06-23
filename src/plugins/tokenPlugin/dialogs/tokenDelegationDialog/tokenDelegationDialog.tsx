@@ -2,6 +2,7 @@
 
 import { invariant, MemberDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { zeroAddress } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
@@ -14,6 +15,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { tokenDelegationDialogUtils } from './tokenDelegationDialogUtils';
 
 export interface ITokenDelegationDialogParams {
@@ -75,6 +77,11 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
         TransactionDialogStep
     >({ initialActiveStep });
 
+    const intentId = useMemo(
+        () => buildIntentId({ token, delegate, network }),
+        [token, delegate, network],
+    );
+
     const handlePrepareTransaction = () =>
         tokenDelegationDialogUtils.buildTransaction(token, delegate);
 
@@ -88,6 +95,7 @@ export const TokenDelegationDialog: React.FC<ITokenDelegationDialogProps> = (
             description={t(
                 'app.plugins.token.tokenDelegationForm.dialog.description',
             )}
+            intentId={intentId}
             network={network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

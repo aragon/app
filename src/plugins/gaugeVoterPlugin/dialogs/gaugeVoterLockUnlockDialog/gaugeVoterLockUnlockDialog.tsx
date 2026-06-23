@@ -2,6 +2,7 @@
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IGaugeVoterPluginSettingsToken } from '@/plugins/gaugeVoterPlugin/types/gaugeVoterPlugin';
@@ -16,6 +17,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { gaugeVoterLockUnlockDialogUtils } from './gaugeVoterLockUnlockDialogUtils';
 
 type ActionType = 'lock' | 'unlock' | 'withdraw';
@@ -165,6 +167,18 @@ export const GaugeVoterLockUnlockDialog: React.FC<
             ? formatUnits(displayAmount, token.decimals)
             : undefined;
 
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                daoId: dao.id,
+                escrowContract,
+                action,
+                amount,
+                tokenId,
+            }),
+        [dao.id, escrowContract, action, amount, tokenId],
+    );
+
     return (
         <TransactionDialog
             description={t(
@@ -172,6 +186,7 @@ export const GaugeVoterLockUnlockDialog: React.FC<
                 { symbol },
             )}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'members')}
+            intentId={intentId}
             network={dao.network}
             onCancelClick={onClose}
             onSuccess={onSuccess}

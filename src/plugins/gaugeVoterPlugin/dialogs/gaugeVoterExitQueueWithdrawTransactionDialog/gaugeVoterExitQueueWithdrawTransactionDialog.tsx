@@ -2,6 +2,7 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { encodeFunctionData } from 'viem';
 import { TransactionType } from '@/shared/api/transactionService';
 import {
@@ -11,6 +12,7 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IGaugeVoterExitQueueWithdrawTransactionDialogProps } from './gaugeVoterExitQueueWithdrawTransactionDialog.api';
 
 export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
@@ -33,6 +35,17 @@ export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
         ITransactionDialogStepMeta,
         TransactionDialogStep
     >({ initialActiveStep });
+
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                type: TransactionType.WITHDRAW_CREATE,
+                network,
+                escrowAddress,
+                tokenId,
+            }),
+        [network, escrowAddress, tokenId],
+    );
 
     const handlePrepareTransaction = () => {
         // Call withdraw on VotingEscrow, which will internally call exit on DynamicExitQueue
@@ -66,6 +79,7 @@ export const GaugeVoterExitQueueWithdrawTransactionDialog: React.FC<
                     symbol: token.symbol,
                 },
             )}
+            intentId={intentId}
             network={network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
