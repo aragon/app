@@ -29,7 +29,16 @@ class ApplicationMetadataUtils {
                 // fixing. Tag both via `noise_class` so they route out of the default alert
                 // stream (internal-broken-link → triage, security-probe → security review).
                 const referer = (await headers()).get('referer') ?? '';
-                const isInternalLink = referer.includes('aragon.org');
+                let isInternalLink = false;
+
+                try {
+                    const refererHost = new URL(referer).hostname.toLowerCase();
+                    isInternalLink =
+                        refererHost === 'aragon.org' ||
+                        refererHost.endsWith('.aragon.org');
+                } catch {
+                    isInternalLink = false;
+                }
 
                 monitoringUtils.logMessage('Invalid DAO URL', {
                     level: isInternalLink ? 'warning' : 'info',
