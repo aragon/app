@@ -1,5 +1,5 @@
 import {
-    AragonSubdomain,
+    AragonDomain,
     EnvioClient,
     type PageDTO,
     type TokenVotingMemberDTO,
@@ -16,7 +16,7 @@ const endpoint =
     process.env.ENVIO_GRAPHQL_ENDPOINT ?? 'http://localhost:8080/v1/graphql';
 const apiToken = process.env.ENVIO_API_TOKEN;
 
-const controller = AragonSubdomain.load(new EnvioClient(endpoint, apiToken));
+const controller = AragonDomain.load(new EnvioClient(endpoint, apiToken));
 
 export const GET = async (req: NextRequest) => {
     const params = req.nextUrl.searchParams;
