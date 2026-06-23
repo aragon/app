@@ -84,7 +84,19 @@ class GaugeVoterLockUtils {
         settings: IGaugeVoterPluginSettings,
     ) => {
         const { token, votingEscrow } = settings;
-        const { slope, maxTime, bias } = votingEscrow!;
+
+        // votingEscrow (and its slope/bias/maxTime) or the locked amount can be missing
+        // for not-yet-initialised plugins — no escrow params means no voting power.
+        if (
+            amount == null ||
+            votingEscrow?.slope == null ||
+            votingEscrow.bias == null ||
+            votingEscrow.maxTime == null
+        ) {
+            return '0';
+        }
+
+        const { slope, maxTime, bias } = votingEscrow;
 
         const processedTime = Math.min(time, maxTime);
 
