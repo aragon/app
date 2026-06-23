@@ -1,3 +1,4 @@
 export enum FinanceDialogId {
     ASSET_SELECTION = ' ASSET_SELECTION',
+    TRANSACTION_DETAIL = 'TRANSACTION_DETAIL',
 }

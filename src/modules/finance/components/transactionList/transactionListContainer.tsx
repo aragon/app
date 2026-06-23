@@ -1,11 +1,15 @@
 'use client';
 
 import type { ReactNode } from 'react';
+import type { IDao } from '@/shared/api/daoService';
 import { DaoFilterComponent } from '@/shared/components/daoFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import type { IGetTransactionListParams } from '../../api/financeService';
+import type {
+    IGetTransactionListParams,
+    ITransactionExecution,
+} from '../../api/financeService';
 import { TransactionListDefault } from './transactionListDefault';
 
 export interface ITransactionListContainerProps {
@@ -25,6 +29,14 @@ export interface ITransactionListContainerProps {
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Callback called on execution transaction click.
+     */
+    onTransactionClick?: (transaction: ITransactionExecution) => void;
+    /**
+     * DAO the transactions belong to.
+     */
+    dao?: IDao;
 }
 
 export const transactionListFilterParam = 'linkedaccount';
