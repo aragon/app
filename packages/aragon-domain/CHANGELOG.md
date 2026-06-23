@@ -1,5 +1,15 @@
 # @aragon/aragon-domain
 
+## 0.3.0
+
+### Minor Changes
+
+- [#15](https://github.com/aragon/aragon-domain/pull/15) [`0f63598`](https://github.com/aragon/aragon-domain/commit/0f63598d834be0e45a4008ad25af703f283cb4f0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Rename package from `@aragon/aragon-subdomain` to `@aragon/aragon-domain`. Public controller export is now `AragonDomain`.
+
+### Patch Changes
+
+- [#6](https://github.com/aragon/aragon-domain/pull/6) [`dc4b0ba`](https://github.com/aragon/aragon-domain/commit/dc4b0badfd84638c1c1b158f7db7562e619138cc) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies, align pnpm supply-chain configuration with the app repository and resolve all known audit vulnerabilities
+
 ## 0.2.0
 
 ### Minor Changes

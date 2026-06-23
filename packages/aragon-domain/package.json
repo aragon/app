@@ -1,6 +1,6 @@
 {
   "name": "@aragon/aragon-domain",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Aragon governance business logic package — domain model, use cases, and infrastructure adapters",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
