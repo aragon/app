@@ -1,6 +1,8 @@
+import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
 import { invariant } from '@aragon/gov-ui-kit';
 import { lockToVoteProposalUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteProposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import {
     AragonBackendService,
     type IPaginatedResponse,
@@ -29,6 +31,8 @@ import type {
 } from './governanceService.api';
 import { collectTokenAddresses } from './utils/collectTokenAddresses';
 import { fetchTokensTotalSupply } from './utils/fetchTokensTotalSupply';
+import { mapBackendMemberToTokenVotingDTO } from './utils/mapBackendMemberToTokenVotingDTO';
+import { resolveMemberSource } from './utils/resolveMemberSource';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -117,6 +121,59 @@ class GovernanceService extends AragonBackendService {
         );
 
         return result;
+    };
+
+    /**
+     * Token-voting member list. Owns subdomain-vs-backend routing and the
+     * backend→DTO mapping, returning the library-owned `TokenVotingMemberDTO`
+     * regardless of source. The generic `getMemberList` still serves
+     * multisig/admin.
+     */
+    getTokenVotingMembership = async (
+        params: IGetMemberListParams,
+    ): Promise<IPaginatedResponse<TokenVotingMemberDTO>> => {
+        const queryParams = params.queryParams;
+
+        if (resolveMemberSource(queryParams) === 'subdomain') {
+            const query = new URLSearchParams({
+                pluginAddress: queryParams.pluginAddress.toLowerCase(),
+                tokenAddress: (queryParams.tokenAddress ?? '').toLowerCase(),
+                page: String(queryParams.page ?? 1),
+                pageSize: String(queryParams.pageSize ?? 10),
+            });
+            const response = await fetch(
+                `/api/subdomain/members?${query.toString()}`,
+            );
+            if (!response.ok) {
+                throw new Error(
+                    `Subdomain members request failed: ${response.status}`,
+                );
+            }
+
+            // The subdomain already returns the DTO — no mapping required.
+            return (await response.json()) as PageDTO<TokenVotingMemberDTO>;
+        }
+
+        // Strip routing-only fields before forwarding to the legacy backend so
+        // we don't introduce unknown query params that the backend may reject.
+        const {
+            network: _network,
+            pluginInterfaceType: _pluginInterfaceType,
+            tokenAddress: _tokenAddress,
+            tokenUnderlying: _tokenUnderlying,
+            ...rest
+        } = queryParams;
+        const legacyParams = { ...params, queryParams: rest };
+
+        const result = await this.request<IPaginatedResponse<ITokenMember>>(
+            this.urls.members,
+            legacyParams,
+        );
+
+        return {
+            ...result,
+            data: result.data.map(mapBackendMemberToTokenVotingDTO),
+        };
     };
 
     getMember = async <TMember extends IMember = IMember>(

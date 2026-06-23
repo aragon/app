@@ -1,7 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
-import * as useMemberListData from '@/modules/governance/hooks/useMemberListData';
+import * as useTokenVotingMembershipModule from '@/modules/governance/hooks/useTokenVotingMembership';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import * as daoService from '@/shared/api/daoService';
 import {
@@ -33,9 +33,9 @@ jest.mock('./lockToVoteMemberListLockCardEmptyState', () => ({
 }));
 
 describe('<LockToVoteMemberList /> component', () => {
-    const useMemberListDataSpy = jest.spyOn(
-        useMemberListData,
-        'useMemberListData',
+    const useTokenVotingMembershipSpy = jest.spyOn(
+        useTokenVotingMembershipModule,
+        'useTokenVotingMembership',
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
@@ -45,7 +45,7 @@ describe('<LockToVoteMemberList /> component', () => {
     );
 
     beforeEach(() => {
-        useMemberListDataSpy.mockReturnValue({
+        useTokenVotingMembershipSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -67,7 +67,7 @@ describe('<LockToVoteMemberList /> component', () => {
     });
 
     afterEach(() => {
-        useMemberListDataSpy.mockReset();
+        useTokenVotingMembershipSpy.mockReset();
         useDaoSpy.mockReset();
         useConnectionSpy.mockReset();
         useLockOnboardingCheckSpy.mockReset();

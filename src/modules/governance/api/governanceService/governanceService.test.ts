@@ -8,6 +8,7 @@ import { generateSppProposal } from '@/plugins/sppPlugin/testUtils/generators/sp
 import { generateSppPluginSettings } from '@/plugins/sppPlugin/testUtils/generators/sppSettings';
 import { generateSppStage } from '@/plugins/sppPlugin/testUtils/generators/sppStage';
 import type { ISppProposal } from '@/plugins/sppPlugin/types';
+import { generateTokenMember } from '@/plugins/tokenPlugin/testUtils';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { generatePaginatedResponse } from '@/shared/testUtils';
 import {
@@ -191,6 +192,104 @@ describe('governance service', () => {
                 },
             }),
         ).rejects.toThrow('Subdomain members request failed: 500');
+    });
+
+    it('getTokenVotingMembership returns the subdomain DTO unmapped for mainnet token-voting', async () => {
+        const responseBody = {
+            data: [
+                {
+                    address: '0xabc',
+                    ens: 'alice.eth',
+                    votingPower: '5000',
+                    metrics: {
+                        firstActivityTimestamp: 1_705_320_000,
+                        lastActivityTimestamp: 1_718_872_200,
+                        delegationCount: 3,
+                    },
+                },
+            ],
+            metadata: {
+                page: 1,
+                pageSize: 10,
+                totalPages: 1,
+                totalRecords: 1,
+            },
+        };
+        fetchSpy.mockResolvedValue({
+            ok: true,
+            json: async () => responseBody,
+        } as Response);
+
+        const result = await governanceService.getTokenVotingMembership({
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: '0xPlugin',
+                tokenAddress: '0xToken',
+                network: Network.ETHEREUM_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            },
+        });
+
+        expect(requestSpy).not.toHaveBeenCalled();
+        const calledUrl = (fetchSpy.mock.calls[0]![0] as string) ?? '';
+        expect(calledUrl).toContain('/api/subdomain/members?');
+        expect(result).toEqual(responseBody);
+    });
+
+    it('getTokenVotingMembership maps the backend members to DTOs when routing to the legacy backend', async () => {
+        const member = generateTokenMember({
+            address: '0xabc',
+            ens: 'alice.eth',
+            votingPower: '5000',
+            type: 'token-voting',
+            firstActive: 100,
+            lastActive: 200,
+            metrics: {
+                firstActivityTimestamp: 1_705_320_000,
+                lastActivityTimestamp: 1_718_872_200,
+                delegationCount: 3,
+            },
+        });
+        requestSpy.mockResolvedValue(
+            generatePaginatedResponse({ data: [member] }),
+        );
+
+        const result = await governanceService.getTokenVotingMembership({
+            queryParams: {
+                daoId: 'dao-id-test',
+                pluginAddress: '0xPlugin',
+                tokenAddress: '0xToken',
+                // Non-mainnet → backend branch.
+                network: Network.POLYGON_MAINNET,
+                pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            },
+        });
+
+        expect(fetchSpy).not.toHaveBeenCalled();
+        // Routing-only fields are stripped before hitting the backend.
+        expect(requestSpy).toHaveBeenCalledWith(
+            governanceService['urls'].members,
+            {
+                queryParams: {
+                    daoId: 'dao-id-test',
+                    pluginAddress: '0xPlugin',
+                },
+            },
+        );
+        expect(result.data).toEqual([
+            {
+                address: '0xabc',
+                ens: 'alice.eth',
+                votingPower: '5000',
+                metrics: {
+                    firstActivityTimestamp: 1_705_320_000,
+                    lastActivityTimestamp: 1_718_872_200,
+                    delegationCount: 3,
+                },
+            },
+        ]);
+        expect(result.data[0]).not.toHaveProperty('type');
+        expect(result.data[0]).not.toHaveProperty('firstActive');
     });
 
     it('getMember fetches the member of the specified DAO by address', async () => {

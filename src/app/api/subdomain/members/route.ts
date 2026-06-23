@@ -1,10 +1,15 @@
-import { AragonSubdomain, EnvioClient } from '@aragon/aragon-subdomain';
+import {
+    AragonSubdomain,
+    EnvioClient,
+    type PageDTO,
+    type TokenVotingMemberDTO,
+} from '@aragon/aragon-subdomain';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
- * BFF route for the aragon-subdomain members endpoint.
- * Used as a demo bridge for select DAOs — see `governanceService.getMemberList`
- * for the conditional routing logic.
+ * BFF route for the aragon-subdomain token-voting members endpoint.
+ * Routed to for the mainnet ERC-20 token-voting slice — see
+ * `governanceService.getTokenVotingMembership` for the routing logic.
  */
 
 const endpoint =
@@ -29,7 +34,7 @@ export const GET = async (req: NextRequest) => {
         );
     }
 
-    const result = await controller.getMembership({
+    const result = await controller.getTokenVotingMembership({
         pluginAddress,
         tokenContractAddress,
         page,
@@ -43,5 +48,7 @@ export const GET = async (req: NextRequest) => {
         );
     }
 
-    return NextResponse.json(result.result);
+    const payload: PageDTO<TokenVotingMemberDTO> = result.result;
+
+    return NextResponse.json(payload);
 };
