@@ -32,3 +32,6 @@
 {"ts":"2026-06-10T10:36:11.106Z","tool":"Edit","file":"src/modules/finance/constants/financeDialogsDefinitions.ts","rule":"dialog-conventions","bytes":3499,"elapsed_ms":1,"adapter":"generic"}
 {"ts":"2026-06-10T10:36:11.149Z","tool":"Edit","file":"src/plugins/tokenPlugin/index.ts","rule":"plugin-slot-registration","bytes":3795,"elapsed_ms":1,"adapter":"generic"}
 {"ts":"2026-06-09T11:03:40.976Z","tool":"Write","file":"src/shared/api/daoService/domain/enum/network.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T12:49:35.098Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":0,"adapter":"claude"}
+{"ts":"2026-06-23T12:49:49.841Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-23T12:50:57.800Z","tool":"Edit","file":"src/shared/api/aragonBackendService/aragonBackendServiceError.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}

@@ -33,13 +33,16 @@ export const PageError: React.FC<IPageErrorProps> = (props) => {
 
     const { t } = useTranslations();
 
+    const isNotFoundError =
+        AragonBackendServiceError.isExpectedNotFoundError(error);
+
     useEffect(() => {
-        if (error != null) {
+        // Don't report expected not-found errors (genuine 404s and stale links to
+        // removed plugins) — they render a clean not-found state, not a bug.
+        if (error != null && !isNotFoundError) {
             monitoringUtils.logError(error);
         }
-    }, [error]);
-
-    const isNotFoundError = AragonBackendServiceError.isNotFoundError(error);
+    }, [error, isNotFoundError]);
 
     const processedTitle = isNotFoundError
         ? `${errorNamespace}.notFound.title`

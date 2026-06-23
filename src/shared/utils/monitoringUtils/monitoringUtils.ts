@@ -1,4 +1,10 @@
-import type { ClientOptions, ScopeContext } from '@sentry/core';
+import type {
+    ClientOptions,
+    ErrorEvent,
+    Event,
+    EventHint,
+    ScopeContext,
+} from '@sentry/core';
 import {
     captureException,
     captureMessage,
@@ -25,17 +31,111 @@ export interface ILogMessageParams {
     level?: ScopeContext['level'];
 }
 
+/**
+ * Classification of an event that we keep in Sentry but route out of the default
+ * alert stream by tagging it. Used as the value of the `noise_class` tag.
+ * - `expected`: normal user/wallet behaviour — kept so a complaint can still be
+ *   investigated (search `user.id:0x... noise_class:expected`), just not alerted on.
+ * - `infra`: backend/RPC/proxy failures — routed to devops/backend.
+ * - `security-probe`: scanner/injection traffic — kept for security review.
+ */
+export type SentryNoiseClass = 'expected' | 'infra' | 'security-probe';
+
 class MonitoringUtils {
+    /**
+     * Expected, non-actionable errors that represent normal user/wallet behaviour
+     * (rejections, missing connection, expected RPC param errors). We do NOT hide these:
+     * `beforeSend` tags them `noise_class=expected` and keeps them in Sentry so a future
+     * complaint can be investigated (search `user.id:0x...`), but they stay out of the
+     * default alert stream / bug board.
+     */
+    expectedErrorPatterns = [
+        'User rejected the request', // Standard wallet rejection (MetaMask, WalletConnect, …)
+        'Signing aborted by user', // Opera wallet rejection
+        'User denied transaction signature', // Older wallet variants
+        'must be connected', // Dialog invariants opened without a connected wallet
+        'wallet must has at least one account', // Wallet connected with no selected account
+        'exceeds the balance', // Insufficient balance for gas/value
+        "session topic doesn't exist", // WalletConnect: stale session
+        'No matching key. session topic', // WalletConnect: stale session
+    ];
+
+    /**
+     * EIP-1193 provider error codes that represent normal user behaviour rather than bugs.
+     * These often surface as unhandled rejections of plain `{ code, message }` objects
+     * (so the message-based `ignoreErrors` cannot catch them) — `beforeSend` matches the
+     * serialized payload instead.
+     */
+    private expectedProviderErrorCodes = [4001, 4100, 4900, 4901];
+
+    /**
+     * Objectively zero-signal noise injected by the user's environment, not our code:
+     * browser extensions and e-mail link crawlers. Safe to drop at the source.
+     */
+    private dropPatterns = [
+        '__firefox__', // Firefox extension internals
+        'window.ethereum.selectedAddress', // Wallet extension probing
+        'Object Not Found Matching Id', // Outlook SafeLink crawler artifact
+        // In-app-browser/WebView scripts JSON.stringify-ing a DOM node (React fiber).
+        // Deliberately narrow: a genuine cyclic-serialization bug in OUR data does NOT
+        // contain `__reactFiber`, so it is never dropped and will still surface.
+        '__reactFiber',
+    ];
+
+    /**
+     * Backend/RPC/proxy failures. Real signal, but the source is outside our codebase —
+     * tagged `infra` so devops/backend can pick them up, kept visible (never dropped).
+     */
+    private infraPatterns = [
+        "Unexpected token '<'", // Backend/proxy returned HTML instead of JSON
+        '<html>',
+        'Error parsing response',
+        'RPC endpoint returned error status',
+        'HTTP request failed',
+        'fetch failed',
+    ];
+
     getBaseConfig = (): Pick<
         ClientOptions,
-        'enabled' | 'dsn' | 'tracesSampleRate' | 'environment' | 'release'
+        | 'enabled'
+        | 'dsn'
+        | 'tracesSampleRate'
+        | 'environment'
+        | 'release'
+        | 'beforeSend'
     > => ({
         enabled: this.isEnabled(),
         dsn: process.env.SENTRY_DSN ?? process.env.NEXT_PUBLIC_SENTRY_DSN,
         tracesSampleRate: 0.1,
         environment: process.env.NEXT_PUBLIC_ENV,
         release: process.env.version,
+        beforeSend: this.beforeSend,
     });
+
+    /**
+     * Routes events instead of hiding them. Only objectively zero-value third-party junk
+     * (extensions, crawlers, WebView scripts serializing DOM nodes) is dropped. Everything
+     * that could ever aid an investigation is KEPT and, when noisy, tagged via `noise_class`
+     * so it can be filtered out of the default alert stream but still searched later:
+     * - expected user/wallet behaviour → `expected`
+     * - backend/RPC failures → `infra`
+     * - scanner/injection traffic → `security-probe`
+     */
+    beforeSend = (event: ErrorEvent, hint?: EventHint): ErrorEvent | null => {
+        const message = this.getEventMessage(event, hint);
+
+        // Drop only zero-signal third-party junk (never our users' or our own errors).
+        if (this.dropPatterns.some((pattern) => message.includes(pattern))) {
+            return null;
+        }
+
+        const noiseClass = this.classifyNoise(event, message, hint);
+        if (noiseClass != null) {
+            event.tags = { ...event.tags, noise_class: noiseClass };
+        }
+
+        return event;
+    };
 
     logError = (error: unknown, params?: ILogErrorParams) => {
         const { context } = params ?? {};
@@ -50,6 +150,110 @@ class MonitoringUtils {
     logRequestError = captureRequestError;
 
     serverActionWrapper = withServerActionInstrumentation;
+
+    private classifyNoise = (
+        event: Event,
+        message: string,
+        hint?: EventHint,
+    ): SentryNoiseClass | undefined => {
+        // Expected user/wallet behaviour: kept for investigation, out of alerts.
+        if (
+            this.expectedErrorPatterns.some((pattern) =>
+                message.includes(pattern),
+            ) ||
+            this.hasExpectedProviderErrorCode(hint, event)
+        ) {
+            return 'expected';
+        }
+
+        if (this.infraPatterns.some((pattern) => message.includes(pattern))) {
+            return 'infra';
+        }
+
+        if (this.isProbeUrl(event.request?.url)) {
+            return 'security-probe';
+        }
+
+        return undefined;
+    };
+
+    /**
+     * Detects scanner/probe traffic. Legitimate routes only ever contain a network slug,
+     * an address/ENS and path segments, so any of the following marks an attack/scan:
+     * double-encoding, a URL that fails to decode, or template/injection metacharacters
+     * (e.g. the SSTI probe `…/dfb__${98991*97996}__::.x/…`).
+     */
+    private isProbeUrl = (url?: string) => {
+        if (url == null) {
+            return false;
+        }
+
+        if (url.includes('%25')) {
+            // Double-encoded characters — almost always a scanner, not a real navigation.
+            return true;
+        }
+
+        let decoded: string;
+        try {
+            decoded = decodeURIComponent(url);
+        } catch {
+            return true;
+        }
+
+        // Metacharacters that never appear in a valid network/address/ENS/slug path.
+        return /[<>${}`;()|]|\]\]|\*\*/.test(decoded);
+    };
+
+    private getEventMessage = (event: Event, hint?: EventHint): string => {
+        const fromException =
+            hint?.originalException instanceof Error
+                ? hint.originalException.message
+                : '';
+        const fromEvent =
+            event.exception?.values
+                ?.map((value) => value.value ?? '')
+                .join(' ') ?? '';
+        // Unhandled rejections of plain objects carry their real text only here.
+        const fromSerialized = this.safeStringify(
+            hint?.originalException ?? event.extra?.__serialized__,
+        );
+
+        return [
+            fromException,
+            fromEvent,
+            event.message ?? '',
+            fromSerialized,
+        ].join(' ');
+    };
+
+    /**
+     * True when the captured payload is an EIP-1193 provider error with an expected
+     * (user-driven) code — e.g. an unhandled rejection of `{ code: 4001, message }`.
+     */
+    private hasExpectedProviderErrorCode = (
+        hint: EventHint | undefined,
+        event: Event,
+    ): boolean => {
+        const candidate = (hint?.originalException ??
+            event.extra?.__serialized__) as { code?: unknown } | undefined;
+        const code = candidate?.code;
+
+        return (
+            typeof code === 'number' &&
+            this.expectedProviderErrorCodes.includes(code)
+        );
+    };
+
+    private safeStringify = (value: unknown): string => {
+        if (value == null || typeof value !== 'object') {
+            return '';
+        }
+        try {
+            return JSON.stringify(value);
+        } catch {
+            return '';
+        }
+    };
 
     // Only enable error tracking for development, staging and production environments
     private isEnabled = () =>

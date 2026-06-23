@@ -44,9 +44,10 @@ class GovernanceMetadataUtils {
                 type: 'article',
             });
         } catch (error: unknown) {
-            // Suppress notFound: the page renders an empty/404 state for arbitrary URLs
-            // (bots, stale links) — these aren't bugs and would flood Sentry.
-            if (!AragonBackendServiceError.isNotFoundError(error)) {
+            // Suppress notFound / pluginNotFound: the page renders an empty/404 state
+            // for arbitrary URLs (bots, stale links to removed plugins) — not bugs, and
+            // would flood Sentry.
+            if (!AragonBackendServiceError.isExpectedNotFoundError(error)) {
                 monitoringUtils.logError(error);
             }
 
