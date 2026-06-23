@@ -1,4 +1,4 @@
-import type { TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 
 /**
  * Builds a `TokenVotingMemberDTO` — the shape the token member list renders

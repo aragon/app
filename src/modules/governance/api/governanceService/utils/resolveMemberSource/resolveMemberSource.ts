@@ -3,7 +3,7 @@ import type { IGetMemberListQueryParams } from '../../governanceService.api';
 
 /**
  * Networks whose token-voting member queries are served by the
- * aragon-subdomain BFF. Expand as more networks are indexed by Envio.
+ * aragon-domain BFF. Expand as more networks are indexed by Envio.
  */
 export const SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
     Network.ETHEREUM_MAINNET,
@@ -12,7 +12,7 @@ export const SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
 /**
  * Decides which backing source serves a token-voting member query.
  *
- * The aragon-subdomain only covers plain ERC-20 token-voting governance
+ * The aragon-domain only covers plain ERC-20 token-voting governance
  * tokens on the networks in `SUBDOMAIN_NETWORKS`. Wrapped / VE-adapter tokens
  * (`tokenUnderlying != null`) and every other plugin type or network keep
  * using the legacy backend until the subdomain supports them.

@@ -1,4 +1,4 @@
-import type { TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
 import type {
     InfiniteQueryOptions,

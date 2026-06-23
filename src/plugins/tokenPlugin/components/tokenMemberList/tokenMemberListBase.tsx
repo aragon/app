@@ -1,6 +1,6 @@
 'use client';
 
-import type { TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import {
     addressUtils,
     DataListContainer,

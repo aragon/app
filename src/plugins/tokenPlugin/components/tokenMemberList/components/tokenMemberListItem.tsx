@@ -1,4 +1,4 @@
-import type { TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';

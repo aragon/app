@@ -3,11 +3,11 @@ import {
     EnvioClient,
     type PageDTO,
     type TokenVotingMemberDTO,
-} from '@aragon/aragon-subdomain';
+} from '@aragon/aragon-domain';
 import { type NextRequest, NextResponse } from 'next/server';
 
 /**
- * BFF route for the aragon-subdomain token-voting members endpoint.
+ * BFF route for the aragon-domain token-voting members endpoint.
  * Routed to for the mainnet ERC-20 token-voting slice — see
  * `governanceService.getTokenVotingMembership` for the routing logic.
  */

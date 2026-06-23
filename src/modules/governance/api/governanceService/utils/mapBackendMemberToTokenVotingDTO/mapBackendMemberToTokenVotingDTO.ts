@@ -1,4 +1,4 @@
-import type { TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 
 /**

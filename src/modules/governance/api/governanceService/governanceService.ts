@@ -1,4 +1,4 @@
-import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-subdomain';
+import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { invariant } from '@aragon/gov-ui-kit';
 import { lockToVoteProposalUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteProposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
@@ -48,7 +48,7 @@ class GovernanceService extends AragonBackendService {
 
     /**
      * Networks whose token-voting member queries are served by the
-     * aragon-subdomain BFF. Expand as more networks are indexed by Envio.
+     * aragon-domain BFF. Expand as more networks are indexed by Envio.
      */
     private static readonly SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
         Network.ETHEREUM_MAINNET,
@@ -64,9 +64,9 @@ class GovernanceService extends AragonBackendService {
         const interfaceType = queryParams?.pluginInterfaceType;
         const tokenUnderlying = queryParams?.tokenUnderlying;
 
-        // The aragon-subdomain only covers plain ERC-20 token-voting
+        // The aragon-domain only covers plain ERC-20 token-voting
         // governance tokens. Wrapped/VE-adapter tokens are not yet indexed
-        // and must keep using the legacy backend until the aragon-subdomain
+        // and must keep using the legacy backend until the aragon-domain
         // supports them.
         const useSubdomain =
             pluginAddress != null &&

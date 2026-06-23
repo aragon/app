@@ -36,7 +36,7 @@
     "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
   },
   "dependencies": {
-    "@aragon/aragon-subdomain": "0.0.0-20260619155927",
+    "@aragon/aragon-domain": "0.0.0-20260623123147",
     "@aragon/gov-ui-kit": "^2.6.0",
     "@floating-ui/react": "^0.27.19",
     "@number-flow/react": "^0.6.0",
