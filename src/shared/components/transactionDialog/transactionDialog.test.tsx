@@ -7,10 +7,15 @@ import { Network } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
 import {
     generateReactQueryResultError,
     generateStepperResult,
 } from '@/shared/testUtils';
+import {
+    PendingTransactionStatus,
+    pendingTransactionManager,
+} from '@/shared/utils/pendingTransactionManager';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { TransactionDialog } from './transactionDialog';
 import {
@@ -33,6 +38,10 @@ jest.mock('@tanstack/react-query', () => ({
     ...jest.requireActual<typeof ReactQuery>('@tanstack/react-query'),
 }));
 
+jest.mock('@/shared/hooks/usePendingTransaction', () => ({
+    usePendingTransaction: jest.fn(),
+}));
+
 describe('<TransactionDialog /> component', () => {
     const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
     const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
@@ -45,6 +54,14 @@ describe('<TransactionDialog /> component', () => {
     const monitorTransactionErrorSpy = jest.spyOn(
         transactionDialogUtils,
         'monitorTransactionError',
+    );
+    const usePendingTransactionMock = jest.mocked(usePendingTransaction);
+    const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
+    const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
+    const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
+    const managerIsInterruptedSpy = jest.spyOn(
+        pendingTransactionManager,
+        'isInterrupted',
     );
 
     beforeEach(() => {
@@ -61,6 +78,11 @@ describe('<TransactionDialog /> component', () => {
         useSwitchChainSpy.mockReturnValue({
             mutate: jest.fn(),
         } as unknown as Wagmi.UseSwitchChainReturnType);
+        usePendingTransactionMock.mockReturnValue(undefined);
+        managerSendSpy.mockImplementation(() => undefined);
+        managerClearSpy.mockImplementation(() => undefined);
+        managerGetSpy.mockReturnValue(undefined);
+        managerIsInterruptedSpy.mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -70,6 +92,11 @@ describe('<TransactionDialog /> component', () => {
         useWaitForTransactionReceiptSpy.mockReset();
         useSwitchChainSpy.mockReset();
         monitorTransactionErrorSpy.mockReset();
+        usePendingTransactionMock.mockReset();
+        managerSendSpy.mockReset();
+        managerClearSpy.mockReset();
+        managerGetSpy.mockReset();
+        managerIsInterruptedSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -307,7 +334,6 @@ describe('<TransactionDialog /> component', () => {
 
     it('approve transaction step sends the transaction to the user wallet when network prop matches current chain', () => {
         const transaction = { from: '0x123', data: '0x000' };
-        const sendTransaction = jest.fn();
         const network = Network.POLYGON_MAINNET;
         useConnectionSpy.mockReturnValue({
             chainId: networkDefinitions[network].id,
@@ -315,9 +341,6 @@ describe('<TransactionDialog /> component', () => {
         useMutationSpy.mockReturnValue({
             data: transaction,
         } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({
-            mutate: sendTransaction,
-        } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
             IStepperStep<ITransactionDialogStepMeta>[][]
@@ -326,13 +349,13 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper, network }));
+        render(createTestComponent({ stepper, network, intentId: 'intent' }));
         const { action: approveStepAction } =
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
-        expect(sendTransaction).toHaveBeenCalledWith(
+        expect(managerSendSpy).toHaveBeenCalledWith(
+            'intent',
             expect.objectContaining(transaction),
-            expect.anything(),
         );
     });
 
@@ -396,13 +419,9 @@ describe('<TransactionDialog /> component', () => {
     });
 
     it('does not send the transaction when transaction is not set at approve step', () => {
-        const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({
             data: null,
         } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({
-            mutate: sendTransaction,
-        } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
             IStepperStep<ITransactionDialogStepMeta>[][]
@@ -411,22 +430,18 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper }));
+        render(createTestComponent({ stepper, intentId: 'intent' }));
         const { action: approveStepAction } =
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
-        expect(sendTransaction).not.toHaveBeenCalled();
+        expect(managerSendSpy).not.toHaveBeenCalled();
     });
 
     it('confirmation action step retries sending the transaction and updates active step', () => {
         const transaction = { from: '0x123', data: '0x000' };
-        const sendTransaction = jest.fn();
         useMutationSpy.mockReturnValue({
             data: transaction,
         } as unknown as ReactQuery.UseMutationResult);
-        useSendTransactionSpy.mockReturnValue({
-            mutate: sendTransaction,
-        } as unknown as Wagmi.UseSendTransactionReturnType);
         const updateSteps = jest.fn() as jest.Mock<
             void,
             IStepperStep<ITransactionDialogStepMeta>[][]
@@ -436,26 +451,26 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps, updateActiveStep });
-        render(createTestComponent({ stepper }));
+        render(createTestComponent({ stepper, intentId: 'intent' }));
         const { action: confirmStepAction } =
             updateSteps.mock.calls[0][0][2].meta;
         act(() => confirmStepAction?.({ onError: jest.fn() }));
-        expect(sendTransaction).toHaveBeenCalledWith(
+        expect(managerSendSpy).toHaveBeenCalledWith(
+            'intent',
             expect.objectContaining(transaction),
-            expect.anything(),
         );
         expect(updateActiveStep).toHaveBeenCalledWith(
             TransactionDialogStep.APPROVE,
         );
     });
 
-    it('displays the link to the block explorer for the confirmation step on transaction success', () => {
+    it('displays the link to the block explorer for the confirmation step once a hash is available', () => {
         const transactionHash = '0x1234';
         const network = Network.POLYGON_MAINNET;
-        useSendTransactionSpy.mockReturnValue({
-            data: transactionHash,
-        } as unknown as Wagmi.UseSendTransactionReturnType);
-        render(createTestComponent());
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: transactionHash,
+        });
         const updateSteps = jest.fn() as jest.Mock<
             void,
             IStepperStep<ITransactionDialogStepMeta>[][]
@@ -470,6 +485,53 @@ describe('<TransactionDialog /> component', () => {
             label: expect.stringMatching(/CONFIRM.addon/) as unknown,
             href: `https://polygonscan.com/tx/${transactionHash}`,
         });
+    });
+
+    it('resumes to the confirm step when a submitted action already exists for the intent', () => {
+        managerGetSpy.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0x1234',
+        });
+        const updateActiveStep = jest.fn();
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateActiveStep });
+        render(createTestComponent({ stepper, intentId: 'intent' }));
+        expect(updateActiveStep).toHaveBeenCalledWith(
+            TransactionDialogStep.CONFIRM,
+        );
+    });
+
+    it('resumes to the approve step for a live pending request', () => {
+        managerGetSpy.mockReturnValue({
+            status: PendingTransactionStatus.PENDING,
+        });
+        managerIsInterruptedSpy.mockReturnValue(false);
+        const updateActiveStep = jest.fn();
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateActiveStep });
+        render(createTestComponent({ stepper, intentId: 'intent' }));
+        expect(updateActiveStep).toHaveBeenCalledWith(
+            TransactionDialogStep.APPROVE,
+        );
+    });
+
+    it('clears an interrupted (reloaded) pending record and starts fresh', () => {
+        managerGetSpy.mockReturnValue({
+            status: PendingTransactionStatus.PENDING,
+        });
+        managerIsInterruptedSpy.mockReturnValue(true);
+        const updateActiveStep = jest.fn();
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateActiveStep });
+        render(createTestComponent({ stepper, intentId: 'intent' }));
+        expect(managerClearSpy).toHaveBeenCalledWith('intent');
+        expect(updateActiveStep).not.toHaveBeenCalled();
     });
 
     it('logs an error to the monitoring service when CONFIRM step fails', () => {

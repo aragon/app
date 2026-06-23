@@ -82,6 +82,12 @@ export interface ITransactionDialogProps<
      */
     description: string;
     /**
+     * Stable identity of the action (e.g. a hash of the proposal content). When provided, the send
+     * is routed through the pending-transaction manager so it survives the dialog closing and can be
+     * resumed on re-open. When omitted, the dialog uses the default in-component send.
+     */
+    intentId?: string;
+    /**
      * Label for the submit button used as fallback when the specific step state label is not set.
      */
     submitLabel: string;
