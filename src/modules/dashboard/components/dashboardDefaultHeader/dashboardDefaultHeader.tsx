@@ -1,5 +1,5 @@
 import { DaoAvatar, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
-import { useProposalListData } from '@/modules/governance/hooks/useProposalListData';
+import { useDaoProposalsCount } from '@/modules/governance/hooks/useDaoProposalsCount';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -21,23 +21,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
 
     const { t } = useTranslations();
 
-    const { itemsCount: proposalsCount } = useProposalListData({
-        queryParams: {
-            daoId: dao.id,
-            pageSize: 1,
-            sort: 'blockTimestamp',
-            isSubProposal: false,
-            onlyActive: true,
-            includeLinkedAccounts: true,
-        },
-    });
-
-    const proposalsCreated =
-        proposalsCount != null
-            ? formatterUtils.formatNumber(proposalsCount, {
-                  format: NumberFormat.GENERIC_SHORT,
-              })
-            : '-';
+    const proposalsCreated = useDaoProposalsCount({ daoId: dao.id });
 
     const membersCount = formatterUtils.formatNumber(dao.metrics.members, {
         format: NumberFormat.GENERIC_SHORT,
