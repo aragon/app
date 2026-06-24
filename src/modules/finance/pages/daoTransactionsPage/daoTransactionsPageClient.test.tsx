@@ -171,6 +171,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
         render(createTestComponent({ id }));
         expect(useDaoSpy).toHaveBeenCalledWith(
             expect.objectContaining({ urlParams: { id } }),
+            expect.objectContaining({ placeholderData: expect.anything() }),
         );
     });
 

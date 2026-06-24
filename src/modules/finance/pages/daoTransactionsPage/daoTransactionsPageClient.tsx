@@ -1,5 +1,6 @@
 'use client';
 
+import { keepPreviousData } from '@tanstack/react-query';
 import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel';
 import {
     useAssetList,
@@ -48,10 +49,16 @@ export const DaoTransactionsPageClient: React.FC<
         name: transactionListFilterParam,
     });
 
-    const { data: dao } = useDao({
-        urlParams: { id },
-        queryParams: { onlyParent: activeOption?.onlyParent },
-    });
+    // Keep the previous DAO while an onlyParent-driven refetch is in flight so
+    // the page never transiently returns null on a filter change — unmounting
+    // the list would trigger useFilterUrlParam's cleanup and wipe the selection.
+    const { data: dao } = useDao(
+        {
+            urlParams: { id },
+            queryParams: { onlyParent: activeOption?.onlyParent },
+        },
+        { placeholderData: keepPreviousData },
+    );
 
     const { hasPermission } = useDaoExecutePermission({ dao });
 
