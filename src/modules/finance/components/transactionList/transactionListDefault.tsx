@@ -214,7 +214,7 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         >
             {(showAccountFilter || showTypeFilters) && (
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
-                    {showAccountFilter && bodyFilter != null && (
+                    {showAccountFilter && bodyFilter && (
                         <Dropdown.Container label={activeAccountLabel}>
                             {bodyFilter.options.map((option) => (
                                 <Dropdown.Item

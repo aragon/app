@@ -12,6 +12,7 @@ import { TransactionListDefault } from './transactionListDefault';
 
 export interface ITransactionListContainerProps {
     initialParams: NestedOmit<IGetTransactionListParams, 'queryParams.address'>;
+    /** Parent DAO id that drives useDaoFilterUrlParam to build linked-account filter options. */
     daoId: string;
     hidePagination?: boolean;
     children?: ReactNode;
