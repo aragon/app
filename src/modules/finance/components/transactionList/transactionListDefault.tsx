@@ -221,14 +221,12 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
                             constrainContentWidth={false}
                             customTrigger={
                                 <Button
-                                    className="min-w-0 max-w-full md:max-w-64"
+                                    className="max-w-full md:max-w-64 [&>div]:min-w-0 [&>div]:truncate"
                                     iconRight={IconType.CHEVRON_DOWN}
                                     size="md"
                                     variant="tertiary"
                                 >
-                                    <span className="truncate">
-                                        {activeAccountLabel}
-                                    </span>
+                                    {activeAccountLabel}
                                 </Button>
                             }
                         >
