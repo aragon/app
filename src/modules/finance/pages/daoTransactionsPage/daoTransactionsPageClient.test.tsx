@@ -174,7 +174,7 @@ describe('<DaoTransactionsPageClient /> component', () => {
         );
     });
 
-    it('renders the page title, Transactions list tabs and stats for all transactions', () => {
+    it('renders the page title, Transactions list filters and stats for all transactions', () => {
         render(createTestComponent());
 
         expect(
