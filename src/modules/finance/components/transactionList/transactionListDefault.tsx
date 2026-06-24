@@ -1,10 +1,12 @@
 'use client';
 
 import {
+    Button,
     DataListContainer,
     DataListPagination,
     DataListRoot,
     Dropdown,
+    IconType,
     Toggle,
     ToggleGroup,
     TransactionDataListItem,
@@ -213,9 +215,23 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
             state={state}
         >
             {(showAccountFilter || showTypeFilters) && (
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+                <div className="flex flex-col items-start gap-2 md:gap-3">
                     {showAccountFilter && bodyFilter && (
-                        <Dropdown.Container label={activeAccountLabel}>
+                        <Dropdown.Container
+                            constrainContentWidth={false}
+                            customTrigger={
+                                <Button
+                                    className="min-w-0 max-w-full md:max-w-64"
+                                    iconRight={IconType.CHEVRON_DOWN}
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    <span className="truncate">
+                                        {activeAccountLabel}
+                                    </span>
+                                </Button>
+                            }
+                        >
                             {bodyFilter.options.map((option) => (
                                 <Dropdown.Item
                                     key={option.id}
