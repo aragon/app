@@ -1,6 +1,5 @@
 import { render } from '@testing-library/react';
 import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
-import * as useDaoFilterUrlParamModule from '@/shared/hooks/useDaoFilterUrlParam';
 import {
     type ITransactionListContainerProps,
     TransactionListContainer,
@@ -9,17 +8,12 @@ import type { ITransactionListDefaultProps } from './transactionListDefault';
 import * as transactionListDefaultModule from './transactionListDefault';
 
 describe('<TransactionListContainer /> component', () => {
-    const useDaoFilterUrlParamSpy = jest.spyOn(
-        useDaoFilterUrlParamModule,
-        'useDaoFilterUrlParam',
-    );
-
     const transactionListDefaultSpy = jest.spyOn(
         transactionListDefaultModule,
         'TransactionListDefault',
     );
 
-    const setActiveOption = jest.fn();
+    const onSelect = jest.fn();
 
     const allOption: IDaoFilterOption = {
         id: 'all',
@@ -48,11 +42,6 @@ describe('<TransactionListContainer /> component', () => {
             capturedProps = props;
             return null;
         });
-        useDaoFilterUrlParamSpy.mockReturnValue({
-            activeOption: subDaoOption,
-            setActiveOption,
-            options: defaultOptions,
-        });
     });
 
     afterEach(() => {
@@ -63,15 +52,19 @@ describe('<TransactionListContainer /> component', () => {
         props?: Partial<ITransactionListContainerProps>,
     ) => {
         const completeProps: ITransactionListContainerProps = {
-            daoId: 'parent-dao',
             initialParams: { queryParams: { daoId: 'parent-dao' } },
+            bodyFilter: {
+                options: defaultOptions,
+                value: subDaoOption,
+                onSelect,
+            },
             ...props,
         };
 
         return <TransactionListContainer {...completeProps} />;
     };
 
-    it('merges activeOption daoId and onlyParent into initialParams.queryParams, and forces address to undefined', () => {
+    it('merges the active bodyFilter value daoId and onlyParent into initialParams.queryParams, and forces address to undefined', () => {
         render(createTestComponent());
 
         expect(capturedProps?.initialParams.queryParams).toEqual(
@@ -83,24 +76,18 @@ describe('<TransactionListContainer /> component', () => {
         );
     });
 
-    it('constructs bodyFilter from hook options, activeOption, and setActiveOption when both are present', () => {
+    it('forwards the bodyFilter to the list component', () => {
         render(createTestComponent());
 
         expect(capturedProps?.bodyFilter).toEqual({
             options: defaultOptions,
             value: subDaoOption,
-            onSelect: setActiveOption,
+            onSelect,
         });
     });
 
-    it('passes bodyFilter as undefined when activeOption and options are absent', () => {
-        useDaoFilterUrlParamSpy.mockReturnValue({
-            activeOption: undefined,
-            setActiveOption: jest.fn(),
-            options: undefined,
-        });
-
-        render(createTestComponent());
+    it('forwards an absent bodyFilter as undefined', () => {
+        render(createTestComponent({ bodyFilter: undefined }));
 
         expect(capturedProps?.bodyFilter).toBeUndefined();
     });

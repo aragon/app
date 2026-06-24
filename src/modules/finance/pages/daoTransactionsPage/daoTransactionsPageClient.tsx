@@ -43,11 +43,19 @@ export const DaoTransactionsPageClient: React.FC<
     const { open } = useDialogContext();
     const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
-    const { activeOption } = useDaoFilterUrlParam({
+    const { activeOption, setActiveOption, options } = useDaoFilterUrlParam({
         daoId: id,
         includeAllOption: true,
         name: transactionListFilterParam,
     });
+
+    // Own the linked-account filter here (single source of truth). The page
+    // never unmounts on a filter refetch, so the selection can't be wiped by
+    // useFilterUrlParam's unmount cleanup the way a container-owned instance was.
+    const bodyFilter =
+        activeOption != null && options != null
+            ? { options, value: activeOption, onSelect: setActiveOption }
+            : undefined;
 
     // Keep the previous DAO while an onlyParent-driven refetch is in flight so
     // the page never transiently returns null on a filter change — unmounting
@@ -104,8 +112,8 @@ export const DaoTransactionsPageClient: React.FC<
                 title={t('app.finance.daoTransactionsPage.main.title')}
             >
                 <TransactionList.Container
+                    bodyFilter={bodyFilter}
                     dao={dao}
-                    daoId={id}
                     initialParams={initialParams}
                     onTransactionClick={(transaction) =>
                         open(FinanceDialogId.TRANSACTION_DETAIL, {

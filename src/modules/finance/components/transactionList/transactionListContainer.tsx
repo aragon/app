@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react';
 import type { IDao } from '@/shared/api/daoService';
-import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
+import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
 import type {
     IGetTransactionListParams,
@@ -12,8 +12,16 @@ import { TransactionListDefault } from './transactionListDefault';
 
 export interface ITransactionListContainerProps {
     initialParams: NestedOmit<IGetTransactionListParams, 'queryParams.address'>;
-    /** Parent DAO id that drives useDaoFilterUrlParam to build linked-account filter options. */
-    daoId: string;
+    /**
+     * Linked-account (SubDAO) filter state. Owned by the page so a single
+     * source of truth survives transient list unmounts (the container is
+     * controlled and holds no filter state of its own).
+     */
+    bodyFilter?: {
+        options: IDaoFilterOption[];
+        value: IDaoFilterOption;
+        onSelect: (option: IDaoFilterOption) => void;
+    };
     hidePagination?: boolean;
     children?: ReactNode;
     onTransactionClick?: (transaction: ITransactionExecution) => void;
@@ -25,28 +33,17 @@ export const transactionListFilterParam = 'linkedaccount';
 export const TransactionListContainer: React.FC<
     ITransactionListContainerProps
 > = (props) => {
-    const { initialParams, daoId, ...otherProps } = props;
-
-    const { activeOption, setActiveOption, options } = useDaoFilterUrlParam({
-        daoId,
-        includeAllOption: true,
-        name: transactionListFilterParam,
-    });
+    const { initialParams, bodyFilter, ...otherProps } = props;
 
     const mergedParams: IGetTransactionListParams = {
         ...initialParams,
         queryParams: {
             ...initialParams.queryParams,
-            daoId: activeOption?.daoId,
+            daoId: bodyFilter?.value.daoId,
             address: undefined,
-            onlyParent: activeOption?.onlyParent,
+            onlyParent: bodyFilter?.value.onlyParent,
         },
     };
-
-    const bodyFilter =
-        activeOption != null && options != null
-            ? { options, value: activeOption, onSelect: setActiveOption }
-            : undefined;
 
     return (
         <TransactionListDefault
