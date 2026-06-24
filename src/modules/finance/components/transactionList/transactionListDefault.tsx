@@ -11,7 +11,7 @@ import {
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import type {
     IGetTransactionListParams,
     IGetTransactionListQueryParams,
@@ -179,6 +179,8 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         validValues: visibleTypeFilters,
     });
 
+    const [isAccountFilterOpen, setIsAccountFilterOpen] = useState(false);
+
     const allAccountsLabel = t('app.finance.transactionList.accountFilter.all');
     const nonAllAccountOptions =
         bodyFilter?.options.filter((option) => !option.isAll) ?? [];
@@ -222,13 +224,19 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
                             customTrigger={
                                 <Button
                                     className="max-w-full md:max-w-64 [&>div]:min-w-0 [&>div]:truncate"
-                                    iconRight={IconType.CHEVRON_DOWN}
+                                    iconRight={
+                                        isAccountFilterOpen
+                                            ? IconType.CHEVRON_UP
+                                            : IconType.CHEVRON_DOWN
+                                    }
                                     size="md"
                                     variant="tertiary"
                                 >
                                     {activeAccountLabel}
                                 </Button>
                             }
+                            onOpenChange={setIsAccountFilterOpen}
+                            open={isAccountFilterOpen}
                         >
                             {bodyFilter.options.map((option) => (
                                 <Dropdown.Item
