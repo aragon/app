@@ -147,9 +147,8 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
     const namespace =
         translationNamespace ?? 'app.governance.publishProposalDialog';
 
-    // Stable identity for resume on re-open. Hash an explicit whitelist of the proposal's content
-    // fields (not the whole object, and not the prepared calldata which embeds a now-relative end
-    // date) so no future/volatile field can make the id drift between re-opens.
+    // Explicit id: the calldata embeds a now-relative end date, so hash a whitelist of stable content
+    // fields instead, so no volatile field can make the id drift between re-opens.
     const intentId = useMemo(
         () =>
             buildIntentId({

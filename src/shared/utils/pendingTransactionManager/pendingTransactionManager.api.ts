@@ -15,8 +15,7 @@ export interface IPendingTransactionState {
     error?: unknown;
 }
 
-// Notified on every state change. `intentId`/`state` describe the change (`state` is undefined when
-// the record was cleared); a no-arg listener (e.g. useSyncExternalStore) simply ignores them.
+// Notified on every state change; `state` is undefined when the record was cleared.
 export type PendingTransactionListener = (
     intentId?: string,
     state?: IPendingTransactionState,

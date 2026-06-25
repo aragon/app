@@ -1,7 +1,6 @@
 'use client';
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
@@ -15,7 +14,6 @@ import {
 import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { tokenApproveTokensDialogUtils } from './tokenApproveTokensDialogUtils';
 
 export interface ITokenApproveTokensDialogParams {
@@ -93,32 +91,11 @@ export const TokenApproveTokensDialog: React.FC<
 
     const parsedAmount = formatUnits(amount, token.decimals);
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                network,
-                owner: address,
-                token: token.address,
-                spender,
-                amount,
-                translationNamespace,
-            }),
-        [
-            network,
-            address,
-            token.address,
-            spender,
-            amount,
-            translationNamespace,
-        ],
-    );
-
     return (
         <TransactionDialog
             description={t(
                 `app.plugins.token.tokenApproveTokensDialog.${translationNamespace}.description`,
             )}
-            intentId={intentId}
             network={network}
             onSuccess={onSuccess}
             prepareTransaction={handlePrepareTransaction}

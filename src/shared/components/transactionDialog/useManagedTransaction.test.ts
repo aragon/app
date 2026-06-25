@@ -71,6 +71,27 @@ describe('useManagedTransaction', () => {
         expect(clearSpy).toHaveBeenCalledWith('id');
     });
 
+    it('re-resolves the resume target when the identity returns after a change, picking up the new status', () => {
+        getSpy.mockReturnValue({ status: PendingTransactionStatus.PENDING });
+        const { result, rerender } = renderHook(
+            ({ id }: { id?: string }) => useManagedTransaction(id),
+            { initialProps: { id: 'id' as string | undefined } },
+        );
+        expect(result.current.resumeTarget).toBe(TransactionDialogStep.APPROVE);
+
+        // The id briefly drops (e.g. an auto-derived id while the wallet reconnects) and the action
+        // is submitted in the meantime.
+        rerender({ id: undefined });
+        getSpy.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0x1',
+        });
+
+        // When the same id returns, the target must reflect the new status, not the stale one.
+        rerender({ id: 'id' });
+        expect(result.current.resumeTarget).toBe(TransactionDialogStep.CONFIRM);
+    });
+
     it('maps the managed status to the approve-step state', () => {
         usePendingTransactionMock.mockReturnValue({
             status: PendingTransactionStatus.PENDING,

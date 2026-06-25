@@ -3,12 +3,11 @@ import {
     PendingTransactionStatus,
     pendingTransactionManager,
 } from '@/shared/utils/pendingTransactionManager';
+import { TransactionDialogStep } from './transactionDialog.api';
 import { transactionDialogUtils } from './transactionDialogUtils';
 
-// Logs each FAILED send exactly once via the manager's change stream — independent of the dialog, so
-// a wallet rejection still gets reported even when the dialog has been closed, and step navigation in
-// an open dialog can no longer re-log it. Wallet rejections are filtered by monitorTransactionError.
-// Exposed as a factory so the behaviour can be unit-tested without the manager or the init guard.
+// Logs each FAILED send once, independent of the dialog so a rejection is reported even when it is
+// closed. Wallet rejections are filtered by monitorTransactionError. A factory, so it is testable.
 export const createTransactionLogger = (): PendingTransactionListener => {
     const loggedIntents = new Set<string>();
 
@@ -21,6 +20,7 @@ export const createTransactionLogger = (): PendingTransactionListener => {
                 loggedIntents.add(intentId);
                 transactionDialogUtils.monitorTransactionError(state.error, {
                     intentId,
+                    stepId: TransactionDialogStep.APPROVE,
                 });
             }
         } else {

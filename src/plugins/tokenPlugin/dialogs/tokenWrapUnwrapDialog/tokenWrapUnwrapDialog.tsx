@@ -2,7 +2,6 @@
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { formatUnits } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IToken } from '@/modules/finance/api/financeService';
@@ -15,7 +14,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { ITokenPluginSettingsToken } from '../../types';
 import { tokenWrapUnwrapDialogUtils } from './tokenWrapUnwrapDialogUtils';
 
@@ -100,18 +98,6 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (
                   amount,
               });
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                action,
-                tokenAddress: token.address,
-                amount: amount.toString(),
-                address,
-                network,
-            }),
-        [action, token.address, amount, address, network],
-    );
-
     const parsedAmount = formatUnits(amount, token.decimals);
     const assetToken = action === 'wrap' ? underlyingToken : token;
 
@@ -131,7 +117,6 @@ export const TokenWrapUnwrapDialog: React.FC<ITokenWrapUnwrapDialogProps> = (
             description={t(
                 `app.plugins.token.tokenWrapUnwrapDialog.${action}.description`,
             )}
-            intentId={intentId}
             network={network}
             onSuccess={onSuccess}
             prepareTransaction={handlePrepareTransaction}

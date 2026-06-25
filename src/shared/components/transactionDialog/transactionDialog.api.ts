@@ -82,11 +82,11 @@ export interface ITransactionDialogProps<
      */
     description: string;
     /**
-     * Stable identity of the action, used to resume an in-flight send when the dialog is re-opened.
-     * Derive it from the action's defining inputs (`buildIntentId`) so it is the same across re-opens
-     * and available before `prepare` runs — that is what makes resume deterministic.
+     * Stable identity used to resume an in-flight send on re-open. Defaults to a hash of the prepared
+     * transaction; pass an explicit `buildIntentId` only when the calldata is non-deterministic across
+     * re-opens (e.g. a proposal's relative end date, or freshly deployed contract addresses).
      */
-    intentId: string;
+    intentId?: string;
     /**
      * Label for the submit button used as fallback when the specific step state label is not set.
      */

@@ -2,7 +2,6 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import type { Hex } from 'viem';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
@@ -13,7 +12,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import {
     CapitalDistributorServiceKey,
     type ICampaign,
@@ -66,17 +64,6 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<
         TransactionDialogStep
     >({ initialActiveStep });
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                campaignId: campaign.campaignId,
-                recipient,
-                pluginAddress,
-                network,
-            }),
-        [campaign.campaignId, recipient, pluginAddress, network],
-    );
-
     const prepareTransaction = () =>
         capitalDistributorClaimTransactionDialogUtils.buildTransaction({
             campaign,
@@ -94,7 +81,6 @@ export const CapitalDistributorClaimTransactionDialog: React.FC<
             description={t(
                 'app.plugins.capitalDistributor.capitalDistributorClaimTransactionDialog.description',
             )}
-            intentId={intentId}
             network={network}
             prepareTransaction={prepareTransaction}
             stepper={stepper}

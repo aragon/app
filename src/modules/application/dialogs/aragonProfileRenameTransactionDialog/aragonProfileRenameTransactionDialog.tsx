@@ -1,7 +1,7 @@
 'use client';
 
 import { invariant } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
@@ -19,7 +19,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
@@ -46,15 +45,6 @@ export const AragonProfileRenameTransactionDialog: React.FC<
     const { address } = useWalletAccount();
 
     const newEnsName = `${subdomain}${memberRegistrySubdomainSuffix}`;
-
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                type: 'aragonProfileRename',
-                subdomain,
-            }),
-        [subdomain],
-    );
 
     const stepper = useStepper<
         ITransactionDialogStepMeta,
@@ -93,7 +83,6 @@ export const AragonProfileRenameTransactionDialog: React.FC<
             description={t(
                 'app.application.aragonProfileRenameTransactionDialog.description',
             )}
-            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             onCancelClick={handleCancel}
             onSuccess={handleSuccess}

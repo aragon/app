@@ -1,6 +1,5 @@
 import { invariant } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { encodeFunctionData, type Hex } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
@@ -16,7 +15,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { CapitalFlowDialogId } from '../../constants/capitalFlowDialogId';
 import type { IRouterSelectorDialogParams } from '../routerSelectorDialog';
 
@@ -81,16 +79,6 @@ export const DispatchTransactionDialog: React.FC<
         initialActiveStep: TransactionDialogStep.PREPARE,
     });
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                type: 'dispatch',
-                policyAddress: policy.address,
-                network,
-            }),
-        [policy.address, network],
-    );
-
     const prepareTransaction = () => {
         const data = encodeFunctionData({
             abi: dispatchAbi,
@@ -121,7 +109,6 @@ export const DispatchTransactionDialog: React.FC<
             description={t(
                 'app.capitalFlow.dispatchTransactionDialog.description',
             )}
-            intentId={intentId}
             network={network}
             prepareTransaction={prepareTransaction}
             stepper={stepper}

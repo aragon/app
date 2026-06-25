@@ -20,7 +20,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IDelegateStatement } from '../../components/delegationStatementCard/delegateStatement.api';
 import type { IDelegateStatementTransactionDialogParams } from './delegateStatementTransactionDialog.api';
 import { delegateStatementTransactionDialogUtils } from './delegateStatementTransactionDialogUtils';
@@ -57,11 +56,6 @@ export const DelegateStatementTransactionDialog: React.FC<
     );
 
     const { ensName, network, tokenAddress, content } = location.params;
-
-    const intentId = useMemo(
-        () => buildIntentId({ ensName, network, tokenAddress, content }),
-        [ensName, network, tokenAddress, content],
-    );
 
     const { t } = useTranslations();
     const queryClient = useQueryClient();
@@ -162,7 +156,6 @@ export const DelegateStatementTransactionDialog: React.FC<
             description={t(
                 'app.governance.delegateStatementTransactionDialog.description',
             )}
-            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

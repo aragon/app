@@ -360,6 +360,35 @@ describe('<TransactionDialog /> component', () => {
         );
     });
 
+    it('derives an intent id from the prepared transaction when none is provided', () => {
+        const transaction = { from: '0x123', data: '0x000' };
+        const network = Network.POLYGON_MAINNET;
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[network].id,
+            address: '0xConnected',
+        } as unknown as Wagmi.UseConnectionReturnType);
+        useMutationSpy.mockReturnValue({
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
+        render(createTestComponent({ stepper, network, intentId: undefined }));
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
+        act(() => approveStepAction?.({ onError: jest.fn() }));
+        // The derived id is opaque; the action is still sent through the manager keyed by it.
+        expect(managerSendSpy).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.objectContaining(transaction),
+        );
+    });
+
     it('approve transaction step switches user network when network prop does not match current chain', () => {
         const network = Network.BASE_MAINNET;
         const switchChain = jest.fn();

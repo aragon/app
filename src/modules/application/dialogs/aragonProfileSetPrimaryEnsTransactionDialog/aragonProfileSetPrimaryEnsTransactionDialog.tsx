@@ -2,7 +2,7 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
 import {
     ensReverseRegistrarAbi,
@@ -20,7 +20,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
@@ -65,11 +64,6 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
 
     const fullEnsName = `${subdomain}${memberRegistrySubdomainSuffix}`;
 
-    const intentId = useMemo(
-        () => buildIntentId({ ensName: fullEnsName, account: address }),
-        [fullEnsName, address],
-    );
-
     const prepareTransaction = useCallback(
         () =>
             Promise.resolve({
@@ -108,7 +102,6 @@ export const AragonProfileSetPrimaryEnsTransactionDialog: React.FC<
                 'app.application.aragonProfileSetPrimaryEnsTransactionDialog.description',
             )}
             disableCancel={true}
-            intentId={intentId}
             network={Network.ETHEREUM_MAINNET}
             onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}

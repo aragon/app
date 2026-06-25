@@ -2,7 +2,6 @@
 
 import { invariant } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
-import { useMemo } from 'react';
 import type { Network } from '@/shared/api/daoService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import {
@@ -12,7 +11,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { gaugeVoterVoteTransactionDialogUtils } from './gaugeVoterVoteTransactionDialogUtils';
 import type { IGaugeVote } from './gaugeVoterVoteTransactionDialogUtils.api';
 
@@ -63,11 +61,6 @@ export const GaugeVoterVoteTransactionDialog: React.FC<
         TransactionDialogStep
     >({ initialActiveStep });
 
-    const intentId = useMemo(
-        () => buildIntentId({ network, pluginAddress, votes }),
-        [network, pluginAddress, votes],
-    );
-
     const prepareTransaction = () =>
         gaugeVoterVoteTransactionDialogUtils.buildTransaction({
             votes,
@@ -92,7 +85,6 @@ export const GaugeVoterVoteTransactionDialog: React.FC<
             description={t(
                 'app.plugins.gaugeVoter.gaugeVoterVoteTransactionDialog.description',
             )}
-            intentId={intentId}
             network={network}
             onSuccess={handleSuccess}
             prepareTransaction={prepareTransaction}

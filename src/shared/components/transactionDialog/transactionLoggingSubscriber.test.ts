@@ -1,4 +1,5 @@
 import { PendingTransactionStatus } from '@/shared/utils/pendingTransactionManager';
+import { TransactionDialogStep } from './transactionDialog.api';
 import { transactionDialogUtils } from './transactionDialogUtils';
 import { createTransactionLogger } from './transactionLoggingSubscriber';
 
@@ -21,7 +22,10 @@ describe('transactionLoggingSubscriber', () => {
         log('id', { status: PendingTransactionStatus.FAILED, error });
 
         expect(monitorSpy).toHaveBeenCalledTimes(1);
-        expect(monitorSpy).toHaveBeenCalledWith(error, { intentId: 'id' });
+        expect(monitorSpy).toHaveBeenCalledWith(error, {
+            intentId: 'id',
+            stepId: TransactionDialogStep.APPROVE,
+        });
     });
 
     it('logs again after a non-failed transition (a retry)', () => {

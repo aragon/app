@@ -1,7 +1,6 @@
 'use client';
 
 import { AssetDataListItem, invariant } from '@aragon/gov-ui-kit';
-import { useMemo } from 'react';
 import type { Hex } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { Network } from '@/shared/api/daoService';
@@ -14,7 +13,6 @@ import {
 import type { ITransactionInfo } from '@/shared/components/transactionStatus';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { tokenApproveNftDialogUtils } from './tokenApproveNftDialogUtils';
 
 export interface ITokenApproveNftDialogParams {
@@ -94,17 +92,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (
         TransactionDialogStep
     >({ initialActiveStep });
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                network,
-                tokenAddress,
-                tokenId: tokenId.toString(),
-                spender,
-            }),
-        [network, tokenAddress, tokenId, spender],
-    );
-
     const handlePrepareTransaction = () =>
         tokenApproveNftDialogUtils.buildApproveTransaction({
             tokenAddress,
@@ -117,7 +104,6 @@ export const TokenApproveNftDialog: React.FC<ITokenApproveNftDialogProps> = (
             description={t(
                 `app.plugins.token.tokenApproveNftDialog.${translationNamespace}.description`,
             )}
-            intentId={intentId}
             network={network}
             onCancelClick={onClose}
             onSuccess={onSuccess}

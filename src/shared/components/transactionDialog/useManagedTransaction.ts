@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { match } from 'ts-pattern';
 import type { Hex } from 'viem';
 import {
@@ -17,58 +17,30 @@ import { TransactionDialogStep } from './transactionDialog.api';
 type ManagedRequest = ITransactionRequest & { chainId: number };
 
 export interface IUseManagedTransactionResult {
-    /**
-     * Approve-step display state derived from the managed wallet status (`success` once a hash exists).
-     */
+    /** Approve-step display state; `success` once a hash exists. */
     approveState: TransactionStatusState;
-    /**
-     * Transaction hash, latched so it survives the record being cleared on confirmation.
-     */
+    /** Transaction hash, latched so it survives the record being cleared. */
     hash?: Hex;
-    /**
-     * Step to resume to when a prior attempt for this action is still in flight on open; computed
-     * once, synchronously, so there is no effect-ordering race.
-     */
+    /** Step to resume to when a prior attempt is still in flight on open. */
     resumeTarget?: TransactionDialogStep;
-    /**
-     * The `useWaitForTransactionReceipt` result for the (latched) hash.
-     */
+    /** `useWaitForTransactionReceipt` result for the latched hash. */
     receipt: UseWaitForTransactionReceiptReturnType;
-    /**
-     * Dispatch the request to the wallet through the manager (survives the dialog closing).
-     */
+    /** Send the request to the wallet via the manager. */
     send: (request: ManagedRequest) => void;
-    /**
-     * Re-send the last request for a resumed action (whose dialog has no freshly-built transaction).
-     * Returns false when there is no stored request to re-send.
-     */
+    /** Re-send the last stored request. Returns false when there is none. */
     resend: () => boolean;
 }
 
-// On open, decide where a prior attempt left off: SUBMITTED -> confirm (on the hash, survives a
-// reload), a live PENDING -> sign. Anything else means start fresh.
-const resolveResumeTarget = (
-    intentId: string,
-): TransactionDialogStep | undefined => {
-    const status = pendingTransactionManager.get(intentId)?.status;
-    if (status === PendingTransactionStatus.SUBMITTED) {
-        return TransactionDialogStep.CONFIRM;
-    }
-    if (
-        status === PendingTransactionStatus.PENDING &&
-        !pendingTransactionManager.isInterrupted(intentId)
-    ) {
-        return TransactionDialogStep.APPROVE;
-    }
-    return undefined;
-};
-
+/**
+ * Binds the dialog to the pending-transaction manager for one action identity. `intentId` is
+ * optional and may arrive late (auto-derived after `prepare`); state is neutral until it is known.
+ */
 export const useManagedTransaction = (
-    intentId: string,
+    intentId?: string,
 ): IUseManagedTransactionResult => {
     const managed = usePendingTransaction(intentId);
 
-    // Latch the hash so the confirm/index steps keep working after the record is cleared on confirm.
+    // The record is cleared on confirmation, so latch the hash that later steps and the link need.
     const [latchedHash, setLatchedHash] = useState<Hex>();
     useEffect(() => {
         if (managed?.hash != null) {
@@ -77,37 +49,43 @@ export const useManagedTransaction = (
     }, [managed?.hash]);
     const hash = latchedHash ?? managed?.hash;
 
-    const [resumeTarget] = useState(() => resolveResumeTarget(intentId));
-
-    // A stale record (reloaded/interrupted PENDING, or a prior FAILED) is dropped once on open so the
-    // run starts clean. Guarded so a fresh send made later in this session is never cleared.
-    const staleCleared = useRef(false);
+    // Resume where a prior attempt left off, re-read on each identity change so it can't go stale:
+    // SUBMITTED -> confirm, live PENDING -> sign. A stale record (interrupted PENDING / prior FAILED)
+    // is cleared so the run starts fresh.
+    const [resumeTarget, setResumeTarget] = useState<TransactionDialogStep>();
     useEffect(() => {
-        if (staleCleared.current) {
+        if (intentId == null) {
             return;
         }
-        staleCleared.current = true;
-        if (
-            resumeTarget == null &&
-            pendingTransactionManager.get(intentId) != null
+
+        const status = pendingTransactionManager.get(intentId)?.status;
+        if (status === PendingTransactionStatus.SUBMITTED) {
+            setResumeTarget(TransactionDialogStep.CONFIRM);
+        } else if (
+            status === PendingTransactionStatus.PENDING &&
+            !pendingTransactionManager.isInterrupted(intentId)
         ) {
+            setResumeTarget(TransactionDialogStep.APPROVE);
+        } else if (status != null) {
             pendingTransactionManager.clear(intentId);
         }
-    }, [intentId, resumeTarget]);
+    }, [intentId]);
 
     const receipt = useWaitForTransactionReceipt({ hash });
 
     // Confirmed — clear the record so a re-open starts fresh; the latch keeps the hash for display.
     useEffect(() => {
-        if (receipt.status === 'success') {
+        if (receipt.status === 'success' && intentId != null) {
             pendingTransactionManager.clear(intentId);
         }
     }, [receipt.status, intentId]);
 
-    // A new send forgets the previous hash, so the advance effect can't see a stale one and jump
-    // straight to confirm on the old transaction.
+    // Forget the previous hash so the advance effect can't jump to confirm on a stale one.
     const send = useCallback(
         (request: ManagedRequest) => {
+            if (intentId == null) {
+                return;
+            }
             setLatchedHash(undefined);
             pendingTransactionManager.send(intentId, request);
         },
@@ -115,6 +93,9 @@ export const useManagedTransaction = (
     );
 
     const resend = useCallback(() => {
+        if (intentId == null) {
+            return false;
+        }
         const request = pendingTransactionManager.getRequest(intentId);
         if (request == null) {
             return false;
@@ -124,14 +105,17 @@ export const useManagedTransaction = (
         return true;
     }, [intentId]);
 
-    const approveState =
+    // A latched hash means the send succeeded (the record may already be cleared), so it wins.
+    const approveState: TransactionStatusState =
         hash != null
             ? 'success'
             : match(managed?.status)
                   .returnType<TransactionStatusState>()
                   .with(PendingTransactionStatus.PENDING, () => 'pending')
+                  .with(PendingTransactionStatus.SUBMITTED, () => 'success')
                   .with(PendingTransactionStatus.FAILED, () => 'error')
-                  .otherwise(() => 'idle');
+                  .with(undefined, () => 'idle')
+                  .exhaustive();
 
     return { approveState, hash, resumeTarget, receipt, send, resend };
 };

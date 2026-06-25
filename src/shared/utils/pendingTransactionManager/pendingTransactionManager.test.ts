@@ -200,5 +200,30 @@ describe('pendingTransactionManager', () => {
 
             expect(manager.get('id')).toBeUndefined();
         });
+
+        it('skips a malformed record without dropping the valid ones alongside it', () => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({
+                    broken: null,
+                    alsoBroken: 'not-an-object',
+                    valid: { status: 'SUBMITTED', hash: '0xhash' },
+                }),
+            );
+            const manager = new PendingTransactionManager();
+
+            expect(manager.get('broken')).toBeUndefined();
+            expect(manager.get('alsoBroken')).toBeUndefined();
+            expect(manager.get('valid')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xhash',
+            });
+        });
+
+        it('starts empty when the stored payload itself is not an object', () => {
+            sessionStorage.setItem(STORAGE_KEY, 'null');
+
+            expect(() => new PendingTransactionManager()).not.toThrow();
+        });
     });
 });

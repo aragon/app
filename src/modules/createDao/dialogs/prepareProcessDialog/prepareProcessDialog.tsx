@@ -20,7 +20,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ICreateProcessFormData } from '../../components/createProcessForm';
 import { prepareProcessDialogUtils } from './prepareProcessDialogUtils';
@@ -191,11 +190,6 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
-    const intentId = useMemo(
-        () => buildIntentId({ daoId, pluginAddress, values }),
-        [daoId, pluginAddress, values],
-    );
-
     const pinMetadataNamespace = `app.createDao.prepareProcessDialog.step.${PrepareProcessStep.PIN_METADATA}`;
     const customSteps: ITransactionDialogStep<PrepareProcessStep>[] = useMemo(
         () => [
@@ -218,7 +212,6 @@ export const PrepareProcessDialog: React.FC<IPrepareProcessDialogProps> = (
         <TransactionDialog<PrepareProcessStep>
             customSteps={customSteps}
             description={t('app.createDao.prepareProcessDialog.description')}
-            intentId={intentId}
             network={dao?.network}
             onSuccess={handlePrepareInstallationSuccess}
             prepareTransaction={handlePrepareTransaction}

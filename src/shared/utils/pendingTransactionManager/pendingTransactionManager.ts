@@ -10,8 +10,19 @@ import {
 
 const STORAGE_KEY = 'aragon.pendingTransactions';
 
-// Stable id from the action's inputs (not its calldata, which embeds a now-relative end date).
-// bigints aren't JSON-serializable, so stringify them.
+// Guard each stored entry's shape so one corrupt record can't throw and drop the whole hydrate pass.
+const isStoredState = (value: unknown): value is IPendingTransactionState => {
+    if (value == null || typeof value !== 'object' || !('status' in value)) {
+        return false;
+    }
+    const { status } = value;
+    return (
+        typeof status === 'string' &&
+        (Object.values(PendingTransactionStatus) as string[]).includes(status)
+    );
+};
+
+// Stable id from an action's inputs. bigints aren't JSON-serializable, so stringify them.
 export const buildIntentId = (parts: unknown): string =>
     keccak256(
         stringToHex(
@@ -21,9 +32,8 @@ export const buildIntentId = (parts: unknown): string =>
         ),
     );
 
-// Owns in-flight wallet sends keyed by intentId. Uses wagmi's core sendTransaction (not the hook) so
-// the sign/reject promise outlives the dialog, and mirrors state to sessionStorage so it survives a
-// reload too. Exported for tests; the app uses the shared `pendingTransactionManager` instance.
+// Owns in-flight wallet sends keyed by intentId, via wagmi's core sendTransaction (not the hook) so
+// the sign/reject promise outlives the dialog. Mirrors state to sessionStorage to survive a reload.
 export class PendingTransactionManager {
     private states = new Map<string, IPendingTransactionState>();
     private listeners = new Set<PendingTransactionListener>();
@@ -144,13 +154,12 @@ export class PendingTransactionManager {
         }
         try {
             const raw = sessionStorage.getItem(STORAGE_KEY);
-            const stored = raw
-                ? (JSON.parse(raw) as Record<string, IPendingTransactionState>)
-                : {};
-            const valid = Object.values(PendingTransactionStatus);
+            const stored: unknown = raw ? JSON.parse(raw) : {};
+            if (stored == null || typeof stored !== 'object') {
+                return;
+            }
             for (const [id, state] of Object.entries(stored)) {
-                // Ignore a status written by an older build that no longer exists.
-                if (valid.includes(state.status)) {
+                if (isStoredState(state)) {
                     this.states.set(id, state);
                 }
             }

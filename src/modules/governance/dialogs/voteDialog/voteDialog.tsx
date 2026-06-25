@@ -4,7 +4,6 @@ import {
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -17,7 +16,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IProposal } from '../../api/governanceService';
 import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
@@ -97,26 +95,6 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const handlePrepareTransaction = () =>
         voteDialogUtils.buildTransaction({ proposal, vote, target });
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                transactionType: TransactionType.PROPOSAL_VOTE,
-                daoId,
-                proposalId: proposal.id,
-                proposalIndex: proposal.proposalIndex,
-                target: target ?? proposal.pluginAddress,
-                voteValue: vote.value,
-            }),
-        [
-            daoId,
-            proposal.id,
-            proposal.proposalIndex,
-            proposal.pluginAddress,
-            target,
-            vote.value,
-        ],
-    );
-
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
     const slug = proposalUtils.getProposalSlug(
@@ -132,7 +110,6 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                     ? daoUtils.getDaoUrl(dao, `proposals/${slug}`)
                     : undefined
             }
-            intentId={intentId}
             network={proposal.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

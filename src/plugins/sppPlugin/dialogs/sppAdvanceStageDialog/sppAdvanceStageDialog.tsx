@@ -6,7 +6,6 @@ import {
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -19,7 +18,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { ISppProposal } from '../../types';
 import { sppAdvanceStageDialogUtils } from './sppAdvanceStageDialogUtils';
 
@@ -66,22 +64,10 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
     const slug = proposalUtils.getProposalSlug(proposal, dao);
 
-    const intentId = useMemo(
-        () =>
-            buildIntentId({
-                transactionType: TransactionType.PROPOSAL_ADVANCE_STAGE,
-                daoId,
-                pluginAddress: proposal.pluginAddress,
-                proposalIndex: proposal.proposalIndex,
-            }),
-        [daoId, proposal.pluginAddress, proposal.proposalIndex],
-    );
-
     return (
         <TransactionDialog
             description={t('app.plugins.spp.advanceStageDialog.description')}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
-            intentId={intentId}
             network={proposal.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
