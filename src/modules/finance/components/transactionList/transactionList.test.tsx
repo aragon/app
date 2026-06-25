@@ -328,4 +328,95 @@ describe('<TransactionList.Default /> component', () => {
         await user.click(screen.getByText('Executed'));
         expect(onTransactionClick).toHaveBeenCalledWith(executionTransaction);
     });
+
+    const accountOptions = [
+        { id: 'all', label: '', isAll: true, isParent: false, daoId: 'dao-1' },
+        {
+            id: 'dao-1',
+            label: 'Parent DAO',
+            isAll: false,
+            isParent: true,
+            daoId: 'dao-1',
+        },
+        {
+            id: 'sub-1',
+            label: 'Rewards SubDAO',
+            isAll: false,
+            isParent: false,
+            daoId: 'sub-1',
+        },
+    ];
+
+    const mockListData = () =>
+        useTransactionListDataSpy.mockReturnValue({
+            onLoadMore: jest.fn(),
+            transactionList: [],
+            state: 'idle' as const,
+            pageSize: 10,
+            itemsCount: 0,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+
+    it('renders the linked-account dropdown when there are 2+ non-all options', () => {
+        mockListData();
+        render(
+            createTestComponent({
+                bodyFilter: {
+                    options: accountOptions,
+                    value: accountOptions[0],
+                    onSelect: jest.fn(),
+                },
+            }),
+        );
+
+        expect(
+            screen.getByRole('button', {
+                name: 'app.finance.transactionList.accountFilter.all',
+            }),
+        ).toBeInTheDocument();
+    });
+
+    it('hides the linked-account dropdown when there are fewer than 2 non-all options', () => {
+        mockListData();
+        render(
+            createTestComponent({
+                bodyFilter: {
+                    options: [accountOptions[0], accountOptions[1]],
+                    value: accountOptions[0],
+                    onSelect: jest.fn(),
+                },
+            }),
+        );
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.finance.transactionList.accountFilter.all',
+            }),
+        ).not.toBeInTheDocument();
+    });
+
+    it('calls onSelect with the chosen account', async () => {
+        const user = userEvent.setup();
+        const onSelect = jest.fn();
+        mockListData();
+        render(
+            createTestComponent({
+                bodyFilter: {
+                    options: accountOptions,
+                    value: accountOptions[0],
+                    onSelect,
+                },
+            }),
+        );
+
+        await user.click(
+            screen.getByRole('button', {
+                name: 'app.finance.transactionList.accountFilter.all',
+            }),
+        );
+        await user.click(screen.getByText('Rewards SubDAO'));
+
+        expect(onSelect).toHaveBeenCalledWith(accountOptions[2]);
+    });
 });

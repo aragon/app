@@ -1,14 +1,17 @@
 'use client';
 
 import {
+    Button,
     DataListContainer,
     DataListPagination,
     DataListRoot,
+    Dropdown,
+    IconType,
     Toggle,
     ToggleGroup,
     TransactionDataListItem,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
 import type {
     IGetTransactionListParams,
     IGetTransactionListQueryParams,
@@ -25,6 +28,7 @@ import type {
     IPluginSettings,
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { TransactionListItem } from './transactionListItem';
@@ -83,13 +87,28 @@ export interface ITransactionListDefaultProps<
      * Children of the component.
      */
     children?: ReactNode;
+    /**
+     * Linked-account (SubDAO) filter state. When present with 2+ non-"All"
+     * options, renders a dropdown beside the type filters.
+     */
+    bodyFilter?: {
+        options: IDaoFilterOption[];
+        value: IDaoFilterOption;
+        onSelect: (option: IDaoFilterOption) => void;
+    };
 }
 
 export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
     props,
 ) => {
-    const { initialParams, hidePagination, children, onTransactionClick, dao } =
-        props;
+    const {
+        initialParams,
+        hidePagination,
+        children,
+        onTransactionClick,
+        dao,
+        bodyFilter,
+    } = props;
 
     const { t } = useTranslations();
 
@@ -160,6 +179,17 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         validValues: visibleTypeFilters,
     });
 
+    const [isAccountFilterOpen, setIsAccountFilterOpen] = useState(false);
+
+    const allAccountsLabel = t('app.finance.transactionList.accountFilter.all');
+    const nonAllAccountOptions =
+        bodyFilter?.options.filter((option) => !option.isAll) ?? [];
+    const showAccountFilter =
+        bodyFilter != null && nonAllAccountOptions.length >= 2;
+    const activeAccountLabel = bodyFilter?.value.isAll
+        ? allAccountsLabel
+        : (bodyFilter?.value.label ?? allAccountsLabel);
+
     const filteredParams: IGetTransactionListParams = {
         ...initialParams,
         queryParams: {
@@ -186,26 +216,63 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
             pageSize={pageSize}
             state={state}
         >
-            {showTypeFilters && (
-                <ToggleGroup
-                    isMultiSelect={false}
-                    onChange={(value) => {
-                        if (typeof value === 'string') {
-                            setActiveTypeFilter(value);
-                        }
-                    }}
-                    value={activeTypeFilter}
-                >
-                    {visibleTypeFilters.map((filter) => (
-                        <Toggle
-                            key={filter}
-                            label={t(
-                                `app.finance.transactionList.typeFilter.${filter}`,
-                            )}
-                            value={filter}
-                        />
-                    ))}
-                </ToggleGroup>
+            {(showAccountFilter || showTypeFilters) && (
+                <div className="flex flex-col items-start gap-2 md:gap-3">
+                    {showAccountFilter && bodyFilter && (
+                        <Dropdown.Container
+                            constrainContentWidth={false}
+                            customTrigger={
+                                <Button
+                                    className="max-w-full md:max-w-64 [&>div]:min-w-0 [&>div]:truncate"
+                                    iconRight={
+                                        isAccountFilterOpen
+                                            ? IconType.CHEVRON_UP
+                                            : IconType.CHEVRON_DOWN
+                                    }
+                                    size="md"
+                                    variant="tertiary"
+                                >
+                                    {activeAccountLabel}
+                                </Button>
+                            }
+                            onOpenChange={setIsAccountFilterOpen}
+                            open={isAccountFilterOpen}
+                        >
+                            {bodyFilter.options.map((option) => (
+                                <Dropdown.Item
+                                    key={option.id}
+                                    onSelect={() => bodyFilter.onSelect(option)}
+                                    selected={option.id === bodyFilter.value.id}
+                                >
+                                    {option.isAll
+                                        ? allAccountsLabel
+                                        : option.label}
+                                </Dropdown.Item>
+                            ))}
+                        </Dropdown.Container>
+                    )}
+                    {showTypeFilters && (
+                        <ToggleGroup
+                            isMultiSelect={false}
+                            onChange={(value) => {
+                                if (typeof value === 'string') {
+                                    setActiveTypeFilter(value);
+                                }
+                            }}
+                            value={activeTypeFilter}
+                        >
+                            {visibleTypeFilters.map((filter) => (
+                                <Toggle
+                                    key={filter}
+                                    label={t(
+                                        `app.finance.transactionList.typeFilter.${filter}`,
+                                    )}
+                                    value={filter}
+                                />
+                            ))}
+                        </ToggleGroup>
+                    )}
+                </div>
             )}
             <DataListContainer
                 emptyState={emptyState}

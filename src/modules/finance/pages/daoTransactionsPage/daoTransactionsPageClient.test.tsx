@@ -171,10 +171,11 @@ describe('<DaoTransactionsPageClient /> component', () => {
         render(createTestComponent({ id }));
         expect(useDaoSpy).toHaveBeenCalledWith(
             expect.objectContaining({ urlParams: { id } }),
+            expect.objectContaining({ placeholderData: expect.anything() }),
         );
     });
 
-    it('renders the page title, Transactions list tabs and stats for all transactions', () => {
+    it('renders the page title, Transactions list filters and stats for all transactions', () => {
         render(createTestComponent());
 
         expect(

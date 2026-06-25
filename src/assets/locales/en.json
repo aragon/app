@@ -1764,6 +1764,9 @@
           "heading": "Error loading transactions"
         },
         "groupTab": "All transactions",
+        "accountFilter": {
+          "all": "All accounts"
+        },
         "typeFilter": {
           "all": "All transactions",
           "executions": "Executions",
