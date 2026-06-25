@@ -134,7 +134,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 2,
+        order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -153,7 +153,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://base-mainnet.g.alchemy.com/v2/',
         },
-        order: 3,
+        order: 2,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -172,7 +172,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 4,
+        order: 3,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -191,7 +191,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -210,7 +210,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -229,7 +229,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
         },
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         beta: false,
         tenderlySupport: true,
@@ -245,7 +245,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...citrea,
         name: 'Citrea',
         logo: '/networks/citrea.svg',
-        order: 8,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -283,7 +283,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
         },
-        order: 10,
+        order: 11,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -302,7 +302,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hemi/',
         },
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -321,7 +321,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.PEAQ,
             rpcUrl: 'https://wiser-dimensional-knowledge.peaq-mainnet.quiknode.pro/',
         },
-        order: 12,
+        order: 13,
         protocolVersion: latestProtocolVersion,
         beta: true,
         tenderlySupport: true,
@@ -341,7 +341,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/monad/',
         },
-        order: 13,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
