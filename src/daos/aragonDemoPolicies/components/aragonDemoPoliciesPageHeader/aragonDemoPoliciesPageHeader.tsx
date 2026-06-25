@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { useDaoProposalsCount } from '@/modules/governance/hooks/useDaoProposalsCount';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { Container } from '@/shared/components/container';
@@ -32,12 +33,7 @@ export const AragonDemoPoliciesPageHeader: React.FC<
 
     const { name: title, description, id: daoId, metrics } = dao;
 
-    const proposalsCreated = formatterUtils.formatNumber(
-        metrics.proposalsCreated,
-        {
-            format: NumberFormat.GENERIC_SHORT,
-        },
-    );
+    const proposalsCreated = useDaoProposalsCount({ daoId });
 
     const daoTvl = formatterUtils.formatNumber(metrics.tvlUSD, {
         format: NumberFormat.FIAT_TOTAL_SHORT,
