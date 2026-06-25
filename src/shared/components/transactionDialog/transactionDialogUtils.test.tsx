@@ -30,58 +30,26 @@ describe('transactionDialog utils', () => {
         });
     });
 
-    describe('shouldIgnoreError', () => {
-        it('returns false when error is not an instance of Error class', () => {
-            expect(
-                transactionDialogUtils['shouldIgnoreError']('test'),
-            ).toBeFalsy();
-        });
-
-        it('returns false when error does not match any of the ignore error list', () => {
-            expect(
-                transactionDialogUtils['shouldIgnoreError']('unknown-error'),
-            ).toBeFalsy();
-        });
-
-        it.each([
-            { message: 'User rejected the request. stack: "Error: [...]' },
-            { message: 'Signing aborted by user. Details: ...' },
-            { message: 'User denied transaction signature.' },
-        ])('returns true when error message contains "$message"', ({
-            message,
-        }) => {
-            const error = new Error(message);
-            expect(
-                transactionDialogUtils['shouldIgnoreError'](error),
-            ).toBeTruthy();
-        });
-    });
-
     describe('monitorTransactionError', () => {
         const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 
-        const shouldIgnoreErrorSpy = jest.spyOn(
-            transactionDialogUtils as any,
-            'shouldIgnoreError',
-        );
-
         afterEach(() => {
             logErrorSpy.mockReset();
-            shouldIgnoreErrorSpy.mockReset();
         });
 
-        it('does not monitor the error when error should be ignored', () => {
-            shouldIgnoreErrorSpy.mockReturnValue(true);
-            transactionDialogUtils.monitorTransactionError('error');
-            expect(logErrorSpy).not.toHaveBeenCalled();
-        });
-
-        it('monitors the error and passes the eventual error context when error should not be ignored', () => {
-            shouldIgnoreErrorSpy.mockReturnValue(false);
+        it('reports the error with the eventual error context', () => {
             const error = new Error('test-error');
             const context = { transactionId: 123 };
             transactionDialogUtils.monitorTransactionError(error, context);
             expect(logErrorSpy).toHaveBeenCalledWith(error, { context });
+        });
+
+        it('still reports expected wallet errors (kept for investigation, tagged by beforeSend)', () => {
+            const error = new Error('User rejected the request');
+            transactionDialogUtils.monitorTransactionError(error);
+            expect(logErrorSpy).toHaveBeenCalledWith(error, {
+                context: undefined,
+            });
         });
     });
 });

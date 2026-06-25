@@ -3,6 +3,7 @@ import type { IErrorResponse } from './domain';
 
 export class AragonBackendServiceError extends Error {
     static notFoundCode = 'notFound';
+    static pluginNotFoundCode = 'pluginNotFound';
 
     static parseErrorCode = 'parseError';
     static parseErrorDescription = 'Error parsing response';
@@ -56,9 +57,26 @@ export class AragonBackendServiceError extends Error {
         );
     };
 
-    static isNotFoundError = (error: unknown) =>
+    private static hasCode = (
+        error: unknown,
+        code: string,
+    ): error is { code: string } =>
         error != null &&
         typeof error === 'object' &&
         'code' in error &&
-        error.code === this.notFoundCode;
+        (error as { code: unknown }).code === code;
+
+    static isNotFoundError = (error: unknown) =>
+        this.hasCode(error, this.notFoundCode);
+
+    static isPluginNotFoundError = (error: unknown) =>
+        this.hasCode(error, this.pluginNotFoundCode);
+
+    /**
+     * Expected "resource is gone" errors: a genuine 404 or a stale link to a DAO
+     * whose plugin has since been removed. These render a clean not-found state and
+     * must never be reported to Sentry (bots and dead links would otherwise flood it).
+     */
+    static isExpectedNotFoundError = (error: unknown) =>
+        this.isNotFoundError(error) || this.isPluginNotFoundError(error);
 }

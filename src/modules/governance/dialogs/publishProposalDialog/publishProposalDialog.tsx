@@ -109,7 +109,11 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
     const getProposalsLink = ({
         slug,
     }: IBuildTransactionDialogSuccessLinkHref) => {
-        const proposalPath = `proposals/${slug!.toUpperCase()}`;
+        // The slug can be absent if the success link is built before the proposal
+        // slug resolves — fall back to the proposals list instead of crashing.
+        const proposalPath = slug
+            ? `proposals/${slug.toUpperCase()}`
+            : 'proposals';
 
         if (daoUtils.isLinkedAccountPlugin(plugin, dao)) {
             return `/dao/${dao!.network}/${plugin.daoAddress}/${proposalPath}`;

@@ -25,6 +25,7 @@ import { ensureAppKit, wagmiConfig } from '../../constants/wagmi';
 import { fetchInterceptorUtils } from '../../utils/fetchInterceptorUtils';
 import { queryClientUtils } from '../../utils/queryClientUtils';
 import { DesyncWatcher } from '../desyncWatcher';
+import { SentryUserSync } from '../sentryUserSync';
 import { providersDialogs } from './providersDialogs';
 
 // Boot AppKit before any descendant renders. AppKit and wagmi must share the
@@ -93,6 +94,7 @@ export const Providers: React.FC<IProvidersProps> = (props) => {
                                 >
                                     <DialogProvider>
                                         <DesyncWatcher />
+                                        <SentryUserSync />
                                         {children}
                                         <DialogRoot
                                             dialogs={providersDialogs}

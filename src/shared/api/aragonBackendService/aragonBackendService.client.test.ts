@@ -18,6 +18,12 @@ describe('AragonBackend service (client)', () => {
     });
 
     describe('getNextPageParams', () => {
+        it('returns undefined when the last page is null (failed/empty fetch)', () => {
+            expect(
+                serviceTest.getNextPageParams(null, [], { queryParams: {} }),
+            ).toBeUndefined();
+        });
+
         it('returns undefined when there are no more items to fetch', () => {
             const previousPageMeta = generatePaginatedResponseMetadata({
                 page: 10,
