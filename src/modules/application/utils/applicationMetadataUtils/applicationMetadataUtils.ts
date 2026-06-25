@@ -42,13 +42,13 @@ class ApplicationMetadataUtils {
 
                 monitoringUtils.logMessage('Invalid DAO URL', {
                     level: isInternalLink ? 'warning' : 'info',
+                    noiseClass: isInternalLink
+                        ? 'internal-broken-link'
+                        : 'security-probe',
                     context: {
                         network: daoPageParams.network,
                         addressOrEns: daoPageParams.addressOrEns,
                         referer,
-                        noise_class: isInternalLink
-                            ? 'internal-broken-link'
-                            : 'security-probe',
                     },
                 });
 

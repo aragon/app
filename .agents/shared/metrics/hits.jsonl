@@ -42,3 +42,17 @@
 {"ts":"2026-06-23T13:45:24.983Z","tool":"Write","file":".agents/shared/skills/rules/error-and-monitoring.md","rule":"rule-authoring","bytes":2654,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-06-23T13:45:48.603Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"generic"}
 {"ts":"2026-06-23T13:45:48.630Z","tool":"Edit","file":"src/modules/governance/utils/governanceMetadataUtils/governanceMetadataUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"generic"}
+{"ts":"2026-06-25T11:41:00.686Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-06-25T11:41:09.003Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T11:41:16.378Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T11:41:24.147Z","tool":"Edit","file":"src/modules/application/utils/applicationMetadataUtils/applicationMetadataUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T11:41:58.234Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":0,"adapter":"claude"}
+{"ts":"2026-06-25T11:42:06.246Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":0,"adapter":"claude"}
+{"ts":"2026-06-25T12:20:18.121Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:20:30.852Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:21:20.172Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:21:53.277Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:22:01.531Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:37:42.551Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:37:48.897Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-25T12:38:05.017Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}

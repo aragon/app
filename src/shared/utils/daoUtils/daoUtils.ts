@@ -65,9 +65,8 @@ class DaoUtils {
         dao?.plugins?.some((p) => p.isBody) ?? false;
 
     hasSupportedPlugins = (dao?: IDao): boolean => {
-        const pluginIds = dao?.plugins?.map(
-            ({ interfaceType }) => interfaceType,
-        );
+        const pluginIds =
+            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };

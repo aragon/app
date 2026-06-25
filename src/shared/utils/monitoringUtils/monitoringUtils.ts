@@ -30,6 +30,13 @@ export interface ILogMessageParams {
      * @default info
      */
     level?: ScopeContext['level'];
+    /**
+     * Optional noise classification, applied as the `noise_class` tag using the same
+     * typed taxonomy `beforeSend` uses — so explicit (call-site) and pattern-based
+     * (`beforeSend`) tagging share one source of truth and never drift from the saved
+     * views / alert filters.
+     */
+    noiseClass?: SentryNoiseClass;
 }
 
 /**
@@ -39,8 +46,14 @@ export interface ILogMessageParams {
  *   investigated (search `user.id:0x... noise_class:expected`), just not alerted on.
  * - `infra`: backend/RPC/proxy failures — routed to devops/backend.
  * - `security-probe`: scanner/injection traffic — kept for security review.
+ * - `internal-broken-link`: a broken link inside our own app (e.g. a bad network
+ *   slug reached from an `aragon.org` referer) — worth triaging/fixing.
  */
-export type SentryNoiseClass = 'expected' | 'infra' | 'security-probe';
+export type SentryNoiseClass =
+    | 'expected'
+    | 'infra'
+    | 'security-probe'
+    | 'internal-broken-link';
 
 class MonitoringUtils {
     /**
@@ -170,8 +183,12 @@ class MonitoringUtils {
     };
 
     logMessage = (name: string, params?: ILogMessageParams) => {
-        const { context, level = 'info' } = params ?? {};
-        captureMessage(name, { level, tags: context });
+        const { context, level = 'info', noiseClass } = params ?? {};
+        const tags =
+            noiseClass != null
+                ? { ...context, noise_class: noiseClass }
+                : context;
+        captureMessage(name, { level, tags });
     };
 
     logRequestError = captureRequestError;
@@ -244,8 +261,11 @@ class MonitoringUtils {
             event.exception?.values
                 ?.map((value) => value.value ?? '')
                 .join(' ') ?? '';
-        // Unhandled rejections of plain objects carry their real text only here.
-        const fromSerialized = this.safeStringify(
+        // Unhandled rejections of plain objects carry their real text in `.message`.
+        // We match only that field — never a JSON dump of the whole object — so a broad
+        // phrase (e.g. `must be connected`) can't accidentally match unrelated nested
+        // data and mis-route a genuine bug into the `expected`/`infra` noise classes.
+        const fromSerializedMessage = this.getSerializedMessage(
             hint?.originalException ?? event.extra?.__serialized__,
         );
 
@@ -253,7 +273,7 @@ class MonitoringUtils {
             fromException,
             fromEvent,
             event.message ?? '',
-            fromSerialized,
+            fromSerializedMessage,
         ].join(' ');
     };
 
@@ -275,15 +295,12 @@ class MonitoringUtils {
         );
     };
 
-    private safeStringify = (value: unknown): string => {
+    private getSerializedMessage = (value: unknown): string => {
         if (value == null || typeof value !== 'object') {
             return '';
         }
-        try {
-            return JSON.stringify(value);
-        } catch {
-            return '';
-        }
+        const message = (value as { message?: unknown }).message;
+        return typeof message === 'string' ? message : '';
     };
 
     // Only enable error tracking for development, staging and production environments

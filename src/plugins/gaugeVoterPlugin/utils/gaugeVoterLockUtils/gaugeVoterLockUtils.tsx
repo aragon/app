@@ -90,8 +90,8 @@ class GaugeVoterLockUtils {
         if (
             amount == null ||
             votingEscrow?.slope == null ||
-            votingEscrow.bias == null ||
-            votingEscrow.maxTime == null
+            votingEscrow?.bias == null ||
+            votingEscrow?.maxTime == null
         ) {
             return '0';
         }

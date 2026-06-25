@@ -126,6 +126,40 @@ describe('monitoring utils', () => {
             expect(result).not.toBeNull();
             expect(result?.tags?.noise_class).toBeUndefined();
         });
+
+        it('does not mis-tag a real bug when a broad phrase only appears in unrelated serialized data', () => {
+            const event = {
+                exception: {
+                    values: [
+                        { value: 'TypeError: cannot read properties of x' },
+                    ],
+                },
+                // A broad phrase buried in an arbitrary field must NOT classify the
+                // event — only the exception text / `.message` is matched.
+                extra: {
+                    __serialized__: {
+                        detail: 'the wallet must be connected to the gauge',
+                    },
+                },
+            } as never;
+            const result = monitoringUtils.beforeSend(event);
+            expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toBeUndefined();
+        });
+
+        it('still tags plain-object wallet rejections that carry their text in .message', () => {
+            const event = {
+                exception: {
+                    values: [{ value: 'Object captured as promise rejection' }],
+                },
+                extra: {
+                    __serialized__: { message: 'User rejected the request' },
+                },
+            } as never;
+            const result = monitoringUtils.beforeSend(event);
+            expect(result).not.toBeNull();
+            expect(result?.tags?.noise_class).toEqual('expected');
+        });
     });
 
     describe('isEnabled', () => {
