@@ -416,6 +416,35 @@ describe('<TransactionDialog /> component', () => {
         );
     });
 
+    it('keeps the managed pending state on the approve step even when the wallet is on the wrong chain', () => {
+        const network = Network.BASE_MAINNET;
+        // Wallet on a different chain than required -> cross-network (would otherwise show idle switch).
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[Network.ARBITRUM_MAINNET].id,
+            address: '0xConnected',
+        } as unknown as Wagmi.UseConnectionReturnType);
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.PENDING,
+        });
+        managerGetSpy.mockReturnValue({
+            status: PendingTransactionStatus.PENDING,
+        });
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
+        render(createTestComponent({ stepper, network, intentId: 'intent' }));
+        const lastSteps = updateSteps.mock.calls.at(-1)?.[0] ?? [];
+        const approveStep = lastSteps.find(
+            (step) => step.id === TransactionDialogStep.APPROVE,
+        );
+        expect(approveStep?.meta.state).toBe('pending');
+    });
+
     it('shows the switch-network alert when the connected chain does not match the required transaction chain', () => {
         const network = Network.BASE_MAINNET;
 

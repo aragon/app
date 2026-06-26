@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 import type { Hex } from 'viem';
 import {
@@ -53,10 +53,21 @@ export const useManagedTransaction = (
     // SUBMITTED -> confirm, live PENDING -> sign. A stale record (interrupted PENDING / prior FAILED)
     // is cleared so the run starts fresh.
     const [resumeTarget, setResumeTarget] = useState<TransactionDialogStep>();
+    const lastResolvedId = useRef<string | undefined>(undefined);
     useEffect(() => {
+        if (
+            intentId != null &&
+            lastResolvedId.current != null &&
+            lastResolvedId.current !== intentId
+        ) {
+            setLatchedHash(undefined);
+            setResumeTarget(undefined);
+        }
+
         if (intentId == null) {
             return;
         }
+        lastResolvedId.current = intentId;
 
         const status = pendingTransactionManager.get(intentId)?.status;
         if (status === PendingTransactionStatus.SUBMITTED) {

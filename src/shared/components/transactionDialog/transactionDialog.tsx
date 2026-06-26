@@ -195,9 +195,12 @@ export const TransactionDialog = <TCustomStepId extends string>(
             ],
         );
 
-    const approveStepStatus = isCrossNetworkTransaction
-        ? switchChainStatus
-        : approveState;
+    // Let a managed send win over the chain-switch state: a resumed pending/submitted action must not
+    // look idle (which would invite a duplicate re-send) just because the wallet is on another chain.
+    const approveStepStatus =
+        isCrossNetworkTransaction && approveState === 'idle'
+            ? switchChainStatus
+            : approveState;
     const indexingStepStatus = transactionStatus?.isProcessed
         ? 'success'
         : isIndexing

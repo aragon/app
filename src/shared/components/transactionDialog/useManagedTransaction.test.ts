@@ -92,6 +92,51 @@ describe('useManagedTransaction', () => {
         expect(result.current.resumeTarget).toBe(TransactionDialogStep.CONFIRM);
     });
 
+    it('drops the latched hash and resume target when reused for a different intent id', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xold',
+        });
+        getSpy.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xold',
+        });
+        const { result, rerender } = renderHook(
+            ({ id }: { id?: string }) => useManagedTransaction(id),
+            { initialProps: { id: 'id1' as string | undefined } },
+        );
+        expect(result.current.hash).toBe('0xold');
+        expect(result.current.resumeTarget).toBe(TransactionDialogStep.CONFIRM);
+
+        // A different action in the same hook instance with no record of its own: nothing carries over.
+        usePendingTransactionMock.mockReturnValue(undefined);
+        getSpy.mockReturnValue(undefined);
+        rerender({ id: 'id2' });
+
+        expect(result.current.hash).toBeUndefined();
+        expect(result.current.resumeTarget).toBeUndefined();
+    });
+
+    it('keeps the latched hash across a transient id drop for the same action', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xabc',
+        });
+        const { result, rerender } = renderHook(
+            ({ id }: { id?: string }) => useManagedTransaction(id),
+            { initialProps: { id: 'id1' as string | undefined } },
+        );
+        expect(result.current.hash).toBe('0xabc');
+
+        // The id momentarily drops (auto-derived) and returns for the SAME action; the record may be
+        // cleared by then, so the latch is the only hash source and must survive the round-trip.
+        usePendingTransactionMock.mockReturnValue(undefined);
+        rerender({ id: undefined });
+        rerender({ id: 'id1' });
+
+        expect(result.current.hash).toBe('0xabc');
+    });
+
     it('maps the managed status to the approve-step state', () => {
         usePendingTransactionMock.mockReturnValue({
             status: PendingTransactionStatus.PENDING,
