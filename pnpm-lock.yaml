@@ -32,8 +32,8 @@ importers:
   .:
     dependencies:
       '@aragon/aragon-domain':
-        specifier: 0.0.0-20260623123147
-        version: 0.0.0-20260623123147(typescript@5.9.3)
+        specifier: 0.0.0-20260626160332
+        version: 0.0.0-20260626160332(typescript@5.9.3)
       '@aragon/gov-ui-kit':
         specifier: ^2.6.0
         version: 2.6.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.7.6)(@tailwindcss/typography@0.5.19(tailwindcss@4.3.0))(@tanstack/react-query@5.101.0(react@19.2.7))(@types/react-dom@19.2.3(@types/react@19.2.16))(@types/react@19.2.16)(react-dom@19.2.7(react@19.2.7))(react-hook-form@7.77.0(react@19.2.7))(react@19.2.7)(tailwindcss@4.3.0)(viem@2.52.2(typescript@5.9.3)(zod@3.25.76))(wagmi@3.6.16(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.16)(immer@11.1.8)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.7))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.0)(@tanstack/react-query@5.101.0(react@19.2.7))(@types/react@19.2.16)(immer@11.1.8)(react@19.2.7)(typescript@5.9.3)(viem@2.52.2(typescript@5.9.3)(zod@3.25.76)))
@@ -264,8 +264,8 @@ packages:
     resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
     engines: {node: '>=10'}
 
-  '@aragon/aragon-domain@0.0.0-20260623123147':
-    resolution: {integrity: sha512-Ad+6gxYHtZ/qREmuBrz9l296Ko/YHScm0lqp/IPZJGaM5vaOjqYOqillQgsgoJ8MoggKtdGRwYZmYraVEF2Giw==}
+  '@aragon/aragon-domain@0.0.0-20260626160332':
+    resolution: {integrity: sha512-+KOVD0x6E2yxawUmLoQzJ/RL1fR1kRGCRYPH256zRRmPN+R9J1SKvtp8FFH/fvtGLwbnCjy25bMm+gJFdKJhNA==}
     engines: {node: '>=24.13.0', pnpm: '>=11.0.0'}
 
   '@aragon/gov-ui-kit@2.6.0':
@@ -8052,7 +8052,7 @@ snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
 
-  '@aragon/aragon-domain@0.0.0-20260623123147(typescript@5.9.3)':
+  '@aragon/aragon-domain@0.0.0-20260626160332(typescript@5.9.3)':
     dependencies:
       bignumber.js: 11.1.2
       ddd-core-ts: 0.1.1

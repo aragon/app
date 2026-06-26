@@ -5,6 +5,9 @@ import {
     type TokenVotingMemberDTO,
 } from '@aragon/aragon-domain';
 import { type NextRequest, NextResponse } from 'next/server';
+import { mainnet } from 'viem/chains';
+import { resolveServerRpcUrl } from '@/modules/application/utils/proxyRpcUtils/resolveServerRpcUrl';
+import { Network } from '@/shared/api/daoService';
 
 /**
  * BFF route for the aragon-domain token-voting members endpoint.
@@ -16,8 +19,9 @@ const endpoint =
     process.env.ENVIO_GRAPHQL_ENDPOINT ?? 'http://localhost:8080/v1/graphql';
 const apiToken = process.env.ENVIO_API_TOKEN;
 
-const controller = AragonDomain.load(new EnvioClient(endpoint, apiToken));
-
+const controller = AragonDomain.load(new EnvioClient(endpoint, apiToken), {
+    [mainnet.id]: resolveServerRpcUrl(Network.ETHEREUM_MAINNET),
+});
 export const GET = async (req: NextRequest) => {
     const params = req.nextUrl.searchParams;
     const pluginAddress = params.get('pluginAddress');
