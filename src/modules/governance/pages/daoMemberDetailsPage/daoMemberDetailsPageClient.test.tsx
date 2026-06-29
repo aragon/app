@@ -9,7 +9,6 @@ import {
 import type * as ReactQuery from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as wagmi from 'wagmi';
 import * as ensModule from '@/modules/ens';
 import { ensRecordKeys } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
@@ -55,7 +54,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const useEfpStatsSpy = jest.spyOn(efpService, 'useEfpStats');
-    const useBlockSpy = jest.spyOn(wagmi, 'useBlock');
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
     const useEnsProfileRecordsSpy = jest.spyOn(
@@ -79,7 +77,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
                 data: { followers_count: 1, following_count: 2 },
             }),
         );
-        useBlockSpy.mockReturnValue({} as wagmi.UseBlockReturnType);
         useEnsNameSpy.mockReturnValue({
             data: null,
             isLoading: false,
@@ -99,7 +96,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         useMemberSpy.mockReset();
         clipboardCopySpy.mockReset();
         useEfpStatsSpy.mockReset();
-        useBlockSpy.mockReset();
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
         useEnsProfileRecordsSpy.mockReset();
@@ -395,15 +391,11 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         );
     });
 
-    it('renders fallback of `-` when lastActive is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
-        useBlockSpy
-            .mockReturnValueOnce({
-                data: { timestamp: 3_204_230_420 },
-            } as unknown as wagmi.UseBlockReturnType)
-            .mockReturnValueOnce({
-                data: { timestamp: null },
-            } as unknown as wagmi.UseBlockReturnType);
+    it('renders fallback of `-` when lastActivityTimestamp is null', () => {
+        const metrics = generateMemberMetrics({
+            firstActivityTimestamp: 1_723_472_877,
+            lastActivityTimestamp: null,
+        });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateMember({ metrics, lastActive: null }),
@@ -416,13 +408,12 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
 
     it('renders the correct last activity date', () => {
         timeUtils.setTime('2025-08-10T09:30:00');
-        const lastActive = 1_754_559_000;
-        useBlockSpy.mockReturnValue({
-            data: { timestamp: lastActive },
-        } as unknown as wagmi.UseBlockReturnType);
+        const metrics = generateMemberMetrics({
+            lastActivityTimestamp: 1_754_559_000,
+        });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ lastActive }),
+                data: generateMember({ metrics }),
             }),
         );
 
@@ -435,18 +426,14 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders fallback of `-` when firstActivity is null', () => {
-        const lastActive = 1_723_472_877;
-        useBlockSpy
-            .mockReturnValueOnce({
-                data: { timestamp: null },
-            } as unknown as wagmi.UseBlockReturnType)
-            .mockReturnValueOnce({
-                data: { timestamp: lastActive },
-            } as unknown as wagmi.UseBlockReturnType);
+    it('renders fallback of `-` when firstActivityTimestamp is null', () => {
+        const metrics = generateMemberMetrics({
+            firstActivityTimestamp: null,
+            lastActivityTimestamp: 1_723_472_877,
+        });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ lastActive }),
+                data: generateMember({ metrics }),
             }),
         );
 
@@ -455,10 +442,9 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct first activity date', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
-        useBlockSpy.mockReturnValue({
-            data: { timestamp: metrics.firstActivity },
-        } as unknown as wagmi.UseBlockReturnType);
+        const metrics = generateMemberMetrics({
+            firstActivityTimestamp: 1_723_472_877,
+        });
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateMember({ metrics }),
@@ -468,7 +454,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         render(createTestComponent());
 
         const firstActivityDate = formatterUtils.formatDate(
-            metrics.firstActivity! * 1000,
+            metrics.firstActivityTimestamp! * 1000,
             {
                 format: DateFormat.YEAR_MONTH_DAY,
             },

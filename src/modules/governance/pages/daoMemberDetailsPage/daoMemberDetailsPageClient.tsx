@@ -8,7 +8,6 @@ import {
     formatterUtils,
     MemberAvatar,
 } from '@aragon/gov-ui-kit';
-import { useBlock } from 'wagmi';
 import {
     ensRecordKeys,
     useEnsAvatar,
@@ -24,7 +23,6 @@ import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import EfpLogo from '../../../../assets/images/efp-logo.svg';
@@ -89,33 +87,18 @@ export const DaoMemberDetailsPageClient: React.FC<
     };
     const { data: member } = useMember(memberParams);
 
-    const { firstActive, lastActive } = member ?? {};
+    const { firstActivityTimestamp, lastActivityTimestamp } =
+        member?.metrics ?? {};
 
-    const { chainId, buildEntityUrl } = useDaoChain({ daoId });
-
-    const firstBlockNumber =
-        firstActive != null ? bigIntUtils.safeParse(firstActive) : undefined;
-    const lastBlockNumber =
-        lastActive != null ? bigIntUtils.safeParse(lastActive) : undefined;
-
-    const { data: firstBlock } = useBlock({
-        chainId,
-        blockNumber: firstBlockNumber,
-        query: { enabled: !!firstBlockNumber },
-    });
-    const { data: lastBlock } = useBlock({
-        chainId,
-        blockNumber: lastBlockNumber,
-        query: { enabled: !!lastBlockNumber },
-    });
+    const { buildEntityUrl } = useDaoChain({ daoId });
 
     const parsedFirstActivity =
-        firstBlock?.timestamp != null
-            ? Number(firstBlock.timestamp) * 1000
+        firstActivityTimestamp != null
+            ? firstActivityTimestamp * 1000
             : undefined;
     const parsedLatestActivity =
-        lastBlock?.timestamp != null
-            ? Number(lastBlock.timestamp) * 1000
+        lastActivityTimestamp != null
+            ? lastActivityTimestamp * 1000
             : undefined;
 
     const formattedFirstActivity = formatterUtils.formatDate(
@@ -164,8 +147,8 @@ export const DaoMemberDetailsPageClient: React.FC<
         firstActive: null,
         lastActive: null,
         metrics: {
-            firstActivity: null,
-            lastActivity: null,
+            firstActivityTimestamp: null,
+            lastActivityTimestamp: null,
         },
     };
     const memberData = member ?? fallbackMember;

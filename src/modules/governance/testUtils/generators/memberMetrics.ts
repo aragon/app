@@ -3,7 +3,7 @@ import type { IMemberMetrics } from '../../api/governanceService';
 export const generateMemberMetrics = (
     metrics?: Partial<IMemberMetrics>,
 ): IMemberMetrics => ({
-    firstActivity: null,
-    lastActivity: null,
+    firstActivityTimestamp: null,
+    lastActivityTimestamp: null,
     ...metrics,
 });

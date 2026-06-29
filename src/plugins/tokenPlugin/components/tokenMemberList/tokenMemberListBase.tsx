@@ -1,5 +1,6 @@
 'use client';
 
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import {
     addressUtils,
     DataListContainer,
@@ -10,7 +11,7 @@ import {
 import { type ReactNode, useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
-import { useMemberListData } from '@/modules/governance/hooks/useMemberListData';
+import { useTokenVotingMembership } from '@/modules/governance/hooks/useTokenVotingMembership';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -68,14 +69,27 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // backend queries the correct DAO.
     const apiParams = useMemo(() => {
         const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
+        // `underlying` is only on ITokenPluginSettingsToken; lock-to-vote tokens
+        // don't carry it. Read defensively — when absent the value is `null`,
+        // which the routing predicate treats as "plain ERC-20".
+        const tokenUnderlying =
+            (plugin.settings.token as { underlying?: string | null })
+                .underlying ?? null;
 
-        if (resolvedDaoId === daoId) {
-            return initialParams;
-        }
+        const routingParams = {
+            network: dao?.network,
+            pluginInterfaceType: plugin.interfaceType,
+            tokenAddress: plugin.settings.token.address,
+            tokenUnderlying,
+        };
 
         return {
             ...initialParams,
-            queryParams: { ...initialParams.queryParams, daoId: resolvedDaoId },
+            queryParams: {
+                ...initialParams.queryParams,
+                ...routingParams,
+                daoId: resolvedDaoId,
+            },
         };
     }, [initialParams, plugin, dao, daoId]);
 
@@ -87,7 +101,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         errorState,
         emptyState,
         memberList,
-    } = useMemberListData<ITokenMember>(apiParams);
+    } = useTokenVotingMembership(apiParams);
 
     const { connectedUserMember, delegateMember, hasValidDelegate } =
         useTokenPinnedMembers({
@@ -103,7 +117,10 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         }
 
         const pinnedAddresses = new Set<string>();
-        const merged: ITokenMember[] = [];
+        // Pinned single-members arrive as `ITokenMember`, which is a structural
+        // superset of `TokenVotingMemberDTO`, so they flow into the DTO list
+        // without a runtime transform (see the slice plan's pinned-member note).
+        const merged: TokenVotingMemberDTO[] = [];
 
         const appendPinnedMember = (member?: ITokenMember) => {
             if (member?.address == null) {

@@ -2,7 +2,7 @@ import type {
     IOrderedRequest,
     IPaginatedRequest,
 } from '@/shared/api/aragonBackendService';
-import type { Network } from '@/shared/api/daoService';
+import type { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     IRequestQueryParams,
     IRequestUrlParams,
@@ -54,6 +54,24 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * Address of the plugin to fetch the members for.
      */
     pluginAddress: string;
+    /**
+     * Network of the plugin.
+     */
+    network?: Network;
+    /**
+     * Interface type of the plugin.
+     */
+    pluginInterfaceType?: PluginInterfaceType;
+    /**
+     * Address of the governance token, when the plugin is token-voting.
+     */
+    tokenAddress?: string;
+    /**
+     * Address of the underlying token when the governance token is a wrapped
+     * or voting-escrow adapter. `null` / `undefined` means the governance
+     * token is a plain ERC-20.
+     */
+    tokenUnderlying?: string | null;
 }
 
 export interface IGetMemberListParams

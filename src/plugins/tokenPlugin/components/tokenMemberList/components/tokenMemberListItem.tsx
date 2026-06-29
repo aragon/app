@@ -1,7 +1,7 @@
+import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { MemberDataListItem } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
 import { useEnsAvatar, useEnsName } from '@/modules/ens';
-import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -11,7 +11,7 @@ export interface ITokenMemberListItemProps {
     /**
      * Member to display the information for.
      */
-    member: ITokenMember;
+    member: TokenVotingMemberDTO;
     /**
      * ID of the DAO the user is member of.
      */
