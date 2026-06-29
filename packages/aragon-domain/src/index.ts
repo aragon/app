@@ -5,3 +5,6 @@ export { AragonController as AragonDomain } from './infrastructure/controllers/A
 
 // Infrastructure
 export { EnvioClient } from './infrastructure/stores/EnvioClient';
+
+// DTOs
+export type { MemberProfileTextRecordDTO } from './infrastructure/controllers/AragonController/maps/domain/MemberProfileTextRecordMap';
