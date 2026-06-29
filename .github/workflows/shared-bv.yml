@@ -47,7 +47,7 @@ jobs:
       report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
 
       - name: Load E2E MetaMask wallet from 1Password
         uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
