@@ -9,6 +9,7 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
+import * as useProposalListDataModule from '@/modules/governance/hooks/useProposalListData';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
@@ -63,6 +64,10 @@ jest.mock('../../components/dashboardOnboarding', () => ({
 
 describe('<DaoDashboardPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useProposalListDataSpy = jest.spyOn(
+        useProposalListDataModule,
+        'useProposalListData',
+    );
     const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
     const hasSupportedPluginsSpy = jest.spyOn(daoUtils, 'hasSupportedPlugins');
     const useAdminStatusSpy = jest.spyOn(
@@ -75,6 +80,15 @@ describe('<DaoDashboardPageClient /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 1,
+            itemsCount: undefined,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
         useAdminStatusSpy.mockReturnValue({
             isAdminMember: false,
             isLoading: false,
@@ -87,6 +101,7 @@ describe('<DaoDashboardPageClient /> component', () => {
 
     afterEach(() => {
         useDaoSpy.mockReset();
+        useProposalListDataSpy.mockReset();
         clipboardCopySpy.mockReset();
         hasSupportedPluginsSpy.mockReset();
         useAdminStatusSpy.mockReset();
@@ -142,7 +157,6 @@ describe('<DaoDashboardPageClient /> component', () => {
 
     it('renders the formatted DAO stats', () => {
         const metrics = generateDaoMetrics({
-            proposalsCreated: 2342,
             members: 123,
             tvlUSD: '4729384792837.4928374',
         });
@@ -150,6 +164,15 @@ describe('<DaoDashboardPageClient /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: dao }),
         );
+        useProposalListDataSpy.mockReturnValue({
+            proposalList: [],
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 1,
+            itemsCount: 2342,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
         render(createTestComponent());
 
         expect(

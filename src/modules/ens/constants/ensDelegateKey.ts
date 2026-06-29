@@ -34,6 +34,7 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.CITREA_MAINNET]: 'citrea',
     [Network.HEMI_MAINNET]: 'hemi',
     [Network.KATANA_MAINNET]: 'katana',
+    [Network.MONAD_MAINNET]: 'monad',
     [Network.ETHEREUM_SEPOLIA]: 'test',
 };
 

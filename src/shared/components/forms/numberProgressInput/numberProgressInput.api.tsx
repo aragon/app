@@ -5,11 +5,15 @@ import type {
 } from '@aragon/gov-ui-kit';
 
 export interface INumberProgressInputProps
-    extends Omit<IInputNumberProps, 'value' | 'alert'> {
+    extends Omit<IInputNumberProps, 'value' | 'alert' | 'label'> {
     /**
      * Name of the form field.
      */
     fieldName: string;
+    /**
+     * Label displayed above the input and used in validation messages.
+     */
+    label: string;
     /**
      * Label displayed above the progress component.
      */

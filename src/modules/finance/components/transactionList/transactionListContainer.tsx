@@ -1,30 +1,31 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { DaoFilterComponent } from '@/shared/components/daoFilterComponent';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useDaoFilterUrlParam } from '@/shared/hooks/useDaoFilterUrlParam';
+import type { IDao } from '@/shared/api/daoService';
+import type { IDaoFilterOption } from '@/shared/hooks/useDaoFilterUrlParam';
 import type { NestedOmit } from '@/shared/types/nestedOmit';
-import type { IGetTransactionListParams } from '../../api/financeService';
+import type {
+    IGetTransactionListParams,
+    ITransactionExecution,
+} from '../../api/financeService';
 import { TransactionListDefault } from './transactionListDefault';
 
 export interface ITransactionListContainerProps {
-    /**
-     * Initial parameters to use for fetching the transaction list.
-     */
     initialParams: NestedOmit<IGetTransactionListParams, 'queryParams.address'>;
     /**
-     * ID of the DAO.
+     * Linked-account (SubDAO) filter state. Owned by the page so a single
+     * source of truth survives transient list unmounts (the container is
+     * controlled and holds no filter state of its own).
      */
-    daoId: string;
-    /**
-     * Hides the pagination when set to true.
-     */
+    bodyFilter?: {
+        options: IDaoFilterOption[];
+        value: IDaoFilterOption;
+        onSelect: (option: IDaoFilterOption) => void;
+    };
     hidePagination?: boolean;
-    /**
-     * Children of the component.
-     */
     children?: ReactNode;
+    onTransactionClick?: (transaction: ITransactionExecution) => void;
+    dao?: IDao;
 }
 
 export const transactionListFilterParam = 'linkedaccount';
@@ -32,26 +33,22 @@ export const transactionListFilterParam = 'linkedaccount';
 export const TransactionListContainer: React.FC<
     ITransactionListContainerProps
 > = (props) => {
-    const { initialParams, daoId, ...otherProps } = props;
+    const { initialParams, bodyFilter, ...otherProps } = props;
 
-    const { t } = useTranslations();
-
-    const { activeOption, setActiveOption, options } = useDaoFilterUrlParam({
-        daoId,
-        includeAllOption: true,
-        name: transactionListFilterParam,
-    });
+    const mergedParams: IGetTransactionListParams = {
+        ...initialParams,
+        queryParams: {
+            ...initialParams.queryParams,
+            daoId: bodyFilter?.value.daoId,
+            address: undefined,
+            onlyParent: bodyFilter?.value.onlyParent,
+        },
+    };
 
     return (
-        <DaoFilterComponent
-            allOptionLabel={t('app.finance.transactionList.groupTab')}
-            Fallback={TransactionListDefault}
-            initialParams={initialParams}
-            onValueChange={setActiveOption}
-            options={options}
-            searchParamName={transactionListFilterParam}
-            slotId="FINANCE_TRANSACTION_LIST"
-            value={activeOption}
+        <TransactionListDefault
+            bodyFilter={bodyFilter}
+            initialParams={mergedParams}
             {...otherProps}
         />
     );

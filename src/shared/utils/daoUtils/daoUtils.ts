@@ -62,12 +62,11 @@ export interface IDaoAvailableUpdates {
 
 class DaoUtils {
     hasPluginBody = (dao?: IDao): boolean =>
-        dao?.plugins.some((p) => p.isBody) ?? false;
+        dao?.plugins?.some((p) => p.isBody) ?? false;
 
     hasSupportedPlugins = (dao?: IDao): boolean => {
-        const pluginIds = dao?.plugins.map(
-            ({ interfaceType }) => interfaceType,
-        );
+        const pluginIds =
+            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
@@ -109,7 +108,7 @@ class DaoUtils {
             slug,
         } = params ?? {};
 
-        return dao?.plugins.filter(
+        return dao?.plugins?.filter(
             (plugin) =>
                 this.filterPluginByAddress(plugin, pluginAddress) &&
                 this.filterPluginByType(plugin, type) &&
@@ -178,7 +177,7 @@ class DaoUtils {
     getAvailablePluginUpdates = (dao?: IDao): IDaoPlugin[] => {
         const registeredPlugins =
             pluginRegistryUtils.getPlugins() as IPluginInfo[];
-        const availablePluginUpdates = dao?.plugins.filter((plugin) => {
+        const availablePluginUpdates = dao?.plugins?.filter((plugin) => {
             // We need to get the registered plugin by subdomain, not by interfaceType!
             // There might be a plugin with the same interfaceType but from different repository, and we don't want to allow updating such plugins.
             const target = registeredPlugins.find(

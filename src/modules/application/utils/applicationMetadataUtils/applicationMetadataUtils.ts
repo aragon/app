@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { daoService } from '@/shared/api/daoService';
 import type { IDaoPageParams } from '@/shared/types';
@@ -23,10 +24,31 @@ class ApplicationMetadataUtils {
             const daoPageParams = await params;
 
             if (!networkUtils.isValidNetwork(daoPageParams.network)) {
+                // A bad network param is almost always external bot/scanner traffic, but
+                // when the referer is our own app it signals a broken internal link worth
+                // fixing. Tag both via `noise_class` so they route out of the default alert
+                // stream (internal-broken-link → triage, security-probe → security review).
+                const referer = (await headers()).get('referer') ?? '';
+                let isInternalLink = false;
+
+                try {
+                    const refererHost = new URL(referer).hostname.toLowerCase();
+                    isInternalLink =
+                        refererHost === 'aragon.org' ||
+                        refererHost.endsWith('.aragon.org');
+                } catch {
+                    isInternalLink = false;
+                }
+
                 monitoringUtils.logMessage('Invalid DAO URL', {
+                    level: isInternalLink ? 'warning' : 'info',
+                    noiseClass: isInternalLink
+                        ? 'internal-broken-link'
+                        : 'security-probe',
                     context: {
                         network: daoPageParams.network,
                         addressOrEns: daoPageParams.addressOrEns,
+                        referer,
                     },
                 });
 
@@ -51,9 +73,10 @@ class ApplicationMetadataUtils {
                 image,
             });
         } catch (error: unknown) {
-            // Suppress notFound: the page renders an empty/404 state for arbitrary URLs
-            // (bots, stale links) — these aren't bugs and would flood Sentry.
-            if (!AragonBackendServiceError.isNotFoundError(error)) {
+            // Suppress notFound / pluginNotFound: the page renders an empty/404 state
+            // for arbitrary URLs (bots, stale links to removed plugins) — not bugs, and
+            // would flood Sentry.
+            if (!AragonBackendServiceError.isExpectedNotFoundError(error)) {
                 monitoringUtils.logError(error);
             }
 

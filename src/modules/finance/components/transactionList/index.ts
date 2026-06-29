@@ -2,7 +2,10 @@ import {
     TransactionListContainer,
     transactionListFilterParam,
 } from './transactionListContainer';
-import { TransactionListDefault } from './transactionListDefault';
+import {
+    TransactionListDefault,
+    transactionListTypeFilterParam,
+} from './transactionListDefault';
 
 export const TransactionList = {
     Container: TransactionListContainer,
@@ -11,4 +14,4 @@ export const TransactionList = {
 
 export type { ITransactionListContainerProps } from './transactionListContainer';
 export type { ITransactionListDefaultProps } from './transactionListDefault';
-export { transactionListFilterParam };
+export { transactionListFilterParam, transactionListTypeFilterParam };

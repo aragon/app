@@ -1,7 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import * as financeService from '@/modules/finance/api/financeService';
+import { TransactionSide } from '@/modules/finance/api/financeService';
+import { TransactionList } from '@/modules/finance/components/transactionList';
+import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
 import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useDaoExecutePermission from '@/shared/hooks/useDaoExecutePermission';
@@ -58,6 +62,8 @@ describe('<DaoTransactionsPageClient /> component', () => {
         useDaoExecutePermission,
         'useDaoExecutePermission',
     );
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
+    const openDialog = jest.fn();
 
     const featureFlagSnapshot: FeatureFlagSnapshot[] = [
         {
@@ -75,6 +81,12 @@ describe('<DaoTransactionsPageClient /> component', () => {
     ];
 
     beforeEach(() => {
+        useDialogContextSpy.mockReturnValue({
+            locations: [],
+            open: openDialog,
+            close: jest.fn(),
+            updateOptions: jest.fn(),
+        });
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
@@ -159,10 +171,11 @@ describe('<DaoTransactionsPageClient /> component', () => {
         render(createTestComponent({ id }));
         expect(useDaoSpy).toHaveBeenCalledWith(
             expect.objectContaining({ urlParams: { id } }),
+            expect.objectContaining({ placeholderData: expect.anything() }),
         );
     });
 
-    it('renders the page title, Transactions list tabs and stats for all transactions', () => {
+    it('renders the page title, Transactions list filters and stats for all transactions', () => {
         render(createTestComponent());
 
         expect(
@@ -257,6 +270,38 @@ describe('<DaoTransactionsPageClient /> component', () => {
         expect(button).toHaveAttribute(
             'href',
             `/dao/${dao.network}/${dao.address}/create/execute`,
+        );
+    });
+
+    it('passes execution transaction clicks to the transaction detail dialog', () => {
+        const dao = generateDao();
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        render(createTestComponent());
+
+        const containerProps = (TransactionList.Container as jest.Mock).mock
+            .calls[0][0];
+        const transaction = {
+            network: Network.ETHEREUM_SEPOLIA,
+            blockNumber: 1,
+            blockTimestamp: 1_700_000_000,
+            fromAddress: '0xfrom',
+            toAddress: '0xto',
+            value: '0',
+            side: TransactionSide.EXECUTION,
+            type: 'execution',
+            transactionHash: '0xabc',
+            id: 'execution-id',
+            actionCount: 1,
+        };
+
+        act(() => containerProps.onTransactionClick(transaction));
+
+        expect(containerProps.dao).toEqual(dao);
+        expect(openDialog).toHaveBeenCalledWith(
+            FinanceDialogId.TRANSACTION_DETAIL,
+            { params: { dao, transaction } },
         );
     });
 });

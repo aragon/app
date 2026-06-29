@@ -4,8 +4,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import * as Wagmi from 'wagmi';
 import * as DaoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
+import * as BlockNavigation from '@/shared/components/blockNavigationContext';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
     generateReactQueryResultSuccess,
@@ -31,6 +33,10 @@ describe('<ExecuteActionsDialog /> component', () => {
     const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
     const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
+    const useBlockNavigationContextSpy = jest.spyOn(
+        BlockNavigation,
+        'useBlockNavigationContext',
+    );
 
     const network = Network.ETHEREUM_MAINNET;
 
@@ -48,6 +54,10 @@ describe('<ExecuteActionsDialog /> component', () => {
             mutate: jest.fn(),
             status: 'idle',
         } as unknown as ReactQuery.UseMutationResult);
+        useBlockNavigationContextSpy.mockReturnValue({
+            isBlocked: false,
+            setIsBlocked: jest.fn(),
+        });
     });
 
     afterEach(() => {
@@ -55,13 +65,14 @@ describe('<ExecuteActionsDialog /> component', () => {
         useSendTransactionSpy.mockReset();
         useMutationSpy.mockReset();
         useDaoSpy.mockReset();
+        useBlockNavigationContextSpy.mockReset();
     });
 
     const generateLocation = (
         params?: Partial<IExecuteActionsDialogParams>,
     ): IDialogLocation<IExecuteActionsDialogParams> => ({
         id: 'test',
-        params: { daoId: 'test', actions: [], ...params },
+        params: { daoId: `${network}-0x123`, actions: [], ...params },
     });
 
     const createTestComponent = (
@@ -167,5 +178,52 @@ describe('<ExecuteActionsDialog /> component', () => {
                 name: /transactionDialog.footer.retry/,
             }),
         ).toBeInTheDocument();
+    });
+
+    it('pins the send to the required chain id of the DAO', () => {
+        const sendTransaction = jest.fn();
+        const transaction = { to: '0x1', value: BigInt(0), data: '0x' };
+        useSendTransactionSpy.mockReturnValue({
+            mutate: sendTransaction,
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        useMutationSpy.mockReturnValue({
+            mutate: jest.fn(),
+            status: 'success',
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+
+        render(createTestComponent());
+
+        fireEvent.click(
+            screen.getByRole('button', {
+                name: /executeActionsDialog.button.submit/,
+            }),
+        );
+
+        expect(sendTransaction).toHaveBeenCalledWith(
+            { ...transaction, chainId: networkDefinitions[network].id },
+            expect.anything(),
+        );
+    });
+
+    it('re-blocks navigation when an optimistically submitted transaction later fails', () => {
+        const setIsBlocked = jest.fn();
+        useBlockNavigationContextSpy.mockReturnValue({
+            isBlocked: false,
+            setIsBlocked,
+        });
+        useSendTransactionSpy.mockReturnValue({
+            mutate: jest.fn(),
+            status: 'error',
+        } as unknown as Wagmi.UseSendTransactionReturnType);
+        useMutationSpy.mockReturnValue({
+            mutate: jest.fn(),
+            status: 'success',
+            data: { to: '0x1', value: BigInt(0), data: '0x' },
+        } as unknown as ReactQuery.UseMutationResult);
+
+        render(createTestComponent());
+
+        expect(setIsBlocked).toHaveBeenCalledWith(true);
     });
 });

@@ -8,6 +8,7 @@ import {
     hemi,
     katana,
     mainnet,
+    monad,
     optimism,
     peaq,
     polygon,
@@ -133,7 +134,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 2,
+        order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -152,7 +153,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://base-mainnet.g.alchemy.com/v2/',
         },
-        order: 3,
+        order: 2,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -171,7 +172,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 4,
+        order: 3,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -190,7 +191,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -209,7 +210,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -228,7 +229,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/katana/',
         },
-        order: 7,
+        order: 8,
         protocolVersion: latestProtocolVersion,
         beta: false,
         tenderlySupport: true,
@@ -244,7 +245,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         ...citrea,
         name: 'Citrea',
         logo: '/networks/citrea.svg',
-        order: 8,
+        order: 10,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -282,7 +283,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ANKR,
             rpcUrl: 'https://rpc.ankr.com/chiliz/',
         },
-        order: 10,
+        order: 11,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -301,7 +302,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/hemi/',
         },
-        order: 11,
+        order: 12,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: false,
         addresses: {
@@ -320,7 +321,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.PEAQ,
             rpcUrl: 'https://wiser-dimensional-knowledge.peaq-mainnet.quiknode.pro/',
         },
-        order: 12,
+        order: 13,
         protocolVersion: latestProtocolVersion,
         beta: true,
         tenderlySupport: true,
@@ -330,6 +331,25 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
             globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
             conditionFactory: '0xdFc18C8Cd61f6cfD0A3B0aF0C0f9a752e2BF1515',
+        },
+    },
+    [Network.MONAD_MAINNET]: {
+        ...monad,
+        name: 'Monad',
+        logo: '/networks/monad.svg',
+        privateRpcConfig: {
+            rpcProvider: RpcProvider.DRPC,
+            rpcUrl: 'https://lb.drpc.live/monad/',
+        },
+        order: 7,
+        protocolVersion: latestProtocolVersion,
+        tenderlySupport: false,
+        addresses: {
+            dao: '0xe16516d16602C45D7f1A7e7874CE9F35850B40B5',
+            daoFactory: '0xc3a857B614D5B79B936Ce6640E5351dF8fA262eD',
+            pluginSetupProcessor: '0x8C719Ef523C7e8Cb3Cf03540D6FDf537B0F09f28',
+            globalExecutor: '0x4320503ED37A32B918a37D2C9A8eDf7202fbAf0C',
+            conditionFactory: '0x85EF9798Cc403f956860Fe23A5545e98dde010f7',
         },
     },
 

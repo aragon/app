@@ -1,4 +1,7 @@
 {
+  "name": "Aragon",
+  "description": "Explore the organizations using our modular governance stack to secure their onchain governance.",
+  "iconPath": "icon-512.png",
   "icons": [
     { "sizes": "192x192", "src": "/icon-192.png", "type": "image/png" },
     { "sizes": "512x512", "src": "/icon-512.png", "type": "image/png" }

@@ -1,12 +1,15 @@
 'use client';
 
+import { keepPreviousData } from '@tanstack/react-query';
 import { DispatchPanel } from '@/modules/capitalFlow/components/dispatchPanel';
 import {
     useAssetList,
     useTransactionList,
 } from '@/modules/finance/api/financeService';
 import { DaoFilterAsideCard } from '@/modules/finance/components/daoFilterAsideCard';
+import { FinanceDialogId } from '@/modules/finance/constants/financeDialogId';
 import { useDao } from '@/shared/api/daoService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -37,18 +40,33 @@ export const DaoTransactionsPageClient: React.FC<
     const { id, initialParams } = props;
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
+    const { open } = useDialogContext();
     const isAutomationEnabled = isEnabled('capitalFlowAutomation');
 
-    const { activeOption } = useDaoFilterUrlParam({
+    const { activeOption, setActiveOption, options } = useDaoFilterUrlParam({
         daoId: id,
         includeAllOption: true,
         name: transactionListFilterParam,
     });
 
-    const { data: dao } = useDao({
-        urlParams: { id },
-        queryParams: { onlyParent: activeOption?.onlyParent },
-    });
+    // Own the linked-account filter here (single source of truth). The page
+    // never unmounts on a filter refetch, so the selection can't be wiped by
+    // useFilterUrlParam's unmount cleanup the way a container-owned instance was.
+    const bodyFilter =
+        activeOption != null && options != null
+            ? { options, value: activeOption, onSelect: setActiveOption }
+            : undefined;
+
+    // Keep the previous DAO while an onlyParent-driven refetch is in flight so
+    // the page never transiently returns null on a filter change — unmounting
+    // the list would trigger useFilterUrlParam's cleanup and wipe the selection.
+    const { data: dao } = useDao(
+        {
+            urlParams: { id },
+            queryParams: { onlyParent: activeOption?.onlyParent },
+        },
+        { placeholderData: keepPreviousData },
+    );
 
     const { hasPermission } = useDaoExecutePermission({ dao });
 
@@ -94,8 +112,14 @@ export const DaoTransactionsPageClient: React.FC<
                 title={t('app.finance.daoTransactionsPage.main.title')}
             >
                 <TransactionList.Container
-                    daoId={id}
+                    bodyFilter={bodyFilter}
+                    dao={dao}
                     initialParams={initialParams}
+                    onTransactionClick={(transaction) =>
+                        open(FinanceDialogId.TRANSACTION_DETAIL, {
+                            params: { dao, transaction },
+                        })
+                    }
                 />
             </Page.Main>
             <Page.Aside>

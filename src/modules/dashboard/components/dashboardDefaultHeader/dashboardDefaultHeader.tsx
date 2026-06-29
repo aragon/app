@@ -1,4 +1,5 @@
 import { DaoAvatar, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
+import { useDaoProposalsCount } from '@/modules/governance/hooks/useDaoProposalsCount';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,12 +21,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
 
     const { t } = useTranslations();
 
-    const proposalsCreated = formatterUtils.formatNumber(
-        dao.metrics.proposalsCreated,
-        {
-            format: NumberFormat.GENERIC_SHORT,
-        },
-    );
+    const proposalsCreated = useDaoProposalsCount({ daoId: dao.id });
 
     const membersCount = formatterUtils.formatNumber(dao.metrics.members, {
         format: NumberFormat.GENERIC_SHORT,

@@ -1,5 +1,10 @@
 import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
-import type { IRequestQueryParams } from '@/shared/api/httpService';
+import type { Network } from '@/shared/api/daoService';
+import type {
+    IRequestQueryParams,
+    IRequestUrlParams,
+} from '@/shared/api/httpService';
+import type { TransactionTransferSide } from './domain';
 
 export interface IGetAssetListQueryParams extends IPaginatedRequest {
     /**
@@ -35,7 +40,29 @@ export interface IGetTransactionListQueryParams extends IPaginatedRequest {
      * Used to differentiate between "All Transactions" (parent + linked accounts) and "Parent DAO" tab (parent only).
      */
     onlyParent?: boolean;
+    /**
+     * Optional transfer direction filter.
+     */
+    side?: TransactionTransferSide;
+    /**
+     * Optional transaction type filter.
+     */
+    type?: 'execution';
 }
 
 export interface IGetTransactionListParams
     extends IRequestQueryParams<IGetTransactionListQueryParams> {}
+
+export interface IGetTransactionActionsUrlParams {
+    /**
+     * Network identifier for the execution transaction.
+     */
+    network: Network;
+    /**
+     * ID of the execution transaction.
+     */
+    id: string;
+}
+
+export interface IGetTransactionActionsParams
+    extends IRequestUrlParams<IGetTransactionActionsUrlParams> {}

@@ -242,13 +242,21 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     ]);
 
     useEffect(() => {
-        const transferParams = [receiverAddress, weiAmount];
-        const newData = isNativeToken
-            ? '0x'
-            : encodeFunctionData({
-                  abi: [erc20TransferAbi],
-                  args: transferParams,
-              });
+        let newData: string | undefined = '0x';
+
+        if (!isNativeToken) {
+            try {
+                newData = encodeFunctionData({
+                    abi: [erc20TransferAbi],
+                    args: [receiverAddress, weiAmount],
+                });
+            } catch {
+                // An absurd amount can exceed the uint256 range and make encoding throw.
+                // Leave data unset so amount-field validation surfaces the error to the
+                // user instead of crashing the whole create-proposal form.
+                newData = undefined;
+            }
+        }
 
         setValue(`${fieldName}.data`, newData);
     }, [isNativeToken, receiverAddress, weiAmount, fieldName, setValue]);

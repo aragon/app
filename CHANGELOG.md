@@ -1,5 +1,43 @@
 # @aragon/app
 
+## 1.32.0
+
+### Minor Changes
+
+- [#1174](https://github.com/aragon/app/pull/1174) [`77fa6c9`](https://github.com/aragon/app/commit/77fa6c9dbad5d68e0f54ebc5256086d36209e7ad) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Add support for the Monad network (chain id 143)
+
+- [#1184](https://github.com/aragon/app/pull/1184) [`8e17dd1`](https://github.com/aragon/app/commit/8e17dd13724f5033ab7f25798b3bd9b81587ee2c) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Render indexed DAO execution transactions with decoded action details.
+
+### Patch Changes
+
+- [#1191](https://github.com/aragon/app/pull/1191) [`027cc02`](https://github.com/aragon/app/commit/027cc02f7f78a1fb5ac1ed1b7d1bb7490a5145ce) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Make Sentry error reporting conscious. Route bot/scanner, expected-user, and backend/RPC noise out of the alert stream (tagged via `noise_class`, expected events demoted to `info`) while keeping everything searchable for investigation, and attach the connected wallet as the Sentry user. Render a clean not-found page for stale links to DAOs whose plugins were removed instead of reporting them. Also fixes two crashes: a null pagination page on the landing page and an undefined plugin list during DAO navigation.
+
+- [#1194](https://github.com/aragon/app/pull/1194) [`bde7987`](https://github.com/aragon/app/commit/bde7987b9f1a89f8fc8cf69218d6a53817f481dc) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update gov-ui-kit
+
+- [#1190](https://github.com/aragon/app/pull/1190) [`605e27c`](https://github.com/aragon/app/commit/605e27c6ca5886d00afdc63f3b33c407e25d2a6b) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Dependency update
+
+- [#1193](https://github.com/aragon/app/pull/1193) [`34ae15e`](https://github.com/aragon/app/commit/34ae15e3845e2d51d0a3b221ed48c680269a79ca) Thanks [@evanaronson](https://github.com/evanaronson)! - Reorder networks in the DAO creation wizard
+
+- [#1181](https://github.com/aragon/app/pull/1181) [`2af3245`](https://github.com/aragon/app/commit/2af32454292bd7b9cc76b5e2d80b19a52a84d2dc) Thanks [@evanaronson](https://github.com/evanaronson)! - Fix proposal counter change
+
+- [#1192](https://github.com/aragon/app/pull/1192) [`a077f50`](https://github.com/aragon/app/commit/a077f50a43eb2fc840b86ccadc5b3603ac8e5cd4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Filter DAO transactions by linked account via a dropdown beside the transaction-type toggles
+
+## 1.31.0
+
+### Minor Changes
+
+- [#1180](https://github.com/aragon/app/pull/1180) [`909dd9b`](https://github.com/aragon/app/commit/909dd9b9d723bc2e128f3bcd68190e59a7b7ffab) Thanks [@milosh86](https://github.com/milosh86)! - Enable the app to run inside Safe{Wallet} as a Safe App
+
+- [#1171](https://github.com/aragon/app/pull/1171) [`8032855`](https://github.com/aragon/app/commit/8032855f987d023e143cf3d7c194592febad1127) Thanks [@milosh86](https://github.com/milosh86)! - Add optional action simulation to the direct execute actions flow
+
+### Patch Changes
+
+- [#1171](https://github.com/aragon/app/pull/1171) [`8032855`](https://github.com/aragon/app/commit/8032855f987d023e143cf3d7c194592febad1127) Thanks [@milosh86](https://github.com/milosh86)! - Unblock navigation after submitting the execute actions transaction and update execute flow copies
+
+- [#1178](https://github.com/aragon/app/pull/1178) [`6ff6eb4`](https://github.com/aragon/app/commit/6ff6eb465859d70fa53c9e2238df9996d81e697c) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies
+
+- [#1169](https://github.com/aragon/app/pull/1169) [`a270445`](https://github.com/aragon/app/commit/a270445cd1ff54b938756defb4156ded5378149f) Thanks [@milosh86](https://github.com/milosh86)! - Improve performance with image cache TTL, ISR revalidation, dynamic dialog imports and font cleanup
+
 ## 1.30.0
 
 ### Minor Changes
@@ -245,6 +283,7 @@
 - [#986](https://github.com/aragon/app/pull/986) [`fb29e63`](https://github.com/aragon/app/commit/fb29e63531257a90e55800799e7dadbd3544183b) Thanks [@milosh86](https://github.com/milosh86)! - Add campaign creation basic view
 
 - [#994](https://github.com/aragon/app/pull/994) [`75259e0`](https://github.com/aragon/app/commit/75259e0b5b71e6126811c2343a2c225f830d0500) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Upgrade wagmi from v2.19.5 to v3.4.2, update viem to 2.45.2, and remove all v3 deprecations
+
     - **wagmi v3**: Connector dependencies are now optional peer dependencies, giving more control over the dependency tree
     - **Removed overrides**: Eliminated `@reown/appkit` version override and `@wagmi/connectors` pin that are no longer needed
     - **useBalance migration**: Replaced deprecated `useBalance({ token })` with `useReadContract({ abi: erc20Abi, functionName: 'balanceOf' })` for ERC20 token balance fetching

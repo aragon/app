@@ -1763,7 +1763,16 @@
           "description": "There was an error loading the transactions. Try again later.",
           "heading": "Error loading transactions"
         },
-        "groupTab": "All transactions"
+        "groupTab": "All transactions",
+        "accountFilter": {
+          "all": "All accounts"
+        },
+        "typeFilter": {
+          "all": "All transactions",
+          "executions": "Executions",
+          "received": "Deposits",
+          "sent": "Withdrawals"
+        }
       },
       "transactionListStats": {
         "daos": "DAOs",
@@ -1886,10 +1895,6 @@
         }
       },
       "createProposalPage": {
-        "createProposalPageClientSteps": {
-          "simulate": "Simulate actions",
-          "skipSimulation": "Skip simulation"
-        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
@@ -2220,6 +2225,8 @@
           "success": "Continue"
         },
         "error": "There was an error simulating the actions. Please try again later.",
+        "simulate": "Simulate actions",
+        "skipSimulation": "Skip simulation",
         "title": "Simulate actions"
       },
       "verifySmartContractDialog": {
@@ -3052,6 +3059,7 @@
           "approve": "Approve proposal",
           "approved": "Approved",
           "helpText": "If you are an owner of this address you can connect with WalletConnect to vote on this proposal.",
+          "helpTextSafe": "To approve this proposal from the Safe{Wallet} UI, add Aragon as a custom Safe App or connect directly with a WalletConnect QR code.",
           "veto": "Veto proposal",
           "vetoed": "Vetoed"
         },
@@ -3739,6 +3747,10 @@
       "governanceBodyInfo": {
         "external": "External address"
       },
+      "networkSwitchAlert": {
+        "body": "Switch to {{networkName}} in your wallet.",
+        "title": "Switch network"
+      },
       "page": {
         "header": {
           "readLess": "Read less",
@@ -3776,10 +3788,6 @@
           "cancel": "Cancel",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
-        },
-        "networkAlert": {
-          "body": "Switch to {{transactionNetworkName}} in your wallet.",
-          "title": "Switch network"
         },
         "step": {
           "APPROVE": {

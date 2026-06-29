@@ -19,7 +19,41 @@ export interface IQueryToDataListStateParams {
     isFetchingNextPage?: boolean;
 }
 
+export interface IDataListFilterAvailability {
+    /**
+     * Number of items matching the filter.
+     */
+    itemsCount?: number;
+    /**
+     * Defines if the filter availability query is loading.
+     */
+    isPending?: boolean;
+    /**
+     * Defines if the filter availability query failed.
+     */
+    isError?: boolean;
+}
+
 class DataListUtils {
+    getVisibleFilters = <TFilter extends string>(
+        filters: TFilter[],
+        availability: Partial<Record<TFilter, IDataListFilterAvailability>>,
+        alwaysVisible: TFilter[] = [],
+    ): TFilter[] =>
+        filters.filter((filter) => {
+            if (alwaysVisible.includes(filter)) {
+                return true;
+            }
+
+            const filterAvailability = availability[filter];
+
+            return (
+                filterAvailability?.isPending ||
+                filterAvailability?.isError ||
+                (filterAvailability?.itemsCount ?? 0) > 0
+            );
+        });
+
     queryToDataListState = (
         params: IQueryToDataListStateParams,
     ): DataListState => {

@@ -91,4 +91,37 @@ describe('AragonBackendServiceError class', () => {
             ).toBeFalsy();
         });
     });
+
+    describe('isPluginNotFoundError / isExpectedNotFoundError', () => {
+        it('isPluginNotFoundError is true only for the pluginNotFound code', () => {
+            expect(
+                AragonBackendServiceError.isPluginNotFoundError({
+                    code: AragonBackendServiceError.pluginNotFoundCode,
+                }),
+            ).toBeTruthy();
+            expect(
+                AragonBackendServiceError.isPluginNotFoundError({
+                    code: AragonBackendServiceError.notFoundCode,
+                }),
+            ).toBeFalsy();
+        });
+
+        it('isExpectedNotFoundError covers both notFound and pluginNotFound', () => {
+            expect(
+                AragonBackendServiceError.isExpectedNotFoundError({
+                    code: AragonBackendServiceError.notFoundCode,
+                }),
+            ).toBeTruthy();
+            expect(
+                AragonBackendServiceError.isExpectedNotFoundError({
+                    code: AragonBackendServiceError.pluginNotFoundCode,
+                }),
+            ).toBeTruthy();
+            expect(
+                AragonBackendServiceError.isExpectedNotFoundError({
+                    code: 'other',
+                }),
+            ).toBeFalsy();
+        });
+    });
 });

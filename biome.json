@@ -11,7 +11,8 @@
             "!snapshots",
             "!.next",
             "!coverage",
-            "!.turbo"
+            "!.turbo",
+            "!**/*.svg"
         ]
     },
     "formatter": {
@@ -56,12 +57,8 @@
     "linter": {
         "enabled": true,
         "rules": {
-            "recommended": false,
-            "nursery": {
-                "noShadow": "off",
-                "noEqualsToNull": "off",
-                "noLeakedRender": "off"
-            },
+            "preset": "none",
+            "nursery": {},
             "a11y": {
                 "noAccessKey": "error",
                 "noAriaUnsupportedElements": "error",
@@ -253,7 +250,10 @@
                 "noBitwiseOperators": "off",
                 "noImplicitAnyLet": "off",
                 "noEmptySource": "off",
-                "noUnusedExpressions": "off"
+                "noUnusedExpressions": "off",
+                "noShadow": "off",
+                "noEqualsToNull": "off",
+                "noLeakedRender": "off"
             }
         },
         "includes": [

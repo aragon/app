@@ -38,7 +38,7 @@ describe('<PluginFilterComponent /> component', () => {
         const component = () => <div data-testid="component-mock" />;
         getSlotComponentSpy.mockReturnValue(component);
         render(createTestComponent({ plugins }));
-        expect(screen.queryByRole('group')).not.toBeInTheDocument();
+        expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
         expect(screen.getByTestId('component-mock')).toBeInTheDocument();
     });
 
@@ -52,7 +52,7 @@ describe('<PluginFilterComponent /> component', () => {
         ];
         getSlotComponentSpy.mockReturnValue(undefined);
         render(createTestComponent({ plugins }));
-        expect(screen.queryByRole('group')).not.toBeInTheDocument();
+        expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
         expect(
             screen.getByTestId('synthetic-content-mock'),
         ).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('<PluginFilterComponent /> component', () => {
         const Fallback = () => <div data-testid="fallback-mock" />;
         getSlotComponentSpy.mockReturnValue(registeredComponent);
         render(createTestComponent({ plugins, Fallback }));
-        expect(screen.queryByRole('group')).not.toBeInTheDocument();
+        expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
         expect(screen.getByTestId('fallback-mock')).toBeInTheDocument();
     });
 
@@ -85,7 +85,7 @@ describe('<PluginFilterComponent /> component', () => {
         const Fallback = () => <div data-testid="fallback-mock" />;
         getSlotComponentSpy.mockReturnValue(registeredComponent);
         render(createTestComponent({ plugins, Fallback }));
-        expect(screen.getByRole('group')).toBeInTheDocument();
+        expect(screen.getByRole('radiogroup')).toBeInTheDocument();
         expect(
             screen.getByRole('radio', { name: plugins[0].label }),
         ).toBeInTheDocument();
@@ -119,7 +119,7 @@ describe('<PluginFilterComponent /> component', () => {
                     : multisigComponent,
         );
         render(createTestComponent({ plugins }));
-        expect(screen.getByRole('group')).toBeInTheDocument();
+        expect(screen.getByRole('radiogroup')).toBeInTheDocument();
         expect(
             screen.getByRole('radio', { name: plugins[0].label }),
         ).toBeInTheDocument();
