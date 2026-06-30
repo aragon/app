@@ -35,7 +35,6 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
-    // TODO(APP-954): confirm copy against Figma
     const pageBreadcrumbs = [
         {
             href: daoUtils.getDaoUrl(dao, 'settings'),

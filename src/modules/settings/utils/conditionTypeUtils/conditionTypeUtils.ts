@@ -13,6 +13,23 @@ const NO_CONDITION = 'none';
  */
 const UNKNOWN_CONDITION = 'unknown';
 
+/**
+ * Placeholder rendered for conditions that have no human-readable label
+ * (unconditional grants and unresolvable condition types).
+ */
+const NO_LABEL = '-';
+
+/**
+ * Explicit display labels for the known condition types. Any other non-empty
+ * type falls back to a Pascal-cased rendering of its discriminator.
+ */
+const CONDITION_LABELS: Record<string, string> = {
+    'voting-power': 'VotingPower',
+    'execute-selector': 'ExecuteSelector',
+};
+
+const WORD_SEPARATOR_REGEX = /[^a-z0-9]+/i;
+
 class ConditionTypeUtils {
     /**
      * Resolves the display condition type for a permission.
@@ -44,6 +61,40 @@ class ConditionTypeUtils {
 
         return UNKNOWN_CONDITION;
     };
+
+    /**
+     * Resolves a human-readable label for a condition type, used by the
+     * collapsed permission row's CONDITION cell.
+     *
+     * - `'none'` / `'unknown'` -> {@link NO_LABEL} (`'-'`).
+     * - a known type -> its explicit label (e.g. `'voting-power'` ->
+     *   `'VotingPower'`).
+     * - any other non-empty type -> a Pascal-cased fallback (e.g.
+     *   `'merkle-claim'` -> `'MerkleClaim'`).
+     *
+     * @param conditionType The resolved condition type discriminator.
+     * @returns The display label for the condition type.
+     */
+    getConditionLabel = (conditionType: string): string => {
+        if (
+            conditionType === NO_CONDITION ||
+            conditionType === UNKNOWN_CONDITION ||
+            conditionType.length === 0
+        ) {
+            return NO_LABEL;
+        }
+
+        return (
+            CONDITION_LABELS[conditionType] ?? this.toPascalCase(conditionType)
+        );
+    };
+
+    private toPascalCase = (value: string): string =>
+        value
+            .split(WORD_SEPARATOR_REGEX)
+            .filter((word) => word.length > 0)
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join('');
 }
 
 export const conditionTypeUtils = new ConditionTypeUtils();

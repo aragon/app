@@ -17,12 +17,32 @@ describe('<VotingPowerConditionSlot /> component', () => {
         );
     };
 
-    it('renders the condition type and the pending placeholder copy', () => {
-        render(createTestComponent({ conditionType: 'voting-power' }));
+    it('renders the truncated token address and the minimum voting power', () => {
+        render(
+            createTestComponent({
+                token: '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5',
+                minVotingPower: '1000000000000000000',
+            }),
+        );
 
-        expect(screen.getByText('voting-power')).toBeInTheDocument();
         expect(
-            screen.getByText(/votingPowerConditionSlot.pending/),
+            screen.getByText(/votingPowerConditionSlot.token/),
         ).toBeInTheDocument();
+        expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
+        expect(
+            screen.getByText(/votingPowerConditionSlot.minVotingPower/),
+        ).toBeInTheDocument();
+        expect(screen.getByText('1000000000000000000')).toBeInTheDocument();
+    });
+
+    it('falls back to a placeholder when payload fields are absent', () => {
+        render(
+            createTestComponent({
+                token: undefined,
+                minVotingPower: undefined,
+            }),
+        );
+
+        expect(screen.getAllByText('—')).toHaveLength(2);
     });
 });

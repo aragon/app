@@ -3498,7 +3498,7 @@
             "permissions": "Permissions"
           },
           "title": "Permissions",
-          "description": "Review who can do what across this DAO and its linked accounts"
+          "description": "All permissions configured in this DAO — who has access, to which contract, and under what conditions."
         },
         "view": {
           "list": "List",
@@ -3512,6 +3512,17 @@
           "permission": "Permission",
           "condition": "Condition"
         },
+        "details": {
+          "heading": "Details",
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition",
+          "noCondition": "No condition"
+        },
+        "condition": {
+          "heading": "Condition detail"
+        },
         "expandAll": "Expand all",
         "collapseAll": "Collapse all",
         "empty": {
@@ -3521,15 +3532,14 @@
       },
       "noConditionSlot": {
         "heading": "No condition",
-        "description": "Functions guarded by this permission can be called by the granted address unconditionally."
+        "description": "Functions guarded by this permission can be called by the granted address directly."
       },
       "votingPowerConditionSlot": {
-        "type": "Condition",
-        "details": "Details",
-        "pending": "Condition details pending (APP-953)"
+        "token": "Token",
+        "minVotingPower": "Minimum voting power"
       },
       "executeSelectorConditionSlot": {
-        "target": "Target",
+        "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
         "allowedActions": "Allowed actions",
         "noActions": "No allowed actions"
       },
@@ -3600,6 +3610,9 @@
           "daoAction": "Linked account",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
+          "permissionsAction": "View permissions",
+          "permissionsDescription": "Review who can do what across this DAO and its linked accounts, and any conditions on each grant.",
+          "permissionsInfoTitle": "Permissions",
           "settingsInfoTitle": "Account",
           "title": "Settings"
         }

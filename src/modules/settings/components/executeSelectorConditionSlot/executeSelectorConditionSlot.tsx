@@ -1,54 +1,67 @@
 'use client';
 
-import { DefinitionList } from '@aragon/gov-ui-kit';
+import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IConditionData } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
+
+const EMPTY_VALUE = '—';
+
+interface IAllowedAction {
+    selector: string;
+    target: string;
+}
 
 const isNonEmptyString = (value: unknown): value is string =>
     typeof value === 'string' && value.length > 0;
 
-const toSelectorList = (value: unknown): string[] => {
-    if (!Array.isArray(value)) {
-        return [];
-    }
+const toStringList = (value: unknown): string[] =>
+    Array.isArray(value) ? value.filter(isNonEmptyString) : [];
 
-    return value.filter(isNonEmptyString);
+const toAllowedActions = (
+    selectors: unknown,
+    targets: unknown,
+): IAllowedAction[] => {
+    const selectorList = toStringList(selectors);
+    const targetList = toStringList(targets);
+
+    return selectorList.map((selector, index) => ({
+        selector,
+        target: targetList[index] ?? EMPTY_VALUE,
+    }));
 };
 
 export const ExecuteSelectorConditionSlot: React.FC<IConditionData> = (
     props,
 ) => {
-    const { target, selectors } = props;
+    const { selectors, targets } = props;
     const { t } = useTranslations();
 
-    const targetLabel = isNonEmptyString(target) ? target : undefined;
-    const selectorList = toSelectorList(selectors);
-    const hasAllowedActions = selectorList.length > 0;
+    const allowedActions = toAllowedActions(selectors, targets);
+    const hasAllowedActions = allowedActions.length > 0;
 
     return (
-        <DefinitionList.Container>
-            {targetLabel != null && (
-                <DefinitionList.Item
-                    term={t('app.settings.executeSelectorConditionSlot.target')}
-                >
-                    {targetLabel}
-                </DefinitionList.Item>
+        <div className="flex flex-col gap-3">
+            <p className="text-neutral-500">
+                {t('app.settings.executeSelectorConditionSlot.description')}
+            </p>
+            {hasAllowedActions ? (
+                <DefinitionList.Container>
+                    {allowedActions.map((action) => (
+                        <DefinitionList.Item
+                            key={action.selector}
+                            term={action.selector}
+                        >
+                            {action.target === EMPTY_VALUE
+                                ? EMPTY_VALUE
+                                : addressUtils.truncateAddress(action.target)}
+                        </DefinitionList.Item>
+                    ))}
+                </DefinitionList.Container>
+            ) : (
+                <p className="text-neutral-400">
+                    {t('app.settings.executeSelectorConditionSlot.noActions')}
+                </p>
             )}
-            <DefinitionList.Item
-                term={t(
-                    'app.settings.executeSelectorConditionSlot.allowedActions',
-                )}
-            >
-                {hasAllowedActions ? (
-                    <ul>
-                        {selectorList.map((selector) => (
-                            <li key={selector}>{selector}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    t('app.settings.executeSelectorConditionSlot.noActions')
-                )}
-            </DefinitionList.Item>
-        </DefinitionList.Container>
+        </div>
     );
 };

@@ -42,4 +42,44 @@ describe('conditionType Utils', () => {
             ).toBe(expected);
         });
     });
+
+    describe('getConditionLabel', () => {
+        it.each([
+            {
+                description: 'maps voting-power to VotingPower',
+                conditionType: 'voting-power',
+                expected: 'VotingPower',
+            },
+            {
+                description: 'maps execute-selector to ExecuteSelector',
+                conditionType: 'execute-selector',
+                expected: 'ExecuteSelector',
+            },
+            {
+                description: 'maps "none" to the empty placeholder',
+                conditionType: 'none',
+                expected: '-',
+            },
+            {
+                description: 'maps "unknown" to the empty placeholder',
+                conditionType: 'unknown',
+                expected: '-',
+            },
+            {
+                description: 'maps an empty string to the empty placeholder',
+                conditionType: '',
+                expected: '-',
+            },
+            {
+                description:
+                    'Pascal-cases an unrecognised but present condition type',
+                conditionType: 'merkle-claim',
+                expected: 'MerkleClaim',
+            },
+        ])('$description', ({ conditionType, expected }) => {
+            expect(conditionTypeUtils.getConditionLabel(conditionType)).toBe(
+                expected,
+            );
+        });
+    });
 });

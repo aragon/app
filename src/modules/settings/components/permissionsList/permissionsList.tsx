@@ -2,10 +2,13 @@
 
 import {
     Accordion,
+    addressUtils,
     Button,
     CardEmptyState,
+    DefinitionList,
     StateSkeletonBar,
     Tabs,
+    Tag,
 } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import {
@@ -19,9 +22,13 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
+import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
-import { permissionEntityUtils } from '../../utils/permissionEntityUtils';
+import {
+    type IPermissionEntity,
+    permissionEntityUtils,
+} from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
 
 export interface IPermissionsListProps {
@@ -199,8 +206,48 @@ interface IPermissionsListRowProps {
     daoPlugins: DaoPlugins;
 }
 
+interface IPermissionEntityCellProps {
+    entity: IPermissionEntity;
+}
+
+const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
+    entity,
+}) => (
+    <span className="flex min-w-0 items-center gap-2 text-neutral-800">
+        {entity.isSentinel && (
+            <span
+                aria-hidden="true"
+                className="size-6 shrink-0 rounded-full bg-neutral-100"
+            />
+        )}
+        <span className="truncate">{entity.label}</span>
+        {entity.tag != null && <Tag label={entity.tag} />}
+    </span>
+);
+
+interface IPermissionDetailValueProps {
+    primary: string;
+    secondary?: string;
+}
+
+const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
+    primary,
+    secondary,
+}) => (
+    <div className="flex flex-col gap-0.5">
+        <span className="text-neutral-500">{primary}</span>
+        {secondary != null && (
+            <span className="font-mono text-neutral-400 text-sm">
+                {secondary}
+            </span>
+        )}
+    </div>
+);
+
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const { row, rowKey, daoPlugins } = props;
+
+    const { t } = useTranslations();
 
     const who = permissionEntityUtils.resolvePermissionEntity(
         row.whoAddress,
@@ -217,29 +264,107 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
         row.conditionAddress,
         row.condition,
     );
+    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
+
+    const hasCondition = !addressUtils.isAddressEqual(
+        row.conditionAddress,
+        ALLOW_FLAG,
+    );
+    const conditionDetail = hasCondition
+        ? addressUtils.truncateAddress(row.conditionAddress)
+        : t('app.settings.permissionsList.details.noCondition');
 
     return (
         <Accordion.Item value={rowKey}>
             <Accordion.ItemHeader>
-                <div className="grid w-full grid-cols-3 gap-4 text-left">
-                    <span className="truncate text-neutral-800">
-                        {who.label}
-                    </span>
-                    <span className="truncate text-neutral-800">
-                        {where.label}
-                    </span>
-                    <span className="truncate text-neutral-800">
+                <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
+                    <PermissionEntityCell entity={who} />
+                    <PermissionEntityCell entity={where} />
+                    <span className="truncate font-mono text-neutral-800">
                         {permissionName}
+                    </span>
+                    <span className="truncate text-neutral-800">
+                        {conditionLabel}
                     </span>
                 </div>
             </Accordion.ItemHeader>
             <Accordion.ItemContent>
-                <PluginSingleComponent
-                    Fallback={NoConditionSlot}
-                    pluginId={conditionType}
-                    slotId={SettingsSlotId.PERMISSION_CONDITION}
-                    {...row.condition}
-                />
+                <div className="flex flex-col gap-6 md:flex-row md:gap-8">
+                    <div className="flex flex-1 flex-col gap-3">
+                        <p className="text-lg text-neutral-800 leading-tight">
+                            {t('app.settings.permissionsList.details.heading')}
+                        </p>
+                        <DefinitionList.Container>
+                            <DefinitionList.Item
+                                copyValue={who.address}
+                                term={t(
+                                    'app.settings.permissionsList.details.who',
+                                )}
+                            >
+                                <PermissionDetailValue
+                                    primary={who.label}
+                                    secondary={addressUtils.truncateAddress(
+                                        who.address,
+                                    )}
+                                />
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                copyValue={where.address}
+                                term={t(
+                                    'app.settings.permissionsList.details.where',
+                                )}
+                            >
+                                <PermissionDetailValue
+                                    primary={where.label}
+                                    secondary={addressUtils.truncateAddress(
+                                        where.address,
+                                    )}
+                                />
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                copyValue={row.permissionId}
+                                term={t(
+                                    'app.settings.permissionsList.details.permission',
+                                )}
+                            >
+                                <PermissionDetailValue
+                                    primary={permissionName}
+                                    secondary={addressUtils.truncateHash(
+                                        row.permissionId,
+                                    )}
+                                />
+                            </DefinitionList.Item>
+                            <DefinitionList.Item
+                                copyValue={
+                                    hasCondition
+                                        ? row.conditionAddress
+                                        : undefined
+                                }
+                                term={t(
+                                    'app.settings.permissionsList.details.condition',
+                                )}
+                            >
+                                <PermissionDetailValue
+                                    primary={conditionLabel}
+                                    secondary={conditionDetail}
+                                />
+                            </DefinitionList.Item>
+                        </DefinitionList.Container>
+                    </div>
+                    <div className="flex flex-1 flex-col gap-3">
+                        <p className="text-lg text-neutral-800 leading-tight">
+                            {t(
+                                'app.settings.permissionsList.condition.heading',
+                            )}
+                        </p>
+                        <PluginSingleComponent
+                            Fallback={NoConditionSlot}
+                            pluginId={conditionType}
+                            slotId={SettingsSlotId.PERMISSION_CONDITION}
+                            {...row.condition}
+                        />
+                    </div>
+                </div>
             </Accordion.ItemContent>
         </Accordion.Item>
     );
