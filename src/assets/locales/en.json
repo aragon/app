@@ -3513,6 +3513,16 @@
         "heading": "No condition",
         "description": "Functions guarded by this permission can be called by the granted address unconditionally."
       },
+      "votingPowerConditionSlot": {
+        "type": "Condition",
+        "details": "Details",
+        "pending": "Condition details pending (APP-953)"
+      },
+      "executeSelectorConditionSlot": {
+        "target": "Target",
+        "allowedActions": "Allowed actions",
+        "noActions": "No allowed actions"
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",
