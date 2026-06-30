@@ -3503,10 +3503,20 @@
         "view": {
           "list": "List",
           "graph": "Graph"
+        }
+      },
+      "permissionsList": {
+        "header": {
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition"
         },
-        "placeholder": {
-          "heading": "Permissions coming soon",
-          "description": "The permissions overview for this DAO will appear here."
+        "expandAll": "Expand all",
+        "collapseAll": "Collapse all",
+        "empty": {
+          "heading": "No permissions",
+          "description": "This account has no indexed permissions."
         }
       },
       "noConditionSlot": {

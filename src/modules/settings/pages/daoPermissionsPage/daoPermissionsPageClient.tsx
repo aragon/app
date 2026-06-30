@@ -1,11 +1,12 @@
 'use client';
 
-import { CardEmptyState, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { PermissionsList } from '../../components/permissionsList';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -80,16 +81,7 @@ export const DaoPermissionsPageClient: React.FC<
                                 value="graph"
                             />
                         </ToggleGroup>
-                        {/* Placeholder for the permissions list mounted in T09. */}
-                        <CardEmptyState
-                            description={t(
-                                'app.settings.daoPermissionsPage.placeholder.description',
-                            )}
-                            heading={t(
-                                'app.settings.daoPermissionsPage.placeholder.heading',
-                            )}
-                            objectIllustration={{ object: 'SETTINGS' }}
-                        />
+                        {view === 'list' && <PermissionsList daoId={daoId} />}
                     </div>
                 </Page.Main>
             </Page.Content>
