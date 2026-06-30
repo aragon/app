@@ -3595,6 +3595,9 @@
         "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
+        "permissions": "Permissions",
+        "permissionsDescription": "Get an overview of all permissions related to this account and its actors",
+        "permissionsLink": "View all permissions",
         "readLess": "Read less",
         "readMore": "Read more",
         "summary": "Summary",
@@ -3610,9 +3613,6 @@
           "daoAction": "Linked account",
           "governanceAction": "Process",
           "governanceInfoTitle": "Governance",
-          "permissionsAction": "View permissions",
-          "permissionsDescription": "Review who can do what across this DAO and its linked accounts, and any conditions on each grant.",
-          "permissionsInfoTitle": "Permissions",
           "settingsInfoTitle": "Account",
           "title": "Settings"
         }

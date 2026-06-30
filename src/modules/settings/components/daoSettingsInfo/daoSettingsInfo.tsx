@@ -111,6 +111,17 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         </div>
                     </DefinitionList.Item>
                 )}
+                <DefinitionList.Item
+                    description={t(
+                        'app.settings.daoSettingsInfo.permissionsDescription',
+                    )}
+                    link={{
+                        href: daoUtils.getDaoUrl(dao, 'settings/permissions'),
+                    }}
+                    term={t('app.settings.daoSettingsInfo.permissions')}
+                >
+                    {t('app.settings.daoSettingsInfo.permissionsLink')}
+                </DefinitionList.Item>
             </DefinitionList.Container>
         </Card>
     );

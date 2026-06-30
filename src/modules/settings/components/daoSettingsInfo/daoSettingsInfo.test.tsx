@@ -58,6 +58,27 @@ describe('<DaoSettingsInfo /> component', () => {
         expect(screen.getByText(/daoSettingsInfo.links/)).toBeInTheDocument();
     });
 
+    it('renders the permissions link to the permissions page', () => {
+        const dao = generateDao({
+            address: '0x123',
+            ens: 'somedao.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        });
+        render(createTestComponent({ dao }));
+
+        expect(
+            screen.getByText(/daoSettingsInfo.permissionsLink/),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /daoSettingsInfo.permissionsLink/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/dao/ethereum-mainnet/somedao.dao.eth/settings/permissions',
+        );
+    });
+
     it('renders the correct definition values of the dao', () => {
         const dao = generateDao({
             name: 'Some DAO',
