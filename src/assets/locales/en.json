@@ -3509,6 +3509,10 @@
           "description": "The permissions overview for this DAO will appear here."
         }
       },
+      "noConditionSlot": {
+        "heading": "No condition",
+        "description": "Functions guarded by this permission can be called by the granted address unconditionally."
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",
