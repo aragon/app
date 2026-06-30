@@ -1,5 +1,13 @@
 # @aragon/aragon-domain
 
+## 0.3.1
+
+### Patch Changes
+
+- [#16](https://github.com/aragon/aragon-domain/pull/16) [`6a37fd8`](https://github.com/aragon/aragon-domain/commit/6a37fd88a2b6d23924f1f9cc2aefe399507d665c) Thanks [@asciiman](https://github.com/asciiman)! - Export MemberProfileTextRecordDTO
+
+- [#18](https://github.com/aragon/aragon-domain/pull/18) [`9a2f445`](https://github.com/aragon/aragon-domain/commit/9a2f445dc9c628294553a6a2aa1b3ce3d84c71d5) Thanks [@asciiman](https://github.com/asciiman)! - Export GetMemberProfileTextRecordsDTO
+
 ## 0.3.0
 
 ### Minor Changes
