@@ -20,6 +20,7 @@ describe('permissionEntity Utils', () => {
                 meta: {
                     address: pluginAddress,
                     name: 'Multisig',
+                    interfaceType: 'multisig',
                 } as IDaoPlugin,
                 props: {},
             },
@@ -46,12 +47,12 @@ describe('permissionEntity Utils', () => {
                 },
             },
             {
-                description: 'resolves a matching plugin address to its tag',
+                description: 'resolves a matching plugin to name + type tag',
                 address: pluginAddress,
                 expected: {
                     label: 'Multisig',
                     isSentinel: false,
-                    tag: 'Multisig',
+                    tag: 'MULTISIG',
                 },
             },
             {

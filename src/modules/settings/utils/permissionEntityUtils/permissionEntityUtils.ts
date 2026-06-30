@@ -15,7 +15,8 @@ export interface IPermissionEntity {
     label: string;
     /**
      * Short type tag for the entity when it can be classified (e.g. the plugin
-     * name). Undefined for plain addresses and sentinels.
+     * type such as `MULTISIG` / `SPP`). Undefined for plain addresses and
+     * sentinels.
      */
     tag?: string;
     /**
@@ -38,7 +39,8 @@ class PermissionEntityUtils {
      * Resolution order:
      * 1. {@link ANY_ADDR} sentinel -> "Anyone".
      * 2. {@link ALLOW_FLAG} sentinel -> "Any Address".
-     * 3. A matching installed DAO plugin -> the plugin name (as label and tag).
+     * 3. A matching installed DAO plugin -> the plugin name (label) plus its
+     *    interface type as an uppercase tag (e.g. `MULTISIG`).
      * 4. Otherwise -> the checksummed, truncated address.
      *
      * @param address - The `who` or `where` address to resolve.
@@ -63,11 +65,15 @@ class PermissionEntityUtils {
         );
 
         if (matchedPlugin != null) {
-            const pluginName = daoUtils.getPluginName(matchedPlugin.meta);
+            const { interfaceType } = matchedPlugin.meta;
 
             return {
-                label: pluginName,
-                tag: pluginName,
+                label: daoUtils.getPluginName(matchedPlugin.meta),
+                tag: interfaceType
+                    ? daoUtils
+                          .parsePluginInterfaceType(interfaceType)
+                          .toUpperCase()
+                    : undefined,
                 address,
                 isSentinel: false,
             };
