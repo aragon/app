@@ -343,7 +343,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
         },
         order: 7,
         protocolVersion: latestProtocolVersion,
-        tenderlySupport: false,
+        tenderlySupport: true,
         addresses: {
             dao: '0xe16516d16602C45D7f1A7e7874CE9F35850B40B5',
             daoFactory: '0xc3a857B614D5B79B936Ce6640E5351dF8fA262eD',
