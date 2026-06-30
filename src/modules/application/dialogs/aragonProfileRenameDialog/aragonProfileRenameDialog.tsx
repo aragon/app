@@ -1,13 +1,23 @@
 'use client';
 
-import { Dialog, InputText, invariant } from '@aragon/gov-ui-kit';
+import {
+    AlertCard,
+    DefinitionList,
+    Dialog,
+    InputContainer,
+    InputText,
+    invariant,
+    Spinner,
+} from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
 import { memberRegistrySubdomainSuffix } from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useMemberProfileTextRecords } from '../../api/memberProfileService';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useEnsSubdomainField } from '../../hooks/useEnsSubdomainField';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 interface IFormData {
     /** New ENS subdomain label, e.g. "alice". */
@@ -38,6 +48,7 @@ export const AragonProfileRenameDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
+    const { address } = useWalletAccount();
 
     const { control, handleSubmit } = useForm<IFormData>({
         mode: 'onTouched',
@@ -54,16 +65,38 @@ export const AragonProfileRenameDialog: React.FC<
             currentSubdomain,
         });
 
+    const {
+        data: allTextRecords,
+        isLoading: isAllTextRecordsLoading,
+        isError: isAllTextRecordsError,
+    } = useMemberProfileTextRecords({ urlParams: { name: currentEnsName } });
+
     const handleCancel = () => close(location.id);
 
     const handleSubmitRename = handleSubmit(({ subdomain }) => {
+        invariant(
+            address != null,
+            'AragonProfileRenameDialog: wallet address must be set.',
+        );
+
         open(ApplicationDialogId.ARAGON_PROFILE_RENAME_TRANSACTION, {
             stack: true,
-            params: { subdomain },
+            params: {
+                subdomain,
+                records: {
+                    textRecords: allTextRecords ?? [],
+                    addr: address,
+                    contenthash: '0x',
+                },
+            },
         });
     });
 
-    const isSubmitDisabled = isNameTaken || isCheckingAvailability;
+    const isSubmitDisabled =
+        isNameTaken ||
+        isCheckingAvailability ||
+        isAllTextRecordsLoading ||
+        isAllTextRecordsError;
 
     return (
         <>
@@ -74,7 +107,7 @@ export const AragonProfileRenameDialog: React.FC<
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileRenameDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
+            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <InputText
                     {...fieldProps}
                     helpText={t(
@@ -84,6 +117,38 @@ export const AragonProfileRenameDialog: React.FC<
                         'app.application.aragonProfileRenameDialog.fields.subdomain.placeholder',
                     )}
                 />
+
+                {isAllTextRecordsLoading && <Spinner />}
+
+                {isAllTextRecordsError && (
+                    <AlertCard
+                        message={t(
+                            'app.application.aragonProfileRenameDialog.recordsFetchError',
+                        )}
+                        variant="critical"
+                    />
+                )}
+
+                {allTextRecords != null && allTextRecords.length > 0 && (
+                    <InputContainer
+                        helpText={t(
+                            'app.application.aragonProfileRenameDialog.fields.records.helpText',
+                        )}
+                        id="aragon-profile-rename-records"
+                        label={t(
+                            'app.application.aragonProfileRenameDialog.fields.records.label',
+                        )}
+                        useCustomWrapper
+                    >
+                        <DefinitionList.Container className="[&_dt]:break-all">
+                            {allTextRecords.map(({ key, value }) => (
+                                <DefinitionList.Item key={key} term={key}>
+                                    <p className="wrap-break-word">{value}</p>
+                                </DefinitionList.Item>
+                            ))}
+                        </DefinitionList.Container>
+                    </InputContainer>
+                )}
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{

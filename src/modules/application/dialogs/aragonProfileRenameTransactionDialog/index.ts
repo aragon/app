@@ -7,6 +7,7 @@ export const AragonProfileRenameTransactionDialog = dynamic(() =>
 );
 
 export type {
+    IAragonProfileRecords,
     IAragonProfileRenameTransactionDialogParams,
     IAragonProfileRenameTransactionDialogProps,
 } from './aragonProfileRenameTransactionDialog';

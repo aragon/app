@@ -559,7 +559,8 @@
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
           "confirmProfile": "Confirm your profile",
-          "removeAragonName": "Delete your Aragon profile"
+          "removeAragonName": "Delete your Aragon profile",
+          "renameAragonName": "Change name"
         },
         "dangerZone": {
           "title": "Delete Aragon profile",
@@ -601,10 +602,15 @@
         "fields": {
           "subdomain": {
             "helpText": "Your records will be moved to this new name.",
-            "label": "New ENS subname",
-            "placeholder": "yourname"
+            "label": "New Aragon name",
+            "placeholder": "Your new name"
+          },
+          "records": {
+            "label": "Records being moved",
+            "helpText": "Only the records listed below will be moved to your new name. Make sure they match your current profile before continuing."
           }
         },
+        "recordsFetchError": "Failed to fetch registered profile records for this name.",
         "actions": {
           "submit": "Change Aragon name",
           "cancel": "Cancel"
