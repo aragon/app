@@ -1,13 +1,13 @@
 import { ChainEntityType, Dialog, IconType } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { Network } from '@/shared/api/daoService';
 import { useTransactionStatus } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { NetworkSwitchAlert } from '../networkSwitchAlert';
 import {
     type ITransactionStatusStepMetaAddon,
@@ -21,6 +21,7 @@ import {
 } from './transactionDialog.api';
 import { TransactionDialogFooter } from './transactionDialogFooter';
 import { transactionDialogUtils } from './transactionDialogUtils';
+import { useManagedTransaction } from './useManagedTransaction';
 
 const indexingStepInterval = 1000;
 
@@ -30,6 +31,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
     const {
         title,
         description,
+        intentId: intentIdProp,
         customSteps,
         transactionInfo,
         stepper,
@@ -90,25 +92,36 @@ export const TransactionDialog = <TCustomStepId extends string>(
         data: transaction,
     } = useMutation({ mutationFn: prepareTransaction, onSuccess: nextStep });
 
-    const {
-        mutate: sendTransaction,
-        status: approveTransactionStatus,
-        data: transactionHash,
-    } = useSendTransaction({ mutation: { onSuccess: nextStep } });
+    // Resume identity: explicit prop when the calldata is non-deterministic (e.g. proposals),
+    // otherwise derived from the prepared transaction, which is stable for the same action.
+    const intentId = useMemo(
+        () =>
+            intentIdProp ??
+            (transaction != null && address != null
+                ? buildIntentId({
+                      from: address,
+                      chainId: requiredChainId,
+                      to: transaction.to,
+                      data: transaction.data,
+                      value: transaction.value,
+                  })
+                : undefined),
+        [intentIdProp, transaction, address, requiredChainId],
+    );
 
+    const { approveState, hash, resumeTarget, receipt, send, resend } =
+        useManagedTransaction(intentId);
     const {
         data: txReceipt,
         status: waitTxStatus,
         fetchStatus: waitTxFetchStatus,
         error: waitTxError,
-    } = useWaitForTransactionReceipt({
-        hash: transactionHash,
-    });
+    } = receipt;
 
     const isIndexing = activeStep === TransactionDialogStep.INDEXING;
 
-    // Using the `!` operator here as this hook is only enabled when the transactionHash and transactionType are defined
-    const indexingUrlParams = { network, transactionHash: transactionHash! };
+    // Using the `!` operator here as this hook is only enabled when the hash and transactionType are defined
+    const indexingUrlParams = { network, transactionHash: hash! };
     const indexingParams = {
         urlParams: indexingUrlParams,
         queryParams: { type: transactionType! },
@@ -120,23 +133,41 @@ export const TransactionDialog = <TCustomStepId extends string>(
     });
 
     const handleSendTransaction = useCallback(() => {
-        const errorHandler = handleTransactionError(
-            TransactionDialogStep.APPROVE,
-        );
+        const onError = handleTransactionError(TransactionDialogStep.APPROVE);
 
+        // No prepared transaction = a resumed dialog that skipped prepare: re-send the stored
+        // request, or surface a failure if there is none (e.g. lost after a reload).
         if (transaction == null) {
-            errorHandler(
-                new Error('TransactionDialog: transaction must be defined.'),
-            );
-        } else {
-            // Pin the send to the required chain so wagmi rejects (instead of silently signing) if
-            // the wallet is still on the wrong chain after the switch.
-            sendTransaction(
-                { ...transaction, chainId: requiredChainId },
-                { onError: errorHandler },
-            );
+            if (!resend()) {
+                onError(
+                    new Error(
+                        'TransactionDialog: no prepared transaction and nothing to re-send.',
+                    ),
+                );
+            }
+            return;
         }
-    }, [transaction, requiredChainId, sendTransaction, handleTransactionError]);
+
+        // With a prepared transaction the id is always derivable; a missing one means no connection.
+        if (intentId == null) {
+            onError(
+                new Error(
+                    'TransactionDialog: cannot identify the action to send (wallet not connected).',
+                ),
+            );
+            return;
+        }
+
+        // Pin to the required chain so wagmi rejects instead of silently signing on the wrong one.
+        send({ ...transaction, chainId: requiredChainId });
+    }, [
+        transaction,
+        intentId,
+        requiredChainId,
+        send,
+        resend,
+        handleTransactionError,
+    ]);
 
     const handleRetryTransaction = useCallback(() => {
         updateActiveStep(TransactionDialogStep.APPROVE);
@@ -164,9 +195,12 @@ export const TransactionDialog = <TCustomStepId extends string>(
             ],
         );
 
-    const approveStepStatus = isCrossNetworkTransaction
-        ? switchChainStatus
-        : approveTransactionStatus;
+    // Let a managed send win over the chain-switch state: a resumed pending/submitted action must not
+    // look idle (which would invite a duplicate re-send) just because the wallet is on another chain.
+    const approveStepStatus =
+        isCrossNetworkTransaction && approveState === 'idle'
+            ? switchChainStatus
+            : approveState;
     const indexingStepStatus = transactionStatus?.isProcessed
         ? 'success'
         : isIndexing
@@ -208,20 +242,20 @@ export const TransactionDialog = <TCustomStepId extends string>(
                 icon: IconType.BLOCKCHAIN_WALLET,
             },
             [TransactionDialogStep.CONFIRM]:
-                transactionHash != null
+                hash != null
                     ? {
                           label: t(
                               `app.shared.transactionDialog.step.${TransactionDialogStep.CONFIRM}.addon`,
                           ),
                           href: buildEntityUrl({
                               type: ChainEntityType.TRANSACTION,
-                              id: transactionHash,
+                              id: hash,
                           }),
                       }
                     : undefined,
             [TransactionDialogStep.INDEXING]: undefined,
         }),
-        [t, buildEntityUrl, transactionHash],
+        [t, buildEntityUrl, hash],
     );
 
     const transactionSteps = useMemo(() => {
@@ -281,10 +315,36 @@ export const TransactionDialog = <TCustomStepId extends string>(
         return () => clearTimeout(timeout);
     }, [activeStepInfo, handleTransactionError]);
 
-    useEffect(
-        () => updateSteps([...(customSteps ?? []), ...transactionSteps]),
-        [customSteps, transactionSteps, updateSteps],
-    );
+    // When resuming, mark steps before the target done and non-auto so the dialog never re-sends.
+    const allSteps = useMemo(() => {
+        const steps = [...(customSteps ?? []), ...transactionSteps];
+
+        if (resumeTarget == null) {
+            return steps;
+        }
+
+        const targetIndex = steps.findIndex((step) => step.id === resumeTarget);
+        return steps.map((step, index) =>
+            index < targetIndex
+                ? {
+                      ...step,
+                      meta: {
+                          ...step.meta,
+                          state: 'success' as const,
+                          auto: false,
+                      },
+                  }
+                : step,
+        );
+    }, [customSteps, transactionSteps, resumeTarget]);
+
+    useEffect(() => updateSteps(allSteps), [allSteps, updateSteps]);
+
+    useEffect(() => {
+        if (resumeTarget != null) {
+            updateActiveStep(resumeTarget);
+        }
+    }, [resumeTarget, updateActiveStep]);
 
     useEffect(() => {
         if (waitTxError) {
@@ -300,6 +360,13 @@ export const TransactionDialog = <TCustomStepId extends string>(
             nextStep();
         }
     }, [waitTxStatus, nextStep, txReceipt]);
+
+    // Advance to confirm once the wallet has signed (the hash appears). Failures go to the subscriber.
+    useEffect(() => {
+        if (hash != null && activeStep === TransactionDialogStep.APPROVE) {
+            nextStep();
+        }
+    }, [hash, activeStep, nextStep]);
 
     return (
         <>

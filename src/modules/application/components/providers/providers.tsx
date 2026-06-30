@@ -18,6 +18,7 @@ import { DialogRoot } from '@/shared/components/dialogRoot';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { Image } from '@/shared/components/image';
 import { Link } from '@/shared/components/link';
+import { initTransactionLogging } from '@/shared/components/transactionDialog/transactionLoggingSubscriber';
 import { TranslationsProvider } from '@/shared/components/translationsProvider';
 import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import type { Translations } from '@/shared/utils/translationsUtils';
@@ -32,6 +33,9 @@ import { providersDialogs } from './providersDialogs';
 // same reconnect cycle on cold load, otherwise a WalletConnect session
 // surviving a failed wagmi reconnect leaves the two stores out of sync.
 ensureAppKit();
+
+// Report failed wallet sends independently of the dialog (catches failures while it is closed).
+initTransactionLogging();
 
 export interface IProvidersProps {
     /**
