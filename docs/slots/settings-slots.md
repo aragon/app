@@ -5,7 +5,7 @@
 **Enum:** `SettingsSlotId`
 **Location:** `src/modules/settings/constants/moduleSlots.ts`
 
-The settings module defines 4 slots for plugin-specific governance settings, updates, and uninstallation.
+The settings module defines 5 slots for plugin-specific governance settings, updates, and uninstallation.
 
 | Slot ID | Type | Description | Registered By |
 |---|---|---|---|
@@ -13,3 +13,4 @@ The settings module defines 4 slots for plugin-specific governance settings, upd
 | `SETTINGS_BUILD_PREPARE_PLUGIN_UPDATE_DATA` | Function | Builds the transaction data for preparing a plugin update | Token Voting, Multisig, Lock To Vote |
 | `SETTINGS_GET_UNINSTALL_HELPERS` | Function | Returns helper data needed for uninstalling the plugin | Token Voting, Multisig, Lock To Vote, SPP |
 | `SETTINGS_PLUGIN_TO_FORM_DATA` | Function | Converts plugin settings to form-compatible data for the settings editor | Token Voting, Lock To Vote |
+| `PERMISSION_CONDITION` | Component | Renders the condition-specific detail for a permission grant (routed by condition type) | Condition registry |
