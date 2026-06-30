@@ -179,10 +179,20 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
             return;
         }
 
+        // Store clean handles without a leading `@` for username-style records.
+        const stripLeadingAt = (value: string) =>
+            value.startsWith('@') ? value.slice(1) : value;
+        const normalizedData = {
+            ...data,
+            twitter: stripLeadingAt(data.twitter),
+            telegram: stripLeadingAt(data.telegram),
+        };
+
         const updates: Record<string, string> = {};
 
         for (const [field, ensKey] of Object.entries(fieldToEnsKey)) {
-            const formValue = data[field as keyof typeof fieldToEnsKey] ?? '';
+            const formValue =
+                normalizedData[field as keyof typeof fieldToEnsKey] ?? '';
             const existing = ensRecords?.[ensKey as TEnsRecordKey] ?? '';
             if (formValue !== existing) {
                 updates[ensKey] = formValue;

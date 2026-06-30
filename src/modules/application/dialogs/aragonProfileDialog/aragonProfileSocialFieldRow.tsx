@@ -7,6 +7,7 @@ import type {
     IAragonProfileDialogFormData,
     SocialKey,
 } from './aragonProfileDialog';
+import { socialFieldRules } from './aragonProfileValidation';
 
 export interface IAragonProfileSocialFieldRowProps {
     /** Form field name. */
@@ -34,7 +35,7 @@ export const AragonProfileSocialFieldRow: React.FC<
 
     const socialField = useFormField<IAragonProfileDialogFormData, SocialKey>(
         fieldName,
-        { trimOnBlur: true },
+        { trimOnBlur: true, rules: socialFieldRules[fieldName] },
     );
 
     return (

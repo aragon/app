@@ -1,0 +1,12 @@
+# Reviewed false positives, pinned to a historical commit. The workspace
+# pre-push hook scans the full branch history on the first push of a new
+# branch, so any secret-looking string that ever landed in history must be
+# allowlisted or every new branch fails to push.
+#
+# In commit 7dd0e6c, ensDelegateKey.test.ts used fake ERC-20 token addresses
+# whose 40-hex form tripped gitleaks' generic-api-key rule. They are not
+# secrets. The live fixture has since been changed to a low-entropy repeating
+# pattern that no longer matches, but the original commit is immutable (it is
+# on main), so these fingerprints stay to keep new-branch pushes green.
+7dd0e6cbeebb9cae103c2b56afd00a37970373e6:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:62
+7dd0e6cbeebb9cae103c2b56afd00a37970373e6:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:66
