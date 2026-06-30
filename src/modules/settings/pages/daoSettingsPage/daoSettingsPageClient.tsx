@@ -1,6 +1,6 @@
 'use client';
 
-import { IconType } from '@aragon/gov-ui-kit';
+import { Button, IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
@@ -209,6 +209,35 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                     ) : (
                         <DaoSettingsInfo dao={dao} />
                     )}
+                </Page.MainSection>
+                <Page.MainSection
+                    title={t(
+                        'app.settings.daoSettingsPage.main.permissionsInfoTitle',
+                    )}
+                >
+                    <div className="flex flex-col items-start gap-3">
+                        <p className="text-neutral-500">
+                            {t(
+                                'app.settings.daoSettingsPage.main.permissionsDescription',
+                            )}
+                        </p>
+                        <Button
+                            iconRight={IconType.CHEVRON_RIGHT}
+                            onClick={() =>
+                                router.push(
+                                    daoUtils.getDaoUrl(
+                                        dao,
+                                        'settings/permissions',
+                                    )!,
+                                )
+                            }
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.settings.daoSettingsPage.main.permissionsAction',
+                            )}
+                        </Button>
+                    </div>
                 </Page.MainSection>
                 {hasSupportedPlugins && (
                     <Page.MainSection
