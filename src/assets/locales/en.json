@@ -3491,6 +3491,24 @@
           "info": "This policy can't be dispatched once it's uninstalled."
         }
       },
+      "daoPermissionsPage": {
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings",
+            "permissions": "Permissions"
+          },
+          "title": "Permissions",
+          "description": "Review who can do what across this DAO and its linked accounts"
+        },
+        "view": {
+          "list": "List",
+          "graph": "Graph"
+        },
+        "placeholder": {
+          "heading": "Permissions coming soon",
+          "description": "The permissions overview for this DAO will appear here."
+        }
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",
