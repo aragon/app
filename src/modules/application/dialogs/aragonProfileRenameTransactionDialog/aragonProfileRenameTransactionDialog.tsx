@@ -1,5 +1,6 @@
 'use client';
 
+import type { MemberProfileTextRecordDTO } from '@aragon/aragon-domain';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { type Address, encodeFunctionData, type Hex } from 'viem';
@@ -19,7 +20,6 @@ import {
 } from '@/shared/components/transactionDialog';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
-import type { IMemberProfileTextRecord } from '../../api/memberProfileService';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
@@ -27,7 +27,7 @@ export interface IAragonProfileRecords {
     /**
      * ENS text records to carry over to the new subdomain.
      */
-    textRecords: IMemberProfileTextRecord[];
+    textRecords: MemberProfileTextRecordDTO[];
     /**
      * Address record to set on the new subdomain.
      */

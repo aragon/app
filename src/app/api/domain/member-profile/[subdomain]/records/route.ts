@@ -6,32 +6,32 @@ interface IRequestParams {
     /**
      * Aragon profile name, e.g. `test.aragon.eth`
      */
-    name: string;
+    subdomain: string;
 }
 
 interface IRequestOptions {
     /**
-     * Parameters of the RPC request call.
+     * Parameters of the request call.
      */
     params: Promise<IRequestParams>;
 }
 
 export const GET = async (_req: NextRequest, { params }: IRequestOptions) => {
-    const { name } = await params;
+    const { subdomain } = await params;
 
     try {
         const result = await memberProfileServiceServer.getEnsTextRecords({
-            urlParams: { name },
+            urlParams: { subdomain },
         });
 
         return NextResponse.json(result);
     } catch (error) {
         monitoringUtils.logError(error, {
-            context: { errorType: 'get_ens_text_records_error', name },
+            context: { errorType: 'get_ens_text_records_error', subdomain },
         });
 
         return NextResponse.json(
-            { error: 'Subdomain getMemberProfileTextRecords request failed' },
+            { error: 'getMemberProfileTextRecords request failed' },
             { status: 500 },
         );
     }

@@ -1,6 +1,6 @@
 import 'server-only';
+import type { MemberProfileTextRecordDTO } from '@aragon/aragon-domain';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
-import type { IMemberProfileTextRecord } from '../../domain/IMemberProfileTextRecord';
 import type { IGetEnsTextRecordsParams } from '../../memberProfileService.api';
 import { memberProfileServiceServer } from '../../memberProfileService.server';
 import { memberProfileTextRecordsOptions } from './useMemberProfileTextRecords';
@@ -11,13 +11,13 @@ import { memberProfileTextRecordsOptions } from './useMemberProfileTextRecords';
  *
  * @example
  * await queryClient.prefetchQuery(
- *     memberProfileTextRecordsOptionsServer({ urlParams: { name } }),
+ *     memberProfileTextRecordsOptionsServer({ urlParams: { subdomain } }),
  *  );
  */
 export const memberProfileTextRecordsOptionsServer = (
     params: IGetEnsTextRecordsParams,
-    options?: QueryOptions<IMemberProfileTextRecord[]>,
-): SharedQueryOptions<IMemberProfileTextRecord[]> => ({
+    options?: QueryOptions<MemberProfileTextRecordDTO[]>,
+): SharedQueryOptions<MemberProfileTextRecordDTO[]> => ({
     ...memberProfileTextRecordsOptions(params, options),
     queryFn: () => memberProfileServiceServer.getEnsTextRecords(params),
 });

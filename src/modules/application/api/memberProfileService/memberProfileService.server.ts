@@ -1,13 +1,13 @@
 import 'server-only';
-import { aragonSubdomainServiceBackend } from '@/shared/api/aragonSubdomainService/aragonSubdomainService.backend';
+import { aragonDomainServiceBackend } from '@/shared/api/aragonDomainService/aragonDomainService.backend';
 import type { IGetEnsTextRecordsParams } from './memberProfileService.api';
 
 class MemberProfileServiceServer {
-    getEnsTextRecords = async (params: IGetEnsTextRecordsParams) => {
+    getEnsTextRecords = async ({ urlParams }: IGetEnsTextRecordsParams) => {
         const result =
-            await aragonSubdomainServiceBackend.getMemberProfileTextRecords({
-                subdomain: params.urlParams.name,
-            });
+            await aragonDomainServiceBackend.getMemberProfileTextRecords(
+                urlParams,
+            );
 
         if (!result.success) {
             throw new Error(

@@ -1,14 +1,14 @@
-import { AragonSubdomainServiceClient } from '@/shared/api/aragonSubdomainService';
-import type { IMemberProfileTextRecord } from './domain/IMemberProfileTextRecord';
+import type { MemberProfileTextRecordDTO } from '@aragon/aragon-domain';
+import { AragonDomainServiceClient } from '@/shared/api/aragonDomainService';
 import type { IGetEnsTextRecordsParams } from './memberProfileService.api';
 
-class MemberProfileServiceClient extends AragonSubdomainServiceClient {
+class MemberProfileServiceClient extends AragonDomainServiceClient {
     private urls = {
-        getMemberProfileTextRecords: '/member-profile/:name/records',
+        getMemberProfileTextRecords: '/member-profile/:subdomain/records',
     };
 
     getEnsTextRecords = async (params: IGetEnsTextRecordsParams) => {
-        const result = await this.request<IMemberProfileTextRecord[]>(
+        const result = await this.request<MemberProfileTextRecordDTO[]>(
             this.urls.getMemberProfileTextRecords,
             params,
         );

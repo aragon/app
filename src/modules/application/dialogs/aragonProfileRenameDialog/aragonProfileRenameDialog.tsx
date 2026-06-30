@@ -10,7 +10,10 @@ import {
     Spinner,
 } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { memberRegistrySubdomainSuffix } from '@/modules/ens';
+import {
+    memberRegistrySubdomainSuffix,
+    useEnsResolverRecords,
+} from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -65,11 +68,31 @@ export const AragonProfileRenameDialog: React.FC<
             currentSubdomain,
         });
 
+    // Text records can only be enumerated from the indexer (you can't list
+    // arbitrary ENS text-record keys on-chain).
     const {
         data: allTextRecords,
         isLoading: isAllTextRecordsLoading,
         isError: isAllTextRecordsError,
-    } = useMemberProfileTextRecords({ urlParams: { name: currentEnsName } });
+    } = useMemberProfileTextRecords({
+        urlParams: { subdomain: currentEnsName },
+    });
+
+    // `addr`/`contenthash` are single live values read straight from the
+    // resolver so the rename carries the current records over unchanged. A
+    // `null` result means the name has no resolver, i.e. the profile was not
+    // found — which gates submit (distinct from "found with zero records").
+    const {
+        data: resolverRecords,
+        isLoading: isResolverRecordsLoading,
+        isError: isResolverRecordsError,
+    } = useEnsResolverRecords(currentEnsName);
+
+    const isRecordsLoading =
+        isAllTextRecordsLoading || isResolverRecordsLoading;
+    const isRecordsError = isAllTextRecordsError || isResolverRecordsError;
+    const isProfileNotFound =
+        !isRecordsLoading && !isRecordsError && resolverRecords == null;
 
     const handleCancel = () => close(location.id);
 
@@ -78,6 +101,10 @@ export const AragonProfileRenameDialog: React.FC<
             address != null,
             'AragonProfileRenameDialog: wallet address must be set.',
         );
+        invariant(
+            resolverRecords != null,
+            'AragonProfileRenameDialog: current profile records must be loaded.',
+        );
 
         open(ApplicationDialogId.ARAGON_PROFILE_RENAME_TRANSACTION, {
             stack: true,
@@ -85,8 +112,8 @@ export const AragonProfileRenameDialog: React.FC<
                 subdomain,
                 records: {
                     textRecords: allTextRecords ?? [],
-                    addr: address,
-                    contenthash: '0x',
+                    addr: resolverRecords.addr,
+                    contenthash: resolverRecords.contenthash,
                 },
             },
         });
@@ -95,8 +122,9 @@ export const AragonProfileRenameDialog: React.FC<
     const isSubmitDisabled =
         isNameTaken ||
         isCheckingAvailability ||
-        isAllTextRecordsLoading ||
-        isAllTextRecordsError;
+        isRecordsLoading ||
+        isRecordsError ||
+        resolverRecords == null;
 
     return (
         <>
@@ -118,12 +146,21 @@ export const AragonProfileRenameDialog: React.FC<
                     )}
                 />
 
-                {isAllTextRecordsLoading && <Spinner />}
+                {isRecordsLoading && <Spinner />}
 
-                {isAllTextRecordsError && (
+                {isRecordsError && (
                     <AlertCard
                         message={t(
                             'app.application.aragonProfileRenameDialog.recordsFetchError',
+                        )}
+                        variant="critical"
+                    />
+                )}
+
+                {isProfileNotFound && (
+                    <AlertCard
+                        message={t(
+                            'app.application.aragonProfileRenameDialog.profileNotFound',
                         )}
                         variant="critical"
                     />

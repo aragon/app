@@ -1,9 +1,9 @@
 import type { IPaginatedResponse } from '../aragonBackendService';
 import { HttpService, type IRequestQueryParams } from '../httpService';
 
-export class AragonSubdomainServiceClient extends HttpService {
+export class AragonDomainServiceClient extends HttpService {
     constructor() {
-        const baseUrl = '/api/subdomain';
+        const baseUrl = '/api/domain';
         super(baseUrl);
     }
 

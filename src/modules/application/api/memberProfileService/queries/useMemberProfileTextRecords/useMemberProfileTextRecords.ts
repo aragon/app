@@ -1,14 +1,14 @@
+import type { MemberProfileTextRecordDTO } from '@aragon/aragon-domain';
 import { useQuery } from '@tanstack/react-query';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
-import type { IMemberProfileTextRecord } from '../../domain/IMemberProfileTextRecord';
 import type { IGetEnsTextRecordsParams } from '../../memberProfileService.api';
 import { memberProfileServiceClient } from '../../memberProfileService.client';
 import { memberProfileServiceKeys } from '../../memberProfileServiceKeys';
 
 export const memberProfileTextRecordsOptions = (
     params: IGetEnsTextRecordsParams,
-    options?: QueryOptions<IMemberProfileTextRecord[]>,
-): SharedQueryOptions<IMemberProfileTextRecord[]> => ({
+    options?: QueryOptions<MemberProfileTextRecordDTO[]>,
+): SharedQueryOptions<MemberProfileTextRecordDTO[]> => ({
     queryKey: memberProfileServiceKeys.textRecords(params),
     queryFn: () => memberProfileServiceClient.getEnsTextRecords(params),
     ...options,
@@ -16,5 +16,5 @@ export const memberProfileTextRecordsOptions = (
 
 export const useMemberProfileTextRecords = (
     params: IGetEnsTextRecordsParams,
-    options?: QueryOptions<IMemberProfileTextRecord[]>,
+    options?: QueryOptions<MemberProfileTextRecordDTO[]>,
 ) => useQuery(memberProfileTextRecordsOptions(params, options));

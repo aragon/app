@@ -611,6 +611,7 @@
           }
         },
         "recordsFetchError": "Failed to fetch registered profile records for this name.",
+        "profileNotFound": "We couldn't find a registered profile for this name. Please try again shortly.",
         "actions": {
           "submit": "Change Aragon name",
           "cancel": "Cancel"
