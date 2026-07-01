@@ -2087,6 +2087,20 @@
           }
         }
       },
+      "duplicateProposalAlertDialog": {
+        "title": "This may create another proposal",
+        "description": {
+          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, publishing again may create another proposal.",
+          "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
+        },
+        "action": {
+          "back": "Go back",
+          "publish": "Publish again"
+        },
+        "a11y": {
+          "description": "Warning that a transaction to publish this proposal was already started."
+        }
+      },
       "memberDelegateButton": {
         "delegate": "Delegate {{token}}",
         "manageDelegation": "Manage delegation"
@@ -3792,7 +3806,7 @@
             "idle": "Sign transaction",
             "pending": "Awaiting signature"
           },
-          "cancel": "Cancel",
+          "cancel": "Close",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },

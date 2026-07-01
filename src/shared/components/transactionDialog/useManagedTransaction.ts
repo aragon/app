@@ -7,6 +7,7 @@ import {
 } from 'wagmi';
 import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
 import {
+    type IPendingTransactionMeta,
     PendingTransactionStatus,
     pendingTransactionManager,
 } from '@/shared/utils/pendingTransactionManager';
@@ -37,6 +38,7 @@ export interface IUseManagedTransactionResult {
  */
 export const useManagedTransaction = (
     intentId?: string,
+    meta?: IPendingTransactionMeta,
 ): IUseManagedTransactionResult => {
     const managed = usePendingTransaction(intentId);
 
@@ -98,9 +100,9 @@ export const useManagedTransaction = (
                 return;
             }
             setLatchedHash(undefined);
-            pendingTransactionManager.send(intentId, request);
+            pendingTransactionManager.send(intentId, request, meta);
         },
-        [intentId],
+        [intentId, meta],
     );
 
     const resend = useCallback(() => {

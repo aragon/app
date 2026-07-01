@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
@@ -11,6 +12,10 @@ import {
     generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import {
+    PendingTransactionStatus,
+    pendingTransactionManager,
+} from '@/shared/utils/pendingTransactionManager';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import {
     CreateProposalPageClient,
@@ -35,8 +40,10 @@ describe('<CreateProposalPageClient /> component', () => {
     );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const getActiveSpy = jest.spyOn(pendingTransactionManager, 'getActive');
 
     beforeEach(() => {
+        getActiveSpy.mockReturnValue([]);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({
             check: jest.fn(),
@@ -53,6 +60,7 @@ describe('<CreateProposalPageClient /> component', () => {
         usePermissionCheckGuardSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
+        getActiveSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -104,5 +112,46 @@ describe('<CreateProposalPageClient /> component', () => {
         expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, {
             params: expectedParams,
         });
+    });
+
+    it('warns instead of publishing when another proposal creation is already in flight', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({
+                meta: generateDaoPlugin({ address: '0x123' }),
+            }),
+        ]);
+        // A different in-flight proposal creation for this DAO + plugin.
+        getActiveSpy.mockReturnValue([
+            ['other-intent', { status: PendingTransactionStatus.SUBMITTED }],
+        ]);
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByTestId('steps-mock'));
+        await userEvent.click(screen.getByTestId('steps-mock'));
+        await userEvent.click(screen.getByTestId('steps-mock'));
+
+        expect(getActiveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ type: TransactionType.PROPOSAL_CREATE }),
+        );
+        expect(open).toHaveBeenCalledWith(
+            GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING,
+            { params: { onProceed: expect.any(Function) } },
+        );
+        expect(open).not.toHaveBeenCalledWith(
+            GovernanceDialogId.PUBLISH_PROPOSAL,
+            expect.anything(),
+        );
+
+        // Proceeding from the warning opens the publish dialog for the new proposal.
+        const warnCall = open.mock.calls.find(
+            ([id]) => id === GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING,
+        );
+        warnCall![1].params.onProceed();
+        expect(open).toHaveBeenCalledWith(
+            GovernanceDialogId.PUBLISH_PROPOSAL,
+            expect.anything(),
+        );
     });
 });

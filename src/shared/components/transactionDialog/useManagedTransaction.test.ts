@@ -158,7 +158,14 @@ describe('useManagedTransaction', () => {
     it('sends through the manager keyed by the intent id', () => {
         const { result } = renderHook(() => useManagedTransaction('id'));
         act(() => result.current.send(request));
-        expect(sendSpy).toHaveBeenCalledWith('id', request);
+        expect(sendSpy).toHaveBeenCalledWith('id', request, undefined);
+    });
+
+    it('forwards the meta so the manager can scope duplicate detection', () => {
+        const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+        const { result } = renderHook(() => useManagedTransaction('id', meta));
+        act(() => result.current.send(request));
+        expect(sendSpy).toHaveBeenCalledWith('id', request, meta);
     });
 
     it('resends the stored request for a resumed action and reports success', () => {
