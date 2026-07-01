@@ -3,14 +3,12 @@
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IConditionData } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { stringUtils } from '@/shared/utils/stringUtils';
 
 const EMPTY_VALUE = '—';
 
-const isNonEmptyString = (value: unknown): value is string =>
-    typeof value === 'string' && value.length > 0;
-
 const resolveMinVotingPower = (value: unknown): string => {
-    if (isNonEmptyString(value)) {
+    if (stringUtils.isNonEmptyString(value)) {
         return value;
     }
 
@@ -25,7 +23,7 @@ export const VotingPowerConditionSlot: React.FC<IConditionData> = (props) => {
     const { token, minVotingPower } = props;
     const { t } = useTranslations();
 
-    const tokenLabel = isNonEmptyString(token)
+    const tokenLabel = stringUtils.isNonEmptyString(token)
         ? addressUtils.truncateAddress(token)
         : EMPTY_VALUE;
     const minVotingPowerLabel = resolveMinVotingPower(minVotingPower);

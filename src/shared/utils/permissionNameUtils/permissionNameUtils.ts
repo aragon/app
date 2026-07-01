@@ -1,7 +1,5 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { keccak256, toBytes } from 'viem';
-
-const truncatedHashPrefixLength = 6;
-const truncatedHashSuffixLength = 4;
 
 /**
  * Canonical list of Aragon OSx, plugin, and AccessControl permission names.
@@ -137,20 +135,21 @@ class PermissionNameUtils {
             return name;
         }
 
-        return this.truncateHash(permissionId);
+        return addressUtils.truncateHash(this.normaliseHash(permissionId));
     };
+
+    /**
+     * Returns the keccak256 permission-id hash for a raw permission name. Inverse
+     * of {@link getPermissionName}; the {@link permissionNames} list is the single
+     * source of truth for both directions.
+     */
+    getPermissionId = (permissionName: string): string =>
+        keccak256(toBytes(permissionName));
 
     private normaliseHash = (hash: string): string => {
         const lowerCased = hash.toLowerCase();
 
         return lowerCased.startsWith('0x') ? lowerCased : `0x${lowerCased}`;
-    };
-
-    private truncateHash = (hash: string): string => {
-        const prefix = hash.slice(0, truncatedHashPrefixLength);
-        const suffix = hash.slice(-truncatedHashSuffixLength);
-
-        return `${prefix}…${suffix}`;
     };
 }
 

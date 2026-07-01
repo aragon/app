@@ -56,12 +56,12 @@ describe('permissionNameUtils', () => {
             {
                 permissionId:
                     '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
-                expected: '0x0123…cdef',
+                expected: '0x01234567…89abcdef',
             },
             {
                 permissionId:
                     '0xdeadbeef00000000000000000000000000000000000000000000000000001234',
-                expected: '0xdead…1234',
+                expected: '0xdeadbeef…00001234',
             },
         ])('returns the truncated fallback $expected for the unmapped hash $permissionId', ({
             permissionId,
