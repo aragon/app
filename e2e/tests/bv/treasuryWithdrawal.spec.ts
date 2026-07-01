@@ -166,7 +166,7 @@ test.describe
                 mainTx.locator('[data-testid="WITHDRAW"]').first(),
             ).toBeVisible({ timeout: 60_000 });
             await expect(
-                mainTx.getByText('Withdraw', { exact: true }).first(),
+                mainTx.getByText('Sent', { exact: true }).first(),
             ).toBeVisible();
         });
     });

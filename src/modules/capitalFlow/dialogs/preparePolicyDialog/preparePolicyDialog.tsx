@@ -25,6 +25,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useStepper } from '@/shared/hooks/useStepper';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { pluginTransactionUtils } from '../../../../shared/utils/pluginTransactionUtils';
 import type { ICreatePolicyFormData } from '../../components/createPolicyForm';
 import { RouterType, StrategyType } from '../setupStrategyDialog';
@@ -289,6 +290,27 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
         open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
     };
 
+    const deployIntentId = useMemo(
+        () =>
+            buildIntentId({
+                phase: 'deploy-source-and-model',
+                daoId,
+                pluginAddress,
+                values,
+            }),
+        [daoId, pluginAddress, values],
+    );
+    const installIntentId = useMemo(
+        () =>
+            buildIntentId({
+                phase: 'prepare-installation',
+                daoId,
+                pluginAddress,
+                values,
+            }),
+        [daoId, pluginAddress, values],
+    );
+
     const pinMetadataNamespace = `app.capitalFlow.preparePolicyDialog.step.${PreparePolicyStep.PIN_METADATA}`;
     const customSteps: ITransactionDialogStep<PreparePolicyStep>[] = useMemo(
         () => [
@@ -319,6 +341,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
                 description={t(
                     'app.capitalFlow.preparePolicyDialog.description',
                 )}
+                intentId={deployIntentId}
                 key="model-and-source-deploy"
                 network={dao?.network}
                 onSuccess={handleDeploySourceAndModelSuccess}
@@ -342,6 +365,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
     return (
         <TransactionDialog
             description={t('app.capitalFlow.preparePolicyDialog.description')}
+            intentId={installIntentId}
             key="plugin-install"
             network={dao?.network}
             onSuccess={handlePrepareInstallationSuccess}

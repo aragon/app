@@ -82,6 +82,12 @@ export interface ITransactionDialogProps<
      */
     description: string;
     /**
+     * Stable identity used to resume an in-flight send on re-open. Defaults to a hash of the prepared
+     * transaction; pass an explicit `buildIntentId` only when the calldata is non-deterministic across
+     * re-opens (e.g. a proposal's relative end date, or freshly deployed contract addresses).
+     */
+    intentId?: string;
+    /**
      * Label for the submit button used as fallback when the specific step state label is not set.
      */
     submitLabel: string;

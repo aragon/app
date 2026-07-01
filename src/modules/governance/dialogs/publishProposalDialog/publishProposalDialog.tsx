@@ -19,6 +19,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -146,11 +147,28 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
     const namespace =
         translationNamespace ?? 'app.governance.publishProposalDialog';
 
+    // Explicit id: the calldata embeds a now-relative end date, so hash a whitelist of stable content
+    // fields instead, so no volatile field can make the id drift between re-opens.
+    const intentId = useMemo(
+        () =>
+            buildIntentId({
+                daoId,
+                plugin: plugin.address,
+                title: proposal.title,
+                summary: proposal.summary,
+                resources: proposal.resources,
+                body: proposal.body,
+                actions: proposal.actions,
+            }),
+        [daoId, plugin.address, proposal],
+    );
+
     return (
         <TransactionDialog<PublishProposalStep>
             customSteps={customSteps}
             description={t(`${namespace}.description`)}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
+            intentId={intentId}
             network={dao?.network}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}

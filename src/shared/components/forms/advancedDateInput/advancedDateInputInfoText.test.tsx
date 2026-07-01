@@ -34,7 +34,8 @@ describe('<AdvancedDateInputInfoText /> component', () => {
 
     it('renders a card alert with the specified infoText and field label when infoDisplay is set to card', () => {
         const infoText = 'info-test';
-        const field = { label: 'label-test' } as unknown as IUseFormFieldReturn<
+        const label = 'label-test';
+        const field = { label } as unknown as IUseFormFieldReturn<
             Record<string, IDateFixed>,
             string
         >;
@@ -42,13 +43,14 @@ describe('<AdvancedDateInputInfoText /> component', () => {
         render(createTestComponent({ infoText, field, infoDisplay }));
         expect(screen.getByRole('alert')).toBeInTheDocument();
         expect(screen.getByTestId(IconType.INFO)).toBeInTheDocument();
-        expect(screen.getByText(field.label!)).toBeInTheDocument();
+        expect(screen.getByText(label)).toBeInTheDocument();
         expect(screen.getByText(infoText)).toBeInTheDocument();
     });
 
     it('renders an inline alert with only the specified infoText when infoDisplay is set to inline', () => {
         const infoText = 'inline-text';
-        const field = { label: 'label-test' } as unknown as IUseFormFieldReturn<
+        const label = 'label-test';
+        const field = { label } as unknown as IUseFormFieldReturn<
             Record<string, IDateFixed>,
             string
         >;
@@ -56,19 +58,20 @@ describe('<AdvancedDateInputInfoText /> component', () => {
         render(createTestComponent({ infoText, field, infoDisplay }));
         expect(screen.getByRole('alert')).toBeInTheDocument();
         expect(screen.getByTestId(IconType.INFO)).toBeInTheDocument();
-        expect(screen.queryByText(field.label!)).not.toBeInTheDocument();
+        expect(screen.queryByText(label)).not.toBeInTheDocument();
         expect(screen.getByText(infoText)).toBeInTheDocument();
     });
 
     it('renders the field alert with a critical variant when field is not valid', () => {
         const infoText = 'hidden-info';
+        const alertMessage = 'invalid-field';
         const field = {
-            alert: { message: 'invalid-field' },
+            alert: { message: alertMessage },
             label: 'field',
         } as unknown as IUseFormFieldReturn<Record<string, IDateFixed>, string>;
         render(createTestComponent({ infoText, field }));
         expect(screen.queryByText(infoText)).not.toBeInTheDocument();
-        expect(screen.getByText(field.alert!.message)).toBeInTheDocument();
+        expect(screen.getByText(alertMessage)).toBeInTheDocument();
         expect(screen.getByTestId(IconType.CRITICAL)).toBeInTheDocument();
     });
 });

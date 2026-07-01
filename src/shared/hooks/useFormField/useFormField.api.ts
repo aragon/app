@@ -74,5 +74,5 @@ export type IUseFormFieldReturn<
     /**
      * Label of the field, only set when passed as option.
      */
-    label?: IInputContainerProps['label'];
+    label?: IUseFormFieldOptions<TFieldValues, TName>['label'];
 };

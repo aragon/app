@@ -2,7 +2,6 @@ minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude:
   # https://pnpm.io/settings#minimumreleaseageexclude
   - "@aragon/gov-ui-kit"
-  - "dompurify@3.4.11" # audit fix (GHSA-cmwh-pvxp-8882) published <7d ago; exempt this exact version from the cooldown
 strictDepBuilds: true
 blockExoticSubdeps: true
 trustPolicy: no-downgrade

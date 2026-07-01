@@ -56,3 +56,8 @@
 {"ts":"2026-06-25T12:37:42.551Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-06-25T12:37:48.897Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-06-25T12:38:05.017Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-26T09:34:56.581Z","tool":"Write","file":"src/shared/components/transactionDialog/transactionDialog.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-06-26T09:35:04.301Z","tool":"Write","file":"src/shared/components/transactionDialog/useManagedTransaction.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-26T09:35:11.202Z","tool":"Write","file":"src/shared/components/transactionDialog/useManagedTransaction.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-06-26T09:37:05.258Z","tool":"Write","file":"src/shared/components/transactionDialog/useManagedTransaction.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-06-26T09:37:14.853Z","tool":"Write","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
