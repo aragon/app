@@ -36,7 +36,7 @@ describe('<DuplicateProposalAlertDialog /> component', () => {
         );
     };
 
-    it('renders the warning title and description', () => {
+    it('renders the warning title and both description paragraphs', () => {
         render(createTestComponent());
         expect(
             screen.getByText(
@@ -45,12 +45,17 @@ describe('<DuplicateProposalAlertDialog /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByText(
-                'app.governance.duplicateProposalAlertDialog.description',
+                'app.governance.duplicateProposalAlertDialog.description.1',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.governance.duplicateProposalAlertDialog.description.2',
             ),
         ).toBeInTheDocument();
     });
 
-    it('closes without proceeding when the safe action is clicked', async () => {
+    it('closes without proceeding when "Go back" is clicked', async () => {
         const close = jest.fn();
         const onProceed = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
@@ -58,7 +63,7 @@ describe('<DuplicateProposalAlertDialog /> component', () => {
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.governance.duplicateProposalAlertDialog.action.wait',
+                name: 'app.governance.duplicateProposalAlertDialog.action.back',
             }),
         );
 
@@ -66,7 +71,7 @@ describe('<DuplicateProposalAlertDialog /> component', () => {
         expect(onProceed).not.toHaveBeenCalled();
     });
 
-    it('closes and proceeds when the user chooses to create anyway', async () => {
+    it('closes and proceeds when "Publish again" is clicked', async () => {
         const close = jest.fn();
         const onProceed = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ close }));
@@ -74,7 +79,7 @@ describe('<DuplicateProposalAlertDialog /> component', () => {
 
         await userEvent.click(
             screen.getByRole('button', {
-                name: 'app.governance.duplicateProposalAlertDialog.action.proceed',
+                name: 'app.governance.duplicateProposalAlertDialog.action.publish',
             }),
         );
 

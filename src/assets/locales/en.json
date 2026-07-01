@@ -2088,14 +2088,17 @@
         }
       },
       "duplicateProposalAlertDialog": {
-        "title": "Proposal already being created",
-        "description": "You already have a proposal being created for this plugin. Publishing a new one now may create two proposals. Wait for the current transaction to finish, or create another proposal anyway.",
+        "title": "This may create another proposal",
+        "description": {
+          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, publishing again may create another proposal.",
+          "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
+        },
         "action": {
-          "wait": "Keep waiting",
-          "proceed": "Create anyway"
+          "back": "Go back",
+          "publish": "Publish again"
         },
         "a11y": {
-          "description": "Warning that a proposal is already being created for this plugin."
+          "description": "Warning that a transaction to publish this proposal was already started."
         }
       },
       "memberDelegateButton": {

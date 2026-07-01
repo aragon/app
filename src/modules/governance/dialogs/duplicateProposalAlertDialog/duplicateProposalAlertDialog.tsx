@@ -29,17 +29,20 @@ export const DuplicateProposalAlertDialog: React.FC<
             <DialogAlert.Header title={t(`${namespace}.title`)} />
             <DialogAlert.Content>
                 <div className="flex flex-col gap-y-4 pb-4 font-normal text-base text-neutral-500 leading-normal">
-                    <p>{t(`${namespace}.description`)}</p>
+                    <p>{t(`${namespace}.description.1`)}</p>
+                    <p>{t(`${namespace}.description.2`)}</p>
                 </div>
             </DialogAlert.Content>
+            {/* "Publish again" is the warning (yellow) action and, for a warning alert, renders on the
+                right; "Go back" is the subdued/safe choice. */}
             <DialogAlertFooter
                 actionButton={{
-                    label: t(`${namespace}.action.wait`),
-                    onClick: () => close(),
+                    label: t(`${namespace}.action.publish`),
+                    onClick: handleProceed,
                 }}
                 cancelButton={{
-                    label: t(`${namespace}.action.proceed`),
-                    onClick: handleProceed,
+                    label: t(`${namespace}.action.back`),
+                    onClick: () => close(),
                 }}
             />
         </>

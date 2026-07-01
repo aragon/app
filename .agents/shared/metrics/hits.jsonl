@@ -78,3 +78,4 @@
 {"ts":"2026-07-01T11:44:33.472Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-07-01T11:44:39.277Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-07-01T11:44:49.278Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-01T17:04:27.643Z","tool":"Edit","file":"src/modules/governance/constants/governanceDialogsDefinitions.ts","rule":"dialog-conventions","bytes":3499,"elapsed_ms":1,"adapter":"claude"}

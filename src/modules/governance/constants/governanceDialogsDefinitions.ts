@@ -22,6 +22,7 @@ export const governanceDialogsDefinitions: Record<
     [GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING]: {
         Component: DuplicateProposalAlertDialog,
         variant: 'warning',
+        size: 'lg',
         hiddenDescription:
             'app.governance.duplicateProposalAlertDialog.a11y.description',
     },
