@@ -45,6 +45,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         transactionType,
         indexingFallbackUrl,
         disableCancel,
+        intentScope,
     } = props;
 
     const {
@@ -109,8 +110,17 @@ export const TransactionDialog = <TCustomStepId extends string>(
         [intentIdProp, transaction, address, requiredChainId],
     );
 
+    // Stored with the pending transaction so duplicate detection can scope by type + context.
+    // Left undefined when there is nothing to scope by (e.g. inline transactions).
+    const transactionMeta = useMemo(
+        () =>
+            transactionType != null || intentScope != null
+                ? { type: transactionType, scope: intentScope }
+                : undefined,
+        [transactionType, intentScope],
+    );
     const { approveState, hash, resumeTarget, receipt, send, resend } =
-        useManagedTransaction(intentId);
+        useManagedTransaction(intentId, transactionMeta);
     const {
         data: txReceipt,
         status: waitTxStatus,

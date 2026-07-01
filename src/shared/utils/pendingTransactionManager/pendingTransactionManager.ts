@@ -3,6 +3,8 @@ import { sendTransaction } from 'wagmi/actions';
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import {
+    type IPendingTransactionFilter,
+    type IPendingTransactionMeta,
     type IPendingTransactionState,
     type PendingTransactionListener,
     PendingTransactionStatus,
@@ -46,6 +48,8 @@ export class PendingTransactionManager {
         string,
         ITransactionRequest & { chainId: number }
     >();
+    // Optional type/scope per intent, merged into state so it survives every status update and a reload.
+    private metas = new Map<string, IPendingTransactionMeta>();
 
     constructor() {
         this.hydrate();
@@ -54,8 +58,13 @@ export class PendingTransactionManager {
     send = (
         intentId: string,
         request: ITransactionRequest & { chainId: number },
+        meta?: IPendingTransactionMeta,
     ): void => {
         this.requests.set(intentId, request);
+        // Only set on an explicit meta so a resend (no meta) keeps the original type/scope.
+        if (meta != null) {
+            this.metas.set(intentId, meta);
+        }
         const attempt = (this.attempts.get(intentId) ?? 0) + 1;
         this.attempts.set(intentId, attempt);
         this.update(intentId, { status: PendingTransactionStatus.PENDING });
@@ -79,6 +88,25 @@ export class PendingTransactionManager {
     get = (intentId: string): IPendingTransactionState | undefined =>
         this.states.get(intentId);
 
+    // Active (PENDING/SUBMITTED) records, optionally narrowed by type/scope and excluding one intent.
+    // Used to warn before starting a second action that would duplicate one already in flight.
+    getActive = (
+        filter?: IPendingTransactionFilter,
+    ): [string, IPendingTransactionState][] =>
+        [...this.states].filter(([id, state]) => {
+            const isActive =
+                state.status === PendingTransactionStatus.PENDING ||
+                state.status === PendingTransactionStatus.SUBMITTED;
+
+            return (
+                isActive &&
+                (filter?.excludeIntentId == null ||
+                    id !== filter.excludeIntentId) &&
+                (filter?.type == null || state.type === filter.type) &&
+                (filter?.scope == null || state.scope === filter.scope)
+            );
+        });
+
     // The request to re-send when resuming an action whose dialog skipped prepare.
     getRequest = (
         intentId: string,
@@ -94,6 +122,7 @@ export class PendingTransactionManager {
         this.liveSends.delete(intentId);
         this.attempts.delete(intentId);
         this.requests.delete(intentId);
+        this.metas.delete(intentId);
         if (this.states.delete(intentId)) {
             this.persist();
             this.emit(intentId);
@@ -116,9 +145,12 @@ export class PendingTransactionManager {
         if (state.status === PendingTransactionStatus.PENDING) {
             this.liveSends.add(intentId);
         }
-        this.states.set(intentId, state);
+        // Merge retained meta so type/scope survive every status transition (and the persisted mirror).
+        const meta = this.metas.get(intentId);
+        const nextState = meta != null ? { ...state, ...meta } : state;
+        this.states.set(intentId, nextState);
         this.persist();
-        this.emit(intentId, state);
+        this.emit(intentId, nextState);
     };
 
     private emit = (
@@ -130,16 +162,17 @@ export class PendingTransactionManager {
         }
     };
 
-    // Persist status + hash only (the promise and error aren't serializable).
+    // Persist status + hash + optional type/scope only (the promise and error aren't serializable).
+    // JSON.stringify drops undefined fields, so records without meta stay `{ status, hash }`.
     private persist = (): void => {
         if (typeof sessionStorage === 'undefined') {
             return;
         }
         try {
             const stored = Object.fromEntries(
-                [...this.states].map(([id, { status, hash }]) => [
+                [...this.states].map(([id, { status, hash, type, scope }]) => [
                     id,
-                    { status, hash },
+                    { status, hash, type, scope },
                 ]),
             );
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
@@ -161,6 +194,13 @@ export class PendingTransactionManager {
             for (const [id, state] of Object.entries(stored)) {
                 if (isStoredState(state)) {
                     this.states.set(id, state);
+                    // Repopulate meta so a resumed action's later updates keep its type/scope.
+                    if (state.type != null || state.scope != null) {
+                        this.metas.set(id, {
+                            type: state.type,
+                            scope: state.scope,
+                        });
+                    }
                 }
             }
         } catch {

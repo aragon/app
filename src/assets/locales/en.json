@@ -2087,6 +2087,17 @@
           }
         }
       },
+      "duplicateProposalAlertDialog": {
+        "title": "Proposal already being created",
+        "description": "You already have a proposal being created for this plugin. Publishing a new one now may create two proposals. Wait for the current transaction to finish, or create another proposal anyway.",
+        "action": {
+          "wait": "Keep waiting",
+          "proceed": "Create anyway"
+        },
+        "a11y": {
+          "description": "Warning that a proposal is already being created for this plugin."
+        }
+      },
       "memberDelegateButton": {
         "delegate": "Delegate {{token}}",
         "manageDelegation": "Manage delegation"
@@ -3792,7 +3803,7 @@
             "idle": "Sign transaction",
             "pending": "Awaiting signature"
           },
-          "cancel": "Cancel",
+          "cancel": "Close",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },

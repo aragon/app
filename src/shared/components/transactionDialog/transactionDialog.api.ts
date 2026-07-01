@@ -143,4 +143,9 @@ export interface ITransactionDialogProps<
      * When true, the cancel button in the dialog footer is permanently disabled.
      */
     disableCancel?: boolean;
+    /**
+     * Opaque scope (e.g. a DAO + plugin key) stored alongside the pending transaction so duplicate
+     * detection can be narrowed to the same context. Combined with `transactionType` by the caller.
+     */
+    intentScope?: string;
 }

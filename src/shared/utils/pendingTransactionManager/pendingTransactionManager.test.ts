@@ -128,6 +128,52 @@ describe('pendingTransactionManager', () => {
         });
     });
 
+    describe('getActive', () => {
+        it('returns only PENDING and SUBMITTED records', async () => {
+            sendTransactionSpy.mockResolvedValueOnce('0xhash'); // submitted
+            sendTransactionSpy.mockRejectedValueOnce(new Error('x')); // failed
+            sendTransactionSpy.mockReturnValueOnce(
+                new Promise(() => undefined),
+            ); // pending
+            const manager = new PendingTransactionManager();
+
+            manager.send('submitted', request);
+            manager.send('failed', request);
+            manager.send('pending', request);
+            await flushPromises();
+
+            const ids = manager.getActive().map(([id]) => id);
+            expect(ids).toEqual(
+                expect.arrayContaining(['submitted', 'pending']),
+            );
+            expect(ids).not.toContain('failed');
+        });
+
+        it('narrows by type and scope and excludes a given intent id', () => {
+            sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
+            const manager = new PendingTransactionManager();
+            const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+
+            manager.send('match', request, meta);
+            manager.send('other-scope', request, {
+                type: 'proposalCreate',
+                scope: 'other',
+            });
+            manager.send('other-type', request, {
+                type: 'tokenTransfer',
+                scope: 'dao:plugin',
+            });
+            manager.send('self', request, meta);
+
+            const matches = manager.getActive({
+                ...meta,
+                excludeIntentId: 'self',
+            });
+
+            expect(matches.map(([id]) => id)).toEqual(['match']);
+        });
+    });
+
     describe('subscribe', () => {
         it('notifies listeners on each change and stops after unsubscribe', () => {
             sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
@@ -176,6 +222,28 @@ describe('pendingTransactionManager', () => {
             expect(
                 JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
             ).toEqual({ id: { status: 'SUBMITTED', hash: '0xhash' } });
+        });
+
+        it('persists and hydrates the type and scope meta for duplicate detection', async () => {
+            sendTransactionSpy.mockResolvedValue('0xhash');
+            const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+            const manager = new PendingTransactionManager();
+
+            manager.send('id', request, meta);
+            await flushPromises();
+
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({
+                id: { status: 'SUBMITTED', hash: '0xhash', ...meta },
+            });
+
+            const rehydrated = new PendingTransactionManager();
+            expect(rehydrated.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xhash',
+                ...meta,
+            });
         });
 
         it('hydrates persisted records on construction so a reload can resume', () => {
