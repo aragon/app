@@ -5,11 +5,17 @@ import {
     addressUtils,
     Button,
     CardEmptyState,
+    ChainEntityType,
+    DaoAvatar,
     DefinitionList,
+    Link,
     StateSkeletonBar,
-    Tabs,
     Tag,
+    Toggle,
+    ToggleGroup,
+    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import {
     type Network,
@@ -19,13 +25,16 @@ import {
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import { PermissionsPreviewRef } from '../../constants/permissionsPreviewRefs';
 import type { IPermissionRow } from '../../types';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
 import {
+    type IPermissionAccountRef,
     type IPermissionEntity,
     permissionEntityUtils,
 } from '../../utils/permissionEntityUtils';
@@ -36,6 +45,10 @@ export interface IPermissionsListProps {
      * ID of the DAO to display permissions for.
      */
     daoId: string;
+    /**
+     * View switcher (list/graph toggle) rendered on the right of the filter row.
+     */
+    viewSwitcher?: ReactNode;
 }
 
 interface IPermissionsAccount {
@@ -43,6 +56,7 @@ interface IPermissionsAccount {
     name: string;
     network: Network;
     daoAddress: string;
+    avatar?: string | null;
 }
 
 const SKELETON_ROW_KEYS = [
@@ -56,7 +70,7 @@ const getRowKey = (row: IPermissionRow): string =>
     `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`;
 
 export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
-    const { daoId } = props;
+    const { daoId, viewSwitcher } = props;
 
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
@@ -77,6 +91,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
             name: dao.name,
             network: dao.network,
             daoAddress: dao.address,
+            avatar: dao.avatar,
         };
 
         const linkedAccounts = dao.linkedAccounts ?? [];
@@ -94,15 +109,32 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                 name: account.name,
                 network: account.network,
                 daoAddress: account.address,
+                avatar: account.avatar,
             })),
         ];
     }, [dao, isEnabled]);
 
     const [selectedAccountId, setSelectedAccountId] = useState<string>();
     const activeAccountId = selectedAccountId ?? accounts[0]?.id;
+
+    const handleAccountChange = (value: string | string[] | undefined) => {
+        if (typeof value === 'string') {
+            setSelectedAccountId(value);
+        }
+    };
     const activeAccount =
         accounts.find((account) => account.id === activeAccountId) ??
         accounts[0];
+
+    const accountRefs = useMemo<IPermissionAccountRef[]>(
+        () =>
+            accounts.map((account) => ({
+                address: account.daoAddress,
+                name: account.name,
+                avatar: account.avatar,
+            })),
+        [accounts],
+    );
 
     const { data, isLoading } = useAllDaoPermissions(
         {
@@ -116,7 +148,31 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
 
     // NOTE: the optional `condition` field is supplied by the preview mock until
     // APP-953 formalizes it on the permissions response; cast at this boundary.
-    const rows = (data ?? []) as IPermissionRow[];
+    const rows = useMemo(() => {
+        const rawRows = (data ?? []) as IPermissionRow[];
+        const pluginAddresses = (daoPlugins ?? []).map(
+            (plugin) => plugin.meta.address,
+        );
+
+        // Swap preview markers for the viewed DAO's real addresses so the sample
+        // rows resolve to names/tags/avatars. No-op for real backend data.
+        const refMap = new Map<string, string | undefined>([
+            [
+                PermissionsPreviewRef.self.toLowerCase(),
+                activeAccount?.daoAddress,
+            ],
+            [PermissionsPreviewRef.plugin0.toLowerCase(), pluginAddresses[0]],
+            [PermissionsPreviewRef.plugin1.toLowerCase(), pluginAddresses[1]],
+        ]);
+        const resolveRef = (address: string): string =>
+            refMap.get(address.toLowerCase()) ?? address;
+
+        return rawRows.map((row) => ({
+            ...row,
+            whoAddress: resolveRef(row.whoAddress),
+            whereAddress: resolveRef(row.whereAddress),
+        }));
+    }, [data, daoPlugins, activeAccount]);
 
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
     const allExpanded = rows.length > 0 && expandedRows.length === rows.length;
@@ -124,6 +180,10 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
     const handleToggleAll = () => {
         setExpandedRows(allExpanded ? [] : rows.map(getRowKey));
     };
+
+    const chainId = activeAccount
+        ? networkDefinitions[activeAccount.network].id
+        : undefined;
 
     const renderBody = () => {
         if (isLoading) {
@@ -144,17 +204,6 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
 
         return (
             <div className="flex flex-col gap-3">
-                <div className="flex justify-end">
-                    <Button
-                        onClick={handleToggleAll}
-                        size="sm"
-                        variant="tertiary"
-                    >
-                        {allExpanded
-                            ? t('app.settings.permissionsList.collapseAll')
-                            : t('app.settings.permissionsList.expandAll')}
-                    </Button>
-                </div>
                 <PermissionsListHeader />
                 <Accordion.Container
                     isMulti={true}
@@ -163,6 +212,8 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                 >
                     {rows.map((row) => (
                         <PermissionsListRow
+                            accounts={accountRefs}
+                            chainId={chainId}
                             daoPlugins={daoPlugins}
                             key={getRowKey(row)}
                             row={row}
@@ -174,27 +225,44 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
         );
     };
 
-    if (accounts.length <= 1) {
-        return renderBody();
-    }
+    const showAccountSelector = accounts.length > 1;
+    const showExpandAll = !isLoading && rows.length > 0;
 
     return (
-        <Tabs.Root onValueChange={setSelectedAccountId} value={activeAccountId}>
-            <Tabs.List>
-                {accounts.map((account) => (
-                    <Tabs.Trigger
-                        key={account.id}
-                        label={account.name}
-                        value={account.id}
-                    />
-                ))}
-            </Tabs.List>
-            {accounts.map((account) => (
-                <Tabs.Content key={account.id} value={account.id}>
-                    {renderBody()}
-                </Tabs.Content>
-            ))}
-        </Tabs.Root>
+        <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                {showAccountSelector && (
+                    <ToggleGroup
+                        isMultiSelect={false}
+                        onChange={handleAccountChange}
+                        value={activeAccountId}
+                    >
+                        {accounts.map((account) => (
+                            <Toggle
+                                key={account.id}
+                                label={account.name}
+                                value={account.id}
+                            />
+                        ))}
+                    </ToggleGroup>
+                )}
+                <div className="flex items-center gap-3 md:ml-auto md:gap-6">
+                    {showExpandAll && (
+                        <Button
+                            onClick={handleToggleAll}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {allExpanded
+                                ? t('app.settings.permissionsList.collapseAll')
+                                : t('app.settings.permissionsList.expandAll')}
+                        </Button>
+                    )}
+                    {viewSwitcher}
+                </div>
+            </div>
+            {renderBody()}
+        </div>
     );
 };
 
@@ -204,6 +272,8 @@ interface IPermissionsListRowProps {
     row: IPermissionRow;
     rowKey: string;
     daoPlugins: DaoPlugins;
+    accounts: IPermissionAccountRef[];
+    chainId?: number;
 }
 
 interface IPermissionEntityCellProps {
@@ -214,16 +284,70 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     entity,
 }) => (
     <span className="flex min-w-0 items-center gap-2 text-neutral-800">
-        {entity.isSentinel && (
+        <span className="truncate">{entity.label}</span>
+        {entity.type === 'dao' && (
+            <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
+        )}
+        {entity.type === 'plugin' && entity.tag != null && (
+            <Tag
+                className="max-w-[140px] shrink-0 [&>p]:truncate"
+                label={entity.tag}
+                variant="primary"
+            />
+        )}
+        {entity.type === 'sentinel' && (
             <span
                 aria-hidden="true"
                 className="size-6 shrink-0 rounded-full bg-neutral-100"
             />
         )}
-        <span className="truncate">{entity.label}</span>
-        {entity.tag != null && <Tag label={entity.tag} />}
     </span>
 );
+
+interface IPermissionEntityDetailProps {
+    entity: IPermissionEntity;
+    chainId?: number;
+}
+
+const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
+    entity,
+    chainId,
+}) => {
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+
+    if (entity.isSentinel) {
+        return (
+            <div className="flex flex-col gap-0.5">
+                <span className="text-neutral-500">{entity.label}</span>
+                <span className="font-mono text-neutral-400 text-sm">
+                    {addressUtils.truncateAddress(entity.address)}
+                </span>
+            </div>
+        );
+    }
+
+    const explorerUrl = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: entity.address,
+    });
+
+    return (
+        <div className="flex flex-col gap-0.5">
+            <Link
+                className="w-fit"
+                href={explorerUrl}
+                isExternal={explorerUrl != null}
+            >
+                {addressUtils.truncateAddress(entity.address)}
+            </Link>
+            {entity.detailName != null && (
+                <span className="text-neutral-500 text-sm">
+                    {entity.detailName}
+                </span>
+            )}
+        </div>
+    );
+};
 
 interface IPermissionDetailValueProps {
     primary: string;
@@ -245,17 +369,18 @@ const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
 );
 
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
-    const { row, rowKey, daoPlugins } = props;
+    const { row, rowKey, daoPlugins, accounts, chainId } = props;
 
     const { t } = useTranslations();
 
+    const resolveOptions = { daoPlugins, accounts };
     const who = permissionEntityUtils.resolvePermissionEntity(
         row.whoAddress,
-        daoPlugins,
+        resolveOptions,
     );
     const where = permissionEntityUtils.resolvePermissionEntity(
         row.whereAddress,
-        daoPlugins,
+        resolveOptions,
     );
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
@@ -283,8 +408,14 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                     <span className="truncate font-mono text-neutral-800">
                         {permissionName}
                     </span>
-                    <span className="truncate text-neutral-800">
-                        {conditionLabel}
+                    <span className="flex min-w-0">
+                        {hasCondition ? (
+                            <Tag label={conditionLabel} />
+                        ) : (
+                            <span className="text-neutral-800">
+                                {conditionLabel}
+                            </span>
+                        )}
                     </span>
                 </div>
             </Accordion.ItemHeader>
@@ -301,11 +432,9 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                                     'app.settings.permissionsList.details.who',
                                 )}
                             >
-                                <PermissionDetailValue
-                                    primary={who.label}
-                                    secondary={addressUtils.truncateAddress(
-                                        who.address,
-                                    )}
+                                <PermissionEntityDetail
+                                    chainId={chainId}
+                                    entity={who}
                                 />
                             </DefinitionList.Item>
                             <DefinitionList.Item
@@ -314,11 +443,9 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                                     'app.settings.permissionsList.details.where',
                                 )}
                             >
-                                <PermissionDetailValue
-                                    primary={where.label}
-                                    secondary={addressUtils.truncateAddress(
-                                        where.address,
-                                    )}
+                                <PermissionEntityDetail
+                                    chainId={chainId}
+                                    entity={where}
                                 />
                             </DefinitionList.Item>
                             <DefinitionList.Item
@@ -374,11 +501,22 @@ const PermissionsListHeader: React.FC = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="grid grid-cols-4 gap-4 px-4 text-neutral-500 text-sm">
-            <span>{t('app.settings.permissionsList.header.who')}</span>
-            <span>{t('app.settings.permissionsList.header.where')}</span>
-            <span>{t('app.settings.permissionsList.header.permission')}</span>
-            <span>{t('app.settings.permissionsList.header.condition')}</span>
+        <div className="sticky top-[90px] z-20 -mx-4 md:-mx-6">
+            <div className="flex items-baseline justify-between gap-x-4 bg-gradient-to-b from-90% from-neutral-50 to-transparent px-8 pt-1 pb-4 text-neutral-500 text-sm md:gap-x-6 md:px-12">
+                <div className="grid w-full grid-cols-4 gap-4">
+                    <span>{t('app.settings.permissionsList.header.who')}</span>
+                    <span>
+                        {t('app.settings.permissionsList.header.where')}
+                    </span>
+                    <span>
+                        {t('app.settings.permissionsList.header.permission')}
+                    </span>
+                    <span>
+                        {t('app.settings.permissionsList.header.condition')}
+                    </span>
+                </div>
+                <span aria-hidden="true" className="size-6 shrink-0" />
+            </div>
         </div>
     );
 };

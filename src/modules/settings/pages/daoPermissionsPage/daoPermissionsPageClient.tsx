@@ -60,28 +60,32 @@ export const DaoPermissionsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
-                    <div className="flex flex-col gap-6">
-                        <ToggleGroup
-                            isMultiSelect={false}
-                            onChange={handleViewChange}
-                            value={view}
-                        >
-                            <Toggle
-                                label={t(
-                                    'app.settings.daoPermissionsPage.view.list',
-                                )}
-                                value="list"
-                            />
-                            <Toggle
-                                disabled={true}
-                                label={t(
-                                    'app.settings.daoPermissionsPage.view.graph',
-                                )}
-                                value="graph"
-                            />
-                        </ToggleGroup>
-                        {view === 'list' && <PermissionsList daoId={daoId} />}
-                    </div>
+                    {view === 'list' && (
+                        <PermissionsList
+                            daoId={daoId}
+                            viewSwitcher={
+                                <ToggleGroup
+                                    isMultiSelect={false}
+                                    onChange={handleViewChange}
+                                    value={view}
+                                >
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.view.list',
+                                        )}
+                                        value="list"
+                                    />
+                                    <Toggle
+                                        disabled={true}
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.view.graph',
+                                        )}
+                                        value="graph"
+                                    />
+                                </ToggleGroup>
+                            }
+                        />
+                    )}
                 </Page.Main>
             </Page.Content>
         </>

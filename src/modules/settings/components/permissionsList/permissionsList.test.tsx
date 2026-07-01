@@ -252,7 +252,9 @@ describe('<PermissionsList /> component', () => {
             expect.anything(),
         );
 
-        await user.click(screen.getByRole('tab', { name: 'Linked Treasury' }));
+        await user.click(
+            screen.getByRole('radio', { name: 'Linked Treasury' }),
+        );
 
         expect(useAllDaoPermissionsSpy).toHaveBeenLastCalledWith(
             expect.objectContaining({
