@@ -2,6 +2,7 @@ import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
@@ -14,6 +15,25 @@ jest.mock('@aragon/gov-ui-kit', () => ({
 }));
 
 describe('<DaoSettingsInfo /> component', () => {
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
+
+    const setPermissionsPageEnabled = (enabled: boolean) => {
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: (key) => key === 'permissionsPage' && enabled,
+        } as ReturnType<typeof featureFlagsProvider.useFeatureFlags>);
+    };
+
+    beforeEach(() => {
+        setPermissionsPageEnabled(true);
+    });
+
+    afterEach(() => {
+        useFeatureFlagsSpy.mockReset();
+    });
+
     const createTestComponent = (props?: Partial<IDaoSettingsInfoProps>) => {
         const completeProps: IDaoSettingsInfoProps = {
             dao: generateDao(),
@@ -77,6 +97,15 @@ describe('<DaoSettingsInfo /> component', () => {
             'href',
             '/dao/ethereum-mainnet/somedao.dao.eth/settings/permissions',
         );
+    });
+
+    it('does not render the permissions link when the flag is disabled', () => {
+        setPermissionsPageEnabled(false);
+        render(createTestComponent());
+
+        expect(
+            screen.queryByText(/daoSettingsInfo.permissionsLink/),
+        ).not.toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {
