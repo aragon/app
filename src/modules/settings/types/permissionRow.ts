@@ -3,7 +3,7 @@ import type { IDaoPermission } from '@/shared/api/daoService';
 /**
  * UI-side representation of a permission's resolved condition.
  *
- * `conditionType` is read straight off the payload (see ADR 0001). Additional,
+ * `conditionType` is read straight off the payload. Additional,
  * condition-specific fields may be present, hence the open-ended index
  * signature.
  */
