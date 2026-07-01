@@ -546,7 +546,15 @@
             "label": "Links",
             "telegram": "Telegram",
             "twitter": "X",
-            "website": "Website"
+            "website": "Website",
+            "placeholders": {
+              "discord": "username",
+              "email": "name@example.com",
+              "github": "username",
+              "telegram": "@username",
+              "twitter": "@handle",
+              "website": "https://example.com"
+            }
           }
         },
         "errors": {

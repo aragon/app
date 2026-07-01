@@ -35,7 +35,13 @@ export const AragonProfileSocialFieldRow: React.FC<
 
     const socialField = useFormField<IAragonProfileDialogFormData, SocialKey>(
         fieldName,
-        { trimOnBlur: true, rules: socialFieldRules[fieldName] },
+        // `sanitizeOnBlur` is required for `trimOnBlur` to run, so pasted values like
+        // `alice@example.com ` or `@aragon ` are normalized before validation.
+        {
+            trimOnBlur: true,
+            sanitizeOnBlur: true,
+            rules: socialFieldRules[fieldName],
+        },
     );
 
     return (
@@ -45,7 +51,7 @@ export const AragonProfileSocialFieldRow: React.FC<
                 iconLeft={socialKeyToIconType[fieldName]}
                 id={`aragon-profile-social-${fieldName}`}
                 placeholder={t(
-                    `app.application.aragonProfileDialog.fields.socials.${fieldName}`,
+                    `app.application.aragonProfileDialog.fields.socials.placeholders.${fieldName}`,
                 )}
                 {...socialField}
             />

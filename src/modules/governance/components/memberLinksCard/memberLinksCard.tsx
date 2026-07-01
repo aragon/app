@@ -1,6 +1,7 @@
 import { Link } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { sanitizeExternalHttpUrl } from '@/shared/security';
+import { socialHandleUtils } from '@/shared/utils/socialHandleUtils';
 
 export interface IMemberLinksCardProps {
     /** ENS `url` text record. */
@@ -24,41 +25,39 @@ interface ILinkEntry {
     display: string;
 }
 
-const SAFE_HANDLE_RE = /^[\w.-]+$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
 /**
- * Builds a safe X (Twitter) profile URL from a handle.
- * Strips a leading `@` if present and encodes the handle to prevent URL injection.
+ * Builds a safe X (Twitter) profile URL from a handle. Strips a leading `@`, then
+ * enforces the same format as the edit-profile validation so records that could never
+ * be saved (or were written elsewhere) don't become dead links.
  */
 export function buildTwitterUrl(handle: string): string | null {
-    const cleaned = handle.startsWith('@') ? handle.slice(1) : handle;
-    if (!SAFE_HANDLE_RE.test(cleaned)) {
+    if (!socialHandleUtils.isTwitterHandle(handle)) {
         return null;
     }
+    const cleaned = socialHandleUtils.stripLeadingAt(handle);
     return `https://x.com/${encodeURIComponent(cleaned)}`;
 }
 
 /**
- * Builds a safe GitHub profile URL from a username.
- * Encodes the handle to prevent URL injection.
+ * Builds a safe GitHub profile URL from a username, enforcing the same format as the
+ * edit-profile validation.
  */
 export function buildGithubUrl(handle: string): string | null {
-    if (!SAFE_HANDLE_RE.test(handle)) {
+    if (!socialHandleUtils.isGithubHandle(handle)) {
         return null;
     }
     return `https://github.com/${encodeURIComponent(handle)}`;
 }
 
 /**
- * Builds a safe Telegram profile URL from a handle.
- * Strips a leading `@` if present and encodes the handle to prevent URL injection.
+ * Builds a safe Telegram profile URL from a handle. Strips a leading `@`, then enforces
+ * the same format as the edit-profile validation.
  */
 export function buildTelegramUrl(handle: string): string | null {
-    const cleaned = handle.startsWith('@') ? handle.slice(1) : handle;
-    if (!SAFE_HANDLE_RE.test(cleaned)) {
+    if (!socialHandleUtils.isTelegramHandle(handle)) {
         return null;
     }
+    const cleaned = socialHandleUtils.stripLeadingAt(handle);
     return `https://t.me/${encodeURIComponent(cleaned)}`;
 }
 
@@ -67,7 +66,7 @@ export function buildTelegramUrl(handle: string): string | null {
  * Returns `null` when the value is not a valid email.
  */
 export function buildEmailHref(email: string): string | null {
-    if (!EMAIL_RE.test(email)) {
+    if (!socialHandleUtils.isEmail(email)) {
         return null;
     }
     return `mailto:${encodeURIComponent(email)}`;
@@ -139,7 +138,7 @@ export function buildMemberLinks(props: IMemberLinksCardProps): ILinkEntry[] {
         }
     }
 
-    if (discord && SAFE_HANDLE_RE.test(discord)) {
+    if (discord && socialHandleUtils.isDiscordHandle(discord)) {
         // Discord usernames have no canonical public profile URL, so render as text.
         links.push({
             labelKey: `${labelPrefix}.discord`,

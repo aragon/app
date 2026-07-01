@@ -30,6 +30,7 @@ import {
 import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { socialHandleUtils } from '@/shared/utils/socialHandleUtils';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
 import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
@@ -180,12 +181,10 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         }
 
         // Store clean handles without a leading `@` for username-style records.
-        const stripLeadingAt = (value: string) =>
-            value.startsWith('@') ? value.slice(1) : value;
         const normalizedData = {
             ...data,
-            twitter: stripLeadingAt(data.twitter),
-            telegram: stripLeadingAt(data.telegram),
+            twitter: socialHandleUtils.stripLeadingAt(data.twitter),
+            telegram: socialHandleUtils.stripLeadingAt(data.telegram),
         };
 
         const updates: Record<string, string> = {};

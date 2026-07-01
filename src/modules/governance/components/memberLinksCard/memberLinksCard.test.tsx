@@ -32,6 +32,10 @@ describe('buildTwitterUrl', () => {
     it('rejects empty handle after stripping @', () => {
         expect(buildTwitterUrl('@')).toBeNull();
     });
+
+    it('rejects handles longer than 15 chars that the save path also rejects', () => {
+        expect(buildTwitterUrl('a'.repeat(16))).toBeNull();
+    });
 });
 
 describe('buildGithubUrl', () => {
@@ -39,10 +43,12 @@ describe('buildGithubUrl', () => {
         expect(buildGithubUrl('octocat')).toBe('https://github.com/octocat');
     });
 
-    it('allows hyphens and dots in handles', () => {
-        expect(buildGithubUrl('my-user.name')).toBe(
-            'https://github.com/my-user.name',
-        );
+    it('allows hyphens in handles', () => {
+        expect(buildGithubUrl('my-user')).toBe('https://github.com/my-user');
+    });
+
+    it('rejects handles with dots (not valid GitHub usernames)', () => {
+        expect(buildGithubUrl('my-user.name')).toBeNull();
     });
 
     it('rejects handles with slashes', () => {
@@ -69,6 +75,15 @@ describe('buildTelegramUrl', () => {
 
     it('rejects handles with slashes', () => {
         expect(buildTelegramUrl('../malicious')).toBeNull();
+    });
+
+    it('rejects too-short handles that the save path also rejects', () => {
+        expect(buildTelegramUrl('abc')).toBeNull();
+    });
+
+    it('rejects handles with dots or hyphens that the save path also rejects', () => {
+        expect(buildTelegramUrl('foo.bar')).toBeNull();
+        expect(buildTelegramUrl('foo-bar')).toBeNull();
     });
 });
 
