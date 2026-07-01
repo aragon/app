@@ -9,23 +9,17 @@ export enum PendingTransactionStatus {
     FAILED = 'FAILED',
 }
 
+// `type` and `scope` are opaque to the manager; they scope duplicate detection (see IPendingTransactionMeta).
 export interface IPendingTransactionState {
     status: PendingTransactionStatus;
     hash?: Hex;
     error?: unknown;
-    /**
-     * Optional transaction type, used to scope duplicate detection (e.g. warn only about another
-     * in-flight proposal creation). Opaque to the manager.
-     */
     type?: string;
-    /**
-     * Optional opaque scope (e.g. a DAO + plugin key) used to narrow duplicate detection to the same
-     * context. Opaque to the manager.
-     */
     scope?: string;
 }
 
-// Optional metadata attached to a send, kept so duplicate detection can be scoped by type and context.
+// Optional metadata attached to a send: `type` (e.g. proposal creation) and `scope` (e.g. a DAO + plugin
+// key), kept so duplicate detection can be narrowed to the same kind of action in the same context.
 export interface IPendingTransactionMeta {
     type?: string;
     scope?: string;
