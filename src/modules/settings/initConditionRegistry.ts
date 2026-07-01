@@ -1,6 +1,7 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ExecuteSelectorConditionSlot } from './components/executeSelectorConditionSlot';
+import { MembershipConditionSlot } from './components/membershipConditionSlot';
 import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot';
 
 /**
@@ -24,5 +25,10 @@ export const initialiseConditionRegistry = () => {
             slotId: SettingsSlotId.PERMISSION_CONDITION,
             pluginId: 'execute-selector',
             component: ExecuteSelectorConditionSlot,
+        })
+        .registerSlotComponent({
+            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            pluginId: 'membership',
+            component: MembershipConditionSlot,
         });
 };

@@ -1,6 +1,7 @@
 import { SettingsSlotId } from '@/modules/settings/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ExecuteSelectorConditionSlot } from './components/executeSelectorConditionSlot';
+import { MembershipConditionSlot } from './components/membershipConditionSlot';
 import { NoConditionSlot } from './components/noConditionSlot';
 import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot';
 import { initialiseConditionRegistry } from './initConditionRegistry';
@@ -16,6 +17,7 @@ describe('initialiseConditionRegistry', () => {
             pluginId: 'execute-selector',
             component: ExecuteSelectorConditionSlot,
         },
+        { pluginId: 'membership', component: MembershipConditionSlot },
     ])('resolves the $pluginId condition component from the slot', ({
         pluginId,
         component,
