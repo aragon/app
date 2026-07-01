@@ -30,6 +30,7 @@ import {
 import { AvatarInput } from '@/shared/components/forms/avatarInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { socialHandleUtils } from '@/shared/utils/socialHandleUtils';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useWalletAccount } from '../../hooks/useWalletAccount';
 import { AragonProfileSocialFieldRow } from './aragonProfileSocialFieldRow';
@@ -179,10 +180,18 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
             return;
         }
 
+        // Store clean handles without a leading `@` for username-style records.
+        const normalizedData = {
+            ...data,
+            twitter: socialHandleUtils.stripLeadingAt(data.twitter),
+            telegram: socialHandleUtils.stripLeadingAt(data.telegram),
+        };
+
         const updates: Record<string, string> = {};
 
         for (const [field, ensKey] of Object.entries(fieldToEnsKey)) {
-            const formValue = data[field as keyof typeof fieldToEnsKey] ?? '';
+            const formValue =
+                normalizedData[field as keyof typeof fieldToEnsKey] ?? '';
             const existing = ensRecords?.[ensKey as TEnsRecordKey] ?? '';
             if (formValue !== existing) {
                 updates[ensKey] = formValue;

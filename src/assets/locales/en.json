@@ -546,8 +546,24 @@
             "label": "Links",
             "telegram": "Telegram",
             "twitter": "X",
-            "website": "Website"
+            "website": "Website",
+            "placeholders": {
+              "discord": "username",
+              "email": "name@example.com",
+              "github": "username",
+              "telegram": "@username",
+              "twitter": "@handle",
+              "website": "https://example.com"
+            }
           }
+        },
+        "errors": {
+          "email": "Enter a valid email address.",
+          "website": "Enter a valid http or https URL.",
+          "github": "Enter a valid GitHub username.",
+          "twitter": "Enter a valid X username.",
+          "telegram": "Enter a valid Telegram username (5–32 characters).",
+          "discord": "Enter a valid Discord username."
         },
         "alert": {
           "description": "Changes are saved to your primary ENS profile and may appear in other ENS-compatible apps.",
@@ -1939,7 +1955,10 @@
             "title": "Links",
             "website": "Website",
             "twitter": "X",
-            "github": "GitHub"
+            "github": "GitHub",
+            "email": "Email",
+            "telegram": "Telegram",
+            "discord": "Discord"
           }
         },
         "error": {

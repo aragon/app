@@ -18,7 +18,10 @@ import {
 import { DaoList } from '@/modules/explore/components/daoList';
 import { useEfpStats } from '@/modules/governance/api/efpService';
 import { EfpCard } from '@/modules/governance/components/efpCard';
-import { MemberLinksCard } from '@/modules/governance/components/memberLinksCard';
+import {
+    buildMemberLinks,
+    MemberLinksCard,
+} from '@/modules/governance/components/memberLinksCard';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -151,6 +154,9 @@ export const DaoMemberDetailsPageClient: React.FC<
         github: ensRecords?.[ensRecordKeys.github],
         twitter: ensRecords?.[ensRecordKeys.twitter],
         url: ensRecords?.[ensRecordKeys.url],
+        email: ensRecords?.[ensRecordKeys.email],
+        telegram: ensRecords?.[ensRecordKeys.telegram],
+        discord: ensRecords?.[ensRecordKeys.discord],
     };
 
     if (dao == null || bodyPlugin == null) {
@@ -317,16 +323,17 @@ export const DaoMemberDetailsPageClient: React.FC<
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Page.AsideCard>
-                    {(memberLinks.url ||
-                        memberLinks.twitter ||
-                        memberLinks.github) && (
+                    {buildMemberLinks(memberLinks).length > 0 && (
                         <Page.AsideCard
                             title={t(
                                 'app.governance.daoMemberDetailsPage.aside.links.title',
                             )}
                         >
                             <MemberLinksCard
+                                discord={memberLinks.discord}
+                                email={memberLinks.email}
                                 github={memberLinks.github}
+                                telegram={memberLinks.telegram}
                                 twitter={memberLinks.twitter}
                                 url={memberLinks.url}
                             />

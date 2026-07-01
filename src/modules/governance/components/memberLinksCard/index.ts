@@ -1,1 +1,1 @@
-export { MemberLinksCard } from './memberLinksCard';
+export { buildMemberLinks, MemberLinksCard } from './memberLinksCard';
