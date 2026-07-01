@@ -28,8 +28,10 @@ export interface IGetLayoutedElementsOptions {
  */
 const DEFAULT_NODE_WIDTH = 280;
 const DEFAULT_NODE_HEIGHT = 88;
-const DEFAULT_NODE_SEP = 130;
-const DEFAULT_RANK_SEP = 220;
+// Generous separation so parallel permission labels stacked at the midpoint of a
+// rank gap keep clear air around them and the graph reads like the Figma spec.
+const DEFAULT_NODE_SEP = 280;
+const DEFAULT_RANK_SEP = 400;
 
 const getNodeSize = (node: Node): { width: number; height: number } => ({
     width: node.measured?.width ?? DEFAULT_NODE_WIDTH,

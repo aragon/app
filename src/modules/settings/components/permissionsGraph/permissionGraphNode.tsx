@@ -1,4 +1,4 @@
-import { DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -89,13 +89,10 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                         src={avatarSrc ?? undefined}
                     />
                 )}
-                {kind === 'plugin' && tag != null && <Tag label={tag} />}
-                {kind === 'actor' && (
-                    <span
-                        aria-hidden="true"
-                        className="size-8 shrink-0 rounded-full bg-neutral-100"
-                    />
+                {kind === 'plugin' && tag != null && (
+                    <Tag className="self-start" label={tag} variant="primary" />
                 )}
+                {kind === 'actor' && <Avatar size="sm" />}
                 <Handle
                     className="opacity-0"
                     position={Position.Top}

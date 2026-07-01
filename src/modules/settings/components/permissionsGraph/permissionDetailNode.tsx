@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SettingsSlotId } from '../../constants/moduleSlots';
-import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionGraphEdge } from '../../types';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
 import { NoConditionSlot } from '../noConditionSlot';
@@ -42,6 +42,23 @@ export const PermissionDetailNode: React.FC<
     const { row } = edge;
 
     const [tab, setTab] = useState<DetailTab>('permission');
+
+    const isWhoAnyAddress = addressUtils.isAddressEqual(
+        row.whoAddress,
+        ANY_ADDR,
+    );
+    const isWhereAnyAddress = addressUtils.isAddressEqual(
+        row.whereAddress,
+        ANY_ADDR,
+    );
+
+    const whoTruncated = addressUtils.truncateAddress(row.whoAddress);
+    const whereTruncated = addressUtils.truncateAddress(row.whereAddress);
+    // Only show the resolved name as the description when it adds information —
+    // unresolved actors are labelled by their own truncated address, which would
+    // otherwise just repeat the heading.
+    const whoName = whoLabel === whoTruncated ? undefined : whoLabel;
+    const whereName = whereLabel === whereTruncated ? undefined : whereLabel;
 
     const hasCondition = !addressUtils.isAddressEqual(
         row.conditionAddress,
@@ -112,35 +129,35 @@ export const PermissionDetailNode: React.FC<
                 {tab === 'permission' ? (
                     <DefinitionList.Container>
                         <DefinitionList.Item
-                            copyValue={row.whoAddress}
-                            description={addressUtils.truncateAddress(
-                                row.whoAddress,
-                            )}
+                            copyValue={
+                                isWhoAnyAddress ? undefined : row.whoAddress
+                            }
+                            description={isWhoAnyAddress ? undefined : whoName}
                             term={t('app.settings.permissionsList.details.who')}
                         >
-                            {whoLabel}
+                            {isWhoAnyAddress ? whoLabel : whoTruncated}
                         </DefinitionList.Item>
                         <DefinitionList.Item
-                            copyValue={row.whereAddress}
-                            description={addressUtils.truncateAddress(
-                                row.whereAddress,
-                            )}
+                            copyValue={
+                                isWhereAnyAddress ? undefined : row.whereAddress
+                            }
+                            description={
+                                isWhereAnyAddress ? undefined : whereName
+                            }
                             term={t(
                                 'app.settings.permissionsList.details.where',
                             )}
                         >
-                            {whereLabel}
+                            {isWhereAnyAddress ? whereLabel : whereTruncated}
                         </DefinitionList.Item>
                         <DefinitionList.Item
                             copyValue={row.permissionId}
-                            description={addressUtils.truncateHash(
-                                row.permissionId,
-                            )}
+                            description={edge.permissionName}
                             term={t(
                                 'app.settings.permissionsList.details.permission',
                             )}
                         >
-                            {edge.permissionName}
+                            {addressUtils.truncateHash(row.permissionId)}
                         </DefinitionList.Item>
                     </DefinitionList.Container>
                 ) : (
