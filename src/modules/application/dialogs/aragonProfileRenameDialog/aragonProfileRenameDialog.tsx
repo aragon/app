@@ -1,13 +1,26 @@
 'use client';
 
-import { Dialog, InputText, invariant } from '@aragon/gov-ui-kit';
+import {
+    AlertCard,
+    DefinitionList,
+    Dialog,
+    InputContainer,
+    InputText,
+    invariant,
+    Spinner,
+} from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { memberRegistrySubdomainSuffix } from '@/modules/ens';
+import {
+    memberRegistrySubdomainSuffix,
+    useEnsResolverRecords,
+} from '@/modules/ens';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useMemberProfileTextRecords } from '../../api/memberProfileService';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 import { useEnsSubdomainField } from '../../hooks/useEnsSubdomainField';
+import { useWalletAccount } from '../../hooks/useWalletAccount';
 
 interface IFormData {
     /** New ENS subdomain label, e.g. "alice". */
@@ -38,6 +51,7 @@ export const AragonProfileRenameDialog: React.FC<
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
+    const { address } = useWalletAccount();
 
     const { control, handleSubmit } = useForm<IFormData>({
         mode: 'onTouched',
@@ -54,16 +68,63 @@ export const AragonProfileRenameDialog: React.FC<
             currentSubdomain,
         });
 
+    // Text records can only be enumerated from the indexer (you can't list
+    // arbitrary ENS text-record keys on-chain).
+    const {
+        data: allTextRecords,
+        isLoading: isAllTextRecordsLoading,
+        isError: isAllTextRecordsError,
+    } = useMemberProfileTextRecords({
+        urlParams: { subdomain: currentEnsName },
+    });
+
+    // `addr`/`contenthash` are single live values read straight from the
+    // resolver so the rename carries the current records over unchanged. A
+    // `null` result means the name has no resolver, i.e. the profile was not
+    // found — which gates submit (distinct from "found with zero records").
+    const {
+        data: resolverRecords,
+        isLoading: isResolverRecordsLoading,
+        isError: isResolverRecordsError,
+    } = useEnsResolverRecords(currentEnsName);
+
+    const isRecordsLoading =
+        isAllTextRecordsLoading || isResolverRecordsLoading;
+    const isRecordsError = isAllTextRecordsError || isResolverRecordsError;
+    const isProfileNotFound =
+        !isRecordsLoading && !isRecordsError && resolverRecords == null;
+
     const handleCancel = () => close(location.id);
 
     const handleSubmitRename = handleSubmit(({ subdomain }) => {
+        invariant(
+            address != null,
+            'AragonProfileRenameDialog: wallet address must be set.',
+        );
+        invariant(
+            resolverRecords != null,
+            'AragonProfileRenameDialog: current profile records must be loaded.',
+        );
+
         open(ApplicationDialogId.ARAGON_PROFILE_RENAME_TRANSACTION, {
             stack: true,
-            params: { subdomain },
+            params: {
+                subdomain,
+                records: {
+                    textRecords: allTextRecords ?? [],
+                    addr: resolverRecords.addr,
+                    contenthash: resolverRecords.contenthash,
+                },
+            },
         });
     });
 
-    const isSubmitDisabled = isNameTaken || isCheckingAvailability;
+    const isSubmitDisabled =
+        isNameTaken ||
+        isCheckingAvailability ||
+        isRecordsLoading ||
+        isRecordsError ||
+        resolverRecords == null;
 
     return (
         <>
@@ -74,7 +135,7 @@ export const AragonProfileRenameDialog: React.FC<
                 onClose={handleCancel}
                 title={t('app.application.aragonProfileRenameDialog.title')}
             />
-            <Dialog.Content className="flex flex-col gap-3 px-6 pt-4 pb-6">
+            <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <InputText
                     {...fieldProps}
                     helpText={t(
@@ -84,6 +145,47 @@ export const AragonProfileRenameDialog: React.FC<
                         'app.application.aragonProfileRenameDialog.fields.subdomain.placeholder',
                     )}
                 />
+
+                {isRecordsLoading && <Spinner />}
+
+                {isRecordsError && (
+                    <AlertCard
+                        message={t(
+                            'app.application.aragonProfileRenameDialog.recordsFetchError',
+                        )}
+                        variant="critical"
+                    />
+                )}
+
+                {isProfileNotFound && (
+                    <AlertCard
+                        message={t(
+                            'app.application.aragonProfileRenameDialog.profileNotFound',
+                        )}
+                        variant="critical"
+                    />
+                )}
+
+                {allTextRecords != null && allTextRecords.length > 0 && (
+                    <InputContainer
+                        helpText={t(
+                            'app.application.aragonProfileRenameDialog.fields.records.helpText',
+                        )}
+                        id="aragon-profile-rename-records"
+                        label={t(
+                            'app.application.aragonProfileRenameDialog.fields.records.label',
+                        )}
+                        useCustomWrapper
+                    >
+                        <DefinitionList.Container className="[&_dt]:break-all">
+                            {allTextRecords.map(({ key, value }) => (
+                                <DefinitionList.Item key={key} term={key}>
+                                    <p className="wrap-break-word">{value}</p>
+                                </DefinitionList.Item>
+                            ))}
+                        </DefinitionList.Container>
+                    </InputContainer>
+                )}
             </Dialog.Content>
             <Dialog.Footer
                 primaryAction={{

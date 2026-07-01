@@ -1,8 +1,9 @@
 'use client';
 
+import type { MemberProfileTextRecordDTO } from '@aragon/aragon-domain';
 import { invariant } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
-import { encodeFunctionData } from 'viem';
+import { type Address, encodeFunctionData, type Hex } from 'viem';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     memberRegistryAbi,
@@ -22,9 +23,26 @@ import { useStepper } from '@/shared/hooks/useStepper';
 import { AragonProfilePreviewCard } from '../../components/aragonProfilePreviewCard';
 import { ApplicationDialogId } from '../../constants/applicationDialogId';
 
+export interface IAragonProfileRecords {
+    /**
+     * ENS text records to carry over to the new subdomain.
+     */
+    textRecords: MemberProfileTextRecordDTO[];
+    /**
+     * Address record to set on the new subdomain.
+     */
+    addr: Address;
+    /**
+     * Content-hash record (encoded bytes) to set on the new subdomain.
+     */
+    contenthash: Hex;
+}
+
 export interface IAragonProfileRenameTransactionDialogParams {
     /** New ENS subdomain label, e.g. "alice". */
     subdomain: string;
+    /** Existing profile records to move to the new subdomain (matches the registry `Records` struct). */
+    records: IAragonProfileRecords;
 }
 
 export interface IAragonProfileRenameTransactionDialogProps
@@ -38,7 +56,8 @@ export const AragonProfileRenameTransactionDialog: React.FC<
         location.params != null,
         'AragonProfileRenameTransactionDialog: required params must be set.',
     );
-    const { subdomain } = location.params;
+
+    const { subdomain, records } = location.params;
 
     const { t } = useTranslations();
     const { open, close } = useDialogContext();
@@ -65,11 +84,11 @@ export const AragonProfileRenameTransactionDialog: React.FC<
                 data: encodeFunctionData({
                     abi: memberRegistryAbi,
                     functionName: 'move',
-                    args: [subdomain],
+                    args: [subdomain, records],
                 }),
                 value: BigInt(0),
             }),
-        [subdomain],
+        [subdomain, records],
     );
 
     const handleSuccess = useCallback(() => {
