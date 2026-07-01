@@ -3503,6 +3503,28 @@
         "view": {
           "list": "List",
           "graph": "Graph"
+        },
+        "graphView": {
+          "node": {
+            "primaryDao": "Primary DAO",
+            "linkedDao": "Linked DAO",
+            "plugin": "Aragon OSx Plugin",
+            "actor": "Any address",
+            "who": "Who",
+            "where": "Where"
+          },
+          "edge": {
+            "condition": "if {{condition}}"
+          },
+          "detail": {
+            "close": "Close",
+            "permission": "Permission",
+            "condition": "Condition"
+          },
+          "empty": {
+            "heading": "No permissions",
+            "description": "This account has no indexed permissions to visualize."
+          }
         }
       },
       "permissionsList": {
