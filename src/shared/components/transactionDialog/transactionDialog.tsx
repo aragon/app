@@ -109,21 +109,14 @@ export const TransactionDialog = <TCustomStepId extends string>(
         [intent?.id, transaction, address, requiredChainId],
     );
 
-    // Stored with the pending transaction so duplicate detection can scope by type + context, and so a
-    // warning can describe the in-flight action. Left undefined when there is nothing to scope by or
-    // describe (e.g. inline transactions).
+    // Stored with the pending transaction so duplicate detection can scope by type + context. Left
+    // undefined when there is nothing to scope by (e.g. inline transactions).
     const transactionMeta = useMemo(
         () =>
-            transactionType != null ||
-            intent?.scope != null ||
-            intent?.label != null
-                ? {
-                      type: transactionType,
-                      scope: intent?.scope,
-                      label: intent?.label,
-                  }
+            transactionType != null || intent?.scope != null
+                ? { type: transactionType, scope: intent?.scope }
                 : undefined,
-        [transactionType, intent?.scope, intent?.label],
+        [transactionType, intent?.scope],
     );
     const { approveState, hash, resumeTarget, receipt, send, resend } =
         useManagedTransaction(intentId, transactionMeta);

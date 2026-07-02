@@ -12,24 +12,21 @@ export enum PendingTransactionStatus {
     FAILED = 'FAILED',
 }
 
-// `type`/`scope` scope duplicate detection; `label` describes the action for the warning UI (see
-// IPendingTransactionMeta). All are opaque to the manager and just travel with the state.
+// `type` and `scope` narrow duplicate detection (see IPendingTransactionMeta). Both are opaque to the
+// manager and just travel with the state.
 export interface IPendingTransactionState {
     status: PendingTransactionStatus;
     hash?: Hex;
     error?: unknown;
     type?: string;
     scope?: string;
-    label?: string;
 }
 
 // Optional metadata attached to a send: `type` (e.g. proposal creation) and `scope` (e.g. a DAO + plugin
-// key) narrow duplicate detection; `label` (e.g. proposal title) lets a warning describe the in-flight
-// action. Kept across every status transition and the persisted mirror.
+// key) narrow duplicate detection. Kept across every status transition and the persisted mirror.
 export interface IPendingTransactionMeta {
     type?: string;
     scope?: string;
-    label?: string;
 }
 
 // Filter for querying active (PENDING/SUBMITTED) records; every provided field must match.

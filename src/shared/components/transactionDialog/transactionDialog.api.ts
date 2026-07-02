@@ -99,11 +99,6 @@ export interface ITransactionDialogProps<
          * detection can be narrowed to the same context. Combined with `transactionType` by the caller.
          */
         scope?: string;
-        /**
-         * Human-readable label (e.g. a proposal title) stored with the pending transaction so a
-         * duplicate warning can describe the in-flight action.
-         */
-        label?: string;
     };
     /**
      * Label for the submit button used as fallback when the specific step state label is not set.

@@ -243,26 +243,6 @@ describe('pendingTransactionManager', () => {
             ).toEqual({});
         });
 
-        it('persists and hydrates the label for the warning UI', async () => {
-            sendTransactionSpy.mockResolvedValue('0xhash');
-            const meta = {
-                type: 'proposalCreate',
-                scope: 'dao:plugin',
-                label: 'My proposal',
-            };
-            const manager = new PendingTransactionManager();
-
-            manager.send('id', request, meta);
-            await flushPromises();
-
-            const rehydrated = new PendingTransactionManager();
-            expect(rehydrated.get('id')).toEqual({
-                status: PendingTransactionStatus.SUBMITTED,
-                hash: '0xhash',
-                ...meta,
-            });
-        });
-
         it('ignores a persisted non-SUBMITTED record on hydrate', () => {
             sessionStorage.setItem(
                 STORAGE_KEY,

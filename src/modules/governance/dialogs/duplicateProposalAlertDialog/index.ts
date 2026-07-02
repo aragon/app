@@ -6,7 +6,6 @@ export const DuplicateProposalAlertDialog = dynamic(() =>
     ),
 );
 export type {
-    IDuplicatePendingProposal,
     IDuplicateProposalAlertDialogParams,
     IDuplicateProposalAlertDialogProps,
 } from './duplicateProposalAlertDialog.api';

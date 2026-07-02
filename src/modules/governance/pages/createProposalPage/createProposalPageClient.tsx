@@ -1,24 +1,18 @@
 'use client';
 
-import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import {
-    PendingTransactionStatus,
-    pendingTransactionManager,
-} from '@/shared/utils/pendingTransactionManager';
+import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
 } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import type { IDuplicatePendingProposal } from '../../dialogs/duplicateProposalAlertDialog';
 import type {
     IPublishProposalDialogParams,
     PrepareProposalActionFunction,
@@ -52,7 +46,6 @@ export const CreateProposalPageClient: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
-    const { buildEntityUrl } = useDaoChain({ daoId });
 
     const { meta: plugin } = useDaoPlugins({
         daoId,
@@ -114,7 +107,7 @@ export const CreateProposalPageClient: React.FC<
         };
 
         const openPublishDialog = () => {
-            // "Publish anyway" / no conflict: the user has committed to this proposal, so supersede any
+            // "New transaction" / no conflict: the user has committed to this proposal, so supersede any
             // other in-flight creation for this DAO + plugin that would otherwise keep warning forever.
             pendingTransactionManager.clearActive(conflictFilter);
             proposalResumeRegistry.set(intentId, params);
@@ -124,36 +117,21 @@ export const CreateProposalPageClient: React.FC<
         const conflicts = pendingTransactionManager.getActive(conflictFilter);
 
         if (conflicts.length > 0) {
-            const pending: IDuplicatePendingProposal[] = conflicts.map(
-                ([id, state]) => {
-                    const resumeParams = proposalResumeRegistry.get(id);
-                    return {
-                        title: state.label,
-                        status:
-                            state.status === PendingTransactionStatus.SUBMITTED
-                                ? 'submitted'
-                                : 'pending',
-                        transactionUrl:
-                            state.hash != null
-                                ? buildEntityUrl({
-                                      type: ChainEntityType.TRANSACTION,
-                                      id: state.hash,
-                                  })
-                                : undefined,
-                        onReturn:
-                            resumeParams != null
-                                ? () =>
-                                      open(
-                                          GovernanceDialogId.PUBLISH_PROPOSAL,
-                                          { params: resumeParams },
-                                      )
-                                : undefined,
-                    };
-                },
-            );
+            // Offer to resume the conflicting in-flight creation when we still hold the params needed
+            // to reopen its dialog (session-scoped; lost after a reload).
+            const resumeParams = conflicts
+                .map(([id]) => proposalResumeRegistry.get(id))
+                .find((registered) => registered != null);
+            const onResume =
+                resumeParams != null
+                    ? () =>
+                          open(GovernanceDialogId.PUBLISH_PROPOSAL, {
+                              params: resumeParams,
+                          })
+                    : undefined;
 
             open(GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING, {
-                params: { onProceed: openPublishDialog, pending },
+                params: { onProceed: openPublishDialog, onResume },
             });
             return;
         }

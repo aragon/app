@@ -144,7 +144,7 @@ export class PendingTransactionManager {
         intentId: string,
         state: IPendingTransactionState,
     ): void => {
-        // Merge retained meta so type/scope/label/network survive every status transition and the mirror.
+        // Merge retained meta so type/scope survive every status transition and the persisted mirror.
         const meta = this.metas.get(intentId);
         const nextState = meta != null ? { ...state, ...meta } : state;
         this.states.set(intentId, nextState);
@@ -176,9 +176,9 @@ export class PendingTransactionManager {
                         ([, state]) =>
                             state.status === PendingTransactionStatus.SUBMITTED,
                     )
-                    .map(([id, { status, hash, type, scope, label }]) => [
+                    .map(([id, { status, hash, type, scope }]) => [
                         id,
-                        { status, hash, type, scope, label },
+                        { status, hash, type, scope },
                     ]),
             );
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
@@ -204,16 +204,11 @@ export class PendingTransactionManager {
                     state.status === PendingTransactionStatus.SUBMITTED
                 ) {
                     this.states.set(id, state);
-                    // Repopulate meta so a resumed action's later updates keep its type/scope/label.
-                    if (
-                        state.type != null ||
-                        state.scope != null ||
-                        state.label != null
-                    ) {
+                    // Repopulate meta so a resumed action's later updates keep its type/scope.
+                    if (state.type != null || state.scope != null) {
                         this.metas.set(id, {
                             type: state.type,
                             scope: state.scope,
-                            label: state.label,
                         });
                     }
                 }

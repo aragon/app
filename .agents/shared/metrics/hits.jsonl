@@ -100,3 +100,6 @@
 {"ts":"2026-07-02T12:33:54.141Z","tool":"Edit","file":"src/shared/components/transactionDialog/useManagedTransaction.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-07-02T12:34:53.656Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-07-02T12:34:58.722Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.test.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-02T17:10:51.377Z","tool":"Edit","file":"src/modules/governance/dialogs/duplicateProposalAlertDialog/index.ts","rule":"dialog-conventions","bytes":3499,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-02T17:12:22.674Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.api.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-02T17:12:32.227Z","tool":"Edit","file":"src/shared/components/transactionDialog/transactionDialog.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
