@@ -1,6 +1,6 @@
 import {
     Button,
-    DefinitionList,
+    DataList,
     DialogAlert,
     DialogAlertFooter,
     invariant,
@@ -44,14 +44,19 @@ export const DuplicateProposalAlertDialog: React.FC<
                 <div className="flex flex-col gap-y-4 pb-4 font-normal text-base text-neutral-500 leading-normal">
                     <p>{t(`${namespace}.description.1`)}</p>
                     <p>{t(`${namespace}.description.2`)}</p>
-                    <DefinitionList.Container>
+                    <DataList.Root entityLabel={t(`${namespace}.entityLabel`)}>
                         {pending.map((item, index) => (
-                            <DefinitionList.Item
+                            <DataList.Item
+                                className="flex flex-col gap-3 p-4 md:p-6"
                                 key={`${item.status}-${item.transactionUrl ?? item.title ?? index}`}
-                                term={item.title ?? t(`${namespace}.untitled`)}
                             >
-                                <div className="flex flex-col items-start gap-y-3">
+                                <div className="flex items-start justify-between gap-3">
+                                    <p className="truncate font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                                        {item.title ??
+                                            t(`${namespace}.untitled`)}
+                                    </p>
                                     <Tag
+                                        className="shrink-0"
                                         label={t(
                                             `${namespace}.status.${item.status}`,
                                         )}
@@ -61,31 +66,38 @@ export const DuplicateProposalAlertDialog: React.FC<
                                                 : 'warning'
                                         }
                                     />
-                                    {item.transactionUrl != null && (
-                                        <Link
-                                            href={item.transactionUrl}
-                                            isExternal={true}
-                                        >
-                                            {t(
-                                                `${namespace}.link.viewTransaction`,
-                                            )}
-                                        </Link>
-                                    )}
-                                    {item.onReturn != null && (
-                                        <Button
-                                            onClick={handleReturn(
-                                                item.onReturn,
-                                            )}
-                                            size="sm"
-                                            variant="secondary"
-                                        >
-                                            {t(`${namespace}.action.return`)}
-                                        </Button>
-                                    )}
                                 </div>
-                            </DefinitionList.Item>
+                                {(item.transactionUrl != null ||
+                                    item.onReturn != null) && (
+                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                                        {item.transactionUrl != null && (
+                                            <Link
+                                                href={item.transactionUrl}
+                                                isExternal={true}
+                                            >
+                                                {t(
+                                                    `${namespace}.link.viewTransaction`,
+                                                )}
+                                            </Link>
+                                        )}
+                                        {item.onReturn != null && (
+                                            <Button
+                                                onClick={handleReturn(
+                                                    item.onReturn,
+                                                )}
+                                                size="sm"
+                                                variant="secondary"
+                                            >
+                                                {t(
+                                                    `${namespace}.action.return`,
+                                                )}
+                                            </Button>
+                                        )}
+                                    </div>
+                                )}
+                            </DataList.Item>
                         ))}
-                    </DefinitionList.Container>
+                    </DataList.Root>
                 </div>
             </DialogAlert.Content>
             {/* "Publish anyway" is the warning (yellow) action and, for a warning alert, renders on the

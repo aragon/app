@@ -2112,6 +2112,7 @@
           "1": "A transaction to publish a proposal for this plugin is already in progress. If it succeeds, publishing again will create a second proposal.",
           "2": "Return to the transaction below to finish it, or publish anyway if you intend to create a new one."
         },
+        "entityLabel": "In-flight proposals",
         "untitled": "Untitled proposal",
         "status": {
           "pending": "Awaiting wallet signature",
