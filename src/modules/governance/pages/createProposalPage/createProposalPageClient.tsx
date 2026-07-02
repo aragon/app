@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -16,6 +18,8 @@ import type {
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '../../dialogs/publishProposalDialog';
+// Imported directly (not via the dialog barrel) so the guard doesn't pull the dialog into this bundle.
+import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import {
@@ -81,7 +85,37 @@ export const CreateProposalPageClient: React.FC<
             plugin,
             prepareActions,
         };
-        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+        const openPublishDialog = () =>
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+
+        // Editing the form after closing the dialog produces a new intentId, so the prior in-flight
+        // proposal creation is no longer resumed and a fresh submit would create a second proposal.
+        // Warn when another proposal creation for this DAO + plugin is still pending/submitted; an
+        // unchanged form shares the intentId and resumes as before (no conflict, no warning).
+        const intentId = publishProposalDialogUtils.buildProposalIntentId({
+            daoId,
+            plugin,
+            proposal,
+        });
+        const scope = publishProposalDialogUtils.buildProposalScope(
+            daoId,
+            plugin.address,
+        );
+        const hasPendingProposal =
+            pendingTransactionManager.getActive({
+                type: TransactionType.PROPOSAL_CREATE,
+                scope,
+                excludeIntentId: intentId,
+            }).length > 0;
+
+        if (hasPendingProposal) {
+            open(GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING, {
+                params: { onProceed: openPublishDialog },
+            });
+            return;
+        }
+
+        openPublishDialog();
     };
 
     const processedSteps = useMemo(

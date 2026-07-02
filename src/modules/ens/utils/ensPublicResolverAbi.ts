@@ -1,6 +1,8 @@
 /**
  * Minimal ABI for the ENS Public Resolver contract.
  *
+ * - addr: EIP-137 address record getter.
+ * - contenthash: EIP-1577 content hash record getter.
  * - setText: EIP-634 text record setter.
  * - multicall: ENS IMulticallable — batches multiple write calls to the resolver
  *   itself via delegatecall. This is NOT Multicall3 (which is view-only); the
@@ -10,6 +12,20 @@
  * Deployed at: 0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63 (mainnet, verified on Etherscan)
  */
 export const ensPublicResolverAbi = [
+    {
+        type: 'function',
+        name: 'addr',
+        inputs: [{ name: 'node', type: 'bytes32' }],
+        outputs: [{ name: '', type: 'address' }],
+        stateMutability: 'view',
+    },
+    {
+        type: 'function',
+        name: 'contenthash',
+        inputs: [{ name: 'node', type: 'bytes32' }],
+        outputs: [{ name: '', type: 'bytes' }],
+        stateMutability: 'view',
+    },
     {
         type: 'function',
         name: 'setText',

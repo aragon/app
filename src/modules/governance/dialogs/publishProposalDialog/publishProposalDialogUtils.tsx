@@ -1,5 +1,6 @@
 import type { Hex } from 'viem';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     type ITransactionRequest,
@@ -26,6 +27,21 @@ export interface IBuildTransactionParams {
      * Plugin of the DAO to interact with.
      */
     plugin: IDaoPlugin;
+}
+
+export interface IBuildProposalIdentityParams {
+    /**
+     * ID of the DAO the proposal is created for.
+     */
+    daoId: string;
+    /**
+     * Plugin used as a target for creating the proposal.
+     */
+    plugin: IDaoPlugin;
+    /**
+     * Data for publishing the proposal.
+     */
+    proposal: IProposalCreate;
 }
 
 class PublishProposalDialogUtils {
@@ -69,6 +85,27 @@ class PublishProposalDialogUtils {
     };
 
     prepareActions = proposalActionPreparationUtils.prepareActions;
+
+    // Stable resume identity for a proposal. Hashes a whitelist of content fields (not the prepared
+    // calldata, which embeds a now-relative end date) so the id is the same across dialog re-opens and
+    // can be recomputed outside the dialog for duplicate detection.
+    buildProposalIntentId = (params: IBuildProposalIdentityParams): string => {
+        const { daoId, plugin, proposal } = params;
+
+        return buildIntentId({
+            daoId,
+            plugin: plugin.address,
+            title: proposal.title,
+            summary: proposal.summary,
+            resources: proposal.resources,
+            body: proposal.body,
+            actions: proposal.actions,
+        });
+    };
+
+    // Opaque context key (DAO + plugin) used to scope duplicate detection to the same creation target.
+    buildProposalScope = (daoId: string, pluginAddress: string): string =>
+        `${daoId}:${pluginAddress}`;
 
     private actionToTransactionRequest = (
         action: IProposalCreateAction,

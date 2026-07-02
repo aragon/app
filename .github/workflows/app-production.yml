@@ -48,7 +48,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -131,7 +131,7 @@ jobs:
           SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -176,7 +176,7 @@ jobs:
 
       - name: Checkout
         if: steps.secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           ref: ${{ github.event.release.tag_name || inputs.tag }}
           fetch-depth: 0
@@ -215,7 +215,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -253,7 +253,7 @@ jobs:
           SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           sparse-checkout: |

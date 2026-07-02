@@ -559,7 +559,8 @@
           "updateProfile": "Update your profile",
           "viewProfile": "View your profile",
           "confirmProfile": "Confirm your profile",
-          "removeAragonName": "Delete your Aragon profile"
+          "removeAragonName": "Delete your Aragon profile",
+          "renameAragonName": "Change name"
         },
         "dangerZone": {
           "title": "Delete Aragon profile",
@@ -601,10 +602,16 @@
         "fields": {
           "subdomain": {
             "helpText": "Your records will be moved to this new name.",
-            "label": "New ENS subname",
-            "placeholder": "yourname"
+            "label": "New Aragon name",
+            "placeholder": "Your new name"
+          },
+          "records": {
+            "label": "Records being moved",
+            "helpText": "Only the records listed below will be moved to your new name. Make sure they match your current profile before continuing."
           }
         },
+        "recordsFetchError": "Failed to fetch registered profile records for this name.",
+        "profileNotFound": "We couldn't find a registered profile for this name. Please try again shortly.",
         "actions": {
           "submit": "Change Aragon name",
           "cancel": "Cancel"
@@ -2078,6 +2085,20 @@
             "label": "Pin statement to IPFS",
             "errorLabel": "Pinning failed"
           }
+        }
+      },
+      "duplicateProposalAlertDialog": {
+        "title": "This may create another proposal",
+        "description": {
+          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, publishing again may create another proposal.",
+          "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
+        },
+        "action": {
+          "back": "Go back",
+          "publish": "Publish again"
+        },
+        "a11y": {
+          "description": "Warning that a transaction to publish this proposal was already started."
         }
       },
       "memberDelegateButton": {
@@ -3845,7 +3866,7 @@
             "idle": "Sign transaction",
             "pending": "Awaiting signature"
           },
-          "cancel": "Cancel",
+          "cancel": "Close",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },

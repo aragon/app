@@ -1,6 +1,7 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { DelegateStatementDialog } from '../dialogs/delegateStatementDialog';
 import { DelegateStatementTransactionDialog } from '../dialogs/delegateStatementTransactionDialog';
+import { DuplicateProposalAlertDialog } from '../dialogs/duplicateProposalAlertDialog';
 import { ExecuteActionsDialog } from '../dialogs/executeActionsDialog';
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
@@ -18,6 +19,13 @@ export const governanceDialogsDefinitions: Record<
     IDialogComponentDefinitions
 > = {
     [GovernanceDialogId.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
+    [GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING]: {
+        Component: DuplicateProposalAlertDialog,
+        variant: 'warning',
+        size: 'lg',
+        hiddenDescription:
+            'app.governance.duplicateProposalAlertDialog.a11y.description',
+    },
     [GovernanceDialogId.EXECUTE_ACTIONS]: { Component: ExecuteActionsDialog },
     [GovernanceDialogId.EXECUTE]: { Component: ExecuteDialog },
     [GovernanceDialogId.VOTE]: { Component: VoteDialog },

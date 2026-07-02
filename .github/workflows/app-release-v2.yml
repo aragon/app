@@ -35,7 +35,7 @@ jobs:
           SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
         with:
           fetch-depth: 1
           sparse-checkout: |
