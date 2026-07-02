@@ -64,10 +64,9 @@ const resolveNode = (
         };
     }
 
-    const entity = permissionEntityUtils.resolvePermissionEntity(
-        address,
+    const entity = permissionEntityUtils.resolvePermissionEntity(address, {
         daoPlugins,
-    );
+    });
 
     if (entity.tag != null) {
         return {

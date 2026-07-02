@@ -3,6 +3,7 @@
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IConditionData } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { stringUtils } from '@/shared/utils/stringUtils';
 
 const EMPTY_VALUE = '—';
 
@@ -11,11 +12,8 @@ interface IAllowedAction {
     target: string;
 }
 
-const isNonEmptyString = (value: unknown): value is string =>
-    typeof value === 'string' && value.length > 0;
-
 const toStringList = (value: unknown): string[] =>
-    Array.isArray(value) ? value.filter(isNonEmptyString) : [];
+    Array.isArray(value) ? value.filter(stringUtils.isNonEmptyString) : [];
 
 const toAllowedActions = (
     selectors: unknown,

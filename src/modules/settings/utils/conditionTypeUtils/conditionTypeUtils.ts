@@ -1,3 +1,4 @@
+import { stringUtils } from '@/shared/utils/stringUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type { IConditionData } from '../../types';
 
@@ -27,8 +28,6 @@ const CONDITION_LABELS: Record<string, string> = {
     'voting-power': 'VotingPower',
     'execute-selector': 'ExecuteSelector',
 };
-
-const WORD_SEPARATOR_REGEX = /[^a-z0-9]+/i;
 
 class ConditionTypeUtils {
     /**
@@ -85,16 +84,10 @@ class ConditionTypeUtils {
         }
 
         return (
-            CONDITION_LABELS[conditionType] ?? this.toPascalCase(conditionType)
+            CONDITION_LABELS[conditionType] ??
+            stringUtils.toPascalCase(conditionType)
         );
     };
-
-    private toPascalCase = (value: string): string =>
-        value
-            .split(WORD_SEPARATOR_REGEX)
-            .filter((word) => word.length > 0)
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join('');
 }
 
 export const conditionTypeUtils = new ConditionTypeUtils();

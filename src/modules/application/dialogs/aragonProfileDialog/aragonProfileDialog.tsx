@@ -225,6 +225,16 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
         });
     };
 
+    const handleRenameAragonName = () => {
+        if (ensName == null) {
+            return;
+        }
+        open(ApplicationDialogId.ARAGON_PROFILE_RENAME, {
+            params: { currentEnsName: ensName },
+            stack: true,
+        });
+    };
+
     const handleViewProfile = () => {
         if (network == null || addressOrEns == null || address == null) {
             close();
@@ -252,16 +262,31 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                 title={t('app.application.aragonProfileDialog.title')}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
-                <InputText
-                    disabled
-                    helpText={t(
-                        'app.application.aragonProfileDialog.fields.ensName.helpText',
+                <div className="flex flex-col gap-3">
+                    <InputText
+                        disabled
+                        helpText={t(
+                            'app.application.aragonProfileDialog.fields.ensName.helpText',
+                        )}
+                        label={t(
+                            'app.application.aragonProfileDialog.fields.ensName.label',
+                        )}
+                        value={ensName ?? ''}
+                    />
+                    {isAragonName && (
+                        <Button
+                            className="w-fit"
+                            iconLeft={IconType.PEN}
+                            onClick={handleRenameAragonName}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.application.aragonProfileDialog.actions.renameAragonName',
+                            )}
+                        </Button>
                     )}
-                    label={t(
-                        'app.application.aragonProfileDialog.fields.ensName.label',
-                    )}
-                    value={ensName ?? ''}
-                />
+                </div>
 
                 <AvatarInput
                     label={t(

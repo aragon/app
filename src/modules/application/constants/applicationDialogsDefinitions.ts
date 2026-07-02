@@ -88,6 +88,7 @@ export const applicationDialogsDefinitions: Record<
         hiddenTitle: 'app.application.aragonProfileRenameDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileRenameDialog.a11y.description',
+        size: 'lg',
     },
     [ApplicationDialogId.ARAGON_PROFILE_RENAME_TRANSACTION]: {
         Component: AragonProfileRenameTransactionDialog,

@@ -47,6 +47,23 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
+    const viewToggle = (
+        <ToggleGroup
+            isMultiSelect={false}
+            onChange={handleViewChange}
+            value={view}
+        >
+            <Toggle
+                label={t('app.settings.daoPermissionsPage.view.list')}
+                value={PermissionsView.LIST}
+            />
+            <Toggle
+                label={t('app.settings.daoPermissionsPage.view.graph')}
+                value={PermissionsView.GRAPH}
+            />
+        </ToggleGroup>
+    );
+
     const pageBreadcrumbs = [
         {
             href: daoUtils.getDaoUrl(dao, 'settings'),
@@ -72,32 +89,18 @@ export const DaoPermissionsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
-                    <div className="flex flex-col gap-6">
-                        <ToggleGroup
-                            isMultiSelect={false}
-                            onChange={handleViewChange}
-                            value={view}
-                        >
-                            <Toggle
-                                label={t(
-                                    'app.settings.daoPermissionsPage.view.list',
-                                )}
-                                value="list"
-                            />
-                            <Toggle
-                                label={t(
-                                    'app.settings.daoPermissionsPage.view.graph',
-                                )}
-                                value="graph"
-                            />
-                        </ToggleGroup>
-                        {view === PermissionsView.LIST && (
-                            <PermissionsList daoId={daoId} />
-                        )}
-                        {view === PermissionsView.GRAPH && (
+                    {view === PermissionsView.LIST && (
+                        <PermissionsList
+                            daoId={daoId}
+                            viewSwitcher={viewToggle}
+                        />
+                    )}
+                    {view === PermissionsView.GRAPH && (
+                        <div className="flex flex-col gap-6">
+                            <div className="flex justify-end">{viewToggle}</div>
                             <PermissionsGraph daoId={daoId} />
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </Page.Main>
             </Page.Content>
         </>

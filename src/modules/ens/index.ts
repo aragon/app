@@ -36,6 +36,10 @@ export {
 export { useEnsAvatar } from './hooks/useEnsAvatar';
 export { useEnsName } from './hooks/useEnsName';
 export { useEnsProfileRecords } from './hooks/useEnsProfileRecords';
+export {
+    type IEnsResolverRecords,
+    useEnsResolverRecords,
+} from './hooks/useEnsResolverRecords';
 export type { IEnsRecords, TEnsRecordKey } from './types';
 export type { IBuildUpdateRecordsTransactionParams } from './utils/ensTransactionUtils';
 export { ensTransactionUtils } from './utils/ensTransactionUtils';

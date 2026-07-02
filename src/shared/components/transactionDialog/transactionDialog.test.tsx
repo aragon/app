@@ -357,6 +357,7 @@ describe('<TransactionDialog /> component', () => {
         expect(managerSendSpy).toHaveBeenCalledWith(
             'intent',
             expect.objectContaining(transaction),
+            undefined,
         );
     });
 
@@ -386,6 +387,7 @@ describe('<TransactionDialog /> component', () => {
         expect(managerSendSpy).toHaveBeenCalledWith(
             expect.any(String),
             expect.objectContaining(transaction),
+            undefined,
         );
     });
 
@@ -519,6 +521,7 @@ describe('<TransactionDialog /> component', () => {
         expect(managerSendSpy).toHaveBeenCalledWith(
             'intent',
             expect.objectContaining(transaction),
+            undefined,
         );
         expect(updateActiveStep).toHaveBeenCalledWith(
             TransactionDialogStep.APPROVE,
