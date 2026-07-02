@@ -59,10 +59,6 @@ describe('<TransactionDialog /> component', () => {
     const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
     const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
     const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
-    const managerIsInterruptedSpy = jest.spyOn(
-        pendingTransactionManager,
-        'isInterrupted',
-    );
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue(
@@ -82,7 +78,6 @@ describe('<TransactionDialog /> component', () => {
         managerSendSpy.mockImplementation(() => undefined);
         managerClearSpy.mockImplementation(() => undefined);
         managerGetSpy.mockReturnValue(undefined);
-        managerIsInterruptedSpy.mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -96,14 +91,13 @@ describe('<TransactionDialog /> component', () => {
         managerSendSpy.mockReset();
         managerClearSpy.mockReset();
         managerGetSpy.mockReset();
-        managerIsInterruptedSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
         const completeProps: ITransactionDialogProps = {
             title: 'title',
             description: 'description',
-            intentId: 'intent',
+            intent: { id: 'intent' },
             submitLabel: 'submit',
             stepper: generateStepperResult(),
             prepareTransaction: jest.fn(),
@@ -350,7 +344,9 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper, network, intentId: 'intent' }));
+        render(
+            createTestComponent({ stepper, network, intent: { id: 'intent' } }),
+        );
         const { action: approveStepAction } =
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
@@ -379,7 +375,7 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper, network, intentId: undefined }));
+        render(createTestComponent({ stepper, network, intent: undefined }));
         const { action: approveStepAction } =
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
@@ -439,7 +435,9 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper, network, intentId: 'intent' }));
+        render(
+            createTestComponent({ stepper, network, intent: { id: 'intent' } }),
+        );
         const lastSteps = updateSteps.mock.calls.at(-1)?.[0] ?? [];
         const approveStep = lastSteps.find(
             (step) => step.id === TransactionDialogStep.APPROVE,
@@ -491,7 +489,7 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps });
-        render(createTestComponent({ stepper, intentId: 'intent' }));
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
         const { action: approveStepAction } =
             updateSteps.mock.calls[0][0][1].meta;
         act(() => approveStepAction?.({ onError: jest.fn() }));
@@ -514,7 +512,7 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateSteps, updateActiveStep });
-        render(createTestComponent({ stepper, intentId: 'intent' }));
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
         const { action: confirmStepAction } =
             updateSteps.mock.calls[0][0][2].meta;
         act(() => confirmStepAction?.({ onError: jest.fn() }));
@@ -561,7 +559,7 @@ describe('<TransactionDialog /> component', () => {
             ITransactionDialogStepMeta,
             string
         >({ updateActiveStep });
-        render(createTestComponent({ stepper, intentId: 'intent' }));
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
         expect(updateActiveStep).toHaveBeenCalledWith(
             TransactionDialogStep.CONFIRM,
         );
@@ -571,29 +569,27 @@ describe('<TransactionDialog /> component', () => {
         managerGetSpy.mockReturnValue({
             status: PendingTransactionStatus.PENDING,
         });
-        managerIsInterruptedSpy.mockReturnValue(false);
         const updateActiveStep = jest.fn();
         const stepper = generateStepperResult<
             ITransactionDialogStepMeta,
             string
         >({ updateActiveStep });
-        render(createTestComponent({ stepper, intentId: 'intent' }));
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
         expect(updateActiveStep).toHaveBeenCalledWith(
             TransactionDialogStep.APPROVE,
         );
     });
 
-    it('clears an interrupted (reloaded) pending record and starts fresh', () => {
+    it('clears a stale failed record and starts fresh', () => {
         managerGetSpy.mockReturnValue({
-            status: PendingTransactionStatus.PENDING,
+            status: PendingTransactionStatus.FAILED,
         });
-        managerIsInterruptedSpy.mockReturnValue(true);
         const updateActiveStep = jest.fn();
         const stepper = generateStepperResult<
             ITransactionDialogStepMeta,
             string
         >({ updateActiveStep });
-        render(createTestComponent({ stepper, intentId: 'intent' }));
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
         expect(managerClearSpy).toHaveBeenCalledWith('intent');
         expect(updateActiveStep).not.toHaveBeenCalled();
     });

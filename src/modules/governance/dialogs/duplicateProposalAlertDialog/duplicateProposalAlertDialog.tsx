@@ -1,4 +1,12 @@
-import { DialogAlert, DialogAlertFooter, invariant } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    DefinitionList,
+    DialogAlert,
+    DialogAlertFooter,
+    invariant,
+    Link,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IDuplicateProposalAlertDialogProps } from './duplicateProposalAlertDialog.api';
@@ -14,7 +22,7 @@ export const DuplicateProposalAlertDialog: React.FC<
         'DuplicateProposalAlertDialog: required parameters must be set.',
     );
 
-    const { onProceed } = location.params;
+    const { onProceed, pending } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -24,6 +32,11 @@ export const DuplicateProposalAlertDialog: React.FC<
         onProceed();
     };
 
+    const handleReturn = (onReturn: () => void) => () => {
+        close();
+        onReturn();
+    };
+
     return (
         <>
             <DialogAlert.Header title={t(`${namespace}.title`)} />
@@ -31,9 +44,51 @@ export const DuplicateProposalAlertDialog: React.FC<
                 <div className="flex flex-col gap-y-4 pb-4 font-normal text-base text-neutral-500 leading-normal">
                     <p>{t(`${namespace}.description.1`)}</p>
                     <p>{t(`${namespace}.description.2`)}</p>
+                    <DefinitionList.Container>
+                        {pending.map((item, index) => (
+                            <DefinitionList.Item
+                                key={`${item.status}-${item.transactionUrl ?? item.title ?? index}`}
+                                term={item.title ?? t(`${namespace}.untitled`)}
+                            >
+                                <div className="flex flex-col items-start gap-y-3">
+                                    <Tag
+                                        label={t(
+                                            `${namespace}.status.${item.status}`,
+                                        )}
+                                        variant={
+                                            item.status === 'submitted'
+                                                ? 'info'
+                                                : 'warning'
+                                        }
+                                    />
+                                    {item.transactionUrl != null && (
+                                        <Link
+                                            href={item.transactionUrl}
+                                            isExternal={true}
+                                        >
+                                            {t(
+                                                `${namespace}.link.viewTransaction`,
+                                            )}
+                                        </Link>
+                                    )}
+                                    {item.onReturn != null && (
+                                        <Button
+                                            onClick={handleReturn(
+                                                item.onReturn,
+                                            )}
+                                            size="sm"
+                                            variant="secondary"
+                                        >
+                                            {t(`${namespace}.action.return`)}
+                                        </Button>
+                                    )}
+                                </div>
+                            </DefinitionList.Item>
+                        ))}
+                    </DefinitionList.Container>
                 </div>
             </DialogAlert.Content>
-            {/* "Publish again" is the warning (yellow) action and, for a warning alert, renders on the
+            {/* "Publish anyway" is the warning (yellow) action and, for a warning alert, renders on the
                 right; "Go back" is the subdued/safe choice. */}
             <DialogAlertFooter
                 actionButton={{

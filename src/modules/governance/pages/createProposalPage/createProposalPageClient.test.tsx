@@ -4,6 +4,7 @@ import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissi
 import * as daoService from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
+import * as useDaoChain from '@/shared/hooks/useDaoChain';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
@@ -40,10 +41,18 @@ describe('<CreateProposalPageClient /> component', () => {
     );
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useDaoChainSpy = jest.spyOn(useDaoChain, 'useDaoChain');
     const getActiveSpy = jest.spyOn(pendingTransactionManager, 'getActive');
+    const clearActiveSpy = jest.spyOn(pendingTransactionManager, 'clearActive');
 
     beforeEach(() => {
         getActiveSpy.mockReturnValue([]);
+        clearActiveSpy.mockImplementation(() => undefined);
+        useDaoChainSpy.mockReturnValue({
+            buildEntityUrl: jest
+                .fn()
+                .mockReturnValue('https://explorer/tx/0x1'),
+        } as unknown as ReturnType<typeof useDaoChain.useDaoChain>);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({
             check: jest.fn(),
@@ -60,7 +69,9 @@ describe('<CreateProposalPageClient /> component', () => {
         usePermissionCheckGuardSpy.mockReset();
         useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
+        useDaoChainSpy.mockReset();
         getActiveSpy.mockReset();
+        clearActiveSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -124,7 +135,14 @@ describe('<CreateProposalPageClient /> component', () => {
         ]);
         // A different in-flight proposal creation for this DAO + plugin.
         getActiveSpy.mockReturnValue([
-            ['other-intent', { status: PendingTransactionStatus.SUBMITTED }],
+            [
+                'other-intent',
+                {
+                    status: PendingTransactionStatus.SUBMITTED,
+                    hash: '0xabc',
+                    label: 'Other proposal',
+                },
+            ],
         ]);
         render(createTestComponent());
 
@@ -137,18 +155,32 @@ describe('<CreateProposalPageClient /> component', () => {
         );
         expect(open).toHaveBeenCalledWith(
             GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING,
-            { params: { onProceed: expect.any(Function) } },
+            {
+                params: {
+                    onProceed: expect.any(Function),
+                    pending: [
+                        expect.objectContaining({
+                            title: 'Other proposal',
+                            status: 'submitted',
+                            transactionUrl: 'https://explorer/tx/0x1',
+                        }),
+                    ],
+                },
+            },
         );
         expect(open).not.toHaveBeenCalledWith(
             GovernanceDialogId.PUBLISH_PROPOSAL,
             expect.anything(),
         );
 
-        // Proceeding from the warning opens the publish dialog for the new proposal.
+        // Proceeding from the warning supersedes the in-flight creation, then opens the publish dialog.
         const warnCall = open.mock.calls.find(
             ([id]) => id === GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING,
         );
         warnCall![1].params.onProceed();
+        expect(clearActiveSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ type: TransactionType.PROPOSAL_CREATE }),
+        );
         expect(open).toHaveBeenCalledWith(
             GovernanceDialogId.PUBLISH_PROPOSAL,
             expect.anything(),

@@ -31,7 +31,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
     const {
         title,
         description,
-        intentId: intentIdProp,
+        intent,
         customSteps,
         transactionInfo,
         stepper,
@@ -45,7 +45,6 @@ export const TransactionDialog = <TCustomStepId extends string>(
         transactionType,
         indexingFallbackUrl,
         disableCancel,
-        intentScope,
     } = props;
 
     const {
@@ -93,11 +92,11 @@ export const TransactionDialog = <TCustomStepId extends string>(
         data: transaction,
     } = useMutation({ mutationFn: prepareTransaction, onSuccess: nextStep });
 
-    // Resume identity: explicit prop when the calldata is non-deterministic (e.g. proposals),
+    // Resume identity: explicit `intent.id` when the calldata is non-deterministic (e.g. proposals),
     // otherwise derived from the prepared transaction, which is stable for the same action.
     const intentId = useMemo(
         () =>
-            intentIdProp ??
+            intent?.id ??
             (transaction != null && address != null
                 ? buildIntentId({
                       from: address,
@@ -107,17 +106,24 @@ export const TransactionDialog = <TCustomStepId extends string>(
                       value: transaction.value,
                   })
                 : undefined),
-        [intentIdProp, transaction, address, requiredChainId],
+        [intent?.id, transaction, address, requiredChainId],
     );
 
-    // Stored with the pending transaction so duplicate detection can scope by type + context.
-    // Left undefined when there is nothing to scope by (e.g. inline transactions).
+    // Stored with the pending transaction so duplicate detection can scope by type + context, and so a
+    // warning can describe the in-flight action. Left undefined when there is nothing to scope by or
+    // describe (e.g. inline transactions).
     const transactionMeta = useMemo(
         () =>
-            transactionType != null || intentScope != null
-                ? { type: transactionType, scope: intentScope }
+            transactionType != null ||
+            intent?.scope != null ||
+            intent?.label != null
+                ? {
+                      type: transactionType,
+                      scope: intent?.scope,
+                      label: intent?.label,
+                  }
                 : undefined,
-        [transactionType, intentScope],
+        [transactionType, intent?.scope, intent?.label],
     );
     const { approveState, hash, resumeTarget, receipt, send, resend } =
         useManagedTransaction(intentId, transactionMeta);

@@ -2109,12 +2109,21 @@
       "duplicateProposalAlertDialog": {
         "title": "This may create another proposal",
         "description": {
-          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, publishing again may create another proposal.",
-          "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
+          "1": "A transaction to publish a proposal for this plugin is already in progress. If it succeeds, publishing again will create a second proposal.",
+          "2": "Return to the transaction below to finish it, or publish anyway if you intend to create a new one."
+        },
+        "untitled": "Untitled proposal",
+        "status": {
+          "pending": "Awaiting wallet signature",
+          "submitted": "Sent — awaiting confirmation"
+        },
+        "link": {
+          "viewTransaction": "View transaction"
         },
         "action": {
+          "return": "Return to transaction",
           "back": "Go back",
-          "publish": "Publish again"
+          "publish": "Publish anyway"
         },
         "a11y": {
           "description": "Warning that a transaction to publish this proposal was already started."

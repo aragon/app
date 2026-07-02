@@ -1,18 +1,24 @@
 'use client';
 
+import { ChainEntityType } from '@aragon/gov-ui-kit';
 import { useCallback, useMemo, useState } from 'react';
 import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
+import {
+    PendingTransactionStatus,
+    pendingTransactionManager,
+} from '@/shared/utils/pendingTransactionManager';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
 } from '../../components/createProposalForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
+import type { IDuplicatePendingProposal } from '../../dialogs/duplicateProposalAlertDialog';
 import type {
     IPublishProposalDialogParams,
     PrepareProposalActionFunction,
@@ -21,6 +27,7 @@ import type {
 // Imported directly (not via the dialog barrel) so the guard doesn't pull the dialog into this bundle.
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
+import { proposalResumeRegistry } from '../../utils/proposalResumeRegistry';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import {
     createProposalWizardId,
@@ -45,6 +52,7 @@ export const CreateProposalPageClient: React.FC<
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
+    const { buildEntityUrl } = useDaoChain({ daoId });
 
     const { meta: plugin } = useDaoPlugins({
         daoId,
@@ -85,8 +93,6 @@ export const CreateProposalPageClient: React.FC<
             plugin,
             prepareActions,
         };
-        const openPublishDialog = () =>
-            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
 
         // Editing the form after closing the dialog produces a new intentId, so the prior in-flight
         // proposal creation is no longer resumed and a fresh submit would create a second proposal.
@@ -101,16 +107,53 @@ export const CreateProposalPageClient: React.FC<
             daoId,
             plugin.address,
         );
-        const hasPendingProposal =
-            pendingTransactionManager.getActive({
-                type: TransactionType.PROPOSAL_CREATE,
-                scope,
-                excludeIntentId: intentId,
-            }).length > 0;
+        const conflictFilter = {
+            type: TransactionType.PROPOSAL_CREATE,
+            scope,
+            excludeIntentId: intentId,
+        };
 
-        if (hasPendingProposal) {
+        const openPublishDialog = () => {
+            // "Publish anyway" / no conflict: the user has committed to this proposal, so supersede any
+            // other in-flight creation for this DAO + plugin that would otherwise keep warning forever.
+            pendingTransactionManager.clearActive(conflictFilter);
+            proposalResumeRegistry.set(intentId, params);
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+        };
+
+        const conflicts = pendingTransactionManager.getActive(conflictFilter);
+
+        if (conflicts.length > 0) {
+            const pending: IDuplicatePendingProposal[] = conflicts.map(
+                ([id, state]) => {
+                    const resumeParams = proposalResumeRegistry.get(id);
+                    return {
+                        title: state.label,
+                        status:
+                            state.status === PendingTransactionStatus.SUBMITTED
+                                ? 'submitted'
+                                : 'pending',
+                        transactionUrl:
+                            state.hash != null
+                                ? buildEntityUrl({
+                                      type: ChainEntityType.TRANSACTION,
+                                      id: state.hash,
+                                  })
+                                : undefined,
+                        onReturn:
+                            resumeParams != null
+                                ? () =>
+                                      open(
+                                          GovernanceDialogId.PUBLISH_PROPOSAL,
+                                          { params: resumeParams },
+                                      )
+                                : undefined,
+                    };
+                },
+            );
+
             open(GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING, {
-                params: { onProceed: openPublishDialog },
+                params: { onProceed: openPublishDialog, pending },
             });
             return;
         }
