@@ -191,7 +191,8 @@ describe('<PermissionsList /> component', () => {
         expect(
             screen.getByText(/votingPowerConditionSlot.token/),
         ).toBeInTheDocument();
-        expect(screen.getByText('1000000000000000000')).toBeInTheDocument();
+        // 1e18 base units formatted with the default 18 decimals.
+        expect(screen.getByText('1')).toBeInTheDocument();
     });
 
     it('routes the condition cell to the fallback slot when expanded', async () => {
