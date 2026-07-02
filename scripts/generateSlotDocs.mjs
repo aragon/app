@@ -90,6 +90,12 @@ const PLUGIN_SOURCES = [
         name: 'gaugeVoterPlugin',
         label: 'Gauge Voter',
     },
+    // Standalone condition registry (conditions are contracts, not plugins).
+    {
+        file: 'src/modules/settings/initConditionRegistry.ts',
+        name: 'conditionRegistry',
+        label: 'Condition registry',
+    },
 ];
 
 // Human-readable descriptions for slot IDs. Falls back to the ID itself if not listed.
@@ -141,6 +147,8 @@ const SLOT_DESCRIPTIONS = {
         'Converts plugin settings to form-compatible data for the settings editor',
     SETTINGS_GET_UNINSTALL_HELPERS:
         'Returns helper data needed for uninstalling the plugin',
+    PERMISSION_CONDITION:
+        'Renders the condition-specific detail for a permission grant (routed by condition type)',
     // Create DAO
     CREATE_DAO_BUILD_PREPARE_PLUGIN_INSTALL_DATA:
         'Builds the transaction data for installing the plugin during DAO creation',
@@ -309,7 +317,7 @@ function slotRegisteredBy(id) {
     if (!entry || entry.registeredBy.length === 0) {
         return '-';
     }
-    return entry.registeredBy.join(', ');
+    return [...new Set(entry.registeredBy)].join(', ');
 }
 
 function slotDescription(id) {

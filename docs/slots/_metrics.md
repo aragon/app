@@ -8,8 +8,8 @@
 
 | Metric | Value |
 |---|---|
-| Total slots | 33 |
-| Registered plugins | 7 |
+| Total slots | 34 |
+| Registered plugins | 8 |
 | Unregistered slots | 4 |
 
 ## Slots Per Module
@@ -17,7 +17,7 @@
 | Module | Enum | Count |
 |---|---|---|
 | Governance | `GovernanceSlotId` | 20 |
-| Settings | `SettingsSlotId` | 4 |
+| Settings | `SettingsSlotId` | 5 |
 | Create DAO | `CreateDaoSlotId` | 5 |
 | Application | `ApplicationSlotId` | 1 |
 | Dashboard (DAO-level) | `DashboardDaoSlotId` | 1 |
@@ -34,6 +34,7 @@
 | SPP | 7 | 2 | - | - | 9 |
 | Capital Distributor | - | - | - | 1 | 1 |
 | Gauge Voter | - | - | - | 1 | 1 |
+| Condition registry | - | 3 | - | - | 3 |
 
 ## Unregistered Slots
 

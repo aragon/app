@@ -18,7 +18,8 @@ export type FeatureFlagKey =
     | 'useMocks'
     | 'enableAllPlugins'
     | 'existingProposalCreationCondition'
-    | 'aragonProfiles';
+    | 'aragonProfiles'
+    | 'permissionsPage';
 
 /**
  * Feature flag definition structure.

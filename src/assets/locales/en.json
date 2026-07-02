@@ -3512,6 +3512,63 @@
           "info": "This policy can't be dispatched once it's uninstalled."
         }
       },
+      "daoPermissionsPage": {
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings",
+            "permissions": "Permissions"
+          },
+          "title": "Permissions",
+          "description": "All permissions configured in this DAO — who has access, to which contract, and under what conditions."
+        },
+        "view": {
+          "list": "List",
+          "graph": "Graph"
+        }
+      },
+      "permissionsList": {
+        "header": {
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition"
+        },
+        "details": {
+          "heading": "Details",
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition",
+          "noCondition": "No condition"
+        },
+        "condition": {
+          "heading": "Condition detail"
+        },
+        "expandAll": "Expand all",
+        "collapseAll": "Collapse all",
+        "empty": {
+          "heading": "No permissions",
+          "description": "This account has no indexed permissions."
+        }
+      },
+      "noConditionSlot": {
+        "heading": "No condition",
+        "description": "Functions guarded by this permission can be called by the granted address directly."
+      },
+      "votingPowerConditionSlot": {
+        "token": "Token",
+        "minVotingPower": "Minimum voting power"
+      },
+      "executeSelectorConditionSlot": {
+        "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
+        "allowedActions": "Allowed actions",
+        "noActions": "No allowed actions"
+      },
+      "membershipConditionSlot": {
+        "memberOfMultisig": "Member of multisig",
+        "true": "True",
+        "false": "False"
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",
@@ -3564,6 +3621,9 @@
         "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
+        "permissions": "Permissions",
+        "permissionsDescription": "Get an overview of all permissions related to this account and its actors",
+        "permissionsLink": "View all permissions",
         "readLess": "Read less",
         "readMore": "Read more",
         "summary": "Summary",
