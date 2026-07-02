@@ -3,7 +3,6 @@
 import {
     Accordion,
     addressUtils,
-    Button,
     CardEmptyState,
     ChainEntityType,
     DaoAvatar,
@@ -11,31 +10,15 @@ import {
     Link,
     StateSkeletonBar,
     Tag,
-    Toggle,
-    ToggleGroup,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
-import {
-    type Network,
-    useAllDaoPermissions,
-    useDao,
-} from '@/shared/api/daoService';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
-import {
-    permissionsPreviewAccounts,
-    permissionsPreviewPlugins,
-} from '../../constants/permissionsPreviewData';
-import { PermissionsPreviewRef } from '../../constants/permissionsPreviewRefs';
 import type { IPermissionRow } from '../../types';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
 import {
@@ -45,23 +28,37 @@ import {
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
 
+type DaoPlugins = IFilterComponentPlugin<IDaoPlugin>[] | undefined;
+
 export interface IPermissionsListProps {
     /**
-     * ID of the DAO to display permissions for.
+     * Permission rows to render.
      */
-    daoId: string;
+    rows: IPermissionRow[];
     /**
-     * View switcher (list/graph toggle) rendered on the right of the filter row.
+     * Account references used to resolve `who` / `where` entities.
      */
-    viewSwitcher?: ReactNode;
-}
-
-interface IPermissionsAccount {
-    id: string;
-    name: string;
-    network: Network;
-    daoAddress: string;
-    avatarSrc?: string;
+    accountRefs: IPermissionAccountRef[];
+    /**
+     * Installed DAO plugins used to classify plugin entities.
+     */
+    daoPlugins?: DaoPlugins;
+    /**
+     * Chain id for block-explorer links.
+     */
+    chainId?: number;
+    /**
+     * Whether the permissions are still loading.
+     */
+    isLoading: boolean;
+    /**
+     * Row keys currently expanded.
+     */
+    expandedRows: string[];
+    /**
+     * Called when the set of expanded rows changes.
+     */
+    onExpandedRowsChange: (rows: string[]) => void;
 }
 
 const SKELETON_ROW_KEYS = [
@@ -71,219 +68,65 @@ const SKELETON_ROW_KEYS = [
     'skeleton-4',
 ];
 
-const getRowKey = (row: IPermissionRow): string =>
+export const getPermissionRowKey = (row: IPermissionRow): string =>
     `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`;
 
+/**
+ * Body of the permissions list view. Receives already-resolved data from the
+ * shared `usePermissionsData` hook; the account selector, view toggle and
+ * expand-all control live in the page shell so the list and graph share them.
+ */
 export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
-    const { daoId, viewSwitcher } = props;
+    const {
+        rows,
+        accountRefs,
+        daoPlugins,
+        chainId,
+        isLoading,
+        expandedRows,
+        onExpandedRowsChange,
+    } = props;
 
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
 
-    // The `useMocks` flag drives both the preview permission rows and the
-    // self-contained "Patito DAO" identity they resolve against.
-    const isPreview = isEnabled('useMocks');
+    if (isLoading) {
+        return <PermissionsListSkeleton />;
+    }
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const realDaoPlugins = useDaoPlugins({
-        daoId,
-        includeLinkedAccounts: true,
-    });
-    const daoPlugins = isPreview ? permissionsPreviewPlugins : realDaoPlugins;
-
-    const realAccounts = useMemo<IPermissionsAccount[]>(() => {
-        if (dao == null) {
-            return [];
-        }
-
-        const mainAccount: IPermissionsAccount = {
-            id: dao.id,
-            name: dao.name,
-            network: dao.network,
-            daoAddress: dao.address,
-            avatarSrc: ipfsUtils.cidToSrc(dao.avatar),
-        };
-
-        const linkedAccounts = dao.linkedAccounts ?? [];
-        const showLinkedAccounts =
-            isEnabled('linkedAccount') && linkedAccounts.length > 0;
-
-        if (!showLinkedAccounts) {
-            return [mainAccount];
-        }
-
-        return [
-            mainAccount,
-            ...linkedAccounts.map((account) => ({
-                id: account.id,
-                name: account.name,
-                network: account.network,
-                daoAddress: account.address,
-                avatarSrc: ipfsUtils.cidToSrc(account.avatar),
-            })),
-        ];
-    }, [dao, isEnabled]);
-
-    const accounts = isPreview ? permissionsPreviewAccounts : realAccounts;
-
-    const [selectedAccountId, setSelectedAccountId] = useState<string>();
-    const activeAccountId = selectedAccountId ?? accounts[0]?.id;
-
-    const handleAccountChange = (value: string | string[] | undefined) => {
-        if (typeof value === 'string') {
-            setSelectedAccountId(value);
-        }
-    };
-    const activeAccount =
-        accounts.find((account) => account.id === activeAccountId) ??
-        accounts[0];
-
-    const accountRefs = useMemo<IPermissionAccountRef[]>(
-        () =>
-            accounts.map((account) => ({
-                address: account.daoAddress,
-                name: account.name,
-                avatarSrc: account.avatarSrc,
-            })),
-        [accounts],
-    );
-
-    const { data, isLoading } = useAllDaoPermissions(
-        {
-            urlParams: {
-                network: activeAccount?.network as Network,
-                daoAddress: activeAccount?.daoAddress ?? '',
-            },
-        },
-        { enabled: activeAccount != null },
-    );
-
-    // NOTE: the optional `condition` field is supplied by the preview mock until
-    // APP-953 formalizes it on the permissions response; cast at this boundary.
-    const rows = useMemo(() => {
-        const rawRows = (data ?? []) as IPermissionRow[];
-        const pluginAddresses = (daoPlugins ?? []).map(
-            (plugin) => plugin.meta.address,
-        );
-
-        const linkedAddress = accounts.find(
-            (account) => account.id !== activeAccount?.id,
-        )?.daoAddress;
-
-        // Swap preview markers for the viewed DAO's real addresses so the sample
-        // rows resolve to names/tags/avatars. No-op for real backend data.
-        const refMap = new Map<string, string | undefined>([
-            [
-                PermissionsPreviewRef.self.toLowerCase(),
-                activeAccount?.daoAddress,
-            ],
-            [PermissionsPreviewRef.linked.toLowerCase(), linkedAddress],
-            [PermissionsPreviewRef.plugin0.toLowerCase(), pluginAddresses[0]],
-            [PermissionsPreviewRef.plugin1.toLowerCase(), pluginAddresses[1]],
-        ]);
-        const resolveRef = (address: string): string =>
-            refMap.get(address.toLowerCase()) ?? address;
-
-        return rawRows.map((row) => ({
-            ...row,
-            whoAddress: resolveRef(row.whoAddress),
-            whereAddress: resolveRef(row.whereAddress),
-        }));
-    }, [data, daoPlugins, activeAccount, accounts]);
-
-    const [expandedRows, setExpandedRows] = useState<string[]>([]);
-    const allExpanded = rows.length > 0 && expandedRows.length === rows.length;
-
-    const handleToggleAll = () => {
-        setExpandedRows(allExpanded ? [] : rows.map(getRowKey));
-    };
-
-    const chainId = activeAccount
-        ? networkDefinitions[activeAccount.network].id
-        : undefined;
-
-    const renderBody = () => {
-        if (isLoading) {
-            return <PermissionsListSkeleton />;
-        }
-
-        if (rows.length === 0) {
-            return (
-                <CardEmptyState
-                    description={t(
-                        'app.settings.permissionsList.empty.description',
-                    )}
-                    heading={t('app.settings.permissionsList.empty.heading')}
-                    objectIllustration={{ object: 'SETTINGS' }}
-                />
-            );
-        }
-
+    if (rows.length === 0) {
         return (
-            <div className="flex flex-col gap-3">
-                <PermissionsListHeader />
-                <Accordion.Container
-                    isMulti={true}
-                    onValueChange={(value) => setExpandedRows(value ?? [])}
-                    value={expandedRows}
-                >
-                    {rows.map((row) => (
-                        <PermissionsListRow
-                            accounts={accountRefs}
-                            chainId={chainId}
-                            daoPlugins={daoPlugins}
-                            key={getRowKey(row)}
-                            row={row}
-                            rowKey={getRowKey(row)}
-                        />
-                    ))}
-                </Accordion.Container>
-            </div>
+            <CardEmptyState
+                description={t(
+                    'app.settings.permissionsList.empty.description',
+                )}
+                heading={t('app.settings.permissionsList.empty.heading')}
+                objectIllustration={{ object: 'SETTINGS' }}
+            />
         );
-    };
-
-    const showAccountSelector = accounts.length > 1;
-    const showExpandAll = !isLoading && rows.length > 0;
+    }
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                {showAccountSelector && (
-                    <ToggleGroup
-                        isMultiSelect={false}
-                        onChange={handleAccountChange}
-                        value={activeAccountId}
-                    >
-                        {accounts.map((account) => (
-                            <Toggle
-                                key={account.id}
-                                label={account.name}
-                                value={account.id}
-                            />
-                        ))}
-                    </ToggleGroup>
-                )}
-                <div className="flex items-center gap-3 md:ml-auto md:gap-6">
-                    {showExpandAll && (
-                        <Button
-                            onClick={handleToggleAll}
-                            size="md"
-                            variant="tertiary"
-                        >
-                            {allExpanded
-                                ? t('app.settings.permissionsList.collapseAll')
-                                : t('app.settings.permissionsList.expandAll')}
-                        </Button>
-                    )}
-                    {viewSwitcher}
-                </div>
-            </div>
-            {renderBody()}
+        <div className="flex flex-col gap-3">
+            <PermissionsListHeader />
+            <Accordion.Container
+                isMulti={true}
+                onValueChange={(value) => onExpandedRowsChange(value ?? [])}
+                value={expandedRows}
+            >
+                {rows.map((row) => (
+                    <PermissionsListRow
+                        accounts={accountRefs}
+                        chainId={chainId}
+                        daoPlugins={daoPlugins}
+                        key={getPermissionRowKey(row)}
+                        row={row}
+                        rowKey={getPermissionRowKey(row)}
+                    />
+                ))}
+            </Accordion.Container>
         </div>
     );
 };
-
-type DaoPlugins = ReturnType<typeof useDaoPlugins>;
 
 interface IPermissionsListRowProps {
     row: IPermissionRow;

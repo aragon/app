@@ -3,6 +3,7 @@
 import '@testing-library/jest-dom';
 import 'jest-canvas-mock';
 import { TextDecoder, TextEncoder } from 'node:util';
+import { deserialize, serialize } from 'node:v8';
 import { mockFetch, mockTranslations, testLogger, timeUtils } from './utils';
 
 // Setup test logger
@@ -19,6 +20,13 @@ timeUtils.setup();
 
 // Globally setup TextEncoder/TextDecoder needed by viem
 Object.assign(global, { TextDecoder, TextEncoder });
+
+// jsdom does not expose structuredClone, which @dagrejs/dagre relies on during
+// graph layout. Back it with v8 serialization for a faithful structured clone.
+if (typeof globalThis.structuredClone !== 'function') {
+    globalThis.structuredClone = <T>(value: T): T =>
+        deserialize(serialize(value)) as T;
+}
 
 // Mock ResizeObserver functionality
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
