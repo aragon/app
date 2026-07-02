@@ -341,7 +341,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
                 description={t(
                     'app.capitalFlow.preparePolicyDialog.description',
                 )}
-                intentId={deployIntentId}
+                intent={{ id: deployIntentId }}
                 key="model-and-source-deploy"
                 network={dao?.network}
                 onSuccess={handleDeploySourceAndModelSuccess}
@@ -365,7 +365,7 @@ export const PreparePolicyDialog: React.FC<IPreparePolicyDialogProps> = (
     return (
         <TransactionDialog
             description={t('app.capitalFlow.preparePolicyDialog.description')}
-            intentId={installIntentId}
+            intent={{ id: installIntentId }}
             key="plugin-install"
             network={dao?.network}
             onSuccess={handlePrepareInstallationSuccess}

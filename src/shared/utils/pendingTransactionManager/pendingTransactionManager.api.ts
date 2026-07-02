@@ -1,5 +1,8 @@
 import type { Hex } from 'viem';
 
+// Lifecycle: PENDING → SUBMITTED → (cleared once the receipt confirms); PENDING → FAILED.
+// Only SUBMITTED records are persisted/resumable — a PENDING send has no hash and its live wallet
+// promise cannot survive a reload.
 export enum PendingTransactionStatus {
     // Handed to the wallet; awaiting sign or reject.
     PENDING = 'PENDING',
@@ -9,7 +12,8 @@ export enum PendingTransactionStatus {
     FAILED = 'FAILED',
 }
 
-// `type` and `scope` are opaque to the manager; they scope duplicate detection (see IPendingTransactionMeta).
+// `type` and `scope` narrow duplicate detection (see IPendingTransactionMeta). Both are opaque to the
+// manager and just travel with the state.
 export interface IPendingTransactionState {
     status: PendingTransactionStatus;
     hash?: Hex;
@@ -19,7 +23,7 @@ export interface IPendingTransactionState {
 }
 
 // Optional metadata attached to a send: `type` (e.g. proposal creation) and `scope` (e.g. a DAO + plugin
-// key), kept so duplicate detection can be narrowed to the same kind of action in the same context.
+// key) narrow duplicate detection. Kept across every status transition and the persisted mirror.
 export interface IPendingTransactionMeta {
     type?: string;
     scope?: string;

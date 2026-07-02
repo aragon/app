@@ -14,7 +14,7 @@ export const DuplicateProposalAlertDialog: React.FC<
         'DuplicateProposalAlertDialog: required parameters must be set.',
     );
 
-    const { onProceed } = location.params;
+    const { onProceed, onResume } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -23,6 +23,18 @@ export const DuplicateProposalAlertDialog: React.FC<
         close();
         onProceed();
     };
+
+    const handleResume = () => {
+        close();
+        onResume?.();
+    };
+
+    // "New transaction" is the warning (yellow) action on the right. The subdued choice resumes the
+    // existing transaction when we can reopen it, otherwise it simply dismisses the warning.
+    const cancelButton =
+        onResume != null
+            ? { label: t(`${namespace}.action.resume`), onClick: handleResume }
+            : { label: t(`${namespace}.action.back`), onClick: () => close() };
 
     return (
         <>
@@ -33,17 +45,12 @@ export const DuplicateProposalAlertDialog: React.FC<
                     <p>{t(`${namespace}.description.2`)}</p>
                 </div>
             </DialogAlert.Content>
-            {/* "Publish again" is the warning (yellow) action and, for a warning alert, renders on the
-                right; "Go back" is the subdued/safe choice. */}
             <DialogAlertFooter
                 actionButton={{
-                    label: t(`${namespace}.action.publish`),
+                    label: t(`${namespace}.action.new`),
                     onClick: handleProceed,
                 }}
-                cancelButton={{
-                    label: t(`${namespace}.action.back`),
-                    onClick: () => close(),
-                }}
+                cancelButton={cancelButton}
             />
         </>
     );

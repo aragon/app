@@ -2109,12 +2109,13 @@
       "duplicateProposalAlertDialog": {
         "title": "This may create another proposal",
         "description": {
-          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, publishing again may create another proposal.",
+          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, starting a new transaction may result in another proposal.",
           "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
         },
         "action": {
-          "back": "Go back",
-          "publish": "Publish again"
+          "resume": "Resume existing transaction",
+          "new": "New transaction",
+          "back": "Go back"
         },
         "a11y": {
           "description": "Warning that a transaction to publish this proposal was already started."

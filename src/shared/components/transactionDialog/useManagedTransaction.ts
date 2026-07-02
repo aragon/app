@@ -52,8 +52,8 @@ export const useManagedTransaction = (
     const hash = latchedHash ?? managed?.hash;
 
     // Resume where a prior attempt left off, re-read on each identity change so it can't go stale:
-    // SUBMITTED -> confirm, live PENDING -> sign. A stale record (interrupted PENDING / prior FAILED)
-    // is cleared so the run starts fresh.
+    // SUBMITTED -> confirm, PENDING -> sign (a PENDING record is always a live this-session send, since
+    // PENDING is never persisted). A prior FAILED record is cleared so the run starts fresh.
     const [resumeTarget, setResumeTarget] = useState<TransactionDialogStep>();
     const lastResolvedId = useRef<string | undefined>(undefined);
     useEffect(() => {
@@ -71,17 +71,20 @@ export const useManagedTransaction = (
         }
         lastResolvedId.current = intentId;
 
-        const status = pendingTransactionManager.get(intentId)?.status;
-        if (status === PendingTransactionStatus.SUBMITTED) {
-            setResumeTarget(TransactionDialogStep.CONFIRM);
-        } else if (
-            status === PendingTransactionStatus.PENDING &&
-            !pendingTransactionManager.isInterrupted(intentId)
-        ) {
-            setResumeTarget(TransactionDialogStep.APPROVE);
-        } else if (status != null) {
-            pendingTransactionManager.clear(intentId);
-        }
+        // The resume state machine: broadcast -> wait for confirmation, live sign -> back to approve,
+        // a leftover failure -> clear and start fresh. No record -> nothing to resume.
+        match(pendingTransactionManager.get(intentId)?.status)
+            .with(PendingTransactionStatus.SUBMITTED, () =>
+                setResumeTarget(TransactionDialogStep.CONFIRM),
+            )
+            .with(PendingTransactionStatus.PENDING, () =>
+                setResumeTarget(TransactionDialogStep.APPROVE),
+            )
+            .with(PendingTransactionStatus.FAILED, () =>
+                pendingTransactionManager.clear(intentId),
+            )
+            .with(undefined, () => undefined)
+            .exhaustive();
     }, [intentId]);
 
     const receipt = useWaitForTransactionReceipt({ hash });

@@ -21,6 +21,7 @@ import type {
 // Imported directly (not via the dialog barrel) so the guard doesn't pull the dialog into this bundle.
 import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
+import { proposalResumeRegistry } from '../../utils/proposalResumeRegistry';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import {
     createProposalWizardId,
@@ -85,8 +86,6 @@ export const CreateProposalPageClient: React.FC<
             plugin,
             prepareActions,
         };
-        const openPublishDialog = () =>
-            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
 
         // Editing the form after closing the dialog produces a new intentId, so the prior in-flight
         // proposal creation is no longer resumed and a fresh submit would create a second proposal.
@@ -101,16 +100,38 @@ export const CreateProposalPageClient: React.FC<
             daoId,
             plugin.address,
         );
-        const hasPendingProposal =
-            pendingTransactionManager.getActive({
-                type: TransactionType.PROPOSAL_CREATE,
-                scope,
-                excludeIntentId: intentId,
-            }).length > 0;
+        const conflictFilter = {
+            type: TransactionType.PROPOSAL_CREATE,
+            scope,
+            excludeIntentId: intentId,
+        };
 
-        if (hasPendingProposal) {
+        const openPublishDialog = () => {
+            // "New transaction" / no conflict: the user has committed to this proposal, so supersede any
+            // other in-flight creation for this DAO + plugin that would otherwise keep warning forever.
+            pendingTransactionManager.clearActive(conflictFilter);
+            proposalResumeRegistry.set(intentId, params);
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+        };
+
+        const conflicts = pendingTransactionManager.getActive(conflictFilter);
+
+        if (conflicts.length > 0) {
+            // Offer to resume the conflicting in-flight creation when we still hold the params needed
+            // to reopen its dialog (session-scoped; lost after a reload).
+            const resumeParams = conflicts
+                .map(([id]) => proposalResumeRegistry.get(id))
+                .find((registered) => registered != null);
+            const onResume =
+                resumeParams != null
+                    ? () =>
+                          open(GovernanceDialogId.PUBLISH_PROPOSAL, {
+                              params: resumeParams,
+                          })
+                    : undefined;
+
             open(GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING, {
-                params: { onProceed: openPublishDialog },
+                params: { onProceed: openPublishDialog, onResume },
             });
             return;
         }
