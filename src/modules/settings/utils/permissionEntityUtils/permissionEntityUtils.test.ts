@@ -31,7 +31,7 @@ describe('permissionEntity Utils', () => {
         ] satisfies IFilterComponentPlugin<IDaoPlugin>[];
 
         const accounts: IPermissionAccountRef[] = [
-            { address: daoAddress, name: 'Patito DAO', avatar: null },
+            { address: daoAddress, name: 'Patito DAO', avatarSrc: undefined },
         ];
 
         it.each([

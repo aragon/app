@@ -12,6 +12,8 @@ const previewRef = (suffix: string): string => `0x${suffix.padStart(40, '0')}`;
 export const PermissionsPreviewRef = {
     /** Resolves to the active account's DAO address. */
     self: previewRef('5e1f'),
+    /** Resolves to the active account's first linked DAO. */
+    linked: previewRef('11a0'),
     /** Resolves to the first installed plugin of the active account. */
     plugin0: previewRef('9100'),
     /** Resolves to the second installed plugin of the active account. */

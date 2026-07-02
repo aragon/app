@@ -27,9 +27,14 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import {
+    permissionsPreviewAccounts,
+    permissionsPreviewPlugins,
+} from '../../constants/permissionsPreviewData';
 import { PermissionsPreviewRef } from '../../constants/permissionsPreviewRefs';
 import type { IPermissionRow } from '../../types';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
@@ -56,7 +61,7 @@ interface IPermissionsAccount {
     name: string;
     network: Network;
     daoAddress: string;
-    avatar?: string | null;
+    avatarSrc?: string;
 }
 
 const SKELETON_ROW_KEYS = [
@@ -75,13 +80,18 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
 
+    // The `useMocks` flag drives both the preview permission rows and the
+    // self-contained "Patito DAO" identity they resolve against.
+    const isPreview = isEnabled('useMocks');
+
     const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const daoPlugins = useDaoPlugins({
+    const realDaoPlugins = useDaoPlugins({
         daoId,
         includeLinkedAccounts: true,
     });
+    const daoPlugins = isPreview ? permissionsPreviewPlugins : realDaoPlugins;
 
-    const accounts = useMemo<IPermissionsAccount[]>(() => {
+    const realAccounts = useMemo<IPermissionsAccount[]>(() => {
         if (dao == null) {
             return [];
         }
@@ -91,7 +101,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
             name: dao.name,
             network: dao.network,
             daoAddress: dao.address,
-            avatar: dao.avatar,
+            avatarSrc: ipfsUtils.cidToSrc(dao.avatar),
         };
 
         const linkedAccounts = dao.linkedAccounts ?? [];
@@ -109,10 +119,12 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                 name: account.name,
                 network: account.network,
                 daoAddress: account.address,
-                avatar: account.avatar,
+                avatarSrc: ipfsUtils.cidToSrc(account.avatar),
             })),
         ];
     }, [dao, isEnabled]);
+
+    const accounts = isPreview ? permissionsPreviewAccounts : realAccounts;
 
     const [selectedAccountId, setSelectedAccountId] = useState<string>();
     const activeAccountId = selectedAccountId ?? accounts[0]?.id;
@@ -131,7 +143,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
             accounts.map((account) => ({
                 address: account.daoAddress,
                 name: account.name,
-                avatar: account.avatar,
+                avatarSrc: account.avatarSrc,
             })),
         [accounts],
     );
@@ -154,6 +166,10 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
             (plugin) => plugin.meta.address,
         );
 
+        const linkedAddress = accounts.find(
+            (account) => account.id !== activeAccount?.id,
+        )?.daoAddress;
+
         // Swap preview markers for the viewed DAO's real addresses so the sample
         // rows resolve to names/tags/avatars. No-op for real backend data.
         const refMap = new Map<string, string | undefined>([
@@ -161,6 +177,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                 PermissionsPreviewRef.self.toLowerCase(),
                 activeAccount?.daoAddress,
             ],
+            [PermissionsPreviewRef.linked.toLowerCase(), linkedAddress],
             [PermissionsPreviewRef.plugin0.toLowerCase(), pluginAddresses[0]],
             [PermissionsPreviewRef.plugin1.toLowerCase(), pluginAddresses[1]],
         ]);
@@ -172,7 +189,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
             whoAddress: resolveRef(row.whoAddress),
             whereAddress: resolveRef(row.whereAddress),
         }));
-    }, [data, daoPlugins, activeAccount]);
+    }, [data, daoPlugins, activeAccount, accounts]);
 
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
     const allExpanded = rows.length > 0 && expandedRows.length === rows.length;

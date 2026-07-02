@@ -2,7 +2,6 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 
 /**
@@ -55,7 +54,7 @@ export interface IPermissionEntity {
 export interface IPermissionAccountRef {
     address: string;
     name: string;
-    avatar?: string | null;
+    avatarSrc?: string;
 }
 
 type DaoPluginEntries = IFilterComponentPlugin<IDaoPlugin>[];
@@ -140,10 +139,7 @@ class PermissionEntityUtils {
                 address,
                 isSentinel: false,
                 type: 'dao',
-                avatarSrc:
-                    matchedAccount.avatar != null
-                        ? ipfsUtils.cidToSrc(matchedAccount.avatar)
-                        : undefined,
+                avatarSrc: matchedAccount.avatarSrc,
                 detailName: matchedAccount.name,
             };
         }
