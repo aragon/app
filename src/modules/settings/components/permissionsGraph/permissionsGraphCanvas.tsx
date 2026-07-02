@@ -47,10 +47,15 @@ const EDGE_NEUTRAL = {
         height: 18,
     },
 };
+// The selected flow is elevated above the dimmed connectors so where they
+// converge on a shared node handle the primary line/arrow always paints on top
+// (otherwise a dimmed grey edge later in the array covers the blue at the node).
+const SELECTED_EDGE_Z_INDEX = 10;
 const EDGE_SELECTED_IN = {
     style: { stroke: 'var(--color-primary-400)', strokeWidth: 1.5 },
     markerStart: 'permission-dot-primary',
     markerEnd: 'permission-dot-primary',
+    zIndex: SELECTED_EDGE_Z_INDEX,
 };
 const EDGE_SELECTED_OUT = {
     style: { stroke: 'var(--color-primary-400)', strokeWidth: 1.5 },
@@ -61,6 +66,7 @@ const EDGE_SELECTED_OUT = {
         width: 18,
         height: 18,
     },
+    zIndex: SELECTED_EDGE_Z_INDEX,
 };
 
 // Vertical gap between the expanded detail card and the who/where nodes it
