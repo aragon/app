@@ -6,6 +6,9 @@ import {
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
+import * as governanceService from '@/modules/governance/api/governanceService';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
+import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
 import { TransactionDialog } from '@/shared/components/transactionDialog';
@@ -16,21 +19,18 @@ import {
     generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import * as governanceService from '@/modules/governance/api/governanceService';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { generateProposal } from '@/modules/governance/testUtils';
 import { generateSppProposal } from '../../testUtils';
 import * as sppProposalUtils from '../../utils/sppProposalUtils';
-import { SppAdvanceStageDialog } from './sppAdvanceStageDialog';
 import type {
     ISppAdvanceStageDialogParams,
     ISppAdvanceStageDialogProps,
 } from './sppAdvanceStageDialog';
+import { SppAdvanceStageDialog } from './sppAdvanceStageDialog';
 
 jest.mock('@/shared/components/transactionDialog', () => {
-    const actual = jest.requireActual<typeof import('@/shared/components/transactionDialog')>(
-        '@/shared/components/transactionDialog',
-    );
+    const actual = jest.requireActual<
+        typeof import('@/shared/components/transactionDialog')
+    >('@/shared/components/transactionDialog');
     return {
         ...actual,
         TransactionDialog: jest.fn((props: { children: ReactNode }) => (
@@ -98,7 +98,9 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         },
     });
 
-    const createTestComponent = (props?: Partial<ISppAdvanceStageDialogProps>) => {
+    const createTestComponent = (
+        props?: Partial<ISppAdvanceStageDialogProps>,
+    ) => {
         const completeProps: ISppAdvanceStageDialogProps = {
             location: { id: 'test' },
             ...props,
@@ -143,7 +145,10 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         );
         const indexedProposal = generateProposal({ id: 'advanced-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTABLE);
 
@@ -206,7 +211,10 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
         );
         const indexedProposal = generateProposal({ id: 'advanced-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTABLE);
 

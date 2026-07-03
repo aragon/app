@@ -19,14 +19,17 @@ import {
 import * as governanceService from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
+import type {
+    IExecuteDialogParams,
+    IExecuteDialogProps,
+} from './executeDialog';
 // Import directly from source to avoid next/dynamic in Jest (index.ts uses dynamic())
 import { ExecuteDialog } from './executeDialog';
-import type { IExecuteDialogParams, IExecuteDialogProps } from './executeDialog';
 
 jest.mock('@/shared/components/transactionDialog', () => {
-    const actual = jest.requireActual<typeof import('@/shared/components/transactionDialog')>(
-        '@/shared/components/transactionDialog',
-    );
+    const actual = jest.requireActual<
+        typeof import('@/shared/components/transactionDialog')
+    >('@/shared/components/transactionDialog');
     return {
         ...actual,
         TransactionDialog: jest.fn((props: { children: ReactNode }) => (
@@ -130,7 +133,10 @@ describe('<ExecuteDialog /> proposal card status after indexing', () => {
         );
         const indexedProposal = generateProposal({ id: 'executed-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTED);
 
@@ -195,7 +201,10 @@ describe('<ExecuteDialog /> proposal card status after indexing', () => {
         );
         const indexedProposal = generateProposal({ id: 'executed-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTED);
 

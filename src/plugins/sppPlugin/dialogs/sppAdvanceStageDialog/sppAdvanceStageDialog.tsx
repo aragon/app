@@ -1,9 +1,6 @@
 'use client';
 
-import {
-    invariant,
-    ProposalDataListItem,
-} from '@aragon/gov-ui-kit';
+import { invariant, ProposalDataListItem } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';

@@ -1,9 +1,6 @@
-import { type ProposalStatus } from '@aragon/gov-ui-kit';
+import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
-import {
-    type IProposal,
-    useProposalBySlug,
-} from '../../api/governanceService';
+import { type IProposal, useProposalBySlug } from '../../api/governanceService';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 
 export interface IUseIndexedProposalStatusParams {
@@ -35,11 +32,19 @@ export const useIndexedProposalStatus = (
         urlParams: { slug: slug ?? '' },
         queryParams: { daoId },
     };
-    const { data: indexedProposal } = useProposalBySlug(indexedProposalParams, {
-        enabled: isFetchEnabled,
-    });
+    const { data: indexedProposal, isFetchedAfterMount } = useProposalBySlug(
+        indexedProposalParams,
+        {
+            enabled: isFetchEnabled,
+            refetchOnMount: 'always',
+            staleTime: 0,
+        },
+    );
 
-    const proposalForStatus = isFetchEnabled ? indexedProposal : undefined;
+    const hasFreshIndexedProposal = isFetchEnabled && isFetchedAfterMount;
+    const proposalForStatus = hasFreshIndexedProposal
+        ? indexedProposal
+        : undefined;
     const indexedProposalStatus = useSlotSingleFunction<
         IProposal,
         ProposalStatus
@@ -49,7 +54,7 @@ export const useIndexedProposalStatus = (
         pluginId: proposalForStatus?.pluginInterfaceType ?? '',
     });
 
-    if (!isIndexed || indexedProposalStatus == null) {
+    if (!hasFreshIndexedProposal || indexedProposalStatus == null) {
         return fallbackStatus;
     }
 

@@ -679,9 +679,9 @@ describe('<TransactionDialog /> onIndexed callback', () => {
             description: 'description',
             intent: { id: 'intent' },
             submitLabel: 'submit',
-            stepper: generateStepperResult<ITransactionDialogStepMeta, string>(
-                { activeStep: TransactionDialogStep.INDEXING },
-            ),
+            stepper: generateStepperResult<ITransactionDialogStepMeta, string>({
+                activeStep: TransactionDialogStep.INDEXING,
+            }),
             prepareTransaction: jest.fn(),
             successLink: { label: '', href: '' },
             transactionType: TransactionType.PROPOSAL_CREATE,
@@ -707,7 +707,9 @@ describe('<TransactionDialog /> onIndexed callback', () => {
             generateReactQueryResultSuccess({ data: { isProcessed: false } }),
         );
 
-        const propsWithCallback: Partial<ITransactionDialogProps> = { onIndexed };
+        const propsWithCallback: Partial<ITransactionDialogProps> = {
+            onIndexed,
+        };
 
         const { rerender } = render(createTestComponent(propsWithCallback));
 

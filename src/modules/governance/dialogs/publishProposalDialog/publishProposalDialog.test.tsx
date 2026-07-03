@@ -340,7 +340,10 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
     it('switches the proposal card to the computed status after indexing completes', () => {
         const indexedProposal = generateProposal({ id: 'indexed-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
 
@@ -392,7 +395,10 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
     it('derives the indexed status from the governance proposal status slot', () => {
         const indexedProposal = generateProposal({ id: 'indexed-1' });
         useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
         );
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
 
