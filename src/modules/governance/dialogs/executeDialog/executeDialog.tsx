@@ -5,7 +5,9 @@ import {
     type ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
@@ -71,12 +73,24 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
 
     const slug = proposalUtils.getProposalSlug(proposal, dao);
+    const [isIndexed, setIsIndexed] = useState(false);
+    const proposalCardStatus = useIndexedProposalStatus({
+        daoId,
+        fallbackStatus: status,
+        isIndexed,
+        slug,
+    });
+
+    const handleIndexed = useCallback(() => {
+        setIsIndexed(true);
+    }, []);
 
     return (
         <TransactionDialog
             description={t('app.governance.executeDialog.description')}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             network={network}
+            onIndexed={handleIndexed}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.governance.executeDialog.buttons.submit')}
@@ -91,7 +105,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
                 <ProposalDataListItem.Structure
                     id={slug}
                     publisher={{ address: creator.address }}
-                    status={status}
+                    status={proposalCardStatus}
                     summary={summary}
                     title={title}
                 />

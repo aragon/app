@@ -3,8 +3,9 @@ import {
     ProposalDataListItem,
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { usePinJson } from '@/shared/api/ipfsService/mutations';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -57,6 +58,15 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
     const { t } = useTranslations();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const [indexedProposalSlug, setIndexedProposalSlug] = useState<string>();
+    const rendersProposalStatusCard =
+        plugin.interfaceType !== PluginInterfaceType.ADMIN;
+    const proposalCardStatus = useIndexedProposalStatus({
+        daoId,
+        fallbackStatus: ProposalStatus.DRAFT,
+        isIndexed: rendersProposalStatusCard && indexedProposalSlug != null,
+        slug: indexedProposalSlug,
+    });
 
     const stepper = useStepper<
         ITransactionDialogStepMeta,
@@ -79,6 +89,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
         },
         [pinJson, proposal],
     );
+
+    const handleIndexed = useCallback((result: { slug?: string }) => {
+        setIndexedProposalSlug(result.slug);
+    }, []);
 
     const handlePrepareTransaction = async () => {
         invariant(
@@ -170,6 +184,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
             intentId={intentId}
             network={dao?.network}
+            onIndexed={rendersProposalStatusCard ? handleIndexed : undefined}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t(`${namespace}.button.submit`)}
@@ -184,7 +199,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
             {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
                 <ProposalDataListItem.Structure
                     publisher={{ address }}
-                    status={ProposalStatus.DRAFT}
+                    status={proposalCardStatus}
                     summary={summary}
                     title={title}
                 />

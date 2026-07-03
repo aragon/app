@@ -4,12 +4,14 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import type { WaitForTransactionReceiptErrorType } from 'viem';
 import * as Wagmi from 'wagmi';
 import { Network } from '@/shared/api/daoService';
+import * as transactionService from '@/shared/api/transactionService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
 import {
     generateReactQueryResultError,
+    generateReactQueryResultSuccess,
     generateStepperResult,
 } from '@/shared/testUtils';
 import {
@@ -614,5 +616,178 @@ describe('<TransactionDialog /> component', () => {
             from: address,
             transaction: undefined,
         });
+    });
+});
+
+// contract 001 — proof-first tests for AC5 / Slice A: onIndexed callback wiring
+describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)', () => {
+    const useTransactionStatusSpy = jest.spyOn(
+        transactionService,
+        'useTransactionStatus',
+    );
+    const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
+    const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
+    const useWaitForTransactionReceiptSpy = jest.spyOn(
+        Wagmi,
+        'useWaitForTransactionReceipt',
+    );
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
+    const usePendingTransactionMock = jest.mocked(usePendingTransaction);
+    const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
+    const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
+    const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
+    const managerIsInterruptedSpy = jest.spyOn(
+        pendingTransactionManager,
+        'isInterrupted',
+    );
+
+    beforeEach(() => {
+        useSendTransactionSpy.mockReturnValue(
+            {} as Wagmi.UseSendTransactionReturnType,
+        );
+        useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
+        useConnectionSpy.mockReturnValue(
+            {} as unknown as Wagmi.UseConnectionReturnType,
+        );
+        useWaitForTransactionReceiptSpy.mockReturnValue({
+            status: 'success',
+        } as unknown as Wagmi.UseWaitForTransactionReceiptReturnType);
+        useSwitchChainSpy.mockReturnValue({
+            mutate: jest.fn(),
+        } as unknown as Wagmi.UseSwitchChainReturnType);
+        usePendingTransactionMock.mockReturnValue(undefined);
+        managerSendSpy.mockImplementation(() => undefined);
+        managerClearSpy.mockImplementation(() => undefined);
+        managerGetSpy.mockReturnValue(undefined);
+        managerIsInterruptedSpy.mockReturnValue(false);
+        // Default: not yet indexed
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+    });
+
+    afterEach(() => {
+        useSendTransactionSpy.mockReset();
+        useMutationSpy.mockReset();
+        useConnectionSpy.mockReset();
+        useWaitForTransactionReceiptSpy.mockReset();
+        useSwitchChainSpy.mockReset();
+        usePendingTransactionMock.mockReset();
+        managerSendSpy.mockReset();
+        managerClearSpy.mockReset();
+        managerGetSpy.mockReset();
+        managerIsInterruptedSpy.mockReset();
+        useTransactionStatusSpy.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
+        const completeProps: ITransactionDialogProps = {
+            title: 'title',
+            description: 'description',
+            intentId: 'intent',
+            submitLabel: 'submit',
+            stepper: generateStepperResult<ITransactionDialogStepMeta, string>(
+                { activeStep: TransactionDialogStep.INDEXING },
+            ),
+            prepareTransaction: jest.fn(),
+            successLink: { label: '', href: '' },
+            transactionType: TransactionType.PROPOSAL_CREATE,
+            ...props,
+        };
+
+        return (
+            <GukModulesProvider>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog {...completeProps} />
+                    </Dialog.Root>
+                </DialogProvider>
+            </GukModulesProvider>
+        );
+    };
+
+    it('AC5: fires onIndexed exactly once when isProcessed transitions to true, with the slug', () => {
+        const onIndexed = jest.fn();
+
+        // First render: isProcessed = false
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+
+        const propsWithCallback: Partial<ITransactionDialogProps> = { onIndexed };
+
+        const { rerender } = render(createTestComponent(propsWithCallback));
+
+        // Not yet processed — onIndexed must not have fired
+        expect(onIndexed).not.toHaveBeenCalled();
+
+        // Transition: isProcessed = true with a slug
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'abc' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent(propsWithCallback));
+        });
+
+        expect(onIndexed).toHaveBeenCalledTimes(1);
+        expect(onIndexed).toHaveBeenCalledWith({ slug: 'abc' });
+
+        // Refetch/identity churn: a fresh status object (react-query polls return new object
+        // identities) AND a new callback identity (consumers pass inline callbacks) while
+        // isProcessed stays true must NOT refire — pins the ref-based once-guard of D2.
+        const onIndexedNext = jest.fn();
+        const nextProps: Partial<ITransactionDialogProps> = {
+            onIndexed: onIndexedNext,
+        };
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'abc' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent(nextProps));
+        });
+
+        expect(onIndexed).toHaveBeenCalledTimes(1);
+        expect(onIndexedNext).not.toHaveBeenCalled();
+    });
+
+    // AC5 regression: consumer WITHOUT onIndexed renders identically through the
+    // isProcessed transition. The card region (children) is pinned byte-for-byte; the
+    // indexing STEP indicator legitimately flips pending→success (pre-existing behavior),
+    // so the assertion scopes to children rather than the whole container.
+    it('AC5 regression: children render identically when onIndexed is omitted, even after isProcessed becomes true', () => {
+        const children = <div data-testid="card-region">card-content</div>;
+
+        // Start with not processed
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+
+        const { rerender } = render(createTestComponent({ children }));
+        expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
+        const cardRegionBefore = screen.getByTestId('card-region').outerHTML;
+
+        // Transition to processed — no onIndexed prop, must not crash nor touch children
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'xyz' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent({ children }));
+        });
+
+        // Component is still alive and the card region is byte-for-byte unchanged
+        expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
+        expect(screen.getByTestId('card-region').outerHTML).toEqual(
+            cardRegionBefore,
+        );
     });
 });

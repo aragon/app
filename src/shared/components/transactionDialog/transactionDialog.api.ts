@@ -123,6 +123,11 @@ export interface ITransactionDialogProps<
      */
     onSuccess?: (receipt: TransactionReceipt) => void;
     /**
+     * Callback fired exactly once when the backend reports the transaction as indexed (isProcessed
+     * transitions to true); the slug is only populated for proposal-creation transactions.
+     */
+    onIndexed?: (result: { slug?: string }) => void;
+    /**
      * The Network the user must be connected to for the transaction.
      * @default Network.ETHEREUM_MAINNET
      */

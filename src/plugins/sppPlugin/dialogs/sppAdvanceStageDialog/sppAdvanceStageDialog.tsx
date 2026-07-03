@@ -6,6 +6,8 @@ import {
     ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
 import { proposalUtils } from '@/modules/governance/utils/proposalUtils';
 import { useDao } from '@/shared/api/daoService';
 import { TransactionType } from '@/shared/api/transactionService';
@@ -63,12 +65,24 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
     const slug = proposalUtils.getProposalSlug(proposal, dao);
+    const [isIndexed, setIsIndexed] = useState(false);
+    const proposalCardStatus = useIndexedProposalStatus({
+        daoId,
+        fallbackStatus: ProposalStatus.ACTIVE,
+        isIndexed,
+        slug,
+    });
+
+    const handleIndexed = useCallback(() => {
+        setIsIndexed(true);
+    }, []);
 
     return (
         <TransactionDialog
             description={t('app.plugins.spp.advanceStageDialog.description')}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
             network={proposal.network}
+            onIndexed={handleIndexed}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.plugins.spp.advanceStageDialog.button.submit')}
@@ -85,7 +99,7 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
                     address: creatorAddress,
                     name: creatorEns ?? undefined,
                 }}
-                status={ProposalStatus.ACTIVE}
+                status={proposalCardStatus}
                 summary={proposal.summary}
                 title={proposal.title}
                 type="approvalThreshold"
