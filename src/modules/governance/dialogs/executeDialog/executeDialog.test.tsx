@@ -1,4 +1,3 @@
-// contract 001 — proof-first tests for AC4: executeDialog post-indexing status update
 import {
     GukModulesProvider,
     modulesCopy,
@@ -41,7 +40,7 @@ jest.mock('next/navigation', () => ({
     useParams: jest.fn(() => ({})),
 }));
 
-describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
+describe('<ExecuteDialog /> proposal card status after indexing', () => {
     const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useProposalBySlugSpy = jest.spyOn(
@@ -102,8 +101,7 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
         );
     };
 
-    // AC4 pre-index: card shows the passed-in status (EXECUTABLE) before indexing
-    it('AC4 pre-index: proposal card shows the passed-in EXECUTABLE status before indexing completes', () => {
+    it('keeps the proposal card on the passed-in status before indexing completes', () => {
         const location = generateDialogLocation({
             status: ProposalStatus.EXECUTABLE,
         });
@@ -115,7 +113,6 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
             ),
         ).toBeInTheDocument();
 
-        // EXECUTED must not appear yet
         expect(
             screen.queryByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.EXECUTED,
@@ -123,9 +120,9 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('AC4 post-index: after indexing completes, proposal card switches from EXECUTABLE to EXECUTED', () => {
-        // Fixtures aligned so the LOCAL slug derives: dao plugin address matches
-        // proposal.pluginAddress ('0x123') → proposalUtils.getProposalSlug = 'SLUG-1'.
+    it('switches the proposal card to the computed status after indexing completes', () => {
+        // Fixtures align the DAO plugin address with the proposal plugin address,
+        // so proposalUtils.getProposalSlug resolves to SLUG-1.
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateDao({ plugins: [generateDaoPlugin()] }),
@@ -142,9 +139,8 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
         });
         render(createTestComponent({ location }));
 
-        // Gate check: fetch + slot mocks are hot from the FIRST render (the proposal is
-        // fetchable before the tx is even signed here), yet the card must keep the
-        // placeholder until the indexing signal — pins "only after we index it".
+        // The post-index query and slot are available from the first render; the
+        // card should still wait for the indexing signal before updating.
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.EXECUTABLE,
@@ -156,7 +152,7 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
             ),
         ).not.toBeInTheDocument();
 
-        // Capture the onIndexed callback — contract 001 D2
+        // Capture onIndexed from the mocked TransactionDialog.
         const passedProps = (TransactionDialog as jest.Mock).mock
             .calls[0][0] as Record<string, unknown>;
         const onIndexed = passedProps['onIndexed'] as
@@ -165,16 +161,14 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
 
         expect(onIndexed).toBeInstanceOf(Function);
 
-        // The backend only returns a slug for proposal-CREATION transactions
-        // (transactionDialog.api.ts:19-21) — for PROPOSAL_EXECUTE the payload carries no
-        // slug, and the dialog must fall back to its locally derived slug.
+        // Execute transactions do not receive a callback slug, so the dialog must
+        // use its locally derived slug.
         act(() => {
             (onIndexed as (result: { slug?: string }) => void)({
                 slug: undefined,
             });
         });
 
-        // EXECUTED must now appear; EXECUTABLE must disappear
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.EXECUTED,
@@ -186,15 +180,14 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
             ),
         ).not.toBeInTheDocument();
 
-        // The fetch must use the LOCALLY derived slug, not the (absent) callback slug.
+        // The fetch must use the locally derived slug, not the absent callback slug.
         const fetchedWithLocalSlug = useProposalBySlugSpy.mock.calls.some(
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
     });
 
-    // AC3 / AC4: real status derived via useSlotSingleFunction with GOVERNANCE_PROCESS_PROPOSAL_STATUS
-    it('AC4+AC3: after indexing, status is derived via useSlotSingleFunction with GOVERNANCE_PROCESS_PROPOSAL_STATUS slot', () => {
+    it('derives the indexed status from the governance proposal status slot', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateDao({ plugins: [generateDaoPlugin()] }),
@@ -219,15 +212,13 @@ describe('<ExecuteDialog /> post-indexing status (contract 001 AC4)', () => {
 
         expect(onIndexed).toBeInstanceOf(Function);
 
-        // No slug for PROPOSAL_EXECUTE — indexed signal only (contract §2.4)
+        // No slug for PROPOSAL_EXECUTE; the callback is only an indexed signal.
         act(() => {
             (onIndexed as (result: { slug?: string }) => void)({
                 slug: undefined,
             });
         });
 
-        // pluginId is load-bearing: without it the slot registry lookup misses in
-        // production and the status never resolves.
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,

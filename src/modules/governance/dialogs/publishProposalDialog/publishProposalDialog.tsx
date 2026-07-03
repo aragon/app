@@ -202,6 +202,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
         >
             {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
                 <ProposalDataListItem.Structure
+                    id={indexedProposalSlug?.toUpperCase()}
                     publisher={{ address }}
                     status={proposalCardStatus}
                     summary={summary}

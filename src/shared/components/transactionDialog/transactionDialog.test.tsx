@@ -618,8 +618,7 @@ describe('<TransactionDialog /> component', () => {
     });
 });
 
-// contract 001 — proof-first tests for AC5 / Slice A: onIndexed callback wiring
-describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)', () => {
+describe('<TransactionDialog /> onIndexed callback', () => {
     const useTransactionStatusSpy = jest.spyOn(
         transactionService,
         'useTransactionStatus',
@@ -636,10 +635,6 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
     const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
     const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
     const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
-    const managerIsInterruptedSpy = jest.spyOn(
-        pendingTransactionManager,
-        'isInterrupted',
-    );
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue(
@@ -659,7 +654,6 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         managerSendSpy.mockImplementation(() => undefined);
         managerClearSpy.mockImplementation(() => undefined);
         managerGetSpy.mockReturnValue(undefined);
-        managerIsInterruptedSpy.mockReturnValue(false);
         // Default: not yet indexed
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: { isProcessed: false } }),
@@ -676,7 +670,6 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         managerSendSpy.mockReset();
         managerClearSpy.mockReset();
         managerGetSpy.mockReset();
-        managerIsInterruptedSpy.mockReset();
         useTransactionStatusSpy.mockReset();
     });
 
@@ -684,7 +677,7 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         const completeProps: ITransactionDialogProps = {
             title: 'title',
             description: 'description',
-            intentId: 'intent',
+            intent: { id: 'intent' },
             submitLabel: 'submit',
             stepper: generateStepperResult<ITransactionDialogStepMeta, string>(
                 { activeStep: TransactionDialogStep.INDEXING },
@@ -706,10 +699,10 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         );
     };
 
-    it('AC5: fires onIndexed exactly once when isProcessed transitions to true, with the slug', () => {
+    it('calls onIndexed exactly once when the transaction is indexed, with the proposal slug', () => {
         const onIndexed = jest.fn();
 
-        // First render: isProcessed = false
+        // First render: the transaction is not indexed yet.
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: { isProcessed: false } }),
         );
@@ -718,10 +711,10 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
 
         const { rerender } = render(createTestComponent(propsWithCallback));
 
-        // Not yet processed — onIndexed must not have fired
+        // The callback waits until indexing completes.
         expect(onIndexed).not.toHaveBeenCalled();
 
-        // Transition: isProcessed = true with a slug
+        // Transition to indexed with a proposal slug.
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: { isProcessed: true, slug: 'abc' },
@@ -735,9 +728,8 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         expect(onIndexed).toHaveBeenCalledTimes(1);
         expect(onIndexed).toHaveBeenCalledWith({ slug: 'abc' });
 
-        // Refetch/identity churn: a fresh status object (react-query polls return new object
-        // identities) AND a new callback identity (consumers pass inline callbacks) while
-        // isProcessed stays true must NOT refire — pins the ref-based once-guard of D2.
+        // React Query polling can replace the status object, and consumers can pass
+        // inline callbacks. Neither should trigger the callback a second time.
         const onIndexedNext = jest.fn();
         const nextProps: Partial<ITransactionDialogProps> = {
             onIndexed: onIndexedNext,
@@ -756,14 +748,12 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         expect(onIndexedNext).not.toHaveBeenCalled();
     });
 
-    // AC5 regression: consumer WITHOUT onIndexed renders identically through the
-    // isProcessed transition. The card region (children) is pinned byte-for-byte; the
-    // indexing STEP indicator legitimately flips pending→success (pre-existing behavior),
-    // so the assertion scopes to children rather than the whole container.
-    it('AC5 regression: children render identically when onIndexed is omitted, even after isProcessed becomes true', () => {
+    // The indexing step indicator legitimately changes from pending to success, so
+    // the assertion scopes to the consumer-rendered card region.
+    it('keeps children unchanged when onIndexed is omitted after indexing completes', () => {
         const children = <div data-testid="card-region">card-content</div>;
 
-        // Start with not processed
+        // Start before indexing completes.
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: { isProcessed: false } }),
         );
@@ -772,7 +762,7 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
         expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
         const cardRegionBefore = screen.getByTestId('card-region').outerHTML;
 
-        // Transition to processed — no onIndexed prop, must not crash nor touch children
+        // Complete indexing without a callback.
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: { isProcessed: true, slug: 'xyz' },
@@ -783,7 +773,7 @@ describe('<TransactionDialog /> onIndexed callback (contract 001 AC5 / Slice A)'
             rerender(createTestComponent({ children }));
         });
 
-        // Component is still alive and the card region is byte-for-byte unchanged
+        // Component is still alive and the card region is unchanged.
         expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
         expect(screen.getByTestId('card-region').outerHTML).toEqual(
             cardRegionBefore,

@@ -3,7 +3,6 @@
 import {
     invariant,
     ProposalDataListItem,
-    ProposalStatus,
 } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
@@ -21,6 +20,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { ISppProposal } from '../../types';
+import { sppProposalUtils } from '../../utils/sppProposalUtils';
 import { sppAdvanceStageDialogUtils } from './sppAdvanceStageDialogUtils';
 
 export interface ISppAdvanceStageDialogParams {
@@ -65,10 +65,11 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
 
     const { address: creatorAddress, ens: creatorEns } = proposal.creator;
     const slug = proposalUtils.getProposalSlug(proposal, dao);
+    const currentProposalStatus = sppProposalUtils.getProposalStatus(proposal);
     const [isIndexed, setIsIndexed] = useState(false);
     const proposalCardStatus = useIndexedProposalStatus({
         daoId,
-        fallbackStatus: ProposalStatus.ACTIVE,
+        fallbackStatus: currentProposalStatus,
         isIndexed,
         slug,
     });

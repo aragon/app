@@ -1,4 +1,3 @@
-// contract 001 — proof-first tests for AC4: sppAdvanceStageDialog post-indexing status update
 import {
     GukModulesProvider,
     modulesCopy,
@@ -21,6 +20,7 @@ import * as governanceService from '@/modules/governance/api/governanceService';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { generateProposal } from '@/modules/governance/testUtils';
 import { generateSppProposal } from '../../testUtils';
+import * as sppProposalUtils from '../../utils/sppProposalUtils';
 import { SppAdvanceStageDialog } from './sppAdvanceStageDialog';
 import type {
     ISppAdvanceStageDialogParams,
@@ -44,7 +44,7 @@ jest.mock('next/navigation', () => ({
     useParams: jest.fn(() => ({})),
 }));
 
-describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', () => {
+describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => {
     const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useProposalBySlugSpy = jest.spyOn(
@@ -54,6 +54,10 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
     const useSlotSingleFunctionSpy = jest.spyOn(
         useSlotSingleFunction,
         'useSlotSingleFunction',
+    );
+    const getProposalStatusSpy = jest.spyOn(
+        sppProposalUtils.sppProposalUtils,
+        'getProposalStatus',
     );
 
     beforeEach(() => {
@@ -71,6 +75,7 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
             >,
         );
         useSlotSingleFunctionSpy.mockReturnValue(undefined);
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
     });
 
     afterEach(() => {
@@ -78,6 +83,7 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
         useDaoSpy.mockReset();
         useProposalBySlugSpy.mockReset();
         useSlotSingleFunctionSpy.mockReset();
+        getProposalStatusSpy.mockReset();
         (TransactionDialog as jest.Mock).mockClear();
     });
 
@@ -104,18 +110,22 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
         );
     };
 
-    // AC4 pre-index: card shows hardcoded ACTIVE status before indexing
-    it('AC4 pre-index: proposal card shows hardcoded ACTIVE status before indexing completes', () => {
+    it('keeps the proposal card on the current status before indexing completes', () => {
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.REJECTED);
         const location = generateDialogLocation();
         render(createTestComponent({ location }));
 
         expect(
             screen.getByText(
-                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+                modulesCopy.proposalDataListItemStatus.statusLabel.REJECTED,
             ),
         ).toBeInTheDocument();
 
-        // EXECUTABLE must not appear yet (the post-index real status we'll test)
+        expect(
+            screen.queryByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+            ),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.EXECUTABLE,
@@ -123,9 +133,9 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
         ).not.toBeInTheDocument();
     });
 
-    it('AC4 post-index: after indexing completes, proposal card switches from ACTIVE to real computed status', () => {
-        // Fixtures aligned so the LOCAL slug derives: dao plugin address matches
-        // proposal.pluginAddress ('0x123') → proposalUtils.getProposalSlug = 'SLUG-1'.
+    it('switches the proposal card to the computed status after indexing completes', () => {
+        // Fixtures align the DAO plugin address with the proposal plugin address,
+        // so proposalUtils.getProposalSlug resolves to SLUG-1.
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateDao({ plugins: [generateDaoPlugin()] }),
@@ -135,15 +145,13 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
         useProposalBySlugSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: indexedProposal }),
         );
-        // The real status after advancing a stage would be EXECUTABLE (stage passed)
         useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTABLE);
 
         const location = generateDialogLocation();
         render(createTestComponent({ location }));
 
-        // Gate check: fetch + slot mocks are hot from the FIRST render (the proposal is
-        // fetchable before the tx is even signed here), yet the card must keep the
-        // placeholder until the indexing signal — pins "only after we index it".
+        // The post-index query and slot are available from the first render; the
+        // card should still wait for the indexing signal before updating.
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
@@ -155,7 +163,7 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
             ),
         ).not.toBeInTheDocument();
 
-        // Capture the onIndexed callback — contract 001 D2
+        // Capture onIndexed from the mocked TransactionDialog.
         const passedProps = (TransactionDialog as jest.Mock).mock
             .calls[0][0] as Record<string, unknown>;
         const onIndexed = passedProps['onIndexed'] as
@@ -164,16 +172,14 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
 
         expect(onIndexed).toBeInstanceOf(Function);
 
-        // The backend only returns a slug for proposal-CREATION transactions
-        // (transactionDialog.api.ts:19-21) — for PROPOSAL_ADVANCE_STAGE the payload
-        // carries no slug, and the dialog must fall back to its locally derived slug.
+        // Advance-stage transactions do not receive a callback slug, so the
+        // dialog must use its locally derived slug.
         act(() => {
             (onIndexed as (result: { slug?: string }) => void)({
                 slug: undefined,
             });
         });
 
-        // EXECUTABLE must now appear; ACTIVE must disappear
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.EXECUTABLE,
@@ -185,15 +191,14 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
             ),
         ).not.toBeInTheDocument();
 
-        // The fetch must use the LOCALLY derived slug, not the (absent) callback slug.
+        // The fetch must use the locally derived slug, not the absent callback slug.
         const fetchedWithLocalSlug = useProposalBySlugSpy.mock.calls.some(
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
     });
 
-    // AC3 / AC4: real status derived via useSlotSingleFunction with GOVERNANCE_PROCESS_PROPOSAL_STATUS
-    it('AC4+AC3: after indexing, status is derived via useSlotSingleFunction with GOVERNANCE_PROCESS_PROPOSAL_STATUS slot', () => {
+    it('derives the indexed status from the governance proposal status slot', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({
                 data: generateDao({ plugins: [generateDaoPlugin()] }),
@@ -216,15 +221,13 @@ describe('<SppAdvanceStageDialog /> post-indexing status (contract 001 AC4)', ()
 
         expect(onIndexed).toBeInstanceOf(Function);
 
-        // No slug for PROPOSAL_ADVANCE_STAGE — indexed signal only (contract §2.4)
+        // No slug for PROPOSAL_ADVANCE_STAGE; the callback is only an indexed signal.
         act(() => {
             (onIndexed as (result: { slug?: string }) => void)({
                 slug: undefined,
             });
         });
 
-        // pluginId is load-bearing: without it the slot registry lookup misses in
-        // production and the status never resolves.
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,

@@ -240,8 +240,7 @@ describe('<PublishProposalDialog /> component', () => {
     });
 });
 
-// contract 001 — proof-first tests for post-indexing proposal-card status update
-describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => {
+describe('<PublishProposalDialog /> proposal card status after indexing', () => {
     const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
     const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
@@ -321,19 +320,16 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
         );
     };
 
-    // AC1 — before indexing completes, card status stays DRAFT; real-status label is absent
-    it('AC1: before indexing completes, proposal card still shows DRAFT status', () => {
+    it('keeps the proposal card in draft before indexing completes', () => {
         const location = generateDialogLocation();
         render(createTestComponent({ location }));
 
-        // DRAFT label must be visible
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
             ),
         ).toBeInTheDocument();
 
-        // Real post-index status (ACTIVE) must NOT be visible
         expect(
             screen.queryByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
@@ -341,7 +337,7 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
         ).not.toBeInTheDocument();
     });
 
-    it('AC2: after indexing completes, proposal card switches to the real status from the slot function', () => {
+    it('switches the proposal card to the computed status after indexing completes', () => {
         const indexedProposal = generateProposal({ id: 'indexed-1' });
         useProposalBySlugSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: indexedProposal }),
@@ -351,9 +347,8 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
         const location = generateDialogLocation();
         render(createTestComponent({ location }));
 
-        // Gate check: the fetch + slot mocks are already hot from the FIRST render, yet the
-        // card must still show DRAFT until the indexing signal fires — pins "only after we
-        // index it" against gate-free implementations that update on data availability.
+        // The post-index query and slot are available from the first render; the
+        // card should still wait for the indexing signal before updating.
         expect(
             screen.getByText(
                 modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
@@ -364,46 +359,9 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
                 modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
             ),
         ).not.toBeInTheDocument();
+        expect(screen.queryByText('MY-PROPOSAL')).not.toBeInTheDocument();
 
-        // Capture onIndexed from the mocked TransactionDialog — contract 001 D2
-        const passedProps = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as Record<string, unknown>;
-        const onIndexed = passedProps['onIndexed'] as
-            | ((result: { slug?: string }) => void)
-            | undefined;
-
-        expect(onIndexed).toBeInstanceOf(Function);
-
-        // Simulate indexing completion
-        act(() => {
-            (onIndexed as (result: { slug?: string }) => void)({
-                slug: 'my-proposal',
-            });
-        });
-
-        // After indexing: ACTIVE label must appear, DRAFT must disappear
-        expect(
-            screen.getByText(
-                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByText(
-                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
-            ),
-        ).not.toBeInTheDocument();
-    });
-
-    it('AC3: after indexing, status is derived via useSlotSingleFunction with GOVERNANCE_PROCESS_PROPOSAL_STATUS slot', () => {
-        const indexedProposal = generateProposal({ id: 'indexed-1' });
-        useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({ data: indexedProposal }),
-        );
-        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
-
-        const location = generateDialogLocation();
-        render(createTestComponent({ location }));
-
+        // Capture onIndexed from the mocked TransactionDialog.
         const passedProps = (TransactionDialog as jest.Mock).mock
             .calls[0][0] as Record<string, unknown>;
         const onIndexed = passedProps['onIndexed'] as
@@ -418,9 +376,43 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
             });
         });
 
-        // Assert the slot utility was called with the canonical shape (AC3: reuse, not
-        // bespoke logic). pluginId is load-bearing: without it the slot registry lookup
-        // misses in production and the status never resolves.
+        expect(
+            screen.getByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
+            ),
+        ).not.toBeInTheDocument();
+        expect(screen.getByText('MY-PROPOSAL')).toBeInTheDocument();
+    });
+
+    it('derives the indexed status from the governance proposal status slot', () => {
+        const indexedProposal = generateProposal({ id: 'indexed-1' });
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: indexedProposal }),
+        );
+        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+        const location = generateDialogLocation();
+        render(createTestComponent({ location }));
+
+        const passedProps = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as Record<string, unknown>;
+        const onIndexed = passedProps['onIndexed'] as
+            | ((result: { slug?: string }) => void)
+            | undefined;
+
+        expect(onIndexed).toBeInstanceOf(Function);
+
+        act(() => {
+            (onIndexed as (result: { slug?: string }) => void)({
+                slug: 'my-proposal',
+            });
+        });
+
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
@@ -430,7 +422,7 @@ describe('<PublishProposalDialog /> post-indexing status (contract 001)', () => 
         );
 
         // Create flow is the one place the backend delivers a slug via onIndexed — the
-        // fetch must use it (contract §2.4).
+        // fetch must use it.
         const fetchedWithCallbackSlug = useProposalBySlugSpy.mock.calls.some(
             ([params]) => params.urlParams.slug === 'my-proposal',
         );
