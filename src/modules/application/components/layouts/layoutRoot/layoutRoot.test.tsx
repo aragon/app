@@ -7,6 +7,11 @@ import { translations } from '@/shared/constants/translations';
 import { testLogger } from '@/test/utils';
 import { type ILayoutRootProps, LayoutRoot } from './layoutRoot';
 
+jest.mock('@vercel/analytics/next', () => ({ Analytics: () => null }));
+jest.mock('@vercel/speed-insights/next', () => ({
+    SpeedInsights: () => null,
+}));
+
 jest.mock('../../providers', () => ({
     Providers: (props: {
         translations: unknown;
