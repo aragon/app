@@ -287,7 +287,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                             className="w-fit"
                             iconLeft={IconType.PEN}
                             onClick={handleRenameAragonName}
-                            size="md"
+                            size="sm"
                             variant="tertiary"
                         >
                             {t(
@@ -384,7 +384,7 @@ export const AragonProfileDialog: React.FC<IAragonProfileDialogProps> = (
                         <Button
                             className="w-fit"
                             onClick={handleRemoveAragonName}
-                            size="md"
+                            size="sm"
                             variant="critical"
                         >
                             {t(
