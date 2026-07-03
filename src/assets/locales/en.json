@@ -546,8 +546,24 @@
             "label": "Links",
             "telegram": "Telegram",
             "twitter": "X",
-            "website": "Website"
+            "website": "Website",
+            "placeholders": {
+              "discord": "username",
+              "email": "name@example.com",
+              "github": "username",
+              "telegram": "@username",
+              "twitter": "@handle",
+              "website": "https://example.com"
+            }
           }
+        },
+        "errors": {
+          "email": "Enter a valid email address.",
+          "website": "Enter a valid http or https URL.",
+          "github": "Enter a valid GitHub username.",
+          "twitter": "Enter a valid X username.",
+          "telegram": "Enter a valid Telegram username (5–32 characters).",
+          "discord": "Enter a valid Discord username."
         },
         "alert": {
           "description": "Changes are saved to your primary ENS profile and may appear in other ENS-compatible apps.",
@@ -564,7 +580,7 @@
         },
         "dangerZone": {
           "title": "Delete Aragon profile",
-          "description": "Once you delete your Aragon profile it's released and can be claimed by someone else. This can't be undone."
+          "description": "Once you delete your Aragon profile, the name is released and can be claimed by anyone else. This action cannot be undone."
         }
       },
       "aragonProfileReleaseAlertDialog": {
@@ -1939,7 +1955,10 @@
             "title": "Links",
             "website": "Website",
             "twitter": "X",
-            "github": "GitHub"
+            "github": "GitHub",
+            "email": "Email",
+            "telegram": "Telegram",
+            "discord": "Discord"
           }
         },
         "error": {
@@ -2085,6 +2104,21 @@
             "label": "Pin statement to IPFS",
             "errorLabel": "Pinning failed"
           }
+        }
+      },
+      "duplicateProposalAlertDialog": {
+        "title": "This may create another proposal",
+        "description": {
+          "1": "A transaction was already started to publish this proposal. If that transaction succeeds, starting a new transaction may result in another proposal.",
+          "2": "Only continue if you've checked the previous transaction or intentionally want to publish again."
+        },
+        "action": {
+          "resume": "Resume existing transaction",
+          "new": "New transaction",
+          "back": "Go back"
+        },
+        "a11y": {
+          "description": "Warning that a transaction to publish this proposal was already started."
         }
       },
       "memberDelegateButton": {
@@ -3498,6 +3532,63 @@
           "info": "This policy can't be dispatched once it's uninstalled."
         }
       },
+      "daoPermissionsPage": {
+        "header": {
+          "breadcrumb": {
+            "settings": "Settings",
+            "permissions": "Permissions"
+          },
+          "title": "Permissions",
+          "description": "All permissions configured in this DAO — who has access, to which contract, and under what conditions."
+        },
+        "view": {
+          "list": "List",
+          "graph": "Graph"
+        }
+      },
+      "permissionsList": {
+        "header": {
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition"
+        },
+        "details": {
+          "heading": "Details",
+          "who": "Who",
+          "where": "Where",
+          "permission": "Permission",
+          "condition": "Condition",
+          "noCondition": "No condition"
+        },
+        "condition": {
+          "heading": "Condition detail"
+        },
+        "expandAll": "Expand all",
+        "collapseAll": "Collapse all",
+        "empty": {
+          "heading": "No permissions",
+          "description": "This account has no indexed permissions."
+        }
+      },
+      "noConditionSlot": {
+        "heading": "No condition",
+        "description": "Functions guarded by this permission can be called by the granted address directly."
+      },
+      "votingPowerConditionSlot": {
+        "token": "Token",
+        "minVotingPower": "Minimum voting power"
+      },
+      "executeSelectorConditionSlot": {
+        "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
+        "allowedActions": "Allowed actions",
+        "noActions": "No allowed actions"
+      },
+      "membershipConditionSlot": {
+        "memberOfMultisig": "Member of multisig",
+        "true": "True",
+        "false": "False"
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",
@@ -3550,6 +3641,9 @@
         "links": "Links",
         "name": "Name",
         "notChangeable": "Not changeable",
+        "permissions": "Permissions",
+        "permissionsDescription": "Get an overview of all permissions related to this account and its actors",
+        "permissionsLink": "View all permissions",
         "readLess": "Read less",
         "readMore": "Read more",
         "summary": "Summary",
@@ -3792,7 +3886,7 @@
             "idle": "Sign transaction",
             "pending": "Awaiting signature"
           },
-          "cancel": "Cancel",
+          "cancel": "Close",
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },

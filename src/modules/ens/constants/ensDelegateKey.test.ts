@@ -59,11 +59,11 @@ describe('buildEnsDelegateKey', () => {
     it('lowercases mixed-case token addresses for canonical keys', () => {
         const a = buildEnsDelegateKey({
             network: Network.ETHEREUM_MAINNET,
-            tokenAddress: '0xABCDEF1234567890abcdef1234567890ABCDEF12',
+            tokenAddress: '0x1234ABCDef1234ABCDef1234ABCDef1234ABCDef',
         });
         const b = buildEnsDelegateKey({
             network: Network.ETHEREUM_MAINNET,
-            tokenAddress: '0xabcdef1234567890abcdef1234567890abcdef12',
+            tokenAddress: '0x1234abcdef1234abcdef1234abcdef1234abcdef',
         });
         expect(a).toBe(b);
     });

@@ -82,11 +82,24 @@ export interface ITransactionDialogProps<
      */
     description: string;
     /**
-     * Stable identity used to resume an in-flight send on re-open. Defaults to a hash of the prepared
-     * transaction; pass an explicit `buildIntentId` only when the calldata is non-deterministic across
-     * re-opens (e.g. a proposal's relative end date, or freshly deployed contract addresses).
+     * Describes the action for the pending-transaction manager: how to resume it and how to scope
+     * duplicate detection. Every field is optional — omit `intent` entirely for one-off inline
+     * transactions that need neither resume-by-explicit-id nor duplicate detection.
      */
-    intentId?: string;
+    intent?: {
+        /**
+         * Stable identity used to resume an in-flight send on re-open. Defaults to a hash of the
+         * prepared transaction; pass an explicit `buildIntentId` only when the calldata is
+         * non-deterministic across re-opens (e.g. a proposal's relative end date, or freshly deployed
+         * contract addresses).
+         */
+        id?: string;
+        /**
+         * Opaque scope (e.g. a DAO + plugin key) stored with the pending transaction so duplicate
+         * detection can be narrowed to the same context. Combined with `transactionType` by the caller.
+         */
+        scope?: string;
+    };
     /**
      * Label for the submit button used as fallback when the specific step state label is not set.
      */

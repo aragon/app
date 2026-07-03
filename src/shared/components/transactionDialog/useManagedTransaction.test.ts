@@ -24,10 +24,6 @@ describe('useManagedTransaction', () => {
     const usePendingTransactionMock = jest.mocked(usePendingTransaction);
     const useReceiptSpy = jest.spyOn(Wagmi, 'useWaitForTransactionReceipt');
     const getSpy = jest.spyOn(pendingTransactionManager, 'get');
-    const isInterruptedSpy = jest.spyOn(
-        pendingTransactionManager,
-        'isInterrupted',
-    );
     const sendSpy = jest.spyOn(pendingTransactionManager, 'send');
     const clearSpy = jest.spyOn(pendingTransactionManager, 'clear');
     const getRequestSpy = jest.spyOn(pendingTransactionManager, 'getRequest');
@@ -38,7 +34,6 @@ describe('useManagedTransaction', () => {
             {} as Wagmi.UseWaitForTransactionReceiptReturnType,
         );
         getSpy.mockReturnValue(undefined);
-        isInterruptedSpy.mockReturnValue(false);
         sendSpy.mockImplementation(() => undefined);
         clearSpy.mockImplementation(() => undefined);
         getRequestSpy.mockReturnValue(undefined);
@@ -63,9 +58,8 @@ describe('useManagedTransaction', () => {
         expect(result.current.resumeTarget).toBe(TransactionDialogStep.APPROVE);
     });
 
-    it('does not resume and clears an interrupted (reloaded) pending record', () => {
-        getSpy.mockReturnValue({ status: PendingTransactionStatus.PENDING });
-        isInterruptedSpy.mockReturnValue(true);
+    it('clears a stale FAILED record and starts fresh (no resume)', () => {
+        getSpy.mockReturnValue({ status: PendingTransactionStatus.FAILED });
         const { result } = renderHook(() => useManagedTransaction('id'));
         expect(result.current.resumeTarget).toBeUndefined();
         expect(clearSpy).toHaveBeenCalledWith('id');
@@ -158,7 +152,14 @@ describe('useManagedTransaction', () => {
     it('sends through the manager keyed by the intent id', () => {
         const { result } = renderHook(() => useManagedTransaction('id'));
         act(() => result.current.send(request));
-        expect(sendSpy).toHaveBeenCalledWith('id', request);
+        expect(sendSpy).toHaveBeenCalledWith('id', request, undefined);
+    });
+
+    it('forwards the meta so the manager can scope duplicate detection', () => {
+        const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+        const { result } = renderHook(() => useManagedTransaction('id', meta));
+        act(() => result.current.send(request));
+        expect(sendSpy).toHaveBeenCalledWith('id', request, meta);
     });
 
     it('resends the stored request for a resumed action and reports success', () => {

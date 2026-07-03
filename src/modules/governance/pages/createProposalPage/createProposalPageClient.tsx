@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useMemo, useState } from 'react';
+import { TransactionType } from '@/shared/api/transactionService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -16,7 +18,10 @@ import type {
     PrepareProposalActionFunction,
     PrepareProposalActionMap,
 } from '../../dialogs/publishProposalDialog';
+// Imported directly (not via the dialog barrel) so the guard doesn't pull the dialog into this bundle.
+import { publishProposalDialogUtils } from '../../dialogs/publishProposalDialog/publishProposalDialogUtils';
 import { useProposalPermissionCheckGuard } from '../../hooks/useProposalPermissionCheckGuard';
+import { proposalResumeRegistry } from '../../utils/proposalResumeRegistry';
 import { CreateProposalPageClientSteps } from './createProposalPageClientSteps';
 import {
     createProposalWizardId,
@@ -81,7 +86,57 @@ export const CreateProposalPageClient: React.FC<
             plugin,
             prepareActions,
         };
-        open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+
+        // Editing the form after closing the dialog produces a new intentId, so the prior in-flight
+        // proposal creation is no longer resumed and a fresh submit would create a second proposal.
+        // Warn when another proposal creation for this DAO + plugin is still pending/submitted; an
+        // unchanged form shares the intentId and resumes as before (no conflict, no warning).
+        const intentId = publishProposalDialogUtils.buildProposalIntentId({
+            daoId,
+            plugin,
+            proposal,
+        });
+        const scope = publishProposalDialogUtils.buildProposalScope(
+            daoId,
+            plugin.address,
+        );
+        const conflictFilter = {
+            type: TransactionType.PROPOSAL_CREATE,
+            scope,
+            excludeIntentId: intentId,
+        };
+
+        const openPublishDialog = () => {
+            // "New transaction" / no conflict: the user has committed to this proposal, so supersede any
+            // other in-flight creation for this DAO + plugin that would otherwise keep warning forever.
+            pendingTransactionManager.clearActive(conflictFilter);
+            proposalResumeRegistry.set(intentId, params);
+            open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
+        };
+
+        const conflicts = pendingTransactionManager.getActive(conflictFilter);
+
+        if (conflicts.length > 0) {
+            // Offer to resume the conflicting in-flight creation when we still hold the params needed
+            // to reopen its dialog (session-scoped; lost after a reload).
+            const resumeParams = conflicts
+                .map(([id]) => proposalResumeRegistry.get(id))
+                .find((registered) => registered != null);
+            const onResume =
+                resumeParams != null
+                    ? () =>
+                          open(GovernanceDialogId.PUBLISH_PROPOSAL, {
+                              params: resumeParams,
+                          })
+                    : undefined;
+
+            open(GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING, {
+                params: { onProceed: openPublishDialog, onResume },
+            });
+            return;
+        }
+
+        openPublishDialog();
     };
 
     const processedSteps = useMemo(

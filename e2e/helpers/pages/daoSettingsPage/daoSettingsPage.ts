@@ -16,7 +16,7 @@ export class DaoSettingsPage extends DaoPage {
     readonly daoInfoSection = () => this.page.getByRole('main');
 
     readonly governanceProcesses = () =>
-        this.page.getByRole('main').locator('a[href*="/settings/"]');
+        this.page.locator('#governance').locator('a[href*="/settings/"]');
 
     readonly firstProcess = () => this.governanceProcesses().first();
 

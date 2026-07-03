@@ -19,10 +19,14 @@ const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe('pendingTransactionManager', () => {
     const sendTransactionSpy = jest.spyOn(wagmiActions, 'sendTransaction');
+    const getReceiptSpy = jest.spyOn(wagmiActions, 'getTransactionReceipt');
 
     beforeEach(() => {
         sessionStorage.clear();
         sendTransactionSpy.mockReset();
+        // Default: hydrated SUBMITTED txs are not mined yet, so reconciliation keeps them.
+        getReceiptSpy.mockReset();
+        getReceiptSpy.mockRejectedValue(new Error('receipt not found'));
     });
 
     describe('buildIntentId', () => {
@@ -128,6 +132,52 @@ describe('pendingTransactionManager', () => {
         });
     });
 
+    describe('getActive', () => {
+        it('returns only PENDING and SUBMITTED records', async () => {
+            sendTransactionSpy.mockResolvedValueOnce('0xhash'); // submitted
+            sendTransactionSpy.mockRejectedValueOnce(new Error('x')); // failed
+            sendTransactionSpy.mockReturnValueOnce(
+                new Promise(() => undefined),
+            ); // pending
+            const manager = new PendingTransactionManager();
+
+            manager.send('submitted', request);
+            manager.send('failed', request);
+            manager.send('pending', request);
+            await flushPromises();
+
+            const ids = manager.getActive().map(([id]) => id);
+            expect(ids).toEqual(
+                expect.arrayContaining(['submitted', 'pending']),
+            );
+            expect(ids).not.toContain('failed');
+        });
+
+        it('narrows by type and scope and excludes a given intent id', () => {
+            sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
+            const manager = new PendingTransactionManager();
+            const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+
+            manager.send('match', request, meta);
+            manager.send('other-scope', request, {
+                type: 'proposalCreate',
+                scope: 'other',
+            });
+            manager.send('other-type', request, {
+                type: 'tokenTransfer',
+                scope: 'dao:plugin',
+            });
+            manager.send('self', request, meta);
+
+            const matches = manager.getActive({
+                ...meta,
+                excludeIntentId: 'self',
+            });
+
+            expect(matches.map(([id]) => id)).toEqual(['match']);
+        });
+    });
+
     describe('subscribe', () => {
         it('notifies listeners on each change and stops after unsubscribe', () => {
             sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
@@ -144,24 +194,25 @@ describe('pendingTransactionManager', () => {
         });
     });
 
-    describe('isInterrupted', () => {
-        it('is false for a PENDING send started this session (it has a live promise)', () => {
+    describe('clearActive', () => {
+        it('clears every active record matching the filter and leaves the rest', () => {
             sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
             const manager = new PendingTransactionManager();
+            const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
 
-            manager.send('id', request);
+            manager.send('match', request, meta);
+            manager.send('self', request, meta);
+            manager.send('other-scope', request, {
+                type: 'proposalCreate',
+                scope: 'other',
+            });
 
-            expect(manager.isInterrupted('id')).toBe(false);
-        });
+            manager.clearActive({ ...meta, excludeIntentId: 'self' });
 
-        it('is true for a PENDING record hydrated after a reload (no live promise)', () => {
-            sessionStorage.setItem(
-                STORAGE_KEY,
-                JSON.stringify({ id: { status: 'PENDING' } }),
-            );
-            const manager = new PendingTransactionManager();
-
-            expect(manager.isInterrupted('id')).toBe(true);
+            expect(manager.get('match')).toBeUndefined();
+            expect(manager.getRequest('match')).toBeUndefined();
+            expect(manager.get('self')).toBeDefined();
+            expect(manager.get('other-scope')).toBeDefined();
         });
     });
 
@@ -176,6 +227,52 @@ describe('pendingTransactionManager', () => {
             expect(
                 JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
             ).toEqual({ id: { status: 'SUBMITTED', hash: '0xhash' } });
+        });
+
+        it('does not persist a PENDING record (it cannot be resumed after a reload)', () => {
+            sendTransactionSpy.mockReturnValue(new Promise(() => undefined));
+            const manager = new PendingTransactionManager();
+
+            manager.send('id', request);
+
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.PENDING,
+            });
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({});
+        });
+
+        it('ignores a persisted non-SUBMITTED record on hydrate', () => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({ id: { status: 'PENDING' } }),
+            );
+            const manager = new PendingTransactionManager();
+
+            expect(manager.get('id')).toBeUndefined();
+        });
+
+        it('persists and hydrates the type and scope meta for duplicate detection', async () => {
+            sendTransactionSpy.mockResolvedValue('0xhash');
+            const meta = { type: 'proposalCreate', scope: 'dao:plugin' };
+            const manager = new PendingTransactionManager();
+
+            manager.send('id', request, meta);
+            await flushPromises();
+
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({
+                id: { status: 'SUBMITTED', hash: '0xhash', ...meta },
+            });
+
+            const rehydrated = new PendingTransactionManager();
+            expect(rehydrated.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xhash',
+                ...meta,
+            });
         });
 
         it('hydrates persisted records on construction so a reload can resume', () => {
@@ -224,6 +321,42 @@ describe('pendingTransactionManager', () => {
             sessionStorage.setItem(STORAGE_KEY, 'null');
 
             expect(() => new PendingTransactionManager()).not.toThrow();
+        });
+    });
+
+    describe('reconcile on hydrate', () => {
+        beforeEach(() => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({
+                    id: { status: 'SUBMITTED', hash: '0xhash' },
+                }),
+            );
+        });
+
+        it('clears a hydrated SUBMITTED record whose transaction is already mined', async () => {
+            getReceiptSpy.mockResolvedValue(
+                {} as Awaited<
+                    ReturnType<typeof wagmiActions.getTransactionReceipt>
+                >,
+            );
+            const manager = new PendingTransactionManager();
+
+            // Present synchronously (resume still works), cleared once reconciliation resolves.
+            expect(manager.get('id')).toBeDefined();
+            await flushPromises();
+            expect(manager.get('id')).toBeUndefined();
+        });
+
+        it('keeps a hydrated SUBMITTED record whose transaction is not yet mined', async () => {
+            getReceiptSpy.mockRejectedValue(new Error('receipt not found'));
+            const manager = new PendingTransactionManager();
+
+            await flushPromises();
+            expect(manager.get('id')).toEqual({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0xhash',
+            });
         });
     });
 });

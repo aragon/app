@@ -20,7 +20,6 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
 import type { IPublishProposalDialogProps } from './publishProposalDialog.api';
 import { publishProposalDialogUtils } from './publishProposalDialogUtils';
 
@@ -162,19 +161,24 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
         translationNamespace ?? 'app.governance.publishProposalDialog';
 
     // Explicit id: the calldata embeds a now-relative end date, so hash a whitelist of stable content
-    // fields instead, so no volatile field can make the id drift between re-opens.
+    // fields instead, so no volatile field can make the id drift between re-opens. The guard at submit
+    // recomputes the same id/scope via these shared helpers to detect a duplicate in-flight creation.
     const intentId = useMemo(
         () =>
-            buildIntentId({
+            publishProposalDialogUtils.buildProposalIntentId({
                 daoId,
-                plugin: plugin.address,
-                title: proposal.title,
-                summary: proposal.summary,
-                resources: proposal.resources,
-                body: proposal.body,
-                actions: proposal.actions,
+                plugin,
+                proposal,
             }),
-        [daoId, plugin.address, proposal],
+        [daoId, plugin, proposal],
+    );
+    const intentScope = useMemo(
+        () =>
+            publishProposalDialogUtils.buildProposalScope(
+                daoId,
+                plugin.address,
+            ),
+        [daoId, plugin.address],
     );
 
     return (
@@ -182,7 +186,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
             customSteps={customSteps}
             description={t(`${namespace}.description`)}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}
-            intentId={intentId}
+            intent={{ id: intentId, scope: intentScope }}
             network={dao?.network}
             onIndexed={rendersProposalStatusCard ? handleIndexed : undefined}
             prepareTransaction={handlePrepareTransaction}
