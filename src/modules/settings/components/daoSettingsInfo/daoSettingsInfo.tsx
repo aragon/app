@@ -9,6 +9,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -101,14 +102,12 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                     >
                         <div className="flex flex-col gap-3">
                             {dao.links.map((link) => (
-                                <Link
-                                    href={link.url}
+                                <ResourceLink
                                     isExternal={true}
                                     key={link.url}
-                                    showUrl={true}
-                                >
-                                    {link.name}
-                                </Link>
+                                    name={link.name}
+                                    url={link.url}
+                                />
                             ))}
                         </div>
                     </DefinitionList.Item>

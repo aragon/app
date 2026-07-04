@@ -5,6 +5,7 @@ import {
     IconType,
     InputText,
 } from '@aragon/gov-ui-kit';
+import { useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 
@@ -32,17 +33,6 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
 
     const { t } = useTranslations();
 
-    const nameFieldName = `${name}.${index.toString()}.name`;
-    const nameField = useFormField<
-        ResourcesInputItemBaseForm,
-        typeof nameFieldName
-    >(nameFieldName, {
-        label: t('app.shared.resourcesInput.item.labelInput.title'),
-        rules: { required: true },
-        defaultValue: '',
-        trimOnBlur: true,
-    });
-
     /**
      * URL Regex:
      * - Optional protocol (http:// or https://)
@@ -55,6 +45,9 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
         /^(https?:\/\/)?(([\da-zA-Z-]+\.)+[a-zA-Z]{2,})(\/[^\s?#]*)?(\?[^\s#]*)?(#[^\s]*)?$/;
 
     const urlFieldName = `${name}.${index.toString()}.url`;
+    const urlValue = useWatch<ResourcesInputItemBaseForm>({
+        name: urlFieldName,
+    });
     const urlField = useFormField<
         ResourcesInputItemBaseForm,
         typeof urlFieldName
@@ -65,15 +58,35 @@ export const ResourcesInputItem: React.FC<IResourcesInputItemProps> = (
         trimOnBlur: true,
     });
 
+    const nameFieldName = `${name}.${index.toString()}.name`;
+    const nameField = useFormField<
+        ResourcesInputItemBaseForm,
+        typeof nameFieldName
+    >(nameFieldName, {
+        label: t('app.shared.resourcesInput.item.labelInput.title'),
+        defaultValue: '',
+        trimOnBlur: true,
+    });
+
+    const namePlaceholder =
+        typeof urlValue === 'string' && urlValue.length > 0
+            ? urlValue
+            : undefined;
+
     return (
         <Card className="flex flex-col gap-3 border border-neutral-100 p-6 shadow-neutral-sm md:flex-row md:gap-2">
-            <InputText maxLength={40} {...nameField} />
-
             <InputText
                 placeholder={t(
                     'app.shared.resourcesInput.item.linkInput.placeholder',
                 )}
                 {...urlField}
+            />
+
+            <InputText
+                isOptional={true}
+                maxLength={40}
+                placeholder={namePlaceholder}
+                {...nameField}
             />
             <div className="mt-0 md:mt-9">
                 <Dropdown.Container

@@ -8,10 +8,10 @@ import {
     InputContainer,
     type IProposalAction,
     type IProposalActionComponentProps,
-    Link,
 } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { NestedActionsList } from '@/modules/governance/components/nestedActionsList';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { ICoreActionCreateProposal } from '../types/coreActionCreateProposal';
@@ -103,14 +103,12 @@ export const CreateProposalActionDetails: React.FC<
                                 >
                                     <div className="flex flex-col gap-3">
                                         {metadata.resources.map((resource) => (
-                                            <Link
-                                                href={resource.url}
+                                            <ResourceLink
                                                 isExternal={true}
                                                 key={resource.url}
-                                                showUrl={true}
-                                            >
-                                                {resource.name}
-                                            </Link>
+                                                name={resource.name}
+                                                url={resource.url}
+                                            />
                                         ))}
                                     </div>
                                 </DefinitionList.Item>
