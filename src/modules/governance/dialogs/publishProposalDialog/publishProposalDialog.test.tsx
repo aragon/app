@@ -365,18 +365,13 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
         expect(screen.queryByText('MY-PROPOSAL')).not.toBeInTheDocument();
 
         // Capture onIndexed from the mocked TransactionDialog.
-        const passedProps = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as Record<string, unknown>;
-        const onIndexed = passedProps['onIndexed'] as
-            | ((result: { slug?: string }) => void)
-            | undefined;
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
 
         expect(onIndexed).toBeInstanceOf(Function);
 
         act(() => {
-            (onIndexed as (result: { slug?: string }) => void)({
-                slug: 'my-proposal',
-            });
+            onIndexed!({ slug: 'my-proposal' });
         });
 
         expect(
@@ -405,18 +400,13 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
         const location = generateDialogLocation();
         render(createTestComponent({ location }));
 
-        const passedProps = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as Record<string, unknown>;
-        const onIndexed = passedProps['onIndexed'] as
-            | ((result: { slug?: string }) => void)
-            | undefined;
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
 
         expect(onIndexed).toBeInstanceOf(Function);
 
         act(() => {
-            (onIndexed as (result: { slug?: string }) => void)({
-                slug: 'my-proposal',
-            });
+            onIndexed!({ slug: 'my-proposal' });
         });
 
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(

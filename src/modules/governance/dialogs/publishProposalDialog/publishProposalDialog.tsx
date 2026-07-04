@@ -200,7 +200,7 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
             transactionInfo={transactionInfo}
             transactionType={TransactionType.PROPOSAL_CREATE}
         >
-            {plugin.interfaceType !== PluginInterfaceType.ADMIN && (
+            {rendersProposalStatusCard && (
                 <ProposalDataListItem.Structure
                     id={indexedProposalSlug?.toUpperCase()}
                     publisher={{ address }}

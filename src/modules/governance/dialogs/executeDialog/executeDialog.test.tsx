@@ -8,7 +8,10 @@ import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
 import * as DaoService from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
-import { TransactionDialog } from '@/shared/components/transactionDialog';
+import {
+    type ITransactionDialogProps,
+    TransactionDialog,
+} from '@/shared/components/transactionDialog';
 import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateDao,
@@ -159,20 +162,15 @@ describe('<ExecuteDialog /> proposal card status after indexing', () => {
         ).not.toBeInTheDocument();
 
         // Capture onIndexed from the mocked TransactionDialog.
-        const passedProps = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as Record<string, unknown>;
-        const onIndexed = passedProps['onIndexed'] as
-            | ((result: { slug?: string }) => void)
-            | undefined;
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
 
         expect(onIndexed).toBeInstanceOf(Function);
 
         // Execute transactions do not receive a callback slug, so the dialog must
         // use its locally derived slug.
         act(() => {
-            (onIndexed as (result: { slug?: string }) => void)({
-                slug: undefined,
-            });
+            onIndexed!({ slug: undefined });
         });
 
         expect(
@@ -213,19 +211,14 @@ describe('<ExecuteDialog /> proposal card status after indexing', () => {
         });
         render(createTestComponent({ location }));
 
-        const passedProps = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as Record<string, unknown>;
-        const onIndexed = passedProps['onIndexed'] as
-            | ((result: { slug?: string }) => void)
-            | undefined;
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
 
         expect(onIndexed).toBeInstanceOf(Function);
 
         // No slug for PROPOSAL_EXECUTE; the callback is only an indexed signal.
         act(() => {
-            (onIndexed as (result: { slug?: string }) => void)({
-                slug: undefined,
-            });
+            onIndexed!({ slug: undefined });
         });
 
         expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
