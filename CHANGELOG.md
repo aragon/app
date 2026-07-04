@@ -1,5 +1,25 @@
 # @aragon/app
 
+## 1.33.0
+
+### Minor Changes
+
+- [#1199](https://github.com/aragon/app/pull/1199) [`4731a48`](https://github.com/aragon/app/commit/4731a481ef1b13841c87fb230ee9429fcd70d92c) Thanks [@evanaronson](https://github.com/evanaronson)! - Enable Tenderly for Monad network.
+
+- [#1189](https://github.com/aragon/app/pull/1189) [`7dd0e6c`](https://github.com/aragon/app/commit/7dd0e6cbeebb9cae103c2b56afd00a37970373e6) Thanks [@harryburger](https://github.com/harryburger)! - Reduce the chance of duplicate pending wallet transactions: the in-flight send is now owned outside the transaction dialog, so closing and reopening (or reloading) resumes the existing request instead of re-sending it.
+
+- [#1175](https://github.com/aragon/app/pull/1175) [`802a4ce`](https://github.com/aragon/app/commit/802a4cebb3642353fd00d1b4db9584c54b57c18b) Thanks [@milosh86](https://github.com/milosh86)! - Implement Aragon profile renaming
+
+- [#1200](https://github.com/aragon/app/pull/1200) [`8ebf2de`](https://github.com/aragon/app/commit/8ebf2de86bbebfa438dda775c09726b637d177d0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Validate Aragon profile contact and social fields (email, website, GitHub, X, Telegram, Discord) before they are saved to ENS, surfacing inline errors and blocking malformed values. The member profile now also displays Email, Telegram and Discord alongside Website, X and GitHub, and the Links card is hidden when a member has no links instead of rendering empty.
+
+- [#1201](https://github.com/aragon/app/pull/1201) [`cf77b16`](https://github.com/aragon/app/commit/cf77b16ea9cf28a17c9102ea3d0387db49ac455f) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Rename the transaction dialog's "Cancel" button to "Close" to reflect that the transaction keeps being tracked in the background. Warn before publishing a proposal when another proposal creation for the same DAO and plugin is still in flight, so editing the form after closing the dialog no longer risks creating two proposals.
+
+### Patch Changes
+
+- [#1198](https://github.com/aragon/app/pull/1198) [`65ca4d5`](https://github.com/aragon/app/commit/65ca4d56ac99963e008f74a15a105fe5fba812cb) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add a permissions overview subpage to DAO settings (list view): linked-account tabs, permission rows (who/where/permission/condition) with expandable details and a per-condition slot system, plus a "Permissions" entry link on the settings page
+
+- [#1203](https://github.com/aragon/app/pull/1203) [`b17a84e`](https://github.com/aragon/app/commit/b17a84e8e2fd3e31b6dd0fe7860932defa3e2090) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Fix stale "duplicate proposal" warnings on the create-proposal page: pending wallet requests that were interrupted (page reloaded mid-sign) or already mined are no longer counted as in-flight, and settled transactions are reconciled and cleared on reload. When a creation for the same DAO + plugin is genuinely in flight, the warning now lets you resume the existing transaction or start a new one.
+
 ## 1.32.0
 
 ### Minor Changes
