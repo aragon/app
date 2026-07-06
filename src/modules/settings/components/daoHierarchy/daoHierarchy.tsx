@@ -13,6 +13,7 @@ import {
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { DaoTypeTag } from '@/shared/components/daoTypeTag';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -128,14 +129,12 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                 >
                     <div className="flex flex-col gap-3">
                         {dao.links.map((link) => (
-                            <Link
-                                href={link.url}
+                            <ResourceLink
                                 isExternal={true}
                                 key={link.url}
-                                showUrl={true}
-                            >
-                                {link.name}
-                            </Link>
+                                name={link.name}
+                                url={link.url}
+                            />
                         ))}
                     </div>
                 </DefinitionList.Item>

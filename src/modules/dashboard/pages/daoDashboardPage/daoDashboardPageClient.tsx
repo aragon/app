@@ -6,7 +6,6 @@ import {
     DateFormat,
     DefinitionList,
     formatterUtils,
-    Link,
 } from '@aragon/gov-ui-kit';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import {
@@ -16,6 +15,7 @@ import {
 } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -165,14 +165,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             )}
                         >
                             {dao.links.map(({ url, name }) => (
-                                <Link
-                                    href={url}
+                                <ResourceLink
                                     isExternal={true}
                                     key={url}
-                                    showUrl={true}
-                                >
-                                    {name}
-                                </Link>
+                                    name={name}
+                                    url={url}
+                                />
                             ))}
                         </Page.AsideCard>
                     )}

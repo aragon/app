@@ -9,7 +9,6 @@ import {
     DefinitionList,
     formatterUtils,
     type IProposalActionsFooterDropdownItem,
-    Link,
     ProposalActions,
     ProposalActionTypeNoBasicView,
     ProposalStatus,
@@ -25,6 +24,7 @@ import { AragonBackendServiceError } from '@/shared/api/aragonBackendService';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -419,14 +419,12 @@ export const DaoProposalDetailsPageClient: React.FC<
                         >
                             <div className="flex flex-col gap-4">
                                 {resources.map((resource) => (
-                                    <Link
-                                        href={resource.url}
+                                    <ResourceLink
                                         isExternal={true}
-                                        key={resource.name}
-                                        showUrl={true}
-                                    >
-                                        {resource.name}
-                                    </Link>
+                                        key={resource.url}
+                                        name={resource.name}
+                                        url={resource.url}
+                                    />
                                 ))}
                             </div>
                         </Page.AsideCard>

@@ -1,7 +1,7 @@
 import { IconType } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import * as useFormField from '@/shared/hooks/useFormField';
+import { FormProvider, useForm } from 'react-hook-form';
 import { FormWrapper } from '@/shared/testUtils';
 import {
     type IResourcesInputItemProps,
@@ -9,25 +9,6 @@ import {
 } from './resourcesInputItem';
 
 describe('<ResourcesInputItem /> component', () => {
-    const useFormFieldSpy = jest.spyOn(useFormField, 'useFormField');
-
-    beforeEach(() => {
-        useFormFieldSpy.mockImplementation(() => ({
-            name: 'name',
-            onChange: jest.fn(),
-            onBlur: jest.fn(),
-            value: '',
-            ref: jest.fn(),
-            variant: 'default',
-            alert: undefined,
-            label: 'Label',
-        }));
-    });
-
-    afterEach(() => {
-        useFormFieldSpy.mockReset();
-    });
-
     const createTestComponent = (props?: Partial<IResourcesInputItemProps>) => {
         const completeProps: IResourcesInputItemProps = {
             name: 'resources',
@@ -43,13 +24,54 @@ describe('<ResourcesInputItem /> component', () => {
         );
     };
 
-    it('renders the label and link input fields', () => {
+    const SubmitTestComponent: React.FC<
+        Partial<IResourcesInputItemProps> & { onSubmit: jest.Mock }
+    > = (props) => {
+        const { onSubmit, ...componentProps } = props;
+        const formMethods = useForm({
+            defaultValues: { resources: [{ name: '', url: '' }] },
+            mode: 'onBlur',
+        });
+
+        return (
+            <FormProvider {...formMethods}>
+                <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+                    <ResourcesInputItem
+                        index={0}
+                        name="resources"
+                        remove={jest.fn()}
+                        {...componentProps}
+                    />
+                    <button type="submit">Submit</button>
+                </form>
+            </FormProvider>
+        );
+    };
+
+    it('renders the URL field before the link text field', () => {
         render(createTestComponent());
+
+        const urlInput = screen.getByLabelText(
+            /resourcesInput.item.linkInput.title/,
+        );
+        const labelInput = screen.getByLabelText(
+            /resourcesInput.item.labelInput.title/,
+        );
+
         expect(
-            screen.getByPlaceholderText(
-                /resourcesInput.item.linkInput.placeholder/,
-            ),
-        ).toBeInTheDocument();
+            urlInput.compareDocumentPosition(labelInput) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+    });
+
+    it('uses the URL placeholder without prefilling a value', () => {
+        render(createTestComponent());
+
+        const urlInput = screen.getByPlaceholderText(
+            /resourcesInput.item.linkInput.placeholder/,
+        );
+
+        expect(urlInput).toHaveValue('');
     });
 
     it('calls remove function when remove button is clicked', async () => {
@@ -68,11 +90,11 @@ describe('<ResourcesInputItem /> component', () => {
 
     it('accepts valid URL format in link input', async () => {
         render(createTestComponent());
-        const linkInput = screen.getByPlaceholderText(
+        const urlInput = screen.getByPlaceholderText(
             /resourcesInput.item.linkInput.placeholder/,
         );
 
-        await userEvent.type(linkInput, 'https://example.com');
+        await userEvent.type(urlInput, 'https://example.com');
         await userEvent.tab();
 
         expect(
@@ -81,29 +103,55 @@ describe('<ResourcesInputItem /> component', () => {
     });
 
     it('validates URL format in link input', async () => {
-        useFormFieldSpy.mockImplementationOnce((name, options) => ({
-            name,
-            onChange: jest.fn(),
-            onBlur: jest.fn(),
-            value: '',
-            ref: jest.fn(),
-            variant: 'critical',
-            alert: { message: 'Invalid URL format', variant: 'critical' },
-            label: options?.label,
-        }));
+        render(<SubmitTestComponent onSubmit={jest.fn()} />);
 
-        render(createTestComponent());
-
-        const linkInput = screen.getByPlaceholderText(
+        const urlInput = screen.getByPlaceholderText(
             /resourcesInput.item.linkInput.placeholder/,
         );
 
-        await userEvent.type(linkInput, 'broken link');
+        await userEvent.type(urlInput, 'broken link');
         await userEvent.tab();
 
         expect(
-            await screen.findByText('Invalid URL format'),
+            await screen.findByText(/formField.error.pattern/),
         ).toBeInTheDocument();
+    });
+
+    it('submits with an empty link text when the URL is valid', async () => {
+        const onSubmit = jest.fn();
+        render(<SubmitTestComponent onSubmit={onSubmit} />);
+
+        const urlInput = screen.getByPlaceholderText(
+            /resourcesInput.item.linkInput.placeholder/,
+        );
+
+        await userEvent.type(urlInput, 'https://example.com');
+        await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+
+        await waitFor(() => expect(onSubmit).toHaveBeenCalled());
+        expect(onSubmit.mock.calls[0][0]).toEqual({
+            resources: [{ name: '', url: 'https://example.com' }],
+        });
+    });
+
+    it('mirrors the URL value as the link text placeholder', async () => {
+        render(createTestComponent());
+
+        const urlInput = screen.getByPlaceholderText(
+            /resourcesInput.item.linkInput.placeholder/,
+        );
+        const labelInput = screen.getByLabelText(
+            /resourcesInput.item.labelInput.title/,
+        );
+
+        await userEvent.type(urlInput, 'https://example.com');
+
+        await waitFor(() =>
+            expect(labelInput).toHaveAttribute(
+                'placeholder',
+                'https://example.com',
+            ),
+        );
     });
 
     it('sets a max length requirement for the resource label', () => {

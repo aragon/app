@@ -1,6 +1,6 @@
 'use client';
 
-import { Link, Tabs } from '@aragon/gov-ui-kit';
+import { Tabs } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import type { Address } from 'viem';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
@@ -12,6 +12,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -361,14 +362,12 @@ export const GaugeVoterGaugesPageClient: React.FC<
                         usagePercentage={usagePercentage}
                     />
                     {links?.map(({ url, name }) => (
-                        <Link
-                            href={url}
+                        <ResourceLink
                             isExternal={true}
                             key={url}
-                            showUrl={true}
-                        >
-                            {name}
-                        </Link>
+                            name={name}
+                            url={url}
+                        />
                     ))}
                 </Page.AsideCard>
                 <Page.AsideCard title={cardTitle}>

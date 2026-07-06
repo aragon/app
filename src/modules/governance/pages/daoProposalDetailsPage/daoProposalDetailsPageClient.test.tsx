@@ -315,6 +315,20 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         });
     });
 
+    it('renders an empty-name proposal resource with the URL as link text', () => {
+        const resource = { name: '', url: 'https://empty-name.com' };
+        const proposal = generateProposal({ resources: [resource] });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
+        );
+        render(createTestComponent());
+
+        const link = screen.getByRole('link', { name: resource.url });
+        expect(link).toBeInTheDocument();
+        expect(link.getAttribute('href')).toEqual(resource.url);
+        expect(screen.getAllByText(resource.url)).toHaveLength(1);
+    });
+
     it('does not render the links section when proposal has no resources', () => {
         const proposal = generateProposal({ resources: [] });
         useProposalSpy.mockReturnValue(
