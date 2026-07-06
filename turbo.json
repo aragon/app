@@ -25,32 +25,38 @@
         "SENTRY_REPORT_URI",
         "version"
     ],
+    "globalDependencies": [
+        "biome.json"
+    ],
     "tasks": {
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "build": {
+            "cache": false
+        },
         "lint": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx,js,jsx}",
-                "*.config.{js,ts,mjs}",
-                "biome.json"
-            ],
+            "outputs": []
+        },
+        "lint:check": {
+            "cache": true,
             "outputs": []
         },
         "type-check": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx}",
-                "tsconfig.json",
-                "next-env.d.ts"
-            ],
             "outputs": []
         },
         "test": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx}",
-                "jest.config.js",
-                "tsconfig.json"
-            ],
+            "outputs": [],
+            "dependsOn": [
+                "type-check"
+            ]
+        },
+        "test:coverage": {
+            "cache": true,
             "outputs": [
                 "coverage/**"
             ],

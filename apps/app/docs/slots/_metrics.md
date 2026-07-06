@@ -2,7 +2,7 @@
 
 # Slot System Metrics
 
-> Auto-generated snapshot of the slot system state. Run `pnpm generate:slot-docs` to refresh.
+> Auto-generated snapshot of the slot system state. Run `pnpm generate:slot-docs` (from `apps/app`) to refresh.
 
 ## Summary
 

@@ -66,7 +66,7 @@ pnpm test:guardrails
 ---
 name: query-and-cache
 description: One-line summary of what the rule covers.
-globs: src/**/api/**, src/**/queries/**
+globs: apps/app/src/**/api/**, apps/app/src/**/queries/**
 kind: rule
 ---
 ```

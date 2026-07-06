@@ -1,4 +1,4 @@
-name: Release PR Finalize
+name: App Release PR Finalize
 
 on:
   pull_request:
@@ -17,7 +17,7 @@ jobs:
   finalize:
     if: >
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'release/')
+      startsWith(github.event.pull_request.head.ref, 'release/app/')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
@@ -61,13 +61,25 @@ jobs:
       - name: Get version
         id: version
         uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: apps/app
+
+      # Per-package tag in the changesets-native format (@aragon/app@1.17.0).
+      # `encoded` is the URL-safe form for release links in Slack messages.
+      - name: Compute release tag
+        id: release-tag
+        env:
+          VERSION: ${{ steps.version.outputs.current-version }}
+        run: |
+          echo "name=@aragon/app@${VERSION}" >> $GITHUB_OUTPUT
+          echo "encoded=%40aragon%2Fapp%40${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Read changelog
         id: changelog
         uses: ./.github/actions/read-changelog
         with:
           version: ${{ steps.version.outputs.current-version }}
-          path: ./CHANGELOG.md
+          path: ./apps/app/CHANGELOG.md
 
       - name: Read PR body
         id: pr
@@ -104,15 +116,15 @@ jobs:
         id: tag
         uses: ./.github/actions/gh-ensure-tag
         with:
-          tag: v${{ steps.version.outputs.current-version }}
+          tag: ${{ steps.release-tag.outputs.name }}
           sha: ${{ github.event.pull_request.head.sha }}
 
       - name: Create GitHub Release
         id: release
         uses: ./.github/actions/gh-ensure-release
         with:
-          tag: v${{ steps.version.outputs.current-version }}
-          title: Release v${{ steps.version.outputs.current-version }}
+          tag: ${{ steps.release-tag.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
           notes_path: ${{ steps.notes.outputs.path }}
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
@@ -125,7 +137,7 @@ jobs:
           thread_ts: ${{ steps.ts.outputs.ts }}
           message: |
             📦 *GitHub Release Created!*
-            *Release:* <https://github.com/aragon/app/releases/tag/v${{ steps.version.outputs.current-version }}|v${{ steps.version.outputs.current-version }}>
+            *Release:* <https://github.com/aragon/app/releases/tag/${{ steps.release-tag.outputs.encoded }}|${{ steps.release-tag.outputs.name }}>
 
             _Production build & deploy will start automatically..._
 
@@ -137,6 +149,6 @@ jobs:
           slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
             📦 *GitHub Release Created!*
-            *Release:* <https://github.com/aragon/app/releases/tag/v${{ steps.version.outputs.current-version }}|v${{ steps.version.outputs.current-version }}>
+            *Release:* <https://github.com/aragon/app/releases/tag/${{ steps.release-tag.outputs.encoded }}|${{ steps.release-tag.outputs.name }}>
 
             _Production build & deploy will start automatically..._

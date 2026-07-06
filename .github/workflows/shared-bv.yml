@@ -64,6 +64,7 @@ jobs:
       - name: Get Playwright version
         id: pw-version
         run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+        working-directory: apps/app
 
       - name: Cache Playwright browsers
         id: pw-cache
@@ -75,22 +76,25 @@ jobs:
       - name: Install Playwright browsers
         if: steps.pw-cache.outputs.cache-hit != 'true'
         run: pnpm e2e:install
+        working-directory: apps/app
 
       - name: Install Playwright OS deps
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
+        working-directory: apps/app
 
       - name: Cache Synpress wallet
         id: synpress-cache
         uses: actions/cache@v6.1.0
         with:
-          path: .cache-synpress
-          key: synpress-${{ runner.os }}-${{ hashFiles('e2e/setup/wallet.setup.ts', 'package.json') }}
+          path: apps/app/.cache-synpress
+          key: synpress-${{ runner.os }}-${{ hashFiles('apps/app/e2e/setup/wallet.setup.ts', 'apps/app/package.json') }}
 
       - name: Build Synpress wallet cache
         if: steps.synpress-cache.outputs.cache-hit != 'true'
         # xvfb-run: MetaMask extension requires a display for onboarding UI.
         run: xvfb-run pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs
+        working-directory: apps/app
 
       - name: Warmup deployment
         run: |
@@ -108,6 +112,7 @@ jobs:
         id: bv
         continue-on-error: true
         run: xvfb-run pnpm e2e:bv
+        working-directory: apps/app
         env:
           E2E_BASE_URL: ${{ inputs.deployment-url }}
 
@@ -116,7 +121,7 @@ jobs:
         if: always()
         uses: ./.github/actions/parse-playwright-results
         with:
-          report-path: e2e/test-results/results.json
+          report-path: apps/app/e2e/test-results/results.json
           step-outcome: ${{ steps.bv.outcome }}
 
       - name: Upload HTML report
@@ -125,7 +130,7 @@ jobs:
         if: always()
         with:
           name: playwright-bv-report-${{ inputs.environment }}
-          path: e2e/playwright-report/
+          path: apps/app/e2e/playwright-report/
           retention-days: 14
 
       - name: Add report link to job summary
@@ -147,5 +152,5 @@ jobs:
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
           name: playwright-bv-traces-${{ inputs.environment }}
-          path: e2e/test-results/
+          path: apps/app/e2e/test-results/
           retention-days: 7

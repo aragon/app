@@ -1,4 +1,4 @@
-name: Release PR Flow
+name: App Release PR Deploy
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   notify-start:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/app/')
     runs-on: ubuntu-latest
     outputs:
       slack-ts: ${{ steps.notify.outputs.ts }}
@@ -97,7 +97,7 @@ jobs:
           echo "ts=$TS" >> "$GITHUB_OUTPUT"
 
   test:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/app/')
     needs: notify-start
     runs-on: ubuntu-latest
     steps:
@@ -123,7 +123,7 @@ jobs:
         run: pnpm test:coverage
 
   deploy:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/app/')
     needs: test
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
@@ -197,7 +197,7 @@ jobs:
             • All good? Approve the PR and merge → production deploy will start automatically
 
   e2e:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/app/')
     needs: deploy
     uses: ./.github/workflows/shared-e2e.yml
     secrets: inherit
@@ -206,7 +206,7 @@ jobs:
       environment: staging
 
   bv:
-    if: startsWith(github.head_ref, 'release/')
+    if: startsWith(github.head_ref, 'release/app/')
     needs: deploy
     uses: ./.github/workflows/shared-bv.yml
     secrets: inherit

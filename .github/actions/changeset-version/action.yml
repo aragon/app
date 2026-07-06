@@ -22,6 +22,6 @@ runs:
         set -euo pipefail
         pnpm changeset version
         if [ "$PRETTIER_CHANGELOG" = "true" ]; then
-          pnpm dlx prettier --write --prose-wrap never CHANGELOG.md
+          pnpm dlx prettier --write --prose-wrap never apps/app/CHANGELOG.md
         fi
 

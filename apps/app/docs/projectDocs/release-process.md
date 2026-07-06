@@ -2,6 +2,18 @@
 
 This document describes the release process for Aragon App.
 
+## Versioning & tags (monorepo)
+
+Each workspace is versioned independently via changesets and gets its own tags in the
+changesets-native format `<package-name>@<version>`:
+
+- App releases: tag `@aragon/app@1.17.0`, branch `release/app/YYYY-MM-DD_HH-mm`, hotfix branch `hotfix/app/<version>_<timestamp>`, hotfix tag `@aragon/app@1.17.0-hotfix.1`.
+- Future workspaces (e.g. `@aragon/gov-ui-kit`) follow the same pattern with their own prefix and their own `<pkg>-*.yml` workflow copies.
+- Packages that must release in lockstep (planned: `@aragon/domain` + the indexer app) go into the `fixed` group in `.changeset/config.json` once they land in the workspace — changesets then bumps them together.
+
+Tags created before the monorepo migration keep the old `vX.Y.Z` format and point at the old
+repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (see MIGRATION.md).
+
 ## Overview
 
 ```
@@ -16,15 +28,15 @@ This document describes the release process for Aragon App.
 ### 1. Start Release
 
 **Who:** Developer or Manager  
-**Action:** Manually trigger **App Release (New)** workflow in GitHub Actions.
+**Action:** Manually trigger **App Release Start** workflow in GitHub Actions.
 
-1. Go to [Actions → App Release (New)](https://github.com/aragon/app/actions/workflows/app-release-v2.yml)
+1. Go to [Actions → App Release Start](https://github.com/aragon/app/actions/workflows/app-release-start.yml)
 2. Click **Run workflow**
 3. Select `main` branch (or specify a commit SHA)
 4. Click **Run workflow**
 
 **What happens automatically:**
-- Branch `release/YYYY-MM-DD_HH-mm` is created
+- Branch `release/app/YYYY-MM-DD_HH-mm` is created
 - Version is updated via changeset
 - Summary is generated with Linear tickets
 - PR is opened to `main`
@@ -86,9 +98,9 @@ Urgent fix for production.
 
 ### Automated way (recommended)
 
-1. Go to [Actions → Hotfix Start](https://github.com/aragon/app/actions/workflows/hotfix-start.yml)
+1. Go to [Actions → Hotfix Start](https://github.com/aragon/app/actions/workflows/app-hotfix-start.yml)
 2. Specify:
-   - `base_tag`: tag to create hotfix from (e.g., `v1.16.0`)
+   - `base_tag`: tag to create hotfix from (e.g., `@aragon/app@1.16.0`)
    - `commits`: SHA of commits to cherry-pick from main (comma-separated)
 3. Run workflow
 
@@ -96,7 +108,7 @@ The rest of the process is the same as a regular release.
 
 ### Manual way
 
-1. Create branch from tag: `git checkout -b hotfix/v1.16.1 v1.16.0`
+1. Create branch from tag: `git checkout -b hotfix/app/1.16.0_manual '@aragon/app@1.16.0'`
 2. Cherry-pick needed commits: `git cherry-pick <commit-sha>`
 3. Create changeset: `pnpm changeset`
 4. Push and create PR to `main`
@@ -110,7 +122,7 @@ The rest of the process is the same as a regular release.
 Roll back production to a previous version.
 
 1. Go to [Actions → App Rollback](https://github.com/aragon/app/actions/workflows/app-rollback.yml)
-2. Specify tag to rollback to (e.g., `v1.16.0`)
+2. Specify tag to rollback to (e.g., `@aragon/app@1.16.0`)
 3. Run workflow
 
 Production will be rebuilt and deployed from the specified tag.
@@ -158,4 +170,4 @@ Stored in 1Password vault `kv_app_infra`:
 
 - [Changelog](../../CHANGELOG.md)
 - [Rollback Workflow](https://github.com/aragon/app/actions/workflows/app-rollback.yml)
-- [Hotfix Workflow](https://github.com/aragon/app/actions/workflows/hotfix-start.yml)
+- [Hotfix Workflow](https://github.com/aragon/app/actions/workflows/app-hotfix-start.yml)
