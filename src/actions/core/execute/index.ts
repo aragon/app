@@ -10,6 +10,7 @@ export {
 export const initExecuteActionViews = () => {
     actionViewRegistry.register({
         actionType: CoreActionType.EXECUTE,
+        functionSelector: '0x3f707e6b',
         componentDetails: ExecuteActionDetails,
     });
 };
