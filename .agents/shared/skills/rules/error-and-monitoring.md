@@ -1,7 +1,7 @@
 ---
 name: error-and-monitoring
 description: How to report errors/info to Sentry — route through monitoringUtils, classify by what a failure IS, don't dress expected/external/not-found as bugs.
-globs: src/shared/utils/monitoringUtils/**, src/shared/utils/errorUtils/**, src/shared/utils/responseUtils/**, src/shared/api/aragonBackendService/**, src/shared/components/transactionDialog/**, src/**/pageError/**, src/**/errorBoundary/**, src/**/globalError/**, src/**/error.tsx, src/**/global-error.tsx, src/**/*MetadataUtils/**
+globs: apps/app/src/shared/utils/monitoringUtils/**, apps/app/src/shared/utils/errorUtils/**, apps/app/src/shared/utils/responseUtils/**, apps/app/src/shared/api/aragonBackendService/**, apps/app/src/shared/components/transactionDialog/**, apps/app/src/**/pageError/**, apps/app/src/**/errorBoundary/**, apps/app/src/**/globalError/**, apps/app/src/**/error.tsx, apps/app/src/**/global-error.tsx, apps/app/src/**/*MetadataUtils/**
 kind: rule
 ---
 

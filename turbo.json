@@ -26,12 +26,32 @@
         "version"
     ],
     "tasks": {
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "build": {
+            "cache": false,
+            "outputs": [
+                ".next/**",
+                "!.next/cache/**"
+            ]
+        },
         "lint": {
             "cache": true,
             "inputs": [
                 "src/**/*.{ts,tsx,js,jsx}",
                 "*.config.{js,ts,mjs}",
-                "biome.json"
+                "$TURBO_ROOT$/biome.json"
+            ],
+            "outputs": []
+        },
+        "lint:check": {
+            "cache": true,
+            "inputs": [
+                "src/**/*.{ts,tsx,js,jsx}",
+                "*.config.{js,ts,mjs}",
+                "$TURBO_ROOT$/biome.json"
             ],
             "outputs": []
         },
@@ -45,6 +65,18 @@
             "outputs": []
         },
         "test": {
+            "cache": true,
+            "inputs": [
+                "src/**/*.{ts,tsx}",
+                "jest.config.js",
+                "tsconfig.json"
+            ],
+            "outputs": [],
+            "dependsOn": [
+                "type-check"
+            ]
+        },
+        "test:coverage": {
             "cache": true,
             "inputs": [
                 "src/**/*.{ts,tsx}",

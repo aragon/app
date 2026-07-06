@@ -1,7 +1,7 @@
 ---
 name: plugin-visibility
 description: Plugin visibility (CMS pluginsToHide) is presentation-only — never filter a list you then look up by address/slug/type.
-globs: src/shared/hooks/useDaoPlugins/**, src/shared/utils/daoVisibilityUtils/**, src/plugins/*/hooks/*NormalizeActions/**, src/modules/governance/dialogs/selectPluginDialog/**
+globs: apps/app/src/shared/hooks/useDaoPlugins/**, apps/app/src/shared/utils/daoVisibilityUtils/**, apps/app/src/plugins/*/hooks/*NormalizeActions/**, apps/app/src/modules/governance/dialogs/selectPluginDialog/**
 kind: rule
 ---
 

@@ -1,6 +1,6 @@
-# Release PR Cancel — notifies Slack when a release PR is closed without merge.
+# App Release PR Cancel — notifies Slack when a release PR is closed without merge.
 
-name: Release PR Cancel
+name: App Release PR Cancel
 
 on:
   pull_request:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   notify:
-    if: github.event.pull_request.merged == false && startsWith(github.event.pull_request.head.ref, 'release/')
+    if: github.event.pull_request.merged == false && startsWith(github.event.pull_request.head.ref, 'release/app/')
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
@@ -55,7 +55,7 @@ jobs:
       - name: Extract version from PR title
         id: version
         run: |
-          VERSION=$(echo "${PR_TITLE}" | sed -nE 's/^Release (v[0-9]+\.[0-9]+\.[0-9]+).*$/\1/p')
+          VERSION=$(echo "${PR_TITLE}" | sed -nE 's#^Release (@aragon/app@[0-9]+\.[0-9]+\.[0-9]+).*$#\1#p')
           echo "name=${VERSION}" >> "$GITHUB_OUTPUT"
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}

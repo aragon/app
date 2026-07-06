@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { withSentryConfig } from '@sentry/nextjs';
 import packageInfo from './package.json' with { type: 'json' };
 
@@ -144,6 +145,8 @@ const nextConfig = {
     serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
     reactCompiler: false,
     turbopack: {
+        // Monorepo workspace root; Turbopack fails to infer it under `vercel build` in apps/app
+        root: path.join(import.meta.dirname, '..', '..'),
         resolveAlias: {
             '@react-native-async-storage/async-storage': {
                 browser: './src/empty.ts',

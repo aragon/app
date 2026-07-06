@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to deploy (e.g. v1.17.0)"
+        description: "Release tag to deploy (e.g. @aragon/app@1.17.0)"
         required: true
         type: string
   release:
@@ -30,9 +30,11 @@ jobs:
           git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
             (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
 
+  # On release events, only react to app tags (@aragon/app@…) — other workspaces
+  # (future apps/packages) publish their own releases with their own prefixes.
   notify-start:
     needs: validate
-    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/app@')) }}
     runs-on: ubuntu-latest
     outputs:
       slack-ts: ${{ steps.set-ts.outputs.ts }}
@@ -152,7 +154,7 @@ jobs:
 
   deploy:
     needs: [validate, notify-start]
-    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') }}
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/app@')) }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:

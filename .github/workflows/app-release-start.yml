@@ -1,4 +1,4 @@
-name: App Release (New)
+name: App Release Start
 
 on:
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
 
       - name: Generate Release Branch Name
         id: branch-name
-        run: echo "name=release/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+        run: echo "name=release/app/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
 
       - name: Ensure Release Branch
         uses: ./.github/actions/git-ensure-branch
@@ -81,11 +81,19 @@ jobs:
       - name: Get package version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: apps/app
+
+      # Per-package tag in the changesets-native format: @aragon/app@1.17.0. Other
+      # workspaces (future apps/packages) get their own prefix and release flows.
+      - name: Compute release tag
+        id: release-tag
+        run: echo "name=@aragon/app@${{ steps.package-version.outputs.current-version }}" >> $GITHUB_OUTPUT
 
       - name: Commit changes
         run: |
           git add --all
-          git commit -am "Release v${{ steps.package-version.outputs.current-version}}"
+          git commit -am "Release ${{ steps.release-tag.outputs.name }}"
           git push origin ${{ steps.branch-name.outputs.name }}
 
       - name: Ensure Pull Request
@@ -94,7 +102,7 @@ jobs:
         with:
           base: main
           head: ${{ steps.branch-name.outputs.name }}
-          title: Release v${{ steps.package-version.outputs.current-version }}
+          title: Release ${{ steps.release-tag.outputs.name }}
           body: ${{ steps.release-summary.outputs.summary }}
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
@@ -105,8 +113,8 @@ jobs:
         with:
           access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: sync
-          name: v${{ steps.package-version.outputs.current-version }}
-          version: v${{ steps.package-version.outputs.current-version }}
+          name: ${{ steps.release-tag.outputs.name }}
+          version: ${{ steps.release-tag.outputs.name }}
 
       - name: Linear — set stage to in_progress
         if: steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
@@ -115,7 +123,7 @@ jobs:
         with:
           access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
           command: update
-          version: v${{ steps.package-version.outputs.current-version }}
+          version: ${{ steps.release-tag.outputs.name }}
           stage: in_progress
 
       - name: Notify Slack
@@ -126,7 +134,7 @@ jobs:
           slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
           slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
           message: |
-            🚀 *Release v${{ steps.package-version.outputs.current-version }} — Started* ${{ steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            🚀 *Release ${{ steps.release-tag.outputs.name }} — Started* ${{ steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
             *PR:* ${{ steps.create-pr.outputs.url }}
 
             ${{ steps.release-summary.outputs.summary }}

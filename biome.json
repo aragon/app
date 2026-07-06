@@ -25,8 +25,8 @@
             "!*.jsonc",
             "!.changeset/**",
             "!.zed/**",
-            "!src/app/manifest.json",
-            "!src/assets/locales/**"
+            "!apps/app/src/app/manifest.json",
+            "!apps/app/src/assets/locales/**"
         ]
     },
     "json": {
@@ -262,7 +262,7 @@
             "!.next/**/*",
             "!.vercel/**/*",
             "!coverage",
-            "!public/web-workers/**/*"
+            "!apps/app/public/web-workers/**/*"
         ]
     },
     "overrides": [
@@ -335,7 +335,7 @@
             "includes": [
                 "**/*.test.ts",
                 "**/*.test.tsx",
-                "e2e/**/*.ts"
+                "apps/app/e2e/**/*.ts"
             ],
             "linter": {
                 "rules": {}
@@ -356,7 +356,7 @@
         },
         {
             "includes": [
-                "e2e/scripts/**/*.mjs"
+                "apps/app/e2e/scripts/**/*.mjs"
             ],
             "linter": {
                 "rules": {
@@ -368,7 +368,7 @@
         },
         {
             "includes": [
-                "scripts/**/*.mjs"
+                "apps/app/scripts/**/*.mjs"
             ],
             "linter": {
                 "rules": {
