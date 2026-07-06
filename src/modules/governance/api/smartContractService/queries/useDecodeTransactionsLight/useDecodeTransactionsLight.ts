@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { skipToken, useQuery } from '@tanstack/react-query';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import { smartContractService } from '../../smartContractService';
@@ -10,13 +10,10 @@ export const decodeTransactionsLightOptions = (
     options?: QueryOptions<IProposalAction[]>,
 ): SharedQueryOptions<IProposalAction[]> => ({
     queryKey: smartContractServiceKeys.decodeTransactionsLight(params),
-    queryFn: () => {
-        if (params == null) {
-            throw new Error('Decode transactions params are required.');
-        }
-
-        return smartContractService.decodeTransactionsLight(params);
-    },
+    queryFn:
+        params == null
+            ? skipToken
+            : () => smartContractService.decodeTransactionsLight(params),
     ...options,
 });
 

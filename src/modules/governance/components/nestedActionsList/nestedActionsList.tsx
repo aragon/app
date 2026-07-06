@@ -38,38 +38,18 @@ interface IRawActionTuple {
     data: string;
 }
 
-type RawActionTupleEntry = IRawActionTuple | unknown[];
-
+// The raw `_actions` tuple entries arrive either as keyed objects or as positional arrays following the fixed
+// `(to, value, data)` component order of the executor Action struct.
 const normalizeRawActionTupleEntry = (
-    entry: RawActionTupleEntry,
-    components: IProposalActionInputDataParameter['components'] = [],
-): IRawActionTuple => {
-    if (!Array.isArray(entry)) {
-        return entry;
-    }
-
-    const getComponentValue = (componentName: keyof IRawActionTuple) => {
-        const componentIndex = components.findIndex(
-            (component) => component.name === componentName,
-        );
-        const fallbackIndex = ['to', 'value', 'data'].indexOf(componentName);
-        const value = entry[componentIndex >= 0 ? componentIndex : fallbackIndex];
-
-        return value == null ? '' : String(value);
-    };
-
-    return {
-        to: getComponentValue('to'),
-        value: getComponentValue('value'),
-        data: getComponentValue('data'),
-    };
-};
-
-const normalizeRawActionTuple = (
-    tuple: RawActionTupleEntry[],
-    components: IProposalActionInputDataParameter['components'] = [],
-): IRawActionTuple[] =>
-    tuple.map((entry) => normalizeRawActionTupleEntry(entry, components));
+    entry: IRawActionTuple | unknown[],
+): IRawActionTuple =>
+    Array.isArray(entry)
+        ? {
+              to: String(entry[0] ?? ''),
+              value: String(entry[1] ?? ''),
+              data: String(entry[2] ?? ''),
+          }
+        : entry;
 
 const buildRawActionStubs = (tuple: IRawActionTuple[]): IProposalAction[] =>
     tuple.map((entry) => ({
@@ -86,46 +66,41 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    const rawActionsParam = outerParams.find((param) => param.name === '_actions');
-    const rawTuple = normalizeRawActionTuple(
-        (rawActionsParam?.value as RawActionTupleEntry[] | undefined) ?? [],
-        rawActionsParam?.components,
-    );
+    // The selector-matched executor signature does not constrain parameter names, so fall back to the single
+    // tuple[] parameter when the wrapper does not name it `_actions`.
+    const actionsParam =
+        outerParams.find((param) => param.name === '_actions') ??
+        outerParams.find((param) => param.type === 'tuple[]');
+    const rawTuple = (
+        (actionsParam?.value as Array<IRawActionTuple | unknown[]> | undefined) ??
+        []
+    ).map(normalizeRawActionTupleEntry);
 
     const hasDecodedMismatch =
         rawActions == null || rawActions.length !== rawTuple.length;
 
-    const decodedFallbackParams =
-        dao == null
-            ? undefined
-            : {
-                  urlParams: {
-                      network: dao.network,
-                      address: dao.address,
-                  },
+    // Client-side fallback for nested actions the backend did not decode (e.g. wrappers it types as Unknown).
+    const decodeParams =
+        dao != null
+            ? {
+                  urlParams: { network: dao.network, address: dao.address },
                   body: rawTuple,
-              };
-    const { data: decodedFallbackActions } = useDecodeTransactionsLight(
-        decodedFallbackParams,
-        {
-            enabled:
-                dao != null && hasDecodedMismatch && rawTuple.length > 0,
-        },
-    );
+              }
+            : undefined;
+    const { data: decodedActions } = useDecodeTransactionsLight(decodeParams, {
+        enabled: hasDecodedMismatch && rawTuple.length > 0,
+    });
 
     if (dao == null) {
         return null;
     }
 
-    const hasDecodedFallback =
-        decodedFallbackActions != null &&
-        decodedFallbackActions.length === rawTuple.length;
-    const rawActionStubs = buildRawActionStubs(rawTuple);
+    const decodedFallback =
+        decodedActions?.length === rawTuple.length ? decodedActions : undefined;
+    const isStubFallback = hasDecodedMismatch && decodedFallback == null;
 
     const actionsToRender = hasDecodedMismatch
-        ? hasDecodedFallback
-            ? decodedFallbackActions
-            : rawActionStubs
+        ? (decodedFallback ?? buildRawActionStubs(rawTuple))
         : rawActions;
 
     if (actionsToRender.length === 0) {
@@ -145,7 +120,9 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
                         action={action}
                         chainId={chainId}
                         daoId={daoId}
-                        key={index}
+                        // Gov-ui-kit initializes the item view mode only on mount; force a remount when the
+                        // raw-calldata stubs are replaced by decoded actions so items default to the decoded view.
+                        key={`${isStubFallback ? 'stub' : 'action'}-${index.toString()}`}
                     />
                 ))}
             </ProposalActions.Container>

@@ -1,7 +1,10 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    type IProposalActionInputDataParameter,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import { useDecodeTransactionsLight } from '@/modules/governance/api/smartContractService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
+import * as smartContractService from '@/modules/governance/api/smartContractService';
 import { proposalActionUtils } from '@/modules/governance/utils/proposalActionUtils';
 import * as daoService from '@/shared/api/daoService';
 import {
@@ -29,18 +32,15 @@ jest.mock('../proposalActionsItem', () => ({
     ),
 }));
 
-jest.mock('@/modules/governance/api/smartContractService', () => ({
-    useDecodeTransactionsLight: jest.fn(),
-}));
-
 describe('<NestedActionsList /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const normalizeActionsSpy = jest.spyOn(
         proposalActionUtils,
         'normalizeActions',
     );
-    const useDecodeTransactionsLightMock = jest.mocked(
-        useDecodeTransactionsLight,
+    const useDecodeTransactionsLightSpy = jest.spyOn(
+        smartContractService,
+        'useDecodeTransactionsLight',
     );
 
     beforeEach(() => {
@@ -48,9 +48,9 @@ describe('<NestedActionsList /> component', () => {
             generateReactQueryResultSuccess({ data: generateDao() }),
         );
         normalizeActionsSpy.mockImplementation((actions) => actions);
-        useDecodeTransactionsLightMock.mockReturnValue(
+        useDecodeTransactionsLightSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData([]) as ReturnType<
-                typeof useDecodeTransactionsLight
+                typeof smartContractService.useDecodeTransactionsLight
             >,
         );
     });
@@ -58,7 +58,7 @@ describe('<NestedActionsList /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         normalizeActionsSpy.mockReset();
-        useDecodeTransactionsLightMock.mockReset();
+        useDecodeTransactionsLightSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<INestedActionsListProps>) => {
@@ -89,6 +89,11 @@ describe('<NestedActionsList /> component', () => {
         ...overrides,
     });
 
+    const generateActionsParams = (
+        value: unknown[],
+        name = '_actions',
+    ): IProposalActionInputDataParameter[] => [{ name, type: 'tuple[]', value }];
+
     it('renders one item per decoded sub-action when length matches the outer tuple', () => {
         const rawActions = [
             generateAction({ type: 'Foo' }),
@@ -97,16 +102,10 @@ describe('<NestedActionsList /> component', () => {
 
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            { to: '0xa', value: '0', data: '0x' },
-                            { to: '0xb', value: '0', data: '0x' },
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xa', value: '0', data: '0x' },
+                    { to: '0xb', value: '0', data: '0x' },
+                ]),
                 rawActions,
             }),
         );
@@ -120,17 +119,11 @@ describe('<NestedActionsList /> component', () => {
     it('falls back to raw-calldata stubs when decoded length disagrees with the outer tuple', () => {
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            { to: '0xa', value: '0', data: '0x' },
-                            { to: '0xb', value: '0', data: '0x' },
-                            { to: '0xc', value: '0', data: '0x' },
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xa', value: '0', data: '0x' },
+                    { to: '0xb', value: '0', data: '0x' },
+                    { to: '0xc', value: '0', data: '0x' },
+                ]),
                 rawActions: [generateAction()],
             }),
         );
@@ -145,24 +138,13 @@ describe('<NestedActionsList /> component', () => {
     it('normalizes positional tuple arrays when building raw-calldata stubs', () => {
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        components: [
-                            { name: 'to', type: 'address' },
-                            { name: 'value', type: 'uint256' },
-                            { name: 'data', type: 'bytes' },
-                        ],
-                        value: [
-                            [
-                                '0x1Fc37B93680329C523515AEd5eFeFB51Bb87B5eF',
-                                '15',
-                                '0x8ab56883',
-                            ],
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    [
+                        '0x1Fc37B93680329C523515AEd5eFeFB51Bb87B5eF',
+                        '15',
+                        '0x8ab56883',
+                    ],
+                ]),
                 rawActions: undefined,
             }),
         );
@@ -178,6 +160,23 @@ describe('<NestedActionsList /> component', () => {
         expect(item).toHaveAttribute('data-data', '0x8ab56883');
     });
 
+    it('reads the raw tuple from the first tuple[] parameter when it is not named _actions', () => {
+        render(
+            createTestComponent({
+                outerParams: generateActionsParams(
+                    [{ to: '0xa', value: '0', data: '0x12345678' }],
+                    'actions',
+                ),
+                rawActions: undefined,
+            }),
+        );
+
+        const item = screen.getByTestId('nested-item');
+
+        expect(item).toHaveTextContent('RAW_CALLDATA');
+        expect(item).toHaveAttribute('data-to', '0xa');
+    });
+
     it('uses decoded fallback actions when backend decoded actions are missing', () => {
         const decodedAction = generateAction({
             type: 'DecodedAction',
@@ -185,34 +184,26 @@ describe('<NestedActionsList /> component', () => {
             data: '0xdecoded-data',
             value: '99',
         });
-        useDecodeTransactionsLightMock.mockReturnValue(
-            generateReactQueryResultSuccessWithData([decodedAction]) as ReturnType<
-                typeof useDecodeTransactionsLight
+        useDecodeTransactionsLightSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData([
+                decodedAction,
+            ]) as ReturnType<
+                typeof smartContractService.useDecodeTransactionsLight
             >,
         );
 
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            {
-                                to: '0xraw',
-                                value: '0',
-                                data: '0xraw-data',
-                            },
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xraw', value: '0', data: '0xraw-data' },
+                ]),
                 rawActions: undefined,
             }),
         );
 
         const item = screen.getByTestId('nested-item');
 
-        expect(useDecodeTransactionsLightMock).toHaveBeenCalledWith(
+        expect(useDecodeTransactionsLightSpy).toHaveBeenCalledWith(
             expect.objectContaining({
                 body: [{ to: '0xraw', value: '0', data: '0xraw-data' }],
             }),
@@ -225,27 +216,17 @@ describe('<NestedActionsList /> component', () => {
     });
 
     it('keeps raw-calldata stubs while decoded fallback actions are loading', () => {
-        useDecodeTransactionsLightMock.mockReturnValue(
+        useDecodeTransactionsLightSpy.mockReturnValue(
             generateReactQueryResultLoading() as ReturnType<
-                typeof useDecodeTransactionsLight
+                typeof smartContractService.useDecodeTransactionsLight
             >,
         );
 
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            {
-                                to: '0xraw',
-                                value: '0',
-                                data: '0xraw-data',
-                            },
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xraw', value: '0', data: '0xraw-data' },
+                ]),
                 rawActions: undefined,
             }),
         );
@@ -257,27 +238,17 @@ describe('<NestedActionsList /> component', () => {
     });
 
     it('keeps raw-calldata stubs when decoded fallback actions fail', () => {
-        useDecodeTransactionsLightMock.mockReturnValue(
+        useDecodeTransactionsLightSpy.mockReturnValue(
             generateReactQueryResultError() as ReturnType<
-                typeof useDecodeTransactionsLight
+                typeof smartContractService.useDecodeTransactionsLight
             >,
         );
 
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            {
-                                to: '0xraw',
-                                value: '0',
-                                data: '0xraw-data',
-                            },
-                        ],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xraw', value: '0', data: '0xraw-data' },
+                ]),
                 rawActions: undefined,
             }),
         );
@@ -288,6 +259,38 @@ describe('<NestedActionsList /> component', () => {
         expect(item).toHaveAttribute('data-to', '0xraw');
     });
 
+    it('remounts nested items when decoded fallback actions replace the raw-calldata stubs', () => {
+        useDecodeTransactionsLightSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof smartContractService.useDecodeTransactionsLight
+            >,
+        );
+        const listProps: Partial<INestedActionsListProps> = {
+            outerParams: generateActionsParams([
+                { to: '0xraw', value: '0', data: '0xraw-data' },
+            ]),
+            rawActions: undefined,
+        };
+
+        const { rerender } = render(createTestComponent(listProps));
+        const stubItem = screen.getByTestId('nested-item');
+        expect(stubItem).toHaveTextContent('RAW_CALLDATA');
+
+        useDecodeTransactionsLightSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData([
+                generateAction({ type: 'DecodedAction' }),
+            ]) as ReturnType<
+                typeof smartContractService.useDecodeTransactionsLight
+            >,
+        );
+        rerender(createTestComponent(listProps));
+
+        // A new DOM node proves the item remounted, re-initializing its default view mode to the decoded view.
+        const decodedItem = screen.getByTestId('nested-item');
+        expect(decodedItem).toHaveTextContent('DecodedAction');
+        expect(decodedItem).not.toBe(stubItem);
+    });
+
     it('renders nothing while the DAO is loading', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
@@ -296,13 +299,9 @@ describe('<NestedActionsList /> component', () => {
         );
         const { container } = render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [{ to: '0xa', value: '0', data: '0x' }],
-                    },
-                ],
+                outerParams: generateActionsParams([
+                    { to: '0xa', value: '0', data: '0x' },
+                ]),
                 rawActions: [generateAction()],
             }),
         );
