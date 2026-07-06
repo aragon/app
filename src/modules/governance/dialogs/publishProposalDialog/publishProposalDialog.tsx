@@ -58,10 +58,11 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
     const [indexedProposalSlug, setIndexedProposalSlug] = useState<string>();
+    const proposalDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
     const rendersProposalStatusCard =
         plugin.interfaceType !== PluginInterfaceType.ADMIN;
     const proposalCardStatus = useIndexedProposalStatus({
-        daoId,
+        daoId: proposalDaoId,
         fallbackStatus: ProposalStatus.DRAFT,
         isIndexed: rendersProposalStatusCard && indexedProposalSlug != null,
         slug: indexedProposalSlug,

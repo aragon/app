@@ -424,4 +424,48 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
         );
         expect(fetchedWithCallbackSlug).toBe(true);
     });
+
+    it('fetches linked-account proposals from the plugin DAO after indexing', () => {
+        const dao = generateDao({
+            address: '0xParentDao',
+            network: DaoService.Network.ETHEREUM_MAINNET,
+        });
+        const plugin = generateDaoPlugin({
+            daoAddress: '0xLinkedDao',
+        });
+        const indexedProposal = generateProposal({ id: 'indexed-linked-1' });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
+        );
+        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+        const location = generateDialogLocation({
+            daoId: `${DaoService.Network.ETHEREUM_MAINNET}-${dao.address}`,
+            plugin,
+        });
+        render(createTestComponent({ location }));
+
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
+
+        act(() => {
+            onIndexed!({ slug: 'linked-proposal' });
+        });
+
+        expect(useProposalBySlugSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                urlParams: { slug: 'linked-proposal' },
+                queryParams: {
+                    daoId: `${DaoService.Network.ETHEREUM_MAINNET}-0xLinkedDao`,
+                },
+            }),
+            expect.objectContaining({ enabled: true }),
+        );
+    });
 });
