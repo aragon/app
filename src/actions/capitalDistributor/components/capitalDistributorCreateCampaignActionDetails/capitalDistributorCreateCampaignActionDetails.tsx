@@ -10,12 +10,12 @@ import {
     formatterUtils,
     type IProposalAction,
     type IProposalActionComponentProps,
-    Link,
     NumberFormat,
 } from '@aragon/gov-ui-kit';
 import { formatUnits, type Hex, zeroAddress, zeroHash } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import {
     type TranslationFunction,
     useTranslations,
@@ -147,14 +147,12 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 >
                     <div className="flex flex-col gap-3">
                         {resources.map((link) => (
-                            <Link
-                                href={link.url}
+                            <ResourceLink
                                 isExternal={true}
                                 key={link.url}
-                                showUrl={true}
-                            >
-                                {link.name}
-                            </Link>
+                                name={link.name}
+                                url={link.url}
+                            />
                         ))}
                     </div>
                 </DefinitionList.Item>

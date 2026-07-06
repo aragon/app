@@ -1,4 +1,6 @@
 import { dehydrate, QueryClient } from '@tanstack/react-query';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { headers } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
@@ -77,6 +79,8 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
                     </ErrorBoundary>
                     <Footer />
                 </Providers>
+                <Analytics />
+                <SpeedInsights />
             </body>
         </html>
     );

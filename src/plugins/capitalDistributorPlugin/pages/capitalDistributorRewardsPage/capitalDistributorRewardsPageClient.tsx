@@ -1,6 +1,6 @@
 'use client';
 
-import { CardEmptyState, IconType, Link } from '@aragon/gov-ui-kit';
+import { CardEmptyState, IconType } from '@aragon/gov-ui-kit';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useDaoOverrides } from '@/shared/api/cmsService';
@@ -8,6 +8,7 @@ import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -100,14 +101,12 @@ export const CapitalDistributorRewardsPageClient: React.FC<
                         />
                     )}
                     {links?.map(({ url, name }) => (
-                        <Link
-                            href={url}
+                        <ResourceLink
                             isExternal={true}
                             key={url}
-                            showUrl={true}
-                        >
-                            {name}
-                        </Link>
+                            name={name}
+                            url={url}
+                        />
                     ))}
                 </Page.AsideCard>
             </Page.Aside>

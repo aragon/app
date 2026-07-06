@@ -16,6 +16,7 @@ import {
     type ICampaign,
 } from '@/plugins/capitalDistributorPlugin/api/capitalDistributorService';
 import type { ICapitalDistributorPlugin } from '@/plugins/capitalDistributorPlugin/types';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { ICapitalDistributorClaimDialogForm } from '../capitalDistributorClaimDialogDefinitions';
@@ -137,14 +138,12 @@ export const CapitalDistributorClaimDialogDetails: React.FC<
                     </Heading>
                     <div className="flex flex-col gap-4">
                         {resources.map((resource) => (
-                            <Link
-                                href={resource.url}
+                            <ResourceLink
                                 isExternal={true}
                                 key={resource.url}
-                                showUrl={true}
-                            >
-                                {resource.name}
-                            </Link>
+                                name={resource.name}
+                                url={resource.url}
+                            />
                         ))}
                     </div>
                 </Card>

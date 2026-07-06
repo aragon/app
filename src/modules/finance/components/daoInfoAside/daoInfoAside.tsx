@@ -7,9 +7,9 @@ import {
     Collapsible,
     DefinitionList,
     IconType,
-    Link,
 } from '@aragon/gov-ui-kit';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { StatCard } from '@/shared/components/statCard';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -86,14 +86,12 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
 
                 <div className="flex flex-col gap-3">
                     {links.map((link) => (
-                        <Link
-                            href={link.url}
+                        <ResourceLink
                             isExternal={true}
                             key={link.url}
-                            showUrl={true}
-                        >
-                            {link.name}
-                        </Link>
+                            name={link.name}
+                            url={link.url}
+                        />
                     ))}
                 </div>
                 {resolvedOctavLink && (
