@@ -1,5 +1,13 @@
 # @aragon/app
 
+## 1.33.1
+
+### Patch Changes
+
+- [#1207](https://github.com/aragon/app/pull/1207) [`4479568`](https://github.com/aragon/app/commit/44795688229568a3b8ea27ca5f0e4132ea336159) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Integrate Vercel Speed Insights and Web Analytics to collect Web Vitals and page-view metrics on deployments.
+
+- [#1208](https://github.com/aragon/app/pull/1208) [`4706e6a`](https://github.com/aragon/app/commit/4706e6a39df2858fc01483bb4c10bc961457a75b) Thanks [@evanaronson](https://github.com/evanaronson)! - Allow resource links to be saved and rendered without custom link text.
+
 ## 1.33.0
 
 ### Minor Changes
