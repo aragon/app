@@ -4,12 +4,14 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import type { WaitForTransactionReceiptErrorType } from 'viem';
 import * as Wagmi from 'wagmi';
 import { Network } from '@/shared/api/daoService';
+import * as transactionService from '@/shared/api/transactionService';
 import { TransactionType } from '@/shared/api/transactionService';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
 import {
     generateReactQueryResultError,
+    generateReactQueryResultSuccess,
     generateStepperResult,
 } from '@/shared/testUtils';
 import {
@@ -613,5 +615,161 @@ describe('<TransactionDialog /> component', () => {
             from: address,
             transaction: undefined,
         });
+    });
+});
+
+describe('<TransactionDialog /> onIndexed callback', () => {
+    const useTransactionStatusSpy = jest.spyOn(
+        transactionService,
+        'useTransactionStatus',
+    );
+    const useSendTransactionSpy = jest.spyOn(Wagmi, 'useSendTransaction');
+    const useMutationSpy = jest.spyOn(ReactQuery, 'useMutation');
+    const useWaitForTransactionReceiptSpy = jest.spyOn(
+        Wagmi,
+        'useWaitForTransactionReceipt',
+    );
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useSwitchChainSpy = jest.spyOn(Wagmi, 'useSwitchChain');
+    const usePendingTransactionMock = jest.mocked(usePendingTransaction);
+    const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
+    const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
+    const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
+
+    beforeEach(() => {
+        useSendTransactionSpy.mockReturnValue(
+            {} as Wagmi.UseSendTransactionReturnType,
+        );
+        useMutationSpy.mockReturnValue({} as ReactQuery.UseMutationResult);
+        useConnectionSpy.mockReturnValue(
+            {} as unknown as Wagmi.UseConnectionReturnType,
+        );
+        useWaitForTransactionReceiptSpy.mockReturnValue({
+            status: 'success',
+        } as unknown as Wagmi.UseWaitForTransactionReceiptReturnType);
+        useSwitchChainSpy.mockReturnValue({
+            mutate: jest.fn(),
+        } as unknown as Wagmi.UseSwitchChainReturnType);
+        usePendingTransactionMock.mockReturnValue(undefined);
+        managerSendSpy.mockImplementation(() => undefined);
+        managerClearSpy.mockImplementation(() => undefined);
+        managerGetSpy.mockReturnValue(undefined);
+        // Default: not yet indexed
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+    });
+
+    afterEach(() => {
+        useSendTransactionSpy.mockReset();
+        useMutationSpy.mockReset();
+        useConnectionSpy.mockReset();
+        useWaitForTransactionReceiptSpy.mockReset();
+        useSwitchChainSpy.mockReset();
+        usePendingTransactionMock.mockReset();
+        managerSendSpy.mockReset();
+        managerClearSpy.mockReset();
+        managerGetSpy.mockReset();
+        useTransactionStatusSpy.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
+        const completeProps: ITransactionDialogProps = {
+            title: 'title',
+            description: 'description',
+            intent: { id: 'intent' },
+            submitLabel: 'submit',
+            stepper: generateStepperResult<ITransactionDialogStepMeta, string>({
+                activeStep: TransactionDialogStep.INDEXING,
+            }),
+            prepareTransaction: jest.fn(),
+            successLink: { label: '', href: '' },
+            transactionType: TransactionType.PROPOSAL_CREATE,
+            ...props,
+        };
+
+        return (
+            <GukModulesProvider>
+                <DialogProvider>
+                    <Dialog.Root open={true}>
+                        <TransactionDialog {...completeProps} />
+                    </Dialog.Root>
+                </DialogProvider>
+            </GukModulesProvider>
+        );
+    };
+
+    it('calls onIndexed exactly once when the transaction is indexed, with the proposal slug', () => {
+        const onIndexed = jest.fn();
+
+        // First render: the transaction is not indexed yet.
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+
+        const propsWithCallback: Partial<ITransactionDialogProps> = {
+            onIndexed,
+        };
+
+        const { rerender } = render(createTestComponent(propsWithCallback));
+
+        // The callback waits until indexing completes.
+        expect(onIndexed).not.toHaveBeenCalled();
+
+        // Transition to indexed with a proposal slug.
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'abc' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent(propsWithCallback));
+        });
+
+        expect(onIndexed).toHaveBeenCalledTimes(1);
+        expect(onIndexed).toHaveBeenCalledWith({ slug: 'abc' });
+
+        // React Query polling can replace the status object, and consumers can pass
+        // inline callbacks. Neither should trigger the callback a second time.
+        const onIndexedNext = jest.fn();
+        const nextProps: Partial<ITransactionDialogProps> = {
+            onIndexed: onIndexedNext,
+        };
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'abc' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent(nextProps));
+        });
+
+        expect(onIndexed).toHaveBeenCalledTimes(1);
+        expect(onIndexedNext).not.toHaveBeenCalled();
+    });
+
+    it('does not throw when indexing completes and onIndexed is omitted', () => {
+        // Start before indexing completes.
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: { isProcessed: false } }),
+        );
+
+        const { rerender } = render(createTestComponent({}));
+
+        // Complete indexing without a callback; the optional callback must be a no-op.
+        useTransactionStatusSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: { isProcessed: true, slug: 'xyz' },
+            }),
+        );
+
+        act(() => {
+            rerender(createTestComponent({}));
+        });
+
+        // Dialog survives the indexed signal with no callback attached.
+        expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
     });
 });

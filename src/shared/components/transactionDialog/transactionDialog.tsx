@@ -41,6 +41,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         prepareTransaction,
         onCancelClick,
         onSuccess,
+        onIndexed,
         network = Network.ETHEREUM_MAINNET,
         transactionType,
         indexingFallbackUrl,
@@ -64,6 +65,10 @@ export const TransactionDialog = <TCustomStepId extends string>(
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
+
+    // Guard so onIndexed fires exactly once: react-query polling yields new status-object
+    // identities on re-render, so without this the indexed effect would refire.
+    const onIndexedFiredRef = useRef(false);
 
     const { address } = useWalletAccount();
     const { buildEntityUrl } = useDaoChain({ network });
@@ -140,6 +145,20 @@ export const TransactionDialog = <TCustomStepId extends string>(
         refetchInterval: ({ state }) =>
             state.data?.isProcessed ? false : indexingStepInterval,
     });
+
+    // Fire onIndexed exactly once when the backend reports the transaction as indexed. The
+    // fired-ref guard makes re-renders and callback identity changes no-ops after the first call.
+    const isTransactionIndexed = transactionStatus?.isProcessed === true;
+    const indexedProposalSlug = transactionStatus?.slug;
+
+    useEffect(() => {
+        if (!isTransactionIndexed || onIndexedFiredRef.current) {
+            return;
+        }
+
+        onIndexedFiredRef.current = true;
+        onIndexed?.({ slug: indexedProposalSlug });
+    }, [isTransactionIndexed, indexedProposalSlug, onIndexed]);
 
     const handleSendTransaction = useCallback(() => {
         const onError = handleTransactionError(TransactionDialogStep.APPROVE);

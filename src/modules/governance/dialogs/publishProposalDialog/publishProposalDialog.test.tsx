@@ -1,4 +1,8 @@
-import { GukModulesProvider, modulesCopy } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    modulesCopy,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
@@ -11,16 +15,19 @@ import {
     TransactionDialog,
 } from '@/shared/components/transactionDialog';
 import * as useDaoPlugins from '@/shared/hooks/useDaoPlugins';
+import * as useSlotSingleFunction from '@/shared/hooks/useSlotSingleFunction';
 import {
     generateDao,
     generateDaoPlugin,
     generateFilterComponentPlugin,
     generateReactQueryMutationResultIdle,
     generateReactQueryMutationResultSuccess,
+    generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { testLogger, timeUtils } from '@/test/utils';
-import { generateProposalCreate } from '../../testUtils';
+import * as governanceService from '../../api/governanceService';
+import { generateProposal, generateProposalCreate } from '../../testUtils';
 import {
     PublishProposalDialog,
     type PublishProposalStep,
@@ -229,5 +236,197 @@ describe('<PublishProposalDialog /> component', () => {
             metadataCid: ipfsResult.IpfsHash,
             plugin: daoPlugin,
         });
+    });
+});
+
+describe('<PublishProposalDialog /> proposal card status after indexing', () => {
+    const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
+    const useDaoSpy = jest.spyOn(DaoService, 'useDao');
+    const useDaoPluginsSpy = jest.spyOn(useDaoPlugins, 'useDaoPlugins');
+    const usePinJsonSpy = jest.spyOn(usePinJson, 'usePinJson');
+    const buildTransactionSpy = jest.spyOn(
+        publishProposalDialogUtils,
+        'buildTransaction',
+    );
+    const useProposalBySlugSpy = jest.spyOn(
+        governanceService,
+        'useProposalBySlug',
+    );
+    const useSlotSingleFunctionSpy = jest.spyOn(
+        useSlotSingleFunction,
+        'useSlotSingleFunction',
+    );
+
+    beforeEach(() => {
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as Wagmi.UseConnectionReturnType);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+        useDaoPluginsSpy.mockReturnValue([generateFilterComponentPlugin()]);
+        usePinJsonSpy.mockReturnValue(generateReactQueryMutationResultIdle());
+        buildTransactionSpy.mockReturnValue({
+            to: '0x123',
+            data: '0x123',
+            value: BigInt(0),
+        });
+        // Default: useProposalBySlug returns no data (not yet indexed). Loading generator
+        // keeps data genuinely undefined (the success generator coerces undefined to {}).
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof governanceService.useProposalBySlug
+            >,
+        );
+        // Default: slot function returns undefined (not yet called with real proposal)
+        useSlotSingleFunctionSpy.mockReturnValue(undefined);
+    });
+
+    afterEach(() => {
+        useConnectionSpy.mockReset();
+        useDaoPluginsSpy.mockReset();
+        usePinJsonSpy.mockReset();
+        buildTransactionSpy.mockReset();
+        useDaoSpy.mockReset();
+        useProposalBySlugSpy.mockReset();
+        useSlotSingleFunctionSpy.mockReset();
+        (TransactionDialog as jest.Mock).mockClear();
+    });
+
+    const generateDialogLocation = (
+        params?: Partial<IPublishProposalDialogParams>,
+    ): IDialogLocation<IPublishProposalDialogParams> => ({
+        id: 'test',
+        params: {
+            proposal: generateProposalCreate(),
+            daoId: 'test-dao',
+            plugin: generateDaoPlugin(),
+            ...params,
+        },
+    });
+
+    const createTestComponent = (
+        props?: Partial<IPublishProposalDialogProps>,
+    ) => {
+        const completeProps: IPublishProposalDialogProps = {
+            location: { id: 'test' },
+            ...props,
+        };
+        return (
+            <GukModulesProvider>
+                <PublishProposalDialog {...completeProps} />
+            </GukModulesProvider>
+        );
+    };
+
+    it('keeps the proposal card in draft before indexing completes', () => {
+        const location = generateDialogLocation();
+        render(createTestComponent({ location }));
+
+        expect(
+            screen.getByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
+            ),
+        ).toBeInTheDocument();
+
+        expect(
+            screen.queryByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+            ),
+        ).not.toBeInTheDocument();
+    });
+
+    it('switches the proposal card to the computed status after indexing completes', () => {
+        const indexedProposal = generateProposal({ id: 'indexed-1' });
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
+        );
+        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+        const location = generateDialogLocation();
+        render(createTestComponent({ location }));
+
+        // The post-index query and slot are available from the first render; the
+        // card should still wait for the indexing signal before updating.
+        expect(
+            screen.getByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+            ),
+        ).not.toBeInTheDocument();
+        expect(screen.queryByText('MY-PROPOSAL')).not.toBeInTheDocument();
+
+        // Capture onIndexed from the mocked TransactionDialog.
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
+
+        expect(onIndexed).toBeInstanceOf(Function);
+
+        act(() => {
+            onIndexed!({ slug: 'my-proposal' });
+        });
+
+        expect(
+            screen.getByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.ACTIVE,
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                modulesCopy.proposalDataListItemStatus.statusLabel.DRAFT,
+            ),
+        ).not.toBeInTheDocument();
+        expect(screen.getByText('MY-PROPOSAL')).toBeInTheDocument();
+    });
+
+    it('fetches linked-account proposals from the plugin DAO after indexing', () => {
+        const dao = generateDao({
+            address: '0xParentDao',
+            network: DaoService.Network.ETHEREUM_MAINNET,
+        });
+        const plugin = generateDaoPlugin({
+            daoAddress: '0xLinkedDao',
+        });
+        const indexedProposal = generateProposal({ id: 'indexed-linked-1' });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        useProposalBySlugSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: indexedProposal,
+                isFetchedAfterMount: true,
+            }),
+        );
+        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
+
+        const location = generateDialogLocation({
+            daoId: `${DaoService.Network.ETHEREUM_MAINNET}-${dao.address}`,
+            plugin,
+        });
+        render(createTestComponent({ location }));
+
+        const { onIndexed } = (TransactionDialog as jest.Mock).mock
+            .calls[0][0] as ITransactionDialogProps;
+
+        act(() => {
+            onIndexed!({ slug: 'linked-proposal' });
+        });
+
+        expect(useProposalBySlugSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                urlParams: { slug: 'linked-proposal' },
+                queryParams: {
+                    daoId: `${DaoService.Network.ETHEREUM_MAINNET}-0xLinkedDao`,
+                },
+            }),
+            expect.objectContaining({ enabled: true }),
+        );
     });
 });
