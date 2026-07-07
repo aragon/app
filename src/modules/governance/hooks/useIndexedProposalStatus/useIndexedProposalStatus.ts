@@ -45,11 +45,13 @@ export const useIndexedProposalStatus = (
     const proposalForStatus = hasFreshIndexedProposal
         ? indexedProposal
         : undefined;
+    // When there is no fresh proposal, pluginId is '' so no status handler is registered/invoked
+    // and the call is a no-op — params is genuinely optional here, so it stays undefined-typed.
     const indexedProposalStatus = useSlotSingleFunction<
-        IProposal,
+        IProposal | undefined,
         ProposalStatus
     >({
-        params: proposalForStatus!,
+        params: proposalForStatus,
         slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
         pluginId: proposalForStatus?.pluginInterfaceType ?? '',
     });

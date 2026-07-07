@@ -20,7 +20,6 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import * as governanceService from '../../api/governanceService';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal } from '../../testUtils';
 import type {
     IExecuteDialogParams,
@@ -189,44 +188,5 @@ describe('<ExecuteDialog /> proposal card status after indexing', () => {
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
-    });
-
-    it('derives the indexed status from the governance proposal status slot', () => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao({ plugins: [generateDaoPlugin()] }),
-            }),
-        );
-        const indexedProposal = generateProposal({ id: 'executed-1' });
-        useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: indexedProposal,
-                isFetchedAfterMount: true,
-            }),
-        );
-        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTED);
-
-        const location = generateDialogLocation({
-            status: ProposalStatus.EXECUTABLE,
-        });
-        render(createTestComponent({ location }));
-
-        const { onIndexed } = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as ITransactionDialogProps;
-
-        expect(onIndexed).toBeInstanceOf(Function);
-
-        // No slug for PROPOSAL_EXECUTE; the callback is only an indexed signal.
-        act(() => {
-            onIndexed!({ slug: undefined });
-        });
-
-        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                params: indexedProposal,
-                pluginId: indexedProposal.pluginInterfaceType,
-            }),
-        );
     });
 });

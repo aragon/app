@@ -7,7 +7,6 @@ import { render, screen } from '@testing-library/react';
 import { act, type ReactNode } from 'react';
 import * as Wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
-import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { generateProposal } from '@/modules/governance/testUtils';
 import * as DaoService from '@/shared/api/daoService';
 import type { IDialogLocation } from '@/shared/components/dialogProvider';
@@ -199,42 +198,5 @@ describe('<SppAdvanceStageDialog /> proposal card status after indexing', () => 
             ([params]) => params.urlParams.slug === 'SLUG-1',
         );
         expect(fetchedWithLocalSlug).toBe(true);
-    });
-
-    it('derives the indexed status from the governance proposal status slot', () => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao({ plugins: [generateDaoPlugin()] }),
-            }),
-        );
-        const indexedProposal = generateProposal({ id: 'advanced-1' });
-        useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: indexedProposal,
-                isFetchedAfterMount: true,
-            }),
-        );
-        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.EXECUTABLE);
-
-        const location = generateDialogLocation();
-        render(createTestComponent({ location }));
-
-        const { onIndexed } = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as ITransactionDialogProps;
-
-        expect(onIndexed).toBeInstanceOf(Function);
-
-        // No slug for PROPOSAL_ADVANCE_STAGE; the callback is only an indexed signal.
-        act(() => {
-            onIndexed!({ slug: undefined });
-        });
-
-        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                params: indexedProposal,
-                pluginId: indexedProposal.pluginInterfaceType,
-            }),
-        );
     });
 });

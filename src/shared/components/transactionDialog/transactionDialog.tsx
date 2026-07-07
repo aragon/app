@@ -66,14 +66,9 @@ export const TransactionDialog = <TCustomStepId extends string>(
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
 
-    // Track the latest onIndexed callback and whether it has already fired to trigger it exactly
-    // once when the transaction is indexed, regardless of callback or status-object identity changes
-    const onIndexedRef = useRef(onIndexed);
+    // Guard so onIndexed fires exactly once: react-query polling yields new status-object
+    // identities on re-render, so without this the indexed effect would refire.
     const onIndexedFiredRef = useRef(false);
-
-    useEffect(() => {
-        onIndexedRef.current = onIndexed;
-    }, [onIndexed]);
 
     const { address } = useWalletAccount();
     const { buildEntityUrl } = useDaoChain({ network });
@@ -151,9 +146,8 @@ export const TransactionDialog = <TCustomStepId extends string>(
             state.data?.isProcessed ? false : indexingStepInterval,
     });
 
-    // Fire onIndexed exactly once when the backend reports the transaction as indexed. The effect is
-    // keyed on the isProcessed boolean (react-query polls return new status-object identities) and
-    // guarded with a ref so re-renders and callback identity changes never refire it.
+    // Fire onIndexed exactly once when the backend reports the transaction as indexed. The
+    // fired-ref guard makes re-renders and callback identity changes no-ops after the first call.
     const isTransactionIndexed = transactionStatus?.isProcessed === true;
     const indexedProposalSlug = transactionStatus?.slug;
 
@@ -163,8 +157,8 @@ export const TransactionDialog = <TCustomStepId extends string>(
         }
 
         onIndexedFiredRef.current = true;
-        onIndexedRef.current?.({ slug: indexedProposalSlug });
-    }, [isTransactionIndexed, indexedProposalSlug]);
+        onIndexed?.({ slug: indexedProposalSlug });
+    }, [isTransactionIndexed, indexedProposalSlug, onIndexed]);
 
     const handleSendTransaction = useCallback(() => {
         const onError = handleTransactionError(TransactionDialogStep.APPROVE);

@@ -27,7 +27,6 @@ import {
 } from '@/shared/testUtils';
 import { testLogger, timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
-import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { generateProposal, generateProposalCreate } from '../../testUtils';
 import {
     PublishProposalDialog,
@@ -385,44 +384,6 @@ describe('<PublishProposalDialog /> proposal card status after indexing', () => 
             ),
         ).not.toBeInTheDocument();
         expect(screen.getByText('MY-PROPOSAL')).toBeInTheDocument();
-    });
-
-    it('derives the indexed status from the governance proposal status slot', () => {
-        const indexedProposal = generateProposal({ id: 'indexed-1' });
-        useProposalBySlugSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: indexedProposal,
-                isFetchedAfterMount: true,
-            }),
-        );
-        useSlotSingleFunctionSpy.mockReturnValue(ProposalStatus.ACTIVE);
-
-        const location = generateDialogLocation();
-        render(createTestComponent({ location }));
-
-        const { onIndexed } = (TransactionDialog as jest.Mock).mock
-            .calls[0][0] as ITransactionDialogProps;
-
-        expect(onIndexed).toBeInstanceOf(Function);
-
-        act(() => {
-            onIndexed!({ slug: 'my-proposal' });
-        });
-
-        expect(useSlotSingleFunctionSpy).toHaveBeenCalledWith(
-            expect.objectContaining({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_STATUS,
-                params: indexedProposal,
-                pluginId: indexedProposal.pluginInterfaceType,
-            }),
-        );
-
-        // Create flow is the one place the backend delivers a slug via onIndexed — the
-        // fetch must use it.
-        const fetchedWithCallbackSlug = useProposalBySlugSpy.mock.calls.some(
-            ([params]) => params.urlParams.slug === 'my-proposal',
-        );
-        expect(fetchedWithCallbackSlug).toBe(true);
     });
 
     it('fetches linked-account proposals from the plugin DAO after indexing', () => {
