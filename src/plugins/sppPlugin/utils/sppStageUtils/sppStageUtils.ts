@@ -9,7 +9,7 @@ class SppStageUtils {
         proposal: ISppProposal,
         stage: ISppStage,
     ): ProposalStatus => {
-        const { stageIndex: currentStage } = proposal;
+        const { stageIndex: currentStage, executed } = proposal;
         const { stageIndex } = stage;
 
         const isOptimisticStage = this.isVeto(stage);
@@ -43,6 +43,7 @@ class SppStageUtils {
             !isLastStage;
 
         const isExpired =
+            !executed.status &&
             !isSignalling &&
             stageIndex === currentStage &&
             maxAdvanceDate != null &&
