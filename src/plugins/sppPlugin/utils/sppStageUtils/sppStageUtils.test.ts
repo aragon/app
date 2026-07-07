@@ -547,6 +547,24 @@ describe('SppStageUtils', () => {
             );
         });
 
+        it('returns accepted instead of expired when the max advance date has passed but the proposal has already been executed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).minus({ days: 3 });
+            const maxAdvance = DateTime.fromISO(now).minus({ days: 2 });
+            const stage = generateSppStage();
+            const proposal = generateSppProposal({
+                hasActions: true,
+                executed: { status: true },
+            });
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACCEPTED,
+            );
+        });
+
         it('returns accepted when stage has ended, approval is reached, max advance date has passed and stage has already been advanced', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const endDate = DateTime.fromISO(now).minus({ days: 3 });
