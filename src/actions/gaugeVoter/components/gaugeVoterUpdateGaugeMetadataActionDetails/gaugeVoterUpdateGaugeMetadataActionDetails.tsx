@@ -7,10 +7,10 @@ import {
     DefinitionList,
     type IProposalAction,
     type IProposalActionComponentProps,
-    Link,
 } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { useDao } from '@/shared/api/daoService';
+import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
@@ -86,14 +86,12 @@ export const GaugeVoterUpdateGaugeMetadataActionDetails: React.FC<
                 >
                     <div className="flex flex-col gap-3">
                         {links.map((link) => (
-                            <Link
-                                href={link.url}
+                            <ResourceLink
                                 isExternal={true}
                                 key={link.url}
-                                showUrl={true}
-                            >
-                                {link.name}
-                            </Link>
+                                name={link.name}
+                                url={link.url}
+                            />
                         ))}
                     </div>
                 </DefinitionList.Item>
