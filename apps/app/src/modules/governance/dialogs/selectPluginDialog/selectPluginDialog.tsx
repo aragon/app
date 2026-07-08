@@ -6,10 +6,10 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { SelectPluginDialogProcessListItem } from './selectPluginDialogProcessListItem';
 
 export interface ISelectPluginDialogParams {
     /**
@@ -96,7 +96,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
             <Dialog.Content>
                 <div className="flex flex-col gap-2 py-2">
                     {processedDaoPlugins.map((plugin) => (
-                        <ProcessDataListItem
+                        <SelectPluginDialogProcessListItem
                             dao={dao}
                             isActive={
                                 plugin.uniqueId === selectedPlugin?.uniqueId
