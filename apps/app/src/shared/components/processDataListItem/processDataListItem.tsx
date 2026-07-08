@@ -49,7 +49,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             ? description
             : t('app.shared.processDataListItem.defaultDescription');
 
-    const processSettingsUrls = daoUtils.getDaoUrl(
+    const processSettingsUrl = daoUtils.getDaoUrl(
         dao,
         `settings/${slug}/#proposal-creation-eligibility`,
     )!;
@@ -91,7 +91,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                 {showNotEligibleHelpText && (
                     <div className="text-neutral-400 text-sm md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} -{' '}
-                        <Link href={processSettingsUrls} isExternal={true}>
+                        <Link href={processSettingsUrl} isExternal={true}>
                             {t(
                                 'app.shared.processDataListItem.viewRequirements',
                             )}
