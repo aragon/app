@@ -60,3 +60,12 @@ pnpm dlx ultracite fix  # Format + lint
 
 Workspace-specific scripts (e2e, env setup, watch modes, codegen) live in the owning
 workspace — run them there: `cd apps/app && pnpm test:watch` (or `pnpm --filter @aragon/app <script>`).
+
+### CI split & Turbo caching
+
+There are two deliberate execution paths in CI, and they must stay that way:
+
+- **Graph tasks** (`type-check`, `lint:check`, `test:coverage`) run **from the repo root** via `turbo run …`. Turbo owns their cache/ordering, so they benefit from local caching and (later) the package graph.
+- **`vercel build` and Playwright** run **inside `apps/app`** (`working-directory: apps/app`), because they need the app as the working directory — Vercel builds the artifact on the GH runner and uploads it with `deploy --prebuilt` (Vercel never builds from git here; see the comment in `.github/workflows/shared-deploy.yml`). This is why `turbo run build` is a non-caching passthrough (`cache: false`, no outputs): the real build is `vercel build`, not Turbo.
+
+Turbo caching is **local only** right now — no remote cache is wired (no `TURBO_TOKEN`/`TURBO_TEAM`). With a single package and a build that doesn't go through Turbo, a remote cache would buy nothing; revisit it once a second interdependent package (e.g. the assistant service) lands and Turbo's graph actually has work to memoize across machines. Task inputs are intentionally left at Turbo's default (hash all package files) rather than hand-narrowed globs — correctness over cache-hit-rate — and the root `biome.json` is listed in `globalDependencies` so lint caches invalidate when lint rules change.
