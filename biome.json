@@ -21,8 +21,6 @@
         "indentWidth": 4,
         "includes": [
             "**",
-            "!*.json",
-            "!*.jsonc",
             "!.changeset/**",
             "!.zed/**",
             "!apps/app/src/app/manifest.json",

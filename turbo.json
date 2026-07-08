@@ -25,52 +25,31 @@
         "SENTRY_REPORT_URI",
         "version"
     ],
+    "globalDependencies": [
+        "biome.json"
+    ],
     "tasks": {
         "dev": {
             "cache": false,
             "persistent": true
         },
         "build": {
-            "cache": false,
-            "outputs": [
-                ".next/**",
-                "!.next/cache/**"
-            ]
+            "cache": false
         },
         "lint": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx,js,jsx}",
-                "*.config.{js,ts,mjs}",
-                "$TURBO_ROOT$/biome.json"
-            ],
             "outputs": []
         },
         "lint:check": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx,js,jsx}",
-                "*.config.{js,ts,mjs}",
-                "$TURBO_ROOT$/biome.json"
-            ],
             "outputs": []
         },
         "type-check": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx}",
-                "tsconfig.json",
-                "next-env.d.ts"
-            ],
             "outputs": []
         },
         "test": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx}",
-                "jest.config.js",
-                "tsconfig.json"
-            ],
             "outputs": [],
             "dependsOn": [
                 "type-check"
@@ -78,11 +57,6 @@
         },
         "test:coverage": {
             "cache": true,
-            "inputs": [
-                "src/**/*.{ts,tsx}",
-                "jest.config.js",
-                "tsconfig.json"
-            ],
             "outputs": [
                 "coverage/**"
             ],
