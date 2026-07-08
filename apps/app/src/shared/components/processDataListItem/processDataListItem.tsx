@@ -89,11 +89,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                 {showNotEligibleHelpText && (
                     <div className="text-neutral-400 text-sm md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} -{' '}
-                        <Link
-                            className="font-bold"
-                            href={processSettingsUrls}
-                            isExternal={true}
-                        >
+                        <Link href={processSettingsUrls} isExternal={true}>
                             {t(
                                 'app.shared.processDataListItem.viewRequirements',
                             )}
