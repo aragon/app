@@ -20,9 +20,8 @@ export const SelectPluginDialogProcessListItem: React.FC<
     return (
         <ProcessDataListItem
             {...props}
-            aria-disabled={simulationFailed}
             isDisabled={simulationFailed}
-            showNotEligibleHelpText={result === 'failure'}
+            showNotEligibleHelpText={simulationFailed}
         />
     );
 };
