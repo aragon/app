@@ -1,3 +1,4 @@
+import { BaseError, ExecutionRevertedError } from 'viem';
 import { useCall } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
@@ -12,7 +13,22 @@ export interface IUseSimulateProposalCreationParams {
     /**
      * Network of the DAO.
      */
-    network: Network;
+    network?: Network;
+}
+
+export interface IUseSimulateProposalCreationResult {
+    /**
+     * Whether the simulation request is in progress.
+     */
+    isLoading: boolean;
+    /**
+     * Whether the simulation request has failed.
+     */
+    isError: boolean;
+    /**
+     * Simulation result.
+     */
+    result?: 'success' | 'failure';
 }
 
 const dummyProposal = {
@@ -32,20 +48,48 @@ const dummyCid = 'QmVZjGBGNmkgTsch6E8Eu1EzYJRqZZKQZoc2xRaySanWvs';
  */
 export const useSimulateProposalCreation = (
     params: IUseSimulateProposalCreationParams,
-) => {
+): IUseSimulateProposalCreationResult => {
     const { plugin, network } = params;
     const { address: userAddress } = useWalletAccount();
-    const { id: chainId } = networkDefinitions[network];
 
-    const transactionData = publishProposalDialogUtils.buildTransaction({
-        proposal: dummyProposal,
-        metadataCid: dummyCid,
-        plugin,
-    });
+    const chainId =
+        network != null ? networkDefinitions[network].id : undefined;
 
-    return useCall({
+    const isEnabled = userAddress != null && chainId != null;
+
+    const transactionData = isEnabled
+        ? publishProposalDialogUtils.buildTransaction({
+              proposal: dummyProposal,
+              metadataCid: dummyCid,
+              plugin,
+          })
+        : undefined;
+
+    const { isLoading, isError, error, isSuccess } = useCall({
         account: userAddress,
         chainId,
         ...transactionData,
+        query: {
+            enabled: isEnabled,
+        },
     });
+
+    // Only ExecutionRevertedError is treated as a simulation failure. All other
+    // errors represent failed simulation request, e.g., RPC not available.
+    const revertError =
+        isError && error instanceof BaseError
+            ? error.walk((e) => e instanceof ExecutionRevertedError)
+            : undefined;
+    const isRequestError = isError && revertError == null;
+    const isSimulationError = isError && revertError != null;
+
+    return {
+        isLoading,
+        isError: isRequestError,
+        result: isSuccess
+            ? 'success'
+            : isSimulationError
+              ? 'failure'
+              : undefined,
+    };
 };

@@ -30,13 +30,11 @@ export const useSppPermissionCheckProposalCreation = (
         'useSppPermissionCheckProposalCreation: Plugins are required',
     );
 
-    const {
-        isLoading: isSimulationLoading,
-        isSuccess: hasSimulationSucceeded,
-    } = useSimulateProposalCreation({
-        plugin,
-        network: dao!.network,
-    });
+    const { isLoading: isSimulationLoading, result: simulationResult } =
+        useSimulateProposalCreation({
+            plugin,
+            network: dao?.network,
+        });
     const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
 
     // Find the sub plugins that are part of the DAO and filter out any potential undefined values
@@ -60,7 +58,7 @@ export const useSppPermissionCheckProposalCreation = (
     );
 
     // GOVERNANCE_PERMISSION_CHECK_PROPOSAL_CREATION is now used only to get settings in the SPP case (we still miss settings for Safe bodies, though).
-    const permissionGranted = hasSimulationSucceeded;
+    const permissionGranted = simulationResult === 'success';
 
     const isLoading =
         isSimulationLoading ||
