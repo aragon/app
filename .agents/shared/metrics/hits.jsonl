@@ -119,3 +119,5 @@
 {"ts":"2026-07-08T16:29:42.858Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-07-08T16:29:55.658Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":11,"adapter":"claude"}
 {"ts":"2026-07-08T16:30:49.523Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-09T11:51:56.300Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-07-09T12:00:44.020Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
