@@ -67,7 +67,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             <div className="flex flex-col gap-3 md:gap-4">
                 <div
                     className={classNames('flex flex-col gap-3 md:gap-4', {
-                        'opacity-40': isDisabled,
+                        'opacity-60': isDisabled,
                     })}
                 >
                     <div className="flex flex-col gap-y-1">
@@ -86,8 +86,8 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
                 {showNotEligibleHelpText && (
-                    <div className="text-neutral-400 text-sm md:text-base">
-                        {t('app.shared.processDataListItem.notEligible')} -{' '}
+                    <div className="text-neutral-300 text-sm md:text-base">
+                        {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link href={processSettingsUrl} isExternal={true}>
                             {t(
                                 'app.shared.processDataListItem.viewRequirements',
