@@ -49,8 +49,6 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             ? description
             : t('app.shared.processDataListItem.defaultDescription');
 
-    const processSettingsUrl = daoUtils.getDaoUrl(dao, `settings/${slug}`)!;
-
     return (
         <DataList.Item
             className={classNames('px-4 py-3 md:p-6', {
@@ -88,7 +86,10 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                 {showNotEligibleHelpText && (
                     <div className="text-neutral-300 text-sm md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
-                        <Link href={processSettingsUrl} isExternal={true}>
+                        <Link
+                            href={daoUtils.getDaoUrl(dao, `settings/${slug}`)}
+                            isExternal={true}
+                        >
                             {t(
                                 'app.shared.processDataListItem.viewRequirements',
                             )}

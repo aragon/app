@@ -99,8 +99,8 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     const sortedDaoPlugins = allResultsReady
         ? [...processedDaoPlugins].sort(
               (a, b) =>
-                  Number(eligibility[b.uniqueId] !== false) -
-                  Number(eligibility[a.uniqueId] !== false),
+                  Number(eligibility[b.uniqueId]) -
+                  Number(eligibility[a.uniqueId]),
           )
         : processedDaoPlugins;
 
@@ -131,7 +131,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
             />
             <Dialog.Content>
                 {!allResultsReady && (
-                    <div className={classNames('py-4')}>
+                    <div className="py-4">
                         <Spinner size="lg" />
                     </div>
                 )}
