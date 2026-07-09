@@ -71,10 +71,16 @@ export const useSppPermissionCheckProposalCreation = (
         result?.isRestricted ? result.settings : [],
     );
 
+    // The simulation only checks the connected wallet's permission; whether the process itself is restricted comes
+    // from the sub-plugin creation rules.
+    const isRestricted = pluginProposalCreationGuardResults.some(
+        (result) => result?.isRestricted === true,
+    );
+
     return {
         hasPermission: permissionGranted,
         settings,
         isLoading,
-        isRestricted: !permissionGranted,
+        isRestricted,
     };
 };
