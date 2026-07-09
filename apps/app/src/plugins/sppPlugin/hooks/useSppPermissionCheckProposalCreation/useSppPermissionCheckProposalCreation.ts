@@ -61,6 +61,7 @@ export const useSppPermissionCheckProposalCreation = (
     const permissionGranted = simulationResult === 'success';
 
     const isLoading =
+        dao == null ||
         isSimulationLoading ||
         pluginProposalCreationGuardResults.some((result) => result?.isLoading);
 
