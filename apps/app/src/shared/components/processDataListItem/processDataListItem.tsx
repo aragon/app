@@ -49,10 +49,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             ? description
             : t('app.shared.processDataListItem.defaultDescription');
 
-    const processSettingsUrl = daoUtils.getDaoUrl(
-        dao,
-        `settings/${slug}/#proposal-creation-eligibility`,
-    )!;
+    const processSettingsUrl = daoUtils.getDaoUrl(dao, `settings/${slug}`)!;
 
     return (
         <DataList.Item

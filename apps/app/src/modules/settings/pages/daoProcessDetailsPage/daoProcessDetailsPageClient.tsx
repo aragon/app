@@ -173,7 +173,6 @@ export const DaoProcessDetailsPageClient: React.FC<
                     </Page.MainSection>
                     {settings != null && settings.length > 0 && (
                         <Page.MainSection
-                            id="proposal-creation-eligibility"
                             title={t(
                                 'app.settings.daoProcessDetailsPage.section.creationEligibility',
                             )}
