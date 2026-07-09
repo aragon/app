@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { BaseError, ExecutionRevertedError } from 'viem';
 import { useCall } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -57,13 +58,20 @@ export const useSimulateProposalCreation = (
 
     const isEnabled = userAddress != null && chainId != null;
 
-    const transactionData = isEnabled
-        ? publishProposalDialogUtils.buildTransaction({
-              proposal: dummyProposal,
-              metadataCid: dummyCid,
-              plugin,
-          })
-        : undefined;
+    // Memoized so the calldata (which embeds a now-relative end date) is built
+    // once and does not change the useCall query key on every render, which
+    // would re-trigger the RPC simulation on each render.
+    const transactionData = useMemo(
+        () =>
+            isEnabled
+                ? publishProposalDialogUtils.buildTransaction({
+                      proposal: dummyProposal,
+                      metadataCid: dummyCid,
+                      plugin,
+                  })
+                : undefined,
+        [isEnabled, plugin],
+    );
 
     const { isLoading, isError, error, isSuccess } = useCall({
         account: userAddress,
