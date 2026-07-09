@@ -1,28 +1,27 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 .pnp.*
 .pnpm-store
 
 # testing
-/coverage
+coverage/
 
 # playwright
 .cache-synpress
-/e2e/playwright-report/
-/e2e/test-results/
-/e2e/blob-report/
-/e2e/.last-run.json
-/playwright-report/
-/test-results/
+playwright-report/
+test-results/
+blob-report/
+e2e/.last-run.json
+apps/app/e2e/.last-run.json
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -41,7 +40,7 @@ yarn-error.log*
 pnpm-debug.log*
 
 # local env files
-/.env*.local
+.env*.local
 .env
 
 # vercel

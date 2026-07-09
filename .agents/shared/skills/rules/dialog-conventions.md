@@ -1,7 +1,7 @@
 ---
 name: dialog-conventions
 description: Dialog barrel + definitions wiring — dynamic-import the component, static-export the types, register by id through the dialogProvider.
-globs: src/**/dialogs/*/index.ts, src/**/constants/*DialogsDefinitions.ts
+globs: apps/app/src/**/dialogs/*/index.ts, apps/app/src/**/constants/*DialogsDefinitions.ts
 kind: rule
 ---
 

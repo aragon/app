@@ -478,7 +478,7 @@ function generateMetrics() {
     let md = GENERATED_HEADER;
     md += '# Slot System Metrics\n\n';
     md +=
-        '> Auto-generated snapshot of the slot system state. Run `pnpm generate:slot-docs` to refresh.\n\n';
+        '> Auto-generated snapshot of the slot system state. Run `pnpm generate:slot-docs` (from `apps/app`) to refresh.\n\n';
 
     // Summary
     md += '## Summary\n\n';
@@ -575,7 +575,9 @@ for (const { file, content } of outputs) {
 }
 
 if (CHECK_MODE && stale) {
-    console.error('\nSlot docs are out of date. Run: pnpm generate:slot-docs');
+    console.error(
+        '\nSlot docs are out of date. Run from apps/app: pnpm generate:slot-docs',
+    );
     process.exit(1);
 } else if (CHECK_MODE) {
     console.log('Slot docs are up to date.');

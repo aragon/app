@@ -1,18 +1,18 @@
-# Hotfix Start — branch from a release tag with optional cherry-picks from main.
+# Hotfix Start — branch from an app release tag (@aragon/app@X.Y.Z) with optional cherry-picks from main.
 # Supports resuming an existing hotfix branch via existing_hotfix_branch input.
 # If hotfix HEAD equals the base release tag, downstream jobs are skipped.
 # Order: unit tests → staging deploy → git tag (not gated on E2E) → smoke E2E parallel with tag.
 # Prod: run App Production workflow_dispatch with the hotfix tag.
 
-name: Hotfix Start
+name: App Hotfix Start
 
 on:
   workflow_dispatch:
     inputs:
       base_tag:
         description: >
-          Release tag to branch from (e.g. v1.2.0). Leave empty for latest tag.
-          Only needed when resuming a branch whose name doesn't match hotfix/vX.Y.Z_….
+          Release tag to branch from (e.g. @aragon/app@1.2.0). Leave empty for the latest app tag.
+          Only needed when resuming a branch whose name doesn't match hotfix/app/X.Y.Z_….
         required: false
         type: string
       commits:
@@ -24,7 +24,7 @@ on:
       existing_hotfix_branch:
         description: >
           Continue an existing hotfix branch (after local commits/push).
-          Empty = create hotfix/<tag>_<timestamp> from base_tag or latest tag.
+          Empty = create hotfix/app/<version>_<timestamp> from base_tag or the latest app tag.
         required: false
         type: string
 
@@ -93,25 +93,30 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --tags --force >/dev/null 2>&1 || true
+          TAG_PREFIX="@aragon/app@"
 
-          # --- resolve tag ---
+          # --- resolve tag (app tags only; other workspaces have their own prefix) ---
           if [ -n "$INPUT_TAG" ]; then
-            TAG="$INPUT_TAG"
+            case "$INPUT_TAG" in
+              "$TAG_PREFIX"*) TAG="$INPUT_TAG" ;;
+              *) echo "::error::base_tag must be a full app tag (e.g. ${TAG_PREFIX}1.2.0)."; exit 1 ;;
+            esac
           elif [ "$MODE" = "resume" ]; then
-            rest="${RESUME_BRANCH#hotfix/}"
-            [ "$rest" = "$RESUME_BRANCH" ] && { echo "::error::Branch must start with hotfix/ or provide base_tag."; exit 1; }
-            TAG="${rest%%_*}"
-            [ -z "$TAG" ] || [ "$TAG" = "$rest" ] && { echo "::error::Cannot parse tag from branch name; provide base_tag."; exit 1; }
+            rest="${RESUME_BRANCH#hotfix/app/}"
+            [ "$rest" = "$RESUME_BRANCH" ] && { echo "::error::Branch must start with hotfix/app/ or provide base_tag."; exit 1; }
+            VERSION="${rest%%_*}"
+            [ -z "$VERSION" ] || [ "$VERSION" = "$rest" ] && { echo "::error::Cannot parse version from branch name; provide base_tag."; exit 1; }
+            TAG="${TAG_PREFIX}${VERSION}"
           else
-            TAG="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-            [ -z "$TAG" ] && { echo "::error::No tags found — provide base_tag."; exit 1; }
+            TAG="$(git describe --tags --abbrev=0 --match "${TAG_PREFIX}*" 2>/dev/null || true)"
+            [ -z "$TAG" ] && { echo "::error::No ${TAG_PREFIX}* tags found — provide base_tag."; exit 1; }
           fi
 
-          # --- resolve branch ---
+          # --- resolve branch (version only in the name; the app prefix is implied) ---
           if [ "$MODE" = "resume" ]; then
             BRANCH="$RESUME_BRANCH"
           else
-            BRANCH="hotfix/${TAG}_$(date +'%Y-%m-%d_%H-%M')"
+            BRANCH="hotfix/app/${TAG#"$TAG_PREFIX"}_$(date +'%Y-%m-%d_%H-%M')"
           fi
 
           echo "tag=$TAG"       >> "$GITHUB_OUTPUT"

@@ -8,7 +8,7 @@ inputs:
   path:
     description: Path to changelog file
     required: false
-    default: ./CHANGELOG.md
+    default: ./apps/app/CHANGELOG.md
 
 outputs:
   changes:
