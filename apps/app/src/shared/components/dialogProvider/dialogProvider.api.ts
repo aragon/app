@@ -103,4 +103,9 @@ export interface IDialogComponentDefinitions<
      * Component to be rendered.
      */
     Component: ComponentType<IDialogComponentProps<TParams>>;
+    /**
+     * Marks a dialog that asserts a connected wallet during render. DialogRoot unmounts and
+     * closes it on wallet disconnect, before the assertion can throw and crash the application.
+     */
+    requiresWallet?: boolean;
 }

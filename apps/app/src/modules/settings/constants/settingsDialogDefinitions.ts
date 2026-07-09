@@ -32,5 +32,6 @@ export const settingsDialogDefinitions: Record<
     },
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: {
         Component: PreparePluginUninstallationDialog,
+        requiresWallet: true,
     },
 };

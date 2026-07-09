@@ -11,6 +11,7 @@ export const sppPluginDialogsDefinitions: Record<
     [SppPluginDialogId.ADVANCE_STAGE]: { Component: SppAdvanceStageDialog },
     [SppPluginDialogId.REPORT_PROPOSAL_RESULT]: {
         Component: SppReportProposalResultDialog,
+        requiresWallet: true,
     },
     [SppPluginDialogId.INVALID_ADDRESS_CONNECTED]: {
         Component: SppInvalidAddressConnectedDialog,

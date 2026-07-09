@@ -13,12 +13,22 @@ export const tokenPluginDialogsDefinitions: Record<
     TokenPluginDialogId,
     IDialogComponentDefinitions
 > = {
-    [TokenPluginDialogId.DELEGATE]: { Component: TokenDelegationDialog },
+    [TokenPluginDialogId.DELEGATE]: {
+        Component: TokenDelegationDialog,
+        requiresWallet: true,
+    },
     [TokenPluginDialogId.APPROVE_TOKENS]: {
         Component: TokenApproveTokensDialog,
+        requiresWallet: true,
     },
-    [TokenPluginDialogId.APPROVE_NFT]: { Component: TokenApproveNftDialog },
-    [TokenPluginDialogId.WRAP_UNWRAP]: { Component: TokenWrapUnwrapDialog },
+    [TokenPluginDialogId.APPROVE_NFT]: {
+        Component: TokenApproveNftDialog,
+        requiresWallet: true,
+    },
+    [TokenPluginDialogId.WRAP_UNWRAP]: {
+        Component: TokenWrapUnwrapDialog,
+        requiresWallet: true,
+    },
     [TokenPluginDialogId.DELEGATION_ONBOARDING_INTRO]: {
         Component: TokenDelegationOnboardingIntroDialog,
         hiddenTitle:

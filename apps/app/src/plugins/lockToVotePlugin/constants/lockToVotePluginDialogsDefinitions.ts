@@ -25,6 +25,7 @@ export const lockToVotePluginDialogsDefinitions: Record<
     },
     [LockToVotePluginDialogId.LOCK_UNLOCK_L2V]: {
         Component: LockToVoteLockUnlockDialog,
+        requiresWallet: true,
     },
     [LockToVotePluginDialogId.UNLOCK_BLOCKED_INFO]: {
         Component: UnlockBlockedInfoDialog,

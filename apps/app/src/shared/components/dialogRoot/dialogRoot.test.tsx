@@ -1,5 +1,8 @@
+import { invariant } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { useState } from 'react';
+import * as useWalletAccountHook from '@/modules/application/hooks/useWalletAccount';
 import { generateDialogContext } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import * as useDialogContext from '../dialogProvider';
@@ -11,12 +14,31 @@ describe('<DialogRoot /> component', () => {
         'useDialogContext',
     );
 
+    const useWalletAccountSpy = jest.spyOn(
+        useWalletAccountHook,
+        'useWalletAccount',
+    );
+
+    const connectedAccount = {
+        address: '0x1234567890123456789012345678901234567890',
+        chainId: 1,
+        isReconnecting: false,
+    } as const;
+
+    const disconnectedAccount = {
+        address: undefined,
+        chainId: 1,
+        isReconnecting: false,
+    } as const;
+
     beforeEach(() => {
         useDialogContextSpy.mockReturnValue(generateDialogContext());
+        useWalletAccountSpy.mockReturnValue({ ...connectedAccount });
     });
 
     afterEach(() => {
         useDialogContextSpy.mockReset();
+        useWalletAccountSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<IDialogRootProps>) => {
@@ -94,5 +116,112 @@ describe('<DialogRoot /> component', () => {
         );
         render(createTestComponent({ dialogs }));
         expect(screen.getByRole('alertdialog')).toBeInTheDocument();
+    });
+
+    it('renders a wallet-requiring dialog while the wallet is connected', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                requiresWallet: true,
+            },
+        };
+        const locations = [{ id: dialogId }];
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations }),
+        );
+        render(createTestComponent({ dialogs }));
+        expect(screen.getByText(dialogContent)).toBeInTheDocument();
+    });
+
+    it('unmounts and closes a wallet-requiring dialog when the wallet disconnects', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                requiresWallet: true,
+            },
+        };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+        useWalletAccountSpy.mockReturnValue({ ...disconnectedAccount });
+        render(createTestComponent({ dialogs }));
+        expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+        expect(close).toHaveBeenCalledWith(dialogId);
+    });
+
+    it('keeps dialogs without the requires-wallet flag open when the wallet disconnects', () => {
+        const dialogId = 'connect-wallet';
+        const dialogContent = 'connect-wallet-content';
+        const dialogs = { [dialogId]: { Component: () => dialogContent } };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+        useWalletAccountSpy.mockReturnValue({ ...disconnectedAccount });
+        render(createTestComponent({ dialogs }));
+        expect(screen.getByText(dialogContent)).toBeInTheDocument();
+        expect(close).not.toHaveBeenCalled();
+    });
+
+    it('unmounts but does not close a wallet-requiring dialog while reconnecting', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                requiresWallet: true,
+            },
+        };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+        useWalletAccountSpy.mockReturnValue({
+            ...disconnectedAccount,
+            isReconnecting: true,
+        });
+        render(createTestComponent({ dialogs }));
+        expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+        expect(close).not.toHaveBeenCalled();
+    });
+
+    it('does not throw when the wallet disconnects while a wallet-requiring dialog is open', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+
+        // Mirrors the real wallet-requiring dialogs: address assertion followed by more hooks.
+        const VoteDialog: React.FC = () => {
+            const { address } = useWalletAccountHook.useWalletAccount();
+            invariant(address != null, 'VoteDialog: user must be connected.');
+            const [state] = useState(dialogContent);
+
+            return state;
+        };
+
+        const dialogs = {
+            [dialogId]: { Component: VoteDialog, requiresWallet: true },
+        };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+
+        const { rerender } = render(createTestComponent({ dialogs }));
+        expect(screen.getByText(dialogContent)).toBeInTheDocument();
+
+        useWalletAccountSpy.mockReturnValue({ ...disconnectedAccount });
+
+        expect(() => rerender(createTestComponent({ dialogs }))).not.toThrow();
+        expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+        expect(close).toHaveBeenCalledWith(dialogId);
     });
 });

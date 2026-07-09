@@ -5,6 +5,8 @@ import {
     DialogAlert,
     type IDialogRootProps as IGukDialogRootProps,
 } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     type IDialogComponentDefinitions,
     useDialogContext,
@@ -23,6 +25,27 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
     const { t } = useTranslations();
     const { locations, close } = useDialogContext();
+    const { address, isReconnecting } = useWalletAccount();
+
+    // Wallet-requiring dialogs assert the address during render, so they must be unmounted from
+    // here before a disconnect makes them throw.
+    // Closing waits out reconnects, as connector switches blank the address for a moment.
+
+    const missingAddress = address == null;
+    const walletDisconnected = missingAddress && !isReconnecting;
+
+    useEffect(() => {
+        if (!walletDisconnected) {
+            return;
+        }
+
+        // Use the context close directly as custom onClose handlers might not pop the stack.
+        for (const location of locations) {
+            if (dialogs[location.id]?.requiresWallet) {
+                close(location.id);
+            }
+        }
+    }, [walletDisconnected, locations, dialogs, close]);
 
     // Render each dialog in the stack but only top one should be visible.
     // Non-visible dialogs should still be rendered in order to keep the state. Useful in parent-child dialog relationships.
@@ -33,6 +56,12 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                 const dialogDefinition = dialogs[location.id];
 
                 if (dialogDefinition == null) {
+                    return null;
+                }
+
+                // Unmount before the dialog renders without an address; the effect above then
+                // removes it from the stack.
+                if (missingAddress && dialogDefinition.requiresWallet) {
                     return null;
                 }
 

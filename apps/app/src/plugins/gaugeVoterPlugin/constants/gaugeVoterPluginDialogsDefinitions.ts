@@ -33,6 +33,7 @@ export const gaugeVoterPluginDialogsDefinitions: Record<
     },
     [GaugeVoterPluginDialogId.LOCK_UNLOCK]: {
         Component: GaugeVoterLockUnlockDialog,
+        requiresWallet: true,
     },
     [GaugeVoterPluginDialogId.VIEW_LOCKS]: {
         Component: GaugeVoterLocksDialog,

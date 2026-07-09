@@ -18,7 +18,10 @@ export const governanceDialogsDefinitions: Record<
     GovernanceDialogId,
     IDialogComponentDefinitions
 > = {
-    [GovernanceDialogId.PUBLISH_PROPOSAL]: { Component: PublishProposalDialog },
+    [GovernanceDialogId.PUBLISH_PROPOSAL]: {
+        Component: PublishProposalDialog,
+        requiresWallet: true,
+    },
     [GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING]: {
         Component: DuplicateProposalAlertDialog,
         variant: 'warning',
@@ -27,8 +30,14 @@ export const governanceDialogsDefinitions: Record<
             'app.governance.duplicateProposalAlertDialog.a11y.description',
     },
     [GovernanceDialogId.EXECUTE_ACTIONS]: { Component: ExecuteActionsDialog },
-    [GovernanceDialogId.EXECUTE]: { Component: ExecuteDialog },
-    [GovernanceDialogId.VOTE]: { Component: VoteDialog },
+    [GovernanceDialogId.EXECUTE]: {
+        Component: ExecuteDialog,
+        requiresWallet: true,
+    },
+    [GovernanceDialogId.VOTE]: {
+        Component: VoteDialog,
+        requiresWallet: true,
+    },
     [GovernanceDialogId.SELECT_PLUGIN]: { Component: SelectPluginDialog },
     [GovernanceDialogId.VERIFY_SMART_CONTRACT]: {
         Component: VerifySmartContractDialog,
