@@ -59,18 +59,19 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                     return null;
                 }
 
-                // Unmount before the dialog renders without an address; the effect above then
-                // removes it from the stack.
-                if (missingAddress && dialogDefinition.requiresWallet) {
-                    return null;
-                }
-
                 const {
                     Component: ActiveDialogComponent,
                     hiddenTitle,
                     hiddenDescription,
+                    requiresWallet,
                     ...otherDialogProps
                 } = dialogDefinition;
+
+                // Unmount before the dialog renders without an address; the effect above then
+                // removes it from the stack.
+                if (missingAddress && requiresWallet) {
+                    return null;
+                }
 
                 const isAlertDialog = 'variant' in otherDialogProps;
                 const { disableOutsideClick, modal, onClose } = location;
