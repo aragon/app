@@ -66,3 +66,4 @@ next-env.d.ts
 !.agents/shared/**
 .playwright-mcp
 .patches
+.omp
