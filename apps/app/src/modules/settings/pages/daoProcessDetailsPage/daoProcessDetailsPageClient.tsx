@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, DateFormat, formatterUtils } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import type { ICreateDaoFormData } from '@/modules/createDao/components/createDaoForm';
 import {
@@ -17,6 +18,7 @@ import type {
 } from '@/modules/governance/types';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
+import { proposalCreationEligibilityAnchor } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
@@ -139,6 +141,22 @@ export const DaoProcessDetailsPageClient: React.FC<
         ? (slotResult ?? fallback)
         : fallback;
 
+    const hasProposalCreationEligibility =
+        settings != null && settings.length > 0;
+
+    useEffect(() => {
+        if (
+            !hasProposalCreationEligibility ||
+            window.location.hash !== `#${proposalCreationEligibilityAnchor}`
+        ) {
+            return;
+        }
+
+        document
+            .getElementById(proposalCreationEligibilityAnchor)
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, [hasProposalCreationEligibility]);
+
     return (
         <>
             <Page.Header
@@ -171,8 +189,9 @@ export const DaoProcessDetailsPageClient: React.FC<
                             )}
                         </FormProvider>
                     </Page.MainSection>
-                    {settings != null && settings.length > 0 && (
+                    {hasProposalCreationEligibility && (
                         <Page.MainSection
+                            id={proposalCreationEligibilityAnchor}
                             title={t(
                                 'app.settings.daoProcessDetailsPage.section.creationEligibility',
                             )}

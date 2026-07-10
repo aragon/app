@@ -5,6 +5,14 @@ import { DaoTargetIndicator } from '@/shared/components/daoTargetIndicator';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { useTranslations } from '../translationsProvider';
 
+/**
+ * Hash anchor of the proposal-creation eligibility section on the process
+ * settings page. Appended to the settings link so the settings page scrolls the
+ * section into view once it has rendered.
+ */
+export const proposalCreationEligibilityAnchor =
+    'proposal-creation-eligibility';
+
 export type IProcessDataListItemProps = IDataListItemProps & {
     /**
      * Process to display the details for.
@@ -87,7 +95,10 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                     <div className="text-neutral-300 text-sm md:text-base">
                         {t('app.shared.processDataListItem.notEligible')} •{' '}
                         <Link
-                            href={daoUtils.getDaoUrl(dao, `settings/${slug}`)}
+                            href={daoUtils.getDaoUrl(
+                                dao,
+                                `settings/${slug}#${proposalCreationEligibilityAnchor}`,
+                            )}
                             isExternal={true}
                         >
                             {t(
