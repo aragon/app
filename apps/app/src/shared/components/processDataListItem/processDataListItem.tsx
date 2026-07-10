@@ -52,10 +52,8 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
 
     const { address, description, slug } = process;
 
-    const processedDescription =
-        description != null && description.length > 0
-            ? description
-            : t('app.shared.processDataListItem.defaultDescription');
+    const processDescription =
+        description != null && description.length > 0 ? description : undefined;
 
     return (
         <DataList.Item
@@ -85,9 +83,11 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
                                 {slug}
                             </p>
                         </div>
-                        <p className="line-clamp-2 font-normal text-neutral-500 text-sm leading-normal md:text-base">
-                            {processedDescription}
-                        </p>
+                        {processDescription && (
+                            <p className="line-clamp-2 font-normal text-neutral-500 text-sm leading-normal md:text-base">
+                                {processDescription}
+                            </p>
+                        )}
                     </div>
                     <DaoTargetIndicator dao={dao} plugin={process} size="sm" />
                 </div>
