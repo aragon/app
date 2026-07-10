@@ -13,6 +13,7 @@ on:
     paths:
       - ".changeset/**"
       - "apps/assistant/**"
+      - "packages/assistant-contracts/**"
       - ".github/workflows/assistant-release-version.yml"
 
 concurrency:
