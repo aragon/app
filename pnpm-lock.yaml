@@ -4,6 +4,63 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@biomejs/biome':
+      specifier: ^2.5.0
+      version: 2.5.0
+    '@changesets/changelog-github':
+      specifier: ^0.7.0
+      version: 0.7.0
+    '@changesets/cli':
+      specifier: ^2.31.0
+      version: 2.31.0
+    '@hono/node-server':
+      specifier: ^1.19.7
+      version: 1.19.14
+    '@types/jest':
+      specifier: ^30.0.0
+      version: 30.0.0
+    '@types/node':
+      specifier: ^24.13.2
+      version: 24.13.2
+    cross-env:
+      specifier: ^10.1.0
+      version: 10.1.0
+    hono:
+      specifier: ^4.11.9
+      version: 4.12.27
+    husky:
+      specifier: ^9.1.7
+      version: 9.1.7
+    jest:
+      specifier: ^30.4.2
+      version: 30.4.2
+    lint-staged:
+      specifier: ^17.0.7
+      version: 17.0.7
+    ts-jest:
+      specifier: ^29.4.11
+      version: 29.4.11
+    tsx:
+      specifier: ^4.20.0
+      version: 4.21.0
+    turbo:
+      specifier: ^2.9.18
+      version: 2.9.18
+    typescript:
+      specifier: ^5.9.3
+      version: 5.9.3
+    ultracite:
+      specifier: ^7.8.3
+      version: 7.8.3
+    vercel:
+      specifier: ^52.2.1
+      version: 52.2.1
+    zod:
+      specifier: ^4.1.16
+      version: 4.4.3
+
 overrides:
   isomorphic-dompurify>jsdom: 26.1.0
   axios@>=1.0.0 <1.15.2: ^1.15.2
@@ -33,28 +90,28 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.5.0
+        specifier: 'catalog:'
         version: 2.5.0
       '@changesets/changelog-github':
-        specifier: ^0.7.0
+        specifier: 'catalog:'
         version: 0.7.0
       '@changesets/cli':
-        specifier: ^2.31.0
+        specifier: 'catalog:'
         version: 2.31.0(@types/node@24.13.2)
       husky:
-        specifier: ^9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       lint-staged:
-        specifier: ^17.0.7
+        specifier: 'catalog:'
         version: 17.0.7
       turbo:
-        specifier: ^2.9.18
+        specifier: 'catalog:'
         version: 2.9.18
       ultracite:
-        specifier: ^7.8.3
+        specifier: 'catalog:'
         version: 7.8.3
       vercel:
-        specifier: ^52.2.1
+        specifier: 'catalog:'
         version: 52.2.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.11.1)(rollup@4.62.0)(typescript@5.9.3)
 
   apps/app:
@@ -169,7 +226,7 @@ importers:
         version: 3.6.17(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.17)(immer@11.1.8)(react@19.2.7)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.7))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.0)(@tanstack/react-query@5.101.0(react@19.2.7))(@types/react@19.2.17)(immer@11.1.8)(react@19.2.7)(typescript@5.9.3)(viem@2.53.1(typescript@5.9.3)(zod@3.25.76))
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.5.0
+        specifier: 'catalog:'
         version: 2.5.0
       '@hookform/devtools':
         specifier: ^4.4.0
@@ -199,13 +256,13 @@ importers:
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/jest':
-        specifier: ^30.0.0
+        specifier: 'catalog:'
         version: 30.0.0
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1
       '@types/node':
-        specifier: ^24.13.2
+        specifier: 'catalog:'
         version: 24.13.2
       '@types/react':
         specifier: ^19.2.17
@@ -220,13 +277,13 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       cross-env:
-        specifier: ^10.1.0
+        specifier: 'catalog:'
         version: 10.1.0
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
       jest:
-        specifier: ^30.4.2
+        specifier: 'catalog:'
         version: 30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0)
       jest-canvas-mock:
         specifier: ^2.5.2
@@ -244,17 +301,76 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(tailwindcss@4.3.1)
       ts-jest:
-        specifier: ^29.4.11
+        specifier: 'catalog:'
         version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0))(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
       ultracite:
-        specifier: ^7.8.3
+        specifier: 'catalog:'
         version: 7.8.3
       webpack:
         specifier: ^5.107.2
         version: 5.107.2(postcss@8.5.15)
+
+  apps/assistant:
+    dependencies:
+      '@aragon/assistant-contracts':
+        specifier: workspace:*
+        version: link:../../packages/assistant-contracts
+      hono:
+        specifier: 'catalog:'
+        version: 4.12.27
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 'catalog:'
+        version: 2.5.0
+      '@hono/node-server':
+        specifier: 'catalog:'
+        version: 1.19.14(hono@4.12.27)
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0)
+      ts-jest:
+        specifier: 'catalog:'
+        version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0))(typescript@5.9.3)
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/assistant-contracts:
+    dependencies:
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@biomejs/biome':
+        specifier: 'catalog:'
+        version: 2.5.0
+      '@types/jest':
+        specifier: 'catalog:'
+        version: 30.0.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.2
+      jest:
+        specifier: 'catalog:'
+        version: 30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0)
+      ts-jest:
+        specifier: 'catalog:'
+        version: 29.4.11(@babel/core@7.29.7)(@jest/transform@30.4.1)(@jest/types@30.4.1)(babel-jest@30.4.1(@babel/core@7.29.7))(jest-util@30.4.1)(jest@30.4.2(@types/node@24.13.2)(babel-plugin-macros@3.1.0))(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
 packages:
 
@@ -1082,6 +1198,12 @@ packages:
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+
+  '@hono/node-server@1.19.14':
+    resolution: {integrity: sha512-GwtvgtXxnWsucXvbQXkRgqksiH2Qed37H9xHZocE5sA3N8O8O8/8FA3uclQXxXVzc9XBZuEOMK7+r02FmSpHtw==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@hookform/devtools@4.4.0':
     resolution: {integrity: sha512-Mtlic+uigoYBPXlfvPBfiYYUZuyMrD3pTjDpVIhL6eCZTvQkHsKBSKeZCvXWUZr8fqrkzDg27N+ZuazLKq6Vmg==}
@@ -5287,6 +5409,10 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
+  hono@4.12.27:
+    resolution: {integrity: sha512-1yrb/+w6HWQJrUCLkJ2IF5jNIPvvFkblV5RNOYl6bV+OA6p9GLcMpHFFGTosSvHvcAUibuUukRqhlYI4z32C7Q==}
+    engines: {node: '>=16.9.0'}
+
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
@@ -8989,6 +9115,10 @@ snapshots:
   '@graphql-typed-document-node/core@3.2.0(graphql@16.14.1)':
     dependencies:
       graphql: 16.14.1
+
+  '@hono/node-server@1.19.14(hono@4.12.27)':
+    dependencies:
+      hono: 4.12.27
 
   '@hookform/devtools@4.4.0(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -14112,6 +14242,8 @@ snapshots:
   hoist-non-react-statics@3.3.2:
     dependencies:
       react-is: 16.13.1
+
+  hono@4.12.27: {}
 
   html-encoding-sniffer@4.0.0:
     dependencies:

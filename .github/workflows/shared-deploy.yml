@@ -1,6 +1,8 @@
-# The "Shared Deploy" workflow deploys the application to Vercel, either in production or preview mode based on the
-# `prod` input. It retrieves the build artifacts, prepares secrets, bundles the Vercel application, and deploys it.
+# The "Shared Deploy" workflow deploys a workspace to Vercel, either in production or preview mode based on the
+# `env` input. It retrieves the build artifacts, prepares secrets, bundles the Vercel application, and deploys it.
 # If a custom domain is specified, it assigns the deployment URL to that domain.
+# The workflow is workspace-agnostic: `workspace` selects the directory to deploy and `vault-prefix` selects the
+# 1Password vaults (`<vault-prefix>_infra` for Vercel credentials, `<vault-prefix>_<env>` for app secrets).
 
 name: Shared Deploy
 
@@ -17,6 +19,25 @@ on:
         type: string
       ref:
         description: "The branch, tag or SHA to checkout"
+        required: false
+        type: string
+      workspace:
+        description: "Workspace directory to deploy"
+        required: false
+        type: string
+        default: "apps/app"
+      vault-prefix:
+        description: "1Password vault prefix for infra and env secrets"
+        required: false
+        type: string
+        default: "kv_app"
+      patch-root-directory:
+        description: "Patch .vercel/project.json with the workspace as rootDirectory (TEMPORARY, apps/app only)"
+        required: false
+        type: boolean
+        default: true
+      env-overrides:
+        description: "Extra env lines appended to the workspace .env after secrets (e.g. per-run URL overrides)"
         required: false
         type: string
     outputs:
@@ -43,7 +64,7 @@ jobs:
         uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app_infra"
+          op-vault: "${{ inputs.vault-prefix }}_infra"
 
       - name: Checkout actions
         uses: actions/checkout@v7.0.0
@@ -58,31 +79,40 @@ jobs:
 
       - name: Setup env file
         run: pnpm run setup ${{ inputs.env }}
-        working-directory: apps/app
+        working-directory: ${{ inputs.workspace }}
 
       - name: Setup env file secrets
         uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app_${{ inputs.env }}"
-          secret-filepath: "apps/app/.env"
+          op-vault: "${{ inputs.vault-prefix }}_${{ inputs.env }}"
+          secret-filepath: "${{ inputs.workspace }}/.env"
           mode: alltofile
+
+      - name: Apply env overrides
+        if: inputs.env-overrides != ''
+        env:
+          ENV_OVERRIDES: ${{ inputs.env-overrides }}
+        run: printf '%s\n' "$ENV_OVERRIDES" >> ${{ inputs.workspace }}/.env
 
       # Vercel never builds from git here: the artifact is built in this job and uploaded as-is
       # (deploy --prebuilt). All vercel commands run from the repo root so Turbopack/Next treat the
-      # pnpm workspace root as the build root (pnpm symlinks point outside apps/app); project
+      # pnpm workspace root as the build root (pnpm symlinks point outside the workspace); project
       # linking comes from VERCEL_ORG_ID/VERCEL_PROJECT_ID (1Password), independent of cwd.
       - name: Pull Vercel project settings
         run: pnpm vercel pull --yes --environment=${{ (inputs.env == 'production' && 'production') || 'preview' }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
-      # TEMPORARY workaround: the Vercel project has no Root Directory configured (pre-monorepo
-      # branches still run the CLI from the repo root where the app used to live). Set it locally
-      # instead: `vercel build` reads .vercel/project.json offline, builds apps/app and keeps the
-      # repo root as the workspace root for Turbopack and output file tracing. Once old-layout
-      # branches are gone, set Root Directory=apps/app in the Vercel dashboard and drop this step.
+      # TEMPORARY workaround for apps/app: its Vercel project has no Root Directory configured
+      # (pre-monorepo branches still run the CLI from the repo root where the app used to live).
+      # Set it locally instead: `vercel build` reads .vercel/project.json offline, builds the
+      # workspace and keeps the repo root as the workspace root for Turbopack and output file
+      # tracing. Once old-layout branches are gone, set Root Directory=apps/app in the Vercel
+      # dashboard and drop this step. New projects (apps/assistant) configure Root Directory in
+      # the dashboard from day one and pass patch-root-directory: false.
       - name: Set Vercel root directory
+        if: inputs.patch-root-directory
         run: |
-          jq '.settings.rootDirectory = "apps/app"' .vercel/project.json > .vercel/project.json.tmp
+          jq '.settings.rootDirectory = "${{ inputs.workspace }}"' .vercel/project.json > .vercel/project.json.tmp
           mv .vercel/project.json.tmp .vercel/project.json
 
       - name: Bundle Vercel application

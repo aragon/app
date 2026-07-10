@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "types": [
+            "node",
+            "jest"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        ".vercel/**/*",
+        "coverage"
+    ],
+    "include": [
+        "src"
+    ]
+}
