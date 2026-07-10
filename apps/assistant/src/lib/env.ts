@@ -25,5 +25,7 @@ export const env = {
 
         return isAssistantEnvironment(value) ? value : 'local';
     },
-    port: (): number => Number(process.env.PORT ?? 4000),
+    // `||` (not `??`) so an empty PORT falls back too — Number('') is 0, which would make the
+    // server listen on a random OS-assigned port.
+    port: (): number => Number(process.env.PORT || 4000),
 };
