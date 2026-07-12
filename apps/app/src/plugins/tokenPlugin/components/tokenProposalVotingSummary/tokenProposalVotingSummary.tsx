@@ -76,17 +76,17 @@ export const TokenProposalVotingSummary: React.FC<
         countableTotalVotes,
         { format: NumberFormat.GENERIC_SHORT },
     );
+
     const supportPercentage =
         countableTotalVotes > 0 ? (yesVotes / countableTotalVotes) * 100 : 0;
-
     const formattedYesVotes = formatterUtils.formatNumber(yesVotes, {
         format: NumberFormat.GENERIC_SHORT,
     });
 
     const supportThresholdPercentage =
         tokenSettingsUtils.ratioToPercentage(supportThreshold);
-    const supportReached = supportPercentage >= supportThresholdPercentage;
 
+    const isSupportReached = tokenProposalUtils.isSupportReached(proposal);
     const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
 
     if (status !== ProposalStatus.ACTIVE || isExecuted) {
@@ -130,7 +130,7 @@ export const TokenProposalVotingSummary: React.FC<
             <Progress
                 thresholdIndicator={supportThresholdPercentage}
                 value={supportPercentage}
-                variant={supportReached ? 'primary' : 'neutral'}
+                variant={isSupportReached ? 'primary' : 'neutral'}
             />
             <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
                 {formattedYesVotes}{' '}
