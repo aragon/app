@@ -1,6 +1,6 @@
 {
     "name": "@aragon/assistant",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Aragon assistant service: support-chat intake API",
     "author": "Aragon Association",
     "homepage": "https://github.com/aragon/app#readme",
