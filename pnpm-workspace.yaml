@@ -11,14 +11,25 @@ catalog:
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0
   "@hono/node-server": ^1.19.7
+  "@linear/sdk": ^88.0.0
+  "@sentry/cli": ^3.6.0
+  "@sentry/hono": ^10.63.0
+  "@sentry/node": ^10.63.0
+  "@sentry/profiling-node": ^10.63.0
   "@types/jest": ^30.0.0
   "@types/node": ^24.13.2
+  "@upstash/ratelimit": ^2.0.8
+  "@upstash/redis": ^1.38.0
+  "@vercel/blob": ^2.5.0
+  ai: ^7.0.0
   cross-env: ^10.1.0
+  file-type: ^22.0.0
   hono: ^4.11.9
   husky: ^9.1.7
   jest: ^30.4.2
   lint-staged: ^17.0.7
   ts-jest: ^29.4.11
+  tsup: ^8.5.1
   tsx: ^4.20.0
   turbo: ^2.9.18
   typescript: ^5.9.3

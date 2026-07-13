@@ -6,8 +6,10 @@
     "homepage": "https://github.com/aragon/app#readme",
     "private": true,
     "license": "GPL-3.0",
+    "type": "module",
     "scripts": {
-        "dev": "pnpm run setup local && tsx watch --env-file=.env.local src/dev.ts",
+        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
+        "build": "tsup",
         "test": "jest",
         "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
         "test:watch": "jest --watch",
@@ -19,15 +21,27 @@
     },
     "dependencies": {
         "@aragon/assistant-contracts": "workspace:*",
-        "hono": "catalog:"
+        "@linear/sdk": "catalog:",
+        "@sentry/hono": "catalog:",
+        "@sentry/node": "catalog:",
+        "@sentry/profiling-node": "catalog:",
+        "@upstash/ratelimit": "catalog:",
+        "@upstash/redis": "catalog:",
+        "@vercel/blob": "catalog:",
+        "ai": "catalog:",
+        "file-type": "catalog:",
+        "hono": "catalog:",
+        "zod": "catalog:"
     },
     "devDependencies": {
         "@biomejs/biome": "catalog:",
         "@hono/node-server": "catalog:",
+        "@sentry/cli": "catalog:",
         "@types/jest": "catalog:",
         "@types/node": "catalog:",
         "jest": "catalog:",
         "ts-jest": "catalog:",
+        "tsup": "catalog:",
         "tsx": "catalog:",
         "typescript": "catalog:"
     },
