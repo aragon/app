@@ -1,0 +1,49 @@
+# The "Assistant Development" workflow deploys the assistant service to dev.assistant.aragon.org on
+# every merge to main that touches the assistant or its shared contracts (see .github/filters.yml).
+# Repo-wide checks (type-check, lint, tests) run in app-development.yml via the Turbo fan-out; the
+# dev app (dev.app.aragon.org) points at dev.assistant.aragon.org, so it picks the deploy up live.
+
+name: Assistant Development
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      assistant: ${{ steps.filter.outputs.assistant }}
+    steps:
+      # Push events are compared locally by paths-filter, so the repository must be checked out.
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Detect assistant changes
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          base: main
+          filters: .github/filters.yml
+
+  deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.assistant == 'true' }}
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: "dev.assistant.aragon.org"
+      env: "development"
+      workspace: "apps/assistant"
+      vault-prefix: "kv_assistant"
+      patch-root-directory: false

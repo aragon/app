@@ -1,9 +1,11 @@
+const { baseConfig, createTsJestTransform } = require('../../jest.config.base');
+
 /** @type {import('@jest/types').Config.InitialOptions} */
 const config = {
+    ...baseConfig,
     testEnvironment: 'jsdom',
     testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
     collectCoverageFrom: ['./src/**/*.{ts,tsx}'],
-    maxWorkers: '70%',
     coveragePathIgnorePatterns: [
         '.d.ts',
         '.api.ts',
@@ -21,18 +23,11 @@ const config = {
     transform: {
         '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$':
             '<rootDir>/src/test/fileTransform.js',
-        '^.+\\.m?[tj]sx?$': [
-            'ts-jest',
-            {
-                tsconfig: {
-                    isolatedModules: true,
-                    module: 'CommonJS',
-                    target: 'ES2020',
-                    allowJs: true,
-                    jsx: 'react-jsx',
-                },
-            },
-        ],
+        ...createTsJestTransform({
+            target: 'ES2020',
+            allowJs: true,
+            jsx: 'react-jsx',
+        }),
     },
     // Allow transforming specific ESM deps even under pnpm's nested layout
     // e.g. node_modules/.pnpm/<pkg>@<ver>/node_modules/<pkg>/...

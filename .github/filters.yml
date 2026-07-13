@@ -1,0 +1,13 @@
+# Central workspace→paths mapper consumed by dorny/paths-filter in the CI workflows.
+# When a new workspace lands, add its filter HERE — the workflows reference these named filters and
+# do not hardcode paths themselves.
+#
+# The app itself needs no filter: app deploys run on every PR/push (the app is the product surface,
+# and assistant changes are tested through the app), so only optional side-deploys are gated.
+
+assistant:
+  - "apps/assistant/**"
+  - "packages/assistant-contracts/**"
+  - ".github/workflows/assistant-*.yml"
+  - ".github/workflows/shared-deploy.yml"
+  - ".github/filters.yml"
