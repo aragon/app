@@ -58,15 +58,14 @@ jobs:
       - name: Recreate version branch from main
         run: git checkout -B changeset-release/assistant main
 
-      # This flow owns the assistant domain: @aragon/assistant plus its version-only contracts
-      # package. App-scoped packages are versioned by the app release flow (app-release-start.yml),
-      # which symmetrically scopes to @aragon/app.
-      # NOTE: @aragon/assistant-chat ownership will be decided when the widget package lands
-      # (Feature/Wire-up PR).
+      # This flow owns the assistant domain: @aragon/assistant plus its version-only packages
+      # (contracts and the assistant-chat widget, which ships inside the app but is released by
+      # its domain owner). App-scoped packages are versioned by the app release flow
+      # (app-release-start.yml), which symmetrically scopes to @aragon/app.
       - name: Update version and changelog
         uses: ./.github/actions/changeset-version
         with:
-          scope: "@aragon/assistant @aragon/assistant-contracts"
+          scope: "@aragon/assistant @aragon/assistant-contracts @aragon/assistant-chat"
           prettier_changelog: "true"
           github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 

@@ -1,0 +1,1 @@
+export { ChatNewChatBar } from './chatNewChatBar';
