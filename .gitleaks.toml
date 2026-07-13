@@ -1,0 +1,20 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Public Algolia npm search API key bundled in Yarn releases (read-only, not a secret)"
+paths = [
+    '''\.yarn/releases/.+\.cjs$''',
+]
+
+[[allowlists]]
+description = "Ethereum addresses (0x + 40 hex chars) are public identifiers, not secrets"
+regexes = [
+    '''^0x[a-fA-F0-9]{40}$''',
+]
+
+[[allowlists]]
+description = "Backend API mock data contains only fake values"
+paths = [
+    '''(^|/)backendApiMocks\.ts$''',
+]
