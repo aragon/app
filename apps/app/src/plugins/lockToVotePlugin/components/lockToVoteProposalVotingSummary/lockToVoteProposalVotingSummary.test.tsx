@@ -93,7 +93,8 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         });
         render(createTestComponent({ proposal }));
 
-        // Support is yes / (yes + no) = 75%, not winning-option / (yes + no + abstain) = 50%
+        // CORRECT calculation: 750 / (750 + 250) = 75%
+        // WRONG: winning-option / all-votes (750 / 1500 = 50%)
         const progressbar = screen.getByRole('progressbar');
         expect(progressbar.dataset.value).toEqual('75');
 
@@ -189,7 +190,7 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
     });
 
     it('displays the approved status when proposal is executed and approval is reached', () => {
-        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.EXECUTED);
         const proposal = generateTestProposal({
             yes: '7500',
             no: '2500',
@@ -203,17 +204,15 @@ describe('<LockToVoteProposalVotingSummary /> component', () => {
         expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
-    it('displays the vetoed status when veto proposal is executed and approval is reached', () => {
-        getProposalStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+    it('displays the vetoed status when veto proposal has failed and approval is reached', () => {
+        getProposalStatusSpy.mockReturnValue(ProposalStatus.FAILED);
         const proposal = generateTestProposal({
             yes: '7500',
             no: '2500',
             minParticipation: 200_000,
             totalSupply: '10000',
         });
-        render(
-            createTestComponent({ proposal, isExecuted: true, isVeto: true }),
-        );
+        render(createTestComponent({ proposal, isVeto: true }));
 
         const statusText = screen.getByText(`${translationPrefix}.vetoed`);
         expect(statusText).toHaveClass('text-critical-800');
