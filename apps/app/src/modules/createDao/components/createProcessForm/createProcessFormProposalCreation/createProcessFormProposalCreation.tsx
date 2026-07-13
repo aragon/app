@@ -56,6 +56,14 @@ export const CreateProcessFormProposalCreation: React.FC<
         'existingProposalCreationConditions'
     >({ name: 'existingProposalCreationConditions' });
 
+    const showExistingConditions =
+        isExistingConditionEnabled && isAdvancedGovernance;
+    const showBasicNotSupported =
+        isExistingConditionEnabled && !isAdvancedGovernance;
+
+    const hasExistingConditions =
+        showExistingConditions && existingConditionFields.length > 0;
+
     const getBodyFormPrefix = (bodyIndex: number, stageIndex?: number) =>
         stageIndex != null
             ? `stages.${stageIndex.toString()}.bodies.${bodyIndex.toString()}`
@@ -81,6 +89,10 @@ export const CreateProcessFormProposalCreation: React.FC<
     const canBodiesCreateProposals = processBodies.some(
         (body) => body.canCreateProposal,
     );
+
+    // Proposal creation must be granted through at least one body or existing condition contract
+    const hasProposalCreationSources =
+        canBodiesCreateProposals || hasExistingConditions;
     const createProposalsError =
         'app.createDao.createProcessForm.proposalCreation.bodies.error';
 
@@ -99,7 +111,7 @@ export const CreateProcessFormProposalCreation: React.FC<
             ),
             rules: {
                 validate: (value) =>
-                    value !== ANY_WALLET && !canBodiesCreateProposals
+                    value !== ANY_WALLET && !hasProposalCreationSources
                         ? createProposalsError
                         : undefined,
             },
@@ -107,15 +119,10 @@ export const CreateProcessFormProposalCreation: React.FC<
         },
     );
 
-    // Trigger proposalCreationMode validation on allowed bodies selection change
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Trigger proposalCreationMode validation on allowed bodies selection change
     useEffect(() => {
         void trigger('proposalCreationMode');
-    }, [trigger]);
-
-    const showExistingConditions =
-        isExistingConditionEnabled && isAdvancedGovernance;
-    const showBasicNotSupported =
-        isExistingConditionEnabled && !isAdvancedGovernance;
+    }, [trigger, hasProposalCreationSources]);
 
     return (
         <>
@@ -158,7 +165,6 @@ export const CreateProcessFormProposalCreation: React.FC<
                 {processBodies.map((body) => (
                     <PluginSingleComponent
                         body={body}
-                        disableCheckbox={processBodies.length === 1}
                         Fallback={ProposalCreationSettingsDefault}
                         formPrefix={getBodyFormPrefix(
                             body.bodyIndex,

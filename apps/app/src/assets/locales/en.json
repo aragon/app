@@ -1225,7 +1225,7 @@
         },
         "proposalCreation": {
           "bodies": {
-            "error": "You must select at least one body.",
+            "error": "You must select at least one body or existing condition.",
             "label": "Bodies"
           },
           "existingCondition": {
