@@ -68,5 +68,6 @@ export const governanceDialogsDefinitions: Record<
     },
     [GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION]: {
         Component: DelegateStatementTransactionDialog,
+        requiresWallet: true,
     },
 };

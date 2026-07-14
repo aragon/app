@@ -123,3 +123,5 @@
 {"ts":"2026-07-08T16:29:42.858Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-07-08T16:29:55.658Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":11,"adapter":"claude"}
 {"ts":"2026-07-08T16:30:49.523Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-14T13:48:20.570Z","tool":"Edit","file":".agents/shared/skills/rules/dialog-conventions.md","rule":"rule-authoring","bytes":2672,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-14T13:49:10.198Z","tool":"Edit","file":".agents/shared/skills/rules/dialog-conventions.md","rule":"rule-authoring","bytes":2672,"elapsed_ms":4,"adapter":"claude"}
