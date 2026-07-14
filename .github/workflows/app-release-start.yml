@@ -70,11 +70,17 @@ jobs:
         id: release-summary
         uses: ./.github/actions/generate-release-summary
         with:
+          package_name: "@aragon/app"
+          path_filter: "app"
           linear_api_token: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
 
+      # Per-package release model: this flow versions only @aragon/app; other workspaces are
+      # versioned by their own release flows (e.g. assistant-release-version.yml), which
+      # symmetrically scope to their packages.
       - name: Update version and changelog
         uses: ./.github/actions/changeset-version
         with:
+          scope: "@aragon/app"
           prettier_changelog: "true"
           github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 

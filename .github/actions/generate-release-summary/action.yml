@@ -1,19 +1,28 @@
 name: Generate Release Summary
-description: Generates a PR/Slack-friendly release summary based on git log range (optionally from a base tag).
+description: Generates a package-scoped PR/Slack summary from its release commit range.
 
 inputs:
+  package_name:
+    description: Package name used to discover <package>@* release tags
+    required: true
+  path_filter:
+    description: Named workspace filter from .github/filters.yml
+    required: true
   linear_api_token:
     description: Linear API token for fetching issue titles (optional)
     required: false
     default: ""
   base_ref:
     description: |
-      Override base ref for summary range (optional, not recommended).
-      Auto-detection finds the latest semver tag and computes merge-base,
-      which works correctly for both releases and hotfixes.
+      Override the resolved release boundary (optional, not recommended).
+      Auto-detection finds the latest <package>@* tag and its mainline integration commit.
       Only use this for debugging or edge cases.
     required: false
     default: ""
+  filters_path:
+    description: Path to the central workspace path mapper
+    required: false
+    default: ".github/filters.yml"
 
 outputs:
   summary:
@@ -26,8 +35,11 @@ runs:
     - id: summary
       shell: bash
       env:
+        PACKAGE_NAME: ${{ inputs.package_name }}
+        PATH_FILTER: ${{ inputs.path_filter }}
         LINEAR_API_TOKEN: ${{ inputs.linear_api_token }}
         BASE_REF: ${{ inputs.base_ref }}
+        FILTERS_PATH: ${{ inputs.filters_path }}
       run: |
         set -euo pipefail
         node .github/workflows/scripts/generateReleaseSummary.js

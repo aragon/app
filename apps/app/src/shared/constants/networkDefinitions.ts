@@ -134,7 +134,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://polygon-mainnet.g.alchemy.com/v2/',
         },
-        order: 4,
+        order: 5,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -172,7 +172,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://arb-mainnet.g.alchemy.com/v2/',
         },
-        order: 3,
+        order: 4,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -191,7 +191,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://opt-mainnet.g.alchemy.com/v2/',
         },
-        order: 6,
+        order: 7,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -210,7 +210,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.ALCHEMY,
             rpcUrl: 'https://avax-mainnet.g.alchemy.com/v2/',
         },
-        order: 5,
+        order: 6,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {
@@ -341,7 +341,7 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             rpcProvider: RpcProvider.DRPC,
             rpcUrl: 'https://lb.drpc.live/monad/',
         },
-        order: 7,
+        order: 3,
         protocolVersion: latestProtocolVersion,
         tenderlySupport: true,
         addresses: {

@@ -110,3 +110,16 @@
 {"ts":"2026-07-08T11:05:45.029Z","tool":"Edit","file":"src/modules/application/components/errorBoundary/errorBoundaryClass.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":6,"adapter":"claude"}
 {"ts":"2026-07-08T11:06:24.791Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-07-08T11:06:45.503Z","tool":"Edit","file":"src/shared/utils/monitoringUtils/monitoringUtils.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":4,"adapter":"claude"}
+{"ts":"2026-07-07T13:45:43.994Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:31:34.162Z","tool":"Write","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:31:49.364Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:31:51.306Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:31:55.733Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:38:04.582Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-07T15:38:11.715Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-07T15:39:53.889Z","tool":"Edit","file":"src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-07-08T16:28:10.671Z","tool":"Write","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-07-08T16:29:33.169Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-08T16:29:42.858Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-07-08T16:29:55.658Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":11,"adapter":"claude"}
+{"ts":"2026-07-08T16:30:49.523Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
