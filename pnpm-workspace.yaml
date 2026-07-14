@@ -8,7 +8,7 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.0
-  "@aragon/gov-ui-kit": ^2.8.1
+  "@aragon/gov-ui-kit": ^2.9.0
   "@biomejs/biome": ^2.5.0
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.0

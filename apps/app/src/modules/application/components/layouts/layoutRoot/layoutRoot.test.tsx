@@ -3,6 +3,7 @@ import type { ReadonlyHeaders } from 'next/dist/server/web/spec-extension/adapte
 import * as headers from 'next/headers';
 import type { ReactNode } from 'react';
 import * as wagmi from 'wagmi';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import { translations } from '@/shared/constants/translations';
 import { testLogger } from '@/test/utils';
 import { type ILayoutRootProps, LayoutRoot } from './layoutRoot';
@@ -32,6 +33,12 @@ describe('<LayoutRoot /> component', () => {
     const cookieToInitialStateSpy = jest.spyOn(wagmi, 'cookieToInitialState');
     const headersSpy = jest.spyOn(headers, 'headers');
 
+    // The Providers component is mocked, so the footer renders without a FeatureFlagsProvider.
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
+
     beforeEach(() => {
         // Suppress "<html> cannot appear as a child of <div>" warnings.
         // To be fixed by React 19 migration (see https://github.com/testing-library/react-testing-library/issues/1250)
@@ -39,11 +46,17 @@ describe('<LayoutRoot /> component', () => {
         headersSpy.mockReturnValue({
             get: jest.fn(),
         } as unknown as Promise<ReadonlyHeaders>);
+        useFeatureFlagsSpy.mockReturnValue({
+            isEnabled: () => false,
+        } as unknown as ReturnType<
+            typeof featureFlagsProvider.useFeatureFlags
+        >);
     });
 
     afterEach(() => {
         cookieToInitialStateSpy.mockReset();
         headersSpy.mockReset();
+        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = async (props?: Partial<ILayoutRootProps>) => {

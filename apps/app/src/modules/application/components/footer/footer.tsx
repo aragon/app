@@ -2,20 +2,37 @@
 
 import { Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Container } from '@/shared/components/container';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
+import { SupportChat } from '../supportChat';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
+
+const linkClassNames =
+    'truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0';
 
 export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
 
     const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+
+    const isSupportChatEnabled = isEnabled('supportChat');
+    const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
+
+    // The help entry stays a real anchor to the support portal (no-JS, middle-click and
+    // flag-off keep the plain link); with the flag on, a plain click opens the chat instead —
+    // the portal stays one click away inside the widget (header link + error escape hatches).
+    const handleHelpClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+        event.preventDefault();
+        setIsSupportChatOpen(true);
+    };
 
     const year = new Date().getFullYear();
 
@@ -57,9 +74,14 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
                     {footerLinks.map(({ link, label, target }) => (
                         <Link
-                            className="truncate border-neutral-100 border-b py-4 font-normal text-base text-neutral-500 leading-tight last:border-none md:border-none md:py-0"
+                            className={linkClassNames}
                             href={link}
                             key={label}
+                            onClick={
+                                label === 'help' && isSupportChatEnabled
+                                    ? handleHelpClick
+                                    : undefined
+                            }
                             target={target}
                         >
                             {t(`app.application.footer.link.${label}`)}
@@ -70,6 +92,12 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>
+            {isSupportChatEnabled && (
+                <SupportChat
+                    isOpen={isSupportChatOpen}
+                    onClose={() => setIsSupportChatOpen(false)}
+                />
+            )}
         </footer>
     );
 };

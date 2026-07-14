@@ -143,6 +143,10 @@ const nextConfig = {
         version: packageInfo.version,
     },
     serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
+    // The widget workspace package is consumed as TypeScript source (no build step) and must
+    // be transpiled by the app bundler; @aragon/assistant-contracts ships prebuilt dist/ and
+    // needs no transpilation.
+    transpilePackages: ['@aragon/assistant-chat'],
     reactCompiler: false,
     turbopack: {
         // Monorepo workspace root; Turbopack fails to infer it under `vercel build` in apps/app
