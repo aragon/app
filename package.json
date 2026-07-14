@@ -6,11 +6,12 @@
     "scripts": {
         "dev": "turbo run dev",
         "build": "turbo run build",
-        "test": "turbo run test",
+        "test": "pnpm test:release-summary && turbo run test",
         "test:changed": "turbo run test:changed",
-        "test:coverage": "turbo run test:coverage",
+        "test:coverage": "pnpm test:release-summary && turbo run test:coverage",
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails",
+        "test:release-summary": "node --test .github/workflows/scripts/generateReleaseSummary.test.js",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
         "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
         "lint": "turbo run lint",
@@ -26,7 +27,8 @@
         "lint-staged": "catalog:",
         "turbo": "catalog:",
         "ultracite": "catalog:",
-        "vercel": "catalog:"
+        "vercel": "catalog:",
+        "yaml": "catalog:"
     },
     "repository": {
         "type": "git",

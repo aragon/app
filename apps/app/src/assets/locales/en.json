@@ -3863,7 +3863,9 @@
         "defaultName": "No name {{type}} policy"
       },
       "processDataListItem": {
-        "defaultDescription": "No description"
+        "defaultDescription": "No description",
+        "notEligible": "Not eligible",
+        "viewRequirements": "View requirements"
       },
       "resourcesInput": {
         "add": "Add",
