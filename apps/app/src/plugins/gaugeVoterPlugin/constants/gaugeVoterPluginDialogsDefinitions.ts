@@ -30,6 +30,7 @@ export const gaugeVoterPluginDialogsDefinitions: Record<
     [GaugeVoterPluginDialogId.VOTE_GAUGES_TRANSACTION]: {
         Component: GaugeVoterVoteTransactionDialog,
         size: 'md',
+        requiresWallet: true,
     },
     [GaugeVoterPluginDialogId.LOCK_UNLOCK]: {
         Component: GaugeVoterLockUnlockDialog,
@@ -43,6 +44,7 @@ export const gaugeVoterPluginDialogsDefinitions: Record<
     },
     [GaugeVoterPluginDialogId.EXIT_QUEUE_WITHDRAW_TRANSACTION]: {
         Component: GaugeVoterExitQueueWithdrawTransactionDialog,
+        requiresWallet: true,
     },
     [GaugeVoterPluginDialogId.LOCK_ONBOARDING_INTRO]: {
         Component: GaugeVoterLockOnboardingIntroDialog,

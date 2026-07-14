@@ -29,7 +29,10 @@ export const governanceDialogsDefinitions: Record<
         hiddenDescription:
             'app.governance.duplicateProposalAlertDialog.a11y.description',
     },
-    [GovernanceDialogId.EXECUTE_ACTIONS]: { Component: ExecuteActionsDialog },
+    [GovernanceDialogId.EXECUTE_ACTIONS]: {
+        Component: ExecuteActionsDialog,
+        requiresWallet: true,
+    },
     [GovernanceDialogId.EXECUTE]: {
         Component: ExecuteDialog,
         requiresWallet: true,
