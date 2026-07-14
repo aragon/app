@@ -1,0 +1,32 @@
+# Central workspace→paths mapper consumed by CI change detection and release-summary generation.
+# When a new workspace lands, add its filter HERE — consumers reference these named filters and do
+# not hardcode paths themselves.
+#
+# App deploys still run on every PR/push. Its filter defines which commits belong in app release
+# notes: app source, workspace dependencies bundled by the app and shared build/delivery inputs.
+
+app:
+  - "apps/app/**"
+  - "packages/assistant-chat/**"
+  - "packages/assistant-contracts/**"
+  - ".changeset/config.json"
+  - ".github/actions/**"
+  - ".github/workflows/app-*.yml"
+  - ".github/workflows/shared-deploy.yml"
+  - ".github/workflows/scripts/**"
+  - ".github/filters.yml"
+  - ".nvmrc"
+  - "biome.json"
+  - "jest.config.base.js"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "pnpm-workspace.yaml"
+  - "tsconfig.base.json"
+  - "turbo.json"
+
+assistant:
+  - "apps/assistant/**"
+  - "packages/assistant-contracts/**"
+  - ".github/workflows/assistant-*.yml"
+  - ".github/workflows/shared-deploy.yml"
+  - ".github/filters.yml"

@@ -1,5 +1,13 @@
 # @aragon/app
 
+## 1.33.3
+
+### Patch Changes
+
+- [#1221](https://github.com/aragon/app/pull/1221) [`5c5fc34`](https://github.com/aragon/app/commit/5c5fc34ba75b757abd5d50de138145116e24bb35) Thanks [@milosh86](https://github.com/milosh86)! - Fix token and lock-to-vote proposal voting summaries incorrectly implementing support reached calculation.
+
+- [#1226](https://github.com/aragon/app/pull/1226) [`dabd6e9`](https://github.com/aragon/app/commit/dabd6e914cc5ff771d4067d75c7badf7068aa261) Thanks [@evanaronson](https://github.com/evanaronson)! - Reorder the chains shown during DAO creation.
+
 ## 1.33.2
 
 ### Patch Changes

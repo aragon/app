@@ -1,18 +1,13 @@
 {
+    "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "allowJs": true,
-        "esModuleInterop": true,
-        "incremental": true,
-        "isolatedModules": true,
         "jsx": "react-jsx",
         "lib": [
             "dom",
             "dom.iterable",
             "esnext"
         ],
-        "module": "esnext",
-        "moduleResolution": "bundler",
-        "noEmit": true,
         "paths": {
             "@/*": [
                 "./src/*"
@@ -35,10 +30,6 @@
                 "name": "next"
             }
         ],
-        "resolveJsonModule": true,
-        "skipLibCheck": true,
-        "strict": true,
-        "strictNullChecks": true,
         "target": "ES2017"
     },
     "exclude": [
