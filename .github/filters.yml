@@ -1,9 +1,28 @@
-# Central workspace→paths mapper consumed by dorny/paths-filter in the CI workflows.
-# When a new workspace lands, add its filter HERE — the workflows reference these named filters and
-# do not hardcode paths themselves.
+# Central workspace→paths mapper consumed by CI change detection and release-summary generation.
+# When a new workspace lands, add its filter HERE — consumers reference these named filters and do
+# not hardcode paths themselves.
 #
-# The app itself needs no filter: app deploys run on every PR/push (the app is the product surface,
-# and assistant changes are tested through the app), so only optional side-deploys are gated.
+# App deploys still run on every PR/push. Its filter defines which commits belong in app release
+# notes: app source, workspace dependencies bundled by the app and shared build/delivery inputs.
+
+app:
+  - "apps/app/**"
+  - "packages/assistant-chat/**"
+  - "packages/assistant-contracts/**"
+  - ".changeset/config.json"
+  - ".github/actions/**"
+  - ".github/workflows/app-*.yml"
+  - ".github/workflows/shared-deploy.yml"
+  - ".github/workflows/scripts/**"
+  - ".github/filters.yml"
+  - ".nvmrc"
+  - "biome.json"
+  - "jest.config.base.js"
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - "pnpm-workspace.yaml"
+  - "tsconfig.base.json"
+  - "turbo.json"
 
 assistant:
   - "apps/assistant/**"
