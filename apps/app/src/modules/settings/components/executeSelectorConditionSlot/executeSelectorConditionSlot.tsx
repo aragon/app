@@ -8,19 +8,26 @@ import { stringUtils } from '@/shared/utils/stringUtils';
 const EMPTY_VALUE = '—';
 
 interface IAllowedAction {
-    selector: string;
+    selector: string | null;
     target: string;
 }
 
-const toStringList = (value: unknown): string[] =>
+const toSelectorList = (value: unknown): Array<string | null> =>
+    Array.isArray(value)
+        ? value.filter((item): item is string | null =>
+              item === null ? true : stringUtils.isNonEmptyString(item),
+          )
+        : [];
+
+const toTargetList = (value: unknown): string[] =>
     Array.isArray(value) ? value.filter(stringUtils.isNonEmptyString) : [];
 
 const toAllowedActions = (
     selectors: unknown,
     targets: unknown,
 ): IAllowedAction[] => {
-    const selectorList = toStringList(selectors);
-    const targetList = toStringList(targets);
+    const selectorList = toSelectorList(selectors);
+    const targetList = toTargetList(targets);
 
     return selectorList.map((selector, index) => ({
         selector,
@@ -46,8 +53,13 @@ export const ExecuteSelectorConditionSlot: React.FC<IConditionData> = (
                 <DefinitionList.Container>
                     {allowedActions.map((action) => (
                         <DefinitionList.Item
-                            key={action.selector}
-                            term={action.selector}
+                            key={`${action.selector ?? 'any'}-${action.target}`}
+                            term={
+                                action.selector ??
+                                t(
+                                    'app.settings.executeSelectorConditionSlot.anySelector',
+                                )
+                            }
                         >
                             {action.target === EMPTY_VALUE
                                 ? EMPTY_VALUE

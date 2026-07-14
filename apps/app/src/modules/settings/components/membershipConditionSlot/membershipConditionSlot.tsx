@@ -11,10 +11,12 @@ import { useTranslations } from '@/shared/components/translationsProvider';
  * "Member of multisig".
  */
 export const MembershipConditionSlot: React.FC<IConditionData> = (props) => {
-    const { onlyListed } = props;
+    const { onlyListed, minApprovals } = props;
     const { t } = useTranslations();
 
     const isMemberGated = onlyListed === true;
+    const approvalsLabel =
+        typeof minApprovals === 'number' ? minApprovals.toString() : undefined;
 
     return (
         <DefinitionList.Container>
@@ -34,6 +36,15 @@ export const MembershipConditionSlot: React.FC<IConditionData> = (props) => {
                     />
                 </span>
             </DefinitionList.Item>
+            {approvalsLabel != null && (
+                <DefinitionList.Item
+                    term={t(
+                        'app.settings.membershipConditionSlot.minApprovals',
+                    )}
+                >
+                    {approvalsLabel}
+                </DefinitionList.Item>
+            )}
         </DefinitionList.Container>
     );
 };

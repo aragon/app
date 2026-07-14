@@ -1,4 +1,5 @@
 import {
+    type IDao,
     type IDaoPlugin,
     Network,
     PluginInterfaceType,
@@ -29,6 +30,8 @@ const patitoDaoAddress = '0xf204245b0B05E9A0780761E326552A569c1D6ceb';
 const patitoDeveloperDaoAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
 const coreAddress = '0x1eC50000000000000000000000000000000e8145';
 const foundersAddress = '0xf00d00000000000000000000000000000000e845';
+const patitoDaoAvatar = '/patitoDao.png';
+const patitoDeveloperDaoAvatar = '/patitoDeveloperDao.png';
 
 export const permissionsPreviewAccounts: IPermissionsPreviewAccount[] = [
     {
@@ -36,16 +39,33 @@ export const permissionsPreviewAccounts: IPermissionsPreviewAccount[] = [
         name: 'Patito DAO',
         network: Network.ETHEREUM_MAINNET,
         daoAddress: patitoDaoAddress,
-        avatarSrc: '/patitoDao.png',
+        avatarSrc: patitoDaoAvatar,
     },
     {
         id: 'patito-developer-dao',
         name: 'Patito Developer DAO',
         network: Network.ETHEREUM_MAINNET,
         daoAddress: patitoDeveloperDaoAddress,
-        avatarSrc: '/patitoDeveloperDao.png',
+        avatarSrc: patitoDeveloperDaoAvatar,
     },
 ];
+
+export const permissionsPreviewDao = {
+    id: 'patito-dao',
+    name: 'Patito DAO',
+    network: Network.ETHEREUM_MAINNET,
+    address: patitoDaoAddress,
+    avatar: patitoDaoAvatar,
+    linkedAccounts: [
+        {
+            id: 'patito-developer-dao',
+            name: 'Patito Developer DAO',
+            network: Network.ETHEREUM_MAINNET,
+            address: patitoDeveloperDaoAddress,
+            avatar: patitoDeveloperDaoAvatar,
+        },
+    ],
+} as unknown as IDao;
 
 export const permissionsPreviewPlugins: IFilterComponentPlugin<IDaoPlugin>[] = [
     {

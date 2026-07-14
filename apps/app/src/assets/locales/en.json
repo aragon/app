@@ -3544,6 +3544,29 @@
         "view": {
           "list": "List",
           "graph": "Graph"
+        },
+        "graphView": {
+          "mode": {
+            "incoming": "To DAO",
+            "outgoing": "From DAO",
+            "other": "Other"
+          },
+          "node": {
+            "dao": "Primary DAO",
+            "linkedDao": "Linked DAO",
+            "plugin": "Aragon OSx Plugin",
+            "actor": "Any address"
+          },
+          "edge": {
+            "condition": "if {{condition}}"
+          },
+          "detail": {
+            "close": "Close"
+          },
+          "empty": {
+            "heading": "No permissions",
+            "description": "This view has no indexed permissions to visualize."
+          }
         }
       },
       "permissionsList": {
@@ -3582,10 +3605,12 @@
       "executeSelectorConditionSlot": {
         "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
         "allowedActions": "Allowed actions",
+        "anySelector": "Any selector",
         "noActions": "No allowed actions"
       },
       "membershipConditionSlot": {
         "memberOfMultisig": "Member of multisig",
+        "minApprovals": "Minimum approvals",
         "true": "True",
         "false": "False"
       },
