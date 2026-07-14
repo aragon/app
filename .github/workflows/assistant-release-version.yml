@@ -1,20 +1,14 @@
-# The "Assistant Release Version" workflow maintains the "Version Packages: assistant" pull request:
-# on every merge to main with pending assistant changesets it recreates the changeset-release/assistant
-# branch, applies `changeset version` scoped to @aragon/assistant, and keeps a PR open with the
-# accumulated version bump and CHANGELOG. Merging that PR is the release act — the finalize workflow
-# tags it (@aragon/assistant@x.y.z) and the tag triggers the production deploy.
+# The "Assistant Release Version" workflow prepares the "Version Packages: assistant" pull request
+# ON DEMAND (trunk-based: merging to main never starts a release by itself). Dispatching it
+# recreates the changeset-release/assistant branch from main, applies `changeset version` scoped to
+# the assistant domain packages, and opens/updates the PR with the accumulated version bump and
+# CHANGELOG. Merging that PR is the release act — the finalize workflow tags it
+# (@aragon/assistant@x.y.z) and the tag triggers the production deploy.
 
 name: Assistant Release Version
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".changeset/**"
-      - "apps/assistant/**"
-      - "packages/assistant-contracts/**"
-      - ".github/workflows/assistant-release-version.yml"
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}
