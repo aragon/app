@@ -3,8 +3,10 @@
     "globalPassThroughEnv": [
         "ANALYZE",
         "ARAGON_BACKEND_URL",
+        "ASSISTANT_ENV",
         "CI",
         "JEST_WORKER_ID",
+        "NEXT_PUBLIC_ASSISTANT_URL",
         "NEXT_PUBLIC_ENV",
         "NEXT_PUBLIC_SENTRY_DSN",
         "NEXT_PUBLIC_SENTRY_ORG",
@@ -17,12 +19,14 @@
         "NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY",
         "NEXT_SECRET_RPC_KEY",
         "NEXT_SECRET_SENTRY_AUTH_TOKEN",
+        "PORT",
         "SENTRY_AUTH_TOKEN",
         "SENTRY_DSN",
         "SENTRY_ORG",
         "SENTRY_PROJECT",
         "SENTRY_REPORT_KEY",
         "SENTRY_REPORT_URI",
+        "VERCEL_ENV",
         "version"
     ],
     "globalDependencies": [

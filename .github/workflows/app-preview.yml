@@ -1,5 +1,9 @@
 # The "App Preview" workflow runs on every pull request. It deploys a preview environment to Vercel, comments the
 # deployment URL on the pull request, and runs E2E smoke tests against the preview.
+# When the PR touches the assistant service (see .github/filters.yml), the assistant preview is deployed FIRST and
+# the app preview is built against it (NEXT_PUBLIC_ASSISTANT_URL override) — the assistant cannot be tested without
+# the app, so the two previews are chained. PRs that do not touch the assistant use dev.assistant.aragon.org
+# (the default in the app env config).
 # Build verification (BV/Synpress) tests run only on staging as part of the release process.
 
 name: App Preview
@@ -20,26 +24,63 @@ permissions:
   pull-requests: write
 
 jobs:
-  deploy:
-    if: ${{ !startsWith(github.head_ref, 'release/') && !startsWith(github.head_ref, 'hotfix/') }}
+  changes:
+    if: ${{ !startsWith(github.head_ref, 'release/') && !startsWith(github.head_ref, 'hotfix/') && !startsWith(github.head_ref, 'changeset-release/') }}
+    runs-on: ubuntu-latest
+    outputs:
+      assistant: ${{ steps.filter.outputs.assistant }}
+    steps:
+      # File-based `filters:` is read from disk by paths-filter, so the file must be checked out.
+      - name: Checkout filters
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/filters.yml
+
+      - name: Detect workspace changes
+        id: filter
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2 (https://github.com/dorny/paths-filter/releases/tag/v3.0.2)
+        with:
+          filters: .github/filters.yml
+
+  deploy-assistant:
+    needs: changes
+    if: ${{ needs.changes.outputs.assistant == 'true' }}
     uses: ./.github/workflows/shared-deploy.yml
     secrets: inherit
     with:
       env: "preview"
+      workspace: "apps/assistant"
+      vault-prefix: "kv_assistant"
+      patch-root-directory: false
+
+  deploy:
+    needs: [changes, deploy-assistant]
+    if: ${{ !cancelled() && needs.changes.result == 'success' && (needs.deploy-assistant.result == 'success' || needs.deploy-assistant.result == 'skipped') }}
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      env: "preview"
+      env-overrides: ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('NEXT_PUBLIC_ASSISTANT_URL={0}', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
 
   comment:
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: [deploy-assistant, deploy]
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     steps:
       - name: Comment preview PR
         uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1 (https://github.com/thollander/actions-comment-pull-request/releases/tag/v3.0.1)
         with:
-          message: "🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})"
+          message: |
+            🚀 **Preview Deployment:** [View Here](${{ needs.deploy.outputs.deploymentUrl }})
+            ${{ needs.deploy-assistant.outputs.deploymentUrl != '' && format('🤖 **Assistant Preview:** [View Here]({0}) (app preview points at it)', needs.deploy-assistant.outputs.deploymentUrl) || '' }}
           comment-tag: preview-url
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
   e2e:
     needs: deploy
+    if: ${{ !cancelled() && needs.deploy.result == 'success' }}
     uses: ./.github/workflows/shared-e2e.yml
     secrets: inherit
     with:
