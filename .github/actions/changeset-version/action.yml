@@ -1,9 +1,13 @@
 name: Changeset Version
-description: Runs `pnpm changeset version` and formats CHANGELOG.md (idempotent when no changesets).
+description: Runs `pnpm changeset version` scoped to the given packages and formats the changed CHANGELOG files (idempotent when no changesets).
 
 inputs:
+  scope:
+    description: Space-separated package names this flow versions; all other workspace packages are passed to changesets as --ignore. Empty = version everything.
+    required: false
+    default: ""
   prettier_changelog:
-    description: Whether to format CHANGELOG.md with prettier
+    description: Whether to format the changed CHANGELOG files with prettier
     required: false
     default: "true"
   github_token:
@@ -17,11 +21,26 @@ runs:
     - shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        SCOPE: ${{ inputs.scope }}
         PRETTIER_CHANGELOG: ${{ inputs.prettier_changelog }}
       run: |
         set -euo pipefail
-        pnpm changeset version
-        if [ "$PRETTIER_CHANGELOG" = "true" ]; then
-          pnpm dlx prettier --write --prose-wrap never apps/app/CHANGELOG.md
+        # Workflows declare the packages they own (scope); the inversion into changesets
+        # --ignore flags happens here, in one place, so flows stay declarative.
+        IGNORE_FLAGS=()
+        if [ -n "$SCOPE" ]; then
+          while IFS= read -r PACKAGE; do
+            case " $SCOPE " in
+              *" $PACKAGE "*) ;;
+              *) IGNORE_FLAGS+=(--ignore "$PACKAGE") ;;
+            esac
+          done < <(pnpm m ls --json --depth -1 | node -p "JSON.parse(require('node:fs').readFileSync(0, 'utf8')).filter((pkg) => pkg.name && pkg.path !== process.cwd()).map((pkg) => pkg.name).join('\n')")
         fi
-
+        pnpm changeset version "${IGNORE_FLAGS[@]}"
+        if [ "$PRETTIER_CHANGELOG" = "true" ]; then
+          CHANGED_CHANGELOGS=$(git status --porcelain | awk '{ print $2 }' | grep 'CHANGELOG\.md$' || true)
+          if [ -n "$CHANGED_CHANGELOGS" ]; then
+            # shellcheck disable=SC2086
+            pnpm dlx prettier --write --prose-wrap never $CHANGED_CHANGELOGS
+          fi
+        fi

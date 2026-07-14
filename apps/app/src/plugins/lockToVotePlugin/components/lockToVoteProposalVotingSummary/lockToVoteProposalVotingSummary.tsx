@@ -60,12 +60,6 @@ export const LockToVoteProposalVotingSummary: React.FC<
     const noVotes = Number(
         lockToVoteProposalUtils.getOptionVotingPower(proposal, VoteOption.NO),
     );
-    const abstainVotes = Number(
-        lockToVoteProposalUtils.getOptionVotingPower(
-            proposal,
-            VoteOption.ABSTAIN,
-        ),
-    );
 
     const tokenTotalSupply = formatUnits(
         bigIntUtils.safeParse(
@@ -80,23 +74,22 @@ export const LockToVoteProposalVotingSummary: React.FC<
         'LockToVoteProposalVotingSummary: tokenTotalSupply must be a positive number',
     );
 
-    const totalVotes = yesVotes + noVotes + abstainVotes;
-    const formattedTotalVotes = formatterUtils.formatNumber(totalVotes, {
-        format: NumberFormat.GENERIC_SHORT,
-    })!;
+    const countableTotalVotes = yesVotes + noVotes;
+    const formattedCountableTotalVotes = formatterUtils.formatNumber(
+        countableTotalVotes,
+        { format: NumberFormat.GENERIC_SHORT },
+    );
 
-    const winningOption = Math.max(yesVotes, noVotes, abstainVotes);
-    const winningOptionPercentage =
-        totalVotes > 0 ? (winningOption / totalVotes) * 100 : 0;
-    const formattedWinningOption = formatterUtils.formatNumber(winningOption, {
+    const supportPercentage =
+        countableTotalVotes > 0 ? (yesVotes / countableTotalVotes) * 100 : 0;
+    const formattedYesVotes = formatterUtils.formatNumber(yesVotes, {
         format: NumberFormat.GENERIC_SHORT,
     });
 
     const supportThresholdPercentage =
         tokenSettingsUtils.ratioToPercentage(supportThreshold);
-    const supportReached =
-        winningOptionPercentage >= supportThresholdPercentage;
 
+    const isSupportReached = lockToVoteProposalUtils.isSupportReached(proposal);
     const isApprovalReached =
         lockToVoteProposalUtils.isApprovalReached(proposal);
 
@@ -140,16 +133,16 @@ export const LockToVoteProposalVotingSummary: React.FC<
             </p>
             <Progress
                 thresholdIndicator={supportThresholdPercentage}
-                value={winningOptionPercentage}
-                variant={supportReached ? 'primary' : 'neutral'}
+                value={supportPercentage}
+                variant={isSupportReached ? 'primary' : 'neutral'}
             />
             <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
-                {formattedWinningOption}{' '}
+                {formattedYesVotes}{' '}
                 <span className="text-neutral-500">
                     {t(
                         'app.plugins.lockToVote.lockToVoteProposalVotingSummary.votesDescription',
                         {
-                            details: `${formattedTotalVotes} ${symbol}`,
+                            details: `${formattedCountableTotalVotes} ${symbol}`,
                         },
                     )}
                 </span>

@@ -7,9 +7,31 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 ## Monorepo layout
 
 - `apps/app/` — the Aragon App (app.aragon.org): all app source, configs (`next.config.mjs`, `tsconfig.json`, `jest.config.js`), `e2e/`, `docs/`, `scripts/`, `CHANGELOG.md`. Package name stays `@aragon/app`.
+- `apps/assistant/` — the assistant service (assistant.aragon.org): Hono API behind the in-app support chat. Own Vercel project, continuous dev deploys from `main`, production released through its Version-PR flow (see `apps/assistant/README.md`).
+- `packages/assistant-contracts/` — shared zod contracts between the assistant service and the assistant-chat widget. Domain-scoped by design, not a catch-all contracts package.
 - `apps/*`, `packages/*` — reserved for future workspaces.
 - Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). Root `package.json` has no version; each workspace is versioned independently via changesets with per-package tags (`@aragon/app@1.17.0`) and release branches (`release/app/…`). See `apps/app/docs/projectDocs/release-process.md`.
-- CI: workflows in `.github/workflows/` are grouped per app (`app-*.yml` for `apps/app`, `shared-*.yml` reusable). Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
+- CI: workflows in `.github/workflows/` are grouped per app (`app-*.yml` for `apps/app`, `assistant-*.yml` for `apps/assistant`, `shared-*.yml` reusable). Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
+
+### Releases — each flow owns its packages
+
+Every deployable package releases through its own flow, and each flow declares the packages it versions via the `scope` input of the `changeset-version` action (the inversion into changesets `--ignore` flags happens once, inside the action):
+
+- **App** — the release ceremony `app-release-start` → release PR (`release/app/…`) → staging checks → merge → `app-release-pr-finalize`, scoped to `@aragon/app`. Finalize tags the tested SHA (`@aragon/app@1.17.0`) and the tag triggers the production deploy. See `apps/app/docs/projectDocs/release-process.md`.
+- **Assistant** — a Version-PR bot (`assistant-release-version.yml`) keeps a "Version Packages: assistant" PR up to date from pending changesets on `main`; merging it is the release act — finalize tags the merge commit (`@aragon/assistant@0.2.0`) and the tag triggers the production deploy. Scope: `@aragon/assistant` + `@aragon/assistant-contracts`.
+- `packages/*` are version-only and ship inside their consumers; each belongs to the scope of its domain owner's flow (`assistant-contracts` → assistant flow).
+
+Versions stay independent per package — no lockstep. A `release-all` orchestrator (dispatch with package selection) is a planned follow-up.
+
+### Adding a new workspace — the mappers
+
+Cross-cutting workspace knowledge lives in root-level mappers; register a new workspace there instead of touching individual workflows:
+
+- `.github/filters.yml` — workspace→paths mapper for CI change detection (dorny/paths-filter): gates optional side-deploys (the app itself deploys on every PR/push and needs no filter).
+- `pnpm-workspace.yaml` `catalog:` — central version pins for shared tooling/deps; workspaces reference them as `"catalog:"`, bumps happen once at the root (then run the full test fan-out — a catalog bump touches every workspace and triggers releases everywhere).
+- Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by declaring a `scope` in its `changeset-version` call — other flows are not touched.
+
+Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is already root-only (`biome.json`).
 
 ## Where things live
 
