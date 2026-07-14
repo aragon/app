@@ -61,7 +61,7 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
+        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_infra"
@@ -82,7 +82,7 @@ jobs:
         working-directory: ${{ inputs.workspace }}
 
       - name: Setup env file secrets
-        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
+        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_${{ inputs.env }}"
