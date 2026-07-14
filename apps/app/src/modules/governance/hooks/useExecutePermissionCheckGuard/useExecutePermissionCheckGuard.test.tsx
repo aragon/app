@@ -41,6 +41,7 @@ describe('useExecutePermissionCheckGuard hook', () => {
         useWalletAccountSpy.mockReturnValue({
             address: '0xabc',
             chainId: 1,
+            isConnecting: false,
             isReconnecting: false,
         });
         useConnectedWalletGuardSpy.mockImplementation((params) => ({

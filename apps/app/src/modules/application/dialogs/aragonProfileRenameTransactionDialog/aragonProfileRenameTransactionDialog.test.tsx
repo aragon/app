@@ -61,6 +61,7 @@ describe('<AragonProfileRenameTransactionDialog />', () => {
         useWalletAccountSpy.mockReturnValue({
             address: WALLET,
             chainId: 1,
+            isConnecting: false,
             isReconnecting: false,
         });
     });

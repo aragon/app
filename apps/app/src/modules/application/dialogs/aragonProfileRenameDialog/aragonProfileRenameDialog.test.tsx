@@ -87,6 +87,7 @@ describe('<AragonProfileRenameDialog />', () => {
         useWalletAccountSpy.mockReturnValue({
             address: '0x1111111111111111111111111111111111111111',
             chainId: 1,
+            isConnecting: false,
             isReconnecting: false,
         });
         useEnsSubdomainFieldSpy.mockReturnValue({

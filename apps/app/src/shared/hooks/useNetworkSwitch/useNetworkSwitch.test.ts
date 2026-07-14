@@ -23,6 +23,7 @@ describe('useNetworkSwitch hook', () => {
         useWalletAccountSpy.mockReturnValue({
             address: '0x123',
             chainId: ethereumChainId,
+            isConnecting: false,
             isReconnecting: false,
         });
     });
@@ -54,6 +55,7 @@ describe('useNetworkSwitch hook', () => {
             useWalletAccountSpy.mockReturnValue({
                 address: undefined,
                 chainId: undefined,
+                isConnecting: false,
                 isReconnecting: false,
             });
 
@@ -94,6 +96,7 @@ describe('useNetworkSwitch hook', () => {
             useWalletAccountSpy.mockReturnValue({
                 address: undefined,
                 chainId: undefined,
+                isConnecting: false,
                 isReconnecting: false,
             });
 

@@ -22,12 +22,14 @@ describe('<DialogRoot /> component', () => {
     const connectedAccount = {
         address: '0x1234567890123456789012345678901234567890',
         chainId: 1,
+        isConnecting: false,
         isReconnecting: false,
     } as const;
 
     const disconnectedAccount = {
         address: undefined,
         chainId: 1,
+        isConnecting: false,
         isReconnecting: false,
     } as const;
 
@@ -190,6 +192,58 @@ describe('<DialogRoot /> component', () => {
         });
         render(createTestComponent({ dialogs }));
         expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+        expect(close).not.toHaveBeenCalled();
+    });
+
+    it('unmounts but does not close a wallet-requiring dialog while connecting on a connector switch', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                requiresWallet: true,
+            },
+        };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+        useWalletAccountSpy.mockReturnValue({
+            ...disconnectedAccount,
+            isConnecting: true,
+        });
+        render(createTestComponent({ dialogs }));
+        expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+        expect(close).not.toHaveBeenCalled();
+    });
+
+    it('restores a wallet-requiring dialog once the connector switch completes', () => {
+        const dialogId = 'vote';
+        const dialogContent = 'vote-content';
+        const dialogs = {
+            [dialogId]: {
+                Component: () => dialogContent,
+                requiresWallet: true,
+            },
+        };
+        const locations = [{ id: dialogId }];
+        const close = jest.fn();
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ locations, close }),
+        );
+
+        useWalletAccountSpy.mockReturnValue({
+            ...disconnectedAccount,
+            isConnecting: true,
+        });
+        const { rerender } = render(createTestComponent({ dialogs }));
+        expect(screen.queryByText(dialogContent)).not.toBeInTheDocument();
+
+        useWalletAccountSpy.mockReturnValue({ ...connectedAccount });
+        rerender(createTestComponent({ dialogs }));
+
+        expect(screen.getByText(dialogContent)).toBeInTheDocument();
         expect(close).not.toHaveBeenCalled();
     });
 
