@@ -1,9 +1,20 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import {
+    type IAllowedAction,
+    useAllowedActions,
+} from '@/modules/governance/api/executeSelectorsService';
 import type { IConditionData } from '@/modules/settings/types';
+import { Network } from '@/shared/api/daoService';
 import { ExecuteSelectorConditionSlot } from './executeSelectorConditionSlot';
 
+jest.mock('@/modules/governance/api/executeSelectorsService', () => ({
+    ...jest.requireActual('@/modules/governance/api/executeSelectorsService'),
+    useAllowedActions: jest.fn(),
+}));
+
 describe('<ExecuteSelectorConditionSlot /> component', () => {
+    const useAllowedActionsMock = jest.mocked(useAllowedActions);
     const createTestComponent = (props?: Partial<IConditionData>) => {
         const completeProps: IConditionData = {
             conditionType: 'execute-selector',
@@ -15,6 +26,35 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
                 <ExecuteSelectorConditionSlot {...completeProps} />
             </GukModulesProvider>
         );
+    };
+
+    beforeEach(() => {
+        useAllowedActionsMock.mockReset();
+    });
+
+    const mockAllowedActions = (
+        data: Array<
+            Partial<IAllowedAction> & {
+                conditionAddress: string;
+                decoded: IAllowedAction['decoded'];
+                id: string;
+                selector: string;
+                target: string;
+            }
+        >,
+    ) => {
+        useAllowedActionsMock.mockReturnValue({
+            data: {
+                pages: [
+                    {
+                        data,
+                        metadata: { totalRecords: data.length },
+                    },
+                ],
+                pageParams: [],
+            },
+            isLoading: false,
+        } as unknown as ReturnType<typeof useAllowedActions>);
     };
 
     it('renders the description and the selectors mapped to their truncated targets', () => {
@@ -35,6 +75,62 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
         expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
         expect(screen.getAllByText('0x23b872dd')).toHaveLength(2);
         expect(screen.getByText('0xDe0B…7BAe')).toBeInTheDocument();
+    });
+
+    it('renders decoded actions resolved from the backend for matching selectors and condition', () => {
+        const conditionAddress = '0xC0Ffee254729296a45a3885639AC7E10F9d54979';
+        const matchingTarget = '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5';
+        const unrelatedTarget = '0xDe0B295669a9FD93d5F28D9Ec85E40f4cb697BAe';
+
+        mockAllowedActions([
+            {
+                conditionAddress,
+                decoded: {
+                    contractName: 'AddressGaugeVoter',
+                    functionName: 'pause',
+                    inputs: [],
+                },
+                id: 'decoded-pause',
+                selector: '0x8456cb59',
+                target: matchingTarget,
+            },
+            {
+                conditionAddress: '0xdEAD000000000000000042069420694206942069',
+                decoded: {
+                    contractName: 'AddressGaugeVoter',
+                    functionName: 'unrelated',
+                    inputs: [],
+                },
+                id: 'decoded-unrelated',
+                selector: '0x8456cb59',
+                target: unrelatedTarget,
+            },
+        ]);
+
+        render(
+            createTestComponent({
+                chainId: 42_161,
+                conditionAddress,
+                network: Network.ARBITRUM_MAINNET,
+                pluginAddress: '0x1234567890123456789012345678901234567890',
+                selectors: ['0x8456cb59'],
+                targets: [matchingTarget],
+            }),
+        );
+
+        expect(useAllowedActionsMock).toHaveBeenCalledWith({
+            queryParams: { pageSize: 50 },
+            urlParams: {
+                network: Network.ARBITRUM_MAINNET,
+                pluginAddress: '0x1234567890123456789012345678901234567890',
+            },
+        });
+        expect(screen.getByText('pause')).toBeInTheDocument();
+        expect(screen.getByText('0x8456cb59')).toBeInTheDocument();
+        expect(screen.getByText('AddressGaugeVoter')).toBeInTheDocument();
+        expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
+        expect(screen.queryByText('unrelated')).not.toBeInTheDocument();
+        expect(screen.queryByText('0xDe0B…7BAe')).not.toBeInTheDocument();
     });
 
     it('shows the no allowed actions fallback when selectors are absent', () => {
