@@ -26,9 +26,13 @@ import type {
     IPermissionRow,
 } from '../../types';
 import { buildPermissionGraph } from '../../utils/buildPermissionGraph';
-import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
+import {
+    conditionTypeUtils,
+    UNKNOWN_CONDITION,
+} from '../../utils/conditionTypeUtils';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
+import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 import {
     type GraphMode,
     PermissionsGraphCanvas,
@@ -141,6 +145,7 @@ const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
         row.conditionAddress,
         row.condition,
     );
+    const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
 
     const isWhoAnyAddress = addressUtils.isAddressEqual(
         row.whoAddress,
@@ -335,6 +340,8 @@ const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                             {addressUtils.truncateHash(row.permissionId)}
                         </DefinitionList.Item>
                     </DefinitionList.Container>
+                ) : hasUnrecognizedCondition ? (
+                    <UnrecognizedConditionSlot />
                 ) : (
                     <PluginSingleComponent
                         chainId={chainId}

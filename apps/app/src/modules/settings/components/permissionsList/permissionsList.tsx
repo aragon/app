@@ -31,6 +31,7 @@ import {
     permissionEntityUtils,
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
+import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
 type DaoPlugins = IFilterComponentPlugin<IDaoPlugin>[] | undefined;
 
@@ -207,21 +208,6 @@ const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
         )}
     </div>
 );
-
-const UnrecognizedConditionSlot: React.FC = () => {
-    const { t } = useTranslations();
-
-    return (
-        <CardEmptyState
-            description={t(
-                'app.settings.unrecognizedConditionSlot.description',
-            )}
-            heading={t('app.settings.unrecognizedConditionSlot.heading')}
-            isStacked={false}
-            objectIllustration={{ object: 'SETTINGS' }}
-        />
-    );
-};
 
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const { row, rowKey, daoPlugins, accounts, chainId, network } = props;
