@@ -4,6 +4,7 @@ import {
     Background,
     Controls,
     type Edge,
+    getViewportForBounds,
     MarkerType,
     type Node,
     Position,
@@ -44,15 +45,17 @@ const nodeTypes = {
 const edgeTypes = { permission: PermissionGraphEdge };
 
 const MIN_ZOOM = 0.2;
+const READABLE_FIT_MIN_ZOOM = 0.45;
 const MAX_ZOOM = 2.5;
-const FIT_BOUNDS_OPTIONS = { padding: 0.08, duration: 250 };
+const FIT_PADDING = 0.08;
+const FIT_DURATION = 250;
 const UNPOSITIONED = { x: 0, y: 0 };
 const SELECTED_EDGE_Z_INDEX = 20;
 const EDGE_ORIGIN_MARKER_NEUTRAL = 'permission-origin-dot-neutral';
 const EDGE_ORIGIN_MARKER_ACTIVE = 'permission-origin-dot-active';
 const SELF_STACK_GAP = 48;
 const FALLBACK_NODE_WIDTH = 256;
-const FALLBACK_NODE_HEIGHT = 72;
+const FALLBACK_NODE_HEIGHT = 92;
 const FALLBACK_STACK_WIDTH = 240;
 const STACK_ROW_HEIGHT = 20;
 const STACK_CONDITION_ROW_HEIGHT = 34;
@@ -285,6 +288,7 @@ interface IBuildFlowElementsParams {
     modeEdges: IPermissionGraphEdge[];
     mode: GraphMode;
     selectedEdgeId?: string;
+    selectedNodeId?: string;
     onSelectEdge: (edgeId: string) => void;
 }
 
@@ -293,6 +297,7 @@ const buildFlowElements = ({
     modeEdges,
     mode,
     selectedEdgeId,
+    selectedNodeId,
     onSelectEdge,
 }: IBuildFlowElementsParams): { nodes: Node[]; edges: Edge[] } => {
     const visibleNodeIds = new Set(
@@ -313,6 +318,7 @@ const buildFlowElements = ({
                     : selectedEdge?.target === node.id
                       ? 'where'
                       : undefined;
+            const isSelectedNode = selectedNodeId === node.id;
 
             return {
                 draggable: false,
@@ -323,7 +329,10 @@ const buildFlowElements = ({
                     ...node,
                     ...handlePositions,
                     selectionRole,
-                    dimmed: selectedEdge != null && selectionRole == null,
+                    active: isSelectedNode,
+                    dimmed:
+                        (selectedEdge != null && selectionRole == null) ||
+                        (selectedNodeId != null && !isSelectedNode),
                 },
             };
         });
@@ -344,6 +353,7 @@ const buildFlowElements = ({
 
         group.entries.push({
             edgeId: edge.id,
+            permissionDisplayName: edge.permissionDisplayName,
             permissionName: edge.permissionName,
             conditionLabel: edge.conditionLabel,
             selected: selectedEdgeId === edge.id,
@@ -357,7 +367,13 @@ const buildFlowElements = ({
 
     for (const group of groups.values()) {
         const active = group.entries.some((entry) => entry.selected === true);
-        const dimmed = selectedEdge != null && !active;
+        const isConnectedToSelectedNode =
+            selectedNodeId != null &&
+            (group.source === selectedNodeId ||
+                group.target === selectedNodeId);
+        const dimmed =
+            (selectedEdge != null && !active) ||
+            (selectedNodeId != null && !isConnectedToSelectedNode);
         const visualKind = getEdgeVisualKind(group.source, group.target, mode);
         const stackId = `permission-stack-${pairKey(group.source, group.target)}`;
         const isSelfEdge = visualKind === 'self';
@@ -441,7 +457,9 @@ export interface IPermissionsGraphCanvasProps {
     mode: GraphMode;
     anchorId: string;
     selectedEdgeId?: string;
+    selectedNodeId?: string;
     onSelectedEdgeChange: (edgeId?: string) => void;
+    onSelectedNodeChange: (nodeId?: string) => void;
 }
 
 export const useModeEdges = (
@@ -456,26 +474,51 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
     mode,
     anchorId,
     selectedEdgeId,
+    selectedNodeId,
     onSelectedEdgeChange,
+    onSelectedNodeChange,
 }) => {
     const modeEdges = useModeEdges(graph, mode, anchorId);
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-    const { fitBounds, getNodes } = useReactFlow();
+    const { getNodes, setViewport } = useReactFlow();
     const nodesInitialized = useNodesInitialized();
     const layoutSignature = useRef('');
+    const containerRef = useRef<HTMLDivElement>(null);
     const [layoutVersion, setLayoutVersion] = useState(0);
     const graphBounds = useRef<ReturnType<typeof getGraphBounds> | undefined>(
         undefined,
     );
 
     const selectEdge = useCallback(
-        (edgeId: string) =>
+        (edgeId: string) => {
+            onSelectedNodeChange(undefined);
             onSelectedEdgeChange(
                 selectedEdgeId === edgeId ? undefined : edgeId,
-            ),
-        [onSelectedEdgeChange, selectedEdgeId],
+            );
+        },
+        [onSelectedEdgeChange, onSelectedNodeChange, selectedEdgeId],
     );
+
+    const fitReadableBounds = useCallback(() => {
+        const bounds = graphBounds.current;
+        const container = containerRef.current;
+
+        if (bounds == null || container == null) {
+            return;
+        }
+
+        const viewport = getViewportForBounds(
+            bounds,
+            container.clientWidth,
+            container.clientHeight,
+            READABLE_FIT_MIN_ZOOM,
+            MAX_ZOOM,
+            FIT_PADDING,
+        );
+
+        void setViewport(viewport, { duration: FIT_DURATION });
+    }, [setViewport]);
 
     useEffect(() => {
         const currentNodes = getNodes();
@@ -487,6 +530,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             modeEdges,
             mode,
             selectedEdgeId,
+            selectedNodeId,
             onSelectEdge: selectEdge,
         });
 
@@ -502,6 +546,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
         modeEdges,
         mode,
         selectedEdgeId,
+        selectedNodeId,
         selectEdge,
         getNodes,
         setNodes,
@@ -547,78 +592,89 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
         }
 
         const frame = requestAnimationFrame(() => {
-            void fitBounds(graphBounds.current!, FIT_BOUNDS_OPTIONS);
+            fitReadableBounds();
         });
 
         return () => cancelAnimationFrame(frame);
-    }, [fitBounds, layoutVersion]);
+    }, [fitReadableBounds, layoutVersion]);
 
     return (
-        <ReactFlow
-            edges={edges}
-            edgesFocusable={false}
-            edgeTypes={edgeTypes}
-            elementsSelectable={false}
-            maxZoom={MAX_ZOOM}
-            minZoom={MIN_ZOOM}
-            nodes={nodes}
-            nodesConnectable={false}
-            nodesDraggable={false}
-            nodesFocusable={false}
-            nodeTypes={nodeTypes}
-            onEdgesChange={onEdgesChange}
-            onNodesChange={onNodesChange}
-            onPaneClick={() => onSelectedEdgeChange(undefined)}
-            proOptions={{ hideAttribution: true }}
-        >
-            <svg
-                aria-hidden="true"
-                className="pointer-events-none absolute size-0"
-            >
-                <defs>
-                    <marker
-                        id={EDGE_ORIGIN_MARKER_NEUTRAL}
-                        markerHeight="8"
-                        markerUnits="userSpaceOnUse"
-                        markerWidth="8"
-                        refX="4"
-                        refY="4"
-                        viewBox="0 0 8 8"
-                    >
-                        <circle
-                            cx="4"
-                            cy="4"
-                            fill="var(--color-neutral-300)"
-                            r="3.5"
-                        />
-                    </marker>
-                    <marker
-                        id={EDGE_ORIGIN_MARKER_ACTIVE}
-                        markerHeight="8"
-                        markerUnits="userSpaceOnUse"
-                        markerWidth="8"
-                        refX="4"
-                        refY="4"
-                        viewBox="0 0 8 8"
-                    >
-                        <circle
-                            cx="4"
-                            cy="4"
-                            fill="var(--color-primary-400)"
-                            r="3.5"
-                        />
-                    </marker>
-                </defs>
-            </svg>
-            <Background />
-            <Controls
-                onFitView={() => {
-                    if (graphBounds.current != null) {
-                        void fitBounds(graphBounds.current, FIT_BOUNDS_OPTIONS);
+        <div className="size-full" ref={containerRef}>
+            <ReactFlow
+                edges={edges}
+                edgesFocusable={false}
+                edgeTypes={edgeTypes}
+                elementsSelectable={false}
+                maxZoom={MAX_ZOOM}
+                minZoom={MIN_ZOOM}
+                nodes={nodes}
+                nodesConnectable={false}
+                nodesDraggable={false}
+                nodesFocusable={false}
+                nodeTypes={nodeTypes}
+                onEdgesChange={onEdgesChange}
+                onNodeClick={(_event, node) => {
+                    if (node.type !== 'permission') {
+                        return;
                     }
+
+                    onSelectedEdgeChange(undefined);
+                    onSelectedNodeChange(
+                        selectedNodeId === node.id ? undefined : node.id,
+                    );
                 }}
-                showInteractive={false}
-            />
-        </ReactFlow>
+                onNodesChange={onNodesChange}
+                onPaneClick={() => {
+                    onSelectedEdgeChange(undefined);
+                    onSelectedNodeChange(undefined);
+                }}
+                proOptions={{ hideAttribution: true }}
+            >
+                <svg
+                    aria-hidden="true"
+                    className="pointer-events-none absolute size-0"
+                >
+                    <defs>
+                        <marker
+                            id={EDGE_ORIGIN_MARKER_NEUTRAL}
+                            markerHeight="8"
+                            markerUnits="userSpaceOnUse"
+                            markerWidth="8"
+                            refX="4"
+                            refY="4"
+                            viewBox="0 0 8 8"
+                        >
+                            <circle
+                                cx="4"
+                                cy="4"
+                                fill="var(--color-neutral-300)"
+                                r="3.5"
+                            />
+                        </marker>
+                        <marker
+                            id={EDGE_ORIGIN_MARKER_ACTIVE}
+                            markerHeight="8"
+                            markerUnits="userSpaceOnUse"
+                            markerWidth="8"
+                            refX="4"
+                            refY="4"
+                            viewBox="0 0 8 8"
+                        >
+                            <circle
+                                cx="4"
+                                cy="4"
+                                fill="var(--color-primary-400)"
+                                r="3.5"
+                            />
+                        </marker>
+                    </defs>
+                </svg>
+                <Background />
+                <Controls
+                    onFitView={fitReadableBounds}
+                    showInteractive={false}
+                />
+            </ReactFlow>
+        </div>
     );
 };

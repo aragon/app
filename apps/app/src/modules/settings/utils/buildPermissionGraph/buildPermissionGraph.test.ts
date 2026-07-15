@@ -115,6 +115,7 @@ describe('buildPermissionGraph', () => {
             source: pluginAddress.toLowerCase(),
             target: daoAddress.toLowerCase(),
             permissionName: 'EXECUTE_PERMISSION',
+            permissionDisplayName: 'Execute',
             conditionLabel: 'VotingPower',
             row,
         });

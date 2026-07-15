@@ -3555,7 +3555,7 @@
             "dao": "Primary DAO",
             "linkedDao": "Linked DAO",
             "plugin": "Aragon OSx Plugin",
-            "actor": "Any address",
+            "actor": "Unresolved address",
             "who": "Who",
             "where": "Where"
           },
@@ -3563,7 +3563,9 @@
             "condition": "if {{condition}}"
           },
           "detail": {
-            "close": "Close"
+            "address": "Address",
+            "close": "Close",
+            "type": "Type"
           },
           "empty": {
             "heading": "No permissions",

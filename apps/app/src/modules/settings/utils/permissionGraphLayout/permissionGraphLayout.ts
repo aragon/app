@@ -10,7 +10,7 @@ export interface IGetLayoutedElementsOptions {
 }
 
 const DEFAULT_NODE_WIDTH = 220;
-const DEFAULT_NODE_HEIGHT = 72;
+const DEFAULT_NODE_HEIGHT = 92;
 const DEFAULT_STACK_NODE_WIDTH = 180;
 const DEFAULT_STACK_NODE_HEIGHT = 40;
 const DEFAULT_NODE_SEP = 140;

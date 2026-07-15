@@ -12,6 +12,7 @@ import type { IPermissionRow } from '../../types';
 import { buildPermissionGraph } from '../../utils/buildPermissionGraph';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 import { PermissionDetailPanel } from './permissionDetailPanel';
+import { PermissionNodeDetailPanel } from './permissionNodeDetailPanel';
 import {
     type GraphMode,
     PermissionsGraphCanvas,
@@ -42,6 +43,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     const { t } = useTranslations();
 
     const [selectedEdgeId, setSelectedEdgeId] = useState<string>();
+    const [selectedNodeId, setSelectedNodeId] = useState<string>();
 
     const graph = useMemo(() => {
         if (dao == null) {
@@ -53,7 +55,13 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
 
     const anchorId = (activeAccountAddress ?? dao?.address ?? '').toLowerCase();
     const modeEdges = useModeEdges(graph, mode, anchorId);
-    const selectedEdge = graph.edges.find((edge) => edge.id === selectedEdgeId);
+    const visibleNodeIds = new Set(
+        modeEdges.flatMap((edge) => [edge.source, edge.target]),
+    );
+    const selectedEdge = modeEdges.find((edge) => edge.id === selectedEdgeId);
+    const selectedNode = graph.nodes.find(
+        (node) => node.id === selectedNodeId && visibleNodeIds.has(node.id),
+    );
 
     if (isLoading || dao == null) {
         return <PermissionsGraphSkeleton />;
@@ -81,7 +89,9 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
                     graph={graph}
                     mode={mode}
                     onSelectedEdgeChange={setSelectedEdgeId}
+                    onSelectedNodeChange={setSelectedNodeId}
                     selectedEdgeId={selectedEdgeId}
+                    selectedNodeId={selectedNodeId}
                 />
             </ReactFlowProvider>
             {selectedEdge != null && (
@@ -91,6 +101,13 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
                     network={dao.network}
                     nodes={graph.nodes}
                     onClose={() => setSelectedEdgeId(undefined)}
+                />
+            )}
+            {selectedNode != null && (
+                <PermissionNodeDetailPanel
+                    chainId={networkDefinitions[dao.network].id}
+                    node={selectedNode}
+                    onClose={() => setSelectedNodeId(undefined)}
                 />
             )}
         </div>

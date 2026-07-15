@@ -145,10 +145,11 @@ class PermissionEntityUtils {
         }
 
         return {
-            label: addressUtils.truncateAddress(address),
+            label: 'Unknown address',
             address,
             isSentinel: false,
             type: 'address',
+            detailName: addressUtils.truncateAddress(address),
         };
     };
 

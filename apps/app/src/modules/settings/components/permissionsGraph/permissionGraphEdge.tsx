@@ -7,6 +7,7 @@ import {
 
 export interface IPermissionEdgeEntry {
     edgeId: string;
+    permissionDisplayName: string;
     permissionName: string;
     conditionLabel?: string;
     selected?: boolean;

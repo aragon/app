@@ -16,6 +16,7 @@ export interface IPermissionGraphEdge {
     source: string;
     target: string;
     permissionName: string;
+    permissionDisplayName: string;
     conditionLabel?: string;
     row: IPermissionRow;
 }

@@ -139,6 +139,29 @@ class PermissionNameUtils {
     };
 
     /**
+     * Converts a resolved raw permission name to compact title case for dense UI
+     * surfaces. Unknown hashes are returned unchanged.
+     */
+    getPermissionDisplayName = (permissionId: string): string => {
+        const permissionName = this.getPermissionName(permissionId);
+
+        if (!permissionName.includes('_')) {
+            return permissionName;
+        }
+
+        const displayName = permissionName
+            .replace(/_(PERMISSION|ROLE)$/u, '')
+            .split('_')
+            .filter(Boolean)
+            .map((word) => word.toLowerCase())
+            .join(' ');
+
+        return displayName.length > 0
+            ? displayName.charAt(0).toUpperCase() + displayName.slice(1)
+            : permissionName;
+    };
+
+    /**
      * Returns the keccak256 permission-id hash for a raw permission name. Inverse
      * of {@link getPermissionName}; the {@link permissionNames} list is the single
      * source of truth for both directions.

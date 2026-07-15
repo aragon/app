@@ -87,10 +87,11 @@ describe('permissionEntity Utils', () => {
             },
             {
                 description:
-                    'falls back to a truncated address for unknown addresses',
+                    'falls back to an unresolved label for unknown addresses',
                 address: unknownAddress,
                 expected: {
-                    label: addressUtils.truncateAddress(unknownAddress),
+                    label: 'Unknown address',
+                    detailName: addressUtils.truncateAddress(unknownAddress),
                     isSentinel: false,
                     tag: undefined,
                     type: 'address',
@@ -107,6 +108,9 @@ describe('permissionEntity Utils', () => {
             expect(result.tag).toEqual(expected.tag);
             expect(result.isSentinel).toEqual(expected.isSentinel);
             expect(result.type).toEqual(expected.type);
+            if (expected.detailName != null) {
+                expect(result.detailName).toEqual(expected.detailName);
+            }
             expect(result.address).toEqual(address);
         });
 

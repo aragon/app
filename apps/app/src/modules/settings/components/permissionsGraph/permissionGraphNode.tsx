@@ -1,4 +1,10 @@
-import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    addressUtils,
+    Clipboard,
+    DaoAvatar,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -9,6 +15,7 @@ export type PermissionNodeSelectionRole = 'who' | 'where';
 
 export interface IPermissionNodeData extends IPermissionGraphNode {
     selectionRole?: PermissionNodeSelectionRole;
+    active?: boolean;
     dimmed?: boolean;
     sourcePosition?: Position;
     targetPosition?: Position;
@@ -96,9 +103,18 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
     data,
 }) => {
     const { t } = useTranslations();
-    const { kind, label, tag, avatarSrc, selectionRole, dimmed } = data;
+    const {
+        address,
+        kind,
+        label,
+        tag,
+        avatarSrc,
+        selectionRole,
+        active,
+        dimmed,
+    } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
-    const isSelected = selectionRole != null;
+    const isSelected = selectionRole != null || active === true;
 
     return (
         <div
@@ -107,17 +123,17 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                 dimmed === true && 'opacity-30',
             )}
         >
-            {isSelected && (
+            {selectionRole != null && (
                 <span className="absolute top-px left-0 -translate-y-full rounded-t-md border border-primary-400 border-b-0 bg-neutral-0 px-4 py-0.5 font-medium text-neutral-500 text-xs uppercase">
                     {t(SELECTION_LABEL_KEY[selectionRole])}
                 </span>
             )}
             <div
                 className={classNames(
-                    'flex min-w-64 items-center justify-between gap-4 border bg-neutral-0 px-4 py-3',
+                    'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-neutral-0 px-4 py-3 transition-colors hover:border-primary-300',
                     isSelected
                         ? 'rounded-xl rounded-tl-none border-primary-400 shadow-primary-lg'
-                        : 'rounded-xl border-neutral-100 shadow-neutral-sm',
+                        : 'rounded-xl border-neutral-300 shadow-neutral-sm',
                 )}
             >
                 <HiddenHandles />
@@ -125,6 +141,13 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                     <span className="truncate text-neutral-800">{label}</span>
                     <span className="truncate text-neutral-500 text-sm">
                         {t(SUBTITLE_KEY[kind])}
+                    </span>
+                    <span className="nodrag nopan w-fit">
+                        <Clipboard copyValue={address}>
+                            <span className="truncate text-neutral-500 text-xs">
+                                {addressUtils.truncateAddress(address)}
+                            </span>
+                        </Clipboard>
                     </span>
                 </div>
                 {isDaoKind && (
@@ -175,10 +198,11 @@ export const PermissionStackNode: React.FC<
                             event.stopPropagation();
                             onSelect?.(permission.edgeId);
                         }}
+                        title={permission.permissionName}
                         type="button"
                     >
                         <span className="max-w-56 truncate">
-                            {permission.permissionName}
+                            {permission.permissionDisplayName}
                         </span>
                         {permission.conditionLabel != null && (
                             <span
@@ -199,6 +223,9 @@ export const PermissionStackNode: React.FC<
                                 )}
                             </span>
                         )}
+                        <span className="sr-only">
+                            {permission.permissionName}
+                        </span>
                     </button>
                 );
             })}

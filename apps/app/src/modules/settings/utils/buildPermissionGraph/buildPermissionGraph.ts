@@ -89,6 +89,9 @@ const resolveEdge = (row: IPermissionRow): IPermissionGraphEdge => {
         source: row.whoAddress.toLowerCase(),
         target: row.whereAddress.toLowerCase(),
         permissionName: permissionNameUtils.getPermissionName(row.permissionId),
+        permissionDisplayName: permissionNameUtils.getPermissionDisplayName(
+            row.permissionId,
+        ),
         conditionLabel:
             conditionLabel === NO_CONDITION_LABEL ? undefined : conditionLabel,
         row,
