@@ -3863,7 +3863,6 @@
         "defaultName": "No name {{type}} policy"
       },
       "processDataListItem": {
-        "defaultDescription": "No description",
         "notEligible": "Not eligible",
         "viewRequirements": "View requirements"
       },

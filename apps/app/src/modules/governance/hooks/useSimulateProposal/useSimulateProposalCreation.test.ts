@@ -125,7 +125,9 @@ describe('useSimulateProposalCreation hook', () => {
         );
 
         expect(useCallSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ query: { enabled: false } }),
+            expect.objectContaining({
+                query: expect.objectContaining({ enabled: false }),
+            }),
         );
     });
 
@@ -135,7 +137,9 @@ describe('useSimulateProposalCreation hook', () => {
         );
 
         expect(useCallSpy).toHaveBeenCalledWith(
-            expect.objectContaining({ query: { enabled: false } }),
+            expect.objectContaining({
+                query: expect.objectContaining({ enabled: false }),
+            }),
         );
     });
 });
