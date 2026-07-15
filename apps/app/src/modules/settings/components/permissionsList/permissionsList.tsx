@@ -9,10 +9,11 @@ import {
     DefinitionList,
     Link,
     StateSkeletonBar,
+    StateSkeletonCircular,
     Tag,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -20,7 +21,10 @@ import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
-import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
+import {
+    conditionTypeUtils,
+    UNKNOWN_CONDITION,
+} from '../../utils/conditionTypeUtils';
 import {
     type IPermissionAccountRef,
     type IPermissionEntity,
@@ -93,6 +97,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                         chainId={chainId}
                         daoPlugins={daoPlugins}
                         key={getPermissionRowKey(row)}
+                        network={row.network}
                         row={row}
                         rowKey={getPermissionRowKey(row)}
                     />
@@ -108,6 +113,7 @@ interface IPermissionsListRowProps {
     daoPlugins: DaoPlugins;
     accounts: IPermissionAccountRef[];
     chainId?: number;
+    network?: Network;
 }
 
 interface IPermissionEntityCellProps {
@@ -202,8 +208,23 @@ const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
     </div>
 );
 
+const UnrecognizedConditionSlot: React.FC = () => {
+    const { t } = useTranslations();
+
+    return (
+        <CardEmptyState
+            description={t(
+                'app.settings.unrecognizedConditionSlot.description',
+            )}
+            heading={t('app.settings.unrecognizedConditionSlot.heading')}
+            isStacked={false}
+            objectIllustration={{ object: 'SETTINGS' }}
+        />
+    );
+};
+
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
-    const { row, rowKey, daoPlugins, accounts, chainId } = props;
+    const { row, rowKey, daoPlugins, accounts, chainId, network } = props;
 
     const { t } = useTranslations();
 
@@ -224,6 +245,8 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
         row.condition,
     );
     const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
+    const hasConditionLabel = conditionLabel !== '-';
+    const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
 
     const hasCondition = !addressUtils.isAddressEqual(
         row.conditionAddress,
@@ -243,7 +266,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                         {permissionName}
                     </span>
                     <span className="flex min-w-0">
-                        {hasCondition ? (
+                        {hasConditionLabel ? (
                             <Tag label={conditionLabel} />
                         ) : (
                             <span className="text-neutral-800">
@@ -318,12 +341,20 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                                 'app.settings.permissionsList.condition.heading',
                             )}
                         </p>
-                        <PluginSingleComponent
-                            Fallback={NoConditionSlot}
-                            pluginId={conditionType}
-                            slotId={SettingsSlotId.PERMISSION_CONDITION}
-                            {...row.condition}
-                        />
+                        {hasUnrecognizedCondition ? (
+                            <UnrecognizedConditionSlot />
+                        ) : (
+                            <PluginSingleComponent
+                                chainId={chainId}
+                                conditionAddress={row.conditionAddress}
+                                Fallback={NoConditionSlot}
+                                network={network}
+                                pluginAddress={row.whoAddress}
+                                pluginId={conditionType}
+                                slotId={SettingsSlotId.PERMISSION_CONDITION}
+                                {...row.condition}
+                            />
+                        )}
                     </div>
                 </div>
             </Accordion.ItemContent>
@@ -363,13 +394,16 @@ const PermissionsListSkeleton: React.FC = () => (
         <PermissionsListHeader />
         {SKELETON_ROW_KEYS.map((rowKey) => (
             <div
-                className="grid grid-cols-4 gap-4 rounded-xl border border-neutral-100 p-4"
+                className="flex items-center justify-between gap-x-4 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 md:gap-x-6 md:px-6 md:py-5"
                 key={rowKey}
             >
-                <StateSkeletonBar width="70%" />
-                <StateSkeletonBar width="70%" />
-                <StateSkeletonBar width="70%" />
-                <StateSkeletonBar width="40%" />
+                <div className="grid w-full grid-cols-4 items-center gap-4">
+                    <StateSkeletonBar width="58%" />
+                    <StateSkeletonBar width="50%" />
+                    <StateSkeletonBar width="72%" />
+                    <StateSkeletonBar width="44%" />
+                </div>
+                <StateSkeletonCircular className="shrink-0" size="sm" />
             </div>
         ))}
     </div>

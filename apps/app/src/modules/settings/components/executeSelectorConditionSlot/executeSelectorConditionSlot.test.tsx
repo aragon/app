@@ -31,9 +31,9 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
         expect(
             screen.getByText(/executeSelectorConditionSlot.description/),
         ).toBeInTheDocument();
-        expect(screen.getByText('0xa9059cbb')).toBeInTheDocument();
+        expect(screen.getAllByText('0xa9059cbb')).toHaveLength(2);
         expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
-        expect(screen.getByText('0x23b872dd')).toBeInTheDocument();
+        expect(screen.getAllByText('0x23b872dd')).toHaveLength(2);
         expect(screen.getByText('0xDe0B…7BAe')).toBeInTheDocument();
     });
 
@@ -50,7 +50,7 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
             createTestComponent({ selectors: ['0xaaaaaaaa', 42, null, ''] }),
         );
 
-        expect(screen.getByText('0xaaaaaaaa')).toBeInTheDocument();
+        expect(screen.getAllByText('0xaaaaaaaa')).toHaveLength(2);
         expect(
             screen.queryByText(/executeSelectorConditionSlot.noActions/),
         ).not.toBeInTheDocument();
@@ -59,7 +59,7 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
     it('renders a placeholder target when no matching target is provided', () => {
         render(createTestComponent({ selectors: ['0xaaaaaaaa'], targets: [] }));
 
-        expect(screen.getByText('0xaaaaaaaa')).toBeInTheDocument();
+        expect(screen.getAllByText('0xaaaaaaaa')).toHaveLength(2);
         expect(screen.getByText('—')).toBeInTheDocument();
     });
 });

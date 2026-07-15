@@ -1,0 +1,624 @@
+'use client';
+
+import {
+    Background,
+    Controls,
+    type Edge,
+    MarkerType,
+    type Node,
+    Position,
+    ReactFlow,
+    useEdgesState,
+    useNodesInitialized,
+    useNodesState,
+    useReactFlow,
+} from '@xyflow/react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type {
+    IPermissionGraph,
+    IPermissionGraphEdge,
+    IPermissionGraphNode,
+} from '../../types';
+import {
+    getLayoutedElements,
+    type PermissionGraphDirection,
+} from '../../utils/permissionGraphLayout';
+import {
+    type IPermissionEdgeData,
+    type IPermissionEdgeEntry,
+    type PermissionEdgeVisualKind,
+    PermissionGraphEdge,
+} from './permissionGraphEdge';
+import {
+    PERMISSION_GRAPH_HANDLE,
+    PermissionGraphNode,
+    PermissionStackNode,
+} from './permissionGraphNode';
+
+export type GraphMode = 'incoming' | 'outgoing' | 'other';
+
+const nodeTypes = {
+    permission: PermissionGraphNode,
+    permissionStack: PermissionStackNode,
+};
+const edgeTypes = { permission: PermissionGraphEdge };
+
+const MIN_ZOOM = 0.2;
+const MAX_ZOOM = 2.5;
+const FIT_BOUNDS_OPTIONS = { padding: 0.08, duration: 250 };
+const UNPOSITIONED = { x: 0, y: 0 };
+const SELECTED_EDGE_Z_INDEX = 20;
+const EDGE_ORIGIN_MARKER_NEUTRAL = 'permission-origin-dot-neutral';
+const EDGE_ORIGIN_MARKER_ACTIVE = 'permission-origin-dot-active';
+const SELF_STACK_GAP = 48;
+const FALLBACK_NODE_WIDTH = 256;
+const FALLBACK_NODE_HEIGHT = 72;
+const FALLBACK_STACK_WIDTH = 240;
+const STACK_ROW_HEIGHT = 20;
+const STACK_CONDITION_ROW_HEIGHT = 34;
+const STACK_ROW_GAP = 2;
+
+const getModeEdges = (
+    graph: IPermissionGraph,
+    mode: GraphMode,
+    anchorId: string,
+): IPermissionGraphEdge[] => {
+    if (mode === 'incoming') {
+        return graph.edges.filter((edge) => edge.target === anchorId);
+    }
+
+    if (mode === 'outgoing') {
+        return graph.edges.filter((edge) => edge.source === anchorId);
+    }
+
+    return graph.edges.filter(
+        (edge) => edge.source !== anchorId && edge.target !== anchorId,
+    );
+};
+
+const getLayoutDirection = (mode: GraphMode): PermissionGraphDirection => {
+    if (mode === 'incoming') {
+        return 'BT';
+    }
+
+    if (mode === 'outgoing') {
+        return 'TB';
+    }
+
+    return 'LR';
+};
+
+const getLayoutSpacing = (
+    mode: GraphMode,
+): { nodesep: number; ranksep: number } => {
+    if (mode === 'other') {
+        return { nodesep: 80, ranksep: 145 };
+    }
+
+    return { nodesep: 60, ranksep: 170 };
+};
+
+const getHandlePositions = (
+    mode: GraphMode,
+): { sourcePosition: Position; targetPosition: Position } => {
+    if (mode === 'incoming') {
+        return {
+            sourcePosition: Position.Top,
+            targetPosition: Position.Bottom,
+        };
+    }
+
+    if (mode === 'outgoing') {
+        return {
+            sourcePosition: Position.Bottom,
+            targetPosition: Position.Top,
+        };
+    }
+
+    return {
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+    };
+};
+
+const getEdgeHandles = (mode: GraphMode) => {
+    if (mode === 'incoming') {
+        return {
+            originSource: PERMISSION_GRAPH_HANDLE.sourceTop,
+            stackTarget: PERMISSION_GRAPH_HANDLE.targetBottom,
+            stackSource: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetTarget: PERMISSION_GRAPH_HANDLE.targetBottom,
+        };
+    }
+
+    if (mode === 'outgoing') {
+        return {
+            originSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            stackTarget: PERMISSION_GRAPH_HANDLE.targetTop,
+            stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
+        };
+    }
+
+    return {
+        originSource: PERMISSION_GRAPH_HANDLE.sourceRight,
+        stackTarget: PERMISSION_GRAPH_HANDLE.targetLeft,
+        stackSource: PERMISSION_GRAPH_HANDLE.sourceRight,
+        targetTarget: PERMISSION_GRAPH_HANDLE.targetLeft,
+    };
+};
+
+const getStackPermissions = (node: Node): IPermissionEdgeEntry[] =>
+    Array.isArray(node.data?.permissions)
+        ? (node.data.permissions as IPermissionEdgeEntry[])
+        : [];
+
+const getFallbackNodeSize = (node: Node) => {
+    if (node.type !== 'permissionStack') {
+        return { width: FALLBACK_NODE_WIDTH, height: FALLBACK_NODE_HEIGHT };
+    }
+
+    const permissions = getStackPermissions(node);
+    const rowHeight = permissions.reduce(
+        (height, permission) =>
+            height +
+            (permission.conditionLabel == null
+                ? STACK_ROW_HEIGHT
+                : STACK_CONDITION_ROW_HEIGHT),
+        0,
+    );
+    const rowGap = Math.max(permissions.length - 1, 0) * STACK_ROW_GAP;
+
+    return {
+        width: FALLBACK_STACK_WIDTH,
+        height: Math.max(rowHeight + rowGap, STACK_ROW_HEIGHT),
+    };
+};
+
+const getNodeRect = (node: Node) => {
+    const fallback = getFallbackNodeSize(node);
+
+    return {
+        x: node.position.x,
+        y: node.position.y,
+        width: node.measured?.width ?? fallback.width,
+        height: node.measured?.height ?? fallback.height,
+    };
+};
+
+const getGraphBounds = (nodes: Node[]) => {
+    const rects = nodes.map(getNodeRect);
+
+    const minX = Math.min(...rects.map((rect) => rect.x));
+    const minY = Math.min(...rects.map((rect) => rect.y));
+    const maxX = Math.max(...rects.map((rect) => rect.x + rect.width));
+    const maxY = Math.max(...rects.map((rect) => rect.y + rect.height));
+
+    return {
+        x: minX,
+        y: minY,
+        width: maxX - minX,
+        height: maxY - minY,
+    };
+};
+
+const positionSelfStacks = (nodes: Node[]): Node[] => {
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+
+    return nodes.map((node) => {
+        const selfTargetId = node.data?.selfTargetId;
+
+        if (
+            node.type !== 'permissionStack' ||
+            typeof selfTargetId !== 'string'
+        ) {
+            return node;
+        }
+
+        const targetNode = nodeById.get(selfTargetId);
+
+        if (targetNode == null) {
+            return node;
+        }
+
+        const targetRect = getNodeRect(targetNode);
+        const stackRect = getNodeRect(node);
+
+        return {
+            ...node,
+            position: {
+                x:
+                    targetNode.position.x +
+                    targetRect.width / 2 -
+                    stackRect.width / 2,
+                y: targetNode.position.y - stackRect.height - SELF_STACK_GAP,
+            },
+        };
+    });
+};
+
+const edgeBaseStyle = {
+    stroke: 'var(--color-neutral-300)',
+    strokeWidth: 1.4,
+};
+
+const edgeActiveStyle = {
+    stroke: 'var(--color-primary-400)',
+    strokeWidth: 2,
+};
+
+const getEdgeVisualKind = (
+    source: string,
+    target: string,
+    mode: GraphMode,
+): PermissionEdgeVisualKind => {
+    if (source === target) {
+        return 'self';
+    }
+
+    if (mode === 'incoming') {
+        return 'incoming';
+    }
+
+    if (mode === 'outgoing') {
+        return 'outgoing';
+    }
+
+    return 'other';
+};
+
+const getOriginMarker = (active: boolean) =>
+    active ? EDGE_ORIGIN_MARKER_ACTIVE : EDGE_ORIGIN_MARKER_NEUTRAL;
+
+const getEdgeMarker = (active: boolean) => ({
+    type: MarkerType.ArrowClosed,
+    color: active ? 'var(--color-primary-400)' : 'var(--color-neutral-300)',
+    width: 18,
+    height: 18,
+});
+
+const getEdgeStyle = (active: boolean) =>
+    active ? edgeActiveStyle : edgeBaseStyle;
+
+interface IBuildFlowElementsParams {
+    graph: IPermissionGraph;
+    modeEdges: IPermissionGraphEdge[];
+    mode: GraphMode;
+    selectedEdgeId?: string;
+    onSelectEdge: (edgeId: string) => void;
+}
+
+const buildFlowElements = ({
+    graph,
+    modeEdges,
+    mode,
+    selectedEdgeId,
+    onSelectEdge,
+}: IBuildFlowElementsParams): { nodes: Node[]; edges: Edge[] } => {
+    const visibleNodeIds = new Set(
+        modeEdges.flatMap((edge) => [edge.source, edge.target]),
+    );
+    const selectedEdge =
+        selectedEdgeId != null
+            ? modeEdges.find((edge) => edge.id === selectedEdgeId)
+            : undefined;
+
+    const handlePositions = getHandlePositions(mode);
+    const nodes: Node[] = graph.nodes
+        .filter((node) => visibleNodeIds.has(node.id))
+        .map((node: IPermissionGraphNode) => {
+            const selectionRole =
+                selectedEdge?.source === node.id
+                    ? 'who'
+                    : selectedEdge?.target === node.id
+                      ? 'where'
+                      : undefined;
+
+            return {
+                draggable: false,
+                id: node.id,
+                type: 'permission',
+                position: UNPOSITIONED,
+                data: {
+                    ...node,
+                    ...handlePositions,
+                    selectionRole,
+                    dimmed: selectedEdge != null && selectionRole == null,
+                },
+            };
+        });
+
+    const pairKey = (source: string, target: string) => `${source}-${target}`;
+    const groups = new Map<
+        string,
+        { source: string; target: string; entries: IPermissionEdgeEntry[] }
+    >();
+
+    for (const edge of modeEdges) {
+        const key = pairKey(edge.source, edge.target);
+        const group = groups.get(key) ?? {
+            source: edge.source,
+            target: edge.target,
+            entries: [],
+        };
+
+        group.entries.push({
+            edgeId: edge.id,
+            permissionName: edge.permissionName,
+            conditionLabel: edge.conditionLabel,
+            selected: selectedEdgeId === edge.id,
+        });
+        groups.set(key, group);
+    }
+
+    const stackNodes: Node[] = [];
+    const edges: Edge[] = [];
+    const edgeHandles = getEdgeHandles(mode);
+
+    for (const group of groups.values()) {
+        const active = group.entries.some((entry) => entry.selected === true);
+        const dimmed = selectedEdge != null && !active;
+        const visualKind = getEdgeVisualKind(group.source, group.target, mode);
+        const stackId = `permission-stack-${pairKey(group.source, group.target)}`;
+        const isSelfEdge = visualKind === 'self';
+        const edgeData = {
+            visualKind,
+            ...(isSelfEdge ? { selfTargetId: group.target } : {}),
+        } satisfies IPermissionEdgeData;
+
+        stackNodes.push({
+            id: stackId,
+            type: 'permissionStack',
+            position: UNPOSITIONED,
+            draggable: false,
+            sourcePosition: handlePositions.sourcePosition,
+            targetPosition: handlePositions.targetPosition,
+            data: {
+                permissions: group.entries,
+                active,
+                dimmed,
+                ...handlePositions,
+                ...(isSelfEdge ? { selfTargetId: group.target } : {}),
+                onSelect: onSelectEdge,
+            },
+        });
+
+        if (isSelfEdge) {
+            edges.push({
+                id: `${stackId}-self`,
+                source: stackId,
+                sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+                target: group.target,
+                targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+                type: 'permission',
+                animated: active,
+                markerEnd: getEdgeMarker(active),
+                style: getEdgeStyle(active),
+                zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
+                data: {
+                    ...edgeData,
+                    excludeFromLayout: true,
+                },
+            });
+
+            continue;
+        }
+
+        edges.push({
+            id: `${stackId}-origin`,
+            source: group.source,
+            sourceHandle: edgeHandles.originSource,
+            target: stackId,
+            targetHandle: edgeHandles.stackTarget,
+            type: 'permission',
+            animated: active,
+            markerStart: getOriginMarker(active),
+            style: getEdgeStyle(active),
+            zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
+            data: edgeData,
+        });
+
+        edges.push({
+            id: `${stackId}-target`,
+            source: stackId,
+            sourceHandle: edgeHandles.stackSource,
+            target: group.target,
+            targetHandle: edgeHandles.targetTarget,
+            type: 'permission',
+            animated: active,
+            markerEnd: getEdgeMarker(active),
+            style: getEdgeStyle(active),
+            zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
+            data: edgeData,
+        });
+    }
+
+    return { nodes: [...nodes, ...stackNodes], edges };
+};
+
+export interface IPermissionsGraphCanvasProps {
+    graph: IPermissionGraph;
+    mode: GraphMode;
+    anchorId: string;
+    selectedEdgeId?: string;
+    onSelectedEdgeChange: (edgeId?: string) => void;
+}
+
+export const useModeEdges = (
+    graph: IPermissionGraph,
+    mode: GraphMode,
+    anchorId: string,
+): IPermissionGraphEdge[] =>
+    useMemo(() => getModeEdges(graph, mode, anchorId), [graph, mode, anchorId]);
+
+export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
+    graph,
+    mode,
+    anchorId,
+    selectedEdgeId,
+    onSelectedEdgeChange,
+}) => {
+    const modeEdges = useModeEdges(graph, mode, anchorId);
+    const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+    const { fitBounds, getNodes } = useReactFlow();
+    const nodesInitialized = useNodesInitialized();
+    const layoutSignature = useRef('');
+    const [layoutVersion, setLayoutVersion] = useState(0);
+    const graphBounds = useRef<ReturnType<typeof getGraphBounds> | undefined>(
+        undefined,
+    );
+
+    const selectEdge = useCallback(
+        (edgeId: string) =>
+            onSelectedEdgeChange(
+                selectedEdgeId === edgeId ? undefined : edgeId,
+            ),
+        [onSelectedEdgeChange, selectedEdgeId],
+    );
+
+    useEffect(() => {
+        const currentNodes = getNodes();
+        const previousPositions = new Map(
+            currentNodes.map((node) => [node.id, node.position]),
+        );
+        const { nodes: nextNodes, edges: nextEdges } = buildFlowElements({
+            graph,
+            modeEdges,
+            mode,
+            selectedEdgeId,
+            onSelectEdge: selectEdge,
+        });
+
+        setNodes(
+            nextNodes.map((node) => ({
+                ...node,
+                position: previousPositions.get(node.id) ?? node.position,
+            })),
+        );
+        setEdges(nextEdges);
+    }, [
+        graph,
+        modeEdges,
+        mode,
+        selectedEdgeId,
+        selectEdge,
+        getNodes,
+        setNodes,
+        setEdges,
+    ]);
+
+    useEffect(() => {
+        if (!nodesInitialized || nodes.length === 0) {
+            return;
+        }
+
+        const topologySignature = [
+            mode,
+            nodes.map((node) => node.id).join('|'),
+            edges.map((edge) => `${edge.source}->${edge.target}`).join('|'),
+        ].join('::');
+
+        if (layoutSignature.current === topologySignature) {
+            return;
+        }
+
+        const currentNodes = getNodes();
+        const { nodes: rawLayoutedNodes } = getLayoutedElements(
+            currentNodes,
+            edges,
+            {
+                direction: getLayoutDirection(mode),
+                ...getLayoutSpacing(mode),
+            },
+        );
+        const layoutedNodes = positionSelfStacks(rawLayoutedNodes);
+
+        layoutSignature.current = topologySignature;
+        graphBounds.current = getGraphBounds(layoutedNodes);
+        setNodes(layoutedNodes);
+        setEdges(edges);
+        setLayoutVersion((version) => version + 1);
+    }, [nodesInitialized, nodes, mode, edges, getNodes, setNodes, setEdges]);
+
+    useEffect(() => {
+        if (layoutVersion === 0 || graphBounds.current == null) {
+            return;
+        }
+
+        const frame = requestAnimationFrame(() => {
+            void fitBounds(graphBounds.current!, FIT_BOUNDS_OPTIONS);
+        });
+
+        return () => cancelAnimationFrame(frame);
+    }, [fitBounds, layoutVersion]);
+
+    return (
+        <ReactFlow
+            edges={edges}
+            edgesFocusable={false}
+            edgeTypes={edgeTypes}
+            elementsSelectable={false}
+            maxZoom={MAX_ZOOM}
+            minZoom={MIN_ZOOM}
+            nodes={nodes}
+            nodesConnectable={false}
+            nodesDraggable={false}
+            nodesFocusable={false}
+            nodeTypes={nodeTypes}
+            onEdgesChange={onEdgesChange}
+            onNodesChange={onNodesChange}
+            onPaneClick={() => onSelectedEdgeChange(undefined)}
+            proOptions={{ hideAttribution: true }}
+        >
+            <svg
+                aria-hidden="true"
+                className="pointer-events-none absolute size-0"
+            >
+                <defs>
+                    <marker
+                        id={EDGE_ORIGIN_MARKER_NEUTRAL}
+                        markerHeight="8"
+                        markerUnits="userSpaceOnUse"
+                        markerWidth="8"
+                        refX="4"
+                        refY="4"
+                        viewBox="0 0 8 8"
+                    >
+                        <circle
+                            cx="4"
+                            cy="4"
+                            fill="var(--color-neutral-300)"
+                            r="3.5"
+                        />
+                    </marker>
+                    <marker
+                        id={EDGE_ORIGIN_MARKER_ACTIVE}
+                        markerHeight="8"
+                        markerUnits="userSpaceOnUse"
+                        markerWidth="8"
+                        refX="4"
+                        refY="4"
+                        viewBox="0 0 8 8"
+                    >
+                        <circle
+                            cx="4"
+                            cy="4"
+                            fill="var(--color-primary-400)"
+                            r="3.5"
+                        />
+                    </marker>
+                </defs>
+            </svg>
+            <Background />
+            <Controls
+                onFitView={() => {
+                    if (graphBounds.current != null) {
+                        void fitBounds(graphBounds.current, FIT_BOUNDS_OPTIONS);
+                    }
+                }}
+                showInteractive={false}
+            />
+        </ReactFlow>
+    );
+};

@@ -1,3 +1,5 @@
+import type { Network } from './enum';
+
 export interface IDaoPermissionCondition {
     /**
      * Backend condition discriminator, e.g. `voting-power`, `membership`,
@@ -36,4 +38,8 @@ export interface IDaoPermission {
      * Enriched condition details returned by the backend when available.
      */
     condition?: IDaoPermissionCondition;
+    /**
+     * Network of the DAO permission event.
+     */
+    network?: Network;
 }

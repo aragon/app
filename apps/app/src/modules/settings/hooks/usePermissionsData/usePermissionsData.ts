@@ -13,12 +13,6 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import {
-    permissionsPreviewAccounts,
-    permissionsPreviewDao,
-    permissionsPreviewPlugins,
-} from '../../constants/permissionsPreviewData';
-import { PermissionsPreviewRef } from '../../constants/permissionsPreviewRefs';
 import type { IPermissionRow } from '../../types';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 
@@ -53,7 +47,6 @@ export const usePermissionsData = (
     const { daoId } = params;
 
     const { isEnabled } = useFeatureFlags();
-    const isPreview = isEnabled('useMocks');
 
     const { data: realDao } = useDao({ urlParams: { id: daoId } });
     const realDaoPlugins = useDaoPlugins({
@@ -61,8 +54,8 @@ export const usePermissionsData = (
         includeLinkedAccounts: true,
     });
 
-    const dao = isPreview ? permissionsPreviewDao : realDao;
-    const daoPlugins = isPreview ? permissionsPreviewPlugins : realDaoPlugins;
+    const dao = realDao;
+    const daoPlugins = realDaoPlugins;
 
     const realAccounts = useMemo<IPermissionsDataAccount[]>(() => {
         if (realDao == null) {
@@ -97,7 +90,7 @@ export const usePermissionsData = (
         ];
     }, [realDao, isEnabled]);
 
-    const accounts = isPreview ? permissionsPreviewAccounts : realAccounts;
+    const accounts = realAccounts;
 
     const [selectedAccountId, setSelectedAccountId] = useState<string>();
     const activeAccountId = selectedAccountId ?? accounts[0]?.id;
@@ -127,31 +120,8 @@ export const usePermissionsData = (
 
     const rows = useMemo(() => {
         const rawRows = (data ?? []) as IPermissionRow[];
-        const pluginAddresses = (daoPlugins ?? []).map(
-            (plugin) => plugin.meta.address,
-        );
-        const linkedAddress = accounts.find(
-            (account) => account.id !== activeAccount?.id,
-        )?.daoAddress;
-
-        const refMap = new Map<string, string | undefined>([
-            [
-                PermissionsPreviewRef.self.toLowerCase(),
-                activeAccount?.daoAddress,
-            ],
-            [PermissionsPreviewRef.linked.toLowerCase(), linkedAddress],
-            [PermissionsPreviewRef.plugin0.toLowerCase(), pluginAddresses[0]],
-            [PermissionsPreviewRef.plugin1.toLowerCase(), pluginAddresses[1]],
-        ]);
-        const resolveRef = (address: string): string =>
-            refMap.get(address.toLowerCase()) ?? address;
-
-        return rawRows.map((row) => ({
-            ...row,
-            whoAddress: resolveRef(row.whoAddress),
-            whereAddress: resolveRef(row.whereAddress),
-        }));
-    }, [data, daoPlugins, accounts, activeAccount]);
+        return rawRows;
+    }, [data]);
 
     const chainId = activeAccount
         ? networkDefinitions[activeAccount.network].id

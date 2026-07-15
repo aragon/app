@@ -111,6 +111,21 @@ describe('<PermissionsList /> component', () => {
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
+    it('renders unresolved condition labels explicitly', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: EXECUTE_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            },
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getByText('Unrecognized condition')).toBeInTheDocument();
+    });
+
     it('renders both the Details and Condition lists for an expanded row', async () => {
         const rows: IPermissionRow[] = [
             {
@@ -163,5 +178,28 @@ describe('<PermissionsList /> component', () => {
         );
 
         expect(screen.getByText(/noConditionSlot.heading/)).toBeInTheDocument();
+    });
+
+    it('renders an unresolved condition detail for expanded unknown conditions', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: EXECUTE_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            },
+        ];
+
+        render(
+            createTestComponent({
+                rows,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(screen.getAllByText('Unrecognized condition')).toHaveLength(2);
+        expect(
+            screen.queryByText(/noConditionSlot.heading/),
+        ).not.toBeInTheDocument();
     });
 });

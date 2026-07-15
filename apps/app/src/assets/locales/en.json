@@ -3555,7 +3555,9 @@
             "dao": "Primary DAO",
             "linkedDao": "Linked DAO",
             "plugin": "Aragon OSx Plugin",
-            "actor": "Any address"
+            "actor": "Any address",
+            "who": "Who",
+            "where": "Where"
           },
           "edge": {
             "condition": "if {{condition}}"
@@ -3585,7 +3587,7 @@
           "noCondition": "No condition"
         },
         "condition": {
-          "heading": "Condition detail"
+          "heading": "Condition"
         },
         "expandAll": "Expand all",
         "collapseAll": "Collapse all",
@@ -3597,6 +3599,10 @@
       "noConditionSlot": {
         "heading": "No condition",
         "description": "Functions guarded by this permission can be called by the granted address directly."
+      },
+      "unrecognizedConditionSlot": {
+        "heading": "Unrecognized condition",
+        "description": "This permission references a condition contract, but its condition data could not be resolved."
       },
       "votingPowerConditionSlot": {
         "token": "Token",

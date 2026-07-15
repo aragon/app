@@ -6,19 +6,25 @@ import type { IConditionData } from '../../types';
  * Discriminator returned when a permission is granted unconditionally
  * (condition equals {@link ALLOW_FLAG}).
  */
-const NO_CONDITION = 'none';
+export const NO_CONDITION = 'none';
 
 /**
  * Discriminator returned when the condition type cannot be resolved from the
  * payload (absent condition data or an empty/unrecognised `conditionType`).
  */
-const UNKNOWN_CONDITION = 'unknown';
+export const UNKNOWN_CONDITION = 'unknown';
 
 /**
  * Placeholder rendered for conditions that have no human-readable label
- * (unconditional grants and unresolvable condition types).
+ * (unconditional grants and empty condition types).
  */
 const NO_LABEL = '-';
+
+/**
+ * Placeholder rendered when the permission references a condition address but
+ * the condition payload could not be resolved or recognised.
+ */
+const UNKNOWN_LABEL = 'Unrecognized condition';
 
 /**
  * Explicit display labels for the known condition types. Any other non-empty
@@ -65,7 +71,8 @@ class ConditionTypeUtils {
      * Resolves a human-readable label for a condition type, used by the
      * collapsed permission row's CONDITION cell.
      *
-     * - `'none'` / `'unknown'` -> {@link NO_LABEL} (`'-'`).
+     * - `'none'` / empty -> {@link NO_LABEL} (`'-'`).
+     * - `'unknown'` -> {@link UNKNOWN_LABEL} (`'Unrecognized condition'`).
      * - a known type -> its explicit label (e.g. `'voting-power'` ->
      *   `'VotingPower'`).
      * - any other non-empty type -> a Pascal-cased fallback (e.g.
@@ -75,12 +82,12 @@ class ConditionTypeUtils {
      * @returns The display label for the condition type.
      */
     getConditionLabel = (conditionType: string): string => {
-        if (
-            conditionType === NO_CONDITION ||
-            conditionType === UNKNOWN_CONDITION ||
-            conditionType.length === 0
-        ) {
+        if (conditionType === NO_CONDITION || conditionType.length === 0) {
             return NO_LABEL;
+        }
+
+        if (conditionType === UNKNOWN_CONDITION) {
+            return UNKNOWN_LABEL;
         }
 
         return (

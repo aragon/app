@@ -1,1 +1,5 @@
-export { conditionTypeUtils } from './conditionTypeUtils';
+export {
+    conditionTypeUtils,
+    NO_CONDITION,
+    UNKNOWN_CONDITION,
+} from './conditionTypeUtils';

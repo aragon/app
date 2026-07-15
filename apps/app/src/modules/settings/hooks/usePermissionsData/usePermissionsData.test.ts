@@ -8,7 +8,6 @@ import {
     generateDaoMetrics,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import { permissionsPreviewAccounts } from '../../constants/permissionsPreviewData';
 import { usePermissionsData } from './usePermissionsData';
 
 describe('usePermissionsData hook', () => {
@@ -107,14 +106,25 @@ describe('usePermissionsData hook', () => {
         );
     });
 
-    it('uses the Patito preview identity when the mocks flag is on', () => {
+    it('uses backend dao data when the mocks flag is on', () => {
         setFeatureFlags({ useMocks: true });
+        setDao({
+            id: 'main-dao',
+            address: '0xMainAddress',
+            network: Network.ETHEREUM_MAINNET,
+            name: 'Main DAO',
+        });
 
         const { result } = renderHook(() =>
-            usePermissionsData({ daoId: 'any-dao' }),
+            usePermissionsData({ daoId: 'main-dao' }),
         );
 
-        expect(result.current.accounts).toEqual(permissionsPreviewAccounts);
-        expect(result.current.dao?.name).toBe('Patito DAO');
+        expect(result.current.accounts).toEqual([
+            expect.objectContaining({
+                daoAddress: '0xMainAddress',
+                name: 'Main DAO',
+            }),
+        ]);
+        expect(result.current.dao?.name).toBe('Main DAO');
     });
 });

@@ -1,13 +1,16 @@
 'use client';
 
 import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import { PermissionsGraph } from '../../components/permissionsGraph';
+import {
+    type GraphMode,
+    PermissionsGraph,
+} from '../../components/permissionsGraph';
 import {
     getPermissionRowKey,
     PermissionsList,
@@ -29,6 +32,35 @@ enum PermissionsView {
 }
 
 const permissionsViews = Object.values(PermissionsView);
+
+const graphModes: GraphMode[] = ['incoming', 'outgoing', 'other'];
+
+const filterRowsByMode = (
+    rows: ReturnType<typeof usePermissionsData>['rows'],
+    mode: GraphMode,
+    activeAccountAddress?: string,
+) => {
+    const activeAddress = activeAccountAddress?.toLowerCase();
+
+    if (activeAddress == null) {
+        return rows;
+    }
+
+    return rows.filter((row) => {
+        const whoAddress = row.whoAddress.toLowerCase();
+        const whereAddress = row.whereAddress.toLowerCase();
+
+        if (mode === 'incoming') {
+            return whereAddress === activeAddress;
+        }
+
+        if (mode === 'outgoing') {
+            return whoAddress === activeAddress;
+        }
+
+        return whoAddress !== activeAddress && whereAddress !== activeAddress;
+    });
+};
 
 export const DaoPermissionsPageClient: React.FC<
     IDaoPermissionsPageClientProps
@@ -59,6 +91,7 @@ export const DaoPermissionsPageClient: React.FC<
         enableUrlUpdate: true,
     });
 
+    const [mode, setMode] = useState<GraphMode>('incoming');
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
     const handleViewChange = (value?: string | string[]) => {
@@ -74,10 +107,25 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
-    const allExpanded = rows.length > 0 && expandedRows.length === rows.length;
+    const handleModeChange = (value?: string | string[]) => {
+        if (graphModes.includes(value as GraphMode)) {
+            setMode(value as GraphMode);
+            setExpandedRows([]);
+        }
+    };
+
+    const filteredRows = useMemo(
+        () => filterRowsByMode(rows, mode, activeAccount?.daoAddress),
+        [rows, mode, activeAccount?.daoAddress],
+    );
+
+    const allExpanded =
+        filteredRows.length > 0 && expandedRows.length === filteredRows.length;
 
     const handleToggleAll = () => {
-        setExpandedRows(allExpanded ? [] : rows.map(getPermissionRowKey));
+        setExpandedRows(
+            allExpanded ? [] : filteredRows.map(getPermissionRowKey),
+        );
     };
 
     const pageBreadcrumbs = [
@@ -96,7 +144,7 @@ export const DaoPermissionsPageClient: React.FC<
 
     const isListView = view === PermissionsView.LIST;
     const showAccountSelector = accounts.length > 1;
-    const showExpandAll = isListView && !isLoading && rows.length > 0;
+    const showExpandAll = isListView && !isLoading && filteredRows.length > 0;
 
     return (
         <>
@@ -111,21 +159,47 @@ export const DaoPermissionsPageClient: React.FC<
                 <Page.Main>
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            {showAccountSelector && (
+                            <div className="flex flex-wrap items-center gap-3">
+                                {showAccountSelector && (
+                                    <ToggleGroup
+                                        isMultiSelect={false}
+                                        onChange={handleAccountChange}
+                                        value={activeAccountId}
+                                    >
+                                        {accounts.map((account) => (
+                                            <Toggle
+                                                key={account.id}
+                                                label={account.name}
+                                                value={account.id}
+                                            />
+                                        ))}
+                                    </ToggleGroup>
+                                )}
                                 <ToggleGroup
                                     isMultiSelect={false}
-                                    onChange={handleAccountChange}
-                                    value={activeAccountId}
+                                    onChange={handleModeChange}
+                                    value={mode}
                                 >
-                                    {accounts.map((account) => (
-                                        <Toggle
-                                            key={account.id}
-                                            label={account.name}
-                                            value={account.id}
-                                        />
-                                    ))}
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.graphView.mode.incoming',
+                                        )}
+                                        value="incoming"
+                                    />
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.graphView.mode.outgoing',
+                                        )}
+                                        value="outgoing"
+                                    />
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.graphView.mode.other',
+                                        )}
+                                        value="other"
+                                    />
                                 </ToggleGroup>
-                            )}
+                            </div>
                             <div className="flex items-center gap-3 md:ml-auto md:gap-6">
                                 {showExpandAll && (
                                     <Button
@@ -170,7 +244,7 @@ export const DaoPermissionsPageClient: React.FC<
                                 expandedRows={expandedRows}
                                 isLoading={isLoading}
                                 onExpandedRowsChange={setExpandedRows}
-                                rows={rows}
+                                rows={filteredRows}
                             />
                         ) : (
                             <PermissionsGraph
@@ -179,7 +253,8 @@ export const DaoPermissionsPageClient: React.FC<
                                 dao={permissionsDao}
                                 daoPlugins={daoPlugins}
                                 isLoading={isLoading}
-                                rows={rows}
+                                mode={mode}
+                                rows={filteredRows}
                             />
                         )}
                     </div>
