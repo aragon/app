@@ -79,6 +79,7 @@ export const useSimulateProposalCreation = (
         ...transactionData,
         query: {
             enabled: isEnabled,
+            refetchOnWindowFocus: false,
         },
     });
 

@@ -1,15 +1,16 @@
-import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { useState } from 'react';
+import { Dialog, invariant, Spinner } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import { useCallback, useEffect, useState } from 'react';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import {
     type IDialogComponentProps,
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { ProcessDataListItem } from '@/shared/components/processDataListItem';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { PluginType } from '@/shared/types';
+import { SelectPluginDialogProcessListItem } from './selectPluginDialogProcessListItem';
 
 export interface ISelectPluginDialogParams {
     /**
@@ -78,6 +79,41 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
     );
 
     const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);
+    const [eligibility, setEligibility] = useState<Record<string, boolean>>({});
+
+    const handleEligibilityResult = useCallback(
+        (pluginId: string, isEligible: boolean) =>
+            setEligibility((current) =>
+                current[pluginId] === isEligible
+                    ? current
+                    : { ...current, [pluginId]: isEligible },
+            ),
+        [],
+    );
+
+    const allResultsReady = processedDaoPlugins.every(
+        (plugin) => eligibility[plugin.uniqueId] != null,
+    );
+
+    // Show not eligible at the bottom
+    const sortedDaoPlugins = allResultsReady
+        ? [...processedDaoPlugins].sort(
+              (a, b) =>
+                  Number(eligibility[b.uniqueId]) -
+                  Number(eligibility[a.uniqueId]),
+          )
+        : processedDaoPlugins;
+
+    // Deselect a preselected plugin the user is not eligible to create proposals for.
+    useEffect(() => {
+        if (
+            allResultsReady &&
+            selectedPlugin != null &&
+            !eligibility[selectedPlugin.uniqueId]
+        ) {
+            setSelectedPlugin(undefined);
+        }
+    }, [allResultsReady, selectedPlugin, eligibility]);
 
     const handleConfirm = () => {
         close();
@@ -94,15 +130,26 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                 title={t(`app.governance.selectPluginDialog.${variant}.title`)}
             />
             <Dialog.Content>
-                <div className="flex flex-col gap-2 py-2">
-                    {processedDaoPlugins.map((plugin) => (
-                        <ProcessDataListItem
+                {!allResultsReady && (
+                    <div className="py-4">
+                        <Spinner size="lg" />
+                    </div>
+                )}
+                <div
+                    className={classNames('flex flex-col gap-2 py-2', {
+                        hidden: !allResultsReady,
+                    })}
+                >
+                    {sortedDaoPlugins.map((plugin) => (
+                        <SelectPluginDialogProcessListItem
                             dao={dao}
                             isActive={
                                 plugin.uniqueId === selectedPlugin?.uniqueId
                             }
                             key={plugin.uniqueId}
                             onClick={() => setSelectedPlugin(plugin)}
+                            onEligibilityResult={handleEligibilityResult}
+                            pluginId={plugin.uniqueId}
                             process={plugin.meta}
                         />
                     ))}
@@ -112,7 +159,7 @@ export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
                 primaryAction={{
                     label: t('app.governance.selectPluginDialog.action.select'),
                     onClick: handleConfirm,
-                    disabled: selectedPlugin == null,
+                    disabled: selectedPlugin == null || !allResultsReady,
                 }}
                 secondaryAction={{
                     label: t('app.governance.selectPluginDialog.action.cancel'),
