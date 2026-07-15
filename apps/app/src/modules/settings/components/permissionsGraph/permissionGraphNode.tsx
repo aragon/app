@@ -1,10 +1,4 @@
-import {
-    Avatar,
-    addressUtils,
-    Clipboard,
-    DaoAvatar,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -103,16 +97,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
     data,
 }) => {
     const { t } = useTranslations();
-    const {
-        address,
-        kind,
-        label,
-        tag,
-        avatarSrc,
-        selectionRole,
-        active,
-        dimmed,
-    } = data;
+    const { kind, label, tag, avatarSrc, selectionRole, active, dimmed } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
     const isSelected = selectionRole != null || active === true;
 
@@ -143,13 +128,6 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                     <span className="truncate text-neutral-800">{label}</span>
                     <span className="truncate text-neutral-500 text-sm">
                         {t(SUBTITLE_KEY[kind])}
-                    </span>
-                    <span className="nodrag nopan w-fit">
-                        <Clipboard copyValue={address}>
-                            <span className="truncate text-neutral-500 text-xs">
-                                {addressUtils.truncateAddress(address)}
-                            </span>
-                        </Clipboard>
                     </span>
                 </div>
                 {isDaoKind && (

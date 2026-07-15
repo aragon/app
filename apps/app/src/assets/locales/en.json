@@ -3555,7 +3555,7 @@
             "dao": "Primary DAO",
             "linkedDao": "Linked DAO",
             "plugin": "Aragon OSx Plugin",
-            "actor": "Unresolved address",
+            "actor": "Address",
             "who": "Who",
             "where": "Where"
           },

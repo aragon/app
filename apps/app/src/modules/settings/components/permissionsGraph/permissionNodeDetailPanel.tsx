@@ -12,6 +12,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useRef, useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
 
 const NODE_TYPE_KEY: Record<PermissionNodeKind, string> = {
@@ -39,11 +40,16 @@ export const PermissionNodeDetailPanel: React.FC<
     );
     const [position, setPosition] = useState({ x: 16, y: 16 });
     const [isDragging, setIsDragging] = useState(false);
+    const isSentinelAddress =
+        addressUtils.isAddressEqual(node.address, ANY_ADDR) ||
+        addressUtils.isAddressEqual(node.address, ALLOW_FLAG);
 
-    const explorerUrl = buildEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        id: node.address,
-    });
+    const explorerUrl = isSentinelAddress
+        ? undefined
+        : buildEntityUrl({
+              type: ChainEntityType.ADDRESS,
+              id: node.address,
+          });
 
     const clampPosition = (next: { x: number; y: number }) => {
         const panel = panelRef.current;
@@ -161,20 +167,22 @@ export const PermissionNodeDetailPanel: React.FC<
                     >
                         {t(NODE_TYPE_KEY[node.kind])}
                     </DefinitionList.Item>
-                    <DefinitionList.Item
-                        copyValue={node.address}
-                        term={t(
-                            'app.settings.daoPermissionsPage.graphView.detail.address',
-                        )}
-                    >
-                        <Link
-                            className="w-fit"
-                            href={explorerUrl}
-                            isExternal={explorerUrl != null}
+                    {!isSentinelAddress && (
+                        <DefinitionList.Item
+                            copyValue={node.address}
+                            term={t(
+                                'app.settings.daoPermissionsPage.graphView.detail.address',
+                            )}
                         >
-                            {addressUtils.truncateAddress(node.address)}
-                        </Link>
-                    </DefinitionList.Item>
+                            <Link
+                                className="w-fit"
+                                href={explorerUrl}
+                                isExternal={explorerUrl != null}
+                            >
+                                {addressUtils.truncateAddress(node.address)}
+                            </Link>
+                        </DefinitionList.Item>
+                    )}
                 </DefinitionList.Container>
             </div>
         </div>
