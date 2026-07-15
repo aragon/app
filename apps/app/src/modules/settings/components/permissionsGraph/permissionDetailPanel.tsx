@@ -63,7 +63,7 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
     const dragOffsetRef = useRef<{ x: number; y: number } | undefined>(
         undefined,
     );
-    const [position, setPosition] = useState({ x: 16, y: 80 });
+    const [position, setPosition] = useState({ x: 16, y: 16 });
     const [isDragging, setIsDragging] = useState(false);
     const [activeTab, setActiveTab] = useState<'permission' | 'condition'>(
         'permission',
