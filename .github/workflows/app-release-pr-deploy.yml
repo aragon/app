@@ -167,6 +167,8 @@ jobs:
         id: summary
         uses: ./.github/actions/generate-release-summary
         with:
+          package_name: "@aragon/app"
+          path_filter: "app"
           linear_api_token: ${{ steps.secrets.outputs.LINEAR_API_TOKEN }}
 
       - name: Update PR Description

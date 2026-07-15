@@ -59,6 +59,16 @@ describe('useSimulateProposalCreation hook', () => {
             }),
         );
 
+    it('returns a loading state without a result while the simulation is in progress', () => {
+        useCallSpy.mockReturnValue(buildResult({ isLoading: true }));
+
+        const { result } = renderSimulation();
+
+        expect(result.current.isLoading).toBeTruthy();
+        expect(result.current.isError).toBeFalsy();
+        expect(result.current.result).toBeUndefined();
+    });
+
     it('returns result success when the call succeeds', () => {
         useCallSpy.mockReturnValue(buildResult({ isSuccess: true }));
 

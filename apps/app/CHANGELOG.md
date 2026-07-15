@@ -1,5 +1,23 @@
 # @aragon/app
 
+## 1.33.3
+
+### Patch Changes
+
+- [#1221](https://github.com/aragon/app/pull/1221) [`5c5fc34`](https://github.com/aragon/app/commit/5c5fc34ba75b757abd5d50de138145116e24bb35) Thanks [@milosh86](https://github.com/milosh86)! - Fix token and lock-to-vote proposal voting summaries incorrectly implementing support reached calculation.
+
+- [#1226](https://github.com/aragon/app/pull/1226) [`dabd6e9`](https://github.com/aragon/app/commit/dabd6e914cc5ff771d4067d75c7badf7068aa261) Thanks [@evanaronson](https://github.com/evanaronson)! - Reorder the chains shown during DAO creation.
+
+## 1.33.2
+
+### Patch Changes
+
+- [#1212](https://github.com/aragon/app/pull/1212) [`d3ba5f7`](https://github.com/aragon/app/commit/d3ba5f7736c2c9a7a0515488c7d5a6c52c7e77f2) Thanks [@harryburger](https://github.com/harryburger)! - Fix an executed SPP proposal showing its final stage as "expired" / "Proposal not executed in time". The per-stage status was derived from the clock alone (`now > maxAdvanceDate`) without checking whether the proposal had already been executed, so a proposal executed on time would flip to expired once viewed after its max-advance date. Executed proposals are now treated as accepted regardless of the max-advance date.
+
+- [#1206](https://github.com/aragon/app/pull/1206) [`ca7b26e`](https://github.com/aragon/app/commit/ca7b26eb1c20288e972dd997342806326c46ac9a) Thanks [@evanaronson](https://github.com/evanaronson)! - Refresh proposal cards in transaction dialogs after transaction indexing so proposal transaction flows show live proposal data.
+
+- [#1211](https://github.com/aragon/app/pull/1211) [`e827f05`](https://github.com/aragon/app/commit/e827f05f30e5889eedce1d468849a91031947cbe) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Restructure the repository into a pnpm monorepo: the app now lives in `apps/app`, shared tooling (turbo, biome, husky, changesets) stays at the workspace root. No runtime changes.
+
 ## 1.33.1
 
 ### Patch Changes

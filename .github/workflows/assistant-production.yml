@@ -1,0 +1,48 @@
+# Assistant Production — deploys the assistant service to assistant.aragon.org when an
+# @aragon/assistant@* GitHub Release is published (created by assistant-release-finalize.yml).
+# Also supports manual re-deploys of an existing tag (rollback = dispatch an older tag, or use
+# Vercel instant rollback).
+
+name: Assistant Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to deploy (e.g. @aragon/assistant@0.2.0)"
+        required: true
+        type: string
+  release:
+    types: [published]
+
+concurrency:
+  group: assistant-production-deployment
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate tag exists
+        run: |
+          git ls-remote --tags --exit-code "${{ github.server_url }}/${{ github.repository }}.git" "refs/tags/${{ inputs.tag }}" || \
+            (echo "::error::Tag '${{ inputs.tag }}' does not exist" && exit 1)
+
+  # On release events, only react to assistant tags (@aragon/assistant@…) — other workspaces
+  # publish their own releases with their own prefixes.
+  deploy:
+    needs: validate
+    if: ${{ !cancelled() && (needs.validate.result == 'success' || needs.validate.result == 'skipped') && (github.event_name != 'release' || startsWith(github.event.release.tag_name, '@aragon/assistant@')) }}
+    uses: ./.github/workflows/shared-deploy.yml
+    secrets: inherit
+    with:
+      domain: "assistant.aragon.org"
+      env: "production"
+      ref: ${{ github.event.release.tag_name || inputs.tag }}
+      workspace: "apps/assistant"
+      vault-prefix: "kv_assistant"
+      patch-root-directory: false

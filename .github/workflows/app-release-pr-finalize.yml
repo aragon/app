@@ -48,13 +48,19 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
-      - name: "Guard: no new changesets at finalize"
+      - name: "Guard: no new @aragon/app changesets at finalize"
         shell: bash
         run: |
           set -euo pipefail
-          if ls .changeset/*.md >/dev/null 2>&1; then
-            echo "Found .changeset/*.md at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
-            ls -1 .changeset/*.md >&2 || true
+          # Scope-aware, mirroring the --ignore scoping in the changeset-version action:
+          # this flow only versions @aragon/app, so only app changesets are consumed here.
+          # Other workspaces' changesets (e.g. "@aragon/assistant") live in .changeset/
+          # continuously and are released by their own flows — they must not trip this guard.
+          # A changeset's frontmatter names the bumped package, e.g. `"@aragon/app": patch`.
+          app_changesets=$(grep -lE '^"@aragon/app":' .changeset/*.md 2>/dev/null || true)
+          if [ -n "$app_changesets" ]; then
+            echo "Found new @aragon/app changesets at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
+            echo "$app_changesets" >&2
             exit 1
           fi
 

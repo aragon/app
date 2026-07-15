@@ -64,9 +64,7 @@ export const ProcessDataListItem: React.FC<IProcessDataListItemProps> = (
             })}
             key={address}
             {...otherProps}
-            {...(isDisabled
-                ? { onClick: undefined, 'aria-disabled': true }
-                : {})}
+            {...(isDisabled ? { onClick: undefined } : {})}
         >
             <div className="flex flex-col gap-3 md:gap-4">
                 <div

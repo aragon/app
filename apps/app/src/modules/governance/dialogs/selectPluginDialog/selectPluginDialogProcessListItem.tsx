@@ -29,6 +29,11 @@ export const SelectPluginDialogProcessListItem: React.FC<
     });
     const simulationFailed = result === 'failure';
 
+    // Fail open on inconclusive simulations (request error or simulation
+    // disabled): only a concrete revert marks the process as not eligible, so
+    // users are not blocked when the permission check itself cannot run. This is
+    // just an UX improvement, not a line of defense. Create proposal guard would
+    // catch it in rare cases when simulation cannot be run for any reason.
     useEffect(() => {
         if (!isLoading) {
             onEligibilityResult(pluginId, !simulationFailed);
