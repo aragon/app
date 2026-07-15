@@ -39,7 +39,7 @@ export const PermissionNodeDetailPanel: React.FC<
     });
 
     return (
-        <div className="absolute top-4 right-4 z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md">
+        <div className="absolute top-4 left-4 z-30 flex w-[320px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md">
             <div className="flex items-start justify-between gap-3 border-neutral-100 border-b p-4">
                 <div className="flex min-w-0 flex-col gap-1">
                     <div className="flex min-w-0 items-center gap-2">

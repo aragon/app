@@ -131,9 +131,11 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             <div
                 className={classNames(
                     'flex min-w-64 cursor-pointer items-center justify-between gap-4 border bg-neutral-0 px-4 py-3 transition-colors hover:border-primary-300',
-                    isSelected
-                        ? 'rounded-xl rounded-tl-none border-primary-400 shadow-primary-lg'
-                        : 'rounded-xl border-neutral-300 shadow-neutral-sm',
+                    isSelected && 'border-primary-400 shadow-primary-lg',
+                    selectionRole != null
+                        ? 'rounded-xl rounded-tl-none'
+                        : 'rounded-xl',
+                    !isSelected && 'border-neutral-300 shadow-neutral-sm',
                 )}
             >
                 <HiddenHandles />
@@ -187,6 +189,7 @@ export const PermissionStackNode: React.FC<
                     <button
                         className={classNames(
                             'pointer-events-auto flex max-w-60 cursor-pointer flex-col items-center gap-0.5 rounded border px-1.5 py-0.5 text-center font-mono text-[10px] shadow-neutral-sm transition-colors',
+                            permission.conditionLabel != null && 'pb-1',
                             isSelected
                                 ? 'border-primary-500 bg-primary-500 text-neutral-0'
                                 : dimmed
