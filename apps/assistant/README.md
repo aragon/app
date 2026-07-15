@@ -1,5 +1,5 @@
 # @aragon/assistant
-
+assistant trigger?
 Aragon assistant service: the support-chat intake API behind the in-app support widget (`packages/assistant-chat`). Hono HTTP service deployed as its own Vercel project (`assistant.aragon.org`, dev on `dev.assistant.aragon.org`).
 
 Phase 1 scope: deterministic intake pipeline (classify intent → extract fields → ask for missing → create Linear issue) with hard limits, idempotent issue creation and structured observability. Docs answering (Phase 2) is out of scope; its seam is the `searchDocs` tool stub.
