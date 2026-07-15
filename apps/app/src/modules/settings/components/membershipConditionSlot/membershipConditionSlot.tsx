@@ -4,6 +4,11 @@ import { DefinitionList, Tag } from '@aragon/gov-ui-kit';
 import type { IConditionData } from '@/modules/settings/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
+interface IMembershipConditionData extends IConditionData {
+    minApprovals?: number;
+    onlyListed?: boolean;
+}
+
 /**
  * Renders the detail for a multisig `membership` condition (ListedCheckCondition).
  * The condition only gates proposal creation to listed members when the multisig
@@ -11,12 +16,10 @@ import { useTranslations } from '@/shared/components/translationsProvider';
  * "Member of multisig".
  */
 export const MembershipConditionSlot: React.FC<IConditionData> = (props) => {
-    const { onlyListed, minApprovals } = props;
+    const { onlyListed, minApprovals } = props as IMembershipConditionData;
     const { t } = useTranslations();
 
     const isMemberGated = onlyListed === true;
-    const approvalsLabel =
-        typeof minApprovals === 'number' ? minApprovals.toString() : undefined;
 
     return (
         <DefinitionList.Container>
@@ -36,13 +39,13 @@ export const MembershipConditionSlot: React.FC<IConditionData> = (props) => {
                     />
                 </span>
             </DefinitionList.Item>
-            {approvalsLabel != null && (
+            {minApprovals != null && (
                 <DefinitionList.Item
                     term={t(
                         'app.settings.membershipConditionSlot.minApprovals',
                     )}
                 >
-                    {approvalsLabel}
+                    {minApprovals}
                 </DefinitionList.Item>
             )}
         </DefinitionList.Container>

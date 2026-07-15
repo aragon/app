@@ -328,7 +328,10 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                             )}
                         </p>
                         {hasUnrecognizedCondition ? (
-                            <UnrecognizedConditionSlot />
+                            <UnrecognizedConditionSlot
+                                chainId={chainId}
+                                conditionAddress={row.conditionAddress}
+                            />
                         ) : (
                             <PluginSingleComponent
                                 chainId={chainId}

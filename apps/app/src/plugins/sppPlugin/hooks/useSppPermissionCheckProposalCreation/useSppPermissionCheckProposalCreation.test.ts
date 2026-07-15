@@ -91,8 +91,9 @@ describe('useSppPermissionCheckProposalCreation', () => {
     });
 
     const mockSimulation = (result: {
+        isError: boolean;
         isLoading: boolean;
-        isSuccess: boolean;
+        result?: 'success' | 'failure';
     }) =>
         useSimulateProposalCreationSpy.mockReturnValue({
             isError: false,
@@ -109,7 +110,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             hasPermission: true,
         });
         const params = createTestParams([guardResult]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -128,7 +129,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             generateGuardResult({ isRestricted: false }),
             generateGuardResult({ isRestricted: false }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -152,7 +153,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
                 settings: restrictedSettings,
             }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -170,7 +171,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createTestParams([
             generateGuardResult({ isRestricted: true }),
         ]);
-        mockSimulation({ isLoading: false, isSuccess: false });
+        mockSimulation({ isError: false, isLoading: false, result: 'failure' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -186,7 +187,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
 
     it('returns isLoading true while the simulation is loading', () => {
         const params = createTestParams([generateGuardResult()]);
-        mockSimulation({ isLoading: true, isSuccess: false });
+        mockSimulation({ isError: false, isLoading: true });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
