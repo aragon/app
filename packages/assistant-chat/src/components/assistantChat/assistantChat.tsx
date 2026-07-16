@@ -21,14 +21,12 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
         onClose,
         assistantUrl,
         appContext,
-        supportPortalUrl,
         monitoring = noopMonitoring,
     } = props;
 
     const controller = useAssistantChatController({
         assistantUrl,
         appContext,
-        supportPortalUrl,
         monitoring,
     });
 

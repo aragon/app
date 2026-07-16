@@ -1,4 +1,5 @@
 import type { IAssistantErrorCode } from '@aragon/assistant-contracts';
+import { supportEmail } from '../constants';
 
 // Single source of the human wording for error codes the service is known to send. Unknown
 // codes and foreign errors (network failures, aborts) fall back to the caller's
@@ -6,8 +7,7 @@ import type { IAssistantErrorCode } from '@aragon/assistant-contracts';
 const errorTextByCode: Partial<Record<IAssistantErrorCode, string>> = {
     rate_limited:
         "You're going a little too fast. Wait a moment and try again.",
-    session_limit:
-        "You've reached today's limit for new support chats. Use the support portal to open a new ticket.",
+    session_limit: `You've reached today's limit for new support chats. Email ${supportEmail} to open a new ticket.`,
     upstream_rate_limited:
         'The assistant is handling a lot of requests right now. Please try again in a minute.',
 };

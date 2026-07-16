@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SUPPORT_PORTAL_URL } from '../footer/footerLinks';
 import { AssistantChatLazy } from './assistantChatLazy';
 import { useSupportChatContext } from './supportChatContext';
 import { supportChatMonitoring } from './supportChatMonitoring';
@@ -10,8 +9,8 @@ import { useSupportAppContext } from './useSupportAppContext';
 const assistantUrl = process.env.NEXT_PUBLIC_ASSISTANT_URL ?? '';
 
 // The trigger opens the chat whenever the feature flag is on — no availability gate in front of
-// the panel. Service failures surface inside the widget, where the support portal stays one
-// click away (header link + error escape hatches).
+// the panel. Service failures surface inside the widget, where mailing the support team stays
+// one click away (header link + error escape hatches).
 export const SupportChat: React.FC = () => {
     const { isOpen, close } = useSupportChatContext();
 
@@ -38,7 +37,6 @@ export const SupportChat: React.FC = () => {
             isOpen={isOpen}
             monitoring={supportChatMonitoring}
             onClose={close}
-            supportPortalUrl={SUPPORT_PORTAL_URL}
         />
     );
 };

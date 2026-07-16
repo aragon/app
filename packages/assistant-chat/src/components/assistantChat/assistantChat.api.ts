@@ -21,11 +21,6 @@ export interface IAssistantChatProps {
      */
     appContext: IAppContext;
     /**
-     * Fallback support-portal URL offered as an escape hatch when the chat hard-fails (e.g. rate
-     * limited or the service is unreachable), so the user can always file a request the old way.
-     */
-    supportPortalUrl?: string;
-    /**
      * Monitoring implementation injected by the host app.
      * @default noopMonitoring
      */

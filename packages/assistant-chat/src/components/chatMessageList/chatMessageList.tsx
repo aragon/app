@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { supportEmail, supportEmailHref } from '../../constants';
 import { useAssistantChatContext } from '../../controller';
 import {
     type AssistantUIMessage,
@@ -27,14 +28,8 @@ const greetingMessage: AssistantUIMessage = {
 const followThreshold = 100;
 
 export const ChatMessageList: React.FC = () => {
-    const {
-        sessionId,
-        messages,
-        chatStatus,
-        chatError,
-        flowState,
-        supportPortalUrl,
-    } = useAssistantChatContext();
+    const { sessionId, messages, chatStatus, chatError, flowState } =
+        useAssistantChatContext();
 
     const isTyping = chatStatus === 'submitted';
 
@@ -87,16 +82,12 @@ export const ChatMessageList: React.FC = () => {
                     <p className="text-critical-800 text-sm leading-normal">
                         {chatErrorText}
                     </p>
-                    {supportPortalUrl != null && (
-                        <a
-                            className="text-primary-400 text-sm leading-normal underline"
-                            href={supportPortalUrl}
-                            rel="noreferrer"
-                            target="_blank"
-                        >
-                            …or file your request via the support portal →
-                        </a>
-                    )}
+                    <a
+                        className="text-primary-400 text-sm leading-normal underline"
+                        href={supportEmailHref}
+                    >
+                        …or email your request to {supportEmail} →
+                    </a>
                 </div>
             )}
             <ChatErrorPanel />

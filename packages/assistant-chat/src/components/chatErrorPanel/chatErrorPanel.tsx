@@ -1,10 +1,10 @@
 import { AlertCard, Button, IconType } from '@aragon/gov-ui-kit';
+import { supportEmail, supportEmailHref } from '../../constants';
 import { useAssistantChatContext } from '../../controller';
 import { getAssistantErrorText } from '../../transport';
 
 export const ChatErrorPanel: React.FC = () => {
-    const { flowState, issueError, createIssue, supportPortalUrl } =
-        useAssistantChatContext();
+    const { flowState, issueError, createIssue } = useAssistantChatContext();
 
     if (flowState !== 'issueError') {
         return null;
@@ -31,16 +31,12 @@ export const ChatErrorPanel: React.FC = () => {
                 >
                     Retry
                 </Button>
-                {supportPortalUrl != null && (
-                    <a
-                        className="text-primary-400 text-sm leading-normal underline"
-                        href={supportPortalUrl}
-                        rel="noreferrer"
-                        target="_blank"
-                    >
-                        …or file your request via the support portal →
-                    </a>
-                )}
+                <a
+                    className="text-primary-400 text-sm leading-normal underline"
+                    href={supportEmailHref}
+                >
+                    …or email your request to {supportEmail} →
+                </a>
             </div>
         </AlertCard>
     );
