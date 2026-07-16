@@ -21,7 +21,7 @@ repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (s
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Start Release  │───▶│  Test & Stage   │───▶│  Approve & Tag  │───▶│  Auto Deploy    │───▶│   Merge PR      │
-│  (manual)       │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │    │  (manual)       │
+│  (auto/manual)  │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │    │  (manual)       │
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -30,7 +30,9 @@ repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (s
 ### 1. Start Release
 
 **Who:** Developer or Manager  
-**Action:** Manually trigger **App Release Start** workflow in GitHub Actions.
+**Action:** Starts automatically every Monday at ~6PM CET (auto release), or trigger **App Release Start** manually in GitHub Actions.
+
+The scheduled run green-skips when there are no pending changesets for `@aragon/app` or a release PR is already open. Manual trigger:
 
 1. Go to [Actions → App Release Start](https://github.com/aragon/app/actions/workflows/app-release-start.yml)
 2. Click **Run workflow**
