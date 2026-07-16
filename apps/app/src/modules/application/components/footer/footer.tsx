@@ -26,13 +26,11 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const isSupportChatEnabled = isEnabled('supportChat');
     const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
 
-    // The help entry stays a real anchor to the support portal (no-JS, middle-click and
-    // flag-off keep the plain link); with the flag on, a plain click opens the chat instead —
-    // the portal stays one click away inside the widget (header link + error escape hatches).
-    const handleHelpClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-        event.preventDefault();
-        setIsSupportChatOpen(true);
-    };
+    // With the support chat flag on, the help entry is a real button that opens the chat drawer —
+    // not an anchor, so hover / middle-click don't advertise a portal URL the click won't follow.
+    // The portal stays reachable inside the widget (header link + error escape hatches). Flag off
+    // keeps the plain portal anchor and its no-JS / middle-click fallback.
+    const handleHelpClick = () => setIsSupportChatOpen(true);
 
     const year = new Date().getFullYear();
 
@@ -72,21 +70,34 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                     />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
-                    {footerLinks.map(({ link, label, target }) => (
-                        <Link
-                            className={linkClassNames}
-                            href={link}
-                            key={label}
-                            onClick={
-                                label === 'help' && isSupportChatEnabled
-                                    ? handleHelpClick
-                                    : undefined
-                            }
-                            target={target}
-                        >
-                            {t(`app.application.footer.link.${label}`)}
-                        </Link>
-                    ))}
+                    {footerLinks.map(({ link, label, target }) => {
+                        if (label === 'help' && isSupportChatEnabled) {
+                            return (
+                                <button
+                                    className={classNames(
+                                        linkClassNames,
+                                        'cursor-pointer text-left',
+                                    )}
+                                    key={label}
+                                    onClick={handleHelpClick}
+                                    type="button"
+                                >
+                                    {t(`app.application.footer.link.${label}`)}
+                                </button>
+                            );
+                        }
+
+                        return (
+                            <Link
+                                className={linkClassNames}
+                                href={link}
+                                key={label}
+                                target={target}
+                            >
+                                {t(`app.application.footer.link.${label}`)}
+                            </Link>
+                        );
+                    })}
                 </div>
                 <p className="truncate pt-6 pb-3 font-normal text-base text-neutral-500 leading-tight [grid-area:copyright] md:py-0 lg:justify-self-end">
                     {t('app.application.footer.copyright', { year })}

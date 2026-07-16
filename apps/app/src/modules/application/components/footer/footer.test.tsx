@@ -75,17 +75,16 @@ describe('<Footer /> component', () => {
         setSupportChatEnabled(true);
         render(createTestComponent());
 
-        // The help entry stays a regular anchor to the portal — no dedicated button.
-        expect(screen.getAllByRole('link')).toHaveLength(footerLinks.length);
-        expect(
-            screen.queryByRole('button', { name: /footer.link.help/ }),
-        ).not.toBeInTheDocument();
-        const helpLink = screen.getByRole<HTMLAnchorElement>('link', {
+        // With the flag on, help becomes a button (not an anchor) so hover / middle-click don't
+        // advertise a portal URL the click won't follow — the remaining links stay anchors.
+        expect(screen.getAllByRole('link')).toHaveLength(
+            footerLinks.length - 1,
+        );
+        const helpButton = screen.getByRole('button', {
             name: /footer.link.help/,
         });
-        expect(helpLink.href).toMatch('atlassian.net');
 
-        fireEvent.click(helpLink);
+        fireEvent.click(helpButton);
         expect(screen.getByTestId('support-chat-mock')).toBeInTheDocument();
     });
 
