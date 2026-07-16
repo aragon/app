@@ -59,6 +59,11 @@ export interface IDaoPlugin<
      */
     isSubPlugin: boolean;
     /**
+     * Backend parent relationship flag used to identify sub / child plugins,
+     * including cases where richer plugin metadata is not available.
+     */
+    hasParent?: boolean;
+    /**
      * Settings of the DAO plugin.
      */
     settings: TSettings;

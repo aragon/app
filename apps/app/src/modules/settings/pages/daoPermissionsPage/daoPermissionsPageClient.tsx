@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -16,6 +16,7 @@ import {
     PermissionsList,
 } from '../../components/permissionsList';
 import { usePermissionsData } from '../../hooks/usePermissionsData';
+import { filterPermissionRows } from '../../utils/permissionRowFilters';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -92,6 +93,9 @@ export const DaoPermissionsPageClient: React.FC<
     });
 
     const [mode, setMode] = useState<GraphMode>('incoming');
+    const [showDaoPermissions, setShowDaoPermissions] = useState(false);
+    const [showSubpluginPermissions, setShowSubpluginPermissions] =
+        useState(false);
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
     const handleViewChange = (value?: string | string[]) => {
@@ -114,9 +118,36 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
-    const filteredRows = useMemo(
+    const handleShowDaoPermissionsChange = (checked: boolean) => {
+        setShowDaoPermissions(checked);
+        setExpandedRows([]);
+    };
+
+    const handleShowSubpluginPermissionsChange = (checked: boolean) => {
+        setShowSubpluginPermissions(checked);
+        setExpandedRows([]);
+    };
+
+    const modeRows = useMemo(
         () => filterRowsByMode(rows, mode, activeAccount?.daoAddress),
         [rows, mode, activeAccount?.daoAddress],
+    );
+
+    const filteredRows = useMemo(
+        () =>
+            filterPermissionRows(modeRows, {
+                activeAccountAddress: activeAccount?.daoAddress,
+                daoPlugins,
+                showDaoPermissions,
+                showSubpluginPermissions,
+            }),
+        [
+            activeAccount?.daoAddress,
+            daoPlugins,
+            modeRows,
+            showDaoPermissions,
+            showSubpluginPermissions,
+        ],
     );
 
     const allExpanded =
@@ -199,6 +230,26 @@ export const DaoPermissionsPageClient: React.FC<
                                         value="other"
                                     />
                                 </ToggleGroup>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm">
+                                    <Switch
+                                        checked={showDaoPermissions}
+                                        inlineLabel={t(
+                                            'app.settings.daoPermissionsPage.filters.showDaoPermissions',
+                                        )}
+                                        onCheckedChanged={
+                                            handleShowDaoPermissionsChange
+                                        }
+                                    />
+                                    <Switch
+                                        checked={showSubpluginPermissions}
+                                        inlineLabel={t(
+                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissions',
+                                        )}
+                                        onCheckedChanged={
+                                            handleShowSubpluginPermissionsChange
+                                        }
+                                    />
+                                </div>
                             </div>
                             <div className="flex items-center gap-3 md:ml-auto md:gap-6">
                                 {showExpandAll && (
