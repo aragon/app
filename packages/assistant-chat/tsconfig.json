@@ -1,0 +1,25 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "jsx": "react-jsx",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "types": [
+            "node",
+            "jest",
+            "@testing-library/jest-dom"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "coverage"
+    ],
+    "include": [
+        "src",
+        "jest.config.js"
+    ]
+}

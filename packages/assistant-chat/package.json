@@ -1,0 +1,68 @@
+{
+    "name": "@aragon/assistant-chat",
+    "version": "0.1.0",
+    "description": "Support-chat widget for the Aragon App, backed by the Aragon assistant service",
+    "author": "Aragon Association",
+    "homepage": "https://github.com/aragon/app#readme",
+    "private": true,
+    "license": "GPL-3.0",
+    "main": "src/index.ts",
+    "types": "src/index.ts",
+    "sideEffects": false,
+    "scripts": {
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "type-check": "tsc --noEmit"
+    },
+    "peerDependencies": {
+        "@aragon/gov-ui-kit": "^2.8.1",
+        "@tanstack/react-query": "^5.101.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+    },
+    "dependencies": {
+        "@ai-sdk/react": "catalog:",
+        "@aragon/assistant-contracts": "workspace:*",
+        "@radix-ui/react-dialog": "catalog:",
+        "@vercel/blob": "catalog:",
+        "ai": "catalog:",
+        "classnames": "catalog:",
+        "react-dropzone": "catalog:",
+        "zod": "catalog:"
+    },
+    "devDependencies": {
+        "@aragon/gov-ui-kit": "catalog:",
+        "@biomejs/biome": "catalog:",
+        "@tailwindcss/typography": "catalog:",
+        "@tanstack/react-query": "catalog:",
+        "@testing-library/dom": "catalog:",
+        "@testing-library/jest-dom": "catalog:",
+        "@testing-library/react": "catalog:",
+        "@testing-library/user-event": "catalog:",
+        "@types/jest": "catalog:",
+        "@types/node": "catalog:",
+        "@types/react": "catalog:",
+        "@types/react-dom": "catalog:",
+        "jest": "catalog:",
+        "jest-environment-jsdom": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "react-hook-form": "catalog:",
+        "tailwindcss": "catalog:",
+        "ts-jest": "catalog:",
+        "typescript": "catalog:",
+        "viem": "catalog:",
+        "wagmi": "catalog:"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}
