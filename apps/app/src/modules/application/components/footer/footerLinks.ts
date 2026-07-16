@@ -1,5 +1,10 @@
 import type { Translations } from '@/shared/utils/translationsUtils';
 
+// External support portal, used as the footer help link when the support chat feature is
+// disabled and as the fallback destination when the assistant service is unreachable.
+export const SUPPORT_PORTAL_URL =
+    'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
+
 export interface IFooterLink {
     /**
      * Label of the footer link.
@@ -19,7 +24,7 @@ export const footerLinks: IFooterLink[] = [
     { label: 'explore', link: '/' },
     {
         label: 'help',
-        link: 'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3',
+        link: SUPPORT_PORTAL_URL,
         target: '_blank',
     },
     {
