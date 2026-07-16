@@ -37,9 +37,22 @@ on:
         type: boolean
         default: true
       env-overrides:
-        description: "Extra env lines appended to the workspace .env after secrets (e.g. per-run URL overrides)"
+        description: "Extra env lines appended to the workspace .env.local after setup (e.g. per-run URL overrides)"
         required: false
         type: string
+      runtime-env:
+        description: "Runtime env vars for the deployment (multiline KEY=VALUE). The .env file only exists at build time; serverless functions need runtime vars passed via `vercel deploy -e`"
+        required: false
+        type: string
+      runtime-env-keys:
+        description: "Names of keys to lift from the prepared workspace .env into deployment runtime env vars — secrets stay in 1Password and never appear in workflow files"
+        required: false
+        type: string
+      upload-sentry-source-maps:
+        description: "Upload source maps using SENTRY_AUTH_TOKEN, SENTRY_ORG and SENTRY_PROJECT from the infrastructure vault"
+        required: false
+        type: boolean
+        default: false
     outputs:
       deploymentUrl:
         description: "The URL of the Vercel deployment"
@@ -89,11 +102,24 @@ jobs:
           secret-filepath: "${{ inputs.workspace }}/.env"
           mode: alltofile
 
+      # Overrides must land in .env.local, not .env: `setup` writes the per-env config (including the
+      # default NEXT_PUBLIC_ASSISTANT_URL) to .env.local, which Next.js loads at higher precedence than
+      # .env. Appending an override for the same key to .env would be silently shadowed by .env.local;
+      # appending it to .env.local (last occurrence wins within the file) lets the per-run value take
+      # effect — e.g. pointing the app preview at the chained assistant preview.
       - name: Apply env overrides
         if: inputs.env-overrides != ''
         env:
           ENV_OVERRIDES: ${{ inputs.env-overrides }}
-        run: printf '%s\n' "$ENV_OVERRIDES" >> ${{ inputs.workspace }}/.env
+        run: printf '%s\n' "$ENV_OVERRIDES" >> ${{ inputs.workspace }}/.env.local
+
+      # Workspace packages that ship a built `dist/` (e.g. @aragon/assistant-contracts) must be
+      # compiled before `vercel build`: the lambda resolves them via package.json exports, and
+      # Node cannot execute the TypeScript source under packages/*/src. The `{dir}^...` filter
+      # selects only the dependencies of the workspace (never the workspace itself) and is a
+      # no-op for workspaces without buildable deps.
+      - name: Build workspace dependencies
+        run: pnpm --filter "{${{ inputs.workspace }}}^..." build
 
       # Vercel never builds from git here: the artifact is built in this job and uploaded as-is
       # (deploy --prebuilt). All vercel commands run from the repo root so Turbopack/Next treat the
@@ -118,8 +144,48 @@ jobs:
       - name: Bundle Vercel application
         run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
+      - name: Upload source maps to Sentry
+        if: inputs.upload-sentry-source-maps
+        run: |
+          : "${SENTRY_AUTH_TOKEN:?SENTRY_AUTH_TOKEN is required in the infrastructure vault}"
+          : "${SENTRY_ORG:?SENTRY_ORG is required in the infrastructure vault}"
+          : "${SENTRY_PROJECT:?SENTRY_PROJECT is required in the infrastructure vault}"
+          release=$(git rev-parse HEAD)
+          pnpm --dir "${{ inputs.workspace }}" exec sentry-cli sourcemaps inject "${GITHUB_WORKSPACE}/.vercel/output"
+          pnpm --dir "${{ inputs.workspace }}" exec sentry-cli sourcemaps upload --release "$release" --validate --wait "${GITHUB_WORKSPACE}/.vercel/output"
+
+      # The runtime `-e KEY=VALUE` args are built as a bash array in the same step (arrays don't
+      # survive GITHUB_ENV) so values containing spaces stay single arguments: the .env file
+      # prepared above only exists at build time, so anything a serverless function needs at
+      # runtime must be set as deployment env vars. Literal values come from `runtime-env`;
+      # `runtime-env-keys` lifts the named keys (1Password secrets) from the prepared .env,
+      # keeping values out of workflow files.
       - name: Deploy to Vercel
-        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+        env:
+          RUNTIME_ENV: ${{ inputs.runtime-env }}
+          RUNTIME_ENV_KEYS: ${{ inputs.runtime-env-keys }}
+          UPLOAD_SENTRY_SOURCE_MAPS: ${{ inputs.upload-sentry-source-maps }}
+        run: |
+          runtime_args=()
+          if [ "$UPLOAD_SENTRY_SOURCE_MAPS" = "true" ]; then
+            runtime_args+=(-e "SENTRY_RELEASE=$(git rev-parse HEAD)")
+          fi
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            runtime_args+=(-e "$line")
+          done <<< "$RUNTIME_ENV"
+          for key in $RUNTIME_ENV_KEYS; do
+            # Tolerate optional whitespace around '=' and at the end of the line — dotenv parsers
+            # accept `KEY = value`, so a hand-edited config entry must not be silently skipped by
+            # the runtime lift (and trailing whitespace must not defeat the quote stripping below).
+            value=$(grep -E "^[[:space:]]*${key}[[:space:]]*=" "${{ inputs.workspace }}/.env" | head -1 | cut -d= -f2- | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')
+            value="${value%\"}"
+            value="${value#\"}"
+            if [ -n "$value" ]; then
+              runtime_args+=(-e "${key}=${value}")
+            fi
+          done
+          pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
       - name: Set output
         id: set-deployment-url

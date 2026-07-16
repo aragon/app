@@ -1,5 +1,6 @@
 import { serve } from '@hono/node-server';
-import { createApp } from './app';
+// Importing ./index loads instrument.ts before the application is constructed.
+import { createApp } from './index';
 import { env } from './lib/env';
 
 const port = env.port();
