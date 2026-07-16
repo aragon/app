@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { supportEmail, supportEmailHref } from '../../constants';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy, supportEmailHref } from '../../copy';
 import {
     type AssistantUIMessage,
     getAssistantErrorText,
@@ -18,7 +18,7 @@ const greetingMessage: AssistantUIMessage = {
     parts: [
         {
             type: 'text',
-            text: "Hi! Tell us what's going on and we'll get it to the right team.",
+            text: chatCopy.messageList.greeting,
         },
     ],
 };
@@ -35,7 +35,7 @@ export const ChatMessageList: React.FC = () => {
 
     const chatErrorText = getAssistantErrorText(
         parseAssistantError(chatError)?.code,
-        'Something went wrong. Please try sending your message again.',
+        chatCopy.messageList.chatErrorFallback,
     );
 
     const endRef = useRef<HTMLDivElement>(null);
@@ -86,7 +86,7 @@ export const ChatMessageList: React.FC = () => {
                         className="text-primary-400 text-sm leading-normal underline"
                         href={supportEmailHref}
                     >
-                        …or email your request to {supportEmail} →
+                        {chatCopy.messageList.emailEscapeHatch}
                     </a>
                 </div>
             )}

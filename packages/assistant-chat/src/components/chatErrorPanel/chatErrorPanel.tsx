@@ -1,6 +1,6 @@
 import { AlertCard, Button, IconType } from '@aragon/gov-ui-kit';
-import { supportEmail, supportEmailHref } from '../../constants';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy, supportEmailHref } from '../../copy';
 import { getAssistantErrorText } from '../../transport';
 
 export const ChatErrorPanel: React.FC = () => {
@@ -12,13 +12,13 @@ export const ChatErrorPanel: React.FC = () => {
 
     const description = getAssistantErrorText(
         issueError?.code,
-        'Nothing was lost. Check your connection and try again.',
+        chatCopy.errorPanel.issueErrorFallback,
     );
 
     return (
         <AlertCard
             className="self-stretch"
-            message="We couldn't create your request"
+            message={chatCopy.errorPanel.title}
             variant="critical"
         >
             <div className="flex flex-col items-start gap-2 pt-1">
@@ -29,13 +29,13 @@ export const ChatErrorPanel: React.FC = () => {
                     size="sm"
                     variant="secondary"
                 >
-                    Retry
+                    {chatCopy.errorPanel.retry}
                 </Button>
                 <a
                     className="text-primary-400 text-sm leading-normal underline"
                     href={supportEmailHref}
                 >
-                    …or email your request to {supportEmail} →
+                    {chatCopy.errorPanel.emailEscapeHatch}
                 </a>
             </div>
         </AlertCard>

@@ -1,5 +1,6 @@
 import { Tag } from '@aragon/gov-ui-kit';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy } from '../../copy';
 
 const maxVisibleEntries = 5;
 
@@ -26,7 +27,7 @@ export const ChatRequestHistory: React.FC = () => {
     return (
         <div className="mt-2 flex flex-col gap-1.5 self-stretch">
             <p className="text-neutral-500 text-xs uppercase tracking-wide">
-                Past requests
+                {chatCopy.requestHistory.heading}
             </p>
             {requestHistory.slice(0, maxVisibleEntries).map((entry) => (
                 <a

@@ -1,6 +1,7 @@
 import { AlertInline, Button, IconType } from '@aragon/gov-ui-kit';
 import { useEffect, useRef } from 'react';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy } from '../../copy';
 import { ChatAttachmentList } from '../chatAttachmentList';
 import { buildFileAlertMessage } from './fileAlertMessage';
 
@@ -90,7 +91,7 @@ export const ChatComposer: React.FC<IChatComposerProps> = (props) => {
                         variant="critical"
                     />
                     <Button
-                        aria-label="Dismiss"
+                        aria-label={chatCopy.composer.dismissAlert}
                         iconLeft={IconType.CLOSE}
                         onClick={dismissFileAlert}
                         size="sm"
@@ -101,24 +102,24 @@ export const ChatComposer: React.FC<IChatComposerProps> = (props) => {
             <ChatAttachmentList />
             {attachments.length > 0 && (
                 <p className="text-neutral-300 text-xs leading-normal">
-                    Attachments are shared with the support team.
+                    {chatCopy.composer.attachmentsShared}
                 </p>
             )}
             <div className="flex items-end gap-2">
                 <Button
-                    aria-label="Attach file"
+                    aria-label={chatCopy.composer.attachFile}
                     iconLeft={IconType.PLUS}
                     onClick={onAttach}
                     size="md"
                     variant="tertiary"
                 />
                 <textarea
-                    aria-label="Message"
+                    aria-label={chatCopy.composer.messageLabel}
                     className="min-w-0 flex-1 resize-none rounded-xl border border-neutral-100 bg-neutral-0 px-3.5 py-2.5 text-neutral-800 text-sm leading-normal outline-none transition-colors placeholder:text-neutral-300 focus:border-primary-400"
                     onChange={(event) => setInput(event.target.value)}
                     onKeyDown={handleKeyDown}
                     onPaste={handlePaste}
-                    placeholder="Message…"
+                    placeholder={chatCopy.composer.placeholder}
                     ref={textareaRef}
                     rows={rows}
                     value={input}
@@ -131,7 +132,9 @@ export const ChatComposer: React.FC<IChatComposerProps> = (props) => {
                     size="md"
                     variant={isStreaming ? 'secondary' : 'primary'}
                 >
-                    {isStreaming ? 'Stop' : 'Send'}
+                    {isStreaming
+                        ? chatCopy.composer.stop
+                        : chatCopy.composer.send}
                 </Button>
             </div>
         </div>
