@@ -35,6 +35,7 @@ describe('useSimulateProposalCreation hook', () => {
         useWalletAccountSpy.mockReturnValue({
             address: walletAddress,
             chainId: 1,
+            isConnecting: false,
             isReconnecting: false,
         });
         buildTransactionSpy.mockReturnValue({
@@ -114,6 +115,7 @@ describe('useSimulateProposalCreation hook', () => {
         useWalletAccountSpy.mockReturnValue({
             address: undefined,
             chainId: undefined,
+            isConnecting: false,
             isReconnecting: false,
         });
 

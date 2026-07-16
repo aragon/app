@@ -5,6 +5,8 @@ import {
     DialogAlert,
     type IDialogRootProps as IGukDialogRootProps,
 } from '@aragon/gov-ui-kit';
+import { useEffect } from 'react';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import {
     type IDialogComponentDefinitions,
     useDialogContext,
@@ -23,6 +25,29 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
 
     const { t } = useTranslations();
     const { locations, close } = useDialogContext();
+    const { address, isConnecting, isReconnecting } = useWalletAccount();
+
+    // Wallet-requiring dialogs read the address during render, so they must be unmounted from
+    // here before a disconnect makes them throw.
+    // Only close once wagmi settles: both 'connecting' (connector switch) and 'reconnecting'
+    // (mount) blank the address for a moment without the wallet actually being gone.
+
+    const missingAddress = address == null;
+    const walletSettling = isConnecting || isReconnecting;
+    const walletDisconnected = missingAddress && !walletSettling;
+
+    useEffect(() => {
+        if (!walletDisconnected) {
+            return;
+        }
+
+        // Use the context close directly as custom onClose handlers might not pop the stack.
+        for (const location of locations) {
+            if (dialogs[location.id]?.requiresWallet) {
+                close(location.id);
+            }
+        }
+    }, [walletDisconnected, locations, dialogs, close]);
 
     // Render each dialog in the stack but only top one should be visible.
     // Non-visible dialogs should still be rendered in order to keep the state. Useful in parent-child dialog relationships.
@@ -40,8 +65,15 @@ export const DialogRoot: React.FC<IDialogRootProps> = (props) => {
                     Component: ActiveDialogComponent,
                     hiddenTitle,
                     hiddenDescription,
+                    requiresWallet,
                     ...otherDialogProps
                 } = dialogDefinition;
+
+                // Unmount before the dialog renders without an address. While the wallet is
+                // settling this only hides it; a real disconnect also pops it via the effect above.
+                if (missingAddress && requiresWallet) {
+                    return null;
+                }
 
                 const isAlertDialog = 'variant' in otherDialogProps;
                 const { disableOutsideClick, modal, onClose } = location;

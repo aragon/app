@@ -49,6 +49,7 @@ export const applicationDialogsDefinitions: Record<
             'app.application.aragonProfileSubdomainRegisterTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileSubdomainRegisterTransactionDialog.a11y.description',
+        requiresWallet: true,
     },
     [ApplicationDialogId.ARAGON_PROFILE_SET_PRIMARY_ENS_TRANSACTION]: {
         Component: AragonProfileSetPrimaryEnsTransactionDialog,
@@ -56,6 +57,7 @@ export const applicationDialogsDefinitions: Record<
             'app.application.aragonProfileSetPrimaryEnsTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileSetPrimaryEnsTransactionDialog.a11y.description',
+        requiresWallet: true,
     },
     [ApplicationDialogId.ARAGON_PROFILE]: {
         Component: AragonProfileDialog,
@@ -67,6 +69,7 @@ export const applicationDialogsDefinitions: Record<
         Component: AragonProfileUpdateTransactionDialog,
         hiddenDescription:
             'app.application.aragonProfileUpdateTransactionDialog.a11y.description',
+        requiresWallet: true,
     },
     [ApplicationDialogId.ARAGON_PROFILE_RELEASE_ALERT]: {
         Component: AragonProfileReleaseAlertDialog,
@@ -82,6 +85,7 @@ export const applicationDialogsDefinitions: Record<
             'app.application.aragonProfileReleaseTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileReleaseTransactionDialog.a11y.description',
+        requiresWallet: true,
     },
     [ApplicationDialogId.ARAGON_PROFILE_RENAME]: {
         Component: AragonProfileRenameDialog,
@@ -96,5 +100,6 @@ export const applicationDialogsDefinitions: Record<
             'app.application.aragonProfileRenameTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileRenameTransactionDialog.a11y.description',
+        requiresWallet: true,
     },
 };

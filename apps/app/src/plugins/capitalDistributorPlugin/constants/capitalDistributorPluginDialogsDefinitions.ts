@@ -12,5 +12,6 @@ export const capitalDistributorPluginDialogsDefinitions: Record<
     },
     [CapitalDistributorPluginDialogId.CLAIM_TRANSACTION]: {
         Component: CapitalDistributorClaimTransactionDialog,
+        requiresWallet: true,
     },
 };

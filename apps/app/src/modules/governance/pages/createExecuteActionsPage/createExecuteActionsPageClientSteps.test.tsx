@@ -54,6 +54,7 @@ describe('<CreateExecuteActionsPageClientSteps /> component', () => {
         useWalletAccountSpy.mockReturnValue({
             address: '0xwallet',
             chainId: 1,
+            isConnecting: false,
             isReconnecting: false,
         });
     });

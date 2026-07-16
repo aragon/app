@@ -103,4 +103,11 @@ export interface IDialogComponentDefinitions<
      * Component to be rendered.
      */
     Component: ComponentType<IDialogComponentProps<TParams>>;
+    /**
+     * Marks a dialog that requires a connected wallet to be meaningful: DialogRoot unmounts it
+     * and closes it on wallet disconnect, before a dialog reading the address can throw.
+     * Dialogs stacked on top of a flagged dialog should be flagged too, otherwise the child is
+     * left orphaned on the stack once its parent closes.
+     */
+    requiresWallet?: boolean;
 }

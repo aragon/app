@@ -41,6 +41,12 @@ Shared build/test config also extends from the root: `tsconfig.base.json` (works
 - **Slots system** — `apps/app/docs/slots/`
 - **Testing** — `apps/app/docs/projectDocs/testing.md`
 
+## Dialogs
+
+When you add a dialog that uses `TransactionDialog` internally — or that otherwise needs the connected wallet address to be meaningful — pass `requiresWallet: true` in its `*DialogsDefinitions.ts` entry. `DialogRoot` unmounts and closes flagged dialogs when the wallet disconnects, which is what stops a mid-transaction disconnect from crashing the app. Dialogs stacked on top of a flagged dialog should be flagged too, otherwise the child is left orphaned on the stack once its parent closes.
+
+Full wiring conventions (dynamic imports, definitions map, params) live in the `dialog-conventions` rule-skill, which auto-injects when you edit a dialog barrel or definitions map.
+
 ## Repo layout for agent infra
 
 Two parallel trees, each split into `shared/` (checked in) and `local/` (gitignored):

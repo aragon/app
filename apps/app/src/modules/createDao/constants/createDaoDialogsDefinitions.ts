@@ -11,7 +11,10 @@ export const createDaoDialogsDefinitions: Record<
     CreateDaoDialogId,
     IDialogComponentDefinitions
 > = {
-    [CreateDaoDialogId.PUBLISH_DAO]: { Component: PublishDaoDialog },
+    [CreateDaoDialogId.PUBLISH_DAO]: {
+        Component: PublishDaoDialog,
+        requiresWallet: true,
+    },
     [CreateDaoDialogId.CREATE_DAO_DETAILS]: {
         Component: CreateDaoDetailsDialog,
         size: 'lg',
@@ -20,7 +23,10 @@ export const createDaoDialogsDefinitions: Record<
         Component: CreateProcessDetailsDialog,
         size: 'lg',
     },
-    [CreateDaoDialogId.PREPARE_PROCESS]: { Component: PrepareProcessDialog },
+    [CreateDaoDialogId.PREPARE_PROCESS]: {
+        Component: PrepareProcessDialog,
+        requiresWallet: true,
+    },
     [CreateDaoDialogId.SETUP_BODY]: {
         Component: SetupBodyDialog,
         size: 'lg',

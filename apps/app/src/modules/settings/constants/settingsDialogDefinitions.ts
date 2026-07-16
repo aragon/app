@@ -16,6 +16,7 @@ export const settingsDialogDefinitions: Record<
     },
     [SettingsDialogId.PREPARE_DAO_CONTRACTS_UPDATE]: {
         Component: PrepareDaoContractsUpdateDialog,
+        requiresWallet: true,
     },
     [SettingsDialogId.GOVERNANCE_PROCESS_REQUIRED]: {
         Component: GovernanceProcessRequiredDialog,
@@ -32,5 +33,6 @@ export const settingsDialogDefinitions: Record<
     },
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: {
         Component: PreparePluginUninstallationDialog,
+        requiresWallet: true,
     },
 };

@@ -24,7 +24,10 @@ export const capitalFlowDialogsDefinitions: Record<
         hiddenDescription:
             'app.capitalFlow.setupStrategyDialog.a11y.description',
     },
-    [CapitalFlowDialogId.PREPARE_POLICY]: { Component: PreparePolicyDialog },
+    [CapitalFlowDialogId.PREPARE_POLICY]: {
+        Component: PreparePolicyDialog,
+        requiresWallet: true,
+    },
     [CapitalFlowDialogId.ROUTER_SELECTOR]: {
         Component: RouterSelectorDialog,
         size: 'lg',
@@ -36,6 +39,7 @@ export const capitalFlowDialogsDefinitions: Record<
     },
     [CapitalFlowDialogId.DISPATCH_TRANSACTION]: {
         Component: DispatchTransactionDialog,
+        requiresWallet: true,
         size: 'lg',
     },
 };
