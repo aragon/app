@@ -94,11 +94,12 @@ describe('useSppPermissionCheckProposalCreation', () => {
         isLoading: boolean;
         isSuccess: boolean;
     }) =>
-        useSimulateProposalCreationSpy.mockReturnValue(
-            result as ReturnType<
-                typeof useSimulateProposalModule.useSimulateProposalCreation
-            >,
-        );
+        useSimulateProposalCreationSpy.mockReturnValue({
+            isError: false,
+            ...result,
+        } as ReturnType<
+            typeof useSimulateProposalModule.useSimulateProposalCreation
+        >);
 
     it('returns isRestricted true for a restricted process even when the connected wallet can create a proposal', () => {
         const settings = [[{ term: 'Members', definition: 'Listed only' }]];
