@@ -419,6 +419,15 @@
         "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
       },
+      "supportChat": {
+        "panel": {
+          "label": "Support chat"
+        },
+        "trigger": {
+          "close": "Close support chat",
+          "open": "Open support chat"
+        }
+      },
       "userDialog": {
         "a11y": {
           "description": "Information about the connected user",

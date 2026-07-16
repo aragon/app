@@ -1,2 +1,3 @@
-export { SupportChat } from './supportChat';
-export type { ISupportChatProps } from './supportChat.api';
+export { SupportChatContextProvider } from './supportChatContext';
+export { SupportChatPanel } from './supportChatPanel';
+export { SupportChatTrigger } from './supportChatTrigger';

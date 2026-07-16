@@ -5,7 +5,6 @@ import {
 } from '../../controller';
 import { noopMonitoring } from '../../monitoring';
 import { ChatComposer } from '../chatComposer';
-import { ChatDrawer } from '../chatDrawer';
 import { ChatDropOverlay } from '../chatDropOverlay';
 import { ChatHeader } from '../chatHeader';
 import { ChatMessageList } from '../chatMessageList';
@@ -13,6 +12,9 @@ import { ChatNewChatBar } from '../chatNewChatBar';
 import { ChatStatusStrip } from '../chatStatusStrip';
 import type { IAssistantChatProps } from './assistantChat.api';
 
+// The widget fills whatever container the host renders it in — panel geometry, visibility and
+// animations are owned by the host layout, so the same chat content works in a side panel, a
+// fullscreen overlay or any future shell.
 export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
     const {
         isOpen,
@@ -44,24 +46,22 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
 
     return (
         <AssistantChatProvider value={controller}>
-            <ChatDrawer isOpen={isOpen} onClose={onClose}>
-                <div
-                    {...getRootProps({
-                        className: 'relative flex h-full min-h-0 flex-col',
-                    })}
-                >
-                    <input {...getInputProps()} />
-                    <ChatHeader onClose={onClose} />
-                    <ChatMessageList />
-                    <ChatStatusStrip />
-                    {isLocked ? (
-                        <ChatNewChatBar />
-                    ) : (
-                        <ChatComposer onAttach={open} />
-                    )}
-                    <ChatDropOverlay isVisible={isDragActive} />
-                </div>
-            </ChatDrawer>
+            <div
+                {...getRootProps({
+                    className: 'relative flex h-full min-h-0 flex-col',
+                })}
+            >
+                <input {...getInputProps()} />
+                <ChatHeader onClose={onClose} />
+                <ChatMessageList />
+                <ChatStatusStrip />
+                {isLocked ? (
+                    <ChatNewChatBar />
+                ) : (
+                    <ChatComposer isOpen={isOpen} onAttach={open} />
+                )}
+                <ChatDropOverlay isVisible={isDragActive} />
+            </div>
         </AssistantChatProvider>
     );
 };

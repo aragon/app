@@ -29,6 +29,10 @@ jest.mock('@aragon/gov-ui-kit', () => ({
     ),
 }));
 
+jest.mock('../../supportChat', () => ({
+    SupportChatTrigger: () => <div data-testid="support-chat-trigger-mock" />,
+}));
+
 jest.mock('@/shared/components/navigation', () => ({
     Navigation: {
         ...jest.requireActual<typeof Navigation>(

@@ -73,7 +73,7 @@ export const ChatMessageList: React.FC = () => {
     return (
         <div
             aria-live="polite"
-            className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 pt-2 pb-4"
+            className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-5 pt-2 pb-4"
             onScroll={handleScroll}
         >
             <ChatMessageItem message={greetingMessage} />

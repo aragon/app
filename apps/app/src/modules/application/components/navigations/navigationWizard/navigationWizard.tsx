@@ -25,6 +25,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { ITFuncOptions } from '@/shared/utils/translationsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
+import { SupportChatTrigger } from '../../supportChat';
 
 export interface INavigationWizardProps extends INavigationContainerProps {
     /**
@@ -113,7 +114,10 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
     const wizardName = typeof name === 'string' ? t(name) : t(...name);
 
     return (
-        <Navigation.Container containerClasses="flex flex-row items-center gap-x-6 justify-between py-5">
+        <Navigation.Container
+            containerClasses="flex flex-row items-center gap-x-6 justify-between py-5"
+            trailing={<SupportChatTrigger />}
+        >
             <div className="flex min-w-0 grow items-center gap-x-3 md:gap-x-4">
                 <Link className={linkClassName} href={exitPath}>
                     <Icon icon={IconType.CLOSE} size="md" />

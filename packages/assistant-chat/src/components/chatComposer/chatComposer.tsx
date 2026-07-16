@@ -1,9 +1,14 @@
 import { AlertInline, Button, IconType } from '@aragon/gov-ui-kit';
+import { useEffect, useRef } from 'react';
 import { useAssistantChatContext } from '../../controller';
 import { ChatAttachmentList } from '../chatAttachmentList';
 import { buildFileAlertMessage } from './fileAlertMessage';
 
 export interface IChatComposerProps {
+    /**
+     * Whether the chat is currently visible; the composer grabs focus when it becomes true.
+     */
+    isOpen: boolean;
     /**
      * Opens the native file picker.
      */
@@ -13,7 +18,17 @@ export interface IChatComposerProps {
 const maxVisibleRows = 4;
 
 export const ChatComposer: React.FC<IChatComposerProps> = (props) => {
-    const { onAttach } = props;
+    const { isOpen, onAttach } = props;
+
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // The host panel is non-modal (no focus trap), so the composer takes focus itself whenever
+    // the chat becomes visible — including the very first lazy mount.
+    useEffect(() => {
+        if (isOpen) {
+            textareaRef.current?.focus();
+        }
+    }, [isOpen]);
 
     const {
         sendMessage,
@@ -104,6 +119,7 @@ export const ChatComposer: React.FC<IChatComposerProps> = (props) => {
                     onKeyDown={handleKeyDown}
                     onPaste={handlePaste}
                     placeholder="Message…"
+                    ref={textareaRef}
                     rows={rows}
                     value={input}
                 />
