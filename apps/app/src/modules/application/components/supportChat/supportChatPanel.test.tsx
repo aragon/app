@@ -41,6 +41,7 @@ describe('<SupportChatPanel /> component', () => {
     afterEach(() => {
         useFeatureFlagsSpy.mockReset();
         useSupportChatContextSpy.mockReset();
+        Reflect.deleteProperty(window, 'matchMedia');
     });
 
     it('renders nothing when the support chat flag is disabled', () => {
@@ -49,13 +50,15 @@ describe('<SupportChatPanel /> component', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('keeps the panel mounted but inert while closed', () => {
+    it('keeps the panel mounted but inert and hidden from assistive technology while closed', () => {
         setContextOpen(false);
         const { container } = render(<SupportChatPanel />);
 
         const panel = container.querySelector('aside');
         expect(panel).toBeInTheDocument();
         expect(panel).toHaveAttribute('inert');
+        expect(panel).toHaveAttribute('aria-hidden', 'true');
+        expect(screen.queryByRole('complementary')).not.toBeInTheDocument();
         expect(screen.getByTestId('support-chat-mock')).toBeInTheDocument();
     });
 
@@ -70,5 +73,53 @@ describe('<SupportChatPanel /> component', () => {
                 name: /supportChat.panel.label/,
             }),
         ).toBeInTheDocument();
+    });
+
+    it('makes the covered app column inert while open below the desktop breakpoint', () => {
+        const matchMediaSpy = jest.fn().mockReturnValue({
+            matches: false,
+            addEventListener: jest.fn(),
+            removeEventListener: jest.fn(),
+        });
+        window.matchMedia =
+            matchMediaSpy as unknown as typeof window.matchMedia;
+
+        setContextOpen(true);
+        const { rerender } = render(
+            <div className="flex">
+                <div data-testid="app-column" />
+                <SupportChatPanel />
+            </div>,
+        );
+        expect(screen.getByTestId('app-column')).toHaveAttribute('inert');
+
+        setContextOpen(false);
+        rerender(
+            <div className="flex">
+                <div data-testid="app-column" />
+                <SupportChatPanel />
+            </div>,
+        );
+        expect(screen.getByTestId('app-column')).not.toHaveAttribute('inert');
+    });
+
+    it('leaves the app column interactive while open on desktop', () => {
+        const matchMediaSpy = jest.fn().mockReturnValue({
+            matches: true,
+            addEventListener: jest.fn(),
+            removeEventListener: jest.fn(),
+        });
+        window.matchMedia =
+            matchMediaSpy as unknown as typeof window.matchMedia;
+
+        setContextOpen(true);
+        render(
+            <div className="flex">
+                <div data-testid="app-column" />
+                <SupportChatPanel />
+            </div>,
+        );
+
+        expect(screen.getByTestId('app-column')).not.toHaveAttribute('inert');
     });
 });

@@ -1,25 +1,33 @@
 'use client';
 
 import classNames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SupportChat } from './supportChat';
 import { useSupportChatContext } from './supportChatContext';
 
 // Non-modal shell of the support chat: on lg+ screens it is an in-flow column the rest of the
-// layout resizes around (animated through its width), below lg it covers the whole screen. The
-// page stays scrollable and interactive while the chat is open; the panel is inert while closed
-// so its kept-mounted content is unreachable for keyboard and screen readers.
+// layout resizes around (animated through its width), below lg it covers the whole screen. On
+// lg+ the page stays scrollable and interactive while the chat is open; below lg the covered app
+// column is made inert so the fullscreen drawer is modal for keyboard and screen readers. While
+// closed the panel is inert and aria-hidden so its kept-mounted content is unreachable and it
+// stops being a `complementary` landmark.
 const panelWidthClassName = 'lg:w-[clamp(500px,30vw,640px)]';
+
+// Tailwind `lg` breakpoint: above it the panel is an in-flow column, below it a fullscreen drawer.
+const desktopMediaQuery = '(min-width: 64rem)';
 
 export const SupportChatPanel: React.FC = () => {
     const { t } = useTranslations();
     const { isEnabled } = useFeatureFlags();
     const { isOpen } = useSupportChatContext();
+    const panelRef = useRef<HTMLElement>(null);
 
-    // Below lg the open panel covers the whole viewport: lock the page scroll behind it so the
-    // chat is the only thing that scrolls (the class is breakpoint-scoped, lg+ stays scrollable).
+    // Below lg the open panel covers the whole viewport: lock the page scroll behind it (the
+    // class is breakpoint-scoped, lg+ stays scrollable) and make the covered app column inert so
+    // the drawer also traps keyboard and screen-reader focus. A resize across the breakpoint
+    // re-evaluates through the media-query listener; lg+ stays fully non-modal.
     useEffect(() => {
         if (!isOpen) {
             return undefined;
@@ -27,7 +35,22 @@ export const SupportChatPanel: React.FC = () => {
 
         document.body.classList.add('max-lg:overflow-hidden');
 
-        return () => document.body.classList.remove('max-lg:overflow-hidden');
+        const appColumn = panelRef.current?.previousElementSibling;
+        const desktopMedia = window.matchMedia?.(desktopMediaQuery);
+        const updateAppColumnInert = () =>
+            appColumn?.toggleAttribute(
+                'inert',
+                !(desktopMedia?.matches ?? true),
+            );
+
+        updateAppColumnInert();
+        desktopMedia?.addEventListener('change', updateAppColumnInert);
+
+        return () => {
+            document.body.classList.remove('max-lg:overflow-hidden');
+            desktopMedia?.removeEventListener('change', updateAppColumnInert);
+            appColumn?.removeAttribute('inert');
+        };
     }, [isOpen]);
 
     if (!isEnabled('supportChat')) {
@@ -49,9 +72,11 @@ export const SupportChatPanel: React.FC = () => {
 
     return (
         <aside
+            aria-hidden={!isOpen}
             aria-label={t('app.application.supportChat.panel.label')}
             className={panelClassNames}
             inert={!isOpen}
+            ref={panelRef}
         >
             {/* Fixed-width inner wrapper: the content keeps its final size while the panel width
                 animates, so the chat appears to slide in from the right instead of reflowing. */}
