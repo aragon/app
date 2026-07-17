@@ -3551,7 +3551,7 @@
         },
         "graphView": {
           "mode": {
-            "incoming": "To DAO",
+            "incoming": "Granted",
             "outgoing": "From DAO",
             "other": "Other"
           },

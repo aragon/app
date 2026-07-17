@@ -34,7 +34,7 @@ enum PermissionsView {
 
 const permissionsViews = Object.values(PermissionsView);
 
-const graphModes: GraphMode[] = ['incoming', 'outgoing', 'other'];
+const graphModes: GraphMode[] = ['incoming', 'other'];
 
 const filterRowsByMode = (
     rows: ReturnType<typeof usePermissionsData>['rows'],
@@ -216,12 +216,6 @@ export const DaoPermissionsPageClient: React.FC<
                                             'app.settings.daoPermissionsPage.graphView.mode.incoming',
                                         )}
                                         value="incoming"
-                                    />
-                                    <Toggle
-                                        label={t(
-                                            'app.settings.daoPermissionsPage.graphView.mode.outgoing',
-                                        )}
-                                        value="outgoing"
                                     />
                                     <Toggle
                                         label={t(
