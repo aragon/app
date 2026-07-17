@@ -96,7 +96,6 @@ describe('useSppPermissionCheckProposalCreation', () => {
         result?: 'success' | 'failure';
     }) =>
         useSimulateProposalCreationSpy.mockReturnValue({
-            isError: false,
             ...result,
         } as ReturnType<
             typeof useSimulateProposalModule.useSimulateProposalCreation
