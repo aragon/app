@@ -13,17 +13,18 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 
 ### Releases
 
-Every deployable workspace releases independently through the same PR-based flow; a flow declares the packages it versions via the `scope` input of the `changeset-version` action (the inversion into changesets `--ignore` flags happens once, inside the action). The shape: dispatch `<workspace>-release-start` → it runs `changeset version` for the scoped packages and opens a `Release <package>@x.y.z` PR (branch `release/<workspace>/…`) describing every bumped package → merging the PR is the release act → `<workspace>-release-pr-finalize` tags the release (`@aragon/app@1.17.0`) and the tag triggers the production deploy.
+Every deployable workspace releases independently through the same PR-based flow; the packages each flow versions together are declared once in `.github/release-scopes.yml` (a flow names its scope via the `scope` input of the `changeset-version` action; the inversion into changesets `--ignore` flags happens inside the action). The shape: dispatch `<workspace>-release-start` → it runs `changeset version` for the scoped packages and opens a `Release <package>@x.y.z` PR (branch `release/<workspace>/…`) describing every bumped package → merging the PR is the release act → `<workspace>-release-pr-finalize` tags the release (`@aragon/app@1.17.0`) and the tag triggers the production deploy.
 
-`packages/*` belong to their domain owner's scope and get no tags or flows of their own. Versions never move in lockstep. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
+`packages/*` belong to their domain owner's scope and get no tags or flows of their own. Versions never move in lockstep. A single changeset must never mix packages from different release scopes (changesets refuses mixed ignored/not-ignored changesets, which breaks every scoped flow) — write one changeset per scope; CI enforces this via `pnpm validate:changesets`. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
 
 ### Adding a new workspace — the mappers
 
 Cross-cutting workspace knowledge lives in root-level mappers; register a new workspace there instead of touching individual workflows:
 
 - `.github/filters.yml` — workspace→paths mapper for CI change detection (dorny/paths-filter): gates optional side-deploys (the app itself deploys on every PR/push and needs no filter).
+- `.github/release-scopes.yml` — package→release-scope mapper: which packages each release flow versions together. Read by the release workflows and by `pnpm validate:changesets`.
 - `pnpm-workspace.yaml` `catalog:` — central version pins for shared tooling/deps; workspaces reference them as `"catalog:"`, bumps happen once at the root (then run the full test fan-out — a catalog bump touches every workspace and triggers releases everywhere).
-- Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by declaring a `scope` in its `changeset-version` call — other flows are not touched.
+- Releases: a new deployable workspace gets its own release flow (or joins an existing domain flow) by adding its packages to a scope in `release-scopes.yml` and naming that scope in its `changeset-version` call — other flows are not touched.
 
 Shared build/test config also extends from the root: `tsconfig.base.json` (workspace tsconfigs `extends` it) and `jest.config.base.js` (node workspaces use `createNodeConfig`, jsdom workspaces spread `baseConfig` + `createTsJestTransform`). Lint/format is already root-only (`biome.json`).
 

@@ -57,14 +57,13 @@ jobs:
           git_user_signingkey: true
           git_commit_gpgsign: true
 
-      # This flow owns the assistant domain: @aragon/assistant plus its version-only packages
-      # (contracts and the assistant-chat widget, which ships inside the app but is released by
-      # its domain owner). App-scoped packages are versioned by the app release flow
-      # (app-release-start.yml), which symmetrically scopes to @aragon/app.
+      # This flow owns the "assistant" release scope (see .github/release-scopes.yml): the
+      # service plus its version-only packages. App-scoped packages are versioned by the app
+      # release flow (app-release-start.yml), which symmetrically owns the "app" scope.
       - name: Update version and changelog
         uses: ./.github/actions/changeset-version
         with:
-          scope: "@aragon/assistant @aragon/assistant-contracts @aragon/assistant-chat"
+          scope: assistant
           prettier_changelog: "true"
           github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
@@ -93,7 +92,7 @@ jobs:
         id: version-summary
         uses: ./.github/actions/generate-version-summary
         with:
-          scope: "@aragon/assistant @aragon/assistant-contracts @aragon/assistant-chat"
+          scope: assistant
 
       - name: Generate release branch name
         if: steps.changes.outputs.dirty == 'true'

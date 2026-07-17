@@ -1,0 +1,13 @@
+# Central package→release-scope mapper: each scope lists the packages one release flow versions
+# together (the `scope` input of the changeset-version action names an entry here). A changeset
+# must never mix packages from different scopes — `changeset version --ignore` refuses mixed
+# changesets, which breaks every scoped flow. CI enforces this via `pnpm validate:changesets`.
+# When a new workspace lands, add it to a scope HERE — flows and validation read this file.
+
+app:
+  - "@aragon/app"
+
+assistant:
+  - "@aragon/assistant"
+  - "@aragon/assistant-contracts"
+  - "@aragon/assistant-chat"

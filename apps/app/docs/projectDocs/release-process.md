@@ -2,7 +2,7 @@
 
 This document describes the release process for Aragon App.
 
-This process is app-scoped: the release flow versions only `@aragon/app` (via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows — e.g. the assistant service via its own release-PR flow (`assistant-release-start` → merge → `assistant-release-pr-finalize`). See the "Releases" section of the root `AGENTS.md` for the per-package model.
+This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows — e.g. the assistant service via its own release-PR flow (`assistant-release-start` → merge → `assistant-release-pr-finalize`). See the "Releases" section of the root `AGENTS.md` for the per-package model.
 
 ## Versioning & tags (monorepo)
 

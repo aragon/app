@@ -2,6 +2,7 @@ const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 const { extractChangelogSection } = require('./readChangelog');
+const { resolveReleaseScope } = require('./releaseScopes');
 
 // Builds a release-PR summary from the CHANGELOG entries written by `changeset version`: one
 // "## <package>@<version>" section per bumped package. Works for any release scope — runs after
@@ -49,13 +50,13 @@ const generateSummary = ({ core, scope, cwd = process.cwd() }) => {
 
 module.exports = { generateSummary };
 
-// Standalone runner
+// Standalone runner: SCOPE names a release scope in .github/release-scopes.yml.
 if (require.main === module) {
-    const scope = (process.env.SCOPE ?? '').split(/\s+/).filter(Boolean);
-    if (scope.length === 0) {
+    if (!process.env.SCOPE) {
         console.error('SCOPE is required.');
         process.exit(1);
     }
+    const scope = resolveReleaseScope(process.env.SCOPE);
 
     const core = {
         setOutput: (name, value) => {

@@ -3,7 +3,7 @@ description: Generates a per-package bump summary (new version + changelog secti
 
 inputs:
   scope:
-    description: Space-separated package names to inspect for uncommitted version bumps
+    description: Name of a release scope in .github/release-scopes.yml whose packages are inspected for uncommitted version bumps
     required: true
 
 outputs:
