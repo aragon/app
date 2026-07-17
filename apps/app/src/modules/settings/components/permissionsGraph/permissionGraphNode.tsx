@@ -155,7 +155,7 @@ export const PermissionStackNode: React.FC<
     return (
         <div
             className={classNames(
-                'nodrag nopan relative flex max-w-60 flex-col items-center gap-0.5',
+                'nodrag nopan relative flex w-60 flex-col items-center gap-0.5',
                 dimmed === true && 'opacity-50',
             )}
         >
