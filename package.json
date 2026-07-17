@@ -11,7 +11,7 @@
         "test:coverage": "pnpm test:release-summary && turbo run test:coverage",
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
         "test:hooks": "pnpm test:guardrails",
-        "test:release-summary": "node --test .github/workflows/scripts/generateReleaseSummary.test.js",
+        "test:release-summary": "node --test .github/workflows/scripts/",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
         "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
         "lint": "turbo run lint",

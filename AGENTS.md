@@ -6,22 +6,16 @@ This file is the team-shared agent entry point. `CLAUDE.md` imports it via `@AGE
 
 ## Monorepo layout
 
-- `apps/app/` — the Aragon App (app.aragon.org): all app source, configs (`next.config.mjs`, `tsconfig.json`, `jest.config.js`), `e2e/`, `docs/`, `scripts/`, `CHANGELOG.md`. Package name stays `@aragon/app`.
-- `apps/assistant/` — the assistant service (assistant.aragon.org): Hono API behind the in-app support chat. Own Vercel project, continuous dev deploys from `main`, production released through its Version-PR flow (see `apps/assistant/README.md`).
-- `packages/assistant-contracts/` — shared zod contracts between the assistant service and the assistant-chat widget. Domain-scoped by design, not a catch-all contracts package. Built with `tsup` to `dist/` (CJS + ESM + `.d.ts`); Turbo `^build` and the shared-deploy workflow compile it before dependents type-check/test/deploy.
-- `apps/*`, `packages/*` — reserved for future workspaces.
-- Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). Root `package.json` has no version; each workspace is versioned independently via changesets with per-package tags (`@aragon/app@1.17.0`) and release branches (`release/app/…`). See `apps/app/docs/projectDocs/release-process.md`.
-- CI: workflows in `.github/workflows/` are grouped per app (`app-*.yml` for `apps/app`, `assistant-*.yml` for `apps/assistant`, `shared-*.yml` reusable). Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
+- `apps/*` — deployable applications, one Vercel project each. Every app owns its source, configs, docs and CHANGELOG; workspace specifics live in the workspace's README, not here.
+- `packages/*` — version-only workspace libraries that ship inside their consumers. Libraries that ship `dist/` override Turbo `build` in their own `turbo.json` (`outputs: ["dist/**"]`, `cache: true`) so `^build` compiles them before dependents run.
+- Root — workspace infra only: `pnpm-workspace.yaml`, `turbo.json`, `biome.json`, `.github/`, `.husky/`, `.changeset/`, agent infra (`.agents/`, `.claude/`). The root `package.json` has no version.
+- CI: workflows in `.github/workflows/` are named per workspace (`app-*.yml`, `assistant-*.yml`) plus reusable `shared-*.yml`. Root scripts proxy through `turbo run <task>`, so `pnpm type-check` etc. work from the repo root.
 
-### Releases — each flow owns its packages
+### Releases
 
-Every deployable package releases through its own flow, and each flow declares the packages it versions via the `scope` input of the `changeset-version` action (the inversion into changesets `--ignore` flags happens once, inside the action):
+Every deployable workspace releases independently through the same PR-based flow; a flow declares the packages it versions via the `scope` input of the `changeset-version` action (the inversion into changesets `--ignore` flags happens once, inside the action). The shape: dispatch `<workspace>-release-start` → it runs `changeset version` for the scoped packages and opens a `Release <package>@x.y.z` PR (branch `release/<workspace>/…`) describing every bumped package → merging the PR is the release act → `<workspace>-release-pr-finalize` tags the release (`@aragon/app@1.17.0`) and the tag triggers the production deploy.
 
-- **App** — the release ceremony `app-release-start` → release PR (`release/app/…`) → staging checks → merge → `app-release-pr-finalize`, scoped to `@aragon/app`. Finalize tags the tested SHA (`@aragon/app@1.17.0`) and the tag triggers the production deploy. See `apps/app/docs/projectDocs/release-process.md`.
-- **Assistant** — a Version-PR bot (`assistant-release-version.yml`) keeps a "Version Packages: assistant" PR up to date from pending changesets on `main`; merging it is the release act — finalize tags the merge commit (`@aragon/assistant@0.2.0`) and the tag triggers the production deploy. Scope: `@aragon/assistant` + `@aragon/assistant-contracts`.
-- `packages/*` are version-only and ship inside their consumers; each belongs to the scope of its domain owner's flow (`assistant-contracts` → assistant flow).
-
-Versions stay independent per package — no lockstep. A `release-all` orchestrator (dispatch with package selection) is a planned follow-up.
+`packages/*` belong to their domain owner's scope and get no tags or flows of their own. Versions never move in lockstep. Details, including the app-specific staging ceremony: `apps/app/docs/projectDocs/release-process.md`.
 
 ### Adding a new workspace — the mappers
 

@@ -1,9 +1,11 @@
-# The "Assistant Release Finalize" workflow runs when the "Version Packages: assistant" PR merges:
-# it tags the merged commit with the changesets-native per-package tag (@aragon/assistant@x.y.z) and
-# creates the GitHub Release with the changelog as notes. Publishing the release triggers the
-# production deploy (assistant-production.yml).
+# The "Assistant Release PR Finalize" workflow runs when a release/assistant/* PR merges: it tags
+# the merge commit with the changesets-native per-package tag (@aragon/assistant@x.y.z) and creates
+# the GitHub Release with the changelog as notes. Publishing the release triggers the production
+# deploy (assistant-production.yml). Unlike the app flow (which tags the staging-tested head SHA),
+# the merge commit is tagged here: the assistant release PR has no staging ceremony, and production
+# builds from the tag, which must include the merge.
 
-name: Assistant Release Finalize
+name: Assistant Release PR Finalize
 
 on:
   pull_request:
@@ -22,7 +24,7 @@ jobs:
   finalize:
     if: >
       github.event.pull_request.merged == true &&
-      github.event.pull_request.head.ref == 'changeset-release/assistant'
+      startsWith(github.event.pull_request.head.ref, 'release/assistant/')
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets

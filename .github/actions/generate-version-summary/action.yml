@@ -1,0 +1,23 @@
+name: Generate Version Summary
+description: Generates a per-package bump summary (new version + changelog section) for the scoped packages; run after `changeset version`, before committing.
+
+inputs:
+  scope:
+    description: Space-separated package names to inspect for uncommitted version bumps
+    required: true
+
+outputs:
+  summary:
+    description: Generated summary markdown (one section per bumped package)
+    value: ${{ steps.summary.outputs.summary }}
+
+runs:
+  using: composite
+  steps:
+    - id: summary
+      shell: bash
+      env:
+        SCOPE: ${{ inputs.scope }}
+      run: |
+        set -euo pipefail
+        node .github/workflows/scripts/generateVersionSummary.js

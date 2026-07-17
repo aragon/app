@@ -1,25 +1,27 @@
-# The "Assistant Release Version" workflow prepares the "Version Packages: assistant" pull request
-# ON DEMAND (trunk-based: merging to main never starts a release by itself). Dispatching it
-# recreates the changeset-release/assistant branch from main, applies `changeset version` scoped to
-# the assistant domain packages, and opens/updates the PR with the accumulated version bump and
-# CHANGELOG. Merging that PR is the release act — the finalize workflow tags it
-# (@aragon/assistant@x.y.z) and the tag triggers the production deploy.
+# The "Assistant Release Start" workflow prepares the assistant release pull request ON DEMAND
+# (trunk-based: merging to main never starts a release by itself). Dispatching it applies
+# `changeset version` scoped to the assistant domain packages, pushes the bump to a timestamped
+# release/assistant/* branch and opens a "Release @aragon/assistant@x.y.z" PR whose description
+# lists every bumped package with its new changelog. Merging that PR is the release act — the
+# finalize workflow (assistant-release-pr-finalize.yml) tags the merge commit and the tag triggers
+# the production deploy.
 
-name: Assistant Release Version
+name: Assistant Release Start
 
 on:
   workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: true
+    inputs:
+      base_commit:
+        description: 'Commit SHA to start release from (default: main HEAD)'
+        required: false
+        type: string
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  version:
+  prepare-release:
     runs-on: ubuntu-latest
     steps:
       - name: Load secrets
@@ -45,7 +47,7 @@ jobs:
         with:
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
           fetch-depth: 0
-          ref: main
+          ref: ${{ inputs.base_commit || 'main' }}
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
@@ -54,9 +56,6 @@ jobs:
           passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
-
-      - name: Recreate version branch from main
-        run: git checkout -B changeset-release/assistant main
 
       # This flow owns the assistant domain: @aragon/assistant plus its version-only packages
       # (contracts and the assistant-chat widget, which ships inside the app but is released by
@@ -69,6 +68,8 @@ jobs:
           prettier_changelog: "true"
           github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
+      # Versioning runs before the release branch exists so a dispatch without pending
+      # changesets exits here without leaving an empty branch or PR behind.
       - name: Detect version changes
         id: changes
         run: echo "dirty=$([ -n "$(git status --porcelain)" ] && echo true || echo false)" >> $GITHUB_OUTPUT
@@ -80,24 +81,44 @@ jobs:
         with:
           path: apps/assistant
 
-      - name: Commit and push version branch
+      # Per-package tag in the changesets-native format: @aragon/assistant@0.2.0. The tag anchors
+      # on the deployable service; the version-only packages ship inside their consumers untagged.
+      - name: Compute release tag
+        if: steps.changes.outputs.dirty == 'true'
+        id: release-tag
+        run: echo "name=@aragon/assistant@${{ steps.package-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+
+      - name: Generate version summary
+        if: steps.changes.outputs.dirty == 'true'
+        id: version-summary
+        uses: ./.github/actions/generate-version-summary
+        with:
+          scope: "@aragon/assistant @aragon/assistant-contracts @aragon/assistant-chat"
+
+      - name: Generate release branch name
+        if: steps.changes.outputs.dirty == 'true'
+        id: branch-name
+        run: echo "name=release/assistant/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Commit and push release branch
         if: steps.changes.outputs.dirty == 'true'
         run: |
+          git checkout -b ${{ steps.branch-name.outputs.name }}
           git add --all
-          git commit -m "Version @aragon/assistant@${{ steps.package-version.outputs.current-version }}"
-          git push --force origin changeset-release/assistant
+          git commit -m "Release ${{ steps.release-tag.outputs.name }}"
+          git push origin ${{ steps.branch-name.outputs.name }}
 
       - name: Ensure Pull Request
         if: steps.changes.outputs.dirty == 'true'
         uses: ./.github/actions/gh-ensure-pr
         with:
           base: main
-          head: changeset-release/assistant
-          title: "Version Packages: assistant (@aragon/assistant@${{ steps.package-version.outputs.current-version }})"
+          head: ${{ steps.branch-name.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
           body: |
-            Accumulated version bump and changelog for the assistant service, maintained automatically
-            from pending changesets on `main`.
+            Merging this PR releases `${{ steps.release-tag.outputs.name }}`: the merge commit is
+            tagged and the tag triggers the production deploy to assistant.aragon.org. The
+            version-only packages below ship inside their consumers and get no tag of their own.
 
-            **Merging this PR releases `@aragon/assistant@${{ steps.package-version.outputs.current-version }}`**:
-            the merge is tagged and the tag triggers the production deploy to assistant.aragon.org.
+            ${{ steps.version-summary.outputs.summary }}
           token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
