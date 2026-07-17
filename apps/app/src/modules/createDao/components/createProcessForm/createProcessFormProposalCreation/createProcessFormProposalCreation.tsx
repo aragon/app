@@ -119,7 +119,7 @@ export const CreateProcessFormProposalCreation: React.FC<
         },
     );
 
-    // biome-ignore lint/correctness/useExhaustiveDependencies: Trigger proposalCreationMode validation on allowed bodies selection change
+    // biome-ignore lint/correctness/useExhaustiveDependencies: hasProposalCreationSources is a trigger-only dep; validation must re-run when it changes
     useEffect(() => {
         void trigger('proposalCreationMode');
     }, [trigger, hasProposalCreationSources]);
