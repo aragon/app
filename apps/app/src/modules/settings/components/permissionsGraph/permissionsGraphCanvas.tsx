@@ -61,7 +61,7 @@ const STACK_ROW_HEIGHT = 20;
 const STACK_CONDITION_ROW_HEIGHT = 34;
 const STACK_ROW_GAP = 2;
 
-const getModeEdges = (
+export const getModeEdges = (
     graph: IPermissionGraph,
     mode: GraphMode,
     anchorId: string,
@@ -74,9 +74,7 @@ const getModeEdges = (
         return graph.edges.filter((edge) => edge.source === anchorId);
     }
 
-    return graph.edges.filter(
-        (edge) => edge.source !== anchorId && edge.target !== anchorId,
-    );
+    return graph.edges.filter((edge) => edge.target !== anchorId);
 };
 
 const getLayoutDirection = (mode: GraphMode): PermissionGraphDirection => {
@@ -84,22 +82,13 @@ const getLayoutDirection = (mode: GraphMode): PermissionGraphDirection => {
         return 'BT';
     }
 
-    if (mode === 'outgoing') {
-        return 'TB';
-    }
-
-    return 'LR';
+    return 'TB';
 };
 
-const getLayoutSpacing = (
-    mode: GraphMode,
-): { nodesep: number; ranksep: number } => {
-    if (mode === 'other') {
-        return { nodesep: 80, ranksep: 145 };
-    }
-
-    return { nodesep: 60, ranksep: 170 };
-};
+const getLayoutSpacing = (): { nodesep: number; ranksep: number } => ({
+    nodesep: 60,
+    ranksep: 170,
+});
 
 const getHandlePositions = (
     mode: GraphMode,
@@ -111,16 +100,9 @@ const getHandlePositions = (
         };
     }
 
-    if (mode === 'outgoing') {
-        return {
-            sourcePosition: Position.Bottom,
-            targetPosition: Position.Top,
-        };
-    }
-
     return {
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
     };
 };
 
@@ -134,20 +116,11 @@ const getEdgeHandles = (mode: GraphMode) => {
         };
     }
 
-    if (mode === 'outgoing') {
-        return {
-            originSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
-            stackTarget: PERMISSION_GRAPH_HANDLE.targetTop,
-            stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
-            targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
-        };
-    }
-
     return {
-        originSource: PERMISSION_GRAPH_HANDLE.sourceRight,
-        stackTarget: PERMISSION_GRAPH_HANDLE.targetLeft,
-        stackSource: PERMISSION_GRAPH_HANDLE.sourceRight,
-        targetTarget: PERMISSION_GRAPH_HANDLE.targetLeft,
+        originSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+        stackTarget: PERMISSION_GRAPH_HANDLE.targetTop,
+        stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+        targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
     };
 };
 
@@ -574,7 +547,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             edges,
             {
                 direction: getLayoutDirection(mode),
-                ...getLayoutSpacing(mode),
+                ...getLayoutSpacing(),
             },
         );
         const layoutedNodes = positionSelfStacks(rawLayoutedNodes);
