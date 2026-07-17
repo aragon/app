@@ -1,22 +1,24 @@
 'use client';
 
 import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import {
-    type GraphMode,
-    PermissionsGraph,
-} from '../../components/permissionsGraph';
+import { PermissionsGraph } from '../../components/permissionsGraph';
 import {
     getPermissionRowKey,
     PermissionsList,
 } from '../../components/permissionsList';
 import { usePermissionsData } from '../../hooks/usePermissionsData';
 import { filterPermissionRows } from '../../utils/permissionRowFilters';
+import {
+    type DisplayGraphMode,
+    filterRowsByMode,
+    graphModes,
+} from './daoPermissionsPageClientUtils';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -32,36 +34,17 @@ enum PermissionsView {
     GRAPH = 'graph',
 }
 
+type PermissionRows = ReturnType<typeof usePermissionsData>['rows'];
+
 const permissionsViews = Object.values(PermissionsView);
 
-const graphModes: GraphMode[] = ['incoming', 'other'];
+const getPermissionRowsSignature = (rows: PermissionRows): string =>
+    rows.map(getPermissionRowKey).sort().join('|');
 
-const filterRowsByMode = (
-    rows: ReturnType<typeof usePermissionsData>['rows'],
-    mode: GraphMode,
-    activeAccountAddress?: string,
-) => {
-    const activeAddress = activeAccountAddress?.toLowerCase();
-
-    if (activeAddress == null) {
-        return rows;
-    }
-
-    return rows.filter((row) => {
-        const whoAddress = row.whoAddress.toLowerCase();
-        const whereAddress = row.whereAddress.toLowerCase();
-
-        if (mode === 'incoming') {
-            return whereAddress === activeAddress;
-        }
-
-        if (mode === 'outgoing') {
-            return whoAddress === activeAddress;
-        }
-
-        return whoAddress !== activeAddress && whereAddress !== activeAddress;
-    });
-};
+const arePermissionRowsEqual = (
+    a: PermissionRows,
+    b: PermissionRows,
+): boolean => getPermissionRowsSignature(a) === getPermissionRowsSignature(b);
 
 export const DaoPermissionsPageClient: React.FC<
     IDaoPermissionsPageClientProps
@@ -92,7 +75,7 @@ export const DaoPermissionsPageClient: React.FC<
         enableUrlUpdate: true,
     });
 
-    const [mode, setMode] = useState<GraphMode>('incoming');
+    const [mode, setMode] = useState<DisplayGraphMode>('incoming');
     const [showDaoPermissions, setShowDaoPermissions] = useState(false);
     const [showSubpluginPermissions, setShowSubpluginPermissions] =
         useState(false);
@@ -112,8 +95,8 @@ export const DaoPermissionsPageClient: React.FC<
     };
 
     const handleModeChange = (value?: string | string[]) => {
-        if (graphModes.includes(value as GraphMode)) {
-            setMode(value as GraphMode);
+        if (graphModes.includes(value as DisplayGraphMode)) {
+            setMode(value as DisplayGraphMode);
             setExpandedRows([]);
         }
     };
@@ -128,10 +111,19 @@ export const DaoPermissionsPageClient: React.FC<
         setExpandedRows([]);
     };
 
-    const modeRows = useMemo(
-        () => filterRowsByMode(rows, mode, activeAccount?.daoAddress),
-        [rows, mode, activeAccount?.daoAddress],
+    const modeRowsByMode = useMemo<Record<DisplayGraphMode, PermissionRows>>(
+        () => ({
+            incoming: filterRowsByMode(
+                rows,
+                'incoming',
+                activeAccount?.daoAddress,
+            ),
+            other: filterRowsByMode(rows, 'other', activeAccount?.daoAddress),
+        }),
+        [rows, activeAccount?.daoAddress],
     );
+
+    const modeRows = modeRowsByMode[mode];
 
     const filteredRows = useMemo(
         () =>
@@ -149,6 +141,63 @@ export const DaoPermissionsPageClient: React.FC<
             showSubpluginPermissions,
         ],
     );
+
+    const showDaoPermissionsToggleDisabled = useMemo(
+        () =>
+            arePermissionRowsEqual(
+                filteredRows,
+                filterPermissionRows(modeRows, {
+                    activeAccountAddress: activeAccount?.daoAddress,
+                    daoPlugins,
+                    showDaoPermissions: !showDaoPermissions,
+                    showSubpluginPermissions,
+                }),
+            ),
+        [
+            activeAccount?.daoAddress,
+            daoPlugins,
+            filteredRows,
+            modeRows,
+            showDaoPermissions,
+            showSubpluginPermissions,
+        ],
+    );
+
+    const showSubpluginPermissionsToggleDisabled = useMemo(
+        () =>
+            arePermissionRowsEqual(
+                filteredRows,
+                filterPermissionRows(modeRows, {
+                    activeAccountAddress: activeAccount?.daoAddress,
+                    daoPlugins,
+                    showDaoPermissions,
+                    showSubpluginPermissions: !showSubpluginPermissions,
+                }),
+            ),
+        [
+            activeAccount?.daoAddress,
+            daoPlugins,
+            filteredRows,
+            modeRows,
+            showDaoPermissions,
+            showSubpluginPermissions,
+        ],
+    );
+
+    useEffect(() => {
+        if (isLoading || modeRowsByMode[mode].length > 0) {
+            return;
+        }
+
+        const nextMode = graphModes.find(
+            (graphMode) => modeRowsByMode[graphMode].length > 0,
+        );
+
+        if (nextMode != null) {
+            setMode(nextMode);
+            setExpandedRows([]);
+        }
+    }, [isLoading, mode, modeRowsByMode]);
 
     const allExpanded =
         filteredRows.length > 0 && expandedRows.length === filteredRows.length;
@@ -212,12 +261,18 @@ export const DaoPermissionsPageClient: React.FC<
                                     value={mode}
                                 >
                                     <Toggle
+                                        disabled={
+                                            modeRowsByMode.incoming.length === 0
+                                        }
                                         label={t(
                                             'app.settings.daoPermissionsPage.graphView.mode.incoming',
                                         )}
                                         value="incoming"
                                     />
                                     <Toggle
+                                        disabled={
+                                            modeRowsByMode.other.length === 0
+                                        }
                                         label={t(
                                             'app.settings.daoPermissionsPage.graphView.mode.other',
                                         )}
@@ -227,6 +282,10 @@ export const DaoPermissionsPageClient: React.FC<
                                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm">
                                     <Switch
                                         checked={showDaoPermissions}
+                                        disabled={
+                                            isLoading ||
+                                            showDaoPermissionsToggleDisabled
+                                        }
                                         inlineLabel={t(
                                             'app.settings.daoPermissionsPage.filters.showDaoPermissions',
                                         )}
@@ -236,6 +295,10 @@ export const DaoPermissionsPageClient: React.FC<
                                     />
                                     <Switch
                                         checked={showSubpluginPermissions}
+                                        disabled={
+                                            isLoading ||
+                                            showSubpluginPermissionsToggleDisabled
+                                        }
                                         inlineLabel={t(
                                             'app.settings.daoPermissionsPage.filters.showSubpluginPermissions',
                                         )}

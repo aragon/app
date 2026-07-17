@@ -3547,7 +3547,7 @@
         },
         "filters": {
           "showDaoPermissions": "Show DAO-granted permissions",
-          "showSubpluginPermissions": "Show subplugin permissions"
+          "showSubpluginPermissions": "Show subplugin/residual permissions"
         },
         "graphView": {
           "mode": {
