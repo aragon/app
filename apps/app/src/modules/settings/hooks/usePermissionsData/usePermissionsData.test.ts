@@ -127,4 +127,16 @@ describe('usePermissionsData hook', () => {
         ]);
         expect(result.current.dao?.name).toBe('Main DAO');
     });
+
+    it('loads subplugins for permission graph filtering', () => {
+        renderHook(() => usePermissionsData({ daoId: 'main-dao' }));
+
+        expect(useDaoPluginsSpy).toHaveBeenCalledWith(
+            expect.objectContaining({
+                daoId: 'main-dao',
+                includeLinkedAccounts: true,
+                includeSubPlugins: true,
+            }),
+        );
+    });
 });

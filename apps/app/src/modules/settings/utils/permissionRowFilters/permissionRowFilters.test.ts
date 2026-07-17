@@ -113,6 +113,28 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[1]]);
     });
 
+    it('hides rows touching addresses listed by a parent plugin subPlugins field', () => {
+        const rows = [
+            buildRow({ whoAddress: subpluginAddress }),
+            buildRow({ whoAddress: pluginAddress }),
+        ];
+        const daoPlugins = [
+            buildPlugin({
+                address: parentPluginAddress,
+                subPlugins: [{ addresses: [subpluginAddress] }],
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins,
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([rows[1]]);
+    });
+
     it('keeps subplugin rows when enabled', () => {
         const rows = [buildRow({ whoAddress: subpluginAddress })];
         const daoPlugins = [

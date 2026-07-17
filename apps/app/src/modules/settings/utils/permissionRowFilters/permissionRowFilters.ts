@@ -28,23 +28,33 @@ const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     return meta.isSubPlugin === true || meta.parentPlugin != null;
 };
 
+const isSubpluginAddress = (
+    address: string,
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
+): boolean =>
+    daoPlugins?.some((plugin) => {
+        const { meta } = plugin;
+
+        if (
+            isSubplugin(plugin) &&
+            addressUtils.isAddressEqual(meta.address, address)
+        ) {
+            return true;
+        }
+
+        return meta.subPlugins?.some((subPlugin) =>
+            subPlugin.addresses.some((subPluginAddress) =>
+                addressUtils.isAddressEqual(subPluginAddress, address),
+            ),
+        );
+    }) ?? false;
+
 const rowTouchesSubplugin = (
     row: IPermissionRow,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
-    daoPlugins
-        ?.filter(isSubplugin)
-        .some(
-            (plugin) =>
-                addressUtils.isAddressEqual(
-                    plugin.meta.address,
-                    row.whoAddress,
-                ) ||
-                addressUtils.isAddressEqual(
-                    plugin.meta.address,
-                    row.whereAddress,
-                ),
-        ) ?? false;
+    isSubpluginAddress(row.whoAddress, daoPlugins) ||
+    isSubpluginAddress(row.whereAddress, daoPlugins);
 
 const isDaoGrantedPermission = (
     row: IPermissionRow,

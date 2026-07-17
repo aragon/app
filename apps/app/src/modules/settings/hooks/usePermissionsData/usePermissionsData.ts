@@ -51,6 +51,7 @@ export const usePermissionsData = (
     const { data: realDao } = useDao({ urlParams: { id: daoId } });
     const realDaoPlugins = useDaoPlugins({
         daoId,
+        includeSubPlugins: true,
         includeLinkedAccounts: true,
     });
 
