@@ -28,6 +28,9 @@ export interface IPermissionEdgeData {
 
 export type IPermissionFlowEdge = Edge<IPermissionEdgeData, 'permission'>;
 
+const getEdgeBorderRadius = (visualKind: PermissionEdgeVisualKind) =>
+    visualKind === 'self' ? 0 : 16;
+
 export const PermissionGraphEdge: React.FC<EdgeProps<IPermissionFlowEdge>> = ({
     sourceX,
     sourceY,
@@ -41,18 +44,15 @@ export const PermissionGraphEdge: React.FC<EdgeProps<IPermissionFlowEdge>> = ({
     data,
 }) => {
     const visualKind = data?.visualKind ?? 'other';
-    const [edgePath] =
-        visualKind === 'self'
-            ? [`M ${sourceX} ${sourceY} L ${targetX} ${targetY}`]
-            : getSmoothStepPath({
-                  sourceX,
-                  sourceY,
-                  targetX,
-                  targetY,
-                  sourcePosition,
-                  targetPosition,
-                  borderRadius: 16,
-              });
+    const [edgePath] = getSmoothStepPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        borderRadius: getEdgeBorderRadius(visualKind),
+    });
 
     return (
         <BaseEdge

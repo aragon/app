@@ -28,6 +28,9 @@ export interface IDaoPermissionsPageClientProps {
 }
 
 export const permissionsViewParam = 'permissionsview';
+export const permissionsModeParam = 'permissionsmode';
+export const permissionsDaoParam = 'permissionsdao';
+export const permissionsSubpluginsParam = 'permissionssubplugins';
 
 enum PermissionsView {
     LIST = 'list',
@@ -36,6 +39,7 @@ enum PermissionsView {
 
 type PermissionRows = ReturnType<typeof usePermissionsData>['rows'];
 
+const booleanParamValues = ['false', 'true'];
 const permissionsViews = Object.values(PermissionsView);
 
 const getPermissionRowsSignature = (rows: PermissionRows): string =>
@@ -75,11 +79,33 @@ export const DaoPermissionsPageClient: React.FC<
         enableUrlUpdate: true,
     });
 
-    const [mode, setMode] = useState<DisplayGraphMode>('incoming');
-    const [showDaoPermissions, setShowDaoPermissions] = useState(false);
-    const [showSubpluginPermissions, setShowSubpluginPermissions] =
-        useState(false);
+    const [modeParam, setMode] = useFilterUrlParam({
+        name: permissionsModeParam,
+        fallbackValue: 'incoming',
+        validValues: graphModes,
+        enableUrlUpdate: true,
+    });
+
+    const [showDaoPermissionsParam, setShowDaoPermissions] = useFilterUrlParam({
+        name: permissionsDaoParam,
+        fallbackValue: 'false',
+        validValues: booleanParamValues,
+        enableUrlUpdate: true,
+    });
+
+    const [showSubpluginPermissionsParam, setShowSubpluginPermissions] =
+        useFilterUrlParam({
+            name: permissionsSubpluginsParam,
+            fallbackValue: 'false',
+            validValues: booleanParamValues,
+            enableUrlUpdate: true,
+        });
+
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
+
+    const mode = (modeParam ?? 'incoming') as DisplayGraphMode;
+    const showDaoPermissions = showDaoPermissionsParam === 'true';
+    const showSubpluginPermissions = showSubpluginPermissionsParam === 'true';
 
     const handleViewChange = (value?: string | string[]) => {
         if (typeof value === 'string' && value) {
@@ -102,12 +128,12 @@ export const DaoPermissionsPageClient: React.FC<
     };
 
     const handleShowDaoPermissionsChange = (checked: boolean) => {
-        setShowDaoPermissions(checked);
+        setShowDaoPermissions(String(checked));
         setExpandedRows([]);
     };
 
     const handleShowSubpluginPermissionsChange = (checked: boolean) => {
-        setShowSubpluginPermissions(checked);
+        setShowSubpluginPermissions(String(checked));
         setExpandedRows([]);
     };
 
@@ -197,7 +223,7 @@ export const DaoPermissionsPageClient: React.FC<
             setMode(nextMode);
             setExpandedRows([]);
         }
-    }, [isLoading, mode, modeRowsByMode]);
+    }, [isLoading, mode, modeRowsByMode, setMode]);
 
     const allExpanded =
         filteredRows.length > 0 && expandedRows.length === filteredRows.length;
