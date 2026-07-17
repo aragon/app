@@ -22,66 +22,29 @@ export interface IPermissionRowFilters {
     showSubpluginPermissions: boolean;
 }
 
-type PermissionRowWithParentMetadata = IPermissionRow & {
-    hasParent?: boolean;
-    whoHasParent?: boolean;
-    whereHasParent?: boolean;
-    who?: { hasParent?: boolean };
-    where?: { hasParent?: boolean };
-    whoEntity?: { hasParent?: boolean };
-    whereEntity?: { hasParent?: boolean };
-};
-
-const hasParentFlag = (value?: boolean): boolean => value === true;
-
-const hasRowParentMetadata = (row: IPermissionRow): boolean => {
-    const rowWithMetadata = row as PermissionRowWithParentMetadata;
-
-    return (
-        hasParentFlag(rowWithMetadata.hasParent) ||
-        hasParentFlag(rowWithMetadata.whoHasParent) ||
-        hasParentFlag(rowWithMetadata.whereHasParent) ||
-        hasParentFlag(rowWithMetadata.who?.hasParent) ||
-        hasParentFlag(rowWithMetadata.where?.hasParent) ||
-        hasParentFlag(rowWithMetadata.whoEntity?.hasParent) ||
-        hasParentFlag(rowWithMetadata.whereEntity?.hasParent)
-    );
-};
-
 const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     const { meta } = plugin;
 
-    return (
-        meta.isSubPlugin === true ||
-        meta.hasParent === true ||
-        meta.parentPlugin != null
-    );
+    return meta.isSubPlugin === true || meta.parentPlugin != null;
 };
 
 const rowTouchesSubplugin = (
     row: IPermissionRow,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-): boolean => {
-    if (hasRowParentMetadata(row)) {
-        return true;
-    }
-
-    return (
-        daoPlugins
-            ?.filter(isSubplugin)
-            .some(
-                (plugin) =>
-                    addressUtils.isAddressEqual(
-                        plugin.meta.address,
-                        row.whoAddress,
-                    ) ||
-                    addressUtils.isAddressEqual(
-                        plugin.meta.address,
-                        row.whereAddress,
-                    ),
-            ) ?? false
-    );
-};
+): boolean =>
+    daoPlugins
+        ?.filter(isSubplugin)
+        .some(
+            (plugin) =>
+                addressUtils.isAddressEqual(
+                    plugin.meta.address,
+                    row.whoAddress,
+                ) ||
+                addressUtils.isAddressEqual(
+                    plugin.meta.address,
+                    row.whereAddress,
+                ),
+        ) ?? false;
 
 const isDaoGrantedPermission = (
     row: IPermissionRow,

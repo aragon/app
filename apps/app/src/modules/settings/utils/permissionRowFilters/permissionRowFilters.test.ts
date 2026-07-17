@@ -91,16 +91,21 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[1]]);
     });
 
-    it('hides rows with backend parent metadata by default', () => {
-        const rowWithParent = {
-            ...buildRow({ whoAddress: subpluginAddress }),
-            where: { hasParent: true },
-        } as IPermissionRow;
-        const rows = [rowWithParent, buildRow({ whoAddress: pluginAddress })];
+    it('hides rows touching plugins with a parent plugin by default', () => {
+        const rows = [
+            buildRow({ whereAddress: subpluginAddress }),
+            buildRow({ whoAddress: pluginAddress }),
+        ];
+        const daoPlugins = [
+            buildPlugin({
+                address: subpluginAddress,
+                parentPlugin: parentPluginAddress,
+            }),
+        ];
 
         const result = filterPermissionRows(rows, {
             activeAccountAddress: daoAddress,
-            daoPlugins: [],
+            daoPlugins,
             showDaoPermissions: true,
             showSubpluginPermissions: false,
         });
