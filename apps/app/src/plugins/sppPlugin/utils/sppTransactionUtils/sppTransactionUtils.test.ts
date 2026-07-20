@@ -679,11 +679,12 @@ describe('sppTransaction utils', () => {
             expect(result).toBeDefined();
         });
 
-        it('includes existingProposalCreationConditions in the condition rules', () => {
+        it('includes existingProposalCreationConditions in the condition rules and skips empty entries', () => {
             const values = generateCreateProcessFormDataAdvanced({
                 stages: [],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
                 existingProposalCreationConditions: [
+                    { address: '' },
                     { address: '0xCustomA' },
                     { address: '0xCustomB' },
                 ],
@@ -712,14 +713,15 @@ describe('sppTransaction utils', () => {
             );
         });
 
-        it('skips empty existingProposalCreationConditions entries', () => {
+        it('builds the rules from only existingProposalCreationConditions when no bodies can create proposals', () => {
+            const body = generateSetupBodyFormNew({
+                canCreateProposal: false,
+            });
+            const stage = generateCreateProcessFormStage({ bodies: [body] });
             const values = generateCreateProcessFormDataAdvanced({
-                stages: [],
+                stages: [stage],
                 proposalCreationMode: ProposalCreationMode.LISTED_BODIES,
-                existingProposalCreationConditions: [
-                    { address: '' },
-                    { address: '0xCustomA' },
-                ],
+                existingProposalCreationConditions: [{ address: '0xCustomA' }],
             });
 
             const sppSetupData = generatePluginInstallationSetupData({
@@ -729,13 +731,22 @@ describe('sppTransaction utils', () => {
                 },
             });
 
+            const pluginSetupData = [
+                generatePluginInstallationSetupData({
+                    preparedSetupData: {
+                        helpers: ['0xNewCondition'],
+                        permissions: [],
+                    },
+                }),
+            ];
+
             buildRuleConditionsSpy.mockReturnValueOnce([]);
             encodeFunctionDataSpy.mockReturnValueOnce('0xData');
 
-            sppTransactionUtils['buildUpdateRulesTransaction'](
+            const result = sppTransactionUtils['buildUpdateRulesTransaction'](
                 values,
                 sppSetupData,
-                [],
+                pluginSetupData,
                 [],
             );
 
@@ -743,6 +754,11 @@ describe('sppTransaction utils', () => {
                 ['0xCustomA'],
                 [],
             );
+            expect(result).toEqual({
+                to: '0xSppRuleCondition',
+                data: '0xData',
+                value: BigInt(0),
+            });
         });
 
         it('dedupes condition addresses across body, safe and custom sources case-insensitively', () => {
