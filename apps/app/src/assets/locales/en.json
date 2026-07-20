@@ -3058,6 +3058,11 @@
           "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
         },
+        "sppPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Safe multisig member"
+        },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"
         },
