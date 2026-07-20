@@ -52,7 +52,10 @@ export const Optional = () => (
 
 export const WithAlert = () => (
     <CheckboxGroup
-        alert={{ message: 'Select at least one action to continue.', variant: 'critical' }}
+        alert={{
+            message: 'Select at least one action to continue.',
+            variant: 'critical',
+        }}
         className="w-full"
         label="Proposal actions"
     >

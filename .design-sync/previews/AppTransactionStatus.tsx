@@ -1,16 +1,18 @@
 import {
+    AppTransactionStatus,
     BlockNavigationContextProvider,
     DebugContextProvider,
     enTranslations,
     IconType,
-    AppTransactionStatus,
     TranslationsProvider,
 } from '@aragon/gov-ui-kit';
 
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <BlockNavigationContextProvider>{props.children}</BlockNavigationContextProvider>
+            <BlockNavigationContextProvider>
+                {props.children}
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -26,7 +28,11 @@ export const Default = () => (
         <Wrapper>
             <AppTransactionStatus.Container
                 steps={[]}
-                transactionInfo={{ title: 'Publish proposal', current: 2, total: 3 }}
+                transactionInfo={{
+                    title: 'Publish proposal',
+                    current: 2,
+                    total: 3,
+                }}
             >
                 <AppTransactionStatus.Step
                     id="prepare"
@@ -38,7 +44,10 @@ export const Default = () => (
                     meta={{
                         label: 'Approve in wallet',
                         state: 'pending',
-                        addon: { label: 'Wallet', icon: IconType.BLOCKCHAIN_WALLET },
+                        addon: {
+                            label: 'Wallet',
+                            icon: IconType.BLOCKCHAIN_WALLET,
+                        },
                     }}
                     order={1}
                 />
@@ -110,7 +119,10 @@ export const Success = () => (
                     meta={{
                         label: 'Onchain confirmation',
                         state: 'success',
-                        addon: { label: 'View on explorer', href: 'https://etherscan.io/tx/0x1234' },
+                        addon: {
+                            label: 'View on explorer',
+                            href: 'https://etherscan.io/tx/0x1234',
+                        },
                     }}
                     order={2}
                 />

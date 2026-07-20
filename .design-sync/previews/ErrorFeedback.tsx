@@ -1,7 +1,7 @@
 import {
     DebugContextProvider,
-    enTranslations,
     ErrorFeedback,
+    enTranslations,
     TranslationsProvider,
 } from '@aragon/gov-ui-kit';
 

@@ -7,11 +7,16 @@ import {
     TranslationsProvider,
 } from '@aragon/gov-ui-kit';
 
-const AppForm = (props: { children?: React.ReactNode; defaultValues?: Record<string, unknown> }) => (
+const AppForm = (props: {
+    children?: React.ReactNode;
+    defaultValues?: Record<string, unknown>;
+}) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
             <GukModulesProvider>
-                <FormWrapper defaultValues={props.defaultValues}>{props.children}</FormWrapper>
+                <FormWrapper defaultValues={props.defaultValues}>
+                    {props.children}
+                </FormWrapper>
             </GukModulesProvider>
         </TranslationsProvider>
     </DebugContextProvider>
@@ -51,7 +56,13 @@ export const Filled = () => (
 
 // Mixed-case address with a broken EIP-55 checksum — AddressInput flags it on render.
 export const ChecksumError = () => (
-    <AppForm defaultValues={{ members: [{ address: '0x2a1E345b4A1eB6cD8194Cd75f7C2B34aE2a08cF3' }] }}>
+    <AppForm
+        defaultValues={{
+            members: [
+                { address: '0x2a1E345b4A1eB6cD8194Cd75f7C2B34aE2a08cF3' },
+            ],
+        }}
+    >
         <AddressesInput.Container
             helpText="Define the wallets that can create and vote on proposals."
             label="Members"

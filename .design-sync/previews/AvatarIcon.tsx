@@ -23,8 +23,20 @@ export const Sizes = () => (
 
 export const BackgroundWhite = () => (
     <div className="flex items-center gap-4 rounded-xl bg-neutral-100 p-4">
-        <AvatarIcon icon={IconType.APP_ASSETS} variant="primary" backgroundWhite={true} />
-        <AvatarIcon icon={IconType.CHECKMARK} variant="success" backgroundWhite={true} />
-        <AvatarIcon icon={IconType.WARNING} variant="warning" backgroundWhite={true} />
+        <AvatarIcon
+            backgroundWhite={true}
+            icon={IconType.APP_ASSETS}
+            variant="primary"
+        />
+        <AvatarIcon
+            backgroundWhite={true}
+            icon={IconType.CHECKMARK}
+            variant="success"
+        />
+        <AvatarIcon
+            backgroundWhite={true}
+            icon={IconType.WARNING}
+            variant="warning"
+        />
     </div>
 );

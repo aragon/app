@@ -6,10 +6,15 @@ import {
     TranslationsProvider,
 } from '@aragon/gov-ui-kit';
 
-const AppForm = (props: { children?: React.ReactNode; defaultValues?: Record<string, unknown> }) => (
+const AppForm = (props: {
+    children?: React.ReactNode;
+    defaultValues?: Record<string, unknown>;
+}) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <FormWrapper defaultValues={props.defaultValues}>{props.children}</FormWrapper>
+            <FormWrapper defaultValues={props.defaultValues}>
+                {props.children}
+            </FormWrapper>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -27,8 +32,14 @@ export const Filled = () => (
     <AppForm
         defaultValues={{
             resources: [
-                { name: 'Forum discussion', url: 'https://forum.aragon.org/t/treasury-diversification/412' },
-                { name: 'Governance docs', url: 'https://docs.aragon.org/governance' },
+                {
+                    name: 'Forum discussion',
+                    url: 'https://forum.aragon.org/t/treasury-diversification/412',
+                },
+                {
+                    name: 'Governance docs',
+                    url: 'https://docs.aragon.org/governance',
+                },
             ],
         }}
     >

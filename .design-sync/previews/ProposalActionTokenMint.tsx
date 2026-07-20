@@ -1,4 +1,8 @@
-import { GukModulesProvider, ProposalActionTokenMint, ProposalActionType } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    ProposalActionTokenMint,
+    ProposalActionType,
+} from '@aragon/gov-ui-kit';
 
 const baseAction = {
     from: '0x25716fB10298638eD386A5A5dD2E9233D213F442',

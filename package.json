@@ -14,8 +14,8 @@
         "test:release-summary": "node --test .github/workflows/scripts/generateReleaseSummary.test.js",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
         "guardrails:stats": "node .agents/shared/hooks/stats-metrics.mjs",
-        "lint": "turbo run lint",
-        "lint:check": "turbo run lint:check",
+        "lint": "turbo run lint && biome check --write --no-errors-on-unmatched --files-ignore-unknown=true .design-sync",
+        "lint:check": "turbo run lint:check && biome check --no-errors-on-unmatched --files-ignore-unknown=true .design-sync",
         "type-check": "turbo run type-check",
         "prepare": "husky"
     },

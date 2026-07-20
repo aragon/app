@@ -1,4 +1,9 @@
-import { Dialog, GukModulesProvider, TransactionDetail, TransactionDetailSummary } from '@aragon/gov-ui-kit';
+import {
+    Dialog,
+    GukModulesProvider,
+    TransactionDetail,
+    TransactionDetailSummary,
+} from '@aragon/gov-ui-kit';
 
 const noop = () => undefined;
 
@@ -18,7 +23,7 @@ export const ExecutionDialog = () => (
             <TransactionDetail.Root onClose={noop}>
                 <TransactionDetailSummary
                     chainId={1}
-                    date={1698432100000}
+                    date={1_698_432_100_000}
                     executedBy={{
                         address: '0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD',
                         helptext: 'SPP v1.3',
@@ -42,8 +47,10 @@ export const CustomTitle = () => (
             <TransactionDetail.Root onClose={noop} title="Treasury withdrawal">
                 <TransactionDetailSummary
                     chainId={1}
-                    date={1697040000000}
-                    executedBy={{ address: '0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786' }}
+                    date={1_697_040_000_000}
+                    executedBy={{
+                        address: '0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786',
+                    }}
                     totalActions={2}
                     transactionHash="0x8f5b7c2f2ad5e304bd53a4a8bcbd11a4a58ab48b93c6e7f4e14a3d3c3b7f90aa"
                 />

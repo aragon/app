@@ -5,7 +5,12 @@ const usdcLogo =
 
 export const Default = () => (
     <GukModulesProvider>
-        <AssetDataListItem.Structure amount={250000} fiatPrice={1} name="USD Coin" symbol="USDC" />
+        <AssetDataListItem.Structure
+            amount={250_000}
+            fiatPrice={1}
+            name="USD Coin"
+            symbol="USDC"
+        />
     </GukModulesProvider>
 );
 
@@ -13,21 +18,36 @@ export const TreasuryList = () => (
     <GukModulesProvider>
         <div className="flex w-full flex-col gap-3">
             <AssetDataListItem.Structure
-                amount={250000}
+                amount={250_000}
                 fiatPrice={1}
                 logoSrc={usdcLogo}
                 name="USD Coin"
                 symbol="USDC"
             />
-            <AssetDataListItem.Structure amount={86.4} fiatPrice={3421.55} name="Ethereum" symbol="ETH" />
-            <AssetDataListItem.Structure amount={1200000} fiatPrice={0.82} name="Aragon" symbol="ANT" />
+            <AssetDataListItem.Structure
+                amount={86.4}
+                fiatPrice={3421.55}
+                name="Ethereum"
+                symbol="ETH"
+            />
+            <AssetDataListItem.Structure
+                amount={1_200_000}
+                fiatPrice={0.82}
+                name="Aragon"
+                symbol="ANT"
+            />
         </div>
     </GukModulesProvider>
 );
 
 export const HiddenValue = () => (
     <GukModulesProvider>
-        <AssetDataListItem.Structure amount={512} hideValue={true} name="Governance NFT" symbol="GOV" />
+        <AssetDataListItem.Structure
+            amount={512}
+            hideValue={true}
+            name="Governance NFT"
+            symbol="GOV"
+        />
     </GukModulesProvider>
 );
 

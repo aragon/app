@@ -9,19 +9,46 @@ const avatarImage =
 
 export const Default = () => (
     <GukModulesProvider>
-        <MemberAvatar address="0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD" avatarSrc={blockiesFallback} />
+        <MemberAvatar
+            address="0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD"
+            avatarSrc={blockiesFallback}
+        />
     </GukModulesProvider>
 );
 
 export const Sizes = () => (
     <GukModulesProvider>
         <div className="flex items-end gap-4">
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="xs" />
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="sm" />
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="md" />
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="lg" />
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="xl" />
-            <MemberAvatar address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786" avatarSrc={blockiesFallback} size="2xl" />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="xs"
+            />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="sm"
+            />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="md"
+            />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="lg"
+            />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="xl"
+            />
+            <MemberAvatar
+                address="0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786"
+                avatarSrc={blockiesFallback}
+                size="2xl"
+            />
         </div>
     </GukModulesProvider>
 );
@@ -29,8 +56,16 @@ export const Sizes = () => (
 export const WithImage = () => (
     <GukModulesProvider>
         <div className="flex items-end gap-4">
-            <MemberAvatar address="0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5" avatarSrc={avatarImage} size="md" />
-            <MemberAvatar address="0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5" avatarSrc={avatarImage} size="2xl" />
+            <MemberAvatar
+                address="0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5"
+                avatarSrc={avatarImage}
+                size="md"
+            />
+            <MemberAvatar
+                address="0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5"
+                avatarSrc={avatarImage}
+                size="2xl"
+            />
         </div>
     </GukModulesProvider>
 );

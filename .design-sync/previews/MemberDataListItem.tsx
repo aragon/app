@@ -6,7 +6,7 @@ export const Default = () => (
             <MemberDataListItem.Structure
                 address="0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD"
                 delegationCount={9}
-                tokenAmount={12500}
+                tokenAmount={12_500}
                 tokenSymbol="ANT"
             />
         </div>
@@ -21,7 +21,7 @@ export const Delegate = () => (
                 delegationCount={1}
                 ensName="cgero.eth"
                 isDelegate={true}
-                tokenAmount={480000}
+                tokenAmount={480_000}
                 tokenSymbol="ANT"
             />
         </div>
@@ -43,13 +43,13 @@ export const MemberGrid = () => (
                 address="0x17366cae2b9c6C3055e9e3C78936a69006BE5409"
                 delegationCount={24}
                 ensName="builder.eth"
-                tokenAmount={1200000}
+                tokenAmount={1_200_000}
                 tokenSymbol="ANT"
             />
             <MemberDataListItem.Structure
                 address="0x02782C0b47DcCd8b74a5f0Cc4dA6a68e00a4e0a8"
                 delegationCount={3}
-                tokenAmount={56000}
+                tokenAmount={56_000}
                 tokenSymbol="ANT"
             />
             <MemberDataListItem.Skeleton />

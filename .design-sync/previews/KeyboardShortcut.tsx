@@ -15,7 +15,9 @@ export const Combination = () => (
 
 export const InSearchHint = () => (
     <div className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-2">
-        <span className="text-neutral-400 text-sm">Search DAOs, proposals, members…</span>
+        <span className="text-neutral-400 text-sm">
+            Search DAOs, proposals, members…
+        </span>
         <KeyboardShortcut>/</KeyboardShortcut>
     </div>
 );

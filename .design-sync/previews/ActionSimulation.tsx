@@ -4,12 +4,12 @@ export const Success = () => (
     <GukModulesProvider>
         <ActionSimulation
             className="flex-1"
-            totalActions={3}
             lastSimulation={{
-                timestamp: 1698000000000,
+                timestamp: 1_698_000_000_000,
                 url: 'https://dashboard.tenderly.co/simulation/12345',
                 status: 'success',
             }}
+            totalActions={3}
         />
     </GukModulesProvider>
 );
@@ -18,19 +18,23 @@ export const Failed = () => (
     <GukModulesProvider>
         <ActionSimulation
             className="flex-1"
-            totalActions={2}
             lastSimulation={{
-                timestamp: 1698000000000,
+                timestamp: 1_698_000_000_000,
                 url: 'https://dashboard.tenderly.co/simulation/12345',
                 status: 'failed',
             }}
+            totalActions={2}
         />
     </GukModulesProvider>
 );
 
 export const Loading = () => (
     <GukModulesProvider>
-        <ActionSimulation className="flex-1" totalActions={5} isLoading={true} />
+        <ActionSimulation
+            className="flex-1"
+            isLoading={true}
+            totalActions={5}
+        />
     </GukModulesProvider>
 );
 

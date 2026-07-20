@@ -4,7 +4,9 @@ const memberImage =
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%233164fa'/%3E%3Ccircle cx='32' cy='24' r='11' fill='%23b8c8fd'/%3E%3Cellipse cx='32' cy='54' rx='19' ry='14' fill='%23b8c8fd'/%3E%3C/svg%3E";
 
 const initialsFallback = (label: string) => (
-    <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">{label}</span>
+    <span className="flex size-full items-center justify-center bg-primary-400 text-neutral-0">
+        {label}
+    </span>
 );
 
 export const Default = () => <Avatar size="md" src={memberImage} />;
@@ -30,8 +32,20 @@ export const DefaultFallback = () => (
 
 export const CustomFallback = () => (
     <div className="flex items-center gap-4">
-        <Avatar size="md" src="broken-image" fallback={initialsFallback('AD')} />
-        <Avatar size="lg" src="broken-image" fallback={initialsFallback('SO')} />
-        <Avatar size="xl" src="broken-image" fallback={initialsFallback('GV')} />
+        <Avatar
+            fallback={initialsFallback('AD')}
+            size="md"
+            src="broken-image"
+        />
+        <Avatar
+            fallback={initialsFallback('SO')}
+            size="lg"
+            src="broken-image"
+        />
+        <Avatar
+            fallback={initialsFallback('GV')}
+            size="xl"
+            src="broken-image"
+        />
     </div>
 );

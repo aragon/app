@@ -1,6 +1,8 @@
 import { IllustrationObject } from '@aragon/gov-ui-kit';
 
-export const Default = () => <IllustrationObject object="ACTION" style={{ width: 140 }} />;
+export const Default = () => (
+    <IllustrationObject object="ACTION" style={{ width: 140 }} />
+);
 
 export const GovernanceObjects = () => (
     <div className="flex flex-wrap items-center gap-4">

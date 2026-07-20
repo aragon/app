@@ -26,7 +26,7 @@ export const Variants = () => (
 
 export const Static = () => (
     <div className="flex items-center gap-4">
-        <Spinner size="lg" variant="primary" isLoading={false} />
-        <Spinner size="lg" variant="neutral" isLoading={false} />
+        <Spinner isLoading={false} size="lg" variant="primary" />
+        <Spinner isLoading={false} size="lg" variant="neutral" />
     </div>
 );

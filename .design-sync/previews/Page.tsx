@@ -12,7 +12,9 @@ import {
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <BlockNavigationContextProvider>{props.children}</BlockNavigationContextProvider>
+            <BlockNavigationContextProvider>
+                {props.children}
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -28,7 +30,10 @@ export const Default = () => (
     <AppProviders>
         <div className="h-full">
             <Page.Header
-                breadcrumbs={[{ href: '/', label: 'Explore' }, { label: 'Builders Collective' }]}
+                breadcrumbs={[
+                    { href: '/', label: 'Explore' },
+                    { label: 'Builders Collective' },
+                ]}
                 description="A collective of independent builders funding open-source public goods through onchain governance."
                 stats={[
                     { label: 'Proposals', value: 128 },
@@ -44,8 +49,12 @@ export const Default = () => (
                         title="Proposals"
                     >
                         <Card className="flex flex-col gap-1 p-6">
-                            <p className="text-neutral-800">Fund the Q3 grants program</p>
-                            <p className="text-neutral-500 text-sm">Active — ends in 3 days</p>
+                            <p className="text-neutral-800">
+                                Fund the Q3 grants program
+                            </p>
+                            <p className="text-neutral-500 text-sm">
+                                Active — ends in 3 days
+                            </p>
                         </Card>
                     </Page.MainSection>
                 </Page.Main>
@@ -63,16 +72,24 @@ export const WithAside = () => (
                 <Page.Main>
                     <Page.MainSection title="Members">
                         <Card className="flex flex-col gap-1 p-6">
-                            <p className="text-neutral-800">2,412 token holders</p>
-                            <p className="text-neutral-500 text-sm">Voting power delegated to 148 addresses</p>
+                            <p className="text-neutral-800">
+                                2,412 token holders
+                            </p>
+                            <p className="text-neutral-500 text-sm">
+                                Voting power delegated to 148 addresses
+                            </p>
                         </Card>
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>
                     <Page.AsideCard title="Details">
                         <DefinitionList.Container>
-                            <DefinitionList.Item term="Network">Ethereum Mainnet</DefinitionList.Item>
-                            <DefinitionList.Item term="ENS">builders.dao.eth</DefinitionList.Item>
+                            <DefinitionList.Item term="Network">
+                                Ethereum Mainnet
+                            </DefinitionList.Item>
+                            <DefinitionList.Item term="ENS">
+                                builders.dao.eth
+                            </DefinitionList.Item>
                         </DefinitionList.Container>
                         <Link href="https://forum.aragon.org" isExternal={true}>
                             Governance forum
@@ -98,12 +115,20 @@ export const MainWithAction = () => (
                     <Page.MainSection inset={false} title="All proposals">
                         <div className="flex flex-col gap-3 pt-4">
                             <Card className="flex flex-col gap-1 p-6">
-                                <p className="text-neutral-800">Fund the Q3 grants program</p>
-                                <p className="text-neutral-500 text-sm">Active — 64% approval</p>
+                                <p className="text-neutral-800">
+                                    Fund the Q3 grants program
+                                </p>
+                                <p className="text-neutral-500 text-sm">
+                                    Active — 64% approval
+                                </p>
                             </Card>
                             <Card className="flex flex-col gap-1 p-6">
-                                <p className="text-neutral-800">Add security council body</p>
-                                <p className="text-neutral-500 text-sm">Pending — starts tomorrow</p>
+                                <p className="text-neutral-800">
+                                    Add security council body
+                                </p>
+                                <p className="text-neutral-500 text-sm">
+                                    Pending — starts tomorrow
+                                </p>
                             </Card>
                         </div>
                     </Page.MainSection>

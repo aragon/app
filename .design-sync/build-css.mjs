@@ -2,10 +2,16 @@
 // wiring (layoutRoot.css). Used as cfg.buildCmd — runs before every converter
 // build. See NOTES.md: the kit's shipped build.css is corrupted by its
 // minifier, and the app never consumes it anyway (it compiles from source).
-import { execFileSync } from 'child_process';
-import { existsSync, mkdirSync, readFileSync, symlinkSync, writeFileSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { execFileSync } from 'node:child_process';
+import {
+    existsSync,
+    mkdirSync,
+    readFileSync,
+    symlinkSync,
+    writeFileSync,
+} from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const cli = join(root, '.ds-sync/node_modules/@tailwindcss/cli/dist/index.mjs');
@@ -14,7 +20,41 @@ const tmp = join(root, '.design-sync/.cache/kit-styles.css');
 // cfg.cssEntry is security-bounded to the package dir, so the compiled file
 // must live inside it. node_modules is disposable — this runs (via
 // cfg.buildCmd) before every converter build, so the file is always fresh.
-const out = join(root, 'apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css');
+const out = join(
+    root,
+    'apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css',
+);
+
+// The Tailwind CLI lives in gitignored machine state (.ds-sync), so fresh
+// clones don't have it — bootstrap it pinned to the app's installed
+// tailwindcss version (the CLI must match the engine the app compiles with).
+if (!existsSync(cli)) {
+    const { version } = JSON.parse(
+        readFileSync(
+            join(root, 'apps/app/node_modules/tailwindcss/package.json'),
+            'utf8',
+        ),
+    );
+    console.log(
+        `@tailwindcss/cli missing — installing ${version} into .ds-sync`,
+    );
+    const dsSync = join(root, '.ds-sync');
+    mkdirSync(dsSync, { recursive: true });
+    // Anchor npm to .ds-sync: without a package.json here it would walk up
+    // and install into the workspace root instead.
+    if (!existsSync(join(dsSync, 'package.json'))) {
+        writeFileSync(
+            join(dsSync, 'package.json'),
+            '{"name":"ds-sync","private":true}\n',
+        );
+    }
+    execFileSync('npm', ['install', `@tailwindcss/cli@${version}`], {
+        cwd: dsSync,
+        stdio: 'inherit',
+        // npm is npm.cmd on Windows; spawn only resolves it through a shell
+        shell: process.platform === 'win32',
+    });
+}
 
 // slice 3: app components import via the '@/' alias; esbuild resolves it
 // through a node_modules/@ junction to apps/app/src (the converter's tsconfig
@@ -32,10 +72,13 @@ if (!existsSync(junction)) {
 // Gitignored (node_modules rule) and regenerated on every build.
 const shimDir = join(root, 'apps/app/src/node_modules/next');
 mkdirSync(shimDir, { recursive: true });
-writeFileSync(join(shimDir, 'package.json'), '{"name":"next","version":"0.0.0-design-sync-shim"}');
+writeFileSync(
+    join(shimDir, 'package.json'),
+    '{"name":"next","version":"0.0.0-design-sync-shim"}',
+);
 writeFileSync(
     join(shimDir, 'dynamic.js'),
-    "export default function dynamic() { return function DynamicShim() { return null; }; }\n",
+    'export default function dynamic() { return function DynamicShim() { return null; }; }\n',
 );
 writeFileSync(
     join(shimDir, 'image.js'),
@@ -46,11 +89,22 @@ writeFileSync(
     "import { createElement, forwardRef } from 'react';\nexport default forwardRef(function Link({ href, children, ...rest }, ref) {\n    return createElement('a', { href: typeof href === 'string' ? href : '#', ref, ...rest }, children);\n});\n",
 );
 
-execFileSync('node', [cli, '-i', entry, '-o', tmp], { stdio: 'inherit' });
+// Pin cwd: Tailwind v4's automatic source detection scans from the working
+// directory, so the emitted utilities (and the verified preview renders)
+// change with the caller's cwd unless it is fixed to the repo root.
+execFileSync('node', [cli, '-i', entry, '-o', tmp], {
+    cwd: root,
+    stdio: 'inherit',
+});
 
 // Tailwind rebases @font-face urls to paths that don't resolve from the output
 // location; point them at the kit's font directory relative to the package
 // root (where the converter reads this file from).
-const css = readFileSync(tmp, 'utf8').replaceAll('url("../../fonts/', 'url("./src/theme/fonts/');
+const css = readFileSync(tmp, 'utf8').replaceAll(
+    'url("../../fonts/',
+    'url("./src/theme/fonts/',
+);
 writeFileSync(out, css);
-console.log(`kit css compiled → ${out} (${Math.round(css.length / 1024)} KB), font urls repointed`);
+console.log(
+    `kit css compiled → ${out} (${Math.round(css.length / 1024)} KB), font urls repointed`,
+);

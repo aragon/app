@@ -11,7 +11,9 @@ import {
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <BlockNavigationContextProvider>{props.children}</BlockNavigationContextProvider>
+            <BlockNavigationContextProvider>
+                {props.children}
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -20,7 +22,11 @@ const AppProviders = (props: { children?: React.ReactNode }) => (
 // animation never progresses past its initial frame. Force the final "open"
 // styles via the kit's className hooks.
 const forceOpenStyles = (
-    <style>{'.ds-force-open { opacity: 1 !important; transform: none !important; }'}</style>
+    <style>
+        {
+            '.ds-force-open { opacity: 1 !important; transform: none !important; }'
+        }
+    </style>
 );
 
 // "What to expect" details shown before entering the create-DAO wizard.
@@ -41,9 +47,18 @@ export const Default = () => (
                     description="Deploy your organization on-chain in a few guided steps. You can adjust everything later through governance."
                     dialogId="createDaoDetails"
                     steps={[
-                        { label: 'Select the network your DAO lives on', icon: 'CHAIN' },
-                        { label: 'Describe your DAO with a name and logo', icon: 'DATABASE' },
-                        { label: 'Define how proposals get approved', icon: 'USERS' },
+                        {
+                            label: 'Select the network your DAO lives on',
+                            icon: 'CHAIN',
+                        },
+                        {
+                            label: 'Describe your DAO with a name and logo',
+                            icon: 'DATABASE',
+                        },
+                        {
+                            label: 'Define how proposals get approved',
+                            icon: 'USERS',
+                        },
                     ]}
                     title="Create your DAO"
                 />
@@ -71,9 +86,18 @@ export const WithInfoLink = () => (
                     dialogId="createProcessDetails"
                     infoLink="https://docs.aragon.org/processes"
                     steps={[
-                        { label: 'Name and describe the process', icon: 'LABELS' },
-                        { label: 'Add the governance bodies involved', icon: 'USERS' },
-                        { label: 'Configure voting settings and thresholds', icon: 'SETTINGS' },
+                        {
+                            label: 'Name and describe the process',
+                            icon: 'LABELS',
+                        },
+                        {
+                            label: 'Add the governance bodies involved',
+                            icon: 'USERS',
+                        },
+                        {
+                            label: 'Configure voting settings and thresholds',
+                            icon: 'SETTINGS',
+                        },
                     ]}
                     title="Create governance process"
                 />

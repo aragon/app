@@ -1,4 +1,8 @@
-import { GukModulesProvider, ProposalActionWithdrawToken, ProposalActionType } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    ProposalActionType,
+    ProposalActionWithdrawToken,
+} from '@aragon/gov-ui-kit';
 
 const baseAction = {
     from: '0x25716fB10298638eD386A5A5dD2E9233D213F442',
@@ -19,8 +23,14 @@ export const StablecoinTransfer = () => (
             action={{
                 ...baseAction,
                 type: ProposalActionType.WITHDRAW_TOKEN,
-                sender: { address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e', name: 'Patito DAO Treasury' },
-                receiver: { address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045', name: 'grants.patito.eth' },
+                sender: {
+                    address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+                    name: 'Patito DAO Treasury',
+                },
+                receiver: {
+                    address: '0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045',
+                    name: 'grants.patito.eth',
+                },
                 token: {
                     name: 'USD Coin',
                     symbol: 'USDC',
@@ -42,8 +52,12 @@ export const EthTransfer = () => (
             action={{
                 ...baseAction,
                 type: ProposalActionType.WITHDRAW_TOKEN,
-                sender: { address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e' },
-                receiver: { address: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE' },
+                sender: {
+                    address: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+                },
+                receiver: {
+                    address: '0x3f5CE5FBFe3E9af3971dD833D26BA9b5C936F0bE',
+                },
                 token: {
                     name: 'Ethereum',
                     symbol: 'ETH',

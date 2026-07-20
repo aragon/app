@@ -16,7 +16,10 @@ const AppProviders = (props: { children?: React.ReactNode }) => (
 export const EthereumMainnet = () => (
     <AppProviders>
         <div className="max-w-lg">
-            <NetworkSwitchAlert isCrossNetworkTransaction={true} networkName="Ethereum Mainnet" />
+            <NetworkSwitchAlert
+                isCrossNetworkTransaction={true}
+                networkName="Ethereum Mainnet"
+            />
         </div>
     </AppProviders>
 );
@@ -24,7 +27,10 @@ export const EthereumMainnet = () => (
 export const Base = () => (
     <AppProviders>
         <div className="max-w-lg">
-            <NetworkSwitchAlert isCrossNetworkTransaction={true} networkName="Base" />
+            <NetworkSwitchAlert
+                isCrossNetworkTransaction={true}
+                networkName="Base"
+            />
         </div>
     </AppProviders>
 );

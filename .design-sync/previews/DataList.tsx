@@ -1,4 +1,9 @@
-import { DataList, StateSkeletonBar, StateSkeletonCircular, Tag } from '@aragon/gov-ui-kit';
+import {
+    DataList,
+    StateSkeletonBar,
+    StateSkeletonCircular,
+    Tag,
+} from '@aragon/gov-ui-kit';
 
 const sortItems = [
     { value: 'date_desc', label: 'Newest first', type: 'DESC' as const },
@@ -9,7 +14,8 @@ const proposals = [
     {
         id: 'PIP-23',
         title: 'Fund grants wave 4 with 250k USDC',
-        summary: 'Allocate treasury funds to the next wave of ecosystem grants.',
+        summary:
+            'Allocate treasury funds to the next wave of ecosystem grants.',
         status: 'Active',
         variant: 'info' as const,
     },
@@ -23,14 +29,20 @@ const proposals = [
     {
         id: 'PIP-21',
         title: 'Onboard security council multisig',
-        summary: 'Grant the security council permission to veto emergency actions.',
+        summary:
+            'Grant the security council permission to veto emergency actions.',
         status: 'Rejected',
         variant: 'critical' as const,
     },
 ];
 
 export const ProposalList = () => (
-    <DataList.Root entityLabel="Proposals" itemsCount={proposals.length} pageSize={3} state="idle">
+    <DataList.Root
+        entityLabel="Proposals"
+        itemsCount={proposals.length}
+        pageSize={3}
+        state="idle"
+    >
         <DataList.Filter
             activeSort="date_desc"
             onSearchValueChange={() => undefined}
@@ -40,10 +52,18 @@ export const ProposalList = () => (
         />
         <DataList.Container>
             {proposals.map((proposal) => (
-                <DataList.Item className="flex flex-col gap-1 py-4" key={proposal.id}>
+                <DataList.Item
+                    className="flex flex-col gap-1 py-4"
+                    key={proposal.id}
+                >
                     <div className="flex items-center justify-between gap-2">
-                        <p className="font-normal text-base text-neutral-800 leading-tight">{proposal.title}</p>
-                        <Tag label={proposal.status} variant={proposal.variant} />
+                        <p className="font-normal text-base text-neutral-800 leading-tight">
+                            {proposal.title}
+                        </p>
+                        <Tag
+                            label={proposal.status}
+                            variant={proposal.variant}
+                        />
                     </div>
                     <p className="text-neutral-500 text-sm leading-normal">
                         {proposal.id} · {proposal.summary}
@@ -63,16 +83,30 @@ const members = [
 ];
 
 export const MemberList = () => (
-    <DataList.Root entityLabel="Members" itemsCount={12} pageSize={4} state="idle">
+    <DataList.Root
+        entityLabel="Members"
+        itemsCount={12}
+        pageSize={4}
+        state="idle"
+    >
         <DataList.Container>
             {members.map((member) => (
-                <DataList.Item className="flex flex-row items-center gap-3 py-4" key={member.address}>
+                <DataList.Item
+                    className="flex flex-row items-center gap-3 py-4"
+                    key={member.address}
+                >
                     <span className="size-8 shrink-0 rounded-full bg-primary-100" />
                     <div className="flex grow flex-col">
-                        <p className="text-base text-neutral-800 leading-tight">{member.name}</p>
-                        <p className="text-neutral-500 text-sm leading-normal">{member.address}</p>
+                        <p className="text-base text-neutral-800 leading-tight">
+                            {member.name}
+                        </p>
+                        <p className="text-neutral-500 text-sm leading-normal">
+                            {member.address}
+                        </p>
                     </div>
-                    <p className="text-neutral-500 text-sm leading-normal">{member.votingPower}</p>
+                    <p className="text-neutral-500 text-sm leading-normal">
+                        {member.votingPower}
+                    </p>
                 </DataList.Item>
             ))}
         </DataList.Container>
@@ -111,7 +145,8 @@ export const EmptyFilteredState = () => (
         <DataList.Container
             emptyFilteredState={{
                 heading: 'No proposals found',
-                description: 'Your filters did not match any proposals. Reset the filters and try again.',
+                description:
+                    'Your filters did not match any proposals. Reset the filters and try again.',
             }}
         />
     </DataList.Root>

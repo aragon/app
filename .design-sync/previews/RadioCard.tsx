@@ -2,7 +2,11 @@ import { RadioCard, RadioGroup } from '@aragon/gov-ui-kit';
 
 export const Default = () => (
     <RadioGroup className="w-full" name="governance-default">
-        <RadioCard label="Token voting" tag={{ label: 'Governance', variant: 'info' }} value="token-voting" />
+        <RadioCard
+            label="Token voting"
+            tag={{ label: 'Governance', variant: 'info' }}
+            value="token-voting"
+        />
     </RadioGroup>
 );
 
@@ -18,14 +22,20 @@ export const WithDescription = () => (
 );
 
 export const SelectedWithChildren = () => (
-    <RadioGroup className="w-full" defaultValue="multisig" name="governance-selected">
+    <RadioGroup
+        className="w-full"
+        defaultValue="multisig"
+        name="governance-selected"
+    >
         <RadioCard
             description="A fixed set of signers approves proposals before execution."
             label="Multisig"
             tag={{ label: 'Selected', variant: 'success' }}
             value="multisig"
         >
-            <p className="text-neutral-500">Requires 3 of 5 signer approvals to execute.</p>
+            <p className="text-neutral-500">
+                Requires 3 of 5 signer approvals to execute.
+            </p>
         </RadioCard>
     </RadioGroup>
 );

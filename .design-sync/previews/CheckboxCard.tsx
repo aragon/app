@@ -25,7 +25,9 @@ export const CheckedWithChildren = () => (
         label="Multisig approval"
         tag={{ label: 'Selected', variant: 'primary' }}
     >
-        <p className="text-neutral-500">3 of 5 signers required to execute proposals.</p>
+        <p className="text-neutral-500">
+            3 of 5 signers required to execute proposals.
+        </p>
     </CheckboxCard>
 );
 

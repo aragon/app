@@ -1,11 +1,30 @@
 import { InputSearch } from '@aragon/gov-ui-kit';
 
-export const Default = () => <InputSearch placeholder="Search proposals" className="w-full" />;
-
-export const WithValue = () => (
-    <InputSearch label="Members" defaultValue="0x47d8…9c1e" helpText="Search by address or ENS name." className="w-full" />
+export const Default = () => (
+    <InputSearch className="w-full" placeholder="Search proposals" />
 );
 
-export const Loading = () => <InputSearch defaultValue="treasury diversification" isLoading={true} className="w-full" />;
+export const WithValue = () => (
+    <InputSearch
+        className="w-full"
+        defaultValue="0x47d8…9c1e"
+        helpText="Search by address or ENS name."
+        label="Members"
+    />
+);
 
-export const Disabled = () => <InputSearch placeholder="Search delegates" disabled={true} className="w-full" />;
+export const Loading = () => (
+    <InputSearch
+        className="w-full"
+        defaultValue="treasury diversification"
+        isLoading={true}
+    />
+);
+
+export const Disabled = () => (
+    <InputSearch
+        className="w-full"
+        disabled={true}
+        placeholder="Search delegates"
+    />
+);

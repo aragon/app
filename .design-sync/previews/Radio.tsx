@@ -16,7 +16,11 @@ export const Selected = () => (
 export const Disabled = () => (
     <RadioGroup defaultValue="abstain" name="vote-disabled">
         <Radio disabled={true} label="Vote yes" value="yes" />
-        <Radio disabled={true} label="Abstain (voting closed)" value="abstain" />
+        <Radio
+            disabled={true}
+            label="Abstain (voting closed)"
+            value="abstain"
+        />
     </RadioGroup>
 );
 

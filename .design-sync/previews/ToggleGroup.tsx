@@ -17,7 +17,12 @@ export const MultiSelect = () => (
 );
 
 export const SpaceBetween = () => (
-    <ToggleGroup className="w-full" defaultValue="default" isMultiSelect={false} variant="space-between">
+    <ToggleGroup
+        className="w-full"
+        defaultValue="default"
+        isMultiSelect={false}
+        variant="space-between"
+    >
         <Toggle label="Default" value="default" />
         <Toggle label="Optimistic" value="optimistic" />
         <Toggle label="Timelock" value="timelock" />
@@ -25,7 +30,11 @@ export const SpaceBetween = () => (
 );
 
 export const Vertical = () => (
-    <ToggleGroup defaultValue="active" isMultiSelect={false} orientation="vertical">
+    <ToggleGroup
+        defaultValue="active"
+        isMultiSelect={false}
+        orientation="vertical"
+    >
         <Toggle label="Active" value="active" />
         <Toggle label="Pending" value="pending" />
         <Toggle label="Executed" value="executed" />

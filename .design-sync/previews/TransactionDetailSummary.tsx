@@ -1,10 +1,13 @@
-import { GukModulesProvider, TransactionDetailSummary } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    TransactionDetailSummary,
+} from '@aragon/gov-ui-kit';
 
 export const ActiveProcess = () => (
     <GukModulesProvider>
         <TransactionDetailSummary
             chainId={1}
-            date={1698432100000}
+            date={1_698_432_100_000}
             executedBy={{
                 address: '0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD',
                 helptext: 'SPP v1.3',
@@ -23,8 +26,10 @@ export const InactiveProcess = () => (
     <GukModulesProvider>
         <TransactionDetailSummary
             chainId={1}
-            date={1697040000000}
-            executedBy={{ address: '0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786' }}
+            date={1_697_040_000_000}
+            executedBy={{
+                address: '0x9d0920D3D7c9F28baF0abed7f2E26A5126cc0786',
+            }}
             totalActions={2}
             transactionHash="0x8f5b7c2f2ad5e304bd53a4a8bcbd11a4a58ab48b93c6e7f4e14a3d3c3b7f90aa"
         />
@@ -35,7 +40,7 @@ export const PluginExecutor = () => (
     <GukModulesProvider>
         <TransactionDetailSummary
             chainId={1}
-            date={1698000000000}
+            date={1_698_000_000_000}
             executedBy={{
                 address: '0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5',
                 label: 'Token Voting',

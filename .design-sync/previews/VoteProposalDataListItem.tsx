@@ -1,9 +1,12 @@
-import { GukModulesProvider, VoteProposalDataListItem } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    VoteProposalDataListItem,
+} from '@aragon/gov-ui-kit';
 
 export const Default = () => (
     <GukModulesProvider>
         <VoteProposalDataListItem.Structure
-            date={1698000000000}
+            date={1_698_000_000_000}
             proposalId="PIP-24"
             proposalTitle="Fund the Q3 grants program"
             voteIndicator="yes"
@@ -15,19 +18,19 @@ export const VotingHistory = () => (
     <GukModulesProvider>
         <div className="flex w-full flex-col gap-3">
             <VoteProposalDataListItem.Structure
-                date={1698000000000}
+                date={1_698_000_000_000}
                 proposalId="PIP-23"
                 proposalTitle="Upgrade the token voting plugin"
                 voteIndicator="yes"
             />
             <VoteProposalDataListItem.Structure
-                date={1696000000000}
+                date={1_696_000_000_000}
                 proposalId="PIP-22"
                 proposalTitle="Increase quorum to 20%"
                 voteIndicator="no"
             />
             <VoteProposalDataListItem.Structure
-                date={1694000000000}
+                date={1_694_000_000_000}
                 proposalId="PIP-21"
                 proposalTitle="Renew the security audit retainer"
                 voteIndicator="abstain"
@@ -39,7 +42,7 @@ export const VotingHistory = () => (
 export const VetoVote = () => (
     <GukModulesProvider>
         <VoteProposalDataListItem.Structure
-            date={1697000000000}
+            date={1_697_000_000_000}
             isVeto={true}
             proposalId="OP-7"
             proposalTitle="Emergency treasury reallocation"

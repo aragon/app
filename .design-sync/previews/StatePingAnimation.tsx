@@ -17,8 +17,12 @@ export const LiveProposalIndicator = () => (
     <div className="flex items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3">
         <StatePingAnimation variant="info" />
         <div className="flex flex-col">
-            <span className="text-base text-neutral-800 leading-tight">Voting is live</span>
-            <span className="text-neutral-500 text-sm">Ends in 2 days · 64% support</span>
+            <span className="text-base text-neutral-800 leading-tight">
+                Voting is live
+            </span>
+            <span className="text-neutral-500 text-sm">
+                Ends in 2 days · 64% support
+            </span>
         </div>
     </div>
 );
@@ -26,6 +30,8 @@ export const LiveProposalIndicator = () => (
 export const ExecutionPending = () => (
     <div className="flex items-center gap-3">
         <StatePingAnimation variant="warning" />
-        <span className="text-neutral-800 text-sm">Awaiting onchain execution</span>
+        <span className="text-neutral-800 text-sm">
+            Awaiting onchain execution
+        </span>
     </div>
 );

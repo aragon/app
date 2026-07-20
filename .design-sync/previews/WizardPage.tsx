@@ -12,7 +12,9 @@ import {
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <BlockNavigationContextProvider>{props.children}</BlockNavigationContextProvider>
+            <BlockNavigationContextProvider>
+                {props.children}
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -62,7 +64,9 @@ export const Default = () => (
 export const FinalStep = () => (
     <AppProviders>
         <WizardPage.Container
-            initialSteps={[{ id: 'review', order: 0, meta: { name: 'Review' } }]}
+            initialSteps={[
+                { id: 'review', order: 0, meta: { name: 'Review' } },
+            ]}
             onSubmit={() => undefined}
             submitHelpText="Deploying the DAO requires an on-chain transaction and gas fees."
             submitLabel="Deploy your DAO"
@@ -77,15 +81,25 @@ export const FinalStep = () => (
                 <Card className="flex flex-col gap-3 p-6">
                     <div className="flex items-center justify-between">
                         <span className="text-neutral-500 text-sm">Name</span>
-                        <span className="text-neutral-800 text-sm">Builders Collective</span>
+                        <span className="text-neutral-800 text-sm">
+                            Builders Collective
+                        </span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-neutral-500 text-sm">Network</span>
-                        <span className="text-neutral-800 text-sm">Ethereum Mainnet</span>
+                        <span className="text-neutral-500 text-sm">
+                            Network
+                        </span>
+                        <span className="text-neutral-800 text-sm">
+                            Ethereum Mainnet
+                        </span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <span className="text-neutral-500 text-sm">Governance</span>
-                        <span className="text-neutral-800 text-sm">Token voting (ERC-20)</span>
+                        <span className="text-neutral-500 text-sm">
+                            Governance
+                        </span>
+                        <span className="text-neutral-800 text-sm">
+                            Token voting (ERC-20)
+                        </span>
                     </div>
                 </Card>
             </WizardPage.Step>
@@ -100,7 +114,11 @@ export const NextDropdown = () => (
         <WizardPage.Container
             finalStep="Publish proposal"
             initialSteps={[
-                { id: 'metadata', order: 0, meta: { name: 'Describe proposal' } },
+                {
+                    id: 'metadata',
+                    order: 0,
+                    meta: { name: 'Describe proposal' },
+                },
                 { id: 'actions', order: 1, meta: { name: 'Actions' } },
             ]}
             onSubmit={() => undefined}

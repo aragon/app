@@ -9,7 +9,10 @@ export const Default = () => (
 export const WithAddress = () => (
     <div className="flex items-center gap-2 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3">
         <span className="text-neutral-500 text-sm">0x1a9C…35BC</span>
-        <Clipboard copyValue="0x1a9C8182C09F50C8318d769245beA52c32BE35BC" variant="avatar-white-bg" />
+        <Clipboard
+            copyValue="0x1a9C8182C09F50C8318d769245beA52c32BE35BC"
+            variant="avatar-white-bg"
+        />
     </div>
 );
 

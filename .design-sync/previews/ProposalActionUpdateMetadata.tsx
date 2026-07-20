@@ -1,4 +1,8 @@
-import { GukModulesProvider, ProposalActionUpdateMetadata, ProposalActionType } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    ProposalActionType,
+    ProposalActionUpdateMetadata,
+} from '@aragon/gov-ui-kit';
 
 const baseAction = {
     from: '0x25716fB10298638eD386A5A5dD2E9233D213F442',
@@ -22,8 +26,14 @@ export const DaoMetadata = () => (
                 existingMetadata: {
                     avatar: oldAvatar,
                     name: 'Patito DAO',
-                    description: 'A community-run DAO funding public goods in the Patito ecosystem.',
-                    links: [{ label: 'Website', href: 'https://patito.example.org/' }],
+                    description:
+                        'A community-run DAO funding public goods in the Patito ecosystem.',
+                    links: [
+                        {
+                            label: 'Website',
+                            href: 'https://patito.example.org/',
+                        },
+                    ],
                 },
                 proposedMetadata: {
                     avatar: newAvatar,
@@ -31,8 +41,14 @@ export const DaoMetadata = () => (
                     description:
                         'The Patito Collective funds public goods, coordinates contributors, and stewards the protocol treasury.',
                     links: [
-                        { label: 'Website', href: 'https://patito.example.org/' },
-                        { label: 'Forum', href: 'https://forum.patito.example.org/' },
+                        {
+                            label: 'Website',
+                            href: 'https://patito.example.org/',
+                        },
+                        {
+                            label: 'Forum',
+                            href: 'https://forum.patito.example.org/',
+                        },
                     ],
                 },
             }}
@@ -50,15 +66,26 @@ export const PluginMetadata = () => (
                 existingMetadata: {
                     name: 'Founder council',
                     description: 'Some non helpful description',
-                    links: [{ label: 'Charter', href: 'https://patito.example.org/charter' }],
+                    links: [
+                        {
+                            label: 'Charter',
+                            href: 'https://patito.example.org/charter',
+                        },
+                    ],
                 },
                 proposedMetadata: {
                     name: 'Founders council',
                     description:
                         'The founders council is composed of the original founders of the DAO and holds a veto right on all published proposals.',
                     links: [
-                        { label: 'Charter', href: 'https://patito.example.org/charter' },
-                        { label: 'Members', href: 'https://patito.example.org/members' },
+                        {
+                            label: 'Charter',
+                            href: 'https://patito.example.org/charter',
+                        },
+                        {
+                            label: 'Members',
+                            href: 'https://patito.example.org/members',
+                        },
                     ],
                 },
             }}
@@ -84,7 +111,12 @@ export const ProcessPluginMetadata = () => (
                     processKey: 'CRE',
                     description:
                         'Core proposals are the primary governance process of the DAO. Grants and protocol upgrades both require passing a Core proposal.',
-                    links: [{ label: 'Process docs', href: 'https://patito.example.org/process/core' }],
+                    links: [
+                        {
+                            label: 'Process docs',
+                            href: 'https://patito.example.org/process/core',
+                        },
+                    ],
                 },
             }}
             index={2}

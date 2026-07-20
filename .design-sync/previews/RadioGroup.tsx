@@ -60,7 +60,10 @@ export const DisabledGroup = () => (
 
 export const WithAlert = () => (
     <RadioGroup
-        alert={{ message: 'You must select an option before submitting your vote.', variant: 'critical' }}
+        alert={{
+            message: 'You must select an option before submitting your vote.',
+            variant: 'critical',
+        }}
         className="w-full"
         label="Cast your vote"
         name="vote-alert"

@@ -39,7 +39,10 @@ export const MultipleCriteria = () => (
         <div style={{ width: '100%', minWidth: 384, maxWidth: 560 }}>
             <ProposalVotingProgress.Container>
                 <ProposalVotingProgress.Item
-                    description={{ value: '6.4M', text: 'of 9.4M ARA in favour' }}
+                    description={{
+                        value: '6.4M',
+                        text: 'of 9.4M ARA in favour',
+                    }}
                     name="Support"
                     showPercentage={true}
                     showStatus={true}

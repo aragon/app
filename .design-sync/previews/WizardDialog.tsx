@@ -14,7 +14,9 @@ import {
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <BlockNavigationContextProvider>{props.children}</BlockNavigationContextProvider>
+            <BlockNavigationContextProvider>
+                {props.children}
+            </BlockNavigationContextProvider>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -23,7 +25,11 @@ const AppProviders = (props: { children?: React.ReactNode }) => (
 // animation never progresses past its initial frame. Force the final "open"
 // styles via the kit's className hooks.
 const forceOpenStyles = (
-    <style>{'.ds-force-open { opacity: 1 !important; transform: none !important; }'}</style>
+    <style>
+        {
+            '.ds-force-open { opacity: 1 !important; transform: none !important; }'
+        }
+    </style>
 );
 
 // First step of a two-step dialog wizard: footer shows "Close" plus the
@@ -51,8 +57,16 @@ export const Default = () => (
                     submitLabel="Add body"
                     title="Set up governance body"
                 >
-                    <WizardDialog.Step id="type" meta={{ name: 'Type' }} order={0}>
-                        <RadioGroup className="w-full" defaultValue="multisig" label="Body type">
+                    <WizardDialog.Step
+                        id="type"
+                        meta={{ name: 'Type' }}
+                        order={0}
+                    >
+                        <RadioGroup
+                            className="w-full"
+                            defaultValue="multisig"
+                            label="Body type"
+                        >
                             <RadioCard
                                 description="A fixed list of members approves proposals."
                                 label="Multisig"
@@ -87,12 +101,22 @@ export const FinalStep = () => (
             >
                 <WizardDialog.Container
                     formId="renameDao"
-                    initialSteps={[{ id: 'metadata', order: 0, meta: { name: 'Metadata' } }]}
+                    initialSteps={[
+                        {
+                            id: 'metadata',
+                            order: 0,
+                            meta: { name: 'Metadata' },
+                        },
+                    ]}
                     onSubmit={() => undefined}
                     submitLabel="Save changes"
                     title="Update DAO metadata"
                 >
-                    <WizardDialog.Step id="metadata" meta={{ name: 'Metadata' }} order={0}>
+                    <WizardDialog.Step
+                        id="metadata"
+                        meta={{ name: 'Metadata' }}
+                        order={0}
+                    >
                         <div className="flex w-full flex-col gap-4">
                             <InputText
                                 defaultValue="Builders Collective"

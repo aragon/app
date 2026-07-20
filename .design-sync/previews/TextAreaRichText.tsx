@@ -20,7 +20,10 @@ export const WithContent = () => (
 export const States = () => (
     <div className="flex w-full flex-col gap-4">
         <TextAreaRichText
-            alert={{ message: 'The proposal body cannot be empty.', variant: 'critical' }}
+            alert={{
+                message: 'The proposal body cannot be empty.',
+                variant: 'critical',
+            }}
             label="Proposal body"
             placeholder="Write the full proposal…"
             variant="critical"

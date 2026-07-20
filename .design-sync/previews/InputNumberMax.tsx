@@ -2,36 +2,46 @@ import { InputNumberMax } from '@aragon/gov-ui-kit';
 
 export const Default = () => (
     <InputNumberMax
-        label="Amount to withdraw"
-        max={12500}
-        placeholder="0"
-        helpText="Treasury balance: 12,500 ANT"
         className="w-full"
+        helpText="Treasury balance: 12,500 ANT"
+        label="Amount to withdraw"
+        max={12_500}
+        placeholder="0"
     />
 );
 
 export const WithValue = () => (
-    <InputNumberMax label="Tokens to delegate" max={54120} value="1500" helpText="Your balance: 54,120 ANT" className="w-full" />
+    <InputNumberMax
+        className="w-full"
+        helpText="Your balance: 54,120 ANT"
+        label="Tokens to delegate"
+        max={54_120}
+        value="1500"
+    />
 );
 
 export const Critical = () => (
     <InputNumberMax
+        alert={{
+            message:
+                'Amount exceeds the 1,000 ANT spending cap of this plugin.',
+            variant: 'critical',
+        }}
+        className="w-full"
         label="Amount to send"
-        max={12500}
+        max={12_500}
         value="1200"
         variant="critical"
-        alert={{ message: 'Amount exceeds the 1,000 ANT spending cap of this plugin.', variant: 'critical' }}
-        className="w-full"
     />
 );
 
 export const Disabled = () => (
     <InputNumberMax
-        label="Locked tokens"
-        max={10000}
-        value="10000"
+        className="w-full"
         disabled={true}
         helpText="Tokens are locked until the voting period ends."
-        className="w-full"
+        label="Locked tokens"
+        max={10_000}
+        value="10000"
     />
 );

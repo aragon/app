@@ -5,7 +5,10 @@ export const Default = () => (
         <Breadcrumbs
             links={[
                 { label: 'Proposals', href: '/proposals' },
-                { label: 'PIP-23: Treasury diversification', href: '/proposals/pip-23' },
+                {
+                    label: 'PIP-23: Treasury diversification',
+                    href: '/proposals/pip-23',
+                },
             ]}
         />
     </div>

@@ -5,29 +5,80 @@
     "globalName": "GovUiKit",
     "buildCmd": "node .design-sync/build-css.mjs",
     "readmeHeader": ".design-sync/conventions.md",
-    "extraEntries": ["../../../../../.design-sync/app-entry.ts"],
+    "extraEntries": [
+        "../../../../../.design-sync/app-entry.ts"
+    ],
     "cssEntry": ".design-sync-kit-styles.css",
     "overrides": {
-        "Button": { "cardMode": "column" },
-        "Dialog": { "cardMode": "single", "viewport": "640x520" },
-        "DialogAlert": { "cardMode": "single", "viewport": "640x520" },
-        "StateSkeletonCircular": { "cardMode": "column" },
-        "Tooltip": { "cardMode": "single", "primaryStory": "Default" },
-        "Breadcrumbs": { "cardMode": "column" },
-        "CardSummary": { "cardMode": "column" },
-        "StateSkeletonBar": { "cardMode": "column" },
-        "Dropdown": { "cardMode": "single", "primaryStory": "OpenMenu" },
-        "MemberDataListItem": { "cardMode": "column" },
-        "ProposalActionUpdateMetadata": { "cardMode": "column" },
-        "ProposalVotingProgress": { "cardMode": "column" },
-        "SmartContractFunctionDataListItem": { "cardMode": "column" },
-        "TransactionDetail": { "cardMode": "single", "primaryStory": "ExecutionDialog" },
-        "Page": { "cardMode": "column" },
-        "AdvancedDateInput": { "cardMode": "column" },
-        "Banner": { "cardMode": "column" },
-        "WizardDetailsDialog": { "cardMode": "single", "primaryStory": "Default" },
-        "WizardDialog": { "cardMode": "single", "primaryStory": "Default" },
-        "Wallet": { "cardMode": "single", "primaryStory": "Connected", "viewport": "1360x300" }
+        "Button": {
+            "cardMode": "column"
+        },
+        "Dialog": {
+            "cardMode": "single",
+            "viewport": "640x520"
+        },
+        "DialogAlert": {
+            "cardMode": "single",
+            "viewport": "640x520"
+        },
+        "StateSkeletonCircular": {
+            "cardMode": "column"
+        },
+        "Tooltip": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "Breadcrumbs": {
+            "cardMode": "column"
+        },
+        "CardSummary": {
+            "cardMode": "column"
+        },
+        "StateSkeletonBar": {
+            "cardMode": "column"
+        },
+        "Dropdown": {
+            "cardMode": "single",
+            "primaryStory": "OpenMenu"
+        },
+        "MemberDataListItem": {
+            "cardMode": "column"
+        },
+        "ProposalActionUpdateMetadata": {
+            "cardMode": "column"
+        },
+        "ProposalVotingProgress": {
+            "cardMode": "column"
+        },
+        "SmartContractFunctionDataListItem": {
+            "cardMode": "column"
+        },
+        "TransactionDetail": {
+            "cardMode": "single",
+            "primaryStory": "ExecutionDialog"
+        },
+        "Page": {
+            "cardMode": "column"
+        },
+        "AdvancedDateInput": {
+            "cardMode": "column"
+        },
+        "Banner": {
+            "cardMode": "column"
+        },
+        "WizardDetailsDialog": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "WizardDialog": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "Wallet": {
+            "cardMode": "single",
+            "primaryStory": "Connected",
+            "viewport": "1360x300"
+        }
     },
     "docsMap": {
         "Page": "../../../../../.design-sync/docs-stubs/page.md",

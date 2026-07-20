@@ -21,13 +21,19 @@ export const WithValueAndCounter = () => (
 export const Variants = () => (
     <div className="flex w-full flex-col gap-4">
         <TextArea
-            alert={{ message: 'Consider adding more context for voters.', variant: 'warning' }}
+            alert={{
+                message: 'Consider adding more context for voters.',
+                variant: 'warning',
+            }}
             defaultValue="Transfer funds to the grants multisig."
             label="Rationale"
             variant="warning"
         />
         <TextArea
-            alert={{ message: 'A description is required to publish the proposal.', variant: 'critical' }}
+            alert={{
+                message: 'A description is required to publish the proposal.',
+                variant: 'critical',
+            }}
             label="Rationale"
             placeholder="Describe your proposal…"
             variant="critical"
@@ -43,6 +49,10 @@ export const States = () => (
             helpText="This field cannot be edited once the proposal is live."
             label="On-chain description"
         />
-        <TextArea isOptional={true} label="Additional resources" placeholder="Links to forum discussions, audits…" />
+        <TextArea
+            isOptional={true}
+            label="Additional resources"
+            placeholder="Links to forum discussions, audits…"
+        />
     </div>
 );

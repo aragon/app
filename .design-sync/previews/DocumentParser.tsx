@@ -32,6 +32,10 @@ const executionSummaryHtml = `
 <p>Read the full committee charter at <a href="https://example.org/charter" title="Grants charter">example.org/charter</a>.</p>
 `;
 
-export const ProposalBody = () => <DocumentParser document={proposalMarkdown} immediatelyRender={false} />;
+export const ProposalBody = () => (
+    <DocumentParser document={proposalMarkdown} immediatelyRender={false} />
+);
 
-export const HtmlSummary = () => <DocumentParser document={executionSummaryHtml} immediatelyRender={false} />;
+export const HtmlSummary = () => (
+    <DocumentParser document={executionSummaryHtml} immediatelyRender={false} />
+);

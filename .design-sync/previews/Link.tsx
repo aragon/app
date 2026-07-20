@@ -21,7 +21,11 @@ export const Variants = () => (
 
 export const External = () => (
     <div className="flex">
-        <Link href="https://etherscan.io/tx/0xba9e" isExternal={true} showUrl={true}>
+        <Link
+            href="https://etherscan.io/tx/0xba9e"
+            isExternal={true}
+            showUrl={true}
+        >
             View on block explorer
         </Link>
     </div>

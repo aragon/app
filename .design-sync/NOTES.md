@@ -4,7 +4,7 @@
 
 - **Kit version drift:** previews and grades were verified against `@aragon/gov-ui-kit@2.8.1`. On a kit bump, the anchor diff scopes re-verification, but the Storybook-reference claim (local checkout at `c:\dev\gov-ui-kit`) only holds if that checkout matches the installed version.
 - **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it inlines the app's `--guk-*` overrides copied from `layoutRoot.css`; if the app changes those overrides, re-copy them into the entry file (they do NOT sync automatically).
-- **Tailwind CLI version:** pinned at 4.3.1 inside `.ds-sync/node_modules` (gitignored) — a fresh clone must `npm i @tailwindcss/cli@4.3.1` into `.ds-sync` (match the app's `tailwindcss` version).
+- **Tailwind CLI version:** lives inside `.ds-sync/node_modules` (gitignored); `build-css.mjs` bootstraps it automatically on fresh clones, pinned to the app's installed `tailwindcss` version.
 - **Dialog/DialogAlert previews** depend on the force-open workaround (frozen-clock + framer-motion); a kit animation refactor may break them silently — check their sheets on any kit bump.
 - **Transient validate flake:** Accordion occasionally reports `[RENDER] root empty` in driver runs (animation timing); a re-run clears it. Don't chase unless it repeats.
 - The module components (25) and 5 infrastructure primitives ship floor cards by design — the standing offer for incremental authoring on any later re-sync (slice 2: modules with `GukModulesProvider` wrapping).

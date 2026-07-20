@@ -1,12 +1,17 @@
 import { Accordion } from '@aragon/gov-ui-kit';
 
 export const Default = () => (
-    <Accordion.Container isMulti={false} defaultValue="item-0" className="w-full">
+    <Accordion.Container
+        className="w-full"
+        defaultValue="item-0"
+        isMulti={false}
+    >
         <Accordion.Item value="item-0">
             <Accordion.ItemHeader>Voting settings</Accordion.ItemHeader>
             <Accordion.ItemContent>
                 <p className="text-neutral-500">
-                    Proposals pass when the support threshold and minimum participation are both met.
+                    Proposals pass when the support threshold and minimum
+                    participation are both met.
                 </p>
             </Accordion.ItemContent>
         </Accordion.Item>
@@ -20,11 +25,17 @@ export const Default = () => (
 );
 
 export const MultiOpen = () => (
-    <Accordion.Container isMulti={true} defaultValue={['item-0', 'item-1']} className="w-full">
+    <Accordion.Container
+        className="w-full"
+        defaultValue={['item-0', 'item-1']}
+        isMulti={true}
+    >
         <Accordion.Item value="item-0">
             <Accordion.ItemHeader>Members</Accordion.ItemHeader>
             <Accordion.ItemContent>
-                <p className="text-neutral-500">12 members can create proposals.</p>
+                <p className="text-neutral-500">
+                    12 members can create proposals.
+                </p>
             </Accordion.ItemContent>
         </Accordion.Item>
         <Accordion.Item value="item-1">
@@ -37,11 +48,13 @@ export const MultiOpen = () => (
 );
 
 export const DisabledItem = () => (
-    <Accordion.Container isMulti={true} className="w-full">
+    <Accordion.Container className="w-full" isMulti={true}>
         <Accordion.Item value="item-0">
             <Accordion.ItemHeader>Available section</Accordion.ItemHeader>
             <Accordion.ItemContent>
-                <p className="text-neutral-500">This section can be expanded.</p>
+                <p className="text-neutral-500">
+                    This section can be expanded.
+                </p>
             </Accordion.ItemContent>
         </Accordion.Item>
         <Accordion.Item disabled={true} value="item-1">

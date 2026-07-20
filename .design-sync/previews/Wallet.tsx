@@ -15,7 +15,11 @@ export const Disconnected = () => (
 export const Connected = () => (
     <GukModulesProvider>
         <Wallet
-            user={{ address: '0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD', avatarSrc: blueAvatar, name: 'cgero.eth' }}
+            user={{
+                address: '0x17C6808fA04DC9de98eaCfeb4c66B352067c1cDD',
+                avatarSrc: blueAvatar,
+                name: 'cgero.eth',
+            }}
         />
     </GukModulesProvider>
 );
@@ -23,7 +27,11 @@ export const Connected = () => (
 export const CustomName = () => (
     <GukModulesProvider>
         <Wallet
-            user={{ address: '0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5', avatarSrc: tealAvatar, name: 'Aragon DAO' }}
+            user={{
+                address: '0xd5fb864ACfD6BB2f72939f122e89fF7F475924f5',
+                avatarSrc: tealAvatar,
+                name: 'Aragon DAO',
+            }}
         />
     </GukModulesProvider>
 );

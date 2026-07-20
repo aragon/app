@@ -25,10 +25,10 @@ export const Sizes = () => (
 export const WithIcons = () => (
     <div className="flex items-center gap-3">
         <Button iconLeft={IconType.PLUS}>Create proposal</Button>
-        <Button variant="secondary" iconRight={IconType.LINK_EXTERNAL}>
+        <Button iconRight={IconType.LINK_EXTERNAL} variant="secondary">
             View on explorer
         </Button>
-        <Button variant="tertiary" iconLeft={IconType.PLUS} />
+        <Button iconLeft={IconType.PLUS} variant="tertiary" />
     </div>
 );
 

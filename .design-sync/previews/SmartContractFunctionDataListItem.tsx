@@ -1,4 +1,7 @@
-import { GukModulesProvider, SmartContractFunctionDataListItem } from '@aragon/gov-ui-kit';
+import {
+    GukModulesProvider,
+    SmartContractFunctionDataListItem,
+} from '@aragon/gov-ui-kit';
 
 export const Verified = () => (
     <GukModulesProvider>

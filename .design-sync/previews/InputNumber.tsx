@@ -2,50 +2,69 @@ import { InputNumber } from '@aragon/gov-ui-kit';
 
 export const Default = () => (
     <InputNumber
+        className="w-full"
+        helpText="How long members can vote on a proposal."
         label="Voting duration"
+        min={1}
         suffix="hours"
         value="72"
-        min={1}
-        helpText="How long members can vote on a proposal."
-        className="w-full"
     />
 );
 
 export const PrefixSuffix = () => (
     <div className="flex w-full flex-col gap-4">
-        <InputNumber label="Support threshold" suffix="%" min={0} max={100} value="50" className="w-full" />
-        <InputNumber label="Proposal deposit" prefix="ANT" value="250" className="w-full" />
+        <InputNumber
+            className="w-full"
+            label="Support threshold"
+            max={100}
+            min={0}
+            suffix="%"
+            value="50"
+        />
+        <InputNumber
+            className="w-full"
+            label="Proposal deposit"
+            prefix="ANT"
+            value="250"
+        />
     </div>
 );
 
 export const Warning = () => (
     <InputNumber
+        alert={{
+            message:
+                'A participation below 5% can make proposals easy to pass.',
+            variant: 'warning',
+        }}
+        className="w-full"
         label="Minimum participation"
         suffix="%"
         value="3"
         variant="warning"
-        alert={{ message: 'A participation below 5% can make proposals easy to pass.', variant: 'warning' }}
-        className="w-full"
     />
 );
 
 export const Critical = () => (
     <InputNumber
-        label="Approval threshold"
-        value="120"
-        suffix="%"
-        variant="critical"
-        alert={{ message: 'The threshold cannot exceed 100%.', variant: 'critical' }}
+        alert={{
+            message: 'The threshold cannot exceed 100%.',
+            variant: 'critical',
+        }}
         className="w-full"
+        label="Approval threshold"
+        suffix="%"
+        value="120"
+        variant="critical"
     />
 );
 
 export const Disabled = () => (
     <InputNumber
-        label="Token decimals"
-        value="18"
+        className="w-full"
         disabled={true}
         helpText="Defined by the ERC-20 token contract."
-        className="w-full"
+        label="Token decimals"
+        value="18"
     />
 );

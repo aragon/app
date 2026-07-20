@@ -6,10 +6,15 @@ import {
     TranslationsProvider,
 } from '@aragon/gov-ui-kit';
 
-const AppForm = (props: { children?: React.ReactNode; defaultValues?: Record<string, unknown> }) => (
+const AppForm = (props: {
+    children?: React.ReactNode;
+    defaultValues?: Record<string, unknown>;
+}) => (
     <DebugContextProvider>
         <TranslationsProvider translations={enTranslations as never}>
-            <FormWrapper defaultValues={props.defaultValues}>{props.children}</FormWrapper>
+            <FormWrapper defaultValues={props.defaultValues}>
+                {props.children}
+            </FormWrapper>
         </TranslationsProvider>
     </DebugContextProvider>
 );
@@ -53,7 +58,8 @@ export const WithAlert = () => (
     <AppForm>
         <NumberProgressInput
             alert={{
-                message: 'A veto threshold above 50% makes proposals very hard to block.',
+                message:
+                    'A veto threshold above 50% makes proposals very hard to block.',
                 variant: 'warning',
             }}
             defaultValue={60}

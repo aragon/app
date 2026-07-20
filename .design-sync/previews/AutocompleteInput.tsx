@@ -8,20 +8,50 @@ import {
 
 const AppProviders = (props: { children?: React.ReactNode }) => (
     <DebugContextProvider>
-        <TranslationsProvider translations={enTranslations as never}>{props.children}</TranslationsProvider>
+        <TranslationsProvider translations={enTranslations as never}>
+            {props.children}
+        </TranslationsProvider>
     </DebugContextProvider>
 );
 
 const actionItems = [
-    { icon: IconType.WITHDRAW, id: 'transfer', name: 'Transfer assets', info: 'Treasury' },
-    { icon: IconType.SETTINGS, id: 'metadata', name: 'Update DAO metadata', info: 'Settings' },
-    { icon: IconType.APP_MEMBERS, id: 'members', name: 'Manage members', info: 'Governance' },
-    { icon: IconType.BLOCKCHAIN_SMARTCONTRACT, id: 'custom', name: 'Custom contract call', info: 'Advanced' },
+    {
+        icon: IconType.WITHDRAW,
+        id: 'transfer',
+        name: 'Transfer assets',
+        info: 'Treasury',
+    },
+    {
+        icon: IconType.SETTINGS,
+        id: 'metadata',
+        name: 'Update DAO metadata',
+        info: 'Settings',
+    },
+    {
+        icon: IconType.APP_MEMBERS,
+        id: 'members',
+        name: 'Manage members',
+        info: 'Governance',
+    },
+    {
+        icon: IconType.BLOCKCHAIN_SMARTCONTRACT,
+        id: 'custom',
+        name: 'Custom contract call',
+        info: 'Advanced',
+    },
 ];
 
 const actionGroups = [
-    { id: 'treasury', info: 'Move funds out of the DAO treasury', name: 'Treasury' },
-    { id: 'governance', info: 'Change how the DAO makes decisions', name: 'Governance' },
+    {
+        id: 'treasury',
+        info: 'Move funds out of the DAO treasury',
+        name: 'Treasury',
+    },
+    {
+        id: 'governance',
+        info: 'Change how the DAO makes decisions',
+        name: 'Governance',
+    },
 ];
 
 export const Default = () => (
@@ -54,7 +84,10 @@ export const WithGroups = () => (
 export const Critical = () => (
     <AppProviders>
         <AutocompleteInput
-            alert={{ message: 'No action matches this search.', variant: 'critical' }}
+            alert={{
+                message: 'No action matches this search.',
+                variant: 'critical',
+            }}
             items={actionItems}
             label="Add action"
             placeholder="Search actions…"
