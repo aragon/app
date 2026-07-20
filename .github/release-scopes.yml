@@ -3,11 +3,18 @@
 # must never mix packages from different scopes — `changeset version --ignore` refuses mixed
 # changesets, which breaks every scoped flow. CI enforces this via `pnpm validate:changesets`.
 # When a new workspace lands, add it to a scope HERE — flows and validation read this file.
+#
+# A package belongs to the scope whose release deploys it: @aragon/assistant-chat ships inside
+# the app bundle (only @aragon/app consumes it), so the app release consumes its changesets and
+# the tag that deploys the widget is the one that versions it. @aragon/assistant-contracts is
+# genuinely shared (bundled by both the app and the assistant service) and can live in only one
+# scope; it stays with its domain owner, the assistant — an app deploy may therefore ship
+# contracts changes whose changeset is consumed by the next assistant release.
 
 app:
   - "@aragon/app"
+  - "@aragon/assistant-chat"
 
 assistant:
   - "@aragon/assistant"
   - "@aragon/assistant-contracts"
-  - "@aragon/assistant-chat"
