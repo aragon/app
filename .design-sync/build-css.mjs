@@ -7,6 +7,7 @@ import {
     existsSync,
     mkdirSync,
     readFileSync,
+    rmSync,
     symlinkSync,
     writeFileSync,
 } from 'node:fs';
@@ -14,6 +15,18 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+// `--clean` removes the sync-time artifacts this script drops into the app
+// workspace (the src/node_modules next shims) and exits. Run it at the end of
+// a sync session so nothing design-sync-related lingers in the working tree.
+if (process.argv.includes('--clean')) {
+    rmSync(join(root, 'apps/app/src/node_modules'), {
+        recursive: true,
+        force: true,
+    });
+    console.log('design-sync shims removed (apps/app/src/node_modules)');
+    process.exit(0);
+}
 const cli = join(root, '.ds-sync/node_modules/@tailwindcss/cli/dist/index.mjs');
 const entry = join(root, '.design-sync/tailwind-entry.css');
 const tmp = join(root, '.design-sync/.cache/kit-styles.css');
@@ -70,6 +83,11 @@ if (!existsSync(junction)) {
 // the real `next` package for files under src/. next/dynamic only lazy-loads
 // hookform devtools here (never in previews); next/image degrades to <img>.
 // Gitignored (node_modules rule) and regenerated on every build.
+// App tooling is immune to the shims by construction: `next dev`/`next build`
+// alias next/* internally, tsc and biome don't resolve through src/node_modules
+// in a breaking way, and jest pins next/* to the real package (moduleNameMapper
+// in apps/app/jest.config.js). Still, run `--clean` after a sync session so the
+// working tree stays free of sync artifacts.
 const shimDir = join(root, 'apps/app/src/node_modules/next');
 mkdirSync(shimDir, { recursive: true });
 writeFileSync(
