@@ -4,6 +4,7 @@ import {
     generateSppStage,
     generateSppStagePlugin,
 } from '@/plugins/sppPlugin/testUtils';
+import { VotingBodyBrandIdentity } from '@/plugins/sppPlugin/types';
 import { generateTokenPluginSettings } from '@/plugins/tokenPlugin/testUtils';
 import { generateTokenPluginSettingsToken } from '@/plugins/tokenPlugin/testUtils/generators/tokenPluginSettingsToken';
 import { generateDaoPlugin, generatePluginSettings } from '@/shared/testUtils';
@@ -167,6 +168,91 @@ describe('daoProcessDetailsClient Utils', () => {
                         body.governance !== null
                     ) {
                         expect('token' in body.governance).toBe(true);
+                    }
+                }
+            });
+
+            it('preserves Safe external bodies from SPP settings', () => {
+                const safeAddress =
+                    '0x1111111111111111111111111111111111111111';
+                const settings = generateSppPluginSettings({
+                    stages: [
+                        generateSppStage({
+                            plugins: [
+                                generateSppStagePlugin({
+                                    address: safeAddress,
+                                    brandId: VotingBodyBrandIdentity.SAFE,
+                                    interfaceType: undefined,
+                                }),
+                            ],
+                        }),
+                    ],
+                });
+
+                const mainPlugin = generateDaoPlugin({
+                    isProcess: true,
+                    isBody: false,
+                    settings,
+                });
+
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        mainPlugin,
+                        [],
+                    );
+
+                expect(result.governanceType).toBe(GovernanceType.ADVANCED);
+                if (result.governanceType === GovernanceType.ADVANCED) {
+                    const body = result.stages[0].bodies[0];
+
+                    expect(body.type).toBe(BodyType.EXTERNAL);
+                    if (body.type === BodyType.EXTERNAL) {
+                        expect(body.address).toBe(safeAddress);
+                        expect(body.isSafe).toBe(true);
+                    }
+                }
+            });
+
+            it.each([
+                VotingBodyBrandIdentity.EOA,
+                VotingBodyBrandIdentity.OTHER,
+            ])('preserves %s external bodies without Safe branding', (brandId) => {
+                const externalAddress =
+                    '0x2222222222222222222222222222222222222222';
+                const settings = generateSppPluginSettings({
+                    stages: [
+                        generateSppStage({
+                            plugins: [
+                                generateSppStagePlugin({
+                                    address: externalAddress,
+                                    brandId,
+                                    interfaceType: undefined,
+                                }),
+                            ],
+                        }),
+                    ],
+                });
+
+                const mainPlugin = generateDaoPlugin({
+                    isProcess: true,
+                    isBody: false,
+                    settings,
+                });
+
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        mainPlugin,
+                        [],
+                    );
+
+                expect(result.governanceType).toBe(GovernanceType.ADVANCED);
+                if (result.governanceType === GovernanceType.ADVANCED) {
+                    const body = result.stages[0].bodies[0];
+
+                    expect(body.type).toBe(BodyType.EXTERNAL);
+                    if (body.type === BodyType.EXTERNAL) {
+                        expect(body.address).toBe(externalAddress);
+                        expect(body.isSafe).toBe(false);
                     }
                 }
             });

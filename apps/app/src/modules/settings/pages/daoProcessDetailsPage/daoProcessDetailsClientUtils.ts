@@ -11,12 +11,16 @@ import {
 } from '@/modules/createDao/components/createProcessForm';
 import type {
     ISetupBodyFormExisting,
+    ISetupBodyFormExternal,
     ISetupBodyFormMembership,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { externalPluginId } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogSelect';
 import { BodyType } from '@/modules/createDao/types/enum';
-import type {
-    ISppPluginSettings,
-    ISppStagePlugin,
+import {
+    type ISppPluginSettings,
+    type ISppStagePlugin,
+    type ISppStagePluginExternal,
+    VotingBodyBrandIdentity,
 } from '@/plugins/sppPlugin/types';
 import {
     type IDaoPlugin,
@@ -118,12 +122,23 @@ export class DaoProcessDetailsClientUtils {
         allPlugins: IDaoPlugin[],
     ): ICreateProcessFormDataAdvanced['stages'] =>
         settings.stages.map((stage) => {
-            const bodies = stage.plugins.map((plugin) =>
-                this.bodyToFormData({
+            const bodies = stage.plugins.map((plugin) => {
+                if (this.isExternalStagePlugin(plugin)) {
+                    return {
+                        internalId: plugin.address,
+                        type: BodyType.EXTERNAL,
+                        plugin: externalPluginId,
+                        address: plugin.address,
+                        isSafe: plugin.brandId === VotingBodyBrandIdentity.SAFE,
+                        canCreateProposal: true,
+                    } satisfies ISetupBodyFormExternal;
+                }
+
+                return this.bodyToFormData({
                     plugin: this.sppBodyToFormData(plugin, allPlugins),
                     membership: { members: [] },
-                }),
-            );
+                });
+            });
 
             return {
                 internalId: stage.stageIndex.toString(),
@@ -152,6 +167,11 @@ export class DaoProcessDetailsClientUtils {
                 bodies,
             };
         });
+
+    private isExternalStagePlugin = (
+        stagePlugin: ISppStagePlugin,
+    ): stagePlugin is ISppStagePluginExternal =>
+        stagePlugin.interfaceType === undefined;
 
     private sppBodyToFormData<T extends IPluginSettings>(
         stagePlugin: ISppStagePlugin,
