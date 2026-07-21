@@ -37,7 +37,7 @@ jobs:
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -65,7 +65,7 @@ jobs:
       # carries other PRs' changesets merged to main while the release PR was open, which must
       # not trip it.
       - name: Checkout release branch head
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 1
@@ -91,7 +91,7 @@ jobs:
           fi
 
       - name: Checkout merge commit
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 1

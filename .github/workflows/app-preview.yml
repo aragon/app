@@ -32,7 +32,7 @@ jobs:
     steps:
       # File-based `filters:` is read from disk by paths-filter, so the file must be checked out.
       - name: Checkout filters
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |

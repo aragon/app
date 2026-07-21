@@ -80,7 +80,7 @@ jobs:
           op-vault: "${{ inputs.vault-prefix }}_infra"
 
       - name: Checkout actions
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
