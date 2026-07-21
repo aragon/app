@@ -1,3 +1,4 @@
+import { addressUtils } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import * as useSimulateProposalModule from '@/modules/governance/hooks/useSimulateProposal';
 import type { IPermissionCheckGuardResult } from '@/modules/governance/types';
@@ -15,6 +16,7 @@ import {
     generateSppStage,
     generateSppStagePlugin,
 } from '../../testUtils';
+import { VotingBodyBrandIdentity } from '../../types';
 import { useSppPermissionCheckProposalCreation } from './useSppPermissionCheckProposalCreation';
 
 describe('useSppPermissionCheckProposalCreation', () => {
@@ -197,5 +199,185 @@ describe('useSppPermissionCheckProposalCreation', () => {
         );
 
         expect(result.current.isLoading).toBeTruthy();
+    });
+
+    const createSafeTestParams = (
+        safeBody?: Partial<
+            Parameters<typeof generateSppStagePlugin>[0] & {
+                brandId: VotingBodyBrandIdentity;
+                proposalCreationConditionAddress?: string;
+            }
+        >,
+    ) => {
+        const sppPlugin = generateDaoPlugin({
+            address: `0x${'a'.repeat(40)}`,
+            settings: generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        plugins: [
+                            generateSppStagePlugin({
+                                address: `0x${'b'.repeat(40)}`,
+                                interfaceType: undefined,
+                                brandId: VotingBodyBrandIdentity.SAFE,
+                                ...safeBody,
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+        });
+
+        // External bodies are not DAO plugins, so no meta matches by address.
+        useDaoPluginsSpy.mockReturnValue([]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+
+        return { daoId: 'dao-test', plugin: sppPlugin };
+    };
+
+    it('surfaces a Safe body settings group when it can create proposals', () => {
+        const safeAddress = `0x${'b'.repeat(40)}`;
+        const params = createSafeTestParams({
+            proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+        });
+        mockSimulation({ isLoading: false, isSuccess: true });
+
+        const { result } = renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
+        expect(result.current.isRestricted).toBeTruthy();
+        expect(result.current.settings).toEqual([
+            [
+                {
+                    term: 'app.plugins.spp.sppPermissionCheckProposalCreation.pluginLabelName',
+                    definition: addressUtils.truncateAddress(safeAddress),
+                },
+                {
+                    term: 'app.plugins.spp.sppPermissionCheckProposalCreation.function',
+                    definition:
+                        'app.plugins.spp.sppPermissionCheckProposalCreation.requirement',
+                },
+            ],
+        ]);
+    });
+
+    it('ignores a Safe body without proposal-creation rights', () => {
+        const params = createSafeTestParams({
+            proposalCreationConditionAddress: undefined,
+        });
+        mockSimulation({ isLoading: false, isSuccess: true });
+
+        const { result } = renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
+        expect(result.current.isRestricted).toBeFalsy();
+        expect(result.current.settings).toEqual([]);
+    });
+
+    it('ignores non-Safe external bodies', () => {
+        const params = createSafeTestParams({
+            brandId: VotingBodyBrandIdentity.EOA,
+            proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+        });
+        mockSimulation({ isLoading: false, isSuccess: true });
+
+        const { result } = renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
+        expect(result.current.isRestricted).toBeFalsy();
+        expect(result.current.settings).toEqual([]);
+    });
+
+    it('combines an installed internal body with an external Safe body in the same process', () => {
+        const internalAddress = `0x${'1'.repeat(40)}`;
+        const safeAddress = `0x${'2'.repeat(40)}`;
+
+        const internalMeta = generateDaoPlugin({ address: internalAddress });
+        const internalSettings = [
+            [{ term: 'Members', definition: 'Listed only' }],
+        ];
+        const internalGuardResult = generateGuardResult({
+            isRestricted: true,
+            settings: internalSettings,
+        });
+
+        const sppPlugin = generateDaoPlugin({
+            address: `0x${'a'.repeat(40)}`,
+            settings: generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        plugins: [
+                            generateSppStagePlugin({
+                                address: internalAddress,
+                            }),
+                            generateSppStagePlugin({
+                                address: safeAddress,
+                                interfaceType: undefined,
+                                brandId: VotingBodyBrandIdentity.SAFE,
+                                proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+        });
+
+        useDaoPluginsSpy.mockReturnValue([
+            generateFilterComponentPlugin({ meta: internalMeta }),
+        ]);
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+
+        // Only the internal body resolves to a slot function; the external Safe body
+        // (pluginId 'external') falls through to the fallback hook.
+        getSlotFunctionSpy.mockImplementation(((slotParams: {
+            pluginId: string;
+        }) =>
+            slotParams.pluginId === internalMeta.interfaceType
+                ? () => internalGuardResult
+                : undefined) as never);
+        mockSimulation({ isLoading: false, isSuccess: true });
+
+        const params = { daoId: 'dao-test', plugin: sppPlugin };
+        const { result } = renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
+        expect(result.current.isRestricted).toBeTruthy();
+        expect(result.current.settings).toEqual([
+            ...internalSettings,
+            [
+                {
+                    term: 'app.plugins.spp.sppPermissionCheckProposalCreation.pluginLabelName',
+                    definition: addressUtils.truncateAddress(safeAddress),
+                },
+                {
+                    term: 'app.plugins.spp.sppPermissionCheckProposalCreation.function',
+                    definition:
+                        'app.plugins.spp.sppPermissionCheckProposalCreation.requirement',
+                },
+            ],
+        ]);
     });
 });
