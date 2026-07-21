@@ -408,6 +408,7 @@ describe('dao utils', () => {
                 }),
                 generateDaoPlugin({
                     subdomain: 'sub-process',
+                    interfaceType: PluginInterfaceType.MULTISIG,
                     isProcess: true,
                     isSubPlugin: true,
                 }),
