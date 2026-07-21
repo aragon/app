@@ -51,13 +51,69 @@ class ActionComposerUtils {
             t,
         });
 
+        // Keep only plugin actions the DAO is authorized to execute, then drop
+        // plugin groups left without any items.
+        const pluginItems = this.filterItemsByPermission(
+            pluginActions.pluginItems,
+            permissions,
+        );
+        const pluginGroups = this.pruneEmptyGroups(
+            pluginActions.pluginGroups,
+            pluginItems,
+        );
+
         return {
-            items: [...pluginActions.pluginItems, ...permissionActions.items],
-            groups: [
-                ...pluginActions.pluginGroups,
-                ...permissionActions.groups,
-            ],
+            items: [...pluginItems, ...permissionActions.items],
+            groups: [...pluginGroups, ...permissionActions.groups],
         };
+    };
+
+    /**
+     * Filters out plugin action items whose required OSx permission is not granted
+     * to the DAO. Items without a `requiredPermissionId` are always kept, and
+     * filtering is skipped entirely (fail-open) while `permissions` is undefined
+     * (not yet loaded). Matching is by permission id only, case-insensitively.
+     *
+     * @param items - Plugin action items to filter.
+     * @param permissions - Permissions granted to the DAO, or undefined when not loaded.
+     * @returns The items the DAO is authorized to execute.
+     */
+    private filterItemsByPermission = (
+        items: IActionComposerInputItem[],
+        permissions?: IGetDaoActionsParams['permissions'],
+    ): IActionComposerInputItem[] => {
+        if (permissions == null) {
+            return items;
+        }
+
+        const grantedIds = new Set(
+            permissions.map((permission) =>
+                permission.permissionId.toLowerCase(),
+            ),
+        );
+
+        return items.filter(
+            (item) =>
+                item.requiredPermissionId == null ||
+                grantedIds.has(item.requiredPermissionId.toLowerCase()),
+        );
+    };
+
+    /**
+     * Removes groups that no longer contain any of the given items, so plugin
+     * groups whose actions were all filtered out are not rendered empty.
+     *
+     * @param groups - Candidate groups.
+     * @param items - Items that survived filtering.
+     * @returns Only the groups still referenced by at least one item's `groupId`.
+     */
+    private pruneEmptyGroups = (
+        groups: IAutocompleteInputGroup[],
+        items: IActionComposerInputItem[],
+    ): IAutocompleteInputGroup[] => {
+        const usedGroupIds = new Set(items.map((item) => item.groupId));
+
+        return groups.filter((group) => usedGroupIds.has(group.id));
     };
 
     getDaoPluginActions = (
