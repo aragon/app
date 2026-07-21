@@ -12,6 +12,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { TokenMintTokensAction } from '../../components/tokenActions/tokenMintTokensAction';
 import { TokenUpdateSettingsAction } from '../../components/tokenActions/tokenUpdateSettingsAction';
@@ -58,6 +59,11 @@ export type IGetTokenActionsResult = IActionComposerPluginData<
     IDaoPlugin<ITokenPluginSettings>
 >;
 
+const mintPermissionId = permissionNameUtils.getPermissionId('MINT_PERMISSION');
+const updateVotingSettingsPermissionId = permissionNameUtils.getPermissionId(
+    'UPDATE_VOTING_SETTINGS_PERMISSION',
+);
+
 class TokenActionUtils {
     getTokenActions = ({
         plugin,
@@ -96,6 +102,7 @@ class TokenActionUtils {
                     groupId: tokenAddress,
                     meta: plugin,
                     defaultValue: defaultMintAction(settings),
+                    requiredPermissionId: mintPermissionId,
                 },
                 {
                     id: `${address}-${TokenProposalActionType.UPDATE_VOTE_SETTINGS}`,
@@ -106,6 +113,7 @@ class TokenActionUtils {
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
+                    requiredPermissionId: updateVotingSettingsPermissionId,
                 },
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(

@@ -8,6 +8,7 @@ import {
     actionViewRegistry,
 } from '@/shared/utils/actionViewRegistry';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     type IProposalAction,
@@ -32,6 +33,10 @@ import {
     type IGetNativeActionGroupsParams,
     type IGetNativeActionItemsParams,
 } from './actionComposerUtils.api';
+
+const setMetadataPermissionId = permissionNameUtils.getPermissionId(
+    'SET_METADATA_PERMISSION',
+);
 
 class ActionComposerUtils {
     // The TransferActionLocked is a UI-only variant of the TransferAction which locks the token field to the one set as
@@ -374,6 +379,7 @@ class ActionComposerUtils {
                 plugin,
                 additionalMetadata,
             ),
+            requiredPermissionId: setMetadataPermissionId,
         };
     };
 
