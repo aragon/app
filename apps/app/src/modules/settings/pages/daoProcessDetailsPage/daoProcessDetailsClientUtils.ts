@@ -124,13 +124,18 @@ export class DaoProcessDetailsClientUtils {
         settings.stages.map((stage) => {
             const bodies = stage.plugins.map((plugin) => {
                 if (this.isExternalStagePlugin(plugin)) {
+                    const isSafe =
+                        plugin.brandId === VotingBodyBrandIdentity.SAFE;
+
                     return {
                         internalId: plugin.address,
                         type: BodyType.EXTERNAL,
                         plugin: externalPluginId,
                         address: plugin.address,
-                        isSafe: plugin.brandId === VotingBodyBrandIdentity.SAFE,
-                        canCreateProposal: true,
+                        isSafe,
+                        canCreateProposal:
+                            isSafe &&
+                            plugin.proposalCreationConditionAddress != null,
                     } satisfies ISetupBodyFormExternal;
                 }
 

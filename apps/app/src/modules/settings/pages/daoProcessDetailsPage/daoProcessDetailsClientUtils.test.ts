@@ -175,6 +175,8 @@ describe('daoProcessDetailsClient Utils', () => {
             it('preserves Safe external bodies from SPP settings', () => {
                 const safeAddress =
                     '0x1111111111111111111111111111111111111111';
+                const conditionAddress =
+                    '0x3333333333333333333333333333333333333333';
                 const settings = generateSppPluginSettings({
                     stages: [
                         generateSppStage({
@@ -183,6 +185,8 @@ describe('daoProcessDetailsClient Utils', () => {
                                     address: safeAddress,
                                     brandId: VotingBodyBrandIdentity.SAFE,
                                     interfaceType: undefined,
+                                    proposalCreationConditionAddress:
+                                        conditionAddress,
                                 }),
                             ],
                         }),
@@ -209,6 +213,50 @@ describe('daoProcessDetailsClient Utils', () => {
                     if (body.type === BodyType.EXTERNAL) {
                         expect(body.address).toBe(safeAddress);
                         expect(body.isSafe).toBe(true);
+                        expect(body.canCreateProposal).toBe(true);
+                    }
+                }
+            });
+
+            it('does not mark Safe external bodies as proposal creators without a condition', () => {
+                const safeAddress =
+                    '0x4444444444444444444444444444444444444444';
+                const settings = generateSppPluginSettings({
+                    stages: [
+                        generateSppStage({
+                            plugins: [
+                                generateSppStagePlugin({
+                                    address: safeAddress,
+                                    brandId: VotingBodyBrandIdentity.SAFE,
+                                    interfaceType: undefined,
+                                    proposalCreationConditionAddress: undefined,
+                                }),
+                            ],
+                        }),
+                    ],
+                });
+
+                const mainPlugin = generateDaoPlugin({
+                    isProcess: true,
+                    isBody: false,
+                    settings,
+                });
+
+                const result =
+                    daoProcessDetailsClientUtils.pluginToProcessFormData(
+                        mainPlugin,
+                        [],
+                    );
+
+                expect(result.governanceType).toBe(GovernanceType.ADVANCED);
+                if (result.governanceType === GovernanceType.ADVANCED) {
+                    const body = result.stages[0].bodies[0];
+
+                    expect(body.type).toBe(BodyType.EXTERNAL);
+                    if (body.type === BodyType.EXTERNAL) {
+                        expect(body.address).toBe(safeAddress);
+                        expect(body.isSafe).toBe(true);
+                        expect(body.canCreateProposal).toBe(false);
                     }
                 }
             });
@@ -227,6 +275,8 @@ describe('daoProcessDetailsClient Utils', () => {
                                     address: externalAddress,
                                     brandId,
                                     interfaceType: undefined,
+                                    proposalCreationConditionAddress:
+                                        '0x5555555555555555555555555555555555555555',
                                 }),
                             ],
                         }),
@@ -253,6 +303,7 @@ describe('daoProcessDetailsClient Utils', () => {
                     if (body.type === BodyType.EXTERNAL) {
                         expect(body.address).toBe(externalAddress);
                         expect(body.isSafe).toBe(false);
+                        expect(body.canCreateProposal).toBe(false);
                     }
                 }
             });
