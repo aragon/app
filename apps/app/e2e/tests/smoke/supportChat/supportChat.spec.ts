@@ -5,9 +5,11 @@ const featureFlagCookieName = 'aragon.featureFlags.overrides';
 const supportPortalUrl =
     'https://aragonassociation.atlassian.net/servicedesk/customer/portal/3';
 
+const supportEmailHref = 'mailto:support@aragon.org';
+
 // The assistant runs on its own origin (NEXT_PUBLIC_ASSISTANT_URL); with the feature flag on,
-// the help click opens the chat directly. The chat streams from POST /chat; the ticket goes
-// through POST /issues/preview.
+// the navigation-bar trigger opens the chat side panel. The chat streams from POST /chat; the
+// ticket goes through POST /issues/preview.
 const chatRoutePattern = '**/chat';
 const previewRoutePattern = '**/issues/preview';
 
@@ -45,9 +47,13 @@ const buildChatStream = (): string => {
     return `${events.join('')}data: [DONE]\n\n`;
 };
 
-const openSupportChat = async (page: Page) => {
-    await page.getByRole('link', { name: 'Support', exact: true }).click();
-};
+const getChatTrigger = (page: Page) =>
+    page.getByRole('button', { name: 'Open support chat' });
+
+// The chat lives in a non-modal side panel (`aside`), not a dialog: the page stays interactive
+// while it is open.
+const getChatPanel = (page: Page) =>
+    page.getByRole('complementary', { name: 'Support chat' });
 
 test.describe('Support chat', () => {
     test('opens the chat, streams a reply and previews the ticket for sending', async ({
@@ -77,19 +83,20 @@ test.describe('Support chat', () => {
         );
 
         await page.goto('/');
-        await openSupportChat(page);
+        await getChatTrigger(page).click();
 
-        // Drawer open: accessible title + greeting message + the persistent portal escape hatch.
-        const drawer = page.getByRole('dialog', {
-            name: 'Aragon Support Assistant',
-        });
-        await expect(drawer).toBeVisible();
+        // Panel open: accessible title + greeting message + the persistent email escape hatch.
+        const panel = getChatPanel(page);
+        await expect(panel).toBeVisible();
+        await expect(
+            panel.getByRole('heading', { name: 'Aragon Support Assistant' }),
+        ).toBeVisible();
         await expect(
             page.getByText("Hi! Tell us what's going on"),
         ).toBeVisible();
         await expect(
-            drawer.getByRole('link', { name: 'Support portal' }),
-        ).toHaveAttribute('href', supportPortalUrl);
+            panel.getByRole('link', { name: 'support@aragon.org' }),
+        ).toHaveAttribute('href', supportEmailHref);
 
         // Send a message and receive the mocked streamed reply.
         const composer = page.getByRole('textbox', { name: 'Message' });
@@ -106,13 +113,17 @@ test.describe('Support chat', () => {
         // The explicit preview: the strip button distills the conversation into the reviewable
         // ticket, whose title the server returned.
         await page.getByRole('button', { name: 'Prepare ticket' }).click();
-        await expect(page.getByText('Proposal page crashes')).toBeVisible();
+        // `exact` keeps the non-exact (case-insensitive) match from also hitting the user
+        // message "The proposal page crashes on load." above the ticket preview.
+        await expect(
+            page.getByText('Proposal page crashes', { exact: true }),
+        ).toBeVisible();
         await expect(
             page.getByRole('button', { name: 'Send ticket' }),
         ).toBeVisible();
     });
 
-    test('keeps the external support link when the flag is disabled', async ({
+    test('hides the chat entry points and keeps the external support link when the flag is disabled', async ({
         baseURL,
         context,
         page,
@@ -121,12 +132,17 @@ test.describe('Support chat', () => {
 
         await page.goto('/');
 
-        // `exact` keeps DAO cards whose text mentions "support" out of the match.
+        // `exact` keeps DAO cards whose text mentions "support" out of the match. The footer
+        // help entry links to the external portal regardless of the flag.
         const helpLink = page.getByRole('link', {
             name: 'Support',
             exact: true,
         });
         await expect(helpLink).toBeVisible();
         await expect(helpLink).toHaveAttribute('href', supportPortalUrl);
+
+        // Flag off: neither the navigation-bar trigger nor the chat panel are rendered.
+        await expect(getChatTrigger(page)).toHaveCount(0);
+        await expect(getChatPanel(page)).toHaveCount(0);
     });
 });

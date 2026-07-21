@@ -104,10 +104,14 @@ const commitMatchesPathFilter = (commit, patterns, git = runGit) => {
         );
 };
 
+// Any workspace's release commit is dropped, not just this package's: other flows' release
+// commits (e.g. "Release @aragon/assistant@0.2.0") touch paths shared with this filter's scope
+// and would otherwise leak into the summary as "Other Changes".
+const RELEASE_COMMIT_RE = /^Release @aragon\/[^@\s]+@\d+\.\d+\.\d+/;
+
 const collectScopedCommits = ({
     baseRef,
     headRef = 'HEAD',
-    packageName,
     patterns,
     git = runGit,
 }) => {
@@ -118,7 +122,6 @@ const collectScopedCommits = ({
         range,
         '--pretty=format:%H%x00%s',
     ]);
-    const releasePrefix = `Release ${packageName}@`;
 
     return log
         .split('\n')
@@ -129,7 +132,7 @@ const collectScopedCommits = ({
         })
         .filter(
             ({ commit, subject }) =>
-                !subject.startsWith(releasePrefix) &&
+                !RELEASE_COMMIT_RE.test(subject) &&
                 commitMatchesPathFilter(commit, patterns, git),
         );
 };
@@ -213,7 +216,6 @@ const generateSummary = async ({ core }) => {
     const patterns = readPathFilter(filterPath, pathFilter);
     const commits = collectScopedCommits({
         baseRef,
-        packageName,
         patterns,
     });
     console.log(

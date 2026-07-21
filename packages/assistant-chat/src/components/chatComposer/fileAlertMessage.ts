@@ -1,4 +1,5 @@
 import { assistantLimits } from '@aragon/assistant-contracts';
+import { chatCopy } from '../../copy';
 import type { IFileAlert } from '../../files';
 
 const maxFileSizeMb = Math.round(
@@ -10,12 +11,14 @@ const maxFileSizeMb = Math.round(
 export const buildFileAlertMessage = (alert: IFileAlert): string => {
     switch (alert.reason) {
         case 'too_large':
-            return `File too large (max ${maxFileSizeMb} MB).`;
+            return chatCopy.fileAlerts.tooLarge(maxFileSizeMb);
         case 'unsupported':
-            return 'Unsupported file. Use an image, text, log or PDF.';
+            return chatCopy.fileAlerts.unsupported;
         case 'remove_failed':
-            return "Couldn't remove the file. Please try again.";
+            return chatCopy.fileAlerts.removeFailed;
         default:
-            return `You can attach up to ${assistantLimits.maxFilesPerSession} files.`;
+            return chatCopy.fileAlerts.tooMany(
+                assistantLimits.maxFilesPerSession,
+            );
     }
 };

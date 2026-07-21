@@ -39,10 +39,6 @@ export interface IUseAssistantChatControllerParams {
      */
     appContext: IAppContext;
     /**
-     * Fallback support-portal URL offered when the chat hard-fails.
-     */
-    supportPortalUrl?: string;
-    /**
      * Monitoring implementation injected by the host app.
      */
     monitoring: IChatMonitoring;
@@ -57,10 +53,6 @@ export interface IAssistantChatController {
      * App context sent alongside every request.
      */
     appContext: IAppContext;
-    /**
-     * Fallback support-portal URL offered when the chat hard-fails; undefined when not configured.
-     */
-    supportPortalUrl?: string;
     /**
      * Messages of the transcript, ready for rendering.
      */
@@ -163,7 +155,7 @@ export interface IAssistantChatController {
 export const useAssistantChatController = (
     params: IUseAssistantChatControllerParams,
 ): IAssistantChatController => {
-    const { assistantUrl, appContext, supportPortalUrl, monitoring } = params;
+    const { assistantUrl, appContext, monitoring } = params;
 
     const { sessionId, rotate } = useChatSession();
 
@@ -272,7 +264,6 @@ export const useAssistantChatController = (
     return {
         sessionId,
         appContext,
-        supportPortalUrl,
         messages: chat.visibleMessages,
         chatStatus: chat.status,
         chatError: chat.error,
