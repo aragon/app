@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import { Container } from '@/shared/components/container';
 
 export interface INavigationContainerProps extends ComponentProps<'nav'> {
@@ -7,12 +7,18 @@ export interface INavigationContainerProps extends ComponentProps<'nav'> {
      * Classes for the navigation container.
      */
     containerClasses?: string;
+    /**
+     * Content pinned to the trailing edge of the bar, outside the centered container (e.g. the
+     * support chat trigger sitting next to the chat panel).
+     */
+    trailing?: ReactNode;
 }
 
 export const NavigationContainer: React.FC<INavigationContainerProps> = (
     props,
 ) => {
-    const { className, containerClasses, children, ...otherProps } = props;
+    const { className, containerClasses, children, trailing, ...otherProps } =
+        props;
 
     return (
         <nav
@@ -25,6 +31,7 @@ export const NavigationContainer: React.FC<INavigationContainerProps> = (
             <Container className={classNames('w-full grow', containerClasses)}>
                 {children}
             </Container>
+            {trailing}
         </nav>
     );
 };

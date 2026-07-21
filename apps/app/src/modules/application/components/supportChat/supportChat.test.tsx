@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { SupportChat } from './supportChat';
-import type { ISupportChatProps } from './supportChat.api';
+import * as supportChatContext from './supportChatContext';
 
 jest.mock('./assistantChatLazy', () => ({
     AssistantChatLazy: (props: { isOpen: boolean }) => (
@@ -12,38 +12,50 @@ jest.mock('./useSupportAppContext', () => ({
     useSupportAppContext: () => ({ route: '/', appVersion: '1.0.0' }),
 }));
 
-// Availability is decided before opening (useAssistantHealth in the footer), so this component
-// only manages the mount lifecycle of the widget.
+// The open / close state lives in the support chat context; this component only manages the
+// mount lifecycle of the widget.
 describe('<SupportChat /> component', () => {
-    const createTestComponent = (props?: Partial<ISupportChatProps>) => {
-        const completeProps: ISupportChatProps = {
-            isOpen: false,
-            onClose: jest.fn(),
-            ...props,
-        };
+    const useSupportChatContextSpy = jest.spyOn(
+        supportChatContext,
+        'useSupportChatContext',
+    );
 
-        return <SupportChat {...completeProps} />;
+    const setContextOpen = (isOpen: boolean) => {
+        useSupportChatContextSpy.mockReturnValue({
+            isOpen,
+            open: jest.fn(),
+            close: jest.fn(),
+            toggle: jest.fn(),
+        });
     };
 
+    afterEach(() => {
+        useSupportChatContextSpy.mockReset();
+    });
+
     it('does not mount the widget before the first open', () => {
-        render(createTestComponent({ isOpen: false }));
+        setContextOpen(false);
+        render(<SupportChat />);
         expect(
             screen.queryByTestId('assistant-chat-mock'),
         ).not.toBeInTheDocument();
     });
 
     it('mounts and opens the widget on open', () => {
-        render(createTestComponent({ isOpen: true }));
+        setContextOpen(true);
+        render(<SupportChat />);
         expect(
             screen.getByTestId('assistant-chat-mock').getAttribute('data-open'),
         ).toEqual('true');
     });
 
     it('keeps the widget mounted after closing so the conversation survives reopening', () => {
-        const { rerender } = render(createTestComponent({ isOpen: true }));
+        setContextOpen(true);
+        const { rerender } = render(<SupportChat />);
         expect(screen.getByTestId('assistant-chat-mock')).toBeInTheDocument();
 
-        rerender(createTestComponent({ isOpen: false }));
+        setContextOpen(false);
+        rerender(<SupportChat />);
         expect(
             screen.getByTestId('assistant-chat-mock').getAttribute('data-open'),
         ).toEqual('false');

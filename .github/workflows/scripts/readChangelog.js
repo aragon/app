@@ -1,6 +1,20 @@
 const fs = require('node:fs');
 
-module.exports = async ({ core }) => {
+// Extracts the changelog section for a version from a changesets-generated CHANGELOG
+// (sections start with "## x.y.z"). Returns null when the version has no section.
+const extractChangelogSection = (changelog, version) => {
+    const versionChanges = changelog
+        .split(/(?=## \d+\.\d+\.\d+)/g)
+        .find((changes) => changes.startsWith(`## ${version}`));
+
+    if (!versionChanges) {
+        return null;
+    }
+
+    return versionChanges.replace(`## ${version}`, '').trim();
+};
+
+const readChangelog = async ({ core }) => {
     const { version, path } = process.env;
 
     // Check if version and path are provided
@@ -25,11 +39,9 @@ module.exports = async ({ core }) => {
             flag: 'r',
         });
 
-        const versionChanges = changelog
-            .split(/(?=## \d+\.\d+\.\d+)/g)
-            .find((changes) => changes.startsWith(`## ${version}`));
+        const parsedChanges = extractChangelogSection(changelog, version);
 
-        if (!versionChanges) {
+        if (parsedChanges == null) {
             core.warning(
                 `No changes found for version ${version} in the changelog.`,
             );
@@ -37,13 +49,11 @@ module.exports = async ({ core }) => {
             return;
         }
 
-        const parsedChanges = versionChanges
-            .replace(`## ${version}`, '')
-            .trim();
-
         core.info(`Setting output: ${parsedChanges}.`);
         core.setOutput('changes', parsedChanges);
     } catch (error) {
         core.setFailed(error);
     }
 };
+
+module.exports = { extractChangelogSection, readChangelog };

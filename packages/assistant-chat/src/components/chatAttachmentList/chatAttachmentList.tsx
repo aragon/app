@@ -7,6 +7,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy } from '../../copy';
 import { formatFileSize } from './formatFileSize';
 
 export const ChatAttachmentList: React.FC = () => {
@@ -44,17 +45,20 @@ export const ChatAttachmentList: React.FC = () => {
                         )}
                         {attachment.status === 'error' && (
                             <p className="text-critical-800 text-xs">
-                                Upload failed
+                                {chatCopy.attachmentList.uploadFailed}
                             </p>
                         )}
                     </div>
                     {attachment.status === 'removing' ? (
-                        <div aria-label="Removing file" role="status">
+                        <div
+                            aria-label={chatCopy.attachmentList.removingFile}
+                            role="status"
+                        >
                             <Spinner size="sm" variant="neutral" />
                         </div>
                     ) : (
                         <Button
-                            aria-label="Remove file"
+                            aria-label={chatCopy.attachmentList.removeFile}
                             iconLeft={IconType.CLOSE}
                             onClick={() => removeFile(attachment.id)}
                             size="sm"

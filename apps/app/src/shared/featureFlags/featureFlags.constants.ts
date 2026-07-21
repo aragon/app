@@ -150,7 +150,7 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         key: 'supportChat',
         name: 'Support chat',
         description:
-            'Replaces the external support portal link in the footer with the in-app support chat.',
+            'Enables the in-app support chat: a side panel toggled from the navigation bar.',
         defaultValue: false,
         environments: {
             local: true,

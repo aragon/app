@@ -1,0 +1,123 @@
+# The "Assistant Release Start" workflow prepares the assistant release pull request ON DEMAND
+# (trunk-based: merging to main never starts a release by itself). Dispatching it applies
+# `changeset version` scoped to the assistant domain packages, pushes the bump to a timestamped
+# release/assistant/* branch and opens a "Release @aragon/assistant@x.y.z" PR whose description
+# lists every bumped package with its new changelog. Merging that PR is the release act — the
+# finalize workflow (assistant-release-pr-finalize.yml) tags the merge commit and the tag triggers
+# the production deploy.
+
+name: Assistant Release Start
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: 'Commit SHA to start release from (default: main HEAD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          fetch-depth: 0
+          ref: ${{ inputs.base_commit || 'main' }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
+        with:
+          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
+          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      # This flow owns the "assistant" release scope (see .github/release-scopes.yml): the
+      # service plus its version-only packages. App-scoped packages are versioned by the app
+      # release flow (app-release-start.yml), which symmetrically owns the "app" scope.
+      - name: Update version and changelog
+        uses: ./.github/actions/changeset-version
+        with:
+          scope: assistant
+          prettier_changelog: "true"
+          github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      # Versioning runs before the release branch exists so a dispatch without pending
+      # changesets exits here without leaving an empty branch or PR behind.
+      - name: Detect version changes
+        id: changes
+        run: echo "dirty=$([ -n "$(git status --porcelain)" ] && echo true || echo false)" >> $GITHUB_OUTPUT
+
+      - name: Get package version
+        if: steps.changes.outputs.dirty == 'true'
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: apps/assistant
+
+      # Per-package tag in the changesets-native format: @aragon/assistant@0.2.0. The tag anchors
+      # on the deployable service; the version-only packages ship inside their consumers untagged.
+      - name: Compute release tag
+        if: steps.changes.outputs.dirty == 'true'
+        id: release-tag
+        run: echo "name=@aragon/assistant@${{ steps.package-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+
+      - name: Generate version summary
+        if: steps.changes.outputs.dirty == 'true'
+        id: version-summary
+        uses: ./.github/actions/generate-version-summary
+        with:
+          scope: assistant
+
+      - name: Generate release branch name
+        if: steps.changes.outputs.dirty == 'true'
+        id: branch-name
+        run: echo "name=release/assistant/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Commit and push release branch
+        if: steps.changes.outputs.dirty == 'true'
+        run: |
+          git checkout -b ${{ steps.branch-name.outputs.name }}
+          git add --all
+          git commit -m "Release ${{ steps.release-tag.outputs.name }}"
+          git push origin ${{ steps.branch-name.outputs.name }}
+
+      - name: Ensure Pull Request
+        if: steps.changes.outputs.dirty == 'true'
+        uses: ./.github/actions/gh-ensure-pr
+        with:
+          base: main
+          head: ${{ steps.branch-name.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
+          body: |
+            Merging this PR releases `${{ steps.release-tag.outputs.name }}`: the merge commit is
+            tagged and the tag triggers the production deploy to assistant.aragon.org. The
+            version-only packages below ship inside their consumers and get no tag of their own.
+
+            ${{ steps.version-summary.outputs.summary }}
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}

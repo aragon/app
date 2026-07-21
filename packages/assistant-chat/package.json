@@ -27,7 +27,6 @@
     "dependencies": {
         "@ai-sdk/react": "catalog:",
         "@aragon/assistant-contracts": "workspace:*",
-        "@radix-ui/react-dialog": "catalog:",
         "@vercel/blob": "catalog:",
         "ai": "catalog:",
         "classnames": "catalog:",

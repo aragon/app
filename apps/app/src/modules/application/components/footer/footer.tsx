@@ -2,14 +2,12 @@
 
 import { Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { type ComponentProps, useState } from 'react';
+import type { ComponentProps } from 'react';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { Container } from '@/shared/components/container';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Link } from '@/shared/components/link';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useApplicationVersion } from '@/shared/hooks/useApplicationVersion';
-import { SupportChat } from '../supportChat';
 import { footerLinks } from './footerLinks';
 
 export interface IFooterProps extends ComponentProps<'footer'> {}
@@ -21,16 +19,6 @@ export const Footer: React.FC<IFooterProps> = (props) => {
     const { className, ...otherProps } = props;
 
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
-
-    const isSupportChatEnabled = isEnabled('supportChat');
-    const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
-
-    // With the support chat flag on, the help entry is a real button that opens the chat drawer —
-    // not an anchor, so hover / middle-click don't advertise a portal URL the click won't follow.
-    // The portal stays reachable inside the widget (header link + error escape hatches). Flag off
-    // keeps the plain portal anchor and its no-JS / middle-click fallback.
-    const handleHelpClick = () => setIsSupportChatOpen(true);
 
     const year = new Date().getFullYear();
 
@@ -70,45 +58,21 @@ export const Footer: React.FC<IFooterProps> = (props) => {
                     />
                 </div>
                 <div className="flex min-w-0 flex-col content-center [grid-area:links] md:flex-row md:gap-6">
-                    {footerLinks.map(({ link, label, target }) => {
-                        if (label === 'help' && isSupportChatEnabled) {
-                            return (
-                                <button
-                                    className={classNames(
-                                        linkClassNames,
-                                        'cursor-pointer text-left',
-                                    )}
-                                    key={label}
-                                    onClick={handleHelpClick}
-                                    type="button"
-                                >
-                                    {t(`app.application.footer.link.${label}`)}
-                                </button>
-                            );
-                        }
-
-                        return (
-                            <Link
-                                className={linkClassNames}
-                                href={link}
-                                key={label}
-                                target={target}
-                            >
-                                {t(`app.application.footer.link.${label}`)}
-                            </Link>
-                        );
-                    })}
+                    {footerLinks.map(({ link, label, target }) => (
+                        <Link
+                            className={linkClassNames}
+                            href={link}
+                            key={label}
+                            target={target}
+                        >
+                            {t(`app.application.footer.link.${label}`)}
+                        </Link>
+                    ))}
                 </div>
                 <p className="truncate pt-6 pb-3 font-normal text-base text-neutral-500 leading-tight [grid-area:copyright] md:py-0 lg:justify-self-end">
                     {t('app.application.footer.copyright', { year })}
                 </p>
             </Container>
-            {isSupportChatEnabled && (
-                <SupportChat
-                    isOpen={isSupportChatOpen}
-                    onClose={() => setIsSupportChatOpen(false)}
-                />
-            )}
         </footer>
     );
 };
