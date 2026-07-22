@@ -36,13 +36,13 @@ describe('useSppExternalPermissionCheckProposalCreation', () => {
             settings: [
                 [
                     {
-                        term: 'app.plugins.spp.sppPermissionCheckProposalCreation.pluginLabelName',
+                        term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                         definition: addressUtils.truncateAddress(safeAddress),
                     },
                     {
-                        term: 'app.plugins.spp.sppPermissionCheckProposalCreation.function',
+                        term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
                         definition:
-                            'app.plugins.spp.sppPermissionCheckProposalCreation.requirement',
+                            'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
                     },
                 ],
             ],
