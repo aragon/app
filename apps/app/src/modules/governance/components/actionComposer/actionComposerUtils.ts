@@ -1,4 +1,4 @@
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, IconType, invariant } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
@@ -80,7 +80,8 @@ class ActionComposerUtils {
      * (not yet loaded).
      * A required permission counts as granted when the DAO's permission list
      * contains a matching `permissionId` on the action's target contract
-     * (`defaultValue.to` as `where`), matched case-insensitively.
+     * (`defaultValue.to` as `where`), matched case-insensitively. A tagged item
+     * with no resolvable target throws, as that indicates a misconfigured action.
      *
      * @param items - Plugin action items to filter.
      * @param permissions - Permissions granted to the DAO, or undefined when not loaded.
@@ -102,11 +103,14 @@ class ActionComposerUtils {
                 return true;
             }
 
-            // Fail-open when the action's target contract cannot be resolved.
+            // An action that declares a required permission must have a target
+            // contract to check it against — a missing `to` means the action
+            // item is misconfigured.
             const where = defaultValue?.to;
-            if (!where) {
-                return true;
-            }
+            invariant(
+                where != null && where !== '',
+                `filterItemsByPermission: action "${item.id}" declares a requiredPermissionId but has no target address.`,
+            );
 
             return permissions.some(
                 (permission) =>
