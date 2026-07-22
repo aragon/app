@@ -5,5 +5,3 @@ import type { UIMessage } from 'ai';
  * the stream carries the conversation only, ticket state lives behind the explicit preview flow.
  */
 export type AssistantUIMessage = UIMessage;
-
-export type ChatStatus = 'submitted' | 'streaming' | 'ready' | 'error';

@@ -62,6 +62,12 @@ const buildFileResponse = (file: ISessionFile): IUploadFileResponse => ({
     size: file.size,
 });
 
+const computeContentHash = async (data: Uint8Array): Promise<string> => {
+    const digest = await crypto.subtle.digest('SHA-256', data);
+
+    return Buffer.from(digest).toString('hex');
+};
+
 export const buildFilesRoute = (deps: IAppDependencies) =>
     new Hono()
         // Issues a client-upload token (vendor protocol of @vercel/blob/client): the widget
@@ -282,12 +288,39 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
+            // Same bytes already queued (e.g. the user re-attached a screenshot after a slow
+            // reply): treat the confirm as idempotent — free the slot, drop the redundant blob
+            // and hand back the queued entry so the ticket carries the file once. Best effort:
+            // the queue snapshot predates the claim, so a perfectly concurrent duplicate can
+            // still slip through.
+            const contentHash = await computeContentHash(data);
+            const duplicateFile = queuedFiles.find(
+                (queuedFile) =>
+                    queuedFile.contentHash === contentHash &&
+                    queuedFile.size === validated.size,
+            );
+            if (duplicateFile != null) {
+                await sessionStore.releaseFileClaim(sessionId, fileId);
+                await deps
+                    .getBlobStore()
+                    .delete([blobUrl])
+                    .catch((error: unknown) =>
+                        observability.logError(error, {
+                            sessionId,
+                            step: 'confirmFile',
+                        }),
+                    );
+
+                return context.json(buildFileResponse(duplicateFile), 200);
+            }
+
             const file: ISessionFile = {
                 id: fileId,
                 blobUrl,
                 filename: validated.filename,
                 contentType: validated.contentType,
                 size: validated.size,
+                contentHash,
             };
 
             // The RPUSH length is atomic, so concurrent confirms of different files get

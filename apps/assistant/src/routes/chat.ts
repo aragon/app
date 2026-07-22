@@ -275,4 +275,39 @@ const isUpstreamRateLimited = (error: unknown): boolean =>
 // The request schema validates the exact subset of UIMessage the pipeline reads (text parts and
 // roles); the cast bridges the contracts type to the AI SDK type in this single place.
 const toUiMessages = (messages: IChatMessage[]): UIMessage[] =>
-    messages as unknown as UIMessage[];
+    messages
+        .map(dropReasoningParts)
+        .map(resolveDanglingApprovals) as unknown as UIMessage[];
+
+// Replayed reasoning is dead weight: it feeds no next turn, burns input tokens and makes the
+// gateway log a warning per part on providers that reject non-OpenAI reasoning in history.
+const dropReasoningParts = (message: IChatMessage): IChatMessage => ({
+    ...message,
+    parts: message.parts.filter((part) => part.type !== 'reasoning'),
+});
+
+// A user may keep typing while a draft awaits approval; the history then carries a tool part
+// stuck in `approval-requested`, which converts to a tool call without a response and makes the
+// model call fail. Resolve such parts as denied so the model sees the draft was superseded and
+// folds the new message into a fresh one.
+const resolveDanglingApprovals = (message: IChatMessage): IChatMessage => ({
+    ...message,
+    parts: message.parts.map((part) => {
+        const { state, approval } = part as {
+            state?: unknown;
+            approval?: object;
+        };
+
+        return state === 'approval-requested'
+            ? {
+                  ...part,
+                  state: 'approval-responded',
+                  approval: {
+                      ...approval,
+                      approved: false,
+                      reason: 'Superseded by a newer user message.',
+                  },
+              }
+            : part;
+    }),
+});

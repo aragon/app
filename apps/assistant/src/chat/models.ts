@@ -18,5 +18,16 @@ export const getChatProviderOptions = () => ({
     // model cannot drift from it. It only applies when the Gateway routes to the OpenAI API;
     // other providers ignore the key.
     openai: { strictJsonSchema: true },
-    gateway: { models: getConfig().chat.fallbackModels },
+    // Intake needs no reasoning, and thinking tokens are invisible output that eats the
+    // maxOutputTokens budget (observed: a draft clipped to an empty turn). Off for Gemini;
+    // other providers ignore the key.
+    google: { thinkingConfig: { thinkingBudget: 0 } },
+    gateway: {
+        models: getConfig().chat.fallbackModels,
+        // The gateway load-balances one model across providers; the deepseek first-party host
+        // proved flaky in testing (finishReason "other", retry storms surfacing error parts in
+        // the chat) while Fireworks stayed clean — prefer it, without excluding the providers
+        // that host the fallback models.
+        order: ['fireworks'],
+    },
 });

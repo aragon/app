@@ -93,7 +93,7 @@ export const buildIssueDescription = (input: {
         `## ${issueTexts.sections.request}
 
 - **${issueTexts.fieldLabels.intent}:** ${fields.intent}
-- **${issueTexts.fieldLabels.email}:** ${fields.email ?? issueTexts.emptyValue}
+- **${issueTexts.fieldLabels.contact}:** ${fields.contact || issueTexts.emptyValue}
 ${renderContextRows(appContext, sessionId)}`,
     );
 
@@ -107,10 +107,13 @@ ${renderContextRows(appContext, sessionId)}`,
     );
 
     if (fields.stepsToReproduce != null && fields.stepsToReproduce.length > 0) {
-        // Steps arrive as an unnumbered list (see collectedFieldsSchema); numbering is applied
-        // here, at the single place that renders them.
+        // The schema asks for unnumbered steps but models number them anyway; any leading
+        // "1." / "1)" is stripped so the numbering applied here never doubles up.
         const steps = fields.stepsToReproduce
-            .map((step, index) => `${String(index + 1)}. ${step}`)
+            .map(
+                (step, index) =>
+                    `${String(index + 1)}. ${step.replace(/^\s*\d+\s*[.)]\s*/, '')}`,
+            )
             .join('\n');
         sections.push(
             `## ${issueTexts.sections.stepsToReproduce}\n\n${quoteUserText(steps)}`,

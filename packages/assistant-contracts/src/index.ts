@@ -35,5 +35,4 @@ export {
     type ICreateTicketToolInput,
     type ICreateTicketToolOutput,
     type ITicketIntent,
-    ticketIntentSchema,
 } from './ticket';

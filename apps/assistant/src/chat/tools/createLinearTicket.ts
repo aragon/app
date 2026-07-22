@@ -90,15 +90,9 @@ export const createSessionTicket = async (
     const { deps, sessionId, appContext, messages } = context;
     const sessionStore = deps.getSessionStore();
 
-    const count = await sessionStore.getTicketCount(sessionId);
-    if (count >= assistantLimits.maxIssuesPerSession) {
-        throw new Error(
-            'This conversation has reached its ticket limit. Please start a new conversation to file another.',
-        );
-    }
-
-    // Deduplicate a replayed execution of the same tool call: only the first claim wins; a later
-    // one returns the ticket already created for it.
+    // Deduplicate a replayed execution of the same tool call first: only the first claim wins; a
+    // later one returns the ticket already created for it — without touching the slot counter, so
+    // a replay keeps working even once the session is at its cap.
     const claimed = await sessionStore.claimTicket(sessionId, toolCallId);
     if (!claimed) {
         const existing = await sessionStore.getTicket(sessionId, toolCallId);
@@ -107,6 +101,19 @@ export const createSessionTicket = async (
         }
 
         throw new Error('This ticket is already being created.');
+    }
+
+    // The cap is enforced on the atomic reservation result, not on a separate read: concurrent
+    // creations of distinct tool calls each get a distinct count, so they cannot all pass while
+    // the counter still reads below the limit. An over-cap reservation rolls itself back.
+    const reserved = await sessionStore.reserveTicketSlot(sessionId);
+    if (reserved > assistantLimits.maxIssuesPerSession) {
+        await sessionStore.releaseTicketSlot(sessionId);
+        await sessionStore.releaseTicketClaim(sessionId, toolCallId);
+
+        throw new Error(
+            'This conversation has reached its ticket limit. Please start a new conversation to file another.',
+        );
     }
 
     const startTime = Date.now();
@@ -141,8 +148,9 @@ export const createSessionTicket = async (
 
         return ticket;
     } catch (error) {
-        // Release the claim so a retry of the same tool call can succeed.
+        // Release the claim and the reserved slot so a retry of the same tool call can succeed.
         await sessionStore.releaseTicketClaim(sessionId, toolCallId);
+        await sessionStore.releaseTicketSlot(sessionId);
         observability.logError(error, { sessionId, step: 'createTicket' });
 
         throw new Error('Creating the ticket failed. Please try again.');

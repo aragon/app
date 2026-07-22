@@ -1,29 +1,8 @@
 // Setup testing-library DOM element matchers (e.g. toBeInTheDocument)
 import '@testing-library/jest-dom';
-import {
-    ReadableStream,
-    TextDecoderStream,
-    TransformStream,
-    WritableStream,
-} from 'node:stream/web';
-import { TextDecoder, TextEncoder } from 'node:util';
-import { deserialize, serialize } from 'node:v8';
 
-// Globally setup TextEncoder/TextDecoder needed by viem (pulled in through gov-ui-kit)
-Object.assign(global, { TextDecoder, TextEncoder });
-
-// jsdom does not implement web streams, required by the AI SDK's SSE parsing
-Object.assign(global, {
-    ReadableStream,
-    TextDecoderStream,
-    TransformStream,
-    WritableStream,
-});
-
-// jsdom does not implement structuredClone, used by the AI SDK to snapshot message state
-Object.assign(global, {
-    structuredClone: (value: unknown) => deserialize(serialize(value)),
-});
+// The fetch/Response/stream/encoding globals live on the jsdom global via the custom test
+// environment (jsdomWithNode.js); only the jest-based DOM shims that jsdom lacks are set up here.
 
 // Mock ResizeObserver functionality
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
@@ -32,13 +11,19 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
     disconnect: jest.fn(),
 }));
 
-// jsdom does not implement scrollIntoView, used to follow the latest chat message
+// jsdom does not implement scrollIntoView / scrollTo, used by the thread viewport to follow the
+// latest message
 Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollTo = jest.fn();
 
 // jsdom does not implement the pointer-capture APIs Radix dialogs rely on
 Element.prototype.hasPointerCapture = jest.fn();
 Element.prototype.setPointerCapture = jest.fn();
 Element.prototype.releasePointerCapture = jest.fn();
+
+// jsdom does not implement object URLs, used by the attachment tiles to preview local files
+URL.createObjectURL = jest.fn(() => 'blob:mock-object-url');
+URL.revokeObjectURL = jest.fn();
 
 // jsdom does not implement matchMedia
 Object.defineProperty(window, 'matchMedia', {

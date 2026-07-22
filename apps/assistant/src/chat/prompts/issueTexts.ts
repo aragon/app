@@ -23,7 +23,7 @@ export const issueTexts = {
     },
     fieldLabels: {
         intent: 'Intent',
-        email: 'Email',
+        contact: 'Contact',
     },
     transcriptRoles: {
         user: 'User',

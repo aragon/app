@@ -11,15 +11,17 @@ export const ticketIntentSchema = z.enum(['feedback', 'bug', 'support']);
 
 export type ITicketIntent = z.infer<typeof ticketIntentSchema>;
 
-// Fields the model must assemble before calling the tool. A thin zod gate against thin or premature
-// calls: an invalid call surfaces to the model as a tool error it recovers from by gathering more.
-// Fields are English (enforced by the system prompt) while the chat stays in the user's language.
+// Fields the model must assemble before calling the tool. Deliberately lenient on lengths: a thin
+// ticket is fine (the team follows up), while a strict floor turned short-but-valid drafts into
+// tool errors the model then narrated verbatim to the user. Fields are English (enforced by the
+// system prompt) while the chat stays in the user's language.
 export const createTicketToolInputSchema = z.object({
     intent: ticketIntentSchema,
-    title: z.string().min(8).max(160),
-    description: z.string().min(20),
-    // Optional: used for updates when provided, never blocks creation.
-    email: z.string().optional(),
+    title: z.string().min(1).max(160),
+    description: z.string().min(1),
+    // Optional free-form contact channel (email, Telegram, anything the user offers): used by the
+    // team to follow up when provided, never blocks creation.
+    contact: z.string().optional(),
     // One step per item, unnumbered — the natural shape models produce; rendering owns numbering.
     stepsToReproduce: z.array(z.string()).optional(),
 });

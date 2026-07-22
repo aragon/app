@@ -1,8 +1,13 @@
 export {
-    dropzoneAccept,
+    createAttachmentAdapter,
+    type ICreateAttachmentAdapterParams,
+} from './attachmentAdapter';
+export {
+    attachmentAccept,
     type FileRejectReason,
     type IFileValidationResult,
     type IRejectedFile,
+    type IValidateFilesOptions,
     validateFiles,
 } from './fileValidation';
 export {
@@ -14,12 +19,3 @@ export {
     type UploadFileErrorCode,
     uploadFile,
 } from './uploadFile';
-export {
-    type ChatAttachmentStatus,
-    type ChatFileAlertReason,
-    type IChatAttachment,
-    type IFileAlert,
-    type IUseFileAttachmentsParams,
-    type IUseFileAttachmentsResult,
-    useFileAttachments,
-} from './useFileAttachments';

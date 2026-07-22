@@ -31,6 +31,10 @@ export interface ISessionFile {
     filename: string;
     contentType: string;
     size: number;
+    // SHA-256 of the content, set at confirm time: lets a re-upload of the same bytes map onto
+    // the already queued entry instead of duplicating the file on the ticket. Optional because
+    // entries queued before the field existed lack it.
+    contentHash?: string;
 }
 
 // Stored under the per-ticket key: the claim marker, then the created ticket.
@@ -49,15 +53,23 @@ export interface ISessionStore {
     getTokens(sessionId: string): Promise<number>;
 
     // --- Ticket lifecycle (up to maxIssuesPerSession per session) ---
-    // Count of tickets already created in the session — the cap is enforced against it.
+    // Count of reserved ticket slots (created tickets plus creations in flight).
     getTicketCount(sessionId: string): Promise<number>;
+    // Atomically reserves a ticket slot and returns the resulting count. The INCRBY reply is
+    // exact under concurrency, so the caller enforces the cap without a read-then-act race: on
+    // an over-cap result it releases its own reservation — concurrent creations of distinct
+    // tool calls cannot oversubscribe the session.
+    reserveTicketSlot(sessionId: string): Promise<number>;
+    // Releases a reservation after an over-cap result or a failed creation so the slot frees up.
+    releaseTicketSlot(sessionId: string): Promise<void>;
     // Atomically claims a single tool call's ticket slot; false when its creation is already in
     // flight or done. Keyed by the tool call id, so distinct calls never block each other and a
     // replay of the same call is deduplicated. The claim expires on its own.
     claimTicket(sessionId: string, toolCallId: string): Promise<boolean>;
     // Releases the claim after a failed creation so a retry of the same tool call can succeed.
     releaseTicketClaim(sessionId: string, toolCallId: string): Promise<void>;
-    // Records the created ticket (overwriting the claim) and bumps the session ticket count.
+    // Records the created ticket (overwriting the claim); its slot was already reserved by
+    // reserveTicketSlot before the creation started.
     storeTicket(
         sessionId: string,
         toolCallId: string,
@@ -136,6 +148,11 @@ export const createSessionStore = (redis: Redis): ISessionStore => {
                 (await redis.get<string>(buildKey(sessionId, 'ticketcount'))) ??
                     0,
             ),
+        reserveTicketSlot: (sessionId) =>
+            incrementBy(buildKey(sessionId, 'ticketcount'), 1),
+        releaseTicketSlot: async (sessionId) => {
+            await incrementBy(buildKey(sessionId, 'ticketcount'), -1);
+        },
         // SET NX EX: exactly one concurrent execution of the same tool call observes 'OK'. The
         // short TTL only covers the in-flight creation; storeTicket overwrites it with the session
         // TTL.
@@ -157,7 +174,6 @@ export const createSessionStore = (redis: Redis): ISessionStore => {
                 JSON.stringify({ status: 'created', ...ticket }),
                 { ex: sessionTtlSeconds },
             );
-            await incrementBy(buildKey(sessionId, 'ticketcount'), 1);
         },
         getTicket: async (sessionId, toolCallId) => {
             const value = await redis.get<string>(

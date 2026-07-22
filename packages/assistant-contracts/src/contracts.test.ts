@@ -78,18 +78,25 @@ describe('assistant wire contract', () => {
                 title: 'Voting transaction reverts',
                 description:
                     'Submitting a vote on a proposal reverts with an unknown error.',
-                email: 'user@example.com',
+                contact: '@user on Telegram',
                 stepsToReproduce: ['Open a proposal', 'Press vote'],
             }).success,
         ).toBeTruthy();
 
-        // The zod gate rejects thin/premature calls (short title, missing description) and
-        // off-topic intents so the model gathers more before it can file.
+        // Lenient on lengths by design: a short-but-valid draft must not become a tool error the
+        // model narrates to the user. Only structurally invalid calls (missing fields, off-topic
+        // intents) are rejected.
         expect(
             createTicketToolInputSchema.safeParse({
                 intent: 'bug',
                 title: 'bug',
                 description: 'x',
+            }).success,
+        ).toBeTruthy();
+        expect(
+            createTicketToolInputSchema.safeParse({
+                intent: 'bug',
+                title: 'Voting transaction reverts',
             }).success,
         ).toBeFalsy();
         expect(

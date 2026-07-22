@@ -23,7 +23,7 @@ const pngBytes = new Uint8Array([
 ]);
 
 const buildFileId = (index: number) =>
-    `00000000-0000-4000-8000-00000000000${index}`;
+    `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
 
 const buildBlobUrl = (params?: {
     fileId?: string;
@@ -166,6 +166,31 @@ describe('files routes', () => {
         const retry = await confirmUpload(app, { blobUrl });
         expect(retry.status).toEqual(200);
         expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
+
+    it('maps a re-upload of identical bytes onto the queued file instead of duplicating it', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const app = buildApp(deps);
+
+        const firstBlobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(firstBlobUrl, pngBytes);
+        const first = await confirmUpload(app, { blobUrl: firstBlobUrl });
+        expect(first.status).toEqual(201);
+        const firstBody: unknown = await first.json();
+
+        // The same bytes under a fresh file id: the user re-attached the same screenshot.
+        const duplicateBlobUrl = buildBlobUrl({ fileId: buildFileId(2) });
+        deps.blobStore.blobs.set(duplicateBlobUrl, pngBytes);
+        const duplicate = await confirmUpload(app, {
+            blobUrl: duplicateBlobUrl,
+        });
+
+        // The confirm succeeds but hands back the already queued entry; the redundant blob is
+        // dropped and the ticket will carry the file once.
+        expect(duplicate.status).toEqual(200);
+        expect(await duplicate.json()).toEqual(firstBody);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+        expect(deps.blobStore.deletedUrls).toEqual([duplicateBlobUrl]);
     });
 
     it('queues the file exactly once under concurrent confirms of the same blob', async () => {

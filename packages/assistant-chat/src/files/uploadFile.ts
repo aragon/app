@@ -31,10 +31,6 @@ export interface IUploadFileParams {
      * File to upload.
      */
     file: File;
-    /**
-     * Called with the upload progress in the [0, 1] range.
-     */
-    onProgress?: (progress: number) => void;
 }
 
 export interface IUploadFileHandle {
@@ -127,7 +123,7 @@ const confirmUpload = async (
 // uploads the bytes directly to blob storage, then POST /files/confirm lets the service
 // validate the content and queue the file for the ticket.
 export const uploadFile = (params: IUploadFileParams): IUploadFileHandle => {
-    const { assistantUrl, sessionId, file, onProgress } = params;
+    const { assistantUrl, sessionId, file } = params;
 
     const abortController = new AbortController();
     const { signal } = abortController;
@@ -141,7 +137,6 @@ export const uploadFile = (params: IUploadFileParams): IUploadFileHandle => {
         handleUploadUrl: `${assistantUrl}/files/token`,
         clientPayload: JSON.stringify({ sessionId }),
         abortSignal: signal,
-        onUploadProgress: ({ percentage }) => onProgress?.(percentage / 100),
     })
         .then((blob) => confirmUpload(params, blob.url, signal))
         .catch((error: unknown) => {

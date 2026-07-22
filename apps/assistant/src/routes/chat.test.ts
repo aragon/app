@@ -138,6 +138,95 @@ describe('POST /chat guardrails', () => {
         expect(await deps.sessionStore.getTokens(sessionId)).toEqual(15);
     });
 
+    it('resolves a dangling approval request as superseded instead of failing the model call', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // The user kept typing while a draft awaited approval: the history carries a tool part
+        // stuck in `approval-requested`, which converts to a tool call without a response.
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    {
+                        type: 'tool-createLinearTicket',
+                        toolCallId: 'tc-1',
+                        state: 'approval-requested',
+                        input: {
+                            intent: 'bug',
+                            title: 'Voting transaction reverts',
+                            description:
+                                'Submitting a vote reverts with an unknown error.',
+                        },
+                        approval: { id: 'ap-1' },
+                    },
+                ],
+            } as never,
+            {
+                id: 'message-3',
+                role: 'user',
+                parts: [{ type: 'text', text: 'It only happens in Safari.' }],
+            },
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        const streamed = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The turn streams a normal reply (no error part), and the model saw the draft as a
+        // denied tool call it can re-draft from.
+        expect(streamed).not.toContain('"type":"error"');
+        expect(JSON.stringify(model.doStreamCalls)).toContain(
+            'execution-denied',
+        );
+    });
+
+    it('strips replayed reasoning parts from the history before the model call', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // A reasoning model's thinking travels back with the client history; it feeds no next
+        // turn and some providers reject it, so it must never reach the model call.
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    { type: 'reasoning', text: 'Private chain of thought.' },
+                    { type: 'text', text: 'Could you share more details?' },
+                ],
+            } as never,
+            {
+                id: 'message-3',
+                role: 'user',
+                parts: [{ type: 'text', text: 'It started today.' }],
+            },
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).not.toContain('Private chain of thought.');
+        expect(streamCalls).toContain('Could you share more details?');
+    });
+
     it('gates ticket creation behind approval: a proposed tool call never executes on its own', async () => {
         const deps = createTestDependencies(
             createMockChatModel({

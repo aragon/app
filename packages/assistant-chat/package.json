@@ -27,10 +27,13 @@
     "dependencies": {
         "@ai-sdk/react": "catalog:",
         "@aragon/assistant-contracts": "workspace:*",
+        "@assistant-ui/react": "catalog:",
+        "@assistant-ui/react-ai-sdk": "catalog:",
+        "@assistant-ui/react-markdown": "catalog:",
+        "@radix-ui/react-dialog": "catalog:",
         "@vercel/blob": "catalog:",
         "ai": "catalog:",
         "classnames": "catalog:",
-        "react-dropzone": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {

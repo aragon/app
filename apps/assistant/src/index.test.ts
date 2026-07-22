@@ -97,15 +97,15 @@ describe('app', () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const app = createApp(deps);
         const sessionId = 'b3b8f8a2-6c9d-4c9e-8f6a-2d1e0c9b8a7f';
-        const postIssues = () =>
+        const postChat = () =>
             app.request('/chat', {
                 method: 'POST',
                 headers: { 'content-type': 'application/json' },
                 body: JSON.stringify({ sessionId, messages: [] }),
             });
 
-        await postIssues();
-        const refused = await postIssues();
+        await postChat();
+        const refused = await postChat();
 
         expect(refused.status).toEqual(429);
         expect(logStepSpy).toHaveBeenCalledWith(

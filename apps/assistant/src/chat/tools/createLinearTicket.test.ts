@@ -76,6 +76,27 @@ describe('createSessionTicket', () => {
         );
     });
 
+    it('never exceeds the ticket cap under concurrent calls of distinct tool calls', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+
+        // Distinct tool call ids race for the session slots: a read-check-then-increment cap
+        // would let every one of them pass while the counter still reads below the limit.
+        const results = await Promise.allSettled(
+            Array.from({ length: 5 }, (_, index) => run(deps, `call-${index}`)),
+        );
+
+        const created = results.filter(
+            (result) => result.status === 'fulfilled',
+        );
+        expect(created).toHaveLength(assistantLimits.maxIssuesPerSession);
+        expect(deps.linear.createIssueCalls).toHaveLength(
+            assistantLimits.maxIssuesPerSession,
+        );
+        expect(await deps.sessionStore.getTicketCount(sessionId)).toEqual(
+            assistantLimits.maxIssuesPerSession,
+        );
+    });
+
     it('releases the claim on a Linear failure so a retry of the same call succeeds', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         deps.linear.failNextCreate = true;

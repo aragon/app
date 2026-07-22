@@ -43,8 +43,12 @@ const defaultRateLimit = { requestsPerMinute: 10, sessionsPerDay: 10 };
 // outage or a per-model rate limit degrades instead of failing. Fallback tool-calling fitness is
 // to be re-confirmed on the stand / llm-smoke before finalizing.
 const defaultChat = {
-    agentModel: 'google/gemini-2.5-flash-lite',
-    fallbackModels: ['openai/gpt-oss-20b', 'amazon/nova-micro'],
+    // deepseek-v4-flash won the in-budget bake-off (4/4 tool calls with a warm sentence, clean
+    // refusals); gemini-2.5-flash-lite skipped tool calls and once fabricated a ticket number,
+    // gpt-5-nano never called the tool, gpt-oss-20b leaked harmony markup into the chat (which
+    // also rules it out as a fallback).
+    agentModel: 'deepseek/deepseek-v4-flash',
+    fallbackModels: ['google/gemini-2.5-flash-lite'],
 };
 
 // Non-secret per-environment configuration. Kept as a checked-in typed module because Vercel

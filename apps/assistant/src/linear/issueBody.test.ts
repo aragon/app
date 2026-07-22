@@ -9,7 +9,7 @@ const sessionId = 'b3b8f8a2-6c9d-4c9e-8f6a-2d1e0c9b8a7f';
 
 const fields: ICreateTicketToolInput = {
     intent: 'bug',
-    email: 'user@example.com',
+    contact: 'user@example.com',
     title: 'Voting crashes on Base',
     description: 'The vote button crashes the page.',
 };
@@ -52,7 +52,7 @@ describe('buildIssueDescription', () => {
         });
 
         expect(description).toContain('- **Intent:** bug');
-        expect(description).toContain('- **Email:** user@example.com');
+        expect(description).toContain('- **Contact:** user@example.com');
         expect(description).toContain(`- **Session:** \`${sessionId}\``);
         expect(description).toContain('- **DAO:** 0x123');
         expect(description).toContain(
@@ -102,7 +102,9 @@ describe('buildIssueDescription', () => {
             sessionId,
             fields: {
                 ...fields,
-                stepsToReproduce: ['Open the proposal page', 'Press Vote'],
+                // The second step is model-numbered despite the schema: its prefix must be
+                // stripped so the applied numbering never doubles up ("2. 2. Press Vote").
+                stepsToReproduce: ['Open the proposal page', '2. Press Vote'],
             },
             appContext,
             messages: [buildUserMessage('hello')],
@@ -112,6 +114,7 @@ describe('buildIssueDescription', () => {
         expect(description).toContain('## Steps to reproduce');
         expect(description).toContain('> 1. Open the proposal page');
         expect(description).toContain('> 2. Press Vote');
+        expect(description).not.toContain('2. 2.');
     });
 
     it('omits empty context rows and optional sections', () => {
