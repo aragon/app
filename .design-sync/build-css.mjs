@@ -17,8 +17,6 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const appSrcNodeModules = join(root, 'apps/app/src/node_modules');
 const appNodeModulesAlias = join(root, 'apps/app/node_modules/@');
-const helperPackageDir = join(root, '.design-sync');
-const helperNodeModules = join(helperPackageDir, 'node_modules');
 const legacyDsSyncDir = join(root, '.ds-sync');
 const kitCssOut = join(
     root,
@@ -39,7 +37,6 @@ if (process.argv.includes('--clean')) {
             path: kitCssOut,
         },
         { label: '.design-sync/.cache', path: cacheDir },
-        { label: '.design-sync/node_modules', path: helperNodeModules },
         { label: '.ds-sync', path: legacyDsSyncDir },
     ];
 
@@ -51,8 +48,11 @@ if (process.argv.includes('--clean')) {
     );
     process.exit(0);
 }
-const cli = join(helperNodeModules, '@tailwindcss/cli/dist/index.mjs');
-const cliPackageJson = join(helperNodeModules, '@tailwindcss/cli/package.json');
+const cli = join(root, 'apps/app/node_modules/@tailwindcss/cli/dist/index.mjs');
+const cliPackageJson = join(
+    root,
+    'apps/app/node_modules/@tailwindcss/cli/package.json',
+);
 const entry = join(root, '.design-sync/tailwind-entry.css');
 const tmp = cacheCss;
 // cfg.cssEntry is security-bounded to the package dir, so the compiled file
@@ -60,35 +60,25 @@ const tmp = cacheCss;
 // cfg.buildCmd) before every converter build, so the file is always fresh.
 const out = kitCssOut;
 
-// The Tailwind CLI is restored from the committed helper lockfile instead of an
-// untracked scratch install, so fresh machines resolve the same transitive tree.
-// Keep the helper package version aligned with the app's installed Tailwind
-// engine; a mismatch means the lockfile needs to be refreshed in the same PR as
-// the Tailwind bump.
+// The Tailwind CLI is a regular app devDependency so the repo's single pnpm
+// lockfile owns the entire toolchain. Keep it aligned with the app's installed
+// Tailwind engine; a mismatch means the catalog/package entries need to be
+// refreshed in the same PR as the Tailwind bump.
+if (!existsSync(cli) || !existsSync(cliPackageJson)) {
+    throw new Error(
+        '@tailwindcss/cli is missing. Run `corepack pnpm install` from the repo root before design-sync.',
+    );
+}
 const tailwindVersion = JSON.parse(
     readFileSync(
         join(root, 'apps/app/node_modules/tailwindcss/package.json'),
         'utf8',
     ),
 ).version;
-let cliVersion = existsSync(cliPackageJson)
-    ? JSON.parse(readFileSync(cliPackageJson, 'utf8')).version
-    : undefined;
-if (!existsSync(cli) || cliVersion !== tailwindVersion) {
-    console.log(
-        `@tailwindcss/cli ${cliVersion == null ? 'missing' : `is ${cliVersion}`} — installing locked ${tailwindVersion} from .design-sync/package-lock.json`,
-    );
-    execFileSync('npm', ['ci'], {
-        cwd: helperPackageDir,
-        stdio: 'inherit',
-        // npm is npm.cmd on Windows; spawn only resolves it through a shell
-        shell: process.platform === 'win32',
-    });
-    cliVersion = JSON.parse(readFileSync(cliPackageJson, 'utf8')).version;
-}
+const cliVersion = JSON.parse(readFileSync(cliPackageJson, 'utf8')).version;
 if (cliVersion !== tailwindVersion) {
     throw new Error(
-        `@tailwindcss/cli is ${cliVersion}, but apps/app has tailwindcss ${tailwindVersion}. Update .design-sync/package.json and package-lock.json.`,
+        `@tailwindcss/cli is ${cliVersion}, but apps/app has tailwindcss ${tailwindVersion}. Update the shared catalog and apps/app devDependencies together.`,
     );
 }
 

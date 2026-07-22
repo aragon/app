@@ -1,8 +1,0 @@
-{
-    "name": "@aragon/design-sync-helper",
-    "private": true,
-    "description": "Locked helper dependencies for deterministic design-sync CSS compilation.",
-    "dependencies": {
-        "@tailwindcss/cli": "4.3.1"
-    }
-}

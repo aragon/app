@@ -74,6 +74,7 @@
         "@hookform/devtools": "^4.4.0",
         "@playwright/test": "^1.61.0",
         "@synthetixio/synpress": "^4.1.2",
+        "@tailwindcss/cli": "catalog:",
         "@tailwindcss/postcss": "^4.3.1",
         "@tailwindcss/typography": "catalog:",
         "@testing-library/dom": "catalog:",
