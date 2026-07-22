@@ -16,13 +16,13 @@ git worktree remove ../app-design-sync  # afterwards; commits stay in the shared
 All build artifacts stay confined to the worktree and die with it. As a second
 line of defense the app tooling is also shielded from the shims (jest pins
 `next/*` — see the shim bullet in "Slice 3 wiring"), and
-`node .design-sync/build-css.mjs --clean` removes them from any tree.
+`corepack pnpm --workspace-root run design-sync:build-css -- --clean` removes them from any tree.
 
 ## Re-sync risks (watch-list for the next run)
 
 - **Kit version drift:** previews and grades were verified against `@aragon/gov-ui-kit@2.8.1`. On a kit bump, the anchor diff scopes re-verification, but the Storybook-reference claim (local checkout at `c:\dev\gov-ui-kit`) only holds if that checkout matches the installed version.
 - **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it inlines the app's `--guk-*` overrides copied from `layoutRoot.css`; if the app changes those overrides, re-copy them into the entry file (they do NOT sync automatically).
-- **Tailwind CLI version:** lives inside `.ds-sync/node_modules` (gitignored); `build-css.mjs` bootstraps it automatically on fresh clones, pinned to the app's installed `tailwindcss` version.
+- **Tailwind CLI version:** restored into `.design-sync/node_modules` (gitignored) from the committed `.design-sync/package-lock.json`; `build-css.mjs` verifies it matches the app's installed `tailwindcss` version, so refresh `.design-sync/package.json` and the lockfile in the same PR as any Tailwind bump.
 - **Dialog/DialogAlert previews** depend on the force-open workaround (frozen-clock + framer-motion); a kit animation refactor may break them silently — check their sheets on any kit bump.
 - **Transient validate flake:** Accordion occasionally reports `[RENDER] root empty` in driver runs (animation timing); a re-run clears it. Don't chase unless it repeats.
 - The module components (25) and 5 infrastructure primitives ship floor cards by design — the standing offer for incremental authoring on any later re-sync (slice 2: modules with `GukModulesProvider` wrapping).
@@ -33,7 +33,7 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - Env: Git Bash resolves Node v23.1.0 (breaks pnpm 11 — no `node:sqlite`); PowerShell has Node 24.14 at `C:\Program Files\nodejs` but no `pnpm` on PATH. Use PowerShell + corepack/npx for pnpm.
 - Existing Claude Design project "Aragon Gov UI Kit — Design System" (owner Selim) is unrelated to this sync — do not touch.
 - **UPSTREAM BUG (report to gov-ui-kit team):** the published package's compiled `build.css` (v2.8.1) is corrupted by its minifier — rules with child selectors got their selector lists wrongly merged with dozens of unrelated utilities (e.g. ~60 `md:*` utilities all give children `border-right: 1px` at ≥768px; ~140 `2xl:*` utilities give `&>:last-child{border-style:none}`). Symptom in previews: stray vertical bars at the right edge of AlertCard/Accordion content. Invisible to the app and Storybook because both compile the kit CSS from source. Any consumer of the precompiled `build.css` is affected.
-- Because of that bug the sync does NOT use `build.css`. `cfg.buildCmd` (`node .design-sync/build-css.mjs`) compiles CSS from source with Tailwind CLI 4.3.1 (pinned in `.ds-sync` deps), mirroring the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + kit `index.css` + `@source` scan of the kit package + the app's `--guk-*` z-index/positioning overrides). Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
+- Because of that bug the sync does NOT use `build.css`. `cfg.buildCmd` (`corepack pnpm --workspace-root run design-sync:build-css`) compiles CSS from source with the locked Tailwind CLI, mirroring the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + kit `index.css` + `@source` scan of the kit package + the app's `--guk-*` z-index/positioning overrides). Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
 - `.design-sync/tailwind-entry.css` imports tailwind via a relative node_modules path (plain `"tailwindcss"` doesn't resolve from `.design-sync/`).
 
 ## Known render warns (triaged legitimate)

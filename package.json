@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "turbo run dev",
         "build": "turbo run build",
+        "design-sync:build-css": "node .design-sync/build-css.mjs",
         "test": "pnpm test:release-summary && turbo run test",
         "test:changed": "turbo run test:changed",
         "test:coverage": "pnpm test:release-summary && turbo run test:coverage",

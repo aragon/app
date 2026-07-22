@@ -42,7 +42,7 @@ const DaoCard = (props: {
 
 export const Default = () => (
     <div className="w-full">
-        <Carousel gap={16} speed={40} speedOnHoverFactor={0.2}>
+        <Carousel gap={16} initialOffset={0} isDraggable={true}>
             {featuredDaos.map((dao) => (
                 <DaoCard key={dao.name} {...dao} />
             ))}
@@ -50,9 +50,9 @@ export const Default = () => (
     </div>
 );
 
-export const Draggable = () => (
+export const Marquee = () => (
     <div className="w-full">
-        <Carousel gap={24} initialOffset={0} isDraggable={true}>
+        <Carousel gap={16} speed={40} speedOnHoverFactor={0.2}>
             {featuredDaos.slice(0, 4).map((dao) => (
                 <DaoCard key={dao.name} {...dao} />
             ))}
