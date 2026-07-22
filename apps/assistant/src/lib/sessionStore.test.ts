@@ -16,33 +16,37 @@ describe('createSessionStore', () => {
         size: 1,
     });
 
-    it('grants exactly one claim to concurrent createTicket calls', async () => {
+    it('grants exactly one claim to concurrent executions of the same tool call', async () => {
         const store = buildStore();
 
         const results = await Promise.all(
-            Array.from({ length: 10 }, () => store.claimIssue(sessionId)),
+            Array.from({ length: 10 }, () =>
+                store.claimTicket(sessionId, 'call-1'),
+            ),
         );
 
         expect(results.filter(Boolean)).toHaveLength(1);
+        // A different tool call is unaffected — distinct calls never block each other.
+        expect(await store.claimTicket(sessionId, 'call-2')).toBeTruthy();
     });
 
-    it('allows a retry after a released claim and replays a stored issue', async () => {
+    it('replays a stored ticket, counts it and allows a retry after release', async () => {
         const store = buildStore();
 
-        expect(await store.claimIssue(sessionId)).toBeTruthy();
-        await store.releaseIssueClaim(sessionId);
-        expect(await store.claimIssue(sessionId)).toBeTruthy();
+        expect(await store.claimTicket(sessionId, 'call-1')).toBeTruthy();
+        await store.releaseTicketClaim(sessionId, 'call-1');
+        expect(await store.claimTicket(sessionId, 'call-1')).toBeTruthy();
 
-        const issue = {
-            issueId: 'issue-1',
+        const ticket = {
             identifier: 'SUP-1',
             url: 'https://linear.app/aragon/issue/SUP-1',
         };
-        await store.storeIssue(sessionId, issue);
-        expect(await store.getIssue(sessionId)).toEqual({
-            status: 'created',
-            ...issue,
-        });
+        await store.storeTicket(sessionId, 'call-1', ticket);
+
+        // A replay of the same call reads the stored result instead of creating again.
+        expect(await store.getTicket(sessionId, 'call-1')).toEqual(ticket);
+        expect(await store.claimTicket(sessionId, 'call-1')).toBeFalsy();
+        expect(await store.getTicketCount(sessionId)).toEqual(1);
     });
 
     it('grants exactly one file claim to concurrent confirms of the same file', async () => {

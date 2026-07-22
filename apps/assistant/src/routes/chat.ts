@@ -1,6 +1,7 @@
 import {
     assistantLimits,
     chatRequestSchema,
+    createTicketToolName,
     type IAssistantError,
     type IChatMessage,
 } from '@aragon/assistant-contracts';
@@ -8,28 +9,25 @@ import {
     convertToModelMessages,
     createUIMessageStream,
     createUIMessageStreamResponse,
+    stepCountIs,
     streamText,
     toUIMessageStream,
     type UIMessage,
     type UIMessageStreamWriter,
 } from 'ai';
 import { Hono } from 'hono';
-import { getChatProviderOptions, respondTimeoutMs } from '../chat/models';
+import { chatTimeoutMs, getChatProviderOptions } from '../chat/models';
+import { buildAgentSystemPrompt } from '../chat/prompts/agentPrompt';
 import {
-    offTopicMessage,
     tokenBudgetMessage,
     turnLimitMessage,
 } from '../chat/prompts/fixedMessages';
-import { buildRespondSystemPrompt } from '../chat/prompts/respond';
-import { classifyIntent } from '../chat/steps/classifyIntent';
+import { buildCreateLinearTicketTool } from '../chat/tools/createLinearTicket';
+import { buildFlagOffTopicTool } from '../chat/tools/flagOffTopic';
 import { searchDocsTool } from '../chat/tools/searchDocs';
 import type { IAppDependencies } from '../lib/appDependencies';
 import { getConfig } from '../lib/config';
-import {
-    type IAssistantStep,
-    type IRefusalReason,
-    observability,
-} from '../lib/observability';
+import { type IRefusalReason, observability } from '../lib/observability';
 import {
     buildNewSessionLimiter,
     getClientIp,
@@ -127,66 +125,58 @@ export const buildChatRoute = (deps: IAppDependencies) => {
             });
         }
 
-        const intakeModel = deps.getChatModel('intake');
+        const { docsSearchEnabled } = getConfig();
 
-        // Set by the nested respond-stream error handler, which sees the ORIGINAL error;
-        // the outer onError only receives an anonymized wrapper and reuses the classified
-        // payload so both emitted error parts agree.
+        // Set by the nested stream error handler, which sees the ORIGINAL error; the outer onError
+        // only receives an anonymized wrapper and reuses the classified payload so both emitted
+        // error parts agree.
         let respondErrorPayload: string | undefined;
-        // Tracks the pipeline position for error logs: the outer onError also catches classify
-        // failures, which must not be misattributed to the respond step.
-        let currentStep: IAssistantStep = 'classifyIntent';
 
         const stream = createUIMessageStream({
             execute: async ({ writer }) => {
-                const { intent, usage: classifyUsage } = await classifyIntent({
-                    model: intakeModel,
-                    sessionId,
-                    messages,
-                });
-                // The classify guardrail consumes the session token budget too; the respond
-                // step records its own usage in onFinish below.
-                await sessionStore.addTokens(
-                    sessionId,
-                    classifyUsage.totalTokens ?? 0,
-                );
-
-                if (intent === 'off_topic') {
-                    observability.logStep({
-                        sessionId,
-                        step: 'respond',
-                        latencyMs: 0,
-                        refusalReason: 'off_topic',
-                    });
-                    writeFixedMessage(writer, offTopicMessage);
-
-                    return;
-                }
-
-                writer.write({ type: 'start' });
-
                 // File metadata only (never contents): the model must know what is already
                 // attached so it can acknowledge files instead of claiming it "can't see" them.
                 const files = await sessionStore.listFiles(sessionId);
 
-                currentStep = 'respond';
+                // Open the message once here; the merged model stream reuses it (sendStart: false)
+                // so the two producers never emit a duplicate start chunk.
+                writer.write({ type: 'start' });
+
                 const startTime = Date.now();
                 const result = streamText({
-                    model: deps.getChatModel('respond'),
+                    model: deps.getChatModel(),
                     providerOptions: getChatProviderOptions(),
-                    abortSignal: AbortSignal.timeout(respondTimeoutMs),
+                    abortSignal: AbortSignal.timeout(chatTimeoutMs),
                     maxOutputTokens: assistantLimits.maxOutputTokens,
-                    system: buildRespondSystemPrompt({
-                        intent,
+                    // Draft → tool → post-approval summary all happen within a bounded step count.
+                    stopWhen: stepCountIs(5),
+                    system: buildAgentSystemPrompt({
                         appContext,
                         files,
+                        docsSearchEnabled,
                     }),
                     messages: await convertToModelMessages(
                         toUiMessages(messages),
                     ),
-                    tools: getConfig().docsSearchEnabled
-                        ? { searchDocs: searchDocsTool }
-                        : undefined,
+                    tools: {
+                        [createTicketToolName]: buildCreateLinearTicketTool({
+                            deps,
+                            sessionId,
+                            appContext,
+                            messages,
+                        }),
+                        // Auto-approved (absent from toolApproval): records off-topic attempts
+                        // for analytics; the model calls it before declining.
+                        flagOffTopic: buildFlagOffTopicTool(sessionId),
+                        ...(docsSearchEnabled
+                            ? { searchDocs: searchDocsTool }
+                            : {}),
+                    },
+                    // Ticket creation is gated behind an explicit user approval of the draft; the
+                    // widget resumes the stream once the user presses Create.
+                    toolApproval: {
+                        [createTicketToolName]: () => 'user-approval',
+                    },
                     onFinish: async ({ usage, finalStep }) => {
                         await sessionStore.addTokens(
                             sessionId,
@@ -201,6 +191,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                             latencyMs: Date.now() - startTime,
                             tokensIn: usage.inputTokens,
                             tokensOut: usage.outputTokens,
+                            finishReason: finalStep.finishReason,
                         });
                     },
                 });
@@ -220,7 +211,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 );
             },
             onError: (error) => {
-                observability.logError(error, { sessionId, step: currentStep });
+                observability.logError(error, { sessionId, step: 'respond' });
                 // The turn produced no reply, so the retry must not count double against the
                 // turn budget — refund it (fire and forget, refusal paths never reach here).
                 void sessionStore.decrementTurns(sessionId);

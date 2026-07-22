@@ -48,10 +48,7 @@ describe('POST /chat guardrails', () => {
 
     it('caps new sessions per IP per day and keeps refused sessions refused on retry', async () => {
         process.env.ASSISTANT_RATE_LIMIT_SESSIONS_PER_DAY = '1';
-        const model = createMockChatModel({
-            objects: [{ intent: 'bug' }],
-        });
-        const deps = createTestDependencies(model);
+        const deps = createTestDependencies(createMockChatModel({}));
         const app = buildApp(deps);
 
         // The first session consumes the whole daily budget. Draining the stream keeps its
@@ -93,7 +90,6 @@ describe('POST /chat guardrails', () => {
 
         expect(response.status).toEqual(200);
         expect(body).toContain('reached its length limit');
-        expect(model.doGenerateCalls).toHaveLength(0);
         expect(model.doStreamCalls).toHaveLength(0);
     });
 
@@ -109,13 +105,11 @@ describe('POST /chat guardrails', () => {
         const body = await response.text();
 
         expect(body).toContain('reached its size limit');
-        expect(model.doGenerateCalls).toHaveLength(0);
         expect(model.doStreamCalls).toHaveLength(0);
     });
 
     it('maps an upstream rate limit to a coded stream error and refunds the turn', async () => {
         const model = createMockChatModel({
-            objects: [{ intent: 'bug' }],
             streamError: Object.assign(new Error('too many requests'), {
                 statusCode: 429,
             }),
@@ -133,30 +127,39 @@ describe('POST /chat guardrails', () => {
         expect(await deps.sessionStore.getTurns(sessionId)).toEqual(0);
     });
 
-    it('runs a single structured call per turn and streams no ticket state', async () => {
-        const model = createMockChatModel({ objects: [{ intent: 'bug' }] });
-        const deps = createTestDependencies(model);
-
-        const response = await postChat(buildApp(deps));
-        const body = await response.text();
-
-        expect(response.status).toEqual(200);
-        // A turn is classify (guardrail) + respond only: extraction happens exclusively behind
-        // the explicit preview action, so a flaky extraction can never break the conversation.
-        expect(model.doGenerateCalls).toHaveLength(1);
-        expect(body).not.toContain('data-collectedFields');
-    });
-
-    it('counts classify and respond usage against the session token budget', async () => {
-        const model = createMockChatModel({ objects: [{ intent: 'bug' }] });
-        const deps = createTestDependencies(model);
+    it('counts the agent stream usage once against the session token budget', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
 
         const response = await postChat(buildApp(deps));
         await response.text();
 
         expect(response.status).toEqual(200);
-        // The mock reports 15 tokens per call (10 in + 5 out); a turn is classify + respond —
-        // a regression back to respond-only counting would report 15 here.
-        expect(await deps.sessionStore.getTokens(sessionId)).toEqual(30);
+        // The mock reports 15 tokens (10 in + 5 out) for the single agent call.
+        expect(await deps.sessionStore.getTokens(sessionId)).toEqual(15);
+    });
+
+    it('gates ticket creation behind approval: a proposed tool call never executes on its own', async () => {
+        const deps = createTestDependencies(
+            createMockChatModel({
+                toolCall: {
+                    toolName: 'createLinearTicket',
+                    input: {
+                        intent: 'bug',
+                        title: 'Voting transaction reverts',
+                        description:
+                            'Submitting a vote reverts with an unknown error.',
+                    },
+                },
+            }),
+        );
+
+        const response = await postChat(buildApp(deps));
+        const body = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The tool call streams to the client, but creation waits for the user's approval —
+        // Linear is never touched by an unapproved proposal.
+        expect(body).toContain('createLinearTicket');
+        expect(deps.linear.createIssueCalls).toHaveLength(0);
     });
 });

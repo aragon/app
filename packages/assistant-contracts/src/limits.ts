@@ -5,12 +5,15 @@ export const assistantLimits = {
     // back-and-forth (plus a few retries) must never feel clipped. Cost abuse is bounded by the
     // AI Gateway spend budget + per-IP rpm/sessions-per-day, not by squeezing this.
     maxTurnsPerSession: 20,
-    maxOutputTokens: 500,
+    // The agent emits the ticket fields (title, description, steps) as tool-call arguments, which
+    // count as output tokens; 500 truncated them. Roomy enough that a full draft is never clipped.
+    maxOutputTokens: 1200,
     // Counts the FULL pipeline (classify + extract + respond each resend the transcript, so a
     // turn costs roughly 3× the respond call alone). Generous enough that a conversation hitting
     // the turn limit is never cut off by tokens first: the turn count is the graceful limiter.
     maxTokensPerSession: 60_000,
-    maxIssuesPerSession: 1,
+    // The chat lives on after a ticket: the agent can file up to this many in one session.
+    maxIssuesPerSession: 3,
     maxFileSizeBytes: 5 * 1024 * 1024,
     maxFilesPerSession: 3,
     maxMessageLength: 4000,

@@ -1,11 +1,8 @@
 import * as Sentry from '@sentry/hono/node';
 
 export type IAssistantStep =
-    | 'classifyIntent'
-    | 'extractFields'
     | 'respond'
-    | 'previewIssue'
-    | 'createIssue'
+    | 'createTicket'
     | 'confirmFile'
     | 'removeFile'
     | 'transferFiles'
@@ -17,8 +14,7 @@ export type IRefusalReason =
     | 'turn_limit'
     | 'token_budget'
     | 'rate_limited'
-    | 'session_limit'
-    | 'missing_required_fields';
+    | 'session_limit';
 
 // PII rule enforced structurally: no free-text fields — message content and email addresses can
 // never end up in logs, only ids, counters and codes.
@@ -31,11 +27,11 @@ export interface IStepLogEntry {
     tokensOut?: number;
     refusalReason?: IRefusalReason;
     issueId?: string;
-    // Model stop reason ('stop', 'length', …): a 'length' on a structured step means the output
-    // was truncated before the JSON completed.
+    // Ticket intent (feedback/bug/support) on a createTicket event — a category, never content.
+    intent?: string;
+    // Model stop reason ('stop', 'length', 'tool-calls', …): a 'length' means the reply or the
+    // tool arguments were truncated before completing.
     finishReason?: string;
-    // Field NAMES the extraction failed to produce — never field contents.
-    missingFields?: string[];
     // Error name/code only, never a message that could carry user content.
     error?: string;
 }

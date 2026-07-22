@@ -1,4 +1,4 @@
-import type { ICollectedFields } from '@aragon/assistant-contracts';
+import type { ICreateTicketToolOutput } from '@aragon/assistant-contracts';
 import type { Redis } from '@upstash/redis';
 
 // Session state lives 24 hours — the lifecycle of a single support request.
@@ -12,11 +12,16 @@ const claimTtlSeconds = 15 * 60;
 
 const buildKey = (
     sessionId: string,
-    part: 'issue' | 'files' | 'turns' | 'tokens' | 'extraction',
+    part: 'files' | 'turns' | 'tokens' | 'ticketcount',
 ) => `assistant:${sessionId}:${part}`;
 
 const buildFileClaimKey = (sessionId: string, fileId: string) =>
     `assistant:${sessionId}:fileclaim:${fileId}`;
+
+// One key per ticket, keyed by the tool call id: it holds the claim marker while the ticket is
+// being created and the created ticket afterwards, so a replayed tool execution is idempotent.
+const buildTicketKey = (sessionId: string, toolCallId: string) =>
+    `assistant:${sessionId}:ticket:${toolCallId}`;
 
 // A file queued for the ticket: the bytes live in blob storage (blobUrl) and reach Linear only
 // when the issue is created; until then the queue can be freely added to and removed from.
@@ -28,9 +33,10 @@ export interface ISessionFile {
     size: number;
 }
 
-export type ISessionIssue =
+// Stored under the per-ticket key: the claim marker, then the created ticket.
+type IStoredTicket =
     | { status: 'creating' }
-    | { status: 'created'; issueId: string; identifier: string; url: string };
+    | ({ status: 'created' } & ICreateTicketToolOutput);
 
 export interface ISessionStore {
     // --- Turn and token budgets ---
@@ -42,28 +48,27 @@ export interface ISessionStore {
     addTokens(sessionId: string, count: number): Promise<number>;
     getTokens(sessionId: string): Promise<number>;
 
-    // --- Collected ticket fields ---
-    // The accumulated extraction state of the session: /chat merges each successful extraction
-    // into it, /issues creates the ticket from it — the "Ready to send" strip and the created
-    // ticket always read the same state. The values are user-derived ticket content (same data
-    // that ends up in Linear), held under the session TTL like the queued file metadata.
-    storeCollectedFields(
+    // --- Ticket lifecycle (up to maxIssuesPerSession per session) ---
+    // Count of tickets already created in the session — the cap is enforced against it.
+    getTicketCount(sessionId: string): Promise<number>;
+    // Atomically claims a single tool call's ticket slot; false when its creation is already in
+    // flight or done. Keyed by the tool call id, so distinct calls never block each other and a
+    // replay of the same call is deduplicated. The claim expires on its own.
+    claimTicket(sessionId: string, toolCallId: string): Promise<boolean>;
+    // Releases the claim after a failed creation so a retry of the same tool call can succeed.
+    releaseTicketClaim(sessionId: string, toolCallId: string): Promise<void>;
+    // Records the created ticket (overwriting the claim) and bumps the session ticket count.
+    storeTicket(
         sessionId: string,
-        fields: ICollectedFields,
+        toolCallId: string,
+        ticket: ICreateTicketToolOutput,
     ): Promise<void>;
-    getCollectedFields(sessionId: string): Promise<ICollectedFields | null>;
-
-    // --- Issue lifecycle ---
-    // Atomically claims the single issue slot of the session; false when already claimed. The
-    // claim expires on its own, so a crashed creation cannot brick the session.
-    claimIssue(sessionId: string): Promise<boolean>;
-    // Releases the claim after a failed creation so a retry can succeed.
-    releaseIssueClaim(sessionId: string): Promise<void>;
-    storeIssue(
+    // The created ticket for a tool call, or null while it is only claimed / unknown — used to
+    // return the same result on an idempotent replay.
+    getTicket(
         sessionId: string,
-        issue: { issueId: string; identifier: string; url: string },
-    ): Promise<void>;
-    getIssue(sessionId: string): Promise<ISessionIssue | null>;
+        toolCallId: string,
+    ): Promise<ICreateTicketToolOutput | null>;
 
     // --- File queue ---
     listFiles(sessionId: string): Promise<ISessionFile[]>;
@@ -126,47 +131,46 @@ export const createSessionStore = (redis: Redis): ISessionStore => {
             Number(
                 (await redis.get<string>(buildKey(sessionId, 'tokens'))) ?? 0,
             ),
-        storeCollectedFields: async (sessionId, fields) => {
-            await redis.set(
-                buildKey(sessionId, 'extraction'),
-                JSON.stringify(fields),
-                { ex: sessionTtlSeconds },
-            );
-        },
-        getCollectedFields: async (sessionId) => {
-            const value = await redis.get<string>(
-                buildKey(sessionId, 'extraction'),
-            );
-
-            return value == null
-                ? null
-                : (JSON.parse(value) as ICollectedFields);
-        },
-        // SET NX EX: exactly one concurrent createTicket call observes 'OK'. The short TTL only
-        // covers the in-flight creation; storeIssue overwrites it with the session TTL.
-        claimIssue: async (sessionId) => {
+        getTicketCount: async (sessionId) =>
+            Number(
+                (await redis.get<string>(buildKey(sessionId, 'ticketcount'))) ??
+                    0,
+            ),
+        // SET NX EX: exactly one concurrent execution of the same tool call observes 'OK'. The
+        // short TTL only covers the in-flight creation; storeTicket overwrites it with the session
+        // TTL.
+        claimTicket: async (sessionId, toolCallId) => {
             const result = await redis.set(
-                buildKey(sessionId, 'issue'),
+                buildTicketKey(sessionId, toolCallId),
                 JSON.stringify({ status: 'creating' }),
                 { ex: claimTtlSeconds, nx: true },
             );
 
             return result === 'OK';
         },
-        releaseIssueClaim: async (sessionId) => {
-            await redis.del(buildKey(sessionId, 'issue'));
+        releaseTicketClaim: async (sessionId, toolCallId) => {
+            await redis.del(buildTicketKey(sessionId, toolCallId));
         },
-        storeIssue: async (sessionId, issue) => {
+        storeTicket: async (sessionId, toolCallId, ticket) => {
             await redis.set(
-                buildKey(sessionId, 'issue'),
-                JSON.stringify({ status: 'created', ...issue }),
+                buildTicketKey(sessionId, toolCallId),
+                JSON.stringify({ status: 'created', ...ticket }),
                 { ex: sessionTtlSeconds },
             );
+            await incrementBy(buildKey(sessionId, 'ticketcount'), 1);
         },
-        getIssue: async (sessionId) => {
-            const value = await redis.get<string>(buildKey(sessionId, 'issue'));
+        getTicket: async (sessionId, toolCallId) => {
+            const value = await redis.get<string>(
+                buildTicketKey(sessionId, toolCallId),
+            );
+            if (value == null) {
+                return null;
+            }
+            const stored = JSON.parse(value) as IStoredTicket;
 
-            return value == null ? null : (JSON.parse(value) as ISessionIssue);
+            return stored.status === 'created'
+                ? { identifier: stored.identifier, url: stored.url }
+                : null;
         },
         listFiles: async (sessionId) => {
             const values = await redis.lrange<string>(

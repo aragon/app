@@ -1,16 +1,16 @@
 import type {
     IAppContext,
     IChatMessage,
-    ICollectedFields,
+    ICreateTicketToolInput,
 } from '@aragon/assistant-contracts';
 import { buildIssueDescription, buildIssueTitle } from './issueBody';
 
 const sessionId = 'b3b8f8a2-6c9d-4c9e-8f6a-2d1e0c9b8a7f';
 
-const fields: ICollectedFields = {
+const fields: ICreateTicketToolInput = {
     intent: 'bug',
     email: 'user@example.com',
-    summary: 'Voting crashes on Base',
+    title: 'Voting crashes on Base',
     description: 'The vote button crashes the page.',
 };
 
@@ -28,9 +28,9 @@ const buildUserMessage = (text: string): IChatMessage => ({
 });
 
 describe('buildIssueTitle', () => {
-    it('uses the extracted summary and falls back when missing', () => {
+    it('uses the ticket title and falls back when blank', () => {
         expect(buildIssueTitle(fields)).toEqual('Voting crashes on Base');
-        expect(buildIssueTitle({ intent: 'bug' })).toEqual(
+        expect(buildIssueTitle({ ...fields, title: '   ' })).toEqual(
             'Support request from the Aragon App',
         );
     });
