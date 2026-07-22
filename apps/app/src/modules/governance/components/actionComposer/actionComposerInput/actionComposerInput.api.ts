@@ -15,10 +15,9 @@ export interface IActionComposerInputItem<TMeta = undefined>
     defaultValue?: IProposalAction;
     /**
      * keccak256 permission-id the DAO must hold for this action to be executable.
-     * When absent, the item is never permission-filtered. Matched by id only
-     * (see actionComposerUtils.getDaoActions).
-     *
-     *  who/where are not checked for now.
+     * When absent, the item is never permission-filtered. Matched by id and by
+     * target contract (the action's `defaultValue.to` as `where`); the grantee
+     * (`who`) is not checked for now (see actionComposerUtils.getDaoActions).
      */
     requiredPermissionId?: string;
 }
