@@ -77,7 +77,10 @@ class ActionComposerUtils {
      * Filters out plugin action items whose required OSx permission is not granted
      * to the DAO. Items without a `requiredPermissionId` are always kept, and
      * filtering is skipped entirely (fail-open) while `permissions` is undefined
-     * (not yet loaded). Matching is by permission id only, case-insensitively.
+     * (not yet loaded).
+     * A required permission counts as granted when the DAO's permission list
+     * contains a matching `permissionId` on the action's target contract
+     * (`defaultValue.to` as `where`), matched case-insensitively.
      *
      * @param items - Plugin action items to filter.
      * @param permissions - Permissions granted to the DAO, or undefined when not loaded.
@@ -91,17 +94,27 @@ class ActionComposerUtils {
             return items;
         }
 
-        const grantedIds = new Set(
-            permissions.map((permission) =>
-                permission.permissionId.toLowerCase(),
-            ),
-        );
+        return items.filter((item) => {
+            const { requiredPermissionId, defaultValue } = item;
 
-        return items.filter(
-            (item) =>
-                item.requiredPermissionId == null ||
-                grantedIds.has(item.requiredPermissionId.toLowerCase()),
-        );
+            // Items without a required permission are never permission-filtered.
+            if (requiredPermissionId == null) {
+                return true;
+            }
+
+            // Fail-open when the action's target contract cannot be resolved.
+            const where = defaultValue?.to;
+            if (!where) {
+                return true;
+            }
+
+            return permissions.some(
+                (permission) =>
+                    permission.permissionId.toLowerCase() ===
+                        requiredPermissionId.toLowerCase() &&
+                    addressUtils.isAddressEqual(permission.whereAddress, where),
+            );
+        });
     };
 
     /**
