@@ -413,13 +413,14 @@ describe('actionComposerUtils', () => {
             expect(result.items.map((item) => item.id)).toEqual(['i1']);
         });
 
-        it('does not filter plugin items while permissions are not loaded', () => {
+        it('filters out permission-gated items but keeps ungated ones when permissions are undefined', () => {
             getDaoPluginActionsSpy.mockReturnValue({
                 pluginItems: [
                     buildPluginItem({
-                        id: 'i1',
+                        id: 'gated',
                         requiredPermissionId: permissionId,
                     }),
+                    buildPluginItem({ id: 'ungated' }),
                 ],
                 pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
                 pluginComponents: {},
@@ -431,7 +432,10 @@ describe('actionComposerUtils', () => {
                 permissions: undefined,
             });
 
-            expect(result.items.map((item) => item.id)).toEqual(['i1']);
+            expect(result.items.map((item) => item.id)).toEqual(['ungated']);
+            expect(result.groups.map((group) => group.id)).toEqual([
+                pluginAddress,
+            ]);
         });
 
         it('prunes plugin groups left without any items after filtering', () => {

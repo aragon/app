@@ -75,9 +75,8 @@ class ActionComposerUtils {
 
     /**
      * Filters out plugin action items whose required OSx permission is not granted
-     * to the DAO. Items without a `requiredPermissionId` are always kept, and
-     * filtering is skipped entirely (fail-open) while `permissions` is undefined
-     * (not yet loaded).
+     * to the DAO. Items without a `requiredPermissionId` are always kept.
+     *
      * A required permission counts as granted when the DAO's permission list
      * contains a matching `permissionId` on the action's target contract
      * (`defaultValue.to` as `where`), matched case-insensitively. A tagged item
@@ -89,12 +88,8 @@ class ActionComposerUtils {
      */
     private filterItemsByPermission = (
         items: IActionComposerInputItem[],
-        permissions?: IGetDaoActionsParams['permissions'],
+        permissions: IGetDaoActionsParams['permissions'] = [],
     ): IActionComposerInputItem[] => {
-        if (permissions == null) {
-            return items;
-        }
-
         return items.filter((item) => {
             const { requiredPermissionId, defaultValue } = item;
 
