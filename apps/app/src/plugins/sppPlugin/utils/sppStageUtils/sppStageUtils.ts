@@ -2,7 +2,13 @@ import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { ISppProposal, ISppStage, ISppSubProposal } from '../../types';
+import {
+    type ISppProposal,
+    type ISppStage,
+    type ISppStagePlugin,
+    type ISppSubProposal,
+    SppProposalType,
+} from '../../types';
 
 class SppStageUtils {
     getStageStatus = (
@@ -12,7 +18,10 @@ class SppStageUtils {
         const { stageIndex: currentStage, executed } = proposal;
         const { stageIndex } = stage;
 
-        const isOptimisticStage = this.isVeto(stage);
+        // A stage with no approval requirement (pure veto / optimistic) stays
+        // active for its whole voting window; any stage that requires approvals
+        // (approval-only or mixed) follows the approval path below.
+        const isOptimisticStage = stage.approvalThreshold === 0;
 
         const now = DateTime.now();
         const startDate = this.getStageStartDate(proposal, stage);
@@ -99,6 +108,40 @@ class SppStageUtils {
         );
     };
 
+    // Whether a body can still submit its result. Approving bodies vote only
+    // while the stage is ACTIVE. A vetoing body can veto for the whole window
+    // even after approvals land (stage ADVANCEABLE, or last stage ACCEPTED), as
+    // long as the stage is still the live one and its window is open — so a
+    // mixed last stage isn't left un-vetoable.
+    canBodyVote = (
+        proposal: ISppProposal,
+        stage: ISppStage,
+        plugin: ISppStagePlugin,
+    ): boolean => {
+        const status = this.getStageStatus(proposal, stage);
+
+        // While the stage is active any of its bodies may still vote.
+        if (status === ProposalStatus.ACTIVE) {
+            return true;
+        }
+
+        // Beyond ACTIVE only a vetoing body may still act: approving bodies are
+        // done once the threshold is met.
+        const canStillBlock =
+            this.isVetoBody(plugin) &&
+            (status === ProposalStatus.ADVANCEABLE ||
+                status === ProposalStatus.ACCEPTED);
+
+        if (!canStillBlock) {
+            return false;
+        }
+
+        const isCurrentStage = stage.stageIndex === proposal.stageIndex;
+        const endDate = this.getStageEndDate(proposal, stage);
+
+        return isCurrentStage && endDate != null && DateTime.now() < endDate;
+    };
+
     // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage
     isSignalingProposal = (proposal: ISppProposal, stage: ISppStage): boolean =>
         !proposal.hasActions && this.isLastStage(proposal, stage);
@@ -171,53 +214,64 @@ class SppStageUtils {
     };
 
     isVetoReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const vetoCount = this.getSuccessThreshold(proposal, stage);
+        const { vetoCount } = this.getStageResultCounts(proposal, stage);
 
         return stage.vetoThreshold > 0 && vetoCount >= stage.vetoThreshold;
     };
 
     isApprovalReached = (proposal: ISppProposal, stage: ISppStage): boolean => {
-        const approvalCount = this.getSuccessThreshold(proposal, stage);
+        const { approvalCount } = this.getStageResultCounts(proposal, stage);
 
         return approvalCount >= stage.approvalThreshold;
     };
 
-    getSuccessThreshold = (
+    // Counts the succeeded bodies of a stage split by each body's own result
+    // type, so that approving and vetoing bodies are evaluated independently
+    // against their respective stage threshold (a stage may mix both).
+    getStageResultCounts = (
         proposal: ISppProposal,
         stage: ISppStage,
-    ): number => {
+    ): { approvalCount: number; vetoCount: number } => {
         const { plugins, stageIndex } = stage;
 
-        const successCount = plugins.reduce((count, plugin) => {
-            const { address, interfaceType } = plugin;
-            const getSucceededStatus = pluginRegistryUtils.getSlotFunction<
-                ISppSubProposal,
-                boolean
-            >({
-                slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-                pluginId: interfaceType ?? 'external',
-            });
+        return plugins.reduce(
+            (counts, plugin) => {
+                if (!this.isBodySucceeded(proposal, plugin, stageIndex)) {
+                    return counts;
+                }
 
-            const subProposal = this.getBodySubProposal(
-                proposal,
-                address,
-                stageIndex,
-            );
-            const bodyResult = this.getBodyResult(
-                proposal,
-                address,
-                stageIndex,
-            );
+                return this.isVetoBody(plugin)
+                    ? { ...counts, vetoCount: counts.vetoCount + 1 }
+                    : { ...counts, approvalCount: counts.approvalCount + 1 };
+            },
+            { approvalCount: 0, vetoCount: 0 },
+        );
+    };
 
-            const isSuccessReached =
-                subProposal != null
-                    ? getSucceededStatus?.(subProposal)
-                    : bodyResult != null;
+    private isBodySucceeded = (
+        proposal: ISppProposal,
+        plugin: ISppStagePlugin,
+        stageIndex: number,
+    ): boolean => {
+        const { address, interfaceType } = plugin;
+        const getSucceededStatus = pluginRegistryUtils.getSlotFunction<
+            ISppSubProposal,
+            boolean
+        >({
+            slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
+            pluginId: interfaceType ?? 'external',
+        });
 
-            return isSuccessReached ? count + 1 : count;
-        }, 0);
+        const subProposal = this.getBodySubProposal(
+            proposal,
+            address,
+            stageIndex,
+        );
+        const bodyResult = this.getBodyResult(proposal, address, stageIndex);
 
-        return successCount;
+        return subProposal != null
+            ? (getSucceededStatus?.(subProposal) ?? false)
+            : bodyResult != null;
     };
 
     getBodyResult = (
@@ -242,7 +296,8 @@ class SppStageUtils {
                 subProposal.stageIndex === stageIndex,
         );
 
-    isVeto = (stage: ISppStage): boolean => stage.vetoThreshold > 0;
+    isVetoBody = (plugin: ISppStagePlugin): boolean =>
+        plugin.proposalType === SppProposalType.VETO;
 
     isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
         proposal.settings.stages.length - 1 === stage.stageIndex;

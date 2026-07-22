@@ -1,14 +1,12 @@
 import { Dialog, invariant } from '@aragon/gov-ui-kit';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import type { IDialogComponentProps } from '@/shared/components/dialogProvider/dialogProvider.api';
 import { useTranslations } from '@/shared/components/translationsProvider/translationsProvider';
-import { ProcessStageType } from '../../components/createProcessForm';
 import { SetupStageApprovalsField } from './fields/setupStageApprovalsField';
 import { SetupStageDurationField } from './fields/setupStageDurationField';
 import { SetupStageEarlyAdvanceField } from './fields/setupStageEarlyAdvanceField';
 import { SetupStageExpirationField } from './fields/setupStageExpirationField';
-import { SetupStageTypeField } from './fields/setupStageTypeField';
 import type { ISetupStageSettingsForm } from './setupStageSettingsDialogDefinitions';
 
 export interface ISetupStageSettingsDialogParams {
@@ -21,9 +19,13 @@ export interface ISetupStageSettingsDialogParams {
      */
     defaultValues: ISetupStageSettingsForm;
     /**
-     * Number of bodies of the stage.
+     * Number of approving bodies in the stage.
      */
-    bodyCount: number;
+    approvingBodyCount: number;
+    /**
+     * Number of vetoing bodies in the stage.
+     */
+    vetoingBodyCount: number;
 }
 
 export interface ISetupStageSettingsProps
@@ -40,7 +42,8 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (
         'SetupStageSettingsDialog: required parameters must be set.',
     );
 
-    const { defaultValues, onSubmit, bodyCount } = location.params;
+    const { defaultValues, onSubmit, approvingBodyCount, vetoingBodyCount } =
+        location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -49,14 +52,12 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (
         mode: 'onTouched',
         defaultValues,
     });
-    const { handleSubmit, control } = formMethods;
+    const { handleSubmit } = formMethods;
 
-    const stageType = useWatch<ISetupStageSettingsForm, 'type'>({
-        name: 'type',
-        control,
-    });
-
-    const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
+    const bodyCount = approvingBodyCount + vetoingBodyCount;
+    // Early advance is not available when the stage has vetoing bodies: the veto
+    // window must fully elapse before the stage can advance.
+    const canConfigureEarlyAdvance = bodyCount > 0 && vetoingBodyCount === 0;
 
     const onFormSubmit = (values: ISetupStageSettingsForm) => {
         onSubmit(values);
@@ -74,15 +75,14 @@ export const SetupStageSettingsDialog: React.FC<ISetupStageSettingsProps> = (
                     id={formId}
                     onSubmit={handleSubmit(onFormSubmit)}
                 >
-                    {bodyCount > 0 && <SetupStageTypeField />}
                     {bodyCount > 0 && (
                         <SetupStageApprovalsField
-                            bodyCount={bodyCount}
-                            stageType={stageType}
+                            approvingBodyCount={approvingBodyCount}
+                            vetoingBodyCount={vetoingBodyCount}
                         />
                     )}
                     <SetupStageDurationField bodyCount={bodyCount} />
-                    {!isOptimisticStage && bodyCount > 0 && (
+                    {canConfigureEarlyAdvance && (
                         <SetupStageEarlyAdvanceField />
                     )}
                     <SetupStageExpirationField

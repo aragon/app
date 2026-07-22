@@ -26,39 +26,73 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
 
     const { t } = useTranslations();
 
-    const isVeto = sppStageUtils.isVeto(stage);
-    const actionType = isVeto ? 'veto' : 'approve';
-    const threshold = isVeto ? stage.vetoThreshold : stage.approvalThreshold;
-    const entityType = threshold > 1 ? 'bodies' : 'body';
+    // Approve/veto is a per-body property, so a stage may carry an approval
+    // requirement, a veto condition, or both (mixed). Evaluate them independently.
+    const hasApproval = stage.approvalThreshold > 0;
+    const hasVeto = stage.vetoThreshold > 0;
 
     const isApprovalReached = sppStageUtils.isApprovalReached(proposal, stage);
-
+    const isVetoReached = sppStageUtils.isVetoReached(proposal, stage);
     const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
     const isAccepted = stageStatus === ProposalStatus.ACCEPTED;
 
-    // Display stage status component if approval is reached and it is not an optimistic stage
-    // or if it is an optimistic stage that is accepted
-    if ((isApprovalReached && !isVeto) || (isVeto && isAccepted)) {
+    // Show the resolved status instead of the requirements once the outcome is
+    // decided: vetoed (a veto can land before approval), approval reached, a
+    // pure veto stage accepted, or a bodyless timelock.
+    const showStageStatus =
+        isVetoReached ||
+        (hasApproval ? isApprovalReached : !hasVeto || isAccepted);
+
+    if (showStageStatus) {
         return (
             <SppStageStatus daoId={daoId} proposal={proposal} stage={stage} />
         );
     }
 
+    // Each requirement carries its own copy key: an approval is a positive
+    // requirement to pass ("required to approve"), while a veto is a blocking
+    // power ("can veto"), so they must not read as the same kind of condition.
+    const requirements: Array<{
+        action: 'approve' | 'veto';
+        labelKey: 'approveRequirement' | 'vetoRequirement';
+        threshold: number;
+    }> = [];
+    if (hasApproval) {
+        requirements.push({
+            action: 'approve',
+            labelKey: 'approveRequirement',
+            threshold: stage.approvalThreshold,
+        });
+    }
+    if (hasVeto) {
+        requirements.push({
+            action: 'veto',
+            labelKey: 'vetoRequirement',
+            threshold: stage.vetoThreshold,
+        });
+    }
+
     return (
-        <p className="text-center text-neutral-500 md:text-right">
-            <span className="text-neutral-800">
-                {t(
-                    'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel',
-                    {
-                        count: threshold,
-                        entityType,
-                    },
-                )}
-            </span>{' '}
-            {t(
-                'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.actionRequired',
-                { action: actionType },
-            )}
-        </p>
+        <div className="flex flex-col gap-1">
+            {requirements.map(({ action, labelKey, threshold }) => (
+                <p
+                    className="text-center text-neutral-500 md:text-right"
+                    key={action}
+                >
+                    <span className="text-neutral-800">
+                        {t(
+                            'app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.thresholdLabel',
+                            {
+                                count: threshold,
+                                entityType: threshold > 1 ? 'bodies' : 'body',
+                            },
+                        )}
+                    </span>{' '}
+                    {t(
+                        `app.plugins.spp.sppVotingTerminalStageBodySummaryFooter.${labelKey}`,
+                    )}
+                </p>
+            ))}
+        </div>
     );
 };

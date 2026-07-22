@@ -135,18 +135,20 @@ describe('SppStageUtils', () => {
     });
 
     describe('isVetoReached', () => {
-        const getSuccessThresholdSpy = jest.spyOn(
+        const getStageResultCountsSpy = jest.spyOn(
             sppStageUtils,
-            'getSuccessThreshold',
+            'getStageResultCounts',
         );
 
         afterEach(() => {
-            getSuccessThresholdSpy.mockReset();
+            getStageResultCountsSpy.mockReset();
         });
 
         it('returns true when veto count reaches threshold', () => {
-            const successCount = 1;
-            getSuccessThresholdSpy.mockReturnValue(successCount);
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 1,
+            });
 
             const stage = generateSppStage({ vetoThreshold: 1 });
             const proposal = generateSppProposal({
@@ -157,8 +159,10 @@ describe('SppStageUtils', () => {
         });
 
         it('returns false when veto count is below threshold', () => {
-            const successCount = 1;
-            getSuccessThresholdSpy.mockReturnValue(successCount);
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 1,
+            });
 
             const stage = generateSppStage({ vetoThreshold: 2 });
             const proposal = generateSppProposal({
@@ -169,10 +173,26 @@ describe('SppStageUtils', () => {
         });
 
         it('returns false when veto threshold is set to 0', () => {
-            const successCount = 0;
-            getSuccessThresholdSpy.mockReturnValue(successCount);
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 0,
+            });
 
             const stage = generateSppStage({ vetoThreshold: 0 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
+
+            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
+        });
+
+        it('ignores approving-body successes', () => {
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 5,
+                vetoCount: 0,
+            });
+
+            const stage = generateSppStage({ vetoThreshold: 1 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
             });
@@ -182,48 +202,89 @@ describe('SppStageUtils', () => {
     });
 
     describe('isApprovalReached', () => {
-        const getSuccessThresholdSpy = jest.spyOn(
+        const getStageResultCountsSpy = jest.spyOn(
             sppStageUtils,
-            'getSuccessThreshold',
+            'getStageResultCounts',
         );
 
         afterEach(() => {
-            getSuccessThresholdSpy.mockReset();
+            getStageResultCountsSpy.mockReset();
         });
 
         afterAll(() => {
-            getSuccessThresholdSpy.mockRestore();
+            getStageResultCountsSpy.mockRestore();
         });
 
         it('returns true when approval count reaches threshold', () => {
-            const successCount = 1;
-            getSuccessThresholdSpy.mockReturnValue(successCount);
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 1,
+                vetoCount: 0,
+            });
 
             const stage = generateSppStage({ approvalThreshold: 1 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
             });
 
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeTruthy();
+            expect(
+                sppStageUtils.isApprovalReached(proposal, stage),
+            ).toBeTruthy();
         });
 
         it('returns false when approval count is below threshold', () => {
-            const successCount = 0;
-            getSuccessThresholdSpy.mockReturnValue(successCount);
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 0,
+            });
 
             const stage = generateSppStage({ approvalThreshold: 1 });
             const proposal = generateSppProposal({
                 settings: generateSppPluginSettings({ stages: [stage] }),
             });
 
-            expect(sppStageUtils.isVetoReached(proposal, stage)).toBeFalsy();
+            expect(
+                sppStageUtils.isApprovalReached(proposal, stage),
+            ).toBeFalsy();
+        });
+
+        it('ignores vetoing-body successes', () => {
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 5,
+            });
+
+            const stage = generateSppStage({ approvalThreshold: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
+
+            expect(
+                sppStageUtils.isApprovalReached(proposal, stage),
+            ).toBeFalsy();
+        });
+
+        it('is always reached when the stage has no approval requirement', () => {
+            getStageResultCountsSpy.mockReturnValue({
+                approvalCount: 0,
+                vetoCount: 0,
+            });
+
+            const stage = generateSppStage({ approvalThreshold: 0 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+            });
+
+            expect(
+                sppStageUtils.isApprovalReached(proposal, stage),
+            ).toBeTruthy();
         });
     });
 
-    describe('getSuccessThreshold', () => {
-        it('returns correct success threshold when body is external and reported the results', () => {
+    describe('getStageResultCounts', () => {
+        it('counts an external approving body that reported an approval result', () => {
             const body = generateSppStagePlugin({
                 address: '0x1c479675ad559DC151F6Ec7ed3FbF8ceE79582B6',
+                proposalType: SppProposalType.APPROVAL,
             });
             const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
             const results = [
@@ -236,11 +297,12 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1);
+            expect(sppStageUtils.getStageResultCounts(proposal, stage)).toEqual(
+                { approvalCount: 1, vetoCount: 0 },
+            );
         });
 
-        it('returns correct success threshold when body is external and did not report the results', () => {
+        it('does not count a body that reported a result on another stage', () => {
             const body = generateSppStagePlugin({
                 address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346',
             });
@@ -255,13 +317,15 @@ describe('SppStageUtils', () => {
             const proposal = generateSppProposal({ results });
 
             getSlotFunctionSpy.mockReturnValue(undefined);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(0);
+            expect(sppStageUtils.getStageResultCounts(proposal, stage)).toEqual(
+                { approvalCount: 0, vetoCount: 0 },
+            );
         });
 
-        it('returns correct success threshold when body is internal and its sub-proposal passed', () => {
+        it('counts an internal approving body whose sub-proposal passed', () => {
             const body = generateSppStagePlugin({
                 address: '0xE66AA98B55C5A55c9Af9da12FE39B8868af9a346',
+                proposalType: SppProposalType.APPROVAL,
             });
             const stage = generateSppStage({ stageIndex: 0, plugins: [body] });
             const proposal = generateSppProposal({
@@ -274,39 +338,44 @@ describe('SppStageUtils', () => {
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(1);
+            expect(sppStageUtils.getStageResultCounts(proposal, stage)).toEqual(
+                { approvalCount: 1, vetoCount: 0 },
+            );
         });
 
-        it('returns correct success threshold with mixed bodies', () => {
-            const bodies = [
-                generateSppStagePlugin({
-                    address: '0x08B2072d388Fa354A4B61c25341707E4Fcd56267',
-                }),
-                generateSppStagePlugin({
-                    address: '0x00E84A0B678CD4584A9A377D334c810025970873',
-                }),
-            ];
-            const stage = generateSppStage({ stageIndex: 0, plugins: bodies });
+        it('counts approving and vetoing bodies into separate buckets', () => {
+            const approvingBody = generateSppStagePlugin({
+                address: '0x08B2072d388Fa354A4B61c25341707E4Fcd56267',
+                proposalType: SppProposalType.APPROVAL,
+            });
+            const vetoingBody = generateSppStagePlugin({
+                address: '0x00E84A0B678CD4584A9A377D334c810025970873',
+                proposalType: SppProposalType.VETO,
+            });
+            const stage = generateSppStage({
+                stageIndex: 0,
+                plugins: [approvingBody, vetoingBody],
+            });
             const proposal = generateSppProposal({
                 subProposals: [
                     generateSppSubProposal({
                         stageIndex: 0,
-                        pluginAddress: bodies[0].address,
+                        pluginAddress: approvingBody.address,
                     }),
                 ],
                 results: [
                     {
-                        pluginAddress: bodies[1].address,
+                        pluginAddress: vetoingBody.address,
                         stage: stage.stageIndex,
-                        resultType: SppProposalType.APPROVAL,
+                        resultType: SppProposalType.VETO,
                     },
                 ],
             });
 
             getSlotFunctionSpy.mockReturnValue(() => true);
-            const result = sppStageUtils.getSuccessThreshold(proposal, stage);
-            expect(result).toBe(2);
+            expect(sppStageUtils.getStageResultCounts(proposal, stage)).toEqual(
+                { approvalCount: 1, vetoCount: 1 },
+            );
         });
     });
 
@@ -481,7 +550,11 @@ describe('SppStageUtils', () => {
 
             const stages = [
                 generateSppStage({ stageIndex: 0 }),
-                generateSppStage({ stageIndex: 1, vetoThreshold: 1 }),
+                generateSppStage({
+                    stageIndex: 1,
+                    approvalThreshold: 0,
+                    vetoThreshold: 1,
+                }),
                 generateSppStage({ stageIndex: 2 }),
             ];
             const proposal = generateSppProposal({
@@ -645,17 +718,53 @@ describe('SppStageUtils', () => {
                 ProposalStatus.ACCEPTED,
             );
         });
-    });
 
-    describe('isVeto', () => {
-        it('returns true when stage veto threshold is > 0', () => {
-            const stage = generateSppStage({ vetoThreshold: 1 });
-            expect(sppStageUtils.isVeto(stage)).toBeTruthy();
+        // Mixed stages (both approving and vetoing bodies) evaluate approval and
+        // veto independently; veto is checked first, so it overrides approval.
+        it('returns vetoed for a mixed stage when the veto threshold is met, even if approval is also met', () => {
+            const stage = generateSppStage({
+                approvalThreshold: 1,
+                vetoThreshold: 1,
+            });
+            const proposal = generateSppProposal();
+            isVetoReachedSpy.mockReturnValue(true);
+            isApprovalReachedSpy.mockReturnValue(true);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.VETOED,
+            );
         });
 
-        it('returns false when veto threshold is 0', () => {
-            const stage = generateSppStage({ vetoThreshold: 0 });
-            expect(sppStageUtils.isVeto(stage)).toBeFalsy();
+        it('stays active for a mixed stage while the window is open and neither threshold is met', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const endDate = DateTime.fromISO(now).plus({ days: 1 });
+            const stage = generateSppStage({
+                approvalThreshold: 1,
+                vetoThreshold: 1,
+            });
+            const proposal = generateSppProposal({ hasActions: true });
+            isVetoReachedSpy.mockReturnValue(false);
+            isApprovalReachedSpy.mockReturnValue(false);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            timeUtils.setTime(now);
+            expect(sppStageUtils.getStageStatus(proposal, stage)).toBe(
+                ProposalStatus.ACTIVE,
+            );
+        });
+    });
+
+    describe('isVetoBody', () => {
+        it('returns true for a body with a veto result type', () => {
+            const plugin = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+            expect(sppStageUtils.isVetoBody(plugin)).toBeTruthy();
+        });
+
+        it('returns false for a body with an approval result type', () => {
+            const plugin = generateSppStagePlugin({
+                proposalType: SppProposalType.APPROVAL,
+            });
+            expect(sppStageUtils.isVetoBody(plugin)).toBeFalsy();
         });
     });
 
@@ -885,6 +994,138 @@ describe('SppStageUtils', () => {
             isSignalingProposalSpy.mockReturnValue(false);
 
             expect(sppStageUtils.canStageAdvance(proposal, stage)).toBeFalsy();
+        });
+    });
+
+    describe('canBodyVote', () => {
+        const getStageStatusSpy = jest.spyOn(sppStageUtils, 'getStageStatus');
+        const getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+
+        afterEach(() => {
+            getStageStatusSpy.mockReset();
+            getStageEndDateSpy.mockReset();
+        });
+
+        afterAll(() => {
+            getStageStatusSpy.mockRestore();
+            getStageEndDateSpy.mockRestore();
+        });
+
+        it('allows any body to vote while the stage is active', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACTIVE);
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            const approveBody = generateSppStagePlugin({
+                proposalType: SppProposalType.APPROVAL,
+            });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+            ).toBeTruthy();
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeTruthy();
+        });
+
+        it('lets a vetoing body veto while the stage is advanceable and the voting window is still open', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeTruthy();
+        });
+
+        it('lets a vetoing body veto on the last stage (accepted) while the window is still open', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeTruthy();
+        });
+
+        it('stops a vetoing body once the voting window has closed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).minus({ minutes: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeFalsy();
+        });
+
+        it('does not let a vetoing body veto a stage that is no longer the active one', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ACCEPTED);
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeFalsy();
+        });
+
+        it('does not let an approving body vote once the stage is advanceable', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.ADVANCEABLE);
+            const stage = generateSppStage();
+            const proposal = generateSppProposal();
+            const approveBody = generateSppStagePlugin({
+                proposalType: SppProposalType.APPROVAL,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, approveBody),
+            ).toBeFalsy();
+        });
+
+        it('does not allow a vetoing body to veto for a non-votable stage status', () => {
+            getStageStatusSpy.mockReturnValue(ProposalStatus.REJECTED);
+            const stage = generateSppStage({ stageIndex: 0 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+            const vetoBody = generateSppStagePlugin({
+                proposalType: SppProposalType.VETO,
+            });
+
+            expect(
+                sppStageUtils.canBodyVote(proposal, stage, vetoBody),
+            ).toBeFalsy();
         });
     });
 

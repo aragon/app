@@ -2,57 +2,79 @@ import { useFormContext } from 'react-hook-form';
 import { NumberProgressInput } from '@/shared/components/forms/numberProgressInput';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { ProcessStageType } from '../../../../components/createProcessForm';
 import type { ISetupStageSettingsForm } from '../../setupStageSettingsDialogDefinitions';
 
 export interface ISetupStageApprovalsFieldProps {
     /**
-     * Type of the stage.
+     * Number of approving bodies in the stage.
      */
-    stageType: ProcessStageType;
+    approvingBodyCount: number;
     /**
-     * Number of bodies of the stage.
+     * Number of vetoing bodies in the stage.
      */
-    bodyCount: number;
+    vetoingBodyCount: number;
 }
 
-const requiredApprovalsDefaultValue = 1;
+const thresholdDefaultValue = 1;
 
 export const SetupStageApprovalsField: React.FC<
     ISetupStageApprovalsFieldProps
 > = (props) => {
-    const { stageType, bodyCount } = props;
+    const { approvingBodyCount, vetoingBodyCount } = props;
 
     const { t } = useTranslations();
     const { control } = useFormContext<ISetupStageSettingsForm>();
 
-    const { value: requiredApprovals } = useFormField<
+    const { value: approvalThreshold } = useFormField<
         ISetupStageSettingsForm,
-        'requiredApprovals'
-    >('requiredApprovals', { control });
+        'approvalThreshold'
+    >('approvalThreshold', { control });
 
-    const labelContext =
-        stageType === ProcessStageType.OPTIMISTIC ? 'veto' : 'approve';
+    const { value: vetoThreshold } = useFormField<
+        ISetupStageSettingsForm,
+        'vetoThreshold'
+    >('vetoThreshold', { control });
 
     return (
-        <NumberProgressInput
-            defaultValue={requiredApprovalsDefaultValue}
-            fieldName="requiredApprovals"
-            helpText={t(
-                `app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.helpText`,
+        <>
+            {approvingBodyCount > 0 && (
+                <NumberProgressInput
+                    defaultValue={thresholdDefaultValue}
+                    fieldName="approvalThreshold"
+                    helpText={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.approve.helpText',
+                    )}
+                    label={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.approve.label',
+                    )}
+                    min={0}
+                    total={approvingBodyCount}
+                    totalLabel={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',
+                        { count: approvingBodyCount },
+                    )}
+                    valueLabel={approvalThreshold.toString()}
+                />
             )}
-            label={t(
-                `app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.${labelContext}.label`,
+            {vetoingBodyCount > 0 && (
+                <NumberProgressInput
+                    defaultValue={thresholdDefaultValue}
+                    fieldName="vetoThreshold"
+                    helpText={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.veto.helpText',
+                    )}
+                    label={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.veto.label',
+                    )}
+                    min={0}
+                    total={vetoingBodyCount}
+                    totalLabel={t(
+                        'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',
+                        { count: vetoingBodyCount },
+                    )}
+                    valueLabel={vetoThreshold.toString()}
+                />
             )}
-            min={0}
-            total={bodyCount}
-            totalLabel={t(
-                'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',
-                {
-                    count: bodyCount,
-                },
-            )}
-            valueLabel={requiredApprovals.toString()}
-        />
+        </>
     );
 };

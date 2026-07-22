@@ -1,9 +1,10 @@
-import { Accordion, Button, Dropdown, IconType } from '@aragon/gov-ui-kit';
+import { Accordion, Button, Dropdown, IconType, Tag } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useWatch } from 'react-hook-form';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { CreateDaoSlotId } from '@/modules/createDao/constants/moduleSlots';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { GovernanceBodyInfo } from '@/shared/components/governanceBodyInfo';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -76,6 +77,18 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
     const isExternal = body.type === BodyType.EXTERNAL;
     const isEditAllowed = onEdit != null;
 
+    // Approve/veto is a per-body property of a stage; only relevant for advanced
+    // (staged) governance, where a stage can mix approving and vetoing bodies.
+    const isVetoBody = body.proposalType === SppProposalType.VETO;
+    const decisionTag = isAdvancedGovernance ? (
+        <Tag
+            label={t(
+                `app.createDao.setupBodyDialog.proposalTypeField.${isVetoBody ? 'veto' : 'approve'}.label`,
+            )}
+            variant={isVetoBody ? 'warning' : 'info'}
+        />
+    ) : undefined;
+
     return (
         <Accordion.Container
             defaultValue={readOnly ? [body.internalId] : undefined}
@@ -106,6 +119,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
                                   : body.release
                         }
                         subdomain={isNew ? plugin?.id : body.plugin}
+                        tag={decisionTag}
                     />
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent className="data-[state=open]:flex data-[state=open]:flex-col data-[state=open]:gap-y-4 data-[state=open]:md:gap-y-6">

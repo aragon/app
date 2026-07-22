@@ -9,6 +9,7 @@ import {
     externalPluginId,
     SetupBodyDialogSelect,
 } from './setupBodyDialogSelect';
+import { SetupBodyProposalTypeField } from './setupBodyProposalTypeField';
 import { SetupBodyDialogExternalAddress } from './setupBodySialogExternalAddress';
 
 export interface ISetupBodyDialogStepsProps {
@@ -66,10 +67,16 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (
                 {...metadataStep}
                 hidden={!isSubPlugin || isExternalPlugin}
             >
-                <SetupBodyDialogMetadata />
+                <div className="flex w-full flex-col gap-6">
+                    <SetupBodyDialogMetadata />
+                    {isSubPlugin && <SetupBodyProposalTypeField />}
+                </div>
             </WizardDialog.Step>
             <WizardDialog.Step {...externalAddress} hidden={!isExternalPlugin}>
-                <SetupBodyDialogExternalAddress daoId={daoId} />
+                <div className="flex w-full flex-col gap-6">
+                    <SetupBodyDialogExternalAddress daoId={daoId} />
+                    {isSubPlugin && <SetupBodyProposalTypeField />}
+                </div>
             </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep} hidden={isExternalPlugin}>
                 <SetupBodyDialogMembership daoId={daoId} />

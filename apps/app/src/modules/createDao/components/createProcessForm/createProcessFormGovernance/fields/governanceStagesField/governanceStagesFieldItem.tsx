@@ -7,12 +7,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import type React from 'react';
 import { useWatch } from 'react-hook-form';
+import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
-import {
-    type ICreateProcessFormStage,
-    ProcessStageType,
-} from '../../../createProcessFormDefinitions';
+import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
 import { GovernanceStageBodiesField } from '../governanceStageBodiesField';
 import { GovernanceStageSettingsField } from '../governanceStageSettingsField';
 
@@ -53,13 +51,16 @@ export const GovernanceStagesFieldItem: React.FC<
         formPrefix,
     );
 
-    const stageType = useWatch<
-        Record<string, ICreateProcessFormStage['settings']['type']>
-    >({
-        name: `${formPrefix}.type`,
+    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
+        name: `${formPrefix}.bodies`,
+        defaultValue: [],
     });
 
-    const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
+    // Only a stage whose bodies are all vetoing is labelled as a veto stage;
+    // approve-only and mixed stages use the default label.
+    const isVetoStage =
+        bodies.length > 0 &&
+        bodies.every((body) => body.proposalType === SppProposalType.VETO);
 
     const stageNameField = useFormField<ICreateProcessFormStage, 'name'>(
         'name',
@@ -74,7 +75,7 @@ export const GovernanceStagesFieldItem: React.FC<
         },
     );
 
-    const bodiesLabelContext = isOptimisticStage ? 'veto' : 'normal';
+    const bodiesLabelContext = isVetoStage ? 'veto' : 'normal';
 
     const stageNameText =
         stageNameField.value !== ''

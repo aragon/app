@@ -1356,6 +1356,18 @@
             "label": "Description"
           }
         },
+        "proposalTypeField": {
+          "approve": {
+            "description": "This body must approve the proposal for the stage to advance.",
+            "label": "Approve"
+          },
+          "helpText": "Choose whether this body approves or vetoes within the stage. A single stage can mix approving and vetoing bodies.",
+          "label": "Body decision",
+          "veto": {
+            "description": "This body can veto the proposal, stopping the stage from advancing.",
+            "label": "Veto"
+          }
+        },
         "select": {
           "disabled": {
             "label": "By request"
@@ -3110,6 +3122,10 @@
             "veto": "Vetoed"
           }
         },
+        "sppVotingTerminalBodyDecisionTag": {
+          "approve": "Approve",
+          "veto": "Veto"
+        },
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",
           "approved": "Approved",
@@ -3119,8 +3135,9 @@
           "vetoed": "Vetoed"
         },
         "sppVotingTerminalStageBodySummaryFooter": {
-          "actionRequired": "required to {{action}}",
-          "thresholdLabel": "{{count}} {{entityType}}"
+          "approveRequirement": "required to approve",
+          "thresholdLabel": "{{count}} {{entityType}}",
+          "vetoRequirement": "can veto"
         },
         "sppVotingTerminalStageTimelock": {
           "active": {
