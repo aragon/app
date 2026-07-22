@@ -1,7 +1,10 @@
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import { generateDao } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
-import { ProposalActionType } from '../../api/governanceService';
+import {
+    type IProposalAction,
+    ProposalActionType,
+} from '../../api/governanceService';
 import { generateSmartContractAbi } from '../../testUtils';
 import type { IActionComposerInputItem } from './actionComposerInput';
 import { actionComposerUtils } from './actionComposerUtils';
@@ -282,6 +285,233 @@ describe('actionComposerUtils', () => {
                         item.defaultValue?.type === ActionItemId.RAW_CALLDATA,
                 ),
             ).toBeUndefined();
+        });
+    });
+
+    describe('getDaoActions', () => {
+        const pluginAddress = '0x1111111111111111111111111111111111111111';
+        const otherAddress = '0x2222222222222222222222222222222222222222';
+        const permissionId = '0xabc123';
+
+        const getDaoPluginActionsSpy = jest.spyOn(
+            actionComposerUtils,
+            'getDaoPluginActions',
+        );
+        const getDaoPermissionActionsSpy = jest.spyOn(
+            actionComposerUtils,
+            'getDaoPermissionActions',
+        );
+
+        const buildPluginItem = (
+            overrides: Partial<IActionComposerInputItem> = {},
+        ): IActionComposerInputItem => ({
+            id: 'item',
+            name: 'Item',
+            icon: IconType.SETTINGS,
+            groupId: pluginAddress,
+            defaultValue: { to: pluginAddress } as IProposalAction,
+            ...overrides,
+        });
+
+        beforeEach(() => {
+            // Isolate the plugin path: permission-registry actions are covered
+            // by their own suites, so keep System B empty here.
+            getDaoPermissionActionsSpy.mockReturnValue({
+                items: [],
+                groups: [],
+                components: {},
+            });
+        });
+
+        afterEach(() => {
+            getDaoPluginActionsSpy.mockReset();
+            getDaoPermissionActionsSpy.mockReset();
+        });
+
+        it('keeps a plugin item whose required permission is granted on the action target', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [{ permissionId, whereAddress: pluginAddress }],
+            });
+
+            expect(result.items.map((item) => item.id)).toEqual(['i1']);
+            expect(result.groups.map((group) => group.id)).toEqual([
+                pluginAddress,
+            ]);
+        });
+
+        it('filters out a plugin item when the permission is granted on a different contract', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [{ permissionId, whereAddress: otherAddress }],
+            });
+
+            expect(result.items).toEqual([]);
+            expect(result.groups).toEqual([]);
+        });
+
+        it('filters out a plugin item when the required permission id is not granted', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [
+                    { permissionId: '0xother', whereAddress: pluginAddress },
+                ],
+            });
+
+            expect(result.items).toEqual([]);
+        });
+
+        it('keeps items without a requiredPermissionId regardless of permissions', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [buildPluginItem({ id: 'i1' })],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [],
+            });
+
+            expect(result.items.map((item) => item.id)).toEqual(['i1']);
+        });
+
+        it('does not filter plugin items while permissions are not loaded', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: undefined,
+            });
+
+            expect(result.items.map((item) => item.id)).toEqual(['i1']);
+        });
+
+        it('prunes plugin groups left without any items after filtering', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'kept',
+                        groupId: pluginAddress,
+                        requiredPermissionId: permissionId,
+                        defaultValue: { to: pluginAddress } as IProposalAction,
+                    }),
+                    buildPluginItem({
+                        id: 'filtered',
+                        groupId: otherAddress,
+                        requiredPermissionId: permissionId,
+                        defaultValue: { to: otherAddress } as IProposalAction,
+                    }),
+                ],
+                pluginGroups: [
+                    { id: pluginAddress, name: 'Plugin', info: '' },
+                    { id: otherAddress, name: 'Other', info: '' },
+                ],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [{ permissionId, whereAddress: pluginAddress }],
+            });
+
+            expect(result.items.map((item) => item.id)).toEqual(['kept']);
+            expect(result.groups.map((group) => group.id)).toEqual([
+                pluginAddress,
+            ]);
+        });
+
+        it('matches the required permission id case-insensitively', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: '0xABCDEF',
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao: generateDao(),
+                t: mockTranslations.tMock,
+                permissions: [
+                    { permissionId: '0xabcdef', whereAddress: pluginAddress },
+                ],
+            });
+
+            expect(result.items.map((item) => item.id)).toEqual(['i1']);
+        });
+
+        it('throws when a plugin item declares a requiredPermissionId but has no target', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                        defaultValue: undefined,
+                    }),
+                ],
+                pluginGroups: [],
+                pluginComponents: {},
+            });
+
+            expect(() =>
+                actionComposerUtils.getDaoActions({
+                    dao: generateDao(),
+                    t: mockTranslations.tMock,
+                    permissions: [],
+                }),
+            ).toThrow();
         });
     });
 });
