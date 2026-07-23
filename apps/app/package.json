@@ -1,6 +1,6 @@
 {
     "name": "@aragon/app",
-    "version": "1.33.3",
+    "version": "1.34.0",
     "description": "Human-centered DAO infrastructure",
     "author": "Aragon Association",
     "homepage": "https://github.com/aragon/app#readme",

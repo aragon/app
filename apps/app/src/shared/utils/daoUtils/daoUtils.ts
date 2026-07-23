@@ -5,7 +5,7 @@ import {
     type IDaoPlugin,
     type ILinkedAccountSummary,
     type Network,
-    type PluginInterfaceType,
+    PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
@@ -267,7 +267,10 @@ class DaoUtils {
     private filterPluginByType = (plugin: IDaoPlugin, type?: PluginType) =>
         type == null ||
         (type === PluginType.BODY && plugin.isBody) ||
-        (type === PluginType.PROCESS && plugin.isProcess);
+        (type === PluginType.PROCESS &&
+            plugin.isProcess &&
+            // TODO (APP-1012): just a temp solution to fix regression in SelectPluginDialog. Implement a consistent way to handle unknowns across the app!
+            plugin.interfaceType !== PluginInterfaceType.UNKNOWN);
 
     private filterBySubPlugin = (
         plugin: IDaoPlugin,
