@@ -1,9 +1,15 @@
 'use client';
 
-import { CardEmptyState, StateSkeletonBar } from '@aragon/gov-ui-kit';
+import {
+    Button,
+    CardEmptyState,
+    IconType,
+    StateSkeletonBar,
+} from '@aragon/gov-ui-kit';
 import '@xyflow/react/dist/style.css';
 import { ReactFlowProvider } from '@xyflow/react';
-import { useMemo, useState } from 'react';
+import classNames from 'classnames';
+import { useEffect, useMemo, useState } from 'react';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -14,9 +20,8 @@ import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 import { PermissionDetailPanel } from './permissionDetailPanel';
 import { PermissionNodeDetailPanel } from './permissionNodeDetailPanel';
 import {
-    type GraphMode,
+    getVisibleEdges,
     PermissionsGraphCanvas,
-    useModeEdges,
 } from './permissionsGraphCanvas';
 
 export interface IPermissionsGraphProps {
@@ -26,7 +31,6 @@ export interface IPermissionsGraphProps {
     accountRefs: IPermissionAccountRef[];
     isLoading: boolean;
     activeAccountAddress?: string;
-    mode: GraphMode;
 }
 
 export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
@@ -37,13 +41,49 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
         accountRefs,
         isLoading,
         activeAccountAddress,
-        mode,
     } = props;
 
     const { t } = useTranslations();
 
     const [selectedEdgeId, setSelectedEdgeId] = useState<string>();
     const [selectedNodeId, setSelectedNodeId] = useState<string>();
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
+    useEffect(() => {
+        if (!isFullScreen) {
+            return;
+        }
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [isFullScreen]);
+
+    useEffect(() => {
+        if (!isFullScreen) {
+            return;
+        }
+
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key !== 'Escape') {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            setIsFullScreen(false);
+        };
+        window.addEventListener('keydown', handleEscape, { capture: true });
+
+        return () => {
+            window.removeEventListener('keydown', handleEscape, {
+                capture: true,
+            });
+        };
+    }, [isFullScreen]);
 
     const graph = useMemo(() => {
         if (dao == null) {
@@ -54,11 +94,13 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     }, [rows, dao, daoPlugins, accountRefs]);
 
     const anchorId = (activeAccountAddress ?? dao?.address ?? '').toLowerCase();
-    const modeEdges = useModeEdges(graph, mode, anchorId);
+    const visibleEdges = getVisibleEdges(graph);
     const visibleNodeIds = new Set(
-        modeEdges.flatMap((edge) => [edge.source, edge.target]),
+        visibleEdges.flatMap((edge) => [edge.source, edge.target]),
     );
-    const selectedEdge = modeEdges.find((edge) => edge.id === selectedEdgeId);
+    const selectedEdge = visibleEdges.find(
+        (edge) => edge.id === selectedEdgeId,
+    );
     const selectedNode = graph.nodes.find(
         (node) => node.id === selectedNodeId && visibleNodeIds.has(node.id),
     );
@@ -67,7 +109,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
         return <PermissionsGraphSkeleton />;
     }
 
-    if (graph.edges.length === 0 || modeEdges.length === 0) {
+    if (graph.edges.length === 0 || visibleEdges.length === 0) {
         return (
             <CardEmptyState
                 description={t(
@@ -82,18 +124,36 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     }
 
     return (
-        <div className="relative h-[640px] overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0">
-            <ReactFlowProvider key={`${anchorId}-${mode}`}>
+        <div
+            className={classNames(
+                'overflow-hidden border border-neutral-200 bg-neutral-0',
+                isFullScreen
+                    ? 'fixed top-0 left-0 z-[var(--guk-text-area-rich-text-expanded-z-index)] h-screen w-screen rounded-none'
+                    : 'relative h-[640px] rounded-lg',
+            )}
+            data-testid="permissions-graph-container"
+        >
+            <ReactFlowProvider key={anchorId}>
                 <PermissionsGraphCanvas
-                    anchorId={anchorId}
                     graph={graph}
-                    mode={mode}
                     onSelectedEdgeChange={setSelectedEdgeId}
                     onSelectedNodeChange={setSelectedNodeId}
                     selectedEdgeId={selectedEdgeId}
                     selectedNodeId={selectedNodeId}
                 />
             </ReactFlowProvider>
+            <Button
+                aria-label={t(
+                    isFullScreen
+                        ? 'app.settings.daoPermissionsPage.graphView.fullscreen.close'
+                        : 'app.settings.daoPermissionsPage.graphView.fullscreen.open',
+                )}
+                className="absolute right-4 bottom-4 z-10 shadow-neutral-sm"
+                iconLeft={isFullScreen ? IconType.SHRINK : IconType.EXPAND}
+                onClick={() => setIsFullScreen((current) => !current)}
+                size="sm"
+                variant="tertiary"
+            />
             {selectedEdge != null && (
                 <PermissionDetailPanel
                     chainId={networkDefinitions[dao.network].id}

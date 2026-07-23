@@ -56,7 +56,6 @@ export const usePermissionsData = (
     });
 
     const dao = realDao;
-    const daoPlugins = realDaoPlugins;
 
     const realAccounts = useMemo<IPermissionsDataAccount[]>(() => {
         if (realDao == null) {
@@ -127,6 +126,28 @@ export const usePermissionsData = (
     const chainId = activeAccount
         ? networkDefinitions[activeAccount.network].id
         : undefined;
+    const daoPlugins = useMemo(() => {
+        if (
+            realDaoPlugins == null ||
+            realDao == null ||
+            activeAccount == null
+        ) {
+            return realDaoPlugins;
+        }
+
+        const rootDaoAddress = realDao.address.toLowerCase();
+        const activeDaoAddress = activeAccount.daoAddress.toLowerCase();
+
+        return realDaoPlugins.filter((plugin) => {
+            const pluginDaoAddress = plugin.meta.daoAddress?.toLowerCase();
+
+            if (pluginDaoAddress == null) {
+                return activeDaoAddress === rootDaoAddress;
+            }
+
+            return pluginDaoAddress === activeDaoAddress;
+        });
+    }, [activeAccount, realDao, realDaoPlugins]);
 
     return {
         dao,

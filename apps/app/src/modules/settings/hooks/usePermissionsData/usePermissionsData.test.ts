@@ -1,11 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 import * as daoService from '@/shared/api/daoService';
-import { type IDao, Network } from '@/shared/api/daoService';
+import { type IDao, type IDaoPlugin, Network } from '@/shared/api/daoService';
 import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
     generateDaoMetrics,
+    generateDaoPlugin,
+    generateFilterComponentPlugin,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { usePermissionsData } from './usePermissionsData';
@@ -138,5 +140,76 @@ describe('usePermissionsData hook', () => {
                 includeSubPlugins: true,
             }),
         );
+    });
+
+    it('only exposes plugin metadata for the selected account', () => {
+        setFeatureFlags({ linkedAccount: true });
+        setDao({
+            id: 'main-dao',
+            address: '0xMainAddress',
+            network: Network.ETHEREUM_MAINNET,
+            name: 'Main DAO',
+            linkedAccounts: [
+                {
+                    id: 'linked-1',
+                    address: '0xLinkedAddress',
+                    network: Network.POLYGON_MAINNET,
+                    name: 'Linked Treasury',
+                    description: '',
+                    ens: null,
+                    subdomain: null,
+                    avatar: null,
+                    metrics: generateDaoMetrics(),
+                    links: [],
+                    blockTimestamp: 0,
+                    transactionHash: '',
+                },
+            ],
+        });
+        const rootPlugin = generateFilterComponentPlugin<IDaoPlugin, object>({
+            uniqueId: 'root-plugin',
+            meta: generateDaoPlugin({
+                address: '0xRootPlugin',
+                daoAddress: '0xMainAddress',
+            }),
+        });
+        const legacyRootPlugin = generateFilterComponentPlugin<
+            IDaoPlugin,
+            object
+        >({
+            uniqueId: 'legacy-root-plugin',
+            meta: generateDaoPlugin({
+                address: '0xLegacyRootPlugin',
+                daoAddress: undefined,
+            }),
+        });
+        const linkedPlugin = generateFilterComponentPlugin<IDaoPlugin, object>({
+            uniqueId: 'linked-plugin',
+            meta: generateDaoPlugin({
+                address: '0xLinkedPlugin',
+                daoAddress: '0xLinkedAddress',
+            }),
+        });
+        useDaoPluginsSpy.mockReturnValue([
+            rootPlugin,
+            legacyRootPlugin,
+            linkedPlugin,
+        ]);
+
+        const { result } = renderHook(() =>
+            usePermissionsData({ daoId: 'main-dao' }),
+        );
+
+        expect(
+            result.current.daoPlugins?.map((plugin) => plugin.uniqueId),
+        ).toEqual(['root-plugin', 'legacy-root-plugin']);
+
+        act(() => {
+            result.current.setSelectedAccountId('linked-1');
+        });
+
+        expect(
+            result.current.daoPlugins?.map((plugin) => plugin.uniqueId),
+        ).toEqual(['linked-plugin']);
     });
 });

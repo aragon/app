@@ -1,5 +1,11 @@
+import type { Node } from '@xyflow/react';
 import type { IPermissionGraph, IPermissionGraphEdge } from '../../types';
-import { getModeEdges } from './permissionsGraphCanvas';
+import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNode';
+import {
+    buildFlowElements,
+    getVisibleEdges,
+    positionSelfStacks,
+} from './permissionsGraphCanvas';
 
 const anchorId = '0x1111111111111111111111111111111111111111';
 const pluginId = '0x2222222222222222222222222222222222222222';
@@ -27,8 +33,8 @@ const buildGraph = (edges: IPermissionGraphEdge[]): IPermissionGraph => ({
     edges,
 });
 
-describe('getModeEdges', () => {
-    it('keeps old from-DAO and unrelated edges in other mode', () => {
+describe('getVisibleEdges', () => {
+    it('keeps granted, from-DAO, and unrelated permissions in one graph', () => {
         const grantedEdge = buildEdge('granted', {
             source: pluginId,
             target: anchorId,
@@ -42,12 +48,68 @@ describe('getModeEdges', () => {
             target: externalId,
         });
 
-        const result = getModeEdges(
+        const result = getVisibleEdges(
             buildGraph([grantedEdge, oldFromDaoEdge, unrelatedEdge]),
-            'other',
-            anchorId,
         );
 
-        expect(result).toEqual([oldFromDaoEdge, unrelatedEdge]);
+        expect(result).toEqual([grantedEdge, oldFromDaoEdge, unrelatedEdge]);
+    });
+});
+
+describe('positionSelfStacks', () => {
+    it('places core DAO self-permission stacks south of the DAO node', () => {
+        const daoY = 100;
+        const daoHeight = 92;
+        const daoNode = {
+            id: anchorId,
+            type: 'permission',
+            data: { kind: 'dao' },
+            measured: { width: 220, height: daoHeight },
+            position: { x: 100, y: daoY },
+        } as Node;
+        const stackNode = {
+            id: 'permission-stack-dao-self',
+            type: 'permissionStack',
+            data: { selfTargetId: anchorId },
+            measured: { width: 180, height: 40 },
+            position: { x: 0, y: 0 },
+        } as Node;
+
+        const result = positionSelfStacks([daoNode, stackNode]);
+        const positionedStack = result.find(
+            (node) => node.id === stackNode.id,
+        )!;
+
+        expect(positionedStack.position.y).toBeGreaterThan(daoY + daoHeight);
+    });
+
+    it('connects core DAO self-permission stacks to the DAO bottom handle', () => {
+        const graph: IPermissionGraph = {
+            nodes: [
+                {
+                    id: anchorId,
+                    kind: 'dao',
+                    label: 'DAO',
+                    address: anchorId,
+                },
+            ],
+            edges: [
+                buildEdge('dao-self', {
+                    source: anchorId,
+                    target: anchorId,
+                }),
+            ],
+        };
+
+        const result = buildFlowElements({
+            graph,
+            visibleEdges: graph.edges,
+            onSelectEdge: jest.fn(),
+        });
+
+        expect(result.edges[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
     });
 });

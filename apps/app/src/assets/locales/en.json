@@ -3547,14 +3547,13 @@
         },
         "filters": {
           "showDaoPermissions": "Show DAO-granted permissions",
-          "showSubpluginPermissions": "Show subplugin/residual permissions"
+          "showDaoPermissionsTooltip": "Permissions where the selected DAO appears under Who, meaning it can call another contract.",
+          "showDaoPermissionsTooltipLabel": "About DAO-granted permissions",
+          "showSubpluginPermissions": "Show subplugin/residual permissions",
+          "showSubpluginPermissionsTooltip": "Permissions involving a subplugin or a contract outside the selected DAO.",
+          "showSubpluginPermissionsTooltipLabel": "About subplugin/residual permissions"
         },
         "graphView": {
-          "mode": {
-            "incoming": "Granted",
-            "outgoing": "From DAO",
-            "other": "Other"
-          },
           "node": {
             "dao": "Primary DAO",
             "linkedDao": "Linked DAO",
@@ -3574,6 +3573,10 @@
           "empty": {
             "heading": "No permissions",
             "description": "This view has no indexed permissions to visualize."
+          },
+          "fullscreen": {
+            "open": "Expand graph",
+            "close": "Exit full screen"
           }
         }
       },
@@ -3589,8 +3592,7 @@
           "who": "Who",
           "where": "Where",
           "permission": "Permission",
-          "condition": "Condition",
-          "noCondition": "No condition"
+          "condition": "Condition"
         },
         "condition": {
           "heading": "Condition"
@@ -3601,10 +3603,6 @@
           "heading": "No permissions",
           "description": "This account has no indexed permissions."
         }
-      },
-      "noConditionSlot": {
-        "heading": "No condition",
-        "description": "Functions guarded by this permission can be called by the granted address directly."
       },
       "unrecognizedConditionSlot": {
         "heading": "Unrecognized condition",

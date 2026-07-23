@@ -131,4 +131,33 @@ describe('buildPermissionGraph', () => {
 
         expect(graph.edges[0].conditionLabel).toBeUndefined();
     });
+
+    it('keeps conditional permissions with the same endpoints distinct', () => {
+        const votingPowerCondition =
+            '0xC0Ffee254729296a45a3885639AC7E10F9d54979';
+        const membershipCondition =
+            '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF';
+        const rows = [
+            buildRow({ conditionAddress: votingPowerCondition }),
+            buildRow({ conditionAddress: membershipCondition }),
+        ];
+
+        const graph = buildPermissionGraph({
+            rows,
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+
+        expect(graph.edges).toHaveLength(2);
+        expect(new Set(graph.edges.map((edge) => edge.id)).size).toBe(2);
+        expect(graph.edges.map((edge) => edge.source)).toEqual([
+            pluginAddress.toLowerCase(),
+            pluginAddress.toLowerCase(),
+        ]);
+        expect(graph.edges.map((edge) => edge.target)).toEqual([
+            daoAddress.toLowerCase(),
+            daoAddress.toLowerCase(),
+        ]);
+    });
 });

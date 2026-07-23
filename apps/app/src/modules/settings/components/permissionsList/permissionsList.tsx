@@ -53,7 +53,7 @@ const SKELETON_ROW_KEYS = [
 ];
 
 export const getPermissionRowKey = (row: IPermissionRow): string =>
-    `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`;
+    `${row.permissionId}-${row.whoAddress.toLowerCase()}-${row.whereAddress.toLowerCase()}-${row.conditionAddress.toLowerCase()}`;
 
 export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
     const {
@@ -240,7 +240,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     );
     const conditionDetail = hasCondition
         ? addressUtils.truncateAddress(row.conditionAddress)
-        : t('app.settings.permissionsList.details.noCondition');
+        : undefined;
 
     return (
         <Accordion.Item value={rowKey}>
@@ -298,10 +298,10 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                                 )}
                             >
                                 <PermissionDetailValue
-                                    primary={permissionName}
-                                    secondary={addressUtils.truncateHash(
+                                    primary={addressUtils.truncateHash(
                                         row.permissionId,
                                     )}
+                                    secondary={permissionName}
                                 />
                             </DefinitionList.Item>
                             <DefinitionList.Item

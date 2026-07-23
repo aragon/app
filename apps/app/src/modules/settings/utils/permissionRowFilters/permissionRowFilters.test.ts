@@ -71,7 +71,7 @@ describe('filterPermissionRows', () => {
     it('hides rows touching installed subplugins by default', () => {
         const rows = [
             buildRow({ whoAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress }),
+            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
         const daoPlugins = [
             buildPlugin({
@@ -94,7 +94,7 @@ describe('filterPermissionRows', () => {
     it('hides rows touching plugins with a parent plugin by default', () => {
         const rows = [
             buildRow({ whereAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress }),
+            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
         const daoPlugins = [
             buildPlugin({
@@ -116,7 +116,7 @@ describe('filterPermissionRows', () => {
     it('hides rows touching addresses listed by a parent plugin subPlugins field', () => {
         const rows = [
             buildRow({ whoAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress }),
+            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
         const daoPlugins = [
             buildPlugin({
@@ -133,6 +133,22 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual([rows[1]]);
+    });
+
+    it('hides residual rows when subplugin/residual permissions are disabled', () => {
+        const rows = [
+            buildRow({ whereAddress: daoAddress }),
+            buildRow({ whereAddress: targetAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([rows[0]]);
     });
 
     it('keeps subplugin rows when enabled', () => {

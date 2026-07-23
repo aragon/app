@@ -204,9 +204,6 @@ export const PermissionStackNode: React.FC<
                                 )}
                             </span>
                         )}
-                        <span className="sr-only">
-                            {permission.permissionName}
-                        </span>
                     </button>
                 );
             })}

@@ -17,7 +17,7 @@ export interface IPermissionRowFilters {
      */
     showDaoPermissions: boolean;
     /**
-     * When false, rows touching a subplugin are hidden.
+     * When false, rows touching a subplugin or not targeting the active DAO are hidden.
      */
     showSubpluginPermissions: boolean;
 }
@@ -63,6 +63,13 @@ const isDaoGrantedPermission = (
     activeAccountAddress != null &&
     addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress);
 
+const isResidualPermission = (
+    row: IPermissionRow,
+    activeAccountAddress?: string,
+): boolean =>
+    activeAccountAddress != null &&
+    !addressUtils.isAddressEqual(row.whereAddress, activeAccountAddress);
+
 export const filterPermissionRows = (
     rows: IPermissionRow[],
     filters: IPermissionRowFilters,
@@ -82,7 +89,11 @@ export const filterPermissionRows = (
             return false;
         }
 
-        if (!showSubpluginPermissions && rowTouchesSubplugin(row, daoPlugins)) {
+        if (
+            !showSubpluginPermissions &&
+            (rowTouchesSubplugin(row, daoPlugins) ||
+                isResidualPermission(row, activeAccountAddress))
+        ) {
             return false;
         }
 

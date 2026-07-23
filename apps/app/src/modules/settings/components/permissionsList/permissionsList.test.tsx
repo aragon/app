@@ -111,6 +111,23 @@ describe('<PermissionsList /> component', () => {
         expect(screen.getByText('-')).toBeInTheDocument();
     });
 
+    it('keys rows by condition address so distinct conditions do not collide', () => {
+        const baseRow: IPermissionRow = {
+            permissionId: EXECUTE_PERMISSION_ID,
+            whoAddress: ANY_ADDR,
+            whereAddress: ALLOW_FLAG,
+            conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+        };
+        const matchingRuleRow: IPermissionRow = {
+            ...baseRow,
+            conditionAddress: '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
+        };
+
+        expect(getPermissionRowKey(baseRow)).not.toEqual(
+            getPermissionRowKey(matchingRuleRow),
+        );
+    });
+
     it('renders unresolved condition labels explicitly', () => {
         const rows: IPermissionRow[] = [
             {
@@ -177,7 +194,34 @@ describe('<PermissionsList /> component', () => {
             }),
         );
 
-        expect(screen.getByText(/noConditionSlot.heading/)).toBeInTheDocument();
+        expect(
+            screen.getByTestId('no-condition-placeholder'),
+        ).toHaveTextContent('-');
+    });
+
+    it('does not render an explicit no-condition detail label', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+            },
+        ];
+
+        render(
+            createTestComponent({
+                rows,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(
+            screen.queryByText(/permissionsList.details.noCondition/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId('no-condition-placeholder'),
+        ).toHaveTextContent('-');
     });
 
     it('renders an unresolved condition detail for expanded unknown conditions', () => {
@@ -198,8 +242,6 @@ describe('<PermissionsList /> component', () => {
         );
 
         expect(screen.getAllByText('Unrecognized condition')).toHaveLength(2);
-        expect(
-            screen.queryByText(/noConditionSlot.heading/),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText(/noConditionSlot/)).not.toBeInTheDocument();
     });
 });

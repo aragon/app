@@ -1,7 +1,15 @@
 'use client';
 
-import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo, useState } from 'react';
+import {
+    Button,
+    Icon,
+    IconType,
+    Switch,
+    Toggle,
+    ToggleGroup,
+    Tooltip,
+} from '@aragon/gov-ui-kit';
+import { useMemo, useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -14,11 +22,6 @@ import {
 } from '../../components/permissionsList';
 import { usePermissionsData } from '../../hooks/usePermissionsData';
 import { filterPermissionRows } from '../../utils/permissionRowFilters';
-import {
-    type DisplayGraphMode,
-    filterRowsByMode,
-    graphModes,
-} from './daoPermissionsPageClientUtils';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -28,7 +31,6 @@ export interface IDaoPermissionsPageClientProps {
 }
 
 export const permissionsViewParam = 'permissionsview';
-export const permissionsModeParam = 'permissionsmode';
 export const permissionsDaoParam = 'permissionsdao';
 export const permissionsSubpluginsParam = 'permissionssubplugins';
 
@@ -79,13 +81,6 @@ export const DaoPermissionsPageClient: React.FC<
         enableUrlUpdate: true,
     });
 
-    const [modeParam, setMode] = useFilterUrlParam({
-        name: permissionsModeParam,
-        fallbackValue: 'incoming',
-        validValues: graphModes,
-        enableUrlUpdate: true,
-    });
-
     const [showDaoPermissionsParam, setShowDaoPermissions] = useFilterUrlParam({
         name: permissionsDaoParam,
         fallbackValue: 'false',
@@ -103,7 +98,6 @@ export const DaoPermissionsPageClient: React.FC<
 
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
-    const mode = (modeParam ?? 'incoming') as DisplayGraphMode;
     const showDaoPermissions = showDaoPermissionsParam === 'true';
     const showSubpluginPermissions = showSubpluginPermissionsParam === 'true';
 
@@ -120,13 +114,6 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
-    const handleModeChange = (value?: string | string[]) => {
-        if (graphModes.includes(value as DisplayGraphMode)) {
-            setMode(value as DisplayGraphMode);
-            setExpandedRows([]);
-        }
-    };
-
     const handleShowDaoPermissionsChange = (checked: boolean) => {
         setShowDaoPermissions(String(checked));
         setExpandedRows([]);
@@ -137,23 +124,9 @@ export const DaoPermissionsPageClient: React.FC<
         setExpandedRows([]);
     };
 
-    const modeRowsByMode = useMemo<Record<DisplayGraphMode, PermissionRows>>(
-        () => ({
-            incoming: filterRowsByMode(
-                rows,
-                'incoming',
-                activeAccount?.daoAddress,
-            ),
-            other: filterRowsByMode(rows, 'other', activeAccount?.daoAddress),
-        }),
-        [rows, activeAccount?.daoAddress],
-    );
-
-    const modeRows = modeRowsByMode[mode];
-
     const filteredRows = useMemo(
         () =>
-            filterPermissionRows(modeRows, {
+            filterPermissionRows(rows, {
                 activeAccountAddress: activeAccount?.daoAddress,
                 daoPlugins,
                 showDaoPermissions,
@@ -162,7 +135,7 @@ export const DaoPermissionsPageClient: React.FC<
         [
             activeAccount?.daoAddress,
             daoPlugins,
-            modeRows,
+            rows,
             showDaoPermissions,
             showSubpluginPermissions,
         ],
@@ -172,7 +145,7 @@ export const DaoPermissionsPageClient: React.FC<
         () =>
             arePermissionRowsEqual(
                 filteredRows,
-                filterPermissionRows(modeRows, {
+                filterPermissionRows(rows, {
                     activeAccountAddress: activeAccount?.daoAddress,
                     daoPlugins,
                     showDaoPermissions: !showDaoPermissions,
@@ -183,7 +156,7 @@ export const DaoPermissionsPageClient: React.FC<
             activeAccount?.daoAddress,
             daoPlugins,
             filteredRows,
-            modeRows,
+            rows,
             showDaoPermissions,
             showSubpluginPermissions,
         ],
@@ -193,7 +166,7 @@ export const DaoPermissionsPageClient: React.FC<
         () =>
             arePermissionRowsEqual(
                 filteredRows,
-                filterPermissionRows(modeRows, {
+                filterPermissionRows(rows, {
                     activeAccountAddress: activeAccount?.daoAddress,
                     daoPlugins,
                     showDaoPermissions,
@@ -204,26 +177,11 @@ export const DaoPermissionsPageClient: React.FC<
             activeAccount?.daoAddress,
             daoPlugins,
             filteredRows,
-            modeRows,
+            rows,
             showDaoPermissions,
             showSubpluginPermissions,
         ],
     );
-
-    useEffect(() => {
-        if (isLoading || modeRowsByMode[mode].length > 0) {
-            return;
-        }
-
-        const nextMode = graphModes.find(
-            (graphMode) => modeRowsByMode[graphMode].length > 0,
-        );
-
-        if (nextMode != null) {
-            setMode(nextMode);
-            setExpandedRows([]);
-        }
-    }, [isLoading, mode, modeRowsByMode, setMode]);
 
     const allExpanded =
         filteredRows.length > 0 && expandedRows.length === filteredRows.length;
@@ -283,75 +241,6 @@ export const DaoPermissionsPageClient: React.FC<
                                 )}
                                 <ToggleGroup
                                     isMultiSelect={false}
-                                    onChange={handleModeChange}
-                                    value={mode}
-                                >
-                                    <Toggle
-                                        disabled={
-                                            modeRowsByMode.incoming.length === 0
-                                        }
-                                        label={t(
-                                            'app.settings.daoPermissionsPage.graphView.mode.incoming',
-                                        )}
-                                        value="incoming"
-                                    />
-                                    <Toggle
-                                        disabled={
-                                            modeRowsByMode.other.length === 0
-                                        }
-                                        label={t(
-                                            'app.settings.daoPermissionsPage.graphView.mode.other',
-                                        )}
-                                        value="other"
-                                    />
-                                </ToggleGroup>
-                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm">
-                                    <Switch
-                                        checked={showDaoPermissions}
-                                        disabled={
-                                            isLoading ||
-                                            showDaoPermissionsToggleDisabled
-                                        }
-                                        inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.showDaoPermissions',
-                                        )}
-                                        onCheckedChanged={
-                                            handleShowDaoPermissionsChange
-                                        }
-                                    />
-                                    <Switch
-                                        checked={showSubpluginPermissions}
-                                        disabled={
-                                            isLoading ||
-                                            showSubpluginPermissionsToggleDisabled
-                                        }
-                                        inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissions',
-                                        )}
-                                        onCheckedChanged={
-                                            handleShowSubpluginPermissionsChange
-                                        }
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-3 md:ml-auto md:gap-6">
-                                {showExpandAll && (
-                                    <Button
-                                        onClick={handleToggleAll}
-                                        size="md"
-                                        variant="tertiary"
-                                    >
-                                        {allExpanded
-                                            ? t(
-                                                  'app.settings.permissionsList.collapseAll',
-                                              )
-                                            : t(
-                                                  'app.settings.permissionsList.expandAll',
-                                              )}
-                                    </Button>
-                                )}
-                                <ToggleGroup
-                                    isMultiSelect={false}
                                     onChange={handleViewChange}
                                     value={view}
                                 >
@@ -368,6 +257,92 @@ export const DaoPermissionsPageClient: React.FC<
                                         value={PermissionsView.GRAPH}
                                     />
                                 </ToggleGroup>
+                                {showExpandAll && (
+                                    <Button
+                                        onClick={handleToggleAll}
+                                        responsiveSize={{ md: 'md' }}
+                                        size="sm"
+                                        variant="tertiary"
+                                    >
+                                        {allExpanded
+                                            ? t(
+                                                  'app.settings.permissionsList.collapseAll',
+                                              )
+                                            : t(
+                                                  'app.settings.permissionsList.expandAll',
+                                              )}
+                                    </Button>
+                                )}
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
+                                <div className="flex items-center gap-1">
+                                    <Switch
+                                        checked={showDaoPermissions}
+                                        disabled={
+                                            isLoading ||
+                                            showDaoPermissionsToggleDisabled
+                                        }
+                                        inlineLabel={t(
+                                            'app.settings.daoPermissionsPage.filters.showDaoPermissions',
+                                        )}
+                                        onCheckedChanged={
+                                            handleShowDaoPermissionsChange
+                                        }
+                                    />
+                                    <Tooltip
+                                        content={t(
+                                            'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip',
+                                        )}
+                                        triggerAsChild={true}
+                                    >
+                                        <span
+                                            aria-label={`${t(
+                                                'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltipLabel',
+                                            )}: ${t('app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip')}`}
+                                            className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
+                                            role="img"
+                                        >
+                                            <Icon
+                                                icon={IconType.INFO}
+                                                size="sm"
+                                            />
+                                        </span>
+                                    </Tooltip>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <Switch
+                                        checked={showSubpluginPermissions}
+                                        disabled={
+                                            isLoading ||
+                                            showSubpluginPermissionsToggleDisabled
+                                        }
+                                        inlineLabel={t(
+                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissions',
+                                        )}
+                                        onCheckedChanged={
+                                            handleShowSubpluginPermissionsChange
+                                        }
+                                    />
+                                    <Tooltip
+                                        content={t(
+                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip',
+                                        )}
+                                        triggerAsChild={true}
+                                    >
+                                        <span
+                                            aria-label={`${t(
+                                                'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltipLabel',
+                                            )}: ${t('app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip')}`}
+                                            className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
+                                            role="img"
+                                        >
+                                            <Icon
+                                                icon={IconType.INFO}
+                                                size="sm"
+                                            />
+                                        </span>
+                                    </Tooltip>
+                                </div>
                             </div>
                         </div>
                         {isListView ? (
@@ -387,7 +362,6 @@ export const DaoPermissionsPageClient: React.FC<
                                 dao={permissionsDao}
                                 daoPlugins={daoPlugins}
                                 isLoading={isLoading}
-                                mode={mode}
                                 rows={filteredRows}
                             />
                         )}

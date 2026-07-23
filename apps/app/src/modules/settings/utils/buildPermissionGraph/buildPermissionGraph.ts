@@ -84,10 +84,14 @@ const resolveEdge = (row: IPermissionRow): IPermissionGraphEdge => {
     );
     const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
 
+    const whoAddress = row.whoAddress.toLowerCase();
+    const whereAddress = row.whereAddress.toLowerCase();
+    const conditionAddress = row.conditionAddress.toLowerCase();
+
     return {
-        id: `${row.permissionId}-${row.whoAddress.toLowerCase()}-${row.whereAddress.toLowerCase()}`,
-        source: row.whoAddress.toLowerCase(),
-        target: row.whereAddress.toLowerCase(),
+        id: `${row.permissionId}-${whoAddress}-${whereAddress}-${conditionAddress}`,
+        source: whoAddress,
+        target: whereAddress,
         permissionName: permissionNameUtils.getPermissionName(row.permissionId),
         permissionDisplayName: permissionNameUtils.getPermissionDisplayName(
             row.permissionId,
