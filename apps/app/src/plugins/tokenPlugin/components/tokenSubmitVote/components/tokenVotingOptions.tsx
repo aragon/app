@@ -24,6 +24,10 @@ export interface ITokenVotingOptionsProps {
      * Options that cannot be selected, each with an optional reason displayed next to the option label.
      */
     disabledOptions?: IDisabledVotingOption[];
+    /**
+     * Restricts the vote options to "No" for objection-stage proposals.
+     */
+    isObjection?: boolean;
 }
 
 export interface IDisabledVotingOption {
@@ -46,6 +50,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
         onChange,
         disableOptions,
         disabledOptions,
+        isObjection,
     } = props;
     const { t } = useTranslations();
     const id = useRandomId();
@@ -66,24 +71,40 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
             description: undefined,
         },
         {
-            label: t('app.plugins.token.tokenSubmitVote.options.no'),
-            value: VoteOption.NO.toString(),
-            variant: isVeto ? 'success' : 'critical',
-            description: t(
-                `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
+            label: t(
+                `app.plugins.token.tokenSubmitVote.options.${isObjection ? 'object' : 'no'}`,
             ),
+            value: VoteOption.NO.toString(),
+            variant: isVeto && !isObjection ? 'success' : 'critical',
+            description: isObjection
+                ? t(
+                      'app.plugins.token.tokenSubmitVote.options.objectionDescription',
+                  )
+                : t(
+                      `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
+                  ),
         },
     ] as const;
+
+    const availableOptions = isObjection
+        ? voteOptions.filter(
+              (option) => option.value === VoteOption.NO.toString(),
+          )
+        : voteOptions;
 
     return (
         <InputContainer
             id={id}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
-                label: isVeto
-                    ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                    : t(
-                          'app.plugins.token.tokenSubmitVote.options.approveLabel',
-                      ),
+                label: isObjection
+                    ? t(
+                          'app.plugins.token.tokenSubmitVote.options.objectionLabel',
+                      )
+                    : isVeto
+                      ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
+                      : t(
+                            'app.plugins.token.tokenSubmitVote.options.approveLabel',
+                        ),
             })}
             useCustomWrapper={true}
         >
@@ -95,7 +116,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
                 orientation="vertical"
                 value={selectedValue ?? ''}
             >
-                {voteOptions.map(({ label, value, variant, description }) => {
+                {availableOptions.map(({ label, value, variant, description }) => {
                     const disabledOption = disabledOptions?.find(
                         (option) => option.value === value,
                     );

@@ -3485,6 +3485,9 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "object": "Object",
+            "objectionDescription": ", I object",
+            "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3492,6 +3495,7 @@
           },
           "voteDescription": {
             "approve": "to approve",
+            "objection": "to object",
             "veto": "to veto"
           }
         },
