@@ -17,6 +17,10 @@ jest.mock('../../components/daoList', () => ({
     DaoList: () => <div data-testid="dao-list-mock" />,
 }));
 
+jest.mock('@/modules/application/components/supportChat', () => ({
+    SupportChatTrigger: () => <div data-testid="support-chat-trigger-mock" />,
+}));
+
 describe('<ExploreDaosPageClient /> component', () => {
     const useConnectionSpy = jest.spyOn(Wagmi, 'useConnection');
     const useDialogContextSpy = jest.spyOn(

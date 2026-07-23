@@ -28,4 +28,9 @@ export interface ISppStagePluginExternal {
      * Branded identity of the plugin.
      */
     brandId: VotingBodyBrandIdentity;
+    /**
+     * Condition address of an external body. Currently, it could be only
+     * SafeOwnerCondition if set.
+     */
+    proposalCreationConditionAddress?: string;
 }

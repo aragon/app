@@ -419,6 +419,15 @@
         "description": "We couldn't find the page you're looking for.",
         "title": "Page not found"
       },
+      "supportChat": {
+        "panel": {
+          "label": "Support chat"
+        },
+        "trigger": {
+          "close": "Close support chat",
+          "open": "Open support chat"
+        }
+      },
       "userDialog": {
         "a11y": {
           "description": "Information about the connected user",
@@ -3057,6 +3066,11 @@
           "action": "Close",
           "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
+        },
+        "sppPermissionCheckProposalCreation": {
+          "function": "Proposal creation",
+          "pluginLabelName": "Name",
+          "requirement": "Safe multisig member"
         },
         "sppProposalListItem": {
           "stage": "Stage {{stageIndex}}"

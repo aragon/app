@@ -15,6 +15,10 @@ pnpm lint           # biome (root biome.json)
 
 The Aragon app (`apps/app`) reads `NEXT_PUBLIC_ASSISTANT_URL` from its own env config and points at `http://localhost:4000` locally, so `pnpm dev` from the repo root boots both sides.
 
+## Texts & prompts
+
+All chat/assistant copy is centralized in two places: service-side texts live in `src/chat/prompts/` (LLM prompts `respond.ts` / `classifyIntent.ts` / `extractFields.ts`, fixed non-LLM replies `fixedMessages.ts`, Linear ticket texts `issueTexts.ts`), and every user-facing string of the widget lives in `packages/assistant-chat/src/copy.ts`.
+
 ## Attachments & content moderation
 
 Users can attach files (images, text/log, PDF) to a support request. Bytes go **client → Vercel Blob directly**, are validated server-side by magic bytes + size (`src/files/validateFile.ts`), queued per session, and move to the **private** Linear ticket only when the ticket is created; abandoned blobs are swept by the daily `/internal/cleanup` cron.
@@ -33,7 +37,7 @@ Users can attach files (images, text/log, PDF) to a support request. Bytes go **
 | --- | --- | --- |
 | preview | pull requests touching the assistant (chained: the app preview of the same PR points at it) | per-deployment URL |
 | development | every merge to `main` touching the assistant | `https://dev.assistant.aragon.org` |
-| production | manually dispatching the "Assistant Release Version" workflow (prepares the "Version Packages: assistant" PR from pending changesets on `main`), then merging that PR: the merge is tagged `@aragon/assistant@x.y.z` and the tag triggers the deploy | `https://assistant.aragon.org` |
+| production | manually dispatching the "Assistant Release Start" workflow (prepares a `Release @aragon/assistant@x.y.z` PR from pending changesets on `main`, listing every bumped package), then merging that PR: the merge is tagged `@aragon/assistant@x.y.z` and the tag triggers the deploy | `https://assistant.aragon.org` |
 
 Configuration layout:
 

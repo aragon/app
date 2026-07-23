@@ -21,14 +21,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |
+            .github/actions/setup
             .github/actions/slack-notify
             .github/actions/extract-slack-ts
             .github/actions/gh-pr-get-body
             .github/workflows/scripts/slackNotify.js
+
+      # Full checkout + pnpm install at the merge commit (post-merge main), so the scope
+      # resolution below reads the current release-scopes policy — release branches cut before
+      # the scope mapper landed don't ship it.
+      - name: Setup merge commit
+        uses: ./.github/actions/setup
+
+      # Resolved before the release-branch checkout: releaseScopes.js needs node_modules, which
+      # the next checkout's clean removes. The guard itself only needs the pattern.
+      - name: Resolve app release scope
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          packages=$(node -e "console.log(require('./.github/workflows/scripts/releaseScopes.js').resolveReleaseScope('app').join('|'))")
+          echo "pattern=${packages}" >> "$GITHUB_OUTPUT"
 
       - name: Load secrets
         id: secrets
@@ -42,25 +59,28 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
 
       - name: Checkout release branch at tested SHA
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
-      - name: "Guard: no new @aragon/app changesets at finalize"
+      - name: "Guard: no new app-scope changesets at finalize"
         shell: bash
+        env:
+          PATTERN: ${{ steps.scope.outputs.pattern }}
         run: |
           set -euo pipefail
-          # Scope-aware, mirroring the --ignore scoping in the changeset-version action:
-          # this flow only versions @aragon/app, so only app changesets are consumed here.
-          # Other workspaces' changesets (e.g. "@aragon/assistant") live in .changeset/
-          # continuously and are released by their own flows — they must not trip this guard.
+          # Scope-aware, mirroring the --ignore scoping in the changeset-version action: this
+          # flow versions the whole "app" release scope (.github/release-scopes.yml), so any
+          # scope changeset still present at finalize was added after `changeset version` ran.
+          # Other scopes' changesets (e.g. "@aragon/assistant") live in .changeset/ continuously
+          # and are released by their own flows — they must not trip this guard.
           # A changeset's frontmatter names the bumped package, e.g. `"@aragon/app": patch`.
-          app_changesets=$(grep -lE '^"@aragon/app":' .changeset/*.md 2>/dev/null || true)
-          if [ -n "$app_changesets" ]; then
-            echo "Found new @aragon/app changesets at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
-            echo "$app_changesets" >&2
+          scope_changesets=$(grep -lE "^\"(${PATTERN})\":" .changeset/*.md 2>/dev/null || true)
+          if [ -n "$scope_changesets" ]; then
+            echo "Found new app-scope changesets at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
+            echo "$scope_changesets" >&2
             exit 1
           fi
 

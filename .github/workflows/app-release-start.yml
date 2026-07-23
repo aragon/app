@@ -26,7 +26,7 @@ jobs:
       proceed: ${{ steps.gate.outputs.proceed }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
 
@@ -71,7 +71,7 @@ jobs:
           SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout actions
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -110,13 +110,13 @@ jobs:
           path_filter: "app"
           linear_api_token: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
 
-      # Per-package release model: this flow versions only @aragon/app; other workspaces are
-      # versioned by their own release flows (e.g. assistant-release-version.yml), which
-      # symmetrically scope to their packages.
+      # Per-package release model: this flow owns the "app" release scope (see
+      # .github/release-scopes.yml); other workspaces are versioned by their own release flows
+      # (e.g. assistant-release-start.yml), which symmetrically own their scopes.
       - name: Update version and changelog
         uses: ./.github/actions/changeset-version
         with:
-          scope: "@aragon/app"
+          scope: app
           prettier_changelog: "true"
           github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
 
