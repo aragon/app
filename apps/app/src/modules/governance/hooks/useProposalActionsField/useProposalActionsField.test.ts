@@ -1,9 +1,20 @@
 import { act, renderHook } from '@testing-library/react';
 import { FormWrapper } from '@/shared/testUtils';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { useProposalActionsField } from './useProposalActionsField';
 
 describe('useProposalActionsField hook', () => {
+    const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
+
+    beforeEach(() => {
+        trackAnalyticsSpy.mockImplementation(() => undefined);
+    });
+
+    afterEach(() => {
+        trackAnalyticsSpy.mockReset();
+    });
+
     const generateAction = (
         action?: Partial<IProposalActionData>,
     ): IProposalActionData =>
@@ -35,8 +46,29 @@ describe('useProposalActionsField hook', () => {
         });
 
         expect(result.current.actionsMerged).toHaveLength(2);
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('action_added_batch', {
+            source: 'form',
+            count: 2,
+            actionCategory: 'unknown_native',
+        });
     });
 
+    it('tracks a single native withdrawal action', () => {
+        const { result } = renderHook(() => useProposalActionsField(), {
+            wrapper: FormWrapper,
+        });
+
+        act(() => {
+            result.current.handleAddAction([
+                generateAction({ type: 'withdraw' }),
+            ]);
+        });
+
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('action_added', {
+            source: 'form',
+            actionCategory: 'native_withdraw',
+        });
+    });
     it('removes all actions', () => {
         const { result } = renderHook(() => useProposalActionsField(), {
             wrapper: FormWrapper,

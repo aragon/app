@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react';
 import type { IUseStepperReturn } from '@/shared/hooks/useStepper';
+import type { PlausibleAnalyticsProps } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 
 export interface IWizardContainerStepMeta {
@@ -12,6 +13,17 @@ export interface IWizardContainerStepMeta {
 export interface IWizardStepperStep
     extends IStepperStep<IWizardContainerStepMeta> {}
 
+export interface IWizardAnalytics {
+    /**
+     * Product flow represented by the wizard.
+     */
+    flow: string;
+    /**
+     * Low-cardinality, privacy-safe event properties shared by wizard events.
+     */
+    props?: PlausibleAnalyticsProps;
+}
+
 export interface IWizardContext
     extends IUseStepperReturn<IWizardContainerStepMeta> {
     /**
@@ -22,6 +34,10 @@ export interface IWizardContext
      * Help text to be displayed under the submit button at the end of the wizard.
      */
     submitHelpText?: string;
+    /**
+     * Optional analytics metadata for stepper-level product telemetry.
+     */
+    analytics?: IWizardAnalytics;
 }
 
 const wizardContext = createContext<IWizardContext | null>(null);

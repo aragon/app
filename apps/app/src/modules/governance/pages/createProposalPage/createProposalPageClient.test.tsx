@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as usePermissionCheckGuard from '@/modules/governance/hooks/usePermissionCheckGuard';
 import * as daoService from '@/shared/api/daoService';
@@ -16,6 +16,7 @@ import {
     PendingTransactionStatus,
     pendingTransactionManager,
 } from '@/shared/utils/pendingTransactionManager';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { proposalResumeRegistry } from '../../utils/proposalResumeRegistry';
 import {
@@ -44,11 +45,13 @@ describe('<CreateProposalPageClient /> component', () => {
     const getActiveSpy = jest.spyOn(pendingTransactionManager, 'getActive');
     const clearActiveSpy = jest.spyOn(pendingTransactionManager, 'clearActive');
     const resumeRegistryGetSpy = jest.spyOn(proposalResumeRegistry, 'get');
+    const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
 
     beforeEach(() => {
         getActiveSpy.mockReturnValue([]);
         clearActiveSpy.mockImplementation(() => undefined);
         resumeRegistryGetSpy.mockReturnValue(undefined);
+        trackAnalyticsSpy.mockImplementation(() => undefined);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         usePermissionCheckGuardSpy.mockReturnValue({
             check: jest.fn(),
@@ -68,6 +71,7 @@ describe('<CreateProposalPageClient /> component', () => {
         getActiveSpy.mockReset();
         clearActiveSpy.mockReset();
         resumeRegistryGetSpy.mockReset();
+        trackAnalyticsSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -91,6 +95,27 @@ describe('<CreateProposalPageClient /> component', () => {
             screen.getByText(/wizardPage.container.total \(total=3\)/),
         ).toBeInTheDocument();
         expect(screen.getByTestId('steps-mock')).toBeInTheDocument();
+    });
+
+    it('tracks create-proposal wizard start once on render', async () => {
+        const daoId = 'test-id';
+        const pluginAddress = '0x472839';
+        const plugins = [
+            generateFilterComponentPlugin({
+                id: 'multisig',
+                meta: generateDaoPlugin({ address: pluginAddress }),
+            }),
+        ];
+        useDaoPluginsSpy.mockReturnValue(plugins);
+
+        render(createTestComponent({ daoId, pluginAddress }));
+
+        await waitFor(() =>
+            expect(trackAnalyticsSpy).toHaveBeenCalledWith('wizard_start', {
+                flow: 'create_proposal',
+                pluginInterfaceType: plugins[0].meta.interfaceType,
+            }),
+        );
     });
 
     it('opens the publish proposal dialog on form submit', async () => {
@@ -118,6 +143,12 @@ describe('<CreateProposalPageClient /> component', () => {
         };
         expect(open).toHaveBeenCalledWith(GovernanceDialogId.PUBLISH_PROPOSAL, {
             params: expectedParams,
+        });
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('wizard_submit', {
+            flow: 'create_proposal',
+            actionCount: 0,
+            hasActions: false,
+            pluginInterfaceType: plugins[0].meta.interfaceType,
         });
     });
 
@@ -159,6 +190,10 @@ describe('<CreateProposalPageClient /> component', () => {
             GovernanceDialogId.PUBLISH_PROPOSAL,
             expect.anything(),
         );
+        expect(trackAnalyticsSpy).not.toHaveBeenCalledWith(
+            'wizard_submit',
+            expect.anything(),
+        );
 
         const warnParams = open.mock.calls.find(
             ([id]) => id === GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING,
@@ -173,6 +208,12 @@ describe('<CreateProposalPageClient /> component', () => {
             GovernanceDialogId.PUBLISH_PROPOSAL,
             expect.anything(),
         );
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('wizard_submit', {
+            flow: 'create_proposal',
+            actionCount: 0,
+            hasActions: false,
+            pluginInterfaceType: expect.any(String),
+        });
 
         // "Resume existing transaction" reopens the conflicting proposal's dialog with its params.
         warnParams.onResume();

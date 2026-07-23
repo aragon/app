@@ -5,6 +5,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IExecuteActionsFormData } from '../../components/createExecuteActionsForm';
 import { CreateExecuteActionsForm } from '../../components/createExecuteActionsForm';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
@@ -60,6 +61,10 @@ export const CreateExecuteActionsPageClient: React.FC<
             actions: values.actions,
             prepareActions,
         };
+        plausibleAnalyticsUtils.track('wizard_submit', {
+            flow: 'direct_execute_actions',
+            actionCount: values.actions.length,
+        });
         open(GovernanceDialogId.EXECUTE_ACTIONS, { params });
     };
 
@@ -75,6 +80,7 @@ export const CreateExecuteActionsPageClient: React.FC<
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
+                analytics={{ flow: 'direct_execute_actions' }}
                 defaultValues={{ actions: [] }}
                 id={createExecuteActionsWizardId}
                 initialSteps={processedSteps}

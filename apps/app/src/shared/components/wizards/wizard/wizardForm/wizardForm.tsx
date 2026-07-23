@@ -1,5 +1,10 @@
 import type { ComponentProps, FormEvent } from 'react';
-import { type FieldValues, useFormContext } from 'react-hook-form';
+import {
+    type FieldErrors,
+    type FieldValues,
+    useFormContext,
+} from 'react-hook-form';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import { useWizardContext } from '../wizardProvider';
 
 export interface IWizardFormProps<TFormData extends FieldValues = FieldValues>
@@ -15,14 +20,30 @@ export const WizardForm = <TFormData extends FieldValues = FieldValues>(
 ) => {
     const { children, onSubmit = () => null, ...otherProps } = props;
 
-    const { hasNext, nextStep } = useWizardContext();
+    const { activeStep, activeStepIndex, analytics, hasNext, nextStep } =
+        useWizardContext();
     const { handleSubmit } = useFormContext<TFormData>();
+
+    const handleInvalidSubmit = (errors: FieldErrors<TFormData>) => {
+        if (analytics == null || activeStep == null) {
+            return;
+        }
+
+        plausibleAnalyticsUtils.track('wizard_validation_blocked', {
+            ...analytics.props,
+            flow: analytics.flow,
+            stepKey: activeStep,
+            stepIndex: activeStepIndex,
+            attempt: hasNext ? 'next' : 'submit',
+            errorCount: Object.keys(errors).length,
+        });
+    };
 
     const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         event.stopPropagation();
         const submitCallback = hasNext ? nextStep : onSubmit;
-        void handleSubmit(submitCallback)(event);
+        void handleSubmit(submitCallback, handleInvalidSubmit)(event);
     };
 
     return (

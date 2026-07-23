@@ -15,6 +15,11 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { buildIntentId } from '@/shared/utils/pendingTransactionManager';
+import {
+    type PlausibleAnalyticsEventName,
+    type PlausibleAnalyticsProps,
+    plausibleAnalyticsUtils,
+} from '@/shared/utils/plausibleAnalyticsUtils';
 import { NetworkSwitchAlert } from '../networkSwitchAlert';
 import {
     type ITransactionStatusStepMetaAddon,
@@ -58,10 +63,10 @@ export const TransactionDialog = <TCustomStepId extends string>(
         onIndexed,
         network = Network.ETHEREUM_MAINNET,
         transactionType,
+        analytics,
         indexingFallbackUrl,
         disableCancel,
     } = props;
-
     const {
         activeStep,
         steps,
@@ -79,11 +84,16 @@ export const TransactionDialog = <TCustomStepId extends string>(
 
     // Make the onSuccess property stable to only trigger it once on transaction success
     const onSuccessRef = useRef(onSuccess);
+    const analyticsRef = useRef(analytics);
+    analyticsRef.current = analytics;
 
     // Guard so onIndexed fires exactly once: react-query polling yields new status-object
     // identities on re-render, so without this the indexed effect would refire.
     const onIndexedFiredRef = useRef(false);
+    const confirmedAnalyticsFiredRef = useRef(false);
+    const terminalAnalyticsFiredRef = useRef(false);
 
+    const failedAnalyticsFiredRef = useRef(false);
     const { address } = useWalletAccount();
     const { buildEntityUrl } = useDaoChain({ network });
     const {
@@ -94,15 +104,61 @@ export const TransactionDialog = <TCustomStepId extends string>(
         withNetworkSwitch,
     } = useNetworkSwitch({ network });
 
+    const getTransactionAnalyticsProps = useCallback(
+        () => ({
+            ...analyticsRef.current,
+            transactionType,
+            network,
+            chainId: requiredChainId,
+        }),
+        [transactionType, network, requiredChainId],
+    );
+
+    const trackTransactionAnalytics = useCallback(
+        (
+            eventName: Extract<
+                PlausibleAnalyticsEventName,
+                `transaction_${string}`
+            >,
+            props?: PlausibleAnalyticsProps,
+        ) => {
+            if (analyticsRef.current == null) {
+                return;
+            }
+
+            plausibleAnalyticsUtils.track(eventName, {
+                ...getTransactionAnalyticsProps(),
+                ...props,
+            });
+        },
+        [getTransactionAnalyticsProps],
+    );
+
+    const trackTransactionFailure = useCallback(
+        (error: unknown, stepId?: string) => {
+            if (failedAnalyticsFiredRef.current) {
+                return;
+            }
+
+            failedAnalyticsFiredRef.current = true;
+            trackTransactionAnalytics('transaction_failed', {
+                step: stepId,
+                errorClass: error instanceof Error ? error.name : 'unknown',
+            });
+        },
+        [trackTransactionAnalytics],
+    );
     const handleTransactionError = useCallback(
         (stepId?: string) =>
-            (error: unknown, context?: Record<string, unknown>) =>
+            (error: unknown, context?: Record<string, unknown>) => {
+                trackTransactionFailure(error, stepId);
                 transactionDialogUtils.monitorTransactionError(error, {
                     stepId,
                     from: address,
                     ...context,
-                }),
-        [address],
+                });
+            },
+        [address, trackTransactionFailure],
     );
 
     const {
@@ -218,8 +274,14 @@ export const TransactionDialog = <TCustomStepId extends string>(
         }
 
         onIndexedFiredRef.current = true;
+        trackTransactionAnalytics('transaction_end', { status: 'indexed' });
         onIndexed?.({ slug: indexedProposalSlug });
-    }, [isTransactionIndexed, indexedProposalSlug, onIndexed]);
+    }, [
+        isTransactionIndexed,
+        indexedProposalSlug,
+        onIndexed,
+        trackTransactionAnalytics,
+    ]);
 
     const handleSendTransaction = useCallback(() => {
         const onError = handleTransactionError(TransactionDialogStep.APPROVE);
@@ -227,13 +289,18 @@ export const TransactionDialog = <TCustomStepId extends string>(
         // No prepared transaction = a resumed dialog that skipped prepare: re-send the stored
         // request, or surface a failure if there is none (e.g. lost after a reload).
         if (transaction == null) {
-            if (!resend()) {
-                onError(
-                    new Error(
-                        'TransactionDialog: no prepared transaction and nothing to re-send.',
-                    ),
-                );
+            if (resend()) {
+                trackTransactionAnalytics('transaction_start', {
+                    attemptKind: 'resume',
+                });
+                return;
             }
+
+            onError(
+                new Error(
+                    'TransactionDialog: no prepared transaction and nothing to re-send.',
+                ),
+            );
             return;
         }
 
@@ -247,6 +314,8 @@ export const TransactionDialog = <TCustomStepId extends string>(
             return;
         }
 
+        trackTransactionAnalytics('transaction_start', { attemptKind: 'new' });
+
         // Pin to the required chain so wagmi rejects instead of silently signing on the wrong one.
         send({ ...transaction, chainId: requiredChainId });
     }, [
@@ -256,6 +325,7 @@ export const TransactionDialog = <TCustomStepId extends string>(
         send,
         resend,
         handleTransactionError,
+        trackTransactionAnalytics,
     ]);
 
     const handleRetryTransaction = useCallback(() => {
@@ -494,11 +564,33 @@ export const TransactionDialog = <TCustomStepId extends string>(
     }, [waitTxError, transaction, handleTransactionError]);
 
     useEffect(() => {
-        if (waitTxStatus === 'success') {
-            onSuccessRef.current?.(txReceipt);
-            nextStep();
+        if (waitTxStatus !== 'success') {
+            return;
         }
-    }, [waitTxStatus, nextStep, txReceipt]);
+
+        if (!confirmedAnalyticsFiredRef.current) {
+            confirmedAnalyticsFiredRef.current = true;
+            trackTransactionAnalytics('transaction_stage', {
+                status: 'confirmed',
+            });
+        }
+
+        if (transactionType == null && !terminalAnalyticsFiredRef.current) {
+            terminalAnalyticsFiredRef.current = true;
+            trackTransactionAnalytics('transaction_end', {
+                status: 'confirmed',
+            });
+        }
+
+        onSuccessRef.current?.(txReceipt);
+        nextStep();
+    }, [
+        waitTxStatus,
+        nextStep,
+        txReceipt,
+        transactionType,
+        trackTransactionAnalytics,
+    ]);
 
     // Advance to confirm once the wallet has signed (the hash appears). Failures go to the subscriber.
     useEffect(() => {

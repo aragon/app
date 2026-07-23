@@ -41,6 +41,17 @@ describe('analytics utils', () => {
 
             expect(init).not.toHaveBeenCalled();
         });
+
+        it('does not initialise the tracker when the domain is empty', async () => {
+            process.env = {
+                ...originalEnv,
+                NEXT_PUBLIC_PLAUSIBLE_DOMAIN: '',
+            };
+
+            await analyticsUtils.init();
+
+            expect(init).not.toHaveBeenCalled();
+        });
     });
 
     describe('trackEvent', () => {
@@ -54,11 +65,11 @@ describe('analytics utils', () => {
         it('forwards the event name and props once initialised', async () => {
             await analyticsUtils.init();
 
-            analyticsUtils.trackEvent('Publish DAO Click', {
+            analyticsUtils.trackEvent('test_event', {
                 network: 'ethereum-mainnet',
             });
 
-            expect(track).toHaveBeenCalledWith('Publish DAO Click', {
+            expect(track).toHaveBeenCalledWith('test_event', {
                 props: { network: 'ethereum-mainnet' },
             });
         });
@@ -66,15 +77,15 @@ describe('analytics utils', () => {
         it('omits the options argument when no props are given', async () => {
             await analyticsUtils.init();
 
-            analyticsUtils.trackEvent('Create DAO Click');
+            analyticsUtils.trackEvent('test_event');
 
-            expect(track).toHaveBeenCalledWith('Create DAO Click', {
+            expect(track).toHaveBeenCalledWith('test_event', {
                 props: undefined,
             });
         });
 
         it('does not call track before init (e.g. domain not configured)', () => {
-            analyticsUtils.trackEvent('Create DAO Click');
+            analyticsUtils.trackEvent('test_event');
 
             expect(track).not.toHaveBeenCalled();
         });

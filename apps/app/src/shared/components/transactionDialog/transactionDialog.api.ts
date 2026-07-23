@@ -70,6 +70,17 @@ export interface ITransactionDialogSuccessLink {
     onClick?: (receipt: TransactionReceipt) => void;
 }
 
+export interface ITransactionDialogAnalytics {
+    /**
+     * Product flow that opened this transaction dialog.
+     */
+    flow?: string;
+    /**
+     * Low-cardinality transaction kind within the product flow.
+     */
+    transactionKind?: string;
+}
+
 export interface ITransactionDialogProps<
     TCustomStepId extends string = string,
 > {
@@ -157,6 +168,10 @@ export interface ITransactionDialogProps<
      * Fallback URL shown when the indexing step takes too long.
      */
     indexingFallbackUrl?: string;
+    /**
+     * Low-cardinality analytics metadata for transaction lifecycle events.
+     */
+    analytics?: ITransactionDialogAnalytics;
     /**
      * When true, the cancel button in the dialog footer is permanently disabled.
      */
