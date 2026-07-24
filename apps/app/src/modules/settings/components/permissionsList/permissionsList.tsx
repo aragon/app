@@ -86,14 +86,9 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-3">
-            <PermissionsListHeader />
-            <Accordion.Container
-                isMulti={true}
-                onValueChange={(value) => onExpandedRowsChange(value ?? [])}
-                value={expandedRows}
-            >
+            <div className="flex flex-col gap-3 md:hidden">
                 {rows.map((row) => (
-                    <PermissionsListRow
+                    <PermissionsListMobileCard
                         accounts={accountRefs}
                         chainId={chainId}
                         daoPlugins={daoPlugins}
@@ -103,7 +98,27 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                         rowKey={getPermissionRowKey(row)}
                     />
                 ))}
-            </Accordion.Container>
+            </div>
+            <div className="hidden flex-col gap-3 md:flex">
+                <PermissionsListHeader />
+                <Accordion.Container
+                    isMulti={true}
+                    onValueChange={(value) => onExpandedRowsChange(value ?? [])}
+                    value={expandedRows}
+                >
+                    {rows.map((row) => (
+                        <PermissionsListRow
+                            accounts={accountRefs}
+                            chainId={chainId}
+                            daoPlugins={daoPlugins}
+                            key={getPermissionRowKey(row)}
+                            network={row.network}
+                            row={row}
+                            rowKey={getPermissionRowKey(row)}
+                        />
+                    ))}
+                </Accordion.Container>
+            </div>
         </div>
     );
 };
@@ -155,13 +170,14 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
     chainId,
 }) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const truncatedAddress = addressUtils.truncateAddress(entity.address);
 
     if (entity.isSentinel) {
         return (
             <div className="flex flex-col gap-0.5">
                 <span className="text-neutral-500">{entity.label}</span>
                 <span className="font-mono text-neutral-400 text-sm">
-                    {addressUtils.truncateAddress(entity.address)}
+                    {truncatedAddress}
                 </span>
             </div>
         );
@@ -171,6 +187,8 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
         type: ChainEntityType.ADDRESS,
         id: entity.address,
     });
+    const detailName =
+        entity.detailName !== truncatedAddress ? entity.detailName : undefined;
 
     return (
         <div className="flex flex-col gap-0.5">
@@ -179,12 +197,10 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
                 href={explorerUrl}
                 isExternal={explorerUrl != null}
             >
-                {addressUtils.truncateAddress(entity.address)}
+                {truncatedAddress}
             </Link>
-            {entity.detailName != null && (
-                <span className="text-neutral-500 text-sm">
-                    {entity.detailName}
-                </span>
+            {detailName != null && (
+                <span className="text-neutral-500 text-sm">{detailName}</span>
             )}
         </div>
     );
@@ -199,15 +215,97 @@ const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
     primary,
     secondary,
 }) => (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex min-w-0 flex-col gap-0.5">
         <span className="text-neutral-500">{primary}</span>
         {secondary != null && (
-            <span className="font-mono text-neutral-400 text-sm">
+            <span className="block max-w-full truncate font-mono text-neutral-400 text-sm">
                 {secondary}
             </span>
         )}
     </div>
 );
+
+interface IPermissionMobileFieldProps {
+    label: string;
+    children: React.ReactNode;
+}
+
+const PermissionMobileField: React.FC<IPermissionMobileFieldProps> = ({
+    label,
+    children,
+}) => (
+    <div className="grid grid-cols-[96px_1fr] gap-4 py-3 first:pt-0 last:pb-0">
+        <span className="text-neutral-500 text-sm">{label}</span>
+        <div className="min-w-0">{children}</div>
+    </div>
+);
+
+const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
+    props,
+) => {
+    const { row, daoPlugins, accounts, chainId } = props;
+
+    const { t } = useTranslations();
+
+    const resolveOptions = { daoPlugins, accounts };
+    const who = permissionEntityUtils.resolvePermissionEntity(
+        row.whoAddress,
+        resolveOptions,
+    );
+    const where = permissionEntityUtils.resolvePermissionEntity(
+        row.whereAddress,
+        resolveOptions,
+    );
+    const permissionName = permissionNameUtils.getPermissionName(
+        row.permissionId,
+    );
+    const conditionType = conditionTypeUtils.resolveConditionType(
+        row.conditionAddress,
+        row.condition,
+    );
+    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
+
+    const hasCondition = !addressUtils.isAddressEqual(
+        row.conditionAddress,
+        ALLOW_FLAG,
+    );
+    const conditionDetail = hasCondition
+        ? addressUtils.truncateAddress(row.conditionAddress)
+        : undefined;
+
+    return (
+        <div className="rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3">
+            <div className="divide-y divide-neutral-100">
+                <PermissionMobileField
+                    label={t('app.settings.permissionsList.header.permission')}
+                >
+                    <PermissionDetailValue
+                        primary={addressUtils.truncateHash(row.permissionId)}
+                        secondary={permissionName}
+                    />
+                </PermissionMobileField>
+                <PermissionMobileField
+                    label={t('app.settings.permissionsList.header.who')}
+                >
+                    <PermissionEntityDetail chainId={chainId} entity={who} />
+                </PermissionMobileField>
+                <PermissionMobileField
+                    label={t('app.settings.permissionsList.header.where')}
+                >
+                    <PermissionEntityDetail chainId={chainId} entity={where} />
+                </PermissionMobileField>
+                <PermissionMobileField
+                    label={t('app.settings.permissionsList.header.condition')}
+                >
+                    <PermissionDetailValue
+                        primary={conditionLabel}
+                        secondary={conditionDetail}
+                    />
+                </PermissionMobileField>
+            </div>
+        </div>
+    );
+};
 
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const { row, rowKey, daoPlugins, accounts, chainId, network } = props;
@@ -248,7 +346,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                 <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
                     <PermissionEntityCell entity={who} />
                     <PermissionEntityCell entity={where} />
-                    <span className="truncate font-mono text-neutral-800">
+                    <span className="min-w-0 truncate font-mono text-neutral-800">
                         {permissionName}
                     </span>
                     <span className="flex min-w-0">
@@ -355,7 +453,7 @@ const PermissionsListHeader: React.FC = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="sticky top-[90px] z-20 -mx-4 md:-mx-6">
+        <div className="sticky top-[90px] z-20 -mx-4 hidden md:-mx-6 md:block">
             <div className="flex items-baseline justify-between gap-x-4 bg-gradient-to-b from-90% from-neutral-50 to-transparent px-8 pt-1 pb-4 text-neutral-500 text-sm md:gap-x-6 md:px-12">
                 <div className="grid w-full grid-cols-4 gap-4">
                     <span>{t('app.settings.permissionsList.header.who')}</span>
@@ -386,7 +484,7 @@ const PermissionsListSkeleton: React.FC = () => (
                 className="flex items-center justify-between gap-x-4 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 md:gap-x-6 md:px-6 md:py-5"
                 key={rowKey}
             >
-                <div className="grid w-full grid-cols-4 items-center gap-4">
+                <div className="grid w-full grid-cols-2 items-center gap-2 md:grid-cols-4 md:gap-4">
                     <StateSkeletonBar width="58%" />
                     <StateSkeletonBar width="50%" />
                     <StateSkeletonBar width="72%" />

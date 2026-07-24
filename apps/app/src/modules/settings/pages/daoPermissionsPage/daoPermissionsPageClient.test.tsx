@@ -31,6 +31,8 @@ jest.mock('../../components/permissionsList', () => ({
     ),
 }));
 
+const mockFilterUrlParams: Record<string, string> = {};
+
 jest.mock('@/shared/hooks/useFilterUrlParam', () => ({
     useFilterUrlParam: ({
         name,
@@ -38,15 +40,7 @@ jest.mock('@/shared/hooks/useFilterUrlParam', () => ({
     }: {
         name: string;
         fallbackValue: string;
-    }) => {
-        const valueByParam: Record<string, string> = {
-            permissionsview: 'graph',
-            permissionsdao: 'true',
-            permissionssubplugins: 'true',
-        };
-
-        return [valueByParam[name] ?? fallbackValue, jest.fn()];
-    },
+    }) => [mockFilterUrlParams[name] ?? fallbackValue, jest.fn()],
 }));
 
 jest.mock('@/shared/components/translationsProvider', () => ({
@@ -142,12 +136,33 @@ describe('<DaoPermissionsPageClient /> component', () => {
             chainId: 1,
             isLoading: false,
         } as IUsePermissionsDataResult);
+        mockFilterUrlParams.permissionsview = 'graph';
+        mockFilterUrlParams.permissionsdao = 'true';
+        mockFilterUrlParams.permissionssubplugins = 'true';
     });
 
     afterEach(() => {
         jest.clearAllMocks();
+        for (const key of Object.keys(mockFilterUrlParams)) {
+            delete mockFilterUrlParams[key];
+        }
     });
 
+    it('renders Expand all as a desktop-only control in list view', () => {
+        mockFilterUrlParams.permissionsview = 'list';
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(
+            screen.getByRole('button', {
+                name: /permissionsList.expandAll/,
+            }),
+        ).toHaveClass('hidden', 'md:inline-flex');
+    });
     it('renders the graph as one screen controlled only by switches', () => {
         render(
             <GukModulesProvider>

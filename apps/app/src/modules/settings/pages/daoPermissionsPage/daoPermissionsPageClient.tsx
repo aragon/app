@@ -259,6 +259,7 @@ export const DaoPermissionsPageClient: React.FC<
                                 </ToggleGroup>
                                 {showExpandAll && (
                                     <Button
+                                        className="hidden md:inline-flex"
                                         onClick={handleToggleAll}
                                         responsiveSize={{ md: 'md' }}
                                         size="sm"

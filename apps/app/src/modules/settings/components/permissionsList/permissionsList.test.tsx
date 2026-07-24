@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
 import type { IPermissionRow } from '../../types';
@@ -13,6 +13,8 @@ const ROOT_PERMISSION_ID =
     '0x815fe80e4b37c8582a3b773d1d7071f983eacfd56b5965db654f3087c25ada33';
 const EXECUTE_PERMISSION_ID =
     '0xbf04b4486c9663d805744005c3da000eda93de6e3308a4a7a812eb565327b78d';
+const SET_TRUSTED_FORWARDER_PERMISSION_ID =
+    '0x06d294bc8cbad2e393408b20dd019a772661f60b8d633e56761157cb1ec85f8c';
 
 describe('<PermissionsList /> component', () => {
     beforeAll(() => {
@@ -36,6 +38,18 @@ describe('<PermissionsList /> component', () => {
                 <PermissionsList {...completeProps} />
             </GukModulesProvider>
         );
+    };
+
+    const getMobileList = (container: HTMLElement) => {
+        const mobileList = container.querySelector<HTMLElement>(
+            '[class~="md:hidden"]',
+        );
+
+        if (mobileList == null) {
+            throw new Error('Mobile permissions list not found');
+        }
+
+        return mobileList;
     };
 
     it('renders a skeleton while the permissions are loading', () => {
@@ -79,13 +93,17 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('ROOT_PERMISSION')).toBeInTheDocument();
-        expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
+        expect(screen.getAllByText('ROOT_PERMISSION').length).toBeGreaterThan(
+            0,
+        );
+        expect(
+            screen.getAllByText('EXECUTE_PERMISSION').length,
+        ).toBeGreaterThan(0);
         expect(screen.getAllByText('Anyone').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Any Address').length).toBeGreaterThan(0);
         expect(
-            screen.getByText(/permissionsList.header.condition/),
-        ).toBeInTheDocument();
+            screen.getAllByText(/permissionsList.header.condition/).length,
+        ).toBeGreaterThan(0);
     });
 
     it('renders the collapsed condition cell with the resolved label or a dash', () => {
@@ -107,8 +125,8 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('VotingPower')).toBeInTheDocument();
-        expect(screen.getByText('-')).toBeInTheDocument();
+        expect(screen.getAllByText('VotingPower').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
     });
 
     it('keys rows by condition address so distinct conditions do not collide', () => {
@@ -140,7 +158,34 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('Unrecognized condition')).toBeInTheDocument();
+        expect(
+            screen.getAllByText('Unrecognized condition').length,
+        ).toBeGreaterThan(0);
+    });
+
+    it('renders mobile cards as static content without accordion controls', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: SET_TRUSTED_FORWARDER_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+            },
+        ];
+
+        const { container } = render(createTestComponent({ rows }));
+        const mobileList = getMobileList(container);
+
+        expect(
+            within(mobileList).getByText(/permissionsList.header.permission/),
+        ).toBeInTheDocument();
+        expect(
+            within(mobileList).getByText('SET_TRUSTED_FORWARDER_PERMISSION'),
+        ).toHaveClass('truncate');
+        expect(within(mobileList).getByText('-')).toBeInTheDocument();
+        expect(
+            within(mobileList).queryByRole('button'),
+        ).not.toBeInTheDocument();
     });
 
     it('renders both the Details and Condition lists for an expanded row', async () => {
@@ -241,7 +286,9 @@ describe('<PermissionsList /> component', () => {
             }),
         );
 
-        expect(screen.getAllByText('Unrecognized condition')).toHaveLength(2);
+        expect(
+            screen.getAllByText('Unrecognized condition').length,
+        ).toBeGreaterThanOrEqual(2);
         expect(screen.queryByText(/noConditionSlot/)).not.toBeInTheDocument();
     });
 });
