@@ -6,6 +6,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
+import { analyticsUtils } from '@/shared/utils/analyticsUtils';
 import {
     CreateDaoForm,
     type ICreateDaoFormData,
@@ -26,6 +27,10 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
+        analyticsUtils.trackEvent('Publish DAO Click', {
+            network: values.network,
+        });
+
         const params: IPublishDaoDialogParams = { values };
         checkWalletConnection({
             onSuccess: () => open(CreateDaoDialogId.PUBLISH_DAO, { params }),

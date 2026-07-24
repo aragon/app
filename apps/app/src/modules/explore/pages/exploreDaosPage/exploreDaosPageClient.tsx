@@ -11,6 +11,7 @@ import { Container } from '@/shared/components/container';
 import { CtaCard } from '@/shared/components/ctaCard';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { analyticsUtils } from '@/shared/utils/analyticsUtils';
 import NetBackground from '../../../../assets/images/net_bg.svg';
 import type { IGetDaoListParams } from '../../api/daoExplorerService';
 import { DaoCarouselCard } from '../../components/daoCarouselCard';
@@ -128,10 +129,14 @@ export const ExploreDaosPageClient: React.FC<IExploreDaosPageClientProps> = (
                                     label: t(
                                         'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
                                     ),
-                                    onClick: () =>
+                                    onClick: () => {
+                                        analyticsUtils.trackEvent(
+                                            'Create DAO Click',
+                                        );
                                         open(
                                             CreateDaoDialogId.CREATE_DAO_DETAILS,
-                                        ),
+                                        );
+                                    },
                                 }}
                                 textSize="smaller"
                                 title={t(

@@ -36,6 +36,7 @@
         "@aragon/gov-ui-kit": "catalog:",
         "@floating-ui/react": "^0.27.20",
         "@number-flow/react": "^0.6.1",
+        "@plausible-analytics/tracker": "^0.4.5",
         "@radix-ui/react-dialog": "catalog:",
         "@radix-ui/react-toggle-group": "^1.1.15",
         "@reown/appkit": "^1.8.22",
