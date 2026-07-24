@@ -19,6 +19,10 @@ const config = {
     globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        // Package only exposes a `module` field (no `main`/`exports`), which Jest's
+        // Node-style resolver doesn't understand unlike bundlers (webpack/Next.js).
+        '^@plausible-analytics/tracker$':
+            '<rootDir>/node_modules/@plausible-analytics/tracker/plausible.js',
     },
     transform: {
         '^.+\\.(svg|jpg|jpeg|css|mp4|png|webp)$':
@@ -33,7 +37,7 @@ const config = {
     // e.g. node_modules/.pnpm/<pkg>@<ver>/node_modules/<pkg>/...
     transformIgnorePatterns: [
         // Transform wagmi-related ESM and gov-ui-kit; avoid downleveling viem/abitype unless needed
-        'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(@aragon/gov-ui-kit|wagmi|@wagmi|use-sync-external-store|react-merge-refs)(/|$))',
+        'node_modules/(?!(?:\\.pnpm/[^/]+/node_modules/)?(@aragon/gov-ui-kit|wagmi|@wagmi|use-sync-external-store|react-merge-refs|@plausible-analytics/tracker)(/|$))',
     ],
 };
 
