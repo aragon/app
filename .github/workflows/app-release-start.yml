@@ -2,9 +2,10 @@ name: App Release Start
 
 on:
   schedule:
-    # Auto release: every Monday at ~6PM CET (17:07 UTC). Off the top of the
+    # Auto release: every Monday at 15:07 UTC (~17:07 CEST in summer, 16:07 CET
+    # in winter — the cron is fixed in UTC, no DST handling). Off the top of the
     # hour because GitHub delays or drops schedules queued at :00.
-    - cron: '7 17 * * 1'
+    - cron: '7 15 * * 1'
   workflow_dispatch:
     inputs:
       base_commit:

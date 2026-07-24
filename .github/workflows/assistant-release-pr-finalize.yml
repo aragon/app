@@ -43,8 +43,8 @@ jobs:
           sparse-checkout: |
             .github/actions/setup
 
-      # Full checkout + pnpm install at the merge commit (post-merge main), so the scope
-      # resolution below reads the current release-scopes policy.
+      # Full checkout + pnpm install at the merge commit (post-merge main): releaseScopes.js and
+      # its node_modules must exist regardless of what the release branch ships.
       - name: Setup merge commit
         uses: ./.github/actions/setup
         with:
@@ -53,12 +53,23 @@ jobs:
 
       # Resolved before the release-branch checkout: releaseScopes.js needs node_modules, which
       # the next checkout's clean removes. The guard itself only needs the pattern.
+      # The policy file is read from the tested SHA so the guard mirrors the --ignore scoping
+      # that `changeset version` ran with when the release was cut — a scope change merged to
+      # main mid-release must not re-classify the branch's leftover changesets as new. The
+      # merge-commit policy is only a fallback for branches cut before the scope mapper landed.
       - name: Resolve assistant release scope
         id: scope
         shell: bash
+        env:
+          TESTED_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           set -euo pipefail
-          packages=$(node -e "console.log(require('./.github/workflows/scripts/releaseScopes.js').resolveReleaseScope('assistant').join('|'))")
+          scopes_path=.github/release-scopes.yml
+          git fetch --depth=1 origin "$TESTED_SHA" || true
+          if git show "$TESTED_SHA:.github/release-scopes.yml" > "$RUNNER_TEMP/release-scopes.yml" 2>/dev/null; then
+            scopes_path="$RUNNER_TEMP/release-scopes.yml"
+          fi
+          packages=$(SCOPES_PATH="$scopes_path" node -e "console.log(require('./.github/workflows/scripts/releaseScopes.js').resolveReleaseScope('assistant', process.env.SCOPES_PATH).join('|'))")
           echo "pattern=${packages}" >> "$GITHUB_OUTPUT"
 
       # The guard checks the release-branch head, not the merge commit: the merge commit also
