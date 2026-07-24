@@ -1244,6 +1244,33 @@ describe('SppStageUtils', () => {
         });
     });
 
+    describe('isObjectionStage', () => {
+        it('returns true when the stage sub-proposal has the isObjection settings flag', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const subProposal = generateSppSubProposal({ stageIndex: 1 });
+            subProposal.settings = {
+                ...subProposal.settings,
+                isObjection: true,
+            };
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+                subProposals: [subProposal],
+            });
+            expect(
+                sppStageUtils.isObjectionStage(proposal, stage),
+            ).toBeTruthy();
+        });
+
+        it('returns false when neither sub-proposals nor stage plugins are objection bodies', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+                subProposals: [generateSppSubProposal({ stageIndex: 1 })],
+            });
+            expect(sppStageUtils.isObjectionStage(proposal, stage)).toBeFalsy();
+        });
+    });
+
     describe('getBodyResult', () => {
         it('returns the result for the given address and stage index if present', () => {
             const externalAddress =

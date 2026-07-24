@@ -36,8 +36,4 @@ export interface ITokenPluginSettings extends IPluginSettings {
      * The settings of the voting escrow.
      */
     votingEscrow?: ITokenPluginSettingsEscrowSettings;
-    /**
-     * Set when the plugin is an objection stage, where members can only vote "No".
-     */
-    isObjection?: boolean;
 }
