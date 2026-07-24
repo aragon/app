@@ -241,7 +241,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createSafeTestParams({
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -271,7 +271,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createSafeTestParams({
             proposalCreationConditionAddress: undefined,
         });
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -290,7 +290,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             brandId: VotingBodyBrandIdentity.EOA,
             proposalCreationConditionAddress: `0x${'c'.repeat(40)}`,
         });
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const { result } = renderHook(() =>
             useSppPermissionCheckProposalCreation(
@@ -353,7 +353,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
             slotParams.pluginId === internalMeta.interfaceType
                 ? () => internalGuardResult
                 : undefined) as never);
-        mockSimulation({ isLoading: false, isSuccess: true });
+        mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
         const { result } = renderHook(() =>
