@@ -206,6 +206,47 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
     );
 };
 
+interface IPermissionEntityMobileValueProps {
+    entity: IPermissionEntity;
+    chainId?: number;
+}
+
+const PermissionEntityMobileValue: React.FC<
+    IPermissionEntityMobileValueProps
+> = ({ entity, chainId }) => {
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const truncatedAddress = addressUtils.truncateAddress(entity.address);
+
+    if (entity.isSentinel) {
+        return (
+            <div className="flex min-w-0 flex-col gap-0.5">
+                <PermissionEntityCell entity={entity} />
+                <span className="block max-w-full truncate font-mono text-neutral-400 text-sm">
+                    {truncatedAddress}
+                </span>
+            </div>
+        );
+    }
+
+    const explorerUrl = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: entity.address,
+    });
+
+    return (
+        <div className="flex min-w-0 flex-col gap-0.5">
+            <PermissionEntityCell entity={entity} />
+            <Link
+                className="w-fit max-w-full truncate"
+                href={explorerUrl}
+                isExternal={explorerUrl != null}
+            >
+                {truncatedAddress}
+            </Link>
+        </div>
+    );
+};
+
 interface IPermissionDetailValueProps {
     primary: string;
     secondary?: string;
@@ -287,12 +328,18 @@ const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
                 <PermissionMobileField
                     label={t('app.settings.permissionsList.header.who')}
                 >
-                    <PermissionEntityDetail chainId={chainId} entity={who} />
+                    <PermissionEntityMobileValue
+                        chainId={chainId}
+                        entity={who}
+                    />
                 </PermissionMobileField>
                 <PermissionMobileField
                     label={t('app.settings.permissionsList.header.where')}
                 >
-                    <PermissionEntityDetail chainId={chainId} entity={where} />
+                    <PermissionEntityMobileValue
+                        chainId={chainId}
+                        entity={where}
+                    />
                 </PermissionMobileField>
                 <PermissionMobileField
                     label={t('app.settings.permissionsList.header.condition')}

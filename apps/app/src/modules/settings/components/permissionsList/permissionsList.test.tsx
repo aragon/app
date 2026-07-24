@@ -1,5 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
 import type { IPermissionRow } from '../../types';
@@ -15,6 +17,7 @@ const EXECUTE_PERMISSION_ID =
     '0xbf04b4486c9663d805744005c3da000eda93de6e3308a4a7a812eb565327b78d';
 const SET_TRUSTED_FORWARDER_PERMISSION_ID =
     '0x06d294bc8cbad2e393408b20dd019a772661f60b8d633e56761157cb1ec85f8c';
+const SPP_PLUGIN_ADDRESS = '0x26A696269116cAaB99626Cc793CeA24bbCec7528';
 
 describe('<PermissionsList /> component', () => {
     beforeAll(() => {
@@ -163,17 +166,34 @@ describe('<PermissionsList /> component', () => {
         ).toBeGreaterThan(0);
     });
 
-    it('renders mobile cards as static content without accordion controls', () => {
+    it('renders mobile cards as static content with entity avatars and tags', () => {
         const rows: IPermissionRow[] = [
             {
                 permissionId: SET_TRUSTED_FORWARDER_PERMISSION_ID,
                 whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
+                whereAddress: SPP_PLUGIN_ADDRESS,
                 conditionAddress: ALLOW_FLAG,
             },
         ];
 
-        const { container } = render(createTestComponent({ rows }));
+        const { container } = render(
+            createTestComponent({
+                rows,
+                daoPlugins: [
+                    {
+                        id: 'spp',
+                        uniqueId: 'spp-1',
+                        label: 'Polling',
+                        meta: generateDaoPlugin({
+                            name: 'Polling',
+                            address: SPP_PLUGIN_ADDRESS,
+                            interfaceType: PluginInterfaceType.SPP,
+                        }),
+                        props: {},
+                    },
+                ],
+            }),
+        );
         const mobileList = getMobileList(container);
 
         expect(
@@ -182,6 +202,9 @@ describe('<PermissionsList /> component', () => {
         expect(
             within(mobileList).getByText('SET_TRUSTED_FORWARDER_PERMISSION'),
         ).toHaveClass('truncate');
+        expect(within(mobileList).getByText('Anyone')).toBeInTheDocument();
+        expect(within(mobileList).getByText('Polling')).toBeInTheDocument();
+        expect(within(mobileList).getByText('SPP')).toBeInTheDocument();
         expect(within(mobileList).getByText('-')).toBeInTheDocument();
         expect(
             within(mobileList).queryByRole('button'),
