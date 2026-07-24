@@ -4,6 +4,7 @@ import { Wallet } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { SupportChatTrigger } from '@/modules/application/components/supportChat';
 import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { useWalletConnected } from '@/modules/application/hooks/useWalletConnected';
@@ -68,6 +69,7 @@ export const ExploreNav: React.FC = () => {
             containerClasses={classNames(
                 'flex items-center justify-between gap-6 px-4 py-3 lg:gap-12 lg:px-6 lg:py-5',
             )}
+            trailing={<SupportChatTrigger />}
         >
             <div className="h-10">
                 <Link href="/">

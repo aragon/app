@@ -1,14 +1,14 @@
 import { Button, Icon, IconType } from '@aragon/gov-ui-kit';
 import { type ChatFlowState, useAssistantChatContext } from '../../controller';
+import { chatCopy } from '../../copy';
 import { getAssistantErrorText } from '../../transport';
 
 // One hint line above the composer while no preview is up for review; the button next to it is
 // the single ticket affordance.
 const hintByFlowState: Partial<Record<ChatFlowState, string>> = {
-    chatting: "Done explaining? You'll review the ticket before it's sent.",
-    previewing: 'Putting your ticket together…',
-    previewUnclear:
-        "We couldn't put a ticket together yet — tell us a bit more about what happened.",
+    chatting: chatCopy.statusStrip.hintChatting,
+    previewing: chatCopy.statusStrip.hintPreviewing,
+    previewUnclear: chatCopy.statusStrip.hintPreviewUnclear,
 };
 
 // The single ticket affordance: a compact sticky bar between messages and composer. It never
@@ -44,7 +44,7 @@ export const ChatStatusStrip: React.FC = () => {
             previewError != null
                 ? getAssistantErrorText(
                       previewError.code,
-                      'The preview failed. Please try again.',
+                      chatCopy.statusStrip.previewErrorFallback,
                   )
                 : hintByFlowState[flowState];
 
@@ -68,7 +68,7 @@ export const ChatStatusStrip: React.FC = () => {
                     size="sm"
                     variant="secondary"
                 >
-                    Prepare ticket
+                    {chatCopy.statusStrip.prepareTicket}
                 </Button>
             </div>
         );
@@ -79,8 +79,8 @@ export const ChatStatusStrip: React.FC = () => {
     );
     const attachmentLabel =
         activeAttachments.length > 0
-            ? `${activeAttachments.length} ${activeAttachments.length === 1 ? 'file' : 'files'}`
-            : 'None';
+            ? chatCopy.statusStrip.attachmentsCount(activeAttachments.length)
+            : chatCopy.statusStrip.attachmentsNone;
 
     // Reviewed preview: the title the ticket gets, plus what travels with it. The description
     // can be long and is deliberately not shown — the full conversation is attached anyway.
@@ -96,7 +96,7 @@ export const ChatStatusStrip: React.FC = () => {
                     size="sm"
                 />
                 <p className="flex-1 font-semibold text-success-800 text-xs">
-                    Ready to send
+                    {chatCopy.statusStrip.readyToSend}
                 </p>
                 <Button
                     disabled={isUploading || isRemoving || isCreating}
@@ -105,13 +105,15 @@ export const ChatStatusStrip: React.FC = () => {
                     size="sm"
                     variant="primary"
                 >
-                    {isCreating ? 'Sending…' : 'Send ticket'}
+                    {isCreating
+                        ? chatCopy.statusStrip.sending
+                        : chatCopy.statusStrip.sendTicket}
                 </Button>
             </div>
             <div className="flex flex-col gap-2 border-success-200 border-t bg-neutral-0 px-5 py-3">
                 <div className="flex flex-col gap-px">
                     <p className="text-neutral-500 text-xs uppercase tracking-wide">
-                        Title
+                        {chatCopy.statusStrip.titleLabel}
                     </p>
                     <p className="whitespace-pre-wrap text-neutral-800 text-sm leading-normal">
                         {ticketPreview?.summary}
@@ -119,7 +121,7 @@ export const ChatStatusStrip: React.FC = () => {
                 </div>
                 <div className="flex flex-col gap-px">
                     <p className="text-neutral-500 text-xs uppercase tracking-wide">
-                        Attachments
+                        {chatCopy.statusStrip.attachmentsLabel}
                     </p>
                     <p className="text-neutral-800 text-sm leading-normal">
                         {attachmentLabel}
@@ -127,13 +129,10 @@ export const ChatStatusStrip: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-1.5 pt-1 text-neutral-400 text-xs">
                     <Icon icon={IconType.INFO} size="sm" />
-                    <span>
-                        The full conversation and debug info are attached
-                        automatically for the team.
-                    </span>
+                    <span>{chatCopy.statusStrip.attachedAutomatically}</span>
                 </div>
                 <p className="text-neutral-400 text-xs">
-                    Not quite right? Keep chatting and prepare it again.
+                    {chatCopy.statusStrip.notQuiteRight}
                 </p>
             </div>
         </div>

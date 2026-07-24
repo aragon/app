@@ -31,6 +31,10 @@ jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
 }));
 
+jest.mock('../../supportChat', () => ({
+    SupportChatTrigger: () => <div data-testid="support-chat-trigger-mock" />,
+}));
+
 describe('<NavigationWizard /> component', () => {
     const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
     const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');

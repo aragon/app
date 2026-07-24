@@ -1,5 +1,29 @@
 # @aragon/app
 
+## 1.34.0
+
+### Minor Changes
+
+- [#1225](https://github.com/aragon/app/pull/1225) [`5f055af`](https://github.com/aragon/app/commit/5f055afe89ee28e1851c98d3feb76195b3594403) Thanks [@milosh86](https://github.com/milosh86)! - Allow selecting an existing condition without requiring a body to be selected for proposal creation
+
+- [#1214](https://github.com/aragon/app/pull/1214) [`2e9a395`](https://github.com/aragon/app/commit/2e9a3959fbecb6825c137fb6d2dd42d886c20ef4) Thanks [@milosh86](https://github.com/milosh86)! - Disable process list items and show eligibility help text when the connected user cannot create proposals
+
+- [#1217](https://github.com/aragon/app/pull/1217) [`811f000`](https://github.com/aragon/app/commit/811f000c1f891212cbc5960bcaec7d3fc85650ef) Thanks [@milosh86](https://github.com/milosh86)! - Sort processes the user cannot create proposals in to the bottom of the selection dialog
+
+- [#1235](https://github.com/aragon/app/pull/1235) [`51ac4c9`](https://github.com/aragon/app/commit/51ac4c91e73ffa5d4f3af268e25ad2e915e763a8) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Wire the support chat into the app behind the `supportChat` feature flag: the footer help entry opens the lazy-loaded assistant chat drawer instead of linking to the external portal, with app context and Sentry monitoring injected into the widget.
+
+### Patch Changes
+
+- [#1245](https://github.com/aragon/app/pull/1245) [`97dc270`](https://github.com/aragon/app/commit/97dc270b54a8c10e2c9f51235cd3678e447d207d) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Remove temporary Citrea core proposal-creation UI hotfix (APP-946) now that the on-chain permissions are fixed
+
+- [#1213](https://github.com/aragon/app/pull/1213) [`ceaa105`](https://github.com/aragon/app/commit/ceaa1054486cc1c18977d46cac5df4505f0ee630) Thanks [@milosh86](https://github.com/milosh86)! - Distinguish simulation failure from request failure in useSimulateProposalCreation
+
+- [#1219](https://github.com/aragon/app/pull/1219) [`6477c04`](https://github.com/aragon/app/commit/6477c04531965c91b04107c847cc92a7f5626d48) Thanks [@milosh86](https://github.com/milosh86)! - Implement scrolling into the proposal creation eligibility section and remove the "No description" fallback text
+
+- [#1215](https://github.com/aragon/app/pull/1215) [`1e823be`](https://github.com/aragon/app/commit/1e823be1b0ef4286d9e0c74a6e21370476f106c0) Thanks [@harryburger](https://github.com/harryburger)! - Fix the application crashing when the wallet disconnects while a transaction dialog is open. Wallet-requiring dialogs read a connected address during render, so a disconnect made them throw with no error boundary above the dialog layer, unmounting the whole application. Dialog definitions now carry a `requiresWallet` flag and `DialogRoot` unmounts and closes flagged dialogs on disconnect before they can re-render without an address. Connector switches do not close dialogs: while the wallet is connecting or reconnecting the dialog is only hidden, and it reappears once the address returns. It does remount, so state held inside the dialog (form inputs, transaction step) is reset.
+
+- [#1218](https://github.com/aragon/app/pull/1218) [`f21414e`](https://github.com/aragon/app/commit/f21414e5d4b74b87d7a177d3ae17297f1486a018) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Fix proposal creation eligibility showing "Unrestricted" for eligible wallets on restricted SPP processes.
+
 ## 1.33.3
 
 ### Patch Changes

@@ -101,6 +101,14 @@ test('uses the package tag integration commit and filters first-parent history',
             'feature',
             'feat(APP-123): add app feature (#42)',
         );
+        // Another workspace's release commit touches paths inside this filter's scope
+        // (the app bundles assistant packages) and must not leak into the summary.
+        commitFile(
+            repository,
+            'packages/assistant-chat/package.json',
+            '{"version":"0.2.0"}',
+            'Release @aragon/assistant@0.2.0',
+        );
 
         git(repository, ['checkout', '-b', 'feature/multi-commit']);
         commitFile(
@@ -139,8 +147,11 @@ test('uses the package tag integration commit and filters first-parent history',
         );
         const commits = collectScopedCommits({
             baseRef,
-            packageName: '@aragon/app',
-            patterns: ['apps/app/**', 'pnpm-lock.yaml'],
+            patterns: [
+                'apps/app/**',
+                'packages/assistant-chat/**',
+                'pnpm-lock.yaml',
+            ],
             git: repositoryGit,
         });
 

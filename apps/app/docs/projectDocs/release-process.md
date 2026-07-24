@@ -2,7 +2,7 @@
 
 This document describes the release process for Aragon App.
 
-This process is app-scoped: the release flow versions only `@aragon/app` (via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows — e.g. the assistant service via its Version-PR bot. See the "Releases" section of the root `AGENTS.md` for the per-package model.
+This process is app-scoped: the release flow versions only the packages of the `app` release scope (declared in `.github/release-scopes.yml` and referenced via the `scope` input of the `changeset-version` action). Other workspaces release through their own flows — e.g. the assistant service via its own release-PR flow (`assistant-release-start` → merge → `assistant-release-pr-finalize`). See the "Releases" section of the root `AGENTS.md` for the per-package model.
 
 ## Versioning & tags (monorepo)
 
@@ -21,7 +21,7 @@ repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (s
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │  Start Release  │───▶│  Test & Stage   │───▶│  Approve & Tag  │───▶│  Auto Deploy    │───▶│   Merge PR      │
-│  (manual)       │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │    │  (manual)       │
+│  (auto/manual)  │    │  (automatic)    │    │  (label+review) │    │  (automatic)    │    │  (manual)       │
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -30,7 +30,9 @@ repo layout — hotfix/rollback workflows only work with `@aragon/app@*` tags (s
 ### 1. Start Release
 
 **Who:** Developer or Manager  
-**Action:** Manually trigger **App Release Start** workflow in GitHub Actions.
+**Action:** Starts automatically every Monday at ~6PM CET (auto release), or trigger **App Release Start** manually in GitHub Actions.
+
+The scheduled run green-skips when there are no pending changesets for `@aragon/app` or a release PR is already open. Manual trigger:
 
 1. Go to [Actions → App Release Start](https://github.com/aragon/app/actions/workflows/app-release-start.yml)
 2. Click **Run workflow**

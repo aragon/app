@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useAssistantChatContext } from '../../controller';
+import { chatCopy, supportEmailHref } from '../../copy';
 import {
     type AssistantUIMessage,
     getAssistantErrorText,
@@ -17,7 +18,7 @@ const greetingMessage: AssistantUIMessage = {
     parts: [
         {
             type: 'text',
-            text: "Hi! Tell us what's going on and we'll get it to the right team.",
+            text: chatCopy.messageList.greeting,
         },
     ],
 };
@@ -27,20 +28,14 @@ const greetingMessage: AssistantUIMessage = {
 const followThreshold = 100;
 
 export const ChatMessageList: React.FC = () => {
-    const {
-        sessionId,
-        messages,
-        chatStatus,
-        chatError,
-        flowState,
-        supportPortalUrl,
-    } = useAssistantChatContext();
+    const { sessionId, messages, chatStatus, chatError, flowState } =
+        useAssistantChatContext();
 
     const isTyping = chatStatus === 'submitted';
 
     const chatErrorText = getAssistantErrorText(
         parseAssistantError(chatError)?.code,
-        'Something went wrong. Please try sending your message again.',
+        chatCopy.messageList.chatErrorFallback,
     );
 
     const endRef = useRef<HTMLDivElement>(null);
@@ -73,7 +68,7 @@ export const ChatMessageList: React.FC = () => {
     return (
         <div
             aria-live="polite"
-            className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 pt-2 pb-4"
+            className="flex flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-5 pt-2 pb-4"
             onScroll={handleScroll}
         >
             <ChatMessageItem message={greetingMessage} />
@@ -87,16 +82,12 @@ export const ChatMessageList: React.FC = () => {
                     <p className="text-critical-800 text-sm leading-normal">
                         {chatErrorText}
                     </p>
-                    {supportPortalUrl != null && (
-                        <a
-                            className="text-primary-400 text-sm leading-normal underline"
-                            href={supportPortalUrl}
-                            rel="noreferrer"
-                            target="_blank"
-                        >
-                            …or file your request via the support portal →
-                        </a>
-                    )}
+                    <a
+                        className="text-primary-400 text-sm leading-normal underline"
+                        href={supportEmailHref}
+                    >
+                        {chatCopy.messageList.emailEscapeHatch}
+                    </a>
                 </div>
             )}
             <ChatErrorPanel />

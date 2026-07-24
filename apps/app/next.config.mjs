@@ -86,6 +86,16 @@ const nextConfig = {
             },
         ];
     },
+    async rewrites() {
+        return [
+            // Proxies Plausible event ingestion through our own domain so ad blockers
+            // that filter requests to plausible.io don't drop analytics events.
+            {
+                source: '/api/analytics',
+                destination: 'https://plausible.io/api/event',
+            },
+        ];
+    },
     async headers() {
         return [
             // Security headers for all paths

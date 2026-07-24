@@ -1,9 +1,9 @@
 name: Changeset Version
-description: Runs `pnpm changeset version` scoped to the given packages and formats the changed CHANGELOG files (idempotent when no changesets).
+description: Runs `pnpm changeset version` scoped to a release scope from .github/release-scopes.yml and formats the changed CHANGELOG files (idempotent when no changesets).
 
 inputs:
   scope:
-    description: Space-separated package names this flow versions; all other workspace packages are passed to changesets as --ignore. Empty = version everything.
+    description: Name of a release scope in .github/release-scopes.yml; all workspace packages outside that scope are passed to changesets as --ignore. Empty = version everything.
     required: false
     default: ""
   prettier_changelog:
@@ -25,12 +25,14 @@ runs:
         PRETTIER_CHANGELOG: ${{ inputs.prettier_changelog }}
       run: |
         set -euo pipefail
-        # Workflows declare the packages they own (scope); the inversion into changesets
-        # --ignore flags happens here, in one place, so flows stay declarative.
+        # Workflows name the release scope they own; the central mapper resolves it to packages
+        # and the inversion into changesets --ignore flags happens here, in one place, so flows
+        # stay declarative.
         IGNORE_FLAGS=()
         if [ -n "$SCOPE" ]; then
+          SCOPE_PACKAGES=$(node -e "console.log(require('./.github/workflows/scripts/releaseScopes.js').resolveReleaseScope(process.argv[1]).join(' '))" "$SCOPE")
           while IFS= read -r PACKAGE; do
-            case " $SCOPE " in
+            case " $SCOPE_PACKAGES " in
               *" $PACKAGE "*) ;;
               *) IGNORE_FLAGS+=(--ignore "$PACKAGE") ;;
             esac

@@ -27,6 +27,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { useWalletAccount } from '../../../hooks/useWalletAccount';
+import { SupportChatTrigger } from '../../supportChat';
 import { NavigationDaoHome } from './navigationDaoHome';
 import { navigationDaoUtils } from './navigationDaoUtils';
 
@@ -86,6 +87,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                 'flex flex-col gap-2 py-3 md:py-5 lg:gap-3',
                 containerClasses,
             )}
+            trailing={<SupportChatTrigger />}
             {...otherProps}
         >
             <div className="flex items-center justify-between gap-1">

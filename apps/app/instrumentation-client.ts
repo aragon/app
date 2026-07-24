@@ -3,7 +3,10 @@ import {
     replayIntegration,
     thirdPartyErrorFilterIntegration,
 } from '@sentry/nextjs';
+import { analyticsUtils } from '@/shared/utils/analyticsUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+
+analyticsUtils.init();
 
 Sentry.init({
     ...monitoringUtils.getBaseConfig(),
