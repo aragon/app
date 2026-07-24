@@ -25,7 +25,7 @@ export interface ITokenVotingOptionsProps {
      */
     disabledOptions?: IDisabledVotingOption[];
     /**
-     * Restricts the vote options to "No" for objection-stage proposals.
+     * Disables all options but "No" for objection-stage proposals, where only objecting is allowed.
      */
     isObjection?: boolean;
 }
@@ -86,14 +86,15 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
         },
     ] as const;
 
-    const availableOptions = isObjection
-        ? voteOptions.filter(
-              (option) => option.value === VoteOption.NO.toString(),
-          )
-        : voteOptions;
-
     return (
         <InputContainer
+            helpText={
+                isObjection
+                    ? t(
+                          'app.plugins.token.tokenSubmitVote.options.objectionHelpText',
+                      )
+                    : undefined
+            }
             id={id}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
                 label: isObjection
@@ -116,7 +117,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
                 orientation="vertical"
                 value={selectedValue ?? ''}
             >
-                {availableOptions.map(({ label, value, variant, description }) => {
+                {voteOptions.map(({ label, value, variant, description }) => {
                     const disabledOption = disabledOptions?.find(
                         (option) => option.value === value,
                     );
@@ -130,7 +131,9 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
                             }
                             disabled={
                                 disableOptions === true ||
-                                disabledOption != null
+                                disabledOption != null ||
+                                (isObjection === true &&
+                                    value !== VoteOption.NO.toString())
                             }
                             isSelected={value === selectedValue}
                             key={value}

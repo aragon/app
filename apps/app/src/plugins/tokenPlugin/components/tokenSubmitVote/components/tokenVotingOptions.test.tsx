@@ -29,23 +29,30 @@ describe('<TokenVotingOptions /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('only renders the object option when the isObjection property is set', () => {
+    it('disables all options but object and renders a help text when the isObjection property is set', () => {
         render(createTestComponent({ isObjection: true }));
+
+        const objectOption = screen.getByText(
+            'app.plugins.token.tokenSubmitVote.options.object',
+        );
+        expect(objectOption).toBeInTheDocument();
+        expect(objectOption.closest('button')).toBeEnabled();
+
+        expect(
+            screen
+                .getByText('app.plugins.token.tokenSubmitVote.options.yes')
+                .closest('button'),
+        ).toBeDisabled();
+        expect(
+            screen
+                .getByText('app.plugins.token.tokenSubmitVote.options.abstain')
+                .closest('button'),
+        ).toBeDisabled();
+
         expect(
             screen.getByText(
-                'app.plugins.token.tokenSubmitVote.options.object',
+                'app.plugins.token.tokenSubmitVote.options.objectionHelpText',
             ),
         ).toBeInTheDocument();
-        expect(
-            screen.queryByText('app.plugins.token.tokenSubmitVote.options.no'),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByText('app.plugins.token.tokenSubmitVote.options.yes'),
-        ).not.toBeInTheDocument();
-        expect(
-            screen.queryByText(
-                'app.plugins.token.tokenSubmitVote.options.abstain',
-            ),
-        ).not.toBeInTheDocument();
     });
 });

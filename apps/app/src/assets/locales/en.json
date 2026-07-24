@@ -3487,6 +3487,7 @@
             "no": "No",
             "object": "Object",
             "objectionDescription": ", I object",
+            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
             "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
