@@ -22,6 +22,10 @@ export interface IUseManagedTransactionResult {
     approveState: TransactionStatusState;
     /** Transaction hash, latched so it survives the record being cleared. */
     hash?: Hex;
+    /** Broadcast timestamp of the current record, used to detect long-unconfirmed transactions. */
+    submittedAt?: number;
+    /** Error of the last failed wallet send, used to surface a specific error label. */
+    sendError?: unknown;
     /** Step to resume to when a prior attempt is still in flight on open. */
     resumeTarget?: TransactionDialogStep;
     /** `useWaitForTransactionReceipt` result for the latched hash. */
@@ -30,15 +34,20 @@ export interface IUseManagedTransactionResult {
     send: (request: ManagedRequest) => void;
     /** Re-send the last stored request. Returns false when there is none. */
     resend: () => boolean;
+    /** Discard the current record and resume state so the dialog can restart the flow from scratch. */
+    reset: () => void;
 }
 
 /**
  * Binds the dialog to the pending-transaction manager for one action identity. `intentId` is
  * optional and may arrive late (auto-derived after `prepare`); state is neutral until it is known.
+ * `chainId` pins the receipt wait to the transaction's chain so it keeps polling correctly while the
+ * wallet is connected to a different one.
  */
 export const useManagedTransaction = (
     intentId?: string,
     meta?: IPendingTransactionMeta,
+    chainId?: number,
 ): IUseManagedTransactionResult => {
     const managed = usePendingTransaction(intentId);
 
@@ -87,7 +96,7 @@ export const useManagedTransaction = (
             .exhaustive();
     }, [intentId]);
 
-    const receipt = useWaitForTransactionReceipt({ hash });
+    const receipt = useWaitForTransactionReceipt({ hash, chainId });
 
     // Confirmed — clear the record so a re-open starts fresh; the latch keeps the hash for display.
     useEffect(() => {
@@ -121,6 +130,17 @@ export const useManagedTransaction = (
         return true;
     }, [intentId]);
 
+    // Explicit user-driven restart (e.g. discarding a long-unconfirmed transaction after a reload,
+    // when there is no stored request to re-send): drop the record and the resume state so the
+    // dialog runs the whole prepare/sign flow again.
+    const reset = useCallback(() => {
+        setLatchedHash(undefined);
+        setResumeTarget(undefined);
+        if (intentId != null) {
+            pendingTransactionManager.clear(intentId);
+        }
+    }, [intentId]);
+
     // A latched hash means the send succeeded (the record may already be cleared), so it wins.
     const approveState: TransactionStatusState =
         hash != null
@@ -133,5 +153,15 @@ export const useManagedTransaction = (
                   .with(undefined, () => 'idle')
                   .exhaustive();
 
-    return { approveState, hash, resumeTarget, receipt, send, resend };
+    return {
+        approveState,
+        hash,
+        submittedAt: managed?.submittedAt,
+        sendError: managed?.error,
+        resumeTarget,
+        receipt,
+        send,
+        resend,
+        reset,
+    };
 };

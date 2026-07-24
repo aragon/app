@@ -12,6 +12,12 @@ import {
 
 const STORAGE_KEY = 'aragon.pendingTransactions';
 
+// Persisted records older than this are dropped on hydrate: a transaction unconfirmed for this long
+// will realistically never confirm, and keeping its record would feed resume flows and duplicate
+// warnings forever. Records without a broadcast timestamp (persisted before it existed) are treated
+// as expired for the same reason — their age is unknown.
+const submittedRecordTtl = 24 * 60 * 60 * 1000;
+
 // Guard each stored entry's shape so one corrupt record can't throw and drop the whole hydrate pass.
 const isStoredState = (value: unknown): value is IPendingTransactionState => {
     if (value == null || typeof value !== 'object' || !('status' in value)) {
@@ -78,7 +84,11 @@ export class PendingTransactionManager {
 
         sendTransaction(wagmiConfig, request)
             .then((hash) =>
-                apply({ status: PendingTransactionStatus.SUBMITTED, hash }),
+                apply({
+                    status: PendingTransactionStatus.SUBMITTED,
+                    hash,
+                    submittedAt: Date.now(),
+                }),
             )
             .catch((error: unknown) =>
                 apply({ status: PendingTransactionStatus.FAILED, error }),
@@ -164,7 +174,7 @@ export class PendingTransactionManager {
     // Persist SUBMITTED records only: they carry a hash, so they can be resumed and reconciled after a
     // reload. A PENDING send has no hash and its live promise is gone on reload, so persisting it would
     // only create a dead ghost. JSON.stringify drops undefined fields, so records without meta stay
-    // `{ status, hash }`. The promise and error aren't serializable and are omitted.
+    // `{ status, hash, submittedAt }`. The promise and error aren't serializable and are omitted.
     private persist = (): void => {
         if (typeof sessionStorage === 'undefined') {
             return;
@@ -176,9 +186,9 @@ export class PendingTransactionManager {
                         ([, state]) =>
                             state.status === PendingTransactionStatus.SUBMITTED,
                     )
-                    .map(([id, { status, hash, type, scope }]) => [
+                    .map(([id, { status, hash, submittedAt, type, scope }]) => [
                         id,
-                        { status, hash, type, scope },
+                        { status, hash, submittedAt, type, scope },
                     ]),
             );
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
@@ -199,9 +209,13 @@ export class PendingTransactionManager {
             }
             for (const [id, state] of Object.entries(stored)) {
                 // Only SUBMITTED records are persisted/restorable; ignore anything else defensively.
+                // Expired records (or timestamp-less ones from before it was persisted) are dropped
+                // so a dead transaction cannot haunt resume flows and duplicate warnings forever.
                 if (
                     isStoredState(state) &&
-                    state.status === PendingTransactionStatus.SUBMITTED
+                    state.status === PendingTransactionStatus.SUBMITTED &&
+                    state.submittedAt != null &&
+                    Date.now() - state.submittedAt <= submittedRecordTtl
                 ) {
                     this.states.set(id, state);
                     // Repopulate meta so a resumed action's later updates keep its type/scope.
@@ -216,6 +230,8 @@ export class PendingTransactionManager {
         } catch {
             // start empty on unreadable storage
         }
+        // Rewrite the mirror so records dropped above are removed from storage as well.
+        this.persist();
         // A persisted SUBMITTED tx may already have mined while the tab was gone; reconcile so settled
         // ones self-clear instead of lingering as stale duplicate warnings.
         this.reconcile();

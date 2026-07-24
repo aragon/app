@@ -56,7 +56,7 @@ describe('pendingTransactionManager', () => {
             });
         });
 
-        it('records SUBMITTED with the hash once the wallet signs', async () => {
+        it('records SUBMITTED with the hash and broadcast timestamp once the wallet signs', async () => {
             sendTransactionSpy.mockResolvedValue('0xhash');
             const manager = new PendingTransactionManager();
 
@@ -66,6 +66,7 @@ describe('pendingTransactionManager', () => {
             expect(manager.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
+                submittedAt: expect.any(Number),
             });
         });
 
@@ -98,6 +99,7 @@ describe('pendingTransactionManager', () => {
             expect(manager.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xnew',
+                submittedAt: expect.any(Number),
             });
 
             resolveFirst('0xold'); // the superseded send resolves late
@@ -105,6 +107,7 @@ describe('pendingTransactionManager', () => {
             expect(manager.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xnew',
+                submittedAt: expect.any(Number),
             });
         });
 
@@ -226,7 +229,13 @@ describe('pendingTransactionManager', () => {
 
             expect(
                 JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
-            ).toEqual({ id: { status: 'SUBMITTED', hash: '0xhash' } });
+            ).toEqual({
+                id: {
+                    status: 'SUBMITTED',
+                    hash: '0xhash',
+                    submittedAt: expect.any(Number),
+                },
+            });
         });
 
         it('does not persist a PENDING record (it cannot be resumed after a reload)', () => {
@@ -264,28 +273,65 @@ describe('pendingTransactionManager', () => {
             expect(
                 JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
             ).toEqual({
-                id: { status: 'SUBMITTED', hash: '0xhash', ...meta },
+                id: {
+                    status: 'SUBMITTED',
+                    hash: '0xhash',
+                    submittedAt: expect.any(Number),
+                    ...meta,
+                },
             });
 
             const rehydrated = new PendingTransactionManager();
             expect(rehydrated.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
+                submittedAt: expect.any(Number),
                 ...meta,
             });
         });
 
         it('hydrates persisted records on construction so a reload can resume', () => {
+            const submittedAt = Date.now();
             sessionStorage.setItem(
                 STORAGE_KEY,
-                JSON.stringify({ id: { status: 'SUBMITTED', hash: '0xhash' } }),
+                JSON.stringify({
+                    id: { status: 'SUBMITTED', hash: '0xhash', submittedAt },
+                }),
             );
             const manager = new PendingTransactionManager();
 
             expect(manager.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
+                submittedAt,
             });
+        });
+
+        it('drops a hydrated record without a broadcast timestamp (persisted before it existed)', () => {
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({ id: { status: 'SUBMITTED', hash: '0xhash' } }),
+            );
+            const manager = new PendingTransactionManager();
+
+            expect(manager.get('id')).toBeUndefined();
+            // The mirror is rewritten so the dead record does not resurrect on the next reload.
+            expect(
+                JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}'),
+            ).toEqual({});
+        });
+
+        it('drops a hydrated record whose transaction has been unconfirmed for longer than the TTL', () => {
+            const submittedAt = Date.now() - 25 * 60 * 60 * 1000;
+            sessionStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify({
+                    id: { status: 'SUBMITTED', hash: '0xhash', submittedAt },
+                }),
+            );
+            const manager = new PendingTransactionManager();
+
+            expect(manager.get('id')).toBeUndefined();
         });
 
         it('drops a hydrated record whose status is no longer a known status', () => {
@@ -299,12 +345,13 @@ describe('pendingTransactionManager', () => {
         });
 
         it('skips a malformed record without dropping the valid ones alongside it', () => {
+            const submittedAt = Date.now();
             sessionStorage.setItem(
                 STORAGE_KEY,
                 JSON.stringify({
                     broken: null,
                     alsoBroken: 'not-an-object',
-                    valid: { status: 'SUBMITTED', hash: '0xhash' },
+                    valid: { status: 'SUBMITTED', hash: '0xhash', submittedAt },
                 }),
             );
             const manager = new PendingTransactionManager();
@@ -314,6 +361,7 @@ describe('pendingTransactionManager', () => {
             expect(manager.get('valid')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
+                submittedAt,
             });
         });
 
@@ -329,7 +377,11 @@ describe('pendingTransactionManager', () => {
             sessionStorage.setItem(
                 STORAGE_KEY,
                 JSON.stringify({
-                    id: { status: 'SUBMITTED', hash: '0xhash' },
+                    id: {
+                        status: 'SUBMITTED',
+                        hash: '0xhash',
+                        submittedAt: Date.now(),
+                    },
                 }),
             );
         });
@@ -356,6 +408,7 @@ describe('pendingTransactionManager', () => {
             expect(manager.get('id')).toEqual({
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
+                submittedAt: expect.any(Number),
             });
         });
     });

@@ -10,6 +10,7 @@ import { AragonProfileSetPrimaryEnsTransactionDialog } from '../dialogs/aragonPr
 import { AragonProfileSubdomainRegisterTransactionDialog } from '../dialogs/aragonProfileSubdomainRegisterTransactionDialog';
 import { AragonProfileUpdateTransactionDialog } from '../dialogs/aragonProfileUpdateTransactionDialog';
 import { ConnectWalletDialog } from '../dialogs/connectWalletDialog';
+import { RetryTransactionAlertDialog } from '../dialogs/retryTransactionAlertDialog';
 import { UserDialog } from '../dialogs/userDialog';
 import { ApplicationDialogId } from './applicationDialogId';
 
@@ -100,6 +101,16 @@ export const applicationDialogsDefinitions: Record<
             'app.application.aragonProfileRenameTransactionDialog.a11y.title',
         hiddenDescription:
             'app.application.aragonProfileRenameTransactionDialog.a11y.description',
+        requiresWallet: true,
+    },
+    [ApplicationDialogId.RETRY_TRANSACTION_WARNING]: {
+        Component: RetryTransactionAlertDialog,
+        variant: 'warning',
+        size: 'lg',
+        hiddenDescription:
+            'app.application.retryTransactionAlertDialog.a11y.description',
+        // Stacks on top of transaction dialogs, which are wallet-gated; flag it too so it is not
+        // left orphaned on the stack when the parent closes on wallet disconnect.
         requiresWallet: true,
     },
 };

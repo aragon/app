@@ -651,6 +651,20 @@
         "description": "Confirm the onchain transaction in your wallet to move your profile records to the new name.",
         "submit": "Confirm in wallet",
         "transactionInfo": "Rename Aragon name"
+      },
+      "retryTransactionAlertDialog": {
+        "title": "This transaction may still go through",
+        "description": {
+          "1": "Your transaction has not been confirmed yet, but it may still be mined. If it eventually succeeds, retrying now may execute the action twice.",
+          "2": "Only retry if the transaction failed in your wallet or you intentionally want to send it again."
+        },
+        "action": {
+          "retry": "Retry transaction",
+          "back": "Go back"
+        },
+        "a11y": {
+          "description": "Warning that retrying an unconfirmed transaction may execute the action twice."
+        }
       }
     },
     "capitalFlow": {
@@ -3895,6 +3909,13 @@
         "title": "Resources"
       },
       "transactionDialog": {
+        "confirmWarning": {
+          "title": "Transaction not confirmed yet",
+          "description": "Check the transaction in your wallet. If it is still pending there, speed it up or cancel it in the wallet and this dialog picks up the result. If it failed in your wallet, retry it here."
+        },
+        "error": {
+          "replacementUnderpriced": "Previous transaction is stuck — raise the gas fee in your wallet when retrying"
+        },
         "footer": {
           "approve": {
             "error": "Resend to wallet",
@@ -3902,6 +3923,9 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Close",
+          "confirm": {
+            "warning": "Retry transaction"
+          },
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },
@@ -3914,7 +3938,8 @@
           "CONFIRM": {
             "addon": "Details",
             "errorLabel": "Confirmation failed",
-            "label": "Confirm transaction"
+            "label": "Confirm transaction",
+            "warningLabel": "Taking longer than expected"
           },
           "INDEXING": {
             "errorLabel": "Indexing failed",
