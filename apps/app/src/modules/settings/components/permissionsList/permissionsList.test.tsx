@@ -88,6 +88,30 @@ describe('<PermissionsList /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders informational help for the Who and Where headers', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+            },
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(
+            screen.getByRole('img', {
+                name: /permissionsList.header.whoTooltip/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('img', {
+                name: /permissionsList.header.whereTooltip/,
+            }),
+        ).toBeInTheDocument();
+    });
+
     it('renders the collapsed condition cell with the resolved label or a dash', () => {
         const rows: IPermissionRow[] = [
             {

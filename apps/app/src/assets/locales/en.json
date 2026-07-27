@@ -3563,9 +3563,9 @@
           "showDaoPermissions": "Show DAO-granted permissions",
           "showDaoPermissionsTooltip": "Permissions where the selected DAO appears under Who, meaning it can call another contract.",
           "showDaoPermissionsTooltipLabel": "About DAO-granted permissions",
-          "showSubpluginPermissions": "Show subplugin/residual permissions",
-          "showSubpluginPermissionsTooltip": "Permissions involving a subplugin or a contract outside the selected DAO.",
-          "showSubpluginPermissionsTooltipLabel": "About subplugin/residual permissions"
+          "showSubpluginPermissions": "Show advanced permission layer",
+          "showSubpluginPermissionsTooltip": "Includes process internals, condition contracts, external actors, and unresolved permission rows from the DAO permission table.",
+          "showSubpluginPermissionsTooltipLabel": "About advanced permission layer"
         },
         "graphView": {
           "node": {
@@ -3598,6 +3598,10 @@
         "header": {
           "who": "Who",
           "where": "Where",
+          "whoTooltip": "The actor that receives the permission and can call the target contract.",
+          "whoTooltipLabel": "About Who",
+          "whereTooltip": "The contract where the permission applies.",
+          "whereTooltipLabel": "About Where",
           "permission": "Permission",
           "condition": "Condition"
         },

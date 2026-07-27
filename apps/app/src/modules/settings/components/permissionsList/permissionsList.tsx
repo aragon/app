@@ -7,10 +7,13 @@ import {
     ChainEntityType,
     DaoAvatar,
     DefinitionList,
+    Icon,
+    IconType,
     Link,
     StateSkeletonBar,
     StateSkeletonCircular,
     Tag,
+    Tooltip,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
@@ -351,6 +354,36 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     );
 };
 
+interface IPermissionsListHeaderLabelProps {
+    labelKey: string;
+    tooltipKey: string;
+    tooltipLabelKey: string;
+}
+
+const PermissionsListHeaderLabel: React.FC<IPermissionsListHeaderLabelProps> = (
+    props,
+) => {
+    const { labelKey, tooltipKey, tooltipLabelKey } = props;
+    const { t } = useTranslations();
+    const label = t(labelKey);
+    const tooltip = t(tooltipKey);
+
+    return (
+        <span className="flex min-w-0 items-center gap-1">
+            <span className="truncate">{label}</span>
+            <Tooltip content={tooltip} triggerAsChild={true}>
+                <span
+                    aria-label={`${t(tooltipLabelKey)}: ${tooltip}`}
+                    className="inline-flex size-5 shrink-0 cursor-help items-center justify-center text-neutral-400 leading-none"
+                    role="img"
+                >
+                    <Icon icon={IconType.INFO} size="sm" />
+                </span>
+            </Tooltip>
+        </span>
+    );
+};
+
 const PermissionsListHeader: React.FC = () => {
     const { t } = useTranslations();
 
@@ -358,10 +391,16 @@ const PermissionsListHeader: React.FC = () => {
         <div className="sticky top-[90px] z-20 -mx-4 md:-mx-6">
             <div className="flex items-baseline justify-between gap-x-4 bg-gradient-to-b from-90% from-neutral-50 to-transparent px-8 pt-1 pb-4 text-neutral-500 text-sm md:gap-x-6 md:px-12">
                 <div className="grid w-full grid-cols-4 gap-4">
-                    <span>{t('app.settings.permissionsList.header.who')}</span>
-                    <span>
-                        {t('app.settings.permissionsList.header.where')}
-                    </span>
+                    <PermissionsListHeaderLabel
+                        labelKey="app.settings.permissionsList.header.who"
+                        tooltipKey="app.settings.permissionsList.header.whoTooltip"
+                        tooltipLabelKey="app.settings.permissionsList.header.whoTooltipLabel"
+                    />
+                    <PermissionsListHeaderLabel
+                        labelKey="app.settings.permissionsList.header.where"
+                        tooltipKey="app.settings.permissionsList.header.whereTooltip"
+                        tooltipLabelKey="app.settings.permissionsList.header.whereTooltipLabel"
+                    />
                     <span>
                         {t('app.settings.permissionsList.header.permission')}
                     </span>

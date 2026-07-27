@@ -56,15 +56,15 @@ jest.mock('@/shared/components/translationsProvider', () => ({
                 'app.settings.daoPermissionsPage.filters.showDaoPermissions':
                     'Show DAO-granted permissions',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissions':
-                    'Show subplugin/residual permissions',
+                    'Show advanced permission layer',
                 'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltipLabel':
                     'About DAO-granted permissions',
                 'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip':
                     'Permissions where the selected DAO appears under Who, meaning it can call another contract.',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltipLabel':
-                    'About subplugin/residual permissions',
+                    'About advanced permission layer',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip':
-                    'Permissions involving a subplugin or a contract outside the selected DAO.',
+                    'Includes process internals, condition contracts, external actors, and unresolved permission rows from the DAO permission table.',
                 'app.settings.daoPermissionsPage.view.graph': 'Graph',
                 'app.settings.daoPermissionsPage.view.list': 'List',
             })[key] ?? key,
@@ -165,8 +165,11 @@ describe('<DaoPermissionsPageClient /> component', () => {
             screen.getByText('Show DAO-granted permissions'),
         ).toBeInTheDocument();
         expect(
-            screen.getByText('Show subplugin/residual permissions'),
+            screen.getByText('Show advanced permission layer'),
         ).toBeInTheDocument();
+        expect(
+            screen.queryByText('Show subplugin/residual permissions'),
+        ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
                 name: 'About DAO-granted permissions',
@@ -174,7 +177,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
-                name: 'About subplugin/residual permissions',
+                name: 'About advanced permission layer',
             }),
         ).not.toBeInTheDocument();
         expect(
@@ -184,7 +187,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('img', {
-                name: /Permissions involving a subplugin/,
+                name: /Includes process internals, condition contracts/,
             }),
         ).toBeInTheDocument();
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
