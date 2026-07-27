@@ -93,7 +93,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     });
 
     const handlePrepareTransaction = () =>
-        voteDialogUtils.buildTransaction({ proposal, vote, target });
+        voteDialogUtils.buildTransaction({ proposal, vote, target, daoId });
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;

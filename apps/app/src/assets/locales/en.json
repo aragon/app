@@ -1432,6 +1432,29 @@
       }
     },
     "daos": {
+      "alchemix": {
+        "alchemixSubmitVoteOverride": {
+          "alsoVote": {
+            "description": "Cast the same option with the voting power delegated to you in the same transaction.",
+            "label": "Also vote with your voting power"
+          },
+          "buttons": {
+            "cancel": "Cancel",
+            "change": "Change override",
+            "override": "Override vote",
+            "submit": "Submit override"
+          },
+          "delegateNotVoted": "Hasn't voted yet · holds your {{amount}} {{symbol}}",
+          "delegateTag": "Your delegate",
+          "delegateVoted": "Voted with your {{amount}} {{symbol}}",
+          "options": {
+            "alreadyCounted": "Your tokens already count toward {{option}}",
+            "currentOverride": "Your current override"
+          },
+          "overrideInfo": "Voted with your {{amount}} {{symbol}} · overrode {{delegate}}",
+          "youTag": "You"
+        }
+      },
       "aragonDemo": {
         "aragonDemoPageHeader": {
           "cta": "Create proposal",
@@ -3475,7 +3498,8 @@
             "approve": "to approve",
             "veto": "to veto"
           },
-          "entity": "Votes"
+          "entity": "Votes",
+          "overridden": "partially overridden"
         },
         "tokenWrapForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",

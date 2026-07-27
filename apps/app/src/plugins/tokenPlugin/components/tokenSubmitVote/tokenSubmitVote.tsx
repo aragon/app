@@ -9,11 +9,13 @@ import {
 } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import { GovernanceDaoSlotId } from '@/modules/governance/constants/moduleDaoSlots';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import { usePermissionCheckGuard } from '@/modules/governance/hooks/usePermissionCheckGuard';
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
@@ -213,6 +215,13 @@ export const TokenSubmitVote: React.FC<ITokenSubmitVoteProps> = (props) => {
                     </Button>
                 </div>
             )}
+            <PluginSingleComponent
+                daoId={daoId}
+                isVeto={isVeto}
+                pluginId={daoId}
+                proposal={proposal}
+                slotId={GovernanceDaoSlotId.GOVERNANCE_SUBMIT_VOTE_OVERRIDE}
+            />
         </div>
     );
 };

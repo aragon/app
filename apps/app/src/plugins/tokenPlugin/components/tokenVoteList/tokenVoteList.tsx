@@ -68,12 +68,23 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 {voteList?.map((vote) => {
                     const voteIndicator =
                         voteOptionToIndicator[vote.voteOption];
-                    const voteIndicatorDescription =
+
+                    // A fully overridden vote has no vote option anymore (set to none) and its whole voting power
+                    // is reclaimed by the delegators, skip rendering it.
+                    if (voteIndicator == null) {
+                        return null;
+                    }
+
+                    const isOverridden = vote.voteOverridden?.status === true;
+                    const defaultDescription =
                         voteIndicator !== 'abstain'
                             ? t(
                                   `app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`,
                               )
                             : undefined;
+                    const voteIndicatorDescription = isOverridden
+                        ? t('app.plugins.token.tokenVoteList.overridden')
+                        : defaultDescription;
 
                     return initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalListItem

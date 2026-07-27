@@ -2,6 +2,7 @@ import type { Hex } from 'viem';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import type { IProposal } from '../../api/governanceService';
+import { GovernanceDaoSlotId } from '../../constants/moduleDaoSlots';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import type { IBuildVoteDataOption, IBuildVoteDataParams } from '../../types';
 
@@ -18,21 +19,36 @@ export interface IBuildTransactionParams {
      * Target of the transaction, defaults to the plugin address of the proposal.
      */
     target?: string;
+    /**
+     * ID of the DAO the vote is submitted for. Used to resolve a DAO-specific build-vote-data function taking
+     * precedence over the plugin one.
+     */
+    daoId?: string;
 }
 
 class VoteDialogUtils {
     buildTransaction = (
         params: IBuildTransactionParams,
     ): Promise<ITransactionRequest> => {
-        const { proposal, vote, target } = params;
+        const { proposal, vote, target, daoId } = params;
 
-        const buildDataFunction = pluginRegistryUtils.getSlotFunction<
-            IBuildVoteDataParams,
-            Hex
-        >({
-            pluginId: proposal.pluginInterfaceType,
-            slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
-        })!;
+        const daoBuildDataFunction =
+            daoId != null
+                ? pluginRegistryUtils.getSlotFunction<
+                      IBuildVoteDataParams,
+                      Hex
+                  >({
+                      pluginId: daoId,
+                      slotId: GovernanceDaoSlotId.GOVERNANCE_DAO_BUILD_VOTE_DATA,
+                  })
+                : undefined;
+
+        const buildDataFunction =
+            daoBuildDataFunction ??
+            pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
+                pluginId: proposal.pluginInterfaceType,
+                slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
+            })!;
 
         const transactionData = buildDataFunction({
             proposalIndex: proposal.proposalIndex,
