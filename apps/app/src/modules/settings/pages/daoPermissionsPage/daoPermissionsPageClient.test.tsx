@@ -56,13 +56,13 @@ jest.mock('@/shared/components/translationsProvider', () => ({
                 'app.settings.daoPermissionsPage.filters.showDaoPermissions':
                     'Show DAO-granted permissions',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissions':
-                    'Show advanced permission layer',
+                    'Show supporting permissions',
                 'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltipLabel':
                     'About DAO-granted permissions',
                 'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip':
                     'Permissions where the selected DAO appears under Who, meaning it can call another contract.',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltipLabel':
-                    'About advanced permission layer',
+                    'About supporting permissions',
                 'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip':
                     'Includes process internals, condition contracts, external actors, and unresolved permission rows from the DAO permission table.',
                 'app.settings.daoPermissionsPage.view.graph': 'Graph',
@@ -165,7 +165,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
             screen.getByText('Show DAO-granted permissions'),
         ).toBeInTheDocument();
         expect(
-            screen.getByText('Show advanced permission layer'),
+            screen.getByText('Show supporting permissions'),
         ).toBeInTheDocument();
         expect(
             screen.queryByText('Show subplugin/residual permissions'),
@@ -177,7 +177,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
-                name: 'About advanced permission layer',
+                name: 'About supporting permissions',
             }),
         ).not.toBeInTheDocument();
         expect(

@@ -3563,9 +3563,9 @@
           "showDaoPermissions": "Show DAO-granted permissions",
           "showDaoPermissionsTooltip": "Permissions where the selected DAO appears under Who, meaning it can call another contract.",
           "showDaoPermissionsTooltipLabel": "About DAO-granted permissions",
-          "showSubpluginPermissions": "Show advanced permission layer",
-          "showSubpluginPermissionsTooltip": "Includes process internals, condition contracts, external actors, and unresolved permission rows from the DAO permission table.",
-          "showSubpluginPermissionsTooltipLabel": "About advanced permission layer"
+          "showSubpluginPermissions": "Show supporting permissions",
+          "showSubpluginPermissionsTooltip": "Includes process internals, condition contracts, external actors, and other permission rows that support the main governance view.",
+          "showSubpluginPermissionsTooltipLabel": "About supporting permissions"
         },
         "graphView": {
           "node": {
