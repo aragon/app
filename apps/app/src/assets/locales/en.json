@@ -3067,9 +3067,9 @@
           "description": "You are not connected to the correct address. If you are one of its owners, you can connect it with WalletConnect.",
           "title": "Not eligible to vote"
         },
-        "sppPermissionCheckProposalCreation": {
+        "sppExternalPermissionCheckProposalCreation": {
           "function": "Proposal creation",
-          "pluginLabelName": "Name",
+          "pluginLabelName": "Address",
           "requirement": "Safe multisig member"
         },
         "sppProposalListItem": {

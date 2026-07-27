@@ -43,7 +43,7 @@ export const useSppExternalPermissionCheckProposalCreation = (
             [
                 {
                     term: t(
-                        'app.plugins.spp.sppPermissionCheckProposalCreation.pluginLabelName',
+                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                     ),
                     definition: addressUtils.truncateAddress(
                         externalBody.address,
@@ -51,10 +51,10 @@ export const useSppExternalPermissionCheckProposalCreation = (
                 },
                 {
                     term: t(
-                        'app.plugins.spp.sppPermissionCheckProposalCreation.function',
+                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
                     ),
                     definition: t(
-                        'app.plugins.spp.sppPermissionCheckProposalCreation.requirement',
+                        'app.plugins.spp.sppExternalPermissionCheckProposalCreation.requirement',
                     ),
                 },
             ],
