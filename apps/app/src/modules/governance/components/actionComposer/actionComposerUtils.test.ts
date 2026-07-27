@@ -1,5 +1,5 @@
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
-import { generateDao } from '@/shared/testUtils';
+import { generateDao, generateDaoPermission } from '@/shared/testUtils';
 import { mockTranslations } from '@/test/utils';
 import {
     type IProposalAction,
@@ -291,7 +291,10 @@ describe('actionComposerUtils', () => {
     describe('getDaoActions', () => {
         const pluginAddress = '0x1111111111111111111111111111111111111111';
         const otherAddress = '0x2222222222222222222222222222222222222222';
+        const daoAddress = '0x3333333333333333333333333333333333333333';
         const permissionId = '0xabc123';
+
+        const dao = generateDao({ address: daoAddress });
 
         const getDaoPluginActionsSpy = jest.spyOn(
             actionComposerUtils,
@@ -341,9 +344,15 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
-                permissions: [{ permissionId, whereAddress: pluginAddress }],
+                permissions: [
+                    generateDaoPermission({
+                        permissionId,
+                        whereAddress: pluginAddress,
+                        whoAddress: daoAddress,
+                    }),
+                ],
             });
 
             expect(result.items.map((item) => item.id)).toEqual(['i1']);
@@ -365,9 +374,43 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
-                permissions: [{ permissionId, whereAddress: otherAddress }],
+                permissions: [
+                    generateDaoPermission({
+                        permissionId,
+                        whereAddress: otherAddress,
+                        whoAddress: daoAddress,
+                    }),
+                ],
+            });
+
+            expect(result.items).toEqual([]);
+            expect(result.groups).toEqual([]);
+        });
+
+        it('filters out a plugin item when the permission is granted to another address than the DAO', () => {
+            getDaoPluginActionsSpy.mockReturnValue({
+                pluginItems: [
+                    buildPluginItem({
+                        id: 'i1',
+                        requiredPermissionId: permissionId,
+                    }),
+                ],
+                pluginGroups: [{ id: pluginAddress, name: 'Plugin', info: '' }],
+                pluginComponents: {},
+            });
+
+            const result = actionComposerUtils.getDaoActions({
+                dao,
+                t: mockTranslations.tMock,
+                permissions: [
+                    generateDaoPermission({
+                        permissionId,
+                        whereAddress: pluginAddress,
+                        whoAddress: otherAddress,
+                    }),
+                ],
             });
 
             expect(result.items).toEqual([]);
@@ -387,10 +430,14 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
                 permissions: [
-                    { permissionId: '0xother', whereAddress: pluginAddress },
+                    generateDaoPermission({
+                        permissionId: '0xother',
+                        whereAddress: pluginAddress,
+                        whoAddress: daoAddress,
+                    }),
                 ],
             });
 
@@ -405,7 +452,7 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
                 permissions: [],
             });
@@ -427,7 +474,7 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
                 permissions: undefined,
             });
@@ -462,9 +509,15 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
-                permissions: [{ permissionId, whereAddress: pluginAddress }],
+                permissions: [
+                    generateDaoPermission({
+                        permissionId,
+                        whereAddress: pluginAddress,
+                        whoAddress: daoAddress,
+                    }),
+                ],
             });
 
             expect(result.items.map((item) => item.id)).toEqual(['kept']);
@@ -486,10 +539,14 @@ describe('actionComposerUtils', () => {
             });
 
             const result = actionComposerUtils.getDaoActions({
-                dao: generateDao(),
+                dao,
                 t: mockTranslations.tMock,
                 permissions: [
-                    { permissionId: '0xabcdef', whereAddress: pluginAddress },
+                    generateDaoPermission({
+                        permissionId: '0xabcdef',
+                        whereAddress: pluginAddress,
+                        whoAddress: daoAddress,
+                    }),
                 ],
             });
 
@@ -511,7 +568,7 @@ describe('actionComposerUtils', () => {
 
             expect(() =>
                 actionComposerUtils.getDaoActions({
-                    dao: generateDao(),
+                    dao,
                     t: mockTranslations.tMock,
                     permissions: [],
                 }),

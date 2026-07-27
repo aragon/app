@@ -61,6 +61,7 @@ class ActionComposerUtils {
         const pluginItems = this.filterItemsByPermission(
             pluginActions.pluginItems,
             permissions,
+            dao?.address,
         );
         const pluginGroups = this.pruneEmptyGroups(
             pluginActions.pluginGroups,
@@ -78,17 +79,20 @@ class ActionComposerUtils {
      * to the DAO. Items without a `requiredPermissionId` are always kept.
      *
      * A required permission counts as granted when the DAO's permission list
-     * contains a matching `permissionId` on the action's target contract
-     * (`defaultValue.to` as `where`), matched case-insensitively. A tagged item
-     * with no resolvable target throws, as that indicates a misconfigured action.
+     * contains a matching `permissionId` (case-insensitive) granted to the DAO
+     * itself (`whoAddress`) on the action's target contract (`defaultValue.to`
+     * as `where`). A tagged item with no resolvable target throws, as that
+     * indicates a misconfigured action.
      *
      * @param items - Plugin action items to filter.
-     * @param permissions - Permissions granted to the DAO, or undefined when not loaded.
+     * @param permissions - Permissions granted on the DAO, or undefined when not loaded.
+     * @param daoAddress - Address of the DAO, which must be the grantee (`who`) of the permission.
      * @returns The items the DAO is authorized to execute.
      */
     private filterItemsByPermission = (
         items: IActionComposerInputItem[],
         permissions: IGetDaoActionsParams['permissions'] = [],
+        daoAddress?: string,
     ): IActionComposerInputItem[] => {
         return items.filter((item) => {
             const { requiredPermissionId, defaultValue } = item;
@@ -111,7 +115,14 @@ class ActionComposerUtils {
                 (permission) =>
                     permission.permissionId.toLowerCase() ===
                         requiredPermissionId.toLowerCase() &&
-                    addressUtils.isAddressEqual(permission.whereAddress, where),
+                    addressUtils.isAddressEqual(
+                        permission.whereAddress,
+                        where,
+                    ) &&
+                    addressUtils.isAddressEqual(
+                        permission.whoAddress,
+                        daoAddress,
+                    ),
             );
         });
     };
