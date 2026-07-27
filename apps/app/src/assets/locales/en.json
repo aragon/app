@@ -653,10 +653,10 @@
         "transactionInfo": "Rename Aragon name"
       },
       "retryTransactionAlertDialog": {
-        "title": "This transaction may still go through",
+        "title": "Your previous transaction may still succeed",
         "description": {
-          "1": "Your transaction has not been confirmed yet, but it may still be mined. If it eventually succeeds, retrying now may execute the action twice.",
-          "2": "Only retry if the transaction failed in your wallet or you intentionally want to send it again."
+          "1": "Your transaction has not been confirmed yet. If it eventually succeeds, retrying now could result in two transactions.",
+          "2": "Only retry if the transaction if you are sure the transaction has failed or you intentionally want to send it again."
         },
         "action": {
           "retry": "Retry transaction",
@@ -3910,8 +3910,8 @@
       },
       "transactionDialog": {
         "confirmWarning": {
-          "title": "Transaction not confirmed yet",
-          "description": "Check the transaction in your wallet. If it is still pending there, speed it up or cancel it in the wallet and this dialog picks up the result. If it failed in your wallet, retry it here."
+          "title": "Transaction not yet confirmed",
+          "description": "Check the transaction in your wallet. If it is still pending, you can speed it up or cancel it. If it failed, you can send it to your wallet to try again."
         },
         "error": {
           "replacementUnderpriced": "Previous transaction is stuck — raise the gas fee in your wallet when retrying"
@@ -3924,7 +3924,7 @@
           },
           "cancel": "Close",
           "confirm": {
-            "warning": "Retry transaction"
+            "warning": "Resend to wallet"
           },
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
