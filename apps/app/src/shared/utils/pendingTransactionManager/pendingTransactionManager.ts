@@ -88,6 +88,7 @@ export class PendingTransactionManager {
                     status: PendingTransactionStatus.SUBMITTED,
                     hash,
                     submittedAt: Date.now(),
+                    chainId: request.chainId,
                 }),
             )
             .catch((error: unknown) =>
@@ -174,7 +175,7 @@ export class PendingTransactionManager {
     // Persist SUBMITTED records only: they carry a hash, so they can be resumed and reconciled after a
     // reload. A PENDING send has no hash and its live promise is gone on reload, so persisting it would
     // only create a dead ghost. JSON.stringify drops undefined fields, so records without meta stay
-    // `{ status, hash, submittedAt }`. The promise and error aren't serializable and are omitted.
+    // `{ status, hash, submittedAt, chainId }`. The promise and error aren't serializable and are omitted.
     private persist = (): void => {
         if (typeof sessionStorage === 'undefined') {
             return;
@@ -186,10 +187,15 @@ export class PendingTransactionManager {
                         ([, state]) =>
                             state.status === PendingTransactionStatus.SUBMITTED,
                     )
-                    .map(([id, { status, hash, submittedAt, type, scope }]) => [
-                        id,
-                        { status, hash, submittedAt, type, scope },
-                    ]),
+                    .map(
+                        ([
+                            id,
+                            { status, hash, submittedAt, chainId, type, scope },
+                        ]) => [
+                            id,
+                            { status, hash, submittedAt, chainId, type, scope },
+                        ],
+                    ),
             );
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
         } catch {
@@ -239,7 +245,8 @@ export class PendingTransactionManager {
 
     // Fire-and-forget: drop any hydrated SUBMITTED whose transaction is already mined. A still-pending
     // (receipt-not-found) tx is kept — it is genuinely in flight. Best-effort; a brief race where a
-    // consumer reads a soon-to-be-cleared record is acceptable.
+    // consumer reads a soon-to-be-cleared record is acceptable. The lookup is pinned to the record's
+    // broadcast chain — the wallet's current chain may be a different one after a reload.
     private reconcile = (): void => {
         for (const [id, state] of this.states) {
             if (
@@ -248,7 +255,10 @@ export class PendingTransactionManager {
             ) {
                 continue;
             }
-            getTransactionReceipt(wagmiConfig, { hash: state.hash })
+            getTransactionReceipt(wagmiConfig, {
+                hash: state.hash,
+                chainId: state.chainId,
+            })
                 .then(() => this.clear(id))
                 .catch(() => {
                     // Not mined yet (or unreadable) — keep it as in-flight.

@@ -56,7 +56,7 @@ describe('pendingTransactionManager', () => {
             });
         });
 
-        it('records SUBMITTED with the hash and broadcast timestamp once the wallet signs', async () => {
+        it('records SUBMITTED with the hash, broadcast timestamp and chain once the wallet signs', async () => {
             sendTransactionSpy.mockResolvedValue('0xhash');
             const manager = new PendingTransactionManager();
 
@@ -67,6 +67,7 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
                 submittedAt: expect.any(Number),
+                chainId: 1,
             });
         });
 
@@ -100,6 +101,7 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xnew',
                 submittedAt: expect.any(Number),
+                chainId: 1,
             });
 
             resolveFirst('0xold'); // the superseded send resolves late
@@ -108,6 +110,7 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xnew',
                 submittedAt: expect.any(Number),
+                chainId: 1,
             });
         });
 
@@ -234,6 +237,7 @@ describe('pendingTransactionManager', () => {
                     status: 'SUBMITTED',
                     hash: '0xhash',
                     submittedAt: expect.any(Number),
+                    chainId: 1,
                 },
             });
         });
@@ -277,6 +281,7 @@ describe('pendingTransactionManager', () => {
                     status: 'SUBMITTED',
                     hash: '0xhash',
                     submittedAt: expect.any(Number),
+                    chainId: 1,
                     ...meta,
                 },
             });
@@ -286,6 +291,7 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
                 submittedAt: expect.any(Number),
+                chainId: 1,
                 ...meta,
             });
         });
@@ -381,9 +387,19 @@ describe('pendingTransactionManager', () => {
                         status: 'SUBMITTED',
                         hash: '0xhash',
                         submittedAt: Date.now(),
+                        chainId: 137,
                     },
                 }),
             );
+        });
+
+        it('looks the receipt up on the chain the transaction was broadcast to', () => {
+            new PendingTransactionManager();
+
+            expect(getReceiptSpy).toHaveBeenCalledWith(expect.anything(), {
+                hash: '0xhash',
+                chainId: 137,
+            });
         });
 
         it('clears a hydrated SUBMITTED record whose transaction is already mined', async () => {
@@ -409,6 +425,7 @@ describe('pendingTransactionManager', () => {
                 status: PendingTransactionStatus.SUBMITTED,
                 hash: '0xhash',
                 submittedAt: expect.any(Number),
+                chainId: 137,
             });
         });
     });
