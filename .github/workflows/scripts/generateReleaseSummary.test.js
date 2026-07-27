@@ -7,10 +7,18 @@ const assert = require('node:assert/strict');
 const {
     collectScopedCommits,
     detectLatestPackageTag,
-    detectReleaseBaseFromTag,
     readPathFilter,
+    resolveCommitTitle,
     runGit,
 } = require('./generateReleaseSummary');
+
+// Ignore the developer's git config: a global commit.gpgsign would make every
+// fixture commit block on a pinentry prompt.
+const gitEnvironment = {
+    ...process.env,
+    GIT_CONFIG_GLOBAL: os.devNull,
+    GIT_CONFIG_SYSTEM: os.devNull,
+};
 
 const createRepository = () => {
     const directory = fs.mkdtempSync(
@@ -19,6 +27,7 @@ const createRepository = () => {
     execFileSync('git', ['init', '--initial-branch=main'], {
         cwd: directory,
         stdio: 'ignore',
+        env: gitEnvironment,
     });
 
     return directory;
@@ -34,7 +43,11 @@ const git = (repository, args) =>
             'user.email=release-summary@example.com',
             ...args,
         ],
-        { cwd: repository, stdio: ['ignore', 'pipe', 'pipe'] },
+        {
+            cwd: repository,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env: gitEnvironment,
+        },
     )
         .toString()
         .trim();
@@ -47,7 +60,7 @@ const commitFile = (repository, file, content, subject) => {
     git(repository, ['commit', '-m', subject]);
 };
 
-test('uses the package tag integration commit and filters first-parent history', () => {
+test('keeps release-window commits and excludes everything the tag already ships', () => {
     const repository = createRepository();
 
     try {
@@ -57,7 +70,7 @@ test('uses the package tag integration commit and filters first-parent history',
             'base',
             'feat: initial app',
         );
-        git(repository, ['tag', 'v9.0.0']);
+        // The release branch is cut here; the tag points at the tested branch SHA.
         git(repository, ['checkout', '-b', 'release/app/1.0.0']);
         commitFile(
             repository,
@@ -66,22 +79,22 @@ test('uses the package tag integration commit and filters first-parent history',
             'Release @aragon/app@1.0.0',
         );
         git(repository, ['tag', '@aragon/app@1.0.0']);
-        git(repository, ['tag', '@aragon/assistant@9.0.0']);
         git(repository, ['checkout', 'main']);
+        // Merged to main while the release branch was open: ships with the NEXT release and
+        // must stay in its summary even though it sits below the integration commit.
         commitFile(
             repository,
-            'apps/assistant/before-release-merge.ts',
-            'main advanced',
-            'feat: main advances while release is tested',
+            'apps/app/window.ts',
+            'window',
+            'feat(APP-9): merged during release window (#41)',
         );
         git(repository, [
             'merge',
             '--no-ff',
             'release/app/1.0.0',
             '-m',
-            'Merge pull request #1 from release/app/1.0.0',
+            'Release @aragon/app@1.0.0 (#1)',
         ]);
-        const integrationCommit = git(repository, ['rev-parse', 'HEAD']);
 
         commitFile(
             repository,
@@ -124,12 +137,15 @@ test('uses the package tag integration commit and filters first-parent history',
             'feat: internal branch commit B',
         );
         git(repository, ['checkout', 'main']);
+        // A PR landed as a merge commit: GitHub puts the PR title into the commit body.
         git(repository, [
             'merge',
             '--no-ff',
             'feature/multi-commit',
             '-m',
             'Merge pull request #43 from feature/multi-commit',
+            '-m',
+            'feat(APP-77): multi-commit feature',
         ]);
         commitFile(
             repository,
@@ -140,13 +156,8 @@ test('uses the package tag integration commit and filters first-parent history',
 
         const repositoryGit = (args) => runGit(args, { cwd: repository });
         const packageTag = detectLatestPackageTag('@aragon/app', repositoryGit);
-        const baseRef = detectReleaseBaseFromTag(
-            packageTag,
-            'HEAD',
-            repositoryGit,
-        );
         const commits = collectScopedCommits({
-            baseRef,
+            baseRef: packageTag,
             patterns: [
                 'apps/app/**',
                 'packages/assistant-chat/**',
@@ -156,14 +167,50 @@ test('uses the package tag integration commit and filters first-parent history',
         });
 
         assert.equal(packageTag, '@aragon/app@1.0.0');
-        assert.equal(baseRef, integrationCommit);
         assert.deepEqual(
             commits.map(({ subject }) => subject),
             [
-                'Merge pull request #43 from feature/multi-commit',
+                'feat(APP-77): multi-commit feature (#43)',
                 'feat(APP-123): add app feature (#42)',
                 'chore: update shared lockfile',
+                'feat(APP-9): merged during release window (#41)',
             ],
+        );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+test('keeps the subject of a merge commit without a PR title in its body', () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(repository, 'apps/app/a.txt', 'a', 'feat: base');
+        git(repository, ['checkout', '-b', 'feature/no-body']);
+        commitFile(repository, 'apps/app/b.txt', 'b', 'feat: branch work');
+        git(repository, ['checkout', 'main']);
+        git(repository, [
+            'merge',
+            '--no-ff',
+            'feature/no-body',
+            '-m',
+            'Merge pull request #7 from feature/no-body',
+        ]);
+
+        const repositoryGit = (args) => runGit(args, { cwd: repository });
+        const mergeCommit = repositoryGit(['rev-parse', 'HEAD']);
+
+        assert.equal(
+            resolveCommitTitle(
+                mergeCommit,
+                'Merge pull request #7 from feature/no-body',
+                repositoryGit,
+            ),
+            'Merge pull request #7 from feature/no-body',
+        );
+        assert.equal(
+            resolveCommitTitle('irrelevant', 'feat: squash subject (#8)'),
+            'feat: squash subject (#8)',
         );
     } finally {
         fs.rmSync(repository, { recursive: true, force: true });
@@ -194,7 +241,6 @@ test('treats a workspace without package tags as a first release', () => {
         );
         const commits = collectScopedCommits({
             baseRef: '',
-            packageName: '@aragon/new-app',
             patterns: ['apps/new-app/**'],
             git: repositoryGit,
         });

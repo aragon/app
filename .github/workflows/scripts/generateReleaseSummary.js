@@ -29,47 +29,6 @@ const detectLatestPackageTag = (packageName, git = runGit) => {
     return out.split('\n')[0]?.trim() ?? '';
 };
 
-// Some release flows tag the tested release-branch SHA. Once that branch is merged, the first
-// mainline commit containing the tag is the integration commit and the real release boundary.
-const detectReleaseBaseFromTag = (tag, headRef = 'HEAD', git = runGit) => {
-    if (!tag || !isSafeGitRef(tag) || !isSafeGitRef(headRef)) {
-        return '';
-    }
-
-    const tagSha = git(['rev-list', '-n', '1', tag]);
-    const mergeBase = git(['merge-base', tag, headRef]);
-    if (!(tagSha && mergeBase)) {
-        return '';
-    }
-
-    const firstParentHistory = git(['rev-list', '--first-parent', headRef])
-        .split('\n')
-        .filter(Boolean);
-    if (firstParentHistory.includes(tagSha)) {
-        return tagSha;
-    }
-
-    if (mergeBase === tagSha) {
-        const candidates = git([
-            'rev-list',
-            '--first-parent',
-            '--reverse',
-            `${tag}..${headRef}`,
-        ])
-            .split('\n')
-            .filter(Boolean);
-
-        return (
-            candidates.find(
-                (candidate) => git(['merge-base', tag, candidate]) === tagSha,
-            ) ?? ''
-        );
-    }
-
-    // A divergent tag (for example an unmerged hotfix) falls back to its common cut point.
-    return mergeBase;
-};
-
 const readPathFilter = (filterPath, filterName) => {
     const filters = parse(fs.readFileSync(filterPath, 'utf8'));
     const patterns = filters?.[filterName];
@@ -109,6 +68,26 @@ const commitMatchesPathFilter = (commit, patterns, git = runGit) => {
 // and would otherwise leak into the summary as "Other Changes".
 const RELEASE_COMMIT_RE = /^Release @aragon\/[^@\s]+@\d+\.\d+\.\d+/;
 
+// A PR landed as a merge commit carries its PR title in the commit body; the subject only says
+// "Merge pull request #N from org/branch". Surface the title so the entry reads like a squash.
+const resolveCommitTitle = (commit, subject, git = runGit) => {
+    const merge = subject.match(/^Merge pull request #(\d+)\b/);
+    if (!merge) {
+        return subject;
+    }
+
+    const bodyTitle = git(['show', '-s', '--format=%b', commit])
+        .split('\n')
+        .map((line) => line.trim())
+        .find(Boolean);
+
+    return bodyTitle ? `${bodyTitle} (#${merge[1]})` : subject;
+};
+
+// Mainline commits since the release boundary. The boundary is the previous release tag itself:
+// everything the tag already contains is excluded, while PRs merged to main during the previous
+// release window (after its branch was cut, before it merged) stay in — they ship with THIS
+// release, even though they sit below the previous release's integration commit on the mainline.
 const collectScopedCommits = ({
     baseRef,
     headRef = 'HEAD',
@@ -134,7 +113,11 @@ const collectScopedCommits = ({
             ({ commit, subject }) =>
                 !RELEASE_COMMIT_RE.test(subject) &&
                 commitMatchesPathFilter(commit, patterns, git),
-        );
+        )
+        .map(({ commit, subject }) => ({
+            commit,
+            subject: resolveCommitTitle(commit, subject, git),
+        }));
 };
 
 // Helper to fetch Linear issue details
@@ -187,29 +170,19 @@ const generateSummary = async ({ core }) => {
         throw new Error(`Refusing unsafe package name: ${packageName}`);
     }
 
-    if (!baseRef) {
-        const latestTag = detectLatestPackageTag(packageName);
-        if (latestTag) {
-            const releaseBase = detectReleaseBaseFromTag(latestTag, 'HEAD');
-            if (releaseBase) {
-                baseRef = releaseBase;
-                console.log(`Auto-detected base from ${latestTag}: ${baseRef}`);
-            } else {
-                console.log(
-                    `Found tag ${latestTag} but its release base could not be resolved. Using full scoped history.`,
-                );
-            }
+    if (baseRef) {
+        if (!isSafeGitRef(baseRef)) {
+            throw new Error(`Refusing unsafe BASE_REF: ${baseRef}`);
+        }
+    } else {
+        baseRef = detectLatestPackageTag(packageName);
+        if (baseRef) {
+            console.log(`Auto-detected release boundary: ${baseRef}`);
         } else {
             console.log(
                 `No ${packageName}@* tags found. Treating this as the first release.`,
             );
         }
-    } else if (!isSafeGitRef(baseRef)) {
-        throw new Error(`Refusing unsafe BASE_REF: ${baseRef}`);
-    }
-
-    if (baseRef && !isSafeGitRef(baseRef)) {
-        throw new Error(`Refusing unsafe resolved base ref: ${baseRef}`);
     }
 
     const range = baseRef ? `${baseRef}..HEAD` : 'HEAD';
@@ -316,9 +289,9 @@ module.exports = {
     collectScopedCommits,
     commitMatchesPathFilter,
     detectLatestPackageTag,
-    detectReleaseBaseFromTag,
     generateSummary,
     readPathFilter,
+    resolveCommitTitle,
     runGit,
 };
 
