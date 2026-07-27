@@ -20,7 +20,7 @@ export const RetryTransactionAlertDialog: React.FC<
     const { close } = useDialogContext();
 
     const handleRetry = () => {
-        close();
+        close(location.id);
         onRetry();
     };
 
@@ -40,7 +40,7 @@ export const RetryTransactionAlertDialog: React.FC<
                 }}
                 cancelButton={{
                     label: t(`${namespace}.action.back`),
-                    onClick: () => close(),
+                    onClick: () => close(location.id),
                 }}
             />
         </>

@@ -67,7 +67,7 @@ describe('<RetryTransactionAlertDialog /> component', () => {
             }),
         );
 
-        expect(close).toHaveBeenCalled();
+        expect(close).toHaveBeenCalledWith('warning');
         expect(onRetry).toHaveBeenCalled();
     });
 
@@ -83,7 +83,7 @@ describe('<RetryTransactionAlertDialog /> component', () => {
             }),
         );
 
-        expect(close).toHaveBeenCalled();
+        expect(close).toHaveBeenCalledWith('warning');
         expect(onRetry).not.toHaveBeenCalled();
     });
 });
