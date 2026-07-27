@@ -2204,6 +2204,15 @@
         "name": "Create proposal",
         "namePlugin": "{{plugin}}: Create proposal"
       },
+      "nestedActionsDialog": {
+        "cancel": "Cancel",
+        "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
+        "decoding": "Decoding actions",
+        "description": "These actions are executed as a batch by the action you are composing.",
+        "prepareError": "We couldn't prepare the actions. Please try again.",
+        "save": "Save actions",
+        "title": "Add actions"
+      },
       "permissionCheckDialog": {
         "a11y": {
           "description": "Checking if user has the permission to perform the action."

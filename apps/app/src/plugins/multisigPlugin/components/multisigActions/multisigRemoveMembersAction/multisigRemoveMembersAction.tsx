@@ -83,7 +83,7 @@ export const MultisigRemoveMembersAction: React.FC<
             pluginAddress: action.to,
             onMemberClick: handleMemberClick,
         };
-        open(MultisigPluginDialogId.REMOVE_MEMBERS, { params });
+        open(MultisigPluginDialogId.REMOVE_MEMBERS, { params, stack: true });
     };
 
     useEffect(() => {

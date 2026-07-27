@@ -73,7 +73,7 @@ export const GaugeVoterActivateGaugeActionCreate: React.FC<
             status: 'inactive',
         };
 
-        open(GaugeVoterDialogId.SELECT_GAUGE, { params });
+        open(GaugeVoterDialogId.SELECT_GAUGE, { params, stack: true });
     };
 
     const prepareAction = useCallback(

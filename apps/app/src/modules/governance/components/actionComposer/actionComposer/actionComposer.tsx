@@ -172,7 +172,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             daoAddress: dao!.address,
             daoNetwork: dao!.network,
         };
-        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
+        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
     const handleImportActions = (actions: IExportedAction[]) => {
