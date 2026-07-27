@@ -99,11 +99,18 @@ export const GovernanceStageSettingsField: React.FC<
         fieldPrefix,
     });
 
-    // A threshold restored from a stage that previously had no bodies of the
-    // corresponding type round-trips as 0; once such a body exists the
-    // effective requirement is at least 1, matching what the encoder writes.
-    const effectiveApprovalThreshold = Math.max(approvalThreshold, 1);
-    const effectiveVetoThreshold = Math.max(vetoThreshold, 1);
+    // The stored thresholds go stale when the body composition changes without
+    // the settings dialog being reopened: 0 when the stage had no bodies of the
+    // type, or above the body count after bodies are removed. Clamp to
+    // [1, bodyCount] to match what the encoder writes on-chain.
+    const effectiveApprovalThreshold = Math.min(
+        Math.max(approvalThreshold, 1),
+        Math.max(approvingBodyCount, 1),
+    );
+    const effectiveVetoThreshold = Math.min(
+        Math.max(vetoThreshold, 1),
+        Math.max(vetoingBodyCount, 1),
+    );
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
     const earlyStageTagLabel = t(

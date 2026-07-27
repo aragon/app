@@ -319,26 +319,30 @@ class SppTransactionUtils {
         // stage actually has bodies of the corresponding type. Timelock stages
         // (no bodies) therefore end up with both thresholds set to 0.
         // An unset proposalType defaults to approval.
-        const hasApprovingBody = bodies.some(
-            (body) => body.proposalType !== SppProposalType.VETO,
-        );
-        const hasVetoingBody = bodies.some(
+        const vetoingBodyCount = bodies.filter(
             (body) => body.proposalType === SppProposalType.VETO,
-        );
+        ).length;
+        const approvingBodyCount = bodies.length - vetoingBodyCount;
 
-        // A stage that previously had no bodies of a given type round-trips
-        // with that threshold set to 0; once such a body is added the
-        // requirement must be at least 1, otherwise the body could never
-        // approve / veto effectively.
-        const approvalThreshold = hasApprovingBody
-            ? Math.max(settings.approvalThreshold, 1)
-            : 0;
-        const vetoThreshold = hasVetoingBody
-            ? Math.max(settings.vetoThreshold, 1)
-            : 0;
+        const approvalThreshold = this.clampThreshold(
+            settings.approvalThreshold,
+            approvingBodyCount,
+        );
+        const vetoThreshold = this.clampThreshold(
+            settings.vetoThreshold,
+            vetoingBodyCount,
+        );
 
         return { approvalThreshold, vetoThreshold };
     };
+
+    // The form thresholds go stale when the body composition changes without
+    // the stage settings dialog being reopened: a threshold round-trips as 0
+    // when the stage had no bodies of the type, and keeps its old value when
+    // bodies are removed. Clamp to [1, bodyCount] so the requirement is always
+    // satisfiable and effective while bodies of the type exist.
+    private clampThreshold = (threshold: number, bodyCount: number): number =>
+        bodyCount > 0 ? Math.min(Math.max(threshold, 1), bodyCount) : 0;
 
     private processStageTiming = (
         settings: ISetupStageSettingsForm,
