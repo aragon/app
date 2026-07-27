@@ -144,13 +144,14 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}
-        {entity.type === 'plugin' && entity.tag != null && (
-            <Tag
-                className="max-w-[140px] shrink-0 [&>p]:truncate"
-                label={entity.tag}
-                variant="primary"
-            />
-        )}
+        {(entity.type === 'plugin' || entity.type === 'processInternal') &&
+            entity.tag != null && (
+                <Tag
+                    className="max-w-[140px] shrink-0 [&>p]:truncate"
+                    label={entity.tag}
+                    variant="primary"
+                />
+            )}
         {entity.type === 'sentinel' && (
             <span
                 aria-hidden="true"
@@ -288,14 +289,18 @@ const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
 
     const { t } = useTranslations();
 
-    const resolveOptions = { daoPlugins, accounts };
-    const who = permissionEntityUtils.resolvePermissionEntity(
-        row.whoAddress,
-        resolveOptions,
-    );
+    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
+        daoPlugins,
+        accounts,
+        role: 'who',
+    });
     const where = permissionEntityUtils.resolvePermissionEntity(
         row.whereAddress,
-        resolveOptions,
+        {
+            daoPlugins,
+            accounts,
+            role: 'where',
+        },
     );
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
@@ -359,14 +364,18 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const resolveOptions = { daoPlugins, accounts };
-    const who = permissionEntityUtils.resolvePermissionEntity(
-        row.whoAddress,
-        resolveOptions,
-    );
+    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
+        daoPlugins,
+        accounts,
+        role: 'who',
+    });
     const where = permissionEntityUtils.resolvePermissionEntity(
         row.whereAddress,
-        resolveOptions,
+        {
+            daoPlugins,
+            accounts,
+            role: 'where',
+        },
     );
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,

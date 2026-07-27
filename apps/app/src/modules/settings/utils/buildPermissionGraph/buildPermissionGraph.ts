@@ -11,6 +11,7 @@ import type {
 import { conditionTypeUtils } from '../conditionTypeUtils';
 import {
     type IPermissionAccountRef,
+    type PermissionEntityRole,
     permissionEntityUtils,
 } from '../permissionEntityUtils';
 
@@ -28,6 +29,7 @@ const resolveNode = (
     dao: IDao,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
     accountRefs?: IPermissionAccountRef[],
+    role?: PermissionEntityRole,
 ): IPermissionGraphNode => {
     const id = address.toLowerCase();
 
@@ -62,9 +64,10 @@ const resolveNode = (
     const entity = permissionEntityUtils.resolvePermissionEntity(address, {
         daoPlugins,
         accounts: accountRefs,
+        role,
     });
 
-    if (entity.type === 'plugin') {
+    if (entity.type === 'plugin' || entity.type === 'processInternal') {
         return {
             id,
             kind: 'plugin',
@@ -108,20 +111,20 @@ export const buildPermissionGraph = (
     const { rows, dao, daoPlugins, accountRefs } = params;
     const nodesById = new Map<string, IPermissionGraphNode>();
 
-    const ensureNode = (address: string): void => {
+    const ensureNode = (address: string, role: PermissionEntityRole): void => {
         const id = address.toLowerCase();
 
         if (!nodesById.has(id)) {
             nodesById.set(
                 id,
-                resolveNode(address, dao, daoPlugins, accountRefs),
+                resolveNode(address, dao, daoPlugins, accountRefs, role),
             );
         }
     };
 
     const edges = rows.map((row) => {
-        ensureNode(row.whoAddress);
-        ensureNode(row.whereAddress);
+        ensureNode(row.whoAddress, 'who');
+        ensureNode(row.whereAddress, 'where');
 
         return resolveEdge(row);
     });
