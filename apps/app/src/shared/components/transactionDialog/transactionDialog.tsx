@@ -36,7 +36,7 @@ const indexingStepInterval = 1000;
 // Generous enough that a slow (but eventually mined) inclusion never false-positives — wallet-priced
 // transactions land within a few blocks even under congestion — while bounding the "stuck in the
 // mempool" spinner. Receipt polling never stops: a late receipt still completes the dialog.
-const confirmStepTimeout = 300_000;
+const confirmStepTimeout = 90_000;
 
 export const TransactionDialog = <TCustomStepId extends string>(
     props: ITransactionDialogProps<TCustomStepId>,
