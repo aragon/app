@@ -326,10 +326,16 @@ class SppTransactionUtils {
             (body) => body.proposalType === SppProposalType.VETO,
         );
 
+        // A stage that previously had no bodies of a given type round-trips
+        // with that threshold set to 0; once such a body is added the
+        // requirement must be at least 1, otherwise the body could never
+        // approve / veto effectively.
         const approvalThreshold = hasApprovingBody
-            ? settings.approvalThreshold
+            ? Math.max(settings.approvalThreshold, 1)
             : 0;
-        const vetoThreshold = hasVetoingBody ? settings.vetoThreshold : 0;
+        const vetoThreshold = hasVetoingBody
+            ? Math.max(settings.vetoThreshold, 1)
+            : 0;
 
         return { approvalThreshold, vetoThreshold };
     };

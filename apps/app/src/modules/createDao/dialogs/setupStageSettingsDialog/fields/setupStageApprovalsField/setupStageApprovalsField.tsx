@@ -47,7 +47,7 @@ export const SetupStageApprovalsField: React.FC<
                     label={t(
                         'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.approve.label',
                     )}
-                    min={0}
+                    min={1}
                     total={approvingBodyCount}
                     totalLabel={t(
                         'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',
@@ -66,7 +66,7 @@ export const SetupStageApprovalsField: React.FC<
                     label={t(
                         'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.veto.label',
                     )}
-                    min={0}
+                    min={1}
                     total={vetoingBodyCount}
                     totalLabel={t(
                         'app.createDao.setupStageSettingsDialog.fields.stageApprovalsField.summary',

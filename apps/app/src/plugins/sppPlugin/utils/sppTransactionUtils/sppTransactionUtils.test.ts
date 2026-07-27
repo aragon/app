@@ -971,6 +971,24 @@ describe('sppTransaction utils', () => {
             );
             expect(result).toEqual({ approvalThreshold: 2, vetoThreshold: 1 });
         });
+
+        it('clamps thresholds to at least 1 when bodies of the type exist', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 0,
+                vetoThreshold: 0,
+            });
+            const approvingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.APPROVAL,
+            });
+            const vetoingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.VETO,
+            });
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                [approvingBody, vetoingBody],
+            );
+            expect(result).toEqual({ approvalThreshold: 1, vetoThreshold: 1 });
+        });
     });
 
     describe('processStageTiming', () => {

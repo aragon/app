@@ -99,6 +99,12 @@ export const GovernanceStageSettingsField: React.FC<
         fieldPrefix,
     });
 
+    // A threshold restored from a stage that previously had no bodies of the
+    // corresponding type round-trips as 0; once such a body exists the
+    // effective requirement is at least 1, matching what the encoder writes.
+    const effectiveApprovalThreshold = Math.max(approvalThreshold, 1);
+    const effectiveVetoThreshold = Math.max(vetoThreshold, 1);
+
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
     const earlyStageTagLabel = t(
         `app.createDao.createProcessForm.governance.stageSettingsField.${earlyStageTagValue}`,
@@ -124,8 +130,8 @@ export const GovernanceStageSettingsField: React.FC<
                 votingPeriod,
                 earlyStageAdvance,
                 stageExpiration,
-                approvalThreshold,
-                vetoThreshold,
+                approvalThreshold: effectiveApprovalThreshold,
+                vetoThreshold: effectiveVetoThreshold,
             },
             approvingBodyCount,
             vetoingBodyCount,
@@ -149,7 +155,7 @@ export const GovernanceStageSettingsField: React.FC<
                             'app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold',
                         )}
                     >
-                        {approvalThreshold}
+                        {effectiveApprovalThreshold}
                     </DefinitionList.Item>
                 )}
                 {vetoingBodyCount > 0 && (
@@ -158,7 +164,7 @@ export const GovernanceStageSettingsField: React.FC<
                             'app.createDao.createProcessForm.governance.stageSettingsField.vetoThreshold',
                         )}
                     >
-                        {vetoThreshold}
+                        {effectiveVetoThreshold}
                     </DefinitionList.Item>
                 )}
                 <DefinitionList.Item

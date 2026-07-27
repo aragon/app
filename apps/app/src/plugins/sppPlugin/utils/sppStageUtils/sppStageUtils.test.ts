@@ -1129,6 +1129,86 @@ describe('SppStageUtils', () => {
         });
     });
 
+    describe('isVetoWindowOpen', () => {
+        // The spy is re-created per test: earlier describes restore the shared
+        // method in their afterAll, which would orphan a collection-time spy.
+        let getStageEndDateSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+            getStageEndDateSpy = jest.spyOn(sppStageUtils, 'getStageEndDate');
+        });
+
+        afterEach(() => {
+            getStageEndDateSpy.mockRestore();
+        });
+
+        it('returns true when the veto requirement is unmet and the current stage window is open', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0, vetoThreshold: 1 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+
+            expect(
+                sppStageUtils.isVetoWindowOpen(proposal, stage),
+            ).toBeTruthy();
+        });
+
+        it('returns false when the stage has no veto requirement', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0, vetoThreshold: 0 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+
+            expect(sppStageUtils.isVetoWindowOpen(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false once the veto threshold has been reached', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const isVetoReachedSpy = jest
+                .spyOn(sppStageUtils, 'isVetoReached')
+                .mockReturnValue(true);
+            const stage = generateSppStage({ stageIndex: 0, vetoThreshold: 1 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+
+            expect(sppStageUtils.isVetoWindowOpen(proposal, stage)).toBeFalsy();
+            isVetoReachedSpy.mockRestore();
+        });
+
+        it('returns false once the voting window has closed', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).minus({ minutes: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0, vetoThreshold: 1 });
+            const proposal = generateSppProposal({ stageIndex: 0 });
+
+            expect(sppStageUtils.isVetoWindowOpen(proposal, stage)).toBeFalsy();
+        });
+
+        it('returns false when the stage is not the current one', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            getStageEndDateSpy.mockReturnValue(
+                DateTime.fromISO(now).plus({ days: 1 }),
+            );
+            timeUtils.setTime(now);
+            const stage = generateSppStage({ stageIndex: 0, vetoThreshold: 1 });
+            const proposal = generateSppProposal({ stageIndex: 1 });
+
+            expect(sppStageUtils.isVetoWindowOpen(proposal, stage)).toBeFalsy();
+        });
+    });
+
     describe('getBodySubProposal', () => {
         it('returns the sub-proposal for the given body address and stage index', () => {
             const bodyAddress = '0x1234567890abcdef1234567890abcdef12345678';

@@ -132,14 +132,25 @@ class SppStageUtils {
             (status === ProposalStatus.ADVANCEABLE ||
                 status === ProposalStatus.ACCEPTED);
 
-        if (!canStillBlock) {
-            return false;
-        }
+        return canStillBlock && this.isVetoWindowOpen(proposal, stage);
+    };
+
+    // Whether the stage's veto condition is still live: it carries an unmet
+    // veto requirement and its voting window on the current stage is open, so
+    // vetoing bodies can still overturn the outcome (even after approvals land).
+    isVetoWindowOpen = (proposal: ISppProposal, stage: ISppStage): boolean => {
+        const hasPendingVeto =
+            stage.vetoThreshold > 0 && !this.isVetoReached(proposal, stage);
 
         const isCurrentStage = stage.stageIndex === proposal.stageIndex;
         const endDate = this.getStageEndDate(proposal, stage);
 
-        return isCurrentStage && endDate != null && DateTime.now() < endDate;
+        return (
+            hasPendingVeto &&
+            isCurrentStage &&
+            endDate != null &&
+            DateTime.now() < endDate
+        );
     };
 
     // Mark proposal as signaling when main-proposal has no actions and this is processing the status of the last stage

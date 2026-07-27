@@ -43,11 +43,10 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
         isVetoReached ||
         (hasApproval ? isApprovalReached : !hasVeto || isAccepted);
 
-    if (showStageStatus) {
-        return (
-            <SppStageStatus daoId={daoId} proposal={proposal} stage={stage} />
-        );
-    }
+    // The stage status alone would hide a still-live veto condition: in a mixed
+    // stage vetoing bodies can act until the window closes even after approval
+    // lands, so keep the veto requirement on screen alongside the status.
+    const isVetoWindowOpen = sppStageUtils.isVetoWindowOpen(proposal, stage);
 
     // Each requirement carries its own copy key: an approval is a positive
     // requirement to pass ("required to approve"), while a veto is a blocking
@@ -57,14 +56,14 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
         labelKey: 'approveRequirement' | 'vetoRequirement';
         threshold: number;
     }> = [];
-    if (hasApproval) {
+    if (hasApproval && !showStageStatus) {
         requirements.push({
             action: 'approve',
             labelKey: 'approveRequirement',
             threshold: stage.approvalThreshold,
         });
     }
-    if (hasVeto) {
+    if (hasVeto && (!showStageStatus || isVetoWindowOpen)) {
         requirements.push({
             action: 'veto',
             labelKey: 'vetoRequirement',
@@ -73,7 +72,7 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
     }
 
     return (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
             {requirements.map(({ action, labelKey, threshold }) => (
                 <p
                     className="text-center text-neutral-500 md:text-right"
@@ -93,6 +92,13 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
                     )}
                 </p>
             ))}
+            {showStageStatus && (
+                <SppStageStatus
+                    daoId={daoId}
+                    proposal={proposal}
+                    stage={stage}
+                />
+            )}
         </div>
     );
 };
