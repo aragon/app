@@ -7,13 +7,7 @@ import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 /**
  * Classifies a resolved permission entity for display purposes.
  */
-export type PermissionEntityType =
-    | 'dao'
-    | 'plugin'
-    | 'sentinel'
-    | 'condition'
-    | 'processInternal'
-    | 'address';
+export type PermissionEntityType = 'dao' | 'plugin' | 'sentinel' | 'address';
 
 /**
  * Resolved, display-ready representation of a permission `who` / `where` entity.
@@ -64,20 +58,6 @@ export interface IPermissionAccountRef {
 }
 
 type DaoPluginEntries = IFilterComponentPlugin<IDaoPlugin>[];
-export type PermissionEntityRole = 'who' | 'where' | 'condition';
-
-interface IPermissionPluginSettings {
-    stages?: Array<{
-        plugins?: Array<{
-            address?: string;
-            proposalCreationConditionAddress?: string | null;
-        }>;
-    }>;
-    externalProposers?: Array<{
-        address?: string;
-        proposalCreationConditionAddress?: string | null;
-    }>;
-}
 
 interface IResolvePermissionEntityOptions {
     /**
@@ -90,11 +70,6 @@ interface IResolvePermissionEntityOptions {
      * DAO names and avatars.
      */
     accounts?: IPermissionAccountRef[];
-    /**
-     * Role of the address inside the permission tuple. Used only for safe,
-     * unresolved fallbacks; resolved plugin/account/condition metadata wins.
-     */
-    role?: PermissionEntityRole;
 }
 
 class PermissionEntityUtils {
@@ -113,7 +88,7 @@ class PermissionEntityUtils {
         address: string,
         options: IResolvePermissionEntityOptions = {},
     ): IPermissionEntity => {
-        const { daoPlugins, accounts, role } = options;
+        const { daoPlugins, accounts } = options;
 
         if (this.isAddressEqual(address, ANY_ADDR)) {
             return {
@@ -142,7 +117,11 @@ class PermissionEntityUtils {
 
             return {
                 label: daoUtils.getPluginName(meta),
-                tag: this.getPluginTag(meta),
+                tag: meta.interfaceType
+                    ? daoUtils
+                          .parsePluginInterfaceType(meta.interfaceType)
+                          .toUpperCase()
+                    : undefined,
                 address,
                 isSentinel: false,
                 type: 'plugin',
@@ -165,114 +144,14 @@ class PermissionEntityUtils {
             };
         }
 
-        const conditionOwner = this.findConditionOwner(address, daoPlugins);
-
-        if (conditionOwner != null) {
-            const ownerName = daoUtils.getPluginName(conditionOwner.meta);
-
-            return {
-                label: 'Condition contract',
-                address,
-                isSentinel: false,
-                type: 'condition',
-                detailName: `${ownerName} condition`,
-            };
-        }
-
-        const internalOwner = this.findProcessInternalOwner(
-            address,
-            daoPlugins,
-        );
-
-        if (internalOwner != null) {
-            const ownerName = daoUtils.getPluginName(internalOwner.meta);
-
-            return {
-                label: 'Process internal',
-                tag: this.getPluginTag(internalOwner.meta),
-                address,
-                isSentinel: false,
-                type: 'processInternal',
-                detailName: `${ownerName} internal contract`,
-            };
-        }
-
         return {
-            label: role === 'where' ? 'Unresolved contract' : 'Unknown address',
+            label: 'Unknown address',
             address,
             isSentinel: false,
             type: 'address',
             detailName: addressUtils.truncateAddress(address),
         };
     };
-
-    private getPluginTag = (plugin: IDaoPlugin): string | undefined =>
-        plugin.interfaceType
-            ? daoUtils
-                  .parsePluginInterfaceType(plugin.interfaceType)
-                  .toUpperCase()
-            : undefined;
-
-    private findConditionOwner = (
-        address: string,
-        daoPlugins?: DaoPluginEntries,
-    ): IFilterComponentPlugin<IDaoPlugin> | undefined =>
-        daoPlugins?.find((plugin) => {
-            const { meta } = plugin;
-            const settings = meta.settings as
-                | IPermissionPluginSettings
-                | undefined;
-
-            return (
-                this.isAddressEqual(meta.conditionAddress, address) ||
-                this.isAddressEqual(
-                    meta.proposalCreationConditionAddress,
-                    address,
-                ) ||
-                settings?.stages?.some((stage) =>
-                    stage.plugins?.some((stagePlugin) =>
-                        this.isAddressEqual(
-                            stagePlugin.proposalCreationConditionAddress ??
-                                undefined,
-                            address,
-                        ),
-                    ),
-                ) === true ||
-                settings?.externalProposers?.some((proposer) =>
-                    this.isAddressEqual(
-                        proposer.proposalCreationConditionAddress ?? undefined,
-                        address,
-                    ),
-                ) === true
-            );
-        });
-
-    private findProcessInternalOwner = (
-        address: string,
-        daoPlugins?: DaoPluginEntries,
-    ): IFilterComponentPlugin<IDaoPlugin> | undefined =>
-        daoPlugins?.find((plugin) => {
-            const { meta } = plugin;
-            const settings = meta.settings as
-                | IPermissionPluginSettings
-                | undefined;
-
-            return (
-                meta.subPlugins?.some((subPlugin) =>
-                    subPlugin.addresses.some((subPluginAddress) =>
-                        this.isAddressEqual(subPluginAddress, address),
-                    ),
-                ) === true ||
-                settings?.stages?.some((stage) =>
-                    stage.plugins?.some((stagePlugin) =>
-                        this.isAddressEqual(stagePlugin.address, address),
-                    ),
-                ) === true ||
-                settings?.externalProposers?.some((proposer) =>
-                    this.isAddressEqual(proposer.address, address),
-                ) === true
-            );
-        });
 
     private formatPluginDetail = (plugin: IDaoPlugin): string => {
         const name = daoUtils.getPluginName(plugin);

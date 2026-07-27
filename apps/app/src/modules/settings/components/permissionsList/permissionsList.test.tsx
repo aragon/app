@@ -1,6 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen, within } from '@testing-library/react';
-import { type IDaoPlugin, PluginInterfaceType } from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { generateDaoPlugin } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
@@ -18,8 +18,6 @@ const EXECUTE_PERMISSION_ID =
 const SET_TRUSTED_FORWARDER_PERMISSION_ID =
     '0x06d294bc8cbad2e393408b20dd019a772661f60b8d633e56761157cb1ec85f8c';
 const SPP_PLUGIN_ADDRESS = '0x26A696269116cAaB99626Cc793CeA24bbCec7528';
-const PROCESS_INTERNAL_ADDRESS = '0x3333333333333333333333333333333333333333';
-const CONDITION_CONTRACT_ADDRESS = '0x4444444444444444444444444444444444444444';
 
 describe('<PermissionsList /> component', () => {
     beforeAll(() => {
@@ -211,67 +209,6 @@ describe('<PermissionsList /> component', () => {
         expect(
             within(mobileList).queryByRole('button'),
         ).not.toBeInTheDocument();
-    });
-
-    it('renders process internals and condition contracts with explicit labels', () => {
-        const rows: IPermissionRow[] = [
-            {
-                permissionId: EXECUTE_PERMISSION_ID,
-                whoAddress: CONDITION_CONTRACT_ADDRESS,
-                whereAddress: PROCESS_INTERNAL_ADDRESS,
-                conditionAddress: ALLOW_FLAG,
-            },
-        ];
-
-        const { container } = render(
-            createTestComponent({
-                rows,
-                daoPlugins: [
-                    {
-                        id: 'spp',
-                        uniqueId: 'spp-1',
-                        label: 'Core Governance',
-                        meta: {
-                            ...generateDaoPlugin({
-                                name: 'Core Governance',
-                                address: SPP_PLUGIN_ADDRESS,
-                                interfaceType: PluginInterfaceType.SPP,
-                            }),
-                            proposalCreationConditionAddress:
-                                CONDITION_CONTRACT_ADDRESS,
-                            subPlugins: [
-                                { addresses: [PROCESS_INTERNAL_ADDRESS] },
-                            ],
-                            settings: {
-                                pluginAddress: SPP_PLUGIN_ADDRESS,
-                                stages: [
-                                    {
-                                        plugins: [
-                                            {
-                                                address:
-                                                    PROCESS_INTERNAL_ADDRESS,
-                                                proposalCreationConditionAddress:
-                                                    CONDITION_CONTRACT_ADDRESS,
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        } as unknown as IDaoPlugin,
-                        props: {},
-                    },
-                ],
-            }),
-        );
-        const mobileList = getMobileList(container);
-
-        expect(
-            within(mobileList).getByText('Condition contract'),
-        ).toBeInTheDocument();
-        expect(
-            within(mobileList).getByText('Process internal'),
-        ).toBeInTheDocument();
-        expect(within(mobileList).getByText('SPP')).toBeInTheDocument();
     });
 
     it('renders both the Details and Condition lists for an expanded row', async () => {

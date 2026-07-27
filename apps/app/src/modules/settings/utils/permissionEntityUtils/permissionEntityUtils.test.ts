@@ -13,11 +13,6 @@ describe('permissionEntity Utils', () => {
         const pluginAddress = '0x1234567890123456789012345678901234567890';
         const daoAddress = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
         const unknownAddress = '0x000000000000000000000000000000000000dead';
-        const conditionAddress = '0x1111111111111111111111111111111111111111';
-        const proposalCreationConditionAddress =
-            '0x2222222222222222222222222222222222222222';
-        const processInternalAddress =
-            '0x3333333333333333333333333333333333333333';
 
         const daoPlugins = [
             {
@@ -30,22 +25,7 @@ describe('permissionEntity Utils', () => {
                     interfaceType: 'multisig',
                     release: '1',
                     build: '2',
-                    conditionAddress,
-                    proposalCreationConditionAddress,
-                    subPlugins: [{ addresses: [processInternalAddress] }],
-                    settings: {
-                        stages: [
-                            {
-                                plugins: [
-                                    {
-                                        address: processInternalAddress,
-                                        proposalCreationConditionAddress,
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                } as unknown as IDaoPlugin,
+                } as IDaoPlugin,
                 props: {},
             },
         ] satisfies IFilterComponentPlugin<IDaoPlugin>[];
@@ -117,28 +97,6 @@ describe('permissionEntity Utils', () => {
                     type: 'address',
                 },
             },
-            {
-                description: 'resolves known condition contracts explicitly',
-                address: conditionAddress,
-                expected: {
-                    label: 'Condition contract',
-                    detailName: 'Multisig condition',
-                    isSentinel: false,
-                    tag: undefined,
-                    type: 'condition',
-                },
-            },
-            {
-                description: 'resolves known process internals explicitly',
-                address: processInternalAddress,
-                expected: {
-                    label: 'Process internal',
-                    detailName: 'Multisig internal contract',
-                    isSentinel: false,
-                    tag: 'MULTISIG',
-                    type: 'processInternal',
-                },
-            },
         ])('$description', ({ address, expected }) => {
             const result: IPermissionEntity =
                 permissionEntityUtils.resolvePermissionEntity(address, {
@@ -163,16 +121,6 @@ describe('permissionEntity Utils', () => {
             );
 
             expect(result.detailName).toEqual('Multisig v1.2');
-        });
-
-        it('uses a contract fallback for unresolved where addresses', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                unknownAddress,
-                { daoPlugins, accounts, role: 'where' },
-            );
-
-            expect(result.label).toEqual('Unresolved contract');
-            expect(result.type).toEqual('address');
         });
     });
 });
