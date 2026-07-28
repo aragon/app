@@ -212,7 +212,7 @@ describe('useManagedTransaction', () => {
         expect(clearSpy).toHaveBeenCalledWith('id');
     });
 
-    it('pins the receipt wait to the transaction chain', () => {
+    it('pins the receipt wait to the transaction chain and disables the default wait timeout', () => {
         usePendingTransactionMock.mockReturnValue({
             status: PendingTransactionStatus.SUBMITTED,
             hash: '0xabc',
@@ -221,6 +221,7 @@ describe('useManagedTransaction', () => {
         expect(useReceiptSpy).toHaveBeenCalledWith({
             hash: '0xabc',
             chainId: 137,
+            timeout: 0,
         });
     });
 

@@ -656,7 +656,7 @@
         "title": "Your previous transaction may still succeed",
         "description": {
           "1": "Your transaction has not been confirmed yet. If it eventually succeeds, retrying now could result in two transactions.",
-          "2": "Only retry if the transaction if you are sure the transaction has failed or you intentionally want to send it again."
+          "2": "Only retry if you are sure the transaction has failed or you intentionally want to send it again."
         },
         "action": {
           "retry": "Retry transaction",

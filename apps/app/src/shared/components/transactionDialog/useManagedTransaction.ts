@@ -96,7 +96,9 @@ export const useManagedTransaction = (
             .exhaustive();
     }, [intentId]);
 
-    const receipt = useWaitForTransactionReceipt({ hash, chainId });
+    // timeout: 0 disables viem's default 180s receipt-wait timeout: the dialog owns the
+    // long-unconfirmed UX (warning + retry), and a late receipt must still complete the flow.
+    const receipt = useWaitForTransactionReceipt({ hash, chainId, timeout: 0 });
 
     // Confirmed — clear the record so a re-open starts fresh; the latch keeps the hash for display.
     useEffect(() => {

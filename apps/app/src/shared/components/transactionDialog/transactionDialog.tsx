@@ -33,9 +33,10 @@ import { useManagedTransaction } from './useManagedTransaction';
 const indexingStepInterval = 1000;
 
 // How long a broadcast transaction may stay unconfirmed before the confirm step surfaces a warning.
-// Generous enough that a slow (but eventually mined) inclusion never false-positives — wallet-priced
-// transactions land within a few blocks even under congestion — while bounding the "stuck in the
-// mempool" spinner. Receipt polling never stops: a late receipt still completes the dialog.
+// Wallet-priced transactions normally land within a few blocks, so 90s already signals something is
+// off. The warning is non-terminal — receipt polling never stops, a late receipt still completes the
+// dialog, and the retry is gated behind an explicit confirmation — so a congestion-delayed inclusion
+// only shows guidance early, it is never failed or interrupted.
 const confirmStepTimeout = 90_000;
 
 export const TransactionDialog = <TCustomStepId extends string>(

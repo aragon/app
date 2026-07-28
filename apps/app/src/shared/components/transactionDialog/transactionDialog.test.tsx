@@ -724,7 +724,7 @@ describe('<TransactionDialog /> component', () => {
                 screen.queryByText(/confirmWarning.title/),
             ).not.toBeInTheDocument();
 
-            act(() => jest.advanceTimersByTime(300_000));
+            act(() => jest.advanceTimersByTime(90_000));
 
             const confirmStep = getLastConfirmStep(updateSteps);
             expect(confirmStep?.meta.state).toEqual('warning');
@@ -774,7 +774,7 @@ describe('<TransactionDialog /> component', () => {
                 string
             >({ updateSteps });
             render(createTestComponent({ stepper }));
-            act(() => jest.advanceTimersByTime(300_000));
+            act(() => jest.advanceTimersByTime(90_000));
 
             const { action: confirmStepAction } =
                 getLastConfirmStep(updateSteps)?.meta ?? {};
