@@ -1,9 +1,10 @@
-import { addressUtils } from '@aragon/gov-ui-kit';
+import { addressUtils, ChainEntityType } from '@aragon/gov-ui-kit';
 import type {
     IPermissionCheckGuardParams,
     IPermissionCheckGuardResult,
 } from '@/modules/governance/types';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import type { ISppStagePluginExternal } from '../../types';
 import { VotingBodyBrandIdentity } from '../../types';
 
@@ -21,7 +22,7 @@ export interface IUseSppExternalPermissionCheckProposalCreationParams
 export const useSppExternalPermissionCheckProposalCreation = (
     params: IUseSppExternalPermissionCheckProposalCreationParams,
 ): IPermissionCheckGuardResult | undefined => {
-    const { plugin } = params;
+    const { plugin, daoId } = params;
 
     const { t } = useTranslations();
 
@@ -30,6 +31,12 @@ export const useSppExternalPermissionCheckProposalCreation = (
     const isSafeProposalCreator =
         externalBody.brandId === VotingBodyBrandIdentity.SAFE &&
         externalBody.proposalCreationConditionAddress != null;
+
+    const { buildEntityUrl } = useDaoChain({ daoId });
+    const addressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: externalBody.address,
+    });
 
     if (!isSafeProposalCreator) {
         return undefined;
@@ -48,6 +55,10 @@ export const useSppExternalPermissionCheckProposalCreation = (
                     definition: addressUtils.truncateAddress(
                         externalBody.address,
                     ),
+                    link: {
+                        href: addressLink,
+                        isExternal: true,
+                    },
                 },
                 {
                     term: t(
