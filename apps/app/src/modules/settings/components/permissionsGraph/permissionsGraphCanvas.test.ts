@@ -105,14 +105,13 @@ describe('buildFlowElements', () => {
 });
 
 describe('positionSelfStacks', () => {
-    it('places core DAO self-permission stacks south of the DAO node', () => {
+    it('places core DAO self-permission stacks above the DAO node', () => {
         const daoY = 100;
-        const daoHeight = 92;
         const daoNode = {
             id: anchorId,
             type: 'permission',
             data: { kind: 'dao' },
-            measured: { width: 220, height: daoHeight },
+            measured: { width: 220, height: 92 },
             position: { x: 100, y: daoY },
         } as Node;
         const stackNode = {
@@ -128,7 +127,7 @@ describe('positionSelfStacks', () => {
             (node) => node.id === stackNode.id,
         )!;
 
-        expect(positionedStack.position.y).toBeGreaterThan(daoY + daoHeight);
+        expect(positionedStack.position.y).toBeLessThan(daoY);
     });
 
     it('connects core DAO self-permission stacks to the DAO bottom handle', () => {

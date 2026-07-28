@@ -204,8 +204,6 @@ export const positionSelfStacks = (nodes: Node[]): Node[] => {
 
         const targetRect = getNodeRect(targetNode);
         const stackRect = getNodeRect(node);
-        const isCoreDaoSelfStack = targetNode.data?.kind === 'dao';
-
         return {
             ...node,
             position: {
@@ -213,9 +211,7 @@ export const positionSelfStacks = (nodes: Node[]): Node[] => {
                     targetNode.position.x +
                     targetRect.width / 2 -
                     stackRect.width / 2,
-                y: isCoreDaoSelfStack
-                    ? targetNode.position.y + targetRect.height + SELF_STACK_GAP
-                    : targetNode.position.y - stackRect.height - SELF_STACK_GAP,
+                y: targetNode.position.y - stackRect.height - SELF_STACK_GAP,
             },
         };
     });

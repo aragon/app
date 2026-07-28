@@ -257,6 +257,50 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual(rows);
     });
 
+    it('hides inactive plugin endpoint rows even when supporting permissions are enabled', () => {
+        const rows = [
+            buildRow({
+                whereAddress: daoAddress,
+                who: {
+                    address: pluginAddress,
+                    label: 'Historical Core Governance DEPRECATED',
+                    layer: 'historicalPlugin',
+                    status: 'uninstalled',
+                },
+                whoAddress: pluginAddress,
+            }),
+            buildRow({
+                whereAddress: daoAddress,
+                who: {
+                    address: parentPluginAddress,
+                    label: 'Unknown status plugin',
+                    layer: 'topLevelPlugin',
+                    status: 'unknown',
+                },
+                whoAddress: parentPluginAddress,
+            }),
+            buildRow({
+                whereAddress: daoAddress,
+                who: {
+                    address: targetAddress,
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+                whoAddress: targetAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: true,
+        });
+
+        expect(result).toEqual([rows[1], rows[2]]);
+    });
+
     it('hides residual rows when subplugin/residual permissions are disabled', () => {
         const rows = [
             buildRow({ whereAddress: daoAddress }),

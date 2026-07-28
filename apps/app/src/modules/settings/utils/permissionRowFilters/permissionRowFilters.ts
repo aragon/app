@@ -37,6 +37,18 @@ const SUPPORTING_PERMISSION_LAYERS = new Set<PermissionEntityLayer>([
 const isSupportingPermissionLayer = (layer?: PermissionEntityLayer): boolean =>
     layer != null && SUPPORTING_PERMISSION_LAYERS.has(layer);
 
+const INACTIVE_PLUGIN_STATUSES = new Set(['uninstalled', 'historical']);
+
+const isInactivePluginEndpoint = (row: IPermissionRow): boolean => {
+    const endpointEntities = [row.who, row.where];
+
+    return endpointEntities.some(
+        (entity) =>
+            entity?.status != null &&
+            INACTIVE_PLUGIN_STATUSES.has(entity.status),
+    );
+};
+
 const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     const { meta } = plugin;
 
@@ -100,6 +112,10 @@ export const filterPermissionRows = (
     } = filters;
 
     return rows.filter((row) => {
+        if (isInactivePluginEndpoint(row)) {
+            return false;
+        }
+
         if (
             !showDaoPermissions &&
             isDaoGrantedPermission(row, activeAccountAddress)
