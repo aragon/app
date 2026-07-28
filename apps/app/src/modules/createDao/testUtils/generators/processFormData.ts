@@ -6,7 +6,6 @@ import {
     type ICreateProcessFormDataBasic,
     type ICreateProcessFormStage,
     ProcessPermission,
-    ProcessStageType,
     ProposalCreationMode,
 } from '../../components/createProcessForm';
 import { generateSetupBodyFormNew } from './setupBodyForm';
@@ -56,10 +55,10 @@ export const generateCreateProcessFormData = (
 export const generateCreateProcessFormStageSettings = (
     values?: Partial<ICreateProcessFormStage['settings']>,
 ): ICreateProcessFormStage['settings'] => ({
-    type: ProcessStageType.NORMAL,
     votingPeriod: { days: 1, hours: 0, minutes: 0 },
     earlyStageAdvance: true,
-    requiredApprovals: 1,
+    approvalThreshold: 1,
+    vetoThreshold: 0,
     ...values,
 });
 
