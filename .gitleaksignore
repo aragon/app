@@ -10,3 +10,30 @@
 # on main), so these fingerprints stay to keep new-branch pushes green.
 7dd0e6cbeebb9cae103c2b56afd00a37970373e6:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:62
 7dd0e6cbeebb9cae103c2b56afd00a37970373e6:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:66
+
+# Same class of false positive as above (fake 0x + 40-hex test/mock addresses),
+# just other historical commits/files gitleaks hadn't flagged yet. Verified by
+# reading each line at its pinned commit — all are mock token/permission/
+# condition addresses in test fixtures, not real secrets.
+65ca4d56ac99963e008f74a15a105fe5fba812cb:src/modules/settings/components/votingPowerConditionSlot/votingPowerConditionSlot.test.tsx:generic-api-key:23
+65ca4d56ac99963e008f74a15a105fe5fba812cb:src/modules/settings/constants/permissionsMocks.ts:generic-api-key:19
+65ca4d56ac99963e008f74a15a105fe5fba812cb:src/modules/settings/components/permissionsList/permissionsList.test.tsx:generic-api-key:172
+05a9fda044154b1ad276315126eb27faff6e9ee2:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:61
+05a9fda044154b1ad276315126eb27faff6e9ee2:src/modules/ens/constants/ensDelegateKey.test.ts:generic-api-key:65
+
+# Public, read-only Algolia docsearch API key that Yarn bundles into its own
+# release script (same non-secret already allowlisted by path/regex in
+# .gitleaks.toml, which does not retroactively apply to historical commits —
+# each Yarn version bump reintroduces it under a new commit hash).
+5af343ed781c07998b57014adeabceacb55bbf3d:.yarn/releases/yarn-4.8.1.cjs:generic-api-key:577
+214b2426dab3bf8524e219d960dd0b27c07ac53e:.yarn/releases/yarn-4.9.2.cjs:generic-api-key:583
+0671a49d7f9b2caea263cc534880014d8c70ec05:.yarn/releases/yarn-4.7.0.cjs:generic-api-key:577
+0873967893db9f99c44b000c4895cfbacc238846:.yarn/releases/yarn-4.6.0.cjs:generic-api-key:576
+af2603ba913b66905d36b326c3bc5ae29a8db1aa:.yarn/releases/yarn-4.5.3.cjs:generic-api-key:576
+3c32245f2812a764f8822d55c240455d89089ce0:.yarn/releases/yarn-4.3.1.cjs:generic-api-key:567
+9e42742bc6914b9406ab4d8c68e119f15d68bd62:.yarn/releases/yarn-4.4.1.cjs:generic-api-key:567
+99edc4db926e15c09ebbe8339b659258aae4ee73:.yarn/releases/yarn-4.5.1.cjs:generic-api-key:576
+f5f578dfd4020c4a38f54eb5980a2310eefe94c3:.yarn/releases/yarn-4.3.0.cjs:generic-api-key:567
+59da625af2ff0be48f582d288d73cbf4c52bf105:.yarn/releases/yarn-4.1.1.cjs:generic-api-key:567
+73f7080432457e358b3678fb02d4b5c466e763eb:.yarn/releases/yarn-4.9.1.cjs:generic-api-key:589
+140074ec8d53b2cac8c8bf84f7eecd5522f53201:.yarn/releases/yarn-4.4.0.cjs:generic-api-key:567

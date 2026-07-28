@@ -15,10 +15,8 @@ import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvi
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
-import {
-    type ICreateProcessFormStage,
-    ProcessStageType,
-} from '../../../createProcessFormDefinitions';
+import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
+import { createProcessFormUtils } from '../../../createProcessFormUtils';
 
 export interface IGovernanceStageSettingsFieldProps {
     /**
@@ -31,8 +29,6 @@ export interface IGovernanceStageSettingsFieldProps {
      */
     readOnly?: boolean;
 }
-
-const requiredApprovalsDefaultValue = 1;
 
 const formatDuration = (duration: IDateDuration): string => {
     const parsedDuration = Object.fromEntries(
@@ -57,23 +53,13 @@ export const GovernanceStageSettingsField: React.FC<
     const { setValue } = useFormContext();
     const { open } = useDialogContext();
 
-    const { value: stageType } = useFormField<ISetupStageSettingsForm, 'type'>(
-        'type',
-        {
-            label: t(
-                'app.createDao.createProcessForm.governance.stageSettingsField.governanceType',
-            ),
-            defaultValue: ProcessStageType.NORMAL,
-            fieldPrefix,
-        },
-    );
-
-    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: `${formPrefix}.bodies`,
-        defaultValue: [],
-    });
-
-    const isOptimisticStage = stageType === ProcessStageType.OPTIMISTIC;
+    // No defaultValue on purpose: with one set, useWatch returns it instead of the
+    // form values until the first subscription update, which never comes on
+    // read-only pages (e.g. process details) where the form is never touched.
+    const bodies =
+        useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
+            name: `${formPrefix}.bodies`,
+        }) ?? [];
 
     const { value: votingPeriod } = useFormField<
         ISetupStageSettingsForm,
@@ -94,12 +80,32 @@ export const GovernanceStageSettingsField: React.FC<
         fieldPrefix,
     });
 
-    const { value: requiredApprovals } = useFormField<
+    const { value: approvalThreshold } = useFormField<
         ISetupStageSettingsForm,
-        'requiredApprovals'
-    >('requiredApprovals', {
+        'approvalThreshold'
+    >('approvalThreshold', {
         fieldPrefix,
-        defaultValue: requiredApprovalsDefaultValue,
+    });
+
+    const { value: vetoThreshold } = useFormField<
+        ISetupStageSettingsForm,
+        'vetoThreshold'
+    >('vetoThreshold', {
+        fieldPrefix,
+    });
+
+    // Approve/veto is a per-body property, so a stage may have approving bodies,
+    // vetoing bodies, or both (mixed). The summary and the settings dialog adapt
+    // to the actual body composition. The thresholds themselves are displayed on
+    // the bodies they apply to, not in the stage settings summary.
+    const {
+        approvingBodyCount,
+        vetoingBodyCount,
+        approvalThreshold: effectiveApprovalThreshold,
+        vetoThreshold: effectiveVetoThreshold,
+    } = createProcessFormUtils.getEffectiveStageThresholds({
+        settings: { approvalThreshold, vetoThreshold },
+        bodies,
     });
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
@@ -113,31 +119,25 @@ export const GovernanceStageSettingsField: React.FC<
     );
 
     const handleDialogSubmit = (values: ISetupStageSettingsForm) => {
-        const {
-            votingPeriod,
-            earlyStageAdvance,
-            stageExpiration,
-            requiredApprovals,
-            type,
-        } = values;
-        setValue(`${fieldPrefix}.votingPeriod`, votingPeriod);
-        setValue(`${fieldPrefix}.earlyStageAdvance`, earlyStageAdvance);
-        setValue(`${fieldPrefix}.stageExpiration`, stageExpiration);
-        setValue(`${fieldPrefix}.requiredApprovals`, requiredApprovals);
-        setValue(`${fieldPrefix}.type`, type);
+        setValue(`${fieldPrefix}.votingPeriod`, values.votingPeriod);
+        setValue(`${fieldPrefix}.earlyStageAdvance`, values.earlyStageAdvance);
+        setValue(`${fieldPrefix}.stageExpiration`, values.stageExpiration);
+        setValue(`${fieldPrefix}.approvalThreshold`, values.approvalThreshold);
+        setValue(`${fieldPrefix}.vetoThreshold`, values.vetoThreshold);
     };
 
     const handleSettingsDialogOpen = () => {
         const params: ISetupStageSettingsDialogParams = {
             onSubmit: handleDialogSubmit,
             defaultValues: {
-                type: stageType,
                 votingPeriod,
                 earlyStageAdvance,
                 stageExpiration,
-                requiredApprovals,
+                approvalThreshold: effectiveApprovalThreshold,
+                vetoThreshold: effectiveVetoThreshold,
             },
-            bodyCount: bodies.length,
+            approvingBodyCount,
+            vetoingBodyCount,
         };
         open(CreateDaoDialogId.SETUP_STAGE_SETTINGS, { params });
     };
@@ -152,31 +152,6 @@ export const GovernanceStageSettingsField: React.FC<
             useCustomWrapper={true}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                {bodies.length > 0 && (
-                    <DefinitionList.Item
-                        term={t(
-                            'app.createDao.createProcessForm.governance.stageSettingsField.governanceType',
-                        )}
-                    >
-                        {t(
-                            `app.createDao.createProcessForm.governance.stageSettingsField.${stageType}.label`,
-                        )}
-                        <p className="text-neutral-400 text-sm">
-                            {t(
-                                `app.createDao.createProcessForm.governance.stageSettingsField.${stageType}.description`,
-                            )}
-                        </p>
-                    </DefinitionList.Item>
-                )}
-                {bodies.length > 0 && (
-                    <DefinitionList.Item
-                        term={t(
-                            `app.createDao.createProcessForm.governance.stageSettingsField.${isOptimisticStage ? 'vetoThreshold' : 'approvalThreshold'}`,
-                        )}
-                    >
-                        {requiredApprovals}
-                    </DefinitionList.Item>
-                )}
                 <DefinitionList.Item
                     term={t(
                         'app.createDao.createProcessForm.governance.stageSettingsField.votingPeriod',
@@ -184,7 +159,7 @@ export const GovernanceStageSettingsField: React.FC<
                 >
                     {formatDuration(votingPeriod)}
                 </DefinitionList.Item>
-                {!isOptimisticStage && bodies.length > 0 && (
+                {vetoingBodyCount === 0 && bodies.length > 0 && (
                     <DefinitionList.Item
                         term={t(
                             'app.createDao.createProcessForm.governance.stageSettingsField.earlyAdvance',

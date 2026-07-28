@@ -8,7 +8,8 @@ import type {
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import type { ISppPluginSettings } from '../../types';
+import type { ISppPluginSettings, ISppStagePlugin } from '../../types';
+import { SppProposalType, VotingBodyBrandIdentity } from '../../types';
 import { useSppExternalPermissionCheckProposalCreation } from '../useSppExternalPermissionCheckProposalCreation';
 
 export interface IUseSppPermissionCheckProposalCreationParams
@@ -36,7 +37,24 @@ export const useSppPermissionCheckProposalCreation = (
             plugin,
             network: dao?.network,
         });
-    const sppPlugins = plugin.settings.stages.flatMap((stage) => stage.plugins);
+    const stageBodies = plugin.settings.stages.flatMap(
+        (stage) => stage.plugins,
+    );
+
+    // Non-body proposer Safes: shape them as external bodies so the existing external-body fallback
+    // (useSppExternalPermissionCheckProposalCreation) resolves them into a Safe eligibility group.
+    const externalProposers = (plugin.settings.externalProposers ?? []).map(
+        (proposer): ISppStagePlugin => ({
+            proposalType: SppProposalType.NONE, // non-body proposers do not vote
+            interfaceType: undefined, // marks it external, resolving to pluginId 'external'
+            brandId: VotingBodyBrandIdentity.SAFE,
+            address: proposer.address,
+            proposalCreationConditionAddress:
+                proposer.proposalCreationConditionAddress,
+        }),
+    );
+
+    const sppPlugins = [...stageBodies, ...externalProposers];
 
     const pluginProposalCreationGuardResults = sppPlugins.map((sppPlugin) => {
         const subPlugin = daoPlugins.find(({ meta }) =>

@@ -1,4 +1,4 @@
-import { ProposalStatus } from '@aragon/gov-ui-kit';
+import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { proposalStatusUtils } from '@/shared/utils/proposalStatusUtils';
@@ -111,7 +111,13 @@ class SppProposalUtils {
             sppStageUtils.getBodyResult(proposal, body, stage.stageIndex) ?? {};
 
         const voted = resultType != null;
-        const isVeto = sppStageUtils.isVeto(stage);
+        // Approve/veto is a per-body property, so read it from the body being
+        // labelled rather than the stage (a stage may mix both types).
+        const stagePlugin = stage.plugins.find((plugin) =>
+            addressUtils.isAddressEqual(plugin.address, body),
+        );
+        const isVeto =
+            stagePlugin != null && sppStageUtils.isVetoBody(stagePlugin);
 
         const status = voted
             ? resultType === SppProposalType.VETO

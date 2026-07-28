@@ -38,7 +38,7 @@ export const PermissionsDefinitionList: React.FC<
     const hasSettingsGroups = settings.length > 1;
 
     if (!hasSettings) {
-        // A special case when Safes are used (we still miss settings for Safe bodies).
+        // No eligibility settings to display: render nothing rather than an empty card (APP-137).
         return null;
     }
 

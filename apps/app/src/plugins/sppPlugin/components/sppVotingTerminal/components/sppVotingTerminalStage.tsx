@@ -1,8 +1,9 @@
-import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
+import { ProposalStatus, ProposalVoting, Tag } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
@@ -30,6 +31,8 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
     props,
 ) => {
     const { stage, daoId, proposal } = props;
+
+    const { t } = useTranslations();
 
     const processedStartDate = sppStageUtils
         .getStageStartDate(proposal, stage)
@@ -62,11 +65,17 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
 
     const stageName = stage.name ?? stage.stageIndex.toString();
     const bodyList = stage.plugins.map((plugin) => plugin.address);
-    const canVote = status === ProposalStatus.ACTIVE;
 
     const isSingleBody = bodyList.length === 1;
-    const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
+
+    // Tag bodies with their decision only in mixed stages; a uniform stage
+    // (all approving or all vetoing) needs no tag.
+    const vetoBodyCount = stage.plugins.filter((plugin) =>
+        sppStageUtils.isVetoBody(plugin),
+    ).length;
+    const isMixedStage =
+        vetoBodyCount > 0 && vetoBodyCount < stage.plugins.length;
 
     return (
         <ProposalVoting.Stage
@@ -81,38 +90,61 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map(({ address, ...plugin }) => (
+                    {stage.plugins.map((plugin) => (
                         <ProposalVoting.BodySummaryListItem
                             bodyBrand={
                                 plugin.interfaceType === undefined
                                     ? brandedExternals[plugin.brandId]
                                     : undefined
                             }
-                            id={address}
-                            key={address}
+                            id={plugin.address}
+                            key={plugin.address}
                         >
-                            {plugin.interfaceType != null && (
-                                <PluginSingleComponent
-                                    isExecuted={proposal.executed.status}
-                                    isVeto={isVeto}
-                                    name={plugin.name}
-                                    pluginId={plugin.interfaceType}
-                                    proposal={sppStageUtils.getBodySubProposal(
-                                        proposal,
-                                        address,
-                                        stage.stageIndex,
+                            {/* Grow wrapper keeps the tag pinned right for both
+                                internal (full-width) and external bodies. */}
+                            <div className="flex grow items-center gap-x-2">
+                                {plugin.interfaceType != null && (
+                                    <PluginSingleComponent
+                                        isExecuted={proposal.executed.status}
+                                        isVeto={sppStageUtils.isVetoBody(
+                                            plugin,
+                                        )}
+                                        name={plugin.name}
+                                        pluginId={plugin.interfaceType}
+                                        proposal={sppStageUtils.getBodySubProposal(
+                                            proposal,
+                                            plugin.address,
+                                            stage.stageIndex,
+                                        )}
+                                        slotId={
+                                            GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
+                                        }
+                                    />
+                                )}
+                                {plugin.interfaceType == null && (
+                                    <SppVotingTerminalMultiBodySummaryDefault
+                                        body={plugin.address}
+                                        canVote={sppStageUtils.canBodyVote(
+                                            proposal,
+                                            stage,
+                                            plugin,
+                                        )}
+                                        proposal={proposal}
+                                        stage={stage}
+                                    />
+                                )}
+                            </div>
+                            {isMixedStage && (
+                                <Tag
+                                    className="shrink-0"
+                                    label={t(
+                                        `app.plugins.spp.sppVotingTerminalBodyDecisionTag.${sppStageUtils.isVetoBody(plugin) ? 'veto' : 'approve'}`,
                                     )}
-                                    slotId={
-                                        GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
+                                    variant={
+                                        sppStageUtils.isVetoBody(plugin)
+                                            ? 'warning'
+                                            : 'info'
                                     }
-                                />
-                            )}
-                            {plugin.interfaceType == null && (
-                                <SppVotingTerminalMultiBodySummaryDefault
-                                    body={address}
-                                    canVote={canVote}
-                                    proposal={proposal}
-                                    stage={stage}
                                 />
                             )}
                         </ProposalVoting.BodySummaryListItem>
