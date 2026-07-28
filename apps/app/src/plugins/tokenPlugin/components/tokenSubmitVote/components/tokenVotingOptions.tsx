@@ -102,7 +102,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
                         <TokenVotingOptionToggle
                             description={
                                 disabledOption?.reason != null
-                                    ? ` ${disabledOption.reason}`
+                                    ? ` — ${disabledOption.reason}`
                                     : description
                             }
                             disabled={
