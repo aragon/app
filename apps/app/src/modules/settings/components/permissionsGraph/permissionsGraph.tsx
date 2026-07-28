@@ -135,6 +135,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
         >
             <ReactFlowProvider key={anchorId}>
                 <PermissionsGraphCanvas
+                    anchorId={anchorId}
                     graph={graph}
                     onSelectedEdgeChange={setSelectedEdgeId}
                     onSelectedNodeChange={setSelectedNodeId}

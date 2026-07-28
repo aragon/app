@@ -58,32 +58,76 @@ const FALLBACK_STACK_WIDTH = 240;
 const STACK_ROW_HEIGHT = 20;
 const STACK_CONDITION_ROW_HEIGHT = 34;
 const STACK_ROW_GAP = 2;
+type PermissionGraphFlow = 'incoming' | 'outgoing';
 
 export const getVisibleEdges = (
     graph: IPermissionGraph,
 ): IPermissionGraphEdge[] => graph.edges;
 
-const getLayoutDirection = (): PermissionGraphDirection => 'TB';
+export const getGraphFlow = (
+    visibleEdges: IPermissionGraphEdge[],
+    anchorId: string,
+): PermissionGraphFlow => {
+    const nonSelfEdges = visibleEdges.filter(
+        (edge) => edge.source !== edge.target,
+    );
+    const hasIncomingEdges = nonSelfEdges.some(
+        (edge) => edge.target === anchorId,
+    );
+    const hasOutgoingEdges = nonSelfEdges.some(
+        (edge) => edge.source === anchorId,
+    );
+
+    return hasIncomingEdges && !hasOutgoingEdges ? 'incoming' : 'outgoing';
+};
+
+export const getLayoutDirection = (
+    visibleEdges: IPermissionGraphEdge[],
+    anchorId: string,
+): PermissionGraphDirection =>
+    getGraphFlow(visibleEdges, anchorId) === 'incoming' ? 'BT' : 'TB';
 
 const getLayoutSpacing = (): { nodesep: number; ranksep: number } => ({
     nodesep: 60,
     ranksep: 170,
 });
 
-const getHandlePositions = (): {
+const getHandlePositions = (
+    flow: PermissionGraphFlow,
+): {
     sourcePosition: Position;
     targetPosition: Position;
-} => ({
-    sourcePosition: Position.Bottom,
-    targetPosition: Position.Top,
-});
+} => {
+    if (flow === 'incoming') {
+        return {
+            sourcePosition: Position.Top,
+            targetPosition: Position.Bottom,
+        };
+    }
 
-const getEdgeHandles = () => ({
-    originSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
-    stackTarget: PERMISSION_GRAPH_HANDLE.targetTop,
-    stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
-    targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
-});
+    return {
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
+    };
+};
+
+const getEdgeHandles = (flow: PermissionGraphFlow) => {
+    if (flow === 'incoming') {
+        return {
+            originSource: PERMISSION_GRAPH_HANDLE.sourceTop,
+            stackTarget: PERMISSION_GRAPH_HANDLE.targetBottom,
+            stackSource: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetTarget: PERMISSION_GRAPH_HANDLE.targetBottom,
+        };
+    }
+
+    return {
+        originSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+        stackTarget: PERMISSION_GRAPH_HANDLE.targetTop,
+        stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
+        targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
+    };
+};
 
 const getStackPermissions = (node: Node): IPermissionEdgeEntry[] =>
     Array.isArray(node.data?.permissions)
@@ -208,6 +252,7 @@ const getEdgeStyle = (active: boolean) =>
 interface IBuildFlowElementsParams {
     graph: IPermissionGraph;
     visibleEdges: IPermissionGraphEdge[];
+    anchorId: string;
     selectedEdgeId?: string;
     selectedNodeId?: string;
     onSelectEdge: (edgeId: string) => void;
@@ -216,6 +261,7 @@ interface IBuildFlowElementsParams {
 export const buildFlowElements = ({
     graph,
     visibleEdges,
+    anchorId,
     selectedEdgeId,
     selectedNodeId,
     onSelectEdge,
@@ -230,7 +276,8 @@ export const buildFlowElements = ({
 
     const graphNodeById = new Map(graph.nodes.map((node) => [node.id, node]));
 
-    const handlePositions = getHandlePositions();
+    const graphFlow = getGraphFlow(visibleEdges, anchorId);
+    const handlePositions = getHandlePositions(graphFlow);
     const nodes: Node[] = graph.nodes
         .filter((node) => visibleNodeIds.has(node.id))
         .map((node: IPermissionGraphNode) => {
@@ -285,7 +332,7 @@ export const buildFlowElements = ({
 
     const stackNodes: Node[] = [];
     const edges: Edge[] = [];
-    const edgeHandles = getEdgeHandles();
+    const edgeHandles = getEdgeHandles(graphFlow);
 
     for (const group of groups.values()) {
         const active = group.entries.some((entry) => entry.selected === true);
@@ -381,6 +428,7 @@ export const buildFlowElements = ({
 };
 
 export interface IPermissionsGraphCanvasProps {
+    anchorId: string;
     graph: IPermissionGraph;
     selectedEdgeId?: string;
     selectedNodeId?: string;
@@ -389,6 +437,7 @@ export interface IPermissionsGraphCanvasProps {
 }
 
 export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
+    anchorId,
     graph,
     selectedEdgeId,
     selectedNodeId,
@@ -444,6 +493,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
         );
         const { nodes: nextNodes, edges: nextEdges } = buildFlowElements({
             graph,
+            anchorId,
             visibleEdges,
             selectedEdgeId,
             selectedNodeId,
@@ -459,6 +509,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
         setEdges(nextEdges);
     }, [
         graph,
+        anchorId,
         visibleEdges,
         selectedEdgeId,
         selectedNodeId,
@@ -487,7 +538,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             currentNodes,
             edges,
             {
-                direction: getLayoutDirection(),
+                direction: getLayoutDirection(visibleEdges, anchorId),
                 ...getLayoutSpacing(),
             },
         );
@@ -498,7 +549,16 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
         setNodes(layoutedNodes);
         setEdges(edges);
         setLayoutVersion((version) => version + 1);
-    }, [nodesInitialized, nodes, edges, getNodes, setNodes, setEdges]);
+    }, [
+        anchorId,
+        nodesInitialized,
+        nodes,
+        edges,
+        visibleEdges,
+        getNodes,
+        setNodes,
+        setEdges,
+    ]);
 
     useEffect(() => {
         if (layoutVersion === 0 || graphBounds.current == null) {

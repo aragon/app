@@ -3,6 +3,7 @@ import type { IPermissionGraph, IPermissionGraphEdge } from '../../types';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNode';
 import {
     buildFlowElements,
+    getLayoutDirection,
     getVisibleEdges,
     positionSelfStacks,
 } from './permissionsGraphCanvas';
@@ -56,6 +57,53 @@ describe('getVisibleEdges', () => {
     });
 });
 
+describe('getLayoutDirection', () => {
+    it('places the DAO above plugin actors for incoming-only graphs', () => {
+        const result = getLayoutDirection(
+            [buildEdge('incoming', { source: pluginId, target: anchorId })],
+            anchorId,
+        );
+
+        expect(result).toBe('BT');
+    });
+
+    it('keeps top-to-bottom layout when DAO-granted rows are visible', () => {
+        const result = getLayoutDirection(
+            [buildEdge('outgoing', { source: anchorId, target: pluginId })],
+            anchorId,
+        );
+
+        expect(result).toBe('TB');
+    });
+});
+
+describe('buildFlowElements', () => {
+    it('uses incoming handles when only plugin-to-DAO rows are visible', () => {
+        const incomingEdge = buildEdge('incoming', {
+            source: pluginId,
+            target: anchorId,
+        });
+        const { edges } = buildFlowElements({
+            anchorId,
+            graph: buildGraph([incomingEdge]),
+            onSelectEdge: jest.fn(),
+            visibleEdges: [incomingEdge],
+        });
+
+        const originEdge = edges.find((edge) => edge.id.endsWith('-origin'));
+        const targetEdge = edges.find((edge) => edge.id.endsWith('-target'));
+
+        expect(originEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+        expect(targetEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+    });
+});
+
 describe('positionSelfStacks', () => {
     it('places core DAO self-permission stacks south of the DAO node', () => {
         const daoY = 100;
@@ -103,6 +151,7 @@ describe('positionSelfStacks', () => {
 
         const result = buildFlowElements({
             graph,
+            anchorId,
             visibleEdges: graph.edges,
             onSelectEdge: jest.fn(),
         });

@@ -1,6 +1,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { generateFilterComponentPlugin } from '@/shared/testUtils/generators';
+import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
 import { filterPermissionRows } from './permissionRowFilters';
 
@@ -158,6 +159,102 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual([rows[1]]);
+    });
+
+    it('keeps ALLOW_FLAG rows when backend sends a condition entity', () => {
+        const rows = [
+            buildRow({
+                conditionAddress: ALLOW_FLAG,
+                conditionEntity: {
+                    address: ALLOW_FLAG,
+                    label: 'Allow flag',
+                    layer: 'condition',
+                },
+                whereAddress: daoAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
+    });
+
+    it('keeps real condition-contract rows when endpoints are primary entities', () => {
+        const conditionAddress = '0x6666666666666666666666666666666666666666';
+        const rows = [
+            buildRow({
+                conditionAddress,
+                conditionEntity: {
+                    address: conditionAddress,
+                    label: 'Condition contract',
+                    layer: 'condition',
+                    status: 'installed',
+                },
+                whereAddress: daoAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
+    });
+
+    it('treats missing condition addresses as unconditional rows', () => {
+        const rows = [
+            buildRow({
+                conditionAddress: undefined,
+                conditionEntity: {
+                    address: ALLOW_FLAG,
+                    label: 'Allow flag',
+                    layer: 'condition',
+                },
+                whereAddress: daoAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
+    });
+
+    it('keeps DAO-granted outgoing rows when DAO permissions are enabled', () => {
+        const rows = [
+            buildRow({
+                whoAddress: daoAddress,
+                where: {
+                    address: pluginAddress,
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+                whereAddress: pluginAddress,
+            }),
+            buildRow({ whereAddress: daoAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
     });
 
     it('hides residual rows when subplugin/residual permissions are disabled', () => {
