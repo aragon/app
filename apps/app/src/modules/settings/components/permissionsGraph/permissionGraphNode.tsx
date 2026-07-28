@@ -93,6 +93,20 @@ const SELECTION_LABEL_KEY: Record<PermissionNodeSelectionRole, string> = {
     where: 'app.settings.daoPermissionsPage.graphView.node.where',
 };
 
+const getSubtitleKey = (data: IPermissionNodeData): string => {
+    if (data.kind === 'plugin') {
+        if (data.status === 'uninstalled') {
+            return 'app.settings.daoPermissionsPage.graphView.node.uninstalledPlugin';
+        }
+
+        if (data.status === 'historical' || data.layer === 'historicalPlugin') {
+            return 'app.settings.daoPermissionsPage.graphView.node.historicalPlugin';
+        }
+    }
+
+    return SUBTITLE_KEY[data.kind];
+};
+
 export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
     data,
 }) => {
@@ -100,6 +114,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
     const { kind, label, tag, avatarSrc, selectionRole, active, dimmed } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
     const isSelected = selectionRole != null || active === true;
+    const subtitleKey = getSubtitleKey(data);
 
     return (
         <div
@@ -127,7 +142,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                 <div className="flex min-w-0 flex-col gap-0.5">
                     <span className="truncate text-neutral-800">{label}</span>
                     <span className="truncate text-neutral-500 text-sm">
-                        {t(SUBTITLE_KEY[kind])}
+                        {t(subtitleKey)}
                     </span>
                 </div>
                 {isDaoKind && (

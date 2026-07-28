@@ -3572,6 +3572,8 @@
             "dao": "Primary DAO",
             "linkedDao": "Linked DAO",
             "plugin": "Aragon OSx Plugin",
+            "historicalPlugin": "Historical plugin",
+            "uninstalledPlugin": "Uninstalled plugin",
             "actor": "Address",
             "who": "Who",
             "where": "Where"
