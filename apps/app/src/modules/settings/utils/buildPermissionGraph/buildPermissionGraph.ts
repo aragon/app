@@ -1,7 +1,12 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type {
+    IDao,
+    IDaoPlugin,
+    IPermissionEntityRef,
+} from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
+import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
@@ -28,6 +33,7 @@ const resolveNode = (
     dao: IDao,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
     accountRefs?: IPermissionAccountRef[],
+    enrichedEntity?: IPermissionEntityRef,
 ): IPermissionGraphNode => {
     const id = address.toLowerCase();
 
@@ -62,6 +68,7 @@ const resolveNode = (
     const entity = permissionEntityUtils.resolvePermissionEntity(address, {
         daoPlugins,
         accounts: accountRefs,
+        entity: enrichedEntity,
     });
 
     if (entity.type === 'plugin') {
@@ -70,26 +77,36 @@ const resolveNode = (
             kind: 'plugin',
             label: entity.label,
             tag: entity.tag,
+            layer: entity.layer,
+            status: entity.status,
             address,
         };
     }
 
-    return { id, kind: 'actor', label: entity.label, address };
+    return {
+        id,
+        kind: 'actor',
+        label: entity.label,
+        layer: entity.layer,
+        status: entity.status,
+        address,
+    };
 };
 
 const resolveEdge = (row: IPermissionRow): IPermissionGraphEdge => {
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
     const conditionType = conditionTypeUtils.resolveConditionType(
-        row.conditionAddress,
+        conditionAddress,
         row.condition,
     );
     const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
 
     const whoAddress = row.whoAddress.toLowerCase();
     const whereAddress = row.whereAddress.toLowerCase();
-    const conditionAddress = row.conditionAddress.toLowerCase();
+    const conditionNodeAddress = conditionAddress.toLowerCase();
 
     return {
-        id: `${row.permissionId}-${whoAddress}-${whereAddress}-${conditionAddress}`,
+        id: `${row.permissionId}-${whoAddress}-${whereAddress}-${conditionNodeAddress}`,
         source: whoAddress,
         target: whereAddress,
         permissionName: permissionNameUtils.getPermissionName(row.permissionId),
@@ -108,20 +125,23 @@ export const buildPermissionGraph = (
     const { rows, dao, daoPlugins, accountRefs } = params;
     const nodesById = new Map<string, IPermissionGraphNode>();
 
-    const ensureNode = (address: string): void => {
+    const ensureNode = (
+        address: string,
+        entity?: IPermissionEntityRef,
+    ): void => {
         const id = address.toLowerCase();
 
         if (!nodesById.has(id)) {
             nodesById.set(
                 id,
-                resolveNode(address, dao, daoPlugins, accountRefs),
+                resolveNode(address, dao, daoPlugins, accountRefs, entity),
             );
         }
     };
 
     const edges = rows.map((row) => {
-        ensureNode(row.whoAddress);
-        ensureNode(row.whereAddress);
+        ensureNode(row.whoAddress, row.who);
+        ensureNode(row.whereAddress, row.where);
 
         return resolveEdge(row);
     });

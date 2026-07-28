@@ -15,6 +15,30 @@ export interface IDaoPermissionCondition {
     [key: string]: unknown;
 }
 
+export type PermissionEntityLayer =
+    | 'dao'
+    | 'topLevelPlugin'
+    | 'processInternal'
+    | 'condition'
+    | 'externalActor'
+    | 'historicalPlugin'
+    | 'contract'
+    | 'unknown';
+
+export interface IPermissionEntityRef {
+    address: string;
+    layer: PermissionEntityLayer;
+    label?: string;
+    interfaceType?: string;
+    status?: 'installed' | 'uninstalled' | 'historical' | 'unknown';
+    parentPluginAddress?: string;
+    parentPluginName?: string;
+    parentInterfaceType?: string;
+    stageIndex?: number;
+    role?: 'who' | 'where' | 'condition';
+    avatarSrc?: string;
+}
+
 export interface IDaoPermission {
     /**
      * Pemission ID. keccak256 hash of a permission string.
@@ -33,11 +57,23 @@ export interface IDaoPermission {
      * The address `ALLOW_FLAG` for regular permissions or, alternatively, the
      * `IPermissionCondition` contract implementation to be used.
      */
-    conditionAddress: string;
+    conditionAddress?: string;
     /**
      * Enriched condition details returned by the backend when available.
      */
     condition?: IDaoPermissionCondition;
+    /**
+     * Backend-enriched display metadata for the permission actor.
+     */
+    who?: IPermissionEntityRef;
+    /**
+     * Backend-enriched display metadata for the permission target.
+     */
+    where?: IPermissionEntityRef;
+    /**
+     * Backend-enriched display metadata for the permission condition contract.
+     */
+    conditionEntity?: IPermissionEntityRef;
     /**
      * Network of the DAO permission event.
      */

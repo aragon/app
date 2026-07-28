@@ -1,7 +1,11 @@
 export type { IAddressInfo } from './addressInfo';
 export type { IDao, ILinkedAccountSummary } from './dao';
 export type { IDaoMetrics } from './daoMetrics';
-export type { IDaoPermission } from './daoPermission';
+export type {
+    IDaoPermission,
+    IPermissionEntityRef,
+    PermissionEntityLayer,
+} from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';
 export {
     type IDaoPolicy,

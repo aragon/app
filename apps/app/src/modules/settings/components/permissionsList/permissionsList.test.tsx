@@ -88,6 +88,29 @@ describe('<PermissionsList /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders backend-enriched entity labels without plugin lookup', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: '0x2222222222222222222222222222222222222222',
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+                who: {
+                    address: '0x2222222222222222222222222222222222222222',
+                    interfaceType: 'spp',
+                    label: 'Backend SPP',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            },
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getByText('Backend SPP')).toBeInTheDocument();
+        expect(screen.getByText('SPP')).toBeInTheDocument();
+    });
+
     it('renders informational help for the Who and Where headers', () => {
         const rows: IPermissionRow[] = [
             {

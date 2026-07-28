@@ -97,6 +97,35 @@ describe('buildPermissionGraph', () => {
         );
     });
 
+    it('uses backend entity metadata without installed plugin lookup', () => {
+        const row = buildRow({
+            whoAddress: pluginAddress,
+            who: {
+                address: pluginAddress,
+                interfaceType: 'spp',
+                label: 'Backend Process',
+                layer: 'topLevelPlugin',
+                status: 'installed',
+            },
+        });
+
+        const graph = buildPermissionGraph({
+            rows: [row],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find((node) => node.id === pluginAddress.toLowerCase()),
+        ).toMatchObject({
+            kind: 'plugin',
+            label: 'Backend Process',
+            tag: 'SPP',
+            layer: 'topLevelPlugin',
+            status: 'installed',
+        });
+    });
+
     it('creates who-to-where edges with resolved permission and condition labels', () => {
         const row = buildRow({
             conditionAddress,

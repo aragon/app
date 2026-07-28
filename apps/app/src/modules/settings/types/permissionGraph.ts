@@ -1,3 +1,4 @@
+import type { IPermissionEntityRef } from '@/shared/api/daoService';
 import type { IPermissionRow } from './permissionRow';
 
 export type PermissionNodeKind = 'dao' | 'linkedDao' | 'plugin' | 'actor';
@@ -7,6 +8,8 @@ export interface IPermissionGraphNode {
     kind: PermissionNodeKind;
     label: string;
     tag?: string;
+    layer?: IPermissionEntityRef['layer'];
+    status?: IPermissionEntityRef['status'];
     avatarSrc?: string;
     address: string;
 }

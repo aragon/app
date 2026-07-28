@@ -55,8 +55,11 @@ const SKELETON_ROW_KEYS = [
     'skeleton-4',
 ];
 
-export const getPermissionRowKey = (row: IPermissionRow): string =>
-    `${row.permissionId}-${row.whoAddress.toLowerCase()}-${row.whereAddress.toLowerCase()}-${row.conditionAddress.toLowerCase()}`;
+export const getPermissionRowKey = (row: IPermissionRow): string => {
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
+
+    return `${row.permissionId}-${row.whoAddress.toLowerCase()}-${row.whereAddress.toLowerCase()}-${conditionAddress.toLowerCase()}`;
+};
 
 export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
     const {
@@ -218,19 +221,23 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const { t } = useTranslations();
 
     const resolveOptions = { daoPlugins, accounts };
-    const who = permissionEntityUtils.resolvePermissionEntity(
-        row.whoAddress,
-        resolveOptions,
-    );
+    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
+        ...resolveOptions,
+        entity: row.who,
+    });
     const where = permissionEntityUtils.resolvePermissionEntity(
         row.whereAddress,
-        resolveOptions,
+        {
+            ...resolveOptions,
+            entity: row.where,
+        },
     );
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
     );
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
     const conditionType = conditionTypeUtils.resolveConditionType(
-        row.conditionAddress,
+        conditionAddress,
         row.condition,
     );
     const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
@@ -238,11 +245,11 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
 
     const hasCondition = !addressUtils.isAddressEqual(
-        row.conditionAddress,
+        conditionAddress,
         ALLOW_FLAG,
     );
     const conditionDetail = hasCondition
-        ? addressUtils.truncateAddress(row.conditionAddress)
+        ? addressUtils.truncateAddress(conditionAddress)
         : undefined;
 
     return (
@@ -309,9 +316,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 copyValue={
-                                    hasCondition
-                                        ? row.conditionAddress
-                                        : undefined
+                                    hasCondition ? conditionAddress : undefined
                                 }
                                 term={t(
                                     'app.settings.permissionsList.details.condition',
@@ -333,12 +338,12 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                         {hasUnrecognizedCondition ? (
                             <UnrecognizedConditionSlot
                                 chainId={chainId}
-                                conditionAddress={row.conditionAddress}
+                                conditionAddress={conditionAddress}
                             />
                         ) : (
                             <PluginSingleComponent
                                 chainId={chainId}
-                                conditionAddress={row.conditionAddress}
+                                conditionAddress={conditionAddress}
                                 Fallback={NoConditionSlot}
                                 network={network}
                                 pluginAddress={row.whoAddress}

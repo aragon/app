@@ -135,6 +135,31 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[1]]);
     });
 
+    it('hides backend-classified supporting permission rows by default', () => {
+        const rows = [
+            buildRow({
+                whereAddress: daoAddress,
+                who: {
+                    address: subpluginAddress,
+                    label: 'Process internal',
+                    layer: 'processInternal',
+                    parentPluginAddress,
+                },
+                whoAddress: subpluginAddress,
+            }),
+            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([rows[1]]);
+    });
+
     it('hides residual rows when subplugin/residual permissions are disabled', () => {
         const rows = [
             buildRow({ whereAddress: daoAddress }),

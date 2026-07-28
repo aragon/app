@@ -39,14 +39,15 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
 }) => {
     const { t } = useTranslations();
     const { row } = edge;
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
     const who = nodes.find((node) => node.id === edge.source);
     const where = nodes.find((node) => node.id === edge.target);
     const hasCondition = !addressUtils.isAddressEqual(
-        row.conditionAddress,
+        conditionAddress,
         ALLOW_FLAG,
     );
     const conditionType = conditionTypeUtils.resolveConditionType(
-        row.conditionAddress,
+        conditionAddress,
         row.condition,
     );
     const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
@@ -247,12 +248,12 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                 ) : hasUnrecognizedCondition ? (
                     <UnrecognizedConditionSlot
                         chainId={chainId}
-                        conditionAddress={row.conditionAddress}
+                        conditionAddress={conditionAddress}
                     />
                 ) : (
                     <PluginSingleComponent
                         chainId={chainId}
-                        conditionAddress={row.conditionAddress}
+                        conditionAddress={conditionAddress}
                         Fallback={NoConditionSlot}
                         network={network}
                         pluginAddress={row.whoAddress}

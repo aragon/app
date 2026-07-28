@@ -1,5 +1,8 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type {
+    IDaoPlugin,
+    PermissionEntityLayer,
+} from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import type { IPermissionRow } from '../../types';
 
@@ -21,6 +24,18 @@ export interface IPermissionRowFilters {
      */
     showSubpluginPermissions: boolean;
 }
+
+const SUPPORTING_PERMISSION_LAYERS = new Set<PermissionEntityLayer>([
+    'processInternal',
+    'condition',
+    'externalActor',
+    'historicalPlugin',
+    'contract',
+    'unknown',
+]);
+
+const isSupportingPermissionLayer = (layer?: PermissionEntityLayer): boolean =>
+    layer != null && SUPPORTING_PERMISSION_LAYERS.has(layer);
 
 const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     const { meta } = plugin;
@@ -49,10 +64,13 @@ const isSubpluginAddress = (
         );
     }) ?? false;
 
-const rowTouchesSubplugin = (
+const rowTouchesSupportingPermission = (
     row: IPermissionRow,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
+    isSupportingPermissionLayer(row.who?.layer) ||
+    isSupportingPermissionLayer(row.where?.layer) ||
+    row.conditionEntity?.layer === 'condition' ||
     isSubpluginAddress(row.whoAddress, daoPlugins) ||
     isSubpluginAddress(row.whereAddress, daoPlugins);
 
@@ -91,7 +109,7 @@ export const filterPermissionRows = (
 
         if (
             !showSubpluginPermissions &&
-            (rowTouchesSubplugin(row, daoPlugins) ||
+            (rowTouchesSupportingPermission(row, daoPlugins) ||
                 isResidualPermission(row, activeAccountAddress))
         ) {
             return false;

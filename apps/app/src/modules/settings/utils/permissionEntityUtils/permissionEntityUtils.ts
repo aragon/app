@@ -1,5 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPlugin, IPermissionEntityRef } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
@@ -37,6 +37,14 @@ export interface IPermissionEntity {
      */
     type: PermissionEntityType;
     /**
+     * Backend entity layer, when supplied by the permissions endpoint.
+     */
+    layer?: IPermissionEntityRef['layer'];
+    /**
+     * Backend lifecycle status, when supplied by the permissions endpoint.
+     */
+    status?: IPermissionEntityRef['status'];
+    /**
      * Avatar source for DAO / linked-account entities.
      */
     avatarSrc?: string;
@@ -70,6 +78,11 @@ interface IResolvePermissionEntityOptions {
      * DAO names and avatars.
      */
     accounts?: IPermissionAccountRef[];
+    /**
+     * Backend-enriched entity metadata returned with the permission row. When
+     * present, this is the source of truth for labels and layers.
+     */
+    entity?: IPermissionEntityRef;
 }
 
 class PermissionEntityUtils {
@@ -79,16 +92,17 @@ class PermissionEntityUtils {
      * Resolution order:
      * 1. {@link ANY_ADDR} sentinel -> "Anyone".
      * 2. {@link ALLOW_FLAG} sentinel -> "Any Address".
-     * 3. A matching installed DAO plugin -> the plugin name plus its interface
+     * 3. Backend-enriched permission entity metadata.
+     * 4. A matching installed DAO plugin -> the plugin name plus its interface
      *    type as an uppercase tag (e.g. `MULTISIG`) and a `name vX.Y` detail.
-     * 4. A matching DAO / linked account -> the account name and avatar.
-     * 5. Otherwise -> the truncated address.
+     * 5. A matching DAO / linked account -> the account name and avatar.
+     * 6. Otherwise -> the truncated address.
      */
     resolvePermissionEntity = (
         address: string,
         options: IResolvePermissionEntityOptions = {},
     ): IPermissionEntity => {
-        const { daoPlugins, accounts } = options;
+        const { daoPlugins, accounts, entity } = options;
 
         if (this.isAddressEqual(address, ANY_ADDR)) {
             return {
@@ -106,6 +120,10 @@ class PermissionEntityUtils {
                 isSentinel: true,
                 type: 'sentinel',
             };
+        }
+
+        if (entity != null) {
+            return this.resolveBackendEntity(address, entity);
         }
 
         const matchedPlugin = daoPlugins?.find((plugin) =>
@@ -150,6 +168,58 @@ class PermissionEntityUtils {
             isSentinel: false,
             type: 'address',
             detailName: addressUtils.truncateAddress(address),
+        };
+    };
+
+    private resolveBackendEntity = (
+        address: string,
+        entity: IPermissionEntityRef,
+    ): IPermissionEntity => {
+        const label =
+            entity.label ??
+            (entity.layer === 'contract'
+                ? 'Unresolved contract'
+                : 'Unknown address');
+        const tag = entity.interfaceType?.toUpperCase();
+
+        if (entity.layer === 'dao') {
+            return {
+                label,
+                address,
+                isSentinel: false,
+                type: 'dao',
+                avatarSrc: entity.avatarSrc,
+                detailName: label,
+                layer: entity.layer,
+                status: entity.status,
+            };
+        }
+
+        if (
+            entity.layer === 'topLevelPlugin' ||
+            entity.layer === 'processInternal' ||
+            entity.layer === 'historicalPlugin'
+        ) {
+            return {
+                label,
+                tag,
+                address,
+                isSentinel: false,
+                type: 'plugin',
+                detailName: entity.parentPluginName ?? label,
+                layer: entity.layer,
+                status: entity.status,
+            };
+        }
+
+        return {
+            label,
+            address,
+            isSentinel: false,
+            type: 'address',
+            detailName: addressUtils.truncateAddress(address),
+            layer: entity.layer,
+            status: entity.status,
         };
     };
 

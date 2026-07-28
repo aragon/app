@@ -122,5 +122,29 @@ describe('permissionEntity Utils', () => {
 
             expect(result.detailName).toEqual('Multisig v1.2');
         });
+
+        it('prefers backend-enriched entity metadata over local fallbacks', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        interfaceType: 'tokenVoting',
+                        label: 'Historical Token Voting',
+                        layer: 'historicalPlugin',
+                        status: 'uninstalled',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                label: 'Historical Token Voting',
+                tag: 'TOKENVOTING',
+                type: 'plugin',
+                detailName: 'Historical Token Voting',
+                layer: 'historicalPlugin',
+                status: 'uninstalled',
+            });
+        });
     });
 });
