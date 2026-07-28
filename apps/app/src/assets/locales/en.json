@@ -1348,13 +1348,13 @@
         },
         "proposalTypeField": {
           "approve": {
-            "description": "This body must approve the proposal for the stage to advance.",
-            "label": "Approve"
+            "description": "This body is able to approve the proposal to advance this stage.",
+            "label": "Approval"
           },
-          "helpText": "Choose whether this body approves or vetoes within the stage. A single stage can mix approving and vetoing bodies.",
-          "label": "Body decision",
+          "helpText": "This will determine the role this body play's in the stage's governance.",
+          "label": "Governance type",
           "veto": {
-            "description": "This body can veto the proposal, stopping the stage from advancing.",
+            "description": "This body is able to veto the proposal to prevent it from advancing this stage.",
             "label": "Veto"
           }
         },
@@ -2932,7 +2932,7 @@
       "multisig": {
         "meta": {
           "setup": {
-            "description": "Designated members must reach a minimum approval threshold",
+            "description": "Designated members must reach a minimum threshold",
             "name": "Multisig"
           }
         },
@@ -2993,11 +2993,11 @@
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
-              "majority": "Proposal will be approved by majority",
-              "minority": "Proposals could be approved by a minority rather than a majority."
+              "majority": "Decisions will be made by majority",
+              "minority": "Decisions could be made by a minority rather than a majority."
             },
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
+            "helpText": "At least this many members will have to sign a transaction to make a decision.",
+            "label": "Multisig threshold",
             "total": "of {{total}} addresses"
           },
           "onlyListed": {
