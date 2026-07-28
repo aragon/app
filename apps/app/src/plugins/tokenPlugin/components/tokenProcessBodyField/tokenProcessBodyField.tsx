@@ -9,6 +9,7 @@ import {
     Tag,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { GovernanceBodyDecisionItem } from '@/modules/createDao/components/createProcessForm';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -52,10 +53,14 @@ export interface ITokenProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Stage threshold applying to this body.
+     */
+    stageThreshold?: number;
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
-    const { body, isAdvancedGovernance, daoId } = props;
+    const { body, isAdvancedGovernance, daoId, stageThreshold } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -143,6 +148,11 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
 
     return (
         <DefinitionList.Container className="w-full">
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+                stageThreshold={stageThreshold}
+            />
             {isExisting &&
                 contractInfo.map(
                     ({ term, definition, description, link, copyValue }) => (

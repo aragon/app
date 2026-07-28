@@ -1160,21 +1160,11 @@
             "title": "Stage name"
           },
           "stageSettingsField": {
-            "NORMAL": {
-              "description": "Proposals pass the stage only if approved.",
-              "label": "Approval"
-            },
-            "OPTIMISTIC": {
-              "description": "Proposals pass the stage unless vetoed.",
-              "label": "Veto"
-            },
-            "approvalHelpText": "Proposals pass the stage only if approved.",
             "approvalThreshold": "Approval threshold",
             "earlyAdvance": "Early stage advance",
             "edit": "Edit settings",
             "expiration": "Stage expiration",
             "expirationPeriod": "Expiration period",
-            "governanceType": "Governance type",
             "label": "Settings",
             "no": "Disabled",
             "vetoThreshold": "Veto threshold",

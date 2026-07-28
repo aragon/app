@@ -45,6 +45,11 @@ export interface IGovernanceBodyFieldProps {
      * @default false
      */
     readOnly?: boolean;
+    /**
+     * Stage threshold applying to this body: the approval threshold for
+     * approving bodies, the veto threshold for vetoing bodies.
+     */
+    stageThreshold?: number;
 }
 
 export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
@@ -57,6 +62,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
         onEdit,
         onDelete,
         readOnly = false,
+        stageThreshold,
     } = props;
 
     const { t } = useTranslations();
@@ -79,15 +85,20 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
 
     // Approve/veto is a per-body property of a stage; only relevant for advanced
     // (staged) governance, where a stage can mix approving and vetoing bodies.
-    const isVetoBody = body.proposalType === SppProposalType.VETO;
-    const decisionTag = isAdvancedGovernance ? (
-        <Tag
-            label={t(
-                `app.createDao.setupBodyDialog.proposalTypeField.${isVetoBody ? 'veto' : 'approve'}.label`,
-            )}
-            variant={isVetoBody ? 'warning' : 'info'}
-        />
-    ) : undefined;
+    // The header tag keeps the decision visible while the collapsed cards are
+    // edited in the create flow; read-only pages expand the cards and show the
+    // decision as part of the body details list instead.
+    const bodyDecision =
+        body.proposalType === SppProposalType.VETO ? 'veto' : 'approve';
+    const decisionTag =
+        isAdvancedGovernance && !readOnly ? (
+            <Tag
+                label={t(
+                    `app.createDao.setupBodyDialog.proposalTypeField.${bodyDecision}.label`,
+                )}
+                variant={bodyDecision === 'veto' ? 'warning' : 'info'}
+            />
+        ) : undefined;
 
     return (
         <Accordion.Container
@@ -132,6 +143,7 @@ export const GovernanceBodyField: React.FC<IGovernanceBodyFieldProps> = (
                         slotId={
                             CreateDaoSlotId.CREATE_DAO_PROCESS_BODY_READ_FIELD
                         }
+                        stageThreshold={stageThreshold}
                     />
                     {!readOnly && (
                         <div

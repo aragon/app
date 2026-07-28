@@ -59,11 +59,12 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
     return (
         <div className="flex w-full flex-col items-start gap-1">
             <div className="flex w-full items-center justify-between gap-2">
-                <p className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
-                    {bodyName}
+                {/* The tag renders a div, which is invalid inside a p element. */}
+                <div className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
+                    <p>{bodyName}</p>
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
                     {tag}
-                </p>
+                </div>
                 {address && name != null && name !== '' && (
                     <p className="text-base text-neutral-500 leading-tight md:text-lg">
                         {truncatedAddress}

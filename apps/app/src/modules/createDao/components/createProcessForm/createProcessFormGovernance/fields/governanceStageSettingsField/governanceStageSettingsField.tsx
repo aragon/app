@@ -11,12 +11,12 @@ import type {
     ISetupStageSettingsDialogParams,
     ISetupStageSettingsForm,
 } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 import type { IDateDuration } from '@/shared/utils/dateUtils';
 import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
+import { createProcessFormUtils } from '../../../createProcessFormUtils';
 
 export interface IGovernanceStageSettingsFieldProps {
     /**
@@ -53,18 +53,13 @@ export const GovernanceStageSettingsField: React.FC<
     const { setValue } = useFormContext();
     const { open } = useDialogContext();
 
-    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: `${formPrefix}.bodies`,
-        defaultValue: [],
-    });
-
-    // Approve/veto is a per-body property, so a stage may have approving bodies,
-    // vetoing bodies, or both (mixed). The summary and the settings dialog adapt
-    // to the actual body composition.
-    const vetoingBodyCount = bodies.filter(
-        (body) => body.proposalType === SppProposalType.VETO,
-    ).length;
-    const approvingBodyCount = bodies.length - vetoingBodyCount;
+    // No defaultValue on purpose: with one set, useWatch returns it instead of the
+    // form values until the first subscription update, which never comes on
+    // read-only pages (e.g. process details) where the form is never touched.
+    const bodies =
+        useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
+            name: `${formPrefix}.bodies`,
+        }) ?? [];
 
     const { value: votingPeriod } = useFormField<
         ISetupStageSettingsForm,
@@ -99,18 +94,19 @@ export const GovernanceStageSettingsField: React.FC<
         fieldPrefix,
     });
 
-    // The stored thresholds go stale when the body composition changes without
-    // the settings dialog being reopened: 0 when the stage had no bodies of the
-    // type, or above the body count after bodies are removed. Clamp to
-    // [1, bodyCount] to match what the encoder writes on-chain.
-    const effectiveApprovalThreshold = Math.min(
-        Math.max(approvalThreshold, 1),
-        Math.max(approvingBodyCount, 1),
-    );
-    const effectiveVetoThreshold = Math.min(
-        Math.max(vetoThreshold, 1),
-        Math.max(vetoingBodyCount, 1),
-    );
+    // Approve/veto is a per-body property, so a stage may have approving bodies,
+    // vetoing bodies, or both (mixed). The summary and the settings dialog adapt
+    // to the actual body composition. The thresholds themselves are displayed on
+    // the bodies they apply to, not in the stage settings summary.
+    const {
+        approvingBodyCount,
+        vetoingBodyCount,
+        approvalThreshold: effectiveApprovalThreshold,
+        vetoThreshold: effectiveVetoThreshold,
+    } = createProcessFormUtils.getEffectiveStageThresholds({
+        settings: { approvalThreshold, vetoThreshold },
+        bodies,
+    });
 
     const earlyStageTagValue = earlyStageAdvance ? 'yes' : 'no';
     const earlyStageTagLabel = t(
@@ -156,24 +152,6 @@ export const GovernanceStageSettingsField: React.FC<
             useCustomWrapper={true}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
-                {approvingBodyCount > 0 && (
-                    <DefinitionList.Item
-                        term={t(
-                            'app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold',
-                        )}
-                    >
-                        {effectiveApprovalThreshold}
-                    </DefinitionList.Item>
-                )}
-                {vetoingBodyCount > 0 && (
-                    <DefinitionList.Item
-                        term={t(
-                            'app.createDao.createProcessForm.governance.stageSettingsField.vetoThreshold',
-                        )}
-                    >
-                        {effectiveVetoThreshold}
-                    </DefinitionList.Item>
-                )}
                 <DefinitionList.Item
                     term={t(
                         'app.createDao.createProcessForm.governance.stageSettingsField.votingPeriod',

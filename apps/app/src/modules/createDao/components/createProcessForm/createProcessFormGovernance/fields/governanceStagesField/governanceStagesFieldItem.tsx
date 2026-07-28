@@ -51,10 +51,13 @@ export const GovernanceStagesFieldItem: React.FC<
         formPrefix,
     );
 
-    const bodies = useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
-        name: `${formPrefix}.bodies`,
-        defaultValue: [],
-    });
+    // No defaultValue on purpose: with one set, useWatch returns it instead of the
+    // form values until the first subscription update, which never comes on
+    // read-only pages (e.g. process details) where the form is never touched.
+    const bodies =
+        useWatch<Record<string, ICreateProcessFormStage['bodies']>>({
+            name: `${formPrefix}.bodies`,
+        }) ?? [];
 
     // Only a stage whose bodies are all vetoing is labelled as a veto stage;
     // approve-only and mixed stages use the default label.

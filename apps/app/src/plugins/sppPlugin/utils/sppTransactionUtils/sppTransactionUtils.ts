@@ -5,6 +5,7 @@ import {
     type ICreateProcessFormDataAdvanced,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import { createProcessFormUtils } from '@/modules/createDao/components/createProcessForm/createProcessFormUtils';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
@@ -317,32 +318,16 @@ class SppTransactionUtils {
     ) => {
         // Approval and veto thresholds apply independently and only when the
         // stage actually has bodies of the corresponding type. Timelock stages
-        // (no bodies) therefore end up with both thresholds set to 0.
-        // An unset proposalType defaults to approval.
-        const vetoingBodyCount = bodies.filter(
-            (body) => body.proposalType === SppProposalType.VETO,
-        ).length;
-        const approvingBodyCount = bodies.length - vetoingBodyCount;
-
-        const approvalThreshold = this.clampThreshold(
-            settings.approvalThreshold,
-            approvingBodyCount,
-        );
-        const vetoThreshold = this.clampThreshold(
-            settings.vetoThreshold,
-            vetoingBodyCount,
-        );
+        // (no bodies) therefore end up with both thresholds set to 0. The
+        // shared utility clamps the same way the form displays the thresholds.
+        const { approvalThreshold, vetoThreshold } =
+            createProcessFormUtils.getEffectiveStageThresholds({
+                settings,
+                bodies,
+            });
 
         return { approvalThreshold, vetoThreshold };
     };
-
-    // The form thresholds go stale when the body composition changes without
-    // the stage settings dialog being reopened: a threshold round-trips as 0
-    // when the stage had no bodies of the type, and keeps its old value when
-    // bodies are removed. Clamp to [1, bodyCount] so the requirement is always
-    // satisfiable and effective while bodies of the type exist.
-    private clampThreshold = (threshold: number, bodyCount: number): number =>
-        bodyCount > 0 ? Math.min(Math.max(threshold, 1), bodyCount) : 0;
 
     private processStageTiming = (
         settings: ISetupStageSettingsForm,
