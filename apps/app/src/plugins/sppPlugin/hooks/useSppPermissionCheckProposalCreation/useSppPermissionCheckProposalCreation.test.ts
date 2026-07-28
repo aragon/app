@@ -1,3 +1,4 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import * as useSimulateProposalModule from '@/modules/governance/hooks/useSimulateProposal';
@@ -30,12 +31,27 @@ describe('useSppPermissionCheckProposalCreation', () => {
         pluginRegistryUtils,
         'getSlotFunction',
     );
+    const useBlockExplorerSpy = jest.spyOn(GovUiKit, 'useBlockExplorer');
+
+    const mockChainEntityUrl = jest.fn(
+        ({ type, id }: { type: string; id?: string }) =>
+            `https://etherscan.io/${type}/${id ?? ''}`,
+    );
+
+    beforeEach(() => {
+        useBlockExplorerSpy.mockReturnValue({
+            buildEntityUrl: mockChainEntityUrl,
+            getBlockExplorer: jest.fn(),
+        } as ReturnType<typeof GovUiKit.useBlockExplorer>);
+    });
 
     afterEach(() => {
         useDaoPluginsSpy.mockReset();
         useDaoSpy.mockReset();
         useSimulateProposalCreationSpy.mockReset();
         getSlotFunctionSpy.mockReset();
+        useBlockExplorerSpy.mockReset();
+        mockChainEntityUrl.mockClear();
     });
 
     const createTestParams = (guardResults: IPermissionCheckGuardResult[]) => {
@@ -257,6 +273,10 @@ describe('useSppPermissionCheckProposalCreation', () => {
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                     definition: addressUtils.truncateAddress(safeAddress),
+                    link: {
+                        href: `https://etherscan.io/address/${safeAddress}`,
+                        isExternal: true,
+                    },
                 },
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
@@ -371,6 +391,10 @@ describe('useSppPermissionCheckProposalCreation', () => {
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                     definition: addressUtils.truncateAddress(safeAddress),
+                    link: {
+                        href: `https://etherscan.io/address/${safeAddress}`,
+                        isExternal: true,
+                    },
                 },
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
@@ -420,6 +444,10 @@ describe('useSppPermissionCheckProposalCreation', () => {
                     definition: addressUtils.truncateAddress(
                         externalProposerAddress,
                     ),
+                    link: {
+                        href: `https://etherscan.io/address/${externalProposerAddress}`,
+                        isExternal: true,
+                    },
                 },
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
@@ -498,6 +526,10 @@ describe('useSppPermissionCheckProposalCreation', () => {
                     definition: addressUtils.truncateAddress(
                         externalProposerAddress,
                     ),
+                    link: {
+                        href: `https://etherscan.io/address/${externalProposerAddress}`,
+                        isExternal: true,
+                    },
                 },
                 {
                     term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',

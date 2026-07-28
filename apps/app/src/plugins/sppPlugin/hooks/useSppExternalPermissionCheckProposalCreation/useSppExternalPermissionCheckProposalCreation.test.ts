@@ -1,12 +1,42 @@
+import * as GovUiKit from '@aragon/gov-ui-kit';
 import { addressUtils } from '@aragon/gov-ui-kit';
 import { renderHook } from '@testing-library/react';
 import type { IPermissionCheckGuardParams } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
+import * as daoService from '@/shared/api/daoService';
+import {
+    generateDao,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import { generateSppStagePlugin } from '../../testUtils';
 import { VotingBodyBrandIdentity } from '../../types';
 import { useSppExternalPermissionCheckProposalCreation } from './useSppExternalPermissionCheckProposalCreation';
 
 describe('useSppExternalPermissionCheckProposalCreation', () => {
+    const useDaoSpy = jest.spyOn(daoService, 'useDao');
+    const useBlockExplorerSpy = jest.spyOn(GovUiKit, 'useBlockExplorer');
+
+    const mockChainEntityUrl = jest.fn(
+        ({ type, id }: { type: string; id?: string }) =>
+            `https://etherscan.io/${type}/${id ?? ''}`,
+    );
+
+    beforeEach(() => {
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: generateDao() }),
+        );
+        useBlockExplorerSpy.mockReturnValue({
+            buildEntityUrl: mockChainEntityUrl,
+            getBlockExplorer: jest.fn(),
+        } as ReturnType<typeof GovUiKit.useBlockExplorer>);
+    });
+
+    afterEach(() => {
+        useDaoSpy.mockReset();
+        useBlockExplorerSpy.mockReset();
+        mockChainEntityUrl.mockClear();
+    });
+
     const createParams = (
         plugin: Partial<Parameters<typeof generateSppStagePlugin>[0]>,
     ): IPermissionCheckGuardParams => ({
@@ -38,6 +68,10 @@ describe('useSppExternalPermissionCheckProposalCreation', () => {
                     {
                         term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.pluginLabelName',
                         definition: addressUtils.truncateAddress(safeAddress),
+                        link: {
+                            href: `https://etherscan.io/address/${safeAddress}`,
+                            isExternal: true,
+                        },
                     },
                     {
                         term: 'app.plugins.spp.sppExternalPermissionCheckProposalCreation.function',
