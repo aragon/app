@@ -4,6 +4,7 @@ import {
     type EdgeProps,
     getSmoothStepPath,
     getStraightPath,
+    type Position,
 } from '@xyflow/react';
 
 export interface IPermissionEdgeEntry {
@@ -29,31 +30,68 @@ export interface IPermissionEdgeData {
 
 export type IPermissionFlowEdge = Edge<IPermissionEdgeData, 'permission'>;
 
-export const PermissionGraphEdge: React.FC<EdgeProps<IPermissionFlowEdge>> = ({
+interface IGetPermissionEdgePathParams {
+    sourceX: number;
+    sourceY: number;
+    targetX: number;
+    targetY: number;
+    sourcePosition?: Position;
+    targetPosition?: Position;
+    visualKind: PermissionEdgeVisualKind;
+}
+const DEGENERATE_CURVE_REGEX = /Q (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) \1,\2/g;
+
+const removeDegenerateCurves = (path: string): string =>
+    path.replaceAll(DEGENERATE_CURVE_REGEX, '');
+
+export const getPermissionEdgePath = ({
     sourceX,
     sourceY,
     targetX,
     targetY,
     sourcePosition,
     targetPosition,
+    visualKind,
+}: IGetPermissionEdgePathParams): string => {
+    if (visualKind === 'incoming') {
+        const [path] = getSmoothStepPath({
+            sourceX,
+            sourceY,
+            targetX,
+            targetY,
+            sourcePosition,
+            targetPosition,
+            borderRadius: 0,
+        });
+
+        return removeDegenerateCurves(path);
+    }
+
+    return getStraightPath({ sourceX, sourceY, targetX, targetY })[0];
+};
+
+export const PermissionGraphEdge: React.FC<EdgeProps<IPermissionFlowEdge>> = ({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
     markerStart,
     markerEnd,
     style,
+    sourcePosition,
+    targetPosition,
     data,
 }) => {
     const visualKind = data?.visualKind ?? 'other';
-    const [edgePath] =
-        visualKind === 'self'
-            ? getStraightPath({ sourceX, sourceY, targetX, targetY })
-            : getSmoothStepPath({
-                  sourceX,
-                  sourceY,
-                  targetX,
-                  targetY,
-                  sourcePosition,
-                  targetPosition,
-                  borderRadius: 16,
-              });
+    const edgePath = getPermissionEdgePath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        visualKind,
+    });
 
     return (
         <BaseEdge

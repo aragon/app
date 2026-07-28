@@ -167,6 +167,75 @@ const getNodeRect = (node: Node) => {
     };
 };
 
+const getNodeCenter = (node: Node): { x: number; y: number } => {
+    const rect = getNodeRect(node);
+
+    return {
+        x: rect.x + rect.width / 2,
+        y: rect.y + rect.height / 2,
+    };
+};
+
+const getFacingHandles = (
+    sourceNode: Node,
+    targetNode: Node,
+): {
+    sourceHandle: string;
+    targetHandle: string;
+} => {
+    const sourceCenter = getNodeCenter(sourceNode);
+    const targetCenter = getNodeCenter(targetNode);
+    const deltaX = targetCenter.x - sourceCenter.x;
+    const deltaY = targetCenter.y - sourceCenter.y;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        return deltaX > 0
+            ? {
+                  sourceHandle: PERMISSION_GRAPH_HANDLE.sourceRight,
+                  targetHandle: PERMISSION_GRAPH_HANDLE.targetLeft,
+              }
+            : {
+                  sourceHandle: PERMISSION_GRAPH_HANDLE.sourceLeft,
+                  targetHandle: PERMISSION_GRAPH_HANDLE.targetRight,
+              };
+    }
+
+    return deltaY > 0
+        ? {
+              sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+              targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+          }
+        : {
+              sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+              targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+          };
+};
+
+export const alignEdgesWithNodePositions = (
+    nodes: Node[],
+    edges: Edge[],
+): Edge[] => {
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+
+    return edges.map((edge) => {
+        if (edge.data?.visualKind === 'incoming') {
+            return edge;
+        }
+
+        const sourceNode = nodeById.get(edge.source);
+        const targetNode = nodeById.get(edge.target);
+
+        if (sourceNode == null || targetNode == null) {
+            return edge;
+        }
+
+        return {
+            ...edge,
+            ...getFacingHandles(sourceNode, targetNode),
+        };
+    });
+};
+
 const getGraphBounds = (nodes: Node[]) => {
     const rects = nodes.map(getNodeRect);
 
@@ -181,6 +250,24 @@ const getGraphBounds = (nodes: Node[]) => {
         width: maxX - minX,
         height: maxY - minY,
     };
+};
+
+interface IFitViewRect {
+    width: number;
+    height: number;
+}
+
+export const getFitViewMinZoom = (
+    bounds: IFitViewRect,
+    container: IFitViewRect,
+): number => {
+    const widthFitZoom = container.width / bounds.width;
+    const heightFitZoom = container.height / bounds.height;
+    const requiredFitZoom = Math.min(widthFitZoom, heightFitZoom);
+
+    return requiredFitZoom < READABLE_FIT_MIN_ZOOM
+        ? MIN_ZOOM
+        : READABLE_FIT_MIN_ZOOM;
 };
 
 export const positionSelfStacks = (nodes: Node[]): Node[] => {
@@ -230,7 +317,22 @@ const edgeActiveStyle = {
 const getEdgeVisualKind = (
     source: string,
     target: string,
-): PermissionEdgeVisualKind => (source === target ? 'self' : 'other');
+    anchorId: string,
+): PermissionEdgeVisualKind => {
+    if (source === target) {
+        return 'self';
+    }
+
+    if (target === anchorId) {
+        return 'incoming';
+    }
+
+    if (source === anchorId) {
+        return 'outgoing';
+    }
+
+    return 'other';
+};
 
 const getOriginMarker = (active: boolean) =>
     active ? EDGE_ORIGIN_MARKER_ACTIVE : EDGE_ORIGIN_MARKER_NEUTRAL;
@@ -269,8 +371,6 @@ export const buildFlowElements = ({
         selectedEdgeId != null
             ? visibleEdges.find((edge) => edge.id === selectedEdgeId)
             : undefined;
-
-    const graphNodeById = new Map(graph.nodes.map((node) => [node.id, node]));
 
     const graphFlow = getGraphFlow(visibleEdges, anchorId);
     const handlePositions = getHandlePositions(graphFlow);
@@ -339,11 +439,13 @@ export const buildFlowElements = ({
         const dimmed =
             (selectedEdge != null && !active) ||
             (selectedNodeId != null && !isConnectedToSelectedNode);
-        const visualKind = getEdgeVisualKind(group.source, group.target);
+        const visualKind = getEdgeVisualKind(
+            group.source,
+            group.target,
+            anchorId,
+        );
         const stackId = `permission-stack-${pairKey(group.source, group.target)}`;
         const isSelfEdge = visualKind === 'self';
-        const isCoreDaoSelfEdge =
-            isSelfEdge && graphNodeById.get(group.target)?.kind === 'dao';
         const edgeData = {
             visualKind,
             ...(isSelfEdge ? { selfTargetId: group.target } : {}),
@@ -370,13 +472,9 @@ export const buildFlowElements = ({
             edges.push({
                 id: `${stackId}-self`,
                 source: stackId,
-                sourceHandle: isCoreDaoSelfEdge
-                    ? PERMISSION_GRAPH_HANDLE.sourceTop
-                    : PERMISSION_GRAPH_HANDLE.sourceBottom,
+                sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
                 target: group.target,
-                targetHandle: isCoreDaoSelfEdge
-                    ? PERMISSION_GRAPH_HANDLE.targetBottom
-                    : PERMISSION_GRAPH_HANDLE.targetTop,
+                targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
                 type: 'permission',
                 animated: active,
                 markerEnd: getEdgeMarker(active),
@@ -474,7 +572,10 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             bounds,
             container.clientWidth,
             container.clientHeight,
-            READABLE_FIT_MIN_ZOOM,
+            getFitViewMinZoom(bounds, {
+                width: container.clientWidth,
+                height: container.clientHeight,
+            }),
             MAX_ZOOM,
             FIT_PADDING,
         );
@@ -539,11 +640,12 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             },
         );
         const layoutedNodes = positionSelfStacks(rawLayoutedNodes);
+        const alignedEdges = alignEdgesWithNodePositions(layoutedNodes, edges);
 
         layoutSignature.current = topologySignature;
         graphBounds.current = getGraphBounds(layoutedNodes);
         setNodes(layoutedNodes);
-        setEdges(edges);
+        setEdges(alignedEdges);
         setLayoutVersion((version) => version + 1);
     }, [
         anchorId,

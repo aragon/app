@@ -1,8 +1,10 @@
-import type { Node } from '@xyflow/react';
+import type { Edge, Node } from '@xyflow/react';
 import type { IPermissionGraph, IPermissionGraphEdge } from '../../types';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNode';
 import {
+    alignEdgesWithNodePositions,
     buildFlowElements,
+    getFitViewMinZoom,
     getLayoutDirection,
     getVisibleEdges,
     positionSelfStacks,
@@ -77,6 +79,26 @@ describe('getLayoutDirection', () => {
     });
 });
 
+describe('getFitViewMinZoom', () => {
+    it('uses the readable zoom for compact graphs', () => {
+        expect(
+            getFitViewMinZoom(
+                { width: 800, height: 400 },
+                { width: 1200, height: 640 },
+            ),
+        ).toBe(0.45);
+    });
+
+    it('allows full fit zoom for wide supporting graphs', () => {
+        expect(
+            getFitViewMinZoom(
+                { width: 5000, height: 800 },
+                { width: 1200, height: 640 },
+            ),
+        ).toBe(0.2);
+    });
+});
+
 describe('buildFlowElements', () => {
     it('uses incoming handles when only plugin-to-DAO rows are visible', () => {
         const incomingEdge = buildEdge('incoming', {
@@ -130,7 +152,7 @@ describe('positionSelfStacks', () => {
         expect(positionedStack.position.y).toBeLessThan(daoY);
     });
 
-    it('connects core DAO self-permission stacks to the DAO bottom handle', () => {
+    it('connects core DAO self-permission stacks from stack bottom to DAO top', () => {
         const graph: IPermissionGraph = {
             nodes: [
                 {
@@ -156,6 +178,97 @@ describe('positionSelfStacks', () => {
         });
 
         expect(result.edges[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+    });
+});
+
+describe('alignEdgesWithNodePositions', () => {
+    const buildFlowNode = (
+        id: string,
+        position: Node['position'],
+        measured: NonNullable<Node['measured']>,
+    ): Node => ({
+        id,
+        data: {},
+        measured,
+        position,
+    });
+
+    it('uses side handles for horizontal edges', () => {
+        const edges: Edge[] = [
+            {
+                id: 'edge',
+                source: 'source',
+                target: 'target',
+            },
+        ];
+        const nodes = [
+            buildFlowNode('source', { x: 0, y: 0 }, { width: 100, height: 80 }),
+            buildFlowNode(
+                'target',
+                { x: 300, y: 0 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceRight,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetLeft,
+        });
+    });
+
+    it('uses vertical handles when the target is below the source', () => {
+        const edges: Edge[] = [
+            {
+                id: 'edge',
+                source: 'source',
+                target: 'target',
+            },
+        ];
+        const nodes = [
+            buildFlowNode('source', { x: 0, y: 0 }, { width: 100, height: 40 }),
+            buildFlowNode(
+                'target',
+                { x: 0, y: 200 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+    });
+
+    it('preserves incoming trident handles during post-layout alignment', () => {
+        const edges: Edge[] = [
+            {
+                id: 'incoming',
+                source: 'source',
+                sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+                target: 'target',
+                targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+                data: { visualKind: 'incoming' },
+            },
+        ];
+        const nodes = [
+            buildFlowNode('source', { x: 0, y: 0 }, { width: 100, height: 80 }),
+            buildFlowNode(
+                'target',
+                { x: 300, y: 0 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
             sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
             targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
         });
