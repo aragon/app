@@ -102,22 +102,27 @@ const collectScopedCommits = ({
         '--pretty=format:%H%x00%s',
     ]);
 
-    return log
-        .split('\n')
-        .filter(Boolean)
-        .map((line) => {
-            const [commit, subject] = line.split('\0');
-            return { commit, subject };
-        })
-        .filter(
-            ({ commit, subject }) =>
-                !RELEASE_COMMIT_RE.test(subject) &&
-                commitMatchesPathFilter(commit, patterns, git),
-        )
-        .map(({ commit, subject }) => ({
-            commit,
-            subject: resolveCommitTitle(commit, subject, git),
-        }));
+    return (
+        log
+            .split('\n')
+            .filter(Boolean)
+            .map((line) => {
+                const [commit, subject] = line.split('\0');
+                return { commit, subject };
+            })
+            // Resolve titles before filtering: a release PR merged with GitHub's default
+            // merge subject only reveals its "Release @aragon/…" title after resolution,
+            // and RELEASE_COMMIT_RE must see that title to drop the commit.
+            .map(({ commit, subject }) => ({
+                commit,
+                subject: resolveCommitTitle(commit, subject, git),
+            }))
+            .filter(
+                ({ commit, subject }) =>
+                    !RELEASE_COMMIT_RE.test(subject) &&
+                    commitMatchesPathFilter(commit, patterns, git),
+            )
+    );
 };
 
 // Helper to fetch Linear issue details

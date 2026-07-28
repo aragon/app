@@ -122,6 +122,25 @@ test('keeps release-window commits and excludes everything the tag already ships
             '{"version":"0.2.0"}',
             'Release @aragon/assistant@0.2.0',
         );
+        // A release PR merged with GitHub's default merge subject only reveals its
+        // release title in the body: it must be dropped after title resolution.
+        git(repository, ['checkout', '-b', 'release/assistant/0.3.0']);
+        commitFile(
+            repository,
+            'packages/assistant-chat/package.json',
+            '{"version":"0.3.0"}',
+            'version packages',
+        );
+        git(repository, ['checkout', 'main']);
+        git(repository, [
+            'merge',
+            '--no-ff',
+            'release/assistant/0.3.0',
+            '-m',
+            'Merge pull request #44 from release/assistant/0.3.0',
+            '-m',
+            'Release @aragon/assistant@0.3.0',
+        ]);
 
         git(repository, ['checkout', '-b', 'feature/multi-commit']);
         commitFile(
