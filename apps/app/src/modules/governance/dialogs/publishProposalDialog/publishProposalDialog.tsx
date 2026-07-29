@@ -184,6 +184,10 @@ export const PublishProposalDialog: React.FC<IPublishProposalDialogProps> = (
 
     return (
         <TransactionDialog<PublishProposalStep>
+            analytics={{
+                flow: 'create_proposal',
+                transactionKind: 'governance_proposal_create',
+            }}
             customSteps={customSteps}
             description={t(`${namespace}.description`)}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, 'proposals')}

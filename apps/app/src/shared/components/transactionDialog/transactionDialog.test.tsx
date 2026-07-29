@@ -22,6 +22,7 @@ import {
     PendingTransactionStatus,
     pendingTransactionManager,
 } from '@/shared/utils/pendingTransactionManager';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IStepperStep } from '@/shared/utils/stepperUtils';
 import { TransactionDialog } from './transactionDialog';
 import {
@@ -65,6 +66,7 @@ describe('<TransactionDialog /> component', () => {
     const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
     const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
     const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
+    const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue(
@@ -84,6 +86,7 @@ describe('<TransactionDialog /> component', () => {
         managerSendSpy.mockImplementation(() => undefined);
         managerClearSpy.mockImplementation(() => undefined);
         managerGetSpy.mockReturnValue(undefined);
+        trackAnalyticsSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
@@ -97,6 +100,7 @@ describe('<TransactionDialog /> component', () => {
         managerSendSpy.mockReset();
         managerClearSpy.mockReset();
         managerGetSpy.mockReset();
+        trackAnalyticsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -217,6 +221,52 @@ describe('<TransactionDialog /> component', () => {
                 onError: expect.any(Function) as unknown,
             }),
         );
+    });
+
+    it('keeps the automatic step action scheduled when analytics props are recreated', () => {
+        jest.useFakeTimers();
+
+        const stepAction = jest.fn();
+        const steps = [
+            {
+                id: TransactionDialogStep.PREPARE,
+                meta: {
+                    label: 'prepare',
+                    action: stepAction,
+                    auto: true,
+                    state: 'idle',
+                },
+            },
+        ] as unknown as IStepperStep<ITransactionDialogStepMeta>[];
+        const stepper = generateStepperResult({
+            steps,
+            activeStep: TransactionDialogStep.PREPARE,
+            activeStepIndex: 0,
+        });
+
+        try {
+            const { rerender } = render(
+                createTestComponent({
+                    analytics: { flow: 'create_dao' },
+                    stepper,
+                }),
+            );
+
+            act(() => jest.advanceTimersByTime(50));
+            rerender(
+                createTestComponent({
+                    analytics: { flow: 'create_dao' },
+                    stepper,
+                }),
+            );
+            act(() => jest.advanceTimersByTime(50));
+
+            expect(stepAction).toHaveBeenCalledWith({
+                onError: expect.any(Function) as unknown,
+            });
+        } finally {
+            jest.useRealTimers();
+        }
     });
 
     it('does not trigger the step action when its auto property is set to false', async () => {
@@ -361,6 +411,85 @@ describe('<TransactionDialog /> component', () => {
             expect.objectContaining(transaction),
             undefined,
         );
+    });
+
+    it('tracks a transaction start when the approve step sends the request', () => {
+        const transaction = { from: '0x123', data: '0x000' };
+        const network = Network.POLYGON_MAINNET;
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[network].id,
+        } as unknown as Wagmi.UseConnectionReturnType);
+        useMutationSpy.mockReturnValue({
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
+
+        render(
+            createTestComponent({
+                analytics: {
+                    flow: 'create_proposal',
+                    transactionKind: 'governance_proposal_create',
+                },
+                stepper,
+                network,
+                transactionType: TransactionType.PROPOSAL_CREATE,
+                intent: { id: 'intent' },
+            }),
+        );
+
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
+        act(() => approveStepAction?.({ onError: jest.fn() }));
+
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_start', {
+            flow: 'create_proposal',
+            transactionKind: 'governance_proposal_create',
+            transactionType: TransactionType.PROPOSAL_CREATE,
+            network,
+            chainId: networkDefinitions[network].id,
+            attemptKind: 'new',
+        });
+    });
+
+    it('does not track a transaction start when analytics are not configured', () => {
+        const transaction = { from: '0x123', data: '0x000' };
+        const network = Network.POLYGON_MAINNET;
+        useConnectionSpy.mockReturnValue({
+            chainId: networkDefinitions[network].id,
+        } as unknown as Wagmi.UseConnectionReturnType);
+        useMutationSpy.mockReturnValue({
+            data: transaction,
+        } as unknown as ReactQuery.UseMutationResult);
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
+
+        render(
+            createTestComponent({
+                stepper,
+                network,
+                transactionType: TransactionType.PROPOSAL_CREATE,
+                intent: { id: 'intent' },
+            }),
+        );
+
+        const { action: approveStepAction } =
+            updateSteps.mock.calls[0][0][1].meta;
+        act(() => approveStepAction?.({ onError: jest.fn() }));
+
+        expect(trackAnalyticsSpy).not.toHaveBeenCalled();
     });
 
     it('derives an intent id from the prepared transaction when none is provided', () => {
@@ -619,6 +748,38 @@ describe('<TransactionDialog /> component', () => {
             from: address,
             transaction: undefined,
         });
+        expect(trackAnalyticsSpy).not.toHaveBeenCalled();
+    });
+
+    it('tracks a transaction failure without sending the raw error', () => {
+        const error = new Error('RPC exploded');
+        const waitTxError = {
+            queryKey: [''],
+            ...generateReactQueryResultError({ error }),
+        };
+        useWaitForTransactionReceiptSpy.mockReturnValue(
+            waitTxError as unknown as Wagmi.UseWaitForTransactionReceiptReturnType,
+        );
+
+        render(
+            createTestComponent({
+                analytics: {
+                    flow: 'create_proposal',
+                    transactionKind: 'governance_proposal_create',
+                },
+                transactionType: TransactionType.PROPOSAL_CREATE,
+            }),
+        );
+
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_failed', {
+            flow: 'create_proposal',
+            transactionKind: 'governance_proposal_create',
+            transactionType: TransactionType.PROPOSAL_CREATE,
+            network: Network.ETHEREUM_MAINNET,
+            chainId: networkDefinitions[Network.ETHEREUM_MAINNET].id,
+            step: TransactionDialogStep.CONFIRM,
+            errorClass: 'Error',
+        });
     });
 
     it('overrides the approve error label for a known wallet error', () => {
@@ -809,6 +970,7 @@ describe('<TransactionDialog /> onIndexed callback', () => {
     const managerSendSpy = jest.spyOn(pendingTransactionManager, 'send');
     const managerClearSpy = jest.spyOn(pendingTransactionManager, 'clear');
     const managerGetSpy = jest.spyOn(pendingTransactionManager, 'get');
+    const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
 
     beforeEach(() => {
         useSendTransactionSpy.mockReturnValue(
@@ -832,6 +994,7 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         useTransactionStatusSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: { isProcessed: false } }),
         );
+        trackAnalyticsSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
@@ -845,6 +1008,7 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         managerClearSpy.mockReset();
         managerGetSpy.mockReset();
         useTransactionStatusSpy.mockReset();
+        trackAnalyticsSpy.mockReset();
     });
 
     const createTestComponent = (props?: Partial<ITransactionDialogProps>) => {
@@ -882,6 +1046,10 @@ describe('<TransactionDialog /> onIndexed callback', () => {
         );
 
         const propsWithCallback: Partial<ITransactionDialogProps> = {
+            analytics: {
+                flow: 'create_proposal',
+                transactionKind: 'governance_proposal_create',
+            },
             onIndexed,
         };
 
@@ -903,6 +1071,14 @@ describe('<TransactionDialog /> onIndexed callback', () => {
 
         expect(onIndexed).toHaveBeenCalledTimes(1);
         expect(onIndexed).toHaveBeenCalledWith({ slug: 'abc' });
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_end', {
+            flow: 'create_proposal',
+            transactionKind: 'governance_proposal_create',
+            transactionType: TransactionType.PROPOSAL_CREATE,
+            chainId: networkDefinitions[Network.ETHEREUM_MAINNET].id,
+            network: Network.ETHEREUM_MAINNET,
+            status: 'indexed',
+        });
 
         // React Query polling can replace the status object, and consumers can pass
         // inline callbacks. Neither should trigger the callback a second time.
@@ -945,5 +1121,6 @@ describe('<TransactionDialog /> onIndexed callback', () => {
 
         // Dialog survives the indexed signal with no callback attached.
         expect(screen.getByTestId('footer-mock')).toBeInTheDocument();
+        expect(trackAnalyticsSpy).not.toHaveBeenCalled();
     });
 });

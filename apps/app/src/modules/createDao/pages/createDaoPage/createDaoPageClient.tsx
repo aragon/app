@@ -6,7 +6,7 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import { analyticsUtils } from '@/shared/utils/analyticsUtils';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import {
     CreateDaoForm,
     type ICreateDaoFormData,
@@ -27,13 +27,17 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
     const handleFormSubmit = (values: ICreateDaoFormData) => {
-        analyticsUtils.trackEvent('Publish DAO Click', {
-            network: values.network,
-        });
-
         const params: IPublishDaoDialogParams = { values };
         checkWalletConnection({
-            onSuccess: () => open(CreateDaoDialogId.PUBLISH_DAO, { params }),
+            onSuccess: () => {
+                plausibleAnalyticsUtils.track('wizard_submit', {
+                    flow: 'create_dao',
+                    network: values.network,
+                    hasEns: values.ens !== '',
+                    hasAvatar: values.avatar != null,
+                });
+                open(CreateDaoDialogId.PUBLISH_DAO, { params });
+            },
         });
     };
 
@@ -51,6 +55,7 @@ export const CreateDaoPageClient: React.FC<ICreateDaoPageClientProps> = () => {
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
+                analytics={{ flow: 'create_dao' }}
                 finalStep={t('app.createDao.createDaoPage.finalStep')}
                 initialSteps={processedSteps}
                 onSubmit={handleFormSubmit}
