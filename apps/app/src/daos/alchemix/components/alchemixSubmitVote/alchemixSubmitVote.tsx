@@ -4,10 +4,12 @@ import {
     addressUtils,
     Button,
     Card,
-    CheckboxCard,
+    ChainEntityType,
     formatterUtils,
+    IconType,
     MemberAvatar,
     NumberFormat,
+    Switch,
     Tag,
     type TagVariant,
     type VoteIndicator,
@@ -21,23 +23,25 @@ import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog'
 import { useUserVote } from '@/modules/governance/hooks/useUserVote';
 import {
     type IDisabledVotingOption,
+    TokenSubmitVoteDefault,
     TokenVotingOptions,
 } from '@/plugins/tokenPlugin/components/tokenSubmitVote';
 import type { ITokenProposal, ITokenVote } from '@/plugins/tokenPlugin/types';
 import { VoteOption } from '@/plugins/tokenPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useAlchemixOverrideStatus } from '../../hooks/useAlchemixOverrideStatus';
 import type { IAlchemixVoteOption } from '../../utils/alchemixTransactionUtils';
 
-export interface IAlchemixSubmitVoteOverrideProps {
+export interface IAlchemixSubmitVoteProps {
     /**
      * ID of the DAO the proposal belongs to.
      */
     daoId: string;
     /**
-     * Proposal to override the delegate vote for.
+     * Proposal to submit the vote for.
      */
     proposal: ITokenProposal;
     /**
@@ -52,9 +56,9 @@ const voteOptionToIndicator: Record<string, VoteIndicator> = {
     [VoteOption.NO.toString()]: 'no',
 };
 
-export const AlchemixSubmitVoteOverride: React.FC<
-    IAlchemixSubmitVoteOverrideProps
-> = (props) => {
+export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
+    props,
+) => {
     const { daoId, proposal, isVeto } = props;
     const { pluginAddress, network, proposalIndex, settings } = proposal;
     const { token } = settings;
@@ -78,6 +82,8 @@ export const AlchemixSubmitVoteOverride: React.FC<
         delegateeVoteRecord,
         canOverride,
         canVote,
+        isLoading,
+        isError,
         refetch,
     } = useAlchemixOverrideStatus({
         proposalIndex,
@@ -88,32 +94,56 @@ export const AlchemixSubmitVoteOverride: React.FC<
 
     const { data: delegateeEnsName } = useEnsName(delegatee);
     const { data: delegateeEnsAvatar } = useEnsAvatar(delegateeEnsName);
+    const { data: userEnsName } = useEnsName(address);
+    const { data: userEnsAvatar } = useEnsAvatar(userEnsName);
 
     const latestVote = useUserVote<ITokenVote>({ proposal, network });
+
+    const { buildEntityUrl } = useDaoChain({ network });
+    const latestVoteTxHref = buildEntityUrl({
+        type: ChainEntityType.TRANSACTION,
+        id: latestVote?.transactionHash,
+    });
 
     const [showOptions, setShowOptions] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string | undefined>(
         undefined,
     );
-    const [alsoVote, setAlsoVote] = useState(false);
+    const [alsoVote, setAlsoVote] = useState(true);
 
     const hasOverridden = userVoteRecord?.hasOverridden === true;
-    const overrideOption = hasOverridden
-        ? userVoteRecord.voteOption
-        : undefined;
+    // The user's position on the proposal is tracked through the contract flags and not through the indexed votes:
+    // the plugin also emits a vote-cast event for a pure override, which must not be displayed as a normal vote.
+    const hasPosition =
+        hasOverridden || userVoteRecord?.votedWithDelegatedVp === true;
+    const positionOption = userVoteRecord?.voteOption;
     const delegateeVoteOption = delegateeVoteRecord?.voteOption;
 
     // The vote records are read from the chain while the vote list is indexed by the backend, refetch the reads as
-    // soon as the indexed user vote changes to keep both in sync after an override.
+    // soon as the indexed user vote changes to keep both in sync after a vote, and close the vote options to
+    // display the updated position.
     const latestVoteTransactionHash = latestVote?.transactionHash;
     useEffect(() => {
         if (latestVoteTransactionHash != null) {
             refetch();
+            setShowOptions(false);
+            setSelectedOption(undefined);
         }
     }, [latestVoteTransactionHash, refetch]);
 
-    if (address == null || plugin == null || !isEligible) {
+    // Fall back to the default token-voting controls when the override feature does not apply to the connected
+    // user or its status cannot be resolved. While the status is loading, render nothing to avoid briefly showing
+    // the default controls to a user that is only allowed to override.
+    if (address == null || plugin == null || isError) {
+        return <TokenSubmitVoteDefault {...props} />;
+    }
+
+    if (isLoading) {
         return null;
+    }
+
+    if (!isEligible) {
+        return <TokenSubmitVoteDefault {...props} />;
     }
 
     const getOptionLabel = (option: VoteOption) =>
@@ -131,30 +161,41 @@ export const AlchemixSubmitVoteOverride: React.FC<
         formatUnits(delegatedVotingPower ?? BigInt(0), token.decimals),
         { format: NumberFormat.TOKEN_AMOUNT_SHORT },
     );
+    const formattedPositionPower = formatterUtils.formatNumber(
+        formatUnits(userVoteRecord?.votingPower ?? BigInt(0), token.decimals),
+        { format: NumberFormat.TOKEN_AMOUNT_SHORT },
+    );
     const delegateeName =
         delegateeEnsName ?? addressUtils.truncateAddress(delegatee);
+    const userName = userEnsName ?? addressUtils.truncateAddress(address);
 
     const disabledOptions: IDisabledVotingOption[] = [];
 
-    if (hasOverridden && overrideOption != null) {
+    if (positionOption != null) {
         disabledOptions.push({
-            value: overrideOption.toString(),
+            value: positionOption.toString(),
             reason: t(
-                'app.daos.alchemix.alchemixSubmitVoteOverride.options.currentOverride',
+                'app.daos.alchemix.alchemixSubmitVote.options.currentVote',
             ),
         });
-    } else if (!hasOverridden && delegateeVoteOption != null) {
+    }
+
+    if (
+        !hasOverridden &&
+        delegateeVoteOption != null &&
+        delegateeVoteOption !== positionOption
+    ) {
         disabledOptions.push({
             value: delegateeVoteOption.toString(),
             reason: t(
-                'app.daos.alchemix.alchemixSubmitVoteOverride.options.alreadyCounted',
+                'app.daos.alchemix.alchemixSubmitVote.options.alreadyCounted',
                 { option: getOptionLabel(delegateeVoteOption) },
             ),
         });
     }
 
     const isSelectionValid =
-        selectedOption != null &&
+        !!selectedOption &&
         !disabledOptions.some((option) => option.value === selectedOption);
 
     const openTransactionDialog = () => {
@@ -184,13 +225,13 @@ export const AlchemixSubmitVoteOverride: React.FC<
 
     const resetVoteOptions = () => {
         setSelectedOption(undefined);
-        setAlsoVote(false);
+        setAlsoVote(true);
         setShowOptions(false);
     };
 
     // After an override the delegated power no longer counts toward the delegate's vote, and a fully overridden
     // delegate vote is even removed from the vote records — describe the delegate status accordingly instead of
-    // stating that the delegate holds (or voted with) the user's tokens.
+    // stating that the delegate votes with the user's tokens.
     const delegateeStatusKey = hasOverridden
         ? delegateeVoteOption != null
             ? 'delegateVotedOverridden'
@@ -198,6 +239,19 @@ export const AlchemixSubmitVoteOverride: React.FC<
         : delegateeVoteOption != null
           ? 'delegateVoted'
           : 'delegateNotVoted';
+
+    // The contract records a single position per account: a normal vote and an override always share one vote
+    // option and only differ in the power sources counted for it — describe the position accordingly.
+    const positionInfo = hasOverridden
+        ? t('app.daos.alchemix.alchemixSubmitVote.position.overrode', {
+              amount: formattedPositionPower,
+              symbol: token.symbol,
+              delegate: delegateeName,
+          })
+        : t('app.daos.alchemix.alchemixSubmitVote.position.voted', {
+              amount: formattedPositionPower,
+              symbol: token.symbol,
+          });
 
     const delegateeInfo = (
         <div className="flex items-center gap-3">
@@ -213,14 +267,14 @@ export const AlchemixSubmitVoteOverride: React.FC<
                     </p>
                     <Tag
                         label={t(
-                            'app.daos.alchemix.alchemixSubmitVoteOverride.delegateTag',
+                            'app.daos.alchemix.alchemixSubmitVote.delegateTag',
                         )}
                         variant="primary"
                     />
                 </div>
                 <p className="text-neutral-500 text-sm leading-tight">
                     {t(
-                        `app.daos.alchemix.alchemixSubmitVoteOverride.${delegateeStatusKey}`,
+                        `app.daos.alchemix.alchemixSubmitVote.${delegateeStatusKey}`,
                         {
                             amount: formattedDelegatedPower,
                             symbol: token.symbol,
@@ -240,60 +294,90 @@ export const AlchemixSubmitVoteOverride: React.FC<
     return (
         <Card className="flex flex-col gap-4 border border-neutral-100 p-4 shadow-neutral-sm md:p-6">
             {delegateeInfo}
-            {hasOverridden && overrideOption != null && !showOptions && (
+            {hasPosition && !showOptions && (
                 <div className="flex items-center gap-3 border-neutral-100 border-t pt-4">
-                    <MemberAvatar address={address} size="md" />
+                    <MemberAvatar
+                        address={address}
+                        avatarSrc={userEnsAvatar ?? undefined}
+                        size="md"
+                    />
                     <div className="flex min-w-0 grow flex-col gap-0.5">
                         <div className="flex items-center gap-2">
                             <p className="truncate font-semibold text-base text-neutral-800 leading-tight">
-                                {addressUtils.truncateAddress(address)}
+                                {userName}
                             </p>
                             <Tag
                                 label={t(
-                                    'app.daos.alchemix.alchemixSubmitVoteOverride.youTag',
+                                    'app.daos.alchemix.alchemixSubmitVote.youTag',
                                 )}
                                 variant="neutral"
                             />
                         </div>
                         <p className="text-neutral-500 text-sm leading-tight">
-                            {t(
-                                'app.daos.alchemix.alchemixSubmitVoteOverride.overrideInfo',
-                                {
-                                    amount: formattedDelegatedPower,
-                                    symbol: token.symbol,
-                                    delegate: delegateeName,
-                                },
-                            )}
+                            {positionInfo}
                         </p>
                     </div>
-                    <Tag
-                        label={getOptionLabel(overrideOption)}
-                        variant={optionToTagVariant[overrideOption.toString()]}
-                    />
+                    {positionOption != null && (
+                        <Tag
+                            label={getOptionLabel(positionOption)}
+                            variant={
+                                optionToTagVariant[positionOption.toString()]
+                            }
+                        />
+                    )}
                 </div>
             )}
-            {!showOptions && (
+            {!showOptions && !hasPosition && (
                 <Button
                     className="w-fit"
                     disabled={!canOverride}
                     onClick={() => setShowOptions(true)}
                     size="md"
-                    variant={
-                        hasOverridden
-                            ? 'tertiary'
-                            : delegateeVoteOption != null
-                              ? 'secondary'
-                              : 'primary'
-                    }
+                    variant="secondary"
                 >
-                    {hasOverridden
-                        ? t(
-                              'app.daos.alchemix.alchemixSubmitVoteOverride.buttons.change',
-                          )
-                        : t(
-                              'app.daos.alchemix.alchemixSubmitVoteOverride.buttons.override',
-                          )}
+                    {t('app.daos.alchemix.alchemixSubmitVote.buttons.override')}
                 </Button>
+            )}
+            {!showOptions && hasPosition && (
+                <div className="flex w-full flex-col items-center gap-4 md:flex-row">
+                    {latestVoteTxHref != null ? (
+                        <Button
+                            className="w-full md:w-fit"
+                            href={latestVoteTxHref}
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            target="_blank"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.token.tokenSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    ) : (
+                        <Button
+                            className="w-full md:w-fit"
+                            disabled
+                            iconLeft={IconType.CHECKMARK}
+                            size="md"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.token.tokenSubmitVote.buttons.submitted',
+                            )}
+                        </Button>
+                    )}
+                    <Button
+                        className="w-full md:w-fit"
+                        disabled={!canOverride && !canVote}
+                        onClick={() => setShowOptions(true)}
+                        size="md"
+                        variant="tertiary"
+                    >
+                        {t(
+                            'app.plugins.token.tokenSubmitVote.buttons.change.vote',
+                        )}
+                    </Button>
+                </div>
             )}
             {showOptions && (
                 <>
@@ -304,17 +388,15 @@ export const AlchemixSubmitVoteOverride: React.FC<
                         value={selectedOption}
                     />
                     {canVote && (
-                        <CheckboxCard
+                        <Switch
                             checked={alsoVote}
-                            description={t(
-                                'app.daos.alchemix.alchemixSubmitVoteOverride.alsoVote.description',
+                            helpText={t(
+                                'app.daos.alchemix.alchemixSubmitVote.alsoVote.description',
                             )}
-                            label={t(
-                                'app.daos.alchemix.alchemixSubmitVoteOverride.alsoVote.label',
+                            inlineLabel={t(
+                                'app.daos.alchemix.alchemixSubmitVote.alsoVote.label',
                             )}
-                            onCheckedChange={(checked) =>
-                                setAlsoVote(checked === true)
-                            }
+                            onCheckedChanged={setAlsoVote}
                         />
                     )}
                     <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
@@ -325,9 +407,13 @@ export const AlchemixSubmitVoteOverride: React.FC<
                             size="md"
                             variant="primary"
                         >
-                            {t(
-                                'app.daos.alchemix.alchemixSubmitVoteOverride.buttons.submit',
-                            )}
+                            {hasPosition
+                                ? t(
+                                      'app.plugins.token.tokenSubmitVote.buttons.change.submit',
+                                  )
+                                : t(
+                                      'app.plugins.token.tokenSubmitVote.buttons.submit',
+                                  )}
                         </Button>
                         <Button
                             className="w-full md:w-fit"
@@ -336,7 +422,7 @@ export const AlchemixSubmitVoteOverride: React.FC<
                             variant="tertiary"
                         >
                             {t(
-                                'app.daos.alchemix.alchemixSubmitVoteOverride.buttons.cancel',
+                                'app.plugins.token.tokenSubmitVote.buttons.cancel',
                             )}
                         </Button>
                     </div>

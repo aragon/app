@@ -1,6 +1,6 @@
 import { GovernanceDaoSlotId } from '@/modules/governance/constants/moduleDaoSlots';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
-import { AlchemixSubmitVoteOverride } from './components/alchemixSubmitVoteOverride';
+import { AlchemixSubmitVote } from './components/alchemixSubmitVote';
 import { alchemixTest } from './constants';
 import { alchemixTransactionUtils } from './utils/alchemixTransactionUtils';
 
@@ -12,9 +12,9 @@ export const initialiseAlchemix = () => {
             .registerPlugin(dao)
 
             .registerSlotComponent({
-                slotId: GovernanceDaoSlotId.GOVERNANCE_SUBMIT_VOTE_OVERRIDE,
+                slotId: GovernanceDaoSlotId.GOVERNANCE_DAO_SUBMIT_VOTE,
                 pluginId: dao.id,
-                component: AlchemixSubmitVoteOverride,
+                component: AlchemixSubmitVote,
             })
 
             .registerSlotFunction({

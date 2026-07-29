@@ -1433,27 +1433,27 @@
     },
     "daos": {
       "alchemix": {
-        "alchemixSubmitVoteOverride": {
+        "alchemixSubmitVote": {
           "alsoVote": {
             "description": "Cast the same option with the voting power delegated to you in the same transaction.",
             "label": "Also vote with your voting power"
           },
           "buttons": {
-            "cancel": "Cancel",
-            "change": "Change override",
-            "override": "Override vote",
-            "submit": "Submit override"
+            "override": "Override vote"
           },
-          "delegateNotVoted": "Hasn't voted yet · holds your {{amount}} {{symbol}}",
+          "delegateNotVoted": "Hasn't voted yet · delegated your {{amount}} {{symbol}}",
           "delegateOverridden": "No longer votes with your {{amount}} {{symbol}}",
           "delegateTag": "Your delegate",
           "delegateVoted": "Voted with your {{amount}} {{symbol}}",
           "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
           "options": {
             "alreadyCounted": "Your tokens already count toward {{option}}",
-            "currentOverride": "Your current override"
+            "currentVote": "Your current vote"
           },
-          "overrideInfo": "Voted with your {{amount}} {{symbol}} · overrode {{delegate}}",
+          "position": {
+            "overrode": "Voting with {{amount}} {{symbol}} · overrode {{delegate}}",
+            "voted": "Voting with {{amount}} {{symbol}}"
+          },
           "youTag": "You"
         }
       },
@@ -3500,8 +3500,7 @@
             "approve": "to approve",
             "veto": "to veto"
           },
-          "entity": "Votes",
-          "overridden": "partially overridden"
+          "entity": "Votes"
         },
         "tokenWrapForm": {
           "approveTransactionInfoTitle": "Approve {{symbol}}",

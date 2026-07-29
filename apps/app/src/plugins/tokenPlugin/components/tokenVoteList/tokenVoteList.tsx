@@ -75,16 +75,12 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                         return null;
                     }
 
-                    const isOverridden = vote.voteOverridden?.status === true;
-                    const defaultDescription =
+                    const voteIndicatorDescription =
                         voteIndicator !== 'abstain'
                             ? t(
                                   `app.plugins.token.tokenVoteList.description.${isVeto ? 'veto' : 'approve'}`,
                               )
                             : undefined;
-                    const voteIndicatorDescription = isOverridden
-                        ? t('app.plugins.token.tokenVoteList.overridden')
-                        : defaultDescription;
 
                     return initialParams.queryParams.includeInfo === true ? (
                         <VoteProposalListItem

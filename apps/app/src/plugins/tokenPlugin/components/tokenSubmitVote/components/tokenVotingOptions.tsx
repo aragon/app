@@ -89,7 +89,9 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
         >
             <ToggleGroup
                 isMultiSelect={false}
-                onChange={onChange}
+                // The toggle group emits an empty string when the selected option is clicked again, normalize the
+                // value so that consumers only ever receive a valid vote option or undefined.
+                onChange={(value) => onChange(value === '' ? undefined : value)}
                 orientation="vertical"
                 value={selectedValue ?? ''}
             >

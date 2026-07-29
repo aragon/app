@@ -221,7 +221,7 @@ describe('<TokenVoteList /> component', () => {
         ).toHaveTextContent('no');
     });
 
-    it('marks overridden votes and skips fully overridden ones', () => {
+    it('renders overridden votes as default items and skips fully overridden ones', () => {
         const token = generateToken({ symbol: 'ABC', decimals: 18 });
         const voteOverridden = {
             status: true,
@@ -269,7 +269,7 @@ describe('<TokenVoteList /> component', () => {
         expect(screen.getAllByRole('link')).toHaveLength(1);
         expect(screen.getByText('yes')).toBeInTheDocument();
         expect(
-            screen.getByText(/tokenVoteList.overridden/),
+            screen.getByText(/tokenVoteList.description.approve/),
         ).toBeInTheDocument();
         expect(
             screen.queryByText(

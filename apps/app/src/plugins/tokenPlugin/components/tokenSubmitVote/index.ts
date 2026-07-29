@@ -5,6 +5,10 @@ export const TokenSubmitVote = dynamic(() =>
 );
 
 export {
+    type ITokenSubmitVoteDefaultProps,
+    TokenSubmitVoteDefault,
+} from './components/tokenSubmitVoteDefault';
+export {
     type IDisabledVotingOption,
     type ITokenVotingOptionsProps,
     TokenVotingOptions,
