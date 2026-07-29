@@ -2488,6 +2488,14 @@
           }
         }
       },
+      "crossChainController": {
+        "crossChainControllerActions": {
+          "CrossChainControllerForwardMessage": "Forward message"
+        },
+        "crossChainControllerForwardMessageAction": {
+          "placeholder": "Configuring a cross-chain message is not supported yet."
+        }
+      },
       "gaugeVoter": {
         "gaugeVoterGaugeDetailsDialog": {
           "a11y": {
