@@ -45,6 +45,7 @@ class CrossChainControllerActionUtils {
                     ),
                     icon: IconType.BLOCKCHAIN_BLOCKCHAIN,
                     groupId: address,
+                    meta: plugin,
                     defaultValue: { ...defaultForwardMessage, to: address },
                 },
             ],

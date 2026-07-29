@@ -4,16 +4,21 @@ import type { IProposalActionData } from '@/modules/governance/components/create
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
+import type { ICrossChainControllerPluginSettings } from '../../../types';
 
 export interface ICrossChainControllerForwardMessageActionProps
     extends IProposalActionComponentProps<
-        IProposalActionData<IProposalAction, IDaoPlugin>
+        IProposalActionData<
+            IProposalAction,
+            IDaoPlugin<ICrossChainControllerPluginSettings>
+        >
     > {}
 
 export const CrossChainControllerForwardMessageAction: React.FC<
     ICrossChainControllerForwardMessageActionProps
 > = (props) => {
-    const { index } = props;
+    const { index, action } = props;
+    const { controllerConfig } = action.meta.settings;
 
     const { t } = useTranslations();
 
@@ -30,6 +35,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             {t(
                 'app.plugins.crossChainController.crossChainControllerForwardMessageAction.placeholder',
             )}
+            {controllerConfig.length}
         </p>
     );
 };
