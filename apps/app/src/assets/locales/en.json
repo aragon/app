@@ -1828,7 +1828,7 @@
           "default": "Action",
           "walletConnect": "Connect"
         },
-        "authorizedSwitchLabel": "Only show authorized actions",
+        "authorizedSwitchLabel": "Only show allowed actions",
         "customItem": {
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
