@@ -47,7 +47,7 @@ Don't write rules speculatively — empty rules atrophy and the routing cost out
 ---
 name: short-kebab-id
 description: One sentence; what the rule covers.
-globs: src/some/narrow/path/**, src/another/specific/glob/**
+globs: apps/app/src/some/narrow/path/**, apps/app/src/another/specific/glob/**
 kind: rule
 ---
 ```

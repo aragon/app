@@ -8,7 +8,7 @@ inputs:
   path:
     description: Path to changelog file
     required: false
-    default: ./CHANGELOG.md
+    default: ./apps/app/CHANGELOG.md
 
 outputs:
   changes:
@@ -25,6 +25,6 @@ runs:
         path: ${{ inputs.path }}
       with:
         script: |
-          const readChangelog = require('./.github/workflows/scripts/readChangelog.js');
+          const { readChangelog } = require('./.github/workflows/scripts/readChangelog.js');
           await readChangelog({ github, context, core });
 

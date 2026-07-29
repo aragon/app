@@ -1,0 +1,115 @@
+import {
+    DataList,
+    invariant,
+    ProposalDataListItem,
+    type ProposalStatus,
+} from '@aragon/gov-ui-kit';
+import { useRouter } from 'next/navigation';
+import { useCallback, useState } from 'react';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { useIndexedProposalStatus } from '@/modules/governance/hooks/useIndexedProposalStatus';
+import { useDao } from '@/shared/api/daoService';
+import { TransactionType } from '@/shared/api/transactionService';
+import type { IDialogComponentProps } from '@/shared/components/dialogProvider';
+import {
+    type ITransactionDialogStepMeta,
+    TransactionDialog,
+    TransactionDialogStep,
+} from '@/shared/components/transactionDialog';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useStepper } from '@/shared/hooks/useStepper';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import type { IProposal } from '../../api/governanceService';
+import { proposalUtils } from '../../utils/proposalUtils';
+import { executeDialogUtils } from './executeDialogUtils';
+
+export interface IExecuteDialogParams {
+    /**
+     * The ID of the DAO.
+     */
+    daoId: string;
+    /**
+     * The proposal to be executed.
+     */
+    proposal: IProposal;
+    /**
+     * The status of the proposal.
+     */
+    status: ProposalStatus;
+}
+
+export interface IExecuteDialogProps
+    extends IDialogComponentProps<IExecuteDialogParams> {}
+
+export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
+    const { location } = props;
+
+    const router = useRouter();
+
+    invariant(
+        location.params != null,
+        'ExecuteDialog: required parameters must be set.',
+    );
+
+    const { address } = useWalletAccount();
+    invariant(address != null, 'ExecuteDialog: user must be connected.');
+
+    const { t } = useTranslations();
+
+    const { proposal, status, daoId } = location.params;
+    const { title, summary, creator, proposalIndex, pluginAddress, network } =
+        proposal;
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const stepper = useStepper<
+        ITransactionDialogStepMeta,
+        TransactionDialogStep
+    >({
+        initialActiveStep: TransactionDialogStep.PREPARE,
+    });
+
+    const handlePrepareTransaction = () =>
+        executeDialogUtils.buildTransaction({ pluginAddress, proposalIndex });
+
+    const slug = proposalUtils.getProposalSlug(proposal, dao);
+    const [isIndexed, setIsIndexed] = useState(false);
+    const proposalCardStatus = useIndexedProposalStatus({
+        daoId,
+        fallbackStatus: status,
+        isIndexed,
+        slug,
+    });
+
+    const handleIndexed = useCallback(() => {
+        setIsIndexed(true);
+    }, []);
+
+    return (
+        <TransactionDialog
+            description={t('app.governance.executeDialog.description')}
+            indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
+            network={network}
+            onIndexed={handleIndexed}
+            prepareTransaction={handlePrepareTransaction}
+            stepper={stepper}
+            submitLabel={t('app.governance.executeDialog.buttons.submit')}
+            successLink={{
+                label: t('app.governance.executeDialog.buttons.success'),
+                onClick: () => router.refresh(),
+            }}
+            title={t('app.governance.executeDialog.title')}
+            transactionType={TransactionType.PROPOSAL_EXECUTE}
+        >
+            <DataList.Root entityLabel="">
+                <ProposalDataListItem.Structure
+                    id={slug}
+                    publisher={{ address: creator.address }}
+                    status={proposalCardStatus}
+                    summary={summary}
+                    title={title}
+                />
+            </DataList.Root>
+        </TransactionDialog>
+    );
+};

@@ -1,0 +1,37 @@
+import classNames from 'classnames';
+import type { ComponentProps, ReactNode } from 'react';
+import { Container } from '@/shared/components/container';
+
+export interface INavigationContainerProps extends ComponentProps<'nav'> {
+    /**
+     * Classes for the navigation container.
+     */
+    containerClasses?: string;
+    /**
+     * Content pinned to the trailing edge of the bar, outside the centered container (e.g. the
+     * support chat trigger sitting next to the chat panel).
+     */
+    trailing?: ReactNode;
+}
+
+export const NavigationContainer: React.FC<INavigationContainerProps> = (
+    props,
+) => {
+    const { className, containerClasses, children, trailing, ...otherProps } =
+        props;
+
+    return (
+        <nav
+            className={classNames(
+                'sticky top-0 z-10 flex w-full border-neutral-100 border-b bg-neutral-0',
+                className,
+            )}
+            {...otherProps}
+        >
+            <Container className={classNames('w-full grow', containerClasses)}>
+                {children}
+            </Container>
+            {trailing}
+        </nav>
+    );
+};

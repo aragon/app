@@ -1,0 +1,278 @@
+'use client';
+
+import {
+    addressUtils,
+    ChainEntityType,
+    DefinitionList,
+    formatterUtils,
+    NumberFormat,
+    Tag,
+} from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import { GovernanceBodyDecisionItem } from '@/modules/createDao/components/createProcessForm';
+import type {
+    ISetupBodyFormExisting,
+    ISetupBodyFormNew,
+} from '@/modules/createDao/dialogs/setupBodyDialog';
+import { BodyType } from '@/modules/createDao/types/enum';
+import { useMemberList } from '@/modules/governance/api/governanceService';
+import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useDaoPluginInfo } from '@/shared/hooks/useDaoPluginInfo';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
+import { daoUtils } from '@/shared/utils/daoUtils';
+import { dateUtils } from '@/shared/utils/dateUtils';
+import { DaoTokenVotingMode } from '../../types';
+import type { ITokenSetupGovernanceForm } from '../tokenSetupGovernance';
+import type {
+    ITokenSetupMembershipForm,
+    ITokenSetupMembershipMember,
+} from '../tokenSetupMembership';
+
+export interface ITokenProcessBodyFieldProps {
+    /**
+     * The field from the create process form.
+     */
+    body:
+        | ISetupBodyFormNew<
+              ITokenSetupGovernanceForm,
+              ITokenSetupMembershipMember,
+              ITokenSetupMembershipForm
+          >
+        | ISetupBodyFormExisting<
+              ITokenSetupGovernanceForm,
+              ITokenSetupMembershipMember,
+              ITokenSetupMembershipForm
+          >;
+    /**
+     * Displays / hides some of the token-voting governance settings depending on the process governance type.
+     */
+    isAdvancedGovernance?: boolean;
+    /**
+     * ID of the DAO.
+     */
+    daoId: string;
+    /**
+     * Stage threshold applying to this body.
+     */
+    stageThreshold?: number;
+}
+
+export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
+    const { body, isAdvancedGovernance, daoId, stageThreshold } = props;
+
+    const daoUrlParams = { id: daoId };
+    const { data: dao } = useDao({ urlParams: daoUrlParams });
+
+    const { t } = useTranslations();
+
+    const isExisting = body.type === BodyType.EXISTING;
+    const { membership, governance } = body;
+
+    const initialParams = {
+        queryParams: {
+            daoId,
+            pluginAddress: isExisting ? body.address : '',
+            network: dao?.network,
+            pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
+            tokenAddress: membership.token.address,
+            tokenUnderlying:
+                (membership.token as { underlying?: string | null })
+                    .underlying ?? null,
+        },
+    };
+    const { data: memberList } = useMemberList(initialParams, {
+        enabled: isExisting,
+    });
+
+    const {
+        address: tokenAddress,
+        name: tokenName,
+        symbol: tokenSymbol,
+        decimals: tokenDecimals,
+        totalSupply,
+    } = membership.token;
+    const { votingMode, supportThreshold, minParticipation, minDuration } =
+        governance;
+
+    const parsedTotalSupply =
+        totalSupply &&
+        formatUnits(bigIntUtils.safeParse(totalSupply), tokenDecimals);
+    const formattedSupply = formatterUtils.formatNumber(parsedTotalSupply, {
+        format: NumberFormat.TOKEN_AMOUNT_LONG,
+        fallback: '0',
+    });
+
+    const formattedMinParticipation = formatterUtils.formatNumber(
+        minParticipation / 100,
+        {
+            format: NumberFormat.PERCENTAGE_LONG,
+        },
+    );
+
+    const voteChangeLabel =
+        votingMode === DaoTokenVotingMode.VOTE_REPLACEMENT
+            ? 'enabled'
+            : 'disabled';
+    const earlyExecutionLabel =
+        votingMode === DaoTokenVotingMode.EARLY_EXECUTION
+            ? 'enabled'
+            : 'disabled';
+
+    const minDurationObject = dateUtils.secondsToDuration(minDuration);
+    const formattedMinDuration = t(
+        'app.plugins.token.tokenProcessBodyField.minDurationDefinition',
+        minDurationObject,
+    );
+
+    const numberOfMembers = isExisting
+        ? memberList?.pages[0].metadata.totalRecords
+        : membership.members.length;
+
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+    const tokenDescription =
+        tokenName && tokenSymbol
+            ? t('app.plugins.token.tokenProcessBodyField.tokenNameAndSymbol', {
+                  tokenName,
+                  tokenSymbol,
+              })
+            : undefined;
+
+    const tokenProps = {
+        link: {
+            href: buildEntityUrl({
+                type: ChainEntityType.TOKEN,
+                id: tokenAddress,
+            }),
+        },
+        copyValue: tokenAddress,
+        description: tokenDescription,
+    };
+
+    const contractInfo = useDaoPluginInfo({
+        daoId,
+        address: isExisting ? body.address : '',
+    });
+
+    return (
+        <DefinitionList.Container className="w-full">
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+                stageThreshold={stageThreshold}
+            />
+            {isExisting &&
+                contractInfo.map(
+                    ({ term, definition, description, link, copyValue }) => (
+                        <DefinitionList.Item
+                            copyValue={copyValue}
+                            description={description}
+                            key={term}
+                            link={link}
+                            term={term}
+                        >
+                            {definition}
+                        </DefinitionList.Item>
+                    ),
+                )}
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
+                {...tokenProps}
+            >
+                {addressUtils.truncateAddress(tokenAddress)}
+            </DefinitionList.Item>
+            {numberOfMembers! > 0 && (
+                <DefinitionList.Item
+                    link={
+                        isExisting
+                            ? {
+                                  href: daoUtils.getDaoUrl(dao, 'members'),
+                                  isExternal: false,
+                              }
+                            : undefined
+                    }
+                    term={t(
+                        'app.plugins.token.tokenProcessBodyField.distributionTerm',
+                    )}
+                >
+                    {t('app.plugins.token.tokenProcessBodyField.holders', {
+                        count: numberOfMembers,
+                    })}
+                </DefinitionList.Item>
+            )}
+            {totalSupply && Number(totalSupply) > 0 && (
+                <DefinitionList.Item
+                    term={t(
+                        'app.plugins.token.tokenProcessBodyField.supplyTerm',
+                    )}
+                >
+                    {formattedSupply} (${tokenSymbol})
+                </DefinitionList.Item>
+            )}
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenProcessBodyField.supportTerm')}
+            >
+                {t(
+                    'app.plugins.token.tokenProcessBodyField.supportDefinition',
+                    {
+                        threshold: supportThreshold,
+                    },
+                )}
+            </DefinitionList.Item>
+            <DefinitionList.Item
+                term={t(
+                    'app.plugins.token.tokenProcessBodyField.minParticipationTerm',
+                )}
+            >
+                {t(
+                    'app.plugins.token.tokenProcessBodyField.minParticipationDefinition',
+                    {
+                        minParticipation: formattedMinParticipation,
+                    },
+                )}
+            </DefinitionList.Item>
+            {!isAdvancedGovernance && (
+                <>
+                    <DefinitionList.Item
+                        term={t(
+                            'app.plugins.token.tokenProcessBodyField.minDurationTerm',
+                        )}
+                    >
+                        {formattedMinDuration}
+                    </DefinitionList.Item>
+                    <DefinitionList.Item
+                        term={t(
+                            'app.plugins.token.tokenProcessBodyField.earlyExecution',
+                        )}
+                    >
+                        <Tag
+                            className="max-w-fit"
+                            label={t(
+                                `app.plugins.token.tokenProcessBodyField.${earlyExecutionLabel}`,
+                            )}
+                            variant={
+                                earlyExecutionLabel === 'enabled'
+                                    ? 'primary'
+                                    : 'neutral'
+                            }
+                        />
+                    </DefinitionList.Item>
+                </>
+            )}
+            <DefinitionList.Item
+                term={t('app.plugins.token.tokenProcessBodyField.voteChange')}
+            >
+                <Tag
+                    className="max-w-fit"
+                    label={t(
+                        `app.plugins.token.tokenProcessBodyField.${voteChangeLabel}`,
+                    )}
+                    variant={
+                        voteChangeLabel === 'enabled' ? 'primary' : 'neutral'
+                    }
+                />
+            </DefinitionList.Item>
+        </DefinitionList.Container>
+    );
+};

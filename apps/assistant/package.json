@@ -1,0 +1,55 @@
+{
+    "name": "@aragon/assistant",
+    "version": "0.1.0",
+    "description": "Aragon assistant service: support-chat intake API",
+    "author": "Aragon Association",
+    "homepage": "https://github.com/aragon/app#readme",
+    "private": true,
+    "license": "GPL-3.0",
+    "type": "module",
+    "scripts": {
+        "dev": "pnpm --filter @aragon/assistant-contracts build && pnpm run setup local && tsx watch --env-file-if-exists=.env --env-file=.env.local src/dev.ts",
+        "build": "tsup",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:watch": "jest --watch",
+        "test:coverage": "jest --coverage",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "type-check": "tsc --noEmit",
+        "setup": "./scripts/setupEnv.sh"
+    },
+    "dependencies": {
+        "@aragon/assistant-contracts": "workspace:*",
+        "@linear/sdk": "catalog:",
+        "@sentry/hono": "catalog:",
+        "@sentry/node": "catalog:",
+        "@sentry/profiling-node": "catalog:",
+        "@upstash/ratelimit": "catalog:",
+        "@upstash/redis": "catalog:",
+        "@vercel/blob": "catalog:",
+        "ai": "catalog:",
+        "file-type": "catalog:",
+        "hono": "catalog:",
+        "zod": "catalog:"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@hono/node-server": "catalog:",
+        "@sentry/cli": "catalog:",
+        "@types/jest": "catalog:",
+        "@types/node": "catalog:",
+        "jest": "catalog:",
+        "ts-jest": "catalog:",
+        "tsup": "catalog:",
+        "tsx": "catalog:",
+        "typescript": "catalog:"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}

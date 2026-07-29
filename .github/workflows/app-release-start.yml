@@ -1,0 +1,194 @@
+name: App Release Start
+
+on:
+  schedule:
+    # Auto release: every Monday at 15:07 UTC (~17:07 CEST in summer, 16:07 CET
+    # in winter — the cron is fixed in UTC, no DST handling). Off the top of the
+    # hour because GitHub delays or drops schedules queued at :00.
+    - cron: '7 15 * * 1'
+  workflow_dispatch:
+    inputs:
+      base_commit:
+        description: 'Commit SHA to start release from (default: main HEAD)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Gates scheduled runs only (manual dispatch bypasses it): green-skips when
+  # there is nothing to release or a release is already in flight.
+  schedule-gate:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.gate.outputs.proceed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+
+      - name: Gate scheduled run
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          skip() { echo "⏭️ Skipping auto release: $1"; echo "proceed=false" >> "$GITHUB_OUTPUT"; exit 0; }
+
+          OPEN=$(gh pr list --repo "$GITHUB_REPOSITORY" --base main --state open --json headRefName \
+            --jq '[.[] | select(.headRefName | startswith("release/app/"))] | length')
+          [ "${OPEN:-0}" -eq 0 ] || skip "an app release PR is already open."
+
+          grep -qs '"@aragon/app"' .changeset/*.md || skip "no pending changesets for @aragon/app."
+
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
+
+  prepare-release:
+    needs: schedule-gate
+    # !cancelled() lets workflow_dispatch runs proceed past the skipped gate.
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || needs.schedule-gate.outputs.proceed == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load secrets
+        id: load-secrets
+        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          GPG_PASSPHRASE: op://kv_app_infra/arabot-1_SIGN_CERTS/credential
+          GPG_PRIVATE_KEY: op://kv_app_infra/arabot-1_SIGN_CERTS/private_key
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+          LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
+          LINEAR_PIPELINE_ACCESS_KEY: op://kv_app_infra/LINEAR_PIPELINE_ACCESS_KEY/credential
+          # Code-owner team Slack group (same key as backend, app vault). Used to
+          # @-mention the release team in the head message when a release starts.
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
+
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          fetch-depth: 0
+          ref: ${{ inputs.base_commit || 'main' }}
+
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@2dc316deee8e90f13e1a351ab510b4d5bc0c82cd # v7.0.0 (https://github.com/crazy-max/ghaction-import-gpg/releases/tag/v7.0.0)
+        with:
+          gpg_private_key: ${{ steps.load-secrets.outputs.GPG_PRIVATE_KEY }}
+          passphrase: ${{ steps.load-secrets.outputs.GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+
+      - name: Generate Release Branch Name
+        id: branch-name
+        run: echo "name=release/app/$(date +'%Y-%m-%d_%H-%M')" >> $GITHUB_OUTPUT
+
+      - name: Ensure Release Branch
+        uses: ./.github/actions/git-ensure-branch
+        with:
+          branch: ${{ steps.branch-name.outputs.name }}
+          base_ref: ${{ inputs.base_commit || 'main' }}
+
+      - name: Generate Release Summary
+        id: release-summary
+        uses: ./.github/actions/generate-release-summary
+        with:
+          package_name: "@aragon/app"
+          path_filter: "app"
+          linear_api_token: ${{ steps.load-secrets.outputs.LINEAR_API_TOKEN }}
+
+      # Per-package release model: this flow owns the "app" release scope (see
+      # .github/release-scopes.yml); other workspaces are versioned by their own release flows
+      # (e.g. assistant-release-start.yml), which symmetrically own their scopes.
+      - name: Update version and changelog
+        uses: ./.github/actions/changeset-version
+        with:
+          scope: app
+          prettier_changelog: "true"
+          github_token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Get package version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: apps/app
+
+      # Per-package tag in the changesets-native format: @aragon/app@1.17.0. Other
+      # workspaces (future apps/packages) get their own prefix and release flows.
+      - name: Compute release tag
+        id: release-tag
+        run: echo "name=@aragon/app@${{ steps.package-version.outputs.current-version }}" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        run: |
+          git add --all
+          git commit -am "Release ${{ steps.release-tag.outputs.name }}"
+          git push origin ${{ steps.branch-name.outputs.name }}
+
+      - name: Ensure Pull Request
+        id: create-pr
+        uses: ./.github/actions/gh-ensure-pr
+        with:
+          base: main
+          head: ${{ steps.branch-name.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
+          body: ${{ steps.release-summary.outputs.summary }}
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+
+      - name: Linear — sync release & link issues
+        if: steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
+        continue-on-error: true
+        uses: linear/linear-release-action@v0
+        with:
+          access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
+          command: sync
+          name: ${{ steps.release-tag.outputs.name }}
+          version: ${{ steps.release-tag.outputs.name }}
+
+      - name: Linear — set stage to in_progress
+        if: steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY != ''
+        continue-on-error: true
+        uses: linear/linear-release-action@v0
+        with:
+          access_key: ${{ steps.load-secrets.outputs.LINEAR_PIPELINE_ACCESS_KEY }}
+          command: update
+          version: ${{ steps.release-tag.outputs.name }}
+          stage: in_progress
+
+      - name: Notify Slack
+        id: slack
+        if: steps.load-secrets.outputs.SLACK_BOT_TOKEN != ''
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.load-secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.load-secrets.outputs.SLACK_CHANNEL_ID }}
+          message: |
+            🚀 *Release ${{ steps.release-tag.outputs.name }} — Started* ${{ steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.load-secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            *PR:* ${{ steps.create-pr.outputs.url }}
+
+            ${{ steps.release-summary.outputs.summary }}
+
+      - name: Update PR with Slack TS
+        if: steps.slack.outputs.ts != ''
+        uses: ./.github/actions/gh-pr-edit-body
+        with:
+          pr_number: ${{ steps.create-pr.outputs.number }}
+          token: ${{ steps.load-secrets.outputs.ARABOT_PAT }}
+          body: |
+            ${{ steps.release-summary.outputs.summary }}
+
+            <!-- slack_ts: ${{ steps.slack.outputs.ts }} -->

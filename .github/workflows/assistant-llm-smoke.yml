@@ -1,0 +1,42 @@
+# The "Assistant LLM Smoke" workflow runs a few real conversations (real models, real Linear
+# team of the target environment) against a deployed assistant instance. It is deliberately
+# NON-BLOCKING: it is not a required check anywhere — a red run is a signal to look at prompt or
+# pipeline drift, not a merge gate. Tickets land in the Linear team configured for the target
+# environment (a test team everywhere except production).
+#
+# Triggers: nightly, after every development deploy, and manually against any URL.
+
+name: Assistant LLM Smoke
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_run:
+    workflows: ["Assistant Development"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Assistant base URL to smoke"
+        required: false
+        default: "https://dev.assistant.aragon.org"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    # For post-deploy runs only fire when the deploy actually succeeded.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup node
+        uses: actions/setup-node@v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Run LLM smoke scenarios
+        run: node apps/assistant/scripts/llmSmoke.mjs "${{ inputs.url || 'https://dev.assistant.aragon.org' }}"

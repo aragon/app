@@ -1,0 +1,41 @@
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { CreateDaoDetailsDialog } from '../dialogs/createDaoDetailsDialog';
+import { CreateProcessDetailsDialog } from '../dialogs/createProcessDetailsDialog';
+import { PrepareProcessDialog } from '../dialogs/prepareProcessDialog';
+import { PublishDaoDialog } from '../dialogs/publishDaoDialog';
+import { SetupBodyDialog } from '../dialogs/setupBodyDialog';
+import { SetupStageSettingsDialog } from '../dialogs/setupStageSettingsDialog';
+import { CreateDaoDialogId } from './createDaoDialogId';
+
+export const createDaoDialogsDefinitions: Record<
+    CreateDaoDialogId,
+    IDialogComponentDefinitions
+> = {
+    [CreateDaoDialogId.PUBLISH_DAO]: {
+        Component: PublishDaoDialog,
+        requiresWallet: true,
+    },
+    [CreateDaoDialogId.CREATE_DAO_DETAILS]: {
+        Component: CreateDaoDetailsDialog,
+        size: 'lg',
+    },
+    [CreateDaoDialogId.CREATE_PROCESS_DETAILS]: {
+        Component: CreateProcessDetailsDialog,
+        size: 'lg',
+    },
+    [CreateDaoDialogId.PREPARE_PROCESS]: {
+        Component: PrepareProcessDialog,
+        requiresWallet: true,
+    },
+    [CreateDaoDialogId.SETUP_BODY]: {
+        Component: SetupBodyDialog,
+        size: 'lg',
+        hiddenDescription: 'app.createDao.setupBodyDialog.a11y.description',
+    },
+    [CreateDaoDialogId.SETUP_STAGE_SETTINGS]: {
+        Component: SetupStageSettingsDialog,
+        size: 'lg',
+        hiddenDescription:
+            'app.createDao.setupStageSettingsDialog.a11y.description',
+    },
+};

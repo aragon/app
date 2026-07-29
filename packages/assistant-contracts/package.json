@@ -1,0 +1,52 @@
+{
+    "name": "@aragon/assistant-contracts",
+    "version": "0.1.0",
+    "description": "Shared zod contracts between the Aragon assistant service and the assistant-chat widget",
+    "author": "Aragon Association",
+    "homepage": "https://github.com/aragon/app#readme",
+    "private": true,
+    "license": "GPL-3.0",
+    "main": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "sideEffects": false,
+    "scripts": {
+        "build": "tsup",
+        "dev": "tsup --watch",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:coverage": "jest --coverage",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "type-check": "tsc --noEmit"
+    },
+    "dependencies": {
+        "zod": "catalog:"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "catalog:",
+        "@types/jest": "catalog:",
+        "@types/node": "catalog:",
+        "jest": "catalog:",
+        "ts-jest": "catalog:",
+        "tsup": "catalog:",
+        "typescript": "catalog:"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
+    "engines": {
+        "node": ">=24.16.0"
+    }
+}

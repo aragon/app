@@ -1,0 +1,171 @@
+import { Dialog, invariant, Spinner } from '@aragon/gov-ui-kit';
+import classNames from 'classnames';
+import { useCallback, useEffect, useState } from 'react';
+import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
+import {
+    type IDialogComponentProps,
+    useDialogContext,
+} from '@/shared/components/dialogProvider';
+import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { PluginType } from '@/shared/types';
+import { SelectPluginDialogProcessListItem } from './selectPluginDialogProcessListItem';
+
+export interface ISelectPluginDialogParams {
+    /**
+     * ID of the DAO to select the plugin for.
+     */
+    daoId: string;
+    /**
+     * Array of plugin IDs to filter out from the selection list.
+     */
+    excludePluginIds?: string[];
+    /**
+     * Callback called on plugin selected.
+     */
+    onPluginSelected?: (plugin: IDaoPlugin) => void;
+    /**
+     * Plugin to preselect.
+     */
+    initialPlugin?: IFilterComponentPlugin<IDaoPlugin>;
+    /**
+     * Variant of the dialog. Used to customize labels.
+     */
+    variant?: 'proposal' | 'process';
+    /**
+     * Only allow plugins with full execute permissions.
+     */
+    fullExecuteOnly?: boolean;
+}
+
+export interface ISelectPluginDialogProps
+    extends IDialogComponentProps<ISelectPluginDialogParams> {}
+
+export const SelectPluginDialog: React.FC<ISelectPluginDialogProps> = (
+    props,
+) => {
+    const { location } = props;
+
+    invariant(
+        location.params != null,
+        'SelectPluginDialog: params must be set for the dialog to work correctly',
+    );
+    const {
+        daoId,
+        excludePluginIds,
+        onPluginSelected,
+        initialPlugin,
+        variant = 'proposal',
+        fullExecuteOnly,
+    } = location.params;
+
+    const { t } = useTranslations();
+    const { close } = useDialogContext();
+
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+
+    const daoPlugins = useDaoPlugins({
+        daoId,
+        type: PluginType.PROCESS,
+        includeSubPlugins: false,
+        includeLinkedAccounts: true,
+        hasExecute: fullExecuteOnly,
+        visibleOnly: true,
+    })!;
+
+    const processedDaoPlugins = daoPlugins.filter(
+        (plugin) => !excludePluginIds?.includes(plugin.uniqueId),
+    );
+
+    const [selectedPlugin, setSelectedPlugin] = useState(initialPlugin);
+    const [eligibility, setEligibility] = useState<Record<string, boolean>>({});
+
+    const handleEligibilityResult = useCallback(
+        (pluginId: string, isEligible: boolean) =>
+            setEligibility((current) =>
+                current[pluginId] === isEligible
+                    ? current
+                    : { ...current, [pluginId]: isEligible },
+            ),
+        [],
+    );
+
+    const allResultsReady = processedDaoPlugins.every(
+        (plugin) => eligibility[plugin.uniqueId] != null,
+    );
+
+    // Show not eligible at the bottom
+    const sortedDaoPlugins = allResultsReady
+        ? [...processedDaoPlugins].sort(
+              (a, b) =>
+                  Number(eligibility[b.uniqueId]) -
+                  Number(eligibility[a.uniqueId]),
+          )
+        : processedDaoPlugins;
+
+    // Deselect a preselected plugin the user is not eligible to create proposals for.
+    useEffect(() => {
+        if (
+            allResultsReady &&
+            selectedPlugin != null &&
+            !eligibility[selectedPlugin.uniqueId]
+        ) {
+            setSelectedPlugin(undefined);
+        }
+    }, [allResultsReady, selectedPlugin, eligibility]);
+
+    const handleConfirm = () => {
+        close();
+        onPluginSelected?.(selectedPlugin!.meta);
+    };
+
+    return (
+        <>
+            <Dialog.Header
+                description={t(
+                    `app.governance.selectPluginDialog.${variant}.description`,
+                )}
+                onClose={close}
+                title={t(`app.governance.selectPluginDialog.${variant}.title`)}
+            />
+            <Dialog.Content>
+                {!allResultsReady && (
+                    <div className="py-4">
+                        <Spinner size="lg" />
+                    </div>
+                )}
+                <div
+                    className={classNames('flex flex-col gap-2 py-2', {
+                        hidden: !allResultsReady,
+                    })}
+                >
+                    {sortedDaoPlugins.map((plugin) => (
+                        <SelectPluginDialogProcessListItem
+                            dao={dao}
+                            isActive={
+                                plugin.uniqueId === selectedPlugin?.uniqueId
+                            }
+                            key={plugin.uniqueId}
+                            onClick={() => setSelectedPlugin(plugin)}
+                            onEligibilityResult={handleEligibilityResult}
+                            pluginId={plugin.uniqueId}
+                            process={plugin.meta}
+                        />
+                    ))}
+                </div>
+            </Dialog.Content>
+            <Dialog.Footer
+                primaryAction={{
+                    label: t('app.governance.selectPluginDialog.action.select'),
+                    onClick: handleConfirm,
+                    disabled: selectedPlugin == null || !allResultsReady,
+                }}
+                secondaryAction={{
+                    label: t('app.governance.selectPluginDialog.action.cancel'),
+                    onClick: () => close(),
+                }}
+            />
+        </>
+    );
+};

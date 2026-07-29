@@ -1,11 +1,14 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
+const path = require('node:path');
+const { parse } = require('yaml');
 
 // Run git via execFile (no shell) so user-controlled inputs (BASE_REF, tag names)
 // cannot be interpreted as shell metacharacters. Inputs are still validated below.
-const runGit = (args) => {
+const runGit = (args, options = {}) => {
     try {
         return execFileSync('git', args, {
+            cwd: options.cwd,
             stdio: ['ignore', 'pipe', 'pipe'],
             maxBuffer: 64 * 1024 * 1024,
         })
@@ -18,22 +21,120 @@ const runGit = (args) => {
 };
 
 // Allow only characters valid in git refs we accept here: tags, SHAs, branch names.
-const GIT_REF_RE = /^[A-Za-z0-9._/-]{1,255}$/;
+const GIT_REF_RE = /^[A-Za-z0-9@._/-]{1,255}$/;
 const isSafeGitRef = (ref) => typeof ref === 'string' && GIT_REF_RE.test(ref);
 
-// Latest semver-like tag by version (not reachability).
-const detectLatestSemverTag = () => {
-    const out = runGit(['tag', '--list', 'v*', '--sort=-v:refname']);
+const detectLatestPackageTag = (packageName, git = runGit) => {
+    const out = git(['tag', '--list', `${packageName}@*`, '--sort=-v:refname']);
     return out.split('\n')[0]?.trim() ?? '';
 };
 
-// If tags are created on release branches, the right "since last release cut" base on main
-// is the merge-base between main (HEAD) and the previous release tag commit.
-const detectReleaseCutBaseFromTag = (tag, headRef = 'HEAD') => {
+// Some release flows tag the tested release-branch SHA. Once that branch is merged, the first
+// mainline commit containing the tag is the integration commit and the real release boundary.
+const detectReleaseBaseFromTag = (tag, headRef = 'HEAD', git = runGit) => {
     if (!tag || !isSafeGitRef(tag) || !isSafeGitRef(headRef)) {
         return '';
     }
-    return runGit(['merge-base', tag, headRef]);
+
+    const tagSha = git(['rev-list', '-n', '1', tag]);
+    const mergeBase = git(['merge-base', tag, headRef]);
+    if (!(tagSha && mergeBase)) {
+        return '';
+    }
+
+    const firstParentHistory = git(['rev-list', '--first-parent', headRef])
+        .split('\n')
+        .filter(Boolean);
+    if (firstParentHistory.includes(tagSha)) {
+        return tagSha;
+    }
+
+    if (mergeBase === tagSha) {
+        const candidates = git([
+            'rev-list',
+            '--first-parent',
+            '--reverse',
+            `${tag}..${headRef}`,
+        ])
+            .split('\n')
+            .filter(Boolean);
+
+        return (
+            candidates.find(
+                (candidate) => git(['merge-base', tag, candidate]) === tagSha,
+            ) ?? ''
+        );
+    }
+
+    // A divergent tag (for example an unmerged hotfix) falls back to its common cut point.
+    return mergeBase;
+};
+
+const readPathFilter = (filterPath, filterName) => {
+    const filters = parse(fs.readFileSync(filterPath, 'utf8'));
+    const patterns = filters?.[filterName];
+
+    if (
+        !Array.isArray(patterns) ||
+        patterns.length === 0 ||
+        patterns.some((pattern) => typeof pattern !== 'string')
+    ) {
+        throw new Error(
+            `Path filter "${filterName}" is missing or invalid in ${filterPath}.`,
+        );
+    }
+
+    return patterns;
+};
+
+const commitMatchesPathFilter = (commit, patterns, git = runGit) => {
+    const parents = git(['show', '-s', '--format=%P', commit])
+        .split(' ')
+        .filter(Boolean);
+    const files =
+        parents.length === 0
+            ? git(['show', '--pretty=format:', '--name-only', commit])
+            : git(['diff', '--name-only', parents[0], commit]);
+
+    return files
+        .split('\n')
+        .filter(Boolean)
+        .some((file) =>
+            patterns.some((pattern) => path.matchesGlob(file, pattern)),
+        );
+};
+
+// Any workspace's release commit is dropped, not just this package's: other flows' release
+// commits (e.g. "Release @aragon/assistant@0.2.0") touch paths shared with this filter's scope
+// and would otherwise leak into the summary as "Other Changes".
+const RELEASE_COMMIT_RE = /^Release @aragon\/[^@\s]+@\d+\.\d+\.\d+/;
+
+const collectScopedCommits = ({
+    baseRef,
+    headRef = 'HEAD',
+    patterns,
+    git = runGit,
+}) => {
+    const range = baseRef ? `${baseRef}..${headRef}` : headRef;
+    const log = git([
+        'log',
+        '--first-parent',
+        range,
+        '--pretty=format:%H%x00%s',
+    ]);
+
+    return log
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => {
+            const [commit, subject] = line.split('\0');
+            return { commit, subject };
+        })
+        .filter(
+            ({ commit, subject }) =>
+                !RELEASE_COMMIT_RE.test(subject) &&
+                commitMatchesPathFilter(commit, patterns, git),
+        );
 };
 
 // Helper to fetch Linear issue details
@@ -73,55 +174,53 @@ const fetchLinearIssue = async (issueId, token) => {
 
 const generateSummary = async ({ core }) => {
     const linearToken = process.env.LINEAR_API_TOKEN;
+    const packageName = process.env.PACKAGE_NAME;
+    const pathFilter = process.env.PATH_FILTER;
+    const filterPath = process.env.FILTERS_PATH || '.github/filters.yml';
     let baseRef = process.env.BASE_REF;
 
-    // Auto-detect base ref (recommended, handles releases and hotfixes correctly).
-    //
-    // Tags are created on release branches, so they're NOT reachable from main via `git describe`.
-    // Instead, we find the latest tag by semver version and compute merge-base(tag, HEAD).
-    // This gives us "the commit where the previous release diverged" — the correct range start.
+    if (!(packageName && pathFilter)) {
+        throw new Error('PACKAGE_NAME and PATH_FILTER are required.');
+    }
+
+    if (!isSafeGitRef(packageName)) {
+        throw new Error(`Refusing unsafe package name: ${packageName}`);
+    }
+
     if (!baseRef) {
-        const latestTag = detectLatestSemverTag();
+        const latestTag = detectLatestPackageTag(packageName);
         if (latestTag) {
-            const cutBase = detectReleaseCutBaseFromTag(latestTag, 'HEAD');
-            if (cutBase) {
-                baseRef = cutBase;
+            const releaseBase = detectReleaseBaseFromTag(latestTag, 'HEAD');
+            if (releaseBase) {
+                baseRef = releaseBase;
                 console.log(`Auto-detected base from ${latestTag}: ${baseRef}`);
             } else {
                 console.log(
-                    `Found tag ${latestTag} but merge-base failed. Using full history.`,
+                    `Found tag ${latestTag} but its release base could not be resolved. Using full scoped history.`,
                 );
             }
         } else {
-            console.log('No tags found. Using full history.');
+            console.log(
+                `No ${packageName}@* tags found. Treating this as the first release.`,
+            );
         }
     } else if (!isSafeGitRef(baseRef)) {
-        console.error(`Refusing unsafe BASE_REF: ${baseRef}`);
-        process.exit(1);
-    } else if (/^v\d+\.\d+\.\d+/.test(baseRef)) {
-        // If a tag was passed explicitly, convert to merge-base (same logic as auto-detect).
-        const cutBase = detectReleaseCutBaseFromTag(baseRef, 'HEAD');
-        if (cutBase) {
-            console.log(`Converting tag ${baseRef} to merge-base: ${cutBase}`);
-            baseRef = cutBase;
-        }
+        throw new Error(`Refusing unsafe BASE_REF: ${baseRef}`);
     }
 
-    // `baseRef` at this point is either empty, a commit SHA we produced, or a value
-    // that passed isSafeGitRef. Re-check defensively before handing it to git.
     if (baseRef && !isSafeGitRef(baseRef)) {
-        console.error(`Refusing unsafe resolved base ref: ${baseRef}`);
-        process.exit(1);
+        throw new Error(`Refusing unsafe resolved base ref: ${baseRef}`);
     }
 
-    // Pass the rev range as a single argv element. With execFile there is no shell
-    // expansion, so the `..HEAD` suffix is interpreted by git itself.
     const range = baseRef ? `${baseRef}..HEAD` : 'HEAD';
-    console.log(`Generating release summary for range: ${range}`);
-
-    // 1. Get stats from Git
-    const log = runGit(['log', range, '--pretty=format:%s']);
-    const lines = log.split('\n').filter(Boolean);
+    const patterns = readPathFilter(filterPath, pathFilter);
+    const commits = collectScopedCommits({
+        baseRef,
+        patterns,
+    });
+    console.log(
+        `Generating ${packageName} release summary for range ${range} with path filter "${pathFilter}".`,
+    );
 
     const categories = {
         features: [],
@@ -132,7 +231,7 @@ const generateSummary = async ({ core }) => {
     const linearRegex = /([a-zA-Z]{2,}-\d+)/g;
     const issuesFound = new Set();
 
-    for (const line of lines) {
+    for (const { subject: line } of commits) {
         const lower = line.toLowerCase();
         const linearMatches = line.match(linearRegex);
 
@@ -152,9 +251,10 @@ const generateSummary = async ({ core }) => {
             .trim();
 
         // Linkify PR numbers (#123 -> [#123](url))
+        const repository = process.env.GITHUB_REPOSITORY || 'aragon/app';
         cleanLine = cleanLine.replace(
             /\(#(\d+)\)/g,
-            '([#$1](https://github.com/aragon/app/pull/$1))',
+            `([#$1](https://github.com/${repository}/pull/$1))`,
         );
 
         // Extract linear issues
@@ -210,6 +310,16 @@ const generateSummary = async ({ core }) => {
 
     core.setOutput('summary', summary);
     console.log('Release summary generated.');
+};
+
+module.exports = {
+    collectScopedCommits,
+    commitMatchesPathFilter,
+    detectLatestPackageTag,
+    detectReleaseBaseFromTag,
+    generateSummary,
+    readPathFilter,
+    runGit,
 };
 
 // Standalone runner

@@ -1,0 +1,94 @@
+import {
+    addressUtils,
+    ChainEntityType,
+    DefinitionList,
+} from '@aragon/gov-ui-kit';
+import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
+import { useEnsName } from '@/modules/ens';
+import { useDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { BodyType } from '../../../../../types/enum';
+import { createProcessFormUtils } from '../../../createProcessFormUtils';
+import { GovernanceBodyDecisionItem } from './governanceBodyDecisionItem';
+
+export interface IGovernanceBodiesFieldItemDefaultProps {
+    /**
+     * Body to display the details for.
+     */
+    body: ISetupBodyForm;
+    /**
+     * ID of the DAO to setup the body for.
+     */
+    daoId: string;
+    /**
+     * Whether the process uses advanced (staged) governance.
+     */
+    isAdvancedGovernance?: boolean;
+    /**
+     * Stage threshold applying to this body.
+     */
+    stageThreshold?: number;
+}
+
+export const GovernanceBodiesFieldItemDefault: React.FC<
+    IGovernanceBodiesFieldItemDefaultProps
+> = (props) => {
+    const { body, daoId, isAdvancedGovernance, stageThreshold } = props;
+
+    const { t } = useTranslations();
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { buildEntityUrl } = useDaoChain({ network: dao?.network });
+
+    const { data: ensName } = useEnsName(
+        body.type !== BodyType.NEW ? body.address : undefined,
+    );
+
+    if (body.type !== BodyType.EXTERNAL && body.type !== BodyType.EXISTING) {
+        return null;
+    }
+
+    const bodyAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: body.address,
+    });
+
+    return (
+        <DefinitionList.Container>
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+                stageThreshold={stageThreshold}
+            />
+            {ensName != null && (
+                <DefinitionList.Item
+                    link={{ href: bodyAddressLink }}
+                    term={t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.ens',
+                    )}
+                >
+                    {ensName}
+                </DefinitionList.Item>
+            )}
+            <DefinitionList.Item
+                link={{ href: bodyAddressLink }}
+                term={t(
+                    'app.createDao.createProcessForm.governance.bodyField.default.address',
+                )}
+            >
+                {addressUtils.truncateAddress(body.address)}
+            </DefinitionList.Item>
+            {createProcessFormUtils.isBodySafe(body) && (
+                <DefinitionList.Item
+                    term={t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.type',
+                    )}
+                >
+                    {t(
+                        'app.createDao.createProcessForm.governance.bodyField.default.safe',
+                    )}
+                </DefinitionList.Item>
+            )}
+        </DefinitionList.Container>
+    );
+};

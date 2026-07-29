@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Tag to rollback to (e.g., v1.16.0)'
+        description: 'Tag to rollback to (e.g., @aragon/app@1.16.0)'
         required: true
         type: string
 
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 

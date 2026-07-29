@@ -42,7 +42,7 @@ jobs:
       report_artifact_id: ${{ steps.upload-report.outputs.artifact-id }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: |
@@ -55,10 +55,11 @@ jobs:
       - name: Get Playwright version
         id: pw-version
         run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
+        working-directory: apps/app
 
       - name: Cache Playwright browsers
         id: pw-cache
-        uses: actions/cache@v5.0.5
+        uses: actions/cache@v6.1.0
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
@@ -66,10 +67,12 @@ jobs:
       - name: Install Playwright browsers
         if: steps.pw-cache.outputs.cache-hit != 'true'
         run: pnpm e2e:install
+        working-directory: apps/app
 
       - name: Install Playwright OS deps
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
+        working-directory: apps/app
 
       - name: Warmup deployment
         run: |
@@ -87,6 +90,7 @@ jobs:
         id: smoke
         continue-on-error: true
         run: pnpm e2e:smoke
+        working-directory: apps/app
         env:
           E2E_BASE_URL: ${{ inputs.deployment-url }}
 
@@ -95,7 +99,7 @@ jobs:
         if: always()
         uses: ./.github/actions/parse-playwright-results
         with:
-          report-path: e2e/test-results/results.json
+          report-path: apps/app/e2e/test-results/results.json
           step-outcome: ${{ steps.smoke.outcome }}
 
       - name: Upload HTML report
@@ -104,7 +108,7 @@ jobs:
         if: always()
         with:
           name: playwright-report-${{ inputs.environment }}
-          path: e2e/playwright-report/
+          path: apps/app/e2e/playwright-report/
           retention-days: 14
 
       - name: Add report link to job summary
@@ -126,5 +130,5 @@ jobs:
         if: ${{ always() && steps.playwright-result.outputs.result != 'passed' }}
         with:
           name: playwright-traces-${{ inputs.environment }}
-          path: e2e/test-results/
+          path: apps/app/e2e/test-results/
           retention-days: 7

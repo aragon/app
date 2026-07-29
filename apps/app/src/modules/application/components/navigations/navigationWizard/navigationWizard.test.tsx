@@ -1,0 +1,155 @@
+import type * as GovUiKit from '@aragon/gov-ui-kit';
+import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import * as NextNavigation from 'next/navigation';
+import * as wagmi from 'wagmi';
+import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import * as useDialogContext from '@/shared/components/dialogProvider';
+import { generateDao, generateDialogContext } from '@/shared/testUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { ApplicationDialogId } from '../../../constants/applicationDialogId';
+import {
+    type INavigationWizardProps,
+    NavigationWizard,
+} from './navigationWizard';
+
+jest.mock('@aragon/gov-ui-kit', () => ({
+    ...jest.requireActual<typeof GovUiKit>('@aragon/gov-ui-kit'),
+    DaoAvatar: (props: { src: string }) => (
+        <div data-src={props.src} data-testid="dao-avatar-mock" />
+    ),
+    Wallet: (props: { user?: { address: string }; onClick: () => void }) => (
+        <button onClick={props.onClick} type="button">
+            {props.user ? props.user.address : 'connect-mock'}
+        </button>
+    ),
+}));
+
+jest.mock('next/navigation', () => ({
+    useRouter: jest.fn(),
+}));
+
+jest.mock('../../supportChat', () => ({
+    SupportChatTrigger: () => <div data-testid="support-chat-trigger-mock" />,
+}));
+
+describe('<NavigationWizard /> component', () => {
+    const cidToSrcSpy = jest.spyOn(ipfsUtils, 'cidToSrc');
+    const useRouterSpy = jest.spyOn(NextNavigation, 'useRouter');
+    const useDialogContextSpy = jest.spyOn(
+        useDialogContext,
+        'useDialogContext',
+    );
+    const useConnectionSpy = jest.spyOn(wagmi, 'useConnection');
+    const useWalletConnectedSpy = jest.spyOn(
+        UseWalletConnected,
+        'useWalletConnected',
+    );
+    const confirmSpy = jest.spyOn(window, 'confirm');
+
+    beforeEach(() => {
+        cidToSrcSpy.mockReturnValue('ipfs://avatar-cid');
+        useRouterSpy.mockReturnValue({
+            push: jest.fn(),
+            prefetch: jest.fn(),
+        } as unknown as AppRouterInstance);
+        useConnectionSpy.mockReturnValue({
+            address: '0x123',
+        } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(true);
+        useDialogContextSpy.mockReturnValue(generateDialogContext());
+        confirmSpy.mockReset();
+    });
+
+    afterEach(() => {
+        cidToSrcSpy.mockReset();
+        useRouterSpy.mockReset();
+        useConnectionSpy.mockReset();
+        useWalletConnectedSpy.mockReset();
+        useDialogContextSpy.mockReset();
+        confirmSpy.mockReset();
+    });
+
+    const createTestComponent = (props?: Partial<INavigationWizardProps>) => {
+        const completeProps: INavigationWizardProps = {
+            name: '',
+            exitPath: '/',
+            ...props,
+        };
+        return (
+            <GukModulesProvider>
+                <NavigationWizard {...completeProps} />
+            </GukModulesProvider>
+        );
+    };
+
+    it('renders the DAO avatar and name when data is fetched', () => {
+        const dao = generateDao({
+            avatar: 'ipfs://avatar-cid',
+            name: 'Test DAO',
+        });
+
+        render(createTestComponent({ dao }));
+
+        const daoAvatar = screen.getByTestId('dao-avatar-mock');
+        expect(daoAvatar).toBeInTheDocument();
+        expect(daoAvatar.getAttribute('data-src')).toEqual(
+            ipfsUtils.cidToSrc(dao.avatar),
+        );
+        expect(screen.getByText('Test DAO')).toBeInTheDocument();
+    });
+
+    it('renders the wizard name', () => {
+        const name = 'Create A New Test Proposal';
+        render(createTestComponent({ name }));
+        expect(screen.getByText(name)).toBeInTheDocument();
+    });
+
+    it('supports params as wizard name', () => {
+        const name: INavigationWizardProps['name'] = [
+            'app.wizardParams',
+            { key: 'value' },
+        ];
+        render(createTestComponent({ name }));
+        expect(
+            screen.getByText('app.wizardParams (key=value)'),
+        ).toBeInTheDocument();
+    });
+
+    it('renders the user wallet address and opens the user dialog when clicked', async () => {
+        const address = '0xUser123';
+        const open = jest.fn();
+        useConnectionSpy.mockReturnValue({
+            address,
+        } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(true);
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+
+        render(createTestComponent());
+
+        const walletButton = screen.getByText(address);
+        expect(walletButton).toBeInTheDocument();
+
+        await userEvent.click(walletButton);
+        expect(open).toHaveBeenCalledWith(ApplicationDialogId.USER);
+    });
+
+    it('renders connect wallet button when user is not connected', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useConnectionSpy.mockReturnValue({
+            address: null,
+        } as unknown as wagmi.UseConnectionReturnType);
+        useWalletConnectedSpy.mockReturnValue(false);
+
+        render(createTestComponent());
+
+        const walletButton = screen.getByText('connect-mock');
+        expect(walletButton).toBeInTheDocument();
+
+        await userEvent.click(walletButton);
+        expect(open).toHaveBeenCalledWith(ApplicationDialogId.CONNECT_WALLET);
+    });
+});

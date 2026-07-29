@@ -1,0 +1,148 @@
+'use client';
+
+import {
+    formatterUtils,
+    invariant,
+    NumberFormat,
+    Progress,
+    ProposalStatus,
+} from '@aragon/gov-ui-kit';
+import { formatUnits } from 'viem';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
+import { type ITokenProposal, VoteOption } from '../../types';
+import { tokenProposalUtils } from '../../utils/tokenProposalUtils';
+import { tokenSettingsUtils } from '../../utils/tokenSettingsUtils';
+
+export interface ITokenProposalVotingSummaryProps {
+    /**
+     * Proposal to be used to display the breakdown.
+     */
+    proposal?: ITokenProposal;
+    /**
+     * Name of the plugin.
+     */
+    name: string;
+    /**
+     * Defines if the voting is to veto or not.
+     */
+    isVeto: boolean;
+    /**
+     * Additional executed status when plugin is a sub-plugin.
+     */
+    isExecuted?: boolean;
+}
+
+export const TokenProposalVotingSummary: React.FC<
+    ITokenProposalVotingSummaryProps
+> = (props) => {
+    const { proposal, name, isVeto, isExecuted } = props;
+
+    const { t } = useTranslations();
+
+    if (!proposal) {
+        return (
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                {name}
+            </p>
+        );
+    }
+
+    const { supportThreshold, historicalTotalSupply } = proposal.settings;
+    const { symbol, decimals } = proposal.settings.token;
+
+    const status = tokenProposalUtils.getProposalStatus(proposal);
+
+    const yesVotes = Number(
+        tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.YES),
+    );
+    const noVotes = Number(
+        tokenProposalUtils.getOptionVotingPower(proposal, VoteOption.NO),
+    );
+
+    const tokenTotalSupply = formatUnits(
+        bigIntUtils.safeParse(historicalTotalSupply),
+        decimals,
+    );
+    const totalSupplyNumber = Number(tokenTotalSupply);
+
+    invariant(
+        totalSupplyNumber > 0,
+        'TokenProposalVotingSummary: tokenTotalSupply must be a positive number',
+    );
+
+    const countableTotalVotes = yesVotes + noVotes;
+    const formattedCountableTotalVotes = formatterUtils.formatNumber(
+        countableTotalVotes,
+        { format: NumberFormat.GENERIC_SHORT },
+    );
+
+    const supportPercentage =
+        countableTotalVotes > 0 ? (yesVotes / countableTotalVotes) * 100 : 0;
+    const formattedYesVotes = formatterUtils.formatNumber(yesVotes, {
+        format: NumberFormat.GENERIC_SHORT,
+    });
+
+    const supportThresholdPercentage =
+        tokenSettingsUtils.ratioToPercentage(supportThreshold);
+
+    const isSupportReached = tokenProposalUtils.isSupportReached(proposal);
+    const isApprovalReached = tokenProposalUtils.isApprovalReached(proposal);
+
+    if (status !== ProposalStatus.ACTIVE || isExecuted) {
+        const approvalText = isApprovalReached ? 'approved' : 'notApproved';
+        const vetoText = isApprovalReached ? 'vetoed' : 'notVetoed';
+        const statusText = isVeto ? vetoText : approvalText;
+
+        const statusClass =
+            isApprovalReached && isVeto
+                ? 'text-critical-800'
+                : isApprovalReached
+                  ? 'text-success-800'
+                  : 'text-neutral-500';
+
+        return (
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                {name}{' '}
+                <span className={statusClass}>
+                    {t(
+                        `app.plugins.token.tokenProposalVotingSummary.${statusText}`,
+                    )}
+                </span>
+            </p>
+        );
+    }
+
+    return (
+        <div className="flex w-full flex-col gap-3">
+            <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
+                {name}{' '}
+                <span className="text-neutral-500">
+                    {isVeto
+                        ? t(
+                              'app.plugins.token.tokenProposalVotingSummary.optimisticSupportLabel',
+                          )
+                        : t(
+                              'app.plugins.token.tokenProposalVotingSummary.supportLabel',
+                          )}
+                </span>
+            </p>
+            <Progress
+                thresholdIndicator={supportThresholdPercentage}
+                value={supportPercentage}
+                variant={isSupportReached ? 'primary' : 'neutral'}
+            />
+            <p className="font-normal text-neutral-800 text-sm leading-tight md:text-base">
+                {formattedYesVotes}{' '}
+                <span className="text-neutral-500">
+                    {t(
+                        'app.plugins.token.tokenProposalVotingSummary.votesDescription',
+                        {
+                            details: `${formattedCountableTotalVotes} ${symbol}`,
+                        },
+                    )}
+                </span>
+            </p>
+        </div>
+    );
+};

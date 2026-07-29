@@ -1,0 +1,190 @@
+name: App Release PR Finalize
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  finalize:
+    if: >
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/app/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            .github/actions/setup
+            .github/actions/slack-notify
+            .github/actions/extract-slack-ts
+            .github/actions/gh-pr-get-body
+            .github/workflows/scripts/slackNotify.js
+
+      # Full checkout + pnpm install at the merge commit (post-merge main): releaseScopes.js and
+      # its node_modules must exist regardless of what the release branch ships.
+      - name: Setup merge commit
+        uses: ./.github/actions/setup
+
+      # Resolved before the release-branch checkout: releaseScopes.js needs node_modules, which
+      # the next checkout's clean removes. The guard itself only needs the pattern.
+      # The policy file is read from the tested SHA so the guard mirrors the --ignore scoping
+      # that `changeset version` ran with when the release was cut — a scope change merged to
+      # main mid-release must not re-classify the branch's leftover changesets as new. The
+      # merge-commit policy is only a fallback for branches cut before the scope mapper landed.
+      - name: Resolve app release scope
+        id: scope
+        shell: bash
+        env:
+          TESTED_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          scopes_path=.github/release-scopes.yml
+          git fetch --depth=1 origin "$TESTED_SHA" || true
+          if git show "$TESTED_SHA:.github/release-scopes.yml" > "$RUNNER_TEMP/release-scopes.yml" 2>/dev/null; then
+            scopes_path="$RUNNER_TEMP/release-scopes.yml"
+          fi
+          packages=$(SCOPES_PATH="$scopes_path" node -e "console.log(require('./.github/workflows/scripts/releaseScopes.js').resolveReleaseScope('app', process.env.SCOPES_PATH).join('|'))")
+          echo "pattern=${packages}" >> "$GITHUB_OUTPUT"
+
+      - name: Load secrets
+        id: secrets
+        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        with:
+          export-env: false
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: '${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}'
+          ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
+          SLACK_BOT_TOKEN: op://kv_app_infra/SLACK_BOT_TOKEN/credential
+          SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
+
+      - name: Checkout release branch at tested SHA
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+
+      - name: "Guard: no new app-scope changesets at finalize"
+        shell: bash
+        env:
+          PATTERN: ${{ steps.scope.outputs.pattern }}
+        run: |
+          set -euo pipefail
+          # Scope-aware, mirroring the --ignore scoping in the changeset-version action: this
+          # flow versions the whole "app" release scope (.github/release-scopes.yml), so any
+          # scope changeset still present at finalize was added after `changeset version` ran.
+          # Other scopes' changesets (e.g. "@aragon/assistant") live in .changeset/ continuously
+          # and are released by their own flows — they must not trip this guard.
+          # A changeset's frontmatter names the bumped package, e.g. `"@aragon/app": patch`.
+          scope_changesets=$(grep -lE "^\"(${PATTERN})\":" .changeset/*.md 2>/dev/null || true)
+          if [ -n "$scope_changesets" ]; then
+            echo "Found new app-scope changesets at finalize. Policy: do not add new changesets to an existing release. Cancel and start a new one." >&2
+            echo "$scope_changesets" >&2
+            exit 1
+          fi
+
+      - name: Get version
+        id: version
+        uses: martinbeentjes/npm-get-version-action@3cf273023a0dda27efcd3164bdfb51908dd46a5b # v1.3.1 (https://github.com/martinbeentjes/npm-get-version-action/releases/tag/v1.3.1)
+        with:
+          path: apps/app
+
+      # Per-package tag in the changesets-native format (@aragon/app@1.17.0).
+      # `encoded` is the URL-safe form for release links in Slack messages.
+      - name: Compute release tag
+        id: release-tag
+        env:
+          VERSION: ${{ steps.version.outputs.current-version }}
+        run: |
+          echo "name=@aragon/app@${VERSION}" >> $GITHUB_OUTPUT
+          echo "encoded=%40aragon%2Fapp%40${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Read changelog
+        id: changelog
+        uses: ./.github/actions/read-changelog
+        with:
+          version: ${{ steps.version.outputs.current-version }}
+          path: ./apps/app/CHANGELOG.md
+
+      - name: Read PR body
+        id: pr
+        uses: ./.github/actions/gh-pr-get-body
+        with:
+          pr_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
+
+      - name: Extract Slack TS from PR body
+        id: ts
+        uses: ./.github/actions/extract-slack-ts
+        with:
+          body: ${{ steps.pr.outputs.body }}
+
+      - name: Build release notes (changelog + slack_ts marker)
+        id: notes
+        uses: ./.github/actions/build-release-notes
+        with:
+          changes: ${{ steps.changelog.outputs.changes }}
+          slack_ts: ${{ steps.ts.outputs.ts }}
+          path: release-notes.md
+
+      - name: Notify Slack - Tagging and releasing
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            🏷️ *PR merged! Creating tag and GitHub Release...*
+
+      - name: Create tag on tested SHA
+        id: tag
+        uses: ./.github/actions/gh-ensure-tag
+        with:
+          tag: ${{ steps.release-tag.outputs.name }}
+          sha: ${{ github.event.pull_request.head.sha }}
+
+      - name: Create GitHub Release
+        id: release
+        uses: ./.github/actions/gh-ensure-release
+        with:
+          tag: ${{ steps.release-tag.outputs.name }}
+          title: Release ${{ steps.release-tag.outputs.name }}
+          notes_path: ${{ steps.notes.outputs.path }}
+          token: ${{ steps.secrets.outputs.ARABOT_PAT }}
+
+      - name: Notify Slack - Release Created (in thread)
+        if: steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          thread_ts: ${{ steps.ts.outputs.ts }}
+          message: |
+            📦 *GitHub Release Created!*
+            *Release:* <https://github.com/aragon/app/releases/tag/${{ steps.release-tag.outputs.encoded }}|${{ steps.release-tag.outputs.name }}>
+
+            _Production build & deploy will start automatically..._
+
+      - name: Notify Slack - Release Created (new message)
+        if: ${{ !steps.ts.outputs.ts && steps.secrets.outputs.SLACK_BOT_TOKEN }}
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          message: |
+            📦 *GitHub Release Created!*
+            *Release:* <https://github.com/aragon/app/releases/tag/${{ steps.release-tag.outputs.encoded }}|${{ steps.release-tag.outputs.name }}>
+
+            _Production build & deploy will start automatically..._

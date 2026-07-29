@@ -1,8 +1,10 @@
-# The "Shared Deploy" workflow deploys the application to Vercel, either in production or preview mode based on the
-# `prod` input. It retrieves the build artifacts, prepares secrets, bundles the Vercel application, and deploys it.
+# The "Shared Deploy" workflow deploys a workspace to Vercel, either in production or preview mode based on the
+# `env` input. It retrieves the build artifacts, prepares secrets, bundles the Vercel application, and deploys it.
 # If a custom domain is specified, it assigns the deployment URL to that domain.
+# The workflow is workspace-agnostic: `workspace` selects the directory to deploy and `vault-prefix` selects the
+# 1Password vaults (`<vault-prefix>_infra` for Vercel credentials, `<vault-prefix>_<env>` for app secrets).
 
-name: App Shared Deploy
+name: Shared Deploy
 
 on:
   workflow_call:
@@ -19,6 +21,38 @@ on:
         description: "The branch, tag or SHA to checkout"
         required: false
         type: string
+      workspace:
+        description: "Workspace directory to deploy"
+        required: false
+        type: string
+        default: "apps/app"
+      vault-prefix:
+        description: "1Password vault prefix for infra and env secrets"
+        required: false
+        type: string
+        default: "kv_app"
+      patch-root-directory:
+        description: "Patch .vercel/project.json with the workspace as rootDirectory (TEMPORARY, apps/app only)"
+        required: false
+        type: boolean
+        default: true
+      env-overrides:
+        description: "Extra env lines appended to the workspace .env.local after setup (e.g. per-run URL overrides)"
+        required: false
+        type: string
+      runtime-env:
+        description: "Runtime env vars for the deployment (multiline KEY=VALUE). The .env file only exists at build time; serverless functions need runtime vars passed via `vercel deploy -e`"
+        required: false
+        type: string
+      runtime-env-keys:
+        description: "Names of keys to lift from the prepared workspace .env into deployment runtime env vars — secrets stay in 1Password and never appear in workflow files"
+        required: false
+        type: string
+      upload-sentry-source-maps:
+        description: "Upload source maps using SENTRY_AUTH_TOKEN, SENTRY_ORG and SENTRY_PROJECT from the infrastructure vault"
+        required: false
+        type: boolean
+        default: false
     outputs:
       deploymentUrl:
         description: "The URL of the Vercel deployment"
@@ -40,13 +74,13 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
+        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app_infra"
+          op-vault: "${{ inputs.vault-prefix }}_infra"
 
       - name: Checkout actions
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 1
           sparse-checkout: .github/actions/setup
@@ -58,20 +92,100 @@ jobs:
 
       - name: Setup env file
         run: pnpm run setup ${{ inputs.env }}
+        working-directory: ${{ inputs.workspace }}
 
       - name: Setup env file secrets
-        uses: aragon/github-templates/steps/credential-retrieval@ed00481c78d797f591f19a417bb75c129af1ce1a # v0.4 (https://github.com/aragon/github-templates/releases/tag/v0.4)
+        uses: aragon/github-templates/steps/credential-retrieval@a36dc232323f483a457ae3ef46028f3a4ef9f2e6 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
-          op-vault: "kv_app_${{ inputs.env }}"
-          secret-filepath: ".env"
+          op-vault: "${{ inputs.vault-prefix }}_${{ inputs.env }}"
+          secret-filepath: "${{ inputs.workspace }}/.env"
           mode: alltofile
+
+      # Overrides must land in .env.local, not .env: `setup` writes the per-env config (including the
+      # default NEXT_PUBLIC_ASSISTANT_URL) to .env.local, which Next.js loads at higher precedence than
+      # .env. Appending an override for the same key to .env would be silently shadowed by .env.local;
+      # appending it to .env.local (last occurrence wins within the file) lets the per-run value take
+      # effect — e.g. pointing the app preview at the chained assistant preview.
+      - name: Apply env overrides
+        if: inputs.env-overrides != ''
+        env:
+          ENV_OVERRIDES: ${{ inputs.env-overrides }}
+        run: printf '%s\n' "$ENV_OVERRIDES" >> ${{ inputs.workspace }}/.env.local
+
+      # Workspace packages that ship a built `dist/` (e.g. @aragon/assistant-contracts) must be
+      # compiled before `vercel build`: the lambda resolves them via package.json exports, and
+      # Node cannot execute the TypeScript source under packages/*/src. The `{dir}^...` filter
+      # selects only the dependencies of the workspace (never the workspace itself) and is a
+      # no-op for workspaces without buildable deps.
+      - name: Build workspace dependencies
+        run: pnpm --filter "{${{ inputs.workspace }}}^..." build
+
+      # Vercel never builds from git here: the artifact is built in this job and uploaded as-is
+      # (deploy --prebuilt). All vercel commands run from the repo root so Turbopack/Next treat the
+      # pnpm workspace root as the build root (pnpm symlinks point outside the workspace); project
+      # linking comes from VERCEL_ORG_ID/VERCEL_PROJECT_ID (1Password), independent of cwd.
+      - name: Pull Vercel project settings
+        run: pnpm vercel pull --yes --environment=${{ (inputs.env == 'production' && 'production') || 'preview' }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+
+      # TEMPORARY workaround for apps/app: its Vercel project has no Root Directory configured
+      # (pre-monorepo branches still run the CLI from the repo root where the app used to live).
+      # Set it locally instead: `vercel build` reads .vercel/project.json offline, builds the
+      # workspace and keeps the repo root as the workspace root for Turbopack and output file
+      # tracing. Once old-layout branches are gone, set Root Directory=apps/app in the Vercel
+      # dashboard and drop this step. New projects (apps/assistant) configure Root Directory in
+      # the dashboard from day one and pass patch-root-directory: false.
+      - name: Set Vercel root directory
+        if: inputs.patch-root-directory
+        run: |
+          jq '.settings.rootDirectory = "${{ inputs.workspace }}"' .vercel/project.json > .vercel/project.json.tmp
+          mv .vercel/project.json.tmp .vercel/project.json
 
       - name: Bundle Vercel application
         run: pnpm vercel build ${{ env.VERCEL_ARGS }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
 
+      - name: Upload source maps to Sentry
+        if: inputs.upload-sentry-source-maps
+        run: |
+          : "${SENTRY_AUTH_TOKEN:?SENTRY_AUTH_TOKEN is required in the infrastructure vault}"
+          : "${SENTRY_ORG:?SENTRY_ORG is required in the infrastructure vault}"
+          : "${SENTRY_PROJECT:?SENTRY_PROJECT is required in the infrastructure vault}"
+          release=$(git rev-parse HEAD)
+          pnpm --dir "${{ inputs.workspace }}" exec sentry-cli sourcemaps inject "${GITHUB_WORKSPACE}/.vercel/output"
+          pnpm --dir "${{ inputs.workspace }}" exec sentry-cli sourcemaps upload --release "$release" --validate --wait "${GITHUB_WORKSPACE}/.vercel/output"
+
+      # The runtime `-e KEY=VALUE` args are built as a bash array in the same step (arrays don't
+      # survive GITHUB_ENV) so values containing spaces stay single arguments: the .env file
+      # prepared above only exists at build time, so anything a serverless function needs at
+      # runtime must be set as deployment env vars. Literal values come from `runtime-env`;
+      # `runtime-env-keys` lifts the named keys (1Password secrets) from the prepared .env,
+      # keeping values out of workflow files.
       - name: Deploy to Vercel
-        run: pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
+        env:
+          RUNTIME_ENV: ${{ inputs.runtime-env }}
+          RUNTIME_ENV_KEYS: ${{ inputs.runtime-env-keys }}
+          UPLOAD_SENTRY_SOURCE_MAPS: ${{ inputs.upload-sentry-source-maps }}
+        run: |
+          runtime_args=()
+          if [ "$UPLOAD_SENTRY_SOURCE_MAPS" = "true" ]; then
+            runtime_args+=(-e "SENTRY_RELEASE=$(git rev-parse HEAD)")
+          fi
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            runtime_args+=(-e "$line")
+          done <<< "$RUNTIME_ENV"
+          for key in $RUNTIME_ENV_KEYS; do
+            # Tolerate optional whitespace around '=' and at the end of the line — dotenv parsers
+            # accept `KEY = value`, so a hand-edited config entry must not be silently skipped by
+            # the runtime lift (and trailing whitespace must not defeat the quote stripping below).
+            value=$(grep -E "^[[:space:]]*${key}[[:space:]]*=" "${{ inputs.workspace }}/.env" | head -1 | cut -d= -f2- | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')
+            value="${value%\"}"
+            value="${value#\"}"
+            if [ -n "$value" ]; then
+              runtime_args+=(-e "${key}=${value}")
+            fi
+          done
+          pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
       - name: Set output
         id: set-deployment-url

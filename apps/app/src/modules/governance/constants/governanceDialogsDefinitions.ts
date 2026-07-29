@@ -1,0 +1,73 @@
+import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
+import { DelegateStatementDialog } from '../dialogs/delegateStatementDialog';
+import { DelegateStatementTransactionDialog } from '../dialogs/delegateStatementTransactionDialog';
+import { DuplicateProposalAlertDialog } from '../dialogs/duplicateProposalAlertDialog';
+import { ExecuteActionsDialog } from '../dialogs/executeActionsDialog';
+import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
+import { ExecuteDialog } from '../dialogs/executeDialog';
+import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
+import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
+import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
+import { SimulateActionsDialog } from '../dialogs/simulateActionsDialog';
+import { VerifySmartContractDialog } from '../dialogs/verifySmartContractDialog';
+import { VoteDialog } from '../dialogs/voteDialog';
+import { WalletConnectActionDialog } from '../dialogs/walletConnectActionDialog';
+import { GovernanceDialogId } from './governanceDialogId';
+
+export const governanceDialogsDefinitions: Record<
+    GovernanceDialogId,
+    IDialogComponentDefinitions
+> = {
+    [GovernanceDialogId.PUBLISH_PROPOSAL]: {
+        Component: PublishProposalDialog,
+        requiresWallet: true,
+    },
+    [GovernanceDialogId.DUPLICATE_PROPOSAL_WARNING]: {
+        Component: DuplicateProposalAlertDialog,
+        variant: 'warning',
+        size: 'lg',
+        hiddenDescription:
+            'app.governance.duplicateProposalAlertDialog.a11y.description',
+    },
+    [GovernanceDialogId.EXECUTE_ACTIONS]: {
+        Component: ExecuteActionsDialog,
+        requiresWallet: true,
+    },
+    [GovernanceDialogId.EXECUTE]: {
+        Component: ExecuteDialog,
+        requiresWallet: true,
+    },
+    [GovernanceDialogId.VOTE]: {
+        Component: VoteDialog,
+        requiresWallet: true,
+    },
+    [GovernanceDialogId.SELECT_PLUGIN]: { Component: SelectPluginDialog },
+    [GovernanceDialogId.VERIFY_SMART_CONTRACT]: {
+        Component: VerifySmartContractDialog,
+        useFocusTrap: false,
+    },
+    [GovernanceDialogId.PERMISSION_CHECK]: {
+        Component: PermissionCheckDialog,
+        hiddenDescription:
+            'app.governance.permissionCheckDialog.a11y.description',
+    },
+    [GovernanceDialogId.EXECUTE_CHECK]: {
+        Component: ExecuteCheckDialog,
+        hiddenDescription: 'app.governance.executeCheckDialog.a11y.description',
+    },
+    [GovernanceDialogId.WALLET_CONNECT_ACTION]: {
+        Component: WalletConnectActionDialog,
+    },
+    [GovernanceDialogId.SIMULATE_ACTIONS]: {
+        Component: SimulateActionsDialog,
+        size: 'lg',
+    },
+    [GovernanceDialogId.DELEGATE_STATEMENT_FORM]: {
+        Component: DelegateStatementDialog,
+        size: 'lg',
+    },
+    [GovernanceDialogId.DELEGATE_STATEMENT_TRANSACTION]: {
+        Component: DelegateStatementTransactionDialog,
+        requiresWallet: true,
+    },
+};

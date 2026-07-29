@@ -1,7 +1,7 @@
 ---
 name: core-action-decoded-input
 description: Decoded core-action inputData is backend-guaranteed non-null; the `as unknown as` registry cast in *ActionDetails components is intentional, not a smell.
-globs: src/actions/**
+globs: apps/app/src/actions/**
 kind: rule
 ---
 
