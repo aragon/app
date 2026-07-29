@@ -3,17 +3,21 @@ import * as ReactQuery from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import type { WaitForTransactionReceiptErrorType } from 'viem';
 import * as Wagmi from 'wagmi';
+import { ApplicationDialogId } from '@/modules/application/constants/applicationDialogId';
 import { Network } from '@/shared/api/daoService';
 import * as transactionService from '@/shared/api/transactionService';
 import { TransactionType } from '@/shared/api/transactionService';
+import * as DialogProviderModule from '@/shared/components/dialogProvider';
 import { DialogProvider } from '@/shared/components/dialogProvider/dialogProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { usePendingTransaction } from '@/shared/hooks/usePendingTransaction';
 import {
+    generateDialogContext,
     generateReactQueryResultError,
     generateReactQueryResultSuccess,
     generateStepperResult,
 } from '@/shared/testUtils';
+import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import {
     PendingTransactionStatus,
     pendingTransactionManager,
@@ -614,6 +618,176 @@ describe('<TransactionDialog /> component', () => {
             stepId: TransactionDialogStep.CONFIRM,
             from: address,
             transaction: undefined,
+        });
+    });
+
+    it('overrides the approve error label for a known wallet error', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.FAILED,
+            error: new Error(
+                'eth_sendRawTransaction: replacement transaction underpriced',
+            ),
+        });
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateSteps });
+        render(createTestComponent({ stepper }));
+        expect(updateSteps).toHaveBeenLastCalledWith(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    id: TransactionDialogStep.APPROVE,
+                    meta: expect.objectContaining({
+                        errorLabel: expect.stringMatching(
+                            /error.replacementUnderpriced/,
+                        ) as unknown,
+                    }) as unknown,
+                }),
+            ]),
+        );
+    });
+
+    it('resets the record and restarts from prepare when a retry has nothing to re-send', () => {
+        const updateActiveStep = jest.fn();
+        const updateSteps = jest.fn() as jest.Mock<
+            void,
+            IStepperStep<ITransactionDialogStepMeta>[][]
+        >;
+        const stepper = generateStepperResult<
+            ITransactionDialogStepMeta,
+            string
+        >({ updateActiveStep, updateSteps });
+        render(createTestComponent({ stepper, intent: { id: 'intent' } }));
+
+        const { action: confirmStepAction } =
+            updateSteps.mock.calls[0][0][2].meta;
+        act(() => confirmStepAction?.({ onError: jest.fn() }));
+
+        expect(managerClearSpy).toHaveBeenCalledWith('intent');
+        expect(updateActiveStep).toHaveBeenCalledWith(
+            TransactionDialogStep.PREPARE,
+        );
+    });
+
+    describe('confirm step timeout', () => {
+        const logMessageSpy = jest.spyOn(monitoringUtils, 'logMessage');
+
+        beforeEach(() => {
+            jest.useFakeTimers();
+            logMessageSpy.mockImplementation(() => undefined);
+            usePendingTransactionMock.mockReturnValue({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0x1',
+                submittedAt: Date.now(),
+            });
+            useWaitForTransactionReceiptSpy.mockReturnValue({
+                status: 'pending',
+                fetchStatus: 'fetching',
+            } as unknown as Wagmi.UseWaitForTransactionReceiptReturnType);
+        });
+
+        afterEach(() => {
+            jest.clearAllTimers();
+            jest.useRealTimers();
+            logMessageSpy.mockReset();
+        });
+
+        const getLastConfirmStep = (
+            updateSteps: jest.Mock<
+                void,
+                IStepperStep<ITransactionDialogStepMeta>[][]
+            >,
+        ) =>
+            updateSteps.mock.lastCall?.[0].find(
+                (step) => step.id === (TransactionDialogStep.CONFIRM as string),
+            );
+
+        it('flips the confirm step to a warning with guidance once the transaction stays unconfirmed past the timeout', () => {
+            const updateSteps = jest.fn() as jest.Mock<
+                void,
+                IStepperStep<ITransactionDialogStepMeta>[][]
+            >;
+            const stepper = generateStepperResult<
+                ITransactionDialogStepMeta,
+                string
+            >({ updateSteps });
+            render(createTestComponent({ stepper }));
+
+            expect(getLastConfirmStep(updateSteps)?.meta.state).toEqual(
+                'pending',
+            );
+            expect(
+                screen.queryByText(/confirmWarning.title/),
+            ).not.toBeInTheDocument();
+
+            act(() => jest.advanceTimersByTime(90_000));
+
+            const confirmStep = getLastConfirmStep(updateSteps);
+            expect(confirmStep?.meta.state).toEqual('warning');
+            expect(confirmStep?.meta.warningLabel).toMatch(
+                /CONFIRM.warningLabel/,
+            );
+            expect(
+                screen.getByText(/confirmWarning.title/),
+            ).toBeInTheDocument();
+            expect(logMessageSpy).toHaveBeenCalled();
+        });
+
+        it('warns immediately when resuming a transaction already unconfirmed for longer than the timeout', () => {
+            usePendingTransactionMock.mockReturnValue({
+                status: PendingTransactionStatus.SUBMITTED,
+                hash: '0x1',
+                submittedAt: Date.now() - 400_000,
+            });
+            const updateSteps = jest.fn() as jest.Mock<
+                void,
+                IStepperStep<ITransactionDialogStepMeta>[][]
+            >;
+            const stepper = generateStepperResult<
+                ITransactionDialogStepMeta,
+                string
+            >({ updateSteps });
+            render(createTestComponent({ stepper }));
+
+            act(() => jest.advanceTimersByTime(0));
+
+            expect(getLastConfirmStep(updateSteps)?.meta.state).toEqual(
+                'warning',
+            );
+        });
+
+        it('gates the confirm step retry behind the retry confirmation dialog while warning', () => {
+            const open = jest.fn();
+            const useDialogContextSpy = jest
+                .spyOn(DialogProviderModule, 'useDialogContext')
+                .mockReturnValue(generateDialogContext({ open }));
+            const updateSteps = jest.fn() as jest.Mock<
+                void,
+                IStepperStep<ITransactionDialogStepMeta>[][]
+            >;
+            const stepper = generateStepperResult<
+                ITransactionDialogStepMeta,
+                string
+            >({ updateSteps });
+            render(createTestComponent({ stepper }));
+            act(() => jest.advanceTimersByTime(90_000));
+
+            const { action: confirmStepAction } =
+                getLastConfirmStep(updateSteps)?.meta ?? {};
+            act(() => confirmStepAction?.({ onError: jest.fn() }));
+
+            expect(open).toHaveBeenCalledWith(
+                ApplicationDialogId.RETRY_TRANSACTION_WARNING,
+                expect.objectContaining({
+                    stack: true,
+                    params: { onRetry: expect.any(Function) },
+                }),
+            );
+            useDialogContextSpy.mockRestore();
         });
     });
 });

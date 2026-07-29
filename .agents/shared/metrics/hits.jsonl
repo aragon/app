@@ -142,3 +142,7 @@
 {"ts":"2026-07-08T16:29:55.658Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialog.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":11,"adapter":"claude"}
 {"ts":"2026-07-08T16:30:49.523Z","tool":"Edit","file":"apps/app/src/modules/governance/dialogs/selectPluginDialog/selectPluginDialogProcessListItem.tsx","rule":"plugin-visibility","bytes":2379,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-07-22T08:55:56.658Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/queries/useAllDaoPermissions/useAllDaoPermissions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":6,"adapter":"claude"}
+{"ts":"2026-07-24T17:37:00.673Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/transactionDialog.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-28T16:26:08.696Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/useManagedTransaction.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-07-28T16:26:28.132Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/useManagedTransaction.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-07-28T16:31:25.874Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/transactionDialog.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}

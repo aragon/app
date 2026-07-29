@@ -71,6 +71,9 @@ const stepStateSubmitLabel: Partial<
         pending: 'app.shared.transactionDialog.footer.approve.pending',
         error: 'app.shared.transactionDialog.footer.approve.error',
     },
+    [TransactionDialogStep.CONFIRM]: {
+        warning: 'app.shared.transactionDialog.footer.confirm.warning',
+    },
 };
 
 const buildSuccessLink = (
@@ -139,6 +142,7 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
     const isErrorState = state === 'error';
     const isSuccessState = state === 'success';
     const isPendingState = state === 'pending';
+    const isWarningState = state === 'warning';
 
     const successStep = transactionType
         ? TransactionDialogStep.INDEXING
@@ -215,7 +219,10 @@ export const TransactionDialogFooter = <TCustomStepId extends string = string>(
             primaryAction={{
                 label: processedSubmitLabel,
                 onClick: handlePrimaryActionClick,
-                iconLeft: isErrorState ? IconType.RELOAD : undefined,
+                iconLeft:
+                    isErrorState || isWarningState
+                        ? IconType.RELOAD
+                        : undefined,
                 isLoading: isPendingState,
                 href: processedSuccessLink,
             }}

@@ -13,10 +13,14 @@ export enum PendingTransactionStatus {
 }
 
 // `type` and `scope` narrow duplicate detection (see IPendingTransactionMeta). Both are opaque to the
-// manager and just travel with the state.
+// manager and just travel with the state. `submittedAt` (broadcast timestamp) and `chainId` (broadcast
+// chain) are persisted with SUBMITTED records so a resumed consumer can tell how long the transaction
+// has been unconfirmed and reconciliation can look the receipt up on the right chain.
 export interface IPendingTransactionState {
     status: PendingTransactionStatus;
     hash?: Hex;
+    submittedAt?: number;
+    chainId?: number;
     error?: unknown;
     type?: string;
     scope?: string;
