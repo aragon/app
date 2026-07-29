@@ -37,6 +37,17 @@ export interface IPermissionEntityRef {
     stageIndex?: number;
     role?: 'who' | 'where' | 'condition';
     avatarSrc?: string;
+    /**
+     * Governance body brand identity, mirrored from the backend permission
+     * entity enrichment (see app-backend #1491). `safe` marks a Safe-based
+     * process body or external proposer.
+     */
+    brandId?: 'eoa' | 'safe' | 'other';
+    /**
+     * Address of the proposal-creation condition wired to a Safe body, when the
+     * backend can resolve it.
+     */
+    proposalCreationConditionAddress?: string;
 }
 
 export interface IDaoPermission {

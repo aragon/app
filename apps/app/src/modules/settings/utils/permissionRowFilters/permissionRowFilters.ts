@@ -4,6 +4,7 @@ import type {
     PermissionEntityLayer,
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import type { IPermissionRow } from '../../types';
 
 export interface IPermissionRowFilters {
@@ -20,24 +21,19 @@ export interface IPermissionRowFilters {
      */
     showDaoPermissions: boolean;
     /**
-     * When false, rows touching a supporting entity or disconnected from the active DAO are hidden.
+     * When false, rows touching a subplugin, unresolved endpoint, or disconnected address are hidden.
      */
     showSubpluginPermissions: boolean;
 }
 
-const SUPPORTING_PERMISSION_LAYERS = new Set<PermissionEntityLayer>([
-    'processInternal',
-    'condition',
-    'externalActor',
-    'historicalPlugin',
+const INACTIVE_PLUGIN_STATUSES = new Set(['uninstalled', 'historical']);
+
+const UNRESOLVED_SUPPORTING_LAYERS = new Set<PermissionEntityLayer>([
     'contract',
     'unknown',
 ]);
 
-const isSupportingPermissionLayer = (layer?: PermissionEntityLayer): boolean =>
-    layer != null && SUPPORTING_PERMISSION_LAYERS.has(layer);
-
-const INACTIVE_PLUGIN_STATUSES = new Set(['uninstalled', 'historical']);
+const PERMISSION_HASH_PATTERN = /^0x[a-f0-9]{64}$/iu;
 
 const isInactivePluginEndpoint = (row: IPermissionRow): boolean => {
     const endpointEntities = [row.who, row.where];
@@ -48,6 +44,11 @@ const isInactivePluginEndpoint = (row: IPermissionRow): boolean => {
             INACTIVE_PLUGIN_STATUSES.has(entity.status),
     );
 };
+
+const isUnresolvedSupportingEndpoint = (
+    entity?: IPermissionRow['who'],
+): boolean =>
+    entity?.layer != null && UNRESOLVED_SUPPORTING_LAYERS.has(entity.layer);
 
 const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     const { meta } = plugin;
@@ -76,15 +77,42 @@ const isSubpluginAddress = (
         );
     }) ?? false;
 
-const rowTouchesSupportingPermission = (
+const isTopLevelProcessEndpoint = (
+    address: string,
+    entity?: IPermissionRow['who'],
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
+): boolean =>
+    entity?.layer === 'processInternal' &&
+    entity.parentPluginAddress == null &&
+    !isSubpluginAddress(address, daoPlugins);
+
+const rowTouchesTopLevelProcess = (
     row: IPermissionRow,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
-    isSupportingPermissionLayer(row.who?.layer) ||
-    isSupportingPermissionLayer(row.where?.layer) ||
+    isTopLevelProcessEndpoint(row.whoAddress, row.who, daoPlugins) ||
+    isTopLevelProcessEndpoint(row.whereAddress, row.where, daoPlugins);
+
+const rowTouchesSubplugin = (
+    row: IPermissionRow,
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
+): boolean =>
     isSubpluginAddress(row.whoAddress, daoPlugins) ||
     isSubpluginAddress(row.whereAddress, daoPlugins);
 
+const rowTouchesUnresolvedSupportingEndpoint = (row: IPermissionRow): boolean =>
+    isUnresolvedSupportingEndpoint(row.who) ||
+    isUnresolvedSupportingEndpoint(row.where);
+
+const rowHasUnresolvedPermission = (row: IPermissionRow): boolean => {
+    if (!PERMISSION_HASH_PATTERN.test(row.permissionId)) {
+        return false;
+    }
+
+    return permissionNameUtils
+        .getPermissionName(row.permissionId)
+        .startsWith('0x');
+};
 const isDaoGrantedPermission = (
     row: IPermissionRow,
     activeAccountAddress?: string,
@@ -95,8 +123,10 @@ const isDaoGrantedPermission = (
 const isResidualPermission = (
     row: IPermissionRow,
     activeAccountAddress?: string,
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
     activeAccountAddress != null &&
+    !rowTouchesTopLevelProcess(row, daoPlugins) &&
     !addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress) &&
     !addressUtils.isAddressEqual(row.whereAddress, activeAccountAddress);
 
@@ -125,8 +155,10 @@ export const filterPermissionRows = (
 
         if (
             !showSubpluginPermissions &&
-            (rowTouchesSupportingPermission(row, daoPlugins) ||
-                isResidualPermission(row, activeAccountAddress))
+            (rowTouchesSubplugin(row, daoPlugins) ||
+                rowTouchesUnresolvedSupportingEndpoint(row) ||
+                rowHasUnresolvedPermission(row) ||
+                isResidualPermission(row, activeAccountAddress, daoPlugins))
         ) {
             return false;
         }

@@ -126,6 +126,58 @@ describe('buildPermissionGraph', () => {
         });
     });
 
+    it('carries backend Safe brand metadata onto graph nodes', () => {
+        const row = buildRow({
+            whoAddress: pluginAddress,
+            who: {
+                address: pluginAddress,
+                label: 'Process internal',
+                layer: 'processInternal',
+                brandId: 'safe',
+            },
+        });
+
+        const graph = buildPermissionGraph({
+            rows: [row],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find((node) => node.id === pluginAddress.toLowerCase()),
+        ).toMatchObject({
+            kind: 'plugin',
+            brandId: 'safe',
+        });
+    });
+
+    it('drops condition-contract permissions from the graph', () => {
+        const conditionRow = buildRow({
+            whoAddress: daoAddress,
+            whereAddress: conditionAddress,
+            where: {
+                address: conditionAddress,
+                layer: 'condition',
+                label: 'Condition contract',
+                status: 'installed',
+            },
+        });
+
+        const graph = buildPermissionGraph({
+            rows: [conditionRow],
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+
+        expect(graph.edges).toHaveLength(0);
+        expect(
+            graph.nodes.find(
+                (node) => node.id === conditionAddress.toLowerCase(),
+            ),
+        ).toBeUndefined();
+    });
+
     it('creates who-to-where edges with resolved permission and condition labels', () => {
         const row = buildRow({
             conditionAddress,

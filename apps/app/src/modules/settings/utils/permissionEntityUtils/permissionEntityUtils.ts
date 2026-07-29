@@ -49,6 +49,11 @@ export interface IPermissionEntity {
      */
     avatarSrc?: string;
     /**
+     * Governance body brand identity, mirrored from the backend permission
+     * entity enrichment. `safe` marks a Safe process body or external proposer.
+     */
+    brandId?: IPermissionEntityRef['brandId'];
+    /**
      * Secondary detail label shown under the address in the expanded row — the
      * DAO name, or the plugin metadata name and version (e.g. `Core v1.3`).
      */
@@ -123,7 +128,7 @@ class PermissionEntityUtils {
         }
 
         if (entity != null) {
-            return this.resolveBackendEntity(address, entity);
+            return this.resolveBackendEntity(address, entity, daoPlugins);
         }
 
         const matchedPlugin = daoPlugins?.find((plugin) =>
@@ -174,6 +179,7 @@ class PermissionEntityUtils {
     private resolveBackendEntity = (
         address: string,
         entity: IPermissionEntityRef,
+        daoPlugins?: DaoPluginEntries,
     ): IPermissionEntity => {
         const label =
             entity.label ??
@@ -192,23 +198,74 @@ class PermissionEntityUtils {
                 detailName: label,
                 layer: entity.layer,
                 status: entity.status,
+                brandId: entity.brandId,
+            };
+        }
+
+        if (entity.layer === 'processInternal') {
+            const bodyInterfaceType = entity.interfaceType;
+            const parsedType =
+                bodyInterfaceType != null
+                    ? daoUtils.parsePluginInterfaceType(bodyInterfaceType)
+                    : undefined;
+            const brandTag = entity.brandId === 'safe' ? 'SAFE' : undefined;
+            // The backend hardcodes a generic label for bodies it cannot name.
+            // Treat that as "no name" and derive a title from the interface type
+            // (front-run until the backend resolves the body's real name).
+            const backendName =
+                entity.label != null && entity.label !== 'Process internal'
+                    ? entity.label
+                    : undefined;
+            const bodyName =
+                backendName ??
+                parsedType ??
+                (entity.brandId === 'safe' ? 'Safe' : label);
+
+            return {
+                label: bodyName,
+                // Show a type chip only when the title is a real name — otherwise
+                // the derived title already is the type and the chip is redundant.
+                tag: backendName
+                    ? (bodyInterfaceType?.toUpperCase() ?? brandTag)
+                    : brandTag,
+                address,
+                isSentinel: false,
+                type: 'plugin',
+                detailName: entity.parentPluginName ?? bodyName,
+                layer: entity.layer,
+                status: entity.status,
+                brandId: entity.brandId,
             };
         }
 
         if (
             entity.layer === 'topLevelPlugin' ||
-            entity.layer === 'processInternal' ||
             entity.layer === 'historicalPlugin'
         ) {
+            const matchedPlugin = daoPlugins?.find((plugin) =>
+                this.isAddressEqual(plugin.meta.address, address),
+            );
+            const backendLabelIsRawType =
+                entity.interfaceType != null &&
+                entity.label === entity.interfaceType;
+            const pluginLabel =
+                backendLabelIsRawType && matchedPlugin != null
+                    ? daoUtils.getPluginName(matchedPlugin.meta)
+                    : label;
+
             return {
-                label,
+                label: pluginLabel,
                 tag,
                 address,
                 isSentinel: false,
                 type: 'plugin',
-                detailName: entity.parentPluginName ?? label,
+                detailName:
+                    matchedPlugin != null && pluginLabel !== label
+                        ? this.formatPluginDetail(matchedPlugin.meta)
+                        : (entity.parentPluginName ?? pluginLabel),
                 layer: entity.layer,
                 status: entity.status,
+                brandId: entity.brandId,
             };
         }
 
@@ -220,6 +277,7 @@ class PermissionEntityUtils {
             detailName: addressUtils.truncateAddress(address),
             layer: entity.layer,
             status: entity.status,
+            brandId: entity.brandId,
         };
     };
 

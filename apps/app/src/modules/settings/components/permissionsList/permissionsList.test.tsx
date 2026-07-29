@@ -1,5 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import { PluginInterfaceType } from '@/shared/api/daoService';
+import { generateDaoPlugin } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
 import type { IPermissionRow } from '../../types';
@@ -13,6 +15,9 @@ const ROOT_PERMISSION_ID =
     '0x815fe80e4b37c8582a3b773d1d7071f983eacfd56b5965db654f3087c25ada33';
 const EXECUTE_PERMISSION_ID =
     '0xbf04b4486c9663d805744005c3da000eda93de6e3308a4a7a812eb565327b78d';
+const SET_TRUSTED_FORWARDER_PERMISSION_ID =
+    '0x06d294bc8cbad2e393408b20dd019a772661f60b8d633e56761157cb1ec85f8c';
+const SPP_PLUGIN_ADDRESS = '0x26A696269116cAaB99626Cc793CeA24bbCec7528';
 
 describe('<PermissionsList /> component', () => {
     beforeAll(() => {
@@ -36,6 +41,18 @@ describe('<PermissionsList /> component', () => {
                 <PermissionsList {...completeProps} />
             </GukModulesProvider>
         );
+    };
+
+    const getMobileList = (container: HTMLElement) => {
+        const mobileList = container.querySelector<HTMLElement>(
+            '[class~="md:hidden"]',
+        );
+
+        if (mobileList == null) {
+            throw new Error('Mobile permissions list not found');
+        }
+
+        return mobileList;
     };
 
     it('renders a skeleton while the permissions are loading', () => {
@@ -79,13 +96,17 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('ROOT_PERMISSION')).toBeInTheDocument();
-        expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
+        expect(screen.getAllByText('ROOT_PERMISSION').length).toBeGreaterThan(
+            0,
+        );
+        expect(
+            screen.getAllByText('EXECUTE_PERMISSION').length,
+        ).toBeGreaterThan(0);
         expect(screen.getAllByText('Anyone').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Any Address').length).toBeGreaterThan(0);
         expect(
-            screen.getByText(/permissionsList.header.condition/),
-        ).toBeInTheDocument();
+            screen.getAllByText(/permissionsList.header.condition/).length,
+        ).toBeGreaterThan(0);
     });
 
     it('renders backend-enriched entity labels without plugin lookup', () => {
@@ -107,8 +128,8 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('Backend SPP')).toBeInTheDocument();
-        expect(screen.getByText('SPP')).toBeInTheDocument();
+        expect(screen.getAllByText('Backend SPP').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('SPP').length).toBeGreaterThan(0);
     });
 
     it('renders informational help for the Who and Where headers', () => {
@@ -154,8 +175,8 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('VotingPower')).toBeInTheDocument();
-        expect(screen.getByText('-')).toBeInTheDocument();
+        expect(screen.getAllByText('VotingPower').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
     });
 
     it('keys rows by condition address so distinct conditions do not collide', () => {
@@ -187,7 +208,88 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getByText('Unrecognized condition')).toBeInTheDocument();
+        const conditionLabels = screen.getAllByText('Unrecognized condition');
+        expect(conditionLabels.length).toBeGreaterThan(0);
+        expect(conditionLabels[0].parentElement).toHaveClass(
+            'max-w-full',
+            '[&>p]:truncate',
+        );
+    });
+
+    it('renders mobile cards with graph-style detail controls and static permission content', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: SET_TRUSTED_FORWARDER_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: SPP_PLUGIN_ADDRESS,
+                conditionAddress: ALLOW_FLAG,
+            },
+        ];
+
+        const { container } = render(
+            createTestComponent({
+                rows,
+                daoPlugins: [
+                    {
+                        id: 'spp',
+                        uniqueId: 'spp-1',
+                        label: 'Polling',
+                        meta: generateDaoPlugin({
+                            name: 'Polling',
+                            address: SPP_PLUGIN_ADDRESS,
+                            interfaceType: PluginInterfaceType.SPP,
+                        }),
+                        props: {},
+                    },
+                ],
+            }),
+        );
+        const mobileList = getMobileList(container);
+
+        expect(
+            within(mobileList).getByText(/permissionsList.details.heading/),
+        ).toBeInTheDocument();
+        expect(
+            within(mobileList).getByRole('radio', {
+                name: /permissionsList.details.permission/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            within(mobileList).getByRole('radio', {
+                name: /permissionsList.details.condition/,
+            }),
+        ).toBeDisabled();
+        expect(
+            within(mobileList).getByText('SET_TRUSTED_FORWARDER_PERMISSION'),
+        ).toBeInTheDocument();
+        expect(
+            within(mobileList).getAllByText('Anyone').length,
+        ).toBeGreaterThan(0);
+        expect(within(mobileList).getByText('Polling')).toBeInTheDocument();
+    });
+
+    it('switches mobile cards from permission details to condition details', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: EXECUTE_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            },
+        ];
+
+        const { container } = render(createTestComponent({ rows }));
+        const mobileList = getMobileList(container);
+
+        fireEvent.click(
+            within(mobileList).getByRole('radio', {
+                name: /permissionsList.details.condition/,
+            }),
+        );
+
+        expect(
+            within(mobileList).getByText(/unrecognizedConditionSlot.heading/),
+        ).toBeInTheDocument();
     });
 
     it('renders both the Details and Condition lists for an expanded row', async () => {
@@ -213,8 +315,8 @@ describe('<PermissionsList /> component', () => {
         );
 
         expect(
-            screen.getByText(/permissionsList.details.heading/),
-        ).toBeInTheDocument();
+            screen.getAllByText(/permissionsList.details.heading/).length,
+        ).toBeGreaterThan(0);
         expect(
             screen.getByText(/permissionsList.condition.heading/),
         ).toBeInTheDocument();
@@ -288,7 +390,9 @@ describe('<PermissionsList /> component', () => {
             }),
         );
 
-        expect(screen.getAllByText('Unrecognized condition')).toHaveLength(2);
+        expect(
+            screen.getAllByText('Unrecognized condition').length,
+        ).toBeGreaterThanOrEqual(2);
         expect(screen.queryByText(/noConditionSlot/)).not.toBeInTheDocument();
     });
 });

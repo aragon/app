@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AlertCard,
     addressUtils,
     Button,
     ChainEntityType,
@@ -13,14 +14,8 @@ import {
 import { useRef, useState } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
-import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
-
-const NODE_TYPE_KEY: Record<PermissionNodeKind, string> = {
-    dao: 'app.settings.daoPermissionsPage.graphView.node.dao',
-    linkedDao: 'app.settings.daoPermissionsPage.graphView.node.linkedDao',
-    plugin: 'app.settings.daoPermissionsPage.graphView.node.plugin',
-    actor: 'app.settings.daoPermissionsPage.graphView.node.actor',
-};
+import type { IPermissionGraphNode } from '../../types';
+import { getPermissionNodeTypeKey } from './permissionGraphNode';
 
 export interface IPermissionNodeDetailPanelProps {
     chainId?: number;
@@ -43,6 +38,10 @@ export const PermissionNodeDetailPanel: React.FC<
     const isSentinelAddress =
         addressUtils.isAddressEqual(node.address, ANY_ADDR) ||
         addressUtils.isAddressEqual(node.address, ALLOW_FLAG);
+    const isAnyoneSentinel = addressUtils.isAddressEqual(
+        node.address,
+        ANY_ADDR,
+    );
 
     const explorerUrl = isSentinelAddress
         ? undefined
@@ -143,7 +142,7 @@ export const PermissionNodeDetailPanel: React.FC<
                         )}
                     </div>
                     <p className="truncate text-neutral-500 text-sm">
-                        {t(NODE_TYPE_KEY[node.kind])}
+                        {t(getPermissionNodeTypeKey(node))}
                     </p>
                 </div>
                 <div onPointerDown={(event) => event.stopPropagation()}>
@@ -159,31 +158,44 @@ export const PermissionNodeDetailPanel: React.FC<
                 </div>
             </div>
             <div className="p-4">
-                <DefinitionList.Container>
-                    <DefinitionList.Item
-                        term={t(
-                            'app.settings.daoPermissionsPage.graphView.detail.type',
+                {isAnyoneSentinel ? (
+                    <AlertCard
+                        message={t(
+                            'app.settings.daoPermissionsPage.graphView.detail.anyone.title',
                         )}
+                        variant="info"
                     >
-                        {t(NODE_TYPE_KEY[node.kind])}
-                    </DefinitionList.Item>
-                    {!isSentinelAddress && (
+                        {t(
+                            'app.settings.daoPermissionsPage.graphView.detail.anyone.description',
+                        )}
+                    </AlertCard>
+                ) : (
+                    <DefinitionList.Container>
                         <DefinitionList.Item
-                            copyValue={node.address}
                             term={t(
-                                'app.settings.daoPermissionsPage.graphView.detail.address',
+                                'app.settings.daoPermissionsPage.graphView.detail.type',
                             )}
                         >
-                            <Link
-                                className="w-fit"
-                                href={explorerUrl}
-                                isExternal={explorerUrl != null}
-                            >
-                                {addressUtils.truncateAddress(node.address)}
-                            </Link>
+                            {t(getPermissionNodeTypeKey(node))}
                         </DefinitionList.Item>
-                    )}
-                </DefinitionList.Container>
+                        {!isSentinelAddress && (
+                            <DefinitionList.Item
+                                copyValue={node.address}
+                                term={t(
+                                    'app.settings.daoPermissionsPage.graphView.detail.address',
+                                )}
+                            >
+                                <Link
+                                    className="w-fit"
+                                    href={explorerUrl}
+                                    isExternal={explorerUrl != null}
+                                >
+                                    {addressUtils.truncateAddress(node.address)}
+                                </Link>
+                            </DefinitionList.Item>
+                        )}
+                    </DefinitionList.Container>
+                )}
             </div>
         </div>
     );

@@ -54,11 +54,12 @@ const EDGE_ORIGIN_MARKER_ACTIVE = 'permission-origin-dot-active';
 const SELF_STACK_GAP = 48;
 const FALLBACK_NODE_WIDTH = 256;
 const FALLBACK_NODE_HEIGHT = 92;
-const FALLBACK_STACK_WIDTH = 240;
+const FALLBACK_STACK_WIDTH = 160;
 const STACK_ROW_HEIGHT = 20;
 const STACK_CONDITION_ROW_HEIGHT = 34;
 const STACK_ROW_GAP = 2;
 type PermissionGraphFlow = 'incoming' | 'outgoing';
+const EXECUTE_PERMISSION_NAME = 'EXECUTE_PERMISSION';
 
 export const getVisibleEdges = (
     graph: IPermissionGraph,
@@ -74,11 +75,8 @@ export const getGraphFlow = (
     const hasIncomingEdges = nonSelfEdges.some(
         (edge) => edge.target === anchorId,
     );
-    const hasOutgoingEdges = nonSelfEdges.some(
-        (edge) => edge.source === anchorId,
-    );
 
-    return hasIncomingEdges && !hasOutgoingEdges ? 'incoming' : 'outgoing';
+    return hasIncomingEdges ? 'incoming' : 'outgoing';
 };
 
 export const getLayoutDirection = (
@@ -88,9 +86,20 @@ export const getLayoutDirection = (
     getGraphFlow(visibleEdges, anchorId) === 'incoming' ? 'BT' : 'TB';
 
 const getLayoutSpacing = (): { nodesep: number; ranksep: number } => ({
-    nodesep: 60,
-    ranksep: 170,
+    nodesep: 96,
+    ranksep: 220,
 });
+
+export const getLayoutSignature = (nodes: Node[], edges: Edge[]): string =>
+    [
+        nodes
+            .map(
+                (node) =>
+                    `${node.id}:${node.measured?.width ?? 0}x${node.measured?.height ?? 0}`,
+            )
+            .join('|'),
+        edges.map((edge) => `${edge.source}->${edge.target}`).join('|'),
+    ].join('::');
 
 const getHandlePositions = (
     flow: PermissionGraphFlow,
@@ -127,6 +136,20 @@ const getEdgeHandles = (flow: PermissionGraphFlow) => {
         stackSource: PERMISSION_GRAPH_HANDLE.sourceBottom,
         targetTarget: PERMISSION_GRAPH_HANDLE.targetTop,
     };
+};
+
+const getEdgeFlow = (
+    visualKind: PermissionEdgeVisualKind,
+    defaultFlow: PermissionGraphFlow,
+    usesBottomToTopHierarchy = false,
+): PermissionGraphFlow => {
+    if (usesBottomToTopHierarchy) {
+        return 'incoming';
+    }
+
+    return visualKind === 'incoming' || visualKind === 'outgoing'
+        ? visualKind
+        : defaultFlow;
 };
 
 const getStackPermissions = (node: Node): IPermissionEdgeEntry[] =>
@@ -185,22 +208,9 @@ const getFacingHandles = (
 } => {
     const sourceCenter = getNodeCenter(sourceNode);
     const targetCenter = getNodeCenter(targetNode);
-    const deltaX = targetCenter.x - sourceCenter.x;
-    const deltaY = targetCenter.y - sourceCenter.y;
+    const targetIsBelowOrLevel = targetCenter.y >= sourceCenter.y;
 
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        return deltaX > 0
-            ? {
-                  sourceHandle: PERMISSION_GRAPH_HANDLE.sourceRight,
-                  targetHandle: PERMISSION_GRAPH_HANDLE.targetLeft,
-              }
-            : {
-                  sourceHandle: PERMISSION_GRAPH_HANDLE.sourceLeft,
-                  targetHandle: PERMISSION_GRAPH_HANDLE.targetRight,
-              };
-    }
-
-    return deltaY > 0
+    return targetIsBelowOrLevel
         ? {
               sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
               targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
@@ -211,14 +221,162 @@ const getFacingHandles = (
           };
 };
 
+type PermissionGraphHandleSide = 'top' | 'right' | 'bottom' | 'left';
+const SOURCE_HANDLE_BY_SIDE: Record<PermissionGraphHandleSide, string> = {
+    top: PERMISSION_GRAPH_HANDLE.sourceTop,
+    right: PERMISSION_GRAPH_HANDLE.sourceRight,
+    bottom: PERMISSION_GRAPH_HANDLE.sourceBottom,
+    left: PERMISSION_GRAPH_HANDLE.sourceLeft,
+};
+
+const TARGET_HANDLE_BY_SIDE: Record<PermissionGraphHandleSide, string> = {
+    top: PERMISSION_GRAPH_HANDLE.targetTop,
+    right: PERMISSION_GRAPH_HANDLE.targetRight,
+    bottom: PERMISSION_GRAPH_HANDLE.targetBottom,
+    left: PERMISSION_GRAPH_HANDLE.targetLeft,
+};
+
+const HANDLE_SIDE_BY_ID: Record<string, PermissionGraphHandleSide> = {
+    [PERMISSION_GRAPH_HANDLE.sourceTop]: 'top',
+    [PERMISSION_GRAPH_HANDLE.sourceRight]: 'right',
+    [PERMISSION_GRAPH_HANDLE.sourceBottom]: 'bottom',
+    [PERMISSION_GRAPH_HANDLE.sourceLeft]: 'left',
+    [PERMISSION_GRAPH_HANDLE.targetTop]: 'top',
+    [PERMISSION_GRAPH_HANDLE.targetRight]: 'right',
+    [PERMISSION_GRAPH_HANDLE.targetBottom]: 'bottom',
+    [PERMISSION_GRAPH_HANDLE.targetLeft]: 'left',
+};
+
+const OPPOSITE_HANDLE_SIDE: Record<
+    PermissionGraphHandleSide,
+    PermissionGraphHandleSide
+> = {
+    top: 'bottom',
+    right: 'left',
+    bottom: 'top',
+    left: 'right',
+};
+
+const getHandleSide = (
+    handleId: string | null | undefined,
+): PermissionGraphHandleSide | undefined =>
+    handleId == null ? undefined : HANDLE_SIDE_BY_ID[handleId];
+
+const enforceOppositeStackSides = (edges: Edge[]): Edge[] => {
+    const nextEdges = [...edges];
+    const edgesByStackId = new Map<
+        string,
+        {
+            origin?: { edge: Edge; index: number };
+            target?: { edge: Edge; index: number };
+        }
+    >();
+
+    for (const [index, edge] of edges.entries()) {
+        const stackId = edge.data?.permissionStackId;
+        const stackConnection = edge.data?.stackConnection;
+
+        if (
+            typeof stackId !== 'string' ||
+            (stackConnection !== 'origin' && stackConnection !== 'target')
+        ) {
+            continue;
+        }
+
+        const group = edgesByStackId.get(stackId) ?? {};
+        group[stackConnection] = { edge, index };
+        edgesByStackId.set(stackId, group);
+    }
+
+    for (const group of edgesByStackId.values()) {
+        if (
+            group.origin == null ||
+            group.target == null ||
+            group.origin.edge.data?.lockHandles === true ||
+            group.target.edge.data?.lockHandles === true
+        ) {
+            continue;
+        }
+
+        const targetStackSide = getHandleSide(group.target.edge.sourceHandle);
+        const originStackSide = getHandleSide(group.origin.edge.targetHandle);
+
+        if (
+            targetStackSide == null ||
+            originStackSide == null ||
+            targetStackSide !== originStackSide
+        ) {
+            continue;
+        }
+
+        const nextOriginStackSide = OPPOSITE_HANDLE_SIDE[targetStackSide];
+        nextEdges[group.origin.index] = {
+            ...group.origin.edge,
+            targetHandle: TARGET_HANDLE_BY_SIDE[nextOriginStackSide],
+        };
+    }
+
+    return nextEdges;
+};
+
+const getOppositeVerticalSourceSide = (
+    sourceSide: PermissionGraphHandleSide,
+): PermissionGraphHandleSide => (sourceSide === 'top' ? 'bottom' : 'top');
+
+const enforceNodeMarkerHandleSeparation = (edges: Edge[]): Edge[] => {
+    const arrowEndSidesByNode = new Map<
+        string,
+        Set<PermissionGraphHandleSide>
+    >();
+
+    for (const edge of edges) {
+        if (edge.markerEnd == null) {
+            continue;
+        }
+
+        const targetSide = getHandleSide(edge.targetHandle);
+
+        if (targetSide == null) {
+            continue;
+        }
+
+        const nodeSides = arrowEndSidesByNode.get(edge.target) ?? new Set();
+        nodeSides.add(targetSide);
+        arrowEndSidesByNode.set(edge.target, nodeSides);
+    }
+
+    return edges.map((edge) => {
+        if (edge.markerStart == null) {
+            return edge;
+        }
+
+        const sourceSide = getHandleSide(edge.sourceHandle);
+        const arrowEndSides = arrowEndSidesByNode.get(edge.source);
+
+        if (
+            sourceSide == null ||
+            arrowEndSides == null ||
+            !arrowEndSides.has(sourceSide)
+        ) {
+            return edge;
+        }
+
+        const nextSourceSide = getOppositeVerticalSourceSide(sourceSide);
+        return {
+            ...edge,
+            sourceHandle: SOURCE_HANDLE_BY_SIDE[nextSourceSide],
+        };
+    });
+};
+
 export const alignEdgesWithNodePositions = (
     nodes: Node[],
     edges: Edge[],
 ): Edge[] => {
     const nodeById = new Map(nodes.map((node) => [node.id, node]));
 
-    return edges.map((edge) => {
-        if (edge.data?.visualKind === 'incoming') {
+    const alignedEdges = edges.map((edge) => {
+        if (edge.data?.lockHandles === true) {
             return edge;
         }
 
@@ -234,6 +392,10 @@ export const alignEdgesWithNodePositions = (
             ...getFacingHandles(sourceNode, targetNode),
         };
     });
+
+    return enforceNodeMarkerHandleSeparation(
+        enforceOppositeStackSides(alignedEdges),
+    );
 };
 
 const getGraphBounds = (nodes: Node[]) => {
@@ -274,33 +436,37 @@ export const positionSelfStacks = (nodes: Node[]): Node[] => {
     const nodeById = new Map(nodes.map((node) => [node.id, node]));
 
     return nodes.map((node) => {
+        if (node.type !== 'permissionStack') {
+            return node;
+        }
+
+        const stackRect = getNodeRect(node);
         const selfTargetId = node.data?.selfTargetId;
 
-        if (
-            node.type !== 'permissionStack' ||
-            typeof selfTargetId !== 'string'
-        ) {
-            return node;
+        if (typeof selfTargetId === 'string') {
+            const targetNode = nodeById.get(selfTargetId);
+
+            if (targetNode == null) {
+                return node;
+            }
+
+            const targetRect = getNodeRect(targetNode);
+            return {
+                ...node,
+                position: {
+                    x:
+                        targetNode.position.x +
+                        targetRect.width / 2 -
+                        stackRect.width / 2,
+                    y:
+                        targetNode.position.y -
+                        stackRect.height -
+                        SELF_STACK_GAP,
+                },
+            };
         }
 
-        const targetNode = nodeById.get(selfTargetId);
-
-        if (targetNode == null) {
-            return node;
-        }
-
-        const targetRect = getNodeRect(targetNode);
-        const stackRect = getNodeRect(node);
-        return {
-            ...node,
-            position: {
-                x:
-                    targetNode.position.x +
-                    targetRect.width / 2 -
-                    stackRect.width / 2,
-                y: targetNode.position.y - stackRect.height - SELF_STACK_GAP,
-            },
-        };
+        return node;
     });
 };
 
@@ -428,7 +594,11 @@ export const buildFlowElements = ({
 
     const stackNodes: Node[] = [];
     const edges: Edge[] = [];
-    const edgeHandles = getEdgeHandles(graphFlow);
+    const daoNodeIds = new Set(
+        graph.nodes
+            .filter((node) => node.kind === 'dao')
+            .map((node) => node.id),
+    );
 
     for (const group of groups.values()) {
         const active = group.entries.some((entry) => entry.selected === true);
@@ -446,11 +616,37 @@ export const buildFlowElements = ({
         );
         const stackId = `permission-stack-${pairKey(group.source, group.target)}`;
         const isSelfEdge = visualKind === 'self';
+        const usesBottomToTopHierarchy = group.entries.some(
+            (entry) => entry.permissionName === EXECUTE_PERMISSION_NAME,
+        );
+        const edgeHandles = getEdgeHandles(
+            getEdgeFlow(visualKind, graphFlow, usesBottomToTopHierarchy),
+        );
         const edgeData = {
             visualKind,
+            ...(visualKind === 'incoming' && graphFlow === 'incoming'
+                ? { lockHandles: true }
+                : {}),
             ...(isSelfEdge ? { selfTargetId: group.target } : {}),
         } satisfies IPermissionEdgeData;
-
+        const sourceIsDao = daoNodeIds.has(group.source);
+        const targetIsDao = daoNodeIds.has(group.target);
+        const usesDaoHierarchy = sourceIsDao !== targetIsDao;
+        const daoLayoutNode = sourceIsDao ? group.source : group.target;
+        const contractLayoutNode = sourceIsDao ? group.target : group.source;
+        const layoutStartsAtDao = graphFlow === 'outgoing';
+        const layoutSourceNode = layoutStartsAtDao
+            ? daoLayoutNode
+            : contractLayoutNode;
+        const layoutTargetNode = layoutStartsAtDao
+            ? contractLayoutNode
+            : daoLayoutNode;
+        const originLayoutData = usesDaoHierarchy
+            ? { layoutSource: layoutSourceNode, layoutTarget: stackId }
+            : {};
+        const targetLayoutData = usesDaoHierarchy
+            ? { layoutSource: stackId, layoutTarget: layoutTargetNode }
+            : {};
         stackNodes.push({
             id: stackId,
             type: 'permissionStack',
@@ -463,6 +659,9 @@ export const buildFlowElements = ({
                 active,
                 dimmed,
                 ...handlePositions,
+                sourceId: group.source,
+                targetId: group.target,
+                visualKind,
                 ...(isSelfEdge ? { selfTargetId: group.target } : {}),
                 onSelect: onSelectEdge,
             },
@@ -477,7 +676,7 @@ export const buildFlowElements = ({
                 targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
                 type: 'permission',
                 animated: active,
-                markerEnd: getEdgeMarker(active),
+                markerEnd: active ? getEdgeMarker(true) : undefined,
                 style: getEdgeStyle(active),
                 zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
                 data: {
@@ -497,10 +696,15 @@ export const buildFlowElements = ({
             targetHandle: edgeHandles.stackTarget,
             type: 'permission',
             animated: active,
-            markerStart: getOriginMarker(active),
+            markerStart: active ? getOriginMarker(true) : undefined,
             style: getEdgeStyle(active),
             zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
-            data: edgeData,
+            data: {
+                ...edgeData,
+                permissionStackId: stackId,
+                stackConnection: 'origin',
+                ...originLayoutData,
+            },
         });
 
         edges.push({
@@ -511,10 +715,15 @@ export const buildFlowElements = ({
             targetHandle: edgeHandles.targetTarget,
             type: 'permission',
             animated: active,
-            markerEnd: getEdgeMarker(active),
+            markerEnd: active ? getEdgeMarker(true) : undefined,
             style: getEdgeStyle(active),
             zIndex: active ? SELECTED_EDGE_Z_INDEX : undefined,
-            data: edgeData,
+            data: {
+                ...edgeData,
+                permissionStackId: stackId,
+                stackConnection: 'target',
+                ...targetLayoutData,
+            },
         });
     }
 
@@ -621,16 +830,12 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
             return;
         }
 
-        const topologySignature = [
-            nodes.map((node) => node.id).join('|'),
-            edges.map((edge) => `${edge.source}->${edge.target}`).join('|'),
-        ].join('::');
+        const currentNodes = getNodes();
+        const topologySignature = getLayoutSignature(currentNodes, edges);
 
         if (layoutSignature.current === topologySignature) {
             return;
         }
-
-        const currentNodes = getNodes();
         const { nodes: rawLayoutedNodes } = getLayoutedElements(
             currentNodes,
             edges,

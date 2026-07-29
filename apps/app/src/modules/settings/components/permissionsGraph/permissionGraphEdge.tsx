@@ -7,6 +7,9 @@ import {
     type Position,
 } from '@xyflow/react';
 
+const EDGE_PATH_BORDER_RADIUS = 12;
+const EDGE_PATH_OFFSET = 28;
+
 export interface IPermissionEdgeEntry {
     edgeId: string;
     permissionDisplayName: string;
@@ -20,11 +23,17 @@ export type PermissionEdgeVisualKind =
     | 'incoming'
     | 'outgoing'
     | 'other';
+export type PermissionStackConnection = 'origin' | 'target';
 
 export interface IPermissionEdgeData {
     excludeFromLayout?: boolean;
     selfTargetId?: string;
+    lockHandles?: boolean;
+    layoutSource?: string;
+    layoutTarget?: string;
     visualKind: PermissionEdgeVisualKind;
+    permissionStackId?: string;
+    stackConnection?: PermissionStackConnection;
     [key: string]: unknown;
 }
 
@@ -39,10 +48,6 @@ interface IGetPermissionEdgePathParams {
     targetPosition?: Position;
     visualKind: PermissionEdgeVisualKind;
 }
-const DEGENERATE_CURVE_REGEX = /Q (-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?) \1,\2/g;
-
-const removeDegenerateCurves = (path: string): string =>
-    path.replaceAll(DEGENERATE_CURVE_REGEX, '');
 
 export const getPermissionEdgePath = ({
     sourceX,
@@ -51,23 +56,21 @@ export const getPermissionEdgePath = ({
     targetY,
     sourcePosition,
     targetPosition,
-    visualKind,
 }: IGetPermissionEdgePathParams): string => {
-    if (visualKind === 'incoming') {
-        const [path] = getSmoothStepPath({
-            sourceX,
-            sourceY,
-            targetX,
-            targetY,
-            sourcePosition,
-            targetPosition,
-            borderRadius: 0,
-        });
-
-        return removeDegenerateCurves(path);
+    if (sourcePosition == null || targetPosition == null) {
+        return getStraightPath({ sourceX, sourceY, targetX, targetY })[0];
     }
 
-    return getStraightPath({ sourceX, sourceY, targetX, targetY })[0];
+    return getSmoothStepPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        borderRadius: EDGE_PATH_BORDER_RADIUS,
+        offset: EDGE_PATH_OFFSET,
+    })[0];
 };
 
 export const PermissionGraphEdge: React.FC<EdgeProps<IPermissionFlowEdge>> = ({

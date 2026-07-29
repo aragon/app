@@ -10,6 +10,7 @@ export interface IPermissionGraphNode {
     tag?: string;
     layer?: IPermissionEntityRef['layer'];
     status?: IPermissionEntityRef['status'];
+    brandId?: IPermissionEntityRef['brandId'];
     avatarSrc?: string;
     address: string;
 }

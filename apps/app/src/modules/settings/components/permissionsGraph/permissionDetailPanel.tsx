@@ -14,7 +14,11 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
-import type { IPermissionGraph, IPermissionGraphEdge } from '../../types';
+import type {
+    IPermissionGraph,
+    IPermissionGraphEdge,
+    IPermissionRow,
+} from '../../types';
 import {
     conditionTypeUtils,
     UNKNOWN_CONDITION,
@@ -30,18 +34,30 @@ export interface IPermissionDetailPanelProps {
     onClose: () => void;
 }
 
-export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
-    chainId,
-    edge,
-    network,
-    nodes,
-    onClose,
-}) => {
+interface IPermissionDetailEntity {
+    address: string;
+    label?: string;
+}
+
+export interface IPermissionDetailContentProps {
+    chainId?: number;
+    className?: string;
+    network?: IDao['network'];
+    permissionName: string;
+    row: IPermissionRow;
+    who?: IPermissionDetailEntity;
+    where?: IPermissionDetailEntity;
+}
+
+type PermissionDetailsTab = 'permission' | 'condition';
+
+export const PermissionDetailContent: React.FC<
+    IPermissionDetailContentProps
+> = ({ chainId, className, network, permissionName, row, who, where }) => {
     const { t } = useTranslations();
-    const { row } = edge;
+    const [activeTab, setActiveTab] =
+        useState<PermissionDetailsTab>('permission');
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
-    const who = nodes.find((node) => node.id === edge.source);
-    const where = nodes.find((node) => node.id === edge.target);
     const hasCondition = !addressUtils.isAddressEqual(
         conditionAddress,
         ALLOW_FLAG,
@@ -60,15 +76,109 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
         row.whereAddress,
         ANY_ADDR,
     );
+
+    const handleTabChange = (value?: string | string[]) => {
+        if (value === 'permission' || value === 'condition') {
+            setActiveTab(value);
+        }
+    };
+
+    return (
+        <div className={className ?? 'flex flex-col gap-4 p-4'}>
+            <div className="flex items-center justify-between gap-4">
+                <p className="font-medium text-neutral-800">
+                    {t('app.settings.permissionsList.details.heading')}
+                </p>
+                <ToggleGroup
+                    isMultiSelect={false}
+                    onChange={handleTabChange}
+                    value={activeTab}
+                >
+                    <Toggle
+                        label={t(
+                            'app.settings.permissionsList.details.permission',
+                        )}
+                        value="permission"
+                    />
+                    <Toggle
+                        disabled={!hasCondition}
+                        label={t(
+                            'app.settings.permissionsList.details.condition',
+                        )}
+                        value="condition"
+                    />
+                </ToggleGroup>
+            </div>
+            {activeTab === 'permission' ? (
+                <DefinitionList.Container>
+                    <DefinitionList.Item
+                        copyValue={isWhoAnyAddress ? undefined : row.whoAddress}
+                        description={who?.label}
+                        term={t('app.settings.permissionsList.details.who')}
+                    >
+                        {isWhoAnyAddress
+                            ? who?.label
+                            : addressUtils.truncateAddress(row.whoAddress)}
+                    </DefinitionList.Item>
+                    <DefinitionList.Item
+                        copyValue={
+                            isWhereAnyAddress ? undefined : row.whereAddress
+                        }
+                        description={where?.label}
+                        term={t('app.settings.permissionsList.details.where')}
+                    >
+                        {isWhereAnyAddress
+                            ? where?.label
+                            : addressUtils.truncateAddress(row.whereAddress)}
+                    </DefinitionList.Item>
+                    <DefinitionList.Item
+                        copyValue={row.permissionId}
+                        description={permissionName}
+                        term={t(
+                            'app.settings.permissionsList.details.permission',
+                        )}
+                    >
+                        {addressUtils.truncateHash(row.permissionId)}
+                    </DefinitionList.Item>
+                </DefinitionList.Container>
+            ) : hasUnrecognizedCondition ? (
+                <UnrecognizedConditionSlot
+                    chainId={chainId}
+                    conditionAddress={conditionAddress}
+                />
+            ) : (
+                <PluginSingleComponent
+                    chainId={chainId}
+                    conditionAddress={conditionAddress}
+                    Fallback={NoConditionSlot}
+                    network={network}
+                    pluginAddress={row.whoAddress}
+                    pluginId={conditionType}
+                    slotId={SettingsSlotId.PERMISSION_CONDITION}
+                    {...(hasCondition ? row.condition : undefined)}
+                />
+            )}
+        </div>
+    );
+};
+
+export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
+    chainId,
+    edge,
+    network,
+    nodes,
+    onClose,
+}) => {
+    const { t } = useTranslations();
+    const { row } = edge;
+    const who = nodes.find((node) => node.id === edge.source);
+    const where = nodes.find((node) => node.id === edge.target);
     const panelRef = useRef<HTMLDivElement>(null);
     const dragOffsetRef = useRef<{ x: number; y: number } | undefined>(
         undefined,
     );
     const [position, setPosition] = useState({ x: 16, y: 16 });
     const [isDragging, setIsDragging] = useState(false);
-    const [activeTab, setActiveTab] = useState<'permission' | 'condition'>(
-        'permission',
-    );
 
     const clampPosition = (next: { x: number; y: number }) => {
         const panel = panelRef.current;
@@ -139,12 +249,6 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
         }
     };
 
-    const handleTabChange = (value?: string | string[]) => {
-        if (value === 'permission' || value === 'condition') {
-            setActiveTab(value);
-        }
-    };
-
     return (
         <div
             className="absolute z-30 flex max-h-[calc(100%-32px)] w-[360px] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md"
@@ -183,86 +287,15 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                     />
                 </div>
             </div>
-            <div className="flex flex-col gap-4 overflow-auto p-4">
-                <div className="flex items-center justify-between gap-4">
-                    <p className="font-medium text-neutral-800">
-                        {t('app.settings.permissionsList.details.heading')}
-                    </p>
-                    <ToggleGroup
-                        isMultiSelect={false}
-                        onChange={handleTabChange}
-                        value={activeTab}
-                    >
-                        <Toggle
-                            label={t(
-                                'app.settings.permissionsList.details.permission',
-                            )}
-                            value="permission"
-                        />
-                        <Toggle
-                            label={t(
-                                'app.settings.permissionsList.details.condition',
-                            )}
-                            value="condition"
-                        />
-                    </ToggleGroup>
-                </div>
-                {activeTab === 'permission' ? (
-                    <DefinitionList.Container>
-                        <DefinitionList.Item
-                            copyValue={
-                                isWhoAnyAddress ? undefined : row.whoAddress
-                            }
-                            description={who?.label}
-                            term={t('app.settings.permissionsList.details.who')}
-                        >
-                            {isWhoAnyAddress
-                                ? who?.label
-                                : addressUtils.truncateAddress(row.whoAddress)}
-                        </DefinitionList.Item>
-                        <DefinitionList.Item
-                            copyValue={
-                                isWhereAnyAddress ? undefined : row.whereAddress
-                            }
-                            description={where?.label}
-                            term={t(
-                                'app.settings.permissionsList.details.where',
-                            )}
-                        >
-                            {isWhereAnyAddress
-                                ? where?.label
-                                : addressUtils.truncateAddress(
-                                      row.whereAddress,
-                                  )}
-                        </DefinitionList.Item>
-                        <DefinitionList.Item
-                            copyValue={row.permissionId}
-                            description={edge.permissionName}
-                            term={t(
-                                'app.settings.permissionsList.details.permission',
-                            )}
-                        >
-                            {addressUtils.truncateHash(row.permissionId)}
-                        </DefinitionList.Item>
-                    </DefinitionList.Container>
-                ) : hasUnrecognizedCondition ? (
-                    <UnrecognizedConditionSlot
-                        chainId={chainId}
-                        conditionAddress={conditionAddress}
-                    />
-                ) : (
-                    <PluginSingleComponent
-                        chainId={chainId}
-                        conditionAddress={conditionAddress}
-                        Fallback={NoConditionSlot}
-                        network={network}
-                        pluginAddress={row.whoAddress}
-                        pluginId={conditionType}
-                        slotId={SettingsSlotId.PERMISSION_CONDITION}
-                        {...(hasCondition ? row.condition : undefined)}
-                    />
-                )}
-            </div>
+            <PermissionDetailContent
+                chainId={chainId}
+                className="flex flex-col gap-4 overflow-auto p-4"
+                network={network}
+                permissionName={edge.permissionName}
+                row={row}
+                where={where}
+                who={who}
+            />
         </div>
     );
 };

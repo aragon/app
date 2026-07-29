@@ -10,6 +10,8 @@ const pluginAddress = '0x2222222222222222222222222222222222222222';
 const subpluginAddress = '0x3333333333333333333333333333333333333333';
 const targetAddress = '0x4444444444444444444444444444444444444444';
 const parentPluginAddress = '0x5555555555555555555555555555555555555555';
+const unknownPermissionId =
+    '0x440d025ee487c9fe654894f3750aeb18132e334d52d7a9c0a3f6a5c77450a9b5';
 
 const buildRow = (partial: Partial<IPermissionRow>): IPermissionRow => ({
     permissionId: 'permission-id',
@@ -150,6 +152,63 @@ describe('filterPermissionRows', () => {
             }),
             buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
+        const daoPlugins = [
+            buildPlugin({
+                address: subpluginAddress,
+                isSubPlugin: true,
+                parentPlugin: parentPluginAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins,
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([rows[1]]);
+    });
+
+    it('keeps top-level process body proposal permissions visible by default', () => {
+        const rows = [
+            buildRow({
+                where: {
+                    address: targetAddress,
+                    label: 'Stage 1 proposal processor',
+                    layer: 'processInternal',
+                    parentPluginName: 'Core Governance',
+                },
+                whereAddress: targetAddress,
+            }),
+            buildRow({ whereAddress: daoAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
+    });
+
+    it('hides process-internal child rows when they do not touch the DAO', () => {
+        const rows = [
+            buildRow({
+                whoAddress: pluginAddress,
+                where: {
+                    address: targetAddress,
+                    label: 'Core Governance Delegate (Veto)',
+                    layer: 'processInternal',
+                    parentPluginAddress,
+                    parentPluginName: 'Core Governance',
+                },
+                whereAddress: targetAddress,
+            }),
+            buildRow({ whereAddress: daoAddress }),
+        ];
 
         const result = filterPermissionRows(rows, {
             activeAccountAddress: daoAddress,
@@ -255,6 +314,48 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual(rows);
+    });
+
+    it('hides DAO-as-caller rows to unknown contracts as supporting noise', () => {
+        const rows = [
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: targetAddress,
+                where: {
+                    address: targetAddress,
+                    label: 'Unknown address',
+                    layer: 'unknown',
+                    status: 'unknown',
+                },
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([]);
+    });
+
+    it('hides locally undecoded permission hashes as supporting noise', () => {
+        const rows = [
+            buildRow({
+                permissionId: unknownPermissionId,
+                whereAddress: daoAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([]);
     });
 
     it('hides inactive plugin endpoint rows even when supporting permissions are enabled', () => {

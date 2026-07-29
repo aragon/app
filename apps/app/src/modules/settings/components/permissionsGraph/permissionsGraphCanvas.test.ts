@@ -1,14 +1,26 @@
 import type { Edge, Node } from '@xyflow/react';
-import type { IPermissionGraph, IPermissionGraphEdge } from '../../types';
+import type {
+    IPermissionGraph,
+    IPermissionGraphEdge,
+    IPermissionGraphNode,
+} from '../../types';
+import { getLayoutedElements } from '../../utils/permissionGraphLayout';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNode';
 import {
     alignEdgesWithNodePositions,
     buildFlowElements,
     getFitViewMinZoom,
     getLayoutDirection,
+    getLayoutSignature,
     getVisibleEdges,
     positionSelfStacks,
 } from './permissionsGraphCanvas';
+
+if (globalThis.structuredClone == null) {
+    Object.defineProperty(globalThis, 'structuredClone', {
+        value: <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T,
+    });
+}
 
 const anchorId = '0x1111111111111111111111111111111111111111';
 const pluginId = '0x2222222222222222222222222222222222222222';
@@ -17,7 +29,13 @@ const otherId = '0x4444444444444444444444444444444444444444';
 
 const buildEdge = (
     id: string,
-    partial: Pick<IPermissionGraphEdge, 'source' | 'target'>,
+    partial: Pick<IPermissionGraphEdge, 'source' | 'target'> &
+        Partial<
+            Pick<
+                IPermissionGraphEdge,
+                'permissionDisplayName' | 'permissionName'
+            >
+        >,
 ): IPermissionGraphEdge => ({
     id,
     permissionDisplayName: 'Permission',
@@ -31,8 +49,11 @@ const buildEdge = (
     ...partial,
 });
 
-const buildGraph = (edges: IPermissionGraphEdge[]): IPermissionGraph => ({
-    nodes: [],
+const buildGraph = (
+    edges: IPermissionGraphEdge[],
+    nodes: IPermissionGraphNode[] = [],
+): IPermissionGraph => ({
+    nodes,
     edges,
 });
 
@@ -76,6 +97,48 @@ describe('getLayoutDirection', () => {
         );
 
         expect(result).toBe('TB');
+    });
+
+    it('keeps active-contract execute views on the stable top-to-bottom layout direction', () => {
+        const result = getLayoutDirection(
+            [
+                buildEdge('execute', {
+                    source: pluginId,
+                    target: anchorId,
+                    permissionName: 'EXECUTE_PERMISSION',
+                    permissionDisplayName: 'Execute',
+                }),
+            ],
+            pluginId,
+        );
+
+        expect(result).toBe('TB');
+    });
+});
+
+describe('getLayoutSignature', () => {
+    it('changes when React Flow replaces fallback dimensions with measured node sizes', () => {
+        const edges: Edge[] = [
+            { id: 'edge', source: 'source', target: 'target' },
+        ];
+        const fallbackNodes = [
+            { id: 'source', data: {}, position: { x: 0, y: 0 } },
+            { id: 'target', data: {}, position: { x: 0, y: 0 } },
+        ] as Node[];
+        const measuredNodes = [
+            {
+                ...fallbackNodes[0],
+                measured: { width: 240, height: 92 },
+            },
+            {
+                ...fallbackNodes[1],
+                measured: { width: 320, height: 120 },
+            },
+        ] as Node[];
+
+        expect(getLayoutSignature(fallbackNodes, edges)).not.toBe(
+            getLayoutSignature(measuredNodes, edges),
+        );
     });
 });
 
@@ -123,6 +186,185 @@ describe('buildFlowElements', () => {
             sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
             targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
         });
+    });
+
+    it('keeps plugin-to-DAO edges on incoming handles in mixed graphs', () => {
+        const incomingEdge = buildEdge('incoming', {
+            source: pluginId,
+            target: anchorId,
+        });
+        const outgoingEdge = buildEdge('outgoing', {
+            source: anchorId,
+            target: pluginId,
+        });
+        const { edges } = buildFlowElements({
+            anchorId,
+            graph: buildGraph([incomingEdge, outgoingEdge]),
+            onSelectEdge: jest.fn(),
+            visibleEdges: [incomingEdge, outgoingEdge],
+        });
+
+        const incomingOriginEdge = edges.find(
+            (edge) =>
+                edge.id === `permission-stack-${pluginId}-${anchorId}-origin`,
+        );
+        const incomingTargetEdge = edges.find(
+            (edge) =>
+                edge.id === `permission-stack-${pluginId}-${anchorId}-target`,
+        );
+
+        expect(incomingOriginEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+        expect(incomingTargetEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+    });
+
+    it('keeps execute permissions on bottom-to-top handles even when the active contract is the who', () => {
+        const executeEdge = buildEdge('execute', {
+            source: pluginId,
+            target: anchorId,
+            permissionName: 'EXECUTE_PERMISSION',
+            permissionDisplayName: 'Execute',
+        });
+        const { edges } = buildFlowElements({
+            anchorId: pluginId,
+            graph: buildGraph([executeEdge]),
+            onSelectEdge: jest.fn(),
+            visibleEdges: [executeEdge],
+        });
+
+        const originEdge = edges.find((edge) => edge.id.endsWith('-origin'));
+        const targetEdge = edges.find((edge) => edge.id.endsWith('-target'));
+
+        expect(originEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+        expect(targetEdge).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+    });
+    it('keeps the DAO above contracts when execute and DAO-granted permissions are both visible', () => {
+        const executeEdge = buildEdge('execute', {
+            source: pluginId,
+            target: anchorId,
+            permissionName: 'EXECUTE_PERMISSION',
+            permissionDisplayName: 'Execute',
+        });
+        const daoGrantedEdge = buildEdge('dao-granted', {
+            source: anchorId,
+            target: pluginId,
+            permissionName: 'SET_METADATA_PERMISSION',
+            permissionDisplayName: 'Set metadata',
+        });
+        const graph = buildGraph(
+            [executeEdge, daoGrantedEdge],
+            [
+                {
+                    id: anchorId,
+                    kind: 'dao',
+                    label: 'DAO',
+                    address: anchorId,
+                },
+                {
+                    id: pluginId,
+                    kind: 'plugin',
+                    label: 'Contract',
+                    address: pluginId,
+                },
+            ],
+        );
+        const { nodes, edges } = buildFlowElements({
+            anchorId,
+            graph,
+            onSelectEdge: jest.fn(),
+            visibleEdges: graph.edges,
+        });
+        const executeStackId = `permission-stack-${pluginId}-${anchorId}`;
+        const daoGrantedStackId = `permission-stack-${anchorId}-${pluginId}`;
+
+        expect(
+            edges.find((edge) => edge.id === `${executeStackId}-origin`)?.data,
+        ).toMatchObject({
+            layoutSource: pluginId,
+            layoutTarget: executeStackId,
+        });
+        expect(
+            edges.find((edge) => edge.id === `${executeStackId}-target`)?.data,
+        ).toMatchObject({
+            layoutSource: executeStackId,
+            layoutTarget: anchorId,
+        });
+        expect(
+            edges.find((edge) => edge.id === `${daoGrantedStackId}-origin`)
+                ?.data,
+        ).toMatchObject({
+            layoutSource: pluginId,
+            layoutTarget: daoGrantedStackId,
+        });
+        expect(
+            edges.find((edge) => edge.id === `${daoGrantedStackId}-target`)
+                ?.data,
+        ).toMatchObject({
+            layoutSource: daoGrantedStackId,
+            layoutTarget: anchorId,
+        });
+
+        const { nodes: layoutedNodes } = getLayoutedElements(nodes, edges, {
+            direction: getLayoutDirection(graph.edges, anchorId),
+        });
+        const positionedNodes = positionSelfStacks(layoutedNodes);
+        const nodeById = new Map(
+            positionedNodes.map((node) => [node.id, node]),
+        );
+
+        expect(nodeById.get(anchorId)!.position.y).toBeLessThan(
+            nodeById.get(executeStackId)!.position.y,
+        );
+        expect(nodeById.get(executeStackId)!.position.y).toBeLessThan(
+            nodeById.get(pluginId)!.position.y,
+        );
+    });
+
+    it('shows origin dots and target arrows only on the selected permission', () => {
+        const edge = buildEdge('perm', {
+            source: pluginId,
+            target: anchorId,
+        });
+        const params = {
+            anchorId,
+            graph: buildGraph([edge]),
+            onSelectEdge: jest.fn(),
+            visibleEdges: [edge],
+        };
+
+        const unselected = buildFlowElements(params);
+        expect(
+            unselected.edges.find((item) => item.id.endsWith('-origin'))
+                ?.markerStart,
+        ).toBeUndefined();
+        expect(
+            unselected.edges.find((item) => item.id.endsWith('-target'))
+                ?.markerEnd,
+        ).toBeUndefined();
+
+        const selected = buildFlowElements({
+            ...params,
+            selectedEdgeId: 'perm',
+        });
+        expect(
+            selected.edges.find((item) => item.id.endsWith('-origin'))
+                ?.markerStart,
+        ).toBeDefined();
+        expect(
+            selected.edges.find((item) => item.id.endsWith('-target'))
+                ?.markerEnd,
+        ).toBeDefined();
     });
 });
 
@@ -196,7 +438,7 @@ describe('alignEdgesWithNodePositions', () => {
         position,
     });
 
-    it('uses side handles for horizontal edges', () => {
+    it('keeps horizontal edges on top/bottom handles', () => {
         const edges: Edge[] = [
             {
                 id: 'edge',
@@ -216,8 +458,8 @@ describe('alignEdgesWithNodePositions', () => {
         const result = alignEdgesWithNodePositions(nodes, edges);
 
         expect(result[0]).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceRight,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetLeft,
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
         });
     });
 
@@ -246,7 +488,7 @@ describe('alignEdgesWithNodePositions', () => {
         });
     });
 
-    it('preserves incoming trident handles during post-layout alignment', () => {
+    it('preserves locked incoming trident handles during post-layout alignment', () => {
         const edges: Edge[] = [
             {
                 id: 'incoming',
@@ -254,7 +496,7 @@ describe('alignEdgesWithNodePositions', () => {
                 sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
                 target: 'target',
                 targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-                data: { visualKind: 'incoming' },
+                data: { visualKind: 'incoming', lockHandles: true },
             },
         ];
         const nodes = [
@@ -270,6 +512,167 @@ describe('alignEdgesWithNodePositions', () => {
 
         expect(result[0]).toMatchObject({
             sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        });
+    });
+
+    it('realigns mixed incoming edges from final node positions', () => {
+        const edges: Edge[] = [
+            {
+                id: 'incoming',
+                source: 'source',
+                sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+                target: 'target',
+                targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+                data: { visualKind: 'incoming' },
+            },
+        ];
+        const nodes = [
+            buildFlowNode('source', { x: 0, y: 0 }, { width: 100, height: 80 }),
+            buildFlowNode(
+                'target',
+                { x: 0, y: 200 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+    });
+
+    it('keeps origin dots and target arrows on opposite stack sides', () => {
+        const edges: Edge[] = [
+            {
+                id: 'stack-origin',
+                source: 'source',
+                target: 'stack',
+                data: {
+                    permissionStackId: 'stack',
+                    stackConnection: 'origin',
+                    visualKind: 'incoming',
+                },
+            },
+            {
+                id: 'stack-target',
+                source: 'stack',
+                target: 'target',
+                data: {
+                    permissionStackId: 'stack',
+                    stackConnection: 'target',
+                    visualKind: 'incoming',
+                },
+            },
+        ];
+        const nodes = [
+            buildFlowNode('stack', { x: 0, y: 0 }, { width: 100, height: 40 }),
+            buildFlowNode(
+                'source',
+                { x: 0, y: 200 },
+                { width: 100, height: 80 },
+            ),
+            buildFlowNode(
+                'target',
+                { x: 0, y: 200 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+        expect(result[1]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+    });
+
+    it('separates dot starts from arrow ends on the same entity handle', () => {
+        const edges: Edge[] = [
+            {
+                id: 'dot-start',
+                source: 'entity',
+                target: 'dot-target',
+                markerStart: 'dot',
+            },
+            {
+                id: 'arrow-end',
+                source: 'arrow-source',
+                target: 'entity',
+                markerEnd: 'arrow',
+            },
+        ];
+        const nodes = [
+            buildFlowNode(
+                'dot-target',
+                { x: 0, y: -200 },
+                { width: 100, height: 80 },
+            ),
+            buildFlowNode(
+                'arrow-source',
+                { x: 0, y: -200 },
+                { width: 100, height: 80 },
+            ),
+            buildFlowNode('entity', { x: 0, y: 0 }, { width: 100, height: 80 }),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+        });
+        expect(result[1]).toMatchObject({
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
+        });
+    });
+
+    it('separates source dots from locked target arrows on the same contract node', () => {
+        const edges: Edge[] = [
+            {
+                id: 'selected-who-path',
+                source: 'contract',
+                target: 'permission-stack',
+                markerStart: 'dot',
+            },
+            {
+                id: 'locked-where-path',
+                source: 'other-stack',
+                target: 'contract',
+                targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+                markerEnd: 'arrow',
+                data: { visualKind: 'incoming', lockHandles: true },
+            },
+        ];
+        const nodes = [
+            buildFlowNode(
+                'permission-stack',
+                { x: 0, y: 200 },
+                { width: 100, height: 40 },
+            ),
+            buildFlowNode(
+                'other-stack',
+                { x: 0, y: 200 },
+                { width: 100, height: 40 },
+            ),
+            buildFlowNode(
+                'contract',
+                { x: 0, y: 0 },
+                { width: 100, height: 80 },
+            ),
+        ];
+
+        const result = alignEdgesWithNodePositions(nodes, edges);
+
+        expect(result[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
+        });
+        expect(result[1]).toMatchObject({
             targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
         });
     });

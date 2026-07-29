@@ -146,5 +146,109 @@ describe('permissionEntity Utils', () => {
                 status: 'uninstalled',
             });
         });
+
+        it('uses the local plugin formatter when a backend plugin label is only the raw interface type', () => {
+            const gaugeAddress = '0x8ab7f7b617b5248358ea9c9b728f3c2edbaa97a2';
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                gaugeAddress,
+                {
+                    daoPlugins: [
+                        {
+                            id: 'gauge',
+                            uniqueId: `${gaugeAddress}-gauge`,
+                            label: 'gauge',
+                            meta: {
+                                address: gaugeAddress,
+                                interfaceType: 'gauge',
+                                subdomain: 'citrea-xctr-gauge-voter-0',
+                            } as IDaoPlugin,
+                            props: {},
+                        },
+                    ],
+                    entity: {
+                        address: gaugeAddress,
+                        interfaceType: 'gauge',
+                        label: 'gauge',
+                        layer: 'topLevelPlugin',
+                        status: 'installed',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                label: 'Citrea Xctr Gauge Voter 0',
+                tag: 'GAUGE',
+                type: 'plugin',
+                detailName: 'Citrea Xctr Gauge Voter 0',
+                layer: 'topLevelPlugin',
+            });
+        });
+
+        it('surfaces backend Safe brand metadata for process bodies', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        label: 'Process internal',
+                        layer: 'processInternal',
+                        brandId: 'safe',
+                        proposalCreationConditionAddress:
+                            '0x00000000000000000000000000000000c0ffee00',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                brandId: 'safe',
+                type: 'plugin',
+                layer: 'processInternal',
+            });
+        });
+
+        it('names internal process bodies by their interface type, not the generic layer label', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        label: 'Process internal',
+                        layer: 'processInternal',
+                        interfaceType: 'tokenVoting',
+                        parentPluginName: 'Core Governance',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                label: 'Token Voting',
+                type: 'plugin',
+                layer: 'processInternal',
+                detailName: 'Core Governance',
+            });
+            expect(result.tag).toBeUndefined();
+        });
+
+        it('renders internal bodies with the real name and type from the backend label', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        label: 'Founders',
+                        layer: 'processInternal',
+                        interfaceType: 'multisig',
+                        parentPluginName: 'Core Governance',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                label: 'Founders',
+                tag: 'MULTISIG',
+                type: 'plugin',
+                layer: 'processInternal',
+            });
+        });
     });
 });

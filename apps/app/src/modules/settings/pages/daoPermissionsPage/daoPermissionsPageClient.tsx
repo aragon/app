@@ -31,8 +31,9 @@ export interface IDaoPermissionsPageClientProps {
 }
 
 export const permissionsViewParam = 'permissionsview';
-export const permissionsDaoParam = 'permissionsdao';
-export const permissionsSubpluginsParam = 'permissionssubplugins';
+export const permissionsHideDaoParam = 'permissionshidedaogrants';
+export const permissionsHideGoverningBodiesParam =
+    'permissionshidegoverningbodypaths';
 
 enum PermissionsView {
     LIST = 'list',
@@ -81,25 +82,28 @@ export const DaoPermissionsPageClient: React.FC<
         enableUrlUpdate: true,
     });
 
-    const [showDaoPermissionsParam, setShowDaoPermissions] = useFilterUrlParam({
-        name: permissionsDaoParam,
-        fallbackValue: 'false',
+    const [hideDaoPermissionsParam, setHideDaoPermissions] = useFilterUrlParam({
+        name: permissionsHideDaoParam,
+        fallbackValue: 'true',
         validValues: booleanParamValues,
         enableUrlUpdate: true,
     });
 
-    const [showSubpluginPermissionsParam, setShowSubpluginPermissions] =
+    const [hideGoverningBodyPermissionsParam, setHideGoverningBodyPermissions] =
         useFilterUrlParam({
-            name: permissionsSubpluginsParam,
-            fallbackValue: 'false',
+            name: permissionsHideGoverningBodiesParam,
+            fallbackValue: 'true',
             validValues: booleanParamValues,
             enableUrlUpdate: true,
         });
 
     const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
-    const showDaoPermissions = showDaoPermissionsParam === 'true';
-    const showSubpluginPermissions = showSubpluginPermissionsParam === 'true';
+    const hideDaoPermissions = hideDaoPermissionsParam === 'true';
+    const hideGoverningBodyPermissions =
+        hideGoverningBodyPermissionsParam === 'true';
+    const showDaoPermissions = !hideDaoPermissions;
+    const showSubpluginPermissions = !hideGoverningBodyPermissions;
 
     const handleViewChange = (value?: string | string[]) => {
         if (typeof value === 'string' && value) {
@@ -114,13 +118,13 @@ export const DaoPermissionsPageClient: React.FC<
         }
     };
 
-    const handleShowDaoPermissionsChange = (checked: boolean) => {
-        setShowDaoPermissions(String(checked));
+    const handleHideDaoPermissionsChange = (checked: boolean) => {
+        setHideDaoPermissions(String(checked));
         setExpandedRows([]);
     };
 
-    const handleShowSubpluginPermissionsChange = (checked: boolean) => {
-        setShowSubpluginPermissions(String(checked));
+    const handleHideGoverningBodyPermissionsChange = (checked: boolean) => {
+        setHideGoverningBodyPermissions(String(checked));
         setExpandedRows([]);
     };
 
@@ -141,7 +145,7 @@ export const DaoPermissionsPageClient: React.FC<
         ],
     );
 
-    const showDaoPermissionsToggleDisabled = useMemo(
+    const hideDaoPermissionsToggleDisabled = useMemo(
         () =>
             arePermissionRowsEqual(
                 filteredRows,
@@ -162,7 +166,7 @@ export const DaoPermissionsPageClient: React.FC<
         ],
     );
 
-    const showSubpluginPermissionsToggleDisabled = useMemo(
+    const hideGoverningBodyPermissionsToggleDisabled = useMemo(
         () =>
             arePermissionRowsEqual(
                 filteredRows,
@@ -259,6 +263,7 @@ export const DaoPermissionsPageClient: React.FC<
                                 </ToggleGroup>
                                 {showExpandAll && (
                                     <Button
+                                        className="hidden md:inline-flex"
                                         onClick={handleToggleAll}
                                         responsiveSize={{ md: 'md' }}
                                         size="sm"
@@ -277,28 +282,28 @@ export const DaoPermissionsPageClient: React.FC<
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
                                 <div className="flex items-center gap-1">
                                     <Switch
-                                        checked={showDaoPermissions}
+                                        checked={hideDaoPermissions}
                                         disabled={
                                             isLoading ||
-                                            showDaoPermissionsToggleDisabled
+                                            hideDaoPermissionsToggleDisabled
                                         }
                                         inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.showDaoPermissions',
+                                            'app.settings.daoPermissionsPage.filters.hideDaoPermissions',
                                         )}
                                         onCheckedChanged={
-                                            handleShowDaoPermissionsChange
+                                            handleHideDaoPermissionsChange
                                         }
                                     />
                                     <Tooltip
                                         content={t(
-                                            'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip',
+                                            'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip',
                                         )}
                                         triggerAsChild={true}
                                     >
                                         <span
                                             aria-label={`${t(
-                                                'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltipLabel',
-                                            )}: ${t('app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip')}`}
+                                                'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel',
+                                            )}: ${t('app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip')}`}
                                             className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
                                             role="img"
                                         >
@@ -311,28 +316,28 @@ export const DaoPermissionsPageClient: React.FC<
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Switch
-                                        checked={showSubpluginPermissions}
+                                        checked={hideGoverningBodyPermissions}
                                         disabled={
                                             isLoading ||
-                                            showSubpluginPermissionsToggleDisabled
+                                            hideGoverningBodyPermissionsToggleDisabled
                                         }
                                         inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissions',
+                                            'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissions',
                                         )}
                                         onCheckedChanged={
-                                            handleShowSubpluginPermissionsChange
+                                            handleHideGoverningBodyPermissionsChange
                                         }
                                     />
                                     <Tooltip
                                         content={t(
-                                            'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip',
+                                            'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip',
                                         )}
                                         triggerAsChild={true}
                                     >
                                         <span
                                             aria-label={`${t(
-                                                'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltipLabel',
-                                            )}: ${t('app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip')}`}
+                                                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel',
+                                            )}: ${t('app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip')}`}
                                             className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
                                             role="img"
                                         >

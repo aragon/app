@@ -1,4 +1,4 @@
-import { getStraightPath, Position } from '@xyflow/react';
+import { getSmoothStepPath, getStraightPath, Position } from '@xyflow/react';
 import { getPermissionEdgePath } from './permissionGraphEdge';
 
 describe('getPermissionEdgePath', () => {
@@ -9,19 +9,45 @@ describe('getPermissionEdgePath', () => {
         targetY: 120,
     };
 
-    it('keeps incoming permission tridents orthogonal without curve segments', () => {
-        const path = getPermissionEdgePath({
+    it('keeps incoming permission tridents on the curved smooth-step path', () => {
+        const [smoothStepPath] = getSmoothStepPath({
             ...coordinates,
             sourcePosition: Position.Top,
             targetPosition: Position.Bottom,
-            visualKind: 'incoming',
+            borderRadius: 12,
+            offset: 28,
         });
 
-        expect(path).toMatch(/^M/);
-        expect(path).not.toContain('Q');
+        expect(
+            getPermissionEdgePath({
+                ...coordinates,
+                sourcePosition: Position.Top,
+                targetPosition: Position.Bottom,
+                visualKind: 'incoming',
+            }),
+        ).toBe(smoothStepPath);
     });
 
-    it('uses the direct shortest path for supporting and mixed graph edges', () => {
+    it('uses curved side-aware paths for supporting and mixed graph edges', () => {
+        const [smoothStepPath] = getSmoothStepPath({
+            ...coordinates,
+            sourcePosition: Position.Right,
+            targetPosition: Position.Left,
+            borderRadius: 12,
+            offset: 28,
+        });
+
+        expect(
+            getPermissionEdgePath({
+                ...coordinates,
+                sourcePosition: Position.Right,
+                targetPosition: Position.Left,
+                visualKind: 'other',
+            }),
+        ).toBe(smoothStepPath);
+    });
+
+    it('uses the direct path when handle positions are unavailable', () => {
         const [straightPath] = getStraightPath(coordinates);
 
         expect(

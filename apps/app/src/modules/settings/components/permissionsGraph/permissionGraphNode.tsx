@@ -1,6 +1,7 @@
 import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
+import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
 import type { IPermissionEdgeEntry } from './permissionGraphEdge';
@@ -19,6 +20,9 @@ export interface IPermissionNodeData extends IPermissionGraphNode {
 export type IPermissionFlowNode = Node<IPermissionNodeData, 'permission'>;
 
 export interface IPermissionStackNodeData {
+    sourceId?: string;
+    targetId?: string;
+    visualKind?: PermissionNodeKind | string;
     permissions: IPermissionEdgeEntry[];
     active?: boolean;
     dimmed?: boolean;
@@ -93,7 +97,14 @@ const SELECTION_LABEL_KEY: Record<PermissionNodeSelectionRole, string> = {
     where: 'app.settings.daoPermissionsPage.graphView.node.where',
 };
 
-const getSubtitleKey = (data: IPermissionNodeData): string => {
+type PermissionNodeTypeInput = Pick<
+    IPermissionGraphNode,
+    'kind' | 'layer' | 'status'
+>;
+
+export const getPermissionNodeTypeKey = (
+    data: PermissionNodeTypeInput,
+): string => {
     if (data.kind === 'plugin') {
         if (data.status === 'uninstalled') {
             return 'app.settings.daoPermissionsPage.graphView.node.uninstalledPlugin';
@@ -111,10 +122,20 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
     data,
 }) => {
     const { t } = useTranslations();
-    const { kind, label, tag, avatarSrc, selectionRole, active, dimmed } = data;
+    const {
+        kind,
+        label,
+        tag,
+        avatarSrc,
+        brandId,
+        selectionRole,
+        active,
+        dimmed,
+    } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
+    const isSafeBody = kind === 'plugin' && brandId === 'safe';
     const isSelected = selectionRole != null || active === true;
-    const subtitleKey = getSubtitleKey(data);
+    const subtitleKey = getPermissionNodeTypeKey(data);
 
     return (
         <div
@@ -152,7 +173,14 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                         src={avatarSrc ?? undefined}
                     />
                 )}
-                {kind === 'plugin' && tag != null && (
+                {isSafeBody && (
+                    <Avatar
+                        className="shrink-0"
+                        size="sm"
+                        src={safeWallet.src}
+                    />
+                )}
+                {kind === 'plugin' && !isSafeBody && tag != null && (
                     <Tag className="self-start" label={tag} variant="primary" />
                 )}
                 {kind === 'actor' && <Avatar size="sm" />}
@@ -170,7 +198,7 @@ export const PermissionStackNode: React.FC<
     return (
         <div
             className={classNames(
-                'nodrag nopan relative flex w-60 flex-col items-center gap-0.5',
+                'nodrag nopan relative flex w-fit flex-col items-center gap-0.5',
                 dimmed === true && 'opacity-50',
             )}
         >

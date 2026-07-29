@@ -54,7 +54,16 @@ export const getLayoutedElements = (
             continue;
         }
 
-        graph.setEdge(edge.source, edge.target);
+        const layoutSource =
+            typeof edge.data?.layoutSource === 'string'
+                ? edge.data.layoutSource
+                : edge.source;
+        const layoutTarget =
+            typeof edge.data?.layoutTarget === 'string'
+                ? edge.data.layoutTarget
+                : edge.target;
+
+        graph.setEdge(layoutSource, layoutTarget);
     }
 
     dagre.layout(graph);

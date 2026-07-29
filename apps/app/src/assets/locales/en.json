@@ -3560,12 +3560,12 @@
           "graph": "Graph"
         },
         "filters": {
-          "showDaoPermissions": "Show DAO-granted permissions",
-          "showDaoPermissionsTooltip": "Permissions where the selected DAO appears under Who, meaning it can call another contract.",
-          "showDaoPermissionsTooltipLabel": "About DAO-granted permissions",
-          "showSubpluginPermissions": "Show supporting permissions",
-          "showSubpluginPermissionsTooltip": "Includes process internals, condition contracts, external actors, and other permission rows that support the main governance view.",
-          "showSubpluginPermissionsTooltipLabel": "About supporting permissions"
+          "hideDaoPermissions": "Hide permissions granted to DAO",
+          "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
+          "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
+          "hideGoverningBodyPermissions": "Hide permissions on governing bodies",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.",
+          "hideGoverningBodyPermissionsTooltipLabel": "About governing body permissions"
         },
         "graphView": {
           "node": {
@@ -3584,7 +3584,11 @@
           "detail": {
             "address": "Address",
             "close": "Close",
-            "type": "Type"
+            "type": "Type",
+            "anyone": {
+              "title": "Open to anyone",
+              "description": "Any wallet or contract can act here — these permission flows have no on-chain requirement for who calls them."
+            }
           },
           "empty": {
             "heading": "No permissions",

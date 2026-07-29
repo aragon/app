@@ -34,6 +34,7 @@ import {
     permissionEntityUtils,
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
+import { PermissionDetailContent } from '../permissionsGraph/permissionDetailPanel';
 import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
 type DaoPlugins = IFilterComponentPlugin<IDaoPlugin>[] | undefined;
@@ -92,14 +93,9 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
 
     return (
         <div className="flex flex-col gap-3">
-            <PermissionsListHeader />
-            <Accordion.Container
-                isMulti={true}
-                onValueChange={(value) => onExpandedRowsChange(value ?? [])}
-                value={expandedRows}
-            >
+            <div className="flex flex-col gap-3 md:hidden">
                 {rows.map((row) => (
-                    <PermissionsListRow
+                    <PermissionsListMobileCard
                         accounts={accountRefs}
                         chainId={chainId}
                         daoPlugins={daoPlugins}
@@ -109,7 +105,27 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                         rowKey={getPermissionRowKey(row)}
                     />
                 ))}
-            </Accordion.Container>
+            </div>
+            <div className="hidden flex-col gap-3 md:flex">
+                <PermissionsListHeader />
+                <Accordion.Container
+                    isMulti={true}
+                    onValueChange={(value) => onExpandedRowsChange(value ?? [])}
+                    value={expandedRows}
+                >
+                    {rows.map((row) => (
+                        <PermissionsListRow
+                            accounts={accountRefs}
+                            chainId={chainId}
+                            daoPlugins={daoPlugins}
+                            key={getPermissionRowKey(row)}
+                            network={row.network}
+                            row={row}
+                            rowKey={getPermissionRowKey(row)}
+                        />
+                    ))}
+                </Accordion.Container>
+            </div>
         </div>
     );
 };
@@ -177,6 +193,9 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
         type: ChainEntityType.ADDRESS,
         id: entity.address,
     });
+    const truncatedAddress = addressUtils.truncateAddress(entity.address);
+    const detailName =
+        entity.detailName !== truncatedAddress ? entity.detailName : undefined;
 
     return (
         <div className="flex flex-col gap-0.5">
@@ -185,12 +204,10 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
                 href={explorerUrl}
                 isExternal={explorerUrl != null}
             >
-                {addressUtils.truncateAddress(entity.address)}
+                {truncatedAddress}
             </Link>
-            {entity.detailName != null && (
-                <span className="text-neutral-500 text-sm">
-                    {entity.detailName}
-                </span>
+            {detailName != null && (
+                <span className="text-neutral-500 text-sm">{detailName}</span>
             )}
         </div>
     );
@@ -205,15 +222,50 @@ const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
     primary,
     secondary,
 }) => (
-    <div className="flex flex-col gap-0.5">
+    <div className="flex min-w-0 flex-col gap-0.5">
         <span className="text-neutral-500">{primary}</span>
         {secondary != null && (
-            <span className="font-mono text-neutral-400 text-sm">
+            <span className="block max-w-full truncate font-mono text-neutral-400 text-sm">
                 {secondary}
             </span>
         )}
     </div>
 );
+
+const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
+    props,
+) => {
+    const { row, daoPlugins, accounts, chainId, network } = props;
+
+    const resolveOptions = { daoPlugins, accounts };
+    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
+        ...resolveOptions,
+        entity: row.who,
+    });
+    const where = permissionEntityUtils.resolvePermissionEntity(
+        row.whereAddress,
+        {
+            ...resolveOptions,
+            entity: row.where,
+        },
+    );
+    const permissionName = permissionNameUtils.getPermissionName(
+        row.permissionId,
+    );
+
+    return (
+        <div className="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md">
+            <PermissionDetailContent
+                chainId={chainId}
+                network={network}
+                permissionName={permissionName}
+                row={row}
+                where={where}
+                who={who}
+            />
+        </div>
+    );
+};
 
 const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const { row, rowKey, daoPlugins, accounts, chainId, network } = props;
@@ -258,12 +310,15 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                 <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
                     <PermissionEntityCell entity={who} />
                     <PermissionEntityCell entity={where} />
-                    <span className="truncate font-mono text-neutral-800">
+                    <span className="min-w-0 truncate font-mono text-neutral-800">
                         {permissionName}
                     </span>
-                    <span className="flex min-w-0">
+                    <span className="flex min-w-0 overflow-hidden">
                         {hasConditionLabel ? (
-                            <Tag label={conditionLabel} />
+                            <Tag
+                                className="max-w-full [&>p]:truncate"
+                                label={conditionLabel}
+                            />
                         ) : (
                             <span className="text-neutral-800">
                                 {conditionLabel}
@@ -393,7 +448,7 @@ const PermissionsListHeader: React.FC = () => {
     const { t } = useTranslations();
 
     return (
-        <div className="sticky top-[90px] z-20 -mx-4 md:-mx-6">
+        <div className="sticky top-[90px] z-20 -mx-4 hidden md:-mx-6 md:block">
             <div className="flex items-baseline justify-between gap-x-4 bg-gradient-to-b from-90% from-neutral-50 to-transparent px-8 pt-1 pb-4 text-neutral-500 text-sm md:gap-x-6 md:px-12">
                 <div className="grid w-full grid-cols-4 gap-4">
                     <PermissionsListHeaderLabel
@@ -430,7 +485,7 @@ const PermissionsListSkeleton: React.FC = () => (
                 className="flex items-center justify-between gap-x-4 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 md:gap-x-6 md:px-6 md:py-5"
                 key={rowKey}
             >
-                <div className="grid w-full grid-cols-4 items-center gap-4">
+                <div className="grid w-full grid-cols-2 items-center gap-2 md:grid-cols-4 md:gap-4">
                     <StateSkeletonBar width="58%" />
                     <StateSkeletonBar width="50%" />
                     <StateSkeletonBar width="72%" />

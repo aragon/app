@@ -21,6 +21,17 @@ import {
 
 const NO_CONDITION_LABEL = '-';
 
+/**
+ * Condition contracts are already conveyed as the `if …` label on the
+ * permission edge, so rendering them as their own graph node is pure
+ * duplication. Drop any permission whose actor or target *is* a condition
+ * contract from the graph (the condition annotation on real permissions is
+ * unaffected). `unknown` / unresolved `contract` endpoints stay — they remain
+ * selectable and are gated by the supporting-permissions toggle upstream.
+ */
+const isGraphExcludedEndpoint = (entity?: IPermissionEntityRef): boolean =>
+    entity?.layer === 'condition';
+
 export interface IBuildPermissionGraphParams {
     rows: IPermissionRow[];
     dao: IDao;
@@ -79,6 +90,7 @@ const resolveNode = (
             tag: entity.tag,
             layer: entity.layer,
             status: entity.status,
+            brandId: entity.brandId,
             address,
         };
     }
@@ -89,6 +101,7 @@ const resolveNode = (
         label: entity.label,
         layer: entity.layer,
         status: entity.status,
+        brandId: entity.brandId,
         address,
     };
 };
@@ -139,7 +152,13 @@ export const buildPermissionGraph = (
         }
     };
 
-    const edges = rows.map((row) => {
+    const graphRows = rows.filter(
+        (row) =>
+            !isGraphExcludedEndpoint(row.who) &&
+            !isGraphExcludedEndpoint(row.where),
+    );
+
+    const edges = graphRows.map((row) => {
         ensureNode(row.whoAddress, row.who);
         ensureNode(row.whereAddress, row.where);
 

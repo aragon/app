@@ -80,6 +80,35 @@ describe('<PermissionGraphNode /> component', () => {
             ),
         ).toBeInTheDocument();
     });
+
+    it('renders internal process bodies as plugin cards with their type tag', () => {
+        renderGraphNode({
+            layer: 'processInternal',
+            label: 'Token Voting',
+            tag: 'TOKENVOTING',
+        });
+
+        expect(screen.getByText('Token Voting')).toBeInTheDocument();
+        expect(screen.getByText('TOKENVOTING')).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.settings.daoPermissionsPage.graphView.node.plugin',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('renders Safe-branded process bodies with the Safe avatar instead of a redundant tag', () => {
+        const { container } = renderGraphNode({
+            brandId: 'safe',
+            layer: 'processInternal',
+            label: 'Safe',
+            tag: 'SAFE',
+        });
+
+        expect(screen.getByText('Safe')).toBeInTheDocument();
+        expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
+        expect(container.textContent).not.toContain('SAFE');
+    });
 });
 
 describe('<PermissionStackNode /> component', () => {
@@ -92,5 +121,13 @@ describe('<PermissionStackNode /> component', () => {
 
         expect(visibleLabels).toEqual(['Execute']);
         expect(button).toHaveAttribute('title', 'EXECUTE_PERMISSION');
+    });
+
+    it('keeps the routed stack node box fitted to the visible permission pills', () => {
+        const { container } = renderStackNode();
+        const stackNode = container.firstElementChild;
+
+        expect(stackNode).toHaveClass('w-fit');
+        expect(stackNode).not.toHaveClass('w-60');
     });
 });

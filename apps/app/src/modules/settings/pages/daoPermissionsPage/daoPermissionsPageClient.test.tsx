@@ -31,6 +31,8 @@ jest.mock('../../components/permissionsList', () => ({
     ),
 }));
 
+let mockFilterParamValues: Record<string, string>;
+
 jest.mock('@/shared/hooks/useFilterUrlParam', () => ({
     useFilterUrlParam: ({
         name,
@@ -38,35 +40,29 @@ jest.mock('@/shared/hooks/useFilterUrlParam', () => ({
     }: {
         name: string;
         fallbackValue: string;
-    }) => {
-        const valueByParam: Record<string, string> = {
-            permissionsview: 'graph',
-            permissionsdao: 'true',
-            permissionssubplugins: 'true',
-        };
-
-        return [valueByParam[name] ?? fallbackValue, jest.fn()];
-    },
+    }) => [mockFilterParamValues[name] ?? fallbackValue, jest.fn()] as const,
 }));
 
 jest.mock('@/shared/components/translationsProvider', () => ({
     useTranslations: () => ({
         t: (key: string) =>
             ({
-                'app.settings.daoPermissionsPage.filters.showDaoPermissions':
-                    'Show DAO-granted permissions',
-                'app.settings.daoPermissionsPage.filters.showSubpluginPermissions':
-                    'Show supporting permissions',
-                'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltipLabel':
-                    'About DAO-granted permissions',
-                'app.settings.daoPermissionsPage.filters.showDaoPermissionsTooltip':
-                    'Permissions where the selected DAO appears under Who, meaning it can call another contract.',
-                'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltipLabel':
-                    'About supporting permissions',
-                'app.settings.daoPermissionsPage.filters.showSubpluginPermissionsTooltip':
-                    'Includes process internals, condition contracts, external actors, and unresolved permission rows from the DAO permission table.',
+                'app.settings.daoPermissionsPage.filters.hideDaoPermissions':
+                    'Hide permissions granted to DAO',
+                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissions':
+                    'Hide permissions on governing bodies',
+                'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel':
+                    'About permissions granted to DAO',
+                'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip':
+                    'Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.',
+                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel':
+                    'About governing body permissions',
+                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip':
+                    'Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.',
                 'app.settings.daoPermissionsPage.view.graph': 'Graph',
                 'app.settings.daoPermissionsPage.view.list': 'List',
+                'app.settings.permissionsList.expandAll': 'Expand all',
+                'app.settings.permissionsList.collapseAll': 'Collapse all',
             })[key] ?? key,
     }),
 }));
@@ -92,6 +88,8 @@ describe('<DaoPermissionsPageClient /> component', () => {
     );
 
     beforeEach(() => {
+        mockFilterParamValues = { permissionsview: 'graph' };
+
         const dao = generateDao({
             address: activeDaoAddress,
             id: 'dao-id',
@@ -109,7 +107,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
             }),
             buildRow({
                 whoAddress: otherAddress,
-                whereAddress: externalAddress,
+                whereAddress: pluginAddress,
             }),
         ];
 
@@ -162,37 +160,107 @@ describe('<DaoPermissionsPageClient /> component', () => {
             screen.queryByRole('button', { name: 'Other' }),
         ).not.toBeInTheDocument();
         expect(
-            screen.getByText('Show DAO-granted permissions'),
+            screen.getByText('Hide permissions granted to DAO'),
         ).toBeInTheDocument();
         expect(
-            screen.getByText('Show supporting permissions'),
+            screen.getByText('Hide permissions on governing bodies'),
         ).toBeInTheDocument();
-        expect(
-            screen.queryByText('Show subplugin/residual permissions'),
-        ).not.toBeInTheDocument();
+        expect(screen.queryByText('DAO as caller')).not.toBeInTheDocument();
+        expect(screen.queryByText('Subplugin paths')).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
-                name: 'About DAO-granted permissions',
+                name: 'About permissions granted to DAO',
             }),
         ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
-                name: 'About supporting permissions',
+                name: 'About governing body permissions',
             }),
         ).not.toBeInTheDocument();
         expect(
             screen.getByRole('img', {
-                name: /Permissions where the selected DAO appears under Who/,
+                name: /including DAO-managed internal contracts such as clocks/,
             }),
         ).toBeInTheDocument();
         expect(
             screen.getByRole('img', {
-                name: /Includes process internals, condition contracts/,
+                name: /Hides permissions to or from installed governing bodies/,
             }),
         ).toBeInTheDocument();
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
+            '1',
+        );
+    });
+
+    it('hides the list expand control below the desktop breakpoint', () => {
+        mockFilterParamValues = { permissionsview: 'list' };
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(screen.getByRole('button', { name: 'Expand all' })).toHaveClass(
+            'hidden',
+            'md:inline-flex',
+        );
+    });
+
+    it('shows noisy permission groups when hide switches are off', () => {
+        mockFilterParamValues = {
+            permissionshidedaogrants: 'false',
+            permissionshidegoverningbodypaths: 'false',
+            permissionsview: 'graph',
+        };
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
+            'data-row-count',
             '3',
+        );
+    });
+
+    it('ignores stale positive show params when deriving hide defaults', () => {
+        mockFilterParamValues = {
+            permissionsdao: 'false',
+            permissionssubplugins: 'false',
+            permissionsview: 'graph',
+        };
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+        expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
+            'data-row-count',
+            '1',
+        );
+    });
+
+    it('ignores stale hide params from the previous preview', () => {
+        mockFilterParamValues = {
+            permissionshidedao: 'false',
+            permissionshidegoverningbodies: 'false',
+            permissionsview: 'graph',
+        };
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
+            'data-row-count',
+            '1',
         );
     });
 });
