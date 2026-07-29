@@ -212,12 +212,22 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             labelDescription: voteLabelDescription,
             voteType: alsoVote && canVote ? 'voteAndOverride' : 'override',
         };
+        // The position is read from the chain, refetch it as soon as the transaction is included in a block instead
+        // of waiting for the vote to be indexed by the backend.
+        const handleVoteSuccess = () => {
+            refetch();
+            setShowOptions(false);
+            setSelectedOption(undefined);
+            setAlsoVote(true);
+        };
+
         const params: IVoteDialogParams = {
             daoId,
             proposal,
             vote,
             isVeto,
             plugin,
+            onSuccess: handleVoteSuccess,
         };
 
         open(GovernanceDialogId.VOTE, { params });

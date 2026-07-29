@@ -1,9 +1,10 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountHook from '@/modules/application/hooks/useWalletAccount';
 import * as ensModule from '@/modules/ens';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
+import type { IVoteDialogParams } from '@/modules/governance/dialogs/voteDialog';
 import * as useUserVoteHook from '@/modules/governance/hooks/useUserVote';
 import { generateTokenProposal } from '@/plugins/tokenPlugin/testUtils';
 import type { ITokenVote } from '@/plugins/tokenPlugin/types';
@@ -508,6 +509,43 @@ describe('<AlchemixSubmitVote /> component', () => {
         expect(
             screen.getByText(/alchemixSubmitVote.delegateVotedOverridden/),
         ).toBeInTheDocument();
+    });
+
+    it('refetches the on-chain status and closes the options when the vote transaction is confirmed', async () => {
+        const open = jest.fn();
+        const refetch = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({ refetch }),
+        );
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /alchemixSubmitVote.buttons.override/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('radio', { name: /tokenSubmitVote.options.yes/ }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.submit/,
+            }),
+        );
+
+        const { params } = open.mock.calls[0][1] as {
+            params: IVoteDialogParams;
+        };
+        act(() => params.onSuccess?.());
+
+        expect(refetch).toHaveBeenCalled();
+        expect(
+            screen.queryByRole('radio', {
+                name: /tokenSubmitVote.options.yes/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('disables the override button when the user cannot override', () => {
