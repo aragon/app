@@ -1,0 +1,37 @@
+{
+    "extends": "../apps/app/tsconfig.json",
+    "compilerOptions": {
+        "incremental": false,
+        "noEmit": true,
+        "plugins": [],
+        "typeRoots": [
+            "../apps/app/node_modules/@types"
+        ],
+        "paths": {
+            "@/*": [
+                "../apps/app/src/*"
+            ],
+            "@aragon/gov-ui-kit": [
+                "./bundleTypes.ts"
+            ],
+            "@aragon/gov-ui-kit-original": [
+                "../apps/app/node_modules/@aragon/gov-ui-kit"
+            ],
+            "react": [
+                "../apps/app/node_modules/@types/react"
+            ],
+            "react/jsx-runtime": [
+                "../apps/app/node_modules/@types/react/jsx-runtime"
+            ],
+            "react-hook-form": [
+                "../apps/app/node_modules/react-hook-form"
+            ]
+        }
+    },
+    "include": [
+        "previews/**/*.tsx",
+        "app-entry.ts",
+        "process-shim.ts",
+        "../apps/app/src/shared/types/media.d.ts"
+    ]
+}
