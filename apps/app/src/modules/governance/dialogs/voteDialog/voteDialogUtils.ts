@@ -21,7 +21,8 @@ export interface IBuildTransactionParams {
     target?: string;
     /**
      * ID of the DAO the vote is submitted for. Used to resolve a DAO-specific build-vote-data function taking
-     * precedence over the plugin one.
+     * precedence over the plugin one. The DAO function may return undefined for votes it does not handle, in which
+     * case the plugin function is used.
      */
     daoId?: string;
 }
@@ -32,28 +33,30 @@ class VoteDialogUtils {
     ): Promise<ITransactionRequest> => {
         const { proposal, vote, target, daoId } = params;
 
+        const buildDataParams = {
+            proposalIndex: proposal.proposalIndex,
+            vote,
+        };
+
         const daoBuildDataFunction =
             daoId != null
                 ? pluginRegistryUtils.getSlotFunction<
                       IBuildVoteDataParams,
-                      Hex
+                      Hex | undefined
                   >({
                       pluginId: daoId,
                       slotId: GovernanceDaoSlotId.GOVERNANCE_DAO_BUILD_VOTE_DATA,
                   })
                 : undefined;
 
-        const buildDataFunction =
-            daoBuildDataFunction ??
+        const daoTransactionData = daoBuildDataFunction?.(buildDataParams);
+
+        const transactionData =
+            daoTransactionData ??
             pluginRegistryUtils.getSlotFunction<IBuildVoteDataParams, Hex>({
                 pluginId: proposal.pluginInterfaceType,
                 slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
-            })!;
-
-        const transactionData = buildDataFunction({
-            proposalIndex: proposal.proposalIndex,
-            vote,
-        });
+            })!(buildDataParams);
         const transactionTarget = (target ?? proposal.pluginAddress) as Hex;
 
         const transaction = {

@@ -70,6 +70,33 @@ describe('voteDialog utils', () => {
             expect(result.data).toEqual('0xdao-data');
         });
 
+        it('falls back to the plugin build-vote-data function when the DAO function does not handle the vote', async () => {
+            const daoId = 'ethereum-sepolia-0x123';
+            const proposal = generateProposal();
+            const vote = { value: 1 };
+            const daoBuildDataFunction = jest.fn(() => undefined);
+            const buildDataFunction = jest.fn(() => '0xplugin-data');
+            getSlotFunctionSpy
+                .mockReturnValueOnce(daoBuildDataFunction)
+                .mockReturnValueOnce(buildDataFunction);
+
+            const result = await voteDialogUtils.buildTransaction({
+                proposal,
+                vote,
+                daoId,
+            });
+
+            expect(daoBuildDataFunction).toHaveBeenCalledWith({
+                proposalIndex: proposal.proposalIndex,
+                vote,
+            });
+            expect(getSlotFunctionSpy).toHaveBeenLastCalledWith({
+                pluginId: proposal.pluginInterfaceType,
+                slotId: GovernanceSlotId.GOVERNANCE_BUILD_VOTE_DATA,
+            });
+            expect(result.data).toEqual('0xplugin-data');
+        });
+
         it('falls back to the plugin build-vote-data function when no DAO function is registered', async () => {
             const daoId = 'ethereum-sepolia-0x123';
             const proposal = generateProposal();

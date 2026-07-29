@@ -1,15 +1,12 @@
 import * as Viem from 'viem';
-import { tokenTransactionUtils } from '@/plugins/tokenPlugin/utils/tokenTransactionUtils';
 import { alchemixTokenVotingAbi } from '../../constants';
 import { alchemixTransactionUtils } from './alchemixTransactionUtils';
 
 describe('alchemixTransaction utils', () => {
     const encodeFunctionDataSpy = jest.spyOn(Viem, 'encodeFunctionData');
-    const buildVoteDataSpy = jest.spyOn(tokenTransactionUtils, 'buildVoteData');
 
     afterEach(() => {
         encodeFunctionDataSpy.mockReset();
-        buildVoteDataSpy.mockReset();
     });
 
     describe('buildVoteData', () => {
@@ -46,23 +43,17 @@ describe('alchemixTransaction utils', () => {
             });
         });
 
-        it('falls back to the token-voting vote data for normal votes', () => {
+        it('does not handle votes without an Alchemix vote type so that the plugin function is used', () => {
             const proposalIndex = '5';
             const vote = { value: 1 };
-            const transactionData = '0xtoken-data' as const;
-            buildVoteDataSpy.mockReturnValue(transactionData);
 
             const result = alchemixTransactionUtils.buildVoteData({
                 proposalIndex,
                 vote,
             });
 
-            expect(buildVoteDataSpy).toHaveBeenCalledWith({
-                proposalIndex,
-                vote,
-            });
             expect(encodeFunctionDataSpy).not.toHaveBeenCalled();
-            expect(result).toEqual(transactionData);
+            expect(result).toBeUndefined();
         });
     });
 });
