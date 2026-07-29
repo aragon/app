@@ -188,6 +188,17 @@ export const AlchemixSubmitVoteOverride: React.FC<
         setShowOptions(false);
     };
 
+    // After an override the delegated power no longer counts toward the delegate's vote, and a fully overridden
+    // delegate vote is even removed from the vote records — describe the delegate status accordingly instead of
+    // stating that the delegate holds (or voted with) the user's tokens.
+    const delegateeStatusKey = hasOverridden
+        ? delegateeVoteOption != null
+            ? 'delegateVotedOverridden'
+            : 'delegateOverridden'
+        : delegateeVoteOption != null
+          ? 'delegateVoted'
+          : 'delegateNotVoted';
+
     const delegateeInfo = (
         <div className="flex items-center gap-3">
             <MemberAvatar
@@ -208,21 +219,13 @@ export const AlchemixSubmitVoteOverride: React.FC<
                     />
                 </div>
                 <p className="text-neutral-500 text-sm leading-tight">
-                    {delegateeVoteOption != null
-                        ? t(
-                              'app.daos.alchemix.alchemixSubmitVoteOverride.delegateVoted',
-                              {
-                                  amount: formattedDelegatedPower,
-                                  symbol: token.symbol,
-                              },
-                          )
-                        : t(
-                              'app.daos.alchemix.alchemixSubmitVoteOverride.delegateNotVoted',
-                              {
-                                  amount: formattedDelegatedPower,
-                                  symbol: token.symbol,
-                              },
-                          )}
+                    {t(
+                        `app.daos.alchemix.alchemixSubmitVoteOverride.${delegateeStatusKey}`,
+                        {
+                            amount: formattedDelegatedPower,
+                            symbol: token.symbol,
+                        },
+                    )}
                 </p>
             </div>
             {delegateeVoteOption != null && (

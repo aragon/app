@@ -241,6 +241,58 @@ describe('<AlchemixSubmitVoteOverride /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('does not display the delegate as holding the user tokens when their vote has been fully overridden', () => {
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({
+                userVoteRecord: {
+                    voteOption: VoteOption.NO,
+                    votingPower: BigInt(100),
+                    reduction: BigInt(0),
+                    hasOverridden: true,
+                    votedWithDelegatedVp: false,
+                },
+            }),
+        );
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(/alchemixSubmitVoteOverride.delegateOverridden/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(/alchemixSubmitVoteOverride.delegateNotVoted/),
+        ).not.toBeInTheDocument();
+    });
+
+    it('displays the delegate as having voted without the user tokens on a partial override', () => {
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({
+                userVoteRecord: {
+                    voteOption: VoteOption.NO,
+                    votingPower: BigInt(100),
+                    reduction: BigInt(0),
+                    hasOverridden: true,
+                    votedWithDelegatedVp: false,
+                },
+                delegateeVoteRecord: {
+                    voteOption: VoteOption.YES,
+                    votingPower: BigInt(100),
+                    reduction: BigInt(100),
+                    hasOverridden: false,
+                    votedWithDelegatedVp: true,
+                },
+            }),
+        );
+
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                /alchemixSubmitVoteOverride.delegateVotedOverridden/,
+            ),
+        ).toBeInTheDocument();
+    });
+
     it('submits an atomic vote-and-override when the user can also vote and checks the option', async () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));

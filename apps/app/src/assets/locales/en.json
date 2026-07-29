@@ -1445,8 +1445,10 @@
             "submit": "Submit override"
           },
           "delegateNotVoted": "Hasn't voted yet · holds your {{amount}} {{symbol}}",
+          "delegateOverridden": "No longer votes with your {{amount}} {{symbol}}",
           "delegateTag": "Your delegate",
           "delegateVoted": "Voted with your {{amount}} {{symbol}}",
+          "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
           "options": {
             "alreadyCounted": "Your tokens already count toward {{option}}",
             "currentOverride": "Your current override"
