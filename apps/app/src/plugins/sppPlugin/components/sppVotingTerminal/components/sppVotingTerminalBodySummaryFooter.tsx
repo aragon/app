@@ -48,9 +48,8 @@ export const SppVotingTerminalBodySummaryFooter: React.FC<
     // lands, so keep the veto requirement on screen alongside the status.
     const isVetoWindowOpen = sppStageUtils.isVetoWindowOpen(proposal, stage);
 
-    // Each requirement carries its own copy key: an approval is a positive
-    // requirement to pass ("required to approve"), while a veto is a blocking
-    // power ("can veto"), so they must not read as the same kind of condition.
+    // Both thresholds render as their own requirement line so a mixed stage
+    // lists the approval and veto conditions separately.
     const requirements: Array<{
         action: 'approve' | 'veto';
         labelKey: 'approveRequirement' | 'vetoRequirement';

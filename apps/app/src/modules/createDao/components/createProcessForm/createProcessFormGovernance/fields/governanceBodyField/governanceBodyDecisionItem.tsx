@@ -14,23 +14,17 @@ export interface IGovernanceBodyDecisionItemProps {
      * @default SppProposalType.APPROVAL
      */
     proposalType?: SppProposalType;
-    /**
-     * Stage threshold applying to this body: the approval threshold for
-     * approving bodies, the veto threshold for vetoing bodies.
-     */
-    stageThreshold?: number;
 }
 
 /**
- * Definition-list items displaying whether a body approves or vetoes proposals
- * within its stage and the stage threshold it counts towards. Rendered as part
- * of the body details list of each plugin, so they share the container
- * (spacing and dividers) with the other items.
+ * Definition-list item displaying whether a body approves or vetoes proposals
+ * within its stage. Rendered as part of the body details list of each plugin,
+ * so it shares the container (spacing and dividers) with the other items.
  */
 export const GovernanceBodyDecisionItem: React.FC<
     IGovernanceBodyDecisionItemProps
 > = (props) => {
-    const { isAdvancedGovernance, proposalType, stageThreshold } = props;
+    const { isAdvancedGovernance, proposalType } = props;
 
     const { t } = useTranslations();
 
@@ -38,34 +32,20 @@ export const GovernanceBodyDecisionItem: React.FC<
         return null;
     }
 
-    const isVeto = proposalType === SppProposalType.VETO;
-    const decision = isVeto ? 'veto' : 'approve';
+    const decision = proposalType === SppProposalType.VETO ? 'veto' : 'approve';
 
     return (
-        <>
-            <DefinitionList.Item
-                term={t(
-                    'app.createDao.setupBodyDialog.proposalTypeField.label',
-                )}
-            >
-                {t(
-                    `app.createDao.setupBodyDialog.proposalTypeField.${decision}.label`,
-                )}
-                <p className="text-neutral-400 text-sm">
-                    {t(
-                        `app.createDao.setupBodyDialog.proposalTypeField.${decision}.description`,
-                    )}
-                </p>
-            </DefinitionList.Item>
-            {stageThreshold != null && (
-                <DefinitionList.Item
-                    term={t(
-                        `app.createDao.createProcessForm.governance.stageSettingsField.${isVeto ? 'vetoThreshold' : 'approvalThreshold'}`,
-                    )}
-                >
-                    {stageThreshold}
-                </DefinitionList.Item>
+        <DefinitionList.Item
+            term={t('app.createDao.setupBodyDialog.proposalTypeField.label')}
+        >
+            {t(
+                `app.createDao.setupBodyDialog.proposalTypeField.${decision}.label`,
             )}
-        </>
+            <p className="text-neutral-400 text-sm">
+                {t(
+                    `app.createDao.setupBodyDialog.proposalTypeField.${decision}.description`,
+                )}
+            </p>
+        </DefinitionList.Item>
     );
 };

@@ -35,16 +35,12 @@ export interface IMultisigProcessBodyFieldProps {
      * Whether the process uses advanced (staged) governance.
      */
     isAdvancedGovernance?: boolean;
-    /**
-     * Stage threshold applying to this body.
-     */
-    stageThreshold?: number;
 }
 
 export const MultisigProcessBodyField = (
     props: IMultisigProcessBodyFieldProps,
 ) => {
-    const { body, daoId, isAdvancedGovernance, stageThreshold } = props;
+    const { body, daoId, isAdvancedGovernance } = props;
 
     const { t } = useTranslations();
     const { membership, governance } = body;
@@ -69,7 +65,6 @@ export const MultisigProcessBodyField = (
             <GovernanceBodyDecisionItem
                 isAdvancedGovernance={isAdvancedGovernance}
                 proposalType={body.proposalType}
-                stageThreshold={stageThreshold}
             />
             <DefinitionList.Item term={t(`${baseTranslationKey}.membersTerm`)}>
                 {t(`${baseTranslationKey}.membersDefinition`, {

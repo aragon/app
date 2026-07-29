@@ -46,29 +46,4 @@ describe('<GovernanceBodyDecisionItem /> component', () => {
             screen.queryByText(/proposalTypeField.approve.label/),
         ).not.toBeInTheDocument();
     });
-
-    it('renders the approval-threshold item of approving bodies when the stage threshold is set', () => {
-        render(createTestComponent({ stageThreshold: 2 }));
-
-        expect(screen.getByText(/approvalThreshold/)).toBeInTheDocument();
-        expect(screen.getByText('2')).toBeInTheDocument();
-    });
-
-    it('renders the veto-threshold item of vetoing bodies when the stage threshold is set', () => {
-        render(
-            createTestComponent({
-                proposalType: SppProposalType.VETO,
-                stageThreshold: 1,
-            }),
-        );
-
-        expect(screen.getByText(/vetoThreshold/)).toBeInTheDocument();
-        expect(screen.getByText('1')).toBeInTheDocument();
-    });
-
-    it('does not render the threshold item without a stage threshold', () => {
-        render(createTestComponent());
-
-        expect(screen.queryByText(/approvalThreshold/)).not.toBeInTheDocument();
-    });
 });

@@ -10,12 +10,9 @@ import type {
     ISetupBodyDialogParams,
     ISetupBodyForm,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
-import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { BodyType } from '../../../../../types/enum';
-import type { ICreateProcessFormStage } from '../../../createProcessFormDefinitions';
-import { createProcessFormUtils } from '../../../createProcessFormUtils';
 import { GovernanceBodyField } from '../governanceBodyField';
 
 export interface IGovernanceStageBodiesFieldProps {
@@ -94,25 +91,6 @@ export const GovernanceStageBodiesField: React.FC<
         open(CreateDaoDialogId.SETUP_BODY, { params });
     };
 
-    // Stage thresholds are displayed on the bodies they apply to: approving
-    // bodies show the approval threshold, vetoing bodies the veto threshold.
-    const stageSettings = useWatch<
-        Record<string, ICreateProcessFormStage['settings']>
-    >({ name: `${formPrefix}.settings` });
-    const { approvalThreshold, vetoThreshold } =
-        createProcessFormUtils.getEffectiveStageThresholds({
-            settings: stageSettings ?? {
-                approvalThreshold: 1,
-                vetoThreshold: 1,
-            },
-            bodies: bodiesMerged,
-        });
-
-    const getBodyStageThreshold = (body: ISetupBodyForm) =>
-        body.proposalType === SppProposalType.VETO
-            ? vetoThreshold
-            : approvalThreshold;
-
     const { message: fieldErrorMessage } =
         getFieldState(fieldName).error?.root ?? {};
     const fieldAlert = fieldErrorMessage
@@ -171,7 +149,6 @@ export const GovernanceStageBodiesField: React.FC<
                                     : undefined
                             }
                             readOnly={readOnly}
-                            stageThreshold={getBodyStageThreshold(body)}
                         />
                     ))}
                     {!readOnly && (
