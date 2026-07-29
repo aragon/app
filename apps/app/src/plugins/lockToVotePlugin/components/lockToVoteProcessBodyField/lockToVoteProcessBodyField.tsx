@@ -8,6 +8,7 @@ import {
     Tag,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { GovernanceBodyDecisionItem } from '@/modules/createDao/components/createProcessForm';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -58,12 +59,17 @@ export interface ILockToVoteProcessBodyFieldProps {
      * @default false
      */
     readOnly?: boolean;
+    /**
+     * Stage threshold applying to this body.
+     */
+    stageThreshold?: number;
 }
 
 export const LockToVoteProcessBodyField = (
     props: ILockToVoteProcessBodyFieldProps,
 ) => {
-    const { body, isAdvancedGovernance, daoId, readOnly } = props;
+    const { body, isAdvancedGovernance, daoId, readOnly, stageThreshold } =
+        props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -157,6 +163,11 @@ export const LockToVoteProcessBodyField = (
 
     return (
         <DefinitionList.Container className="w-full">
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+                stageThreshold={stageThreshold}
+            />
             {readOnly &&
                 contractInfo.map(
                     ({ term, definition, description, link, copyValue }) => (

@@ -2,7 +2,6 @@ import * as Viem from 'viem';
 import { zeroHash } from 'viem';
 import {
     GovernanceType,
-    ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
 import {
@@ -27,6 +26,7 @@ import { permissionTransactionUtils } from '@/shared/utils/permissionTransaction
 import { pluginTransactionUtils } from '@/shared/utils/pluginTransactionUtils';
 import type { ITransactionRequest } from '@/shared/utils/transactionUtils';
 import { generateSppPluginSettings } from '../../testUtils';
+import { SppProposalType } from '../../types';
 import { sppPluginAbi, sppPluginSetupAbi } from './sppPluginAbi';
 import { sppTransactionUtils } from './sppTransactionUtils';
 
@@ -912,41 +912,106 @@ describe('sppTransaction utils', () => {
     });
 
     describe('processStageApprovals', () => {
-        it('returns the correct approvals for a timelock stage', () => {
+        it('returns zero thresholds for a timelock stage', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 1,
+                vetoThreshold: 1,
+            });
             const result = sppTransactionUtils['processStageApprovals'](
-                1,
-                ProcessStageType.NORMAL,
+                settings,
                 [],
             );
             expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 0 });
         });
 
-        it('returns the correct approvals for a normal stage', () => {
-            const requiredApprovals = 3;
-            const body = generateSetupBodyFormData();
-            const result = sppTransactionUtils['processStageApprovals'](
-                requiredApprovals,
-                ProcessStageType.NORMAL,
-                [body],
-            );
-            expect(result).toEqual({
-                approvalThreshold: requiredApprovals,
-                vetoThreshold: 0,
+        it('returns only the approval threshold when all bodies approve', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 3,
+                vetoThreshold: 2,
             });
+            const bodies = Array.from({ length: 3 }, () =>
+                generateSetupBodyFormData({
+                    proposalType: SppProposalType.APPROVAL,
+                }),
+            );
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                bodies,
+            );
+            expect(result).toEqual({ approvalThreshold: 3, vetoThreshold: 0 });
         });
 
-        it('returns the correct approvals for a optimistic stage', () => {
-            const requiredApprovals = 2;
-            const body = generateSetupBodyFormData();
-            const result = sppTransactionUtils['processStageApprovals'](
-                requiredApprovals,
-                ProcessStageType.OPTIMISTIC,
-                [body],
-            );
-            expect(result).toEqual({
-                approvalThreshold: 0,
-                vetoThreshold: requiredApprovals,
+        it('returns only the veto threshold when all bodies veto', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 3,
+                vetoThreshold: 2,
             });
+            const bodies = Array.from({ length: 2 }, () =>
+                generateSetupBodyFormData({
+                    proposalType: SppProposalType.VETO,
+                }),
+            );
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                bodies,
+            );
+            expect(result).toEqual({ approvalThreshold: 0, vetoThreshold: 2 });
+        });
+
+        it('returns both thresholds for a mixed stage', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 2,
+                vetoThreshold: 1,
+            });
+            const approvingBodies = Array.from({ length: 2 }, () =>
+                generateSetupBodyFormData({
+                    proposalType: SppProposalType.APPROVAL,
+                }),
+            );
+            const vetoingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.VETO,
+            });
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                [...approvingBodies, vetoingBody],
+            );
+            expect(result).toEqual({ approvalThreshold: 2, vetoThreshold: 1 });
+        });
+
+        it('clamps thresholds to at least 1 when bodies of the type exist', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 0,
+                vetoThreshold: 0,
+            });
+            const approvingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.APPROVAL,
+            });
+            const vetoingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.VETO,
+            });
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                [approvingBody, vetoingBody],
+            );
+            expect(result).toEqual({ approvalThreshold: 1, vetoThreshold: 1 });
+        });
+
+        it('clamps stale thresholds down to the body count of each type', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                approvalThreshold: 3,
+                vetoThreshold: 2,
+            });
+            const approvingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.APPROVAL,
+            });
+            const vetoingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.VETO,
+            });
+            const result = sppTransactionUtils['processStageApprovals'](
+                settings,
+                [approvingBody, vetoingBody],
+            );
+            expect(result).toEqual({ approvalThreshold: 1, vetoThreshold: 1 });
         });
     });
 
@@ -973,6 +1038,20 @@ describe('sppTransaction utils', () => {
                 body,
             ]);
             expect(result.minAdvance).toBe(BigInt(0));
+        });
+
+        it('forces minAdvance to the voting period when the stage has a vetoing body, even if early advance is enabled', () => {
+            const settings = generateCreateProcessFormStageSettings({
+                votingPeriod: { days: 1, hours: 0, minutes: 0 },
+                earlyStageAdvance: true,
+            });
+            const vetoingBody = generateSetupBodyFormData({
+                proposalType: SppProposalType.VETO,
+            });
+            const result = sppTransactionUtils['processStageTiming'](settings, [
+                vetoingBody,
+            ]);
+            expect(result.minAdvance).toBe(BigInt(86_400));
         });
 
         it('returns minAdvance as the voting period when earlyStageAdvance is false', () => {

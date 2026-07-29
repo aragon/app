@@ -1,4 +1,5 @@
 export * from './enum';
+export type { ISppExternalProposer } from './sppExternalProposer';
 export type { ISppPluginSettings } from './sppPluginSettings';
 export type { ISppProposal } from './sppProposal';
 export type { ISppProposalBodyResult } from './sppProposalBodyResult';

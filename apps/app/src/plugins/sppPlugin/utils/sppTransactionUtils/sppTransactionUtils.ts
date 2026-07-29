@@ -3,9 +3,9 @@
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import {
     type ICreateProcessFormDataAdvanced,
-    ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
+import { createProcessFormUtils } from '@/modules/createDao/components/createProcessForm/createProcessFormUtils';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import type { ISetupStageSettingsForm } from '@/modules/createDao/dialogs/setupStageSettingsDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
@@ -279,26 +279,17 @@ class SppTransactionUtils {
         const processedBodyAddresses = [...bodyAddresses];
         const processedStages = stages.map((stage) => {
             const { settings, bodies } = stage;
-            const { type, requiredApprovals } = settings;
 
             const stageTiming = this.processStageTiming(settings, bodies);
-            const stageApprovals = this.processStageApprovals(
-                requiredApprovals,
-                type,
-                bodies,
-            );
-
-            const resultType =
-                type === ProcessStageType.NORMAL
-                    ? SppProposalType.APPROVAL
-                    : SppProposalType.VETO;
+            const stageApprovals = this.processStageApprovals(settings, bodies);
 
             const processedBodies = bodies.map((body) => ({
                 addr:
                     body.type === BodyType.NEW
                         ? processedBodyAddresses.shift()!
                         : body.address,
-                resultType,
+                // Approve/veto is a per-body property; a stage may mix both.
+                resultType: body.proposalType ?? SppProposalType.APPROVAL,
                 tryAdvance: true,
                 isManual: body.type === BodyType.EXTERNAL,
             }));
@@ -322,19 +313,18 @@ class SppTransactionUtils {
     };
 
     private processStageApprovals = (
-        requiredApprovals: number,
-        stageType: ProcessStageType,
+        settings: ISetupStageSettingsForm,
         bodies: ISetupBodyForm[],
     ) => {
-        // Stages with no bodies (timelock stages) do not require approvals
-        const approvalThreshold =
-            bodies.length > 0 && stageType === ProcessStageType.NORMAL
-                ? requiredApprovals
-                : 0;
-        const vetoThreshold =
-            bodies.length > 0 && stageType === ProcessStageType.OPTIMISTIC
-                ? requiredApprovals
-                : 0;
+        // Approval and veto thresholds apply independently and only when the
+        // stage actually has bodies of the corresponding type. Timelock stages
+        // (no bodies) therefore end up with both thresholds set to 0. The
+        // shared utility clamps the same way the form displays the thresholds.
+        const { approvalThreshold, vetoThreshold } =
+            createProcessFormUtils.getEffectiveStageThresholds({
+                settings,
+                bodies,
+            });
 
         return { approvalThreshold, vetoThreshold };
     };
@@ -352,9 +342,14 @@ class SppTransactionUtils {
                   BigInt(dateUtils.durationToSeconds(stageExpiration))
                 : undefined;
 
-        // Stages with no bodies (timelock stages) should not have early stage advance
-        const minAdvance =
-            bodies.length > 0 && earlyStageAdvance ? BigInt(0) : voteDuration;
+        // Early advance is not possible for timelock stages (no bodies) nor for
+        // stages with any vetoing body, whose veto window must fully elapse.
+        const hasVetoingBody = bodies.some(
+            (body) => body.proposalType === SppProposalType.VETO,
+        );
+        const allowEarlyAdvance =
+            bodies.length > 0 && earlyStageAdvance && !hasVetoingBody;
+        const minAdvance = allowEarlyAdvance ? BigInt(0) : voteDuration;
         const maxAdvance = processedStageExpiration ?? this.defaultMaxAdvance;
 
         return { minAdvance, maxAdvance, voteDuration };

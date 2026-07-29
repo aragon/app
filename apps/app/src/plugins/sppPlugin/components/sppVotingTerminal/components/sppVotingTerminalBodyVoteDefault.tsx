@@ -34,12 +34,17 @@ export interface ISppVotingTerminalBodyVoteDefaultProps {
      * Stage on which the body is setup.
      */
     stage: ISppStage;
+    /**
+     * Whether this body vetoes (`true`) or approves (`false`). Derived per body
+     * by the parent, since a stage may mix approving and vetoing bodies.
+     */
+    isVeto: boolean;
 }
 
 export const SppVotingTerminalBodyVoteDefault: React.FC<
     ISppVotingTerminalBodyVoteDefaultProps
 > = (props) => {
-    const { daoId, proposal, externalAddress, brandId, stage } = props;
+    const { daoId, proposal, externalAddress, brandId, stage, isVeto } = props;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -54,7 +59,6 @@ export const SppVotingTerminalBodyVoteDefault: React.FC<
 
     const { check: checkWalletConnection } = useConnectedWalletGuard();
 
-    const isVeto = sppStageUtils.isVeto(stage);
     const voted =
         sppStageUtils.getBodyResult(
             proposal,

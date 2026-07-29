@@ -12,11 +12,6 @@ export enum ProposalCreationMode {
     ANY_WALLET = 'ANY_WALLET',
 }
 
-export enum ProcessStageType {
-    NORMAL = 'NORMAL',
-    OPTIMISTIC = 'OPTIMISTIC',
-}
-
 export enum GovernanceType {
     BASIC = 'BASIC',
     ADVANCED = 'ADVANCED',

@@ -6,7 +6,6 @@ import {
     type ICreateProcessFormData,
     type ICreateProcessFormDataAdvanced,
     ProcessPermission,
-    ProcessStageType,
     ProposalCreationMode,
 } from '@/modules/createDao/components/createProcessForm';
 import type {
@@ -136,13 +135,17 @@ export class DaoProcessDetailsClientUtils {
                         canCreateProposal:
                             isSafe &&
                             plugin.proposalCreationConditionAddress != null,
+                        proposalType: plugin.proposalType,
                     } satisfies ISetupBodyFormExternal;
                 }
 
-                return this.bodyToFormData({
-                    plugin: this.sppBodyToFormData(plugin, allPlugins),
-                    membership: { members: [] },
-                });
+                return {
+                    ...this.bodyToFormData({
+                        plugin: this.sppBodyToFormData(plugin, allPlugins),
+                        membership: { members: [] },
+                    }),
+                    proposalType: plugin.proposalType,
+                };
             });
 
             return {
@@ -150,18 +153,12 @@ export class DaoProcessDetailsClientUtils {
                 id: stage.stageIndex.toString(),
                 name: stage.name ?? '',
                 settings: {
-                    type:
-                        stage.vetoThreshold > 0
-                            ? ProcessStageType.OPTIMISTIC
-                            : ProcessStageType.NORMAL,
                     votingPeriod: dateUtils.secondsToDuration(
                         stage.voteDuration,
                     ),
                     earlyStageAdvance: stage.minAdvance === 0,
-                    requiredApprovals:
-                        stage.approvalThreshold > 0
-                            ? stage.approvalThreshold
-                            : stage.vetoThreshold,
+                    approvalThreshold: stage.approvalThreshold,
+                    vetoThreshold: stage.vetoThreshold,
                     stageExpiration:
                         stage.maxAdvance !== 3_155_760_000
                             ? dateUtils.secondsToDuration(
