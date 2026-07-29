@@ -7,6 +7,14 @@ const assert = require('node:assert/strict');
 const { generateSummary } = require('./generateVersionSummary');
 const { extractChangelogSection } = require('./readChangelog');
 
+// Ignore the developer's git config: a global commit.gpgsign would make every
+// fixture commit block on a pinentry prompt.
+const gitEnvironment = {
+    ...process.env,
+    GIT_CONFIG_GLOBAL: os.devNull,
+    GIT_CONFIG_SYSTEM: os.devNull,
+};
+
 const createWorkspaceRepository = () => {
     const directory = fs.realpathSync(
         fs.mkdtempSync(path.join(os.tmpdir(), 'version-summary-')),
@@ -14,6 +22,7 @@ const createWorkspaceRepository = () => {
     execFileSync('git', ['init', '--initial-branch=main'], {
         cwd: directory,
         stdio: 'ignore',
+        env: gitEnvironment,
     });
     writeFile(
         directory,
@@ -39,7 +48,11 @@ const git = (repository, args) =>
             'user.email=version-summary@example.com',
             ...args,
         ],
-        { cwd: repository, stdio: ['ignore', 'pipe', 'pipe'] },
+        {
+            cwd: repository,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env: gitEnvironment,
+        },
     );
 
 const writeFile = (repository, file, content) => {
