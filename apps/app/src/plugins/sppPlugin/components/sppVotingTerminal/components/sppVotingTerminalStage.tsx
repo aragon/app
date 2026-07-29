@@ -1,9 +1,8 @@
-import { ProposalStatus, ProposalVoting, Tag } from '@aragon/gov-ui-kit';
+import { ProposalStatus, ProposalVoting } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
-import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDynamicValue } from '@/shared/hooks/useDynamicValue';
 import type { ISppProposal, ISppStage } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
@@ -31,8 +30,6 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
     props,
 ) => {
     const { stage, daoId, proposal } = props;
-
-    const { t } = useTranslations();
 
     const processedStartDate = sppStageUtils
         .getStageStartDate(proposal, stage)
@@ -69,14 +66,6 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
     const isSingleBody = bodyList.length === 1;
     const isTimelockStage = !stage.plugins.length;
 
-    // Tag bodies with their decision only in mixed stages; a uniform stage
-    // (all approving or all vetoing) needs no tag.
-    const vetoBodyCount = stage.plugins.filter((plugin) =>
-        sppStageUtils.isVetoBody(plugin),
-    ).length;
-    const isMixedStage =
-        vetoBodyCount > 0 && vetoBodyCount < stage.plugins.length;
-
     return (
         <ProposalVoting.Stage
             bodyList={bodyList}
@@ -100,51 +89,32 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
                             id={plugin.address}
                             key={plugin.address}
                         >
-                            {/* Grow wrapper keeps the tag pinned right for both
-                                internal (full-width) and external bodies. */}
-                            <div className="flex grow items-center gap-x-2">
-                                {plugin.interfaceType != null && (
-                                    <PluginSingleComponent
-                                        isExecuted={proposal.executed.status}
-                                        isVeto={sppStageUtils.isVetoBody(
-                                            plugin,
-                                        )}
-                                        name={plugin.name}
-                                        pluginId={plugin.interfaceType}
-                                        proposal={sppStageUtils.getBodySubProposal(
-                                            proposal,
-                                            plugin.address,
-                                            stage.stageIndex,
-                                        )}
-                                        slotId={
-                                            GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
-                                        }
-                                    />
-                                )}
-                                {plugin.interfaceType == null && (
-                                    <SppVotingTerminalMultiBodySummaryDefault
-                                        body={plugin.address}
-                                        canVote={sppStageUtils.canBodyVote(
-                                            proposal,
-                                            stage,
-                                            plugin,
-                                        )}
-                                        proposal={proposal}
-                                        stage={stage}
-                                    />
-                                )}
-                            </div>
-                            {isMixedStage && (
-                                <Tag
-                                    className="shrink-0"
-                                    label={t(
-                                        `app.plugins.spp.sppVotingTerminalBodyDecisionTag.${sppStageUtils.isVetoBody(plugin) ? 'veto' : 'approve'}`,
+                            {plugin.interfaceType != null && (
+                                <PluginSingleComponent
+                                    isExecuted={proposal.executed.status}
+                                    isVeto={sppStageUtils.isVetoBody(plugin)}
+                                    name={plugin.name}
+                                    pluginId={plugin.interfaceType}
+                                    proposal={sppStageUtils.getBodySubProposal(
+                                        proposal,
+                                        plugin.address,
+                                        stage.stageIndex,
                                     )}
-                                    variant={
-                                        sppStageUtils.isVetoBody(plugin)
-                                            ? 'warning'
-                                            : 'info'
+                                    slotId={
+                                        GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_MULTI_BODY_SUMMARY
                                     }
+                                />
+                            )}
+                            {plugin.interfaceType == null && (
+                                <SppVotingTerminalMultiBodySummaryDefault
+                                    body={plugin.address}
+                                    canVote={sppStageUtils.canBodyVote(
+                                        proposal,
+                                        stage,
+                                        plugin,
+                                    )}
+                                    proposal={proposal}
+                                    stage={stage}
                                 />
                             )}
                         </ProposalVoting.BodySummaryListItem>

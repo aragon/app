@@ -25,16 +25,12 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
      * Whether the process uses advanced (staged) governance.
      */
     isAdvancedGovernance?: boolean;
-    /**
-     * Stage threshold applying to this body.
-     */
-    stageThreshold?: number;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<
     IGovernanceBodiesFieldItemDefaultProps
 > = (props) => {
-    const { body, daoId, isAdvancedGovernance, stageThreshold } = props;
+    const { body, daoId, isAdvancedGovernance } = props;
 
     const { t } = useTranslations();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -58,7 +54,6 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
             <GovernanceBodyDecisionItem
                 isAdvancedGovernance={isAdvancedGovernance}
                 proposalType={body.proposalType}
-                stageThreshold={stageThreshold}
             />
             {ensName != null && (
                 <DefinitionList.Item

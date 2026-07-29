@@ -96,8 +96,8 @@ export const GovernanceStageSettingsField: React.FC<
 
     // Approve/veto is a per-body property, so a stage may have approving bodies,
     // vetoing bodies, or both (mixed). The summary and the settings dialog adapt
-    // to the actual body composition. The thresholds themselves are displayed on
-    // the bodies they apply to, not in the stage settings summary.
+    // to the actual body composition, only showing the thresholds that have
+    // bodies they apply to.
     const {
         approvingBodyCount,
         vetoingBodyCount,
@@ -152,6 +152,24 @@ export const GovernanceStageSettingsField: React.FC<
             useCustomWrapper={true}
         >
             <DefinitionList.Container className="rounded-xl border border-neutral-100 px-6 py-4">
+                {approvingBodyCount > 0 && (
+                    <DefinitionList.Item
+                        term={t(
+                            'app.createDao.createProcessForm.governance.stageSettingsField.approvalThreshold',
+                        )}
+                    >
+                        {effectiveApprovalThreshold}
+                    </DefinitionList.Item>
+                )}
+                {vetoingBodyCount > 0 && (
+                    <DefinitionList.Item
+                        term={t(
+                            'app.createDao.createProcessForm.governance.stageSettingsField.vetoThreshold',
+                        )}
+                    >
+                        {effectiveVetoThreshold}
+                    </DefinitionList.Item>
+                )}
                 <DefinitionList.Item
                     term={t(
                         'app.createDao.createProcessForm.governance.stageSettingsField.votingPeriod',

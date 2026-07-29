@@ -71,9 +71,32 @@ describe('<GovernanceStageSettingsField /> component', () => {
     const vetoingBody = () =>
         generateSetupBodyFormExternal({ proposalType: SppProposalType.VETO });
 
-    it('does not render threshold rows as they are displayed per body', () => {
+    it('renders both threshold rows for a mixed stage', () => {
         const stage = { bodies: [approvingBody(), vetoingBody()] };
         render(createTestComponent({ stage }));
+
+        expect(screen.getByText(/approvalThreshold/)).toBeInTheDocument();
+        expect(screen.getByText(/vetoThreshold/)).toBeInTheDocument();
+    });
+
+    it('only renders the approval-threshold row for a stage with only approving bodies', () => {
+        const stage = { bodies: [approvingBody()] };
+        render(createTestComponent({ stage }));
+
+        expect(screen.getByText(/approvalThreshold/)).toBeInTheDocument();
+        expect(screen.queryByText(/vetoThreshold/)).not.toBeInTheDocument();
+    });
+
+    it('only renders the veto-threshold row for a stage with only vetoing bodies', () => {
+        const stage = { bodies: [vetoingBody()] };
+        render(createTestComponent({ stage }));
+
+        expect(screen.getByText(/vetoThreshold/)).toBeInTheDocument();
+        expect(screen.queryByText(/approvalThreshold/)).not.toBeInTheDocument();
+    });
+
+    it('does not render threshold rows for a stage without bodies', () => {
+        render(createTestComponent({ stage: { bodies: [] } }));
 
         expect(screen.queryByText(/approvalThreshold/)).not.toBeInTheDocument();
         expect(screen.queryByText(/vetoThreshold/)).not.toBeInTheDocument();
