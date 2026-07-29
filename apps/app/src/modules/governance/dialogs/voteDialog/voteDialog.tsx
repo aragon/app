@@ -3,6 +3,7 @@ import {
     type VoteIndicator,
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
@@ -16,7 +17,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { IProposal } from '../../api/governanceService';
+import {
+    governanceServiceKeys,
+    type IProposal,
+} from '../../api/governanceService';
 import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
@@ -72,6 +76,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     const { t } = useTranslations();
     const router = useRouter();
+    const queryClient = useQueryClient();
 
     invariant(
         location.params != null,
@@ -95,6 +100,18 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const handlePrepareTransaction = () =>
         voteDialogUtils.buildTransaction({ proposal, vote, target });
 
+    const handleIndexed = () => {
+        const queryKey = governanceServiceKeys.voteList({
+            queryParams: {
+                proposalId: proposal.id,
+                pluginAddress: proposal.pluginAddress,
+                address,
+                network: proposal.network,
+            },
+        });
+        void queryClient.invalidateQueries({ queryKey });
+    };
+
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
     const slug = proposalUtils.getProposalSlug(
@@ -115,6 +132,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                     : undefined
             }
             network={proposal.network}
+            onIndexed={handleIndexed}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.governance.voteDialog.button.submit')}
