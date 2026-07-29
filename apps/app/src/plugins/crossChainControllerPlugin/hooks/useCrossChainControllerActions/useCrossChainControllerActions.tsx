@@ -1,10 +1,12 @@
 'use client';
 
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { ICrossChainControllerPlugin } from '../../types';
 import { crossChainControllerActionUtils } from '../../utils/crossChainControllerActionUtils';
 
-export const useCrossChainControllerActions = (plugin: IDaoPlugin) => {
+export const useCrossChainControllerActions = (
+    plugin: ICrossChainControllerPlugin,
+) => {
     const { t } = useTranslations();
 
     return crossChainControllerActionUtils.getCrossChainControllerActions({

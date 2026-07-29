@@ -30,15 +30,25 @@ class FetchInterceptorUtils {
             const result = await this.originalFetch(url, request);
 
             const parsedResult = await responseUtils.safeJsonParse(result);
-            const resultJson =
-                parsedResult &&
-                typeof parsedResult === 'object' &&
-                !Array.isArray(parsedResult)
-                    ? (parsedResult as { _merged?: boolean })
-                    : {};
-            mockData = resultJson._merged
-                ? resultJson
-                : deepmerge(resultJson, mock.data, { _merged: true });
+
+            // List endpoints answer with a top-level array, which `deepmerge` cannot combine with
+            // the live response (it only merges objects) — append the mocked entries instead so the
+            // real list is kept.
+            if (Array.isArray(mock.data)) {
+                mockData = (
+                    Array.isArray(parsedResult) ? parsedResult : []
+                ).concat(mock.data);
+            } else {
+                const resultJson =
+                    parsedResult &&
+                    typeof parsedResult === 'object' &&
+                    !Array.isArray(parsedResult)
+                        ? (parsedResult as { _merged?: boolean })
+                        : {};
+                mockData = resultJson._merged
+                    ? resultJson
+                    : deepmerge(resultJson, mock.data, { _merged: true });
+            }
         }
 
         return new Response(JSON.stringify(mockData), {

@@ -1,17 +1,19 @@
 import { addressUtils, IconType } from '@aragon/gov-ui-kit';
 import type { IActionComposerPluginData } from '@/modules/governance/types';
-import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { CrossChainControllerForwardMessageAction } from '../../components/crossChainControllerActions/crossChainControllerForwardMessageAction';
-import { CrossChainControllerProposalActionType } from '../../types';
+import {
+    CrossChainControllerProposalActionType,
+    type ICrossChainControllerPlugin,
+} from '../../types';
 import { defaultForwardMessage } from './crossChainControllerActionDefinitions';
 
 export interface IGetCrossChainControllerActionsProps {
     /**
      * DAO plugin data.
      */
-    plugin: IDaoPlugin;
+    plugin: ICrossChainControllerPlugin;
     /**
      * The translation function for internationalization.
      */
@@ -19,7 +21,7 @@ export interface IGetCrossChainControllerActionsProps {
 }
 
 export type IGetCrossChainControllerActionsResult =
-    IActionComposerPluginData<IDaoPlugin>;
+    IActionComposerPluginData<ICrossChainControllerPlugin>;
 
 class CrossChainControllerActionUtils {
     getCrossChainControllerActions = ({

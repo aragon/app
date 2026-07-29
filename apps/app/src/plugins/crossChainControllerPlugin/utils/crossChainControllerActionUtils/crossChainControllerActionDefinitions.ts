@@ -9,6 +9,8 @@ export const defaultForwardMessage: ICrossChainControllerActionForwardMessage =
         to: '',
         data: '',
         value: '0',
+        destinationChainId: undefined,
+        nestedActions: [],
         inputData: {
             function: 'forwardMessage',
             contract: PluginContractName.CROSS_CHAIN_CONTROLLER,

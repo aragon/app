@@ -30,9 +30,8 @@ export interface ILayoutRootProps {
     children?: ReactNode;
 }
 
-// Initialise plugin registry and intercept fetch requests (if enabled) for server-side components
+// Initialise plugin registry for server-side components
 initPluginRegistry();
-fetchInterceptorUtils.intercept();
 initActionViewRegistry();
 
 export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
@@ -44,6 +43,14 @@ export const LayoutRoot: React.FC<ILayoutRootProps> = async (props) => {
             headers(),
             featureFlags.getSnapshot(),
         ]);
+
+    // Intercept fetch requests (if enabled) for server-side components. The flag can only be
+    // resolved asynchronously, so this cannot live at module scope: it must still run before any
+    // nested layout prefetches, which it does as this layout renders first.
+    const useMocks =
+        featureFlagsSnapshot.find((f) => f.key === 'useMocks')?.enabled ??
+        false;
+    fetchInterceptorUtils.intercept(useMocks);
 
     const wagmiInitialState = cookieToInitialState(
         wagmiConfig,
