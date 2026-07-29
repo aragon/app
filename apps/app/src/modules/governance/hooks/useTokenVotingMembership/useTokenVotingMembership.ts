@@ -1,18 +1,26 @@
+import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import {
-    type IGetMemberListParams,
+    type IGetTokenVotingMembershipParams,
     tokenVotingMembershipOptions,
 } from '@/modules/governance/api/governanceService';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import type { InfiniteQueryOptions } from '@/shared/types';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 /**
  * Token-voting member list data hook. Wraps the dedicated
- * `getTokenVotingMembership` fetch (subdomain-vs-backend routing + backend→DTO
+ * `getTokenVotingMembership` fetch (domain-vs-backend routing + backend→DTO
  * map) and exposes the same data-list interface the token member list
  * consumes — the list items are `TokenVotingMemberDTO`.
  */
-export const useTokenVotingMembership = (params: IGetMemberListParams) => {
+export const useTokenVotingMembership = (
+    params: IGetTokenVotingMembershipParams,
+    options?: InfiniteQueryOptions<
+        PageDTO<TokenVotingMemberDTO>,
+        IGetTokenVotingMembershipParams
+    >,
+) => {
     const { t } = useTranslations();
 
     const {
@@ -21,7 +29,7 @@ export const useTokenVotingMembership = (params: IGetMemberListParams) => {
         fetchStatus,
         isFetchingNextPage,
         fetchNextPage,
-    } = useInfiniteQuery(tokenVotingMembershipOptions(params));
+    } = useInfiniteQuery(tokenVotingMembershipOptions(params, options));
 
     const memberList = membershipData?.pages.flatMap((page) => page.data);
     const state = dataListUtils.queryToDataListState({

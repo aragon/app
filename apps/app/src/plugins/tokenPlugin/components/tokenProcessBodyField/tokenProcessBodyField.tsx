@@ -15,7 +15,7 @@ import type {
     ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
-import { useMemberList } from '@/modules/governance/api/governanceService';
+import { useTokenVotingMembership } from '@/modules/governance/hooks/useTokenVotingMembership';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -82,9 +82,10 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     .underlying ?? null,
         },
     };
-    const { data: memberList } = useMemberList(initialParams, {
-        enabled: isExisting,
-    });
+    const { itemsCount: memberCount } = useTokenVotingMembership(
+        initialParams,
+        { enabled: isExisting },
+    );
 
     const {
         address: tokenAddress,
@@ -127,7 +128,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
     );
 
     const numberOfMembers = isExisting
-        ? memberList?.pages[0].metadata.totalRecords
+        ? memberCount
         : membership.members.length;
 
     const { buildEntityUrl } = useDaoChain({ network: dao?.network });

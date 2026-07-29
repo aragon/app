@@ -6,6 +6,7 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
+    IGetTokenVotingMembershipParams,
     IGetVoteListParams,
 } from './governanceService.api';
 
@@ -42,7 +43,7 @@ export const governanceServiceKeys = {
         GovernanceServiceKey.MEMBER_LIST,
         params,
     ],
-    tokenVotingMembership: (params: IGetMemberListParams) => [
+    tokenVotingMembership: (params: IGetTokenVotingMembershipParams) => [
         GovernanceServiceKey.TOKEN_VOTING_MEMBERSHIP,
         params,
     ],

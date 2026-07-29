@@ -7,11 +7,11 @@ import {
     AragonBackendService,
     type IPaginatedResponse,
 } from '@/shared/api/aragonBackendService';
-import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
 } from '../../types';
+import { tokenVotingMembershipServiceClient } from '../tokenVotingMembershipService';
 import type {
     IMember,
     IProposal,
@@ -27,12 +27,12 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
+    IGetTokenVotingMembershipParams,
     IGetVoteListParams,
 } from './governanceService.api';
 import { collectTokenAddresses } from './utils/collectTokenAddresses';
 import { fetchTokensTotalSupply } from './utils/fetchTokensTotalSupply';
-import { mapBackendMemberToTokenVotingDTO } from './utils/mapBackendMemberToTokenVotingDTO';
-import { resolveMemberSource } from './utils/resolveMemberSource';
+import { fetchTokenVotingMembership } from './utils/fetchTokenVotingMembership';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -46,135 +46,31 @@ class GovernanceService extends AragonBackendService {
         votes: '/v2/votes',
     };
 
-    /**
-     * Networks whose token-voting member queries are served by the
-     * aragon-domain BFF. Expand as more networks are indexed by Envio.
-     */
-    private static readonly SUBDOMAIN_NETWORKS: ReadonlySet<Network> = new Set([
-        Network.ETHEREUM_MAINNET,
-    ]);
-
     getMemberList = async <TMember extends IMember = IMember>(
         params: IGetMemberListParams,
     ): Promise<IPaginatedResponse<TMember>> => {
-        const queryParams = params.queryParams;
-        const pluginAddress = queryParams?.pluginAddress?.toLowerCase();
-        const tokenAddress = queryParams?.tokenAddress?.toLowerCase();
-        const network = queryParams?.network;
-        const interfaceType = queryParams?.pluginInterfaceType;
-        const tokenUnderlying = queryParams?.tokenUnderlying;
-
-        // The aragon-domain only covers plain ERC-20 token-voting
-        // governance tokens. Wrapped/VE-adapter tokens are not yet indexed
-        // and must keep using the legacy backend until the aragon-domain
-        // supports them.
-        const useSubdomain =
-            pluginAddress != null &&
-            tokenAddress != null &&
-            network != null &&
-            GovernanceService.SUBDOMAIN_NETWORKS.has(network) &&
-            interfaceType === PluginInterfaceType.TOKEN_VOTING &&
-            tokenUnderlying == null;
-
-        if (useSubdomain) {
-            const query = new URLSearchParams({
-                pluginAddress,
-                tokenAddress,
-                page: String(queryParams?.page ?? 1),
-                pageSize: String(queryParams?.pageSize ?? 10),
-            });
-            const response = await fetch(
-                `/api/subdomain/members?${query.toString()}`,
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Subdomain members request failed: ${response.status}`,
-                );
-            }
-            return (await response.json()) as IPaginatedResponse<TMember>;
-        }
-
-        // Strip routing-only fields before forwarding to the legacy backend so
-        // we don't introduce unknown query params that the backend may reject.
-        const hasRoutingFields =
-            queryParams != null &&
-            (queryParams.network !== undefined ||
-                queryParams.pluginInterfaceType !== undefined ||
-                queryParams.tokenAddress !== undefined ||
-                queryParams.tokenUnderlying !== undefined);
-
-        let legacyParams = params;
-        if (hasRoutingFields && queryParams != null) {
-            const {
-                network: _network,
-                pluginInterfaceType: _pluginInterfaceType,
-                tokenAddress: _tokenAddress,
-                tokenUnderlying: _tokenUnderlying,
-                ...rest
-            } = queryParams;
-            legacyParams = { ...params, queryParams: rest };
-        }
-
         const result = await this.request<IPaginatedResponse<TMember>>(
             this.urls.members,
-            legacyParams,
+            params,
         );
 
         return result;
     };
 
     /**
-     * Token-voting member list. Owns subdomain-vs-backend routing and the
-     * backend→DTO mapping, returning the library-owned `TokenVotingMemberDTO`
-     * regardless of source. The generic `getMemberList` still serves
-     * multisig/admin.
+     * Token-voting member list. Routes between the aragon-domain BFF and the
+     * legacy backend (see `fetchTokenVotingMembership`), returning the
+     * library-owned `TokenVotingMemberDTO` page regardless of source. The
+     * generic `getMemberList` still serves multisig/admin.
      */
-    getTokenVotingMembership = async (
-        params: IGetMemberListParams,
-    ): Promise<IPaginatedResponse<TokenVotingMemberDTO>> => {
-        const queryParams = params.queryParams;
-
-        if (resolveMemberSource(queryParams) === 'subdomain') {
-            const query = new URLSearchParams({
-                pluginAddress: queryParams.pluginAddress.toLowerCase(),
-                tokenAddress: (queryParams.tokenAddress ?? '').toLowerCase(),
-                page: String(queryParams.page ?? 1),
-                pageSize: String(queryParams.pageSize ?? 10),
-            });
-            const response = await fetch(
-                `/api/subdomain/members?${query.toString()}`,
-            );
-            if (!response.ok) {
-                throw new Error(
-                    `Subdomain members request failed: ${response.status}`,
-                );
-            }
-
-            // The subdomain already returns the DTO — no mapping required.
-            return (await response.json()) as PageDTO<TokenVotingMemberDTO>;
-        }
-
-        // Strip routing-only fields before forwarding to the legacy backend so
-        // we don't introduce unknown query params that the backend may reject.
-        const {
-            network: _network,
-            pluginInterfaceType: _pluginInterfaceType,
-            tokenAddress: _tokenAddress,
-            tokenUnderlying: _tokenUnderlying,
-            ...rest
-        } = queryParams;
-        const legacyParams = { ...params, queryParams: rest };
-
-        const result = await this.request<IPaginatedResponse<ITokenMember>>(
-            this.urls.members,
-            legacyParams,
+    getTokenVotingMembership = (
+        params: IGetTokenVotingMembershipParams,
+    ): Promise<PageDTO<TokenVotingMemberDTO>> =>
+        fetchTokenVotingMembership(
+            params,
+            tokenVotingMembershipServiceClient.getTokenVotingMembership,
+            (legacyParams) => this.getMemberList<ITokenMember>(legacyParams),
         );
-
-        return {
-            ...result,
-            data: result.data.map(mapBackendMemberToTokenVotingDTO),
-        };
-    };
 
     getMember = async <TMember extends IMember = IMember>(
         params: IGetMemberParams,

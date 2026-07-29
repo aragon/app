@@ -54,8 +54,16 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      * Address of the plugin to fetch the members for.
      */
     pluginAddress: string;
+}
+
+export interface IGetMemberListParams
+    extends IRequestQueryParams<IGetMemberListQueryParams> {}
+
+export interface IGetTokenVotingMembershipQueryParams
+    extends IGetMemberListQueryParams {
     /**
-     * Network of the plugin.
+     * Network of the plugin, used to route the query to the aragon-domain BFF
+     * when the network is indexed by Envio.
      */
     network?: Network;
     /**
@@ -63,7 +71,7 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
      */
     pluginInterfaceType?: PluginInterfaceType;
     /**
-     * Address of the governance token, when the plugin is token-voting.
+     * Address of the governance token.
      */
     tokenAddress?: string;
     /**
@@ -74,8 +82,8 @@ export interface IGetMemberListQueryParams extends IPaginatedRequest {
     tokenUnderlying?: string | null;
 }
 
-export interface IGetMemberListParams
-    extends IRequestQueryParams<IGetMemberListQueryParams> {}
+export interface IGetTokenVotingMembershipParams
+    extends IRequestQueryParams<IGetTokenVotingMembershipQueryParams> {}
 
 export interface IGetMemberUrlParams {
     /**

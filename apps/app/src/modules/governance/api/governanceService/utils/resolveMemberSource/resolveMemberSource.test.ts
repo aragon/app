@@ -1,9 +1,9 @@
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
-import type { IGetMemberListQueryParams } from '../../governanceService.api';
+import type { IGetTokenVotingMembershipQueryParams } from '../../governanceService.api';
 import { resolveMemberSource } from './resolveMemberSource';
 
 describe('resolveMemberSource', () => {
-    const baseParams: IGetMemberListQueryParams = {
+    const baseParams: IGetTokenVotingMembershipQueryParams = {
         daoId: 'dao-id',
         pluginAddress: '0xPlugin',
         tokenAddress: '0xToken',
@@ -11,8 +11,8 @@ describe('resolveMemberSource', () => {
         pluginInterfaceType: PluginInterfaceType.TOKEN_VOTING,
     };
 
-    it('routes mainnet token-voting plain ERC-20 to the subdomain', () => {
-        expect(resolveMemberSource(baseParams)).toBe('subdomain');
+    it('routes mainnet token-voting plain ERC-20 to the aragon-domain', () => {
+        expect(resolveMemberSource(baseParams)).toBe('domain');
     });
 
     it.each([

@@ -10,12 +10,12 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
+import { buildTokenVotingMembershipParams } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useTokenVotingMembership } from '@/modules/governance/hooks/useTokenVotingMembership';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { useTokenPinnedMembers } from '../../hooks/useTokenPinnedMembers';
 import type { ITokenMember } from '../../types';
 import { TokenMemberListItem } from './components/tokenMemberListItem';
@@ -65,33 +65,12 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // The parent DAO is server-side prefetched → always a cache hit.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // For linked account plugins the API call must target the linked account's own daoId so the
-    // backend queries the correct DAO.
-    const apiParams = useMemo(() => {
-        const resolvedDaoId = daoUtils.resolvePluginDaoId(daoId, plugin, dao);
-        // `underlying` is only on ITokenPluginSettingsToken; lock-to-vote tokens
-        // don't carry it. Read defensively — when absent the value is `null`,
-        // which the routing predicate treats as "plain ERC-20".
-        const tokenUnderlying =
-            (plugin.settings.token as { underlying?: string | null })
-                .underlying ?? null;
-
-        const routingParams = {
-            network: dao?.network,
-            pluginInterfaceType: plugin.interfaceType,
-            tokenAddress: plugin.settings.token.address,
-            tokenUnderlying,
-        };
-
-        return {
-            ...initialParams,
-            queryParams: {
-                ...initialParams.queryParams,
-                ...routingParams,
-                daoId: resolvedDaoId,
-            },
-        };
-    }, [initialParams, plugin, dao, daoId]);
+    // Shared with the members-page RSC prefetch — both sides must build
+    // identical params so the dehydrated cache resolves this query.
+    const apiParams = useMemo(
+        () => buildTokenVotingMembershipParams(initialParams, plugin, dao),
+        [initialParams, plugin, dao],
+    );
 
     const {
         onLoadMore,

@@ -1,1 +1,1 @@
-export { resolveMemberSource, SUBDOMAIN_NETWORKS } from './resolveMemberSource';
+export { DOMAIN_NETWORKS, resolveMemberSource } from './resolveMemberSource';
