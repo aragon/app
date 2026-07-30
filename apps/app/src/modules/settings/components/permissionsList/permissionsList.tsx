@@ -2,6 +2,7 @@
 
 import {
     Accordion,
+    Avatar,
     addressUtils,
     CardEmptyState,
     ChainEntityType,
@@ -16,6 +17,7 @@ import {
     Tooltip,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
+import safeWallet from '@/assets/images/safeWallet.png';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -151,13 +153,20 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}
-        {entity.type === 'plugin' && entity.tag != null && (
-            <Tag
-                className="max-w-[140px] shrink-0 [&>p]:truncate"
-                label={entity.tag}
-                variant="primary"
-            />
+        {entity.brandId === 'safe' && (
+            <span aria-label="Safe account" className="shrink-0" role="img">
+                <Avatar size="sm" src={safeWallet.src} />
+            </span>
         )}
+        {entity.type === 'plugin' &&
+            entity.brandId !== 'safe' &&
+            entity.tag != null && (
+                <Tag
+                    className="max-w-[140px] shrink-0 [&>p]:truncate"
+                    label={entity.tag}
+                    variant="primary"
+                />
+            )}
         {entity.type === 'sentinel' && (
             <span
                 aria-hidden="true"

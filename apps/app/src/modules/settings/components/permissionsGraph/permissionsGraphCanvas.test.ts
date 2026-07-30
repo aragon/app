@@ -249,6 +249,75 @@ describe('buildFlowElements', () => {
             targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
         });
     });
+
+    it('keeps proposal creator nodes below their governing body target', () => {
+        const creatorId = 'proposal-creator-anyone-core';
+        const executeEdge = buildEdge('execute', {
+            source: pluginId,
+            target: anchorId,
+            permissionName: 'EXECUTE_PERMISSION',
+            permissionDisplayName: 'Execute',
+        });
+        const createProposalEdge = buildEdge('create-proposal', {
+            source: creatorId,
+            target: pluginId,
+            permissionName: 'CREATE_PROPOSAL_PERMISSION',
+            permissionDisplayName: 'Create proposal',
+        });
+        const graph = buildGraph(
+            [executeEdge, createProposalEdge],
+            [
+                {
+                    id: anchorId,
+                    kind: 'dao',
+                    label: 'DAO',
+                    address: anchorId,
+                },
+                {
+                    id: pluginId,
+                    kind: 'plugin',
+                    label: 'Core Governance',
+                    address: pluginId,
+                },
+                {
+                    id: creatorId,
+                    kind: 'actor',
+                    label: 'Anyone',
+                    address: externalId,
+                },
+            ],
+        );
+        const { nodes, edges } = buildFlowElements({
+            anchorId,
+            graph,
+            onSelectEdge: jest.fn(),
+            visibleEdges: graph.edges,
+        });
+        const createProposalStackId = `permission-stack-${creatorId}-${pluginId}`;
+
+        expect(
+            nodes.find((node) => node.id === createProposalStackId)?.data,
+        ).toMatchObject({
+            sourceId: creatorId,
+            targetId: pluginId,
+        });
+
+        const { nodes: layoutedNodes } = getLayoutedElements(nodes, edges, {
+            direction: getLayoutDirection(graph.edges, anchorId),
+        });
+        const positionedNodes = positionSelfStacks(layoutedNodes);
+        const nodeById = new Map(
+            positionedNodes.map((node) => [node.id, node]),
+        );
+
+        expect(nodeById.get(pluginId)!.position.y).toBeLessThan(
+            nodeById.get(createProposalStackId)!.position.y,
+        );
+        expect(nodeById.get(createProposalStackId)!.position.y).toBeLessThan(
+            nodeById.get(creatorId)!.position.y,
+        );
+    });
+
     it('keeps the DAO above contracts when execute and DAO-granted permissions are both visible', () => {
         const executeEdge = buildEdge('execute', {
             source: pluginId,

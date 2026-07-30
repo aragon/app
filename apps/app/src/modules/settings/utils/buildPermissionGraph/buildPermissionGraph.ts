@@ -20,6 +20,8 @@ import {
 } from '../permissionEntityUtils';
 
 const NO_CONDITION_LABEL = '-';
+const CREATE_PROPOSAL_PERMISSION_NAME = 'CREATE_PROPOSAL_PERMISSION';
+const PROPOSAL_CREATOR_NODE_PREFIX = 'proposal-creator';
 
 /**
  * Condition contracts are already conveyed as the `if …` label on the
@@ -106,7 +108,73 @@ const resolveNode = (
     };
 };
 
-const resolveEdge = (row: IPermissionRow): IPermissionGraphEdge => {
+interface IResolveEdgeOptions {
+    sourceId?: string;
+}
+
+const isGoverningBodyTarget = (row: IPermissionRow): boolean =>
+    row.where?.layer === 'topLevelPlugin' ||
+    row.where?.layer === 'historicalPlugin';
+
+const isProposalCreatorRow = (row: IPermissionRow): boolean =>
+    permissionNameUtils.getPermissionName(row.permissionId) ===
+        CREATE_PROPOSAL_PERMISSION_NAME && isGoverningBodyTarget(row);
+
+const getProposalCreatorNodeId = (row: IPermissionRow): string => {
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
+
+    return [
+        PROPOSAL_CREATOR_NODE_PREFIX,
+        row.permissionId,
+        row.whoAddress,
+        row.whereAddress,
+        conditionAddress,
+    ]
+        .map((part) => part.toLowerCase())
+        .join('-');
+};
+
+const resolveProposalCreatorNode = (
+    row: IPermissionRow,
+    dao: IDao,
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
+    accountRefs?: IPermissionAccountRef[],
+): IPermissionGraphNode => {
+    const baseNode = resolveNode(
+        row.whoAddress,
+        dao,
+        daoPlugins,
+        accountRefs,
+        row.who,
+    );
+    const interfaceType = row.who?.interfaceType?.toLowerCase();
+    const isSafeEntity = baseNode.brandId === 'safe';
+    const isMultisigMember = !isSafeEntity && interfaceType === 'multisig';
+
+    if (isMultisigMember) {
+        return {
+            id: getProposalCreatorNodeId(row),
+            kind: 'actor',
+            label: `Members of ${baseNode.label}`,
+            layer: baseNode.layer,
+            status: baseNode.status,
+            brandId: baseNode.brandId,
+            address: row.whoAddress,
+        };
+    }
+
+    return {
+        ...baseNode,
+        id: getProposalCreatorNodeId(row),
+        address: row.whoAddress,
+    };
+};
+
+const resolveEdge = (
+    row: IPermissionRow,
+    options: IResolveEdgeOptions = {},
+): IPermissionGraphEdge => {
+    const { sourceId } = options;
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
     const conditionType = conditionTypeUtils.resolveConditionType(
         conditionAddress,
@@ -117,17 +185,17 @@ const resolveEdge = (row: IPermissionRow): IPermissionGraphEdge => {
     const whoAddress = row.whoAddress.toLowerCase();
     const whereAddress = row.whereAddress.toLowerCase();
     const conditionNodeAddress = conditionAddress.toLowerCase();
+    const shouldOmitConditionLabel = conditionLabel === NO_CONDITION_LABEL;
 
     return {
         id: `${row.permissionId}-${whoAddress}-${whereAddress}-${conditionNodeAddress}`,
-        source: whoAddress,
+        source: sourceId ?? whoAddress,
         target: whereAddress,
         permissionName: permissionNameUtils.getPermissionName(row.permissionId),
         permissionDisplayName: permissionNameUtils.getPermissionDisplayName(
             row.permissionId,
         ),
-        conditionLabel:
-            conditionLabel === NO_CONDITION_LABEL ? undefined : conditionLabel,
+        conditionLabel: shouldOmitConditionLabel ? undefined : conditionLabel,
         row,
     };
 };
@@ -159,6 +227,23 @@ export const buildPermissionGraph = (
     );
 
     const edges = graphRows.map((row) => {
+        const isProposalCreator = isProposalCreatorRow(row);
+
+        if (isProposalCreator) {
+            const creatorNode = resolveProposalCreatorNode(
+                row,
+                dao,
+                daoPlugins,
+                accountRefs,
+            );
+            nodesById.set(creatorNode.id, creatorNode);
+            ensureNode(row.whereAddress, row.where);
+
+            return resolveEdge(row, {
+                sourceId: creatorNode.id,
+            });
+        }
+
         ensureNode(row.whoAddress, row.who);
         ensureNode(row.whereAddress, row.where);
 

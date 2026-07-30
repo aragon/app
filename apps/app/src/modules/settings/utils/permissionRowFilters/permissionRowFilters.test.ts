@@ -1,7 +1,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { generateFilterComponentPlugin } from '@/shared/testUtils/generators';
-import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
 import { filterPermissionRows } from './permissionRowFilters';
 
@@ -12,6 +12,8 @@ const targetAddress = '0x4444444444444444444444444444444444444444';
 const parentPluginAddress = '0x5555555555555555555555555555555555555555';
 const unknownPermissionId =
     '0x440d025ee487c9fe654894f3750aeb18132e334d52d7a9c0a3f6a5c77450a9b5';
+const createProposalPermissionId =
+    '0x8c433a4cd6b51969eca37f974940894297b9fcf4b282a213fea5cd8f85289c90';
 
 const buildRow = (partial: Partial<IPermissionRow>): IPermissionRow => ({
     permissionId: 'permission-id',
@@ -400,6 +402,38 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual([rows[1], rows[2]]);
+    });
+
+    it('keeps open create-proposal rows targeting governing body plugins', () => {
+        const rows = [
+            buildRow({
+                permissionId: createProposalPermissionId,
+                whoAddress: ANY_ADDR,
+                who: {
+                    address: ANY_ADDR,
+                    label: 'Unknown address',
+                    layer: 'unknown',
+                },
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            buildRow({ whereAddress: targetAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual([rows[0]]);
     });
 
     it('hides residual rows when subplugin/residual permissions are disabled', () => {

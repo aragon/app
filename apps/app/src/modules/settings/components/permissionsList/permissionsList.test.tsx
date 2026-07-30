@@ -132,6 +132,30 @@ describe('<PermissionsList /> component', () => {
         expect(screen.getAllByText('SPP').length).toBeGreaterThan(0);
     });
 
+    it('renders the Safe logo instead of a SAFE tag for Safe bodies', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: EXECUTE_PERMISSION_ID,
+                whoAddress: '0x3333333333333333333333333333333333333333',
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+                who: {
+                    address: '0x3333333333333333333333333333333333333333',
+                    brandId: 'safe',
+                    label: 'Safe',
+                    layer: 'processInternal',
+                },
+            },
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getAllByLabelText('Safe account').length).toBeGreaterThan(
+            0,
+        );
+        expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
+    });
+
     it('renders informational help for the Who and Where headers', () => {
         const rows: IPermissionRow[] = [
             {

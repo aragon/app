@@ -34,6 +34,7 @@ const UNRESOLVED_SUPPORTING_LAYERS = new Set<PermissionEntityLayer>([
 ]);
 
 const PERMISSION_HASH_PATTERN = /^0x[a-f0-9]{64}$/iu;
+const CREATE_PROPOSAL_PERMISSION_NAME = 'CREATE_PROPOSAL_PERMISSION';
 
 const isInactivePluginEndpoint = (row: IPermissionRow): boolean => {
     const endpointEntities = [row.who, row.where];
@@ -120,6 +121,12 @@ const isDaoGrantedPermission = (
     activeAccountAddress != null &&
     addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress);
 
+const isGoverningBodyProposalCreationRow = (row: IPermissionRow): boolean =>
+    permissionNameUtils.getPermissionName(row.permissionId) ===
+        CREATE_PROPOSAL_PERMISSION_NAME &&
+    (row.where?.layer === 'topLevelPlugin' ||
+        row.where?.layer === 'historicalPlugin');
+
 const isResidualPermission = (
     row: IPermissionRow,
     activeAccountAddress?: string,
@@ -155,6 +162,7 @@ export const filterPermissionRows = (
 
         if (
             !showSubpluginPermissions &&
+            !isGoverningBodyProposalCreationRow(row) &&
             (rowTouchesSubplugin(row, daoPlugins) ||
                 rowTouchesUnresolvedSupportingEndpoint(row) ||
                 rowHasUnresolvedPermission(row) ||

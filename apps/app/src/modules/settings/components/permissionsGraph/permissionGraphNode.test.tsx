@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import type { ComponentProps } from 'react';
+import { ANY_ADDR } from '../../constants/permissionSentinels';
 import {
     PermissionGraphNode,
     PermissionStackNode,
@@ -108,6 +109,30 @@ describe('<PermissionGraphNode /> component', () => {
         expect(screen.getByText('Safe')).toBeInTheDocument();
         expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
         expect(container.textContent).not.toContain('SAFE');
+    });
+
+    it('renders Anyone actor nodes with the primary members icon', () => {
+        renderGraphNode({
+            address: ANY_ADDR,
+            kind: 'actor',
+            label: 'Anyone',
+            tag: undefined,
+        });
+
+        expect(screen.getByText('Anyone')).toBeInTheDocument();
+        expect(screen.getByLabelText('Members')).toBeInTheDocument();
+    });
+
+    it('renders Safe-branded actor nodes with the Safe avatar', () => {
+        renderGraphNode({
+            brandId: 'safe',
+            kind: 'actor',
+            label: 'Safe',
+            tag: undefined,
+        });
+
+        expect(screen.getByText('Safe')).toBeInTheDocument();
+        expect(screen.getByLabelText('Safe account')).toBeInTheDocument();
     });
 });
 

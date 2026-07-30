@@ -1,8 +1,15 @@
-import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
+import {
+    Avatar,
+    AvatarIcon,
+    DaoAvatar,
+    IconType,
+    Tag,
+} from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
 import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
 import type { IPermissionEdgeEntry } from './permissionGraphEdge';
 
@@ -128,12 +135,15 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
         tag,
         avatarSrc,
         brandId,
+        address,
         selectionRole,
         active,
         dimmed,
     } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
-    const isSafeBody = kind === 'plugin' && brandId === 'safe';
+    const isSafeBody = brandId === 'safe';
+    const isAnyoneActor =
+        kind === 'actor' && address.toLowerCase() === ANY_ADDR.toLowerCase();
     const isSelected = selectionRole != null || active === true;
     const subtitleKey = getPermissionNodeTypeKey(data);
 
@@ -174,16 +184,29 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                     />
                 )}
                 {isSafeBody && (
-                    <Avatar
+                    <span
+                        aria-label="Safe account"
                         className="shrink-0"
-                        size="sm"
-                        src={safeWallet.src}
-                    />
+                        role="img"
+                    >
+                        <Avatar size="sm" src={safeWallet.src} />
+                    </span>
                 )}
                 {kind === 'plugin' && !isSafeBody && tag != null && (
                     <Tag className="self-start" label={tag} variant="primary" />
                 )}
-                {kind === 'actor' && <Avatar size="sm" />}
+                {isAnyoneActor && !isSafeBody && (
+                    <span aria-label="Members" role="img">
+                        <AvatarIcon
+                            icon={IconType.APP_MEMBERS}
+                            size="sm"
+                            variant="primary"
+                        />
+                    </span>
+                )}
+                {kind === 'actor' && !isSafeBody && !isAnyoneActor && (
+                    <Avatar size="sm" />
+                )}
             </div>
         </div>
     );
