@@ -1,4 +1,4 @@
-import { addressUtils, IconType } from '@aragon/gov-ui-kit';
+import { addressUtils, IconType, invariant } from '@aragon/gov-ui-kit';
 import { zeroAddress } from 'viem';
 import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
@@ -8,6 +8,7 @@ import {
     actionViewRegistry,
 } from '@/shared/utils/actionViewRegistry';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import {
     type IProposalAction,
@@ -33,6 +34,10 @@ import {
     type IGetNativeActionItemsParams,
 } from './actionComposerUtils.api';
 
+const setMetadataPermissionId = permissionNameUtils.getPermissionId(
+    'SET_METADATA_PERMISSION',
+);
+
 class ActionComposerUtils {
     // The TransferActionLocked is a UI-only variant of the TransferAction which locks the token field to the one set as
     // the "to" attribute of the action. It is used to display the native transfer UI on ERC-20 transfer actions.
@@ -51,13 +56,92 @@ class ActionComposerUtils {
             t,
         });
 
+        // Keep only plugin actions the DAO is authorized to execute, then drop
+        // plugin groups left without any items.
+        const pluginItems = this.filterItemsByPermission(
+            pluginActions.pluginItems,
+            permissions,
+            dao?.address,
+        );
+        const pluginGroups = this.pruneEmptyGroups(
+            pluginActions.pluginGroups,
+            pluginItems,
+        );
+
         return {
-            items: [...pluginActions.pluginItems, ...permissionActions.items],
-            groups: [
-                ...pluginActions.pluginGroups,
-                ...permissionActions.groups,
-            ],
+            items: [...pluginItems, ...permissionActions.items],
+            groups: [...pluginGroups, ...permissionActions.groups],
         };
+    };
+
+    /**
+     * Filters out plugin action items whose required OSx permission is not granted
+     * to the DAO. Items without a `requiredPermissionId` are always kept.
+     *
+     * A required permission counts as granted when the DAO's permission list
+     * contains a matching `permissionId` (case-insensitive) granted to the DAO
+     * itself (`whoAddress`) on the action's target contract (`defaultValue.to`
+     * as `where`). A tagged item with no resolvable target throws, as that
+     * indicates a misconfigured action.
+     *
+     * @param items - Plugin action items to filter.
+     * @param permissions - Permissions granted on the DAO, or undefined when not loaded.
+     * @param daoAddress - Address of the DAO, which must be the grantee (`who`) of the permission.
+     * @returns The items the DAO is authorized to execute.
+     */
+    private filterItemsByPermission = (
+        items: IActionComposerInputItem[],
+        permissions: IGetDaoActionsParams['permissions'] = [],
+        daoAddress?: string,
+    ): IActionComposerInputItem[] => {
+        return items.filter((item) => {
+            const { requiredPermissionId, defaultValue } = item;
+
+            // Items without a required permission are never permission-filtered.
+            if (requiredPermissionId == null) {
+                return true;
+            }
+
+            // An action that declares a required permission must have a target
+            // contract to check it against — a missing `to` means the action
+            // item is misconfigured.
+            const where = defaultValue?.to;
+            invariant(
+                where != null && where !== '',
+                `filterItemsByPermission: action "${item.id}" declares a requiredPermissionId but has no target address.`,
+            );
+
+            return permissions.some(
+                (permission) =>
+                    permission.permissionId.toLowerCase() ===
+                        requiredPermissionId.toLowerCase() &&
+                    addressUtils.isAddressEqual(
+                        permission.whereAddress,
+                        where,
+                    ) &&
+                    addressUtils.isAddressEqual(
+                        permission.whoAddress,
+                        daoAddress,
+                    ),
+            );
+        });
+    };
+
+    /**
+     * Removes groups that no longer contain any of the given items, so plugin
+     * groups whose actions were all filtered out are not rendered empty.
+     *
+     * @param groups - Candidate groups.
+     * @param items - Items that survived filtering.
+     * @returns Only the groups still referenced by at least one item's `groupId`.
+     */
+    private pruneEmptyGroups = (
+        groups: IAutocompleteInputGroup[],
+        items: IActionComposerInputItem[],
+    ): IAutocompleteInputGroup[] => {
+        const usedGroupIds = new Set(items.map((item) => item.groupId));
+
+        return groups.filter((group) => usedGroupIds.has(group.id));
     };
 
     getDaoPluginActions = (
@@ -318,6 +402,7 @@ class ActionComposerUtils {
                 plugin,
                 additionalMetadata,
             ),
+            requiredPermissionId: setMetadataPermissionId,
         };
     };
 

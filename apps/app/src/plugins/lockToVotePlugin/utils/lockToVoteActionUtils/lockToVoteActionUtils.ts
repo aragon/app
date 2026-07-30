@@ -11,6 +11,7 @@ import type { ITokenProposalAction } from '@/plugins/tokenPlugin/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { LockToVoteUpdateSettingsAction } from '../../components/lockToVoteActions/lockToVoteUpdateSettingsAction';
 import type {
     ILockToVoteActionChangeSettings,
@@ -51,6 +52,10 @@ export type IGetLockToVoteActionsResult = IActionComposerPluginData<
     IDaoPlugin<ILockToVotePluginSettings>
 >;
 
+const updateSettingsPermissionId = permissionNameUtils.getPermissionId(
+    'UPDATE_SETTINGS_PERMISSION',
+);
+
 class LockToVoteActionUtils {
     getLockToVoteActions = ({
         plugin,
@@ -84,6 +89,7 @@ class LockToVoteActionUtils {
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
+                    requiredPermissionId: updateSettingsPermissionId,
                 },
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(

@@ -11,6 +11,7 @@ import type { IActionComposerPluginData } from '@/modules/governance/types';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { versionComparatorUtils } from '@/shared/utils/versionComparatorUtils';
 import { MultisigAddMembersAction } from '../../components/multisigActions/multisigAddMembersAction';
 import { MultisigRemoveMembersAction } from '../../components/multisigActions/multisigRemoveMembersAction';
@@ -55,6 +56,12 @@ export type IGetMultisigActionsResult = IActionComposerPluginData<
     IDaoPlugin<IMultisigPluginSettings>
 >;
 
+// Add / remove members and update settings all require the multisig
+// update-settings permission on the plugin.
+const updateSettingsPermissionId = permissionNameUtils.getPermissionId(
+    'UPDATE_MULTISIG_SETTINGS_PERMISSION',
+);
+
 class MultisigActionUtils {
     getMultisigActions = ({
         plugin,
@@ -85,6 +92,7 @@ class MultisigActionUtils {
                     icon: IconType.PLUS,
                     groupId: address,
                     defaultValue: { ...defaultAddMembers, to: address },
+                    requiredPermissionId: updateSettingsPermissionId,
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.MULTISIG_REMOVE_MEMBERS}`,
@@ -94,6 +102,7 @@ class MultisigActionUtils {
                     icon: IconType.MINUS,
                     groupId: address,
                     defaultValue: { ...defaultRemoveMembers, to: address },
+                    requiredPermissionId: updateSettingsPermissionId,
                 },
                 {
                     id: `${address}-${MultisigProposalActionType.UPDATE_MULTISIG_SETTINGS}`,
@@ -104,6 +113,7 @@ class MultisigActionUtils {
                     groupId: address,
                     defaultValue: defaultUpdateSettings(plugin),
                     meta: plugin,
+                    requiredPermissionId: updateSettingsPermissionId,
                 },
                 {
                     ...actionComposerUtils.getDefaultActionPluginMetadataItem(

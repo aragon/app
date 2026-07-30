@@ -1,5 +1,11 @@
 import dynamic from 'next/dynamic';
-import { type ElementType, type ReactNode, useEffect, useMemo } from 'react';
+import {
+    type ElementType,
+    type ReactNode,
+    useEffect,
+    useMemo,
+    useRef,
+} from 'react';
 import {
     type FieldValues,
     FormProvider,
@@ -8,7 +14,12 @@ import {
 } from 'react-hook-form';
 import { useConfirmWizardExit } from '@/shared/hooks/useConfirmWizardExit';
 import { useStepper } from '@/shared/hooks/useStepper';
-import { type IWizardStepperStep, WizardProvider } from '../wizardProvider';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
+import {
+    type IWizardAnalytics,
+    type IWizardStepperStep,
+    WizardProvider,
+} from '../wizardProvider';
 
 // Dynamically import react-hook-form dev-tools to avoid NextJs hydration errors
 const DevTool: ElementType = dynamic(
@@ -40,6 +51,10 @@ export interface IWizardRootProps<TFormData extends FieldValues = FieldValues> {
      */
     useDevTool?: boolean;
     /**
+     * Optional analytics metadata for stepper-level product telemetry.
+     */
+    analytics?: IWizardAnalytics;
+    /**
      * Children of the component.
      */
     children?: ReactNode;
@@ -55,6 +70,7 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
         defaultValues,
         useDevTool,
         submitHelpText,
+        analytics,
     } = props;
 
     const formMethods = useForm<TFormData>({
@@ -64,6 +80,71 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
     const { formState, reset, control } = formMethods;
 
     const wizardStepper = useStepper({ initialSteps });
+    const previousStepRef = useRef<
+        | {
+              id?: string;
+              index: number;
+          }
+        | undefined
+    >(undefined);
+    const hasTrackedStartRef = useRef(false);
+    const activeStep = wizardStepper.activeStep;
+    const activeStepIndex = wizardStepper.activeStepIndex;
+    const analyticsFlow = analytics?.flow;
+    const analyticsPropsKey = JSON.stringify(analytics?.props ?? null);
+    const stableAnalytics = useMemo(() => {
+        if (analyticsFlow == null) {
+            return undefined;
+        }
+
+        return {
+            flow: analyticsFlow,
+            props:
+                analyticsPropsKey === 'null'
+                    ? undefined
+                    : (JSON.parse(
+                          analyticsPropsKey,
+                      ) as IWizardAnalytics['props']),
+        };
+    }, [analyticsFlow, analyticsPropsKey]);
+
+    useEffect(() => {
+        if (stableAnalytics == null || activeStep == null) {
+            return;
+        }
+
+        const baseProps = {
+            ...stableAnalytics.props,
+            flow: stableAnalytics.flow,
+        };
+
+        if (!hasTrackedStartRef.current) {
+            hasTrackedStartRef.current = true;
+            plausibleAnalyticsUtils.track('wizard_start', baseProps);
+        }
+
+        if (previousStepRef.current?.id === activeStep) {
+            return;
+        }
+
+        const previousStep = previousStepRef.current;
+        const direction =
+            previousStep == null
+                ? 'direct'
+                : activeStepIndex > previousStep.index
+                  ? 'forward'
+                  : activeStepIndex < previousStep.index
+                    ? 'back'
+                    : 'direct';
+
+        previousStepRef.current = { id: activeStep, index: activeStepIndex };
+        plausibleAnalyticsUtils.track('wizard_step', {
+            ...baseProps,
+            stepKey: activeStep,
+            stepIndex: activeStepIndex,
+            direction,
+        });
+    }, [stableAnalytics, activeStep, activeStepIndex]);
 
     // Reset submitted form state to only display validation alerts when user clicks again on "next" button
     useEffect(() => {
@@ -73,8 +154,13 @@ export const WizardRoot = <TFormData extends FieldValues = FieldValues>(
     }, [formState, reset]);
 
     const wizardContextValues = useMemo(
-        () => ({ ...wizardStepper, submitLabel, submitHelpText }),
-        [wizardStepper, submitLabel, submitHelpText],
+        () => ({
+            ...wizardStepper,
+            analytics: stableAnalytics,
+            submitLabel,
+            submitHelpText,
+        }),
+        [wizardStepper, stableAnalytics, submitLabel, submitHelpText],
     );
 
     useConfirmWizardExit(formState.isDirty);

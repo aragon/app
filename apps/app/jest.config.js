@@ -19,6 +19,13 @@ const config = {
     globalSetup: '<rootDir>/src/test/globalSetup.ts',
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        // The design-sync bundle build (.design-sync/build-css.mjs) drops
+        // next/* shims into src/node_modules, which nearest-node_modules
+        // resolution would pick over the real `next` package for anything
+        // under src/. Pin next imports to the app's real package so tests are
+        // unaffected by the shims' presence.
+        '^next$': '<rootDir>/node_modules/next',
+        '^next/(.*)$': '<rootDir>/node_modules/next/$1',
         // Package only exposes a `module` field (no `main`/`exports`), which Jest's
         // Node-style resolver doesn't understand unlike bundlers (webpack/Next.js).
         '^@plausible-analytics/tracker$':

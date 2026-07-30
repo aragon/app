@@ -15,7 +15,7 @@ class AnalyticsUtils {
     init = async () => {
         const domain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
 
-        if (domain == null) {
+        if (!domain) {
             return;
         }
 

@@ -1,15 +1,16 @@
 import type { IDateDuration } from '@/shared/utils/dateUtils';
-import type { ProcessStageType } from '../../components/createProcessForm';
 
 export interface ISetupStageSettingsForm {
     /**
-     * Type of the stage.
+     * Number of approving bodies required for the stage to pass. `0` when the
+     * stage has no approving bodies.
      */
-    type: ProcessStageType;
+    approvalThreshold: number;
     /**
-     * Number of bodies required to veto (for optimistic type) or approve.
+     * Number of vetoing bodies required to veto the stage. `0` when the stage
+     * has no vetoing bodies.
      */
-    requiredApprovals: number;
+    vetoThreshold: number;
     /**
      * The period of time the stage is open for voting.
      */

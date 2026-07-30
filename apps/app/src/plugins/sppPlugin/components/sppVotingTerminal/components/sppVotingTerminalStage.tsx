@@ -62,10 +62,8 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
 
     const stageName = stage.name ?? stage.stageIndex.toString();
     const bodyList = stage.plugins.map((plugin) => plugin.address);
-    const canVote = status === ProposalStatus.ACTIVE;
 
     const isSingleBody = bodyList.length === 1;
-    const isVeto = sppStageUtils.isVeto(stage);
     const isTimelockStage = !stage.plugins.length;
 
     return (
@@ -81,25 +79,25 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
         >
             <ProposalVoting.BodySummary>
                 <ProposalVoting.BodySummaryList>
-                    {stage.plugins.map(({ address, ...plugin }) => (
+                    {stage.plugins.map((plugin) => (
                         <ProposalVoting.BodySummaryListItem
                             bodyBrand={
                                 plugin.interfaceType === undefined
                                     ? brandedExternals[plugin.brandId]
                                     : undefined
                             }
-                            id={address}
-                            key={address}
+                            id={plugin.address}
+                            key={plugin.address}
                         >
                             {plugin.interfaceType != null && (
                                 <PluginSingleComponent
                                     isExecuted={proposal.executed.status}
-                                    isVeto={isVeto}
+                                    isVeto={sppStageUtils.isVetoBody(plugin)}
                                     name={plugin.name}
                                     pluginId={plugin.interfaceType}
                                     proposal={sppStageUtils.getBodySubProposal(
                                         proposal,
-                                        address,
+                                        plugin.address,
                                         stage.stageIndex,
                                     )}
                                     slotId={
@@ -109,8 +107,12 @@ export const SppVotingTerminalStage: React.FC<ISppVotingTerminalStageProps> = (
                             )}
                             {plugin.interfaceType == null && (
                                 <SppVotingTerminalMultiBodySummaryDefault
-                                    body={address}
-                                    canVote={canVote}
+                                    body={plugin.address}
+                                    canVote={sppStageUtils.canBodyVote(
+                                        proposal,
+                                        stage,
+                                        plugin,
+                                    )}
                                     proposal={proposal}
                                     stage={stage}
                                 />

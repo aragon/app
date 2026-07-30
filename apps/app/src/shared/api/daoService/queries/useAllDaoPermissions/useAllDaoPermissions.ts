@@ -40,6 +40,11 @@ export const useAllDaoPermissions = (
         options,
     );
 
+    // While auto-paginating, `isLoading` only tracks the first page and `data`
+    // defaults to an empty array, so neither can express "the full permission
+    // set is not ready yet".
+    const isFetchingAll = isLoading || hasNextPage || isFetchingNextPage;
+
     useEffect(() => {
         if (hasNextPage && !isFetchingNextPage) {
             void fetchNextPage();
@@ -47,13 +52,16 @@ export const useAllDaoPermissions = (
     }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
     const allPermissions = useMemo(
-        () => data?.pages.flatMap((page) => page.data) ?? [],
-        [data],
+        () =>
+            isFetchingAll || error
+                ? undefined
+                : (data?.pages.flatMap((page) => page.data) ?? []),
+        [data, isFetchingAll, error],
     );
 
     return {
         data: allPermissions,
-        isLoading,
+        isLoading: isFetchingAll,
         error,
         refetch,
     };

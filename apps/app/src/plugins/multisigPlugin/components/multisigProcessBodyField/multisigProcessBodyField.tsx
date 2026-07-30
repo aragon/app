@@ -1,6 +1,7 @@
 'use client';
 
 import { DefinitionList, type ICompositeAddress } from '@aragon/gov-ui-kit';
+import { GovernanceBodyDecisionItem } from '@/modules/createDao/components/createProcessForm';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -30,12 +31,16 @@ export interface IMultisigProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
+    /**
+     * Whether the process uses advanced (staged) governance.
+     */
+    isAdvancedGovernance?: boolean;
 }
 
 export const MultisigProcessBodyField = (
     props: IMultisigProcessBodyFieldProps,
 ) => {
-    const { body, daoId } = props;
+    const { body, daoId, isAdvancedGovernance } = props;
 
     const { t } = useTranslations();
     const { membership, governance } = body;
@@ -57,6 +62,10 @@ export const MultisigProcessBodyField = (
 
     return (
         <DefinitionList.Container className="w-full">
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+            />
             <DefinitionList.Item term={t(`${baseTranslationKey}.membersTerm`)}>
                 {t(`${baseTranslationKey}.membersDefinition`, {
                     count: membersCount,

@@ -12,6 +12,7 @@ import {
     generateDao,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import { testLogger } from '@/test/utils';
 import { ExecuteActionsDialog } from './executeActionsDialog';
 import type {
@@ -37,6 +38,7 @@ describe('<ExecuteActionsDialog /> component', () => {
         BlockNavigation,
         'useBlockNavigationContext',
     );
+    const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
 
     const network = Network.ETHEREUM_MAINNET;
 
@@ -58,6 +60,7 @@ describe('<ExecuteActionsDialog /> component', () => {
             isBlocked: false,
             setIsBlocked: jest.fn(),
         });
+        trackAnalyticsSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
@@ -66,6 +69,7 @@ describe('<ExecuteActionsDialog /> component', () => {
         useMutationSpy.mockReset();
         useDaoSpy.mockReset();
         useBlockNavigationContextSpy.mockReset();
+        trackAnalyticsSpy.mockReset();
     });
 
     const generateLocation = (
@@ -150,6 +154,21 @@ describe('<ExecuteActionsDialog /> component', () => {
             expect.objectContaining(transaction),
             expect.anything(),
         );
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_start', {
+            flow: 'direct_execute_actions',
+            transactionKind: 'admin_instant_execute',
+            network,
+            chainId: networkDefinitions[network].id,
+            actionCount: 0,
+        });
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_stage', {
+            flow: 'direct_execute_actions',
+            transactionKind: 'admin_instant_execute',
+            network,
+            chainId: networkDefinitions[network].id,
+            status: 'submitted',
+            actionCount: 0,
+        });
         expect(
             screen.getByRole('link', {
                 name: /executeActionsDialog.button.success/,
@@ -178,6 +197,15 @@ describe('<ExecuteActionsDialog /> component', () => {
                 name: /transactionDialog.footer.retry/,
             }),
         ).toBeInTheDocument();
+
+        expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_failed', {
+            flow: 'direct_execute_actions',
+            transactionKind: 'admin_instant_execute',
+            network,
+            chainId: networkDefinitions[network].id,
+            status: 'send_error',
+            actionCount: 0,
+        });
     });
 
     it('pins the send to the required chain id of the DAO', () => {

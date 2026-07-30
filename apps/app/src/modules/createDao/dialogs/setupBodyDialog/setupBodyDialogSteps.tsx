@@ -9,6 +9,7 @@ import {
     externalPluginId,
     SetupBodyDialogSelect,
 } from './setupBodyDialogSelect';
+import { SetupBodyProposalTypeField } from './setupBodyProposalTypeField';
 import { SetupBodyDialogExternalAddress } from './setupBodySialogExternalAddress';
 
 export interface ISetupBodyDialogStepsProps {
@@ -30,8 +31,9 @@ const setupBodySteps = [
     { id: 'select', order: 1, meta: { name: '' } },
     { id: 'metadata', order: 2, meta: { name: '' } },
     { id: 'externalAddress', order: 2, meta: { name: '' } },
-    { id: 'membership', order: 3, meta: { name: '' } },
-    { id: 'governance', order: 4, meta: { name: '' } },
+    { id: 'proposalType', order: 3, meta: { name: '' } },
+    { id: 'membership', order: 4, meta: { name: '' } },
+    { id: 'governance', order: 5, meta: { name: '' } },
 ];
 
 export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (
@@ -48,6 +50,7 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (
         selectStep,
         metadataStep,
         externalAddress,
+        proposalTypeStep,
         membershipStep,
         governanceStep,
     ] = setupBodySteps;
@@ -70,6 +73,9 @@ export const SetupBodyDialogSteps: React.FC<ISetupBodyDialogStepsProps> = (
             </WizardDialog.Step>
             <WizardDialog.Step {...externalAddress} hidden={!isExternalPlugin}>
                 <SetupBodyDialogExternalAddress daoId={daoId} />
+            </WizardDialog.Step>
+            <WizardDialog.Step {...proposalTypeStep} hidden={!isSubPlugin}>
+                <SetupBodyProposalTypeField />
             </WizardDialog.Step>
             <WizardDialog.Step {...membershipStep} hidden={isExternalPlugin}>
                 <SetupBodyDialogMembership daoId={daoId} />

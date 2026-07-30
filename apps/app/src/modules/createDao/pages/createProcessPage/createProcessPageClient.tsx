@@ -6,7 +6,11 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
-import type { ICreateProcessFormData } from '../../components/createProcessForm';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
+import {
+    GovernanceType,
+    type ICreateProcessFormData,
+} from '../../components/createProcessForm';
 import { CreateDaoDialogId } from '../../constants/createDaoDialogId';
 import type { IPrepareProcessDialogParams } from '../../dialogs/prepareProcessDialog';
 import { createProcessWizardSteps } from './createProcessPageDefinitions';
@@ -43,6 +47,17 @@ export const CreateProcessPageClient: React.FC<
             values,
             pluginAddress,
         };
+        plausibleAnalyticsUtils.track('wizard_submit', {
+            flow: 'governance_designer',
+            setupMode:
+                values.governanceType === GovernanceType.ADVANCED
+                    ? 'advanced'
+                    : 'basic',
+            stageCount:
+                values.governanceType === GovernanceType.ADVANCED
+                    ? values.stages.length
+                    : undefined,
+        });
         open(CreateDaoDialogId.PREPARE_PROCESS, { params: dialogParams });
     };
 
@@ -58,6 +73,7 @@ export const CreateProcessPageClient: React.FC<
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
+                analytics={{ flow: 'governance_designer' }}
                 defaultValues={{
                     stages: [],
                     existingProposalCreationConditions: [],

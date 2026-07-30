@@ -1,6 +1,7 @@
 import { formatUnits } from 'viem';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import { PluginContractName } from '@/shared/api/daoService/domain/enum';
+import { bigIntUtils } from '@/shared/utils/bigIntUtils';
 import {
     type ITokenActionChangeSettings,
     type ITokenPluginSettings,
@@ -55,7 +56,7 @@ export const defaultUpdateSettings = ({
             settings.supportThreshold,
         ),
         minProposerVotingPower: formatUnits(
-            BigInt(settings.minProposerVotingPower),
+            bigIntUtils.safeParse(settings.minProposerVotingPower),
             settings.token.decimals,
         ),
     },
@@ -68,7 +69,7 @@ export const defaultUpdateSettings = ({
             settings.supportThreshold,
         ),
         minProposerVotingPower: formatUnits(
-            BigInt(settings.minProposerVotingPower),
+            bigIntUtils.safeParse(settings.minProposerVotingPower),
             settings.token.decimals,
         ),
     },

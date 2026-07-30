@@ -68,3 +68,8 @@ next-env.d.ts
 .playwright-mcp
 .patches
 .omp
+
+# design-sync (claude.ai/design) — staged scripts, build output, machine state
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/

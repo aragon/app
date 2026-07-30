@@ -30,6 +30,35 @@ describe('transactionDialog utils', () => {
         });
     });
 
+    describe('getTransactionErrorLabel', () => {
+        it('maps a replacement-underpriced error to its specific label key', () => {
+            const error = new Error(
+                'An internal error was received. Details: RPC Custom eth_sendRawTransaction: replacement transaction underpriced',
+            );
+            expect(
+                transactionDialogUtils.getTransactionErrorLabel(error),
+            ).toEqual(
+                'app.shared.transactionDialog.error.replacementUnderpriced',
+            );
+        });
+
+        it('returns undefined for an unknown error so the generic step label is used', () => {
+            const error = new Error('something else went wrong');
+            expect(
+                transactionDialogUtils.getTransactionErrorLabel(error),
+            ).toBeUndefined();
+        });
+
+        it('returns undefined for non-error values', () => {
+            expect(
+                transactionDialogUtils.getTransactionErrorLabel(undefined),
+            ).toBeUndefined();
+            expect(
+                transactionDialogUtils.getTransactionErrorLabel('underpriced'),
+            ).toBeUndefined();
+        });
+    });
+
     describe('monitorTransactionError', () => {
         const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
 

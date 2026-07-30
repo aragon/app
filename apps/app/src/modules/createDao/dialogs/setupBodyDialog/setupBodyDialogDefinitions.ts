@@ -1,4 +1,5 @@
 import type { ICompositeAddress } from '@aragon/gov-ui-kit';
+import type { SppProposalType } from '@/plugins/sppPlugin/types';
 import type { IResourcesInputResource } from '@/shared/components/forms/resourcesInput';
 import type { BodyType } from '../../types/enum';
 
@@ -20,6 +21,13 @@ export interface ISetupBodyFormBase {
      * for setting the correct condition rules when the plugin is installed as SPP sub-plugin.
      */
     canCreateProposal: boolean;
+    /**
+     * Whether the body approves or vetoes within its stage. A single stage may
+     * mix approving and vetoing bodies, so this is a per-body property. Only
+     * `Approval` and `Veto` are used. Optional because it is only meaningful for
+     * SPP stage bodies; consumers default an unset value to `Approval`.
+     */
+    proposalType?: SppProposalType;
 }
 
 export interface ISetupBodyFormNew<

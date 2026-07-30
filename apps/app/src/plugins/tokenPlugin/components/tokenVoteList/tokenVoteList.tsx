@@ -68,6 +68,13 @@ export const TokenVoteList: React.FC<ITokenVoteListProps> = (props) => {
                 {voteList?.map((vote) => {
                     const voteIndicator =
                         voteOptionToIndicator[vote.voteOption];
+
+                    // A fully overridden vote has no vote option anymore (set to none) and its whole voting power
+                    // is reclaimed by the delegators, skip rendering it.
+                    if (voteIndicator == null) {
+                        return null;
+                    }
+
                     const voteIndicatorDescription =
                         voteIndicator !== 'abstain'
                             ? t(

@@ -221,6 +221,63 @@ describe('<TokenVoteList /> component', () => {
         ).toHaveTextContent('no');
     });
 
+    it('renders overridden votes as default items and skips fully overridden ones', () => {
+        const token = generateToken({ symbol: 'ABC', decimals: 18 });
+        const voteOverridden = {
+            status: true,
+            transactionHash: '0xOverrideTx',
+            blockNumber: 100,
+            blockTimestamp: 1_234_567_890,
+        };
+        const votes = [
+            generateTokenVote({
+                transactionHash: '0x123',
+                voteOption: VoteOption.YES,
+                member: generateAddressInfo({
+                    address: '0xF6ad40D5D477ade0C640eaD49944bdD0AA1fBF05',
+                }),
+                votingPower: '1000000000000000000',
+                voteOverridden,
+                token,
+            }),
+            generateTokenVote({
+                transactionHash: '0x456',
+                // Fully overridden votes are set to the none option not supported by the frontend.
+                voteOption: 0 as VoteOption,
+                member: generateAddressInfo({
+                    address: '0x00C51Fad10462780e488B54D413aD92B28b88204',
+                }),
+                votingPower: '0',
+                voteOverridden,
+                token,
+            }),
+        ];
+
+        useVoteListDataSpy.mockReturnValue({
+            voteList: votes,
+            onLoadMore: jest.fn(),
+            state: 'idle',
+            pageSize: 10,
+            itemsCount: votes.length,
+            emptyState: { heading: '', description: '' },
+            errorState: { heading: '', description: '' },
+        });
+        getDaoUrlSpy.mockReturnValue('/dao/ethereum-sepolia/test-member');
+
+        render(createTestComponent());
+
+        expect(screen.getAllByRole('link')).toHaveLength(1);
+        expect(screen.getByText('yes')).toBeInTheDocument();
+        expect(
+            screen.getByText(/tokenVoteList.description.approve/),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                addressUtils.truncateAddress(votes[1].member.address),
+            ),
+        ).not.toBeInTheDocument();
+    });
+
     it('calls useVoteListData with the correct query initialParams', () => {
         const initialParams = {
             queryParams: {
