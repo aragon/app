@@ -30,7 +30,7 @@
         "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
     },
     "dependencies": {
-        "@aragon/aragon-domain": "0.0.0-20260626160332",
+        "@aragon/aragon-domain": "0.0.0-20260730113648",
         "@aragon/assistant-chat": "workspace:*",
         "@aragon/assistant-contracts": "workspace:*",
         "@aragon/gov-ui-kit": "catalog:",

@@ -218,8 +218,8 @@ importers:
   apps/app:
     dependencies:
       '@aragon/aragon-domain':
-        specifier: 0.0.0-20260626160332
-        version: 0.0.0-20260626160332(typescript@5.9.3)
+        specifier: 0.0.0-20260730113648
+        version: 0.0.0-20260730113648(typescript@5.9.3)
       '@aragon/assistant-chat':
         specifier: workspace:*
         version: link:../../packages/assistant-chat
@@ -666,8 +666,8 @@ packages:
   '@apm-js-collab/tracing-hooks@0.10.1':
     resolution: {integrity: sha512-w2OWXR7FWrKqSziuE9+QclaZrStxO/8+OwbXM635s/zs0Eez1Qo3ivSPdB2WsaPY/iznKTytONPx/PitD7IXcA==}
 
-  '@aragon/aragon-domain@0.0.0-20260626160332':
-    resolution: {integrity: sha512-+KOVD0x6E2yxawUmLoQzJ/RL1fR1kRGCRYPH256zRRmPN+R9J1SKvtp8FFH/fvtGLwbnCjy25bMm+gJFdKJhNA==}
+  '@aragon/aragon-domain@0.0.0-20260730113648':
+    resolution: {integrity: sha512-Uo31sjq1UUIOxju5KEzW3KKME5C2/UGwD4llv7VRsSlUaGnGDlRxLAKyiMqm4OLIIqvbWjGshg+V3u3f0UCvuA==}
     engines: {node: '>=24.13.0', pnpm: '>=11.0.0'}
 
   '@aragon/gov-ui-kit@2.9.0':
@@ -4926,8 +4926,8 @@ packages:
   big.js@6.2.2:
     resolution: {integrity: sha512-y/ie+Faknx7sZA5MfGA2xKlu0GDv8RWrXGsmlteyJQ2lvoKv9GBK/fpRMc2qlSoBAgNxrixICFCBefIq8WCQpQ==}
 
-  bignumber.js@11.1.2:
-    resolution: {integrity: sha512-9idDyC15Vpk+53w4OfxEu2PqHSKFQUffrH1oTvnkJ9fduTJ032tpuI2sxS04oCzocklokWUZmWVEkTEQdLmUOQ==}
+  bignumber.js@11.1.4:
+    resolution: {integrity: sha512-AJ9dSeaUGj2xu7tEwmdqb51dqdb633xo4njI9K8ZFfcLrNr0XN8/EPkkZUNaF9fkCblGt2zVwZymesUdGynEkQ==}
 
   binary@0.3.0:
     resolution: {integrity: sha512-D4H1y5KYwpJgK8wk1Cue5LLPgmwHKYSChkbspQg5JtVuR5ulGckxfR62H3AE9UDkdMC8yyXlqYihuz3Aqg2XZg==}
@@ -8310,8 +8310,8 @@ packages:
   victory-vendor@37.3.6:
     resolution: {integrity: sha512-SbPDPdDBYp+5MJHhBCAyI7wKM3d5ivekigc2Dk2s7pgbZ9wIgIBYGVw4zGHBml/qTFbexrofXW6Gu4noGxrOwQ==}
 
-  viem@2.52.2:
-    resolution: {integrity: sha512-HSU12p5aD/kAPZfrlbCUqdiP4P/c6hQ9AhfTS51VbLUQIjkWd1d5EjrCx/SCxZ0zhZVRn4Iv5X5WDqXPG8Ubew==}
+  viem@2.53.1:
+    resolution: {integrity: sha512-FhfJ/SW73CVosiyVLmIMVgKDRKYV1AGCLzZoHYvmNayyVff63Qi1ocPCk59LqC/cNw244RbBJjHnmxqXkE7NpA==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -8672,13 +8672,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@aragon/aragon-domain@0.0.0-20260626160332(typescript@5.9.3)':
+  '@aragon/aragon-domain@0.0.0-20260730113648(typescript@5.9.3)':
     dependencies:
-      bignumber.js: 11.1.2
+      bignumber.js: 11.1.4
       ddd-core-ts: 0.1.1
       graphql: 16.14.1
       graphql-request: 7.4.0(graphql@16.14.1)
-      viem: 2.52.2(typescript@5.9.3)(zod@3.25.76)
+      viem: 2.53.1(typescript@5.9.3)(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
       - bufferutil
@@ -14258,7 +14258,7 @@ snapshots:
 
   big.js@6.2.2: {}
 
-  bignumber.js@11.1.2: {}
+  bignumber.js@11.1.4: {}
 
   binary@0.3.0:
     dependencies:
@@ -17924,7 +17924,7 @@ snapshots:
       d3-time: 3.1.0
       d3-timer: 3.0.1
 
-  viem@2.52.2(typescript@5.9.3)(zod@3.25.76):
+  viem@2.53.1(typescript@5.9.3)(zod@3.25.76):
     dependencies:
       '@noble/curves': 1.9.1
       '@noble/hashes': 1.8.0
