@@ -112,6 +112,9 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     const [alsoVote, setAlsoVote] = useState(true);
 
     const hasOverridden = userVoteRecord?.hasOverridden === true;
+    // A user that cannot override can still cast a plain vote with the voting power delegated to them by others.
+    const isPlainVote = !canOverride && canVote;
+    const canSubmit = canOverride || canVote;
     // The user's position on the proposal is tracked through the contract flags and not through the indexed votes:
     // the plugin also emits a vote-cast event for a pure override, which must not be displayed as a normal vote.
     const hasPosition =
@@ -180,7 +183,10 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
         });
     }
 
+    // The already-counted reason only applies when the submission moves the delegated power away from the option
+    // the delegate voted on: a plain vote casts the user's own power and is valid for any option.
     if (
+        canOverride &&
         !hasOverridden &&
         delegateeVoteOption != null &&
         delegateeVoteOption !== positionOption
@@ -206,11 +212,18 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                 : t(
                       `app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`,
                   );
+        // Without override permission the delegated power cannot be moved: leave the vote type unset so that the
+        // DAO-level build-vote-data slot falls back to the plain vote of the token plugin.
+        const voteType = isPlainVote
+            ? undefined
+            : alsoVote && canVote
+              ? 'voteAndOverride'
+              : 'override';
         const vote: IAlchemixVoteOption & IVoteDialogParams['vote'] = {
             value: Number(selectedOption),
             label: voteLabel,
             labelDescription: voteLabelDescription,
-            voteType: alsoVote && canVote ? 'voteAndOverride' : 'override',
+            voteType,
         };
         // The position is read from the chain, refetch it as soon as the transaction is included in a block instead
         // of waiting for the vote to be indexed by the backend.
@@ -340,12 +353,16 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             {!showOptions && !hasPosition && (
                 <Button
                     className="w-fit"
-                    disabled={!canOverride}
+                    disabled={!canSubmit}
                     onClick={() => setShowOptions(true)}
                     size="md"
                     variant="secondary"
                 >
-                    {t('app.daos.alchemix.alchemixSubmitVote.buttons.override')}
+                    {isPlainVote
+                        ? t('app.plugins.token.tokenSubmitVote.buttons.vote')
+                        : t(
+                              'app.daos.alchemix.alchemixSubmitVote.buttons.override',
+                          )}
                 </Button>
             )}
             {!showOptions && hasPosition && (
@@ -378,7 +395,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     )}
                     <Button
                         className="w-full md:w-fit"
-                        disabled={!canOverride && !canVote}
+                        disabled={!canSubmit}
                         onClick={() => setShowOptions(true)}
                         size="md"
                         variant="tertiary"
@@ -397,7 +414,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                         onChange={setSelectedOption}
                         value={selectedOption}
                     />
-                    {canVote && (
+                    {canVote && canOverride && (
                         <Switch
                             checked={alsoVote}
                             helpText={t(
@@ -412,7 +429,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                     <div className="flex w-full flex-col items-center gap-y-3 md:flex-row md:gap-x-4">
                         <Button
                             className="w-full md:w-fit"
-                            disabled={!isSelectionValid || !canOverride}
+                            disabled={!isSelectionValid || !canSubmit}
                             onClick={openTransactionDialog}
                             size="md"
                             variant="primary"

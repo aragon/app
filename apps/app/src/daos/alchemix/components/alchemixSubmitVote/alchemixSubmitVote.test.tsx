@@ -18,6 +18,7 @@ import {
     generateFilterComponentPlugin,
 } from '@/shared/testUtils';
 import * as useAlchemixOverrideStatusHook from '../../hooks/useAlchemixOverrideStatus/useAlchemixOverrideStatus';
+import type { IAlchemixVoteOption } from '../../utils/alchemixTransactionUtils';
 import {
     AlchemixSubmitVote,
     type IAlchemixSubmitVoteProps,
@@ -548,9 +549,9 @@ describe('<AlchemixSubmitVote /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('disables the override button when the user cannot override', () => {
+    it('disables the override button when the user can neither override nor vote', () => {
         useAlchemixOverrideStatusSpy.mockReturnValue(
-            buildOverrideStatus({ canOverride: false }),
+            buildOverrideStatus({ canOverride: false, canVote: false }),
         );
 
         render(createTestComponent());
@@ -560,5 +561,100 @@ describe('<AlchemixSubmitVote /> component', () => {
                 name: /alchemixSubmitVote.buttons.override/,
             }),
         ).toBeDisabled();
+    });
+
+    it('opens the vote dialog with a plain vote and no also-vote switch when the user can vote but not override', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({ canOverride: false, canVote: true }),
+        );
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.vote/,
+            }),
+        );
+
+        expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+
+        await userEvent.click(
+            screen.getByRole('radio', {
+                name: /tokenSubmitVote.options.yes/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.submit/,
+            }),
+        );
+
+        const { params } = open.mock.calls[0][1] as {
+            params: IVoteDialogParams;
+        };
+        expect(open).toHaveBeenCalledWith(
+            GovernanceDialogId.VOTE,
+            expect.anything(),
+        );
+        expect(params.vote.value).toEqual(VoteOption.YES);
+        expect((params.vote as IAlchemixVoteOption).voteType).toBeUndefined();
+    });
+
+    it('allows changing an existing position with a plain vote for any option when the user cannot override', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({
+                canOverride: false,
+                canVote: true,
+                userVoteRecord: {
+                    voteOption: VoteOption.NO,
+                    votingPower: BigInt(100),
+                    reduction: BigInt(0),
+                    hasOverridden: false,
+                    votedWithDelegatedVp: true,
+                },
+                delegateeVoteRecord: {
+                    voteOption: VoteOption.YES,
+                    votingPower: BigInt(100),
+                    reduction: BigInt(0),
+                    hasOverridden: false,
+                    votedWithDelegatedVp: true,
+                },
+            }),
+        );
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.change.vote/,
+            }),
+        );
+
+        // A plain vote casts the user's own voting power, the option the delegate voted on must stay enabled.
+        const yesOption = screen.getByRole('radio', {
+            name: /tokenSubmitVote.options.yes/,
+        });
+        expect(yesOption).toBeEnabled();
+        expect(
+            screen.getByRole('radio', { name: /tokenSubmitVote.options.no/ }),
+        ).toBeDisabled();
+
+        await userEvent.click(yesOption);
+
+        const submitButton = screen.getByRole('button', {
+            name: /tokenSubmitVote.buttons.change.submit/,
+        });
+        expect(submitButton).toBeEnabled();
+        await userEvent.click(submitButton);
+
+        const { params } = open.mock.calls[0][1] as {
+            params: IVoteDialogParams;
+        };
+        expect(params.vote.value).toEqual(VoteOption.YES);
+        expect((params.vote as IAlchemixVoteOption).voteType).toBeUndefined();
     });
 });
