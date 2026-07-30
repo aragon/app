@@ -3,6 +3,7 @@ import {
     type VoteIndicator,
     VoteProposalDataListItemStructure,
 } from '@aragon/gov-ui-kit';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { type IDaoPlugin, useDao } from '@/shared/api/daoService';
@@ -16,7 +17,10 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useStepper } from '@/shared/hooks/useStepper';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import type { IProposal } from '../../api/governanceService';
+import {
+    GovernanceServiceKey,
+    type IProposal,
+} from '../../api/governanceService';
 import type { IBuildVoteDataOption } from '../../types';
 import { proposalUtils } from '../../utils/proposalUtils';
 import { voteDialogUtils } from './voteDialogUtils';
@@ -62,6 +66,10 @@ export interface IVoteDialogParams<
      * Plugin where the proposal has been created.
      */
     plugin: IDaoPlugin;
+    /**
+     * Callback called when the vote transaction has been included in a block.
+     */
+    onSuccess?: () => void;
 }
 
 export interface IVoteDialogProps
@@ -81,8 +89,10 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useWalletAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto, daoId, plugin, target } = location.params;
+    const { vote, proposal, isVeto, daoId, plugin, target, onSuccess } =
+        location.params;
 
+    const queryClient = useQueryClient();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const stepper = useStepper<
@@ -93,7 +103,14 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     });
 
     const handlePrepareTransaction = () =>
-        voteDialogUtils.buildTransaction({ proposal, vote, target });
+        voteDialogUtils.buildTransaction({ proposal, vote, target, daoId });
+
+    // Refresh the vote lists as soon as the vote is indexed so that the submit-vote controls reflect the new vote
+    // without waiting for a route refresh or window focus.
+    const handleIndexed = () =>
+        queryClient.invalidateQueries({
+            queryKey: [GovernanceServiceKey.VOTE_LIST],
+        });
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;
@@ -115,6 +132,8 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
                     : undefined
             }
             network={proposal.network}
+            onIndexed={handleIndexed}
+            onSuccess={onSuccess}
             prepareTransaction={handlePrepareTransaction}
             stepper={stepper}
             submitLabel={t('app.governance.voteDialog.button.submit')}

@@ -1,3 +1,4 @@
+import { initialiseAlchemix } from './alchemix';
 import { initialiseAragonDemo } from './aragonDemo';
 import { initialiseAragonDemoPolicies } from './aragonDemoPolicies';
 import { initialiseBoundless } from './boundless';
@@ -14,4 +15,5 @@ export const initialiseDaos = () => {
     initialiseAragonDemoPolicies();
     initialiseKatana();
     initialiseGaugeDistributions();
+    initialiseAlchemix();
 };
