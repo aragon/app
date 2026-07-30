@@ -156,6 +156,22 @@ describe('<PermissionsList /> component', () => {
         expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
     });
 
+    it('renders the members icon for Anyone entities', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: ALLOW_FLAG,
+            },
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getAllByText('Anyone').length).toBeGreaterThan(0);
+        expect(screen.getAllByLabelText('Members').length).toBeGreaterThan(0);
+    });
+
     it('renders informational help for the Who and Where headers', () => {
         const rows: IPermissionRow[] = [
             {

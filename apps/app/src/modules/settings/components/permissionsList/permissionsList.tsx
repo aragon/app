@@ -3,6 +3,7 @@
 import {
     Accordion,
     Avatar,
+    AvatarIcon,
     addressUtils,
     CardEmptyState,
     ChainEntityType,
@@ -24,7 +25,7 @@ import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
-import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
 import {
     conditionTypeUtils,
@@ -167,12 +168,21 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
                     variant="primary"
                 />
             )}
-        {entity.type === 'sentinel' && (
-            <span
-                aria-hidden="true"
-                className="size-6 shrink-0 rounded-full bg-neutral-100"
-            />
-        )}
+        {entity.type === 'sentinel' &&
+            (addressUtils.isAddressEqual(entity.address, ANY_ADDR) ? (
+                <span aria-label="Members" className="shrink-0" role="img">
+                    <AvatarIcon
+                        icon={IconType.APP_MEMBERS}
+                        size="sm"
+                        variant="primary"
+                    />
+                </span>
+            ) : (
+                <span
+                    aria-hidden="true"
+                    className="size-6 shrink-0 rounded-full bg-neutral-100"
+                />
+            ))}
     </span>
 );
 
