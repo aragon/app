@@ -34,7 +34,7 @@ import {
     permissionEntityUtils,
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
-import { PermissionDetailContent } from '../permissionsGraph/permissionDetailPanel';
+import { PermissionDetailCard } from '../permissionsGraph/permissionDetailPanel';
 import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
 type DaoPlugins = IFilterComponentPlugin<IDaoPlugin>[] | undefined;
@@ -252,18 +252,28 @@ const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
     );
+    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
+    const conditionType = conditionTypeUtils.resolveConditionType(
+        conditionAddress,
+        row.condition,
+    );
+    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
+    const hasCondition = !addressUtils.isAddressEqual(
+        conditionAddress,
+        ALLOW_FLAG,
+    );
 
     return (
-        <div className="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md">
-            <PermissionDetailContent
-                chainId={chainId}
-                network={network}
-                permissionName={permissionName}
-                row={row}
-                where={where}
-                who={who}
-            />
-        </div>
+        <PermissionDetailCard
+            chainId={chainId}
+            className="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-neutral-0 shadow-neutral-md"
+            conditionLabel={hasCondition ? conditionLabel : undefined}
+            network={network}
+            permissionName={permissionName}
+            row={row}
+            where={where}
+            who={who}
+        />
     );
 };
 

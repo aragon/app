@@ -1,6 +1,8 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import * as Wagmi from 'wagmi';
+import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialogId';
 import * as CmsService from '@/shared/api/cmsService';
 import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
@@ -8,6 +10,7 @@ import {
     generateDialogContext,
     generateReactQueryInfiniteResultSuccess,
 } from '@/shared/testUtils';
+import { analyticsUtils } from '@/shared/utils/analyticsUtils';
 import {
     ExploreDaosPageClient,
     type IExploreDaosPageClientProps,
@@ -28,6 +31,7 @@ describe('<ExploreDaosPageClient /> component', () => {
         'useDialogContext',
     );
     const useFeaturedDaosSpy = jest.spyOn(CmsService, 'useFeaturedDaos');
+    const trackEventSpy = jest.spyOn(analyticsUtils, 'trackEvent');
 
     beforeEach(() => {
         useConnectionSpy.mockReturnValue({} as Wagmi.UseConnectionReturnType);
@@ -35,12 +39,14 @@ describe('<ExploreDaosPageClient /> component', () => {
         useFeaturedDaosSpy.mockReturnValue(
             generateReactQueryInfiniteResultSuccess({ data: [] }),
         );
+        trackEventSpy.mockImplementation(() => undefined);
     });
 
     afterEach(() => {
         useConnectionSpy.mockReset();
         useDialogContextSpy.mockReset();
         useFeaturedDaosSpy.mockReset();
+        trackEventSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -63,5 +69,20 @@ describe('<ExploreDaosPageClient /> component', () => {
     it('renders the list of DAOs', () => {
         render(createTestComponent());
         expect(screen.getByTestId('dao-list-mock')).toBeInTheDocument();
+    });
+
+    it('opens the create DAO dialog without firing the seed click event', async () => {
+        const open = jest.fn();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.explore.exploreDaosPage.noCodeSetup.actionLabel',
+            }),
+        );
+
+        expect(trackEventSpy).not.toHaveBeenCalled();
+        expect(open).toHaveBeenCalledWith(CreateDaoDialogId.CREATE_DAO_DETAILS);
     });
 });

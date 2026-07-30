@@ -211,4 +211,60 @@ describe('useManagedTransaction', () => {
         renderHook(() => useManagedTransaction('id'));
         expect(clearSpy).toHaveBeenCalledWith('id');
     });
+
+    it('pins the receipt wait to the transaction chain and disables the default wait timeout', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xabc',
+        });
+        renderHook(() => useManagedTransaction('id', undefined, 137));
+        expect(useReceiptSpy).toHaveBeenCalledWith({
+            hash: '0xabc',
+            chainId: 137,
+            timeout: 0,
+        });
+    });
+
+    it('exposes the broadcast timestamp of the record', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xabc',
+            submittedAt: 1234,
+        });
+        const { result } = renderHook(() => useManagedTransaction('id'));
+        expect(result.current.submittedAt).toBe(1234);
+    });
+
+    it('exposes the send error of a failed record', () => {
+        const error = new Error('replacement transaction underpriced');
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.FAILED,
+            error,
+        });
+        const { result } = renderHook(() => useManagedTransaction('id'));
+        expect(result.current.sendError).toBe(error);
+    });
+
+    it('drops the record, latched hash and resume target on reset', () => {
+        usePendingTransactionMock.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xabc',
+        });
+        getSpy.mockReturnValue({
+            status: PendingTransactionStatus.SUBMITTED,
+            hash: '0xabc',
+        });
+        const { result, rerender } = renderHook(() =>
+            useManagedTransaction('id'),
+        );
+        expect(result.current.resumeTarget).toBe(TransactionDialogStep.CONFIRM);
+
+        usePendingTransactionMock.mockReturnValue(undefined);
+        act(() => result.current.reset());
+        rerender();
+
+        expect(clearSpy).toHaveBeenCalledWith('id');
+        expect(result.current.hash).toBeUndefined();
+        expect(result.current.resumeTarget).toBeUndefined();
+    });
 });

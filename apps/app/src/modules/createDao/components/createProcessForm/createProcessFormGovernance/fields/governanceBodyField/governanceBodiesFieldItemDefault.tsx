@@ -10,6 +10,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { BodyType } from '../../../../../types/enum';
 import { createProcessFormUtils } from '../../../createProcessFormUtils';
+import { GovernanceBodyDecisionItem } from './governanceBodyDecisionItem';
 
 export interface IGovernanceBodiesFieldItemDefaultProps {
     /**
@@ -20,12 +21,16 @@ export interface IGovernanceBodiesFieldItemDefaultProps {
      * ID of the DAO to setup the body for.
      */
     daoId: string;
+    /**
+     * Whether the process uses advanced (staged) governance.
+     */
+    isAdvancedGovernance?: boolean;
 }
 
 export const GovernanceBodiesFieldItemDefault: React.FC<
     IGovernanceBodiesFieldItemDefaultProps
 > = (props) => {
-    const { body, daoId } = props;
+    const { body, daoId, isAdvancedGovernance } = props;
 
     const { t } = useTranslations();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -46,6 +51,10 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
 
     return (
         <DefinitionList.Container>
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+            />
             {ensName != null && (
                 <DefinitionList.Item
                     link={{ href: bodyAddressLink }}

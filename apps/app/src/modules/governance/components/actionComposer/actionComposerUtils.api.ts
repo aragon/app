@@ -1,4 +1,4 @@
-import type { IDao } from '@/shared/api/daoService';
+import type { IDao, IDaoPermission } from '@/shared/api/daoService';
 import type { IAutocompleteInputGroup } from '@/shared/components/forms/autocompleteInput';
 import type { TranslationFunction } from '@/shared/components/translationsProvider';
 import type { IAllowedAction } from '../../api/executeSelectorsService';
@@ -66,5 +66,5 @@ export interface IGetDaoActionsParams extends IGetActionBaseParams {
     /**
      * Permissions granted to DAO.
      */
-    permissions?: Array<{ permissionId: string; whereAddress: string }>;
+    permissions?: IDaoPermission[];
 }

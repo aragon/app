@@ -1,5 +1,24 @@
 # @aragon/app
 
+## 1.35.0
+
+### Minor Changes
+
+- [#1244](https://github.com/aragon/app/pull/1244) [`3aeab8d`](https://github.com/aragon/app/commit/3aeab8d18bb7c121284ba901ebc15460f382ddd6) Thanks [@milosh86](https://github.com/milosh86)! - Show proposal creation eligibility for external Safe bodies in advanced processes
+
+- [#1242](https://github.com/aragon/app/pull/1242) [`4977e3e`](https://github.com/aragon/app/commit/4977e3e565c58842853835796a0a040e28cb5b75) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support chat opens as a side panel the layout resizes around (toggled from the navigation bar) instead of a blur overlay
+
+- [#1260](https://github.com/aragon/app/pull/1260) [`ff824a0`](https://github.com/aragon/app/commit/ff824a0f24360da7fd0e4090c537779b5adf8ba6) Thanks [@jjavieralv](https://github.com/jjavieralv)! - Track "Create a DAO" and "Publish DAO" button clicks via Plausible Analytics, proxied through `/api/analytics` so ad blockers don't drop the events; enabled per environment via `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`.
+
+- [#1254](https://github.com/aragon/app/pull/1254) [`207f3e3`](https://github.com/aragon/app/commit/207f3e373df062ef8f85101f275af2f0dd6eb671) Thanks [@milosh86](https://github.com/milosh86)! - Show proposal creation eligibility for SPP external proposer Safes
+
+### Patch Changes
+
+- [#1246](https://github.com/aragon/app/pull/1246) [`eeebd43`](https://github.com/aragon/app/commit/eeebd43d7435308c9f522afef383ed40c4933285) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Show Safe branding for external Safe bodies on governance process details pages and preserve external body addresses instead of showing Unknown.
+
+- Updated dependencies [[`4977e3e`](https://github.com/aragon/app/commit/4977e3e565c58842853835796a0a040e28cb5b75), [`903fbfe`](https://github.com/aragon/app/commit/903fbfe7cf3b5c3112621c028830b8aace8c4cde)]:
+    - @aragon/assistant-chat@0.2.0
+
 ## 1.34.0
 
 ### Minor Changes

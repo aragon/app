@@ -1,8 +1,4 @@
-import {
-    type IDefinitionSetting,
-    ProposalStatus,
-    ProposalVoting,
-} from '@aragon/gov-ui-kit';
+import { type IDefinitionSetting, ProposalVoting } from '@aragon/gov-ui-kit';
 import type { ReactNode } from 'react';
 import { VoteList } from '@/modules/governance/components/voteList';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
@@ -57,11 +53,12 @@ export const SppVotingTerminalBodyContent: React.FC<
 > = (props) => {
     const { plugin, daoId, subProposal, stage, proposal, children } = props;
 
-    const stageStatus = sppStageUtils.getStageStatus(proposal, stage);
-    const canVote = stageStatus === ProposalStatus.ACTIVE;
+    const canVote = sppStageUtils.canBodyVote(proposal, stage, plugin);
 
     const isExternalBody = plugin.interfaceType == null;
-    const isVeto = sppStageUtils.isVeto(stage);
+    // Approve/veto is a per-body property: a single stage can mix approving and
+    // vetoing bodies, so derive it from this body rather than the stage.
+    const isVeto = sppStageUtils.isVetoBody(plugin);
 
     const pluginSettings = isExternalBody
         ? {}

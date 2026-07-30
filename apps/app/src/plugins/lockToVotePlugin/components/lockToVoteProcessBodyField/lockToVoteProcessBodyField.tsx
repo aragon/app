@@ -8,6 +8,7 @@ import {
     Tag,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
+import { GovernanceBodyDecisionItem } from '@/modules/createDao/components/createProcessForm';
 import type {
     ISetupBodyFormExisting,
     ISetupBodyFormNew,
@@ -157,6 +158,10 @@ export const LockToVoteProcessBodyField = (
 
     return (
         <DefinitionList.Container className="w-full">
+            <GovernanceBodyDecisionItem
+                isAdvancedGovernance={isAdvancedGovernance}
+                proposalType={body.proposalType}
+            />
             {readOnly &&
                 contractInfo.map(
                     ({ term, definition, description, link, copyValue }) => (

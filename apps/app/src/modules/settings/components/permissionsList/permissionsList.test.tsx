@@ -216,7 +216,7 @@ describe('<PermissionsList /> component', () => {
         );
     });
 
-    it('renders mobile cards with graph-style detail controls and static permission content', () => {
+    it('renders mobile cards with graph-style chrome and hides toggles without a condition', () => {
         const rows: IPermissionRow[] = [
             {
                 permissionId: SET_TRUSTED_FORWARDER_PERMISSION_ID,
@@ -247,21 +247,19 @@ describe('<PermissionsList /> component', () => {
         const mobileList = getMobileList(container);
 
         expect(
-            within(mobileList).getByText(/permissionsList.details.heading/),
-        ).toBeInTheDocument();
+            within(mobileList).getAllByText('SET_TRUSTED_FORWARDER_PERMISSION')
+                .length,
+        ).toBeGreaterThanOrEqual(2);
         expect(
-            within(mobileList).getByRole('radio', {
+            within(mobileList).queryByRole('radio', {
                 name: /permissionsList.details.permission/,
             }),
-        ).toBeInTheDocument();
+        ).not.toBeInTheDocument();
         expect(
-            within(mobileList).getByRole('radio', {
+            within(mobileList).queryByRole('radio', {
                 name: /permissionsList.details.condition/,
             }),
-        ).toBeDisabled();
-        expect(
-            within(mobileList).getByText('SET_TRUSTED_FORWARDER_PERMISSION'),
-        ).toBeInTheDocument();
+        ).not.toBeInTheDocument();
         expect(
             within(mobileList).getAllByText('Anyone').length,
         ).toBeGreaterThan(0);
@@ -289,6 +287,26 @@ describe('<PermissionsList /> component', () => {
 
         expect(
             within(mobileList).getByText(/unrecognizedConditionSlot.heading/),
+        ).toBeInTheDocument();
+    });
+
+    it('renders the graph-popout condition summary on conditioned mobile cards', () => {
+        const rows: IPermissionRow[] = [
+            {
+                permissionId: EXECUTE_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                whereAddress: ALLOW_FLAG,
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            },
+        ];
+
+        const { container } = render(createTestComponent({ rows }));
+        const mobileList = getMobileList(container);
+
+        expect(
+            within(mobileList).getByText(
+                /daoPermissionsPage\.graphView\.edge\.condition/,
+            ),
         ).toBeInTheDocument();
     });
 

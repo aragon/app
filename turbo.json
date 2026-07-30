@@ -39,7 +39,8 @@
         "version"
     ],
     "globalDependencies": [
-        "biome.json"
+        "biome.json",
+        ".design-sync/**"
     ],
     "tasks": {
         "dev": {

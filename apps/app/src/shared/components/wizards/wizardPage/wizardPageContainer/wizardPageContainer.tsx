@@ -28,6 +28,7 @@ export const WizardPageContainer = <
         initialSteps,
         defaultValues,
         finalStep,
+        analytics,
         children,
         className,
         ...wizardFormProps
@@ -35,6 +36,7 @@ export const WizardPageContainer = <
 
     return (
         <Wizard.Root
+            analytics={analytics}
             defaultValues={defaultValues}
             initialSteps={initialSteps}
             submitHelpText={submitHelpText}

@@ -1,0 +1,124 @@
+{
+    "projectId": "2f22a679-7abb-4283-9f39-e28a63dba83b",
+    "shape": "package",
+    "pkg": "@aragon/gov-ui-kit",
+    "globalName": "GovUiKit",
+    "buildCmd": "corepack pnpm --workspace-root run design-sync:build-css",
+    "readmeHeader": ".design-sync/conventions.md",
+    "extraEntries": [
+        "../../../../../.design-sync/app-entry.ts"
+    ],
+    "cssEntry": ".design-sync-kit-styles.css",
+    "overrides": {
+        "Button": {
+            "cardMode": "column"
+        },
+        "Dialog": {
+            "cardMode": "single",
+            "viewport": "640x520"
+        },
+        "DialogAlert": {
+            "cardMode": "single",
+            "viewport": "640x520"
+        },
+        "StateSkeletonCircular": {
+            "cardMode": "column"
+        },
+        "Tooltip": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "Breadcrumbs": {
+            "cardMode": "column"
+        },
+        "CardSummary": {
+            "cardMode": "column"
+        },
+        "StateSkeletonBar": {
+            "cardMode": "column"
+        },
+        "Dropdown": {
+            "cardMode": "single",
+            "primaryStory": "OpenMenu"
+        },
+        "MemberDataListItem": {
+            "cardMode": "column"
+        },
+        "ProposalActionUpdateMetadata": {
+            "cardMode": "column"
+        },
+        "ProposalVotingProgress": {
+            "cardMode": "column"
+        },
+        "SmartContractFunctionDataListItem": {
+            "cardMode": "column"
+        },
+        "TransactionDetail": {
+            "cardMode": "single",
+            "primaryStory": "ExecutionDialog"
+        },
+        "Page": {
+            "cardMode": "column"
+        },
+        "AdvancedDateInput": {
+            "cardMode": "column"
+        },
+        "Banner": {
+            "cardMode": "column"
+        },
+        "WizardDetailsDialog": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "WizardDialog": {
+            "cardMode": "single",
+            "primaryStory": "Default"
+        },
+        "Wallet": {
+            "cardMode": "single",
+            "primaryStory": "Connected",
+            "viewport": "1360x300"
+        }
+    },
+    "docsMap": {
+        "Page": "../../../../../.design-sync/docs-stubs/page.md",
+        "AppTransactionStatus": "../../../../../.design-sync/docs-stubs/appTransactionStatus.md",
+        "BlockNavigationContextProvider": "../../../../../.design-sync/docs-stubs/blockNavigationContextProvider.md",
+        "DebugContextProvider": "../../../../../.design-sync/docs-stubs/debugContextProvider.md"
+    },
+    "componentSrcMap": {
+        "DialogStoryComponent": null,
+        "DialogAlertStoryComponent": null,
+        "Wizard": "../../../src/shared/components/wizards/wizard/index.ts",
+        "WizardPage": "../../../src/shared/components/wizards/wizardPage/index.ts",
+        "WizardDialog": "../../../src/shared/components/wizards/wizardDialog/index.ts",
+        "WizardDetailsDialog": "../../../src/shared/components/wizardDetailsDialog/index.ts",
+        "Page": "../../../../../.design-sync/app-entry.ts",
+        "Container": "../../../src/shared/components/container/index.ts",
+        "AragonLogo": "../../../src/shared/components/aragonLogo/index.ts",
+        "Banner": "../../../src/shared/components/banner/index.ts",
+        "Carousel": "../../../src/shared/components/carousel/index.ts",
+        "CtaCard": "../../../src/shared/components/ctaCard/index.ts",
+        "StatCard": "../../../src/shared/components/statCard/index.ts",
+        "DaoTargetIndicator": "../../../src/shared/components/daoTargetIndicator/index.ts",
+        "DaoTypeTag": "../../../src/shared/components/daoTypeTag/index.ts",
+        "ErrorFeedback": "../../../src/shared/components/errorFeedback/index.ts",
+        "FooterInfo": "../../../src/shared/components/footerInfo/index.ts",
+        "KeyboardShortcut": "../../../src/shared/components/keyboardShortcut/index.ts",
+        "NetworkSwitchAlert": "../../../src/shared/components/networkSwitchAlert/index.ts",
+        "ResourceLink": "../../../src/shared/components/resourceLink/index.ts",
+        "SafeDocumentParser": "../../../src/shared/components/SafeDocumentParser.tsx",
+        "SafeHtml": "../../../src/shared/components/SafeHtml.tsx",
+        "AppTransactionStatus": "../../../../../.design-sync/app-entry.ts",
+        "AddressesInput": "../../../src/shared/components/forms/addressesInput/index.ts",
+        "AdvancedDateInput": "../../../src/shared/components/forms/advancedDateInput/index.ts",
+        "AutocompleteInput": "../../../src/shared/components/forms/autocompleteInput/index.ts",
+        "AvatarInput": "../../../src/shared/components/forms/avatarInput/index.ts",
+        "NumberProgressInput": "../../../src/shared/components/forms/numberProgressInput/index.ts",
+        "ResourcesInput": "../../../src/shared/components/forms/resourcesInput/index.ts",
+        "TranslationsProvider": "../../../src/shared/components/translationsProvider/index.ts",
+        "DialogProvider": "../../../src/shared/components/dialogProvider/index.ts",
+        "DebugContextProvider": "../../../src/shared/components/debugProvider/index.ts",
+        "BlockNavigationContextProvider": "../../../src/shared/components/blockNavigationContext/index.ts"
+    }
+}
