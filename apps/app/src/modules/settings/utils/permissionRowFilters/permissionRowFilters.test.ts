@@ -436,6 +436,40 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[0]]);
     });
 
+    it('keeps internal-body create-proposal rows on governing bodies for the list', () => {
+        const rows = [
+            buildRow({
+                permissionId: createProposalPermissionId,
+                whoAddress: subpluginAddress,
+                who: {
+                    address: subpluginAddress,
+                    brandId: 'safe',
+                    label: 'Process internal',
+                    layer: 'processInternal',
+                    parentPluginAddress: pluginAddress,
+                },
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            buildRow({ whereAddress: daoAddress }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
+    });
+
     it('hides residual rows when subplugin/residual permissions are disabled', () => {
         const rows = [
             buildRow({ whereAddress: daoAddress }),

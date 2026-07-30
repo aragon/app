@@ -6,7 +6,7 @@ import type {
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
-import { ALLOW_FLAG } from '../../constants/permissionSentinels';
+import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
@@ -120,6 +120,29 @@ const isProposalCreatorRow = (row: IPermissionRow): boolean =>
     permissionNameUtils.getPermissionName(row.permissionId) ===
         CREATE_PROPOSAL_PERMISSION_NAME && isGoverningBodyTarget(row);
 
+const isOpenProposalCreatorRow = (row: IPermissionRow): boolean =>
+    isProposalCreatorRow(row) &&
+    addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR);
+
+const getOpenProposalTargets = (rows: IPermissionRow[]): Set<string> =>
+    new Set(
+        rows
+            .filter(isOpenProposalCreatorRow)
+            .map((row) => row.whereAddress.toLowerCase()),
+    );
+
+// An open "Anyone" proposal grant on a governing body trumps every more-specific
+// proposal-creation eligibility on that same body (token thresholds, multisig
+// members, SPP stage bodies). Those grants are real, but redundant to show once
+// anyone can propose, so they are dropped from the graph.
+const isSubsumedProposalCreatorRow = (
+    row: IPermissionRow,
+    openProposalTargets: Set<string>,
+): boolean =>
+    isProposalCreatorRow(row) &&
+    !addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR) &&
+    openProposalTargets.has(row.whereAddress.toLowerCase());
+
 const getProposalCreatorNodeId = (row: IPermissionRow): string => {
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
 
@@ -225,30 +248,35 @@ export const buildPermissionGraph = (
             !isGraphExcludedEndpoint(row.who) &&
             !isGraphExcludedEndpoint(row.where),
     );
+    const openProposalTargets = getOpenProposalTargets(graphRows);
 
-    const edges = graphRows.map((row) => {
-        const isProposalCreator = isProposalCreatorRow(row);
+    const edges = graphRows
+        .filter(
+            (row) => !isSubsumedProposalCreatorRow(row, openProposalTargets),
+        )
+        .map((row) => {
+            const isProposalCreator = isProposalCreatorRow(row);
 
-        if (isProposalCreator) {
-            const creatorNode = resolveProposalCreatorNode(
-                row,
-                dao,
-                daoPlugins,
-                accountRefs,
-            );
-            nodesById.set(creatorNode.id, creatorNode);
+            if (isProposalCreator) {
+                const creatorNode = resolveProposalCreatorNode(
+                    row,
+                    dao,
+                    daoPlugins,
+                    accountRefs,
+                );
+                nodesById.set(creatorNode.id, creatorNode);
+                ensureNode(row.whereAddress, row.where);
+
+                return resolveEdge(row, {
+                    sourceId: creatorNode.id,
+                });
+            }
+
+            ensureNode(row.whoAddress, row.who);
             ensureNode(row.whereAddress, row.where);
 
-            return resolveEdge(row, {
-                sourceId: creatorNode.id,
-            });
-        }
-
-        ensureNode(row.whoAddress, row.who);
-        ensureNode(row.whereAddress, row.where);
-
-        return resolveEdge(row);
-    });
+            return resolveEdge(row);
+        });
 
     return { nodes: [...nodesById.values()], edges };
 };

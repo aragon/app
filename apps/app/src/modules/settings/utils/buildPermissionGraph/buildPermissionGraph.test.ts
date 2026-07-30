@@ -311,8 +311,9 @@ describe('buildPermissionGraph', () => {
             who: {
                 address: multisigAddress,
                 brandId: 'safe',
-                label: 'Safe',
+                label: 'Process internal',
                 layer: 'processInternal',
+                parentPluginAddress: pluginAddress,
             },
             whereAddress: pluginAddress,
             where: {
@@ -338,6 +339,60 @@ describe('buildPermissionGraph', () => {
             brandId: 'safe',
             address: multisigAddress,
         });
+    });
+
+    it('drops specific proposal creators when Anyone can already propose on the body', () => {
+        const rows = [
+            buildRow({
+                permissionId: CREATE_PROPOSAL_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                who: {
+                    address: ANY_ADDR,
+                    label: 'Unknown address',
+                    layer: 'unknown',
+                },
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+            buildRow({
+                permissionId: CREATE_PROPOSAL_PERMISSION_ID,
+                whoAddress: multisigAddress,
+                who: {
+                    address: multisigAddress,
+                    brandId: 'safe',
+                    label: 'Process internal',
+                    layer: 'processInternal',
+                    parentPluginAddress: pluginAddress,
+                },
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+        ];
+
+        const graph = buildPermissionGraph({
+            rows,
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+        const creators = graph.nodes.filter((node) =>
+            node.id.startsWith('proposal-creator-'),
+        );
+
+        expect(creators).toHaveLength(1);
+        expect(creators[0]).toMatchObject({ label: 'Anyone' });
+        expect(graph.edges).toHaveLength(1);
+        expect(graph.edges[0].source).toBe(creators[0].id);
     });
 
     it('styles concrete plugin proposal creators as their real body', () => {
