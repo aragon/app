@@ -201,8 +201,10 @@ describe('<AlchemixSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('disables the option the delegate voted on and opens the vote dialog with the override vote type', async () => {
+    it('uses normal confirmation copy for an objection override', async () => {
         const open = jest.fn();
+        const proposal = generateTokenProposal();
+        proposal.settings.isObjection = true;
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
         useAlchemixOverrideStatusSpy.mockReturnValue(
             buildOverrideStatus({
@@ -216,7 +218,7 @@ describe('<AlchemixSubmitVote /> component', () => {
             }),
         );
 
-        render(createTestComponent());
+        render(createTestComponent({ isVeto: true, proposal }));
 
         await userEvent.click(
             screen.getByRole('button', {
@@ -245,6 +247,8 @@ describe('<AlchemixSubmitVote /> component', () => {
             expect.objectContaining({
                 params: expect.objectContaining({
                     vote: expect.objectContaining({
+                        labelDescription:
+                            'app.plugins.token.tokenSubmitVote.voteDescription.veto',
                         value: VoteOption.NO,
                         voteType: 'override',
                     }),

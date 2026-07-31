@@ -5,6 +5,10 @@ import {
 } from './tokenVotingOptions';
 
 describe('<TokenVotingOptions /> component', () => {
+    const optionKey = 'app.plugins.token.tokenSubmitVote.options';
+    const getOptionText = (key: string) =>
+        screen.getByText(`${optionKey}.${key}`);
+
     const createTestComponent = (props?: Partial<ITokenVotingOptionsProps>) => {
         const completeProps: ITokenVotingOptionsProps = {
             onChange: jest.fn(),
@@ -16,43 +20,29 @@ describe('<TokenVotingOptions /> component', () => {
 
     it('renders the yes, abstain and no vote options', () => {
         render(createTestComponent());
-        expect(
-            screen.getByText('app.plugins.token.tokenSubmitVote.options.yes'),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(
-                'app.plugins.token.tokenSubmitVote.options.abstain',
-            ),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText('app.plugins.token.tokenSubmitVote.options.no'),
-        ).toBeInTheDocument();
+        ['yes', 'abstain', 'no'].forEach((key) =>
+            expect(getOptionText(key)).toBeInTheDocument(),
+        );
     });
 
-    it('disables all options but object and renders a help text when the isObjection property is set', () => {
-        render(createTestComponent({ isObjection: true }));
-
-        const objectOption = screen.getByText(
-            'app.plugins.token.tokenSubmitVote.options.object',
-        );
-        expect(objectOption).toBeInTheDocument();
-        expect(objectOption.closest('button')).toBeEnabled();
-
-        expect(
-            screen
-                .getByText('app.plugins.token.tokenSubmitVote.options.yes')
-                .closest('button'),
-        ).toBeDisabled();
-        expect(
-            screen
-                .getByText('app.plugins.token.tokenSubmitVote.options.abstain')
-                .closest('button'),
-        ).toBeDisabled();
+    it('uses approval copy and only enables No for objection proposals', () => {
+        render(createTestComponent({ isObjection: true, isVeto: true }));
 
         expect(
             screen.getByText(
-                'app.plugins.token.tokenSubmitVote.options.objectionHelpText',
+                `${optionKey}.label (label=${optionKey}.vetoLabel)`,
             ),
         ).toBeInTheDocument();
+
+        const noOption = getOptionText('no').closest('button');
+        expect(noOption).toBeEnabled();
+        expect(noOption).toHaveClass('active:border-success-500');
+        expect(getOptionText('vetoNoDescription')).toBeInTheDocument();
+        const yesOption = getOptionText('yes').closest('button');
+        expect(yesOption).toBeDisabled();
+        expect(yesOption).toHaveClass('active:border-critical-500');
+        expect(getOptionText('vetoYesDescription')).toBeInTheDocument();
+        expect(getOptionText('abstain').closest('button')).toBeDisabled();
+        expect(getOptionText('objectionHelpText')).toBeInTheDocument();
     });
 });

@@ -82,7 +82,7 @@ export const TokenSubmitVoteDefault: React.FC<ITokenSubmitVoteDefaultProps> = (
             voteLabel === 'abstain'
                 ? undefined
                 : t(
-                      `app.plugins.token.tokenSubmitVote.voteDescription.${proposal.settings.isObjection ? 'objection' : isVeto ? 'veto' : 'approve'}`,
+                      `app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`,
                   );
         const vote = {
             value: Number(selectedOption),

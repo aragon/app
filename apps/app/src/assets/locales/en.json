@@ -3485,10 +3485,7 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
-            "object": "Object",
-            "objectionDescription": ", I object",
-            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
-            "objectionLabel": "object to",
+            "objectionHelpText": "During the objection phase you can only vote No.",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3496,7 +3493,6 @@
           },
           "voteDescription": {
             "approve": "to approve",
-            "objection": "to object",
             "veto": "to veto"
           }
         },

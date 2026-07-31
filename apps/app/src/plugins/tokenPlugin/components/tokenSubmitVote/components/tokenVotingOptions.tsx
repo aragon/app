@@ -71,18 +71,12 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
             description: undefined,
         },
         {
-            label: t(
-                `app.plugins.token.tokenSubmitVote.options.${isObjection ? 'object' : 'no'}`,
-            ),
+            label: t('app.plugins.token.tokenSubmitVote.options.no'),
             value: VoteOption.NO.toString(),
-            variant: isVeto && !isObjection ? 'success' : 'critical',
-            description: isObjection
-                ? t(
-                      'app.plugins.token.tokenSubmitVote.options.objectionDescription',
-                  )
-                : t(
-                      `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
-                  ),
+            variant: isVeto ? 'success' : 'critical',
+            description: t(
+                `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
+            ),
         },
     ] as const;
 
@@ -97,15 +91,11 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
             }
             id={id}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
-                label: isObjection
-                    ? t(
-                          'app.plugins.token.tokenSubmitVote.options.objectionLabel',
-                      )
-                    : isVeto
-                      ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                      : t(
-                            'app.plugins.token.tokenSubmitVote.options.approveLabel',
-                        ),
+                label: isVeto
+                    ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
+                    : t(
+                          'app.plugins.token.tokenSubmitVote.options.approveLabel',
+                      ),
             })}
             useCustomWrapper={true}
         >

@@ -98,11 +98,13 @@ describe('<TokenSubmitVoteDefault /> component', () => {
         expect(check).toHaveBeenCalled();
     });
 
-    it('shows the vote options and opens the vote dialog with the selected option', async () => {
+    it('uses normal confirmation copy when selecting No during objection', async () => {
         const open = jest.fn();
+        const proposal = generateTokenProposal();
+        proposal.settings.isObjection = true;
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
-        render(createTestComponent());
+        render(createTestComponent({ isVeto: true, proposal }));
 
         await userEvent.click(
             screen.getByRole('button', {
@@ -116,7 +118,7 @@ describe('<TokenSubmitVoteDefault /> component', () => {
         expect(submitButton).toBeDisabled();
 
         await userEvent.click(
-            screen.getByRole('radio', { name: /tokenSubmitVote.options.yes/ }),
+            screen.getByRole('radio', { name: /tokenSubmitVote.options.no/ }),
         );
         await userEvent.click(submitButton);
 
@@ -124,7 +126,11 @@ describe('<TokenSubmitVoteDefault /> component', () => {
             GovernanceDialogId.VOTE,
             expect.objectContaining({
                 params: expect.objectContaining({
-                    vote: expect.objectContaining({ value: VoteOption.YES }),
+                    vote: expect.objectContaining({
+                        labelDescription:
+                            'app.plugins.token.tokenSubmitVote.voteDescription.veto',
+                        value: VoteOption.NO,
+                    }),
                 }),
             }),
         );
