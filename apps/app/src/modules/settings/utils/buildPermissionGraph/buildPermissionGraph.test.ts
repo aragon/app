@@ -341,7 +341,7 @@ describe('buildPermissionGraph', () => {
         });
     });
 
-    it('drops specific proposal creators when Anyone can already propose on the body', () => {
+    it('keeps specific proposal creators alongside an open Anyone grant on the body', () => {
         const rows = [
             buildRow({
                 permissionId: CREATE_PROPOSAL_PERMISSION_ID,
@@ -389,10 +389,12 @@ describe('buildPermissionGraph', () => {
             node.id.startsWith('proposal-creator-'),
         );
 
-        expect(creators).toHaveLength(1);
-        expect(creators[0]).toMatchObject({ label: 'Anyone' });
-        expect(graph.edges).toHaveLength(1);
-        expect(graph.edges[0].source).toBe(creators[0].id);
+        // No subsumption: the list and the graph show the same rows, so the
+        // Safe body's create-proposal eligibility stays visible next to the
+        // open Anyone grant on the same body.
+        expect(creators).toHaveLength(2);
+        expect(creators.map((node) => node.label)).toEqual(['Anyone', 'Safe']);
+        expect(graph.edges).toHaveLength(2);
     });
 
     it('styles concrete plugin proposal creators as their real body', () => {

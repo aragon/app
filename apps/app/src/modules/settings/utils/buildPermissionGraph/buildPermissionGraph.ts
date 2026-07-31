@@ -6,7 +6,7 @@ import type {
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
-import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
+import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
@@ -113,29 +113,6 @@ interface IResolveEdgeOptions {
     sourceId?: string;
 }
 
-const getOpenProposalTargets = (rows: IPermissionRow[]): Set<string> =>
-    new Set(
-        rows
-            .filter(
-                (row) =>
-                    isGoverningBodyProposalCreationRow(row) &&
-                    addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR),
-            )
-            .map((row) => row.whereAddress.toLowerCase()),
-    );
-
-// An open "Anyone" proposal grant on a governing body trumps every more-specific
-// proposal-creation eligibility on that same body (token thresholds, multisig
-// members, SPP stage bodies). Those grants are real, but redundant to show once
-// anyone can propose, so they are dropped from the graph. Only call with rows
-// already known to be proposal-creator rows.
-const isSubsumedByOpenGrant = (
-    row: IPermissionRow,
-    openProposalTargets: Set<string>,
-): boolean =>
-    !addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR) &&
-    openProposalTargets.has(row.whereAddress.toLowerCase());
-
 const getProposalCreatorNodeId = (row: IPermissionRow): string => {
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
 
@@ -227,7 +204,6 @@ export const buildPermissionGraph = (
             !isGraphExcludedEndpoint(row.who) &&
             !isGraphExcludedEndpoint(row.where),
     );
-    const openProposalTargets = getOpenProposalTargets(graphRows);
 
     const edges: IPermissionGraphEdge[] = [];
 
@@ -236,10 +212,6 @@ export const buildPermissionGraph = (
             ensureNode(row.whoAddress, row.who);
             ensureNode(row.whereAddress, row.where);
             edges.push(resolveEdge(row));
-            continue;
-        }
-
-        if (isSubsumedByOpenGrant(row, openProposalTargets)) {
             continue;
         }
 

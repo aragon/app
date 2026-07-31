@@ -213,12 +213,11 @@ const PermissionEntityListItem: React.FC<IPermissionEntityListItemProps> = ({
     chainId,
 }) => {
     if (entity.isSentinel) {
+        // Sentinels (ANY_ADDR / ALLOW_FLAG) resolve to a human label whose
+        // truncated address is the same string, so a description line would
+        // duplicate the primary. Render the label alone at primary size.
         return (
-            <DefinitionList.Item
-                copyValue={entity.address}
-                description={addressUtils.truncateAddress(entity.address)}
-                term={term}
-            >
+            <DefinitionList.Item copyValue={entity.address} term={term}>
                 {entity.label}
             </DefinitionList.Item>
         );
