@@ -14,7 +14,7 @@ import {
     useNodesState,
     useReactFlow,
 } from '@xyflow/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
@@ -60,10 +60,6 @@ const STACK_CONDITION_ROW_HEIGHT = 34;
 const STACK_ROW_GAP = 2;
 type PermissionGraphFlow = 'incoming' | 'outgoing';
 const EXECUTE_PERMISSION_NAME = 'EXECUTE_PERMISSION';
-
-export const getVisibleEdges = (
-    graph: IPermissionGraph,
-): IPermissionGraphEdge[] => graph.edges;
 
 export const getGraphFlow = (
     visibleEdges: IPermissionGraphEdge[],
@@ -747,7 +743,7 @@ export const PermissionsGraphCanvas: React.FC<IPermissionsGraphCanvasProps> = ({
     onSelectedEdgeChange,
     onSelectedNodeChange,
 }) => {
-    const visibleEdges = useMemo(() => getVisibleEdges(graph), [graph]);
+    const visibleEdges = graph.edges;
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
     const { getNodes, setViewport } = useReactFlow();

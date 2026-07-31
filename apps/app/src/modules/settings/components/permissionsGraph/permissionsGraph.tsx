@@ -19,10 +19,7 @@ import { buildPermissionGraph } from '../../utils/buildPermissionGraph';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 import { PermissionDetailPanel } from './permissionDetailPanel';
 import { PermissionNodeDetailPanel } from './permissionNodeDetailPanel';
-import {
-    getVisibleEdges,
-    PermissionsGraphCanvas,
-} from './permissionsGraphCanvas';
+import { PermissionsGraphCanvas } from './permissionsGraphCanvas';
 
 export interface IPermissionsGraphProps {
     rows: IPermissionRow[];
@@ -94,7 +91,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     }, [rows, dao, daoPlugins, accountRefs]);
 
     const anchorId = (activeAccountAddress ?? dao?.address ?? '').toLowerCase();
-    const visibleEdges = getVisibleEdges(graph);
+    const visibleEdges = graph.edges;
     const visibleNodeIds = new Set(
         visibleEdges.flatMap((edge) => [edge.source, edge.target]),
     );

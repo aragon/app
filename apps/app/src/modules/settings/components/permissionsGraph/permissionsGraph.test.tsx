@@ -9,7 +9,6 @@ import type { IPermissionRow } from '../../types';
 import { PermissionsGraph } from './permissionsGraph';
 
 jest.mock('./permissionsGraphCanvas', () => ({
-    getVisibleEdges: (graph: { edges: unknown[] }) => graph.edges,
     PermissionsGraphCanvas: () => (
         <div data-testid="permissions-graph-canvas" />
     ),

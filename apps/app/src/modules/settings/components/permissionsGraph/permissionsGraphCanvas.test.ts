@@ -12,7 +12,6 @@ import {
     getFitViewMinZoom,
     getLayoutDirection,
     getLayoutSignature,
-    getVisibleEdges,
     positionSelfStacks,
 } from './permissionsGraphCanvas';
 
@@ -25,7 +24,6 @@ if (globalThis.structuredClone == null) {
 const anchorId = '0x1111111111111111111111111111111111111111';
 const pluginId = '0x2222222222222222222222222222222222222222';
 const externalId = '0x3333333333333333333333333333333333333333';
-const otherId = '0x4444444444444444444444444444444444444444';
 
 const buildEdge = (
     id: string,
@@ -55,29 +53,6 @@ const buildGraph = (
 ): IPermissionGraph => ({
     nodes,
     edges,
-});
-
-describe('getVisibleEdges', () => {
-    it('keeps granted, from-DAO, and unrelated permissions in one graph', () => {
-        const grantedEdge = buildEdge('granted', {
-            source: pluginId,
-            target: anchorId,
-        });
-        const oldFromDaoEdge = buildEdge('old-from-dao', {
-            source: anchorId,
-            target: externalId,
-        });
-        const unrelatedEdge = buildEdge('unrelated', {
-            source: otherId,
-            target: externalId,
-        });
-
-        const result = getVisibleEdges(
-            buildGraph([grantedEdge, oldFromDaoEdge, unrelatedEdge]),
-        );
-
-        expect(result).toEqual([grantedEdge, oldFromDaoEdge, unrelatedEdge]);
-    });
 });
 
 describe('getLayoutDirection', () => {
