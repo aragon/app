@@ -15,6 +15,7 @@ import {
     useReactFlow,
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
@@ -59,7 +60,8 @@ const STACK_ROW_HEIGHT = 20;
 const STACK_CONDITION_ROW_HEIGHT = 34;
 const STACK_ROW_GAP = 2;
 type PermissionGraphFlow = 'incoming' | 'outgoing';
-const EXECUTE_PERMISSION_NAME = 'EXECUTE_PERMISSION';
+const EXECUTE_PERMISSION_NAME =
+    permissionTransactionUtils.permissionIds.executePermission;
 
 export const getGraphFlow = (
     visibleEdges: IPermissionGraphEdge[],
