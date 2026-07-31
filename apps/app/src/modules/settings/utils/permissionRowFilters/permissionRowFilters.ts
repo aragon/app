@@ -1,7 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import type { IPermissionRow } from '../../types';
 
 export interface IPermissionRowFilters {
@@ -23,8 +22,6 @@ export interface IPermissionRowFilters {
      */
     showSubpluginPermissions: boolean;
 }
-
-const CREATE_PROPOSAL_PERMISSION_NAME = 'CREATE_PROPOSAL_PERMISSION';
 
 /**
  * Registry-backed subplugin check: the plugin at `address` (or one of its
@@ -69,7 +66,7 @@ const isGoverningBodyEndpoint = (
     entity?.parentPluginAddress != null ||
     isSubpluginAddress(address, daoPlugins);
 
-const isDaoGrantedPermission = (
+export const isDaoGrantedPermission = (
     row: IPermissionRow,
     activeAccountAddress?: string,
 ): boolean =>
@@ -77,15 +74,13 @@ const isDaoGrantedPermission = (
     addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress);
 
 /**
- * A create-proposal permission targeting a governing body (top-level or
- * historical OSx plugin). Used by the graph builder to synthesize per-target
- * creator nodes; exported so the predicate has a single home.
+ * A row targets a governing body (subplugin) — the predicate behind the
+ * "hide permissions on governing bodies" toggle.
  */
-export const isGoverningBodyProposalCreationRow = (row: IPermissionRow) =>
-    permissionNameUtils.getPermissionName(row.permissionId) ===
-        CREATE_PROPOSAL_PERMISSION_NAME &&
-    (row.where?.layer === 'topLevelPlugin' ||
-        row.where?.layer === 'historicalPlugin');
+export const isGoverningBodyTargetRow = (
+    row: IPermissionRow,
+    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
+): boolean => isGoverningBodyEndpoint(row.whereAddress, row.where, daoPlugins);
 
 /**
  * Filters permission rows via exactly the two user-facing toggles:

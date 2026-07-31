@@ -226,7 +226,7 @@ describe('buildFlowElements', () => {
     });
 
     it('keeps proposal creator nodes below their governing body target', () => {
-        const creatorId = 'proposal-creator-anyone-core';
+        const creatorId = 'governing-body-actor-anyone-core';
         const executeEdge = buildEdge('execute', {
             source: pluginId,
             target: anchorId,

@@ -1,5 +1,6 @@
 export type { IPermissionRowFilters } from './permissionRowFilters';
 export {
     filterPermissionRows,
-    isGoverningBodyProposalCreationRow,
+    isDaoGrantedPermission,
+    isGoverningBodyTargetRow,
 } from './permissionRowFilters';
