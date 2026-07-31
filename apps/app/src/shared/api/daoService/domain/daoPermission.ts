@@ -25,24 +25,33 @@ export type PermissionEntityLayer =
     | 'contract'
     | 'unknown';
 
+export type PermissionEntityStatus =
+    | 'installed'
+    | 'uninstalled'
+    | 'historical'
+    | 'unknown';
+
+export type PermissionEntityRole = 'who' | 'where' | 'condition';
+
+/**
+ * Governance body brand identity, mirrored from the backend permission entity
+ * enrichment. `safe` marks a Safe-based process body or external proposer.
+ */
+export type PermissionEntityBrandId = 'eoa' | 'safe' | 'other';
+
 export interface IPermissionEntityRef {
     address: string;
     layer: PermissionEntityLayer;
     label?: string;
     interfaceType?: string;
-    status?: 'installed' | 'uninstalled' | 'historical' | 'unknown';
+    status?: PermissionEntityStatus;
     parentPluginAddress?: string;
     parentPluginName?: string;
     parentInterfaceType?: string;
     stageIndex?: number;
-    role?: 'who' | 'where' | 'condition';
+    role?: PermissionEntityRole;
     avatarSrc?: string;
-    /**
-     * Governance body brand identity, mirrored from the backend permission
-     * entity enrichment (see app-backend #1491). `safe` marks a Safe-based
-     * process body or external proposer.
-     */
-    brandId?: 'eoa' | 'safe' | 'other';
+    brandId?: PermissionEntityBrandId;
     /**
      * Address of the proposal-creation condition wired to a Safe body, when the
      * backend can resolve it.

@@ -3,8 +3,12 @@ export type { IDao, ILinkedAccountSummary } from './dao';
 export type { IDaoMetrics } from './daoMetrics';
 export type {
     IDaoPermission,
+    IDaoPermissionCondition,
     IPermissionEntityRef,
+    PermissionEntityBrandId,
     PermissionEntityLayer,
+    PermissionEntityRole,
+    PermissionEntityStatus,
 } from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';
 export {
