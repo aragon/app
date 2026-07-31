@@ -13,8 +13,7 @@ import type {
 export interface ITokenVotingMembershipPluginSettings extends IPluginSettings {
     /**
      * Governance token of the plugin. `underlying` is only set on the token
-     * plugin's wrapped / VE-adapter governance tokens — lock-to-vote tokens
-     * don't carry the field, and `null` / absent means plain ERC-20.
+     * plugin's wrapped / VE-adapter governance tokens.
      */
     token: {
         address: string;
@@ -32,12 +31,8 @@ const tokenMemberListPlugins: PluginInterfaceType[] = [
  * consumes the token-voting membership query instead of the generic member
  * list.
  *
- * The guard narrows the generic plugin to the token-carrying settings this
- * module needs — the same interfaceType→settings contract the slot registry
- * relies on when it mounts token-typed components for these plugin ids.
- * TypeScript cannot verify the contract itself; if `IDaoPlugin` ever becomes
- * a discriminated union on `interfaceType`, this guard (and the slot
- * system's implicit casts) can be replaced by automatic narrowing.
+ * The guard narrows a generic plugin to the token-carrying settings this
+ * module needs.
  */
 export const isTokenMemberListPlugin = (
     plugin: IDaoPlugin,
@@ -52,10 +47,6 @@ export const isTokenMemberListPlugin = (
  *
  * For linked account plugins the API call must target the linked account's
  * own daoId so the backend queries the correct DAO.
- *
- * `tokenUnderlying` is normalized to `null` when absent, which the routing
- * predicate treats as plain ERC-20 — the domain-eligible value. Wrapped /
- * VE-adapter tokens set it and stay on the legacy backend.
  */
 export const buildTokenVotingMembershipParams = (
     initialParams: IGetMemberListParams,
