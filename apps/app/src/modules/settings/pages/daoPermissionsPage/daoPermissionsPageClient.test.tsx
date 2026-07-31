@@ -58,7 +58,7 @@ jest.mock('@/shared/components/translationsProvider', () => ({
                 'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel':
                     'About governing body permissions',
                 'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip':
-                    'Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.',
+                    'Hides permissions whose target is a governing body — a plugin nested inside another (subplugin).',
                 'app.settings.daoPermissionsPage.view.graph': 'Graph',
                 'app.settings.daoPermissionsPage.view.list': 'List',
                 'app.settings.permissionsList.expandAll': 'Expand all',
@@ -184,12 +184,12 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('img', {
-                name: /Hides permissions to or from installed governing bodies/,
+                name: /Hides permissions whose target is a governing body/,
             }),
         ).toBeInTheDocument();
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
     });
 
@@ -241,7 +241,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         );
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
     });
 
@@ -260,7 +260,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
 
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
     });
 });

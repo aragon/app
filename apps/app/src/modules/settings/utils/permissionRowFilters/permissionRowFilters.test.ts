@@ -1,7 +1,7 @@
 import type { IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { generateFilterComponentPlugin } from '@/shared/testUtils/generators';
-import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
+import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
 import { filterPermissionRows } from './permissionRowFilters';
 
@@ -44,461 +44,322 @@ const buildPlugin = (
     });
 
 describe('filterPermissionRows', () => {
-    it('hides permissions granted to the active DAO by default', () => {
-        const rows = [
-            buildRow({ whoAddress: daoAddress }),
-            buildRow({ whoAddress: pluginAddress }),
-        ];
+    describe('hide permissions granted to the DAO', () => {
+        it('hides rows the active DAO holds (who === DAO) when disabled', () => {
+            const rows = [
+                buildRow({ whoAddress: daoAddress }),
+                buildRow({ whoAddress: pluginAddress }),
+            ];
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: false,
-            showSubpluginPermissions: true,
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: false,
+                showSubpluginPermissions: true,
+            });
+
+            expect(result).toEqual([rows[1]]);
         });
 
-        expect(result).toEqual([rows[1]]);
-    });
+        it('keeps DAO-held rows when enabled', () => {
+            const rows = [buildRow({ whoAddress: daoAddress })];
 
-    it('keeps DAO-granted permissions when enabled', () => {
-        const rows = [buildRow({ whoAddress: daoAddress })];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: true,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: true,
+            expect(result).toEqual(rows);
         });
 
-        expect(result).toEqual(rows);
-    });
+        it('keys off who only — a row targeting the DAO is not DAO-granted', () => {
+            const rows = [
+                buildRow({
+                    whoAddress: pluginAddress,
+                    whereAddress: daoAddress,
+                }),
+            ];
 
-    it('hides rows touching installed subplugins by default', () => {
-        const rows = [
-            buildRow({ whoAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
-        ];
-        const daoPlugins = [
-            buildPlugin({
-                address: subpluginAddress,
-                isSubPlugin: true,
-                parentPlugin: parentPluginAddress,
-            }),
-        ];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: false,
+                showSubpluginPermissions: true,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins,
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            expect(result).toEqual(rows);
         });
-
-        expect(result).toEqual([rows[1]]);
     });
 
-    it('hides rows touching plugins with a parent plugin by default', () => {
-        const rows = [
-            buildRow({ whereAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
-        ];
-        const daoPlugins = [
-            buildPlugin({
-                address: subpluginAddress,
-                parentPlugin: parentPluginAddress,
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins,
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual([rows[1]]);
-    });
-
-    it('hides rows touching addresses listed by a parent plugin subPlugins field', () => {
-        const rows = [
-            buildRow({ whoAddress: subpluginAddress }),
-            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
-        ];
-        const daoPlugins = [
-            buildPlugin({
-                address: parentPluginAddress,
-                subPlugins: [{ addresses: [subpluginAddress] }],
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins,
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual([rows[1]]);
-    });
-
-    it('hides backend-classified supporting permission rows by default', () => {
-        const rows = [
-            buildRow({
-                whereAddress: daoAddress,
-                who: {
+    describe('hide permissions on governing bodies (subplugin targets)', () => {
+        it('hides rows whose target is a registered subplugin', () => {
+            const rows = [
+                buildRow({ whereAddress: subpluginAddress }),
+                buildRow({ whereAddress: daoAddress }),
+            ];
+            const daoPlugins = [
+                buildPlugin({
                     address: subpluginAddress,
-                    label: 'Process internal',
-                    layer: 'processInternal',
-                    parentPluginAddress,
-                },
-                whoAddress: subpluginAddress,
-            }),
-            buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
-        ];
-        const daoPlugins = [
-            buildPlugin({
-                address: subpluginAddress,
-                isSubPlugin: true,
-                parentPlugin: parentPluginAddress,
-            }),
-        ];
+                    isSubPlugin: true,
+                    parentPlugin: parentPluginAddress,
+                }),
+            ];
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins,
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins,
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
+
+            expect(result).toEqual([rows[1]]);
         });
 
-        expect(result).toEqual([rows[1]]);
-    });
+        it('hides rows whose target is backend-marked with a parent plugin', () => {
+            const rows = [
+                buildRow({
+                    whereAddress: subpluginAddress,
+                    where: {
+                        address: subpluginAddress,
+                        label: 'Core Governance Delegate',
+                        layer: 'processInternal',
+                        parentPluginAddress,
+                    },
+                }),
+                buildRow({ whereAddress: daoAddress }),
+            ];
 
-    it('keeps top-level process body proposal permissions visible by default', () => {
-        const rows = [
-            buildRow({
-                where: {
-                    address: targetAddress,
-                    label: 'Stage 1 proposal processor',
-                    layer: 'processInternal',
-                    parentPluginName: 'Core Governance',
-                },
-                whereAddress: targetAddress,
-            }),
-            buildRow({ whereAddress: daoAddress }),
-        ];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            expect(result).toEqual([rows[1]]);
         });
 
-        expect(result).toEqual(rows);
-    });
-
-    it('hides process-internal child rows when they do not touch the DAO', () => {
-        const rows = [
-            buildRow({
-                whoAddress: pluginAddress,
-                where: {
-                    address: targetAddress,
-                    label: 'Core Governance Delegate (Veto)',
-                    layer: 'processInternal',
-                    parentPluginAddress,
-                    parentPluginName: 'Core Governance',
-                },
-                whereAddress: targetAddress,
-            }),
-            buildRow({ whereAddress: daoAddress }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual([rows[1]]);
-    });
-
-    it('keeps ALLOW_FLAG rows when backend sends a condition entity', () => {
-        const rows = [
-            buildRow({
-                conditionAddress: ALLOW_FLAG,
-                conditionEntity: {
-                    address: ALLOW_FLAG,
-                    label: 'Allow flag',
-                    layer: 'condition',
-                },
-                whereAddress: daoAddress,
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual(rows);
-    });
-
-    it('keeps real condition-contract rows when endpoints are primary entities', () => {
-        const conditionAddress = '0x6666666666666666666666666666666666666666';
-        const rows = [
-            buildRow({
-                conditionAddress,
-                conditionEntity: {
-                    address: conditionAddress,
-                    label: 'Condition contract',
-                    layer: 'condition',
-                    status: 'installed',
-                },
-                whereAddress: daoAddress,
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual(rows);
-    });
-
-    it('treats missing condition addresses as unconditional rows', () => {
-        const rows = [
-            buildRow({
-                conditionAddress: undefined,
-                conditionEntity: {
-                    address: ALLOW_FLAG,
-                    label: 'Allow flag',
-                    layer: 'condition',
-                },
-                whereAddress: daoAddress,
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual(rows);
-    });
-
-    it('keeps DAO-granted outgoing rows when DAO permissions are enabled', () => {
-        const rows = [
-            buildRow({
-                whoAddress: daoAddress,
-                where: {
-                    address: pluginAddress,
-                    label: 'Core Governance',
-                    layer: 'topLevelPlugin',
-                    status: 'installed',
-                },
-                whereAddress: pluginAddress,
-            }),
-            buildRow({ whereAddress: daoAddress }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual(rows);
-    });
-
-    it('hides DAO-as-caller rows to unknown contracts as supporting noise', () => {
-        const rows = [
-            buildRow({
-                whoAddress: daoAddress,
-                whereAddress: targetAddress,
-                where: {
-                    address: targetAddress,
-                    label: 'Unknown address',
-                    layer: 'unknown',
-                    status: 'unknown',
-                },
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual([]);
-    });
-
-    it('hides locally undecoded permission hashes as supporting noise', () => {
-        const rows = [
-            buildRow({
-                permissionId: unknownPermissionId,
-                whereAddress: daoAddress,
-            }),
-        ];
-
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
-        });
-
-        expect(result).toEqual([]);
-    });
-
-    it('hides inactive plugin endpoint rows even when supporting permissions are enabled', () => {
-        const rows = [
-            buildRow({
-                whereAddress: daoAddress,
-                who: {
-                    address: pluginAddress,
-                    label: 'Historical Core Governance DEPRECATED',
-                    layer: 'historicalPlugin',
-                    status: 'uninstalled',
-                },
-                whoAddress: pluginAddress,
-            }),
-            buildRow({
-                whereAddress: daoAddress,
-                who: {
+        it('hides rows whose target is listed by a parent plugin subPlugins field', () => {
+            const rows = [
+                buildRow({ whereAddress: subpluginAddress }),
+                buildRow({ whereAddress: daoAddress }),
+            ];
+            const daoPlugins = [
+                buildPlugin({
                     address: parentPluginAddress,
-                    label: 'Unknown status plugin',
-                    layer: 'topLevelPlugin',
-                    status: 'unknown',
-                },
-                whoAddress: parentPluginAddress,
-            }),
-            buildRow({
-                whereAddress: daoAddress,
-                who: {
-                    address: targetAddress,
-                    label: 'Core Governance',
-                    layer: 'topLevelPlugin',
-                    status: 'installed',
-                },
-                whoAddress: targetAddress,
-            }),
-        ];
+                    subPlugins: [{ addresses: [subpluginAddress] }],
+                }),
+            ];
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: true,
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins,
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
+
+            expect(result).toEqual([rows[1]]);
         });
 
-        expect(result).toEqual([rows[1], rows[2]]);
+        it('keeps rows whose source is a governing body but target is top-level', () => {
+            const rows = [
+                buildRow({
+                    permissionId: createProposalPermissionId,
+                    whoAddress: subpluginAddress,
+                    who: {
+                        address: subpluginAddress,
+                        brandId: 'safe',
+                        label: 'Process internal',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whereAddress: pluginAddress,
+                    where: {
+                        address: pluginAddress,
+                        interfaceType: 'spp',
+                        label: 'Core Governance',
+                        layer: 'topLevelPlugin',
+                        status: 'installed',
+                    },
+                }),
+            ];
+
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
+
+            expect(result).toEqual(rows);
+        });
+
+        it('keeps open create-proposal rows targeting a top-level plugin', () => {
+            const rows = [
+                buildRow({
+                    permissionId: createProposalPermissionId,
+                    whoAddress: ANY_ADDR,
+                    who: {
+                        address: ANY_ADDR,
+                        label: 'Unknown address',
+                        layer: 'unknown',
+                    },
+                    whereAddress: pluginAddress,
+                    where: {
+                        address: pluginAddress,
+                        interfaceType: 'spp',
+                        label: 'Core Governance',
+                        layer: 'topLevelPlugin',
+                        status: 'installed',
+                    },
+                }),
+            ];
+
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
+
+            expect(result).toEqual(rows);
+        });
+
+        it('keeps top-level process bodies without a parent plugin', () => {
+            const rows = [
+                buildRow({
+                    whereAddress: targetAddress,
+                    where: {
+                        address: targetAddress,
+                        label: 'Stage 1 proposal processor',
+                        layer: 'processInternal',
+                        parentPluginName: 'Core Governance',
+                    },
+                }),
+            ];
+
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
+
+            expect(result).toEqual(rows);
+        });
+
+        it('keeps subplugin-target rows when enabled', () => {
+            const rows = [buildRow({ whereAddress: subpluginAddress })];
+            const daoPlugins = [
+                buildPlugin({ address: subpluginAddress, isSubPlugin: true }),
+            ];
+
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins,
+                showDaoPermissions: true,
+                showSubpluginPermissions: true,
+            });
+
+            expect(result).toEqual(rows);
+        });
     });
 
-    it('keeps open create-proposal rows targeting governing body plugins', () => {
-        const rows = [
-            buildRow({
-                permissionId: createProposalPermissionId,
-                whoAddress: ANY_ADDR,
-                who: {
-                    address: ANY_ADDR,
-                    label: 'Unknown address',
-                    layer: 'unknown',
-                },
-                whereAddress: pluginAddress,
-                where: {
-                    address: pluginAddress,
-                    interfaceType: 'spp',
-                    label: 'Core Governance',
-                    layer: 'topLevelPlugin',
-                    status: 'installed',
-                },
-            }),
-            buildRow({ whereAddress: targetAddress }),
-        ];
+    describe('full audit (no implicit pre-filters)', () => {
+        it('keeps inactive/historical plugin rows', () => {
+            const rows = [
+                buildRow({
+                    whereAddress: daoAddress,
+                    who: {
+                        address: pluginAddress,
+                        label: 'Historical Core Governance DEPRECATED',
+                        layer: 'historicalPlugin',
+                        status: 'uninstalled',
+                    },
+                    whoAddress: pluginAddress,
+                }),
+                buildRow({
+                    whereAddress: daoAddress,
+                    who: {
+                        address: targetAddress,
+                        label: 'Core Governance',
+                        layer: 'topLevelPlugin',
+                        status: 'installed',
+                    },
+                    whoAddress: targetAddress,
+                }),
+            ];
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: true,
+            });
+
+            expect(result).toEqual(rows);
         });
 
-        expect(result).toEqual([rows[0]]);
-    });
+        it('keeps residual rows unrelated to the DAO', () => {
+            const rows = [
+                buildRow({
+                    whoAddress: pluginAddress,
+                    whereAddress: targetAddress,
+                }),
+            ];
 
-    it('keeps internal-body create-proposal rows on governing bodies for the list', () => {
-        const rows = [
-            buildRow({
-                permissionId: createProposalPermissionId,
-                whoAddress: subpluginAddress,
-                who: {
-                    address: subpluginAddress,
-                    brandId: 'safe',
-                    label: 'Process internal',
-                    layer: 'processInternal',
-                    parentPluginAddress: pluginAddress,
-                },
-                whereAddress: pluginAddress,
-                where: {
-                    address: pluginAddress,
-                    interfaceType: 'spp',
-                    label: 'Core Governance',
-                    layer: 'topLevelPlugin',
-                    status: 'installed',
-                },
-            }),
-            buildRow({ whereAddress: daoAddress }),
-        ];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            expect(result).toEqual(rows);
         });
 
-        expect(result).toEqual(rows);
-    });
+        it('keeps rows with locally undecoded permission hashes', () => {
+            const rows = [
+                buildRow({
+                    permissionId: unknownPermissionId,
+                    whereAddress: daoAddress,
+                }),
+            ];
 
-    it('hides residual rows when subplugin/residual permissions are disabled', () => {
-        const rows = [
-            buildRow({ whereAddress: daoAddress }),
-            buildRow({ whereAddress: targetAddress }),
-        ];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: false,
+            expect(result).toEqual(rows);
         });
 
-        expect(result).toEqual([rows[0]]);
-    });
+        it('keeps DAO-as-caller rows to unknown contracts', () => {
+            const rows = [
+                buildRow({
+                    whoAddress: daoAddress,
+                    whereAddress: targetAddress,
+                    where: {
+                        address: targetAddress,
+                        label: 'Unknown address',
+                        layer: 'unknown',
+                        status: 'unknown',
+                    },
+                }),
+            ];
 
-    it('keeps subplugin rows when enabled', () => {
-        const rows = [buildRow({ whoAddress: subpluginAddress })];
-        const daoPlugins = [
-            buildPlugin({ address: subpluginAddress, isSubPlugin: true }),
-        ];
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions: true,
+                showSubpluginPermissions: false,
+            });
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins,
-            showDaoPermissions: true,
-            showSubpluginPermissions: true,
+            expect(result).toEqual(rows);
         });
-
-        expect(result).toEqual(rows);
     });
 });

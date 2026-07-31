@@ -39,6 +39,7 @@ export interface IUsePermissionsDataResult {
     rows: IPermissionRow[];
     chainId?: number;
     isLoading: boolean;
+    error?: unknown;
 }
 
 export const usePermissionsData = (
@@ -108,7 +109,7 @@ export const usePermissionsData = (
         [accounts],
     );
 
-    const { data, isLoading } = useAllDaoPermissions(
+    const { data, isLoading, error } = useAllDaoPermissions(
         {
             urlParams: {
                 network: activeAccount?.network as Network,
@@ -160,5 +161,6 @@ export const usePermissionsData = (
         rows,
         chainId,
         isLoading,
+        error,
     };
 };

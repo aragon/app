@@ -3560,6 +3560,11 @@
           "title": "Permissions",
           "description": "All permissions configured in this DAO — who has access, to which contract, and under what conditions."
         },
+        "error": {
+          "title": "Unable to load permissions",
+          "description": "We couldn't load this DAO's permissions. Please try again later.",
+          "action": "Back to settings"
+        },
         "view": {
           "list": "List",
           "graph": "Graph"
@@ -3569,7 +3574,7 @@
           "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
           "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
           "hideGoverningBodyPermissions": "Hide permissions on governing bodies",
-          "hideGoverningBodyPermissionsTooltip": "Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions whose target is a governing body — a plugin nested inside another (subplugin).",
           "hideGoverningBodyPermissionsTooltipLabel": "About governing body permissions"
         },
         "graphView": {

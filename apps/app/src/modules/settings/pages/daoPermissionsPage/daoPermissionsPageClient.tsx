@@ -66,6 +66,7 @@ export const DaoPermissionsPageClient: React.FC<
         rows,
         chainId,
         isLoading,
+        error,
     } = usePermissionsData({ daoId });
 
     const [view, setView] = useFilterUrlParam({
@@ -218,122 +219,136 @@ export const DaoPermissionsPageClient: React.FC<
             />
             <Page.Content>
                 <Page.Main>
-                    <div className="flex flex-col gap-6">
-                        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                            <div className="flex flex-wrap items-center gap-3">
-                                {showAccountSelector && (
+                    {error != null ? (
+                        <Page.Error
+                            actionLink={daoUtils.getDaoUrl(dao, 'settings')}
+                            descriptionKey="app.settings.daoPermissionsPage.error.description"
+                            error={error}
+                            errorNamespace="app.settings.daoPermissionsPage.error"
+                            titleKey="app.settings.daoPermissionsPage.error.title"
+                        />
+                    ) : (
+                        <div className="flex flex-col gap-6">
+                            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                                <div className="flex flex-wrap items-center gap-3">
+                                    {showAccountSelector && (
+                                        <ToggleGroup
+                                            isMultiSelect={false}
+                                            onChange={handleAccountChange}
+                                            value={activeAccountId}
+                                        >
+                                            {accounts.map((account) => (
+                                                <Toggle
+                                                    key={account.id}
+                                                    label={account.name}
+                                                    value={account.id}
+                                                />
+                                            ))}
+                                        </ToggleGroup>
+                                    )}
                                     <ToggleGroup
                                         isMultiSelect={false}
-                                        onChange={handleAccountChange}
-                                        value={activeAccountId}
+                                        onChange={handleViewChange}
+                                        value={view}
                                     >
-                                        {accounts.map((account) => (
-                                            <Toggle
-                                                key={account.id}
-                                                label={account.name}
-                                                value={account.id}
-                                            />
-                                        ))}
+                                        <Toggle
+                                            label={t(
+                                                'app.settings.daoPermissionsPage.view.list',
+                                            )}
+                                            value={PermissionsView.LIST}
+                                        />
+                                        <Toggle
+                                            label={t(
+                                                'app.settings.daoPermissionsPage.view.graph',
+                                            )}
+                                            value={PermissionsView.GRAPH}
+                                        />
                                     </ToggleGroup>
-                                )}
-                                <ToggleGroup
-                                    isMultiSelect={false}
-                                    onChange={handleViewChange}
-                                    value={view}
-                                >
-                                    <Toggle
-                                        label={t(
-                                            'app.settings.daoPermissionsPage.view.list',
-                                        )}
-                                        value={PermissionsView.LIST}
-                                    />
-                                    <Toggle
-                                        label={t(
-                                            'app.settings.daoPermissionsPage.view.graph',
-                                        )}
-                                        value={PermissionsView.GRAPH}
-                                    />
-                                </ToggleGroup>
-                                {showExpandAll && (
-                                    <Button
-                                        className="hidden md:inline-flex"
-                                        onClick={handleToggleAll}
-                                        responsiveSize={{ md: 'md' }}
-                                        size="sm"
-                                        variant="tertiary"
-                                    >
-                                        {allExpanded
-                                            ? t(
-                                                  'app.settings.permissionsList.collapseAll',
-                                              )
-                                            : t(
-                                                  'app.settings.permissionsList.expandAll',
-                                              )}
-                                    </Button>
-                                )}
-                            </div>
-                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
-                                <div className="flex items-center gap-1">
-                                    <Switch
-                                        checked={hideDaoPermissions}
-                                        disabled={
-                                            isLoading ||
-                                            hideDaoPermissionsToggleDisabled
-                                        }
-                                        inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.hideDaoPermissions',
-                                        )}
-                                        onCheckedChanged={
-                                            handleHideDaoPermissionsChange
-                                        }
-                                    />
-                                    <PermissionInfoTooltip
-                                        tooltipKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip"
-                                        tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel"
-                                    />
+                                    {showExpandAll && (
+                                        <Button
+                                            className="hidden md:inline-flex"
+                                            onClick={handleToggleAll}
+                                            responsiveSize={{ md: 'md' }}
+                                            size="sm"
+                                            variant="tertiary"
+                                        >
+                                            {allExpanded
+                                                ? t(
+                                                      'app.settings.permissionsList.collapseAll',
+                                                  )
+                                                : t(
+                                                      'app.settings.permissionsList.expandAll',
+                                                  )}
+                                        </Button>
+                                    )}
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <Switch
-                                        checked={hideGoverningBodyPermissions}
-                                        disabled={
-                                            isLoading ||
-                                            hideGoverningBodyPermissionsToggleDisabled
-                                        }
-                                        inlineLabel={t(
-                                            'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissions',
-                                        )}
-                                        onCheckedChanged={
-                                            handleHideGoverningBodyPermissionsChange
-                                        }
-                                    />
-                                    <PermissionInfoTooltip
-                                        tooltipKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip"
-                                        tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel"
-                                    />
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
+                                    <div className="flex items-center gap-1">
+                                        <Switch
+                                            checked={hideDaoPermissions}
+                                            disabled={
+                                                isLoading ||
+                                                hideDaoPermissionsToggleDisabled
+                                            }
+                                            inlineLabel={t(
+                                                'app.settings.daoPermissionsPage.filters.hideDaoPermissions',
+                                            )}
+                                            onCheckedChanged={
+                                                handleHideDaoPermissionsChange
+                                            }
+                                        />
+                                        <PermissionInfoTooltip
+                                            tooltipKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip"
+                                            tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel"
+                                        />
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <Switch
+                                            checked={
+                                                hideGoverningBodyPermissions
+                                            }
+                                            disabled={
+                                                isLoading ||
+                                                hideGoverningBodyPermissionsToggleDisabled
+                                            }
+                                            inlineLabel={t(
+                                                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissions',
+                                            )}
+                                            onCheckedChanged={
+                                                handleHideGoverningBodyPermissionsChange
+                                            }
+                                        />
+                                        <PermissionInfoTooltip
+                                            tooltipKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip"
+                                            tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel"
+                                        />
+                                    </div>
                                 </div>
                             </div>
+                            {isListView ? (
+                                <PermissionsList
+                                    accountRefs={accountRefs}
+                                    chainId={chainId}
+                                    daoPlugins={daoPlugins}
+                                    expandedRows={expandedRows}
+                                    isLoading={isLoading}
+                                    onExpandedRowsChange={setExpandedRows}
+                                    rows={filteredRows}
+                                />
+                            ) : (
+                                <PermissionsGraph
+                                    accountRefs={accountRefs}
+                                    activeAccountAddress={
+                                        activeAccount?.daoAddress
+                                    }
+                                    dao={permissionsDao}
+                                    daoPlugins={daoPlugins}
+                                    isLoading={isLoading}
+                                    rows={filteredRows}
+                                />
+                            )}
                         </div>
-                        {isListView ? (
-                            <PermissionsList
-                                accountRefs={accountRefs}
-                                chainId={chainId}
-                                daoPlugins={daoPlugins}
-                                expandedRows={expandedRows}
-                                isLoading={isLoading}
-                                onExpandedRowsChange={setExpandedRows}
-                                rows={filteredRows}
-                            />
-                        ) : (
-                            <PermissionsGraph
-                                accountRefs={accountRefs}
-                                activeAccountAddress={activeAccount?.daoAddress}
-                                dao={permissionsDao}
-                                daoPlugins={daoPlugins}
-                                isLoading={isLoading}
-                                rows={filteredRows}
-                            />
-                        )}
-                    </div>
+                    )}
                 </Page.Main>
             </Page.Content>
         </>
