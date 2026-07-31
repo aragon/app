@@ -157,6 +157,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         }
     };
 
+    // TODO: enable running without DAO ID
     return (
         <FormProvider {...methods}>
             <CreateProposalFormProvider value={contextValues}>
