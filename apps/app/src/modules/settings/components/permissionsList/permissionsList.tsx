@@ -20,7 +20,10 @@ import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
-import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
+import {
+    conditionTypeUtils,
+    type IConditionDisplay,
+} from '../../utils/conditionTypeUtils';
 import {
     type IPermissionAccountRef,
     type IPermissionEntity,
@@ -134,6 +137,38 @@ interface IPermissionsListRowProps {
     network?: Network;
 }
 
+interface IResolvedPermissionRow {
+    who: IPermissionEntity;
+    where: IPermissionEntity;
+    permissionName: string;
+    condition: IConditionDisplay;
+}
+
+// Resolves the display entities a permission row needs, shared by the desktop
+// accordion row and the mobile card so who/where/condition are derived once.
+const resolvePermissionRow = (
+    row: IPermissionRow,
+    options: { daoPlugins: DaoPlugins; accounts: IPermissionAccountRef[] },
+): IResolvedPermissionRow => {
+    const resolveOptions = {
+        daoPlugins: options.daoPlugins,
+        accounts: options.accounts,
+    };
+
+    return {
+        who: permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
+            ...resolveOptions,
+            entity: row.who,
+        }),
+        where: permissionEntityUtils.resolvePermissionEntity(row.whereAddress, {
+            ...resolveOptions,
+            entity: row.where,
+        }),
+        permissionName: permissionNameUtils.getPermissionName(row.permissionId),
+        condition: conditionTypeUtils.resolveConditionDisplay(row),
+    };
+};
+
 interface IPermissionEntityCellProps {
     entity: IPermissionEntity;
 }
@@ -238,23 +273,11 @@ const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
 ) => {
     const { row, daoPlugins, accounts, chainId, network } = props;
 
-    const resolveOptions = { daoPlugins, accounts };
-    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
-        ...resolveOptions,
-        entity: row.who,
-    });
-    const where = permissionEntityUtils.resolvePermissionEntity(
-        row.whereAddress,
-        {
-            ...resolveOptions,
-            entity: row.where,
-        },
+    const { who, where, permissionName, condition } = resolvePermissionRow(
+        row,
+        { daoPlugins, accounts },
     );
-    const permissionName = permissionNameUtils.getPermissionName(
-        row.permissionId,
-    );
-    const { label: conditionLabel, hasCondition } =
-        conditionTypeUtils.resolveConditionDisplay(row);
+    const { label: conditionLabel, hasCondition } = condition;
 
     return (
         <PermissionDetailCard
@@ -275,20 +298,9 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
 
     const { t } = useTranslations();
 
-    const resolveOptions = { daoPlugins, accounts };
-    const who = permissionEntityUtils.resolvePermissionEntity(row.whoAddress, {
-        ...resolveOptions,
-        entity: row.who,
-    });
-    const where = permissionEntityUtils.resolvePermissionEntity(
-        row.whereAddress,
-        {
-            ...resolveOptions,
-            entity: row.where,
-        },
-    );
-    const permissionName = permissionNameUtils.getPermissionName(
-        row.permissionId,
+    const { who, where, permissionName, condition } = resolvePermissionRow(
+        row,
+        { daoPlugins, accounts },
     );
     const {
         address: conditionAddress,
@@ -296,7 +308,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
         label: conditionLabel,
         hasCondition,
         isUnrecognized: hasUnrecognizedCondition,
-    } = conditionTypeUtils.resolveConditionDisplay(row);
+    } = condition;
     const hasConditionLabel = conditionLabel !== '-';
 
     return (
@@ -323,7 +335,7 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                 </div>
             </Accordion.ItemHeader>
             <Accordion.ItemContent>
-                <div className="flex flex-col gap-6 md:flex-row md:gap-8">
+                <div className="flex flex-row gap-8">
                     <div className="flex flex-1 flex-col gap-3">
                         <p className="text-lg text-neutral-800 leading-tight">
                             {t('app.settings.permissionsList.details.heading')}
