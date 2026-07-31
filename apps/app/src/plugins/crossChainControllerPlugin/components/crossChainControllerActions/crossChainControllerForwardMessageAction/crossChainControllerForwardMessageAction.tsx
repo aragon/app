@@ -65,8 +65,7 @@ const messageAbiParameters = [
     },
 ] as const;
 
-// TODO(APP-1029): expose the gas limit once the product decides between a user input and a quote
-// derived from the destination chain.
+// TODO(APP-1029): expose the gas limit once the product decides between a user input and a quote derived from the destination chain.
 const defaultGasLimit = BigInt(1_000_000);
 
 export const CrossChainControllerForwardMessageAction: React.FC<
@@ -85,8 +84,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         actionFieldName,
     );
 
-    // A lane to the DAO's own chain is valid on the controller but never a useful destination, as the
-    // DAO can execute those actions directly.
+    // Filter out DAO's own chain
     const destinationChains = useMemo(
         () =>
             controllerConfig
@@ -145,7 +143,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         const params: INestedActionsDialogParams = {
             daoId: action.daoId,
             initialActions: nestedActions,
-            // A forwarded message cannot forward another message.
+            // Prevent showing nested forward actions.
             excludeActionTypes: [
                 CrossChainControllerProposalActionType.FORWARD_MESSAGE,
             ],
@@ -229,6 +227,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     variant="warning"
                 />
             )}
+
             <InputContainer
                 alert={nestedActionsAlert}
                 helpText={t(
