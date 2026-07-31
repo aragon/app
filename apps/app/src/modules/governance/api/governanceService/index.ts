@@ -6,4 +6,8 @@ export {
     governanceServiceKeys,
 } from './governanceServiceKeys';
 export * from './queries';
-export { buildTokenVotingMembershipParams } from './utils/buildTokenVotingMembershipParams';
+export {
+    buildTokenVotingMembershipParams,
+    type ITokenVotingMembershipPluginSettings,
+    isTokenVotingMembershipPlugin,
+} from './utils/buildTokenVotingMembershipParams';

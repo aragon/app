@@ -1,1 +1,5 @@
-export { buildTokenVotingMembershipParams } from './buildTokenVotingMembershipParams';
+export {
+    buildTokenVotingMembershipParams,
+    type ITokenVotingMembershipPluginSettings,
+    isTokenVotingMembershipPlugin,
+} from './buildTokenVotingMembershipParams';

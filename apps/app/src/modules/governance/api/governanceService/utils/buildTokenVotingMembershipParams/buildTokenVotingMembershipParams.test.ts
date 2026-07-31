@@ -1,10 +1,14 @@
+import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import {
-    type IPluginSettings,
-    Network,
-    PluginInterfaceType,
-} from '@/shared/api/daoService';
-import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
-import { buildTokenVotingMembershipParams } from './buildTokenVotingMembershipParams';
+    generateDao,
+    generateDaoPlugin,
+    generatePluginSettings,
+} from '@/shared/testUtils';
+import {
+    buildTokenVotingMembershipParams,
+    type ITokenVotingMembershipPluginSettings,
+    isTokenVotingMembershipPlugin,
+} from './buildTokenVotingMembershipParams';
 
 describe('buildTokenVotingMembershipParams', () => {
     const initialParams = {
@@ -15,14 +19,20 @@ describe('buildTokenVotingMembershipParams', () => {
         },
     };
 
-    it('builds the routing params from the plugin settings and DAO network', () => {
-        const settings = {
-            token: { address: '0xToken', underlying: '0xUnderlying' },
-        } as unknown as IPluginSettings;
-        const plugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.TOKEN_VOTING,
-            settings,
+    const generateMembershipPlugin = (
+        interfaceType: PluginInterfaceType,
+        token: ITokenVotingMembershipPluginSettings['token'],
+    ) =>
+        generateDaoPlugin<ITokenVotingMembershipPluginSettings>({
+            interfaceType,
+            settings: { ...generatePluginSettings(), token },
         });
+
+    it('builds the routing params from the plugin settings and DAO network', () => {
+        const plugin = generateMembershipPlugin(
+            PluginInterfaceType.TOKEN_VOTING,
+            { address: '0xToken', underlying: '0xUnderlying' },
+        );
         const dao = generateDao({ network: Network.ETHEREUM_MAINNET });
 
         const result = buildTokenVotingMembershipParams(
@@ -42,10 +52,11 @@ describe('buildTokenVotingMembershipParams', () => {
         });
     });
 
-    it('defaults tokenUnderlying to null and tokenAddress to undefined when the settings carry no token', () => {
-        const plugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.LOCK_TO_VOTE,
-        });
+    it('normalizes a missing underlying to null (lock-to-vote tokens do not carry the field)', () => {
+        const plugin = generateMembershipPlugin(
+            PluginInterfaceType.LOCK_TO_VOTE,
+            { address: '0xToken' },
+        );
         const dao = generateDao({ network: Network.POLYGON_MAINNET });
 
         const { queryParams } = buildTokenVotingMembershipParams(
@@ -54,7 +65,7 @@ describe('buildTokenVotingMembershipParams', () => {
             dao,
         );
 
-        expect(queryParams.tokenAddress).toBeUndefined();
+        expect(queryParams.tokenAddress).toBe('0xToken');
         expect(queryParams.tokenUnderlying).toBeNull();
         expect(queryParams.pluginInterfaceType).toBe(
             PluginInterfaceType.LOCK_TO_VOTE,
@@ -62,9 +73,10 @@ describe('buildTokenVotingMembershipParams', () => {
     });
 
     it('preserves the original daoId for non-linked-account plugins', () => {
-        const plugin = generateDaoPlugin({
-            interfaceType: PluginInterfaceType.TOKEN_VOTING,
-        });
+        const plugin = generateMembershipPlugin(
+            PluginInterfaceType.TOKEN_VOTING,
+            { address: '0xToken' },
+        );
 
         const { queryParams } = buildTokenVotingMembershipParams(
             initialParams,
@@ -73,5 +85,17 @@ describe('buildTokenVotingMembershipParams', () => {
         );
 
         expect(queryParams.daoId).toBe('dao-id');
+    });
+});
+
+describe('isTokenVotingMembershipPlugin', () => {
+    it.each([
+        [PluginInterfaceType.TOKEN_VOTING, true],
+        [PluginInterfaceType.LOCK_TO_VOTE, true],
+        [PluginInterfaceType.MULTISIG, false],
+        [PluginInterfaceType.ADMIN, false],
+    ])('returns %s → %s', (interfaceType, expected) => {
+        const plugin = generateDaoPlugin({ interfaceType });
+        expect(isTokenVotingMembershipPlugin(plugin)).toBe(expected);
     });
 });

@@ -1,6 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { cmsService, daoOverridesOptions } from '@/shared/api/cmsService';
-import { daoOptions, PluginInterfaceType } from '@/shared/api/daoService';
+import { daoOptions } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { RedirectToUrl } from '@/shared/components/redirectToUrl';
 import { type IDaoPageParams, PluginType } from '@/shared/types';
@@ -9,20 +9,11 @@ import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     buildTokenVotingMembershipParams,
+    isTokenVotingMembershipPlugin,
     memberListOptions,
 } from '../../api/governanceService';
 import { tokenVotingMembershipOptionsServer } from '../../api/governanceService/queries/useTokenVotingMembership/useTokenVotingMembership.server';
 import { DaoMembersPageClient } from './daoMembersPageClient';
-
-/**
- * Plugins whose member list renders through `TokenMemberListBase` and thus
- * consumes the token-voting membership query instead of the generic member
- * list — the prefetch below must target the same query key.
- */
-const tokenVotingMembershipPlugins: PluginInterfaceType[] = [
-    PluginInterfaceType.TOKEN_VOTING,
-    PluginInterfaceType.LOCK_TO_VOTE,
-];
 
 export interface IDaoMembersPageProps {
     /**
@@ -82,7 +73,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     // Token-voting / lock-to-vote lists consume the token-voting membership
     // query; every other plugin uses the generic member list. The prefetched
     // key must match what the list component builds on the client.
-    if (tokenVotingMembershipPlugins.includes(bodyPlugin.interfaceType)) {
+    if (isTokenVotingMembershipPlugin(bodyPlugin)) {
         await queryClient.prefetchInfiniteQuery(
             tokenVotingMembershipOptionsServer(
                 buildTokenVotingMembershipParams(
