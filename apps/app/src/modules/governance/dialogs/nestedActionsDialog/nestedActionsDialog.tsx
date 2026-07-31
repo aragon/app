@@ -10,7 +10,6 @@ import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { CreateProposalFormProvider } from '../../components/createProposalForm';
 import { ProposalActionsEditor } from '../../components/proposalActionsEditor';
-import { GovernanceDialogId } from '../../constants/governanceDialogId';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 import { proposalActionsImportExportUtils } from '../../utils/proposalActionsImportExportUtils';
 import type {
@@ -124,7 +123,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         void decodeInitialActions();
     }, [dao, daoId, initialActions, requiresDecoding, reset]);
 
-    const handleClose = () => close(GovernanceDialogId.NESTED_ACTIONS);
+    const handleClose = () => close(location.id);
 
     const handleSave = async () => {
         const isFormValid = await trigger();
@@ -144,7 +143,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                 });
 
             onSubmit(preparedActions);
-            close(GovernanceDialogId.NESTED_ACTIONS);
+            handleClose();
         } catch (error) {
             monitoringUtils.logError(error, {
                 context: {

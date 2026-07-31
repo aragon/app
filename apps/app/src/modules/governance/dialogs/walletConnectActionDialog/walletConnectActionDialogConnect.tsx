@@ -1,6 +1,5 @@
 import { Dialog, IconType, InputText } from '@aragon/gov-ui-kit';
 import { useForm } from 'react-hook-form';
-import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFormField } from '@/shared/hooks/useFormField';
 
@@ -17,6 +16,10 @@ export interface IWalletConnectActionDialogConnectProps {
      */
     onFormSubmit: (values: IWalletConnectActionFormData) => void;
     /**
+     * Callback called on cancel click, closing the dialog.
+     */
+    onCancel: () => void;
+    /**
      * Status of the app connection.
      */
     status: 'idle' | 'pending' | 'error';
@@ -27,9 +30,8 @@ const formId = 'dappConnectForm';
 export const WalletConnectActionDialogConnect: React.FC<
     IWalletConnectActionDialogConnectProps
 > = (props) => {
-    const { onFormSubmit, status } = props;
+    const { onFormSubmit, onCancel, status } = props;
 
-    const { close } = useDialogContext();
     const { t } = useTranslations();
 
     const { handleSubmit, control } = useForm<IWalletConnectActionFormData>({
@@ -83,7 +85,7 @@ export const WalletConnectActionDialogConnect: React.FC<
                     label: t(
                         'app.governance.walletConnectActionDialog.connect.action.cancel',
                     ),
-                    onClick: () => close(),
+                    onClick: onCancel,
                 }}
             />
         </>

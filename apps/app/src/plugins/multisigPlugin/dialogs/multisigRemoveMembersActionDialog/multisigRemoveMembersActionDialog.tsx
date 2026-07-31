@@ -50,15 +50,18 @@ export const MultisigRemoveMembersActionDialog: React.FC<
 
     const membersParams = { queryParams: { daoId, pluginAddress } };
 
+    // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+    const handleClose = () => close(location.id);
+
     const handleMemberClicked = (member: IMember) => {
         onMemberClick(member.address);
-        close();
+        handleClose();
     };
 
     return (
         <>
             <Dialog.Header
-                onClose={close}
+                onClose={handleClose}
                 title={t(
                     'app.plugins.multisig.multisigRemoveMembersAction.dialog.heading',
                 )}

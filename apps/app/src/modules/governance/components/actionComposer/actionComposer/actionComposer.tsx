@@ -153,7 +153,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             onSubmit: handleAbiSubmit,
             initialValue,
         };
-        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
+        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, {
+            params,
+            stack: true,
+        });
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
