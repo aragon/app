@@ -173,6 +173,39 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     </span>
 );
 
+interface IPermissionAddressListItemProps {
+    address: string;
+    term: string;
+    name?: string;
+    chainId?: number;
+}
+
+const PermissionAddressListItem: React.FC<IPermissionAddressListItemProps> = ({
+    address,
+    term,
+    name,
+    chainId,
+}) => {
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const truncatedAddress = addressUtils.truncateAddress(address);
+    const explorerUrl = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: address,
+    });
+    const description = name !== truncatedAddress ? name : undefined;
+
+    return (
+        <DefinitionList.Item
+            copyValue={address}
+            description={description}
+            link={{ href: explorerUrl, isExternal: true }}
+            term={term}
+        >
+            {truncatedAddress}
+        </DefinitionList.Item>
+    );
+};
+
 interface IPermissionEntityListItemProps {
     entity: IPermissionEntity;
     term: string;
@@ -184,14 +217,11 @@ const PermissionEntityListItem: React.FC<IPermissionEntityListItemProps> = ({
     term,
     chainId,
 }) => {
-    const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const truncatedAddress = addressUtils.truncateAddress(entity.address);
-
     if (entity.isSentinel) {
         return (
             <DefinitionList.Item
                 copyValue={entity.address}
-                description={truncatedAddress}
+                description={addressUtils.truncateAddress(entity.address)}
                 term={term}
             >
                 {entity.label}
@@ -199,22 +229,13 @@ const PermissionEntityListItem: React.FC<IPermissionEntityListItemProps> = ({
         );
     }
 
-    const explorerUrl = buildEntityUrl({
-        type: ChainEntityType.ADDRESS,
-        id: entity.address,
-    });
-    const description =
-        entity.detailName !== truncatedAddress ? entity.detailName : undefined;
-
     return (
-        <DefinitionList.Item
-            copyValue={entity.address}
-            description={description}
-            link={{ href: explorerUrl, isExternal: true }}
+        <PermissionAddressListItem
+            address={entity.address}
+            chainId={chainId}
+            name={entity.detailName}
             term={term}
-        >
-            {truncatedAddress}
-        </DefinitionList.Item>
+        />
     );
 };
 
@@ -296,9 +317,6 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
         conditionAddress,
         ALLOW_FLAG,
     );
-    const conditionDetail = hasCondition
-        ? addressUtils.truncateAddress(conditionAddress)
-        : undefined;
 
     return (
         <Accordion.Item value={rowKey}>
@@ -353,17 +371,24 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                             >
                                 {addressUtils.truncateHash(row.permissionId)}
                             </DefinitionList.Item>
-                            <DefinitionList.Item
-                                copyValue={
-                                    hasCondition ? conditionAddress : undefined
-                                }
-                                description={conditionDetail}
-                                term={t(
-                                    'app.settings.permissionsList.details.condition',
-                                )}
-                            >
-                                {conditionLabel}
-                            </DefinitionList.Item>
+                            {hasCondition ? (
+                                <PermissionAddressListItem
+                                    address={conditionAddress}
+                                    chainId={chainId}
+                                    name={conditionLabel}
+                                    term={t(
+                                        'app.settings.permissionsList.details.condition',
+                                    )}
+                                />
+                            ) : (
+                                <DefinitionList.Item
+                                    term={t(
+                                        'app.settings.permissionsList.details.condition',
+                                    )}
+                                >
+                                    {conditionLabel}
+                                </DefinitionList.Item>
+                            )}
                         </DefinitionList.Container>
                     </div>
                     <div className="flex flex-1 flex-col gap-3">

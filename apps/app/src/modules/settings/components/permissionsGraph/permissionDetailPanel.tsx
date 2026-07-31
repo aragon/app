@@ -82,6 +82,7 @@ export const PermissionDetailContent: React.FC<
         conditionAddress,
         row.condition,
     );
+    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
     const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
 
     const isWhoAnyAddress = addressUtils.isAddressEqual(
@@ -180,6 +181,28 @@ export const PermissionDetailContent: React.FC<
                         )}
                     >
                         {addressUtils.truncateHash(row.permissionId)}
+                    </DefinitionList.Item>
+                    <DefinitionList.Item
+                        copyValue={hasCondition ? conditionAddress : undefined}
+                        description={hasCondition ? conditionLabel : undefined}
+                        link={
+                            hasCondition
+                                ? {
+                                      href: buildEntityUrl({
+                                          type: ChainEntityType.ADDRESS,
+                                          id: conditionAddress,
+                                      }),
+                                      isExternal: true,
+                                  }
+                                : undefined
+                        }
+                        term={t(
+                            'app.settings.permissionsList.details.condition',
+                        )}
+                    >
+                        {hasCondition
+                            ? addressUtils.truncateAddress(conditionAddress)
+                            : conditionLabel}
                     </DefinitionList.Item>
                 </DefinitionList.Container>
             ) : hasUnrecognizedCondition ? (

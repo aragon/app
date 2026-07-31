@@ -249,11 +249,10 @@ describe('<PermissionsList /> component', () => {
         render(createTestComponent({ rows }));
 
         const conditionLabels = screen.getAllByText('Unrecognized condition');
-        expect(conditionLabels.length).toBeGreaterThan(0);
-        expect(conditionLabels[0].parentElement).toHaveClass(
-            'max-w-full',
-            '[&>p]:truncate',
-        );
+        const conditionTag = conditionLabels
+            .map((label) => label.parentElement)
+            .find((parent) => parent?.closest('button') != null);
+        expect(conditionTag).toHaveClass('max-w-full', '[&>p]:truncate');
     });
 
     it('renders mobile cards with graph-style chrome and hides toggles without a condition', () => {
