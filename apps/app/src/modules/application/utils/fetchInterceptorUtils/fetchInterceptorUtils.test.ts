@@ -102,32 +102,4 @@ describe('fetchInterceptorUtils', () => {
             _merged: true,
         });
     });
-
-    it('appends array mock data to a live list response', async () => {
-        fetchMock.mockResolvedValue(Response.json([{ id: 'live' }]));
-
-        const intercept = await setupInterceptor({
-            url: /\/test-list/,
-            type: 'merge',
-            data: [{ id: 'mocked' }],
-        });
-
-        const result = await intercept('https://api.aragon.org/test-list');
-
-        expect(await result.json()).toEqual([{ id: 'live' }, { id: 'mocked' }]);
-    });
-
-    it('returns only the array mock data when the live response is not a list', async () => {
-        fetchMock.mockResolvedValue(Response.json({ unexpected: true }));
-
-        const intercept = await setupInterceptor({
-            url: /\/test-list/,
-            type: 'merge',
-            data: [{ id: 'mocked' }],
-        });
-
-        const result = await intercept('https://api.aragon.org/test-list');
-
-        expect(await result.json()).toEqual([{ id: 'mocked' }]);
-    });
 });

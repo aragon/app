@@ -72,7 +72,8 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     ICrossChainControllerForwardMessageActionProps
 > = (props) => {
     const { index, action } = props;
-    const { controllerConfig } = action.meta.settings;
+    const { crossChain: controllerConfig } = action.meta.settings;
+    const { lanes } = controllerConfig;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -87,7 +88,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     // Filter out DAO's own chain
     const destinationChains = useMemo(
         () =>
-            controllerConfig
+            lanes
                 .filter(({ chainId }) => chainId !== daoChainId)
                 .map(({ chainId }) => {
                     const network = networkUtils.getNetworkByChainId(chainId);
