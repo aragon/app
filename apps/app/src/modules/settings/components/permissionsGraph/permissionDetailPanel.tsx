@@ -3,10 +3,12 @@
 import {
     addressUtils,
     Button,
+    ChainEntityType,
     DefinitionList,
     IconType,
     Toggle,
     ToggleGroup,
+    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useRef, useState } from 'react';
@@ -68,6 +70,7 @@ export const PermissionDetailContent: React.FC<
     IPermissionDetailContentProps
 > = ({ chainId, className, network, permissionName, row, who, where }) => {
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
     const [activeTab, setActiveTab] =
         useState<PermissionDetailsTab>('permission');
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
@@ -130,6 +133,17 @@ export const PermissionDetailContent: React.FC<
                     <DefinitionList.Item
                         copyValue={isWhoAnyAddress ? undefined : row.whoAddress}
                         description={who?.label}
+                        link={
+                            isWhoAnyAddress
+                                ? undefined
+                                : {
+                                      href: buildEntityUrl({
+                                          type: ChainEntityType.ADDRESS,
+                                          id: row.whoAddress,
+                                      }),
+                                      isExternal: true,
+                                  }
+                        }
                         term={t('app.settings.permissionsList.details.who')}
                     >
                         {isWhoAnyAddress
@@ -141,6 +155,17 @@ export const PermissionDetailContent: React.FC<
                             isWhereAnyAddress ? undefined : row.whereAddress
                         }
                         description={where?.label}
+                        link={
+                            isWhereAnyAddress
+                                ? undefined
+                                : {
+                                      href: buildEntityUrl({
+                                          type: ChainEntityType.ADDRESS,
+                                          id: row.whereAddress,
+                                      }),
+                                      isExternal: true,
+                                  }
+                        }
                         term={t('app.settings.permissionsList.details.where')}
                     >
                         {isWhereAnyAddress

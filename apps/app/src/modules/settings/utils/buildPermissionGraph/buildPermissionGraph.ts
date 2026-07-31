@@ -41,13 +41,14 @@ export interface IBuildPermissionGraphParams {
     accountRefs?: IPermissionAccountRef[];
 }
 
+type IResolveNodeContext = Omit<IBuildPermissionGraphParams, 'rows'>;
+
 const resolveNode = (
     address: string,
-    dao: IDao,
-    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-    accountRefs?: IPermissionAccountRef[],
+    context: IResolveNodeContext,
     enrichedEntity?: IPermissionEntityRef,
 ): IPermissionGraphNode => {
+    const { dao, daoPlugins, accountRefs } = context;
     const id = address.toLowerCase();
 
     if (addressUtils.isAddressEqual(address, dao.address)) {
@@ -120,26 +121,26 @@ const isProposalCreatorRow = (row: IPermissionRow): boolean =>
     permissionNameUtils.getPermissionName(row.permissionId) ===
         CREATE_PROPOSAL_PERMISSION_NAME && isGoverningBodyTarget(row);
 
-const isOpenProposalCreatorRow = (row: IPermissionRow): boolean =>
-    isProposalCreatorRow(row) &&
-    addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR);
-
 const getOpenProposalTargets = (rows: IPermissionRow[]): Set<string> =>
     new Set(
         rows
-            .filter(isOpenProposalCreatorRow)
+            .filter(
+                (row) =>
+                    isProposalCreatorRow(row) &&
+                    addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR),
+            )
             .map((row) => row.whereAddress.toLowerCase()),
     );
 
 // An open "Anyone" proposal grant on a governing body trumps every more-specific
 // proposal-creation eligibility on that same body (token thresholds, multisig
 // members, SPP stage bodies). Those grants are real, but redundant to show once
-// anyone can propose, so they are dropped from the graph.
-const isSubsumedProposalCreatorRow = (
+// anyone can propose, so they are dropped from the graph. Only call with rows
+// already known to be proposal-creator rows.
+const isSubsumedByOpenGrant = (
     row: IPermissionRow,
     openProposalTargets: Set<string>,
 ): boolean =>
-    isProposalCreatorRow(row) &&
     !addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR) &&
     openProposalTargets.has(row.whereAddress.toLowerCase());
 
@@ -159,36 +160,25 @@ const getProposalCreatorNodeId = (row: IPermissionRow): string => {
 
 const resolveProposalCreatorNode = (
     row: IPermissionRow,
-    dao: IDao,
-    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-    accountRefs?: IPermissionAccountRef[],
+    context: IResolveNodeContext,
 ): IPermissionGraphNode => {
-    const baseNode = resolveNode(
-        row.whoAddress,
-        dao,
-        daoPlugins,
-        accountRefs,
-        row.who,
-    );
-    const interfaceType = row.who?.interfaceType?.toLowerCase();
-    const isSafeEntity = baseNode.brandId === 'safe';
-    const isMultisigMember = !isSafeEntity && interfaceType === 'multisig';
+    const baseNode = resolveNode(row.whoAddress, context, row.who);
+    const id = getProposalCreatorNodeId(row);
+    const isMultisigMembers =
+        baseNode.brandId !== 'safe' &&
+        row.who?.interfaceType?.toLowerCase() === 'multisig';
 
-    if (isMultisigMember) {
-        return {
-            id: getProposalCreatorNodeId(row),
-            kind: 'actor',
-            label: `Members of ${baseNode.label}`,
-            layer: baseNode.layer,
-            status: baseNode.status,
-            brandId: baseNode.brandId,
-            address: row.whoAddress,
-        };
+    if (!isMultisigMembers) {
+        return { ...baseNode, id };
     }
 
     return {
-        ...baseNode,
-        id: getProposalCreatorNodeId(row),
+        id,
+        kind: 'actor',
+        label: `Members of ${baseNode.label}`,
+        layer: baseNode.layer,
+        status: baseNode.status,
+        brandId: baseNode.brandId,
         address: row.whoAddress,
     };
 };
@@ -226,7 +216,7 @@ const resolveEdge = (
 export const buildPermissionGraph = (
     params: IBuildPermissionGraphParams,
 ): IPermissionGraph => {
-    const { rows, dao, daoPlugins, accountRefs } = params;
+    const { rows, ...context } = params;
     const nodesById = new Map<string, IPermissionGraphNode>();
 
     const ensureNode = (
@@ -236,10 +226,7 @@ export const buildPermissionGraph = (
         const id = address.toLowerCase();
 
         if (!nodesById.has(id)) {
-            nodesById.set(
-                id,
-                resolveNode(address, dao, daoPlugins, accountRefs, entity),
-            );
+            nodesById.set(id, resolveNode(address, context, entity));
         }
     };
 
@@ -250,33 +237,25 @@ export const buildPermissionGraph = (
     );
     const openProposalTargets = getOpenProposalTargets(graphRows);
 
-    const edges = graphRows
-        .filter(
-            (row) => !isSubsumedProposalCreatorRow(row, openProposalTargets),
-        )
-        .map((row) => {
-            const isProposalCreator = isProposalCreatorRow(row);
+    const edges: IPermissionGraphEdge[] = [];
 
-            if (isProposalCreator) {
-                const creatorNode = resolveProposalCreatorNode(
-                    row,
-                    dao,
-                    daoPlugins,
-                    accountRefs,
-                );
-                nodesById.set(creatorNode.id, creatorNode);
-                ensureNode(row.whereAddress, row.where);
-
-                return resolveEdge(row, {
-                    sourceId: creatorNode.id,
-                });
-            }
-
+    for (const row of graphRows) {
+        if (!isProposalCreatorRow(row)) {
             ensureNode(row.whoAddress, row.who);
             ensureNode(row.whereAddress, row.where);
+            edges.push(resolveEdge(row));
+            continue;
+        }
 
-            return resolveEdge(row);
-        });
+        if (isSubsumedByOpenGrant(row, openProposalTargets)) {
+            continue;
+        }
+
+        const creatorNode = resolveProposalCreatorNode(row, context);
+        nodesById.set(creatorNode.id, creatorNode);
+        ensureNode(row.whereAddress, row.where);
+        edges.push(resolveEdge(row, { sourceId: creatorNode.id }));
+    }
 
     return { nodes: [...nodesById.values()], edges };
 };

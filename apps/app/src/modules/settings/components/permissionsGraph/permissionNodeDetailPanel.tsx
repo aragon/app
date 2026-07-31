@@ -7,7 +7,6 @@ import {
     ChainEntityType,
     DefinitionList,
     IconType,
-    Link,
     Tag,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
@@ -181,17 +180,12 @@ export const PermissionNodeDetailPanel: React.FC<
                         {!isSentinelAddress && (
                             <DefinitionList.Item
                                 copyValue={node.address}
+                                link={{ href: explorerUrl, isExternal: true }}
                                 term={t(
                                     'app.settings.daoPermissionsPage.graphView.detail.address',
                                 )}
                             >
-                                <Link
-                                    className="w-fit"
-                                    href={explorerUrl}
-                                    isExternal={explorerUrl != null}
-                                >
-                                    {addressUtils.truncateAddress(node.address)}
-                                </Link>
+                                {addressUtils.truncateAddress(node.address)}
                             </DefinitionList.Item>
                         )}
                     </DefinitionList.Container>

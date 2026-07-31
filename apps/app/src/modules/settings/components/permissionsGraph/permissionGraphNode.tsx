@@ -1,16 +1,10 @@
-import {
-    Avatar,
-    AvatarIcon,
-    DaoAvatar,
-    IconType,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import { Handle, type Node, type NodeProps, Position } from '@xyflow/react';
 import classNames from 'classnames';
-import safeWallet from '@/assets/images/safeWallet.png';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
+import { MembersAvatarIcon, SafeAccountAvatar } from '../permissionEntityIcons';
 import type { IPermissionEdgeEntry } from './permissionGraphEdge';
 
 export type PermissionNodeSelectionRole = 'who' | 'where';
@@ -183,27 +177,11 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
                         src={avatarSrc ?? undefined}
                     />
                 )}
-                {isSafeBody && (
-                    <span
-                        aria-label="Safe account"
-                        className="shrink-0"
-                        role="img"
-                    >
-                        <Avatar size="sm" src={safeWallet.src} />
-                    </span>
-                )}
+                {isSafeBody && <SafeAccountAvatar />}
                 {kind === 'plugin' && !isSafeBody && tag != null && (
                     <Tag className="self-start" label={tag} variant="primary" />
                 )}
-                {isAnyoneActor && !isSafeBody && (
-                    <span aria-label="Members" role="img">
-                        <AvatarIcon
-                            icon={IconType.APP_MEMBERS}
-                            size="sm"
-                            variant="primary"
-                        />
-                    </span>
-                )}
+                {isAnyoneActor && !isSafeBody && <MembersAvatarIcon />}
                 {kind === 'actor' && !isSafeBody && !isAnyoneActor && (
                     <Avatar size="sm" />
                 )}

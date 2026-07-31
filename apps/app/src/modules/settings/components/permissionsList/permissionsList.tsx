@@ -2,8 +2,6 @@
 
 import {
     Accordion,
-    Avatar,
-    AvatarIcon,
     addressUtils,
     CardEmptyState,
     ChainEntityType,
@@ -11,14 +9,12 @@ import {
     DefinitionList,
     Icon,
     IconType,
-    Link,
     StateSkeletonBar,
     StateSkeletonCircular,
     Tag,
     Tooltip,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
-import safeWallet from '@/assets/images/safeWallet.png';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
@@ -37,6 +33,7 @@ import {
     permissionEntityUtils,
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
+import { MembersAvatarIcon, SafeAccountAvatar } from '../permissionEntityIcons';
 import { PermissionDetailCard } from '../permissionsGraph/permissionDetailPanel';
 import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
@@ -154,11 +151,7 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}
-        {entity.brandId === 'safe' && (
-            <span aria-label="Safe account" className="shrink-0" role="img">
-                <Avatar size="sm" src={safeWallet.src} />
-            </span>
-        )}
+        {entity.brandId === 'safe' && <SafeAccountAvatar />}
         {entity.type === 'plugin' &&
             entity.brandId !== 'safe' &&
             entity.tag != null && (
@@ -170,13 +163,7 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
             )}
         {entity.type === 'sentinel' &&
             (addressUtils.isAddressEqual(entity.address, ANY_ADDR) ? (
-                <span aria-label="Members" className="shrink-0" role="img">
-                    <AvatarIcon
-                        icon={IconType.APP_MEMBERS}
-                        size="sm"
-                        variant="primary"
-                    />
-                </span>
+                <MembersAvatarIcon />
             ) : (
                 <span
                     aria-hidden="true"
@@ -186,25 +173,29 @@ const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     </span>
 );
 
-interface IPermissionEntityDetailProps {
+interface IPermissionEntityListItemProps {
     entity: IPermissionEntity;
+    term: string;
     chainId?: number;
 }
 
-const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
+const PermissionEntityListItem: React.FC<IPermissionEntityListItemProps> = ({
     entity,
+    term,
     chainId,
 }) => {
     const { buildEntityUrl } = useBlockExplorer({ chainId });
+    const truncatedAddress = addressUtils.truncateAddress(entity.address);
 
     if (entity.isSentinel) {
         return (
-            <div className="flex flex-col gap-0.5">
-                <span className="text-neutral-500">{entity.label}</span>
-                <span className="font-mono text-neutral-400 text-sm">
-                    {addressUtils.truncateAddress(entity.address)}
-                </span>
-            </div>
+            <DefinitionList.Item
+                copyValue={entity.address}
+                description={truncatedAddress}
+                term={term}
+            >
+                {entity.label}
+            </DefinitionList.Item>
         );
     }
 
@@ -212,44 +203,20 @@ const PermissionEntityDetail: React.FC<IPermissionEntityDetailProps> = ({
         type: ChainEntityType.ADDRESS,
         id: entity.address,
     });
-    const truncatedAddress = addressUtils.truncateAddress(entity.address);
-    const detailName =
+    const description =
         entity.detailName !== truncatedAddress ? entity.detailName : undefined;
 
     return (
-        <div className="flex flex-col gap-0.5">
-            <Link
-                className="w-fit"
-                href={explorerUrl}
-                isExternal={explorerUrl != null}
-            >
-                {truncatedAddress}
-            </Link>
-            {detailName != null && (
-                <span className="text-neutral-500 text-sm">{detailName}</span>
-            )}
-        </div>
+        <DefinitionList.Item
+            copyValue={entity.address}
+            description={description}
+            link={{ href: explorerUrl, isExternal: true }}
+            term={term}
+        >
+            {truncatedAddress}
+        </DefinitionList.Item>
     );
 };
-
-interface IPermissionDetailValueProps {
-    primary: string;
-    secondary?: string;
-}
-
-const PermissionDetailValue: React.FC<IPermissionDetailValueProps> = ({
-    primary,
-    secondary,
-}) => (
-    <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-neutral-500">{primary}</span>
-        {secondary != null && (
-            <span className="block max-w-full truncate font-mono text-neutral-400 text-sm">
-                {secondary}
-            </span>
-        )}
-    </div>
-);
 
 const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
     props,
@@ -363,53 +330,39 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                             {t('app.settings.permissionsList.details.heading')}
                         </p>
                         <DefinitionList.Container>
-                            <DefinitionList.Item
-                                copyValue={who.address}
+                            <PermissionEntityListItem
+                                chainId={chainId}
+                                entity={who}
                                 term={t(
                                     'app.settings.permissionsList.details.who',
                                 )}
-                            >
-                                <PermissionEntityDetail
-                                    chainId={chainId}
-                                    entity={who}
-                                />
-                            </DefinitionList.Item>
-                            <DefinitionList.Item
-                                copyValue={where.address}
+                            />
+                            <PermissionEntityListItem
+                                chainId={chainId}
+                                entity={where}
                                 term={t(
                                     'app.settings.permissionsList.details.where',
                                 )}
-                            >
-                                <PermissionEntityDetail
-                                    chainId={chainId}
-                                    entity={where}
-                                />
-                            </DefinitionList.Item>
+                            />
                             <DefinitionList.Item
                                 copyValue={row.permissionId}
+                                description={permissionName}
                                 term={t(
                                     'app.settings.permissionsList.details.permission',
                                 )}
                             >
-                                <PermissionDetailValue
-                                    primary={addressUtils.truncateHash(
-                                        row.permissionId,
-                                    )}
-                                    secondary={permissionName}
-                                />
+                                {addressUtils.truncateHash(row.permissionId)}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 copyValue={
                                     hasCondition ? conditionAddress : undefined
                                 }
+                                description={conditionDetail}
                                 term={t(
                                     'app.settings.permissionsList.details.condition',
                                 )}
                             >
-                                <PermissionDetailValue
-                                    primary={conditionLabel}
-                                    secondary={conditionDetail}
-                                />
+                                {conditionLabel}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </div>
