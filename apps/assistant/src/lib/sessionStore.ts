@@ -31,8 +31,8 @@ export interface ISessionFile {
     filename: string;
     contentType: string;
     size: number;
-    // SHA-256 of the content, set at confirm time: lets a re-upload of the same bytes map onto
-    // the already queued entry instead of duplicating the file on the ticket. Optional because
+    // SHA-256 of the content, set at confirm time: the transfer to Linear deduplicates queued
+    // entries carrying the same bytes so the ticket gets the file once. Optional because
     // entries queued before the field existed lack it.
     contentHash?: string;
 }

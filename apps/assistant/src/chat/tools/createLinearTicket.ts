@@ -21,7 +21,9 @@ import {
 // Files reach Linear only now, at creation time: until this moment they live in blob storage and
 // can be freely added and removed. Each queued blob is downloaded, re-validated (defense in depth —
 // the authoritative check ran at confirm time) and uploaded to Linear; a file failing validation is
-// dropped, a transfer failure aborts creation (the claim is released, retry works).
+// dropped, a transfer failure aborts creation (the claim is released, retry works). Entries
+// carrying the same bytes (the user re-attached a screenshot) queue independently so composer
+// tiles stay removable one by one; the dedup happens here so the ticket gets the content once.
 const transferFilesToLinear = async (
     deps: IAppDependencies,
     sessionId: string,
@@ -29,8 +31,18 @@ const transferFilesToLinear = async (
 ): Promise<IIssueAttachment[]> => {
     const startTime = Date.now();
     const attachments: IIssueAttachment[] = [];
+    const transferredHashes = new Set<string>();
 
     for (const file of files) {
+        // Entries queued before contentHash existed lack it — those always transfer.
+        const dedupKey =
+            file.contentHash != null
+                ? `${file.contentHash}:${String(file.size)}`
+                : null;
+        if (dedupKey != null && transferredHashes.has(dedupKey)) {
+            continue;
+        }
+
         const data = await deps.getBlobStore().fetchBytes(file.blobUrl);
         const validated = await validateFile(data, file.filename);
 
@@ -46,6 +58,10 @@ const transferFilesToLinear = async (
 
         const { assetUrl } = await deps.getLinear().uploadFile(validated);
         attachments.push({ filename: validated.filename, assetUrl });
+
+        if (dedupKey != null) {
+            transferredHashes.add(dedupKey);
+        }
     }
 
     observability.logStep({

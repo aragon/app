@@ -168,7 +168,7 @@ describe('files routes', () => {
         expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
     });
 
-    it('maps a re-upload of identical bytes onto the queued file instead of duplicating it', async () => {
+    it('queues a re-upload of identical bytes as its own removable entry', async () => {
         const deps = createTestDependencies(createMockChatModel({}));
         const app = buildApp(deps);
 
@@ -176,20 +176,28 @@ describe('files routes', () => {
         deps.blobStore.blobs.set(firstBlobUrl, pngBytes);
         const first = await confirmUpload(app, { blobUrl: firstBlobUrl });
         expect(first.status).toEqual(201);
-        const firstBody: unknown = await first.json();
 
-        // The same bytes under a fresh file id: the user re-attached the same screenshot.
+        // The same bytes under a fresh file id: the user re-attached the same screenshot. It
+        // queues independently — the dedup happens at transfer time — so each composer tile
+        // owns its own entry and blob.
         const duplicateBlobUrl = buildBlobUrl({ fileId: buildFileId(2) });
         deps.blobStore.blobs.set(duplicateBlobUrl, pngBytes);
         const duplicate = await confirmUpload(app, {
             blobUrl: duplicateBlobUrl,
         });
+        expect(duplicate.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(2);
 
-        // The confirm succeeds but hands back the already queued entry; the redundant blob is
-        // dropped and the ticket will carry the file once.
-        expect(duplicate.status).toEqual(200);
-        expect(await duplicate.json()).toEqual(firstBody);
-        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+        // Removing the re-upload never touches the original entry or its blob.
+        const remove = await app.request(`/files/${buildFileId(2)}`, {
+            method: 'DELETE',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+        });
+        expect(remove.status).toEqual(204);
+        const remaining = await deps.sessionStore.listFiles(sessionId);
+        expect(remaining).toHaveLength(1);
+        expect(remaining[0]?.id).toEqual(buildFileId(1));
         expect(deps.blobStore.deletedUrls).toEqual([duplicateBlobUrl]);
     });
 

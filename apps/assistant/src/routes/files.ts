@@ -288,31 +288,11 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
-            // Same bytes already queued (e.g. the user re-attached a screenshot after a slow
-            // reply): treat the confirm as idempotent — free the slot, drop the redundant blob
-            // and hand back the queued entry so the ticket carries the file once. Best effort:
-            // the queue snapshot predates the claim, so a perfectly concurrent duplicate can
-            // still slip through.
+            // Re-attached identical bytes (e.g. the same screenshot uploaded twice) queue as
+            // their own entry: every composer tile owns its fileId and blob, so removing one
+            // never orphans another. The ticket still carries the content once — the transfer
+            // to Linear deduplicates by this hash at creation time.
             const contentHash = await computeContentHash(data);
-            const duplicateFile = queuedFiles.find(
-                (queuedFile) =>
-                    queuedFile.contentHash === contentHash &&
-                    queuedFile.size === validated.size,
-            );
-            if (duplicateFile != null) {
-                await sessionStore.releaseFileClaim(sessionId, fileId);
-                await deps
-                    .getBlobStore()
-                    .delete([blobUrl])
-                    .catch((error: unknown) =>
-                        observability.logError(error, {
-                            sessionId,
-                            step: 'confirmFile',
-                        }),
-                    );
-
-                return context.json(buildFileResponse(duplicateFile), 200);
-            }
 
             const file: ISessionFile = {
                 id: fileId,

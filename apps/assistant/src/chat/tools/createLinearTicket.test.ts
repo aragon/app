@@ -132,4 +132,42 @@ describe('createSessionTicket', () => {
         expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
         expect(deps.blobStore.deletedUrls).toContain(blobUrl);
     });
+
+    it('transfers queued entries carrying the same bytes once and cleans up both', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const pngBytes = new Uint8Array([
+            0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13, 0x49,
+            0x48, 0x44, 0x52, 0, 0, 0, 1, 0, 0, 0, 1, 8, 6, 0, 0, 0, 0x1f, 0x15,
+            0xc4, 0x89,
+        ]);
+        // The same screenshot attached twice: two independent queue entries (own id and blob)
+        // sharing one content hash — confirm no longer deduplicates, the transfer does.
+        const contentHash = 'a'.repeat(64);
+        const buildBlobUrl = (fileId: string) =>
+            `https://store.public.blob.vercel-storage.com/assistant/${sessionId}/${fileId}/shot.png`;
+        for (const fileId of ['file-1', 'file-2']) {
+            const blobUrl = buildBlobUrl(fileId);
+            deps.blobStore.blobs.set(blobUrl, pngBytes);
+            await deps.sessionStore.addFile(sessionId, {
+                id: fileId,
+                blobUrl,
+                filename: 'shot.png',
+                contentType: 'image/png',
+                size: pngBytes.length,
+                contentHash,
+            });
+        }
+
+        await run(deps, 'call-1');
+
+        // The ticket carries the content once, yet both entries and blobs are cleaned up.
+        expect(deps.linear.uploadFileCalls).toHaveLength(1);
+        expect(await deps.sessionStore.listFiles(sessionId)).toEqual([]);
+        expect(deps.blobStore.deletedUrls).toEqual(
+            expect.arrayContaining([
+                buildBlobUrl('file-1'),
+                buildBlobUrl('file-2'),
+            ]),
+        );
+    });
 });

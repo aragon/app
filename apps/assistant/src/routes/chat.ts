@@ -34,10 +34,23 @@ import {
     refuseRateLimited,
 } from '../lib/rateLimit';
 
-// Writes a complete fixed assistant message (no model involved) as UI message chunks.
-const writeFixedMessage = (writer: UIMessageStreamWriter, text: string) => {
+// Writes a complete fixed assistant message (no model involved) as UI message chunks. Approved
+// tool calls the refused request was meant to execute are failed explicitly — without a result
+// chunk their approval card would show the creation as in flight forever.
+const writeFixedMessage = (
+    writer: UIMessageStreamWriter,
+    text: string,
+    failedToolCallIds: string[] = [],
+) => {
     const id = 'fixed-message';
     writer.write({ type: 'start' });
+    for (const toolCallId of failedToolCallIds) {
+        writer.write({
+            type: 'tool-output-error',
+            toolCallId,
+            errorText: text,
+        });
+    }
     writer.write({ type: 'text-start', id });
     writer.write({ type: 'text-delta', id, delta: text });
     writer.write({ type: 'text-end', id });
@@ -48,8 +61,9 @@ const buildFixedMessageResponse = (params: {
     sessionId: string;
     text: string;
     refusalReason: IRefusalReason;
+    failedToolCallIds?: string[];
 }) => {
-    const { sessionId, text, refusalReason } = params;
+    const { sessionId, text, refusalReason, failedToolCallIds } = params;
 
     observability.logStep({
         sessionId,
@@ -60,7 +74,7 @@ const buildFixedMessageResponse = (params: {
 
     const stream = createUIMessageStream({
         execute: ({ writer }) => {
-            writeFixedMessage(writer, text);
+            writeFixedMessage(writer, text, failedToolCallIds);
         },
     });
 
@@ -105,7 +119,17 @@ export const buildChatRoute = (deps: IAppDependencies) => {
             }
         }
 
-        const turns = await sessionStore.incrementTurns(sessionId);
+        // A resume carries no new user input — the user only answered the approval prompt of
+        // the previous turn (Create / Dismiss) — so it does not consume the turn budget: a
+        // created ticket costs one turn, not two. The limits below still apply to it; a refusal
+        // fails its approved tool calls explicitly so the card never hangs on a spinner.
+        const isResume = isResumeRequest(messages);
+        const pendingApprovedToolCallIds =
+            getPendingApprovedToolCallIds(messages);
+
+        const turns = isResume
+            ? await sessionStore.getTurns(sessionId)
+            : await sessionStore.incrementTurns(sessionId);
 
         // Hard limits short-circuit before any model call.
         if (turns > assistantLimits.maxTurnsPerSession) {
@@ -113,6 +137,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: turnLimitMessage,
                 refusalReason: 'turn_limit',
+                failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
 
@@ -122,6 +147,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: tokenBudgetMessage,
                 refusalReason: 'token_budget',
+                failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
 
@@ -155,8 +181,12 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                         files,
                         docsSearchEnabled,
                     }),
+                    // ignoreIncompleteToolCalls drops tool parts the composer's Stop left in
+                    // `input-streaming`/`input-available`: replayed as-is they would convert
+                    // to a tool call without a response and fail every following model call.
                     messages: await convertToModelMessages(
                         toUiMessages(messages),
+                        { ignoreIncompleteToolCalls: true },
                     ),
                     tools: {
                         [createTicketToolName]: buildCreateLinearTicketTool({
@@ -214,7 +244,10 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 observability.logError(error, { sessionId, step: 'respond' });
                 // The turn produced no reply, so the retry must not count double against the
                 // turn budget — refund it (fire and forget, refusal paths never reach here).
-                void sessionStore.decrementTurns(sessionId);
+                // Resumes were never counted, so there is nothing to refund.
+                if (!isResume) {
+                    void sessionStore.decrementTurns(sessionId);
+                }
 
                 return (
                     respondErrorPayload ??
@@ -272,6 +305,40 @@ const isUpstreamRateLimited = (error: unknown): boolean =>
         );
     });
 
+// A resume re-sends the history with the assistant's message last (no new user input): the
+// widget auto-resumes the stream once the user answers a tool approval (Create / Dismiss).
+const isResumeRequest = (messages: IChatMessage[]): boolean =>
+    messages.at(-1)?.role === 'assistant';
+
+// Tool calls the user approved but whose execution has not run yet (once it runs, the part
+// state moves past `approval-responded`): the request carrying them is what actually creates
+// the ticket, and a refusal must resolve them so the approval card reaches a terminal state.
+const getPendingApprovedToolCallIds = (messages: IChatMessage[]): string[] => {
+    const lastMessage = messages.at(-1);
+
+    if (lastMessage?.role !== 'assistant') {
+        return [];
+    }
+
+    return lastMessage.parts
+        .filter((part) => part.type === `tool-${createTicketToolName}`)
+        .map((part) => {
+            const { state, approval, toolCallId } = part as {
+                state?: unknown;
+                approval?: { approved?: unknown };
+                toolCallId?: unknown;
+            };
+
+            return state === 'approval-responded' && approval?.approved === true
+                ? toolCallId
+                : null;
+        })
+        .filter(
+            (toolCallId): toolCallId is string =>
+                typeof toolCallId === 'string',
+        );
+};
+
 // The request schema validates the exact subset of UIMessage the pipeline reads (text parts and
 // roles); the cast bridges the contracts type to the AI SDK type in this single place.
 const toUiMessages = (messages: IChatMessage[]): UIMessage[] =>
@@ -289,7 +356,9 @@ const dropReasoningParts = (message: IChatMessage): IChatMessage => ({
 // A user may keep typing while a draft awaits approval; the history then carries a tool part
 // stuck in `approval-requested`, which converts to a tool call without a response and makes the
 // model call fail. Resolve such parts as denied so the model sees the draft was superseded and
-// folds the new message into a fresh one.
+// folds the new message into a fresh one. (Parts a Stop left in `input-streaming` /
+// `input-available` never reached the approval and are dropped instead, via the
+// ignoreIncompleteToolCalls conversion option.)
 const resolveDanglingApprovals = (message: IChatMessage): IChatMessage => ({
     ...message,
     parts: message.parts.map((part) => {
