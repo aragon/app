@@ -1,4 +1,5 @@
+export type { IPermissionRowFilters } from './permissionRowFilters';
 export {
     filterPermissionRows,
-    type IPermissionRowFilters,
+    isGoverningBodyProposalCreationRow,
 } from './permissionRowFilters';

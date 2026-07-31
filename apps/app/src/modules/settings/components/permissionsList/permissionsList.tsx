@@ -7,12 +7,9 @@ import {
     ChainEntityType,
     DaoAvatar,
     DefinitionList,
-    Icon,
-    IconType,
     StateSkeletonBar,
     StateSkeletonCircular,
     Tag,
-    Tooltip,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IDaoPlugin, Network } from '@/shared/api/daoService';
@@ -23,10 +20,7 @@ import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { SettingsSlotId } from '../../constants/moduleSlots';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionRow } from '../../types';
-import {
-    conditionTypeUtils,
-    UNKNOWN_CONDITION,
-} from '../../utils/conditionTypeUtils';
+import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
 import {
     type IPermissionAccountRef,
     type IPermissionEntity,
@@ -34,6 +28,7 @@ import {
 } from '../../utils/permissionEntityUtils';
 import { NoConditionSlot } from '../noConditionSlot';
 import { MembersAvatarIcon, SafeAccountAvatar } from '../permissionEntityIcons';
+import { PermissionInfoTooltip } from '../permissionInfoTooltip';
 import { PermissionDetailCard } from '../permissionsGraph/permissionDetailPanel';
 import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
@@ -259,16 +254,8 @@ const PermissionsListMobileCard: React.FC<IPermissionsListRowProps> = (
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
     );
-    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
-    const conditionType = conditionTypeUtils.resolveConditionType(
-        conditionAddress,
-        row.condition,
-    );
-    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
-    const hasCondition = !addressUtils.isAddressEqual(
-        conditionAddress,
-        ALLOW_FLAG,
-    );
+    const { label: conditionLabel, hasCondition } =
+        conditionTypeUtils.resolveConditionDisplay(row);
 
     return (
         <PermissionDetailCard
@@ -304,19 +291,14 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
     );
-    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
-    const conditionType = conditionTypeUtils.resolveConditionType(
-        conditionAddress,
-        row.condition,
-    );
-    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
+    const {
+        address: conditionAddress,
+        type: conditionType,
+        label: conditionLabel,
+        hasCondition,
+        isUnrecognized: hasUnrecognizedCondition,
+    } = conditionTypeUtils.resolveConditionDisplay(row);
     const hasConditionLabel = conditionLabel !== '-';
-    const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
-
-    const hasCondition = !addressUtils.isAddressEqual(
-        conditionAddress,
-        ALLOW_FLAG,
-    );
 
     return (
         <Accordion.Item value={rowKey}>
@@ -432,21 +414,14 @@ const PermissionsListHeaderLabel: React.FC<IPermissionsListHeaderLabelProps> = (
 ) => {
     const { labelKey, tooltipKey, tooltipLabelKey } = props;
     const { t } = useTranslations();
-    const label = t(labelKey);
-    const tooltip = t(tooltipKey);
 
     return (
         <span className="flex min-w-0 items-center gap-1">
-            <span className="truncate">{label}</span>
-            <Tooltip content={tooltip} triggerAsChild={true}>
-                <span
-                    aria-label={`${t(tooltipLabelKey)}: ${tooltip}`}
-                    className="inline-flex size-5 shrink-0 cursor-help items-center justify-center text-neutral-400 leading-none"
-                    role="img"
-                >
-                    <Icon icon={IconType.INFO} size="sm" />
-                </span>
-            </Tooltip>
+            <span className="truncate">{t(labelKey)}</span>
+            <PermissionInfoTooltip
+                tooltipKey={tooltipKey}
+                tooltipLabelKey={tooltipLabelKey}
+            />
         </span>
     );
 };

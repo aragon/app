@@ -1,6 +1,6 @@
 import { stringUtils } from '@/shared/utils/stringUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
-import type { IConditionData } from '../../types';
+import type { IConditionData, IPermissionRow } from '../../types';
 
 /**
  * Discriminator returned when a permission is granted unconditionally
@@ -34,6 +34,18 @@ const CONDITION_LABELS: Record<string, string> = {
     'voting-power': 'VotingPower',
     'execute-selector': 'ExecuteSelector',
 };
+
+/**
+ * Bundled condition display data, so callers don't repeat the
+ * address/type/label/hasCondition/isUnrecognized computation.
+ */
+export interface IConditionDisplay {
+    address: string;
+    type: string;
+    label: string;
+    hasCondition: boolean;
+    isUnrecognized: boolean;
+}
 
 class ConditionTypeUtils {
     /**
@@ -94,6 +106,32 @@ class ConditionTypeUtils {
             CONDITION_LABELS[conditionType] ??
             stringUtils.toPascalCase(conditionType)
         );
+    };
+
+    /**
+     * Resolves the full display bundle for a permission row's condition in one
+     * call: the effective condition address, its type discriminator, its
+     * human-readable label, whether a real condition is attached (address is
+     * not {@link ALLOW_FLAG}), and whether the condition payload was
+     * unrecognised. Replaces a 5-line block duplicated across the list views
+     * and the graph edge panel.
+     *
+     * @param row The permission row (only `conditionAddress` / `condition`).
+     * @returns The resolved condition display data.
+     */
+    resolveConditionDisplay = (
+        row: Pick<IPermissionRow, 'conditionAddress' | 'condition'>,
+    ): IConditionDisplay => {
+        const address = row.conditionAddress ?? ALLOW_FLAG;
+        const type = this.resolveConditionType(address, row.condition);
+
+        return {
+            address,
+            type,
+            label: this.getConditionLabel(type),
+            hasCondition: address.toLowerCase() !== ALLOW_FLAG.toLowerCase(),
+            isUnrecognized: type === UNKNOWN_CONDITION,
+        };
     };
 }
 

@@ -121,7 +121,13 @@ const isDaoGrantedPermission = (
     activeAccountAddress != null &&
     addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress);
 
-const isGoverningBodyProposalCreationRow = (row: IPermissionRow): boolean =>
+/**
+ * A create-proposal permission targeting a governing body (top-level or
+ * historical OSx plugin). In the graph these become per-target creator nodes;
+ * in the list they remain audible rows. Shared with the graph builder so the
+ * predicate has a single home.
+ */
+export const isGoverningBodyProposalCreationRow = (row: IPermissionRow) =>
     permissionNameUtils.getPermissionName(row.permissionId) ===
         CREATE_PROPOSAL_PERMISSION_NAME &&
     (row.where?.layer === 'topLevelPlugin' ||

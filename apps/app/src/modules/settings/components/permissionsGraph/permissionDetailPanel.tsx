@@ -11,23 +11,21 @@ import {
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import type { IDao } from '@/shared/api/daoService';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { SettingsSlotId } from '../../constants/moduleSlots';
-import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
+import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
     IPermissionRow,
 } from '../../types';
-import {
-    conditionTypeUtils,
-    UNKNOWN_CONDITION,
-} from '../../utils/conditionTypeUtils';
+import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
 import { NoConditionSlot } from '../noConditionSlot';
 import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
+import { useDraggablePanel } from './useDraggablePanel';
 
 export interface IPermissionDetailPanelProps {
     chainId?: number;
@@ -73,17 +71,13 @@ export const PermissionDetailContent: React.FC<
     const { buildEntityUrl } = useBlockExplorer({ chainId });
     const [activeTab, setActiveTab] =
         useState<PermissionDetailsTab>('permission');
-    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
-    const hasCondition = !addressUtils.isAddressEqual(
-        conditionAddress,
-        ALLOW_FLAG,
-    );
-    const conditionType = conditionTypeUtils.resolveConditionType(
-        conditionAddress,
-        row.condition,
-    );
-    const conditionLabel = conditionTypeUtils.getConditionLabel(conditionType);
-    const hasUnrecognizedCondition = conditionType === UNKNOWN_CONDITION;
+    const {
+        address: conditionAddress,
+        type: conditionType,
+        label: conditionLabel,
+        hasCondition,
+        isUnrecognized: hasUnrecognizedCondition,
+    } = conditionTypeUtils.resolveConditionDisplay(row);
 
     const isWhoAnyAddress = addressUtils.isAddressEqual(
         row.whoAddress,
@@ -304,81 +298,7 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
     const { row } = edge;
     const who = nodes.find((node) => node.id === edge.source);
     const where = nodes.find((node) => node.id === edge.target);
-    const panelRef = useRef<HTMLDivElement>(null);
-    const dragOffsetRef = useRef<{ x: number; y: number } | undefined>(
-        undefined,
-    );
-    const [position, setPosition] = useState({ x: 16, y: 16 });
-    const [isDragging, setIsDragging] = useState(false);
-
-    const clampPosition = (next: { x: number; y: number }) => {
-        const panel = panelRef.current;
-        const container = panel?.parentElement;
-
-        if (panel == null || container == null) {
-            return next;
-        }
-
-        const margin = 16;
-        const maxX = Math.max(
-            margin,
-            container.clientWidth - panel.offsetWidth - margin,
-        );
-        const maxY = Math.max(
-            margin,
-            container.clientHeight - panel.offsetHeight - margin,
-        );
-
-        return {
-            x: Math.min(Math.max(next.x, margin), maxX),
-            y: Math.min(Math.max(next.y, margin), maxY),
-        };
-    };
-
-    const handleDragStart = (event: React.PointerEvent<HTMLDivElement>) => {
-        const panel = panelRef.current;
-
-        if (panel == null) {
-            return;
-        }
-
-        const panelRect = panel.getBoundingClientRect();
-        dragOffsetRef.current = {
-            x: event.clientX - panelRect.left,
-            y: event.clientY - panelRect.top,
-        };
-        setIsDragging(true);
-        event.currentTarget.setPointerCapture(event.pointerId);
-    };
-
-    const handleDragMove = (event: React.PointerEvent<HTMLDivElement>) => {
-        if (!isDragging || dragOffsetRef.current == null) {
-            return;
-        }
-
-        const container = panelRef.current?.parentElement;
-
-        if (container == null) {
-            return;
-        }
-
-        const containerRect = container.getBoundingClientRect();
-        const nextPosition = {
-            x: event.clientX - containerRect.left - dragOffsetRef.current.x,
-            y: event.clientY - containerRect.top - dragOffsetRef.current.y,
-        };
-
-        setPosition(clampPosition(nextPosition));
-    };
-
-    const handleDragEnd = (event: React.PointerEvent<HTMLDivElement>) => {
-        dragOffsetRef.current = undefined;
-        setIsDragging(false);
-
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId);
-        }
-    };
+    const { panelRef, headerProps, style } = useDraggablePanel();
 
     return (
         <PermissionDetailCard
@@ -387,18 +307,13 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
             conditionLabel={edge.conditionLabel}
             contentClassName="flex flex-col gap-4 overflow-auto p-4"
             headerClassName="cursor-grab touch-none select-none active:cursor-grabbing"
-            headerProps={{
-                onPointerCancel: handleDragEnd,
-                onPointerDown: handleDragStart,
-                onPointerMove: handleDragMove,
-                onPointerUp: handleDragEnd,
-            }}
+            headerProps={headerProps}
             network={network}
             onClose={onClose}
             permissionName={edge.permissionName}
             rootRef={panelRef}
             row={row}
-            style={{ left: position.x, top: position.y }}
+            style={style}
             where={where}
             who={who}
         />

@@ -18,9 +18,9 @@ import {
     type IPermissionAccountRef,
     permissionEntityUtils,
 } from '../permissionEntityUtils';
+import { isGoverningBodyProposalCreationRow } from '../permissionRowFilters';
 
 const NO_CONDITION_LABEL = '-';
-const CREATE_PROPOSAL_PERMISSION_NAME = 'CREATE_PROPOSAL_PERMISSION';
 const PROPOSAL_CREATOR_NODE_PREFIX = 'proposal-creator';
 
 /**
@@ -113,20 +113,12 @@ interface IResolveEdgeOptions {
     sourceId?: string;
 }
 
-const isGoverningBodyTarget = (row: IPermissionRow): boolean =>
-    row.where?.layer === 'topLevelPlugin' ||
-    row.where?.layer === 'historicalPlugin';
-
-const isProposalCreatorRow = (row: IPermissionRow): boolean =>
-    permissionNameUtils.getPermissionName(row.permissionId) ===
-        CREATE_PROPOSAL_PERMISSION_NAME && isGoverningBodyTarget(row);
-
 const getOpenProposalTargets = (rows: IPermissionRow[]): Set<string> =>
     new Set(
         rows
             .filter(
                 (row) =>
-                    isProposalCreatorRow(row) &&
+                    isGoverningBodyProposalCreationRow(row) &&
                     addressUtils.isAddressEqual(row.whoAddress, ANY_ADDR),
             )
             .map((row) => row.whereAddress.toLowerCase()),
@@ -240,7 +232,7 @@ export const buildPermissionGraph = (
     const edges: IPermissionGraphEdge[] = [];
 
     for (const row of graphRows) {
-        if (!isProposalCreatorRow(row)) {
+        if (!isGoverningBodyProposalCreationRow(row)) {
             ensureNode(row.whoAddress, row.who);
             ensureNode(row.whereAddress, row.where);
             edges.push(resolveEdge(row));

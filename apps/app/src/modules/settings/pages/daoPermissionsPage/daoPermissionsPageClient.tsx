@@ -1,20 +1,13 @@
 'use client';
 
-import {
-    Button,
-    Icon,
-    IconType,
-    Switch,
-    Toggle,
-    ToggleGroup,
-    Tooltip,
-} from '@aragon/gov-ui-kit';
+import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
 import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { PermissionInfoTooltip } from '../../components/permissionInfoTooltip';
 import { PermissionsGraph } from '../../components/permissionsGraph';
 import {
     getPermissionRowKey,
@@ -294,25 +287,10 @@ export const DaoPermissionsPageClient: React.FC<
                                             handleHideDaoPermissionsChange
                                         }
                                     />
-                                    <Tooltip
-                                        content={t(
-                                            'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip',
-                                        )}
-                                        triggerAsChild={true}
-                                    >
-                                        <span
-                                            aria-label={`${t(
-                                                'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel',
-                                            )}: ${t('app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip')}`}
-                                            className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
-                                            role="img"
-                                        >
-                                            <Icon
-                                                icon={IconType.INFO}
-                                                size="sm"
-                                            />
-                                        </span>
-                                    </Tooltip>
+                                    <PermissionInfoTooltip
+                                        tooltipKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip"
+                                        tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel"
+                                    />
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <Switch
@@ -328,25 +306,10 @@ export const DaoPermissionsPageClient: React.FC<
                                             handleHideGoverningBodyPermissionsChange
                                         }
                                     />
-                                    <Tooltip
-                                        content={t(
-                                            'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip',
-                                        )}
-                                        triggerAsChild={true}
-                                    >
-                                        <span
-                                            aria-label={`${t(
-                                                'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel',
-                                            )}: ${t('app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip')}`}
-                                            className="inline-flex size-5 shrink-0 cursor-help items-center justify-center self-center text-neutral-400 leading-none"
-                                            role="img"
-                                        >
-                                            <Icon
-                                                icon={IconType.INFO}
-                                                size="sm"
-                                            />
-                                        </span>
-                                    </Tooltip>
+                                    <PermissionInfoTooltip
+                                        tooltipKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip"
+                                        tooltipLabelKey="app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel"
+                                    />
                                 </div>
                             </div>
                         </div>
