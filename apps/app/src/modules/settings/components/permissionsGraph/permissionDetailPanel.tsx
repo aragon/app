@@ -212,7 +212,7 @@ export const PermissionDetailContent: React.FC<
                     network={network}
                     pluginAddress={row.whoAddress}
                     pluginId={conditionType}
-                    slotId={SettingsSlotId.PERMISSION_CONDITION}
+                    slotId={SettingsSlotId.SETTINGS_PERMISSION_CONDITION}
                     {...(hasCondition ? row.condition : undefined)}
                 />
             )}

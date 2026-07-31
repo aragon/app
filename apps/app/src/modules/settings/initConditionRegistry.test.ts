@@ -23,7 +23,7 @@ describe('initialiseConditionRegistry', () => {
         component,
     }) => {
         const resolved = pluginRegistryUtils.getSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId,
         });
 
@@ -37,7 +37,7 @@ describe('initialiseConditionRegistry', () => {
         pluginId,
     }) => {
         const resolved = pluginRegistryUtils.getSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId,
         });
 

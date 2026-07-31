@@ -391,7 +391,9 @@ const PermissionsListRow: React.FC<IPermissionsListRowProps> = (props) => {
                                 network={network}
                                 pluginAddress={row.whoAddress}
                                 pluginId={conditionType}
-                                slotId={SettingsSlotId.PERMISSION_CONDITION}
+                                slotId={
+                                    SettingsSlotId.SETTINGS_PERMISSION_CONDITION
+                                }
                                 {...row.condition}
                             />
                         )}

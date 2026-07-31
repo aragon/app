@@ -6,7 +6,7 @@ import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot'
 
 /**
  * Registers the permission-condition slot components against the
- * {@link SettingsSlotId.PERMISSION_CONDITION} slot.
+ * {@link SettingsSlotId.SETTINGS_PERMISSION_CONDITION} slot.
  *
  * Condition registration is standalone: the synthetic `conditionType`
  * discriminator (see {@link IConditionData}) is used as the `pluginId`, so each
@@ -17,17 +17,17 @@ import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot'
 export const initialiseConditionRegistry = () => {
     pluginRegistryUtils
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'voting-power',
             component: VotingPowerConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'execute-selector',
             component: ExecuteSelectorConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'membership',
             component: MembershipConditionSlot,
         });
