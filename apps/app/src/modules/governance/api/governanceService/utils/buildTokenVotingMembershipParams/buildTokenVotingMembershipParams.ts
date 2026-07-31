@@ -14,9 +14,14 @@ import type {
  * For linked account plugins the API call must target the linked account's
  * own daoId so the backend queries the correct DAO.
  *
- * `token` is only present on token-voting / lock-to-vote plugin settings and
- * `underlying` only on the token plugin's token — both are read defensively.
- * When absent the values route the query to the legacy backend.
+ * The generic `IDaoPlugin` type says nothing about `settings.token`: it only
+ * exists on token-voting and lock-to-vote settings, and its `underlying`
+ * field only on the token plugin's token. Both reads are defensive:
+ * - no `token` → `tokenAddress` is undefined, which `resolveMemberSource`
+ *   routes to the legacy backend (the domain query needs the token contract);
+ * - no `underlying` → normalized to `null`, which the routing predicate
+ *   treats as a plain ERC-20 — the domain-eligible value. Wrapped/VE-adapter
+ *   tokens set it and stay on the legacy backend.
  */
 export const buildTokenVotingMembershipParams = (
     initialParams: IGetMemberListParams,
