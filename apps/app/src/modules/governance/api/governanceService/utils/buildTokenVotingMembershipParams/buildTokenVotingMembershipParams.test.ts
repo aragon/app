@@ -7,7 +7,7 @@ import {
 import {
     buildTokenVotingMembershipParams,
     type ITokenVotingMembershipPluginSettings,
-    isTokenVotingMembershipPlugin,
+    isTokenMemberListPlugin,
 } from './buildTokenVotingMembershipParams';
 
 describe('buildTokenVotingMembershipParams', () => {
@@ -88,7 +88,7 @@ describe('buildTokenVotingMembershipParams', () => {
     });
 });
 
-describe('isTokenVotingMembershipPlugin', () => {
+describe('isTokenMemberListPlugin', () => {
     it.each([
         [PluginInterfaceType.TOKEN_VOTING, true],
         [PluginInterfaceType.LOCK_TO_VOTE, true],
@@ -96,6 +96,6 @@ describe('isTokenVotingMembershipPlugin', () => {
         [PluginInterfaceType.ADMIN, false],
     ])('returns %s → %s', (interfaceType, expected) => {
         const plugin = generateDaoPlugin({ interfaceType });
-        expect(isTokenVotingMembershipPlugin(plugin)).toBe(expected);
+        expect(isTokenMemberListPlugin(plugin)).toBe(expected);
     });
 });

@@ -9,7 +9,7 @@ import { daoVisibilityUtils } from '@/shared/utils/daoVisibilityUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     buildTokenVotingMembershipParams,
-    isTokenVotingMembershipPlugin,
+    isTokenMemberListPlugin,
     memberListOptions,
 } from '../../api/governanceService';
 import { tokenVotingMembershipOptionsServer } from '../../api/governanceService/queries/useTokenVotingMembership/useTokenVotingMembership.server';
@@ -73,7 +73,7 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     // Token-voting / lock-to-vote lists consume the token-voting membership
     // query; every other plugin uses the generic member list. The prefetched
     // key must match what the list component builds on the client.
-    if (isTokenVotingMembershipPlugin(bodyPlugin)) {
+    if (isTokenMemberListPlugin(bodyPlugin)) {
         await queryClient.prefetchInfiniteQuery(
             tokenVotingMembershipOptionsServer(
                 buildTokenVotingMembershipParams(

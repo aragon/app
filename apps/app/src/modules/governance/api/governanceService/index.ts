@@ -9,5 +9,5 @@ export * from './queries';
 export {
     buildTokenVotingMembershipParams,
     type ITokenVotingMembershipPluginSettings,
-    isTokenVotingMembershipPlugin,
+    isTokenMemberListPlugin,
 } from './utils/buildTokenVotingMembershipParams';

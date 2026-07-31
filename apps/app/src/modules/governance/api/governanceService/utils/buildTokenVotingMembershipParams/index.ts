@@ -1,5 +1,5 @@
 export {
     buildTokenVotingMembershipParams,
     type ITokenVotingMembershipPluginSettings,
-    isTokenVotingMembershipPlugin,
+    isTokenMemberListPlugin,
 } from './buildTokenVotingMembershipParams';

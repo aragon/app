@@ -22,7 +22,7 @@ export interface ITokenVotingMembershipPluginSettings extends IPluginSettings {
     };
 }
 
-const tokenVotingMembershipPlugins: PluginInterfaceType[] = [
+const tokenMemberListPlugins: PluginInterfaceType[] = [
     PluginInterfaceType.TOKEN_VOTING,
     PluginInterfaceType.LOCK_TO_VOTE,
 ];
@@ -39,10 +39,10 @@ const tokenVotingMembershipPlugins: PluginInterfaceType[] = [
  * a discriminated union on `interfaceType`, this guard (and the slot
  * system's implicit casts) can be replaced by automatic narrowing.
  */
-export const isTokenVotingMembershipPlugin = (
+export const isTokenMemberListPlugin = (
     plugin: IDaoPlugin,
 ): plugin is IDaoPlugin<ITokenVotingMembershipPluginSettings> =>
-    tokenVotingMembershipPlugins.includes(plugin.interfaceType);
+    tokenMemberListPlugins.includes(plugin.interfaceType);
 
 /**
  * Builds the token-voting membership query params from a plugin and its DAO.
