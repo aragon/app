@@ -292,6 +292,9 @@ class PermissionEntityUtils {
         return name;
     };
 
+    // Lenient, case-insensitive comparison. Unlike the kit's checksum-strict
+    // addressUtils.isAddressEqual, this matches the OSx sentinels
+    // (ANY_ADDR / ALLOW_FLAG) regardless of the casing the backend sends.
     private isAddressEqual = (a?: string, b?: string): boolean =>
         a != null && b != null && a.toLowerCase() === b.toLowerCase();
 }

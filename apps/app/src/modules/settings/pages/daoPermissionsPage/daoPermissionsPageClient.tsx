@@ -2,7 +2,6 @@
 
 import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -14,7 +13,11 @@ import {
     PermissionsList,
 } from '../../components/permissionsList';
 import { usePermissionsData } from '../../hooks/usePermissionsData';
-import { filterPermissionRows } from '../../utils/permissionRowFilters';
+import {
+    filterPermissionRows,
+    isDaoGrantedPermission,
+    isGoverningBodyTargetRow,
+} from '../../utils/permissionRowFilters';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -33,18 +36,8 @@ enum PermissionsView {
     GRAPH = 'graph',
 }
 
-type PermissionRows = ReturnType<typeof usePermissionsData>['rows'];
-
 const booleanParamValues = ['false', 'true'];
 const permissionsViews = Object.values(PermissionsView);
-
-const getPermissionRowsSignature = (rows: PermissionRows): string =>
-    rows.map(getPermissionRowKey).sort().join('|');
-
-const arePermissionRowsEqual = (
-    a: PermissionRows,
-    b: PermissionRows,
-): boolean => getPermissionRowsSignature(a) === getPermissionRowsSignature(b);
 
 export const DaoPermissionsPageClient: React.FC<
     IDaoPermissionsPageClientProps
@@ -53,10 +46,8 @@ export const DaoPermissionsPageClient: React.FC<
 
     const { t } = useTranslations();
 
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-
     const {
-        dao: permissionsDao,
+        dao,
         accounts,
         activeAccountId,
         activeAccount,
@@ -139,46 +130,12 @@ export const DaoPermissionsPageClient: React.FC<
         ],
     );
 
-    const hideDaoPermissionsToggleDisabled = useMemo(
-        () =>
-            arePermissionRowsEqual(
-                filteredRows,
-                filterPermissionRows(rows, {
-                    activeAccountAddress: activeAccount?.daoAddress,
-                    daoPlugins,
-                    showDaoPermissions: !showDaoPermissions,
-                    showSubpluginPermissions,
-                }),
-            ),
-        [
-            activeAccount?.daoAddress,
-            daoPlugins,
-            filteredRows,
-            rows,
-            showDaoPermissions,
-            showSubpluginPermissions,
-        ],
+    const hideDaoPermissionsToggleDisabled = !rows.some((row) =>
+        isDaoGrantedPermission(row, activeAccount?.daoAddress),
     );
 
-    const hideGoverningBodyPermissionsToggleDisabled = useMemo(
-        () =>
-            arePermissionRowsEqual(
-                filteredRows,
-                filterPermissionRows(rows, {
-                    activeAccountAddress: activeAccount?.daoAddress,
-                    daoPlugins,
-                    showDaoPermissions,
-                    showSubpluginPermissions: !showSubpluginPermissions,
-                }),
-            ),
-        [
-            activeAccount?.daoAddress,
-            daoPlugins,
-            filteredRows,
-            rows,
-            showDaoPermissions,
-            showSubpluginPermissions,
-        ],
+    const hideGoverningBodyPermissionsToggleDisabled = !rows.some((row) =>
+        isGoverningBodyTargetRow(row, daoPlugins),
     );
 
     const allExpanded =
@@ -341,7 +298,7 @@ export const DaoPermissionsPageClient: React.FC<
                                     activeAccountAddress={
                                         activeAccount?.daoAddress
                                     }
-                                    dao={permissionsDao}
+                                    dao={dao}
                                     daoPlugins={daoPlugins}
                                     isLoading={isLoading}
                                     rows={filteredRows}

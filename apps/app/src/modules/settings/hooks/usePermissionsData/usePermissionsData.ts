@@ -49,29 +49,27 @@ export const usePermissionsData = (
 
     const { isEnabled } = useFeatureFlags();
 
-    const { data: realDao } = useDao({ urlParams: { id: daoId } });
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
     const realDaoPlugins = useDaoPlugins({
         daoId,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
     });
 
-    const dao = realDao;
-
-    const realAccounts = useMemo<IPermissionsDataAccount[]>(() => {
-        if (realDao == null) {
+    const accounts = useMemo<IPermissionsDataAccount[]>(() => {
+        if (dao == null) {
             return [];
         }
 
         const mainAccount: IPermissionsDataAccount = {
-            id: realDao.id,
-            name: realDao.name,
-            network: realDao.network,
-            daoAddress: realDao.address,
-            avatarSrc: ipfsUtils.cidToSrc(realDao.avatar),
+            id: dao.id,
+            name: dao.name,
+            network: dao.network,
+            daoAddress: dao.address,
+            avatarSrc: ipfsUtils.cidToSrc(dao.avatar),
         };
 
-        const linkedAccounts = realDao.linkedAccounts ?? [];
+        const linkedAccounts = dao.linkedAccounts ?? [];
         const showLinkedAccounts =
             isEnabled('linkedAccount') && linkedAccounts.length > 0;
 
@@ -89,9 +87,7 @@ export const usePermissionsData = (
                 avatarSrc: ipfsUtils.cidToSrc(account.avatar),
             })),
         ];
-    }, [realDao, isEnabled]);
-
-    const accounts = realAccounts;
+    }, [dao, isEnabled]);
 
     const [selectedAccountId, setSelectedAccountId] = useState<string>();
     const activeAccountId = selectedAccountId ?? accounts[0]?.id;
@@ -119,24 +115,20 @@ export const usePermissionsData = (
         { enabled: activeAccount != null },
     );
 
-    const rows = useMemo(() => {
-        const rawRows = (data ?? []) as IPermissionRow[];
-        return rawRows;
-    }, [data]);
+    const rows = useMemo<IPermissionRow[]>(
+        () => (data ?? []) as IPermissionRow[],
+        [data],
+    );
 
     const chainId = activeAccount
         ? networkDefinitions[activeAccount.network].id
         : undefined;
     const daoPlugins = useMemo(() => {
-        if (
-            realDaoPlugins == null ||
-            realDao == null ||
-            activeAccount == null
-        ) {
+        if (realDaoPlugins == null || dao == null || activeAccount == null) {
             return realDaoPlugins;
         }
 
-        const rootDaoAddress = realDao.address.toLowerCase();
+        const rootDaoAddress = dao.address.toLowerCase();
         const activeDaoAddress = activeAccount.daoAddress.toLowerCase();
 
         return realDaoPlugins.filter((plugin) => {
@@ -148,7 +140,7 @@ export const usePermissionsData = (
 
             return pluginDaoAddress === activeDaoAddress;
         });
-    }, [activeAccount, realDao, realDaoPlugins]);
+    }, [activeAccount, dao, realDaoPlugins]);
 
     return {
         dao,
