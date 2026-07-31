@@ -14,7 +14,7 @@ Telemetry for the rule-skills spike. Answers one question: **is this spike pulli
 
 ## Why this exists
 
-The rule-skills system at `.agents/shared/skills/rules/` is a spike. It has a real maintenance cost (loader, frontmatter discipline, contributor education) and a speculative benefit (agents make fewer convention mistakes). We need numbers to know whether the trade is worth it.
+The rule-skills system at `skills/shared/rules/` is a spike. It has a real maintenance cost (loader, frontmatter discipline, contributor education) and a speculative benefit (agents make fewer convention mistakes). We need numbers to know whether the trade is worth it.
 
 The metrics in this folder answer:
 

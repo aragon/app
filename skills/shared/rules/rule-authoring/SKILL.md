@@ -1,7 +1,7 @@
 ---
 name: rule-authoring
 description: How to author or revise a rule-skill — fires when editing files inside the rule folders themselves.
-globs: .agents/shared/skills/rules/**
+globs: skills/shared/rules/**
 kind: rule
 ---
 
@@ -11,8 +11,8 @@ You're editing inside a rule-skills folder. Follow the conventions below so the 
 
 ## Canon
 
-- `.agents/shared/skills/rules/README.md` — full spec for the rule-skill convention (frontmatter, glob semantics, hook contract).
-- `.agents/shared/skills/rules/query-and-cache.md`, `plugin-slot-registration.md` — reference shapes.
+- `skills/shared/rules/README.md` — full spec for the rule-skill convention (frontmatter, glob semantics, hook contract).
+- `skills/shared/rules/query-and-cache/SKILL.md`, `plugin-slot-registration/SKILL.md` — reference shapes.
 - `.agents/shared/hooks/inject-rules.mjs` — the shared loader; how rules get matched and injected.
 
 ## Authoring shape (sweet spot)

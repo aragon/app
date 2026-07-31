@@ -3,7 +3,7 @@
 // roots, matches their `globs` field against the file being edited,
 // and emits matched rule content in the shape an adapter asks for.
 //
-// Spec: .agents/shared/skills/rules/README.md
+// Spec: skills/shared/rules/README.md
 
 import {
     appendFileSync,
@@ -62,7 +62,7 @@ export const canonicalize = (path) => {
 export const DEFAULT_REPO_ROOT = canonicalize(
     resolve(dirname(fileURLToPath(import.meta.url)), '..', '..', '..'),
 );
-export const DEFAULT_RULE_ROOTS = ['.agents/shared/skills/rules'];
+export const DEFAULT_RULE_ROOTS = ['skills/shared/rules'];
 export const TRIGGER_TOOLS = new Set(['Edit', 'Write', 'MultiEdit']);
 
 export const parseFrontmatter = (content) => {
@@ -136,13 +136,17 @@ export const collectRules = ({
             continue;
         }
 
-        for (const entry of readdirSync(dir)) {
-            if (!entry.endsWith('.md') || entry === 'README.md') {
+        for (const entry of readdirSync(dir, { withFileTypes: true })) {
+            if (!entry.isDirectory()) {
                 continue;
             }
 
-            const fullPath = join(dir, entry);
-            const content = readFileSync(fullPath, 'utf8');
+            const skillMd = join(dir, entry.name, 'SKILL.md');
+            if (!existsSync(skillMd)) {
+                continue;
+            }
+
+            const content = readFileSync(skillMd, 'utf8');
             const { meta, body } = parseFrontmatter(content);
 
             if (meta.kind !== 'rule') {
@@ -150,10 +154,10 @@ export const collectRules = ({
             }
 
             rules.push({
-                name: meta.name || entry.replace(/\.md$/, ''),
+                name: meta.name || entry.name,
                 globs: meta.globs,
                 body,
-                source: relative(repoRoot, fullPath),
+                source: relative(repoRoot, skillMd),
             });
         }
     }
