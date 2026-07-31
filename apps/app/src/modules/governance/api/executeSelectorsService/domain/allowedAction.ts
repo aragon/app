@@ -13,7 +13,7 @@ export interface IAllowedAction {
      * Decoded action data.
      * Contains information about the action, such as function name, parameters, etc.
      */
-    decoded: IAllowedActionDecoded;
+    decoded?: IAllowedActionDecoded;
     /**
      * Whether the action is allowed or not. Should always be `true` for allowed actions.
      */

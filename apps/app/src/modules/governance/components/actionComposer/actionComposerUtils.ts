@@ -250,7 +250,11 @@ class ActionComposerUtils {
                 addressUtils.isAddressEqual(action.target, daoAddress)
                     ? daoGroup
                     : this.buildCustomActionGroup({
-                          name: action.decoded.contractName,
+                          name:
+                              action.decoded?.contractName ??
+                              t(
+                                  'app.governance.actionComposer.unverifiedContract',
+                              ),
                           address: action.target,
                       }),
         );
@@ -287,8 +291,20 @@ class ActionComposerUtils {
                 }
 
                 const item = this.buildDefaultCustomAction(
-                    { address: action.target, name: decoded.contractName },
-                    { name: decoded.functionName, parameters: decoded.inputs },
+                    {
+                        address: action.target,
+                        name:
+                            decoded?.contractName ??
+                            t(
+                                'app.governance.actionComposer.unverifiedContract',
+                            ),
+                    },
+                    {
+                        name:
+                            decoded?.functionName ??
+                            t('app.governance.actionComposer.unknownFunction'),
+                        parameters: decoded?.inputs ?? [],
+                    },
                     actionIndex,
                 );
 
