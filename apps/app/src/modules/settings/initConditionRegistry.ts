@@ -10,7 +10,7 @@ import { NO_CONDITION, UNKNOWN_CONDITION } from './utils/conditionTypeUtils';
 
 /**
  * Registers the permission-condition slot components against the
- * {@link SettingsSlotId.PERMISSION_CONDITION} slot.
+ * {@link SettingsSlotId.SETTINGS_PERMISSION_CONDITION} slot.
  *
  * Condition registration is standalone: the synthetic `conditionType`
  * discriminator (see {@link IDaoPermissionCondition}) is used as the `pluginId`, so each
@@ -21,27 +21,27 @@ import { NO_CONDITION, UNKNOWN_CONDITION } from './utils/conditionTypeUtils';
 export const initialiseConditionRegistry = () => {
     pluginRegistryUtils
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'voting-power',
             component: VotingPowerConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'execute-selector',
             component: ExecuteSelectorConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'membership',
             component: MembershipConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: UNKNOWN_CONDITION,
             component: UnrecognizedConditionSlot,
         })
         .registerSlotComponent({
-            slotId: SettingsSlotId.PERMISSION_CONDITION,
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: NO_CONDITION,
             component: NoConditionSlot,
         });

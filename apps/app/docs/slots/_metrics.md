@@ -34,7 +34,7 @@
 | SPP | 7 | 2 | - | - | 9 |
 | Capital Distributor | - | - | - | 1 | 1 |
 | Gauge Voter | - | - | - | 1 | 1 |
-| Condition registry | - | 3 | - | - | 3 |
+| Condition registry | - | 5 | - | - | 5 |
 
 ## Unregistered Slots
 

@@ -27,7 +27,7 @@ export const PermissionCondition: React.FC<IPermissionConditionProps> = ({
             network={network}
             pluginAddress={row.whoAddress}
             pluginId={type}
-            slotId={SettingsSlotId.PERMISSION_CONDITION}
+            slotId={SettingsSlotId.SETTINGS_PERMISSION_CONDITION}
             {...row.condition}
         />
     );

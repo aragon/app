@@ -8,7 +8,6 @@ import type {
 import { PermissionEntityBrandId } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
-import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
@@ -22,12 +21,7 @@ import {
 } from '../permissionEntityUtils';
 
 const NO_CONDITION_LABEL = '-';
-const PROPOSAL_CREATOR_NODE_PREFIX = 'proposal-creator';
-const isGoverningBodyProposalCreationRow = (row: IDaoPermission): boolean =>
-    permissionNameUtils.getPermissionName(row.permissionId) ===
-        permissionTransactionUtils.permissionIds.createProposalPermission &&
-    (row.where?.layer === 'topLevelPlugin' ||
-        row.where?.layer === 'historicalPlugin');
+const GOVERNING_BODY_ACTOR_NODE_PREFIX = 'governing-body-actor';
 
 /**
  * Condition contracts are already conveyed as the `if …` label on the
@@ -119,26 +113,25 @@ interface IResolveEdgeOptions {
     sourceId?: string;
 }
 
-const getProposalCreatorNodeId = (row: IDaoPermission): string => {
-    const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
-
-    return [
-        PROPOSAL_CREATOR_NODE_PREFIX,
-        row.permissionId,
-        row.whoAddress,
-        row.whereAddress,
-        conditionAddress,
-    ]
+const getGoverningBodyActorNodeId = (row: IDaoPermission): string =>
+    [GOVERNING_BODY_ACTOR_NODE_PREFIX, row.whoAddress, row.whereAddress]
         .map((part) => part.toLowerCase())
         .join('-');
-};
 
-const resolveProposalCreatorNode = (
+// A permission acting *on* a governance body (a top-level or historical OSx
+// plugin). Its actor renders as a per-body node keyed by (who, where), so every
+// permission the same actor holds on that body stacks into one node — and the
+// ANY_ADDR quantifier never collapses across different bodies.
+const targetsGovernanceBody = (row: IDaoPermission): boolean =>
+    row.where?.layer === 'topLevelPlugin' ||
+    row.where?.layer === 'historicalPlugin';
+
+const resolveGoverningBodyActorNode = (
     row: IDaoPermission,
     context: IResolveNodeContext,
 ): IPermissionGraphNode => {
     const baseNode = resolveNode(row.whoAddress, context, row.who);
-    const id = getProposalCreatorNodeId(row);
+    const id = getGoverningBodyActorNodeId(row);
     const isMultisigMembers =
         baseNode.brandId !== PermissionEntityBrandId.SAFE &&
         row.who?.interfaceType?.toLowerCase() === 'multisig';
@@ -214,17 +207,19 @@ export const buildPermissionGraph = (
     const edges: IPermissionGraphEdge[] = [];
 
     for (const row of graphRows) {
-        if (!isGoverningBodyProposalCreationRow(row)) {
+        if (!targetsGovernanceBody(row)) {
             ensureNode(row.whoAddress, row.who);
             ensureNode(row.whereAddress, row.where);
             edges.push(resolveEdge(row));
             continue;
         }
 
-        const creatorNode = resolveProposalCreatorNode(row, context);
-        nodesById.set(creatorNode.id, creatorNode);
+        const actorNode = resolveGoverningBodyActorNode(row, context);
+        if (!nodesById.has(actorNode.id)) {
+            nodesById.set(actorNode.id, actorNode);
+        }
         ensureNode(row.whereAddress, row.where);
-        edges.push(resolveEdge(row, { sourceId: creatorNode.id }));
+        edges.push(resolveEdge(row, { sourceId: actorNode.id }));
     }
 
     return { nodes: [...nodesById.values()], edges };

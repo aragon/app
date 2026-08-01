@@ -313,7 +313,7 @@ describe('buildPermissionGraph', () => {
             accountRefs,
         });
         const creatorNodes = graph.nodes.filter((node) =>
-            node.id.startsWith('proposal-creator-'),
+            node.id.startsWith('governing-body-actor-'),
         );
 
         expect(creatorNodes).toHaveLength(2);
@@ -366,7 +366,9 @@ describe('buildPermissionGraph', () => {
         });
 
         expect(
-            graph.nodes.find((node) => node.id.startsWith('proposal-creator-')),
+            graph.nodes.find((node) =>
+                node.id.startsWith('governing-body-actor-'),
+            ),
         ).toMatchObject({
             kind: 'actor',
             label: 'Members of Treasury Multisig',
@@ -383,7 +385,9 @@ describe('buildPermissionGraph', () => {
         });
 
         expect(
-            graph.nodes.find((node) => node.id.startsWith('proposal-creator-')),
+            graph.nodes.find((node) =>
+                node.id.startsWith('governing-body-actor-'),
+            ),
         ).toMatchObject({
             kind: 'plugin',
             label: 'Safe',
@@ -420,7 +424,7 @@ describe('buildPermissionGraph', () => {
             accountRefs,
         });
         const creators = graph.nodes.filter((node) =>
-            node.id.startsWith('proposal-creator-'),
+            node.id.startsWith('governing-body-actor-'),
         );
 
         // GRF-1 regression guard.
@@ -459,7 +463,9 @@ describe('buildPermissionGraph', () => {
         });
 
         expect(
-            graph.nodes.find((node) => node.id.startsWith('proposal-creator-')),
+            graph.nodes.find((node) =>
+                node.id.startsWith('governing-body-actor-'),
+            ),
         ).toMatchObject({
             kind: 'plugin',
             label: 'Polling',
