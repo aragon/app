@@ -220,6 +220,7 @@ describe('permissionEntity Utils', () => {
                         interfaceType: 'multisig',
                         label,
                         layer,
+                        parentPluginName: 'Core Governance',
                     },
                 },
             );
@@ -230,6 +231,9 @@ describe('permissionEntity Utils', () => {
                 tag: undefined,
                 type: 'plugin',
                 layer,
+                // The parent process name describes the body's container, not the
+                // address itself, so it must never become the Safe's detail line.
+                detailName: 'Safe',
             });
         });
 

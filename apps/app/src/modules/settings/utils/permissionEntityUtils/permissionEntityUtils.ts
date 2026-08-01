@@ -199,7 +199,9 @@ class PermissionEntityUtils {
                 address,
                 isSentinel: false,
                 type: 'plugin',
-                detailName: entity.parentPluginName ?? 'Safe',
+                // `parentPluginName` names the process this body sits in, not the
+                // address, so a Safe keeps its own identity as the detail line.
+                detailName: 'Safe',
                 layer: entity.layer,
                 status: entity.status,
                 brandId: entity.brandId,
