@@ -3569,7 +3569,7 @@
           "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
           "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
           "hideGoverningBodyPermissions": "Hide subplugin permissions",
-          "hideGoverningBodyPermissionsTooltip": "Hides permissions where either Who or Where is identified as a subplugin.",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions whose target (Where) is identified as a subplugin.",
           "hideGoverningBodyPermissionsTooltipLabel": "About subplugin permissions"
         },
         "graphView": {

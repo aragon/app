@@ -6,6 +6,7 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
+import { permissionEntityUtils } from '../../utils/permissionEntityUtils';
 import { PermissionsListHeader } from './permissionsListHeader';
 import { PermissionsListRow } from './permissionsListRow';
 import { PermissionsListSkeleton } from './permissionsListSkeleton';
@@ -54,6 +55,21 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
         );
     }
 
+    const sortedRows = rows
+        .map((row) => ({
+            row,
+            whereLabel: permissionEntityUtils.resolvePermissionEntity(
+                row.whereAddress,
+                { daoPlugins, accounts: accountRefs, entity: row.where },
+            ).label,
+        }))
+        .sort((first, second) =>
+            first.whereLabel.localeCompare(second.whereLabel, undefined, {
+                sensitivity: 'base',
+            }),
+        )
+        .map((entry) => entry.row);
+
     return (
         <div className="flex flex-col gap-3">
             <PermissionsListHeader />
@@ -64,7 +80,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                 }
                 value={expandedRows}
             >
-                {rows.map((row) => (
+                {sortedRows.map((row) => (
                     <PermissionsListRow
                         accounts={accountRefs}
                         chainId={chainId}

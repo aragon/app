@@ -16,7 +16,7 @@ export interface IPermissionRowFilters {
      */
     showDaoPermissions: boolean;
     /**
-     * When false, rows touching a subplugin are hidden.
+     * When false, rows whose target (Where) is a subplugin are hidden.
      */
     showSubpluginPermissions: boolean;
 }
@@ -48,20 +48,12 @@ const isSubpluginAddress = (
         );
     }) ?? false;
 
-const isSubpluginEndpoint = (
-    address: string,
-    entity?: IDaoPermission['who'],
-    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-): boolean =>
-    entity?.parentPluginAddress != null ||
-    isSubpluginAddress(address, daoPlugins);
-
-const rowTouchesSubplugin = (
+const rowTargetsSubplugin = (
     row: IDaoPermission,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
-    isSubpluginEndpoint(row.whoAddress, row.who, daoPlugins) ||
-    isSubpluginEndpoint(row.whereAddress, row.where, daoPlugins);
+    row.where?.parentPluginAddress != null ||
+    isSubpluginAddress(row.whereAddress, daoPlugins);
 
 const isDaoGrantedPermission = (
     row: IDaoPermission,
@@ -94,7 +86,7 @@ export const filterPermissionRows = (
             return false;
         }
 
-        if (!showSubpluginPermissions && rowTouchesSubplugin(row, daoPlugins)) {
+        if (!showSubpluginPermissions && rowTargetsSubplugin(row, daoPlugins)) {
             return false;
         }
 
@@ -120,7 +112,7 @@ export const getPermissionRowToggleAvailability = (
             row,
             activeAccountAddress,
         );
-        const isSubpluginPermission = rowTouchesSubplugin(row, daoPlugins);
+        const isSubpluginPermission = rowTargetsSubplugin(row, daoPlugins);
 
         if (
             isDaoPermission &&

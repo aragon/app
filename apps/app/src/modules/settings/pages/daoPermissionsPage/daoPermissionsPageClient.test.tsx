@@ -385,6 +385,24 @@ describe('<DaoPermissionsPageClient /> component', () => {
             name: 'a backend-classified subplugin row',
             rows: [
                 buildRow({
+                    where: {
+                        address: externalAddress,
+                        label: 'Subplugin process',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: {},
+            daoDisabled: true,
+            subpluginDisabled: false,
+            isLoading: false,
+        },
+        {
+            name: 'a caller-side subplugin row that no longer activates the subplugin control',
+            rows: [
+                buildRow({
                     who: {
                         address: externalAddress,
                         label: 'Subplugin process',
@@ -396,7 +414,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
             ],
             params: {},
             daoDisabled: true,
-            subpluginDisabled: false,
+            subpluginDisabled: true,
             isLoading: false,
         },
         {

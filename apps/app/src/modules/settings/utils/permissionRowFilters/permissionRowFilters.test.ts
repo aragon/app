@@ -77,9 +77,9 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual(rows);
     });
 
-    it('hides rows touching installed subplugins by default', () => {
+    it('hides rows targeting installed subplugins by default', () => {
         const rows = [
-            buildRow({ whoAddress: subpluginAddress }),
+            buildRow({ whereAddress: subpluginAddress }),
             buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
         const daoPlugins = [
@@ -98,6 +98,37 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual([rows[1]]);
+    });
+
+    it('keeps rows whose caller is a subplugin when the target is not', () => {
+        const rows = [
+            buildRow({
+                whoAddress: subpluginAddress,
+                who: {
+                    address: subpluginAddress,
+                    label: 'Subplugin process',
+                    layer: 'processInternal',
+                    parentPluginAddress,
+                },
+                whereAddress: pluginAddress,
+            }),
+        ];
+        const daoPlugins = [
+            buildPlugin({
+                address: subpluginAddress,
+                isSubPlugin: true,
+                parentPlugin: parentPluginAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins,
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+        });
+
+        expect(result).toEqual(rows);
     });
 
     it('hides rows touching plugins with a parent plugin by default', () => {
@@ -122,9 +153,9 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[1]]);
     });
 
-    it('hides rows touching addresses listed by a parent plugin subPlugins field', () => {
+    it('hides rows targeting addresses listed by a parent plugin subPlugins field', () => {
         const rows = [
-            buildRow({ whoAddress: subpluginAddress }),
+            buildRow({ whereAddress: subpluginAddress }),
             buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
         const daoPlugins = [
@@ -147,14 +178,14 @@ describe('filterPermissionRows', () => {
     it('hides backend-classified subplugin rows without installed-plugin metadata', () => {
         const rows = [
             buildRow({
-                whereAddress: daoAddress,
-                who: {
+                whoAddress: pluginAddress,
+                where: {
                     address: subpluginAddress,
                     label: 'Process internal',
                     layer: 'processInternal',
                     parentPluginAddress,
                 },
-                whoAddress: subpluginAddress,
+                whereAddress: subpluginAddress,
             }),
             buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
@@ -436,21 +467,21 @@ describe('filterPermissionRows', () => {
         const rows = [
             buildRow({
                 permissionId: createProposalPermissionId,
-                whoAddress: subpluginAddress,
+                whoAddress: pluginAddress,
                 who: {
-                    address: subpluginAddress,
-                    brandId: 'safe',
-                    label: 'Process internal',
-                    layer: 'processInternal',
-                    parentPluginAddress: pluginAddress,
-                },
-                whereAddress: pluginAddress,
-                where: {
                     address: pluginAddress,
                     interfaceType: 'spp',
                     label: 'Core Governance',
                     layer: 'topLevelPlugin',
                     status: 'installed',
+                },
+                whereAddress: subpluginAddress,
+                where: {
+                    address: subpluginAddress,
+                    brandId: 'safe',
+                    label: 'Process internal',
+                    layer: 'processInternal',
+                    parentPluginAddress: pluginAddress,
                 },
             }),
             buildRow({ whereAddress: daoAddress }),
@@ -483,7 +514,7 @@ describe('filterPermissionRows', () => {
     });
 
     it('keeps subplugin rows when enabled', () => {
-        const rows = [buildRow({ whoAddress: subpluginAddress })];
+        const rows = [buildRow({ whereAddress: subpluginAddress })];
         const daoPlugins = [
             buildPlugin({ address: subpluginAddress, isSubPlugin: true }),
         ];
@@ -502,12 +533,12 @@ describe('filterPermissionRows', () => {
         {
             showDaoPermissions: false,
             showSubpluginPermissions: false,
-            expectedIndexes: [0],
+            expectedIndexes: [0, 2],
         },
         {
             showDaoPermissions: true,
             showSubpluginPermissions: false,
-            expectedIndexes: [0, 1],
+            expectedIndexes: [0, 1, 2],
         },
         {
             showDaoPermissions: false,

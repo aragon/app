@@ -48,8 +48,12 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
     const permissionName = permissionNameUtils.getPermissionName(
         row.permissionId,
     );
-    const { label: conditionLabel, hasCondition } =
-        conditionTypeUtils.resolveConditionDisplay(row);
+    const {
+        label: conditionLabel,
+        hasCondition,
+        isUnrecognized,
+    } = conditionTypeUtils.resolveConditionDisplay(row);
+    const hasConditionBreakdown = hasCondition && !isUnrecognized;
 
     const handleTabChange = (value?: string | string[]) => {
         if (value === 'details' || value === 'condition') {
@@ -57,7 +61,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
         }
     };
 
-    const selectedTab = hasCondition ? activeTab : 'details';
+    const selectedTab = hasConditionBreakdown ? activeTab : 'details';
 
     return (
         <>
@@ -66,7 +70,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                     <p className="min-w-0 truncate font-mono text-lg text-neutral-800 leading-tight">
                         {permissionName}
                     </p>
-                    {hasCondition && (
+                    {hasConditionBreakdown && (
                         <ToggleGroup
                             isMultiSelect={false}
                             onChange={handleTabChange}
@@ -153,7 +157,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                             />
                         </div>
                         <div className="flex flex-1 flex-col gap-3">
-                            {hasCondition && (
+                            {hasConditionBreakdown && (
                                 <>
                                     <p className="text-lg text-neutral-800 leading-tight">
                                         {t(

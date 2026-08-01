@@ -45,4 +45,28 @@ describe('<PermissionDetailContent /> component', () => {
             screen.queryByTestId('no-condition-placeholder'),
         ).not.toBeInTheDocument();
     });
+
+    it('hides the condition toggle for unrecognized condition payloads', () => {
+        const row: IDaoPermission = {
+            permissionId: EXECUTE_PERMISSION_ID,
+            whoAddress: ANY_ADDR,
+            whereAddress: ALLOW_FLAG,
+            conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+        };
+
+        render(
+            <GukModulesProvider>
+                <PermissionDetailContent
+                    chainId={1}
+                    permissionName="EXECUTE_PERMISSION"
+                    row={row}
+                />
+            </GukModulesProvider>,
+        );
+
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
+        expect(
+            screen.queryByTestId('unrecognized-condition'),
+        ).not.toBeInTheDocument();
+    });
 });

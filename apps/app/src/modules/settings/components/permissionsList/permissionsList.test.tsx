@@ -362,10 +362,15 @@ describe('<PermissionsList /> component', () => {
         expect(screen.getAllByText('-').length).toBeGreaterThan(0);
     });
 
-    it('renders mobile rows as inline detail cards showing the existing details list directly', () => {
+    it('renders mobile rows as inline detail cards showing the existing details list directly', async () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+                condition: {
+                    conditionType: 'voting-power',
+                    token: '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5',
+                    minVotingPower: '1000000000000000000',
+                },
             }),
         ];
 
@@ -390,11 +395,69 @@ describe('<PermissionsList /> component', () => {
         );
 
         expect(
-            screen.getByTestId('unrecognized-condition'),
+            await screen.findByText(/votingPowerConditionSlot.token/),
         ).toBeInTheDocument();
         expect(
             screen.queryByText(/permissionsList.details.who/),
         ).not.toBeInTheDocument();
+    });
+
+    it('treats unrecognized conditions like unconditional rows for the breakdown affordances', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            }),
+        ];
+
+        render(
+            createTestComponent({
+                rows,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
+        expect(
+            screen.queryByText(/permissionsList.condition.heading/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('unrecognized-condition'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getAllByText('Unrecognized condition').length,
+        ).toBeGreaterThan(0);
+    });
+
+    it('sorts rows by the resolved Where label', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                whereAddress: '0x9999999999999999999999999999999999999999',
+                where: {
+                    address: '0x9999999999999999999999999999999999999999',
+                    label: 'Zeta Plugin',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+                whereAddress: '0x8888888888888888888888888888888888888888',
+                where: {
+                    address: '0x8888888888888888888888888888888888888888',
+                    label: 'Alpha Plugin',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+        ];
+
+        render(createTestComponent({ rows }));
+
+        const whereLabels = screen
+            .getAllByText(/^(Zeta Plugin|Alpha Plugin)$/)
+            .map((element) => element.textContent);
+        expect(whereLabels[0]).toBe('Alpha Plugin');
+        expect(whereLabels.at(-1)).toBe('Zeta Plugin');
     });
 
     it('hides the condition toggle on mobile cards when the row has no condition', () => {

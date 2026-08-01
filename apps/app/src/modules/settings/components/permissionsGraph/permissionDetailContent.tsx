@@ -43,7 +43,9 @@ export const PermissionDetailContent: React.FC<
         address: conditionAddress,
         label: conditionLabel,
         hasCondition,
+        isUnrecognized,
     } = conditionTypeUtils.resolveConditionDisplay(row);
+    const hasConditionBreakdown = hasCondition && !isUnrecognized;
 
     const isWhoAnyAddress = addressUtils.isAddressEqual(
         row.whoAddress,
@@ -60,7 +62,7 @@ export const PermissionDetailContent: React.FC<
         }
     };
 
-    const selectedTab = hasCondition ? activeTab : 'permission';
+    const selectedTab = hasConditionBreakdown ? activeTab : 'permission';
 
     return (
         <div className={className ?? 'flex flex-col gap-4 p-4'}>
@@ -68,7 +70,7 @@ export const PermissionDetailContent: React.FC<
                 <p className="font-medium text-neutral-800">
                     {t('app.settings.permissionsList.details.heading')}
                 </p>
-                {hasCondition && (
+                {hasConditionBreakdown && (
                     <ToggleGroup
                         isMultiSelect={false}
                         onChange={handleTabChange}
