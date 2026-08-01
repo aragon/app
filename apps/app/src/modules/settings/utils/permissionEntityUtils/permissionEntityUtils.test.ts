@@ -109,10 +109,10 @@ describe('permissionEntity Utils', () => {
             },
             {
                 description:
-                    'falls back to an unresolved label for unknown addresses',
+                    'falls back to the truncated address for unknown addresses',
                 address: unknownAddress,
                 expected: {
-                    label: 'Unknown address',
+                    label: addressUtils.truncateAddress(unknownAddress),
                     detailName: addressUtils.truncateAddress(unknownAddress),
                     isSentinel: false,
                     tag: undefined,
@@ -134,6 +134,26 @@ describe('permissionEntity Utils', () => {
                 expect(result.detailName).toEqual(expected.detailName);
             }
             expect(result.address).toEqual(address);
+        });
+
+        it('presents backend-unresolved addresses as their address, not a placeholder label', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        label: 'Unknown address',
+                        layer: 'unknown',
+                        status: 'unknown',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                label: addressUtils.truncateAddress(unknownAddress),
+                type: 'address',
+                layer: 'unknown',
+            });
         });
 
         it('prefers backend-enriched entity metadata over local fallbacks', () => {

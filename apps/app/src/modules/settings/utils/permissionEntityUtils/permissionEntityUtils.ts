@@ -172,7 +172,7 @@ class PermissionEntityUtils {
         }
 
         return {
-            label: 'Unknown address',
+            label: addressUtils.truncateAddress(address),
             address,
             isSentinel: false,
             type: 'address',
@@ -185,11 +185,15 @@ class PermissionEntityUtils {
         entity: IPermissionEntityRef,
         daoPlugins?: DaoPluginEntries,
     ): IPermissionEntity => {
+        // The backend hardcodes a generic label for addresses it cannot resolve;
+        // treat it as "no name" so unknowns present as their address instead.
+        const backendLabel =
+            entity.label !== 'Unknown address' ? entity.label : undefined;
         const label =
-            entity.label ??
+            backendLabel ??
             (entity.layer === 'contract'
                 ? 'Unresolved contract'
-                : 'Unknown address');
+                : addressUtils.truncateAddress(address));
         const tag = entity.interfaceType?.toUpperCase();
 
         if (entity.brandId === PermissionEntityBrandId.SAFE) {
