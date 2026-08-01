@@ -1,6 +1,6 @@
 # Contract: APP-942 permission-viewer audit remediation
 
-Status: **Contract decisions resolved; implementation intentionally not started and requires explicit follow-up authorization.**
+Status: **Slices 2–6 complete; only manual browser review remains. Slice 1 stays reversed per the owner (existing `permissionsPage` flag artifacts retained, no new gate wiring). Slice 6 (2026-07-31) ran the scope/regression review with an owner-directed simplicity focus: an opus adversarial simplicity review over the full diff plus sonnet disposition/scope sweeps; ten behavior-preserving simplifications applied (folds, dead-code/dead-type removal, registry-canonical condition dispatch, per-module test co-location), five judgment calls explicitly rejected with rationale. All 62 audit finding IDs dispositioned with zero open (see `APP-942-finding-dispositions.md`). Verification: focused suites 32/214 green (a direct `PermissionDetailPanel` proof was added when the 2026-08-01 final-check bug hunt found the folded panel uncovered); full app jest 2289/2289 tests pass (3 unrelated suites fail to compile on a Windows-only jest/SVG path quirk in `daos/xmaquina`); lint clean; type-check baseline-red in the same 69 pre-existing files with zero changed-file diagnostics; `git diff --check` clean. Outstanding: manual narrow/wide viewport and graph interaction review in a real browser. Owner authorized final checks + draft PR on 2026-08-01; at PR time, `origin/app-942-permissions-graph-finish` was found to carry 8 parallel APP-942 remediation commits (including flag re-gating and the CNV-2 slot rename, both contrary to this contract's owner decisions) — the divergence is flagged in the draft PR for an owner decision.**
 
 ## Linked intent
 
@@ -8,7 +8,7 @@ Status: **Contract decisions resolved; implementation intentionally not started 
 - Audit: `C:\Users\navet\AppData\Local\Temp\claude\c--dev-app\c9c1dfaa-d272-491d-8f1b-5a02401cc5ff\scratchpad\permission-viewer-audit.md`
 - Call feedback: adjacent `permission-viewer-call-feedback.md`
 - Reconciled base: `675a7f9d` on `app-942-permissions-graph-finish`
-- Owner decision (2026-07-31): APP-953 is complete and the permissions page is intentionally launched without a feature gate.
+- Owner decision (2026-07-31): APP-953 is complete; retain the existing `permissionsPage` flag artifacts, leave current gate wiring unchanged, and continue with the permission-viewer remediation.
 - History decision: leave inherited `cc1a6a2c` ancestry unchanged; a later branch reconstruction/history rewrite requires separate explicit authority.
 - Slot decision: keep the existing `PERMISSION_CONDITION` runtime key; CNV-2 is an owner-approved exclusion because the rename is non-critical and would add compatibility complexity.
 - Risk class: high (permission visibility and rollout control)
@@ -27,15 +27,15 @@ The page is a trustworthy, maintainable view of the permission rows returned by 
 
 ### Acceptance criteria
 
-- [ ] **AC-1 — Complete, explicit visibility.** The primary endpoint remains the only permission-row source. No secondary-source stitching, permission-name carve-out, unresolved/residual heuristic, inactive/historical pre-filter, or unacknowledged view-local selector hides rows. Page-level rows may be hidden only by the two visible controls: DAO-granted permissions and true subplugin-touching permissions.
-- [ ] **AC-2 — Correct subplugin semantics.** `parentPluginAddress != null` is authoritative row enrichment; installed plugin metadata (`isSubPlugin`, `parentPlugin`, or the parent plugin's `subPlugins`) is fallback evidence only. A top-level `processInternal` entity with no parent remains visible. ANY_ADDR/create-proposal, unresolved, and historical permissions follow the same rules as every other permission. This deliberately supersedes the audit blueprint's over-broad `processInternal` shorthand and preserves the call's parent-vs-subplugin distinction.
-- [ ] **AC-3 — One row set, two views.** The page passes the identical filtered row array to list and graph, and graph presentation must not subsume ordinary source permission rows. Preserve only the audit-acknowledged condition-contract endpoint exception: those endpoints may be omitted as graph nodes/edges when their condition is represented as edge annotation, and that exception must remain explicit and tested. The parity already established by `675a7f9d` remains protected.
+- [x] **AC-1 — Complete, explicit visibility.** The primary endpoint remains the only permission-row source. No secondary-source stitching, permission-name carve-out, unresolved/residual heuristic, inactive/historical pre-filter, or unacknowledged view-local selector hides rows. Page-level rows may be hidden only by the two visible controls: DAO-granted permissions and true subplugin-touching permissions.
+- [x] **AC-2 — Correct subplugin semantics.** `parentPluginAddress != null` is authoritative row enrichment; installed plugin metadata (`isSubPlugin`, `parentPlugin`, or the parent plugin's `subPlugins`) is fallback evidence only. A top-level `processInternal` entity with no parent remains visible. ANY_ADDR/create-proposal, unresolved, and historical permissions follow the same rules as every other permission. This deliberately supersedes the audit blueprint's over-broad `processInternal` shorthand and preserves the call's parent-vs-subplugin distinction.
+- [x] **AC-3 — One row set, two views.** The page passes the identical filtered row array to list and graph, and graph presentation must not subsume ordinary source permission rows. Preserve only the audit-acknowledged condition-contract endpoint exception: those endpoints may be omitted as graph nodes/edges when their condition is represented as edge annotation, and that exception must remain explicit and tested. The parity already established by `675a7f9d` remains protected.
 - [ ] **AC-4 — One responsive information model.** Every permission exposes, in order, Who, Where, Permission, Condition at every breakpoint. Condition always exists as a field and renders `-` when absent. Breakpoints may change the affordance, never the information or detail semantics. Mobile and desktop share row/detail content rather than parallel component systems.
-- [ ] **AC-5 — Shared entity and condition semantics.** Existing DefinitionList/Link/copy affordances, explorer URL builders, permission ID sources, Safe brand registry/types, and shared condition dispatch are reused. Conditions and voting-token addresses link to the explorer; permission IDs remain copyable non-address content and never receive an explorer link. Recognized Safe enrichment (`brandId: safe`) wins over generic/backend labels so a Safe is consistently identified as Safe; other backend entity labels retain their normal precedence.
-- [ ] **AC-6 — Honest states and controls.** Permission-query failure renders the existing error surface, not an empty state. Empty state remains reserved for a successful empty result. Toggle disabled-state computation is covered and does not require signature sorting or repeated whole-result comparisons.
-- [ ] **AC-7 — Complete the approved launch.** APP-953 is complete and the owner confirms the page is intentionally launched. Keep the route and both entry links available, remove the obsolete `permissionsPage` flag/config/docs/test assumptions, and prove there are no remaining rollout-gate references or mixed states.
-- [ ] **AC-8 — Finish the surviving audit cleanup.** The graph is loaded only for graph view; obsolete no-op graph filtering is removed; canvas responsibilities are decomposed into settings-local seams without changing graph behavior; surviving condition UI, typing/generator, file/component, duplicated-dispatch, dead-code, spacing/a11y, and naming findings are corrected. Keep the existing `PERMISSION_CONDITION` runtime key unchanged. No compatibility layer or new app-wide framework is introduced.
-- [ ] **AC-9 — Scope integrity.** Refuted findings, the legitimate empty `backendApiMocks` array, and work already satisfied on the reconciled base are not reimplemented. The remediation adds no new unrelated design-sync/tooling changes and leaves inherited `cc1a6a2c` ancestry unchanged. Any later history reconstruction is separate work requiring explicit authority.
+- [x] **AC-5 — Shared entity and condition semantics.** Existing DefinitionList/Link/copy affordances, explorer URL builders, permission ID sources, Safe brand registry/types, and shared condition dispatch are reused. Conditions and voting-token addresses link to the explorer; permission IDs remain copyable non-address content and never receive an explorer link. Recognized Safe enrichment (`brandId: safe`) wins over generic/backend labels so a Safe is consistently identified as Safe; other backend entity labels retain their normal precedence.
+- [x] **AC-6 — Honest states and controls.** Permission-query failure renders the existing error surface, not an empty state. Empty state remains reserved for a successful empty result. Toggle disabled-state computation is covered and does not require signature sorting or repeated whole-result comparisons.
+- [x] **AC-7 — Preserve the rollout flag.** APP-953 is complete, but the owner explicitly directed that the existing `permissionsPage` flag declaration and configuration remain. Slice 1 is reversed and deferred; no new gate wiring or rollout behavior change is authorized in this remediation.
+- [x] **AC-8 — Finish the surviving audit cleanup.** The graph is loaded only for graph view; obsolete no-op graph filtering is removed; canvas responsibilities are decomposed into settings-local seams without changing graph behavior; surviving condition UI, typing/generator, file/component, duplicated-dispatch, dead-code, spacing/a11y, and naming findings are corrected. Keep the existing `PERMISSION_CONDITION` runtime key unchanged. No compatibility layer or new app-wide framework is introduced.
+- [x] **AC-9 — Scope integrity.** Refuted findings, the legitimate empty `backendApiMocks` array, and work already satisfied on the reconciled base are not reimplemented. The remediation adds no new unrelated design-sync/tooling changes and leaves inherited `cc1a6a2c` ancestry unchanged. Any later history reconstruction is separate work requiring explicit authority.
 
 ### Non-goals
 
@@ -45,7 +45,7 @@ The page is a trustworthy, maintainable view of the permission rows returned by 
 - [ ] No reintroduction of a second permission data source.
 - [ ] No work on audit Appendix A refutations or GAP3-4 (`backendApiMocks`).
 - [ ] No rename, alias, migration, or documentation churn for `PERMISSION_CONDITION` (CNV-2 is explicitly accepted).
-- [ ] No implementation, proof changes, history rewrite, commit, push, PR, merge, or deploy under the current authorization.
+- [ ] No implementation outside authorized slices 5–6, no new `permissionsPage` gate wiring, and no history rewrite, merge, or deploy under the current authorization. Owner authorization 2026-08-01: final checks, commit, push, and a **draft** PR are explicitly authorized; merge/deploy remain excluded.
 
 ### Constraints
 
@@ -72,17 +72,17 @@ All other audit recommendations remain in scope only where the underlying proble
 | GRF | GRF-1 and GRF-2 outcomes are satisfied; GRF-3/4 remain where reproduced | Slice 4; graph unit/component tests and changed-file review |
 | LBL / CND | Condition address linking partly satisfied; Safe precedence and residual condition-slot/UI issues remain | Slices 3 and 5; entity/condition component tests |
 | VRB / TST / CNV / GAP1 | Partly satisfied by reconciled commits; surviving dead code, proof, naming, typing, and generator findings remain; CNV-2 is owner-excluded | Slice 5; tests, type-check, and targeted search/review; record CNV-2 as accepted/no-action |
-| GAP2 | Owner confirms intentional launch; obsolete flag declaration/config remains | Slice 1; delete dead rollout artifacts and prove route plus both entry links remain available |
+| GAP2 | Owner explicitly retains the existing flag declaration/config after reviewing slice 1 | Owner-deferred/no implementation; preserve the restored artifacts and do not add gate wiring without separate authorization |
 | GAP3 | Lazy graph remains; inherited design-sync ancestry is accepted unchanged for this task; GAP3-4 is legitimate/no-action | Slices 4 and 6; import-boundary proof and changed-file review |
 | Appendix A / refuted findings | Excluded | No implementation; retain exclusion rationale |
 
-Before review, every confirmed audit finding ID must appear in a compact disposition record as one of: satisfied by reconciled base commit, fixed by this remediation with proof, or explicitly excluded/deferred with owner-approved rationale. This matrix may live in the implementation PR; it need not duplicate the audit in this contract.
+Before review, every confirmed audit finding ID must appear in a compact disposition record as one of: satisfied by reconciled base commit, fixed by this remediation with proof, or explicitly excluded/deferred with owner-approved rationale. This matrix may live in the implementation PR; it need not duplicate the audit in this contract. **Done: the record lives at `operating-model/contracts/APP-942-finding-dispositions.md` (62/62 IDs, zero open).**
 
 ## Technical contract
 
 ### Current behavior
 
-`useAllDaoPermissions` is already the sole permission source and `daoPermissionsPageClient` supplies one filtered array to both views. However, `permissionRowFilters` still permanently removes inactive endpoints and uses unresolved/residual/name-specific rules unrelated to the two controls; query errors are discarded; all three `permissionsPage` gates are absent; the list still has separate mobile and desktop trees; Safe/domain/condition conventions remain fragmented; and graph loading/canvas structure plus several smaller audit findings remain unresolved.
+`useAllDaoPermissions` is the sole permission source and `daoPermissionsPageClient` supplies one explicitly filtered array to both views while preserving query errors. The existing `permissionsPage` artifacts remain restored per owner direction. The list now shares one responsive row/detail tree, entity and condition semantics use the shared DAO-service boundary, and graph-only code is lazy-loaded behind a decomposed settings-local canvas. Manual responsive and graph interaction review remains outstanding.
 
 ### Proposed system change
 
@@ -110,16 +110,16 @@ Keep selection at the DAO-permissions page boundary: one source, one explicit fi
 - ADR required: no; the audit and contract are sufficient for this bounded feature remediation. Reassess only if rollout becomes a cross-feature policy.
 - Split-work decision: one task/PR with sequential, independently reviewable commits. A staged rollout, compatibility migration, or history rewrite requires separate explicit authority and may require a follow-up contract.
 - Human or governed approval required before coding: yes.
-- Approval owner/status: user/product owner; rollout, history, and slot decisions are resolved. A follow-up instruction to implement remains pending.
+- Approval owner/status: user/product owner; slice 1 is reversed and the flag-retention decision is recorded. Slices 2–5 are explicitly authorized. The owner accepted carrying slice-3 adversarial blockers forward instead of stopping; slice 5 fixed the behavior gaps. Slice 6 was authorized and executed on 2026-07-31 with an owner-directed simplicity focus; manual browser review remains for the owner.
 
 ### Implementation slices
 
-1. **Approved launch cleanup** — Complete AC-7 by removing the obsolete `permissionsPage` flag artifacts while retaining an available route and both entry links. Status: To do.
-2. **Permission selection and error proof/fix** — AC-1, AC-2, AC-3, AC-6 with proof-first filter, parity, toggle, and error cases. Status: To do.
-3. **Responsive list and shared semantics** — AC-4 and AC-5; unify content, condition behavior, links/copy, Safe/entity resolution, and condition UI. Status: To do.
-4. **Graph boundary and structural cleanup** — AC-8 graph lazy-loading, no-op removal, and behavior-preserving canvas seams. Status: To do.
-5. **Domain, convention, and residual audit cleanup** — Remaining AC-8 types/generators, permission constants, file/component boundaries, dead code, test fixtures, spacing/a11y; explicitly leave the slot key/docs unchanged. Status: To do.
-6. **Scope and regression review** — AC-9 plus full focused verification and manual responsive/graph review. Status: To do.
+1. **Approved launch cleanup** — AC-7 flag removal was implemented locally, then explicitly reversed by the owner. Status: Deferred/no change; existing `permissionsPage` flag artifacts are restored and no new gate wiring is authorized.
+2. **Permission selection and error proof/fix** — AC-1, AC-2, AC-3, AC-6 with proof-first filter, parity, toggle, and error cases. Status: Focused proof green (4 suites / 57 tests; expanded 5 suites / 74 tests), lint green, no changed-file type-check diagnostics, and adversarially approved. Repository type-check remains baseline-red outside slice 2; full repository tests have not been run.
+3. **Responsive list and shared semantics** — AC-4 and AC-5; unify content, condition behavior, links/copy, Safe/entity resolution, and condition UI. Status: Focused proof green (8 suites / 61 tests in expanded regression); owner-directed provisional acceptance. Deferred to the final cleanup/review: Safe precedence outside `processInternal`, unsupported non-empty condition dispatch, malformed voting-token payload validation, and manual narrow/wide viewport proof.
+4. **Graph boundary and structural cleanup** — AC-8 graph lazy-loading, no-op removal, and behavior-preserving canvas seams. Status: Focused proof green (5 graph suites / 41 tests; expanded page/graph regression 6 suites / 56 tests), focused lint and `git diff --check` green, no changed-file type-check diagnostics, and adversarially approved. The graph is behind a dynamic barrel, the identity edge helper is removed, and the 957-line canvas is decomposed into a 274-line orchestrator plus settings-local flow/layout modules. Manual graph interaction/layout proof is deferred to the final review.
+5. **Domain, convention, and residual audit cleanup** — Remaining AC-8 types/generators, permission constants, file/component boundaries, dead code, test fixtures, spacing/a11y; explicitly leave the slot key/docs unchanged. Status: Adversarially approved. Focused behavior proof green (5 suites / 50 tests); compact condition/constants proof green (2 suites / 15 tests); domain/view-model proof green (7 suites / 55 tests); component-boundary proof green (5 suites / 49 tests); TST-6 proof green (1 suite / 11 tests); original CND-6 proof green (1 suite / 5 tests). Final blocker closure passed 5 suites / 53 tests, followed by a 17/17 list rerun after the typed icon wrapper fix. The shared generator now has direct default-coherence proof and backs list/graph/page fixtures; decoded-to-raw fallback is covered; list-header spacing uses the Accordion padding and real chevron affordance; and the legacy settings permission-row aliases are deleted. The full app type-check remains baseline-red on broad UI-kit declaration issues; its only two reported slice-local issues were corrected. Focused component/domain lint checks were green, and `git diff --check` plus feature-flag/slot-key scope checks are green. The combined root suite and final focused lint rerun were blocked before execution by the environment approval service's usage quota, not by test failures.
+6. **Scope and regression review** — AC-9 plus full focused verification and manual responsive/graph review. Status: Done except manual browser review. Simplicity-focused review pass (opus diff review + sonnet disposition/scope sweeps) applied ten behavior-preserving simplifications and rejected five judgment calls with recorded rationale; one proposed cleanup (dropping sentinel `.toLowerCase()` normalization) was disproven by the case-insensitivity test and reverted. Finding dispositions: 51 fixed / 4 satisfied-by-base / 7 owner-excluded / 0 open (`APP-942-finding-dispositions.md`). Focused suites 32/214 green at close (final-check additions included); full app jest 2289/2289 tests pass on the final tree (3 unrelated Windows-env compile failures in `daos/xmaquina`); lint clean; type-check unchanged vs baseline; `git diff --check` clean. Manual narrow/wide viewport and graph drag/fullscreen review in a real browser is the sole remaining item.
 
 Slices are sequential because later refactors depend on the corrected selection/error contracts. They may use bounded subagents only with disjoint write scopes.
 
@@ -132,7 +132,7 @@ Slices are sequential because later refactors depend on the corrected selection/
 | AC-4 | component + manual viewport proof | `permissionsList.test.tsx`; Who/Where/Permission/Condition and the no-condition dash at narrow and wide layouts | yes for semantics; manual after layout change |
 | AC-5 | unit/component tests | entity resolver, condition slots, and list/graph details prove Safe precedence and explorer/copy semantics | yes for regressions |
 | AC-6 | hook + page component tests | `usePermissionsData.test.ts`, `daoPermissionsPageClient.test.tsx`; error vs successful-empty and toggle disabled states | yes |
-| AC-7 | server + entry-point tests and targeted search | route renders without a gate, settings-info and hierarchy links remain visible, and no obsolete `permissionsPage` flag/config reference survives | yes |
+| AC-7 | changed-file review | existing `permissionsPage` flag declaration/configuration remain unchanged; no new gate wiring is introduced | no; owner-deferred |
 | AC-8 | unit/component/type checks | graph lazy boundary and behavior tests; condition component tests; domain type/generator tests; type-check; targeted searches for no-op/dead code; viewport/a11y checklist | before behavior-changing fixes; after pure extraction where no stable red oracle exists |
 | AC-9 | deterministic + review | `git diff --check`, changed-file/range review, and finding-ID disposition record | no; review stage |
 
@@ -140,7 +140,8 @@ Slices are sequential because later refactors depend on the corrected selection/
 
 | Behavior or risk | Proof artifact | Stage | Rationale |
 |---|---|---|---|
-| Permission visibility and rollout | proof-first tests | proof | Precise, security-adjacent, and regression-prone behavior needs a red oracle before code changes. |
+| Permission visibility | proof-first tests | proof | Precise, security-adjacent, and regression-prone behavior needs a red oracle before code changes. |
+| Rollout flag retention | changed-file review | review | The owner reversed slice 1; preserve existing artifacts and add no new gate wiring. |
 | Query error handling and responsive information parity | proof-first component tests | proof | Stable semantic assertions exist independent of styling. |
 | Graph/list parity already fixed at base | existing tests plus strengthened regression | proof | Preserve the current fix; do not recreate it. |
 | Visual spacing, affordances, fullscreen/drag interactions | manual browser verification and targeted existing tests | review | jsdom cannot reliably prove geometry or responsive visual quality. |
@@ -149,9 +150,10 @@ Slices are sequential because later refactors depend on the corrected selection/
 
 ### Proof strategy
 
-- [x] Proof-first for permission selection, rollout, error behavior, and responsive information semantics.
+- [x] Proof-first for permission selection and error behavior.
+- [x] Proof-first for responsive information semantics in slice 3.
 - [x] Proof-after for behavior-preserving structural extraction.
-- [x] Manual verification for responsive visual quality and graph interactions, with recorded evidence.
+- [ ] Manual verification for responsive visual quality and graph interactions, with recorded evidence.
 
 ### Required commands
 
@@ -160,10 +162,7 @@ pnpm --filter @aragon/app exec jest --runInBand --runTestsByPath \
   src/modules/settings/utils/permissionRowFilters/permissionRowFilters.test.ts \
   src/modules/settings/utils/buildPermissionGraph/buildPermissionGraph.test.ts \
   src/modules/settings/hooks/usePermissionsData/usePermissionsData.test.ts \
-  src/modules/settings/pages/daoPermissionsPage/daoPermissionsPage.test.tsx \
   src/modules/settings/pages/daoPermissionsPage/daoPermissionsPageClient.test.tsx \
-  src/modules/settings/components/daoSettingsInfo/daoSettingsInfo.test.tsx \
-  src/modules/settings/components/daoHierarchy/daoHierarchy.test.tsx \
   src/modules/settings/components/permissionsList/permissionsList.test.tsx
 pnpm --filter @aragon/app type-check
 pnpm --filter @aragon/app lint:check
@@ -175,7 +174,7 @@ git diff --check
 
 ### Risks
 
-- Product: launch is approved; the remaining risk is leaving stale flag artifacts or continuing to hide audit rows.
+- Product: the existing flag artifacts are intentionally retained without new gate wiring; the slice-2 risk is continuing to hide audit rows.
 - Technical: broad cleanup can change graph/list behavior if correctness and refactor slices are mixed.
 - Security: display visibility is security-adjacent, though on-chain authorization is unchanged.
 - Data: no mutation; risk is incorrect omission or labeling of returned permissions.
@@ -188,6 +187,6 @@ git diff --check
 
 Near task close before merge, decide:
 
-- [ ] Actual learning or no-op rationale included in the implementation PR.
+- [x] Slice-4 learning: the named-export dynamic-barrel test is the narrow durable guardrail for keeping the heavy graph behind its conditional view boundary; no broader rule or skill change is justified from one instance.
 - [ ] Follow-up intent proposed for any separate rollout, history, or durable guardrail work.
-- [ ] Durable memory action chosen for feature-flag removal and visibility-filter guardrails, or explicitly declined with rationale.
+- [x] Durable memory action chosen for slice 4: retain the focused lazy-barrel and all-graph-edge tests; defer the task-wide visibility-filter learning decision until final review.
