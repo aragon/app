@@ -6,7 +6,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { IDaoPermission } from '@/shared/api/daoService';
-import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDaoPermission } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
@@ -15,10 +14,6 @@ import {
     type IPermissionsListProps,
     PermissionsList,
 } from './permissionsList';
-
-jest.mock('@/shared/components/dialogProvider', () => ({
-    useDialogContext: jest.fn(),
-}));
 
 const ROOT_PERMISSION_ID =
     '0x815fe80e4b37c8582a3b773d1d7071f983eacfd56b5965db654f3087c25ada33';
@@ -40,20 +35,8 @@ const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
     });
 
 describe('<PermissionsList /> component', () => {
-    const useDialogContextMock =
-        dialogProvider.useDialogContext as unknown as jest.Mock;
-    const openDialogMock = jest.fn();
-
     beforeAll(() => {
         initialiseConditionRegistry();
-    });
-
-    beforeEach(() => {
-        openDialogMock.mockClear();
-        useDialogContextMock.mockReturnValue({
-            open: openDialogMock,
-            close: jest.fn(),
-        });
     });
 
     afterEach(() => {
@@ -251,7 +234,7 @@ describe('<PermissionsList /> component', () => {
         );
     });
 
-    it('renders the summary card and accordion arrangements with ordered field labels and no graph-detail tabs', () => {
+    it('renders the inline card and accordion arrangements with ordered field labels', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
@@ -261,8 +244,8 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(2);
-        expect(screen.queryAllByRole('radio')).toHaveLength(0);
+        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(3);
+        expect(screen.getAllByRole('radio')).toHaveLength(2);
 
         const rowHeader = screen
             .getAllByText('EXECUTE_PERMISSION')
@@ -323,24 +306,30 @@ describe('<PermissionsList /> component', () => {
                 /app\.settings\.permissionsList\.details\.(who|where|permission|condition)$/,
             )
             .map((element) => element.textContent);
-        expect(detailTerms).toEqual([
+        expect(detailTerms).toHaveLength(8);
+        expect(detailTerms.slice(0, 4)).toEqual([
             'app.settings.permissionsList.details.who',
             'app.settings.permissionsList.details.where',
             'app.settings.permissionsList.details.permission',
             'app.settings.permissionsList.details.condition',
         ]);
 
-        const conditionLink = screen
-            .getByText(addressUtils.truncateAddress(conditionAddress))
-            .closest('a');
-        expect(conditionLink?.getAttribute('href')).toContain(
-            `/address/${conditionAddress}`,
+        const conditionLinks = screen.getAllByText(
+            addressUtils.truncateAddress(conditionAddress),
         );
+        expect(conditionLinks.length).toBeGreaterThan(0);
+        for (const conditionValue of conditionLinks) {
+            expect(conditionValue.closest('a')?.getAttribute('href')).toContain(
+                `/address/${conditionAddress}`,
+            );
+        }
 
-        const permissionHash = screen.getByText(
+        const permissionHashes = screen.getAllByText(
             addressUtils.truncateHash(EXECUTE_PERMISSION_ID),
         );
-        expect(permissionHash.closest('a')).toBeNull();
+        for (const permissionHash of permissionHashes) {
+            expect(permissionHash.closest('a')).toBeNull();
+        }
         screen
             .getAllByTestId(IconType.COPY)
             .forEach((copyIcon) => fireEvent.click(copyIcon));
@@ -373,47 +362,42 @@ describe('<PermissionsList /> component', () => {
         expect(screen.getAllByText('-').length).toBeGreaterThan(0);
     });
 
-    it('renders mobile summary cards whose buttons open the shared details and condition dialogs', () => {
+    it('renders mobile rows as inline detail cards showing the existing details list directly', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
-                condition: { conditionType: 'voting-power' },
             }),
         ];
 
         render(createTestComponent({ rows, chainId: 1 }));
 
-        const detailsButton = screen.getByRole('button', {
-            name: /permissionsList.details.heading/,
-        });
-        expect(detailsButton.closest('[class~="md:hidden"]')).not.toBeNull();
+        const detailsTerm = screen.getAllByText(
+            /permissionsList.details.who/,
+        )[0];
+        expect(detailsTerm.closest('[class~="md:hidden"]')).not.toBeNull();
 
-        fireEvent.click(detailsButton);
-        expect(openDialogMock).toHaveBeenCalledWith(
-            'PERMISSION_DETAILS',
-            expect.objectContaining({
-                params: expect.objectContaining({
-                    row: rows[0],
-                    view: 'details',
-                }),
+        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(3);
+        expect(
+            screen.queryByRole('button', {
+                name: /permissionsList.details.heading/,
+            }),
+        ).not.toBeInTheDocument();
+
+        fireEvent.click(
+            screen.getByRole('radio', {
+                name: /permissionsList.condition.heading/,
             }),
         );
 
-        const conditionButton = screen.getByRole('button', {
-            name: /permissionsList.condition.heading/,
-        });
-        expect(conditionButton.closest('[class~="md:hidden"]')).not.toBeNull();
-
-        fireEvent.click(conditionButton);
-        expect(openDialogMock).toHaveBeenCalledWith(
-            'PERMISSION_DETAILS',
-            expect.objectContaining({
-                params: expect.objectContaining({ view: 'condition' }),
-            }),
-        );
+        expect(
+            screen.getByTestId('unrecognized-condition'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByText(/permissionsList.details.who/),
+        ).not.toBeInTheDocument();
     });
 
-    it('omits the condition drill-in button entirely when the row has no condition', () => {
+    it('hides the condition toggle on mobile cards when the row has no condition', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 permissionId: ROOT_PERMISSION_ID,
@@ -423,14 +407,11 @@ describe('<PermissionsList /> component', () => {
         render(createTestComponent({ rows }));
 
         expect(
-            screen.getByRole('button', {
-                name: /permissionsList.details.heading/,
-            }),
-        ).toBeEnabled();
+            screen.getAllByText(/permissionsList.details.who/).length,
+        ).toBeGreaterThan(0);
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
         expect(
-            screen.queryByRole('button', {
-                name: /permissionsList.condition.heading/,
-            }),
+            screen.queryByTestId('no-condition-placeholder'),
         ).not.toBeInTheDocument();
     });
 

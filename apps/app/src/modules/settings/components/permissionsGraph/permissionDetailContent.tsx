@@ -20,12 +20,9 @@ interface IPermissionDetailEntity {
     label?: string;
 }
 
-export type PermissionDetailsTab = 'permission' | 'condition';
-
 export interface IPermissionDetailContentProps {
     chainId?: number;
     className?: string;
-    initialTab?: PermissionDetailsTab;
     network?: IDao['network'];
     permissionName: string;
     row: IDaoPermission;
@@ -33,23 +30,15 @@ export interface IPermissionDetailContentProps {
     where?: IPermissionDetailEntity;
 }
 
+type PermissionDetailsTab = 'permission' | 'condition';
+
 export const PermissionDetailContent: React.FC<
     IPermissionDetailContentProps
-> = ({
-    chainId,
-    className,
-    initialTab,
-    network,
-    permissionName,
-    row,
-    who,
-    where,
-}) => {
+> = ({ chainId, className, network, permissionName, row, who, where }) => {
     const { t } = useTranslations();
     const { buildEntityUrl } = useBlockExplorer({ chainId });
-    const [activeTab, setActiveTab] = useState<PermissionDetailsTab>(
-        initialTab ?? 'permission',
-    );
+    const [activeTab, setActiveTab] =
+        useState<PermissionDetailsTab>('permission');
     const {
         address: conditionAddress,
         label: conditionLabel,
