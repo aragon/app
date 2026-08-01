@@ -2,8 +2,18 @@ import { DefinitionList } from '@aragon/gov-ui-kit';
 import type { IPermissionEntity } from '../../utils/permissionEntityUtils';
 import { PermissionAddressListItem } from './permissionAddressListItem';
 
+/**
+ * The subset of a resolved permission entity the detail rows actually render.
+ * Kept narrow so callers without a full resolution (e.g. graph nodes) can map
+ * into it.
+ */
+export type IPermissionDetailsEntity = Pick<
+    IPermissionEntity,
+    'address' | 'label' | 'isSentinel' | 'detailName'
+>;
+
 interface IPermissionEntityListItemProps {
-    entity: IPermissionEntity;
+    entity: IPermissionDetailsEntity;
     term: string;
     chainId?: number;
 }

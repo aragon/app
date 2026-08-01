@@ -3,14 +3,16 @@ import type { IDaoPermission } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { conditionTypeUtils } from '../../utils/conditionTypeUtils';
-import type { IPermissionEntity } from '../../utils/permissionEntityUtils';
 import { PermissionAddressListItem } from './permissionAddressListItem';
-import { PermissionEntityListItem } from './permissionEntityListItem';
+import {
+    type IPermissionDetailsEntity,
+    PermissionEntityListItem,
+} from './permissionEntityListItem';
 
 export interface IPermissionDetailsListProps {
     row: IDaoPermission;
-    who: IPermissionEntity;
-    where: IPermissionEntity;
+    who: IPermissionDetailsEntity;
+    where: IPermissionDetailsEntity;
     chainId?: number;
 }
 

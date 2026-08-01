@@ -12,6 +12,23 @@ import {
 } from '@/shared/testUtils';
 import { usePermissionsData } from './usePermissionsData';
 
+const linkedAccounts: IDao['linkedAccounts'] = [
+    {
+        id: 'linked-1',
+        address: '0xLinkedAddress',
+        network: Network.POLYGON_MAINNET,
+        name: 'Linked Treasury',
+        description: '',
+        ens: null,
+        subdomain: null,
+        avatar: null,
+        metrics: generateDaoMetrics(),
+        links: [],
+        blockTimestamp: 0,
+        transactionHash: '',
+    },
+];
+
 describe('usePermissionsData hook', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useAllDaoPermissionsSpy = jest.spyOn(
@@ -61,22 +78,7 @@ describe('usePermissionsData hook', () => {
             address: '0xMainAddress',
             network: Network.ETHEREUM_MAINNET,
             name: 'Main DAO',
-            linkedAccounts: [
-                {
-                    id: 'linked-1',
-                    address: '0xLinkedAddress',
-                    network: Network.POLYGON_MAINNET,
-                    name: 'Linked Treasury',
-                    description: '',
-                    ens: null,
-                    subdomain: null,
-                    avatar: null,
-                    metrics: generateDaoMetrics(),
-                    links: [],
-                    blockTimestamp: 0,
-                    transactionHash: '',
-                },
-            ],
+            linkedAccounts,
         });
 
         const { result } = renderHook(() =>
@@ -108,7 +110,9 @@ describe('usePermissionsData hook', () => {
         );
     });
 
-    it('uses backend dao data when the mocks flag is on', () => {
+    // Guards the deleted permissionsMocks / preview system: the flag is inert and
+    // the hook always reads real backend dao data.
+    it('ignores the mocks flag and always uses backend dao data', () => {
         setFeatureFlags({ useMocks: true });
         setDao({
             id: 'main-dao',
@@ -149,22 +153,7 @@ describe('usePermissionsData hook', () => {
             address: '0xMainAddress',
             network: Network.ETHEREUM_MAINNET,
             name: 'Main DAO',
-            linkedAccounts: [
-                {
-                    id: 'linked-1',
-                    address: '0xLinkedAddress',
-                    network: Network.POLYGON_MAINNET,
-                    name: 'Linked Treasury',
-                    description: '',
-                    ens: null,
-                    subdomain: null,
-                    avatar: null,
-                    metrics: generateDaoMetrics(),
-                    links: [],
-                    blockTimestamp: 0,
-                    transactionHash: '',
-                },
-            ],
+            linkedAccounts,
         });
         const rootPlugin = generateFilterComponentPlugin<IDaoPlugin, object>({
             uniqueId: 'root-plugin',
@@ -213,6 +202,7 @@ describe('usePermissionsData hook', () => {
         ).toEqual(['linked-plugin']);
     });
 
+    // FLT-5 guard: no stitching, no no-op memo — the endpoint rows pass through by identity.
     it('preserves the permission endpoint rows without stitching or filtering', () => {
         const rows = [
             {

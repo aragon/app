@@ -1,6 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     type IDaoPlugin,
+    type IPermissionEntityRef,
     PermissionEntityBrandId,
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
@@ -10,6 +11,19 @@ import {
     type IPermissionEntity,
     permissionEntityUtils,
 } from './permissionEntityUtils';
+
+interface ISafeBrandCase {
+    name: string;
+    label: string;
+    layer: IPermissionEntityRef['layer'];
+}
+
+interface IProcessBodyNameCase {
+    name: string;
+    label: string;
+    interfaceType: string;
+    expected: { label: string; tag: string | undefined; detailName: string };
+}
 
 describe('permissionEntity Utils', () => {
     describe('resolvePermissionEntity', () => {
@@ -49,6 +63,9 @@ describe('permissionEntity Utils', () => {
                 },
             },
             {
+                // VRB-2 [S6] guard: this case pins the `.toLowerCase()` calls in
+                // `resolvePermissionEntity` — the kit helper checksum-validates
+                // before case-folding, so dropping them breaks sentinel matching.
                 description: 'resolves ANY_ADDR case-insensitively to "Anyone"',
                 address: ANY_ADDR.toUpperCase(),
                 expected: {
@@ -69,10 +86,12 @@ describe('permissionEntity Utils', () => {
                 },
             },
             {
-                description: 'resolves a matching plugin to name + type tag',
+                description:
+                    'resolves a matching plugin to name + type tag, with the metadata name and version as the detail name',
                 address: pluginAddress,
                 expected: {
                     label: 'Multisig',
+                    detailName: 'Multisig v1.2',
                     isSentinel: false,
                     tag: 'MULTISIG',
                     type: 'plugin',
@@ -115,15 +134,6 @@ describe('permissionEntity Utils', () => {
                 expect(result.detailName).toEqual(expected.detailName);
             }
             expect(result.address).toEqual(address);
-        });
-
-        it('includes the plugin metadata name and version as the detail name', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                pluginAddress,
-                { daoPlugins },
-            );
-
-            expect(result.detailName).toEqual('Multisig v1.2');
         });
 
         it('prefers backend-enriched entity metadata over local fallbacks', () => {
@@ -187,29 +197,20 @@ describe('permissionEntity Utils', () => {
             });
         });
 
-        it('surfaces backend Safe brand metadata for process bodies', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                unknownAddress,
-                {
-                    entity: {
-                        address: unknownAddress,
-                        label: 'Process internal',
-                        layer: 'processInternal',
-                        brandId: 'safe',
-                        proposalCreationConditionAddress:
-                            '0x00000000000000000000000000000000c0ffee00',
-                    },
-                },
-            );
-
-            expect(result).toMatchObject({
-                brandId: 'safe',
-                type: 'plugin',
+        // LBL-1 guard: a recognized Safe brand is hoisted above the backend label,
+        // the interface type, and the layer fallbacks — in and out of processInternal.
+        it.each<ISafeBrandCase>([
+            {
+                name: 'identifies a recognized Safe before backend labels or interface types',
+                label: 'Treasury signers',
                 layer: 'processInternal',
-            });
-        });
-
-        it('identifies a recognized Safe before backend labels or interface types', () => {
+            },
+            {
+                name: 'identifies a recognized Safe outside the process-internal layer',
+                label: 'Backend multisig label',
+                layer: 'externalActor',
+            },
+        ])('$name', ({ label, layer }) => {
             const result = permissionEntityUtils.resolvePermissionEntity(
                 unknownAddress,
                 {
@@ -217,8 +218,8 @@ describe('permissionEntity Utils', () => {
                         address: unknownAddress,
                         brandId: PermissionEntityBrandId.SAFE,
                         interfaceType: 'multisig',
-                        label: 'Treasury signers',
-                        layer: 'processInternal',
+                        label,
+                        layer,
                     },
                 },
             );
@@ -228,71 +229,47 @@ describe('permissionEntity Utils', () => {
                 label: 'Safe',
                 tag: undefined,
                 type: 'plugin',
+                layer,
             });
         });
 
-        it('identifies a recognized Safe outside the process-internal layer', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                unknownAddress,
-                {
-                    entity: {
-                        address: unknownAddress,
-                        brandId: PermissionEntityBrandId.SAFE,
-                        interfaceType: 'multisig',
-                        label: 'Backend multisig label',
-                        layer: 'externalActor',
-                    },
+        it.each<IProcessBodyNameCase>([
+            {
+                name: 'names internal process bodies by their interface type, not the generic layer label',
+                label: 'Process internal',
+                interfaceType: 'tokenVoting',
+                expected: {
+                    label: 'Token Voting',
+                    tag: undefined,
+                    detailName: 'Core Governance',
                 },
-            );
-
-            expect(result).toMatchObject({
-                brandId: PermissionEntityBrandId.SAFE,
-                label: 'Safe',
-                tag: undefined,
-                type: 'plugin',
-            });
-        });
-
-        it('names internal process bodies by their interface type, not the generic layer label', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                unknownAddress,
-                {
-                    entity: {
-                        address: unknownAddress,
-                        label: 'Process internal',
-                        layer: 'processInternal',
-                        interfaceType: 'tokenVoting',
-                        parentPluginName: 'Core Governance',
-                    },
-                },
-            );
-
-            expect(result).toMatchObject({
-                label: 'Token Voting',
-                type: 'plugin',
-                layer: 'processInternal',
-                detailName: 'Core Governance',
-            });
-            expect(result.tag).toBeUndefined();
-        });
-
-        it('renders internal bodies with the real name and type from the backend label', () => {
-            const result = permissionEntityUtils.resolvePermissionEntity(
-                unknownAddress,
-                {
-                    entity: {
-                        address: unknownAddress,
-                        label: 'Founders',
-                        layer: 'processInternal',
-                        interfaceType: 'multisig',
-                        parentPluginName: 'Core Governance',
-                    },
-                },
-            );
-
-            expect(result).toMatchObject({
+            },
+            {
+                name: 'renders internal bodies with the real name and type from the backend label',
                 label: 'Founders',
-                tag: 'MULTISIG',
+                interfaceType: 'multisig',
+                expected: {
+                    label: 'Founders',
+                    tag: 'MULTISIG',
+                    detailName: 'Core Governance',
+                },
+            },
+        ])('$name', ({ label, interfaceType, expected }) => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        label,
+                        layer: 'processInternal',
+                        interfaceType,
+                        parentPluginName: 'Core Governance',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                ...expected,
                 type: 'plugin',
                 layer: 'processInternal',
             });

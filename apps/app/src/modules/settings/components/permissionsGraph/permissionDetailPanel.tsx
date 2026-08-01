@@ -67,7 +67,6 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
                 chainId={chainId}
                 className="flex flex-col gap-4 overflow-auto p-4"
                 network={network}
-                permissionName={edge.permissionName}
                 row={row}
                 where={where}
                 who={who}

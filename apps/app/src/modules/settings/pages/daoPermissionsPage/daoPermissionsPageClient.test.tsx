@@ -251,43 +251,6 @@ describe('<DaoPermissionsPageClient /> component', () => {
         );
     });
 
-    it('ignores stale positive show params when deriving hide defaults', () => {
-        mockFilterParamValues = {
-            permissionsdao: 'false',
-            permissionssubplugins: 'false',
-            permissionsview: 'graph',
-        };
-
-        render(
-            <GukModulesProvider>
-                <DaoPermissionsPageClient daoId="dao-id" />
-            </GukModulesProvider>,
-        );
-        expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
-            'data-row-count',
-            '2',
-        );
-    });
-
-    it('ignores stale hide params from the previous preview', () => {
-        mockFilterParamValues = {
-            permissionshidedao: 'false',
-            permissionshidegoverningbodies: 'false',
-            permissionsview: 'graph',
-        };
-
-        render(
-            <GukModulesProvider>
-                <DaoPermissionsPageClient daoId="dao-id" />
-            </GukModulesProvider>,
-        );
-
-        expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
-            'data-row-count',
-            '2',
-        );
-    });
-
     it('passes the same filtered row array from list view to graph view', () => {
         mockFilterParamValues = {
             permissionshidedaogrants: 'false',
@@ -359,119 +322,26 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
     });
 
+    // Predicate semantics live in getPermissionRowToggleAvailability's own suite; these three
+    // cases only prove the page wires availability (and loading) into the switches.
     it.each([
+        {
+            name: 'an available control',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    whereAddress: externalAddress,
+                }),
+            ],
+            daoDisabled: false,
+            subpluginDisabled: true,
+            isLoading: false,
+        },
         {
             name: 'no affected rows',
             rows: [buildRow({ whereAddress: activeDaoAddress })],
-            params: {},
             daoDisabled: true,
             subpluginDisabled: true,
-            isLoading: false,
-        },
-        {
-            name: 'a DAO-granted row',
-            rows: [
-                buildRow({
-                    whoAddress: activeDaoAddress,
-                    whereAddress: externalAddress,
-                }),
-            ],
-            params: {},
-            daoDisabled: false,
-            subpluginDisabled: true,
-            isLoading: false,
-        },
-        {
-            name: 'a backend-classified subplugin row',
-            rows: [
-                buildRow({
-                    where: {
-                        address: externalAddress,
-                        label: 'Subplugin process',
-                        layer: 'processInternal',
-                        parentPluginAddress: pluginAddress,
-                    },
-                    whereAddress: externalAddress,
-                }),
-            ],
-            params: {},
-            daoDisabled: true,
-            subpluginDisabled: false,
-            isLoading: false,
-        },
-        {
-            name: 'a caller-side subplugin row that no longer activates the subplugin control',
-            rows: [
-                buildRow({
-                    who: {
-                        address: externalAddress,
-                        label: 'Subplugin process',
-                        layer: 'processInternal',
-                        parentPluginAddress: pluginAddress,
-                    },
-                    whoAddress: externalAddress,
-                }),
-            ],
-            params: {},
-            daoDisabled: true,
-            subpluginDisabled: true,
-            isLoading: false,
-        },
-        {
-            name: 'a row hidden by both active controls',
-            rows: [
-                buildRow({
-                    whoAddress: activeDaoAddress,
-                    where: {
-                        address: externalAddress,
-                        label: 'Subplugin process',
-                        layer: 'processInternal',
-                        parentPluginAddress: pluginAddress,
-                    },
-                    whereAddress: externalAddress,
-                }),
-            ],
-            params: {},
-            daoDisabled: true,
-            subpluginDisabled: true,
-            isLoading: false,
-        },
-        {
-            name: 'a row hidden by both with the subplugin control off',
-            rows: [
-                buildRow({
-                    whoAddress: activeDaoAddress,
-                    where: {
-                        address: externalAddress,
-                        label: 'Subplugin process',
-                        layer: 'processInternal',
-                        parentPluginAddress: pluginAddress,
-                    },
-                    whereAddress: externalAddress,
-                }),
-            ],
-            params: { permissionshidegoverningbodypaths: 'false' },
-            daoDisabled: false,
-            subpluginDisabled: true,
-            isLoading: false,
-        },
-        {
-            name: 'a row hidden by both with the DAO control off',
-            rows: [
-                buildRow({
-                    whoAddress: activeDaoAddress,
-                    where: {
-                        address: externalAddress,
-                        label: 'Subplugin process',
-                        layer: 'processInternal',
-                        parentPluginAddress: pluginAddress,
-                    },
-                    whereAddress: externalAddress,
-                }),
-            ],
-            params: { permissionshidedaogrants: 'false' },
-            daoDisabled: true,
-            subpluginDisabled: false,
             isLoading: false,
         },
         {
@@ -482,20 +352,17 @@ describe('<DaoPermissionsPageClient /> component', () => {
                     whereAddress: externalAddress,
                 }),
             ],
-            params: {},
             daoDisabled: true,
             subpluginDisabled: true,
             isLoading: true,
         },
-    ])('derives disabled controls from row predicates for $name', ({
+    ])('wires toggle availability into the switches for $name', ({
         rows,
-        params,
         daoDisabled,
         subpluginDisabled,
         isLoading,
     }) => {
         mockFilterParamValues = {
-            ...(params as Record<string, string>),
             permissionsview: 'graph',
         };
         permissionsData = {

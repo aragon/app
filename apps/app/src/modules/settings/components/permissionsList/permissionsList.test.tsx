@@ -110,9 +110,12 @@ describe('<PermissionsList /> component', () => {
         ).toBeGreaterThan(0);
     });
 
-    it('renders backend-enriched entity labels without plugin lookup', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
+    // Entity-cell visuals: backend labels win over plugin lookup (CMP-5/LBL-1 keeps the Safe
+    // brand ahead of tags), and sentinel actors get the members icon.
+    it.each([
+        {
+            name: 'backend-enriched entity labels without plugin lookup',
+            row: buildRow({
                 permissionId: ROOT_PERMISSION_ID,
                 whoAddress: '0x2222222222222222222222222222222222222222',
                 who: {
@@ -123,17 +126,13 @@ describe('<PermissionsList /> component', () => {
                     status: 'installed',
                 },
             }),
-        ];
-
-        render(createTestComponent({ rows }));
-
-        expect(screen.getAllByText('Backend SPP').length).toBeGreaterThan(0);
-        expect(screen.getAllByText('SPP').length).toBeGreaterThan(0);
-    });
-
-    it('renders the Safe logo instead of a SAFE tag for Safe bodies', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
+            expectedTexts: ['Backend SPP', 'SPP'],
+            expectedLabels: [],
+            absentText: undefined,
+        },
+        {
+            name: 'the Safe logo instead of a SAFE tag for Safe bodies',
+            row: buildRow({
                 whoAddress: '0x3333333333333333333333333333333333333333',
                 who: {
                     address: '0x3333333333333333333333333333333333333333',
@@ -142,27 +141,34 @@ describe('<PermissionsList /> component', () => {
                     layer: 'processInternal',
                 },
             }),
-        ];
+            expectedTexts: [],
+            expectedLabels: ['Safe account'],
+            absentText: 'SAFE',
+        },
+        {
+            name: 'the members icon for Anyone entities',
+            row: buildRow({ permissionId: ROOT_PERMISSION_ID }),
+            expectedTexts: ['Anyone'],
+            expectedLabels: ['Members'],
+            absentText: undefined,
+        },
+    ])('renders $name', ({
+        row,
+        expectedTexts,
+        expectedLabels,
+        absentText,
+    }) => {
+        render(createTestComponent({ rows: [row] }));
 
-        render(createTestComponent({ rows }));
-
-        expect(screen.getAllByLabelText('Safe account').length).toBeGreaterThan(
-            0,
-        );
-        expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
-    });
-
-    it('renders the members icon for Anyone entities', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
-                permissionId: ROOT_PERMISSION_ID,
-            }),
-        ];
-
-        render(createTestComponent({ rows }));
-
-        expect(screen.getAllByText('Anyone').length).toBeGreaterThan(0);
-        expect(screen.getAllByLabelText('Members').length).toBeGreaterThan(0);
+        for (const text of expectedTexts) {
+            expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+        }
+        for (const label of expectedLabels) {
+            expect(screen.getAllByLabelText(label).length).toBeGreaterThan(0);
+        }
+        if (absentText != null) {
+            expect(screen.queryByText(absentText)).not.toBeInTheDocument();
+        }
     });
 
     it('renders informational help for the Who and Where headers', () => {
@@ -254,14 +260,14 @@ describe('<PermissionsList /> component', () => {
         expect(rowHeader).not.toBeNull();
         expect(rowHeader!.closest('[class~="md:block"]')).not.toBeNull();
 
-        const fieldLabels = [
-            'app.settings.permissionsList.header.who',
-            'app.settings.permissionsList.header.where',
-            'app.settings.permissionsList.header.permission',
-            'app.settings.permissionsList.header.condition',
+        const fieldValues = [
+            'Anyone',
+            'Any Address',
+            'EXECUTE_PERMISSION',
+            'VotingPower',
         ];
         const rowText = rowHeader?.textContent ?? '';
-        const positions = fieldLabels.map((label) => rowText.indexOf(label));
+        const positions = fieldValues.map((value) => rowText.indexOf(value));
 
         expect(positions.every((position) => position >= 0)).toBe(true);
         expect(positions).toEqual([...positions].sort((a, b) => a - b));
@@ -339,7 +345,7 @@ describe('<PermissionsList /> component', () => {
         ).toBeNull();
     });
 
-    it('keeps the details dash as the only empty-condition state for an expanded row', () => {
+    it('keeps the empty-condition state to the details dash with no breakdown affordances', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 permissionId: ROOT_PERMISSION_ID,
@@ -353,6 +359,10 @@ describe('<PermissionsList /> component', () => {
             }),
         );
 
+        expect(
+            screen.getAllByText(/permissionsList.details.who/).length,
+        ).toBeGreaterThan(0);
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
         expect(
             screen.queryByTestId('no-condition-placeholder'),
         ).not.toBeInTheDocument();
@@ -458,66 +468,5 @@ describe('<PermissionsList /> component', () => {
             .map((element) => element.textContent);
         expect(whereLabels[0]).toBe('Alpha Plugin');
         expect(whereLabels.at(-1)).toBe('Zeta Plugin');
-    });
-
-    it('hides the condition toggle on mobile cards when the row has no condition', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
-                permissionId: ROOT_PERMISSION_ID,
-            }),
-        ];
-
-        render(createTestComponent({ rows }));
-
-        expect(
-            screen.getAllByText(/permissionsList.details.who/).length,
-        ).toBeGreaterThan(0);
-        expect(screen.queryAllByRole('radio')).toHaveLength(0);
-        expect(
-            screen.queryByTestId('no-condition-placeholder'),
-        ).not.toBeInTheDocument();
-    });
-
-    it('renders an unresolved condition detail for expanded unknown conditions', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
-                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
-            }),
-        ];
-
-        render(
-            createTestComponent({
-                rows,
-                expandedRows: [getPermissionRowKey(rows[0])],
-            }),
-        );
-
-        expect(
-            screen.getAllByText('Unrecognized condition').length,
-        ).toBeGreaterThanOrEqual(2);
-        expect(screen.queryByText(/noConditionSlot/)).not.toBeInTheDocument();
-    });
-
-    it('renders unsupported condition payloads as unrecognized, not absent', () => {
-        const rows: IDaoPermission[] = [
-            buildRow({
-                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
-                condition: { conditionType: 'merkle-claim' },
-            }),
-        ];
-
-        render(
-            createTestComponent({
-                rows,
-                expandedRows: [getPermissionRowKey(rows[0])],
-            }),
-        );
-
-        expect(
-            screen.getByTestId('unrecognized-condition'),
-        ).toBeInTheDocument();
-        expect(
-            screen.queryByTestId('no-condition-placeholder'),
-        ).not.toBeInTheDocument();
     });
 });

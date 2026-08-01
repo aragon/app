@@ -13,7 +13,7 @@ describe('<PermissionDetailContent /> component', () => {
         initialiseConditionRegistry();
     });
 
-    it('renders unsupported condition payloads as unrecognized, not absent', () => {
+    it('switches to the condition breakdown for present-but-unregistered types', () => {
         const row: IDaoPermission = {
             permissionId: EXECUTE_PERMISSION_ID,
             whoAddress: ANY_ADDR,
@@ -24,11 +24,7 @@ describe('<PermissionDetailContent /> component', () => {
 
         render(
             <GukModulesProvider>
-                <PermissionDetailContent
-                    chainId={1}
-                    permissionName="EXECUTE_PERMISSION"
-                    row={row}
-                />
+                <PermissionDetailContent chainId={1} row={row} />
             </GukModulesProvider>,
         );
 
@@ -56,11 +52,7 @@ describe('<PermissionDetailContent /> component', () => {
 
         render(
             <GukModulesProvider>
-                <PermissionDetailContent
-                    chainId={1}
-                    permissionName="EXECUTE_PERMISSION"
-                    row={row}
-                />
+                <PermissionDetailContent chainId={1} row={row} />
             </GukModulesProvider>,
         );
 

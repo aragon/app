@@ -14,7 +14,6 @@ import { permissionEntityUtils } from '../../utils/permissionEntityUtils';
 import { PermissionCondition } from '../permissionCondition';
 import { PermissionDetailsList } from './permissionDetailsList';
 import { PermissionEntityCell } from './permissionEntityCell';
-import { PermissionSummaryField } from './permissionSummaryField';
 
 export interface IPermissionsListRowProps {
     row: IDaoPermission;
@@ -108,37 +107,19 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
             </div>
             <Accordion.Item className="hidden md:block" value={rowKey}>
                 <Accordion.ItemHeader>
-                    <div className="grid w-full grid-cols-1 items-start gap-4 text-left sm:grid-cols-2 md:grid-cols-4 md:items-center">
-                        <PermissionSummaryField
-                            label={t('app.settings.permissionsList.header.who')}
-                        >
+                    <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
+                        <div className="min-w-0">
                             <PermissionEntityCell entity={who} />
-                        </PermissionSummaryField>
-                        <PermissionSummaryField
-                            label={t(
-                                'app.settings.permissionsList.header.where',
-                            )}
-                        >
+                        </div>
+                        <div className="min-w-0">
                             <PermissionEntityCell entity={where} />
-                        </PermissionSummaryField>
-                        <PermissionSummaryField
-                            label={t(
-                                'app.settings.permissionsList.header.permission',
-                            )}
-                        >
-                            <span className="block min-w-0 truncate font-mono text-neutral-800">
-                                {permissionName}
-                            </span>
-                        </PermissionSummaryField>
-                        <PermissionSummaryField
-                            label={t(
-                                'app.settings.permissionsList.header.condition',
-                            )}
-                        >
-                            <span className="block min-w-0 truncate text-neutral-800">
-                                {conditionLabel}
-                            </span>
-                        </PermissionSummaryField>
+                        </div>
+                        <span className="block min-w-0 truncate font-mono text-neutral-800">
+                            {permissionName}
+                        </span>
+                        <span className="block min-w-0 truncate text-neutral-800">
+                            {conditionLabel}
+                        </span>
                     </div>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent>

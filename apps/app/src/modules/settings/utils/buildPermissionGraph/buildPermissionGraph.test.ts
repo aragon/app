@@ -73,6 +73,28 @@ const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
         ...partial,
     });
 
+// Shared fixture: a Safe process body granted create-proposal on a top-level
+// plugin body, used both on its own and next to an open Anyone grant.
+const buildSafeProposalCreatorRow = (): IDaoPermission =>
+    buildRow({
+        permissionId: CREATE_PROPOSAL_PERMISSION_ID,
+        whoAddress: multisigAddress,
+        who: {
+            address: multisigAddress,
+            brandId: 'safe',
+            label: 'Process internal',
+            layer: 'processInternal',
+            parentPluginAddress: pluginAddress,
+        },
+        whereAddress: pluginAddress,
+        where: {
+            address: pluginAddress,
+            interfaceType: 'spp',
+            label: 'Core Governance',
+            layer: 'topLevelPlugin',
+        },
+    });
+
 describe('buildPermissionGraph', () => {
     it('classifies DAO, linked DAO, plugin, and actor nodes', () => {
         const graph = buildPermissionGraph({
@@ -107,18 +129,41 @@ describe('buildPermissionGraph', () => {
         );
     });
 
-    it('uses backend entity metadata without installed plugin lookup', () => {
-        const row = buildRow({
-            whoAddress: pluginAddress,
-            who: {
-                address: pluginAddress,
-                interfaceType: 'spp',
+    it.each([
+        {
+            name: 'uses backend entity metadata without installed plugin lookup',
+            row: buildRow({
+                whoAddress: pluginAddress,
+                who: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Backend Process',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            expected: {
+                kind: 'plugin',
                 label: 'Backend Process',
+                tag: 'SPP',
                 layer: 'topLevelPlugin',
                 status: 'installed',
             },
-        });
-
+        },
+        {
+            name: 'carries backend Safe brand metadata onto graph nodes',
+            row: buildRow({
+                whoAddress: pluginAddress,
+                who: {
+                    address: pluginAddress,
+                    label: 'Process internal',
+                    layer: 'processInternal',
+                    brandId: 'safe',
+                },
+            }),
+            expected: { kind: 'plugin', brandId: 'safe' },
+        },
+    ])('$name', ({ row, expected }) => {
         const graph = buildPermissionGraph({
             rows: [row],
             dao,
@@ -127,65 +172,7 @@ describe('buildPermissionGraph', () => {
 
         expect(
             graph.nodes.find((node) => node.id === pluginAddress.toLowerCase()),
-        ).toMatchObject({
-            kind: 'plugin',
-            label: 'Backend Process',
-            tag: 'SPP',
-            layer: 'topLevelPlugin',
-            status: 'installed',
-        });
-    });
-
-    it('carries backend Safe brand metadata onto graph nodes', () => {
-        const row = buildRow({
-            whoAddress: pluginAddress,
-            who: {
-                address: pluginAddress,
-                label: 'Process internal',
-                layer: 'processInternal',
-                brandId: 'safe',
-            },
-        });
-
-        const graph = buildPermissionGraph({
-            rows: [row],
-            dao,
-            accountRefs,
-        });
-
-        expect(
-            graph.nodes.find((node) => node.id === pluginAddress.toLowerCase()),
-        ).toMatchObject({
-            kind: 'plugin',
-            brandId: 'safe',
-        });
-    });
-
-    it('drops condition-contract permissions from the graph', () => {
-        const conditionRow = buildRow({
-            whoAddress: daoAddress,
-            whereAddress: conditionAddress,
-            where: {
-                address: conditionAddress,
-                layer: 'condition',
-                label: 'Condition contract',
-                status: 'installed',
-            },
-        });
-
-        const graph = buildPermissionGraph({
-            rows: [conditionRow],
-            dao,
-            daoPlugins,
-            accountRefs,
-        });
-
-        expect(graph.edges).toHaveLength(0);
-        expect(
-            graph.nodes.find(
-                (node) => node.id === conditionAddress.toLowerCase(),
-            ),
-        ).toBeUndefined();
+        ).toMatchObject(expected);
     });
 
     it('preserves every selected ordinary row and only omits condition endpoints', () => {
@@ -249,14 +236,35 @@ describe('buildPermissionGraph', () => {
         graph.edges.forEach((edge, index) => {
             expect(edge.row).toBe(ordinaryRows[index]);
         });
+        // Condition endpoints are dropped as nodes too, not only as edges.
+        expect(
+            graph.nodes.find(
+                (node) => node.id === conditionAddress.toLowerCase(),
+            ),
+        ).toBeUndefined();
     });
 
-    it('creates who-to-where edges with resolved permission and condition labels', () => {
-        const row = buildRow({
-            conditionAddress,
-            condition: { conditionType: 'voting-power' },
-        });
-
+    it.each([
+        {
+            name: 'creates who-to-where edges with resolved permission and condition labels',
+            row: buildRow({
+                conditionAddress,
+                condition: { conditionType: 'voting-power' },
+            }),
+            expected: {
+                source: pluginAddress.toLowerCase(),
+                target: daoAddress.toLowerCase(),
+                permissionName: 'EXECUTE_PERMISSION',
+                permissionDisplayName: 'Execute',
+                conditionLabel: 'VotingPower',
+            },
+        },
+        {
+            name: 'omits condition labels for unconditional grants',
+            row: buildRow({ conditionAddress: ALLOW_FLAG }),
+            expected: { conditionLabel: undefined },
+        },
+    ])('$name', ({ row, expected }) => {
         const graph = buildPermissionGraph({
             rows: [row],
             dao,
@@ -265,14 +273,7 @@ describe('buildPermissionGraph', () => {
         });
 
         expect(graph.edges).toHaveLength(1);
-        expect(graph.edges[0]).toMatchObject({
-            source: pluginAddress.toLowerCase(),
-            target: daoAddress.toLowerCase(),
-            permissionName: 'EXECUTE_PERMISSION',
-            permissionDisplayName: 'Execute',
-            conditionLabel: 'VotingPower',
-            row,
-        });
+        expect(graph.edges[0]).toMatchObject({ ...expected, row });
     });
 
     it('creates per-target proposal creator who nodes for open proposal grants', () => {
@@ -374,27 +375,8 @@ describe('buildPermissionGraph', () => {
     });
 
     it('keeps Safe proposal creator labels and brand metadata', () => {
-        const row = buildRow({
-            permissionId: CREATE_PROPOSAL_PERMISSION_ID,
-            whoAddress: multisigAddress,
-            who: {
-                address: multisigAddress,
-                brandId: 'safe',
-                label: 'Process internal',
-                layer: 'processInternal',
-                parentPluginAddress: pluginAddress,
-            },
-            whereAddress: pluginAddress,
-            where: {
-                address: pluginAddress,
-                interfaceType: 'spp',
-                label: 'Core Governance',
-                layer: 'topLevelPlugin',
-            },
-        });
-
         const graph = buildPermissionGraph({
-            rows: [row],
+            rows: [buildSafeProposalCreatorRow()],
             dao,
             daoPlugins,
             accountRefs,
@@ -428,24 +410,7 @@ describe('buildPermissionGraph', () => {
                     layer: 'topLevelPlugin',
                 },
             }),
-            buildRow({
-                permissionId: CREATE_PROPOSAL_PERMISSION_ID,
-                whoAddress: multisigAddress,
-                who: {
-                    address: multisigAddress,
-                    brandId: 'safe',
-                    label: 'Process internal',
-                    layer: 'processInternal',
-                    parentPluginAddress: pluginAddress,
-                },
-                whereAddress: pluginAddress,
-                where: {
-                    address: pluginAddress,
-                    interfaceType: 'spp',
-                    label: 'Core Governance',
-                    layer: 'topLevelPlugin',
-                },
-            }),
+            buildSafeProposalCreatorRow(),
         ];
 
         const graph = buildPermissionGraph({
@@ -458,6 +423,7 @@ describe('buildPermissionGraph', () => {
             node.id.startsWith('proposal-creator-'),
         );
 
+        // GRF-1 regression guard.
         // No subsumption: the list and the graph show the same rows, so the
         // Safe body's create-proposal eligibility stays visible next to the
         // open Anyone grant on the same body.
@@ -500,17 +466,6 @@ describe('buildPermissionGraph', () => {
             tag: 'SPP',
             address: secondPluginAddress,
         });
-    });
-
-    it('omits condition labels for unconditional grants', () => {
-        const graph = buildPermissionGraph({
-            rows: [buildRow({ conditionAddress: ALLOW_FLAG })],
-            dao,
-            daoPlugins,
-            accountRefs,
-        });
-
-        expect(graph.edges[0].conditionLabel).toBeUndefined();
     });
 
     it('keeps conditional permissions with the same endpoints distinct', () => {

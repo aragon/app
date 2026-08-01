@@ -54,30 +54,23 @@ const renderGraphNode = (
 };
 
 describe('<PermissionGraphNode /> component', () => {
-    it('marks uninstalled plugin nodes as historical', () => {
-        renderGraphNode({
-            layer: 'historicalPlugin',
+    it.each([
+        {
+            name: 'uninstalled plugin nodes as historical',
             status: 'uninstalled',
-        });
-
-        expect(
-            screen.getByText(
+            typeKey:
                 'app.settings.daoPermissionsPage.graphView.node.uninstalledPlugin',
-            ),
-        ).toBeInTheDocument();
-    });
-
-    it('marks historical plugin nodes separately from installed plugins', () => {
-        renderGraphNode({
-            layer: 'historicalPlugin',
+        },
+        {
+            name: 'historical plugin nodes separately from installed plugins',
             status: 'historical',
-        });
-
-        expect(
-            screen.getByText(
+            typeKey:
                 'app.settings.daoPermissionsPage.graphView.node.historicalPlugin',
-            ),
-        ).toBeInTheDocument();
+        },
+    ] as const)('marks $name', ({ status, typeKey }) => {
+        renderGraphNode({ layer: 'historicalPlugin', status });
+
+        expect(screen.getByText(typeKey)).toBeInTheDocument();
     });
 
     it('renders internal process bodies as plugin cards with their type tag', () => {
@@ -96,16 +89,24 @@ describe('<PermissionGraphNode /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders Safe-branded process bodies with the Safe avatar instead of a redundant tag', () => {
+    it.each([
+        {
+            name: 'process bodies with the Safe avatar instead of a redundant tag',
+            data: { layer: 'processInternal', tag: 'SAFE' },
+        },
+        {
+            name: 'actor nodes with the Safe avatar',
+            data: { kind: 'actor', tag: undefined },
+        },
+    ] as const)('renders Safe-branded $name', ({ data }) => {
         const { container } = renderGraphNode({
             brandId: 'safe',
-            layer: 'processInternal',
             label: 'Safe',
-            tag: 'SAFE',
+            ...data,
         });
 
         expect(screen.getByText('Safe')).toBeInTheDocument();
-        expect(screen.queryByText('SAFE')).not.toBeInTheDocument();
+        expect(screen.getByLabelText('Safe account')).toBeInTheDocument();
         expect(container.textContent).not.toContain('SAFE');
     });
 
@@ -119,18 +120,6 @@ describe('<PermissionGraphNode /> component', () => {
 
         expect(screen.getByText('Anyone')).toBeInTheDocument();
         expect(screen.getByLabelText('Members')).toBeInTheDocument();
-    });
-
-    it('renders Safe-branded actor nodes with the Safe avatar', () => {
-        renderGraphNode({
-            brandId: 'safe',
-            kind: 'actor',
-            label: 'Safe',
-            tag: undefined,
-        });
-
-        expect(screen.getByText('Safe')).toBeInTheDocument();
-        expect(screen.getByLabelText('Safe account')).toBeInTheDocument();
     });
 });
 

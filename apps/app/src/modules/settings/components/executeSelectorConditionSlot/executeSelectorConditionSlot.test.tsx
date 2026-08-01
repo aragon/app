@@ -176,6 +176,7 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
         );
 
         expect(screen.getAllByText('0xaaaaaaaa')).toHaveLength(2);
+        expect(screen.queryByText('42')).not.toBeInTheDocument();
         expect(
             screen.queryByText(/executeSelectorConditionSlot.noActions/),
         ).not.toBeInTheDocument();

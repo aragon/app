@@ -9,30 +9,27 @@ describe('getPermissionEdgePath', () => {
         targetY: 120,
     };
 
-    it('keeps incoming permission tridents on the curved smooth-step path', () => {
-        const [smoothStepPath] = getSmoothStepPath({
-            ...coordinates,
-            sourcePosition: Position.Top,
-            targetPosition: Position.Bottom,
-            borderRadius: 12,
-            offset: 28,
-        });
-
-        expect(
-            getPermissionEdgePath({
-                ...coordinates,
+    it.each([
+        {
+            name: 'keeps incoming permission tridents on the curved smooth-step path',
+            positions: {
                 sourcePosition: Position.Top,
                 targetPosition: Position.Bottom,
-                visualKind: 'incoming',
-            }),
-        ).toBe(smoothStepPath);
-    });
-
-    it('uses curved side-aware paths for supporting and mixed graph edges', () => {
+            },
+            visualKind: 'incoming',
+        },
+        {
+            name: 'uses curved side-aware paths for supporting and mixed graph edges',
+            positions: {
+                sourcePosition: Position.Right,
+                targetPosition: Position.Left,
+            },
+            visualKind: 'other',
+        },
+    ] as const)('$name', ({ positions, visualKind }) => {
         const [smoothStepPath] = getSmoothStepPath({
             ...coordinates,
-            sourcePosition: Position.Right,
-            targetPosition: Position.Left,
+            ...positions,
             borderRadius: 12,
             offset: 28,
         });
@@ -40,9 +37,8 @@ describe('getPermissionEdgePath', () => {
         expect(
             getPermissionEdgePath({
                 ...coordinates,
-                sourcePosition: Position.Right,
-                targetPosition: Position.Left,
-                visualKind: 'other',
+                ...positions,
+                visualKind,
             }),
         ).toBe(smoothStepPath);
     });

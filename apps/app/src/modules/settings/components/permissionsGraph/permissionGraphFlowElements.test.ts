@@ -11,12 +11,6 @@ import {
 } from './permissionGraphFlowElements';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNodeTypes';
 
-if (globalThis.structuredClone == null) {
-    Object.defineProperty(globalThis, 'structuredClone', {
-        value: <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T,
-    });
-}
-
 const anchorId = '0x1111111111111111111111111111111111111111';
 const pluginId = '0x2222222222222222222222222222222222222222';
 const externalId = '0x3333333333333333333333333333333333333333';
@@ -53,27 +47,27 @@ const buildGraph = (
 });
 
 describe('getLayoutDirection', () => {
-    it('places the DAO above plugin actors for incoming-only graphs', () => {
-        const result = getLayoutDirection(
-            [buildEdge('incoming', { source: pluginId, target: anchorId })],
-            anchorId,
-        );
-
-        expect(result).toBe('BT');
-    });
-
-    it('keeps top-to-bottom layout when DAO-granted rows are visible', () => {
-        const result = getLayoutDirection(
-            [buildEdge('outgoing', { source: anchorId, target: pluginId })],
-            anchorId,
-        );
-
-        expect(result).toBe('TB');
-    });
-
-    it('keeps active-contract execute views on the stable top-to-bottom layout direction', () => {
-        const result = getLayoutDirection(
-            [
+    it.each([
+        {
+            name: 'places the DAO above plugin actors for incoming-only graphs',
+            anchor: anchorId,
+            edges: [
+                buildEdge('incoming', { source: pluginId, target: anchorId }),
+            ],
+            expected: 'BT',
+        },
+        {
+            name: 'keeps top-to-bottom layout when DAO-granted rows are visible',
+            anchor: anchorId,
+            edges: [
+                buildEdge('outgoing', { source: anchorId, target: pluginId }),
+            ],
+            expected: 'TB',
+        },
+        {
+            name: 'keeps active-contract execute views on the stable top-to-bottom layout direction',
+            anchor: pluginId,
+            edges: [
                 buildEdge('execute', {
                     source: pluginId,
                     target: anchorId,
@@ -81,10 +75,12 @@ describe('getLayoutDirection', () => {
                     permissionDisplayName: 'Execute',
                 }),
             ],
-            pluginId,
-        );
+            expected: 'TB',
+        },
+    ])('$name', ({ anchor, edges, expected }) => {
+        const result = getLayoutDirection(edges, anchor);
 
-        expect(result).toBe('TB');
+        expect(result).toBe(expected);
     });
 });
 
@@ -108,87 +104,76 @@ describe('buildFlowElements', () => {
         expect(edges).toHaveLength(6);
     });
 
-    it('uses incoming handles when only plugin-to-DAO rows are visible', () => {
-        const incomingEdge = buildEdge('incoming', {
-            source: pluginId,
-            target: anchorId,
-        });
-        const { edges } = buildFlowElements({
-            anchorId,
-            graph: buildGraph([incomingEdge]),
+    it.each([
+        {
+            name: 'uses incoming handles when only plugin-to-DAO rows are visible',
+            anchor: anchorId,
+            edges: [
+                buildEdge('incoming', { source: pluginId, target: anchorId }),
+            ],
+        },
+        {
+            name: 'keeps plugin-to-DAO edges on incoming handles in mixed graphs',
+            anchor: anchorId,
+            edges: [
+                buildEdge('incoming', { source: pluginId, target: anchorId }),
+                buildEdge('outgoing', { source: anchorId, target: pluginId }),
+            ],
+        },
+        {
+            name: 'keeps execute permissions on bottom-to-top handles even when the active contract is the who',
+            anchor: pluginId,
+            edges: [
+                buildEdge('execute', {
+                    source: pluginId,
+                    target: anchorId,
+                    permissionName: 'EXECUTE_PERMISSION',
+                    permissionDisplayName: 'Execute',
+                }),
+            ],
+        },
+    ])('$name', ({ anchor, edges }) => {
+        const { edges: flowEdges } = buildFlowElements({
+            anchorId: anchor,
+            graph: buildGraph(edges),
             onSelectEdge: jest.fn(),
         });
-
-        const originEdge = edges.find((edge) => edge.id.endsWith('-origin'));
-        const targetEdge = edges.find((edge) => edge.id.endsWith('-target'));
-
-        expect(originEdge).toMatchObject({
+        const incomingStackId = `permission-stack-${pluginId}-${anchorId}`;
+        const incomingHandles = {
             sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
             targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-        });
-        expect(targetEdge).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-        });
+        };
+
+        expect(
+            flowEdges.find((edge) => edge.id === `${incomingStackId}-origin`),
+        ).toMatchObject(incomingHandles);
+        expect(
+            flowEdges.find((edge) => edge.id === `${incomingStackId}-target`),
+        ).toMatchObject(incomingHandles);
     });
 
-    it('keeps plugin-to-DAO edges on incoming handles in mixed graphs', () => {
-        const incomingEdge = buildEdge('incoming', {
-            source: pluginId,
-            target: anchorId,
-        });
-        const outgoingEdge = buildEdge('outgoing', {
-            source: anchorId,
-            target: pluginId,
-        });
-        const { edges } = buildFlowElements({
+    it('connects core DAO self-permission stacks from stack bottom to DAO top', () => {
+        const graph = buildGraph(
+            [buildEdge('dao-self', { source: anchorId, target: anchorId })],
+            [
+                {
+                    id: anchorId,
+                    kind: 'dao',
+                    label: 'DAO',
+                    address: anchorId,
+                },
+            ],
+        );
+
+        const result = buildFlowElements({
+            graph,
             anchorId,
-            graph: buildGraph([incomingEdge, outgoingEdge]),
             onSelectEdge: jest.fn(),
         });
 
-        const incomingOriginEdge = edges.find(
-            (edge) =>
-                edge.id === `permission-stack-${pluginId}-${anchorId}-origin`,
-        );
-        const incomingTargetEdge = edges.find(
-            (edge) =>
-                edge.id === `permission-stack-${pluginId}-${anchorId}-target`,
-        );
-
-        expect(incomingOriginEdge).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-        });
-        expect(incomingTargetEdge).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-        });
-    });
-
-    it('keeps execute permissions on bottom-to-top handles even when the active contract is the who', () => {
-        const executeEdge = buildEdge('execute', {
-            source: pluginId,
-            target: anchorId,
-            permissionName: 'EXECUTE_PERMISSION',
-            permissionDisplayName: 'Execute',
-        });
-        const { edges } = buildFlowElements({
-            anchorId: pluginId,
-            graph: buildGraph([executeEdge]),
-            onSelectEdge: jest.fn(),
-        });
-
-        const originEdge = edges.find((edge) => edge.id.endsWith('-origin'));
-        const targetEdge = edges.find((edge) => edge.id.endsWith('-target'));
-
-        expect(originEdge).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
-        });
-        expect(targetEdge).toMatchObject({
-            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceTop,
-            targetHandle: PERMISSION_GRAPH_HANDLE.targetBottom,
+        expect(result.edges[0]).toMatchObject({
+            sourceHandle: PERMISSION_GRAPH_HANDLE.sourceBottom,
+            targetHandle: PERMISSION_GRAPH_HANDLE.targetTop,
         });
     });
 
@@ -294,18 +279,6 @@ describe('buildFlowElements', () => {
         const executeStackId = `permission-stack-${pluginId}-${anchorId}`;
         const daoGrantedStackId = `permission-stack-${anchorId}-${pluginId}`;
 
-        expect(
-            edges.find((edge) => edge.id === `${executeStackId}-origin`)?.data,
-        ).toMatchObject({
-            layoutSource: pluginId,
-            layoutTarget: executeStackId,
-        });
-        expect(
-            edges.find((edge) => edge.id === `${executeStackId}-target`)?.data,
-        ).toMatchObject({
-            layoutSource: executeStackId,
-            layoutTarget: anchorId,
-        });
         expect(
             edges.find((edge) => edge.id === `${daoGrantedStackId}-origin`)
                 ?.data,

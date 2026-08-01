@@ -1,12 +1,6 @@
 import type { Edge, Node } from '@xyflow/react';
 import { getLayoutedElements } from './permissionGraphLayout';
 
-if (globalThis.structuredClone == null) {
-    Object.defineProperty(globalThis, 'structuredClone', {
-        value: <T>(value: T): T => JSON.parse(JSON.stringify(value)) as T,
-    });
-}
-
 const buildNode = (id: string, partial?: Partial<Node>): Node => ({
     id,
     data: {},

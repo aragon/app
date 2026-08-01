@@ -5,7 +5,7 @@ import {
 } from './daoPermission';
 
 describe('dao permission generators', () => {
-    it('builds coherent enriched defaults', () => {
+    it('builds coherent enriched defaults and applies overrides', () => {
         const permission = generateDaoPermission();
 
         expect(permission).toEqual({
@@ -28,15 +28,13 @@ describe('dao permission generators', () => {
             },
             whoAddress: '0x1111111111111111111111111111111111111111',
         });
-    });
 
-    it('overrides entity metadata and condition data', () => {
         const who = generatePermissionEntityRef({
             address: '0x1111111111111111111111111111111111111111',
             label: 'Treasury Safe',
             layer: 'externalActor',
         });
-        const permission = generateDaoPermission({
+        const overridden = generateDaoPermission({
             condition: {
                 conditionType: 'voting-power',
                 minVotingPower: '1000000000000000000',
@@ -45,7 +43,7 @@ describe('dao permission generators', () => {
             who,
         });
 
-        expect(permission).toMatchObject({
+        expect(overridden).toMatchObject({
             condition: {
                 conditionType: 'voting-power',
                 minVotingPower: '1000000000000000000',
