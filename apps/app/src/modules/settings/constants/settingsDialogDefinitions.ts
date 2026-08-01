@@ -1,5 +1,6 @@
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
 import { GovernanceProcessRequiredDialog } from '../dialogs/governanceProcessRequiredDialog';
+import { PermissionDetailsDialog } from '../dialogs/permissionDetailsDialog';
 import { PrepareDaoContractsUpdateDialog } from '../dialogs/prepareDaoContractsUpdateDialog';
 import { PreparePluginUninstallationDialog } from '../dialogs/preparePluginUninstallationDialog';
 import { UninstallPluginAlertDialog } from '../dialogs/uninstallPluginAlertDialog';
@@ -34,5 +35,8 @@ export const settingsDialogDefinitions: Record<
     [SettingsDialogId.PREPARE_PLUGIN_UNINSTALLATION]: {
         Component: PreparePluginUninstallationDialog,
         requiresWallet: true,
+    },
+    [SettingsDialogId.PERMISSION_DETAILS]: {
+        Component: PermissionDetailsDialog,
     },
 };

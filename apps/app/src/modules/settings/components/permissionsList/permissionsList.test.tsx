@@ -6,6 +6,7 @@ import {
 } from '@aragon/gov-ui-kit';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { IDaoPermission } from '@/shared/api/daoService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import { generateDaoPermission } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
@@ -14,6 +15,10 @@ import {
     type IPermissionsListProps,
     PermissionsList,
 } from './permissionsList';
+
+jest.mock('@/shared/components/dialogProvider', () => ({
+    useDialogContext: jest.fn(),
+}));
 
 const ROOT_PERMISSION_ID =
     '0x815fe80e4b37c8582a3b773d1d7071f983eacfd56b5965db654f3087c25ada33';
@@ -35,8 +40,20 @@ const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
     });
 
 describe('<PermissionsList /> component', () => {
+    const useDialogContextMock =
+        dialogProvider.useDialogContext as unknown as jest.Mock;
+    const openDialogMock = jest.fn();
+
     beforeAll(() => {
         initialiseConditionRegistry();
+    });
+
+    beforeEach(() => {
+        openDialogMock.mockClear();
+        useDialogContextMock.mockReturnValue({
+            open: openDialogMock,
+            close: jest.fn(),
+        });
     });
 
     afterEach(() => {
@@ -234,7 +251,7 @@ describe('<PermissionsList /> component', () => {
         );
     });
 
-    it('renders one responsive row tree with ordered field labels and no graph-detail tabs', () => {
+    it('renders the summary card and accordion arrangements with ordered field labels and no graph-detail tabs', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
@@ -244,13 +261,15 @@ describe('<PermissionsList /> component', () => {
 
         render(createTestComponent({ rows }));
 
-        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(1);
+        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(2);
         expect(screen.queryAllByRole('radio')).toHaveLength(0);
 
         const rowHeader = screen
-            .getByText('EXECUTE_PERMISSION')
-            .closest('button');
+            .getAllByText('EXECUTE_PERMISSION')
+            .map((element) => element.closest('button'))
+            .find((button) => button != null);
         expect(rowHeader).not.toBeNull();
+        expect(rowHeader!.closest('[class~="md:block"]')).not.toBeNull();
 
         const fieldLabels = [
             'app.settings.permissionsList.header.who',
@@ -292,8 +311,8 @@ describe('<PermissionsList /> component', () => {
             screen.getAllByText(/permissionsList.details.heading/).length,
         ).toBeGreaterThan(0);
         expect(
-            screen.getByText(/permissionsList.condition.heading/),
-        ).toBeInTheDocument();
+            screen.getAllByText(/permissionsList.condition.heading/).length,
+        ).toBeGreaterThan(0);
         expect(
             await screen.findByText(/votingPowerConditionSlot.token/),
         ).toBeInTheDocument();
@@ -331,7 +350,7 @@ describe('<PermissionsList /> component', () => {
         ).toBeNull();
     });
 
-    it('routes the condition cell to the fallback slot for an expanded row', () => {
+    it('keeps the details dash as the only empty-condition state for an expanded row', () => {
         const rows: IDaoPermission[] = [
             buildRow({
                 permissionId: ROOT_PERMISSION_ID,
@@ -346,8 +365,73 @@ describe('<PermissionsList /> component', () => {
         );
 
         expect(
-            screen.getByTestId('no-condition-placeholder'),
-        ).toHaveTextContent('-');
+            screen.queryByTestId('no-condition-placeholder'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(/permissionsList.condition.heading/),
+        ).not.toBeInTheDocument();
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
+    });
+
+    it('renders mobile summary cards whose buttons open the shared details and condition dialogs', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+                condition: { conditionType: 'voting-power' },
+            }),
+        ];
+
+        render(createTestComponent({ rows, chainId: 1 }));
+
+        const detailsButton = screen.getByRole('button', {
+            name: /permissionsList.details.heading/,
+        });
+        expect(detailsButton.closest('[class~="md:hidden"]')).not.toBeNull();
+
+        fireEvent.click(detailsButton);
+        expect(openDialogMock).toHaveBeenCalledWith(
+            'PERMISSION_DETAILS',
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    row: rows[0],
+                    view: 'details',
+                }),
+            }),
+        );
+
+        const conditionButton = screen.getByRole('button', {
+            name: /permissionsList.condition.heading/,
+        });
+        expect(conditionButton.closest('[class~="md:hidden"]')).not.toBeNull();
+
+        fireEvent.click(conditionButton);
+        expect(openDialogMock).toHaveBeenCalledWith(
+            'PERMISSION_DETAILS',
+            expect.objectContaining({
+                params: expect.objectContaining({ view: 'condition' }),
+            }),
+        );
+    });
+
+    it('omits the condition drill-in button entirely when the row has no condition', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+            }),
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(
+            screen.getByRole('button', {
+                name: /permissionsList.details.heading/,
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.queryByRole('button', {
+                name: /permissionsList.condition.heading/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('renders an unresolved condition detail for expanded unknown conditions', () => {
