@@ -1,13 +1,8 @@
 'use client';
 
 import { DefinitionList, Tag } from '@aragon/gov-ui-kit';
-import type { IConditionData } from '@/modules/settings/types';
+import type { IDaoPermissionCondition } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-
-interface IMembershipConditionData extends IConditionData {
-    minApprovals?: number;
-    onlyListed?: boolean;
-}
 
 /**
  * Renders the detail for a multisig `membership` condition (ListedCheckCondition).
@@ -15,8 +10,10 @@ interface IMembershipConditionData extends IConditionData {
  * `onlyListed` setting is enabled, so that boolean is surfaced as
  * "Member of multisig".
  */
-export const MembershipConditionSlot: React.FC<IConditionData> = (props) => {
-    const { onlyListed, minApprovals } = props as IMembershipConditionData;
+export const MembershipConditionSlot: React.FC<IDaoPermissionCondition> = ({
+    onlyListed,
+    minApprovals,
+}) => {
     const { t } = useTranslations();
 
     const isMemberGated = onlyListed === true;

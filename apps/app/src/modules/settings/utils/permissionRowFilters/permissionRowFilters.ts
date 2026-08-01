@@ -1,11 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type {
-    IDaoPlugin,
-    PermissionEntityLayer,
-} from '@/shared/api/daoService';
+import type { IDaoPermission, IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
-import type { IPermissionRow } from '../../types';
 
 export interface IPermissionRowFilters {
     /**
@@ -21,35 +16,10 @@ export interface IPermissionRowFilters {
      */
     showDaoPermissions: boolean;
     /**
-     * When false, rows touching a subplugin, unresolved endpoint, or disconnected address are hidden.
+     * When false, rows touching a subplugin are hidden.
      */
     showSubpluginPermissions: boolean;
 }
-
-const INACTIVE_PLUGIN_STATUSES = new Set(['uninstalled', 'historical']);
-
-const UNRESOLVED_SUPPORTING_LAYERS = new Set<PermissionEntityLayer>([
-    'contract',
-    'unknown',
-]);
-
-const PERMISSION_HASH_PATTERN = /^0x[a-f0-9]{64}$/iu;
-const CREATE_PROPOSAL_PERMISSION_NAME = 'CREATE_PROPOSAL_PERMISSION';
-
-const isInactivePluginEndpoint = (row: IPermissionRow): boolean => {
-    const endpointEntities = [row.who, row.where];
-
-    return endpointEntities.some(
-        (entity) =>
-            entity?.status != null &&
-            INACTIVE_PLUGIN_STATUSES.has(entity.status),
-    );
-};
-
-const isUnresolvedSupportingEndpoint = (
-    entity?: IPermissionRow['who'],
-): boolean =>
-    entity?.layer != null && UNRESOLVED_SUPPORTING_LAYERS.has(entity.layer);
 
 const isSubplugin = (plugin: IFilterComponentPlugin<IDaoPlugin>): boolean => {
     const { meta } = plugin;
@@ -78,75 +48,37 @@ const isSubpluginAddress = (
         );
     }) ?? false;
 
-const isTopLevelProcessEndpoint = (
+const isSubpluginEndpoint = (
     address: string,
-    entity?: IPermissionRow['who'],
+    entity?: IDaoPermission['who'],
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
-    entity?.layer === 'processInternal' &&
-    entity.parentPluginAddress == null &&
-    !isSubpluginAddress(address, daoPlugins);
-
-const rowTouchesTopLevelProcess = (
-    row: IPermissionRow,
-    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-): boolean =>
-    isTopLevelProcessEndpoint(row.whoAddress, row.who, daoPlugins) ||
-    isTopLevelProcessEndpoint(row.whereAddress, row.where, daoPlugins);
+    entity?.parentPluginAddress != null ||
+    isSubpluginAddress(address, daoPlugins);
 
 const rowTouchesSubplugin = (
-    row: IPermissionRow,
+    row: IDaoPermission,
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
 ): boolean =>
-    isSubpluginAddress(row.whoAddress, daoPlugins) ||
-    isSubpluginAddress(row.whereAddress, daoPlugins);
+    isSubpluginEndpoint(row.whoAddress, row.who, daoPlugins) ||
+    isSubpluginEndpoint(row.whereAddress, row.where, daoPlugins);
 
-const rowTouchesUnresolvedSupportingEndpoint = (row: IPermissionRow): boolean =>
-    isUnresolvedSupportingEndpoint(row.who) ||
-    isUnresolvedSupportingEndpoint(row.where);
-
-const rowHasUnresolvedPermission = (row: IPermissionRow): boolean => {
-    if (!PERMISSION_HASH_PATTERN.test(row.permissionId)) {
-        return false;
-    }
-
-    return permissionNameUtils
-        .getPermissionName(row.permissionId)
-        .startsWith('0x');
-};
 const isDaoGrantedPermission = (
-    row: IPermissionRow,
+    row: IDaoPermission,
     activeAccountAddress?: string,
 ): boolean =>
     activeAccountAddress != null &&
     addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress);
 
-/**
- * A create-proposal permission targeting a governing body (top-level or
- * historical OSx plugin). In the graph these become per-target creator nodes;
- * in the list they remain audible rows. Shared with the graph builder so the
- * predicate has a single home.
- */
-export const isGoverningBodyProposalCreationRow = (row: IPermissionRow) =>
-    permissionNameUtils.getPermissionName(row.permissionId) ===
-        CREATE_PROPOSAL_PERMISSION_NAME &&
-    (row.where?.layer === 'topLevelPlugin' ||
-        row.where?.layer === 'historicalPlugin');
-
-const isResidualPermission = (
-    row: IPermissionRow,
-    activeAccountAddress?: string,
-    daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[],
-): boolean =>
-    activeAccountAddress != null &&
-    !rowTouchesTopLevelProcess(row, daoPlugins) &&
-    !addressUtils.isAddressEqual(row.whoAddress, activeAccountAddress) &&
-    !addressUtils.isAddressEqual(row.whereAddress, activeAccountAddress);
+export interface IPermissionRowToggleAvailability {
+    daoPermissions: boolean;
+    subpluginPermissions: boolean;
+}
 
 export const filterPermissionRows = (
-    rows: IPermissionRow[],
+    rows: IDaoPermission[],
     filters: IPermissionRowFilters,
-): IPermissionRow[] => {
+): IDaoPermission[] => {
     const {
         activeAccountAddress,
         daoPlugins,
@@ -155,10 +87,6 @@ export const filterPermissionRows = (
     } = filters;
 
     return rows.filter((row) => {
-        if (isInactivePluginEndpoint(row)) {
-            return false;
-        }
-
         if (
             !showDaoPermissions &&
             isDaoGrantedPermission(row, activeAccountAddress)
@@ -166,17 +94,49 @@ export const filterPermissionRows = (
             return false;
         }
 
-        if (
-            !showSubpluginPermissions &&
-            !isGoverningBodyProposalCreationRow(row) &&
-            (rowTouchesSubplugin(row, daoPlugins) ||
-                rowTouchesUnresolvedSupportingEndpoint(row) ||
-                rowHasUnresolvedPermission(row) ||
-                isResidualPermission(row, activeAccountAddress, daoPlugins))
-        ) {
+        if (!showSubpluginPermissions && rowTouchesSubplugin(row, daoPlugins)) {
             return false;
         }
 
         return true;
     });
+};
+
+export const getPermissionRowToggleAvailability = (
+    rows: IDaoPermission[],
+    filters: IPermissionRowFilters,
+): IPermissionRowToggleAvailability => {
+    const {
+        activeAccountAddress,
+        daoPlugins,
+        showDaoPermissions,
+        showSubpluginPermissions,
+    } = filters;
+    let daoPermissions = false;
+    let subpluginPermissions = false;
+
+    for (const row of rows) {
+        const isDaoPermission = isDaoGrantedPermission(
+            row,
+            activeAccountAddress,
+        );
+        const isSubpluginPermission = rowTouchesSubplugin(row, daoPlugins);
+
+        if (
+            isDaoPermission &&
+            (showSubpluginPermissions || !isSubpluginPermission)
+        ) {
+            daoPermissions = true;
+        }
+
+        if (isSubpluginPermission && (showDaoPermissions || !isDaoPermission)) {
+            subpluginPermissions = true;
+        }
+
+        if (daoPermissions && subpluginPermissions) {
+            break;
+        }
+    }
+
+    return { daoPermissions, subpluginPermissions };
 };

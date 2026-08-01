@@ -1,5 +1,7 @@
-import type { IPermissionEntityRef } from '@/shared/api/daoService';
-import type { IPermissionRow } from './permissionRow';
+import type {
+    IDaoPermission,
+    IPermissionEntityRef,
+} from '@/shared/api/daoService';
 
 export type PermissionNodeKind = 'dao' | 'linkedDao' | 'plugin' | 'actor';
 
@@ -22,7 +24,7 @@ export interface IPermissionGraphEdge {
     permissionName: string;
     permissionDisplayName: string;
     conditionLabel?: string;
-    row: IPermissionRow;
+    row: IDaoPermission;
 }
 
 export interface IPermissionGraph {

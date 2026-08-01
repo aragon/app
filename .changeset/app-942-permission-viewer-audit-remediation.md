@@ -1,0 +1,5 @@
+---
+"@aragon/app": patch
+---
+
+Remediate the permission-viewer audit findings: permission rows are hidden only by the two explicit toggles (the residual/unresolved heuristics, the create-proposal name carve-out, and the invisible inactive-plugin pre-filter are gone, so historical and unresolved grants are visible by default), permission-query failures render the error surface instead of the empty state, list and graph consume one identical filtered row set, every breakpoint shares one row/detail implementation with the condition field always present (dash when absent), Safe entities resolve through the shared brand identity with explorer-linked condition and token addresses, the graph bundle lazy-loads behind the graph view, and the permission domain types/generators move to shared enums with the settings-local canvas decomposed into focused modules.

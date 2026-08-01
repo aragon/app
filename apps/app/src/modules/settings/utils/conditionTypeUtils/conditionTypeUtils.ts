@@ -1,6 +1,9 @@
+import type {
+    IDaoPermission,
+    IDaoPermissionCondition,
+} from '@/shared/api/daoService';
 import { stringUtils } from '@/shared/utils/stringUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
-import type { IConditionData, IPermissionRow } from '../../types';
 
 /**
  * Discriminator returned when a permission is granted unconditionally
@@ -64,7 +67,7 @@ class ConditionTypeUtils {
      */
     resolveConditionType = (
         conditionAddress: string,
-        conditionData?: IConditionData,
+        conditionData?: IDaoPermissionCondition,
     ): string => {
         if (conditionAddress.toLowerCase() === ALLOW_FLAG.toLowerCase()) {
             return NO_CONDITION;
@@ -120,7 +123,7 @@ class ConditionTypeUtils {
      * @returns The resolved condition display data.
      */
     resolveConditionDisplay = (
-        row: Pick<IPermissionRow, 'conditionAddress' | 'condition'>,
+        row: Pick<IDaoPermission, 'conditionAddress' | 'condition'>,
     ): IConditionDisplay => {
         const address = row.conditionAddress ?? ALLOW_FLAG;
         const type = this.resolveConditionType(address, row.condition);

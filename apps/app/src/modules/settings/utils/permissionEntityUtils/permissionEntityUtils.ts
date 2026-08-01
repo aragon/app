@@ -1,5 +1,9 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { IDaoPlugin, IPermissionEntityRef } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    type IPermissionEntityRef,
+    PermissionEntityBrandId,
+} from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
@@ -109,7 +113,7 @@ class PermissionEntityUtils {
     ): IPermissionEntity => {
         const { daoPlugins, accounts, entity } = options;
 
-        if (this.isAddressEqual(address, ANY_ADDR)) {
+        if (addressUtils.isAddressEqual(address.toLowerCase(), ANY_ADDR)) {
             return {
                 label: 'Anyone',
                 address,
@@ -118,7 +122,7 @@ class PermissionEntityUtils {
             };
         }
 
-        if (this.isAddressEqual(address, ALLOW_FLAG)) {
+        if (addressUtils.isAddressEqual(address.toLowerCase(), ALLOW_FLAG)) {
             return {
                 label: 'Any Address',
                 address,
@@ -132,7 +136,7 @@ class PermissionEntityUtils {
         }
 
         const matchedPlugin = daoPlugins?.find((plugin) =>
-            this.isAddressEqual(plugin.meta.address, address),
+            addressUtils.isAddressEqual(plugin.meta.address, address),
         );
 
         if (matchedPlugin != null) {
@@ -153,7 +157,7 @@ class PermissionEntityUtils {
         }
 
         const matchedAccount = accounts?.find((account) =>
-            this.isAddressEqual(account.address, address),
+            addressUtils.isAddressEqual(account.address, address),
         );
 
         if (matchedAccount != null) {
@@ -188,6 +192,20 @@ class PermissionEntityUtils {
                 : 'Unknown address');
         const tag = entity.interfaceType?.toUpperCase();
 
+        if (entity.brandId === PermissionEntityBrandId.SAFE) {
+            return {
+                label: 'Safe',
+                tag: undefined,
+                address,
+                isSentinel: false,
+                type: 'plugin',
+                detailName: entity.parentPluginName ?? 'Safe',
+                layer: entity.layer,
+                status: entity.status,
+                brandId: entity.brandId,
+            };
+        }
+
         if (entity.layer === 'dao') {
             return {
                 label,
@@ -208,7 +226,6 @@ class PermissionEntityUtils {
                 bodyInterfaceType != null
                     ? daoUtils.parsePluginInterfaceType(bodyInterfaceType)
                     : undefined;
-            const brandTag = entity.brandId === 'safe' ? 'SAFE' : undefined;
             // The backend hardcodes a generic label for bodies it cannot name.
             // Treat that as "no name" and derive a title from the interface type
             // (front-run until the backend resolves the body's real name).
@@ -216,18 +233,13 @@ class PermissionEntityUtils {
                 entity.label != null && entity.label !== 'Process internal'
                     ? entity.label
                     : undefined;
-            const bodyName =
-                backendName ??
-                parsedType ??
-                (entity.brandId === 'safe' ? 'Safe' : label);
+            const bodyName = backendName ?? parsedType ?? label;
 
             return {
                 label: bodyName,
                 // Show a type chip only when the title is a real name — otherwise
                 // the derived title already is the type and the chip is redundant.
-                tag: backendName
-                    ? (bodyInterfaceType?.toUpperCase() ?? brandTag)
-                    : brandTag,
+                tag: backendName ? bodyInterfaceType?.toUpperCase() : undefined,
                 address,
                 isSentinel: false,
                 type: 'plugin',
@@ -243,7 +255,7 @@ class PermissionEntityUtils {
             entity.layer === 'historicalPlugin'
         ) {
             const matchedPlugin = daoPlugins?.find((plugin) =>
-                this.isAddressEqual(plugin.meta.address, address),
+                addressUtils.isAddressEqual(plugin.meta.address, address),
             );
             const backendLabelIsRawType =
                 entity.interfaceType != null &&
@@ -291,9 +303,6 @@ class PermissionEntityUtils {
 
         return name;
     };
-
-    private isAddressEqual = (a?: string, b?: string): boolean =>
-        a != null && b != null && a.toLowerCase() === b.toLowerCase();
 }
 
 export const permissionEntityUtils = new PermissionEntityUtils();

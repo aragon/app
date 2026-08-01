@@ -2,10 +2,8 @@ import { render, screen } from '@testing-library/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import type { ComponentProps } from 'react';
 import { ANY_ADDR } from '../../constants/permissionSentinels';
-import {
-    PermissionGraphNode,
-    PermissionStackNode,
-} from './permissionGraphNode';
+import { PermissionGraphNode } from './permissionGraphNode';
+import { PermissionStackNode } from './permissionStackNode';
 
 jest.mock('@/shared/components/translationsProvider', () => ({
     useTranslations: () => ({

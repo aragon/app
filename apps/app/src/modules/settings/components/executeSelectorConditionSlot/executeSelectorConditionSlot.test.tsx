@@ -4,8 +4,7 @@ import {
     type IAllowedAction,
     useAllowedActions,
 } from '@/modules/governance/api/executeSelectorsService';
-import type { IConditionData } from '@/modules/settings/types';
-import { Network } from '@/shared/api/daoService';
+import { type IDaoPermissionCondition, Network } from '@/shared/api/daoService';
 import { ExecuteSelectorConditionSlot } from './executeSelectorConditionSlot';
 
 jest.mock('@/modules/governance/api/executeSelectorsService', () => ({
@@ -15,8 +14,17 @@ jest.mock('@/modules/governance/api/executeSelectorsService', () => ({
 
 describe('<ExecuteSelectorConditionSlot /> component', () => {
     const useAllowedActionsMock = jest.mocked(useAllowedActions);
-    const createTestComponent = (props?: Partial<IConditionData>) => {
-        const completeProps: IConditionData = {
+    type ExecuteSelectorConditionProps = IDaoPermissionCondition & {
+        chainId?: number;
+        conditionAddress?: string;
+        network?: Network;
+        pluginAddress?: string;
+    };
+
+    const createTestComponent = (
+        props?: Partial<ExecuteSelectorConditionProps>,
+    ) => {
+        const completeProps: ExecuteSelectorConditionProps = {
             conditionType: 'execute-selector',
             ...props,
         };
@@ -131,6 +139,27 @@ describe('<ExecuteSelectorConditionSlot /> component', () => {
         expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
         expect(screen.queryByText('unrelated')).not.toBeInTheDocument();
         expect(screen.queryByText('0xDe0B…7BAe')).not.toBeInTheDocument();
+    });
+
+    it('falls back to raw actions when the backend has no decoded match', () => {
+        const target = '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5';
+
+        mockAllowedActions([]);
+
+        render(
+            createTestComponent({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+                network: Network.ARBITRUM_MAINNET,
+                pluginAddress: '0x1234567890123456789012345678901234567890',
+                selectors: ['0xaaaaaaaa'],
+                targets: [target],
+            }),
+        );
+
+        expect(useAllowedActionsMock).toHaveBeenCalled();
+        expect(screen.getAllByText('0xaaaaaaaa')).toHaveLength(2);
+        expect(screen.getByText('0x0bA4…a2e5')).toBeInTheDocument();
+        expect(screen.queryByText('AddressGaugeVoter')).not.toBeInTheDocument();
     });
 
     it('shows the no allowed actions fallback when selectors are absent', () => {

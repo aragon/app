@@ -3568,9 +3568,9 @@
           "hideDaoPermissions": "Hide permissions granted to DAO",
           "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
           "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
-          "hideGoverningBodyPermissions": "Hide permissions on governing bodies",
-          "hideGoverningBodyPermissionsTooltip": "Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.",
-          "hideGoverningBodyPermissionsTooltipLabel": "About governing body permissions"
+          "hideGoverningBodyPermissions": "Hide subplugin permissions",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions where either Who or Where is identified as a subplugin.",
+          "hideGoverningBodyPermissionsTooltipLabel": "About subplugin permissions"
         },
         "graphView": {
           "node": {
@@ -3632,10 +3632,6 @@
           "heading": "No permissions",
           "description": "This account has no indexed permissions."
         }
-      },
-      "unrecognizedConditionSlot": {
-        "heading": "Unrecognized condition",
-        "description": "This permission references a condition contract, but its condition data could not be resolved."
       },
       "votingPowerConditionSlot": {
         "token": "Token",

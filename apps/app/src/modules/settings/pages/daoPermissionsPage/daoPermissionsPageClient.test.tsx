@@ -1,34 +1,45 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as DaoService from '@/shared/api/daoService';
-import { Network } from '@/shared/api/daoService';
+import { type IDaoPermission, Network } from '@/shared/api/daoService';
 import {
     generateDao,
+    generateDaoPermission,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import type { IUsePermissionsDataResult } from '../../hooks/usePermissionsData';
 import * as UsePermissionsDataModule from '../../hooks/usePermissionsData';
-import type { IPermissionRow } from '../../types';
 import { DaoPermissionsPageClient } from './daoPermissionsPageClient';
 
+let mockGraphRows: IDaoPermission[] | undefined;
+let mockListRows: IDaoPermission[] | undefined;
+
 jest.mock('../../components/permissionsGraph', () => ({
-    PermissionsGraph: (props: { rows: IPermissionRow[] }) => (
-        <div
-            data-row-count={props.rows.length}
-            data-testid="permissions-graph"
-        />
-    ),
+    PermissionsGraph: (props: { rows: IDaoPermission[] }) => {
+        mockGraphRows = props.rows;
+
+        return (
+            <div
+                data-row-count={props.rows.length}
+                data-testid="permissions-graph"
+            />
+        );
+    },
 }));
 
 jest.mock('../../components/permissionsList', () => ({
-    getPermissionRowKey: (row: IPermissionRow) =>
+    getPermissionRowKey: (row: IDaoPermission) =>
         `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`,
-    PermissionsList: (props: { rows: IPermissionRow[] }) => (
-        <div
-            data-row-count={props.rows.length}
-            data-testid="permissions-list"
-        />
-    ),
+    PermissionsList: (props: { rows: IDaoPermission[] }) => {
+        mockListRows = props.rows;
+
+        return (
+            <div
+                data-row-count={props.rows.length}
+                data-testid="permissions-list"
+            />
+        );
+    },
 }));
 
 let mockFilterParamValues: Record<string, string>;
@@ -50,21 +61,22 @@ jest.mock('@/shared/components/translationsProvider', () => ({
                 'app.settings.daoPermissionsPage.filters.hideDaoPermissions':
                     'Hide permissions granted to DAO',
                 'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissions':
-                    'Hide permissions on governing bodies',
+                    'Hide subplugin permissions',
                 'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltipLabel':
                     'About permissions granted to DAO',
                 'app.settings.daoPermissionsPage.filters.hideDaoPermissionsTooltip':
                     'Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.',
                 'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltipLabel':
-                    'About governing body permissions',
+                    'About subplugin permissions',
                 'app.settings.daoPermissionsPage.filters.hideGoverningBodyPermissionsTooltip':
-                    'Hides permissions to or from installed governing bodies and rows not connected to the selected DAO.',
+                    'Hides permissions where either Who or Where is identified as a subplugin.',
                 'app.settings.daoPermissionsPage.view.graph': 'Graph',
                 'app.settings.daoPermissionsPage.view.list': 'List',
                 'app.settings.permissionsList.expandAll': 'Expand all',
                 'app.settings.permissionsList.collapseAll': 'Collapse all',
             })[key] ?? key,
     }),
+    useSafeTranslations: () => ({ t: (key: string) => key }),
 }));
 
 const activeDaoAddress = '0x1111111111111111111111111111111111111111';
@@ -72,13 +84,19 @@ const pluginAddress = '0x2222222222222222222222222222222222222222';
 const externalAddress = '0x3333333333333333333333333333333333333333';
 const otherAddress = '0x4444444444444444444444444444444444444444';
 
-const buildRow = (partial: Partial<IPermissionRow>): IPermissionRow => ({
-    permissionId: 'permission-id',
-    whoAddress: pluginAddress,
-    whereAddress: activeDaoAddress,
-    conditionAddress: '0x0000000000000000000000000000000000000000',
-    ...partial,
-});
+const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
+    generateDaoPermission({
+        permissionId: 'permission-id',
+        whoAddress: pluginAddress,
+        whereAddress: activeDaoAddress,
+        conditionAddress: '0x0000000000000000000000000000000000000000',
+        condition: undefined,
+        conditionEntity: undefined,
+        network: undefined,
+        who: undefined,
+        where: undefined,
+        ...partial,
+    });
 
 describe('<DaoPermissionsPageClient /> component', () => {
     const useDaoSpy = jest.spyOn(DaoService, 'useDao');
@@ -86,8 +104,11 @@ describe('<DaoPermissionsPageClient /> component', () => {
         UsePermissionsDataModule,
         'usePermissionsData',
     );
+    let permissionsData: IUsePermissionsDataResult;
 
     beforeEach(() => {
+        mockGraphRows = undefined;
+        mockListRows = undefined;
         mockFilterParamValues = { permissionsview: 'graph' };
 
         const dao = generateDao({
@@ -114,7 +135,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccess({ data: dao }),
         );
-        usePermissionsDataSpy.mockReturnValue({
+        permissionsData = {
             dao,
             accounts: [
                 {
@@ -139,7 +160,9 @@ describe('<DaoPermissionsPageClient /> component', () => {
             rows,
             chainId: 1,
             isLoading: false,
-        } as IUsePermissionsDataResult);
+            error: null,
+        } as IUsePermissionsDataResult;
+        usePermissionsDataSpy.mockImplementation(() => permissionsData);
     });
 
     afterEach(() => {
@@ -163,10 +186,11 @@ describe('<DaoPermissionsPageClient /> component', () => {
             screen.getByText('Hide permissions granted to DAO'),
         ).toBeInTheDocument();
         expect(
-            screen.getByText('Hide permissions on governing bodies'),
+            screen.getByText('Hide subplugin permissions'),
         ).toBeInTheDocument();
         expect(screen.queryByText('DAO as caller')).not.toBeInTheDocument();
         expect(screen.queryByText('Subplugin paths')).not.toBeInTheDocument();
+        expect(useDaoSpy).not.toHaveBeenCalled();
         expect(
             screen.queryByRole('button', {
                 name: 'About permissions granted to DAO',
@@ -174,7 +198,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).not.toBeInTheDocument();
         expect(
             screen.queryByRole('button', {
-                name: 'About governing body permissions',
+                name: 'About subplugin permissions',
             }),
         ).not.toBeInTheDocument();
         expect(
@@ -184,12 +208,12 @@ describe('<DaoPermissionsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByRole('img', {
-                name: /Hides permissions to or from installed governing bodies/,
+                name: /either Who or Where is identified as a subplugin/,
             }),
         ).toBeInTheDocument();
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
     });
 
@@ -241,7 +265,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         );
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
     });
 
@@ -260,7 +284,222 @@ describe('<DaoPermissionsPageClient /> component', () => {
 
         expect(screen.getByTestId('permissions-graph')).toHaveAttribute(
             'data-row-count',
-            '1',
+            '2',
         );
+    });
+
+    it('passes the same filtered row array from list view to graph view', () => {
+        mockFilterParamValues = {
+            permissionshidedaogrants: 'false',
+            permissionshidegoverningbodypaths: 'false',
+            permissionsview: 'list',
+        };
+        const createComponent = () => (
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>
+        );
+        const { rerender } = render(createComponent());
+        const listRows = mockListRows;
+
+        expect(listRows).toHaveLength(permissionsData.rows.length);
+        listRows?.forEach((row, index) => {
+            expect(row).toBe(permissionsData.rows[index]);
+        });
+
+        mockFilterParamValues.permissionsview = 'graph';
+        rerender(createComponent());
+
+        expect(mockGraphRows).toBe(listRows);
+    });
+
+    it('renders the shared error surface instead of an empty permissions view', () => {
+        permissionsData = {
+            ...permissionsData,
+            error: new Error('permissions unavailable'),
+            rows: [],
+        } as IUsePermissionsDataResult;
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(
+            screen.getByText('app.shared.errorFeedback.title'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('permissions-graph'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('permissions-list'),
+        ).not.toBeInTheDocument();
+    });
+
+    it('keeps a successful empty result in the normal permissions view', () => {
+        mockFilterParamValues = { permissionsview: 'list' };
+        permissionsData = {
+            ...permissionsData,
+            rows: [],
+        } as IUsePermissionsDataResult;
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        expect(screen.getByTestId('permissions-list')).toHaveAttribute(
+            'data-row-count',
+            '0',
+        );
+        expect(
+            screen.queryByText('app.shared.errorFeedback.title'),
+        ).not.toBeInTheDocument();
+    });
+
+    it.each([
+        {
+            name: 'no affected rows',
+            rows: [buildRow({ whereAddress: activeDaoAddress })],
+            params: {},
+            daoDisabled: true,
+            subpluginDisabled: true,
+            isLoading: false,
+        },
+        {
+            name: 'a DAO-granted row',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: {},
+            daoDisabled: false,
+            subpluginDisabled: true,
+            isLoading: false,
+        },
+        {
+            name: 'a backend-classified subplugin row',
+            rows: [
+                buildRow({
+                    who: {
+                        address: externalAddress,
+                        label: 'Subplugin process',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whoAddress: externalAddress,
+                }),
+            ],
+            params: {},
+            daoDisabled: true,
+            subpluginDisabled: false,
+            isLoading: false,
+        },
+        {
+            name: 'a row hidden by both active controls',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    where: {
+                        address: externalAddress,
+                        label: 'Subplugin process',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: {},
+            daoDisabled: true,
+            subpluginDisabled: true,
+            isLoading: false,
+        },
+        {
+            name: 'a row hidden by both with the subplugin control off',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    where: {
+                        address: externalAddress,
+                        label: 'Subplugin process',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: { permissionshidegoverningbodypaths: 'false' },
+            daoDisabled: false,
+            subpluginDisabled: true,
+            isLoading: false,
+        },
+        {
+            name: 'a row hidden by both with the DAO control off',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    where: {
+                        address: externalAddress,
+                        label: 'Subplugin process',
+                        layer: 'processInternal',
+                        parentPluginAddress: pluginAddress,
+                    },
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: { permissionshidedaogrants: 'false' },
+            daoDisabled: true,
+            subpluginDisabled: false,
+            isLoading: false,
+        },
+        {
+            name: 'loading data',
+            rows: [
+                buildRow({
+                    whoAddress: activeDaoAddress,
+                    whereAddress: externalAddress,
+                }),
+            ],
+            params: {},
+            daoDisabled: true,
+            subpluginDisabled: true,
+            isLoading: true,
+        },
+    ])('derives disabled controls from row predicates for $name', ({
+        rows,
+        params,
+        daoDisabled,
+        subpluginDisabled,
+        isLoading,
+    }) => {
+        mockFilterParamValues = {
+            ...(params as Record<string, string>),
+            permissionsview: 'graph',
+        };
+        permissionsData = {
+            ...permissionsData,
+            isLoading,
+            rows,
+        } as IUsePermissionsDataResult;
+
+        render(
+            <GukModulesProvider>
+                <DaoPermissionsPageClient daoId="dao-id" />
+            </GukModulesProvider>,
+        );
+
+        const daoSwitch = screen.getByRole('switch', {
+            name: 'Hide permissions granted to DAO',
+        });
+        const subpluginSwitch = screen.getByRole('switch', {
+            name: 'Hide subplugin permissions',
+        });
+
+        expect(daoSwitch).toHaveProperty('disabled', daoDisabled);
+        expect(subpluginSwitch).toHaveProperty('disabled', subpluginDisabled);
     });
 });

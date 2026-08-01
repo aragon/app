@@ -1,7 +1,6 @@
 'use client';
 
-import type { IConditionData } from '@/modules/settings/types';
-import type { Network } from '@/shared/api/daoService';
+import type { IDaoPermissionCondition, Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { AllowedActionsList } from './allowedActionsList';
 import { DecodedAllowedActionsList } from './decodedAllowedActionsList';
@@ -10,24 +9,23 @@ import {
     toAllowedActionViews,
 } from './executeSelectorConditionSlotUtils';
 
-interface IExecuteSelectorConditionSlotProps extends IConditionData {
+interface IExecuteSelectorConditionSlotProps extends IDaoPermissionCondition {
     chainId?: number;
     conditionAddress?: string;
     network?: Network;
     pluginAddress?: string;
 }
 
-export const ExecuteSelectorConditionSlot: React.FC<IConditionData> = (
-    props,
-) => {
-    const {
-        selectors,
-        targets,
-        chainId,
-        conditionAddress,
-        network,
-        pluginAddress,
-    } = props as IExecuteSelectorConditionSlotProps;
+export const ExecuteSelectorConditionSlot: React.FC<
+    IExecuteSelectorConditionSlotProps
+> = ({
+    selectors,
+    targets,
+    chainId,
+    conditionAddress,
+    network,
+    pluginAddress,
+}) => {
     const { t } = useTranslations();
 
     const rawAllowedActions = toAllowedActions(selectors, targets);

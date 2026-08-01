@@ -1,4 +1,10 @@
-import type { Network } from './enum';
+import type {
+    Network,
+    PermissionEntityBrandId,
+    PermissionEntityLayer,
+    PermissionEntityRole,
+    PermissionEntityStatus,
+} from './enum';
 
 export interface IDaoPermissionCondition {
     /**
@@ -10,39 +16,30 @@ export interface IDaoPermissionCondition {
     minVotingPower?: string;
     onlyListed?: boolean;
     minApprovals?: number;
-    selectors?: Array<string | null>;
-    targets?: string[];
-    [key: string]: unknown;
+    /** Untrusted backend payload, narrowed by the execute-selector slot. */
+    selectors?: unknown;
+    /** Untrusted backend payload, narrowed by the execute-selector slot. */
+    targets?: unknown;
 }
-
-export type PermissionEntityLayer =
-    | 'dao'
-    | 'topLevelPlugin'
-    | 'processInternal'
-    | 'condition'
-    | 'externalActor'
-    | 'historicalPlugin'
-    | 'contract'
-    | 'unknown';
 
 export interface IPermissionEntityRef {
     address: string;
     layer: PermissionEntityLayer;
     label?: string;
     interfaceType?: string;
-    status?: 'installed' | 'uninstalled' | 'historical' | 'unknown';
+    status?: PermissionEntityStatus;
     parentPluginAddress?: string;
     parentPluginName?: string;
     parentInterfaceType?: string;
     stageIndex?: number;
-    role?: 'who' | 'where' | 'condition';
+    role?: PermissionEntityRole;
     avatarSrc?: string;
     /**
      * Governance body brand identity, mirrored from the backend permission
      * entity enrichment (see app-backend #1491). `safe` marks a Safe-based
      * process body or external proposer.
      */
-    brandId?: 'eoa' | 'safe' | 'other';
+    brandId?: PermissionEntityBrandId;
     /**
      * Address of the proposal-creation condition wired to a Safe body, when the
      * backend can resolve it.

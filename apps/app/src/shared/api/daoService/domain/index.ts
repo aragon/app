@@ -3,8 +3,8 @@ export type { IDao, ILinkedAccountSummary } from './dao';
 export type { IDaoMetrics } from './daoMetrics';
 export type {
     IDaoPermission,
+    IDaoPermissionCondition,
     IPermissionEntityRef,
-    PermissionEntityLayer,
 } from './daoPermission';
 export type { IDaoPlugin } from './daoPlugin';
 export {
@@ -14,6 +14,15 @@ export {
     PolicyStrategySourceType,
     PolicyStrategyType,
 } from './daoPolicy';
-export { Network, PluginInterfaceType } from './enum';
+export type {
+    PermissionEntityLayer,
+    PermissionEntityRole,
+    PermissionEntityStatus,
+} from './enum';
+export {
+    Network,
+    PermissionEntityBrandId,
+    PluginInterfaceType,
+} from './enum';
 export type { IPluginSettings } from './pluginSettings';
 export type { IResource } from './resource';

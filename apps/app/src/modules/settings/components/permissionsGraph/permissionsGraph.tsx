@@ -1,31 +1,23 @@
 'use client';
 
-import {
-    Button,
-    CardEmptyState,
-    IconType,
-    StateSkeletonBar,
-} from '@aragon/gov-ui-kit';
+import { Button, CardEmptyState, IconType } from '@aragon/gov-ui-kit';
 import '@xyflow/react/dist/style.css';
 import { ReactFlowProvider } from '@xyflow/react';
 import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
-import type { IDao, IDaoPlugin } from '@/shared/api/daoService';
+import type { IDao, IDaoPermission, IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import type { IPermissionRow } from '../../types';
 import { buildPermissionGraph } from '../../utils/buildPermissionGraph';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 import { PermissionDetailPanel } from './permissionDetailPanel';
 import { PermissionNodeDetailPanel } from './permissionNodeDetailPanel';
-import {
-    getVisibleEdges,
-    PermissionsGraphCanvas,
-} from './permissionsGraphCanvas';
+import { PermissionsGraphCanvas } from './permissionsGraphCanvas';
+import { PermissionsGraphSkeleton } from './permissionsGraphSkeleton';
 
 export interface IPermissionsGraphProps {
-    rows: IPermissionRow[];
+    rows: IDaoPermission[];
     dao?: IDao;
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[];
     accountRefs: IPermissionAccountRef[];
@@ -94,13 +86,10 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
     }, [rows, dao, daoPlugins, accountRefs]);
 
     const anchorId = (activeAccountAddress ?? dao?.address ?? '').toLowerCase();
-    const visibleEdges = getVisibleEdges(graph);
     const visibleNodeIds = new Set(
-        visibleEdges.flatMap((edge) => [edge.source, edge.target]),
+        graph.edges.flatMap((edge) => [edge.source, edge.target]),
     );
-    const selectedEdge = visibleEdges.find(
-        (edge) => edge.id === selectedEdgeId,
-    );
+    const selectedEdge = graph.edges.find((edge) => edge.id === selectedEdgeId);
     const selectedNode = graph.nodes.find(
         (node) => node.id === selectedNodeId && visibleNodeIds.has(node.id),
     );
@@ -109,7 +98,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
         return <PermissionsGraphSkeleton />;
     }
 
-    if (graph.edges.length === 0 || visibleEdges.length === 0) {
+    if (graph.edges.length === 0) {
         return (
             <CardEmptyState
                 description={t(
@@ -174,14 +163,3 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
         </div>
     );
 };
-
-const PermissionsGraphSkeleton: React.FC = () => (
-    <div
-        className="flex h-[560px] w-full flex-col gap-4 rounded-lg border border-neutral-200 p-6"
-        data-testid="permissions-graph-skeleton"
-    >
-        <StateSkeletonBar width="36%" />
-        <StateSkeletonBar width="64%" />
-        <StateSkeletonBar width="48%" />
-    </div>
-);

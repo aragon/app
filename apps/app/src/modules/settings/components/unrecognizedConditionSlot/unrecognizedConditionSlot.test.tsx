@@ -14,20 +14,21 @@ describe('<UnrecognizedConditionSlot /> component', () => {
         </GukModulesProvider>
     );
 
-    it('renders the unrecognized condition heading and description copy', () => {
+    it('renders a compact placeholder when the condition address is missing', () => {
         render(createTestComponent());
 
-        expect(
-            screen.getByText(/unrecognizedConditionSlot.heading/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/unrecognizedConditionSlot.description/),
-        ).toBeInTheDocument();
+        expect(screen.getByTestId('unrecognized-condition')).toHaveTextContent(
+            '-',
+        );
+        expect(screen.queryByRole('link')).not.toBeInTheDocument();
     });
 
     it('renders the unrecognized condition address with explorer access', () => {
         render(createTestComponent({ chainId: 1, conditionAddress }));
 
+        expect(
+            screen.getByTestId('unrecognized-condition'),
+        ).toBeInTheDocument();
         expect(
             screen.getByText(/permissionsList.details.condition/),
         ).toBeInTheDocument();

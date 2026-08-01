@@ -2,7 +2,6 @@
 
 import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { useDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
@@ -14,7 +13,10 @@ import {
     PermissionsList,
 } from '../../components/permissionsList';
 import { usePermissionsData } from '../../hooks/usePermissionsData';
-import { filterPermissionRows } from '../../utils/permissionRowFilters';
+import {
+    filterPermissionRows,
+    getPermissionRowToggleAvailability,
+} from '../../utils/permissionRowFilters';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -33,18 +35,8 @@ enum PermissionsView {
     GRAPH = 'graph',
 }
 
-type PermissionRows = ReturnType<typeof usePermissionsData>['rows'];
-
 const booleanParamValues = ['false', 'true'];
 const permissionsViews = Object.values(PermissionsView);
-
-const getPermissionRowsSignature = (rows: PermissionRows): string =>
-    rows.map(getPermissionRowKey).sort().join('|');
-
-const arePermissionRowsEqual = (
-    a: PermissionRows,
-    b: PermissionRows,
-): boolean => getPermissionRowsSignature(a) === getPermissionRowsSignature(b);
 
 export const DaoPermissionsPageClient: React.FC<
     IDaoPermissionsPageClientProps
@@ -52,8 +44,6 @@ export const DaoPermissionsPageClient: React.FC<
     const { daoId } = props;
 
     const { t } = useTranslations();
-
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const {
         dao: permissionsDao,
@@ -66,6 +56,7 @@ export const DaoPermissionsPageClient: React.FC<
         rows,
         chainId,
         isLoading,
+        error,
     } = usePermissionsData({ daoId });
 
     const [view, setView] = useFilterUrlParam({
@@ -138,47 +129,31 @@ export const DaoPermissionsPageClient: React.FC<
         ],
     );
 
-    const hideDaoPermissionsToggleDisabled = useMemo(
+    const permissionToggleAvailability = useMemo(
         () =>
-            arePermissionRowsEqual(
-                filteredRows,
-                filterPermissionRows(rows, {
-                    activeAccountAddress: activeAccount?.daoAddress,
-                    daoPlugins,
-                    showDaoPermissions: !showDaoPermissions,
-                    showSubpluginPermissions,
-                }),
-            ),
+            getPermissionRowToggleAvailability(rows, {
+                activeAccountAddress: activeAccount?.daoAddress,
+                daoPlugins,
+                showDaoPermissions,
+                showSubpluginPermissions,
+            }),
         [
             activeAccount?.daoAddress,
             daoPlugins,
-            filteredRows,
             rows,
             showDaoPermissions,
             showSubpluginPermissions,
         ],
     );
 
-    const hideGoverningBodyPermissionsToggleDisabled = useMemo(
-        () =>
-            arePermissionRowsEqual(
-                filteredRows,
-                filterPermissionRows(rows, {
-                    activeAccountAddress: activeAccount?.daoAddress,
-                    daoPlugins,
-                    showDaoPermissions,
-                    showSubpluginPermissions: !showSubpluginPermissions,
-                }),
-            ),
-        [
-            activeAccount?.daoAddress,
-            daoPlugins,
-            filteredRows,
-            rows,
-            showDaoPermissions,
-            showSubpluginPermissions,
-        ],
-    );
+    const hideDaoPermissionsToggleDisabled =
+        !permissionToggleAvailability.daoPermissions;
+    const hideGoverningBodyPermissionsToggleDisabled =
+        !permissionToggleAvailability.subpluginPermissions;
+
+    if (error != null) {
+        return <Page.Error error={error} />;
+    }
 
     const allExpanded =
         filteredRows.length > 0 && expandedRows.length === filteredRows.length;
@@ -191,7 +166,7 @@ export const DaoPermissionsPageClient: React.FC<
 
     const pageBreadcrumbs = [
         {
-            href: daoUtils.getDaoUrl(dao, 'settings'),
+            href: daoUtils.getDaoUrl(permissionsDao, 'settings'),
             label: t(
                 'app.settings.daoPermissionsPage.header.breadcrumb.settings',
             ),

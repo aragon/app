@@ -1,41 +1,47 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type {
     IDao,
+    IDaoPermission,
     IDaoPlugin,
     IPermissionEntityRef,
 } from '@/shared/api/daoService';
+import { PermissionEntityBrandId } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
+import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
 import type {
     IPermissionGraph,
     IPermissionGraphEdge,
     IPermissionGraphNode,
-    IPermissionRow,
 } from '../../types';
 import { conditionTypeUtils } from '../conditionTypeUtils';
 import {
     type IPermissionAccountRef,
     permissionEntityUtils,
 } from '../permissionEntityUtils';
-import { isGoverningBodyProposalCreationRow } from '../permissionRowFilters';
 
 const NO_CONDITION_LABEL = '-';
 const PROPOSAL_CREATOR_NODE_PREFIX = 'proposal-creator';
+const isGoverningBodyProposalCreationRow = (row: IDaoPermission): boolean =>
+    permissionNameUtils.getPermissionName(row.permissionId) ===
+        permissionTransactionUtils.permissionIds.createProposalPermission &&
+    (row.where?.layer === 'topLevelPlugin' ||
+        row.where?.layer === 'historicalPlugin');
 
 /**
  * Condition contracts are already conveyed as the `if …` label on the
  * permission edge, so rendering them as their own graph node is pure
  * duplication. Drop any permission whose actor or target *is* a condition
  * contract from the graph (the condition annotation on real permissions is
- * unaffected). `unknown` / unresolved `contract` endpoints stay — they remain
- * selectable and are gated by the supporting-permissions toggle upstream.
+ * unaffected). `unknown` / unresolved `contract` endpoints stay because page
+ * selection hides only DAO-granted and true subplugin-touching rows.
  */
 const isGraphExcludedEndpoint = (entity?: IPermissionEntityRef): boolean =>
     entity?.layer === 'condition';
 
 export interface IBuildPermissionGraphParams {
-    rows: IPermissionRow[];
+    rows: IDaoPermission[];
     dao: IDao;
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[];
     accountRefs?: IPermissionAccountRef[];
@@ -113,7 +119,7 @@ interface IResolveEdgeOptions {
     sourceId?: string;
 }
 
-const getProposalCreatorNodeId = (row: IPermissionRow): string => {
+const getProposalCreatorNodeId = (row: IDaoPermission): string => {
     const conditionAddress = row.conditionAddress ?? ALLOW_FLAG;
 
     return [
@@ -128,13 +134,13 @@ const getProposalCreatorNodeId = (row: IPermissionRow): string => {
 };
 
 const resolveProposalCreatorNode = (
-    row: IPermissionRow,
+    row: IDaoPermission,
     context: IResolveNodeContext,
 ): IPermissionGraphNode => {
     const baseNode = resolveNode(row.whoAddress, context, row.who);
     const id = getProposalCreatorNodeId(row);
     const isMultisigMembers =
-        baseNode.brandId !== 'safe' &&
+        baseNode.brandId !== PermissionEntityBrandId.SAFE &&
         row.who?.interfaceType?.toLowerCase() === 'multisig';
 
     if (!isMultisigMembers) {
@@ -153,7 +159,7 @@ const resolveProposalCreatorNode = (
 };
 
 const resolveEdge = (
-    row: IPermissionRow,
+    row: IDaoPermission,
     options: IResolveEdgeOptions = {},
 ): IPermissionGraphEdge => {
     const { sourceId } = options;

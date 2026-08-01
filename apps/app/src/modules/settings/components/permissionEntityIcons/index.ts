@@ -1,4 +1,2 @@
-export {
-    MembersAvatarIcon,
-    SafeAccountAvatar,
-} from './permissionEntityIcons';
+export { MembersAvatarIcon } from './membersAvatarIcon';
+export { SafeAccountAvatar } from './safeAccountAvatar';

@@ -2,14 +2,12 @@ jest.mock('@xyflow/react/dist/style.css', () => ({}));
 
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Network } from '@/shared/api/daoService';
+import { type IDaoPermission, Network } from '@/shared/api/daoService';
 import { generateDao } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
-import type { IPermissionRow } from '../../types';
 import { PermissionsGraph } from './permissionsGraph';
 
 jest.mock('./permissionsGraphCanvas', () => ({
-    getVisibleEdges: (graph: { edges: unknown[] }) => graph.edges,
     PermissionsGraphCanvas: () => (
         <div data-testid="permissions-graph-canvas" />
     ),
@@ -33,7 +31,7 @@ const dao = generateDao({
     name: 'Test DAO',
 });
 
-const row: IPermissionRow = {
+const row: IDaoPermission = {
     permissionId: 'permission-id',
     whoAddress: ANY_ADDR,
     whereAddress: dao.address,

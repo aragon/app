@@ -1,5 +1,8 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import {
+    type IDaoPlugin,
+    PermissionEntityBrandId,
+} from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import {
@@ -203,6 +206,50 @@ describe('permissionEntity Utils', () => {
                 brandId: 'safe',
                 type: 'plugin',
                 layer: 'processInternal',
+            });
+        });
+
+        it('identifies a recognized Safe before backend labels or interface types', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        brandId: PermissionEntityBrandId.SAFE,
+                        interfaceType: 'multisig',
+                        label: 'Treasury signers',
+                        layer: 'processInternal',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                brandId: PermissionEntityBrandId.SAFE,
+                label: 'Safe',
+                tag: undefined,
+                type: 'plugin',
+            });
+        });
+
+        it('identifies a recognized Safe outside the process-internal layer', () => {
+            const result = permissionEntityUtils.resolvePermissionEntity(
+                unknownAddress,
+                {
+                    entity: {
+                        address: unknownAddress,
+                        brandId: PermissionEntityBrandId.SAFE,
+                        interfaceType: 'multisig',
+                        label: 'Backend multisig label',
+                        layer: 'externalActor',
+                    },
+                },
+            );
+
+            expect(result).toMatchObject({
+                brandId: PermissionEntityBrandId.SAFE,
+                label: 'Safe',
+                tag: undefined,
+                type: 'plugin',
             });
         });
 

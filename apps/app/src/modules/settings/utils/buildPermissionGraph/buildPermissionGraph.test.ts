@@ -1,12 +1,12 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPermission, IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import {
     generateDao,
+    generateDaoPermission,
     generateFilterComponentPlugin,
     generateLinkedAccount,
 } from '@/shared/testUtils/generators';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
-import type { IPermissionRow } from '../../types';
 import { buildPermissionGraph } from './buildPermissionGraph';
 
 const ROOT_PERMISSION_ID =
@@ -59,13 +59,19 @@ const accountRefs = [
     },
 ];
 
-const buildRow = (partial: Partial<IPermissionRow>): IPermissionRow => ({
-    permissionId: EXECUTE_PERMISSION_ID,
-    whoAddress: pluginAddress,
-    whereAddress: daoAddress,
-    conditionAddress: ALLOW_FLAG,
-    ...partial,
-});
+const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
+    generateDaoPermission({
+        permissionId: EXECUTE_PERMISSION_ID,
+        whoAddress: pluginAddress,
+        whereAddress: daoAddress,
+        conditionAddress: ALLOW_FLAG,
+        condition: undefined,
+        conditionEntity: undefined,
+        network: undefined,
+        who: undefined,
+        where: undefined,
+        ...partial,
+    });
 
 describe('buildPermissionGraph', () => {
     it('classifies DAO, linked DAO, plugin, and actor nodes', () => {
@@ -180,6 +186,69 @@ describe('buildPermissionGraph', () => {
                 (node) => node.id === conditionAddress.toLowerCase(),
             ),
         ).toBeUndefined();
+    });
+
+    it('preserves every selected ordinary row and only omits condition endpoints', () => {
+        const ordinaryRows = [
+            buildRow({}),
+            buildRow({
+                permissionId: CREATE_PROPOSAL_PERMISSION_ID,
+                whoAddress: ANY_ADDR,
+                who: {
+                    address: ANY_ADDR,
+                    label: 'Anyone',
+                    layer: 'unknown',
+                },
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: secondPluginAddress,
+                who: {
+                    address: secondPluginAddress,
+                    label: 'Historical plugin',
+                    layer: 'historicalPlugin',
+                    status: 'uninstalled',
+                },
+            }),
+        ];
+        const conditionTargetRow = buildRow({
+            permissionId: ROOT_PERMISSION_ID,
+            whereAddress: conditionAddress,
+            where: {
+                address: conditionAddress,
+                label: 'Condition contract',
+                layer: 'condition',
+                status: 'installed',
+            },
+        });
+        const conditionActorRow = buildRow({
+            permissionId: ROOT_PERMISSION_ID,
+            whoAddress: conditionAddress,
+            who: {
+                address: conditionAddress,
+                label: 'Condition contract',
+                layer: 'condition',
+                status: 'installed',
+            },
+        });
+
+        const graph = buildPermissionGraph({
+            rows: [...ordinaryRows, conditionTargetRow, conditionActorRow],
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+
+        expect(graph.edges).toHaveLength(ordinaryRows.length);
+        graph.edges.forEach((edge, index) => {
+            expect(edge.row).toBe(ordinaryRows[index]);
+        });
     });
 
     it('creates who-to-where edges with resolved permission and condition labels', () => {

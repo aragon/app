@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import {
     type IDao,
+    type IDaoPermission,
     type IDaoPlugin,
     type Network,
     useAllDaoPermissions,
@@ -13,7 +14,6 @@ import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterCom
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
-import type { IPermissionRow } from '../../types';
 import type { IPermissionAccountRef } from '../../utils/permissionEntityUtils';
 
 export interface IPermissionsDataAccount {
@@ -36,9 +36,10 @@ export interface IUsePermissionsDataResult {
     activeAccount?: IPermissionsDataAccount;
     accountRefs: IPermissionAccountRef[];
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[];
-    rows: IPermissionRow[];
+    rows: IDaoPermission[];
     chainId?: number;
     isLoading: boolean;
+    error: unknown;
 }
 
 export const usePermissionsData = (
@@ -48,29 +49,27 @@ export const usePermissionsData = (
 
     const { isEnabled } = useFeatureFlags();
 
-    const { data: realDao } = useDao({ urlParams: { id: daoId } });
-    const realDaoPlugins = useDaoPlugins({
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const daoPluginsData = useDaoPlugins({
         daoId,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
     });
 
-    const dao = realDao;
-
-    const realAccounts = useMemo<IPermissionsDataAccount[]>(() => {
-        if (realDao == null) {
+    const accounts = useMemo<IPermissionsDataAccount[]>(() => {
+        if (dao == null) {
             return [];
         }
 
         const mainAccount: IPermissionsDataAccount = {
-            id: realDao.id,
-            name: realDao.name,
-            network: realDao.network,
-            daoAddress: realDao.address,
-            avatarSrc: ipfsUtils.cidToSrc(realDao.avatar),
+            id: dao.id,
+            name: dao.name,
+            network: dao.network,
+            daoAddress: dao.address,
+            avatarSrc: ipfsUtils.cidToSrc(dao.avatar),
         };
 
-        const linkedAccounts = realDao.linkedAccounts ?? [];
+        const linkedAccounts = dao.linkedAccounts ?? [];
         const showLinkedAccounts =
             isEnabled('linkedAccount') && linkedAccounts.length > 0;
 
@@ -88,9 +87,7 @@ export const usePermissionsData = (
                 avatarSrc: ipfsUtils.cidToSrc(account.avatar),
             })),
         ];
-    }, [realDao, isEnabled]);
-
-    const accounts = realAccounts;
+    }, [dao, isEnabled]);
 
     const [selectedAccountId, setSelectedAccountId] = useState<string>();
     const activeAccountId = selectedAccountId ?? accounts[0]?.id;
@@ -108,7 +105,7 @@ export const usePermissionsData = (
         [accounts],
     );
 
-    const { data, isLoading } = useAllDaoPermissions(
+    const { data, isLoading, error } = useAllDaoPermissions(
         {
             urlParams: {
                 network: activeAccount?.network as Network,
@@ -118,27 +115,20 @@ export const usePermissionsData = (
         { enabled: activeAccount != null },
     );
 
-    const rows = useMemo(() => {
-        const rawRows = (data ?? []) as IPermissionRow[];
-        return rawRows;
-    }, [data]);
+    const rows: IDaoPermission[] = data ?? [];
 
     const chainId = activeAccount
         ? networkDefinitions[activeAccount.network].id
         : undefined;
     const daoPlugins = useMemo(() => {
-        if (
-            realDaoPlugins == null ||
-            realDao == null ||
-            activeAccount == null
-        ) {
-            return realDaoPlugins;
+        if (daoPluginsData == null || dao == null || activeAccount == null) {
+            return daoPluginsData;
         }
 
-        const rootDaoAddress = realDao.address.toLowerCase();
+        const rootDaoAddress = dao.address.toLowerCase();
         const activeDaoAddress = activeAccount.daoAddress.toLowerCase();
 
-        return realDaoPlugins.filter((plugin) => {
+        return daoPluginsData.filter((plugin) => {
             const pluginDaoAddress = plugin.meta.daoAddress?.toLowerCase();
 
             if (pluginDaoAddress == null) {
@@ -147,7 +137,7 @@ export const usePermissionsData = (
 
             return pluginDaoAddress === activeDaoAddress;
         });
-    }, [activeAccount, realDao, realDaoPlugins]);
+    }, [activeAccount, dao, daoPluginsData]);
 
     return {
         dao,
@@ -160,5 +150,6 @@ export const usePermissionsData = (
         rows,
         chainId,
         isLoading,
+        error,
     };
 };

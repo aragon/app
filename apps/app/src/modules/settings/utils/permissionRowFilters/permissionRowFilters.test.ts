@@ -1,8 +1,10 @@
-import type { IDaoPlugin } from '@/shared/api/daoService';
+import type { IDaoPermission, IDaoPlugin } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
-import { generateFilterComponentPlugin } from '@/shared/testUtils/generators';
+import {
+    generateDaoPermission,
+    generateFilterComponentPlugin,
+} from '@/shared/testUtils/generators';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
-import type { IPermissionRow } from '../../types';
 import { filterPermissionRows } from './permissionRowFilters';
 
 const daoAddress = '0x1111111111111111111111111111111111111111';
@@ -15,11 +17,13 @@ const unknownPermissionId =
 const createProposalPermissionId =
     '0x8c433a4cd6b51969eca37f974940894297b9fcf4b282a213fea5cd8f85289c90';
 
-const buildRow = (partial: Partial<IPermissionRow>): IPermissionRow => ({
-    permissionId: 'permission-id',
-    whoAddress: pluginAddress,
-    whereAddress: targetAddress,
-    conditionAddress: '0x0000000000000000000000000000000000000002',
+const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission => ({
+    ...generateDaoPermission({
+        conditionAddress: '0x0000000000000000000000000000000000000002',
+        permissionId: 'permission-id',
+        whereAddress: targetAddress,
+        whoAddress: pluginAddress,
+    }),
     ...partial,
 });
 
@@ -140,7 +144,7 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual([rows[1]]);
     });
 
-    it('hides backend-classified supporting permission rows by default', () => {
+    it('hides backend-classified subplugin rows without installed-plugin metadata', () => {
         const rows = [
             buildRow({
                 whereAddress: daoAddress,
@@ -154,17 +158,9 @@ describe('filterPermissionRows', () => {
             }),
             buildRow({ whoAddress: pluginAddress, whereAddress: daoAddress }),
         ];
-        const daoPlugins = [
-            buildPlugin({
-                address: subpluginAddress,
-                isSubPlugin: true,
-                parentPlugin: parentPluginAddress,
-            }),
-        ];
-
         const result = filterPermissionRows(rows, {
             activeAccountAddress: daoAddress,
-            daoPlugins,
+            daoPlugins: [],
             showDaoPermissions: true,
             showSubpluginPermissions: false,
         });
@@ -318,7 +314,7 @@ describe('filterPermissionRows', () => {
         expect(result).toEqual(rows);
     });
 
-    it('hides DAO-as-caller rows to unknown contracts as supporting noise', () => {
+    it('keeps DAO-as-caller rows to unknown contracts when DAO permissions are enabled', () => {
         const rows = [
             buildRow({
                 whoAddress: daoAddress,
@@ -339,10 +335,10 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual([]);
+        expect(result).toEqual(rows);
     });
 
-    it('hides locally undecoded permission hashes as supporting noise', () => {
+    it('keeps locally undecoded permission hashes', () => {
         const rows = [
             buildRow({
                 permissionId: unknownPermissionId,
@@ -357,10 +353,10 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual([]);
+        expect(result).toEqual(rows);
     });
 
-    it('hides inactive plugin endpoint rows even when supporting permissions are enabled', () => {
+    it('keeps inactive and historical plugin endpoint rows', () => {
         const rows = [
             buildRow({
                 whereAddress: daoAddress,
@@ -397,14 +393,14 @@ describe('filterPermissionRows', () => {
         const result = filterPermissionRows(rows, {
             activeAccountAddress: daoAddress,
             daoPlugins: [],
-            showDaoPermissions: true,
-            showSubpluginPermissions: true,
+            showDaoPermissions: false,
+            showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual([rows[1], rows[2]]);
+        expect(result).toEqual(rows);
     });
 
-    it('keeps open create-proposal rows targeting governing body plugins', () => {
+    it('keeps open create-proposal and ordinary rows under the same rules', () => {
         const rows = [
             buildRow({
                 permissionId: createProposalPermissionId,
@@ -433,10 +429,10 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual([rows[0]]);
+        expect(result).toEqual(rows);
     });
 
-    it('keeps internal-body create-proposal rows on governing bodies for the list', () => {
+    it('applies the subplugin filter to create-proposal rows without a name carve-out', () => {
         const rows = [
             buildRow({
                 permissionId: createProposalPermissionId,
@@ -467,10 +463,10 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual(rows);
+        expect(result).toEqual([rows[1]]);
     });
 
-    it('hides residual rows when subplugin/residual permissions are disabled', () => {
+    it('keeps ordinary rows that are not connected to the active DAO', () => {
         const rows = [
             buildRow({ whereAddress: daoAddress }),
             buildRow({ whereAddress: targetAddress }),
@@ -483,7 +479,7 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: false,
         });
 
-        expect(result).toEqual([rows[0]]);
+        expect(result).toEqual(rows);
     });
 
     it('keeps subplugin rows when enabled', () => {
@@ -500,5 +496,74 @@ describe('filterPermissionRows', () => {
         });
 
         expect(result).toEqual(rows);
+    });
+
+    it.each([
+        {
+            showDaoPermissions: false,
+            showSubpluginPermissions: false,
+            expectedIndexes: [0],
+        },
+        {
+            showDaoPermissions: true,
+            showSubpluginPermissions: false,
+            expectedIndexes: [0, 1],
+        },
+        {
+            showDaoPermissions: false,
+            showSubpluginPermissions: true,
+            expectedIndexes: [0, 2],
+        },
+        {
+            showDaoPermissions: true,
+            showSubpluginPermissions: true,
+            expectedIndexes: [0, 1, 2, 3],
+        },
+    ])('applies only the two visible controls ($showDaoPermissions, $showSubpluginPermissions)', ({
+        showDaoPermissions,
+        showSubpluginPermissions,
+        expectedIndexes,
+    }) => {
+        const rows = [
+            buildRow({ whereAddress: daoAddress }),
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: targetAddress,
+            }),
+            buildRow({
+                who: {
+                    address: subpluginAddress,
+                    label: 'Subplugin process',
+                    layer: 'processInternal',
+                    parentPluginAddress,
+                },
+                whoAddress: subpluginAddress,
+                whereAddress: daoAddress,
+            }),
+            buildRow({
+                who: {
+                    address: daoAddress,
+                    label: 'DAO-managed subplugin process',
+                    layer: 'processInternal',
+                },
+                whoAddress: daoAddress,
+                where: {
+                    address: subpluginAddress,
+                    label: 'Subplugin process',
+                    layer: 'processInternal',
+                    parentPluginAddress,
+                },
+                whereAddress: subpluginAddress,
+            }),
+        ];
+
+        const result = filterPermissionRows(rows, {
+            activeAccountAddress: daoAddress,
+            daoPlugins: [],
+            showDaoPermissions,
+            showSubpluginPermissions,
+        });
+
+        expect(result).toEqual(expectedIndexes.map((index) => rows[index]));
     });
 });

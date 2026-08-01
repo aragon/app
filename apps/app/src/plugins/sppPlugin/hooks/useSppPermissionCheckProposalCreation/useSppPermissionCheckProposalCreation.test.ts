@@ -108,6 +108,15 @@ describe('useSppPermissionCheckProposalCreation', () => {
         ...result,
     });
 
+    const renderGuard = (params: ReturnType<typeof createTestParams>) =>
+        renderHook(() =>
+            useSppPermissionCheckProposalCreation(
+                params as Parameters<
+                    typeof useSppPermissionCheckProposalCreation
+                >[0],
+            ),
+        );
+
     const mockSimulation = (result: {
         isError: boolean;
         isLoading: boolean;
@@ -129,13 +138,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createTestParams([guardResult]);
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual(settings);
@@ -148,13 +151,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         ]);
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
     });
@@ -172,13 +169,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         ]);
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual(restrictedSettings);
@@ -190,13 +181,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         ]);
         mockSimulation({ isError: false, isLoading: false, result: 'failure' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.hasPermission).toBeFalsy();
         expect(result.current.isRestricted).toBeTruthy();
@@ -206,13 +191,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         const params = createTestParams([generateGuardResult()]);
         mockSimulation({ isError: false, isLoading: true });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isLoading).toBeTruthy();
     });
@@ -259,13 +238,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         });
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
@@ -293,13 +266,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         });
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
         expect(result.current.settings).toEqual([]);
@@ -312,13 +279,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         });
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeFalsy();
         expect(result.current.settings).toEqual([]);
@@ -376,13 +337,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
@@ -428,13 +383,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([
@@ -509,13 +458,7 @@ describe('useSppPermissionCheckProposalCreation', () => {
         mockSimulation({ isError: false, isLoading: false, result: 'success' });
 
         const params = { daoId: 'dao-test', plugin: sppPlugin };
-        const { result } = renderHook(() =>
-            useSppPermissionCheckProposalCreation(
-                params as Parameters<
-                    typeof useSppPermissionCheckProposalCreation
-                >[0],
-            ),
-        );
+        const { result } = renderGuard(params);
 
         expect(result.current.isRestricted).toBeTruthy();
         expect(result.current.settings).toEqual([

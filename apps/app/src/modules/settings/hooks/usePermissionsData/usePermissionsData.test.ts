@@ -212,4 +212,42 @@ describe('usePermissionsData hook', () => {
             result.current.daoPlugins?.map((plugin) => plugin.uniqueId),
         ).toEqual(['linked-plugin']);
     });
+
+    it('preserves the permission endpoint rows without stitching or filtering', () => {
+        const rows = [
+            {
+                permissionId: 'permission-id',
+                whoAddress: '0x1111111111111111111111111111111111111111',
+                whereAddress: '0x2222222222222222222222222222222222222222',
+            },
+        ];
+        useAllDaoPermissionsSpy.mockReturnValue({
+            data: rows,
+            isLoading: false,
+            error: null,
+            refetch: jest.fn(),
+        } as ReturnType<typeof daoService.useAllDaoPermissions>);
+
+        const { result } = renderHook(() =>
+            usePermissionsData({ daoId: 'main-dao' }),
+        );
+
+        expect(result.current.rows).toBe(rows);
+    });
+
+    it('preserves the exact permission-query error', () => {
+        const error = new Error('permissions unavailable');
+        useAllDaoPermissionsSpy.mockReturnValue({
+            data: undefined,
+            isLoading: false,
+            error,
+            refetch: jest.fn(),
+        } as ReturnType<typeof daoService.useAllDaoPermissions>);
+
+        const { result } = renderHook(() =>
+            usePermissionsData({ daoId: 'main-dao' }),
+        );
+
+        expect(result.current).toMatchObject({ error });
+    });
 });
