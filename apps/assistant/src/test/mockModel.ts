@@ -14,45 +14,54 @@ export const buildMockUsage = (inputTokens = 10, outputTokens = 5) => ({
     },
 });
 
-const toGenerateResult = (object: unknown) => ({
-    content: [{ type: 'text' as const, text: JSON.stringify(object) }],
-    finishReason: { unified: 'stop' as const, raw: undefined },
-    usage: buildMockUsage(),
-    warnings: [],
-});
-
-const toStreamResult = (text: string) => ({
+const toStreamResult = (
+    text: string,
+    toolCall?: { toolName: string; input: unknown },
+) => ({
     stream: simulateReadableStream({
         chunks: [
             { type: 'stream-start' as const, warnings: [] },
             { type: 'text-start' as const, id: 'text-1' },
             { type: 'text-delta' as const, id: 'text-1', delta: text },
             { type: 'text-end' as const, id: 'text-1' },
+            ...(toolCall
+                ? [
+                      {
+                          type: 'tool-call' as const,
+                          toolCallId: 'call-1',
+                          toolName: toolCall.toolName,
+                          input: JSON.stringify(toolCall.input),
+                      },
+                  ]
+                : []),
             {
                 type: 'finish' as const,
-                finishReason: { unified: 'stop' as const, raw: undefined },
+                finishReason: {
+                    unified: toolCall
+                        ? ('tool-calls' as const)
+                        : ('stop' as const),
+                    raw: undefined,
+                },
                 usage: buildMockUsage(),
             },
         ],
     }),
 });
 
-// Mock chat model: structured-output calls (generateText + Output.object) consume `objects` in
-// order (classify → extract → …); streamText calls stream `streamedText`, or throw `streamError`
-// when provided (upstream failure simulation).
+// Mock chat agent: streams `streamedText`, optionally proposing a `toolCall` (the route gates it
+// behind approval), or throws `streamError` to simulate an upstream failure.
 export const createMockChatModel = (params: {
-    objects?: unknown[];
     streamedText?: string;
     streamError?: Error;
+    toolCall?: { toolName: string; input: unknown };
 }) => {
-    const { objects = [], streamedText = 'Mock reply.', streamError } = params;
+    const { streamedText = 'Mock reply.', streamError, toolCall } = params;
 
     return new MockLanguageModelV4({
-        doGenerate: objects.map(toGenerateResult),
         doStream: streamError
             ? () => {
                   throw streamError;
               }
-            : toStreamResult(streamedText),
+            : toStreamResult(streamedText, toolCall),
     });
 };

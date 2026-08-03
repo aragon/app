@@ -57,33 +57,3 @@ export const chatRequestSchema = z.object({
 });
 
 export type IChatRequest = z.infer<typeof chatRequestSchema>;
-
-export const supportIntentSchema = z.enum([
-    'feedback',
-    'bug',
-    'support',
-    'off_topic',
-    'unknown',
-]);
-
-export type ISupportIntent = z.infer<typeof supportIntentSchema>;
-
-// Fields are raw model extractions: email is only validated as an address when a ticket is
-// actually created, so partial or malformed values still show up in the live summary. Steps are
-// a list (one step per item, unnumbered) — the natural shape models produce; rendering owns the
-// numbering.
-export const collectedFieldsSchema = z.object({
-    intent: supportIntentSchema,
-    email: z.string().optional(),
-    summary: z.string().optional(),
-    description: z.string().optional(),
-    stepsToReproduce: z.array(z.string()).optional(),
-});
-
-export type ICollectedFields = z.infer<typeof collectedFieldsSchema>;
-
-// Email is deliberately NOT required: it is asked for softly and used for updates when provided,
-// but never blocks ticket creation.
-export const requiredIssueFieldSchema = z.enum(['summary', 'description']);
-
-export type IRequiredIssueField = z.infer<typeof requiredIssueFieldSchema>;

@@ -43,7 +43,7 @@ const sentryOptions = {
         // The AI-monitoring integration records full prompts and model outputs onto gen_ai
         // spans — that is the whole chat transcript. Production conversations are PII and stay
         // out; non-production stands run test conversations and keep the capture, which is the
-        // primary tool for debugging extraction quality.
+        // primary tool for debugging agent behavior and ticket quality.
         Sentry.vercelAIIntegration({
             recordInputs: environment !== 'production',
             recordOutputs: environment !== 'production',

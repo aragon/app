@@ -17,13 +17,12 @@ export interface IAssistantConfig {
      */
     rateLimit: { requestsPerMinute: number; sessionsPerDay: number };
     /**
-     * AI Gateway model ids per pipeline role: intake = structured steps (classify/extract),
-     * respond = user-facing streamed reply. The fallbacks are tried in order by the Gateway when
-     * a call on the requested model fails (shared by both roles).
+     * AI Gateway model ids for the chat agent: a single model runs the streamed reply and the
+     * tool calls. The fallbacks are tried in order by the Gateway when a call on the agent model
+     * fails.
      */
     chat: {
-        intakeModel: string;
-        respondModel: string;
+        agentModel: string;
         fallbackModels: string[];
     };
 }
@@ -36,17 +35,20 @@ const previewOrigins = ['http://localhost:3000', '*-aragon-app.vercel.app'];
 // and for several users behind one NAT, still a hard abuse cap. Tunable per-env without a redeploy
 // via ASSISTANT_RATE_LIMIT_* env overrides.
 const defaultRateLimit = { requestsPerMinute: 10, sessionsPerDay: 10 };
-// Model selection criteria, in priority order: structured-output/tool-calling fidelity (extract
-// today, searchDocs + Linear tools in Phase 2), time-to-first-token on the streamed reply,
+// Model selection criteria, in priority order: tool-calling fidelity (the agent drafts the ticket
+// as a tool call, plus searchDocs in Phase 2), time-to-first-token on the streamed reply,
 // multilingual chat (ticket fields are forced English, the reply follows the user), proven
-// providers, ≤ ~$0.15/M input. Intake keeps a reasoning model at minimal effort (intent edge
-// cases); respond is deliberately non-reasoning. The fallbacks run on different serving
-// infrastructure than both primaries (Groq/Cerebras, AWS), so a vendor outage or a per-model
-// rate limit (free-tier accounts are limited per model) degrades instead of failing.
+// providers, ≤ ~$0.15/M input. flash-lite is the starting agent (fast, cheap, thinking off by
+// default); the fallbacks run on different serving infrastructure (Groq/Cerebras, AWS) so a vendor
+// outage or a per-model rate limit degrades instead of failing. Fallback tool-calling fitness is
+// to be re-confirmed on the stand / llm-smoke before finalizing.
 const defaultChat = {
-    intakeModel: 'openai/gpt-5-nano',
-    respondModel: 'google/gemini-2.5-flash-lite',
-    fallbackModels: ['openai/gpt-oss-20b', 'amazon/nova-micro'],
+    // deepseek-v4-flash won the in-budget bake-off (4/4 tool calls with a warm sentence, clean
+    // refusals); gemini-2.5-flash-lite skipped tool calls and once fabricated a ticket number,
+    // gpt-5-nano never called the tool, gpt-oss-20b leaked harmony markup into the chat (which
+    // also rules it out as a fallback).
+    agentModel: 'deepseek/deepseek-v4-flash',
+    fallbackModels: ['google/gemini-2.5-flash-lite'],
 };
 
 // Non-secret per-environment configuration. Kept as a checked-in typed module because Vercel

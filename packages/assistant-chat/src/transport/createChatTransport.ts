@@ -18,7 +18,9 @@ export interface ICreateChatTransportParams {
 }
 
 // The server re-validates against chatRequestSchema; only the fields of the contract are sent
-// (the default AI SDK body would leak chat id / trigger metadata).
+// (the default AI SDK body would leak chat id / trigger metadata). File parts exist only for the
+// local transcript preview — the server reads queued files from its own session store, so they
+// never travel with the conversation.
 const buildRequestBody = (
     params: ICreateChatTransportParams,
     messages: AssistantUIMessage[],
@@ -27,7 +29,7 @@ const buildRequestBody = (
     messages: messages.map((message) => ({
         id: message.id,
         role: message.role === 'user' ? 'user' : 'assistant',
-        parts: message.parts,
+        parts: message.parts.filter((part) => part.type !== 'file'),
     })),
     appContext: params.getAppContext(),
 });
