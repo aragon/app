@@ -36,6 +36,12 @@ export const CapitalDistributorPauseCampaignActionCreate: React.FC<
     ICapitalDistributorPauseCampaignActionCreateProps
 > = (props) => {
     const { action, index } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'CapitalDistributorPauseCampaignActionCreate: daoId must be set on the action.',
+    );
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue, resetField } = useFormContext();

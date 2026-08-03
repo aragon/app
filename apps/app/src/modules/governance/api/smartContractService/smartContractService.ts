@@ -11,7 +11,7 @@ class SmartContractService extends AragonBackendService {
     private urls = {
         abi: '/v2/contract/:network/:address',
         decodeTransaction: '/v2/contract/:network/:address/decode',
-        decodeTransactionsBatch: '/v2/contract/:network/:address/decode-batch',
+        decodeTransactionsBatch: '/v3/contract/:network/decode-batch',
     };
 
     getAbi = async (

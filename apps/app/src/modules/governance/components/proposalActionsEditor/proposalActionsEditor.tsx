@@ -1,5 +1,9 @@
-import type { ProposalActionComponent } from '@aragon/gov-ui-kit';
-import { useAllDaoPermissions, useDao } from '@/shared/api/daoService';
+import { invariant, type ProposalActionComponent } from '@aragon/gov-ui-kit';
+import {
+    type Network,
+    useAllDaoPermissions,
+    useDao,
+} from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useProposalActionsField } from '../../hooks/useProposalActionsField';
@@ -10,9 +14,14 @@ import { ProposalActionsEditList } from '../proposalActionsEditList';
 
 export interface IProposalActionsEditorProps {
     /**
-     * ID of the DAO the actions are composed for.
+     * ID of the DAO the actions are composed for. When omitted the editor runs outside DAO context, so
+     * no DAO-, plugin- or permission-specific actions are offered. Either `daoId` or `network` must be set.
      */
-    daoId: string;
+    daoId?: string;
+    /**
+     * Network the actions are composed for. Falls back to the DAO network when `daoId` is set.
+     */
+    network?: Network;
     /**
      * Action types to hide from the action composer, e.g. to stop an action from being nested into itself.
      */
@@ -27,11 +36,19 @@ export interface IProposalActionsEditorProps {
 export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
     props,
 ) => {
-    const { daoId, excludeActionTypes } = props;
+    const { daoId, network, excludeActionTypes } = props;
+
+    invariant(
+        daoId != null || network != null,
+        'ProposalActionsEditor: either daoId or network must be set.',
+    );
 
     const { t } = useTranslations();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
-    const { chainId } = useDaoChain({ daoId });
+    const { data: dao } = useDao(
+        { urlParams: { id: daoId ?? '' } },
+        { enabled: daoId != null },
+    );
+    const { chainId } = useDaoChain({ daoId, network });
 
     const {
         actionsMerged,
@@ -40,9 +57,15 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         getArrayControls,
     } = useProposalActionsField();
 
-    const { data: daoPermissions } = useAllDaoPermissions({
-        urlParams: { network: dao!.network, daoAddress: dao!.address },
-    });
+    const { data: daoPermissions } = useAllDaoPermissions(
+        {
+            urlParams: {
+                network: dao?.network as Network,
+                daoAddress: dao?.address ?? '',
+            },
+        },
+        { enabled: dao != null },
+    );
 
     const { pluginComponents } = actionComposerUtils.getDaoPluginActions(dao);
     const { components: permissionActionComponents } =
@@ -60,7 +83,9 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         ...permissionActionComponents,
     };
 
-    const showActionComposer = dao != null;
+    // In DAO context the composer needs the DAO to build its plugin and permission actions, outside of
+    // it there is nothing to wait for.
+    const showActionComposer = daoId == null || dao != null;
     const hasActions = actionsMerged.length > 0;
 
     return (
@@ -77,6 +102,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
                     daoPermissions={daoPermissions}
                     excludeActionTypes={excludeActionTypes}
                     hasActions={hasActions}
+                    network={network}
                     onAddAction={handleAddAction}
                     onRemoveAllActions={handleRemoveAllActions}
                 />

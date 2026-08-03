@@ -1,6 +1,7 @@
 import {
     addressUtils,
     type IProposalActionComponentProps,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -46,6 +47,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     props,
 ) => {
     const { action, index } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'TransferAssetAction: daoId must be set on the action.',
+    );
 
     const { setValue, getValues } = useFormContext();
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });

@@ -1,5 +1,6 @@
 import type { Network } from '@/shared/api/daoService';
 import type {
+    IRequestBodyParams,
     IRequestUrlBodyParams,
     IRequestUrlParams,
 } from '@/shared/api/httpService';
@@ -51,13 +52,16 @@ export interface IDecodeTransactionParams
 
 export interface IDecodeTransactionsLightUrlParams {
     /**
-     * Network of the DAO.
+     * Network of the smart contracts to decode actions for.
      */
     network: Network;
+}
+
+export interface IDecodeTransactionsLightQueryParams {
     /**
-     * Address of the DAO.
+     * Address sending the actions, i.e., DAO.
      */
-    address: string;
+    from: string;
 }
 
 export interface IDecodeTransactionsLightAction {
@@ -82,7 +86,10 @@ export type IDecodeTransactionsLightBodyParams =
     IDecodeTransactionsLightAction[];
 
 export interface IDecodeTransactionsLightParams
-    extends IRequestUrlBodyParams<
-        IDecodeTransactionsLightUrlParams,
-        IDecodeTransactionsLightBodyParams
-    > {}
+    extends IRequestUrlParams<IDecodeTransactionsLightUrlParams>,
+        IRequestBodyParams<IDecodeTransactionsLightBodyParams> {
+    /**
+     * Query parameters of the request, omitted when decoding outside DAO context.
+     */
+    queryParams?: IDecodeTransactionsLightQueryParams;
+}

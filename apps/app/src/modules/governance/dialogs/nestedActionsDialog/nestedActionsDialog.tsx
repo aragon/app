@@ -95,6 +95,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                             value,
                             data,
                         })),
+                        dao.network,
                         dao,
                     );
 

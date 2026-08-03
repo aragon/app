@@ -11,8 +11,11 @@ import {
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import { useCallback, useRef, useState } from 'react';
-import type { IDaoPermission } from '@/shared/api/daoService';
-import { useDao } from '@/shared/api/daoService';
+import {
+    type IDaoPermission,
+    type Network,
+    useDao,
+} from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import type { IAllowedAction } from '../../../api/executeSelectorsService';
@@ -21,10 +24,7 @@ import type { ISmartContractAbi } from '../../../api/smartContractService';
 import { GovernanceDialogId } from '../../../constants/governanceDialogId';
 import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySmartContractDialog';
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
-import {
-    type IExportedAction,
-    proposalActionsImportExportUtils,
-} from '../../../utils/proposalActionsImportExportUtils';
+import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
 import {
     ActionComposerInput,
@@ -37,9 +37,15 @@ import { ActionItemId } from '../actionComposerUtils.api';
 export interface IActionComposerProps
     extends Pick<IActionComposerInputProps, 'excludeActionTypes'> {
     /**
-     * ID of the DAO.
+     * ID of the DAO. When omitted the composer runs in network-only mode, outside DAO context.
+     * No DAO-, plugin- or permission-specific actions are offered and only the decoded action view is supported.
+     * Either `daoId` or `network` must be set.
      */
-    daoId: string;
+    daoId?: string;
+    /**
+     * Network to build network-scoped actions for. Falls back to the DAO network when `daoId` is set.
+     */
+    network?: Network;
     /**
      * Callback called when an action is added.
      * @param value - single action or array of actions to be added.
@@ -84,6 +90,7 @@ export interface IActionComposerProps
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const {
         daoId,
+        network,
         onAddAction,
         excludeActionTypes,
         hideWalletConnect = false,
@@ -96,12 +103,23 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         hasPinErrors = false,
     } = props;
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
+    invariant(
+        daoId != null || network != null,
+        'ActionComposer: either daoId or network must be set.',
+    );
+
+    const daoUrlParams = { id: daoId ?? '' };
+    const { data: dao } = useDao(
+        { urlParams: daoUrlParams },
+        { enabled: daoId != null },
+    );
+
+    const resolvedNetwork = network ?? dao?.network;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
+    // Yields no items or groups outside DAO context, where there are no plugin or permission actions.
     const { items, groups } = actionComposerUtils.getDaoActions({
         dao,
         permissions: daoPermissions,
@@ -148,8 +166,13 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleVerifySmartContract = (initialValue?: string) => {
+        invariant(
+            resolvedNetwork != null,
+            'handleVerifySmartContract: `resolvedNetwork` not found',
+        );
+
         const params: IVerifySmartContractDialogParams = {
-            network: dao!.network,
+            network: resolvedNetwork,
             onSubmit: handleAbiSubmit,
             initialValue,
         };
@@ -160,6 +183,11 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
+        invariant(
+            daoId != null,
+            'handleAddWalletConnectActions: daoId is required for WalletConnect imports',
+        );
+
         const parsedActions = actions.map((action) => ({
             ...action,
             daoId,
@@ -169,22 +197,31 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     };
 
     const displayWalletConnectDialog = () => {
+        invariant(
+            dao != null,
+            'displayWalletConnectDialog: `dao` is required for WalletConnect dialog',
+        );
+
         setUploadError(null);
         const params: IWalletConnectActionDialogParams = {
             onAddActionsClick: handleAddWalletConnectActions,
-            daoAddress: dao!.address,
-            daoNetwork: dao!.network,
+            daoAddress: dao.address,
+            daoNetwork: dao.network,
         };
         open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
-    const handleImportActions = (actions: IExportedAction[]) => {
+    const handleImportActions = (actions: IProposalAction[]) => {
         const parsedActions = actions.map(
             (action) =>
                 ({
                     ...action,
+                    // The imported JSON carries the native value as a number or a numeric string, the
+                    // action type declares it as a string: normalize it to a bigint (hence the cast).
                     value: BigInt(action.value),
+                    // Undefined outside DAO context, where no basic action views are rendered.
                     daoId,
+                    meta: undefined,
                 }) as unknown as IProposalActionData,
         );
         onAddAction(parsedActions);
@@ -194,8 +231,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         event: React.ChangeEvent<HTMLInputElement>,
     ) => {
         invariant(
-            dao != null,
-            'DAO must be defined to import actions from file',
+            resolvedNetwork != null,
+            'handleDirectFileUpload: `resolvedNetwork` not found',
         );
 
         const file = event.target.files?.[0];
@@ -218,6 +255,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
                 const decodedActions =
                     await proposalActionsImportExportUtils.decodeActions(
                         result.actions,
+                        resolvedNetwork,
                         dao,
                     );
 
@@ -251,6 +289,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
         if (defaultValue != null) {
             // removed custom action id with crypto.randomUUID(), because it messes the internal RFH id!
+            // `daoId` is undefined outside DAO context, where only network-scoped actions (i.e. actions
+            // of imported contracts) are offered and none of their views resolve a DAO.
             onAddAction([{ ...defaultValue, daoId, meta }]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract(inputValue);
@@ -277,7 +317,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onDownloadActions != null && onRemoveAllActions != null;
 
     const shouldRenderWalletConnect = !(
-        hideWalletConnect || onlyShowAuthorizedActions
+        daoId == null ||
+        hideWalletConnect ||
+        onlyShowAuthorizedActions
     );
 
     const shouldRenderUpload = !onlyShowAuthorizedActions;

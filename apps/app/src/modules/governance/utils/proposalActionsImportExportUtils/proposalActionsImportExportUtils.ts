@@ -14,6 +14,7 @@ import { tokenSettingsUtils } from '@/plugins/tokenPlugin/utils/tokenSettingsUti
 import {
     type IDao,
     type IDaoPlugin,
+    type Network,
     PluginInterfaceType,
 } from '@/shared/api/daoService';
 import { smartContractService } from '../../api/smartContractService';
@@ -134,24 +135,18 @@ class ProposalActionsImportExportUtils {
     };
 
     /**
-     * Decodes imported actions using the smart contract service
-     *
-     * @param actions - Array of exported actions to decode
-     * @param network - Network where the contracts exist
-     * @param daoAddress - DAO address
-     * @returns Promise resolving to array of decoded proposal actions
+     * Decodes imported actions using the smart contract service. The DAO is optional to support decoding
+     * outside a DAO context, in which case all actions are normalized to the decoded (`Unknown`) view.
      */
     decodeActions = async (
         actions: IExportedAction[],
-        dao: IDao,
+        network: Network,
+        dao?: IDao,
     ): Promise<IProposalAction[]> => {
-        const { network, address: daoAddress } = dao;
         const decodedActions =
             await smartContractService.decodeTransactionsLight({
-                urlParams: {
-                    network,
-                    address: daoAddress,
-                },
+                urlParams: { network },
+                queryParams: dao != null ? { from: dao.address } : undefined,
                 body: actions,
             });
 
@@ -163,8 +158,16 @@ class ProposalActionsImportExportUtils {
      */
     normalizeDecodedActions = (
         decodedActions: IProposalAction[],
-        dao: IDao,
+        dao?: IDao,
     ): IProposalAction[] => {
+        if (dao == null) {
+            // Without a DAO there is only decoded view available.
+            return decodedActions.map((action) => ({
+                ...action,
+                type: 'Unknown',
+            }));
+        }
+
         const { plugins } = dao;
 
         return decodedActions.map((action) => {
