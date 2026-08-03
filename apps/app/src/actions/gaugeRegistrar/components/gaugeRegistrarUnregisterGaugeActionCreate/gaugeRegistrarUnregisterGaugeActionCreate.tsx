@@ -73,7 +73,7 @@ export const GaugeRegistrarUnregisterGaugeActionCreate: React.FC<
             onGaugeSelected: setSelectedGauge,
         };
 
-        open(GaugeRegistrarDialogId.SELECT_GAUGE, { params });
+        open(GaugeRegistrarDialogId.SELECT_GAUGE, { params, stack: true });
     };
 
     const prepareAction = useCallback(

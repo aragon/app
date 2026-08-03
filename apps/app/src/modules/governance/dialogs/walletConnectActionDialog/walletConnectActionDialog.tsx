@@ -84,8 +84,10 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
         }
 
         resetAppSession();
-        close();
-    }, [appSession, resetAppSession, disconnectApp, close]);
+
+        // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+        close(location.id);
+    }, [appSession, resetAppSession, disconnectApp, close, location.id]);
 
     const handleAddActions = () => {
         onAddActionsClick(actions);
@@ -125,6 +127,7 @@ export const WalletConnectActionDialog: React.FC<IWalletConnectActionDialog> = (
     if (appSession == null) {
         return (
             <WalletConnectActionDialogConnect
+                onCancel={handleCloseDialog}
                 onFormSubmit={handleFormSubmit}
                 status={connectionStatus}
             />

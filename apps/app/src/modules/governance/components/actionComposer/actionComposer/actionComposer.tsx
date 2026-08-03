@@ -153,7 +153,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             onSubmit: handleAbiSubmit,
             initialValue,
         };
-        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, { params });
+        open(GovernanceDialogId.VERIFY_SMART_CONTRACT, {
+            params,
+            stack: true,
+        });
     };
 
     const handleAddWalletConnectActions = (actions: IProposalAction[]) => {
@@ -172,7 +175,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             daoAddress: dao!.address,
             daoNetwork: dao!.network,
         };
-        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params });
+        open(GovernanceDialogId.WALLET_CONNECT_ACTION, { params, stack: true });
     };
 
     const handleImportActions = (actions: IExportedAction[]) => {

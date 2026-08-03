@@ -164,6 +164,9 @@ export const VerifySmartContractDialog: React.FC<
         },
     ];
 
+    // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+    const handleClose = () => close(location.id);
+
     const handleFormSubmit = (values: IVerifySmartContractFormData) => {
         const defaultAbi = {
             name: unverifiedContractName,
@@ -175,7 +178,7 @@ export const VerifySmartContractDialog: React.FC<
         const processedAbi = smartContractAbi ?? defaultAbi;
 
         onSubmit?.(processedAbi);
-        close();
+        handleClose();
     };
 
     // Update ABI form field when fetching the smart-contract ABI
@@ -245,7 +248,7 @@ export const VerifySmartContractDialog: React.FC<
                     label: t(
                         'app.governance.verifySmartContractDialog.action.cancel',
                     ),
-                    onClick: () => close(),
+                    onClick: handleClose,
                 }}
             />
         </>

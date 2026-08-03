@@ -82,7 +82,10 @@ export const CapitalDistributorResumeCampaignActionCreate: React.FC<
             activityStatus: 'inactive',
         };
 
-        open(CapitalDistributorDialogId.SELECT_CAMPAIGN, { params });
+        open(CapitalDistributorDialogId.SELECT_CAMPAIGN, {
+            params,
+            stack: true,
+        });
     };
 
     const prepareAction = useCallback(

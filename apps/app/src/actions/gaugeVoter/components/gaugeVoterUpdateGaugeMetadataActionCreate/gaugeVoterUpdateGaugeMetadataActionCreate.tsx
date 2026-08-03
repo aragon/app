@@ -88,7 +88,7 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<
             onGaugeSelected: setSelectedGauge,
         };
 
-        open(GaugeVoterDialogId.SELECT_GAUGE, { params });
+        open(GaugeVoterDialogId.SELECT_GAUGE, { params, stack: true });
     };
 
     const prepareAction = useCallback(

@@ -62,17 +62,20 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
         null,
     );
 
+    // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+    const handleClose = () => close(location.id);
+
     const handleSubmit = () => {
         if (selectedGauge != null) {
             onGaugeSelected?.(selectedGauge);
         }
-        close();
+        handleClose();
     };
 
     return (
         <>
             <Dialog.Header
-                onClose={close}
+                onClose={handleClose}
                 title={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.title',
                 )}
@@ -134,7 +137,7 @@ export const GaugeRegistrarSelectGaugeDialog: React.FC<
                     label: t(
                         'app.actions.gaugeRegistrar.gaugeRegistrarSelectGaugeDialog.cancel',
                     ),
-                    onClick: () => close(),
+                    onClick: handleClose,
                 }}
             />
         </>
