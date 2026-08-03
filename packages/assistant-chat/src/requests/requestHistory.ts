@@ -36,18 +36,22 @@ export const getRequestHistory = (): IRequestHistoryEntry[] => {
 };
 
 /**
- * Prepends the given entry to the stored request history and returns the updated list.
+ * Prepends the given entry to the stored request history. Idempotent by ticket identifier, so
+ * callers may re-append on re-renders without creating duplicates.
  */
-export const appendRequestToHistory = (
-    entry: IRequestHistoryEntry,
-): IRequestHistoryEntry[] => {
-    const history = [entry, ...getRequestHistory()].slice(0, maxEntries);
+export const appendRequestToHistory = (entry: IRequestHistoryEntry): void => {
+    const history = getRequestHistory();
 
-    try {
-        localStorage.setItem(storageKey, JSON.stringify(history));
-    } catch {
-        // Ignore storage failures (e.g. private mode): the entry only lives in memory.
+    if (history.some((known) => known.identifier === entry.identifier)) {
+        return;
     }
 
-    return history;
+    try {
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify([entry, ...history].slice(0, maxEntries)),
+        );
+    } catch {
+        // Ignore storage failures (e.g. private mode): the history is a convenience only.
+    }
 };

@@ -1,6 +1,5 @@
 import type { Redis } from '@upstash/redis';
 import type { LanguageModel } from 'ai';
-import type { ChatStep } from '../chat/models';
 import type { IBlobStore } from '../files/blobStore';
 import type { ILinearGateway } from '../linear/linearGateway';
 import type { ISessionStore } from './sessionStore';
@@ -13,7 +12,7 @@ export interface IAppDependencies {
     getRedis: () => Redis;
     getSessionStore: () => ISessionStore;
     getLinear: () => ILinearGateway;
-    getChatModel: (step: ChatStep) => LanguageModel;
+    getChatModel: () => LanguageModel;
     getBlobStore: () => IBlobStore;
 }
 

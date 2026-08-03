@@ -23,7 +23,7 @@ const pngBytes = new Uint8Array([
 ]);
 
 const buildFileId = (index: number) =>
-    `00000000-0000-4000-8000-00000000000${index}`;
+    `00000000-0000-4000-8000-${String(index).padStart(12, '0')}`;
 
 const buildBlobUrl = (params?: {
     fileId?: string;
@@ -166,6 +166,39 @@ describe('files routes', () => {
         const retry = await confirmUpload(app, { blobUrl });
         expect(retry.status).toEqual(200);
         expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
+
+    it('queues a re-upload of identical bytes as its own removable entry', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const app = buildApp(deps);
+
+        const firstBlobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(firstBlobUrl, pngBytes);
+        const first = await confirmUpload(app, { blobUrl: firstBlobUrl });
+        expect(first.status).toEqual(201);
+
+        // The same bytes under a fresh file id: the user re-attached the same screenshot. It
+        // queues independently — the dedup happens at transfer time — so each composer tile
+        // owns its own entry and blob.
+        const duplicateBlobUrl = buildBlobUrl({ fileId: buildFileId(2) });
+        deps.blobStore.blobs.set(duplicateBlobUrl, pngBytes);
+        const duplicate = await confirmUpload(app, {
+            blobUrl: duplicateBlobUrl,
+        });
+        expect(duplicate.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(2);
+
+        // Removing the re-upload never touches the original entry or its blob.
+        const remove = await app.request(`/files/${buildFileId(2)}`, {
+            method: 'DELETE',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+        });
+        expect(remove.status).toEqual(204);
+        const remaining = await deps.sessionStore.listFiles(sessionId);
+        expect(remaining).toHaveLength(1);
+        expect(remaining[0]?.id).toEqual(buildFileId(1));
+        expect(deps.blobStore.deletedUrls).toEqual([duplicateBlobUrl]);
     });
 
     it('queues the file exactly once under concurrent confirms of the same blob', async () => {

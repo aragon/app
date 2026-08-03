@@ -1,9 +1,7 @@
-// Fixed assistant replies for pipeline short-circuits — no model call is involved.
-export const offTopicMessage =
-    'Happy to help! I collect feedback, bug reports and support requests about the Aragon App and pass them to the team. Tell me what you ran into and I will file it for you.';
-
+// Fixed assistant replies for hard session limits — no model call is involved. Off-topic refusals
+// are handled by the agent's system prompt instead (a cheap short generation), not here.
 export const turnLimitMessage =
-    'This conversation has reached its length limit. If your request is ready, press "Prepare ticket" to review and send it — otherwise please start a new conversation.';
+    'This conversation has reached its length limit. Please start a new conversation to continue.';
 
 export const tokenBudgetMessage =
-    'This conversation has reached its size limit. If your request is ready, press "Prepare ticket" to review and send it — otherwise please start a new conversation.';
+    'This conversation has reached its size limit. Please start a new conversation to continue.';

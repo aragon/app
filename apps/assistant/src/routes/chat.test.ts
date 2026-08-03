@@ -48,10 +48,7 @@ describe('POST /chat guardrails', () => {
 
     it('caps new sessions per IP per day and keeps refused sessions refused on retry', async () => {
         process.env.ASSISTANT_RATE_LIMIT_SESSIONS_PER_DAY = '1';
-        const model = createMockChatModel({
-            objects: [{ intent: 'bug' }],
-        });
-        const deps = createTestDependencies(model);
+        const deps = createTestDependencies(createMockChatModel({}));
         const app = buildApp(deps);
 
         // The first session consumes the whole daily budget. Draining the stream keeps its
@@ -93,7 +90,8 @@ describe('POST /chat guardrails', () => {
 
         expect(response.status).toEqual(200);
         expect(body).toContain('reached its length limit');
-        expect(model.doGenerateCalls).toHaveLength(0);
+        // A plain refused turn has no approved tool calls to resolve.
+        expect(body).not.toContain('tool-output-error');
         expect(model.doStreamCalls).toHaveLength(0);
     });
 
@@ -109,13 +107,11 @@ describe('POST /chat guardrails', () => {
         const body = await response.text();
 
         expect(body).toContain('reached its size limit');
-        expect(model.doGenerateCalls).toHaveLength(0);
         expect(model.doStreamCalls).toHaveLength(0);
     });
 
     it('maps an upstream rate limit to a coded stream error and refunds the turn', async () => {
         const model = createMockChatModel({
-            objects: [{ intent: 'bug' }],
             streamError: Object.assign(new Error('too many requests'), {
                 statusCode: 429,
             }),
@@ -133,30 +129,257 @@ describe('POST /chat guardrails', () => {
         expect(await deps.sessionStore.getTurns(sessionId)).toEqual(0);
     });
 
-    it('runs a single structured call per turn and streams no ticket state', async () => {
-        const model = createMockChatModel({ objects: [{ intent: 'bug' }] });
-        const deps = createTestDependencies(model);
-
-        const response = await postChat(buildApp(deps));
-        const body = await response.text();
-
-        expect(response.status).toEqual(200);
-        // A turn is classify (guardrail) + respond only: extraction happens exclusively behind
-        // the explicit preview action, so a flaky extraction can never break the conversation.
-        expect(model.doGenerateCalls).toHaveLength(1);
-        expect(body).not.toContain('data-collectedFields');
-    });
-
-    it('counts classify and respond usage against the session token budget', async () => {
-        const model = createMockChatModel({ objects: [{ intent: 'bug' }] });
-        const deps = createTestDependencies(model);
+    it('counts the agent stream usage once against the session token budget', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
 
         const response = await postChat(buildApp(deps));
         await response.text();
 
         expect(response.status).toEqual(200);
-        // The mock reports 15 tokens per call (10 in + 5 out); a turn is classify + respond —
-        // a regression back to respond-only counting would report 15 here.
-        expect(await deps.sessionStore.getTokens(sessionId)).toEqual(30);
+        // The mock reports 15 tokens (10 in + 5 out) for the single agent call.
+        expect(await deps.sessionStore.getTokens(sessionId)).toEqual(15);
+    });
+
+    it('resolves a dangling approval request as superseded instead of failing the model call', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // The user kept typing while a draft awaited approval: the history carries a tool part
+        // stuck in `approval-requested`, which converts to a tool call without a response.
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    {
+                        type: 'tool-createLinearTicket',
+                        toolCallId: 'tc-1',
+                        state: 'approval-requested',
+                        input: {
+                            intent: 'bug',
+                            title: 'Voting transaction reverts',
+                            description:
+                                'Submitting a vote reverts with an unknown error.',
+                        },
+                        approval: { id: 'ap-1' },
+                    },
+                ],
+            } as never,
+            {
+                id: 'message-3',
+                role: 'user',
+                parts: [{ type: 'text', text: 'It only happens in Safari.' }],
+            },
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        const streamed = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The turn streams a normal reply (no error part), and the model saw the draft as a
+        // denied tool call it can re-draft from.
+        expect(streamed).not.toContain('"type":"error"');
+        expect(JSON.stringify(model.doStreamCalls)).toContain(
+            'execution-denied',
+        );
+    });
+
+    it('drops tool parts a Stop left in input-streaming or input-available instead of bricking the session', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // The composer's Stop can abort a draft mid-stream; the client keeps the tool part
+        // as-is (cancelPendingToolCallsOnSend is false), so the history replays it in an
+        // incomplete state — converted naively it becomes a tool call without a response and
+        // every following turn of the session fails.
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    { type: 'text', text: 'Let me draft that for you.' },
+                    {
+                        type: 'tool-createLinearTicket',
+                        toolCallId: 'tc-1',
+                        state: 'input-streaming',
+                        input: { intent: 'bug' },
+                    },
+                    {
+                        type: 'tool-createLinearTicket',
+                        toolCallId: 'tc-2',
+                        state: 'input-available',
+                        input: {
+                            intent: 'bug',
+                            title: 'Voting transaction reverts',
+                            description:
+                                'Submitting a vote reverts with an unknown error.',
+                        },
+                    },
+                ],
+            } as never,
+            {
+                id: 'message-3',
+                role: 'user',
+                parts: [{ type: 'text', text: 'Actually, one more detail.' }],
+            },
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        const streamed = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The turn streams a normal reply, and the stopped draft never reaches the model as a
+        // dangling tool call.
+        expect(streamed).not.toContain('"type":"error"');
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).not.toContain('tc-1');
+        expect(streamCalls).not.toContain('tc-2');
+    });
+
+    it('strips replayed reasoning parts from the history before the model call', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        const app = buildApp(deps);
+
+        // A reasoning model's thinking travels back with the client history; it feeds no next
+        // turn and some providers reject it, so it must never reach the model call.
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    { type: 'reasoning', text: 'Private chain of thought.' },
+                    { type: 'text', text: 'Could you share more details?' },
+                ],
+            } as never,
+            {
+                id: 'message-3',
+                role: 'user',
+                parts: [{ type: 'text', text: 'It started today.' }],
+            },
+        ];
+
+        const response = await app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        const streamCalls = JSON.stringify(model.doStreamCalls);
+        expect(streamCalls).not.toContain('Private chain of thought.');
+        expect(streamCalls).toContain('Could you share more details?');
+    });
+
+    it('gates ticket creation behind approval: a proposed tool call never executes on its own', async () => {
+        const deps = createTestDependencies(
+            createMockChatModel({
+                toolCall: {
+                    toolName: 'createLinearTicket',
+                    input: {
+                        intent: 'bug',
+                        title: 'Voting transaction reverts',
+                        description:
+                            'Submitting a vote reverts with an unknown error.',
+                    },
+                },
+            }),
+        );
+
+        const response = await postChat(buildApp(deps));
+        const body = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The tool call streams to the client, but creation waits for the user's approval —
+        // Linear is never touched by an unapproved proposal.
+        expect(body).toContain('createLinearTicket');
+        expect(deps.linear.createIssueCalls).toHaveLength(0);
+    });
+
+    // An approval resume: the widget re-sends the history ending on the assistant's message,
+    // whose draft the user just approved — no new user input.
+    const buildResumeBody = (toolCallId = 'tc-1') => {
+        const body = buildRequestBody();
+        body.messages = [
+            ...body.messages,
+            {
+                id: 'message-2',
+                role: 'assistant',
+                parts: [
+                    {
+                        type: 'tool-createLinearTicket',
+                        toolCallId,
+                        state: 'approval-responded',
+                        input: {
+                            intent: 'bug',
+                            title: 'Voting transaction reverts',
+                            description:
+                                'Submitting a vote reverts with an unknown error.',
+                        },
+                        approval: { id: 'ap-1', approved: true },
+                    },
+                ],
+            } as never,
+        ];
+
+        return body;
+    };
+
+    const postResume = (app: Hono, toolCallId?: string) =>
+        app.request('/chat', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(buildResumeBody(toolCallId)),
+        });
+
+    it('does not count an approval resume against the turn budget', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+
+        const response = await postResume(buildApp(deps));
+        await response.text();
+
+        expect(response.status).toEqual(200);
+        // The resume executed the approved creation, and the ticket cost one turn (the draft),
+        // not two — the Create press itself is free.
+        expect(deps.linear.createIssueCalls).toHaveLength(1);
+        expect(await deps.sessionStore.getTurns(sessionId)).toEqual(0);
+    });
+
+    it('fails a pending approved creation explicitly when a limit refuses the resume', async () => {
+        const model = createMockChatModel({});
+        const deps = createTestDependencies(model);
+        await deps.sessionStore.addTokens(
+            sessionId,
+            assistantLimits.maxTokensPerSession,
+        );
+
+        const response = await postResume(buildApp(deps), 'tc-9');
+        const streamed = await response.text();
+
+        expect(response.status).toEqual(200);
+        // The fixed limit message also resolves the approved call as a failure: the approval
+        // card reaches a terminal state instead of showing the creation in flight forever.
+        expect(streamed).toContain('tool-output-error');
+        expect(streamed).toContain('tc-9');
+        expect(streamed).toContain('reached its size limit');
+        expect(model.doStreamCalls).toHaveLength(0);
+        expect(deps.linear.createIssueCalls).toHaveLength(0);
     });
 });

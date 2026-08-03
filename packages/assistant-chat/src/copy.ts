@@ -1,6 +1,11 @@
+import {
+    assistantLimits,
+    type ITicketIntent,
+} from '@aragon/assistant-contracts';
+import type { FileRejectReason } from './files/fileValidation';
+
 // Single source of every user-facing string of the widget, grouped by component. Change wording
-// here, not in the components; parameterized strings are functions so the wording and its
-// placeholders stay next to each other.
+// here, not in the components.
 
 // Escape hatch offered when the user prefers email or the chat hard-fails: filing a request by
 // mail replaces the deprecated external support portal.
@@ -8,79 +13,93 @@ export const supportEmail = 'support@aragon.org';
 
 export const supportEmailHref = `mailto:${supportEmail}`;
 
+const maxFileSizeMb = Math.round(
+    assistantLimits.maxFileSizeBytes / (1024 * 1024),
+);
+
 export const chatCopy = {
     header: {
         title: 'Aragon Support Assistant',
         close: 'Close',
+        startNewChat: 'Start new chat',
     },
-    messageList: {
+    welcome: {
         greeting:
             "Hi! Tell us what's going on and we'll get it to the right team.",
+        suggestions: [
+            { label: 'Report a bug', message: "I'd like to report a bug." },
+            {
+                label: 'Share feedback',
+                message: "I'd like to share some feedback.",
+            },
+            { label: 'I need help', message: 'I need help with something.' },
+        ],
+    },
+    thread: {
+        typing: 'Assistant is typing',
+        copyMessage: 'Copy',
         chatErrorFallback:
             'Something went wrong. Please try sending your message again.',
         emailEscapeHatch: `…or email your request to ${supportEmail} →`,
-        typing: 'Assistant is typing',
-    },
-    statusStrip: {
-        hintChatting:
-            "Done explaining? You'll review the ticket before it's sent.",
-        hintPreviewing: 'Putting your ticket together…',
-        hintPreviewUnclear:
-            "We couldn't put a ticket together yet — tell us a bit more about what happened.",
-        previewErrorFallback: 'The preview failed. Please try again.',
-        prepareTicket: 'Prepare ticket',
-        readyToSend: 'Ready to send',
-        sendTicket: 'Send ticket',
-        sending: 'Sending…',
-        titleLabel: 'Title',
-        attachmentsLabel: 'Attachments',
-        attachmentsNone: 'None',
-        attachmentsCount: (count: number) =>
-            `${count} ${count === 1 ? 'file' : 'files'}`,
-        attachedAutomatically:
-            'The full conversation and debug info are attached automatically for the team.',
-        notQuiteRight: 'Not quite right? Keep chatting and prepare it again.',
     },
     composer: {
         placeholder: 'Message…',
-        messageLabel: 'Message',
-        attachFile: 'Attach file',
-        dismissAlert: 'Dismiss',
-        send: 'Send',
-        stop: 'Stop',
+        inputLabel: 'Message',
+        send: 'Send message',
+        stop: 'Stop generating',
+        addAttachment: 'Add attachment',
         attachmentsShared: 'Attachments are shared with the support team.',
     },
+    attachments: {
+        remove: 'Remove file',
+        previewTitle: 'Image attachment preview',
+        typeLabel: {
+            image: 'Image',
+            document: 'Document',
+            file: 'File',
+        },
+    },
+    // Short and filename-free: the user can already see which file they just picked; the text
+    // shows in the tooltip of the failed attachment tile.
     fileAlerts: {
-        tooLarge: (maxSizeMb: number) =>
-            `File too large (max ${maxSizeMb} MB).`,
+        too_large: `File too large (max ${maxFileSizeMb} MB).`,
         unsupported: 'Unsupported file. Use an image, text, log or PDF.',
+        file_limit: `You can attach up to ${assistantLimits.maxFilesPerMessage} files per message.`,
+        uploadFailed: 'Upload failed. Please try again.',
         removeFailed: "Couldn't remove the file. Please try again.",
-        tooMany: (maxFiles: number) =>
-            `You can attach up to ${maxFiles} files.`,
-    },
-    attachmentList: {
-        uploadFailed: 'Upload failed',
-        removingFile: 'Removing file',
-        removeFile: 'Remove file',
-    },
-    dropOverlay: {
-        dropFiles: 'Drop files to attach',
-    },
-    errorPanel: {
-        title: "We couldn't create your request",
-        issueErrorFallback:
-            'Nothing was lost. Check your connection and try again.',
+    } satisfies Record<
+        FileRejectReason | 'uploadFailed' | 'removeFailed',
+        string
+    >,
+    ticketCard: {
+        draftHeading: 'Review your request',
+        intentLabel: {
+            feedback: 'Feedback',
+            bug: 'Bug report',
+            support: 'Support request',
+        } satisfies Record<ITicketIntent, string>,
+        descriptionLabel: 'Details',
+        stepsLabel: 'Steps to reproduce',
+        contactLabel: 'Contact',
+        preparing: 'Putting your request together…',
+        addMore: 'Anything to add? Any detail helps — just keep typing.',
+        create: 'Create',
+        dismiss: 'Dismiss',
+        creating: 'Creating your request…',
+        dismissed: 'Draft dismissed. Keep chatting to prepare a new one.',
+        superseded: 'This draft was set aside after your newer messages.',
+        draftInterrupted:
+            'That draft did not come through. Keep chatting to prepare a new one.',
+        successTitle: 'Request created',
+        contactUpdates:
+            'If you left a way to reach you, the team will follow up there.',
+        viewTicket: 'View request',
+        errorTitle: "We couldn't create your request",
+        errorFallback: 'Nothing was lost. Check your connection and try again.',
         retry: 'Retry',
-        emailEscapeHatch: `…or email your request to ${supportEmail} →`,
     },
-    successPanel: {
-        title: 'Request created',
-        emailUpdates: "If you left an email, we'll send updates there.",
-    },
-    newChatBar: {
-        startNewChat: 'Start new chat',
-        linkedToRequest:
-            'This chat is linked to the created request. Need something else? Start a new chat.',
+    markdown: {
+        copyCode: 'Copy code',
     },
     requestHistory: {
         heading: 'Past requests',

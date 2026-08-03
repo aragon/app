@@ -62,6 +62,12 @@ const buildFileResponse = (file: ISessionFile): IUploadFileResponse => ({
     size: file.size,
 });
 
+const computeContentHash = async (data: Uint8Array): Promise<string> => {
+    const digest = await crypto.subtle.digest('SHA-256', data);
+
+    return Buffer.from(digest).toString('hex');
+};
+
 export const buildFilesRoute = (deps: IAppDependencies) =>
     new Hono()
         // Issues a client-upload token (vendor protocol of @vercel/blob/client): the widget
@@ -282,12 +288,19 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
+            // Re-attached identical bytes (e.g. the same screenshot uploaded twice) queue as
+            // their own entry: every composer tile owns its fileId and blob, so removing one
+            // never orphans another. The ticket still carries the content once — the transfer
+            // to Linear deduplicates by this hash at creation time.
+            const contentHash = await computeContentHash(data);
+
             const file: ISessionFile = {
                 id: fileId,
                 blobUrl,
                 filename: validated.filename,
                 contentType: validated.contentType,
                 size: validated.size,
+                contentHash,
             };
 
             // The RPUSH length is atomic, so concurrent confirms of different files get

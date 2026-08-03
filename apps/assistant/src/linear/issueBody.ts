@@ -1,8 +1,8 @@
 import type {
     IAppContext,
     IChatMessage,
-    ICollectedFields,
-    ISupportIntent,
+    ICreateTicketToolInput,
+    ITicketIntent,
 } from '@aragon/assistant-contracts';
 import { issueTexts } from '../chat/prompts/issueTexts';
 import { fenceUserText, quoteUserText, toTranscript } from '../chat/transcript';
@@ -13,14 +13,14 @@ export interface IIssueAttachment {
     assetUrl: string;
 }
 
-export const issueLabelByIntent: Partial<Record<ISupportIntent, string>> = {
+export const issueLabelByIntent: Record<ITicketIntent, string> = {
     feedback: 'feedback',
     bug: 'bug',
     support: 'bug',
 };
 
-export const buildIssueTitle = (fields: ICollectedFields): string =>
-    fields.summary?.trim() || issueTexts.fallbackTitle;
+export const buildIssueTitle = (fields: ICreateTicketToolInput): string =>
+    fields.title.trim() || issueTexts.fallbackTitle;
 
 // A bullet list rather than a markdown table: Linear renders two-column tables cramped and
 // narrow, while list rows use the full ticket width.
@@ -80,7 +80,7 @@ const renderRecentTransactions = (appContext: IAppContext): string | null => {
 // mentions, checklists or collapsible markers into the ticket structure.
 export const buildIssueDescription = (input: {
     sessionId: string;
-    fields: ICollectedFields;
+    fields: ICreateTicketToolInput;
     appContext: IAppContext;
     messages: IChatMessage[];
     files: IIssueAttachment[];
@@ -93,7 +93,7 @@ export const buildIssueDescription = (input: {
         `## ${issueTexts.sections.request}
 
 - **${issueTexts.fieldLabels.intent}:** ${fields.intent}
-- **${issueTexts.fieldLabels.email}:** ${fields.email ?? issueTexts.emptyValue}
+- **${issueTexts.fieldLabels.contact}:** ${fields.contact || issueTexts.emptyValue}
 ${renderContextRows(appContext, sessionId)}`,
     );
 
@@ -107,10 +107,13 @@ ${renderContextRows(appContext, sessionId)}`,
     );
 
     if (fields.stepsToReproduce != null && fields.stepsToReproduce.length > 0) {
-        // Steps arrive as an unnumbered list (see collectedFieldsSchema); numbering is applied
-        // here, at the single place that renders them.
+        // The schema asks for unnumbered steps but models number them anyway; any leading
+        // "1." / "1)" is stripped so the numbering applied here never doubles up.
         const steps = fields.stepsToReproduce
-            .map((step, index) => `${String(index + 1)}. ${step}`)
+            .map(
+                (step, index) =>
+                    `${String(index + 1)}. ${step.replace(/^\s*\d+\s*[.)]\s*/, '')}`,
+            )
             .join('\n');
         sections.push(
             `## ${issueTexts.sections.stepsToReproduce}\n\n${quoteUserText(steps)}`,
