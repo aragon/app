@@ -1,5 +1,32 @@
 # @aragon/app
 
+## 1.36.0
+
+### Minor Changes
+
+- [#1266](https://github.com/aragon/app/pull/1266) [`8091efb`](https://github.com/aragon/app/commit/8091efb8bf88dfeb9001589f23ed7c7789963edd) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support delegate vote overrides for Alchemix Token Voting: eligible delegators can override their delegate's vote (or vote and override atomically) from the voting terminal, and overridden votes are reflected in the votes list
+
+- [#1256](https://github.com/aragon/app/pull/1256) [`4119b3c`](https://github.com/aragon/app/commit/4119b3cb25d5260ad6899d5f9d2e993a99262c55) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Support mixed approving and vetoing bodies within a single SPP stage
+
+- [#1258](https://github.com/aragon/app/pull/1258) [`93154db`](https://github.com/aragon/app/commit/93154db76fd714caef1a2cb01a6c350fa0935bcf) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Instrument privacy-safe Plausible custom events across the wizard, transaction and proposal-action flows, sent through the shared analytics pipeline
+
+- [#1259](https://github.com/aragon/app/pull/1259) [`c4f3a60`](https://github.com/aragon/app/commit/c4f3a609eeb53b7b1b6107b15d5182f4ffd2c1c7) Thanks [@harryburger](https://github.com/harryburger)! - Restrict voting to an "Object" option on objection-stage proposals
+
+### Patch Changes
+
+- [#1253](https://github.com/aragon/app/pull/1253) [`ae5dd8f`](https://github.com/aragon/app/commit/ae5dd8ffa3a0bc8df73f561e6fef3770d9f6da10) Thanks [@milosh86](https://github.com/milosh86)! - Filter OSx-related actions from the action builder when the DAO lacks the required permission
+
+- [#1262](https://github.com/aragon/app/pull/1262) [`3e2b8c5`](https://github.com/aragon/app/commit/3e2b8c54213fafbf50ce493e871a6d5d0b821a19) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Surface a warning with an explicitly confirmed retry when a transaction stays unconfirmed past 90 seconds, expire stale persisted pending-transaction records, pin receipt polling to the transaction chain, and show an actionable error for underpriced replacement transactions
+
+- [#1267](https://github.com/aragon/app/pull/1267) [`fef1057`](https://github.com/aragon/app/commit/fef10573f2d153eb76bd5f0fee3a6927a5f5eeb5) Thanks [@milosh86](https://github.com/milosh86)! - Add link to block explorer for external Safe address in proposal creation eligibility
+
+- [#1268](https://github.com/aragon/app/pull/1268) [`302cdda`](https://github.com/aragon/app/commit/302cdda59317a1e5647b4ee26a3b8e1de16f75a1) Thanks [@evanaronson](https://github.com/evanaronson)! - Revise mixed-body UI: remove approve/veto decision tags, move the governance-type field to its own setup-body wizard step, display stage thresholds in the stage settings list and update governance copy
+
+- [#1243](https://github.com/aragon/app/pull/1243) [`cc1a6a2`](https://github.com/aragon/app/commit/cc1a6a2ccf1df0c4d4ffc7304a6648d2fd150d02) Thanks [@evanaronson](https://github.com/evanaronson)! - Add design-sync setup for the "Aragon App Design System" Claude Design project to enable future re-syncs.
+
+- Updated dependencies [[`3e7c9fd`](https://github.com/aragon/app/commit/3e7c9fd62afdfd79616e98e319b1baf2b303a037)]:
+    - @aragon/assistant-chat@0.3.0
+
 ## 1.35.0
 
 ### Minor Changes

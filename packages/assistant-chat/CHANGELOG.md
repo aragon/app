@@ -1,5 +1,11 @@
 # @aragon/assistant-chat
 
+## 0.3.0
+
+### Minor Changes
+
+- [#1255](https://github.com/aragon/app/pull/1255) [`3e7c9fd`](https://github.com/aragon/app/commit/3e7c9fd62afdfd79616e98e319b1baf2b303a037) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Rebuild the assistant-chat widget on assistant-ui with the agentic backend: streamed transcript and a `createLinearTicket` approval card (draft → Create/Dismiss → success or retry), a greeting screen with intake shortcuts and request history, and our own composer.
+
 ## 0.2.0
 
 ### Minor Changes
