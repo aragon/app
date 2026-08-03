@@ -61,9 +61,9 @@ describe('conditionType Utils', () => {
                 expected: '-',
             },
             {
-                description: 'maps "unknown" to the empty placeholder',
+                description: 'maps "unknown" to the unresolved placeholder',
                 conditionType: 'unknown',
-                expected: '-',
+                expected: 'Unrecognized condition',
             },
             {
                 description: 'maps an empty string to the empty placeholder',

@@ -1,24 +1,33 @@
+import type {
+    IDaoPermission,
+    IDaoPermissionCondition,
+} from '@/shared/api/daoService';
 import { stringUtils } from '@/shared/utils/stringUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
-import type { IConditionData } from '../../types';
 
 /**
  * Discriminator returned when a permission is granted unconditionally
  * (condition equals {@link ALLOW_FLAG}).
  */
-const NO_CONDITION = 'none';
+export const NO_CONDITION = 'none';
 
 /**
  * Discriminator returned when the condition type cannot be resolved from the
  * payload (absent condition data or an empty/unrecognised `conditionType`).
  */
-const UNKNOWN_CONDITION = 'unknown';
+export const UNKNOWN_CONDITION = 'unknown';
 
 /**
  * Placeholder rendered for conditions that have no human-readable label
- * (unconditional grants and unresolvable condition types).
+ * (unconditional grants and empty condition types).
  */
 const NO_LABEL = '-';
+
+/**
+ * Placeholder rendered when the permission references a condition address but
+ * the condition payload could not be resolved or recognised.
+ */
+const UNKNOWN_LABEL = 'Unrecognized condition';
 
 /**
  * Explicit display labels for the known condition types. Any other non-empty
@@ -28,6 +37,18 @@ const CONDITION_LABELS: Record<string, string> = {
     'voting-power': 'VotingPower',
     'execute-selector': 'ExecuteSelector',
 };
+
+/**
+ * Bundled condition display data, so callers don't repeat the
+ * address/type/label/hasCondition/isUnrecognized computation.
+ */
+export interface IConditionDisplay {
+    address: string;
+    type: string;
+    label: string;
+    hasCondition: boolean;
+    isUnrecognized: boolean;
+}
 
 class ConditionTypeUtils {
     /**
@@ -46,7 +67,7 @@ class ConditionTypeUtils {
      */
     resolveConditionType = (
         conditionAddress: string,
-        conditionData?: IConditionData,
+        conditionData?: IDaoPermissionCondition,
     ): string => {
         if (conditionAddress.toLowerCase() === ALLOW_FLAG.toLowerCase()) {
             return NO_CONDITION;
@@ -65,7 +86,8 @@ class ConditionTypeUtils {
      * Resolves a human-readable label for a condition type, used by the
      * collapsed permission row's CONDITION cell.
      *
-     * - `'none'` / `'unknown'` -> {@link NO_LABEL} (`'-'`).
+     * - `'none'` / empty -> {@link NO_LABEL} (`'-'`).
+     * - `'unknown'` -> {@link UNKNOWN_LABEL} (`'Unrecognized condition'`).
      * - a known type -> its explicit label (e.g. `'voting-power'` ->
      *   `'VotingPower'`).
      * - any other non-empty type -> a Pascal-cased fallback (e.g.
@@ -75,18 +97,44 @@ class ConditionTypeUtils {
      * @returns The display label for the condition type.
      */
     getConditionLabel = (conditionType: string): string => {
-        if (
-            conditionType === NO_CONDITION ||
-            conditionType === UNKNOWN_CONDITION ||
-            conditionType.length === 0
-        ) {
+        if (conditionType === NO_CONDITION || conditionType.length === 0) {
             return NO_LABEL;
+        }
+
+        if (conditionType === UNKNOWN_CONDITION) {
+            return UNKNOWN_LABEL;
         }
 
         return (
             CONDITION_LABELS[conditionType] ??
             stringUtils.toPascalCase(conditionType)
         );
+    };
+
+    /**
+     * Resolves the full display bundle for a permission row's condition in one
+     * call: the effective condition address, its type discriminator, its
+     * human-readable label, whether a real condition is attached (address is
+     * not {@link ALLOW_FLAG}), and whether the condition payload was
+     * unrecognised. Replaces a 5-line block duplicated across the list views
+     * and the graph edge panel.
+     *
+     * @param row The permission row (only `conditionAddress` / `condition`).
+     * @returns The resolved condition display data.
+     */
+    resolveConditionDisplay = (
+        row: Pick<IDaoPermission, 'conditionAddress' | 'condition'>,
+    ): IConditionDisplay => {
+        const address = row.conditionAddress ?? ALLOW_FLAG;
+        const type = this.resolveConditionType(address, row.condition);
+
+        return {
+            address,
+            type,
+            label: this.getConditionLabel(type),
+            hasCondition: address.toLowerCase() !== ALLOW_FLAG.toLowerCase(),
+            isUnrecognized: type === UNKNOWN_CONDITION,
+        };
     };
 }
 
