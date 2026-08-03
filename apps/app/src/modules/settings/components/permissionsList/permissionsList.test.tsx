@@ -1,88 +1,69 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import * as daoService from '@/shared/api/daoService';
 import {
-    type IDao,
-    type ILinkedAccountSummary,
-    Network,
-} from '@/shared/api/daoService';
-import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
-import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
-import {
-    generateDao,
-    generateDaoMetrics,
-    generateReactQueryResultSuccess,
-} from '@/shared/testUtils';
+    addressUtils,
+    clipboardUtils,
+    GukModulesProvider,
+    IconType,
+} from '@aragon/gov-ui-kit';
+import { fireEvent, render, screen, within } from '@testing-library/react';
+import type { IDaoPermission } from '@/shared/api/daoService';
+import { generateDaoPermission } from '@/shared/testUtils';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
 import { initialiseConditionRegistry } from '../../initConditionRegistry';
-import type { IPermissionRow } from '../../types';
-import { PermissionsList } from './permissionsList';
+import {
+    getPermissionRowKey,
+    type IPermissionsListProps,
+    PermissionsList,
+} from './permissionsList';
 
 const ROOT_PERMISSION_ID =
     '0x815fe80e4b37c8582a3b773d1d7071f983eacfd56b5965db654f3087c25ada33';
 const EXECUTE_PERMISSION_ID =
     '0xbf04b4486c9663d805744005c3da000eda93de6e3308a4a7a812eb565327b78d';
 
+const buildRow = (partial: Partial<IDaoPermission>): IDaoPermission =>
+    generateDaoPermission({
+        permissionId: EXECUTE_PERMISSION_ID,
+        whoAddress: ANY_ADDR,
+        whereAddress: ALLOW_FLAG,
+        conditionAddress: ALLOW_FLAG,
+        condition: undefined,
+        conditionEntity: undefined,
+        network: undefined,
+        who: undefined,
+        where: undefined,
+        ...partial,
+    });
+
 describe('<PermissionsList /> component', () => {
-    const useDaoSpy = jest.spyOn(daoService, 'useDao');
-    const useAllDaoPermissionsSpy = jest.spyOn(
-        daoService,
-        'useAllDaoPermissions',
-    );
-    const useDaoPluginsSpy = jest.spyOn(useDaoPluginsModule, 'useDaoPlugins');
-    const useFeatureFlagsSpy = jest.spyOn(
-        featureFlagsProvider,
-        'useFeatureFlags',
-    );
-
-    const setFeatureFlags = (linkedAccountEnabled: boolean) => {
-        useFeatureFlagsSpy.mockReturnValue({
-            isEnabled: (key) => key === 'linkedAccount' && linkedAccountEnabled,
-        } as ReturnType<typeof featureFlagsProvider.useFeatureFlags>);
-    };
-
-    const setDao = (dao?: Partial<IDao>) => {
-        useDaoSpy.mockReturnValue(
-            generateReactQueryResultSuccess({
-                data: generateDao(dao),
-            }) as ReturnType<typeof daoService.useDao>,
-        );
-    };
-
-    const setPermissions = (
-        result: Partial<ReturnType<typeof daoService.useAllDaoPermissions>>,
-    ) => {
-        useAllDaoPermissionsSpy.mockReturnValue({
-            data: [],
-            isLoading: false,
-            error: null,
-            refetch: jest.fn(),
-            ...result,
-        } as ReturnType<typeof daoService.useAllDaoPermissions>);
-    };
-
-    beforeEach(() => {
-        setFeatureFlags(false);
-        setDao();
-        setPermissions({ data: [], isLoading: false });
-        useDaoPluginsSpy.mockReturnValue([]);
+    beforeAll(() => {
+        initialiseConditionRegistry();
     });
 
     afterEach(() => {
-        jest.clearAllMocks();
+        jest.restoreAllMocks();
     });
 
-    const createTestComponent = (props?: { daoId?: string }) => (
-        <GukModulesProvider>
-            <PermissionsList daoId={props?.daoId ?? 'dao-test'} />
-        </GukModulesProvider>
-    );
+    const createTestComponent = (props?: Partial<IPermissionsListProps>) => {
+        const completeProps: IPermissionsListProps = {
+            rows: [],
+            accountRefs: [],
+            daoPlugins: [],
+            chainId: undefined,
+            isLoading: false,
+            expandedRows: [],
+            onExpandedRowsChange: jest.fn(),
+            ...props,
+        };
+
+        return (
+            <GukModulesProvider>
+                <PermissionsList {...completeProps} />
+            </GukModulesProvider>
+        );
+    };
 
     it('renders a skeleton while the permissions are loading', () => {
-        setPermissions({ data: [], isLoading: true });
-
-        render(createTestComponent());
+        render(createTestComponent({ isLoading: true }));
 
         expect(
             screen.getByTestId('permissions-list-skeleton'),
@@ -92,10 +73,8 @@ describe('<PermissionsList /> component', () => {
         ).not.toBeInTheDocument();
     });
 
-    it('renders the empty state when the account has no permissions', () => {
-        setPermissions({ data: [], isLoading: false });
-
-        render(createTestComponent());
+    it('renders the empty state when there are no permissions', () => {
+        render(createTestComponent({ rows: [] }));
 
         expect(
             screen.getByText(/permissionsList.empty.heading/),
@@ -106,165 +85,388 @@ describe('<PermissionsList /> component', () => {
     });
 
     it('renders rows with resolved who, where and permission names', () => {
-        const rows: IPermissionRow[] = [
-            {
+        const rows: IDaoPermission[] = [
+            buildRow({
                 permissionId: ROOT_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
-                conditionAddress: ALLOW_FLAG,
-            },
-            {
-                permissionId: EXECUTE_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
+            }),
+            buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
                 condition: { conditionType: 'voting-power' },
-            },
+            }),
         ];
-        setPermissions({ data: rows, isLoading: false });
 
-        render(createTestComponent());
+        render(createTestComponent({ rows }));
 
-        expect(screen.getByText('ROOT_PERMISSION')).toBeInTheDocument();
-        expect(screen.getByText('EXECUTE_PERMISSION')).toBeInTheDocument();
+        expect(screen.getAllByText('ROOT_PERMISSION').length).toBeGreaterThan(
+            0,
+        );
+        expect(
+            screen.getAllByText('EXECUTE_PERMISSION').length,
+        ).toBeGreaterThan(0);
         expect(screen.getAllByText('Anyone').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Any Address').length).toBeGreaterThan(0);
         expect(
-            screen.getByText(/permissionsList.header.condition/),
+            screen.getAllByText(/permissionsList.header.condition/).length,
+        ).toBeGreaterThan(0);
+    });
+
+    // Entity-cell visuals: backend labels win over plugin lookup (CMP-5/LBL-1 keeps the Safe
+    // brand ahead of tags), and sentinel actors get the members icon.
+    it.each([
+        {
+            name: 'backend-enriched entity labels without plugin lookup',
+            row: buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+                whoAddress: '0x2222222222222222222222222222222222222222',
+                who: {
+                    address: '0x2222222222222222222222222222222222222222',
+                    interfaceType: 'spp',
+                    label: 'Backend SPP',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            expectedTexts: ['Backend SPP', 'SPP'],
+            expectedLabels: [],
+            absentText: undefined,
+        },
+        {
+            name: 'the Safe logo instead of a SAFE tag for Safe bodies',
+            row: buildRow({
+                whoAddress: '0x3333333333333333333333333333333333333333',
+                who: {
+                    address: '0x3333333333333333333333333333333333333333',
+                    brandId: 'safe',
+                    label: 'Safe',
+                    layer: 'processInternal',
+                },
+            }),
+            expectedTexts: [],
+            expectedLabels: ['Safe account'],
+            absentText: 'SAFE',
+        },
+        {
+            name: 'the members icon for Anyone entities',
+            row: buildRow({ permissionId: ROOT_PERMISSION_ID }),
+            expectedTexts: ['Anyone'],
+            expectedLabels: ['Members'],
+            absentText: undefined,
+        },
+    ])('renders $name', ({
+        row,
+        expectedTexts,
+        expectedLabels,
+        absentText,
+    }) => {
+        render(createTestComponent({ rows: [row] }));
+
+        for (const text of expectedTexts) {
+            expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+        }
+        for (const label of expectedLabels) {
+            expect(screen.getAllByLabelText(label).length).toBeGreaterThan(0);
+        }
+        if (absentText != null) {
+            expect(screen.queryByText(absentText)).not.toBeInTheDocument();
+        }
+    });
+
+    it('renders informational help for the Who and Where headers', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+            }),
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(
+            screen.getByRole('img', {
+                name: /permissionsList.header.whoTooltip/,
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('img', {
+                name: /permissionsList.header.whereTooltip/,
+            }),
         ).toBeInTheDocument();
     });
 
-    it('renders the collapsed CONDITION cell with the resolved label or a dash', () => {
-        const rows: IPermissionRow[] = [
-            {
-                permissionId: ROOT_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
-                conditionAddress: ALLOW_FLAG,
-            },
-            {
-                permissionId: EXECUTE_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
-                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
-                condition: { conditionType: 'voting-power' },
-            },
-        ];
-        setPermissions({ data: rows, isLoading: false });
+    it('aligns the desktop header with the accordion row affordance', () => {
+        const rows = [buildRow({ permissionId: ROOT_PERMISSION_ID })];
 
-        render(createTestComponent());
+        render(createTestComponent({ rows }));
 
-        expect(screen.getByText('VotingPower')).toBeInTheDocument();
-        expect(screen.getByText('-')).toBeInTheDocument();
+        const alignmentAffordance = screen
+            .getAllByTestId(IconType.CHEVRON_DOWN)
+            .map((icon) => icon.parentElement)
+            .find((parent) => parent?.classList.contains('invisible'));
+
+        expect(alignmentAffordance).toBeInTheDocument();
+        expect(alignmentAffordance?.parentElement).toHaveClass(
+            'px-4',
+            'md:px-6',
+        );
     });
 
-    it('renders both the Details and Condition lists when a row is expanded', async () => {
-        initialiseConditionRegistry();
-        const user = userEvent.setup();
-        const rows: IPermissionRow[] = [
-            {
-                permissionId: EXECUTE_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
+    it('renders the collapsed condition cell with the resolved label or a dash', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+            }),
+            buildRow({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+                condition: { conditionType: 'voting-power' },
+            }),
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getAllByText('VotingPower').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
+    });
+
+    it('keys rows by condition address so distinct conditions do not collide', () => {
+        const baseRow = buildRow({
+            conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+        });
+        const matchingRuleRow: IDaoPermission = {
+            ...baseRow,
+            conditionAddress: '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
+        };
+
+        expect(getPermissionRowKey(baseRow)).not.toEqual(
+            getPermissionRowKey(matchingRuleRow),
+        );
+    });
+
+    it('renders the inline card and accordion arrangements with ordered field labels', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+                condition: { conditionType: 'voting-power' },
+            }),
+        ];
+
+        render(createTestComponent({ rows }));
+
+        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(3);
+        expect(screen.getAllByRole('radio')).toHaveLength(2);
+
+        const rowHeader = screen
+            .getAllByText('EXECUTE_PERMISSION')
+            .map((element) => element.closest('button'))
+            .find((button) => button != null);
+        expect(rowHeader).not.toBeNull();
+        expect(rowHeader!.closest('[class~="md:block"]')).not.toBeNull();
+
+        const fieldValues = [
+            'Anyone',
+            'Any Address',
+            'EXECUTE_PERMISSION',
+            'VotingPower',
+        ];
+        const rowText = rowHeader?.textContent ?? '';
+        const positions = fieldValues.map((value) => rowText.indexOf(value));
+
+        expect(positions.every((position) => position >= 0)).toBe(true);
+        expect(positions).toEqual([...positions].sort((a, b) => a - b));
+        expect(within(rowHeader!).getByText('VotingPower')).toBeInTheDocument();
+    });
+
+    it('renders both the Details and Condition lists for an expanded row', async () => {
+        const conditionAddress = '0xC0Ffee254729296a45a3885639AC7E10F9d54979';
+        const rows: IDaoPermission[] = [
+            buildRow({
+                conditionAddress,
+                condition: {
+                    conditionType: 'voting-power',
+                    token: '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5',
+                    minVotingPower: '1000000000000000000',
+                },
+            }),
+        ];
+
+        const clipboardCopySpy = jest.spyOn(clipboardUtils, 'copy');
+        const { container } = render(
+            createTestComponent({
+                rows,
+                chainId: 1,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(
+            screen.getAllByText(/permissionsList.details.heading/).length,
+        ).toBeGreaterThan(0);
+        expect(
+            screen.getAllByText(/permissionsList.condition.heading/).length,
+        ).toBeGreaterThan(0);
+        expect(
+            await screen.findByText(/votingPowerConditionSlot.token/),
+        ).toBeInTheDocument();
+        expect(await screen.findByText('1')).toBeInTheDocument();
+
+        const detailTerms = screen
+            .getAllByText(
+                /app\.settings\.permissionsList\.details\.(who|where|permission|condition)$/,
+            )
+            .map((element) => element.textContent);
+        expect(detailTerms).toHaveLength(8);
+        expect(detailTerms.slice(0, 4)).toEqual([
+            'app.settings.permissionsList.details.who',
+            'app.settings.permissionsList.details.where',
+            'app.settings.permissionsList.details.permission',
+            'app.settings.permissionsList.details.condition',
+        ]);
+
+        const conditionLinks = screen.getAllByText(
+            addressUtils.truncateAddress(conditionAddress),
+        );
+        expect(conditionLinks.length).toBeGreaterThan(0);
+        for (const conditionValue of conditionLinks) {
+            expect(conditionValue.closest('a')?.getAttribute('href')).toContain(
+                `/address/${conditionAddress}`,
+            );
+        }
+
+        const permissionHashes = screen.getAllByText(
+            addressUtils.truncateHash(EXECUTE_PERMISSION_ID),
+        );
+        for (const permissionHash of permissionHashes) {
+            expect(permissionHash.closest('a')).toBeNull();
+        }
+        screen
+            .getAllByTestId(IconType.COPY)
+            .forEach((copyIcon) => fireEvent.click(copyIcon));
+        expect(clipboardCopySpy).toHaveBeenCalledWith(EXECUTE_PERMISSION_ID);
+        expect(
+            container.querySelector(`a[href*="${EXECUTE_PERMISSION_ID}"]`),
+        ).toBeNull();
+    });
+
+    it('keeps the empty-condition state to the details dash with no breakdown affordances', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                permissionId: ROOT_PERMISSION_ID,
+            }),
+        ];
+
+        render(
+            createTestComponent({
+                rows,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(
+            screen.getAllByText(/permissionsList.details.who/).length,
+        ).toBeGreaterThan(0);
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
+        expect(
+            screen.queryByTestId('no-condition-placeholder'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByText(/permissionsList.condition.heading/),
+        ).not.toBeInTheDocument();
+        expect(screen.getAllByText('-').length).toBeGreaterThan(0);
+    });
+
+    it('renders mobile rows as inline detail cards showing the existing details list directly', async () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
                 conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
                 condition: {
                     conditionType: 'voting-power',
                     token: '0x0bA45A8b5d5575935B8158a88C631E9F9C95a2e5',
                     minVotingPower: '1000000000000000000',
                 },
-            },
+            }),
         ];
-        setPermissions({ data: rows, isLoading: false });
 
-        render(createTestComponent());
+        render(createTestComponent({ rows, chainId: 1 }));
 
-        await user.click(
-            screen.getByRole('button', { name: /permissionsList.expandAll/ }),
+        const detailsTerm = screen.getAllByText(
+            /permissionsList.details.who/,
+        )[0];
+        expect(detailsTerm.closest('[class~="md:hidden"]')).not.toBeNull();
+
+        expect(screen.getAllByText('EXECUTE_PERMISSION')).toHaveLength(3);
+        expect(
+            screen.queryByRole('button', {
+                name: /permissionsList.details.heading/,
+            }),
+        ).not.toBeInTheDocument();
+
+        fireEvent.click(
+            screen.getByRole('radio', {
+                name: /permissionsList.condition.heading/,
+            }),
         );
 
         expect(
-            screen.getByText(/permissionsList.details.heading/),
+            await screen.findByText(/votingPowerConditionSlot.token/),
         ).toBeInTheDocument();
         expect(
-            screen.getByText(/permissionsList.condition.heading/),
-        ).toBeInTheDocument();
-        expect(
-            screen.getByText(/votingPowerConditionSlot.token/),
-        ).toBeInTheDocument();
-        // 1e18 base units formatted with the default 18 decimals.
-        expect(screen.getByText('1')).toBeInTheDocument();
+            screen.queryByText(/permissionsList.details.who/),
+        ).not.toBeInTheDocument();
     });
 
-    it('routes the condition cell to the fallback slot when expanded', async () => {
-        const user = userEvent.setup();
-        const rows: IPermissionRow[] = [
-            {
+    it('treats unrecognized conditions like unconditional rows for the breakdown affordances', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                conditionAddress: '0xC0Ffee254729296a45a3885639AC7E10F9d54979',
+            }),
+        ];
+
+        render(
+            createTestComponent({
+                rows,
+                expandedRows: [getPermissionRowKey(rows[0])],
+            }),
+        );
+
+        expect(screen.queryAllByRole('radio')).toHaveLength(0);
+        expect(
+            screen.queryByText(/permissionsList.condition.heading/),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByTestId('unrecognized-condition'),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getAllByText('Unrecognized condition').length,
+        ).toBeGreaterThan(0);
+    });
+
+    it('sorts rows by the resolved Where label', () => {
+        const rows: IDaoPermission[] = [
+            buildRow({
+                whereAddress: '0x9999999999999999999999999999999999999999',
+                where: {
+                    address: '0x9999999999999999999999999999999999999999',
+                    label: 'Zeta Plugin',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
+            buildRow({
                 permissionId: ROOT_PERMISSION_ID,
-                whoAddress: ANY_ADDR,
-                whereAddress: ALLOW_FLAG,
-                conditionAddress: ALLOW_FLAG,
-            },
+                whereAddress: '0x8888888888888888888888888888888888888888',
+                where: {
+                    address: '0x8888888888888888888888888888888888888888',
+                    label: 'Alpha Plugin',
+                    layer: 'topLevelPlugin',
+                    status: 'installed',
+                },
+            }),
         ];
-        setPermissions({ data: rows, isLoading: false });
 
-        render(createTestComponent());
+        render(createTestComponent({ rows }));
 
-        await user.click(
-            screen.getByRole('button', { name: /permissionsList.expandAll/ }),
-        );
-
-        expect(screen.getByText(/noConditionSlot.heading/)).toBeInTheDocument();
-    });
-
-    it('re-queries permissions with the selected linked account params on tab switch', async () => {
-        const user = userEvent.setup();
-        const linkedAccount: ILinkedAccountSummary = {
-            id: 'linked-1',
-            address: '0xLinkedAddress',
-            network: Network.POLYGON_MAINNET,
-            name: 'Linked Treasury',
-            description: '',
-            ens: null,
-            subdomain: null,
-            avatar: null,
-            metrics: generateDaoMetrics(),
-            links: [],
-            blockTimestamp: 0,
-            transactionHash: '',
-        };
-        setFeatureFlags(true);
-        setDao({
-            id: 'main-dao',
-            address: '0xMainAddress',
-            network: Network.ETHEREUM_MAINNET,
-            name: 'Main DAO',
-            linkedAccounts: [linkedAccount],
-        });
-
-        render(createTestComponent({ daoId: 'main-dao' }));
-
-        expect(useAllDaoPermissionsSpy).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-                urlParams: {
-                    network: Network.ETHEREUM_MAINNET,
-                    daoAddress: '0xMainAddress',
-                },
-            }),
-            expect.anything(),
-        );
-
-        await user.click(
-            screen.getByRole('radio', { name: 'Linked Treasury' }),
-        );
-
-        expect(useAllDaoPermissionsSpy).toHaveBeenLastCalledWith(
-            expect.objectContaining({
-                urlParams: {
-                    network: Network.POLYGON_MAINNET,
-                    daoAddress: '0xLinkedAddress',
-                },
-            }),
-            expect.anything(),
-        );
+        const whereLabels = screen
+            .getAllByText(/^(Zeta Plugin|Alpha Plugin)$/)
+            .map((element) => element.textContent);
+        expect(whereLabels[0]).toBe('Alpha Plugin');
+        expect(whereLabels.at(-1)).toBe('Zeta Plugin');
     });
 });

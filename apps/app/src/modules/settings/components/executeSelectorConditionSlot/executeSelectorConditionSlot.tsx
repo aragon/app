@@ -1,60 +1,56 @@
 'use client';
 
-import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
-import type { IConditionData } from '@/modules/settings/types';
+import type { IDaoPermissionCondition, Network } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { stringUtils } from '@/shared/utils/stringUtils';
+import { AllowedActionsList } from './allowedActionsList';
+import { DecodedAllowedActionsList } from './decodedAllowedActionsList';
+import {
+    toAllowedActions,
+    toAllowedActionViews,
+} from './executeSelectorConditionSlotUtils';
 
-const EMPTY_VALUE = '—';
-
-interface IAllowedAction {
-    selector: string;
-    target: string;
+interface IExecuteSelectorConditionSlotProps extends IDaoPermissionCondition {
+    chainId?: number;
+    conditionAddress?: string;
+    network?: Network;
+    pluginAddress?: string;
 }
 
-const toStringList = (value: unknown): string[] =>
-    Array.isArray(value) ? value.filter(stringUtils.isNonEmptyString) : [];
-
-const toAllowedActions = (
-    selectors: unknown,
-    targets: unknown,
-): IAllowedAction[] => {
-    const selectorList = toStringList(selectors);
-    const targetList = toStringList(targets);
-
-    return selectorList.map((selector, index) => ({
-        selector,
-        target: targetList[index] ?? EMPTY_VALUE,
-    }));
-};
-
-export const ExecuteSelectorConditionSlot: React.FC<IConditionData> = (
-    props,
-) => {
-    const { selectors, targets } = props;
+export const ExecuteSelectorConditionSlot: React.FC<
+    IExecuteSelectorConditionSlotProps
+> = ({
+    selectors,
+    targets,
+    chainId,
+    conditionAddress,
+    network,
+    pluginAddress,
+}) => {
     const { t } = useTranslations();
 
-    const allowedActions = toAllowedActions(selectors, targets);
-    const hasAllowedActions = allowedActions.length > 0;
+    const rawAllowedActions = toAllowedActions(selectors, targets);
+    const hasRawAllowedActions = rawAllowedActions.length > 0;
+    const shouldShowDecodedActions =
+        network != null && pluginAddress != null && hasRawAllowedActions;
 
     return (
         <div className="flex flex-col gap-3">
             <p className="text-neutral-500">
                 {t('app.settings.executeSelectorConditionSlot.description')}
             </p>
-            {hasAllowedActions ? (
-                <DefinitionList.Container>
-                    {allowedActions.map((action) => (
-                        <DefinitionList.Item
-                            key={action.selector}
-                            term={action.selector}
-                        >
-                            {action.target === EMPTY_VALUE
-                                ? EMPTY_VALUE
-                                : addressUtils.truncateAddress(action.target)}
-                        </DefinitionList.Item>
-                    ))}
-                </DefinitionList.Container>
+            {shouldShowDecodedActions ? (
+                <DecodedAllowedActionsList
+                    chainId={chainId}
+                    conditionAddress={conditionAddress}
+                    network={network}
+                    pluginAddress={pluginAddress}
+                    rawAllowedActions={rawAllowedActions}
+                />
+            ) : hasRawAllowedActions ? (
+                <AllowedActionsList
+                    actions={toAllowedActionViews(rawAllowedActions)}
+                    chainId={chainId}
+                />
             ) : (
                 <p className="text-neutral-400">
                     {t('app.settings.executeSelectorConditionSlot.noActions')}

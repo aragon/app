@@ -124,7 +124,7 @@ export interface IDaoPermission {
      * The address `ALLOW_FLAG` for regular permissions or, alternatively, the
      * `IPermissionCondition` contract implementation to be used.
      */
-    conditionAddress: string;
+    conditionAddress?: string;
     /**
      * Enriched condition details returned by the backend when available.
      */
