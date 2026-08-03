@@ -10,7 +10,6 @@ import {
     mainnet,
     monad,
     optimism,
-    peaq,
     polygon,
     sepolia,
     zksync,
@@ -93,7 +92,6 @@ export enum RpcProvider {
     ALCHEMY = 'alchemy',
     ANKR = 'ankr',
     DRPC = 'drpc',
-    PEAQ = 'peaq',
 }
 
 const latestProtocolVersion: IContractVersionInfo = {
@@ -311,26 +309,6 @@ export const networkDefinitions: Record<Network, INetworkDefinition> = {
             pluginSetupProcessor: '0x4ca8230AbD9427618f3A6bca7c814C0E59821235',
             globalExecutor: '0x938DA6B9B16078a999E33FE4E37b243C40c7680b',
             conditionFactory: '0x62BD83766EdA81dba2F8B7DbCc72500BD46CbADD',
-        },
-    },
-    [Network.PEAQ_MAINNET]: {
-        ...peaq,
-        name: 'Peaq',
-        logo: 'https://assets.coingecko.com/coins/images/51415/large/peaq-token-brand-icon_%281%29.png',
-        privateRpcConfig: {
-            rpcProvider: RpcProvider.PEAQ,
-            rpcUrl: 'https://wiser-dimensional-knowledge.peaq-mainnet.quiknode.pro/',
-        },
-        order: 13,
-        protocolVersion: latestProtocolVersion,
-        beta: true,
-        tenderlySupport: true,
-        addresses: {
-            dao: '0xa8a4Dc9B6f16BEe4E527CEA47FBeb6e0802030e1',
-            daoFactory: '0x35B62715459cB60bf6dC17fF8cfe138EA305E7Ee',
-            pluginSetupProcessor: '0x08633901DdF9cD8e2DC3a073594d0A7DaD6f3f57',
-            globalExecutor: '0x07f49c49Ce2A99CF7C28F66673d406386BDD8Ff4',
-            conditionFactory: '0xdFc18C8Cd61f6cfD0A3B0aF0C0f9a752e2BF1515',
         },
     },
     [Network.MONAD_MAINNET]: {

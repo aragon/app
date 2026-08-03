@@ -9,7 +9,6 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
     [RpcProvider.ALCHEMY]: 'NEXT_SECRET_RPC_KEY',
     [RpcProvider.ANKR]: 'NEXT_SECRET_ANKR_RPC_KEY',
     [RpcProvider.DRPC]: 'NEXT_SECRET_DRPC_RPC_KEY',
-    [RpcProvider.PEAQ]: 'NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY',
 };
 
 /**
@@ -22,7 +21,7 @@ const RPC_PROVIDER_ENV_VARS: Record<RpcProvider, string> = {
  *
  * Resolution order:
  * 1. Local-dev override `NEXT_SECRET_RPC_OVERRIDE_<chainId>` (e.g. Anvil fork).
- * 2. Private RPC config (Alchemy / Ankr / DRPC / Peaq) with the matching key from env.
+ * 2. Private RPC config (Alchemy / Ankr / DRPC) with the matching key from env.
  * 3. Public RPC URL from the viem chain definition, as a fallback when the provider key is missing.
  *
  * Returns `undefined` only when no usable URL is configured.

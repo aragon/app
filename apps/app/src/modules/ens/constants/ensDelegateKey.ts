@@ -30,7 +30,6 @@ export const NETWORK_EIP3770_SHORTNAME: Record<Network, string> = {
     [Network.AVAX_MAINNET]: 'avax',
     [Network.ZKSYNC_MAINNET]: 'zksync',
     [Network.CHILIZ_MAINNET]: 'chzmainnet',
-    [Network.PEAQ_MAINNET]: 'PEAQ',
     [Network.CITREA_MAINNET]: 'citrea',
     [Network.HEMI_MAINNET]: 'hemi',
     [Network.KATANA_MAINNET]: 'katana',
