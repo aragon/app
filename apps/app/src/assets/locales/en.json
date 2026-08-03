@@ -2513,6 +2513,11 @@
           }
         }
       },
+      "crossChainController": {
+        "crossChainControllerActions": {
+          "CrossChainControllerForwardMessage": "Forward message"
+        }
+      },
       "gaugeVoter": {
         "gaugeVoterGaugeDetailsDialog": {
           "a11y": {

@@ -12,4 +12,5 @@ export enum PluginContractName {
     GAUGE_VOTER = 'Gauge Voter',
     CAPITAL_DISTRIBUTOR = 'Capital distributor',
     LOCK_TO_VOTE = 'Lock to vote',
+    CROSS_CHAIN_CONTROLLER = 'Cross-chain controller',
 }
