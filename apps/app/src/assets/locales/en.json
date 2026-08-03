@@ -3593,12 +3593,56 @@
         "view": {
           "list": "List",
           "graph": "Graph"
+        },
+        "filters": {
+          "hideDaoPermissions": "Hide permissions granted to DAO",
+          "hideDaoPermissionsTooltip": "Hides permissions where the selected DAO appears under Who, including DAO-managed internal contracts such as clocks.",
+          "hideDaoPermissionsTooltipLabel": "About permissions granted to DAO",
+          "hideGoverningBodyPermissions": "Hide subplugin permissions",
+          "hideGoverningBodyPermissionsTooltip": "Hides permissions whose target (Where) is identified as a subplugin.",
+          "hideGoverningBodyPermissionsTooltipLabel": "About subplugin permissions"
+        },
+        "graphView": {
+          "node": {
+            "dao": "Primary DAO",
+            "linkedDao": "Linked DAO",
+            "plugin": "Aragon OSx Plugin",
+            "historicalPlugin": "Historical plugin",
+            "uninstalledPlugin": "Uninstalled plugin",
+            "actor": "Address",
+            "who": "Who",
+            "where": "Where"
+          },
+          "edge": {
+            "condition": "if {{condition}}"
+          },
+          "detail": {
+            "address": "Address",
+            "close": "Close",
+            "type": "Type",
+            "anyone": {
+              "title": "Open to anyone",
+              "description": "Any wallet or contract can act here — these permission flows have no on-chain requirement for who calls them."
+            }
+          },
+          "empty": {
+            "heading": "No permissions",
+            "description": "This view has no indexed permissions to visualize."
+          },
+          "fullscreen": {
+            "open": "Expand graph",
+            "close": "Exit full screen"
+          }
         }
       },
       "permissionsList": {
         "header": {
           "who": "Who",
           "where": "Where",
+          "whoTooltip": "The actor that receives the permission and can call the target contract.",
+          "whoTooltipLabel": "About Who",
+          "whereTooltip": "The contract where the permission applies.",
+          "whereTooltipLabel": "About Where",
           "permission": "Permission",
           "condition": "Condition"
         },
@@ -3607,11 +3651,10 @@
           "who": "Who",
           "where": "Where",
           "permission": "Permission",
-          "condition": "Condition",
-          "noCondition": "No condition"
+          "condition": "Condition"
         },
         "condition": {
-          "heading": "Condition detail"
+          "heading": "Condition"
         },
         "expandAll": "Expand all",
         "collapseAll": "Collapse all",
@@ -3620,10 +3663,6 @@
           "description": "This account has no indexed permissions."
         }
       },
-      "noConditionSlot": {
-        "heading": "No condition",
-        "description": "Functions guarded by this permission can be called by the granted address directly."
-      },
       "votingPowerConditionSlot": {
         "token": "Token",
         "minVotingPower": "Minimum voting power"
@@ -3631,10 +3670,12 @@
       "executeSelectorConditionSlot": {
         "description": "The ExecuteSelectorCondition authorizes the caller to execute actions only on explicitly authorized contract functions.",
         "allowedActions": "Allowed actions",
+        "anySelector": "Any selector",
         "noActions": "No allowed actions"
       },
       "membershipConditionSlot": {
         "memberOfMultisig": "Member of multisig",
+        "minApprovals": "Minimum approvals",
         "true": "True",
         "false": "False"
       },

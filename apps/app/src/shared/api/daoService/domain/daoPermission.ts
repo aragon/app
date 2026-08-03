@@ -1,6 +1,55 @@
+import type {
+    Network,
+    PermissionEntityBrandId,
+    PermissionEntityLayer,
+    PermissionEntityRole,
+    PermissionEntityStatus,
+} from './enum';
+
+export interface IDaoPermissionCondition {
+    /**
+     * Backend condition discriminator, e.g. `voting-power`, `membership`,
+     * `execute-selector`, or `unknown`.
+     */
+    conditionType: string;
+    token?: string;
+    minVotingPower?: string;
+    onlyListed?: boolean;
+    minApprovals?: number;
+    /** Untrusted backend payload, narrowed by the execute-selector slot. */
+    selectors?: unknown;
+    /** Untrusted backend payload, narrowed by the execute-selector slot. */
+    targets?: unknown;
+}
+
+export interface IPermissionEntityRef {
+    address: string;
+    layer: PermissionEntityLayer;
+    label?: string;
+    interfaceType?: string;
+    status?: PermissionEntityStatus;
+    parentPluginAddress?: string;
+    parentPluginName?: string;
+    parentInterfaceType?: string;
+    stageIndex?: number;
+    role?: PermissionEntityRole;
+    avatarSrc?: string;
+    /**
+     * Governance body brand identity, mirrored from the backend permission
+     * entity enrichment (see app-backend #1491). `safe` marks a Safe-based
+     * process body or external proposer.
+     */
+    brandId?: PermissionEntityBrandId;
+    /**
+     * Address of the proposal-creation condition wired to a Safe body, when the
+     * backend can resolve it.
+     */
+    proposalCreationConditionAddress?: string;
+}
+
 export interface IDaoPermission {
     /**
-     * Pemission ID. keccak256 hash of a permission string.
+     * Permission ID. keccak256 hash of a permission string.
      */
     permissionId: string;
     /**
@@ -16,5 +65,25 @@ export interface IDaoPermission {
      * The address `ALLOW_FLAG` for regular permissions or, alternatively, the
      * `IPermissionCondition` contract implementation to be used.
      */
-    conditionAddress: string;
+    conditionAddress?: string;
+    /**
+     * Enriched condition details returned by the backend when available.
+     */
+    condition?: IDaoPermissionCondition;
+    /**
+     * Backend-enriched display metadata for the permission actor.
+     */
+    who?: IPermissionEntityRef;
+    /**
+     * Backend-enriched display metadata for the permission target.
+     */
+    where?: IPermissionEntityRef;
+    /**
+     * Backend-enriched display metadata for the permission condition contract.
+     */
+    conditionEntity?: IPermissionEntityRef;
+    /**
+     * Network of the DAO permission event.
+     */
+    network?: Network;
 }
