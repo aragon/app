@@ -92,4 +92,39 @@ describe('permissionNameUtils', () => {
             );
         });
     });
+
+    describe('getPermissionDisplayName', () => {
+        it.each([
+            {
+                permissionName: 'SET_METADATA_PERMISSION',
+                expected: 'Set metadata',
+            },
+            {
+                permissionName: 'EXECUTE_PERMISSION',
+                expected: 'Execute',
+            },
+            {
+                permissionName: 'SWEEPER_ROLE',
+                expected: 'Sweeper',
+            },
+        ])('formats $permissionName for graph display', ({
+            permissionName,
+            expected,
+        }) => {
+            expect(
+                permissionNameUtils.getPermissionDisplayName(
+                    permissionNameUtils.getPermissionId(permissionName),
+                ),
+            ).toEqual(expected);
+        });
+
+        it('keeps unknown permission hashes unchanged', () => {
+            const permissionId =
+                '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+
+            expect(
+                permissionNameUtils.getPermissionDisplayName(permissionId),
+            ).toEqual('0x01234567…89abcdef');
+        });
+    });
 });
