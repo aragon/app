@@ -83,6 +83,22 @@ const permissionNames: string[] = [
     'CHANGE_DISTRIBUTOR_PERMISSION',
     'MERKLE_MINT_PERMISSION',
 
+     // VeGovernance
+    'PAUSER',
+    'ESCROW_ADMIN',
+    'SWEEPER',
+    'QUEUE_ADMIN',
+    'CLOCK_ADMIN_ROLE',
+    'WITHDRAW_ROLE',
+    'DELEGATION_TOKEN_ROLE',
+    'CURVE_ADMIN_ROLE',
+    'LOCK_ADMIN',
+    'GAUGE_ADMIN',
+
+     // Linked accounts
+    'PARENT_TO_SUB_DAO_ACKNOWLEDGEMENT_PERMISSION_ID',
+    'SUB_DAO_TO_PARENT_ACKNOWLEDGEMENT_PERMISSION_ID',
+
     // ERC-20 / token
     'MINT_PERMISSION',
     'BURN_PERMISSION',
