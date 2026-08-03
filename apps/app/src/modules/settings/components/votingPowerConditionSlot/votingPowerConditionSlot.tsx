@@ -2,11 +2,13 @@
 
 import {
     addressUtils,
+    ChainEntityType,
     DefinitionList,
     formatterUtils,
+    useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import { formatUnits } from 'viem';
-import type { IConditionData } from '@/modules/settings/types';
+import type { IDaoPermissionCondition } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { stringUtils } from '@/shared/utils/stringUtils';
 
@@ -16,6 +18,10 @@ const EMPTY_VALUE = '—';
 // condition slot receives the token's chainId. Governance tokens are 18-decimal
 // by convention, so default to that for now.
 const DEFAULT_TOKEN_DECIMALS = 18;
+
+interface IVotingPowerConditionSlotProps extends IDaoPermissionCondition {
+    chainId?: number;
+}
 
 const formatMinVotingPower = (value: unknown): string => {
     if (
@@ -39,18 +45,39 @@ const formatMinVotingPower = (value: unknown): string => {
     }
 };
 
-export const VotingPowerConditionSlot: React.FC<IConditionData> = (props) => {
-    const { token, minVotingPower } = props;
+export const VotingPowerConditionSlot: React.FC<
+    IVotingPowerConditionSlotProps
+> = (props) => {
+    const { chainId, token, minVotingPower } = props;
     const { t } = useTranslations();
+    const { buildEntityUrl } = useBlockExplorer({ chainId });
 
-    const tokenLabel = stringUtils.isNonEmptyString(token)
-        ? addressUtils.truncateAddress(token)
-        : EMPTY_VALUE;
+    const tokenAddress =
+        stringUtils.isNonEmptyString(token) && addressUtils.isAddress(token)
+            ? token
+            : undefined;
+    const tokenLabel =
+        tokenAddress != null
+            ? addressUtils.truncateAddress(tokenAddress)
+            : EMPTY_VALUE;
+    const tokenUrl =
+        tokenAddress != null
+            ? buildEntityUrl({
+                  type: ChainEntityType.ADDRESS,
+                  id: tokenAddress,
+              })
+            : undefined;
     const minVotingPowerLabel = formatMinVotingPower(minVotingPower);
 
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
+                copyValue={tokenAddress}
+                link={
+                    tokenUrl != null
+                        ? { href: tokenUrl, isExternal: true }
+                        : undefined
+                }
                 term={t('app.settings.votingPowerConditionSlot.token')}
             >
                 {tokenLabel}
