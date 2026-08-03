@@ -1,5 +1,1 @@
-export enum VotingBodyBrandIdentity {
-    EOA = 'eoa',
-    SAFE = 'safe',
-    OTHER = 'other',
-}
+export { PermissionEntityBrandId as VotingBodyBrandIdentity } from '@/shared/api/daoService';
