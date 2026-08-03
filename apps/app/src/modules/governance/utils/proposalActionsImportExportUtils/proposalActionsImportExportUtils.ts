@@ -136,7 +136,7 @@ class ProposalActionsImportExportUtils {
 
     /**
      * Decodes imported actions using the smart contract service. The DAO is optional to support decoding
-     * outside a DAO context, in which case all actions are normalized to the decoded (`Unknown`) view.
+     * outside a DAO context, in which case all actions are normalized to the decoded view (`Unknown` type).
      */
     decodeActions = async (
         actions: IExportedAction[],

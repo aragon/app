@@ -119,7 +119,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const { t } = useTranslations();
     const { open } = useDialogContext();
 
-    // Yields no items or groups outside DAO context, where there are no plugin or permission actions.
     const { items, groups } = actionComposerUtils.getDaoActions({
         dao,
         permissions: daoPermissions,
@@ -216,10 +215,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
             (action) =>
                 ({
                     ...action,
-                    // The imported JSON carries the native value as a number or a numeric string, the
-                    // action type declares it as a string: normalize it to a bigint (hence the cast).
                     value: BigInt(action.value),
-                    // Undefined outside DAO context, where no basic action views are rendered.
                     daoId,
                     meta: undefined,
                 }) as unknown as IProposalActionData,
@@ -289,8 +285,6 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
         if (defaultValue != null) {
             // removed custom action id with crypto.randomUUID(), because it messes the internal RFH id!
-            // `daoId` is undefined outside DAO context, where only network-scoped actions (i.e. actions
-            // of imported contracts) are offered and none of their views resolve a DAO.
             onAddAction([{ ...defaultValue, daoId, meta }]);
         } else if (id === ActionItemId.ADD_CONTRACT) {
             handleVerifySmartContract(inputValue);
