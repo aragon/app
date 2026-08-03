@@ -1,11 +1,10 @@
 'use client';
 
+import type { Edge, Node } from '@xyflow/react';
 import {
     Background,
     Controls,
-    type Edge,
     getViewportForBounds,
-    type Node,
     ReactFlow,
     useEdgesState,
     useNodesInitialized,

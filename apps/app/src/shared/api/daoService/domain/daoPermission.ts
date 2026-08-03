@@ -49,7 +49,7 @@ export interface IPermissionEntityRef {
 
 export interface IDaoPermission {
     /**
-     * Pemission ID. keccak256 hash of a permission string.
+     * Permission ID. keccak256 hash of a permission string.
      */
     permissionId: string;
     /**

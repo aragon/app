@@ -1,11 +1,5 @@
-import {
-    BaseEdge,
-    type Edge,
-    type EdgeProps,
-    getSmoothStepPath,
-    getStraightPath,
-    type Position,
-} from '@xyflow/react';
+import type { Edge, EdgeProps, Position } from '@xyflow/react';
+import { BaseEdge, getSmoothStepPath, getStraightPath } from '@xyflow/react';
 
 const EDGE_PATH_BORDER_RADIUS = 12;
 const EDGE_PATH_OFFSET = 28;

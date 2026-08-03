@@ -1,4 +1,5 @@
-import { type Edge, MarkerType, type Node, Position } from '@xyflow/react';
+import type { Edge, Node } from '@xyflow/react';
+import { MarkerType, Position } from '@xyflow/react';
 import { permissionTransactionUtils } from '@/shared/utils/permissionTransactionUtils';
 import type {
     IPermissionGraph,

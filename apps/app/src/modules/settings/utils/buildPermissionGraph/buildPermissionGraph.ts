@@ -14,13 +14,12 @@ import type {
     IPermissionGraphEdge,
     IPermissionGraphNode,
 } from '../../types';
-import { conditionTypeUtils } from '../conditionTypeUtils';
+import { conditionTypeUtils, NO_CONDITION } from '../conditionTypeUtils';
 import {
     type IPermissionAccountRef,
     permissionEntityUtils,
 } from '../permissionEntityUtils';
 
-const NO_CONDITION_LABEL = '-';
 const GOVERNING_BODY_ACTOR_NODE_PREFIX = 'governing-body-actor';
 
 /**
@@ -166,7 +165,6 @@ const resolveEdge = (
     const whoAddress = row.whoAddress.toLowerCase();
     const whereAddress = row.whereAddress.toLowerCase();
     const conditionNodeAddress = conditionAddress.toLowerCase();
-    const shouldOmitConditionLabel = conditionLabel === NO_CONDITION_LABEL;
 
     return {
         id: `${row.permissionId}-${whoAddress}-${whereAddress}-${conditionNodeAddress}`,
@@ -176,7 +174,8 @@ const resolveEdge = (
         permissionDisplayName: permissionNameUtils.getPermissionDisplayName(
             row.permissionId,
         ),
-        conditionLabel: shouldOmitConditionLabel ? undefined : conditionLabel,
+        conditionLabel:
+            conditionType === NO_CONDITION ? undefined : conditionLabel,
         row,
     };
 };
