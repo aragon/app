@@ -18,7 +18,6 @@
         "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
         "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
         "type-check": "tsc --noEmit",
-        "generate:slot-docs": "node scripts/generateSlotDocs.mjs",
         "setup": "./scripts/setupEnv.sh",
         "e2e": "playwright test --config e2e/playwright.config.ts",
         "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
