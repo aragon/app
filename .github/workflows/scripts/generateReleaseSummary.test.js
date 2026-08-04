@@ -7,6 +7,7 @@ const assert = require('node:assert/strict');
 const {
     collectScopedCommits,
     detectLatestPackageTag,
+    generateSummary,
     readPathFilter,
     resolveCommitTitle,
     runGit,
@@ -269,6 +270,141 @@ test('treats a workspace without package tags as a first release', () => {
             commits.map(({ subject }) => subject),
             ['feat: first new-app feature'],
         );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+// Runs generateSummary end-to-end inside a fixture repository with a mocked Linear API,
+// capturing the summary output. Restores cwd, env and global.fetch afterwards.
+const runGenerateSummary = async (repository, issuesById) => {
+    const filterPath = path.join(repository, 'filters.yml');
+    fs.writeFileSync(filterPath, 'app:\n  - "apps/app/**"\n');
+
+    const originalCwd = process.cwd();
+    const originalFetch = global.fetch;
+    const originalEnvironment = { ...process.env };
+    const outputs = {};
+
+    try {
+        process.chdir(repository);
+        process.env.PACKAGE_NAME = '@aragon/app';
+        process.env.PATH_FILTER = 'app';
+        process.env.FILTERS_PATH = filterPath;
+        process.env.LINEAR_API_TOKEN = 'test-token';
+        process.env.GITHUB_REPOSITORY = 'aragon/app';
+        delete process.env.BASE_REF;
+
+        global.fetch = async (_url, options) => {
+            const { variables } = JSON.parse(options.body);
+            return {
+                json: async () => ({
+                    data: { issue: issuesById[variables.id] ?? null },
+                }),
+            };
+        };
+
+        await generateSummary({
+            core: {
+                setOutput: (name, value) => {
+                    outputs[name] = value;
+                },
+            },
+        });
+    } finally {
+        process.chdir(originalCwd);
+        global.fetch = originalFetch;
+        process.env = originalEnvironment;
+    }
+
+    return outputs.summary;
+};
+
+test('warns about open Linear tickets and their current status', async () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(
+            repository,
+            'apps/app/open.ts',
+            'open',
+            'feat(APP-100): open work (#1)',
+        );
+        commitFile(
+            repository,
+            'apps/app/done.ts',
+            'done',
+            'fix(APP-200): finished work (#2)',
+        );
+        commitFile(
+            repository,
+            'apps/app/canceled.ts',
+            'canceled',
+            'fix(APP-300): canceled work (#3)',
+        );
+        commitFile(
+            repository,
+            'apps/app/phantom.ts',
+            'phantom',
+            'chore(APP-400): unresolvable id (#4)',
+        );
+
+        const summary = await runGenerateSummary(repository, {
+            'APP-100': {
+                title: 'Open feature',
+                url: 'https://linear.app/aragon/issue/APP-100',
+                state: { name: 'In Development', type: 'started' },
+            },
+            'APP-200': {
+                title: 'Finished fix',
+                url: 'https://linear.app/aragon/issue/APP-200',
+                state: { name: 'Done', type: 'completed' },
+            },
+            'APP-300': {
+                title: 'Canceled fix',
+                url: 'https://linear.app/aragon/issue/APP-300',
+                state: { name: 'Canceled', type: 'canceled' },
+            },
+        });
+
+        const [warningSection] = summary.split('## Features');
+        assert.match(warningSection, /## ⚠️ Open tickets/);
+        assert.match(
+            warningSection,
+            /- \[APP-100: Open feature\]\(https:\/\/linear\.app\/aragon\/issue\/APP-100\) — In Development/,
+        );
+        // Finished, canceled and unresolvable tickets stay out of the warning section.
+        assert.doesNotMatch(warningSection, /APP-200|APP-300|APP-400/);
+        // Regular enrichment keeps linking every resolved ticket.
+        assert.match(
+            summary,
+            /\[APP-200: Finished fix\]\(https:\/\/linear\.app\/aragon\/issue\/APP-200\)/,
+        );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+test('omits the warning section when every ticket is finished', async () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(
+            repository,
+            'apps/app/done.ts',
+            'done',
+            'fix(APP-200): finished work (#2)',
+        );
+
+        const summary = await runGenerateSummary(repository, {
+            'APP-200': {
+                title: 'Finished fix',
+                url: 'https://linear.app/aragon/issue/APP-200',
+                state: { name: 'Done', type: 'completed' },
+            },
+        });
+
+        assert.doesNotMatch(summary, /Open tickets/);
     } finally {
         fs.rmSync(repository, { recursive: true, force: true });
     }
