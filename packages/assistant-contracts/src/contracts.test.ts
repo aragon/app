@@ -1,9 +1,8 @@
 import {
     assistantErrorSchema,
     chatRequestSchema,
-    createIssueRequestSchema,
-    createIssueResponseSchema,
-    previewIssueResponseSchema,
+    createTicketToolInputSchema,
+    createTicketToolOutputSchema,
 } from './index';
 
 // Pinned wire contract between the assistant service and the chat widget. These payloads are
@@ -21,13 +20,14 @@ describe('assistant wire contract', () => {
             {
                 id: 'message-2',
                 role: 'assistant',
-                // The widget posts its UIMessage history verbatim: non-text parts (data parts,
+                // The widget posts its UIMessage history verbatim: non-text parts (tool calls,
                 // step markers) must stay tolerated.
                 parts: [
                     { type: 'step-start' },
                     {
-                        type: 'data-collectedFields',
-                        data: { fields: { intent: 'bug' } },
+                        type: 'tool-createLinearTicket',
+                        toolCallId: 'call-1',
+                        state: 'output-available',
                     },
                     { type: 'text', text: 'Got it.' },
                 ],
@@ -42,12 +42,8 @@ describe('assistant wire contract', () => {
         },
     };
 
-    it('accepts the pinned chat/issue request shape', () => {
+    it('accepts the pinned chat request shape', () => {
         expect(chatRequestSchema.safeParse(request).success).toBeTruthy();
-        // Preview and creation take the transcript too: the requests ARE the chat request shape.
-        expect(
-            createIssueRequestSchema.safeParse(request).success,
-        ).toBeTruthy();
     });
 
     it('accepts the optional debug context fields attached to the ticket', () => {
@@ -75,31 +71,49 @@ describe('assistant wire contract', () => {
         ).toBeFalsy();
     });
 
-    it('pins the issue preview response', () => {
+    it('pins the createLinearTicket tool input shape', () => {
         expect(
-            previewIssueResponseSchema.safeParse({
-                status: 'ready',
-                summary: 'Voting crash',
+            createTicketToolInputSchema.safeParse({
                 intent: 'bug',
+                title: 'Voting transaction reverts',
+                description:
+                    'Submitting a vote on a proposal reverts with an unknown error.',
+                contact: '@user on Telegram',
+                stepsToReproduce: ['Open a proposal', 'Press vote'],
+            }).success,
+        ).toBeTruthy();
+
+        // Lenient on lengths by design: a short-but-valid draft must not become a tool error the
+        // model narrates to the user. Only structurally invalid calls (missing fields, off-topic
+        // intents) are rejected.
+        expect(
+            createTicketToolInputSchema.safeParse({
+                intent: 'bug',
+                title: 'bug',
+                description: 'x',
             }).success,
         ).toBeTruthy();
         expect(
-            previewIssueResponseSchema.safeParse({ status: 'unclear' }).success,
-        ).toBeTruthy();
-
-        // A ready preview without a reviewable summary must never pass.
+            createTicketToolInputSchema.safeParse({
+                intent: 'bug',
+                title: 'Voting transaction reverts',
+            }).success,
+        ).toBeFalsy();
         expect(
-            previewIssueResponseSchema.safeParse({ status: 'ready' }).success,
+            createTicketToolInputSchema.safeParse({
+                intent: 'off_topic',
+                title: 'Voting transaction reverts',
+                description:
+                    'Submitting a vote on a proposal reverts with an unknown error.',
+            }).success,
         ).toBeFalsy();
     });
 
-    it('pins the issue creation response', () => {
+    it('pins the createLinearTicket tool output shape', () => {
         expect(
-            createIssueResponseSchema.safeParse({
-                issueId: 'issue-1',
+            createTicketToolOutputSchema.safeParse({
                 identifier: 'SUP-123',
                 url: 'https://linear.app/aragon/issue/SUP-123',
-                alreadyExisted: false,
             }).success,
         ).toBeTruthy();
     });
@@ -110,7 +124,6 @@ describe('assistant wire contract', () => {
                 error: {
                     code: 'rate_limited',
                     message: 'Too many requests, please retry later.',
-                    details: { missingFields: ['summary'] },
                 },
             }).success,
         ).toBeTruthy();

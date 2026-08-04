@@ -10,9 +10,6 @@ export const assistantErrorCodeSchema = z.enum([
     'file_too_large',
     'file_limit',
     'unsupported_file',
-    'issue_already_created',
-    'issue_in_progress',
-    'preview_required',
     'internal',
 ]);
 

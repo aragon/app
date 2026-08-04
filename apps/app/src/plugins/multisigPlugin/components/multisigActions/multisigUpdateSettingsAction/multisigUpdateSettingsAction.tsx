@@ -1,4 +1,7 @@
-import type { IProposalActionComponentProps } from '@aragon/gov-ui-kit';
+import {
+    type IProposalActionComponentProps,
+    invariant,
+} from '@aragon/gov-ui-kit';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { encodeFunctionData } from 'viem';
@@ -49,6 +52,12 @@ export const MultisigUpdateSettingsAction: React.FC<
     IMultisigUpdateSettingsActionProps
 > = (props) => {
     const { index, action } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'MultisigUpdateSettingsAction: daoId must be set on the action.',
+    );
 
     const { setValue } = useFormContext();
 

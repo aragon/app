@@ -7,6 +7,7 @@ import {
     type IProposalAction,
     type IProposalActionComponentProps,
     type IProposalActionInputDataParameter,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import type { Address, Hex } from 'viem';
 import { useReadContract } from 'wagmi';
@@ -54,6 +55,12 @@ export const GaugeRegistrarUnregisterGaugeActionDetails: React.FC<
     IGaugeRegistrarUnregisterGaugeActionDetailsProps
 > = (props) => {
     const { action } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'GaugeRegistrarUnregisterGaugeActionDetails: daoId must be set on the action.',
+    );
     const pluginAddress = action.to;
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
     const [gaugeVoterPlugin] =

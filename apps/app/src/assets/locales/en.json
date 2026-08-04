@@ -1432,6 +1432,31 @@
       }
     },
     "daos": {
+      "alchemix": {
+        "alchemixSubmitVote": {
+          "alsoVote": {
+            "description": "Cast the same option with the voting power delegated to you in the same transaction.",
+            "label": "Also vote with your voting power"
+          },
+          "buttons": {
+            "override": "Override vote"
+          },
+          "delegateNotVoted": "Hasn't voted yet · delegated your {{amount}} {{symbol}}",
+          "delegateOverridden": "No longer votes with your {{amount}} {{symbol}}",
+          "delegateTag": "Your delegate",
+          "delegateVoted": "Voted with your {{amount}} {{symbol}}",
+          "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
+          "options": {
+            "alreadyCounted": "Your tokens already count toward {{option}}",
+            "currentVote": "Your current vote"
+          },
+          "position": {
+            "overrode": "Voting with {{amount}} {{symbol}} · overrode {{delegate}}",
+            "voted": "Voting with {{amount}} {{symbol}}"
+          },
+          "youTag": "You"
+        }
+      },
       "aragonDemo": {
         "aragonDemoPageHeader": {
           "cta": "Create proposal",
@@ -2203,6 +2228,15 @@
         },
         "name": "Create proposal",
         "namePlugin": "{{plugin}}: Create proposal"
+      },
+      "nestedActionsDialog": {
+        "cancel": "Cancel",
+        "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
+        "decoding": "Decoding actions",
+        "description": "These actions are executed as a batch by the action you are composing.",
+        "prepareError": "We couldn't prepare the actions. Please try again.",
+        "save": "Save actions",
+        "title": "Add actions"
       },
       "permissionCheckDialog": {
         "a11y": {
@@ -3460,6 +3494,10 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "object": "Object",
+            "objectionDescription": ", I object",
+            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
+            "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3467,6 +3505,7 @@
           },
           "voteDescription": {
             "approve": "to approve",
+            "objection": "to object",
             "veto": "to veto"
           }
         },

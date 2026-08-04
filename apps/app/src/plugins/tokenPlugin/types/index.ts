@@ -11,3 +11,4 @@ export type { ITokenProposal } from './tokenProposal';
 export type { ITokenProposalAction } from './tokenProposalAction';
 export type { ITokenProposalOptionVotes } from './tokenProposalOptionVotes';
 export type { ITokenVote } from './tokenVote';
+export type { IVoteOverridden } from './voteOverridden';

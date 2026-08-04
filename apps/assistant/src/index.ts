@@ -16,7 +16,6 @@ import { buildChatRoute } from './routes/chat';
 import { buildFilesRoute } from './routes/files';
 import { healthRoute } from './routes/health';
 import { buildInternalRoute } from './routes/internal';
-import { buildIssuesRoute } from './routes/issues';
 
 // Real dependencies are constructed lazily on first use: Upstash/Linear/Blob clients read env
 // vars at construction time, and /health must work in environments without any secrets. Session
@@ -64,12 +63,10 @@ export const createApp = (overrides?: Partial<IAppDependencies>) => {
 
     app.route('/health', healthRoute);
     app.use('/chat', rateLimit);
-    app.use('/issues', rateLimit);
     // `/files/*` (not `/files`): Hono middleware paths are exact, and the files API lives on
     // subpaths (/files/token, /files/confirm, /files/:fileId).
     app.use('/files/*', rateLimit);
     app.route('/chat', buildChatRoute(deps));
-    app.route('/issues', buildIssuesRoute(deps));
     app.route('/files', buildFilesRoute(deps));
     // Cron-only maintenance endpoints; authenticated by CRON_SECRET, not rate limited.
     app.route('/internal', buildInternalRoute(deps));

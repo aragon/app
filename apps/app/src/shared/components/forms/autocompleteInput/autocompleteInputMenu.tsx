@@ -41,7 +41,8 @@ export const AutocompleteInputMenu = forwardRef<
     const isBottomPlacement = context.placement === 'bottom';
 
     const menuClassName = classNames(
-        'flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
+        'pointer-events-auto flex flex-col gap-3 overflow-hidden border-x border-primary-400 bg-neutral-0 shadow-primary-lg outline-none',
+        'z-[var(--guk-dropdown-container-content-z-index)]',
         { 'rounded-b-xl border-b pt-1 md:pb-12': isBottomPlacement },
         { 'rounded-t-xl border-t pb-1 md:pt-12': !isBottomPlacement },
         className,
@@ -63,7 +64,10 @@ export const AutocompleteInputMenu = forwardRef<
                     visuallyHiddenDismiss={true}
                 >
                     <div className={menuClassName} ref={ref} {...otherProps}>
-                        <div className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3">
+                        <div
+                            className="flex max-h-[268px] flex-col gap-3 overflow-auto px-3"
+                            onWheel={(event) => event.stopPropagation()}
+                        >
                             {children}
                         </div>
                         <div className={footerClassName}>

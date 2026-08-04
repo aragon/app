@@ -4,19 +4,25 @@ import type {
     PrepareProposalActionMap,
 } from '../../dialogs/publishProposalDialog';
 
-export interface IPrepareActionsParams {
+export interface IPrepareActionsParams<
+    TAction extends IProposalCreateAction = IProposalCreateAction,
+> {
     /**
      * List of actions of the proposal.
      */
-    actions: IProposalCreateAction[];
+    actions: TAction[];
     /**
      * Partial map of action-type and prepare-action function.
      */
-    prepareActions?: PrepareProposalActionMap;
+    prepareActions?: PrepareProposalActionMap<TAction>;
 }
 
 class ProposalActionPreparationUtils {
-    prepareActions = async (params: IPrepareActionsParams) => {
+    prepareActions = async <
+        TAction extends IProposalCreateAction = IProposalCreateAction,
+    >(
+        params: IPrepareActionsParams<TAction>,
+    ) => {
         const { actions, prepareActions } = params;
 
         const prepareActionDataPromises = actions.map(async (action) => {

@@ -36,6 +36,12 @@ export const GaugeVoterDeactivateGaugeActionCreate: React.FC<
     IGaugeVoterDeactivateGaugeActionCreateProps
 > = (props) => {
     const { action, index } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'GaugeVoterDeactivateGaugeActionCreate: daoId must be set on the action.',
+    );
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue } = useFormContext();
@@ -73,7 +79,7 @@ export const GaugeVoterDeactivateGaugeActionCreate: React.FC<
             status: 'active',
         };
 
-        open(GaugeVoterDialogId.SELECT_GAUGE, { params });
+        open(GaugeVoterDialogId.SELECT_GAUGE, { params, stack: true });
     };
 
     const prepareAction = useCallback(

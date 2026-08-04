@@ -1,20 +1,17 @@
-import { useDropzone } from 'react-dropzone';
-import {
-    AssistantChatProvider,
-    useAssistantChatController,
-} from '../../controller';
+import { AssistantRuntimeProvider } from '@assistant-ui/react';
+import { useCallback } from 'react';
 import { noopMonitoring } from '../../monitoring';
-import { ChatComposer } from '../chatComposer';
-import { ChatDropOverlay } from '../chatDropOverlay';
+import { useAssistantRuntime } from '../../runtime';
+import { useChatSession } from '../../session';
 import { ChatHeader } from '../chatHeader';
-import { ChatMessageList } from '../chatMessageList';
-import { ChatNewChatBar } from '../chatNewChatBar';
-import { ChatStatusStrip } from '../chatStatusStrip';
+import { Thread } from '../thread';
 import type { IAssistantChatProps } from './assistantChat.api';
 
 // The widget fills whatever container the host renders it in — panel geometry, visibility and
 // animations are owned by the host layout, so the same chat content works in a side panel, a
-// fullscreen overlay or any future shell.
+// fullscreen overlay or any future shell. Chat behaviour (streaming, composer, attachments, tool
+// cards, approval) lives in the assistant-ui runtime and the ported registry components; this
+// component only wires our session, monitoring and header chrome around them.
 export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
     const {
         isOpen,
@@ -24,42 +21,31 @@ export const AssistantChat: React.FC<IAssistantChatProps> = (props) => {
         monitoring = noopMonitoring,
     } = props;
 
-    const controller = useAssistantChatController({
+    const { sessionId, rotate } = useChatSession();
+
+    const runtime = useAssistantRuntime({
         assistantUrl,
+        sessionId,
         appContext,
         monitoring,
     });
 
-    const isLocked = controller.flowState === 'issueCreated';
-
-    // One addFiles entry point for all three attach paths: the dropzone covers picker (open) and
-    // drag-and-drop, the composer forwards clipboard pastes. Type and size filtering happens
-    // inside addFiles so all paths share it.
-    const { getRootProps, getInputProps, open, isDragActive } = useDropzone({
-        noClick: true,
-        noKeyboard: true,
-        disabled: isLocked,
-        onDrop: controller.addFiles,
-    });
+    const startNewChat = useCallback(() => {
+        // The composer lives in the assistant-ui runtime and survives a session rotation, so a
+        // fresh chat clears its draft and attachments explicitly (removal also frees the server
+        // slots of the old session).
+        runtime.thread.composer.setText('');
+        void runtime.thread.composer.clearAttachments();
+        // The runtime starts a fresh thread when the session identifier changes.
+        rotate();
+    }, [runtime, rotate]);
 
     return (
-        <AssistantChatProvider value={controller}>
-            <div
-                {...getRootProps({
-                    className: 'relative flex h-full min-h-0 flex-col',
-                })}
-            >
-                <input {...getInputProps()} />
-                <ChatHeader onClose={onClose} />
-                <ChatMessageList />
-                <ChatStatusStrip />
-                {isLocked ? (
-                    <ChatNewChatBar />
-                ) : (
-                    <ChatComposer isOpen={isOpen} onAttach={open} />
-                )}
-                <ChatDropOverlay isVisible={isDragActive} />
+        <AssistantRuntimeProvider runtime={runtime}>
+            <div className="flex h-full min-h-0 flex-col">
+                <ChatHeader onClose={onClose} onNewChat={startNewChat} />
+                <Thread isOpen={isOpen} />
             </div>
-        </AssistantChatProvider>
+        </AssistantRuntimeProvider>
     );
 };

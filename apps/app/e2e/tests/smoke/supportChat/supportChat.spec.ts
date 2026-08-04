@@ -8,10 +8,10 @@ const supportPortalUrl =
 const supportEmailHref = 'mailto:support@aragon.org';
 
 // The assistant runs on its own origin (NEXT_PUBLIC_ASSISTANT_URL); with the feature flag on,
-// the navigation-bar trigger opens the chat side panel. The chat streams from POST /chat; the
-// ticket goes through POST /issues/preview.
+// the navigation-bar trigger opens the chat side panel. Everything streams from POST /chat: the
+// agent drafts the ticket as a tool call gated behind an approval, and approving it resumes the
+// stream with a second /chat call that carries the tool output.
 const chatRoutePattern = '**/chat';
-const previewRoutePattern = '**/issues/preview';
 
 const setSupportChatFlag = async (
     context: BrowserContext,
@@ -27,25 +27,49 @@ const setSupportChatFlag = async (
     ]);
 };
 
-// AI SDK UI message stream: SSE with one JSON chunk per event, terminated by [DONE]. The stream
-// carries the conversation only — ticket state goes through the explicit preview flow.
-const buildChatStream = (): string => {
-    const chunks = [
-        { type: 'start' },
-        { type: 'text-start', id: 'text-1' },
-        {
-            type: 'text-delta',
-            id: 'text-1',
-            delta: 'Thanks, that is everything we need!',
-        },
-        { type: 'text-end', id: 'text-1' },
-        { type: 'finish' },
-    ];
-
+// AI SDK UI message stream: SSE with one JSON chunk per event, terminated by [DONE].
+const buildStream = (chunks: unknown[]): string => {
     const events = chunks.map((chunk) => `data: ${JSON.stringify(chunk)}\n\n`);
 
     return `${events.join('')}data: [DONE]\n\n`;
 };
+
+// First /chat call: the agent drafts the ticket — a completed tool call awaiting user approval,
+// rendered by the widget as the review card with Create / Dismiss.
+const draftStream = buildStream([
+    { type: 'start' },
+    {
+        type: 'tool-input-start',
+        toolCallId: 'tc-1',
+        toolName: 'createLinearTicket',
+    },
+    {
+        type: 'tool-input-available',
+        toolCallId: 'tc-1',
+        toolName: 'createLinearTicket',
+        input: {
+            intent: 'bug',
+            title: 'Proposal page crashes',
+            description: 'The proposal page crashes on load.',
+        },
+    },
+    { type: 'tool-approval-request', approvalId: 'ap-1', toolCallId: 'tc-1' },
+    { type: 'finish' },
+]);
+
+// Second /chat call (the approval resume): the executed tool reports the created ticket.
+const successStream = buildStream([
+    { type: 'start' },
+    {
+        type: 'tool-output-available',
+        toolCallId: 'tc-1',
+        output: {
+            identifier: 'SUP-123',
+            url: 'https://linear.app/aragon/issue/SUP-123',
+        },
+    },
+    { type: 'finish' },
+]);
 
 const getChatTrigger = (page: Page) =>
     page.getByRole('button', { name: 'Open support chat' });
@@ -56,24 +80,17 @@ const getChatPanel = (page: Page) =>
     page.getByRole('complementary', { name: 'Support chat' });
 
 test.describe('Support chat', () => {
-    test('opens the chat, streams a reply and previews the ticket for sending', async ({
+    test('opens the chat, drafts the ticket and creates it on approval', async ({
         baseURL,
         context,
         page,
     }) => {
         await setSupportChatFlag(context, baseURL!, true);
-        await page.route(previewRoutePattern, (route) =>
-            route.fulfill({
-                json: {
-                    status: 'ready',
-                    summary: 'Proposal page crashes',
-                    intent: 'bug',
-                },
-            }),
-        );
+
+        const chatStreams = [draftStream, successStream];
         await page.route(chatRoutePattern, (route) =>
             route.fulfill({
-                body: buildChatStream(),
+                body: chatStreams.shift(),
                 headers: {
                     'cache-control': 'no-cache',
                     'content-type': 'text/event-stream',
@@ -98,7 +115,7 @@ test.describe('Support chat', () => {
             panel.getByRole('link', { name: 'support@aragon.org' }),
         ).toHaveAttribute('href', supportEmailHref);
 
-        // Send a message and receive the mocked streamed reply.
+        // Send a message; the agent streams back the ticket draft for review.
         const composer = page.getByRole('textbox', { name: 'Message' });
         await composer.fill('The proposal page crashes on load.');
         await composer.press('Enter');
@@ -107,20 +124,20 @@ test.describe('Support chat', () => {
             page.getByText('The proposal page crashes on load.').first(),
         ).toBeVisible();
         await expect(
-            page.getByText('Thanks, that is everything we need!'),
-        ).toBeVisible();
-
-        // The explicit preview: the strip button distills the conversation into the reviewable
-        // ticket, whose title the server returned.
-        await page.getByRole('button', { name: 'Prepare ticket' }).click();
-        // `exact` keeps the non-exact (case-insensitive) match from also hitting the user
-        // message "The proposal page crashes on load." above the ticket preview.
-        await expect(
             page.getByText('Proposal page crashes', { exact: true }),
         ).toBeVisible();
         await expect(
-            page.getByRole('button', { name: 'Send ticket' }),
+            panel.getByRole('button', { name: 'Dismiss' }),
         ).toBeVisible();
+
+        // Approving resumes the stream: the tool executes and the card links to the ticket.
+        // `exact` keeps the match away from other "Create …" buttons of the page.
+        await panel
+            .getByRole('button', { name: 'Create', exact: true })
+            .click();
+
+        await expect(page.getByText('Request created')).toBeVisible();
+        await expect(page.getByText('SUP-123')).toBeVisible();
     });
 
     test('hides the chat entry points and keeps the external support link when the flag is disabled', async ({

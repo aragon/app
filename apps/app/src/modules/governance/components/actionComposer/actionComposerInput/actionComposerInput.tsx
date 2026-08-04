@@ -20,8 +20,11 @@ export const ActionComposerInput = forwardRef<
         ...otherProps
     } = props;
 
-    const daoUrlParams = { id: daoId };
-    const { data: dao } = useDao({ urlParams: daoUrlParams });
+    const daoUrlParams = { id: daoId ?? '' };
+    const { data: dao } = useDao(
+        { urlParams: daoUrlParams },
+        { enabled: daoId != null },
+    );
 
     const { t } = useTranslations();
 
