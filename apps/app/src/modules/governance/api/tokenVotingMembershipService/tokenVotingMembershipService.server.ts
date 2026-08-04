@@ -9,10 +9,9 @@ class TokenVotingMembershipServiceServer {
     }: IGetTokenVotingMembersParams): Promise<
         PageDTO<TokenVotingMemberDTO>
     > => {
-        const result =
-            await aragonDomainServiceBackend.getTokenVotingMembership(
-                queryParams,
-            );
+        const result = await aragonDomainServiceBackend
+            .getDomain()
+            .getTokenVotingMembership(queryParams);
 
         if (!result.success) {
             throw new Error(
