@@ -1,4 +1,5 @@
 import { invariant, type ProposalActionComponent } from '@aragon/gov-ui-kit';
+import type { IAllowedAction } from '@/modules/governance/api/executeSelectorsService';
 import {
     type Network,
     useAllDaoPermissions,
@@ -26,6 +27,10 @@ export interface IProposalActionsEditorProps {
      * Action types to hide from the action composer, e.g. to stop an action from being nested into itself.
      */
     excludeActionTypes?: string[];
+    /**
+     * Actions the composer restricts its offering to. Leave undefined to offer every action.
+     */
+    allowedActions?: IAllowedAction[];
 }
 
 /**
@@ -36,7 +41,7 @@ export interface IProposalActionsEditorProps {
 export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
     props,
 ) => {
-    const { daoId, network, excludeActionTypes } = props;
+    const { daoId, network, excludeActionTypes, allowedActions } = props;
 
     invariant(
         daoId != null || network != null,
@@ -98,6 +103,7 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
             />
             {showActionComposer ? (
                 <ActionComposer
+                    allowedActions={allowedActions}
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     excludeActionTypes={excludeActionTypes}

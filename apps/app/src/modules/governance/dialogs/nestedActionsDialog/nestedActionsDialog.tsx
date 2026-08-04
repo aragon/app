@@ -3,10 +3,12 @@
 import { AlertInline, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useDao } from '@/shared/api/daoService';
+import { type Network, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { useAllAllowedActions } from '../../api/executeSelectorsService';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { CreateProposalFormProvider } from '../../components/createProposalForm';
 import { ProposalActionsEditor } from '../../components/proposalActionsEditor';
@@ -37,17 +39,43 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         'NestedActionsDialog: required parameters must be set.',
     );
 
-    const { daoId, network, initialActions, excludeActionTypes, onSubmit } =
-        location.params;
+    const {
+        daoId,
+        pluginAddress,
+        network,
+        initialActions,
+        excludeActionTypes,
+        onSubmit,
+    } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { data: dao } = useDao(
-        { urlParams: { id: daoId ?? '' } },
-        { enabled: daoId != null },
-    );
+    const { data: dao } = useDao({ urlParams: { id: daoId } });
 
     const resolvedNetwork = network ?? dao?.network;
+
+    // The allowed actions are indexed for the network of the plugin, while the nested actions are
+    // composed for the network they are executed on.
+    const hasAllowedActions = dao != null && pluginAddress != null;
+    const composerChainId =
+        resolvedNetwork != null
+            ? networkDefinitions[resolvedNetwork].id
+            : undefined;
+
+    const { data: pluginAllowedActions } = useAllAllowedActions(
+        {
+            urlParams: {
+                network: dao?.network as Network,
+                pluginAddress: pluginAddress ?? '',
+            },
+            chainId: composerChainId,
+        },
+        { enabled: hasAllowedActions },
+    );
+
+    // The composer treats a defined list as "only offer the authorized actions", so it must stay
+    // undefined while there is no plugin restricting the actions.
+    const allowedActions = hasAllowedActions ? pluginAllowedActions : undefined;
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -89,7 +117,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
             return;
         }
 
-        if (daoId != null && dao == null) {
+        if (dao == null) {
             return;
         }
 
@@ -114,12 +142,10 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                     );
 
                 reset({
-                    actions: daoId
-                        ? decodedActions.map(
-                              (action) =>
-                                  ({ ...action, daoId }) as IProposalActionData,
-                          )
-                        : decodedActions,
+                    actions: decodedActions.map(
+                        (action) =>
+                            ({ ...action, daoId }) as IProposalActionData,
+                    ),
                 });
             } catch (error) {
                 monitoringUtils.logError(error, {
@@ -201,6 +227,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                         />
                     ) : (
                         <ProposalActionsEditor
+                            allowedActions={allowedActions}
                             daoId={daoId}
                             excludeActionTypes={excludeActionTypes}
                             network={network}
