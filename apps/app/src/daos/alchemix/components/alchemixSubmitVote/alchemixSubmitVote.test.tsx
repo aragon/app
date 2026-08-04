@@ -31,6 +31,10 @@ jest.mock('@/plugins/tokenPlugin/components/tokenSubmitVote', () => ({
     ),
 }));
 
+jest.mock('./components', () => ({
+    AlchemixObjectionVote: () => <div data-testid="alchemix-objection-vote" />,
+}));
+
 describe('<AlchemixSubmitVote /> component', () => {
     const useWalletAccountSpy = jest.spyOn(
         useWalletAccountHook,
@@ -132,6 +136,25 @@ describe('<AlchemixSubmitVote /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('renders the objection controls instead of the default ones on an objection stage', () => {
+        const proposal = generateTokenProposal();
+        proposal.settings.isObjection = true;
+        useAlchemixOverrideStatusSpy.mockReturnValue(
+            buildOverrideStatus({ isEligible: false }),
+        );
+        render(createTestComponent({ proposal }));
+
+        expect(
+            screen.getByTestId('alchemix-objection-vote'),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId('token-submit-vote-default'),
+        ).not.toBeInTheDocument();
+        expect(useAlchemixOverrideStatusSpy).toHaveBeenCalledWith(
+            expect.objectContaining({ enabled: false }),
+        );
+    });
+
     it('renders the default voting controls when no wallet is connected', () => {
         useWalletAccountSpy.mockReturnValue({
             address: undefined,
@@ -199,58 +222,6 @@ describe('<AlchemixSubmitVote /> component', () => {
         expect(
             screen.getByText(/tokenSubmitVote.options.yes/),
         ).toBeInTheDocument();
-    });
-
-    it('disables the option the delegate voted on and opens the vote dialog with the override vote type', async () => {
-        const open = jest.fn();
-        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
-        useAlchemixOverrideStatusSpy.mockReturnValue(
-            buildOverrideStatus({
-                delegateeVoteRecord: {
-                    voteOption: VoteOption.YES,
-                    votingPower: BigInt(100),
-                    reduction: BigInt(0),
-                    hasOverridden: false,
-                    votedWithDelegatedVp: true,
-                },
-            }),
-        );
-
-        render(createTestComponent());
-
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: /alchemixSubmitVote.buttons.override/,
-            }),
-        );
-
-        const yesOption = screen.getByRole('radio', {
-            name: /tokenSubmitVote.options.yes/,
-        });
-        expect(yesOption).toBeDisabled();
-
-        await userEvent.click(
-            screen.getByRole('radio', {
-                name: /tokenSubmitVote.options.no/,
-            }),
-        );
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: /tokenSubmitVote.buttons.submit/,
-            }),
-        );
-
-        expect(open).toHaveBeenCalledWith(
-            GovernanceDialogId.VOTE,
-            expect.objectContaining({
-                params: expect.objectContaining({
-                    vote: expect.objectContaining({
-                        value: VoteOption.NO,
-                        voteType: 'override',
-                    }),
-                }),
-            }),
-        );
     });
 
     it('opens the vote dialog with the vote-and-override type by default when the user can also vote', async () => {

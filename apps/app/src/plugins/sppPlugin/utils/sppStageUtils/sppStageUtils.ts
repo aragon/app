@@ -20,8 +20,12 @@ class SppStageUtils {
 
         // A stage with no approval requirement (pure veto / optimistic) stays
         // active for its whole voting window; any stage that requires approvals
-        // (approval-only or mixed) follows the approval path below.
-        const isOptimisticStage = stage.approvalThreshold === 0;
+        // (approval-only or mixed) follows the approval path below. Objection
+        // stages inherit the first stage's tallies, so their approval is reached
+        // from the start — they must stay active until the window closes too.
+        const isOptimisticStage =
+            stage.approvalThreshold === 0 ||
+            this.isObjectionStage(proposal, stage);
 
         const now = DateTime.now();
         const startDate = this.getStageStartDate(proposal, stage);
@@ -309,6 +313,18 @@ class SppStageUtils {
 
     isVetoBody = (plugin: ISppStagePlugin): boolean =>
         plugin.proposalType === SppProposalType.VETO;
+
+    isObjectionStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
+        proposal.subProposals.some(
+            (subProposal) =>
+                subProposal.stageIndex === stage.stageIndex &&
+                subProposal.settings?.isObjection === true,
+        ) ||
+        stage.plugins.some(
+            (plugin) =>
+                plugin.interfaceType != null &&
+                plugin.settings?.isObjection === true,
+        );
 
     isLastStage = (proposal: ISppProposal, stage: ISppStage): boolean =>
         proposal.settings.stages.length - 1 === stage.stageIndex;

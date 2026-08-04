@@ -34,6 +34,7 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { useAlchemixOverrideStatus } from '../../hooks/useAlchemixOverrideStatus';
 import type { IAlchemixVoteOption } from '../../utils/alchemixTransactionUtils';
+import { AlchemixObjectionVote } from './components';
 
 export interface IAlchemixSubmitVoteProps {
     /**
@@ -62,6 +63,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     const { daoId, proposal, isVeto } = props;
     const { pluginAddress, network, proposalIndex, settings } = proposal;
     const { token } = settings;
+    const isObjection = settings.isObjection === true;
 
     const { t } = useTranslations();
     const { open } = useDialogContext();
@@ -90,6 +92,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
         pluginAddress,
         network,
         userAddress: address,
+        enabled: !isObjection,
     });
 
     const { data: delegateeEnsName } = useEnsName(delegatee);
@@ -127,16 +130,20 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
     // display the updated position.
     const latestVoteTransactionHash = latestVote?.transactionHash;
     useEffect(() => {
-        if (latestVoteTransactionHash != null) {
+        if (!isObjection && latestVoteTransactionHash != null) {
             refetch();
             setShowOptions(false);
             setSelectedOption(undefined);
         }
-    }, [latestVoteTransactionHash, refetch]);
+    }, [isObjection, latestVoteTransactionHash, refetch]);
 
-    // Fall back to the default token-voting controls when the override feature does not apply to the connected
-    // user or its status cannot be resolved. While the status is loading, render nothing to avoid briefly showing
-    // the default controls to a user that is only allowed to override.
+    if (isObjection) {
+        return <AlchemixObjectionVote {...props} />;
+    }
+
+    // Fall back to the plain voting controls when the override feature does not apply to the connected user or its
+    // status cannot be resolved. While the status is loading, render nothing to avoid briefly showing the default
+    // controls to a user that is only allowed to override.
     if (address == null || plugin == null || isError) {
         return <TokenSubmitVoteDefault {...props} />;
     }
