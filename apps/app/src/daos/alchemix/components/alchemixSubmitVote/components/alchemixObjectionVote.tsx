@@ -55,6 +55,8 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
         undefined,
     );
 
+    // Read failures are not handled explicitly: they degrade to the guard path on click,
+    // which performs its own permission check and reports the accurate result.
     const { voteOption, votingPower, canObject, isFetched, refetch } =
         useAlchemixObjectionStatus({
             proposalIndex,

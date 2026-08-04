@@ -4,7 +4,7 @@ export interface IPluginSettings {
      */
     pluginAddress: string;
     /**
-     * Set when the plugin is an alchemix objection stage, where members can only vote "No".
+     * Set when the plugin is an objection stage, where members can only vote "No".
      */
     isObjection?: boolean;
 }
