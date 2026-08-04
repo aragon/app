@@ -2518,6 +2518,24 @@
       "crossChainController": {
         "crossChainControllerActions": {
           "CrossChainControllerForwardMessage": "Forward message"
+        },
+        "crossChainControllerForwardMessageAction": {
+          "actions": {
+            "add": "Add actions",
+            "edit": "Edit actions",
+            "emptyDescription": "Compose the actions the destination chain executes when the message is delivered.",
+            "emptyHeading": "No actions added",
+            "helpText": "These actions are executed as a single batch on the destination chain. If one of them fails, none of them are applied.",
+            "label": "Actions",
+            "selected": "{{count}} action selected",
+            "selectedPlural": "{{count}} actions selected"
+          },
+          "chain": {
+            "empty": "This cross-chain controller has no other chain configured, so there is no destination to forward a message to.",
+            "helpText": "The chain the message is forwarded to. Only chains configured on this cross-chain controller can be selected.",
+            "label": "Destination chain",
+            "unknown": "Chain {{chainId}}"
+          }
         }
       },
       "gaugeVoter": {
