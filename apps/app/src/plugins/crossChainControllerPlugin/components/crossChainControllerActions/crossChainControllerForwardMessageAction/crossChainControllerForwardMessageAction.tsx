@@ -75,7 +75,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const { index, action } = props;
     const { daoId } = action;
 
-    // The nested action composer resolves its DAO data from the action, so this view only supports
+    // The DAO chain is needed to exclude it from the destination chains, so this view only supports
     // actions composed in DAO context.
     invariant(
         daoId != null,
@@ -108,6 +108,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
 
                     return {
                         chainId,
+                        network,
                         name: definition?.name,
                         logo: definition?.logo,
                     };
@@ -149,9 +150,20 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const handleDestinationChainChange = (value: string) =>
         onDestinationChainChange(Number(value));
 
+    // The nested actions are executed by the destination chain controller, therefore they are composed
+    // for the selected destination network instead of the DAO network.
+    const destinationNetwork = destinationChains.find(
+        ({ chainId }) => chainId === destinationChainId,
+    )?.network;
+
     const handleOpenActionsDialog = () => {
+        invariant(
+            destinationNetwork != null,
+            'CrossChainControllerForwardMessageAction: destination network must be set.',
+        );
+
         const params: INestedActionsDialogParams = {
-            daoId,
+            network: destinationNetwork,
             initialActions: nestedActions,
             // Prevent showing nested forward actions.
             excludeActionTypes: [
@@ -160,7 +172,10 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             onSubmit: onNestedActionsChange,
         };
 
-        open(GovernanceDialogId.NESTED_ACTIONS, { params, stack: true });
+        open(GovernanceDialogId.NESTED_ACTIONS, {
+            params,
+            disableOutsideClick: true,
+        });
     };
 
     const encodedMessage = useMemo(
@@ -258,6 +273,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                             )}
                         </p>
                         <Button
+                            disabled={destinationNetwork == null}
                             iconLeft={IconType.SETTINGS}
                             onClick={handleOpenActionsDialog}
                             size="md"
@@ -283,6 +299,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                             label: t(
                                 'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.add',
                             ),
+                            disabled: destinationNetwork == null,
                             onClick: handleOpenActionsDialog,
                             iconLeft: IconType.PLUS,
                         }}
