@@ -96,9 +96,8 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         }
 
         const pinnedAddresses = new Set<string>();
-        // Pinned single-members arrive as `ITokenMember`, which is a structural
-        // superset of `TokenVotingMemberDTO`, so they flow into the DTO list
-        // without a runtime transform (see the slice plan's pinned-member note).
+        // Pinned single-members arrive as `ITokenMember` which is a structural
+        // superset of `TokenVotingMemberDTO`.
         const merged: TokenVotingMemberDTO[] = [];
 
         const appendPinnedMember = (member?: ITokenMember) => {
