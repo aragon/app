@@ -6,7 +6,6 @@ export const crossChainControllerPlugin: IPluginInfo = {
     subdomain: 'cross-chain-controller',
     name: 'Cross-chain controller',
     installVersion: { release: 1, build: 1, releaseNotes: '', description: '' },
-    // TODO(APP-1029): set the published PluginRepo address per network once the CrossChainControllerSetup repositories are deployed.
     repositoryAddresses: {
         [Network.ARBITRUM_MAINNET]:
             '0x0000000000000000000000000000000000000000',
