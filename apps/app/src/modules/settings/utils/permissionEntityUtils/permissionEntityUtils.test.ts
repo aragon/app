@@ -2,7 +2,7 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     type IDaoPlugin,
     type IPermissionEntityRef,
-    PermissionEntityBrandId,
+    PermissionEntityExternalBrandId,
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { ALLOW_FLAG, ANY_ADDR } from '../../constants/permissionSentinels';
@@ -236,7 +236,7 @@ describe('permissionEntity Utils', () => {
                 {
                     entity: {
                         address: unknownAddress,
-                        brandId: PermissionEntityBrandId.SAFE,
+                        brandId: PermissionEntityExternalBrandId.SAFE,
                         interfaceType: 'multisig',
                         label,
                         layer,
@@ -246,7 +246,7 @@ describe('permissionEntity Utils', () => {
             );
 
             expect(result).toMatchObject({
-                brandId: PermissionEntityBrandId.SAFE,
+                brandId: PermissionEntityExternalBrandId.SAFE,
                 label: 'Safe',
                 tag: undefined,
                 type: 'plugin',

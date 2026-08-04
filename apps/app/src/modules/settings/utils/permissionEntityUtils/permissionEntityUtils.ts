@@ -2,7 +2,7 @@ import { addressUtils } from '@aragon/gov-ui-kit';
 import {
     type IDaoPlugin,
     type IPermissionEntityRef,
-    PermissionEntityBrandId,
+    PermissionEntityExternalBrandId,
 } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { daoUtils } from '@/shared/utils/daoUtils';
@@ -53,7 +53,7 @@ export interface IPermissionEntity {
      */
     avatarSrc?: string;
     /**
-     * Governance body brand identity, mirrored from the backend permission
+     * External voting-body brand identity, mirrored from the backend permission
      * entity enrichment. `safe` marks a Safe process body or external proposer.
      */
     brandId?: IPermissionEntityRef['brandId'];
@@ -196,7 +196,7 @@ class PermissionEntityUtils {
                 : addressUtils.truncateAddress(address));
         const tag = entity.interfaceType?.toUpperCase();
 
-        if (entity.brandId === PermissionEntityBrandId.SAFE) {
+        if (entity.brandId === PermissionEntityExternalBrandId.SAFE) {
             return {
                 label: 'Safe',
                 tag: undefined,

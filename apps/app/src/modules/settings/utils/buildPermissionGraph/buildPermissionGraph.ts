@@ -5,7 +5,7 @@ import type {
     IDaoPlugin,
     IPermissionEntityRef,
 } from '@/shared/api/daoService';
-import { PermissionEntityBrandId } from '@/shared/api/daoService';
+import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
 import type { IFilterComponentPlugin } from '@/shared/components/pluginFilterComponent';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
 import { ALLOW_FLAG } from '../../constants/permissionSentinels';
@@ -132,7 +132,7 @@ const resolveGoverningBodyActorNode = (
     const baseNode = resolveNode(row.whoAddress, context, row.who);
     const id = getGoverningBodyActorNodeId(row);
     const isMultisigMembers =
-        baseNode.brandId !== PermissionEntityBrandId.SAFE &&
+        baseNode.brandId !== PermissionEntityExternalBrandId.SAFE &&
         row.who?.interfaceType?.toLowerCase() === 'multisig';
 
     if (!isMultisigMembers) {
