@@ -2,15 +2,10 @@ import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 
 /**
- * Anti-corruption boundary: maps a legacy backend token member into the
- * library-owned `TokenVotingMemberDTO` that the token list renders from.
+ * Anti-corruption boundary: Maps a legacy backend token member into the
+ * aragon-domain `TokenVotingMemberDTO` that the token list renders from.
  *
- * The block-number `type` / `firstActive` / `lastActive` fields are dropped —
- * they are not part of the list DTO. `address`, `ens`, `votingPower` and the
- * `metrics` (including `delegationCount`) pass through unchanged.
- *
- * This survives until the legacy backend list path is retired; the subdomain
- * branch returns the DTO directly and needs no mapper.
+ * This survives until the legacy backend list path is retired.
  */
 export const mapBackendMemberToTokenVotingDTO = (
     member: ITokenMember,
