@@ -8,6 +8,7 @@ import {
     InputContainer,
     type IProposalAction,
     type IProposalActionComponentProps,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import { NestedActionsList } from '@/modules/governance/components/nestedActionsList';
@@ -25,6 +26,13 @@ export const CreateProposalActionDetails: React.FC<
     ICreateProposalActionDetailsProps
 > = (props) => {
     const { action, chainId } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'CreateProposalActionDetails: daoId must be set on the action.',
+    );
+
     const { inputData } = action as unknown as ICoreActionCreateProposal;
 
     const { t } = useTranslations();

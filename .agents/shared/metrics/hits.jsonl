@@ -146,3 +146,11 @@
 {"ts":"2026-07-28T16:26:08.696Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/useManagedTransaction.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-07-28T16:26:28.132Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/useManagedTransaction.test.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-07-28T16:31:25.874Z","tool":"Edit","file":"apps/app/src/shared/components/transactionDialog/transactionDialog.tsx","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-08-03T13:05:06.523Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T13:05:14.497Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":11,"adapter":"claude"}
+{"ts":"2026-08-03T13:05:27.682Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T13:05:34.336Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T13:13:29.614Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T13:13:36.306Z","tool":"Edit","file":"apps/app/src/modules/governance/api/smartContractService/smartContractService.api.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T14:29:17.284Z","tool":"Edit","file":"apps/app/src/actions/core/createProposal/createProposalActionDetails.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-03T14:29:22.784Z","tool":"Edit","file":"apps/app/src/actions/core/execute/executeActionDetails.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":2,"adapter":"claude"}

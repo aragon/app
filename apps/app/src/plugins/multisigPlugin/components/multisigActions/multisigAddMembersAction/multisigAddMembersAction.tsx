@@ -1,6 +1,7 @@
 import {
     addressUtils,
     type IProposalActionComponentProps,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -36,6 +37,12 @@ export const MultisigAddMembersAction: React.FC<
     IMultisigAddMembersActionProps
 > = (props) => {
     const { index, action } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'MultisigAddMembersAction: daoId must be set on the action.',
+    );
 
     const { setValue } = useFormContext();
 

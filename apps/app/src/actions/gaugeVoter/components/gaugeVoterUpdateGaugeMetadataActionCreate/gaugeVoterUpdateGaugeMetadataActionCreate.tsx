@@ -39,6 +39,12 @@ export const GaugeVoterUpdateGaugeMetadataActionCreate: React.FC<
     IGaugeVoterUpdateGaugeMetadataActionCreateProps
 > = (props) => {
     const { action, index, chainId } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'GaugeVoterUpdateGaugeMetadataActionCreate: daoId must be set on the action.',
+    );
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue, unregister } = useFormContext();

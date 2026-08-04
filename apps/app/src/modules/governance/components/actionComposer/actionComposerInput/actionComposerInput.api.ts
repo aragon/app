@@ -37,7 +37,7 @@ export interface IActionComposerInputProps<TMeta = undefined>
     /**
      * ID of the DAO.
      */
-    daoId: string;
+    daoId?: string;
     /**
      * Additional native items to be displayed.
      */

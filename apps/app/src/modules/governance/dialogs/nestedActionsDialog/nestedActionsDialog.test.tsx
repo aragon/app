@@ -219,6 +219,7 @@ describe('<NestedActionsDialog /> component', () => {
         ).toBeInTheDocument();
         expect(decodeActionsSpy).toHaveBeenCalledWith(
             [{ to: '0xraw', value: '10', data: '0xcalldata' }],
+            DAO.network,
             DAO,
         );
 

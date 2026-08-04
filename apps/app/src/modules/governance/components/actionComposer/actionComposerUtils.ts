@@ -238,7 +238,7 @@ class ActionComposerUtils {
         dao,
         allowedActions,
     }: IGetAllowedActionBaseParams): IAutocompleteInputGroup[] => {
-        const daoAddress = dao!.address;
+        const daoAddress = dao?.address;
         const [daoGroup] = this.getNativeActionGroups({
             t,
             dao,
@@ -546,12 +546,16 @@ class ActionComposerUtils {
     ): IAutocompleteInputGroup[] => {
         const { t, dao, nativeGroups } = params;
 
+        if (dao == null) {
+            return nativeGroups;
+        }
+
         return [
             {
-                id: dao!.address,
+                id: dao.address,
                 name: t('app.governance.actionComposer.nativeGroup.DAO'),
-                info: addressUtils.truncateAddress(dao?.address),
-                indexData: [dao!.address],
+                info: addressUtils.truncateAddress(dao.address),
+                indexData: [dao.address],
             },
             ...nativeGroups,
         ];
@@ -562,6 +566,10 @@ class ActionComposerUtils {
     ): IActionComposerInputItem[] => {
         const { t, dao, nativeItems } = params;
 
+        if (dao == null) {
+            return nativeItems;
+        }
+
         const transferAction = this.buildTransferNativeAction(t);
         const metadataUpdateAction = {
             id: ProposalActionType.METADATA_UPDATE,
@@ -569,8 +577,8 @@ class ActionComposerUtils {
                 `app.governance.actionComposer.nativeItem.${ProposalActionType.METADATA_UPDATE}`,
             ),
             icon: IconType.SETTINGS,
-            groupId: dao!.address,
-            defaultValue: this.buildDefaultActionMetadata(dao!),
+            groupId: dao.address,
+            defaultValue: this.buildDefaultActionMetadata(dao),
         };
 
         return [transferAction, metadataUpdateAction, ...nativeItems];
