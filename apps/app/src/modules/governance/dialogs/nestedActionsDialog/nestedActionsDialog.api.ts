@@ -6,9 +6,16 @@ export interface INestedActionsDialogParams {
     /**
      * ID of the DAO the nested actions are composed for.
      */
-    daoId?: string;
+    daoId: string;
     /**
-     * Alternative to `daoId` if the intention is to use component  outside DAO context.
+     * Address of the plugin restricting the actions that can be composed. When omitted no allowed
+     * actions are fetched and every action is offered by the composer.
+     */
+    pluginAddress?: string;
+    /**
+     * Network the nested actions are composed for, defaults to the network of the DAO. Set it when
+     * the actions are executed on another chain than the DAO, e.g. when they are forwarded to a
+     * cross-chain controller.
      */
     network?: Network;
     /**
