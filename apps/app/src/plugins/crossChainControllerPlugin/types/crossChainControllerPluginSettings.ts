@@ -14,6 +14,10 @@ export interface ICrossChainLaneSettings {
      * Cross-chain adapter, i.e CCIP, on the remote chain.
      */
     remoteAdapter: Address;
+    /**
+     * Fee token address, set on local adapter.
+     */
+    feeToken?: Address;
 }
 
 export interface ICrossChainControllerPluginSettings extends IPluginSettings {
