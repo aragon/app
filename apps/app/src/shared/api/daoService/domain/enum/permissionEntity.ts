@@ -1,11 +1,11 @@
-export const PermissionEntityBrandId = {
+export const PermissionEntityExternalBrandId = {
     EOA: 'eoa',
     SAFE: 'safe',
     OTHER: 'other',
 } as const;
 
-export type PermissionEntityBrandId =
-    (typeof PermissionEntityBrandId)[keyof typeof PermissionEntityBrandId];
+export type PermissionEntityExternalBrandId =
+    (typeof PermissionEntityExternalBrandId)[keyof typeof PermissionEntityExternalBrandId];
 
 export type PermissionEntityLayer =
     | 'dao'

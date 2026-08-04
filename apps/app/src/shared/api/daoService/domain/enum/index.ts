@@ -4,6 +4,6 @@ export type {
     PermissionEntityRole,
     PermissionEntityStatus,
 } from './permissionEntity';
-export { PermissionEntityBrandId } from './permissionEntity';
+export { PermissionEntityExternalBrandId } from './permissionEntity';
 export { PluginContractName } from './pluginContractName';
 export { PluginInterfaceType } from './pluginInterfaceType';

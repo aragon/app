@@ -21,7 +21,7 @@ export type {
 } from './enum';
 export {
     Network,
-    PermissionEntityBrandId,
+    PermissionEntityExternalBrandId,
     PluginInterfaceType,
 } from './enum';
 export type { IPluginSettings } from './pluginSettings';
