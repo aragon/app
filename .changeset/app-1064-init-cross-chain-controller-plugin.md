@@ -1,5 +1,5 @@
 ---
-"@aragon/app": patch
+"@aragon/app": none
 ---
 
-Initialise the CrossChainController plugin with a placeholder `forwardMessage` action in the action composer
+Initialize the CrossChainController plugin with a placeholder `forwardMessage` action in the action composer
