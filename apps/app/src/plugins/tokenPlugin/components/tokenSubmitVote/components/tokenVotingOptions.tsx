@@ -24,10 +24,6 @@ export interface ITokenVotingOptionsProps {
      * Options that cannot be selected, each with an optional reason displayed next to the option label.
      */
     disabledOptions?: IDisabledVotingOption[];
-    /**
-     * Disables all options but "No" for objection-stage proposals, where only objecting is allowed.
-     */
-    isObjection?: boolean;
 }
 
 export interface IDisabledVotingOption {
@@ -50,7 +46,6 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
         onChange,
         disableOptions,
         disabledOptions,
-        isObjection,
     } = props;
     const { t } = useTranslations();
     const id = useRandomId();
@@ -71,41 +66,24 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
             description: undefined,
         },
         {
-            label: t(
-                `app.plugins.token.tokenSubmitVote.options.${isObjection ? 'object' : 'no'}`,
-            ),
+            label: t('app.plugins.token.tokenSubmitVote.options.no'),
             value: VoteOption.NO.toString(),
-            variant: isVeto && !isObjection ? 'success' : 'critical',
-            description: isObjection
-                ? t(
-                      'app.plugins.token.tokenSubmitVote.options.objectionDescription',
-                  )
-                : t(
-                      `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
-                  ),
+            variant: isVeto ? 'success' : 'critical',
+            description: t(
+                `app.plugins.token.tokenSubmitVote.options.${isVeto ? 'vetoNoDescription' : 'approveNoDescription'}`,
+            ),
         },
     ] as const;
 
     return (
         <InputContainer
-            helpText={
-                isObjection
-                    ? t(
-                          'app.plugins.token.tokenSubmitVote.options.objectionHelpText',
-                      )
-                    : undefined
-            }
             id={id}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
-                label: isObjection
-                    ? t(
-                          'app.plugins.token.tokenSubmitVote.options.objectionLabel',
-                      )
-                    : isVeto
-                      ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
-                      : t(
-                            'app.plugins.token.tokenSubmitVote.options.approveLabel',
-                        ),
+                label: isVeto
+                    ? t('app.plugins.token.tokenSubmitVote.options.vetoLabel')
+                    : t(
+                          'app.plugins.token.tokenSubmitVote.options.approveLabel',
+                      ),
             })}
             useCustomWrapper={true}
         >
@@ -131,9 +109,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
                             }
                             disabled={
                                 disableOptions === true ||
-                                disabledOption != null ||
-                                (isObjection === true &&
-                                    value !== VoteOption.NO.toString())
+                                disabledOption != null
                             }
                             isSelected={value === selectedValue}
                             key={value}

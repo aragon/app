@@ -210,7 +210,7 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
             voteLabel === 'abstain'
                 ? undefined
                 : t(
-                      `app.plugins.token.tokenSubmitVote.voteDescription.${settings.isObjection ? 'objection' : isVeto ? 'veto' : 'approve'}`,
+                      `app.plugins.token.tokenSubmitVote.voteDescription.${isVeto ? 'veto' : 'approve'}`,
                   );
         // Without override permission the delegated power cannot be moved: leave the vote type unset so that the
         // DAO-level build-vote-data slot falls back to the plain vote of the token plugin.
@@ -410,7 +410,6 @@ export const AlchemixSubmitVote: React.FC<IAlchemixSubmitVoteProps> = (
                 <>
                     <TokenVotingOptions
                         disabledOptions={disabledOptions}
-                        isObjection={settings.isObjection}
                         isVeto={isVeto}
                         onChange={setSelectedOption}
                         value={selectedOption}
