@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react';
 import type { IPaginatedResponse } from '@/shared/api/aragonBackendService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import type { InfiniteQueryOptions } from '@/shared/types';
 import type { IAllowedAction } from '../../domain';
 import type {
@@ -13,7 +14,7 @@ import { useAllowedActions } from '../useAllowedActions';
 /**
  * Parameters of the useAllAllowedActions hook.
  */
-type IUseAllAllowedActionsParams = Omit<
+export type IUseAllAllowedActionsParams = Omit<
     IGetAllowedActionsParams,
     'queryParams'
 > & {
@@ -21,10 +22,17 @@ type IUseAllAllowedActionsParams = Omit<
      * Query parameters of the request, the page size is set by the hook.
      */
     queryParams?: IGetAllowedActionsQueryParams;
+    /**
+     * Chain ID to return the allowed actions for, the actions of all chains are returned when not
+     * set. Actions without a chain ID are only relevant for the chain of the DAO, therefore they are
+     * only returned when this matches the DAO chain.
+     */
+    chainId?: number;
 };
 
 /**
- * Hook that fetches all allowed actions of a plugin by automatically loading all pages.
+ * Hook that fetches all allowed actions of a plugin by automatically loading all pages. Only returns
+ * the actions relevant for the specified chain when a chain ID is set.
  */
 export const useAllAllowedActions = (
     params: IUseAllAllowedActionsParams,
@@ -33,6 +41,9 @@ export const useAllAllowedActions = (
         IGetAllowedActionsParams
     >,
 ) => {
+    // Keep the chain ID out of the request params to avoid fetching the same actions once per chain.
+    const { chainId, ...requestParams } = params;
+
     const {
         data,
         isLoading,
@@ -42,7 +53,10 @@ export const useAllAllowedActions = (
         isFetchingNextPage,
         refetch,
     } = useAllowedActions(
-        { ...params, queryParams: { ...params.queryParams, pageSize: 50 } },
+        {
+            ...requestParams,
+            queryParams: { ...requestParams.queryParams, pageSize: 50 },
+        },
         options,
     );
 
@@ -57,13 +71,25 @@ export const useAllAllowedActions = (
         }
     }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
-    const allAllowedActions = useMemo(
-        () =>
-            isFetchingAll || error
-                ? undefined
-                : (data?.pages.flatMap((page) => page.data) ?? []),
-        [data, isFetchingAll, error],
-    );
+    const daoChainId = networkDefinitions[params.urlParams.network].id;
+
+    const allAllowedActions = useMemo(() => {
+        if (isFetchingAll || error) {
+            return undefined;
+        }
+
+        const actions = data?.pages.flatMap((page) => page.data) ?? [];
+
+        if (chainId == null) {
+            return actions;
+        }
+
+        // The chain ID of an action is not guaranteed to be back-filled, an action without it is
+        // considered to be on the DAO chain.
+        return actions.filter(
+            (action) => (action.chainId ?? daoChainId) === chainId,
+        );
+    }, [data, isFetchingAll, error, chainId, daoChainId]);
 
     return {
         data: allAllowedActions,
