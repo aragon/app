@@ -1,5 +1,5 @@
 import { Avatar, addressUtils, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
-import { PermissionEntityBrandId } from '@/shared/api/daoService';
+import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
 import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionEntity } from '../../utils/permissionEntityUtils';
 import { MembersAvatarIcon, SafeAccountAvatar } from '../permissionEntityIcons';
@@ -16,11 +16,11 @@ export const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}
-        {entity.brandId === PermissionEntityBrandId.SAFE && (
+        {entity.brandId === PermissionEntityExternalBrandId.SAFE && (
             <SafeAccountAvatar />
         )}
         {entity.type === 'plugin' &&
-            entity.brandId !== PermissionEntityBrandId.SAFE &&
+            entity.brandId !== PermissionEntityExternalBrandId.SAFE &&
             entity.tag != null && (
                 <Tag
                     className="max-w-[140px] shrink-0 [&>p]:truncate"
