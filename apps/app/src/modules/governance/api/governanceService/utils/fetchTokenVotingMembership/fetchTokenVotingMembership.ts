@@ -18,11 +18,7 @@ export type FetchLegacyMemberList = (
 ) => Promise<IPaginatedResponse<ITokenMember>>;
 
 /**
- * Single source-routing implementation for token-voting membership queries,
- * shared by the client fetch (`governanceService.getTokenVotingMembership`)
- * and the server prefetch (`tokenVotingMembershipOptionsServer`). The two
- * entry points only differ in their aragon-domain transport (BFF route vs
- * in-process controller), injected as `fetchDomainMembers`.
+ * Routes token-voting membership queries.
  *
  * The legacy branch strips the routing-only fields before forwarding so no
  * unknown query params reach the backend, then normalizes the response
