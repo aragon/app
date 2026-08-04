@@ -1,7 +1,9 @@
 'use client';
 
 import {
+    AlertCard,
     AlertInline,
+    addressUtils,
     Button,
     Card,
     CardEmptyState,
@@ -25,6 +27,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
+import { useToken } from '@/shared/hooks/useToken';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import type {
     ICrossChainControllerActionForwardMessage,
@@ -159,6 +162,17 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const destinationNetwork = destinationChains.find(
         ({ chainId }) => chainId === destinationChainId,
     )?.network;
+
+    // The messaging fee is paid by the controller on the DAO chain with the fee token set on the
+    // local adapter of the selected lane.
+    const feeTokenAddress = lanes.find(
+        ({ chainId }) => chainId === destinationChainId,
+    )?.feeToken;
+
+    const { data: feeToken } = useToken({
+        address: feeTokenAddress,
+        chainId: daoChainId,
+    });
 
     const handleOpenActionsDialog = () => {
         invariant(
@@ -312,6 +326,27 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     />
                 )}
             </InputContainer>
+
+            <AlertCard
+                message={t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.title',
+                )}
+                variant="info"
+            >
+                {t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.description',
+                    {
+                        address: addressUtils.truncateAddress(
+                            action.meta.address,
+                        ),
+                        token:
+                            feeToken?.symbol ??
+                            t(
+                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.defaultToken',
+                            ),
+                    },
+                )}
+            </AlertCard>
         </div>
     );
 };
