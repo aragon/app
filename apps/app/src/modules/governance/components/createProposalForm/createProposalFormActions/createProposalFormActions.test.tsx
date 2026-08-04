@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as executeSelectorsService from '@/modules/governance/api/executeSelectorsService';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import {
@@ -22,6 +23,10 @@ describe('<CreateProposalFormActions /> component', () => {
         daoService,
         'useAllDaoPermissions',
     );
+    const useAllAllowedActionsSpy = jest.spyOn(
+        executeSelectorsService,
+        'useAllAllowedActions',
+    );
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
     const useCreateProposalFormContextSpy = jest.spyOn(
         CreateProposalProvider,
@@ -38,6 +43,13 @@ describe('<CreateProposalFormActions /> component', () => {
                 data: [],
             }) as unknown as ReturnType<typeof daoService.useAllDaoPermissions>,
         );
+        useAllAllowedActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: [],
+            }) as unknown as ReturnType<
+                typeof executeSelectorsService.useAllAllowedActions
+            >,
+        );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useCreateProposalFormContextSpy.mockReturnValue({
             prepareActions: {},
@@ -49,6 +61,7 @@ describe('<CreateProposalFormActions /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useAllDaoPermissionsSpy.mockReset();
+        useAllAllowedActionsSpy.mockReset();
         useDialogContextSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         getDaoPluginsSpy.mockReset();
