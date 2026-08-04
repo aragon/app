@@ -1,7 +1,7 @@
 import { Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import type { NodeProps } from '@xyflow/react';
 import classNames from 'classnames';
-import { PermissionEntityBrandId } from '@/shared/api/daoService';
+import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { ANY_ADDR } from '../../constants/permissionSentinels';
 import type { IPermissionGraphNode, PermissionNodeKind } from '../../types';
@@ -61,7 +61,7 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
         dimmed,
     } = data;
     const isDaoKind = kind === 'dao' || kind === 'linkedDao';
-    const isSafeBody = brandId === PermissionEntityBrandId.SAFE;
+    const isSafeBody = brandId === PermissionEntityExternalBrandId.SAFE;
     const isAnyoneActor =
         kind === 'actor' && address.toLowerCase() === ANY_ADDR.toLowerCase();
     const isSelected = selectionRole != null || active === true;
