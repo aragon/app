@@ -2,7 +2,7 @@ import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import * as wagmi from 'wagmi';
 import * as governanceService from '@/modules/governance/api/governanceService';
-import * as useTokenVotingMembershipModule from '@/modules/governance/hooks/useTokenVotingMembership';
+import * as useTokenVotingMembershipDataModule from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import * as daoService from '@/shared/api/daoService';
 import {
     generateDao,
@@ -34,9 +34,9 @@ jest.mock('./components/tokenMemberListItem', () => ({
 }));
 
 describe('<TokenMemberListBase />', () => {
-    const useTokenVotingMembershipSpy = jest.spyOn(
-        useTokenVotingMembershipModule,
-        'useTokenVotingMembership',
+    const useTokenVotingMembershipDataSpy = jest.spyOn(
+        useTokenVotingMembershipDataModule,
+        'useTokenVotingMembershipData',
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const resolvePluginDaoIdSpy = jest.spyOn(daoUtils, 'resolvePluginDaoId');
@@ -48,7 +48,7 @@ describe('<TokenMemberListBase />', () => {
     const useMemberSpy = jest.spyOn(governanceService, 'useMember');
 
     beforeEach(() => {
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: undefined,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -76,7 +76,7 @@ describe('<TokenMemberListBase />', () => {
     });
 
     afterEach(() => {
-        useTokenVotingMembershipSpy.mockReset();
+        useTokenVotingMembershipDataSpy.mockReset();
         useDaoSpy.mockReset();
         resolvePluginDaoIdSpy.mockReset();
         useConnectionSpy.mockReset();
@@ -109,7 +109,7 @@ describe('<TokenMemberListBase />', () => {
             generateTokenVotingMember({ address: '0x123' }),
             generateTokenVotingMember({ address: '0x456' }),
         ];
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: members,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -126,7 +126,7 @@ describe('<TokenMemberListBase />', () => {
     });
 
     it('does not render the data-list pagination when hidePagination is set to true', () => {
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: [generateTokenVotingMember()],
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -172,7 +172,7 @@ describe('<TokenMemberListBase />', () => {
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
 
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -232,7 +232,7 @@ describe('<TokenMemberListBase />', () => {
             isError: false,
         });
 
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -299,7 +299,7 @@ describe('<TokenMemberListBase />', () => {
             isError: false,
         });
 
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -358,7 +358,7 @@ describe('<TokenMemberListBase />', () => {
             address: userAddress,
         } as unknown as wagmi.UseConnectionReturnType);
 
-        useTokenVotingMembershipSpy.mockReturnValue({
+        useTokenVotingMembershipDataSpy.mockReturnValue({
             memberList: paginatedMembers,
             onLoadMore: jest.fn(),
             state: 'idle',
@@ -398,7 +398,7 @@ describe('<TokenMemberListBase />', () => {
             };
             resolvePluginDaoIdSpy.mockReturnValue('dao-id');
             render(createTestComponent({ initialParams }));
-            expect(useTokenVotingMembershipSpy).toHaveBeenCalledWith(
+            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     queryParams: expect.objectContaining({
                         daoId: 'dao-id',
@@ -410,11 +410,11 @@ describe('<TokenMemberListBase />', () => {
             );
         });
 
-        it('passes the resolved daoId to useTokenVotingMembership for linked-account plugins', () => {
+        it('passes the resolved daoId to useTokenVotingMembershipData for linked-account plugins', () => {
             const resolvedDaoId = 'eth-mainnet-0xlinked';
             resolvePluginDaoIdSpy.mockReturnValue(resolvedDaoId);
             render(createTestComponent());
-            expect(useTokenVotingMembershipSpy).toHaveBeenCalledWith(
+            expect(useTokenVotingMembershipDataSpy).toHaveBeenCalledWith(
                 expect.objectContaining({
                     queryParams: expect.objectContaining({
                         daoId: resolvedDaoId,

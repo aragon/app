@@ -12,7 +12,7 @@ import { type ReactNode, useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
 import { buildTokenVotingMembershipParams } from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
-import { useTokenVotingMembership } from '@/modules/governance/hooks/useTokenVotingMembership';
+import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { IPluginSettings } from '@/shared/api/daoService';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -80,7 +80,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         errorState,
         emptyState,
         memberList,
-    } = useTokenVotingMembership(apiParams);
+    } = useTokenVotingMembershipData(apiParams);
 
     const { connectedUserMember, delegateMember, hasValidDelegate } =
         useTokenPinnedMembers({

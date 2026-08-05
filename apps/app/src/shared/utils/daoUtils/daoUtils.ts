@@ -1,4 +1,5 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+// biome-ignore lint/style/noRestrictedImports: server-safe address check — the gov-ui-kit shim is not callable from RSC code paths; { strict: false } is passed explicitly.
 import { isAddress } from 'viem';
 import {
     daoService,

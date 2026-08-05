@@ -14,7 +14,7 @@ import { dataListUtils } from '@/shared/utils/dataListUtils';
  * map) and exposes the same data-list interface the token member list
  * consumes — the list items are `TokenVotingMemberDTO`.
  */
-export const useTokenVotingMembership = (
+export const useTokenVotingMembershipData = (
     params: IGetTokenVotingMembershipParams,
     options?: InfiniteQueryOptions<
         PageDTO<TokenVotingMemberDTO>,

@@ -15,7 +15,7 @@ import type {
     ISetupBodyFormNew,
 } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { BodyType } from '@/modules/createDao/types/enum';
-import { useTokenVotingMembership } from '@/modules/governance/hooks/useTokenVotingMembership';
+import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import { PluginInterfaceType, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -82,7 +82,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                     .underlying ?? null,
         },
     };
-    const { itemsCount: memberCount } = useTokenVotingMembership(
+    const { itemsCount: memberCount } = useTokenVotingMembershipData(
         initialParams,
         { enabled: isExisting },
     );

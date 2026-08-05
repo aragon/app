@@ -1,4 +1,5 @@
 import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type {
     InfiniteQueryOptions,
     SharedInfiniteQueryOptions,
@@ -24,3 +25,11 @@ export const tokenVotingMembershipOptions = (
     getNextPageParam: governanceService.getNextPageParams,
     ...options,
 });
+
+export const useTokenVotingMembership = (
+    params: IGetTokenVotingMembershipParams,
+    options?: InfiniteQueryOptions<
+        PageDTO<TokenVotingMemberDTO>,
+        IGetTokenVotingMembershipParams
+    >,
+) => useInfiniteQuery(tokenVotingMembershipOptions(params, options));
