@@ -185,7 +185,7 @@ describe('<NestedActionsDialog /> component', () => {
         params?: Partial<INestedActionsDialogParams>,
     ) => {
         const completeParams: INestedActionsDialogParams = {
-            daoId: DAO_ID,
+            hostDaoId: DAO_ID,
             initialActions: [],
             onSubmit: jest.fn(),
             ...params,
@@ -221,8 +221,8 @@ describe('<NestedActionsDialog /> component', () => {
 
     it('fetches the allowed actions on the plugin network for the chain the actions are composed for', () => {
         createTestComponent({
-            pluginAddress: '0xplugin',
-            network: daoService.Network.BASE_MAINNET,
+            processPluginAddress: '0xplugin',
+            crossChainNetwork: daoService.Network.BASE_MAINNET,
         });
 
         expect(useAllAllowedActionsSpy).toHaveBeenLastCalledWith(
@@ -243,7 +243,7 @@ describe('<NestedActionsDialog /> component', () => {
             >,
         );
 
-        createTestComponent({ pluginAddress: '0xplugin' });
+        createTestComponent({ processPluginAddress: '0xplugin' });
 
         expect(
             screen.getByTestId('actions-editor').dataset.allowedActionTargets,

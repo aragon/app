@@ -167,9 +167,9 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         );
 
         const params: INestedActionsDialogParams = {
-            daoId,
-            pluginAddress: processPlugin?.address,
-            network: destinationNetwork,
+            hostDaoId: daoId,
+            processPluginAddress: processPlugin?.address,
+            crossChainNetwork: destinationNetwork,
             initialActions: nestedActions,
             // Prevent showing nested forward actions.
             excludeActionTypes: [
