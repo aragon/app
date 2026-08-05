@@ -58,10 +58,10 @@ class GovernanceService extends AragonBackendService {
     };
 
     /**
-     * Token-voting member list. Routes between the aragon-domain BFF and the
-     * legacy backend (see `fetchTokenVotingMembership`), returning the
-     * library-owned `TokenVotingMemberDTO` page regardless of source. The
-     * generic `getMemberList` still serves multisig/admin.
+     * Gets the membership for token-voting plugins.
+     *
+     * This routes between the aragon-domain BFF and the legacy backend
+     * regardless of source. The generic `getMemberList` still serves multisig/admin.
      */
     getTokenVotingMembership = (
         params: IGetTokenVotingMembershipParams,
