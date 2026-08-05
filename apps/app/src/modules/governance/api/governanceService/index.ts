@@ -11,3 +11,4 @@ export {
     type ITokenVotingMembershipPluginSettings,
     isTokenMemberListPlugin,
 } from './utils/buildTokenVotingMembershipParams';
+export { mapBackendMemberToTokenVotingDTO } from './utils/mapBackendMemberToTokenVotingDTO';

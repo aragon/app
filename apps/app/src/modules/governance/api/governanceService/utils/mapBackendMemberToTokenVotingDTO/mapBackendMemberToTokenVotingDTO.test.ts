@@ -2,14 +2,14 @@ import { generateTokenMember } from '@/plugins/tokenPlugin/testUtils';
 import { mapBackendMemberToTokenVotingDTO } from './mapBackendMemberToTokenVotingDTO';
 
 describe('mapBackendMemberToTokenVotingDTO', () => {
-    it('passes address, ens, votingPower and metrics (incl. delegationCount) through', () => {
+    it('passes address, ens, votingPower and delegationCount through and emits null activity timestamps', () => {
         const member = generateTokenMember({
             address: '0xabc',
             ens: 'alice.eth',
             votingPower: '5000',
             metrics: {
-                firstActivityTimestamp: 1_705_320_000,
-                lastActivityTimestamp: 1_718_872_200,
+                firstActivity: 100,
+                lastActivity: 200,
                 delegationCount: 3,
             },
         });
@@ -19,8 +19,10 @@ describe('mapBackendMemberToTokenVotingDTO', () => {
             ens: 'alice.eth',
             votingPower: '5000',
             metrics: {
-                firstActivityTimestamp: 1_705_320_000,
-                lastActivityTimestamp: 1_718_872_200,
+                // The legacy backend only reports activity as block numbers,
+                // which the mapper does not resolve to timestamps.
+                firstActivityTimestamp: null,
+                lastActivityTimestamp: null,
                 delegationCount: 3,
             },
         });

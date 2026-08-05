@@ -172,8 +172,8 @@ export const DaoMemberDetailsPageClient: React.FC<
         firstActive: null,
         lastActive: null,
         metrics: {
-            firstActivityTimestamp: null,
-            lastActivityTimestamp: null,
+            firstActivity: null,
+            lastActivity: null,
         },
     };
     const memberData = member ?? fallbackMember;

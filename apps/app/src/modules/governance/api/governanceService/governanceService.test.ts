@@ -151,8 +151,8 @@ describe('governance service', () => {
             firstActive: 100,
             lastActive: 200,
             metrics: {
-                firstActivityTimestamp: 1_705_320_000,
-                lastActivityTimestamp: 1_718_872_200,
+                firstActivity: 100,
+                lastActivity: 200,
                 delegationCount: 3,
             },
         });
@@ -188,8 +188,9 @@ describe('governance service', () => {
                 ens: 'alice.eth',
                 votingPower: '5000',
                 metrics: {
-                    firstActivityTimestamp: 1_705_320_000,
-                    lastActivityTimestamp: 1_718_872_200,
+                    // Legacy block numbers are not resolved to timestamps.
+                    firstActivityTimestamp: null,
+                    lastActivityTimestamp: null,
                     delegationCount: 3,
                 },
             },

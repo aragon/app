@@ -10,7 +10,10 @@ import {
 } from '@aragon/gov-ui-kit';
 import { type ReactNode, useMemo } from 'react';
 import type { IToken } from '@/modules/finance/api/financeService';
-import { buildTokenVotingMembershipParams } from '@/modules/governance/api/governanceService';
+import {
+    buildTokenVotingMembershipParams,
+    mapBackendMemberToTokenVotingDTO,
+} from '@/modules/governance/api/governanceService';
 import type { IDaoMemberListDefaultProps } from '@/modules/governance/components/daoMemberList';
 import { useTokenVotingMembershipData } from '@/modules/governance/hooks/useTokenVotingMembershipData';
 import type { IPluginSettings } from '@/shared/api/daoService';
@@ -96,8 +99,9 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
         }
 
         const pinnedAddresses = new Set<string>();
-        // Pinned single-members arrive as `ITokenMember` which is a structural
-        // superset of `TokenVotingMemberDTO`.
+        // Pinned single-members arrive as legacy `ITokenMember` and are
+        // normalized through the same anti-corruption mapper as the legacy
+        // list branch.
         const merged: TokenVotingMemberDTO[] = [];
 
         const appendPinnedMember = (member?: ITokenMember) => {
@@ -111,7 +115,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
             }
 
             pinnedAddresses.add(memberAddress);
-            merged.push(member);
+            merged.push(mapBackendMemberToTokenVotingDTO(member));
         };
 
         appendPinnedMember(connectedUserMember);
