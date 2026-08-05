@@ -40,9 +40,9 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     );
 
     const {
-        daoId,
-        pluginAddress,
-        network,
+        hostDaoId,
+        processPluginAddress,
+        crossChainNetwork,
         initialActions,
         excludeActionTypes,
         onSubmit,
@@ -50,32 +50,33 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { data: hostDao } = useDao({ urlParams: { id: hostDaoId } });
 
-    const resolvedNetwork = network ?? dao?.network;
+    const resolvedNetwork = crossChainNetwork ?? hostDao?.network;
 
-    // The allowed actions are indexed for the network of the plugin, while the nested actions are
-    // composed for the network they are executed on.
-    const hasAllowedActions = dao != null && pluginAddress != null;
+    const shouldFetchAllowedActions =
+        hostDao != null && processPluginAddress != null;
     const composerChainId =
         resolvedNetwork != null
             ? networkDefinitions[resolvedNetwork].id
             : undefined;
 
-    const { data: pluginAllowedActions } = useAllAllowedActions(
+    const { data: processAllowedActions } = useAllAllowedActions(
         {
             urlParams: {
-                network: dao?.network as Network,
-                pluginAddress: pluginAddress ?? '',
+                network: hostDao?.network as Network,
+                pluginAddress: processPluginAddress ?? '',
             },
             chainId: composerChainId,
         },
-        { enabled: hasAllowedActions },
+        { enabled: shouldFetchAllowedActions },
     );
 
     // The composer treats a defined list as "only offer the authorized actions", so it must stay
-    // undefined while there is no plugin restricting the actions.
-    const allowedActions = hasAllowedActions ? pluginAllowedActions : undefined;
+    // undefined if we don't fetch actions
+    const allowedActions = shouldFetchAllowedActions
+        ? processAllowedActions
+        : undefined;
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -117,7 +118,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
             return;
         }
 
-        if (dao == null) {
+        if (hostDao == null) {
             return;
         }
 
@@ -138,20 +139,25 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                             data,
                         })),
                         resolvedNetwork,
-                        dao,
+                        crossChainNetwork ? undefined : hostDao,
                     );
 
                 reset({
-                    actions: decodedActions.map(
-                        (action) =>
-                            ({ ...action, daoId }) as IProposalActionData,
-                    ),
+                    actions: crossChainNetwork
+                        ? decodedActions
+                        : decodedActions.map(
+                              (action) =>
+                                  ({
+                                      ...action,
+                                      daoId: hostDaoId,
+                                  }) as IProposalActionData,
+                          ),
                 });
             } catch (error) {
                 monitoringUtils.logError(error, {
                     context: {
-                        daoId,
-                        network,
+                        hostDaoId,
+                        crossChainNetwork,
                         message: 'Failed to decode the nested proposal actions',
                     },
                 });
@@ -163,9 +169,9 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
 
         void decodeInitialActions();
     }, [
-        dao,
-        daoId,
-        network,
+        hostDao,
+        hostDaoId,
+        crossChainNetwork,
         resolvedNetwork,
         initialActions,
         requiresDecoding,
@@ -196,8 +202,8 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         } catch (error) {
             monitoringUtils.logError(error, {
                 context: {
-                    daoId,
-                    network,
+                    hostDaoId,
+                    crossChainNetwork,
                     message: 'Failed to prepare the nested proposal actions',
                 },
             });
@@ -228,9 +234,9 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                     ) : (
                         <ProposalActionsEditor
                             allowedActions={allowedActions}
-                            daoId={daoId}
+                            daoId={crossChainNetwork ? undefined : hostDaoId}
                             excludeActionTypes={excludeActionTypes}
-                            network={network}
+                            network={crossChainNetwork}
                         />
                     )}
                     {hasDecodeError && (

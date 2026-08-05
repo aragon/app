@@ -130,7 +130,7 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
     const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
-        allowedActions != null,
+        allowedActions != null && allowedActions.length > 0,
     );
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isUploadLoading, setIsUploadLoading] = useState(false);
