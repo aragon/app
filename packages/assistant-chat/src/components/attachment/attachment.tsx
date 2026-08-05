@@ -101,7 +101,7 @@ const AttachmentPreviewDialog: React.FC<PropsWithChildren> = (props) => {
                     <Dialog.Close asChild={true}>
                         <TooltipIconButton
                             className="absolute top-4 right-4 bg-neutral-0/80 text-neutral-800 hover:bg-neutral-0"
-                            tooltip={chatCopy.header.close}
+                            tooltip={chatCopy.attachments.closePreview}
                             variant="unstyled"
                         >
                             <Icon icon={IconType.CLOSE} size="sm" />

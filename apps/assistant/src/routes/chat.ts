@@ -1,5 +1,6 @@
 import {
     assistantLimits,
+    attachmentPartType,
     chatRequestSchema,
     createTicketToolName,
     type IAssistantError,
@@ -61,9 +62,16 @@ const buildFixedMessageResponse = (params: {
     sessionId: string;
     text: string;
     refusalReason: IRefusalReason;
+    originalMessages: UIMessage[];
     failedToolCallIds?: string[];
 }) => {
-    const { sessionId, text, refusalReason, failedToolCallIds } = params;
+    const {
+        sessionId,
+        text,
+        refusalReason,
+        originalMessages,
+        failedToolCallIds,
+    } = params;
 
     observability.logStep({
         sessionId,
@@ -73,6 +81,7 @@ const buildFixedMessageResponse = (params: {
     });
 
     const stream = createUIMessageStream({
+        originalMessages,
         execute: ({ writer }) => {
             writeFixedMessage(writer, text, failedToolCallIds);
         },
@@ -98,6 +107,13 @@ export const buildChatRoute = (deps: IAppDependencies) => {
 
         const { sessionId, messages, appContext } = parsed.data;
         const sessionStore = deps.getSessionStore();
+
+        // Every stream below is opened against the incoming history: when it ends on an assistant
+        // message (an approval resume), the AI SDK stamps the response with THAT message's id and
+        // the widget continues it. Without it the SDK stamps a fresh id, and the widget — whose
+        // response state is seeded from the last message — appends a copy of it, so the text
+        // written before the tool call is shown a second time under the created ticket.
+        const uiMessages = toUiMessages(messages);
 
         // A session's first turn consumes the per-IP new-session budget. The gate runs BEFORE
         // the turn is counted: a refused session never increments, so retries and concurrent
@@ -137,6 +153,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: turnLimitMessage,
                 refusalReason: 'turn_limit',
+                originalMessages: uiMessages,
                 failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
@@ -147,6 +164,7 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 sessionId,
                 text: tokenBudgetMessage,
                 refusalReason: 'token_budget',
+                originalMessages: uiMessages,
                 failedToolCallIds: pendingApprovedToolCallIds,
             });
         }
@@ -159,11 +177,8 @@ export const buildChatRoute = (deps: IAppDependencies) => {
         let respondErrorPayload: string | undefined;
 
         const stream = createUIMessageStream({
+            originalMessages: uiMessages,
             execute: async ({ writer }) => {
-                // File metadata only (never contents): the model must know what is already
-                // attached so it can acknowledge files instead of claiming it "can't see" them.
-                const files = await sessionStore.listFiles(sessionId);
-
                 // Open the message once here; the merged model stream reuses it (sendStart: false)
                 // so the two producers never emit a duplicate start chunk.
                 writer.write({ type: 'start' });
@@ -178,16 +193,15 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                     stopWhen: stepCountIs(5),
                     system: buildAgentSystemPrompt({
                         appContext,
-                        files,
+                        hasAttachments: hasAttachments(messages),
                         docsSearchEnabled,
                     }),
                     // ignoreIncompleteToolCalls drops tool parts the composer's Stop left in
                     // `input-streaming`/`input-available`: replayed as-is they would convert
                     // to a tool call without a response and fail every following model call.
-                    messages: await convertToModelMessages(
-                        toUiMessages(messages),
-                        { ignoreIncompleteToolCalls: true },
-                    ),
+                    messages: await convertToModelMessages(uiMessages, {
+                        ignoreIncompleteToolCalls: true,
+                    }),
                     tools: {
                         [createTicketToolName]: buildCreateLinearTicketTool({
                             deps,
@@ -344,7 +358,41 @@ const getPendingApprovedToolCallIds = (messages: IChatMessage[]): string[] => {
 const toUiMessages = (messages: IChatMessage[]): UIMessage[] =>
     messages
         .map(dropReasoningParts)
+        .map(markAttachments)
         .map(resolveDanglingApprovals) as unknown as UIMessage[];
+
+// Whether the conversation carries any attachment, which is what the attachment guidance in the
+// system prompt is about. Read off the messages, not the session queue: a created ticket empties
+// the queue, and the conversation still remembers the file it took with it.
+const hasAttachments = (messages: IChatMessage[]): boolean =>
+    messages.some((message) =>
+        message.parts.some((part) => part.type === attachmentPartType),
+    );
+
+// Attachments reach the model as a plain line inside the message that carried them: the bytes
+// travel out-of-band, and a positionless "N files are attached" note in the system prompt left the
+// model guessing WHEN a file arrived — it kept asking for screenshots the user had just sent. The
+// line names the file and nothing more. File parts (bytes inline) are never expected here and are
+// reduced to the same line rather than pushed at the model.
+const markAttachments = (message: IChatMessage): IChatMessage => ({
+    ...message,
+    parts: message.parts.map((part) => {
+        if (part.type !== attachmentPartType && part.type !== 'file') {
+            return part;
+        }
+
+        const { data, filename } = part as {
+            data?: { filename?: unknown };
+            filename?: unknown;
+        };
+        const name = data?.filename ?? filename;
+
+        return {
+            type: 'text' as const,
+            text: `[attached: ${typeof name === 'string' ? name : 'a file'}]`,
+        };
+    }),
+});
 
 // Replayed reasoning is dead weight: it feeds no next turn, burns input tokens and makes the
 // gateway log a warning per part on providers that reject non-OpenAI reasoning in history.
