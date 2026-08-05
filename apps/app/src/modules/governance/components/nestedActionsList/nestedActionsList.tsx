@@ -3,10 +3,10 @@
 import {
     type IProposalActionInputDataParameter,
     ProposalActions,
-    ProposalActionTypeNoBasicView,
 } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import type { IProposalAction } from '../../api/governanceService';
+import type { IRawActionTuple } from '../../types';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
 import { ProposalActionsItem } from '../proposalActionsItem';
 
@@ -31,22 +31,6 @@ export interface INestedActionsListProps {
     chainId?: number;
 }
 
-interface IRawActionTuple {
-    to: string;
-    value: string;
-    data: string;
-}
-
-const buildRawActionStubs = (tuple: IRawActionTuple[]): IProposalAction[] =>
-    tuple.map((entry) => ({
-        from: '',
-        to: entry.to,
-        data: entry.data,
-        value: entry.value,
-        type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
-        inputData: null,
-    }));
-
 export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
     const { outerParams, rawActions, daoId, chainId } = props;
 
@@ -61,12 +45,10 @@ export const NestedActionsList: React.FC<INestedActionsListProps> = (props) => {
             | IRawActionTuple[]
             | undefined) ?? [];
 
-    const hasDecodedMismatch =
-        rawActions == null || rawActions.length !== rawTuple.length;
-
-    const actionsToRender = hasDecodedMismatch
-        ? buildRawActionStubs(rawTuple)
-        : rawActions;
+    const actionsToRender = proposalActionUtils.resolveNestedActions(
+        rawActions,
+        rawTuple,
+    );
 
     if (actionsToRender.length === 0) {
         return null;
