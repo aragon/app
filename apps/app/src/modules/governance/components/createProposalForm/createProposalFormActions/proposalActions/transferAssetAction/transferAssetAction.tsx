@@ -3,7 +3,7 @@ import {
     type IProposalActionComponentProps,
     invariant,
 } from '@aragon/gov-ui-kit';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import {
     encodeFunctionData,
@@ -86,6 +86,9 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     // For imported ERC20 actions, we need to fetch token details to get correct decimals
     const isImportedErc20Action =
         action.rawAmount != null && action.to !== zeroAddress;
+    const [isImportPending, setIsImportPending] = useState(
+        isImportedErc20Action,
+    );
     const { data: token } = useToken({
         address: action.to as Hex,
         chainId,
@@ -149,7 +152,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
     // Initialize asset field for transferActionLocked case
     useEffect(() => {
-        if (token == null || balance == null) {
+        if (!disableTokenSelection || token == null || balance == null) {
             return;
         }
 
@@ -164,7 +167,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         const asset: IAsset = { token: tokenAsset, amount: tokenBalance };
 
         setValue(`${fieldName}.asset`, asset);
-    }, [token, balance, tokenAddress, tokenDecimals, setValue, fieldName, dao]);
+    }, [
+        disableTokenSelection,
+        token,
+        balance,
+        tokenAddress,
+        tokenDecimals,
+        setValue,
+        fieldName,
+        dao,
+    ]);
 
     // Initialize imported ERC20 action with fetched token details and formatted amount
     useEffect(() => {
@@ -199,6 +211,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
         // Clear rawAmount after initialization
         setValue(`${fieldName}.rawAmount`, undefined);
+        setIsImportPending(false);
     }, [
         isImportedErc20Action,
         token,
@@ -211,7 +224,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
     // Update asset balance for imported actions. Uploaded and decoded transfer actions have token info, but don't have max available balance for the given DAO.
     useEffect(() => {
-        if (!shouldFetchImportedTokenBalance) {
+        if (isImportPending || !shouldFetchImportedTokenBalance) {
             return;
         }
 
@@ -238,6 +251,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             });
         }
     }, [
+        isImportPending,
         shouldFetchImportedTokenBalance,
         isNativeToken,
         nativeBalance,
@@ -249,6 +263,10 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     ]);
 
     useEffect(() => {
+        if (isImportPending) {
+            return;
+        }
+
         let newData: string | undefined = '0x';
 
         if (!isNativeToken) {
@@ -265,28 +283,6 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             }
         }
 
-        setValue(`${fieldName}.data`, newData);
-    }, [isNativeToken, receiverAddress, weiAmount, fieldName, setValue]);
-
-    useEffect(() => {
-        const newTarget = isNativeToken ? receiverAddress : tokenAddress;
-
-        setValue(`${fieldName}.to`, newTarget);
-    }, [isNativeToken, receiverAddress, tokenAddress, fieldName, setValue]);
-
-    useEffect(() => {
-        const newAmount = formatUnits(weiAmount, tokenDecimals);
-
-        setValue(`${fieldName}.amount`, newAmount);
-    }, [weiAmount, tokenDecimals, fieldName, setValue]);
-
-    useEffect(() => {
-        const newValue = isNativeToken ? weiAmount.toString() : '0';
-
-        setValue(`${fieldName}.value`, newValue);
-    }, [isNativeToken, weiAmount, fieldName, setValue]);
-
-    useEffect(() => {
         // Get current inputData to preserve function and stateMutability
         const currentAction = getValues(`actions.${index.toString()}`) as
             | IProposalActionData
@@ -299,6 +295,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         ];
         const processedParameters = isNativeToken ? [] : newContractParameters;
 
+        setValue(`${fieldName}.data`, newData);
+        setValue(
+            `${fieldName}.to`,
+            isNativeToken ? receiverAddress : tokenAddress,
+        );
+        setValue(`${fieldName}.amount`, formatUnits(weiAmount, tokenDecimals));
+        setValue(
+            `${fieldName}.value`,
+            isNativeToken ? weiAmount.toString() : '0',
+        );
         // Preserve all inputData fields while updating specific ones
         setValue(`${fieldName}.inputData`, {
             ...currentInputData,
@@ -306,13 +312,16 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             parameters: processedParameters,
         });
     }, [
+        isImportPending,
         isNativeToken,
         receiverAddress,
-        weiAmount,
-        setValue,
-        fieldName,
+        tokenAddress,
+        tokenDecimals,
         tokenName,
+        weiAmount,
+        fieldName,
         index,
+        setValue,
         getValues,
     ]);
 
