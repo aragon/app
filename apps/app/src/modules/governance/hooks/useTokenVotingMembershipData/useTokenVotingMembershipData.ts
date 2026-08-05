@@ -9,10 +9,10 @@ import type { InfiniteQueryOptions } from '@/shared/types';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 
 /**
- * Token-voting member list data hook. Wraps the dedicated
- * `getTokenVotingMembership` fetch (domain-vs-backend routing + backend→DTO
- * map) and exposes the same data-list interface the token member list
- * consumes — the list items are `TokenVotingMemberDTO`.
+ * Gets the membership for token-voting plugins.
+ *
+ * This routes between the aragon-domain BFF and the legacy backend
+ * regardless of source. The generic `getMemberList` still serves multisig/admin.
  */
 export const useTokenVotingMembershipData = (
     params: IGetTokenVotingMembershipParams,
