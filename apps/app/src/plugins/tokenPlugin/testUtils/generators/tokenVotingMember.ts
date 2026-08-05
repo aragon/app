@@ -1,10 +1,5 @@
 import type { TokenVotingMemberDTO } from '@aragon/aragon-domain';
 
-/**
- * Builds a `TokenVotingMemberDTO` — the shape the token member list renders
- * from. Use this for member-list tests; use `generateTokenMember`
- * (`ITokenMember`) for single-member tests.
- */
 export const generateTokenVotingMember = (
     member?: Partial<TokenVotingMemberDTO>,
 ): TokenVotingMemberDTO => ({

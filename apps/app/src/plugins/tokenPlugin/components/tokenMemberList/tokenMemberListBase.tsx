@@ -68,7 +68,7 @@ export const TokenMemberListBase: React.FC<ITokenMemberListBaseProps> = (
     // The parent DAO is server-side prefetched → always a cache hit.
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
-    // Shared with the members-page RSC prefetch — both sides must build
+    // Shared with the members-page RSC prefetch. Both sides must build
     // identical params so the dehydrated cache resolves this query.
     const apiParams = useMemo(
         () => buildTokenVotingMembershipParams(initialParams, plugin, dao),

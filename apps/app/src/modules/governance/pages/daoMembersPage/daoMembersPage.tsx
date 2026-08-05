@@ -70,8 +70,8 @@ export const DaoMembersPage: React.FC<IDaoMembersPageProps> = async (props) => {
     };
     const memberListParams = { queryParams: memberListQueryParams };
 
-    // Token-voting / lock-to-vote lists consume the token-voting membership
-    // query; every other plugin uses the generic member list. The prefetched
+    // Token-voting and lock-to-vote lists consume the token-voting membership
+    // query. Every other plugin uses the generic member list. The prefetched
     // key must match what the list component builds on the client.
     if (isTokenMemberListPlugin(bodyPlugin)) {
         await queryClient.prefetchInfiniteQuery(

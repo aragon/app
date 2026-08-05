@@ -392,7 +392,7 @@ describe('<TokenMemberListBase />', () => {
     });
 
     describe('linked-account daoId resolution', () => {
-        it('augments params with subdomain routing fields for non-linked-account plugins', () => {
+        it('augments params with domain routing fields for non-linked-account plugins', () => {
             const initialParams = {
                 queryParams: { daoId: 'dao-id', pluginAddress: '0x123' },
             };
