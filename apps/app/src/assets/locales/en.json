@@ -424,7 +424,6 @@
           "label": "Support chat"
         },
         "trigger": {
-          "close": "Close support chat",
           "open": "Open support chat"
         }
       },

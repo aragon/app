@@ -21,14 +21,14 @@ describe('<SupportChatTrigger /> component', () => {
         } as ReturnType<typeof featureFlagsProvider.useFeatureFlags>);
     };
 
-    const setContext = (isOpen: boolean, toggle = jest.fn()) => {
+    const setContext = (isOpen: boolean, open = jest.fn()) => {
         useSupportChatContextSpy.mockReturnValue({
             isOpen,
-            open: jest.fn(),
+            open,
             close: jest.fn(),
-            toggle,
+            toggle: jest.fn(),
         });
-        return toggle;
+        return open;
     };
 
     beforeEach(() => {
@@ -47,22 +47,20 @@ describe('<SupportChatTrigger /> component', () => {
         expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
-    it('renders an open button and toggles the chat on click', async () => {
-        const toggle = setContext(false);
+    it('renders an open button and opens the chat on click', async () => {
+        const open = setContext(false);
         render(<SupportChatTrigger />);
 
         const button = screen.getByRole('button', {
             name: /supportChat.trigger.open/,
         });
         await userEvent.click(button);
-        expect(toggle).toHaveBeenCalled();
+        expect(open).toHaveBeenCalled();
     });
 
-    it('renders a close button while the chat is open', () => {
+    it('withdraws while the chat is open, which closes through the panel itself', () => {
         setContext(true);
         render(<SupportChatTrigger />);
-        expect(
-            screen.getByRole('button', { name: /supportChat.trigger.close/ }),
-        ).toBeInTheDocument();
+        expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 });
