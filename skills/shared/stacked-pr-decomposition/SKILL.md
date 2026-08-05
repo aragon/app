@@ -136,6 +136,7 @@ Use this when one branch already contains the work and the task is "split this i
 2. **Place shared foundations low.** If two upper layers need the same graph utility, type, feature flag, or test helper, put it in the lowest layer that can merge safely. Do not duplicate or let adjacent layers rewrite it.
 3. **Keep every intermediate branch compiling.** After slicing layer N, run the narrow check that proves N is valid without layers above it. A layer that only passes with unmerged higher code is not a layer.
 4. **Handle shared files deliberately.** For `en.json`, package manifests, lockfiles, route maps, and generated registries, pick one: all related edits in the first layer that needs them; split by stable key namespace; or defer cosmetic/generated churn to cleanup. Never let every layer casually touch the same shared file.
+   - **Verify shared-file diffs before pushing.** A rebase or partial re-apply of `en.json`, lockfiles, or generated registries can silently drop unrelated entries. Diff each shared file against the base (`git diff <base>...HEAD -- <file>`); it must contain only your layer's keys. Restore accidental deletions byte-for-byte from `main` (locale files are the common victim — a stray deletion removes keys other layers or pages still reference).
 5. **Co-locate tests with the behavior they prove.** Contract tests go with contract layers; UI tests with UI layers. If tests dominate LOC, mention that in the stack map instead of splitting a coherent behavior layer only to satisfy a raw line threshold.
 6. **Write the stack map after slicing.** For each layer: purpose, base branch, files, dependency sentence, ship-safety statement, and verification command.
 
@@ -197,9 +198,13 @@ When review feedback lands on a mid-stack PR, fix it on the branch that owns the
 
 1. Navigate to the owning branch: `gh stack checkout <branch>` or `gh stack up/down/top/bottom`.
 2. Make the fix, stage, and commit it there.
-3. Cascade the update through dependent layers: `gh stack rebase` (or `gh stack rebase --upstack` when starting from the changed branch).
-4. Push the rebased stack: `gh stack push`. This uses `--force-with-lease` and retriggers CI on affected PRs.
+3. Cascade **only upward**: `gh stack rebase --upstack --no-trunk` from the changed branch. This rebases the changed layer and everything above it onto each other, without re-fetching or re-parenting the stack onto trunk.
+4. Push: `gh stack push`. It force-with-leases only the branches whose SHA actually changed; untouched lower branches are no-ops.
 5. Return to the working layer with `gh stack top` or `gh stack checkout <branch>`.
+
+**Preserve lower-layer approvals — do not re-parent onto trunk for every edit.** Branch protection's "dismiss stale reviews on push" dismisses a layer's approval whenever its head SHA changes. A plain `gh stack rebase` (or `gh stack sync`) fetches trunk and re-parents the *whole* stack onto the latest `main`; if `main` moved, that rewrites even approved layers **below** your change and dismisses their approvals for no functional reason. `--upstack --no-trunk` touches only the changed layer and up, so an L3 fix dismisses at most L3–L5 and never L1–L2. Reach for a full trunk rebase (`gh stack rebase` / `gh stack sync`) only when you have a genuine conflict with `main`, or as one deliberate pre-merge catch-up — moments when you expect to re-collect approvals anyway.
+
+**Lockfile / generated-file conflicts during a rebase:** never hand-merge `pnpm-lock.yaml` (or other generated files). Take the base side and regenerate: `git checkout --ours pnpm-lock.yaml && pnpm install`, confirm `pnpm install --frozen-lockfile` exits clean (that is exactly what CI runs), `git add`, then `gh stack rebase --continue`.
 
 If the repo requires signed commits, avoid the GitHub website **Rebase stack** button; server-side rebases are unsigned. Use `gh stack rebase` locally, then `gh stack push`.
 
@@ -254,7 +259,7 @@ For CI cost, use stack metadata: lowest unmerged PR when `github.event.pull_requ
 - Hide incomplete user-visible behavior behind a flag or parallel-change path before landing lower layers.
 - For retrospective splits, prove each branch compiles without layers above it; do not rely on the full original branch.
 - Name shared files (`en.json`, package manifests, lockfiles, generated registries) in the stack map and explain which layer owns each one.
-- Address review feedback on the branch that owns the change, then cascade with `gh stack rebase` / `gh stack push`.
+- Address review feedback on the branch that owns the change, then cascade **upward only** with `gh stack rebase --upstack --no-trunk` (not a full trunk rebase) so lower-layer approvals survive; then `gh stack push`.
 - After bottom merges, run `gh stack sync --prune` before continuing work.
 
 ### Reviewer
@@ -290,6 +295,10 @@ For CI cost, use stack metadata: lowest unmerged PR when `github.event.pull_requ
 | Trying to merge a mid-stack PR by itself | Merge segments are contiguous from the lowest unmerged PR upward |
 | Continuing after a bottom merge without syncing | Run `gh stack sync --prune` so remaining branches retarget cleanly |
 | Flattening the stack into one PR after review | Keep layers as PRs; merge top once for atomic landing or merge safe lower segments early |
+| Re-parenting the whole stack onto `main` for every mid-stack edit | Use `gh stack rebase --upstack --no-trunk`; full trunk rebase only for a real `main` conflict or a deliberate pre-merge sync |
+| Full `gh stack rebase`/`sync` per fix, dismissing lower approvals | Moving trunk rewrites approved lower layers' SHAs → "dismiss stale reviews" fires; scope with `--upstack --no-trunk` |
+| Hand-merging `pnpm-lock.yaml` conflict markers | Take base (`git checkout --ours`) + `pnpm install` to regenerate; verify `--frozen-lockfile`; then `--continue` |
+| Rebase/re-apply silently drops unrelated `en.json`/generated keys | Diff each shared file against base before pushing; it must contain only your layer's keys; restore accidental deletions byte-for-byte from `main` |
 
 ## Red Flags — Reconsider the Split
 
@@ -302,6 +311,7 @@ For CI cost, use stack metadata: lowest unmerged PR when `github.event.pull_requ
 - Retrospective layers only compile when checked out with later branches.
 - Shared files (`en.json`, lockfiles, package manifests, generated registries) are touched by many adjacent layers without an owner.
 - Review feedback is patched in a higher layer than the code it changes.
+- Every small mid-stack fix triggers a full-stack rebase onto a moving `main`, dismissing lower-layer approvals each time.
 - A stack needs unsigned server-side rebase in a signed-commit repo.
 - A closed middle PR blocks upper PRs.
 
