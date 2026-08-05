@@ -218,6 +218,12 @@ Do **not** flatten the stack into one giant PR after review. The point is separa
 
 Default for a feature that should land atomically: get every layer reviewed/approved, keep the stack green and linear, then use the GitHub UI merge box on the **top PR** (or `gh stack merge`) once. The merge box shows whole-stack status; GitHub lands the top plus every unmerged PR below it as one contiguous bottom-up operation.
 
+**Review up, merge from the top.** Approve bottom-up (layer 1 → N), then merge **once from the top PR (N)** — never one layer at a time from the bottom. Reviewing climbs up; the single top merge lands the whole stack from the top down.
+
+**Merging the bottom PR one layer at a time is the trap.** It looks right — layer 1 is closest to `main` — but landing just the bottom PR retargets the layer above onto `main` and rebases it; the SHA change trips branch protection's "dismiss stale reviews on push" and dismisses that layer's approval. Repeat up the stack and a 5-layer stack costs four needless re-reviews — the same stale-review mechanism as a mid-stack rebase (see **Review Feedback + Rebase Loop**). Merging from the top lands the whole approved group at once, with no intermediate retarget.
+
+**The web merge button is easy to misread.** Its label reflects only what that PR's box lands, with no hint it belongs to a stack: on the **bottom** PR it reads "Merge pull request" (singular — merges only that layer and starts the rebase cascade above); on the **top** PR it reads "Merge pull requests (N)" — the count is the only signal that one click lands the whole stack, and you see it only if you open the top PR. `gh stack merge` is the least ambiguous path; make it (or the top PR's box) the default and reserve the per-PR web button for a deliberate partial merge.
+
 Merge lower layers earlier when they are independently useful and merge-safe: foundation refactors, schema/contract expansion, inert flags, test scaffolding, or cleanup that does not expose unfinished behavior. Merging a mid-stack PR lands it plus everything below it; upper PRs remain open and retarget. After any bottom/partial merge, run `gh stack sync --prune` before continuing.
 
 Use merge queue normally if the repo requires it; queued stacks stay ordered, but very large stacks may split across consecutive merge groups. If a lower PR is ejected, all PRs above it are ejected too.
@@ -225,7 +231,7 @@ Use merge queue normally if the repo requires it; queued stacks stay ordered, bu
 Choose:
 | Situation | Merge posture |
 |---|---|
-| User-visible feature must appear all at once | Approve all layers, merge top once |
+| User-visible feature must appear all at once | Approve all layers, then `gh stack merge` (or merge the top PR) once |
 | Lower layer improves code safely by itself | Merge that bottom/mid contiguous segment early |
 | Lower layer exposes incomplete behavior | Keep it unmerged or hide behind a flag/shim |
 | Review uncovers bad seam | Restack before merging; don't flatten as a shortcut |
@@ -293,6 +299,7 @@ For CI cost, use stack metadata: lowest unmerged PR when `github.event.pull_requ
 | Fixing review feedback on the top branch | Checkout the owning branch, commit there, rebase/push upward |
 | Using website rebase in signed-commit repos | Rebase locally with `gh stack rebase`; server-side rebase commits are unsigned |
 | Trying to merge a mid-stack PR by itself | Merge segments are contiguous from the lowest unmerged PR upward |
+| Merging the bottom PR one layer at a time | Each bottom merge rebases the layer above → its approval is dismissed; merge from the top (`gh stack merge`) so the whole approved stack lands at once |
 | Continuing after a bottom merge without syncing | Run `gh stack sync --prune` so remaining branches retarget cleanly |
 | Flattening the stack into one PR after review | Keep layers as PRs; merge top once for atomic landing or merge safe lower segments early |
 | Re-parenting the whole stack onto `main` for every mid-stack edit | Use `gh stack rebase --upstack --no-trunk`; full trunk rebase only for a real `main` conflict or a deliberate pre-merge sync |
