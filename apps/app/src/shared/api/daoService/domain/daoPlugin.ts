@@ -2,6 +2,17 @@ import type { PluginInterfaceType } from './enum';
 import type { IPluginSettings } from './pluginSettings';
 import type { IResource } from './resource';
 
+export interface IDaoSubPlugin {
+    /**
+     * Addresses of the sub / child plugins used by a parent plugin.
+     */
+    addresses: string[];
+    /**
+     * Stage index where this subplugin group is configured, when applicable.
+     */
+    stageIndex?: number;
+}
+
 export interface IDaoPlugin<
     TSettings extends IPluginSettings = IPluginSettings,
 > {
@@ -66,6 +77,10 @@ export interface IDaoPlugin<
      * Address of the parent plugin's smart contract.
      */
     parentPlugin?: string;
+    /**
+     * Sub / child plugin addresses configured by this plugin.
+     */
+    subPlugins?: IDaoSubPlugin[];
     /**
      * Block timestamp when the plugin was created.
      */
