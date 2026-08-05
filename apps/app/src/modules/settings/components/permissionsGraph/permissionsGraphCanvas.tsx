@@ -13,7 +13,6 @@ import {
 } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IPermissionGraph } from '../../types';
-import { getLayoutedElements } from '../../utils/permissionGraphLayout';
 import {
     alignEdgesWithNodePositions,
     getFitViewMinZoom,
@@ -21,14 +20,15 @@ import {
     getLayoutSignature,
     PERMISSION_GRAPH_MIN_ZOOM,
     positionSelfStacks,
-} from './permissionGraphCanvasLayout';
+} from './permissionGraphCanvasLayoutUtils';
 import { PermissionGraphEdge } from './permissionGraphEdge';
 import {
     buildFlowElements,
     EDGE_ORIGIN_MARKER_ACTIVE,
     EDGE_ORIGIN_MARKER_NEUTRAL,
     getLayoutDirection,
-} from './permissionGraphFlowElements';
+} from './permissionGraphFlowElementsUtils';
+import { getLayoutedElements } from './permissionGraphLayoutUtils';
 import { PermissionGraphNode } from './permissionGraphNode';
 import { PermissionStackNode } from './permissionStackNode';
 

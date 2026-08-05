@@ -6,12 +6,12 @@ import type {
     IPermissionGraphEdge,
     IPermissionGraphNode,
 } from '../../types';
-import type { PermissionGraphDirection } from '../../utils/permissionGraphLayout';
 import type {
     IPermissionEdgeData,
     IPermissionEdgeEntry,
     PermissionEdgeVisualKind,
 } from './permissionGraphEdge';
+import type { PermissionGraphDirection } from './permissionGraphLayoutUtils';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNodeTypes';
 
 export const EDGE_ORIGIN_MARKER_NEUTRAL = 'permission-origin-dot-neutral';

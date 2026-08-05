@@ -3,12 +3,12 @@ import type {
     IPermissionGraphEdge,
     IPermissionGraphNode,
 } from '../../types';
-import { getLayoutedElements } from '../../utils/permissionGraphLayout';
-import { positionSelfStacks } from './permissionGraphCanvasLayout';
+import { positionSelfStacks } from './permissionGraphCanvasLayoutUtils';
 import {
     buildFlowElements,
     getLayoutDirection,
-} from './permissionGraphFlowElements';
+} from './permissionGraphFlowElementsUtils';
+import { getLayoutedElements } from './permissionGraphLayoutUtils';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNodeTypes';
 
 const anchorId = '0x1111111111111111111111111111111111111111';

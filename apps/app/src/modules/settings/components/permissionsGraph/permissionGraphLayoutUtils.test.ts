@@ -1,5 +1,5 @@
 import type { Edge, Node } from '@xyflow/react';
-import { getLayoutedElements } from './permissionGraphLayout';
+import { getLayoutedElements } from './permissionGraphLayoutUtils';
 
 const buildNode = (id: string, partial?: Partial<Node>): Node => ({
     id,

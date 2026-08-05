@@ -4,7 +4,7 @@ import {
     getFitViewMinZoom,
     getLayoutSignature,
     positionSelfStacks,
-} from './permissionGraphCanvasLayout';
+} from './permissionGraphCanvasLayoutUtils';
 import { PERMISSION_GRAPH_HANDLE } from './permissionGraphNodeTypes';
 
 const anchorId = '0x1111111111111111111111111111111111111111';
