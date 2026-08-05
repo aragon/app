@@ -31,19 +31,19 @@ const GENERATED_ROOTS = [
 ];
 
 const AGENT_FLAGS = [
+    // codex, cursor, and gemini-cli all resolve to the same universal .agents/skills
+    // store in the pinned CLI, so passing each would clean+recopy that dir once per
+    // agent. `universal` writes .agents/skills exactly once; claude-code writes
+    // .claude/skills. Together they cover both generated roots with no repeated work.
     '-a',
-    'codex',
+    'universal',
     '-a',
     'claude-code',
-    '-a',
-    'cursor',
-    '-a',
-    'gemini-cli',
 ];
 
 // --- skip conditions ---
 
-if (process.env.CI === '1' || process.env.CI === 'true') {
+if (process.env.CI && process.env.CI !== '0' && process.env.CI !== 'false') {
     console.log('[skills] CI detected — skipping sync.');
     process.exit(0);
 }
@@ -252,7 +252,9 @@ function validateRoot(root) {
             process.exit(1);
         }
 
-        // Validate supporting files were preserved (skip README.md which the CLI excludes).
+        // Validate supporting files were preserved. README.md is intentionally not
+        // required in generated output: it is often a category/skill doc, not an
+        // agent-consumed asset, and the pinned CLI (1.5.20) excludes only metadata.json.
         const sourceEntries = readdirSync(skill.dir, { withFileTypes: true })
             .filter((e) => e.name !== 'SKILL.md' && e.name !== 'README.md')
             .map((e) => e.name);

@@ -134,7 +134,7 @@ All generated roots are gitignored — do not commit generated skill copies and 
 3. Rejects category-level `SKILL.md` files.
 4. Validates frontmatter `name` matches the directory and `description` is present.
 5. Reconciles stale generated skills (removes generated dirs with no canonical source).
-6. Installs all skills via the pinned CLI with `--copy --yes --full-depth` to Codex, Claude Code, Cursor, and Gemini CLI.
+6. Installs all skills via the pinned CLI (`skills add … --copy --yes --full-depth`) to the two generated roots — the universal store (`.agents/skills`, read by Codex, Cursor, Gemini CLI, and others) and Claude Code (`.claude/skills`). It passes `-a universal -a claude-code`: the `universal` target writes `.agents/skills` exactly once, rather than once per universal agent.
 7. Validates the generated filesystem: every canonical skill exists at each root, `SKILL.md` present, supporting files preserved, categories flattened, executable bits retained.
 8. Fails on any inconsistency even if the CLI reported success.
 
@@ -184,3 +184,9 @@ pnpm test:guardrails   # rule-skill loader + adapter contract tests
 ## CLI
 
 The `skills` CLI ([npm](https://www.npmjs.com/package/skills), [source](https://github.com/vercel-labs/skills)) is pinned as an exact devDependency. The wrapper uses the local `node_modules/.bin/skills` — no global install, no `npx`.
+
+## Dependency-provided skills
+
+The CLI also ships an `experimental_sync` command that discovers skills bundled inside `node_modules` packages. This repository deliberately does **not** use it. `pnpm skills:sync` installs only the reviewed, checked-in catalog under `skills/` — a package appearing in the dependency graph never turns its `SKILL.md` into an authorized agent instruction here. Adopting a package-provided skill is an explicit, manual decision: review it, then copy it into `skills/shared/` or `skills/local/`.
+
+Note: `pnpm skills:sync` (repository catalog reconciliation) is a different operation from the CLI's `experimental_sync` (dependency discovery). Same word, opposite trust model.
