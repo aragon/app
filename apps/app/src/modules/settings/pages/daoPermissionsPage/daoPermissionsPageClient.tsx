@@ -7,6 +7,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { PermissionInfoTooltip } from '../../components/permissionInfoTooltip';
+import { PermissionsGraph } from '../../components/permissionsGraph';
 import {
     getPermissionRowKey,
     PermissionsList,
@@ -24,11 +25,18 @@ export interface IDaoPermissionsPageClientProps {
     daoId: string;
 }
 
+export const permissionsViewParam = 'permissionsview';
 export const permissionsHideDaoParam = 'permissionshidedaogrants';
 export const permissionsHideGoverningBodiesParam =
     'permissionshidegoverningbodypaths';
 
+enum PermissionsView {
+    LIST = 'list',
+    GRAPH = 'graph',
+}
+
 const booleanParamValues = ['false', 'true'];
+const permissionsViews = Object.values(PermissionsView);
 
 export const DaoPermissionsPageClient: React.FC<
     IDaoPermissionsPageClientProps
@@ -50,6 +58,13 @@ export const DaoPermissionsPageClient: React.FC<
         isLoading,
         error,
     } = usePermissionsData({ daoId });
+
+    const [view, setView] = useFilterUrlParam({
+        name: permissionsViewParam,
+        fallbackValue: PermissionsView.LIST,
+        validValues: permissionsViews,
+        enableUrlUpdate: true,
+    });
 
     const [hideDaoPermissionsParam, setHideDaoPermissions] = useFilterUrlParam({
         name: permissionsHideDaoParam,
@@ -73,6 +88,12 @@ export const DaoPermissionsPageClient: React.FC<
         hideGoverningBodyPermissionsParam === 'true';
     const showDaoPermissions = !hideDaoPermissions;
     const showSubpluginPermissions = !hideGoverningBodyPermissions;
+
+    const handleViewChange = (value?: string | string[]) => {
+        if (typeof value === 'string' && value) {
+            setView(value);
+        }
+    };
 
     const handleAccountChange = (value?: string | string[]) => {
         if (typeof value === 'string' && value) {
@@ -157,8 +178,9 @@ export const DaoPermissionsPageClient: React.FC<
         },
     ];
 
+    const isListView = view === PermissionsView.LIST;
     const showAccountSelector = accounts.length > 1;
-    const showExpandAll = !isLoading && filteredRows.length > 0;
+    const showExpandAll = isListView && !isLoading && filteredRows.length > 0;
 
     return (
         <>
@@ -189,6 +211,24 @@ export const DaoPermissionsPageClient: React.FC<
                                         ))}
                                     </ToggleGroup>
                                 )}
+                                <ToggleGroup
+                                    isMultiSelect={false}
+                                    onChange={handleViewChange}
+                                    value={view}
+                                >
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.view.list',
+                                        )}
+                                        value={PermissionsView.LIST}
+                                    />
+                                    <Toggle
+                                        label={t(
+                                            'app.settings.daoPermissionsPage.view.graph',
+                                        )}
+                                        value={PermissionsView.GRAPH}
+                                    />
+                                </ToggleGroup>
                                 {showExpandAll && (
                                     <Button
                                         className="hidden md:inline-flex"
@@ -248,15 +288,26 @@ export const DaoPermissionsPageClient: React.FC<
                                 </div>
                             </div>
                         </div>
-                        <PermissionsList
-                            accountRefs={accountRefs}
-                            chainId={chainId}
-                            daoPlugins={daoPlugins}
-                            expandedRows={expandedRows}
-                            isLoading={isLoading}
-                            onExpandedRowsChange={setExpandedRows}
-                            rows={filteredRows}
-                        />
+                        {isListView ? (
+                            <PermissionsList
+                                accountRefs={accountRefs}
+                                chainId={chainId}
+                                daoPlugins={daoPlugins}
+                                expandedRows={expandedRows}
+                                isLoading={isLoading}
+                                onExpandedRowsChange={setExpandedRows}
+                                rows={filteredRows}
+                            />
+                        ) : (
+                            <PermissionsGraph
+                                accountRefs={accountRefs}
+                                activeAccountAddress={activeAccount?.daoAddress}
+                                dao={permissionsDao}
+                                daoPlugins={daoPlugins}
+                                isLoading={isLoading}
+                                rows={filteredRows}
+                            />
+                        )}
                     </div>
                 </Page.Main>
             </Page.Content>
