@@ -7,14 +7,18 @@ import {
     Button,
     Card,
     CardEmptyState,
+    formatterUtils,
     IconType,
     InputContainer,
+    InputNumber,
     type IProposalActionComponentProps,
     invariant,
+    Link,
+    NumberFormat,
     RadioCard,
     RadioGroup,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
@@ -29,11 +33,22 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import {
+    GasLimitEstimationStatus,
+    useEstimateGasLimit,
+} from '../../../api/crossChainControllerService';
+import { crossChainControllerGas } from '../../../constants/crossChainControllerGas';
 import type {
     ICrossChainControllerActionForwardMessage,
     ICrossChainControllerPlugin,
 } from '../../../types';
 import { CrossChainControllerProposalActionType } from '../../../types';
+import { crossChainControllerGasUtils } from '../../../utils/crossChainControllerGasUtils';
+
+const formatGas = (gas?: string) =>
+    formatterUtils.formatNumber(gas ?? '0', {
+        format: NumberFormat.GENERIC_SHORT,
+    });
 
 export interface ICrossChainControllerForwardMessageActionProps
     extends IProposalActionComponentProps<
@@ -70,9 +85,6 @@ const messageAbiParameters = [
     },
 ] as const;
 
-// TODO(APP-1029): expose the gas limit once the product decides between a user input and a quote derived from the destination chain.
-const defaultGasLimit = BigInt(1_000_000);
-
 export const CrossChainControllerForwardMessageAction: React.FC<
     ICrossChainControllerForwardMessageActionProps
 > = (props) => {
@@ -91,7 +103,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue } = useFormContext();
-    const { chainId: daoChainId } = useDaoChain({ daoId });
+    const { chainId: daoChainId, network: daoNetwork } = useDaoChain({ daoId });
 
     // The nested actions are part of the proposal, so they are restricted by the process creating it.
     const { processPlugin } = useCreateProposalFormContext();
@@ -154,6 +166,28 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         fieldPrefix: actionFieldName,
     });
 
+    // Required rather than defaulted: an unset limit is what lands the message in the branch that
+    // records it as delivered without running its actions, recoverable only by a permissioned retry
+    // on the destination chain.
+    const {
+        onChange: onGasLimitChange,
+        value: gasLimit,
+        ...gasLimitField
+    } = useFormField<ICrossChainControllerActionForwardMessage, 'gasLimit'>(
+        'gasLimit',
+        {
+            label: t(
+                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.label',
+            ),
+            rules: {
+                required: true,
+                min: crossChainControllerGas.minGasLimit,
+                max: crossChainControllerGas.maxGasLimit,
+            },
+            fieldPrefix: actionFieldName,
+        },
+    );
+
     const handleDestinationChainChange = (value: string) =>
         onDestinationChainChange(Number(value));
 
@@ -163,14 +197,14 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         ({ chainId }) => chainId === destinationChainId,
     )?.network;
 
+    const destinationLane = lanes.find(
+        ({ chainId }) => chainId === destinationChainId,
+    );
+
     // The messaging fee is paid by the controller on the DAO chain with the fee token set on the
     // local adapter of the selected lane.
-    const feeTokenAddress = lanes.find(
-        ({ chainId }) => chainId === destinationChainId,
-    )?.feeToken;
-
     const { data: feeToken } = useToken({
-        address: feeTokenAddress,
+        address: destinationLane?.feeToken,
         chainId: daoChainId,
     });
 
@@ -210,15 +244,96 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         [nestedActions],
     );
 
+    const hasNestedActions = nestedActions.length > 0;
+
+    // The gas limit is measured against a specific payload on a specific chain, so it is only valid
+    // for the pair it was calculated from.
+    const estimationSubject = `${destinationChainId?.toString() ?? ''}:${encodedMessage}`;
+    const lastEstimationSubject = useRef(estimationSubject);
+
+    const {
+        mutate: estimateGasLimit,
+        data: estimation,
+        isPending: isEstimating,
+        isError: isEstimationError,
+        reset: resetEstimation,
+    } = useEstimateGasLimit();
+
+    // A limit calculated for a different destination or a different action list is worse than none:
+    // it looks authoritative and is silently wrong. Clearing it forces a recalculation, and the
+    // required rule on the field stops the proposal until that happens.
+    useEffect(() => {
+        if (lastEstimationSubject.current === estimationSubject) {
+            return;
+        }
+
+        lastEstimationSubject.current = estimationSubject;
+        onGasLimitChange(undefined);
+        resetEstimation();
+    }, [estimationSubject, onGasLimitChange, resetEstimation]);
+
+    const handleEstimateGasLimit = () => {
+        invariant(
+            daoNetwork != null && destinationChainId != null,
+            'CrossChainControllerForwardMessageAction: network and destination must be set to estimate gas.',
+        );
+
+        estimateGasLimit(
+            {
+                urlParams: {
+                    network: daoNetwork,
+                    controllerAddress: action.meta.address,
+                },
+                body: {
+                    destinationChainId,
+                    actions: nestedActions.map(({ to, value, data }) => ({
+                        to,
+                        value: value || '0',
+                        data: data || '0x',
+                    })),
+                },
+            },
+            {
+                // The backend only measures. The safety margin, floor and cap on top of that
+                // measurement are a product decision and are applied here.
+                onSuccess: (result) => {
+                    if (
+                        result.status !== GasLimitEstimationStatus.SUCCESS ||
+                        result.requiredGas == null
+                    ) {
+                        return;
+                    }
+
+                    const { gasLimit: resolvedGasLimit, exceedsMaxGasLimit } =
+                        crossChainControllerGasUtils.resolveGasLimit({
+                            requiredGas: BigInt(result.requiredGas),
+                        });
+
+                    // No choice of margin makes this deliverable; leaving the field empty keeps the
+                    // required rule from letting a wrong-but-plausible value reach the proposal.
+                    if (exceedsMaxGasLimit) {
+                        return;
+                    }
+
+                    onGasLimitChange(resolvedGasLimit.toString());
+                },
+            },
+        );
+    };
+
     useEffect(() => {
         if (destinationChainId == null) {
             return;
         }
 
+        // Encodes to zero while the limit is unset. The field is required, so a proposal can never
+        // be created in that state.
+        const encodedGasLimit = BigInt(gasLimit || 0);
+
         const newData = encodeFunctionData({
             abi: [forwardMessageAbi],
             functionName: 'forwardMessage',
-            args: [BigInt(destinationChainId), defaultGasLimit, encodedMessage],
+            args: [BigInt(destinationChainId), encodedGasLimit, encodedMessage],
         });
 
         setValue(`${actionFieldName}.data`, newData);
@@ -228,15 +343,102 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         );
         setValue(
             `${actionFieldName}.inputData.parameters[1].value`,
-            defaultGasLimit.toString(),
+            encodedGasLimit.toString(),
         );
         setValue(
             `${actionFieldName}.inputData.parameters[2].value`,
             encodedMessage,
         );
-    }, [actionFieldName, destinationChainId, encodedMessage, setValue]);
+    }, [
+        actionFieldName,
+        destinationChainId,
+        encodedMessage,
+        gasLimit,
+        setValue,
+    ]);
 
-    const hasNestedActions = nestedActions.length > 0;
+    // Reports how the calculation went. The field's own alert already covers the required, min and
+    // max rules, so this only speaks about the simulation.
+    const getEstimationAlert = () => {
+        if (isEstimationError) {
+            return {
+                message: t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.error',
+                ),
+                variant: 'critical' as const,
+            };
+        }
+
+        if (estimation == null) {
+            return undefined;
+        }
+
+        if (estimation.status === GasLimitEstimationStatus.REVERTED) {
+            return {
+                message: t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.reverted',
+                    {
+                        reason:
+                            estimation.revertReason ??
+                            t(
+                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.unknownReason',
+                            ),
+                    },
+                ),
+                variant: 'critical' as const,
+            };
+        }
+
+        if (estimation.requiredGas == null) {
+            return undefined;
+        }
+
+        const { isMarginReduced, exceedsMaxGasLimit } =
+            crossChainControllerGasUtils.resolveGasLimit({
+                requiredGas: BigInt(estimation.requiredGas),
+            });
+
+        // The backend never checks the requirement against the cap, so this is the client's own
+        // verdict: no choice of margin makes this deliverable, the batch has to be split.
+        if (exceedsMaxGasLimit) {
+            return {
+                message: t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.exceedsMax',
+                    {
+                        maxGasLimit: formatGas(
+                            crossChainControllerGas.maxGasLimit.toString(),
+                        ),
+                    },
+                ),
+                variant: 'critical' as const,
+            };
+        }
+
+        // The limit still covers the measured requirement, it just carries less headroom than the
+        // configured margin, which is worth saying out loud.
+        if (isMarginReduced) {
+            return {
+                message: t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.marginReduced',
+                    { requiredGas: formatGas(estimation.requiredGas) },
+                ),
+                variant: 'warning' as const,
+            };
+        }
+
+        return {
+            message: t(
+                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.simulated',
+                {
+                    requiredGas: formatGas(estimation.requiredGas),
+                    bufferPercent: crossChainControllerGas.bufferPercent,
+                },
+            ),
+            variant: 'success' as const,
+        };
+    };
+
+    const estimationAlert = getEstimationAlert();
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -326,6 +528,60 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     />
                 )}
             </InputContainer>
+
+            {hasNestedActions && (
+                <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-end">
+                        <div className="grow">
+                            <InputNumber
+                                helpText={t(
+                                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
+                                )}
+                                max={crossChainControllerGas.maxGasLimit}
+                                min={crossChainControllerGas.minGasLimit}
+                                onChange={onGasLimitChange}
+                                placeholder={t(
+                                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
+                                )}
+                                value={gasLimit ?? ''}
+                                {...gasLimitField}
+                            />
+                        </div>
+                        <Button
+                            className="md:mb-1"
+                            disabled={destinationChainId == null}
+                            iconLeft={IconType.RELOAD}
+                            isLoading={isEstimating}
+                            onClick={handleEstimateGasLimit}
+                            size="md"
+                            variant="secondary"
+                        >
+                            {t(
+                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
+                            )}
+                        </Button>
+                    </div>
+
+                    {estimationAlert != null && (
+                        <AlertInline
+                            message={estimationAlert.message}
+                            variant={estimationAlert.variant}
+                        />
+                    )}
+
+                    {estimation?.simulationUrl != null && (
+                        <Link
+                            href={estimation.simulationUrl}
+                            isExternal={true}
+                            showUrl={false}
+                        >
+                            {t(
+                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
+                            )}
+                        </Link>
+                    )}
+                </div>
+            )}
 
             <AlertCard
                 message={t(

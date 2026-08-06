@@ -160,4 +160,5 @@
 {"ts":"2026-08-04T12:34:00.962Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-08-04T12:34:05.191Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
 {"ts":"2026-08-04T12:34:06.974Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":7,"adapter":"claude"}
+{"ts":"2026-08-05T14:35:43.784Z","tool":"Write","file":"apps/app/src/plugins/crossChainControllerPlugin/api/crossChainControllerService/domain/gasLimitEstimation.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":9,"adapter":"claude"}
 {"ts":"2026-08-10T03:51:44.869Z","tool":"Edit","file":"apps/app/src/shared/hooks/useDaoPlugins/useDaoPlugins.ts","rule":"plugin-visibility","bytes":2379,"elapsed_ms":1,"adapter":"claude"}
