@@ -89,7 +89,7 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
         <TransactionDialog
             analytics={{
                 flow: 'proposal_execution',
-                transactionKind: 'governance_proposal_execute',
+                transactionTypeEvent: 'governance_proposal_execute',
             }}
             description={t('app.governance.executeDialog.description')}
             indexingFallbackUrl={daoUtils.getDaoUrl(dao, `proposals/${slug}`)}
