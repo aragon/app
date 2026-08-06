@@ -8,6 +8,5 @@ export type {
     IPermissionGraphNode,
     PermissionNodeKind,
 } from './permissionGraph';
-export type { IConditionData, IPermissionRow } from './permissionRow';
 export type { IPluginToFormDataParams } from './pluginToFormDataParams';
 export type { IUseGovernanceSettingsParams } from './useGovernanceSettingsParams';
