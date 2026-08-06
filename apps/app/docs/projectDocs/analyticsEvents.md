@@ -61,7 +61,7 @@ Rationale:
 - event names are stable code IDs;
 - prefixes group related funnel events;
 - TypeScript unions catch typos;
-- dashboards can segment by event props such as `flow` and `transactionKind`;
+- dashboards can segment by event props such as `flow` and `transactionTypeEvent`;
 - Title Case click-goal names are too easy to attach to the wrong lifecycle point.
 
 Do not name a click after a later business outcome. For example, a submit-button click before wallet signing is not a DAO publish event. DAO creation success is represented by a transaction terminal event with DAO-specific props.
@@ -92,11 +92,12 @@ Use `analyticsUtils.trackEvent` directly only for shared pipeline tests or futur
 | Prop | Type before normalization | Meaning |
 | --- | --- | --- |
 | `flow` | string | Product flow that emitted the event. |
-| `transactionKind` | string | Low-cardinality transaction purpose inside a flow. |
-| `transactionType` | string | Backend transaction type when backend transaction status/indexing is used. |
+| `transactionTypeEvent` | string | Low-cardinality transaction purpose inside a product flow. This is the only transaction classification sent on analytics events. |
 | `network` | string | DAO or transaction network. |
 | `chainId` | number | Required EVM chain ID. |
 | `pluginInterfaceType` | string | Governance plugin interface type when relevant. |
+
+`transactionType` is a separate backend enum used by the pending-transaction manager for resume, duplicate detection, and indexing. It is intentionally not included in Plausible payloads; do not add it as a second analytics dimension.
 
 Known `flow` values:
 
@@ -109,7 +110,7 @@ Known `flow` values:
 | `proposal_execution` | Execute existing proposal. |
 | `proposal_vote` | Vote on existing proposal. |
 
-Known `transactionKind` values:
+Known `transactionTypeEvent` values:
 
 | Value | Flow |
 | --- | --- |
@@ -230,7 +231,7 @@ Required props:
 | Prop | Notes |
 | --- | --- |
 | `flow` | Product flow. |
-| `transactionKind` | Low-cardinality transaction purpose. |
+| `transactionTypeEvent` | Low-cardinality transaction purpose. |
 | `network` | Transaction network. |
 | `chainId` | Required chain ID. |
 | `attemptKind` | `new` or `resume`. |
@@ -239,10 +240,9 @@ Optional props:
 
 | Prop | Notes |
 | --- | --- |
-| `transactionType` | Present when backend transaction status/indexing is used. |
 | `actionCount` | Present for direct execute-actions. |
 
-DAO publish/create attempt is `transaction_start` with `flow: 'create_dao'` and `transactionKind: 'dao_create'`.
+DAO publish/create attempt is `transaction_start` with `flow: 'create_dao'` and `transactionTypeEvent: 'dao_create'`.
 
 ### `transaction_stage`
 
@@ -253,7 +253,7 @@ Required props:
 | Prop | Notes |
 | --- | --- |
 | `flow` | Product flow. |
-| `transactionKind` | Low-cardinality transaction purpose. |
+| `transactionTypeEvent` | Low-cardinality transaction purpose. |
 | `network` | Transaction network. |
 | `chainId` | Required chain ID. |
 | `status` | Currently `submitted` or `confirmed`. |
@@ -267,12 +267,12 @@ Required props:
 | Prop | Notes |
 | --- | --- |
 | `flow` | Product flow. |
-| `transactionKind` | Low-cardinality transaction purpose. |
+| `transactionTypeEvent` | Low-cardinality transaction purpose. |
 | `network` | Transaction network. |
 | `chainId` | Required chain ID. |
 | `status` | `confirmed` or `indexed`. |
 
-DAO creation success is `transaction_end` with `flow: 'create_dao'`, `transactionKind: 'dao_create'`, and a success `status`.
+DAO creation success is `transaction_end` with `flow: 'create_dao'`, `transactionTypeEvent: 'dao_create'`, and a success `status`.
 
 ### `transaction_failed`
 
@@ -283,7 +283,7 @@ Required props:
 | Prop | Notes |
 | --- | --- |
 | `flow` | Product flow. |
-| `transactionKind` | Low-cardinality transaction purpose. |
+| `transactionTypeEvent` | Low-cardinality transaction purpose. |
 | `network` | Transaction network. |
 | `chainId` | Required chain ID. |
 | `errorClass` | Error class name only, or `unknown`. |
@@ -293,8 +293,43 @@ Optional props:
 | Prop | Notes |
 | --- | --- |
 | `step` | Step where failure happened, e.g. `PREPARE`, `APPROVE`, `CONFIRM`, `INDEXING`. |
+| `status` | Present as `send_error` for direct execute-actions failures. |
 
 Never send raw error messages, stacks, revert reasons, provider payloads, calldata, addresses, hashes, or proposal metadata.
+
+## Where each event fires
+
+Each event is fired by exactly one place in the app: a page, dialog, or hook. These are code paths, not the Plausible dashboard Goals covered in the next section. The wizard and transaction events are opt-in, so their component fires them only when it is given analytics metadata.
+
+| Events | Fired by | Current application surfaces |
+| --- | --- | --- |
+| `wizard_start`, `wizard_step` | `WizardRoot` | `createDaoPageClient` (`create_dao`), `createProcessPageClient` (`governance_designer`), `createProposalPageClient` (`create_proposal`), and `createExecuteActionsPageClient` (`direct_execute_actions`) |
+| `wizard_validation_blocked` | `WizardForm` | The same four analytics-enabled wizards |
+| `wizard_submit` | Flow page client | `createDaoPageClient`, `createProcessPageClient`, `createProposalPageClient`, and `createExecuteActionsPageClient` |
+| `transaction_start`, `transaction_stage`, `transaction_end`, `transaction_failed` | `TransactionDialog` | `publishDaoDialog`, `publishProposalDialog`, `executeDialog`, and `voteDialog`, when passed an `analytics` prop |
+| `transaction_start`, `transaction_stage`, `transaction_failed` | `ExecuteActionsDialog` | Direct admin action execution (`direct_execute_actions`) |
+| `action_added`, `action_added_batch` | `useProposalActionsField` | Proposal and direct-execute action forms |
+
+## Plausible dashboard declarations
+
+Plausible is a passive receiver. It has no registry of the app's event names; it only learns an event exists once the tracker sends it to `/api/event`. Both steps are required, in order: the app emits the event, and a matching Custom event Goal exists for the count to appear. A Goal with no matching event sits at zero forever, and an event with no Goal is received but never shown. Past events are not backfilled, so a Goal counts only from when you create it.
+
+In the development site (`dev.app.aragon.org`) and production site (`app.aragon.org`), create one Custom event Goal for each exact event name the app emits:
+
+- `wizard_start`
+- `wizard_step`
+- `wizard_submit`
+- `wizard_validation_blocked`
+- `action_added`
+- `action_added_batch`
+- `transaction_start`
+- `transaction_stage`
+- `transaction_end`
+- `transaction_failed`
+
+Create property-filtered Goals only when a funnel needs a specific segment, using `flow` and/or `transactionTypeEvent` (Plausible allows up to three property constraints per Goal). Do not register Goals for names the app does not emit, such as the backend `transactionType` or Title Case labels; a Goal for a non-emitted name is a permanent zero. When a new surface ships, add its name to `PlausibleAnalyticsEventName`, emit it from that UI, then register the Goal.
+
+Renaming an emitted property key does not require rebuilding event Goals. The ten event names above are unchanged, so unfiltered Goals and their funnels keep working. Only update Goals, funnels, and saved filters that constrain on `transactionKind`: edit those in place to `transactionTypeEvent`. Historical events keep the old key, so segmented data splits at the rename boundary; do not dual-send both keys to paper over it.
 
 ## Adding a new event
 

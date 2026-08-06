@@ -123,7 +123,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
         <TransactionDialog
             analytics={{
                 flow: 'proposal_vote',
-                transactionKind: 'governance_proposal_vote',
+                transactionTypeEvent: 'governance_proposal_vote',
             }}
             description={t('app.governance.voteDialog.description')}
             indexingFallbackUrl={
