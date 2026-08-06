@@ -172,7 +172,7 @@ export const PublishDaoDialog: React.FC<IPublishDaoDialogProps> = (props) => {
         <TransactionDialog<PublishDaoStep>
             analytics={{
                 flow: 'create_dao',
-                transactionKind: 'dao_create',
+                transactionTypeEvent: 'dao_create',
             }}
             customSteps={customSteps}
             description={t('app.createDao.publishDaoDialog.description')}

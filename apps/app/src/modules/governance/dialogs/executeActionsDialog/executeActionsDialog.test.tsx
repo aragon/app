@@ -156,14 +156,14 @@ describe('<ExecuteActionsDialog /> component', () => {
         );
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_start', {
             flow: 'direct_execute_actions',
-            transactionKind: 'admin_instant_execute',
+            transactionTypeEvent: 'admin_instant_execute',
             network,
             chainId: networkDefinitions[network].id,
             actionCount: 0,
         });
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_stage', {
             flow: 'direct_execute_actions',
-            transactionKind: 'admin_instant_execute',
+            transactionTypeEvent: 'admin_instant_execute',
             network,
             chainId: networkDefinitions[network].id,
             status: 'submitted',
@@ -200,7 +200,7 @@ describe('<ExecuteActionsDialog /> component', () => {
 
         expect(trackAnalyticsSpy).toHaveBeenCalledWith('transaction_failed', {
             flow: 'direct_execute_actions',
-            transactionKind: 'admin_instant_execute',
+            transactionTypeEvent: 'admin_instant_execute',
             network,
             chainId: networkDefinitions[network].id,
             status: 'send_error',
