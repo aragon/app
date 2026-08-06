@@ -64,17 +64,20 @@ export const GaugeVoterSelectGaugeDialog: React.FC<
 
     const [selectedGauge, setSelectedGauge] = useState<IGauge | null>(null);
 
+    // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+    const handleClose = () => close(location.id);
+
     const handleSubmit = () => {
         if (selectedGauge != null) {
             onGaugeSelected?.(selectedGauge);
         }
-        close();
+        handleClose();
     };
 
     return (
         <>
             <Dialog.Header
-                onClose={close}
+                onClose={handleClose}
                 title={t(
                     'app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.title',
                 )}
@@ -135,7 +138,7 @@ export const GaugeVoterSelectGaugeDialog: React.FC<
                     label: t(
                         'app.actions.gaugeVoter.gaugeVoterSelectGaugeDialog.cancel',
                     ),
-                    onClick: () => close(),
+                    onClick: handleClose,
                 }}
             />
         </>

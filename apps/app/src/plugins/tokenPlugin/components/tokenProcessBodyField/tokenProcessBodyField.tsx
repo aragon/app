@@ -53,14 +53,10 @@ export interface ITokenProcessBodyFieldProps {
      * ID of the DAO.
      */
     daoId: string;
-    /**
-     * Stage threshold applying to this body.
-     */
-    stageThreshold?: number;
 }
 
 export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
-    const { body, isAdvancedGovernance, daoId, stageThreshold } = props;
+    const { body, isAdvancedGovernance, daoId } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -161,7 +157,6 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             <GovernanceBodyDecisionItem
                 isAdvancedGovernance={isAdvancedGovernance}
                 proposalType={body.proposalType}
-                stageThreshold={stageThreshold}
             />
             {isExisting &&
                 contractInfo.map(

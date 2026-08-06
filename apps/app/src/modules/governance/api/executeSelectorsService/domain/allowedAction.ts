@@ -2,6 +2,14 @@ import type { IAllowedActionDecoded } from './allowedActionDecoded';
 
 export interface IAllowedAction {
     /**
+     * Unique backend identifier of the allowed-action event.
+     */
+    id: string;
+    /**
+     * Address of the condition contract that gates this action.
+     */
+    conditionAddress: string;
+    /**
      * Selector of the allowed action. `null` means native transfer.
      */
     selector: string | null;

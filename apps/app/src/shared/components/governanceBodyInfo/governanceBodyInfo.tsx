@@ -1,5 +1,4 @@
 import { Avatar, addressUtils, invariant } from '@aragon/gov-ui-kit';
-import type { ReactNode } from 'react';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { daoUtils } from '@/shared/utils/daoUtils';
 
@@ -8,10 +7,6 @@ export interface IGovernanceBodyInfoProps {
      * The name of the body.
      */
     name?: string;
-    /**
-     * Optional element (e.g. a tag) rendered next to the body name.
-     */
-    tag?: ReactNode;
     /**
      * The address of the body.
      */
@@ -37,7 +32,7 @@ export interface IGovernanceBodyInfoProps {
 export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
     props,
 ) => {
-    const { name, subdomain, address, release, build, logoSrc, tag } = props;
+    const { name, subdomain, address, release, build, logoSrc } = props;
 
     invariant(
         address != null || subdomain != null,
@@ -58,13 +53,11 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
 
     return (
         <div className="flex w-full flex-col items-start gap-1">
-            <div className="flex w-full items-center justify-between gap-2">
-                {/* The tag renders a div, which is invalid inside a p element. */}
-                <div className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
-                    <p>{bodyName}</p>
+            <div className="flex w-full items-center justify-between">
+                <p className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
+                    {bodyName}
                     {logoSrc && <Avatar size="sm" src={logoSrc} />}
-                    {tag}
-                </div>
+                </p>
                 {address && name != null && name !== '' && (
                     <p className="text-base text-neutral-500 leading-tight md:text-lg">
                         {truncatedAddress}

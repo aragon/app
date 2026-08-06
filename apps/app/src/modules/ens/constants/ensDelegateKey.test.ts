@@ -14,7 +14,6 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         { network: Network.AVAX_MAINNET, expected: 'avax' },
         { network: Network.ZKSYNC_MAINNET, expected: 'zksync' },
         { network: Network.CHILIZ_MAINNET, expected: 'chzmainnet' },
-        { network: Network.PEAQ_MAINNET, expected: 'PEAQ' },
         { network: Network.CITREA_MAINNET, expected: 'citrea' },
         { network: Network.HEMI_MAINNET, expected: 'hemi' },
         { network: Network.KATANA_MAINNET, expected: 'katana' },
@@ -73,7 +72,6 @@ describe('buildEnsDelegateKey', () => {
         { network: Network.BASE_MAINNET, prefix: 'base' },
         { network: Network.ARBITRUM_MAINNET, prefix: 'arb1' },
         { network: Network.OPTIMISM_MAINNET, prefix: 'oeth' },
-        { network: Network.PEAQ_MAINNET, prefix: 'PEAQ' },
     ])('builds the key with the network shortname for $network', ({
         network,
         prefix,

@@ -54,6 +54,7 @@ export const useCapitalDistributorCampaignUpload = (
             open(CapitalDistributorDialogId.CAMPAIGN_UPLOAD_STATUS, {
                 params: dialogParams,
                 disableOutsideClick: true,
+                stack: true,
             });
         },
         [dao, capitalDistributorAddress, onComplete, open],

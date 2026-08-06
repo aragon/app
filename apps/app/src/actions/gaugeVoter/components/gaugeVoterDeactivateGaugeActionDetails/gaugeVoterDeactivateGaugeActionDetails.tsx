@@ -6,6 +6,7 @@ import {
     EmptyState,
     type IProposalAction,
     type IProposalActionComponentProps,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import type { Hex } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
@@ -27,6 +28,12 @@ export const GaugeVoterDeactivateGaugeActionDetails: React.FC<
     IGaugeVoterDeactivateGaugeActionDetailsProps
 > = (props) => {
     const { action } = props;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        action.daoId != null,
+        'GaugeVoterDeactivateGaugeActionDetails: daoId must be set on the action.',
+    );
     const pluginAddress = action.to;
     const { data: dao } = useDao({ urlParams: { id: action.daoId } });
     const { t } = useTranslations();

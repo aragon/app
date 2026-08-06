@@ -651,6 +651,20 @@
         "description": "Confirm the onchain transaction in your wallet to move your profile records to the new name.",
         "submit": "Confirm in wallet",
         "transactionInfo": "Rename Aragon name"
+      },
+      "retryTransactionAlertDialog": {
+        "title": "Your previous transaction may still succeed",
+        "description": {
+          "1": "Your transaction has not been confirmed yet. If it eventually succeeds, retrying now could result in two transactions.",
+          "2": "Only retry if you are sure the transaction has failed or you intentionally want to send it again."
+        },
+        "action": {
+          "retry": "Retry transaction",
+          "back": "Go back"
+        },
+        "a11y": {
+          "description": "Warning that retrying an unconfirmed transaction may execute the action twice."
+        }
       }
     },
     "capitalFlow": {
@@ -1348,13 +1362,13 @@
         },
         "proposalTypeField": {
           "approve": {
-            "description": "This body must approve the proposal for the stage to advance.",
-            "label": "Approve"
+            "description": "This body is able to approve the proposal to advance this stage.",
+            "label": "Approval"
           },
-          "helpText": "Choose whether this body approves or vetoes within the stage. A single stage can mix approving and vetoing bodies.",
-          "label": "Body decision",
+          "helpText": "This will determine the role this body plays in the stage's governance.",
+          "label": "Governance type",
           "veto": {
-            "description": "This body can veto the proposal, stopping the stage from advancing.",
+            "description": "This body is able to veto the proposal to prevent it from advancing this stage.",
             "label": "Veto"
           }
         },
@@ -1418,6 +1432,31 @@
       }
     },
     "daos": {
+      "alchemix": {
+        "alchemixSubmitVote": {
+          "alsoVote": {
+            "description": "Cast the same option with the voting power delegated to you in the same transaction.",
+            "label": "Also vote with your voting power"
+          },
+          "buttons": {
+            "override": "Override vote"
+          },
+          "delegateNotVoted": "Hasn't voted yet · delegated your {{amount}} {{symbol}}",
+          "delegateOverridden": "No longer votes with your {{amount}} {{symbol}}",
+          "delegateTag": "Your delegate",
+          "delegateVoted": "Voted with your {{amount}} {{symbol}}",
+          "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
+          "options": {
+            "alreadyCounted": "Your tokens already count toward {{option}}",
+            "currentVote": "Your current vote"
+          },
+          "position": {
+            "overrode": "Voting with {{amount}} {{symbol}} · overrode {{delegate}}",
+            "voted": "Voting with {{amount}} {{symbol}}"
+          },
+          "youTag": "You"
+        }
+      },
       "aragonDemo": {
         "aragonDemoPageHeader": {
           "cta": "Create proposal",
@@ -1828,7 +1867,7 @@
           "default": "Action",
           "walletConnect": "Connect"
         },
-        "authorizedSwitchLabel": "Only show authorized actions",
+        "authorizedSwitchLabel": "Only show allowed actions",
         "customItem": {
           "ADD_CONTRACT": "Add contract address",
           "RAW_CALLDATA": "Enter raw calldata"
@@ -2189,6 +2228,15 @@
         },
         "name": "Create proposal",
         "namePlugin": "{{plugin}}: Create proposal"
+      },
+      "nestedActionsDialog": {
+        "cancel": "Cancel",
+        "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
+        "decoding": "Decoding actions",
+        "description": "These actions are executed as a batch by the action you are composing.",
+        "prepareError": "We couldn't prepare the actions. Please try again.",
+        "save": "Save actions",
+        "title": "Add actions"
       },
       "permissionCheckDialog": {
         "a11y": {
@@ -2932,7 +2980,7 @@
       "multisig": {
         "meta": {
           "setup": {
-            "description": "Designated members must reach a minimum approval threshold",
+            "description": "Designated members must reach a minimum threshold",
             "name": "Multisig"
           }
         },
@@ -2993,11 +3041,11 @@
         "multisigSetupGovernance": {
           "minimumApproval": {
             "alert": {
-              "majority": "Proposal will be approved by majority",
-              "minority": "Proposals could be approved by a minority rather than a majority."
+              "majority": "Decisions will be made by majority",
+              "minority": "Decisions could be made by a minority rather than a majority."
             },
-            "helpText": "At least this many members will have to approve proposals.",
-            "label": "Approval threshold",
+            "helpText": "At least this many members will have to sign a transaction to make a decision.",
+            "label": "Multisig threshold",
             "total": "of {{total}} addresses"
           },
           "onlyListed": {
@@ -3100,10 +3148,6 @@
             "veto": "Vetoed"
           }
         },
-        "sppVotingTerminalBodyDecisionTag": {
-          "approve": "Approve",
-          "veto": "Veto"
-        },
         "sppVotingTerminalBodyVoteDefault": {
           "approve": "Approve proposal",
           "approved": "Approved",
@@ -3115,7 +3159,7 @@
         "sppVotingTerminalStageBodySummaryFooter": {
           "approveRequirement": "required to approve",
           "thresholdLabel": "{{count}} {{entityType}}",
-          "vetoRequirement": "can veto"
+          "vetoRequirement": "required to veto"
         },
         "sppVotingTerminalStageTimelock": {
           "active": {
@@ -3450,6 +3494,10 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
+            "object": "Object",
+            "objectionDescription": ", I object",
+            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
+            "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3457,6 +3505,7 @@
           },
           "voteDescription": {
             "approve": "to approve",
+            "objection": "to object",
             "veto": "to veto"
           }
         },
@@ -3890,6 +3939,13 @@
         "title": "Resources"
       },
       "transactionDialog": {
+        "confirmWarning": {
+          "title": "Transaction not yet confirmed",
+          "description": "Check the transaction in your wallet. If it is still pending, you can speed it up or cancel it. If it failed, you can send it to your wallet to try again."
+        },
+        "error": {
+          "replacementUnderpriced": "Previous transaction is stuck — raise the gas fee in your wallet when retrying"
+        },
         "footer": {
           "approve": {
             "error": "Resend to wallet",
@@ -3897,6 +3953,9 @@
             "pending": "Awaiting signature"
           },
           "cancel": "Close",
+          "confirm": {
+            "warning": "Resend to wallet"
+          },
           "proceedAnyway": "Continue in background",
           "retry": "Retry"
         },
@@ -3909,7 +3968,8 @@
           "CONFIRM": {
             "addon": "Details",
             "errorLabel": "Confirmation failed",
-            "label": "Confirm transaction"
+            "label": "Confirm transaction",
+            "warningLabel": "Taking longer than expected"
           },
           "INDEXING": {
             "errorLabel": "Indexing failed",

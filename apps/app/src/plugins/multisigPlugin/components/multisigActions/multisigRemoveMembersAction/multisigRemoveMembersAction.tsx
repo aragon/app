@@ -1,6 +1,7 @@
 import {
     addressUtils,
     type IProposalActionComponentProps,
+    invariant,
 } from '@aragon/gov-ui-kit';
 import { useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
@@ -38,6 +39,13 @@ export const MultisigRemoveMembersAction: React.FC<
     IMultisigRemoveMembersActionProps
 > = (props) => {
     const { action, index } = props;
+    const { daoId } = action;
+
+    // The view resolves its DAO data from the action, so it only supports actions composed in DAO context.
+    invariant(
+        daoId != null,
+        'MultisigRemoveMembersAction: daoId must be set on the action.',
+    );
 
     const { setValue } = useFormContext();
     const { open } = useDialogContext();
@@ -79,11 +87,11 @@ export const MultisigRemoveMembersAction: React.FC<
 
     const handleAddClick = () => {
         const params: IMultisigRemoveMembersActionDialogParams = {
-            daoId: action.daoId,
+            daoId,
             pluginAddress: action.to,
             onMemberClick: handleMemberClick,
         };
-        open(MultisigPluginDialogId.REMOVE_MEMBERS, { params });
+        open(MultisigPluginDialogId.REMOVE_MEMBERS, { params, stack: true });
     };
 
     useEffect(() => {

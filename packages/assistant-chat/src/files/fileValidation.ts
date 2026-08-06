@@ -14,16 +14,13 @@ const allowedMimeTypes = [
 const allowedTextExtensions = ['.txt', '.log', '.md', '.json'];
 
 /**
- * Accept map for react-dropzone, mirroring the client-side allowlist.
+ * Accept string of the attachment adapter (native file-input format), mirroring the client-side
+ * allowlist. The runtime also pre-filters dropped and pasted files against it.
  */
-export const dropzoneAccept: Record<string, string[]> = {
-    'image/png': ['.png'],
-    'image/jpeg': ['.jpg', '.jpeg'],
-    'image/gif': ['.gif'],
-    'image/webp': ['.webp'],
-    'application/pdf': ['.pdf'],
-    'text/plain': allowedTextExtensions,
-};
+export const attachmentAccept = [
+    ...allowedMimeTypes,
+    ...allowedTextExtensions,
+].join(',');
 
 export type FileRejectReason = 'too_large' | 'unsupported' | 'file_limit';
 
@@ -40,13 +37,20 @@ export interface IRejectedFile {
 
 export interface IFileValidationResult {
     /**
-     * Files passing the client-side filter, capped to the remaining session slots.
+     * Files passing the client-side filter, capped to the remaining slots of the message.
      */
     accepted: File[];
     /**
      * Files rejected client-side with the reason of the first failed check.
      */
     rejected: IRejectedFile[];
+}
+
+export interface IValidateFilesOptions {
+    /**
+     * Attachment slots the message being composed has already used.
+     */
+    usedSlots: number;
 }
 
 const isSupportedFile = (file: File): boolean => {
@@ -61,12 +65,15 @@ const isSupportedFile = (file: File): boolean => {
 
 /**
  * Filters the given files against the shared limits: type allowlist, max size and the remaining
- * attachment slots of the session.
+ * attachment slots of the message being composed.
  */
 export const validateFiles = (
     files: File[],
-    remainingSlots: number,
+    options: IValidateFilesOptions,
 ): IFileValidationResult => {
+    const remainingSlots =
+        assistantLimits.maxFilesPerMessage - options.usedSlots;
+
     const accepted: File[] = [];
     const rejected: IRejectedFile[] = [];
 

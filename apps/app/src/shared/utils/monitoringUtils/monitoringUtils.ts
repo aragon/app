@@ -70,6 +70,7 @@ class MonitoringUtils {
         'must be connected', // Dialog invariants opened without a connected wallet
         'wallet must has at least one account', // Wallet connected with no selected account
         'exceeds the balance', // Insufficient balance for gas/value
+        'replacement transaction underpriced', // Wallet has a stuck same-nonce transaction; user-resolvable
         "session topic doesn't exist", // WalletConnect: stale session
         'No matching key. session topic', // WalletConnect: stale session
     ];

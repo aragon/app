@@ -71,17 +71,20 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
         null,
     );
 
+    // Close only this dialog to keep a parent dialog (e.g. NestedActionsDialog) on the stack.
+    const handleClose = () => close(location.id);
+
     const handleSubmit = () => {
         if (selectedCampaign != null) {
             onCampaignSelected?.(selectedCampaign);
         }
-        close();
+        handleClose();
     };
 
     return (
         <>
             <Dialog.Header
-                onClose={close}
+                onClose={handleClose}
                 title={t(
                     'app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.title',
                 )}
@@ -145,7 +148,7 @@ export const CapitalDistributorSelectCampaignDialog: React.FC<
                     label: t(
                         'app.actions.capitalDistributor.capitalDistributorSelectCampaignDialog.cancel',
                     ),
-                    onClick: () => close(),
+                    onClick: handleClose,
                 }}
             />
         </>

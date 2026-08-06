@@ -110,6 +110,29 @@ describe('<TransactionDialogFooter /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('keeps the cancel button enabled and offers a retry action when the confirm step warns', async () => {
+        const confirmAction = jest.fn();
+        const onError = jest.fn();
+        const activeStep = {
+            id: TransactionDialogStep.CONFIRM,
+            meta: { state: 'warning', action: confirmAction },
+        } as unknown as ITransactionDialogStep;
+        render(createTestComponent({ activeStep, onError }));
+
+        expect(
+            screen.getByRole('button', {
+                name: /transactionDialog.footer.cancel/,
+            }),
+        ).not.toBeDisabled();
+
+        const retryButton = screen.getByRole('button', {
+            name: /transactionDialog.footer.confirm.warning/,
+        });
+        expect(screen.getByTestId(IconType.RELOAD)).toBeInTheDocument();
+        await userEvent.click(retryButton);
+        expect(confirmAction).toHaveBeenCalledWith({ onError });
+    });
+
     it('renders default retry label and icon when step is not approve and state is error', () => {
         const activeStep = {
             id: TransactionDialogStep.PREPARE,

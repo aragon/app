@@ -1,6 +1,6 @@
 import { Dialog, DialogFooter, IconType, invariant } from '@aragon/gov-ui-kit';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 import { useSendTransaction } from 'wagmi';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
@@ -17,6 +17,7 @@ import {
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IExecuteActionsDialogProps } from './executeActionsDialog.api';
 import { executeActionsDialogUtils } from './executeActionsDialogUtils';
 
@@ -82,6 +83,18 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
             ? switchChainStatus
             : 'idle';
 
+    const failureTrackedRef = useRef(false);
+    const analyticsProps = useMemo(
+        () => ({
+            flow: 'direct_execute_actions',
+            transactionKind: 'admin_instant_execute',
+            network,
+            chainId: requiredChainId,
+            actionCount: actions.length,
+        }),
+        [network, requiredChainId, actions.length],
+    );
+
     // Once the transaction is successfully submitted, unblock navigation so that clicking the
     // success link does not trigger the confirm-exit guard of the still-dirty wizard form behind
     // the dialog. The submitted state is optimistic, so re-block if the send later fails (e.g. the
@@ -93,6 +106,18 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
             setIsBlocked(false);
         }
     }, [sendFailed, submitState, setIsBlocked]);
+
+    useEffect(() => {
+        if (!sendFailed || failureTrackedRef.current) {
+            return;
+        }
+
+        failureTrackedRef.current = true;
+        plausibleAnalyticsUtils.track('transaction_failed', {
+            ...analyticsProps,
+            status: 'send_error',
+        });
+    }, [sendFailed, analyticsProps]);
 
     const monitorError = useCallback(
         (error: unknown) =>
@@ -146,11 +171,16 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         withNetworkSwitch(() => {
             // Pin the send to the required chain so wagmi rejects (instead of silently signing) if
             // the wallet is still on the wrong chain after the switch.
+            plausibleAnalyticsUtils.track('transaction_start', analyticsProps);
             sendTransaction(
                 { ...transaction, chainId: requiredChainId },
                 { onError: monitorError },
             );
             setIsSubmitted(true);
+            plausibleAnalyticsUtils.track('transaction_stage', {
+                ...analyticsProps,
+                status: 'submitted',
+            });
         });
     }, [
         transaction,
@@ -158,6 +188,7 @@ export const ExecuteActionsDialog: React.FC<IExecuteActionsDialogProps> = (
         sendTransaction,
         monitorError,
         withNetworkSwitch,
+        analyticsProps,
     ]);
 
     const isPreparing = prepareStatus === 'pending';

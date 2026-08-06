@@ -1,6 +1,7 @@
 import { Tag } from '@aragon/gov-ui-kit';
-import { useAssistantChatContext } from '../../controller';
+import { useState } from 'react';
 import { chatCopy } from '../../copy';
+import { getRequestHistory } from '../../requests';
 
 const maxVisibleEntries = 5;
 
@@ -15,17 +16,19 @@ const formatCreatedAt = (createdAt: string): string => {
     return Number.isNaN(date.getTime()) ? '' : dateFormatter.format(date);
 };
 
-// Past requests of this device, shown on the idle screen so users can get back to a created
-// ticket without digging through their email.
+// Past requests of this device, shown on the greeting screen so users can get back to a created
+// ticket without digging through their email. The component only exists on the greeting screen,
+// so reading the stored history once per mount is always fresh: any newly created ticket
+// unmounts the greeting, and the next fresh chat remounts it.
 export const ChatRequestHistory: React.FC = () => {
-    const { flowState, requestHistory } = useAssistantChatContext();
+    const [requestHistory] = useState(() => getRequestHistory());
 
-    if (flowState !== 'idle' || requestHistory.length === 0) {
+    if (requestHistory.length === 0) {
         return null;
     }
 
     return (
-        <div className="mt-2 flex flex-col gap-1.5 self-stretch">
+        <div className="mt-8 flex flex-col gap-2 self-stretch text-start">
             <p className="text-neutral-500 text-xs uppercase tracking-wide">
                 {chatCopy.requestHistory.heading}
             </p>

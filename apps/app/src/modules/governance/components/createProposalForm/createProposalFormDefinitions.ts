@@ -16,9 +16,10 @@ export type IProposalActionData<
      */
     fieldId?: string;
     /**
-     * ID of the DAO.
+     * ID of the DAO. Undefined when the action is composed outside a DAO context, in which case only
+     * the decoded action view is available (basic views resolve their data through the DAO).
      */
-    daoId: string;
+    daoId?: string;
     /**
      * Additional metadata for the action.
      */

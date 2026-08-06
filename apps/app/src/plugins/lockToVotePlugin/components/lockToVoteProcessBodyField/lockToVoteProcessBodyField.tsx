@@ -59,17 +59,12 @@ export interface ILockToVoteProcessBodyFieldProps {
      * @default false
      */
     readOnly?: boolean;
-    /**
-     * Stage threshold applying to this body.
-     */
-    stageThreshold?: number;
 }
 
 export const LockToVoteProcessBodyField = (
     props: ILockToVoteProcessBodyFieldProps,
 ) => {
-    const { body, isAdvancedGovernance, daoId, readOnly, stageThreshold } =
-        props;
+    const { body, isAdvancedGovernance, daoId, readOnly } = props;
 
     const daoUrlParams = { id: daoId };
     const { data: dao } = useDao({ urlParams: daoUrlParams });
@@ -166,7 +161,6 @@ export const LockToVoteProcessBodyField = (
             <GovernanceBodyDecisionItem
                 isAdvancedGovernance={isAdvancedGovernance}
                 proposalType={body.proposalType}
-                stageThreshold={stageThreshold}
             />
             {readOnly &&
                 contractInfo.map(

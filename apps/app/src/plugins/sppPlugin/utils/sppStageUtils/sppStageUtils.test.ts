@@ -575,6 +575,73 @@ describe('SppStageUtils', () => {
             );
         });
 
+        it('returns active for an objection stage while the window is open, even though approval is already reached', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 });
+            const minAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 3 });
+            const endDate = DateTime.fromISO(now).plus({ days: 10 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1, approvalThreshold: 1 }),
+                generateSppStage({ stageIndex: 2 }),
+            ];
+            const subProposal = generateSppSubProposal({ stageIndex: 1 });
+            subProposal.settings = {
+                ...subProposal.settings,
+                isObjection: true,
+            };
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 1,
+                settings: generateSppPluginSettings({ stages }),
+                subProposals: [subProposal],
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ACTIVE,
+            );
+        });
+
+        it('returns advanceable for the same open stage with approval reached when it is not an objection stage', () => {
+            const now = '2023-01-01T12:00:00.000Z';
+            const startDate = DateTime.fromISO(now).minus({ days: 2 });
+            const minAdvance = DateTime.fromISO(now).minus({ days: 1 });
+            const maxAdvance = DateTime.fromISO(now).plus({ days: 3 });
+            const endDate = DateTime.fromISO(now).plus({ days: 10 });
+
+            const stages = [
+                generateSppStage({ stageIndex: 0 }),
+                generateSppStage({ stageIndex: 1, approvalThreshold: 1 }),
+                generateSppStage({ stageIndex: 2 }),
+            ];
+            const proposal = generateSppProposal({
+                hasActions: true,
+                stageIndex: 1,
+                settings: generateSppPluginSettings({ stages }),
+                subProposals: [generateSppSubProposal({ stageIndex: 1 })],
+            });
+
+            getStageStartDateSpy.mockReturnValue(startDate);
+            getStageEndDateSpy.mockReturnValue(endDate);
+            getStageMaxAdvanceSpy.mockReturnValue(maxAdvance);
+            getStageMinAdvanceSpy.mockReturnValue(minAdvance);
+            isApprovalReachedSpy.mockReturnValue(true);
+            timeUtils.setTime(now);
+
+            expect(sppStageUtils.getStageStatus(proposal, stages[1])).toBe(
+                ProposalStatus.ADVANCEABLE,
+            );
+        });
+
         it('returns advanceable for optimistic stage once voting period is over and not vetoed', () => {
             const now = '2023-01-01T12:00:00.000Z';
             const startDate = DateTime.fromISO(now).minus({ days: 2 });
@@ -1241,6 +1308,33 @@ describe('SppStageUtils', () => {
             expect(
                 sppStageUtils.getBodySubProposal(proposal, bodyAddress, stage),
             ).toBeUndefined();
+        });
+    });
+
+    describe('isObjectionStage', () => {
+        it('returns true when the stage sub-proposal has the isObjection settings flag', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const subProposal = generateSppSubProposal({ stageIndex: 1 });
+            subProposal.settings = {
+                ...subProposal.settings,
+                isObjection: true,
+            };
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+                subProposals: [subProposal],
+            });
+            expect(
+                sppStageUtils.isObjectionStage(proposal, stage),
+            ).toBeTruthy();
+        });
+
+        it('returns false when neither sub-proposals nor stage plugins are objection bodies', () => {
+            const stage = generateSppStage({ stageIndex: 1 });
+            const proposal = generateSppProposal({
+                settings: generateSppPluginSettings({ stages: [stage] }),
+                subProposals: [generateSppSubProposal({ stageIndex: 1 })],
+            });
+            expect(sppStageUtils.isObjectionStage(proposal, stage)).toBeFalsy();
         });
     });
 

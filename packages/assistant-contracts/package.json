@@ -1,6 +1,6 @@
 {
     "name": "@aragon/assistant-contracts",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Shared zod contracts between the Aragon assistant service and the assistant-chat widget",
     "author": "Aragon Association",
     "homepage": "https://github.com/aragon/app#readme",

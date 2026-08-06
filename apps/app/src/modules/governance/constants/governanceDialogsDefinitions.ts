@@ -5,6 +5,7 @@ import { DuplicateProposalAlertDialog } from '../dialogs/duplicateProposalAlertD
 import { ExecuteActionsDialog } from '../dialogs/executeActionsDialog';
 import { ExecuteCheckDialog } from '../dialogs/executeCheckDialog';
 import { ExecuteDialog } from '../dialogs/executeDialog';
+import { NestedActionsDialog } from '../dialogs/nestedActionsDialog';
 import { PermissionCheckDialog } from '../dialogs/permissionCheckDialog';
 import { PublishProposalDialog } from '../dialogs/publishProposalDialog';
 import { SelectPluginDialog } from '../dialogs/selectPluginDialog';
@@ -57,6 +58,10 @@ export const governanceDialogsDefinitions: Record<
     },
     [GovernanceDialogId.WALLET_CONNECT_ACTION]: {
         Component: WalletConnectActionDialog,
+    },
+    [GovernanceDialogId.NESTED_ACTIONS]: {
+        Component: NestedActionsDialog,
+        size: 'xl',
     },
     [GovernanceDialogId.SIMULATE_ACTIONS]: {
         Component: SimulateActionsDialog,

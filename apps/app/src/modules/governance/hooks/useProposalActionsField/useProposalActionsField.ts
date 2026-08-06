@@ -2,6 +2,7 @@ import type { IProposalActionsArrayControls } from '@aragon/gov-ui-kit';
 import { useCallback } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type {
     ICreateProposalFormData,
     IProposalActionData,
@@ -13,6 +14,32 @@ import type {
  * keeps rendered data in sync with view edits, and the add/remove/reorder
  * handlers. Must be called within a form context holding an `actions` array.
  */
+const resolveActionCategory = (action: IProposalActionData) => {
+    const actionType = action.type.toLowerCase();
+
+    if (actionType.includes('withdraw')) {
+        return 'native_withdraw';
+    }
+
+    if (actionType.includes('uninstall')) {
+        return 'native_uninstall_plugin';
+    }
+
+    if (actionType.includes('install')) {
+        return 'native_install_plugin';
+    }
+
+    if (actionType.includes('metadata')) {
+        return 'native_metadata_update';
+    }
+
+    if (actionType.includes('external')) {
+        return 'external_contract_call';
+    }
+
+    return 'unknown_native';
+};
+
 export const useProposalActionsField = () => {
     const { t } = useTranslations();
 
@@ -84,6 +111,17 @@ export const useProposalActionsField = () => {
             ...action,
             fieldId: action.fieldId ?? crypto.randomUUID(),
         }));
+        const actionCategories = new Set(newActions.map(resolveActionCategory));
+        const actionCategory =
+            actionCategories.size === 1 ? [...actionCategories][0] : 'mixed';
+        plausibleAnalyticsUtils.track(
+            newActions.length === 1 ? 'action_added' : 'action_added_batch',
+            {
+                source: 'form',
+                actionCategory,
+                count: newActions.length === 1 ? undefined : newActions.length,
+            },
+        );
         append(actionsWithId);
     };
 

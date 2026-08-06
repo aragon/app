@@ -1,6 +1,6 @@
 {
     "name": "@aragon/assistant-chat",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Support-chat widget for the Aragon App, backed by the Aragon assistant service",
     "author": "Aragon Association",
     "homepage": "https://github.com/aragon/app#readme",
@@ -27,10 +27,13 @@
     "dependencies": {
         "@ai-sdk/react": "catalog:",
         "@aragon/assistant-contracts": "workspace:*",
+        "@assistant-ui/react": "catalog:",
+        "@assistant-ui/react-ai-sdk": "catalog:",
+        "@assistant-ui/react-markdown": "catalog:",
+        "@radix-ui/react-dialog": "catalog:",
         "@vercel/blob": "catalog:",
         "ai": "catalog:",
         "classnames": "catalog:",
-        "react-dropzone": "catalog:",
         "zod": "catalog:"
     },
     "devDependencies": {

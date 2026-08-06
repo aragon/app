@@ -8,6 +8,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { WizardPage } from '@/shared/components/wizards/wizardPage';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
 import { pendingTransactionManager } from '@/shared/utils/pendingTransactionManager';
+import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import {
     CreateProposalForm,
     type ICreateProposalFormData,
@@ -106,11 +107,22 @@ export const CreateProposalPageClient: React.FC<
             excludeIntentId: intentId,
         };
 
+        const trackWizardSubmit = () => {
+            const actionCount = proposal.actions.length;
+            plausibleAnalyticsUtils.track('wizard_submit', {
+                flow: 'create_proposal',
+                actionCount,
+                hasActions: actionCount > 0,
+                pluginInterfaceType: plugin.interfaceType,
+            });
+        };
+
         const openPublishDialog = () => {
             // "New transaction" / no conflict: the user has committed to this proposal, so supersede any
             // other in-flight creation for this DAO + plugin that would otherwise keep warning forever.
             pendingTransactionManager.clearActive(conflictFilter);
             proposalResumeRegistry.set(intentId, params);
+            trackWizardSubmit();
             open(GovernanceDialogId.PUBLISH_PROPOSAL, { params });
         };
 
@@ -151,6 +163,10 @@ export const CreateProposalPageClient: React.FC<
     return (
         <Page.Main fullWidth={true}>
             <WizardPage.Container
+                analytics={{
+                    flow: 'create_proposal',
+                    props: { pluginInterfaceType: plugin.interfaceType },
+                }}
                 defaultValues={{ actions: [] }}
                 finalStep={t('app.governance.createProposalPage.finalStep')}
                 id={createProposalWizardId}

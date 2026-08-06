@@ -54,13 +54,18 @@ export const useTokenPermissionCheckVoteSubmission = (
 
     const { chainId, buildEntityUrl } = useDaoChain({ network });
 
+    // The probed option only matters on objection stages, where the contract rejects
+    // everything except "No" — for regular token voting any option reflects the permission.
+    const probeVoteOption = plugin.settings.isObjection
+        ? VoteOption.NO
+        : VoteOption.YES;
+
     const { data: hasPermission, isLoading } = useReadContract({
         address: pluginAddress as Hex,
         chainId,
         abi: tokenVotingAbi,
         functionName: 'canVote',
-        // Passing YES as vote option because we are only checking permission to vote and the option does not matter
-        args: [BigInt(proposalIndex), address as Hex, VoteOption.YES],
+        args: [BigInt(proposalIndex), address as Hex, probeVoteOption],
         query: { enabled: address != null },
     });
 

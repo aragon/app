@@ -7,10 +7,19 @@ const assert = require('node:assert/strict');
 const {
     collectScopedCommits,
     detectLatestPackageTag,
-    detectReleaseBaseFromTag,
+    generateSummary,
     readPathFilter,
+    resolveCommitTitle,
     runGit,
 } = require('./generateReleaseSummary');
+
+// Ignore the developer's git config: a global commit.gpgsign would make every
+// fixture commit block on a pinentry prompt.
+const gitEnvironment = {
+    ...process.env,
+    GIT_CONFIG_GLOBAL: os.devNull,
+    GIT_CONFIG_SYSTEM: os.devNull,
+};
 
 const createRepository = () => {
     const directory = fs.mkdtempSync(
@@ -19,6 +28,7 @@ const createRepository = () => {
     execFileSync('git', ['init', '--initial-branch=main'], {
         cwd: directory,
         stdio: 'ignore',
+        env: gitEnvironment,
     });
 
     return directory;
@@ -34,7 +44,11 @@ const git = (repository, args) =>
             'user.email=release-summary@example.com',
             ...args,
         ],
-        { cwd: repository, stdio: ['ignore', 'pipe', 'pipe'] },
+        {
+            cwd: repository,
+            stdio: ['ignore', 'pipe', 'pipe'],
+            env: gitEnvironment,
+        },
     )
         .toString()
         .trim();
@@ -47,7 +61,7 @@ const commitFile = (repository, file, content, subject) => {
     git(repository, ['commit', '-m', subject]);
 };
 
-test('uses the package tag integration commit and filters first-parent history', () => {
+test('keeps release-window commits and excludes everything the tag already ships', () => {
     const repository = createRepository();
 
     try {
@@ -57,7 +71,7 @@ test('uses the package tag integration commit and filters first-parent history',
             'base',
             'feat: initial app',
         );
-        git(repository, ['tag', 'v9.0.0']);
+        // The release branch is cut here; the tag points at the tested branch SHA.
         git(repository, ['checkout', '-b', 'release/app/1.0.0']);
         commitFile(
             repository,
@@ -66,22 +80,22 @@ test('uses the package tag integration commit and filters first-parent history',
             'Release @aragon/app@1.0.0',
         );
         git(repository, ['tag', '@aragon/app@1.0.0']);
-        git(repository, ['tag', '@aragon/assistant@9.0.0']);
         git(repository, ['checkout', 'main']);
+        // Merged to main while the release branch was open: ships with the NEXT release and
+        // must stay in its summary even though it sits below the integration commit.
         commitFile(
             repository,
-            'apps/assistant/before-release-merge.ts',
-            'main advanced',
-            'feat: main advances while release is tested',
+            'apps/app/window.ts',
+            'window',
+            'feat(APP-9): merged during release window (#41)',
         );
         git(repository, [
             'merge',
             '--no-ff',
             'release/app/1.0.0',
             '-m',
-            'Merge pull request #1 from release/app/1.0.0',
+            'Release @aragon/app@1.0.0 (#1)',
         ]);
-        const integrationCommit = git(repository, ['rev-parse', 'HEAD']);
 
         commitFile(
             repository,
@@ -109,6 +123,25 @@ test('uses the package tag integration commit and filters first-parent history',
             '{"version":"0.2.0"}',
             'Release @aragon/assistant@0.2.0',
         );
+        // A release PR merged with GitHub's default merge subject only reveals its
+        // release title in the body: it must be dropped after title resolution.
+        git(repository, ['checkout', '-b', 'release/assistant/0.3.0']);
+        commitFile(
+            repository,
+            'packages/assistant-chat/package.json',
+            '{"version":"0.3.0"}',
+            'version packages',
+        );
+        git(repository, ['checkout', 'main']);
+        git(repository, [
+            'merge',
+            '--no-ff',
+            'release/assistant/0.3.0',
+            '-m',
+            'Merge pull request #44 from release/assistant/0.3.0',
+            '-m',
+            'Release @aragon/assistant@0.3.0',
+        ]);
 
         git(repository, ['checkout', '-b', 'feature/multi-commit']);
         commitFile(
@@ -124,12 +157,15 @@ test('uses the package tag integration commit and filters first-parent history',
             'feat: internal branch commit B',
         );
         git(repository, ['checkout', 'main']);
+        // A PR landed as a merge commit: GitHub puts the PR title into the commit body.
         git(repository, [
             'merge',
             '--no-ff',
             'feature/multi-commit',
             '-m',
             'Merge pull request #43 from feature/multi-commit',
+            '-m',
+            'feat(APP-77): multi-commit feature',
         ]);
         commitFile(
             repository,
@@ -140,13 +176,8 @@ test('uses the package tag integration commit and filters first-parent history',
 
         const repositoryGit = (args) => runGit(args, { cwd: repository });
         const packageTag = detectLatestPackageTag('@aragon/app', repositoryGit);
-        const baseRef = detectReleaseBaseFromTag(
-            packageTag,
-            'HEAD',
-            repositoryGit,
-        );
         const commits = collectScopedCommits({
-            baseRef,
+            baseRef: packageTag,
             patterns: [
                 'apps/app/**',
                 'packages/assistant-chat/**',
@@ -156,14 +187,50 @@ test('uses the package tag integration commit and filters first-parent history',
         });
 
         assert.equal(packageTag, '@aragon/app@1.0.0');
-        assert.equal(baseRef, integrationCommit);
         assert.deepEqual(
             commits.map(({ subject }) => subject),
             [
-                'Merge pull request #43 from feature/multi-commit',
+                'feat(APP-77): multi-commit feature (#43)',
                 'feat(APP-123): add app feature (#42)',
                 'chore: update shared lockfile',
+                'feat(APP-9): merged during release window (#41)',
             ],
+        );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+test('keeps the subject of a merge commit without a PR title in its body', () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(repository, 'apps/app/a.txt', 'a', 'feat: base');
+        git(repository, ['checkout', '-b', 'feature/no-body']);
+        commitFile(repository, 'apps/app/b.txt', 'b', 'feat: branch work');
+        git(repository, ['checkout', 'main']);
+        git(repository, [
+            'merge',
+            '--no-ff',
+            'feature/no-body',
+            '-m',
+            'Merge pull request #7 from feature/no-body',
+        ]);
+
+        const repositoryGit = (args) => runGit(args, { cwd: repository });
+        const mergeCommit = repositoryGit(['rev-parse', 'HEAD']);
+
+        assert.equal(
+            resolveCommitTitle(
+                mergeCommit,
+                'Merge pull request #7 from feature/no-body',
+                repositoryGit,
+            ),
+            'Merge pull request #7 from feature/no-body',
+        );
+        assert.equal(
+            resolveCommitTitle('irrelevant', 'feat: squash subject (#8)'),
+            'feat: squash subject (#8)',
         );
     } finally {
         fs.rmSync(repository, { recursive: true, force: true });
@@ -194,7 +261,6 @@ test('treats a workspace without package tags as a first release', () => {
         );
         const commits = collectScopedCommits({
             baseRef: '',
-            packageName: '@aragon/new-app',
             patterns: ['apps/new-app/**'],
             git: repositoryGit,
         });
@@ -204,6 +270,141 @@ test('treats a workspace without package tags as a first release', () => {
             commits.map(({ subject }) => subject),
             ['feat: first new-app feature'],
         );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+// Runs generateSummary end-to-end inside a fixture repository with a mocked Linear API,
+// capturing the summary output. Restores cwd, env and global.fetch afterwards.
+const runGenerateSummary = async (repository, issuesById) => {
+    const filterPath = path.join(repository, 'filters.yml');
+    fs.writeFileSync(filterPath, 'app:\n  - "apps/app/**"\n');
+
+    const originalCwd = process.cwd();
+    const originalFetch = global.fetch;
+    const originalEnvironment = { ...process.env };
+    const outputs = {};
+
+    try {
+        process.chdir(repository);
+        process.env.PACKAGE_NAME = '@aragon/app';
+        process.env.PATH_FILTER = 'app';
+        process.env.FILTERS_PATH = filterPath;
+        process.env.LINEAR_API_TOKEN = 'test-token';
+        process.env.GITHUB_REPOSITORY = 'aragon/app';
+        delete process.env.BASE_REF;
+
+        global.fetch = async (_url, options) => {
+            const { variables } = JSON.parse(options.body);
+            return {
+                json: async () => ({
+                    data: { issue: issuesById[variables.id] ?? null },
+                }),
+            };
+        };
+
+        await generateSummary({
+            core: {
+                setOutput: (name, value) => {
+                    outputs[name] = value;
+                },
+            },
+        });
+    } finally {
+        process.chdir(originalCwd);
+        global.fetch = originalFetch;
+        process.env = originalEnvironment;
+    }
+
+    return outputs.summary;
+};
+
+test('warns about open Linear tickets and their current status', async () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(
+            repository,
+            'apps/app/open.ts',
+            'open',
+            'feat(APP-100): open work (#1)',
+        );
+        commitFile(
+            repository,
+            'apps/app/done.ts',
+            'done',
+            'fix(APP-200): finished work (#2)',
+        );
+        commitFile(
+            repository,
+            'apps/app/canceled.ts',
+            'canceled',
+            'fix(APP-300): canceled work (#3)',
+        );
+        commitFile(
+            repository,
+            'apps/app/phantom.ts',
+            'phantom',
+            'chore(APP-400): unresolvable id (#4)',
+        );
+
+        const summary = await runGenerateSummary(repository, {
+            'APP-100': {
+                title: 'Open feature',
+                url: 'https://linear.app/aragon/issue/APP-100',
+                state: { name: 'In Development', type: 'started' },
+            },
+            'APP-200': {
+                title: 'Finished fix',
+                url: 'https://linear.app/aragon/issue/APP-200',
+                state: { name: 'Done', type: 'completed' },
+            },
+            'APP-300': {
+                title: 'Canceled fix',
+                url: 'https://linear.app/aragon/issue/APP-300',
+                state: { name: 'Canceled', type: 'canceled' },
+            },
+        });
+
+        const [warningSection] = summary.split('## Features');
+        assert.match(warningSection, /## ⚠️ Open tickets/);
+        assert.match(
+            warningSection,
+            /- \[APP-100: Open feature\]\(https:\/\/linear\.app\/aragon\/issue\/APP-100\) — In Development/,
+        );
+        // Finished, canceled and unresolvable tickets stay out of the warning section.
+        assert.doesNotMatch(warningSection, /APP-200|APP-300|APP-400/);
+        // Regular enrichment keeps linking every resolved ticket.
+        assert.match(
+            summary,
+            /\[APP-200: Finished fix\]\(https:\/\/linear\.app\/aragon\/issue\/APP-200\)/,
+        );
+    } finally {
+        fs.rmSync(repository, { recursive: true, force: true });
+    }
+});
+
+test('omits the warning section when every ticket is finished', async () => {
+    const repository = createRepository();
+
+    try {
+        commitFile(
+            repository,
+            'apps/app/done.ts',
+            'done',
+            'fix(APP-200): finished work (#2)',
+        );
+
+        const summary = await runGenerateSummary(repository, {
+            'APP-200': {
+                title: 'Finished fix',
+                url: 'https://linear.app/aragon/issue/APP-200',
+                state: { name: 'Done', type: 'completed' },
+            },
+        });
+
+        assert.doesNotMatch(summary, /Open tickets/);
     } finally {
         fs.rmSync(repository, { recursive: true, force: true });
     }

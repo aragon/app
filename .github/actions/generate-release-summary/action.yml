@@ -1,5 +1,8 @@
 name: Generate Release Summary
-description: Generates a package-scoped PR/Slack summary from its release commit range.
+description: |
+  Generates the detailed, team-facing PR/Slack summary from the package's release commit range
+  (previous release tag → HEAD). The outward-facing release notes are built separately from the
+  changesets-generated CHANGELOG (see the finalize flow).
 
 inputs:
   package_name:
@@ -14,8 +17,9 @@ inputs:
     default: ""
   base_ref:
     description: |
-      Override the resolved release boundary (optional, not recommended).
-      Auto-detection finds the latest <package>@* tag and its mainline integration commit.
+      Override the release boundary ref (optional, not recommended).
+      Auto-detection uses the latest <package>@* tag: everything the tag already contains is
+      excluded, so PRs merged to main while that release was staging still get summarized here.
       Only use this for debugging or edge cases.
     required: false
     default: ""

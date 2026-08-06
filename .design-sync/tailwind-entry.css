@@ -1,0 +1,30 @@
+/*
+ * design-sync CSS entry — mirrors the app's own Tailwind wiring
+ * (apps/app/src/modules/application/components/layouts/layoutRoot/layoutRoot.css).
+ * The kit's shipped build.css is corrupted by its minifier (merged selector
+ * lists give children of md: and 2xl: utilities spurious borders) — see
+ * .design-sync/NOTES.md. Compiling from source is also what the app really ships.
+ * Compiled by cfg.buildCmd on every sync; output: .design-sync/.cache/kit-styles.css
+ */
+@import "../apps/app/node_modules/tailwindcss/index.css";
+@import "../apps/app/node_modules/@aragon/gov-ui-kit/index.css";
+
+@source "../apps/app/node_modules/@aragon/gov-ui-kit";
+/* slice 3: app shared components' utility classes must compile in too */
+@source "../apps/app/src/shared";
+
+/* App-level kit variable overrides, copied from layoutRoot.css — the design
+ * system being synced is the app's, so designs should match app rendering. */
+:root {
+    --guk-avatar-container-position: relative;
+
+    --guk-dialog-overlay-z-index: 20;
+    --guk-dialog-alert-overlay-z-index: 20;
+
+    --guk-dialog-content-z-index: 30;
+    --guk-dialog-alert-content-z-index: 30;
+
+    --guk-text-area-rich-text-expanded-z-index: 35;
+
+    --guk-dropdown-container-content-z-index: 40;
+}

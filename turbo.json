@@ -23,7 +23,6 @@
         "NEXT_SECRET_ARAGON_BACKEND_API_KEY",
         "NEXT_SECRET_DRPC_RPC_KEY",
         "NEXT_SECRET_IPFS_JWT",
-        "NEXT_SECRET_PEAQ_QUICKNODE_RPC_KEY",
         "NEXT_SECRET_RPC_KEY",
         "NEXT_SECRET_SENTRY_AUTH_TOKEN",
         "PORT",
@@ -39,7 +38,8 @@
         "version"
     ],
     "globalDependencies": [
-        "biome.json"
+        "biome.json",
+        ".design-sync/**"
     ],
     "tasks": {
         "dev": {

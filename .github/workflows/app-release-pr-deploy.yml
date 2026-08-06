@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
@@ -149,6 +149,7 @@ jobs:
           SLACK_CHANNEL_ID: op://kv_app_infra/SLACK_CHANNEL_ID/credential
           ARABOT_PAT: op://kv_app_infra/ARABOT_PAT/credential
           LINEAR_API_TOKEN: op://kv_app_infra/LINEAR_API_TOKEN/credential
+          SLACK_CODEOWNERS_GROUP_ID: op://kv_app_infra/SLACK_CODEOWNERS_GROUP_ID/credential
 
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -180,6 +181,21 @@ jobs:
             ${{ steps.summary.outputs.summary }}
 
             <!-- slack_ts: ${{ needs.notify-start.outputs.slack-ts }} -->
+
+      # Keep the Slack head message in sync with the PR description it just regenerated
+      # (chat.update); thread replies below it carry the per-deploy lifecycle updates.
+      - name: Update Slack head message
+        if: needs.notify-start.outputs.slack-ts && steps.secrets.outputs.SLACK_BOT_TOKEN
+        uses: ./.github/actions/slack-notify
+        with:
+          slack_bot_token: ${{ steps.secrets.outputs.SLACK_BOT_TOKEN }}
+          slack_channel_id: ${{ steps.secrets.outputs.SLACK_CHANNEL_ID }}
+          update_ts: ${{ needs.notify-start.outputs.slack-ts }}
+          message: |
+            🚀 *${{ github.event.pull_request.title }} — Started* ${{ steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID && format('<!subteam^{0}>', steps.secrets.outputs.SLACK_CODEOWNERS_GROUP_ID) || '' }}
+            *PR:* ${{ github.event.pull_request.html_url }}
+
+            ${{ steps.summary.outputs.summary }}
 
       - name: Notify Slack
         if: needs.notify-start.outputs.slack-ts && steps.secrets.outputs.SLACK_BOT_TOKEN
@@ -223,7 +239,7 @@ jobs:
     steps:
       - name: Load secrets
         id: secrets
-        uses: 1password/load-secrets-action@3a12b0ab99d9cd590a3e9b5a90ea017210ed9556 # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
+        uses: 1password/load-secrets-action@eb2efd0703da22a93c467f2d1ffbb6826c11e19c # v4.0.0 (https://github.com/1Password/load-secrets-action/releases/tag/v4.0.0)
         with:
           export-env: false
         env:
