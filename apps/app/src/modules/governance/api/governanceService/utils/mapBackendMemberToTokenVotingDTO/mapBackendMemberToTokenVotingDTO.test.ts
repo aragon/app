@@ -18,13 +18,11 @@ describe('mapBackendMemberToTokenVotingDTO', () => {
             address: '0xabc',
             ens: 'alice.eth',
             votingPower: '5000',
-            metrics: {
-                // The legacy backend only reports activity as block numbers,
-                // which the mapper does not resolve to timestamps.
-                firstActivityTimestamp: null,
-                lastActivityTimestamp: null,
-                delegationCount: 3,
-            },
+            // The legacy backend only reports activity as block numbers,
+            // which the mapper does not resolve to timestamps.
+            firstActivityTimestamp: null,
+            lastActivityTimestamp: null,
+            delegationCount: 3,
         });
     });
 

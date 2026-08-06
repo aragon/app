@@ -6,7 +6,7 @@ import type { ITokenMember } from '@/plugins/tokenPlugin/types';
  * aragon-domain `TokenVotingMemberDTO` that the token list renders from.
  *
  * The legacy backend reports activity as block numbers, which cannot be
- * resolved to the DTO's unix-second timestamps without per-member RPC
+ * resolved to the DTO's activity timestamps without per-member RPC
  * lookups. The mapper emits `null` until the UI actually needs pre-migration
  * activity data. Nothing renders the list timestamps today.
  *
@@ -18,9 +18,7 @@ export const mapBackendMemberToTokenVotingDTO = (
     address: member.address,
     ens: member.ens,
     votingPower: member.votingPower,
-    metrics: {
-        firstActivityTimestamp: null,
-        lastActivityTimestamp: null,
-        delegationCount: member.metrics.delegationCount,
-    },
+    firstActivityTimestamp: null,
+    lastActivityTimestamp: null,
+    delegationCount: member.metrics.delegationCount,
 });

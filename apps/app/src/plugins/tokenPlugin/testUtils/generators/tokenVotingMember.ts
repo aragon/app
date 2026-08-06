@@ -6,10 +6,8 @@ export const generateTokenVotingMember = (
     address: '0x0000000000000000000000000000000000000000',
     ens: null,
     votingPower: '0',
-    metrics: {
-        firstActivityTimestamp: null,
-        lastActivityTimestamp: null,
-        delegationCount: 0,
-    },
+    firstActivityTimestamp: null,
+    lastActivityTimestamp: null,
+    delegationCount: 0,
     ...member,
 });

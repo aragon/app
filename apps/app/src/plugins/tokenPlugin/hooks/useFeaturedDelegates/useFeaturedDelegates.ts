@@ -65,11 +65,9 @@ export const useFeaturedDelegates = (params: IUseFeaturedDelegatesParams) => {
                     address,
                     ens: null,
                     votingPower: null,
-                    metrics: {
-                        delegationCount: 0,
-                        firstActivityTimestamp: null,
-                        lastActivityTimestamp: null,
-                    },
+                    delegationCount: 0,
+                    firstActivityTimestamp: null,
+                    lastActivityTimestamp: null,
                 };
             }),
         [addresses, results],

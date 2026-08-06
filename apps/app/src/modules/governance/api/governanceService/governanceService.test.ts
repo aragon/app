@@ -67,11 +67,9 @@ describe('governance service', () => {
                     address: '0xabc',
                     ens: 'alice.eth',
                     votingPower: '5000',
-                    metrics: {
-                        firstActivityTimestamp: 1_705_320_000,
-                        lastActivityTimestamp: 1_718_872_200,
-                        delegationCount: 3,
-                    },
+                    firstActivityTimestamp: '2024-01-15T12:00:00.000Z',
+                    lastActivityTimestamp: '2024-06-20T08:30:00.000Z',
+                    delegationCount: 3,
                 },
             ],
             metadata: {
@@ -187,12 +185,10 @@ describe('governance service', () => {
                 address: '0xabc',
                 ens: 'alice.eth',
                 votingPower: '5000',
-                metrics: {
-                    // Legacy block numbers are not resolved to timestamps.
-                    firstActivityTimestamp: null,
-                    lastActivityTimestamp: null,
-                    delegationCount: 3,
-                },
+                // Legacy block numbers are not resolved to timestamps.
+                firstActivityTimestamp: null,
+                lastActivityTimestamp: null,
+                delegationCount: 3,
             },
         ]);
         expect(result.data[0]).not.toHaveProperty('type');
