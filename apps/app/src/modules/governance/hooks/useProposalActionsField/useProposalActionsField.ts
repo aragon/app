@@ -40,6 +40,32 @@ const resolveActionCategory = (action: IProposalActionData) => {
     return 'unknown_native';
 };
 
+/**
+ * Merges a field-array entry with its watched form value.
+ *
+ * `useFieldArray`'s `fields` update synchronously inside `remove()`/`append()`, but `useWatch` only
+ * catches up a render later, through react-hook-form's own internal broadcast. Comparing array
+ * length alone is not enough to detect that lag: deleting one action and adding a different one
+ * leaves the array length unchanged, so a `watchedAction` that still describes the just-deleted
+ * action can slip through - overwriting not just stale field values but the new action's `type`,
+ * which silently mounts the wrong view populated with the previous action's data. Comparing
+ * `fieldId` (unique per action instance) catches the lag even when the length coincidentally
+ * matches again.
+ */
+export const mergeWatchedAction = (
+    field: IProposalActionData,
+    watchedAction: IProposalActionData | undefined,
+): IProposalActionData => {
+    const fieldId = field.fieldId ?? field.id;
+    const isWatchedActionCurrent = watchedAction?.fieldId === fieldId;
+
+    return {
+        ...field,
+        ...(isWatchedActionCurrent ? watchedAction : undefined),
+        fieldId,
+    };
+};
+
 export const useProposalActionsField = () => {
     const { t } = useTranslations();
 
@@ -57,19 +83,9 @@ export const useProposalActionsField = () => {
     const watchActions = useWatch<
         Record<string, ICreateProposalFormData['actions']>
     >({ name: 'actions' });
-    // Skip stale watch data when lengths diverge after remove() to avoid index corruption.
-    const stableWatchActions =
-        watchActions?.length === actions.length ? watchActions : undefined;
-    const actionsMerged = actions.map((field, index) => ({
-        ...field,
-        ...stableWatchActions?.[index],
-        // `fieldId` is our own stable id (assigned in handleAddAction) and is the React key for the
-        // item. It lives in the form values, so it survives RHF regenerating the field array `id`
-        // when the decoder re-encodes calldata on each keystroke. Every action enters the array via
-        // handleAddAction (which assigns a `fieldId`), so the `field.id` fallback is purely defensive
-        // — it just guarantees a key if some future path adds an action without going through it.
-        fieldId: field.fieldId ?? field.id,
-    }));
+    const actionsMerged = actions.map((field, index) =>
+        mergeWatchedAction(field, watchActions?.[index]),
+    );
 
     /**
      * Note: We don't use useFieldArray.swap() or .move() because they create empty slots

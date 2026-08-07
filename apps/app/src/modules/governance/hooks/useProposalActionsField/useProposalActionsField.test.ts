@@ -2,7 +2,78 @@ import { act, renderHook } from '@testing-library/react';
 import { FormWrapper } from '@/shared/testUtils';
 import { plausibleAnalyticsUtils } from '@/shared/utils/plausibleAnalyticsUtils';
 import type { IProposalActionData } from '../../components/createProposalForm';
-import { useProposalActionsField } from './useProposalActionsField';
+import {
+    mergeWatchedAction,
+    useProposalActionsField,
+} from './useProposalActionsField';
+
+describe('mergeWatchedAction', () => {
+    const generateAction = (
+        action?: Partial<IProposalActionData>,
+    ): IProposalActionData =>
+        ({
+            type: 'transfer',
+            daoId: 'test',
+            meta: undefined,
+            ...action,
+        }) as IProposalActionData;
+
+    it('merges the watched values when they belong to the same action', () => {
+        const field = generateAction({
+            type: 'transfer',
+            fieldId: 'action-1',
+            id: 'rhf-1',
+        });
+        const watchedAction = generateAction({
+            type: 'transfer',
+            fieldId: 'action-1',
+            amount: '100',
+        } as Partial<IProposalActionData>);
+
+        expect(mergeWatchedAction(field, watchedAction)).toEqual({
+            ...field,
+            ...watchedAction,
+            fieldId: 'action-1',
+        });
+    });
+
+    it('ignores a watched action left over from a deleted action at the same index', () => {
+        // Reproduces deleting an action and adding a different one: `useFieldArray`'s `fields`
+        // already reflect the new action, but `useWatch` can still be one render behind and hand
+        // back data describing the action that used to sit at this index.
+        const field = generateAction({
+            type: 'gaugeRegistrarRegisterGauge',
+            fieldId: 'action-2',
+            id: 'rhf-2',
+        });
+        const staleWatchedAction = generateAction({
+            type: 'transfer',
+            fieldId: 'action-1',
+            amount: '100',
+        } as Partial<IProposalActionData>);
+
+        const result = mergeWatchedAction(field, staleWatchedAction);
+
+        expect(result.type).toEqual('gaugeRegistrarRegisterGauge');
+        expect(result).not.toHaveProperty('amount');
+        expect(result.fieldId).toEqual('action-2');
+    });
+
+    it('falls back to the field id when neither the field nor the watched action carry a fieldId', () => {
+        const field = generateAction({ fieldId: undefined, id: 'rhf-3' });
+
+        expect(mergeWatchedAction(field, undefined).fieldId).toEqual('rhf-3');
+    });
+
+    it('does not merge when there is no watched action yet at this index', () => {
+        const field = generateAction({ fieldId: 'action-4', id: 'rhf-4' });
+
+        expect(mergeWatchedAction(field, undefined)).toEqual({
+            ...field,
+            fieldId: 'action-4',
+        });
+    });
+});
 
 describe('useProposalActionsField hook', () => {
     const trackAnalyticsSpy = jest.spyOn(plausibleAnalyticsUtils, 'track');
