@@ -21,7 +21,7 @@ import { networkUtils } from '@/shared/utils/networkUtils';
 import type { ICrossChainControllerActionCrossChainExecute } from '../../types/crossChainControllerActionCrossChainExecute';
 import { CrossChainControllerNestedActionsList } from '../crossChainControllerNestedActionsList';
 
-export interface ICrossChainControllerExecuteActionDetailsProps
+export interface ICrossChainControllerForwardMessageDetailsProps
     extends IProposalActionComponentProps<
         IProposalActionData<IProposalAction>
     > {}
@@ -54,8 +54,8 @@ const decodeMessageActions = (
     }
 };
 
-export const CrossChainControllerExecuteActionDetails: React.FC<
-    ICrossChainControllerExecuteActionDetailsProps
+export const CrossChainControllerForwardMessageDetails: React.FC<
+    ICrossChainControllerForwardMessageDetailsProps
 > = (props) => {
     const { action } = props;
 
@@ -99,7 +99,7 @@ export const CrossChainControllerExecuteActionDetails: React.FC<
             <DefinitionList.Container>
                 <DefinitionList.Item
                     term={t(
-                        'app.actions.crossChainController.crossChainControllerExecuteActionDetails.chainTerm',
+                        'app.actions.crossChainController.crossChainControllerForwardMessageDetails.chainTerm',
                     )}
                 >
                     {destinationDefinition ? (
@@ -112,7 +112,7 @@ export const CrossChainControllerExecuteActionDetails: React.FC<
                         </div>
                     ) : (
                         t(
-                            'app.actions.crossChainController.crossChainControllerExecuteActionDetails.chainUnknown',
+                            'app.actions.crossChainController.crossChainControllerForwardMessageDetails.chainUnknown',
                             { chainId },
                         )
                     )}
@@ -120,7 +120,7 @@ export const CrossChainControllerExecuteActionDetails: React.FC<
                 {formattedGasLimit != null && (
                     <DefinitionList.Item
                         term={t(
-                            'app.actions.crossChainController.crossChainControllerExecuteActionDetails.gasLimitTerm',
+                            'app.actions.crossChainController.crossChainControllerForwardMessageDetails.gasLimitTerm',
                         )}
                     >
                         {formattedGasLimit}
@@ -129,18 +129,18 @@ export const CrossChainControllerExecuteActionDetails: React.FC<
             </DefinitionList.Container>
             <InputContainer
                 helpText={t(
-                    'app.actions.crossChainController.crossChainControllerExecuteActionDetails.actionsHelpText',
+                    'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsHelpText',
                 )}
                 id="crossChainExecuteActions"
                 label={t(
-                    'app.actions.crossChainController.crossChainControllerExecuteActionDetails.actionsLabel',
+                    'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsLabel',
                 )}
                 useCustomWrapper={true}
             >
                 {messageActions == null ? (
                     <AlertInline
                         message={t(
-                            'app.actions.crossChainController.crossChainControllerExecuteActionDetails.actionsDecodeError',
+                            'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsDecodeError',
                         )}
                         variant="warning"
                     />
