@@ -37,12 +37,17 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         'NestedActionsDialog: required parameters must be set.',
     );
 
-    const { daoId, initialActions, excludeActionTypes, onSubmit } =
+    const { daoId, network, initialActions, excludeActionTypes, onSubmit } =
         location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { data: dao } = useDao({ urlParams: { id: daoId } });
+    const { data: dao } = useDao(
+        { urlParams: { id: daoId ?? '' } },
+        { enabled: daoId != null },
+    );
+
+    const resolvedNetwork = network ?? dao?.network;
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -80,7 +85,11 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     const hasDecodingStartedRef = useRef(false);
 
     useEffect(() => {
-        if (!requiresDecoding || dao == null || hasDecodingStartedRef.current) {
+        if (!requiresDecoding || hasDecodingStartedRef.current) {
+            return;
+        }
+
+        if (daoId != null && dao == null) {
             return;
         }
 
@@ -88,6 +97,11 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
 
         const decodeInitialActions = async () => {
             try {
+                invariant(
+                    resolvedNetwork != null,
+                    'decodeInitialActions: resolvedNetwork not found',
+                );
+
                 const decodedActions =
                     await proposalActionsImportExportUtils.decodeActions(
                         initialActions.map(({ to, value, data }) => ({
@@ -95,23 +109,23 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                             value,
                             data,
                         })),
-                        dao.network,
+                        resolvedNetwork,
                         dao,
                     );
 
-                // The decoder returns the backend action shape, which carries no `daoId`. Attach it
-                // as the composer and the action import do, since the basic views read it (e.g. a
-                // transfer resolves its DAO through `useDao({ id: action.daoId })`).
                 reset({
-                    actions: decodedActions.map(
-                        (action) =>
-                            ({ ...action, daoId }) as IProposalActionData,
-                    ),
+                    actions: daoId
+                        ? decodedActions.map(
+                              (action) =>
+                                  ({ ...action, daoId }) as IProposalActionData,
+                          )
+                        : decodedActions,
                 });
             } catch (error) {
                 monitoringUtils.logError(error, {
                     context: {
                         daoId,
+                        network,
                         message: 'Failed to decode the nested proposal actions',
                     },
                 });
@@ -122,7 +136,15 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         };
 
         void decodeInitialActions();
-    }, [dao, daoId, initialActions, requiresDecoding, reset]);
+    }, [
+        dao,
+        daoId,
+        network,
+        resolvedNetwork,
+        initialActions,
+        requiresDecoding,
+        reset,
+    ]);
 
     const handleClose = () => close(location.id);
 
@@ -149,6 +171,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
             monitoringUtils.logError(error, {
                 context: {
                     daoId,
+                    network,
                     message: 'Failed to prepare the nested proposal actions',
                 },
             });
@@ -158,7 +181,6 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         }
     };
 
-    // TODO: enable running without DAO ID
     return (
         <FormProvider {...methods}>
             <CreateProposalFormProvider value={contextValues}>
@@ -181,6 +203,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                         <ProposalActionsEditor
                             daoId={daoId}
                             excludeActionTypes={excludeActionTypes}
+                            network={network}
                         />
                     )}
                     {hasDecodeError && (
