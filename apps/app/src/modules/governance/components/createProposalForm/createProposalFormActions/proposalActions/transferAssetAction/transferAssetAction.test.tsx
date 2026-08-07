@@ -214,6 +214,41 @@ describe('<TransferAssetAction /> component', () => {
         expect(action.asset.token.logo).toEqual('usdc-logo.png');
     });
 
+    it('does not apply the fetched logo when the selected asset no longer matches the action token', () => {
+        useTokenSpy.mockReturnValue({
+            data: resolvedToken,
+            isLoading: false,
+            isError: false,
+        });
+        useTokenInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateToken({
+                    address: tokenAddress,
+                    logo: 'usdc-logo.png',
+                }),
+            }),
+        );
+
+        // Already initialized action where the user picked another asset in the meantime.
+        const importedAction = generateImportedAction();
+        const otherAssetAction = {
+            ...importedAction,
+            rawAmount: undefined,
+            asset: {
+                ...importedAction.asset,
+                token: {
+                    ...importedAction.asset.token,
+                    address: '0x3333333333333333333333333333333333333333',
+                },
+            },
+        };
+
+        render(createTestComponent(otherAssetAction));
+
+        const action = getFormValues('actions.0');
+        expect(action.asset.token.logo).toEqual('');
+    });
+
     it('re-encodes the calldata from user edits when the token query fails for an imported action', async () => {
         useTokenSpy.mockReturnValue({
             data: null,
