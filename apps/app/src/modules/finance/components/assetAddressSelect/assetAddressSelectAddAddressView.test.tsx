@@ -1,8 +1,14 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import * as financeService from '@/modules/finance/api/financeService';
+import { generateToken } from '@/modules/finance/testUtils';
 import { Network } from '@/shared/api/daoService';
 import * as useTokenModule from '@/shared/hooks/useToken/useToken';
+import {
+    generateReactQueryResultLoading,
+    generateReactQueryResultSuccess,
+} from '@/shared/testUtils';
 import {
     AssetAddressSelectAddAddressView,
     type IAssetAddressSelectAddAddressViewProps,
@@ -10,6 +16,7 @@ import {
 
 describe('<AssetAddressSelectAddAddressView /> component', () => {
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
+    const useTokenInfoSpy = jest.spyOn(financeService, 'useTokenInfo');
 
     beforeEach(() => {
         useTokenSpy.mockReturnValue({
@@ -17,10 +24,16 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
             isLoading: false,
             isError: false,
         });
+        useTokenInfoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof financeService.useTokenInfo
+            >,
+        );
     });
 
     afterEach(() => {
         useTokenSpy.mockReset();
+        useTokenInfoSpy.mockReset();
     });
 
     const createTestComponent = (
@@ -115,6 +128,40 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
         );
 
         expect(screen.getByText('Wrapped stETH')).toBeInTheDocument();
+    });
+
+    it('builds the asset with the logo fetched from the backend token info', async () => {
+        useTokenSpy.mockReturnValue({
+            data: {
+                name: 'Wrapped stETH',
+                symbol: 'wstETH',
+                decimals: 18,
+                totalSupply: '0',
+            },
+            isLoading: false,
+            isError: false,
+        });
+        useTokenInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateToken({ logo: 'wsteth-logo.png' }),
+            }),
+        );
+        const onAssetClick = jest.fn();
+
+        render(createTestComponent({ onAssetClick }));
+
+        const user = userEvent.setup();
+        await user.type(
+            screen.getByRole('searchbox'),
+            '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+        );
+        await user.click(screen.getByText('Wrapped stETH'));
+
+        expect(onAssetClick).toHaveBeenCalledWith(
+            expect.objectContaining({
+                token: expect.objectContaining({ logo: 'wsteth-logo.png' }),
+            }),
+        );
     });
 
     it('renders the not-a-token empty state when useToken resolves with no data', async () => {
