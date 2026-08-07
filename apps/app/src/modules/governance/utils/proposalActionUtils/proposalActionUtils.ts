@@ -5,6 +5,7 @@ import {
     type IProposalActionWithdrawToken as IGukProposalActionWithdrawToken,
     type IProposalActionUpdateMetadataDaoMetadata,
     type IProposalActionUpdateMetadataDaoMetadataLink,
+    ProposalActionTypeNoBasicView,
 } from '@aragon/gov-ui-kit';
 import {
     type AbiStateMutability,
@@ -25,9 +26,39 @@ import type { IDao, IResource } from '@/shared/api/daoService';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
-import type { INormalizeActionsParams } from '../../types';
+import type { INormalizeActionsParams, IRawActionTuple } from '../../types';
 
 class ProposalActionUtils {
+    /**
+     * Builds raw-calldata stubs out of a raw actions tuple, used as a fallback view when the decoded sub-actions of a
+     * wrapper action are missing or out of sync with the tuple.
+     */
+    buildRawActionStubs = (tuple: IRawActionTuple[]): IProposalAction[] =>
+        tuple.map((entry) => ({
+            from: '',
+            to: entry.to,
+            data: entry.data,
+            value: entry.value,
+            type: ProposalActionTypeNoBasicView.RAW_CALLDATA,
+            inputData: null,
+        }));
+
+    /**
+     * Resolves the sub-actions of a wrapper action to render, falling back to raw-calldata stubs built from `rawTuple`
+     * when the decoded `subActions` are missing or their length disagrees with the tuple.
+     */
+    resolveNestedActions = (
+        subActions: IProposalAction[] | undefined,
+        rawTuple: IRawActionTuple[],
+    ): IProposalAction[] => {
+        const hasDecodedMismatch =
+            subActions == null || subActions.length !== rawTuple.length;
+
+        return hasDecodedMismatch
+            ? this.buildRawActionStubs(rawTuple)
+            : subActions;
+    };
+
     normalizeActions = (
         actions: IProposalAction[],
         dao: IDao,

@@ -30,6 +30,10 @@ import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { useToken } from '@/shared/hooks/useToken';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import {
+    forwardMessageAbi,
+    forwardMessageActionsAbi,
+} from '../../../constants/crossChainControllerAbi';
 import { crossChainControllerGas } from '../../../constants/crossChainControllerGas';
 import type {
     ICrossChainControllerActionForwardMessage,
@@ -43,36 +47,6 @@ export interface ICrossChainControllerForwardMessageActionProps
     extends IProposalActionComponentProps<
         IProposalActionData<IProposalAction, ICrossChainControllerPlugin>
     > {}
-
-const forwardMessageAbi = {
-    type: 'function',
-    inputs: [
-        {
-            name: '_destinationChainId',
-            internalType: 'uint256',
-            type: 'uint256',
-        },
-        { name: '_gasLimit', internalType: 'uint256', type: 'uint256' },
-        { name: '_message', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'forwardMessage',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'nonpayable',
-} as const;
-
-// The `_message` payload is the ABI encoding of the OSx `Action[]` the destination controller hands
-// to its executor.
-const messageAbiParameters = [
-    {
-        name: 'actions',
-        type: 'tuple[]',
-        components: [
-            { name: 'to', type: 'address' },
-            { name: 'value', type: 'uint256' },
-            { name: 'data', type: 'bytes' },
-        ],
-    },
-] as const;
 
 export const CrossChainControllerForwardMessageAction: React.FC<
     ICrossChainControllerForwardMessageActionProps
@@ -220,7 +194,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
 
     const encodedMessage = useMemo(
         () =>
-            encodeAbiParameters(messageAbiParameters, [
+            encodeAbiParameters(forwardMessageActionsAbi, [
                 nestedActions.map(({ to, value, data }) => ({
                     to: to as Hex,
                     value: BigInt(value || 0),
