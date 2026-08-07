@@ -2536,6 +2536,11 @@
             "helpText": "The chain the message is forwarded to. Only chains configured on this cross-chain controller can be selected.",
             "label": "Destination chain",
             "unknown": "Chain {{chainId}}"
+          },
+          "fee": {
+            "defaultToken": "fee tokens",
+            "description": "The cross-chain controller ({{address}}) pays the fee to send the message. Make sure it holds enough {{token}}, otherwise the proposal execution will fail.",
+            "title": "Cross-chain fees are paid by the controller"
           }
         }
       },
