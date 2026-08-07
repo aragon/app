@@ -1,25 +1,29 @@
 import 'server-only';
-import { AragonDomain, EnvioClient } from '@aragon/aragon-domain';
+import { AragonDomain, EnvioClient, type RpcUrls } from '@aragon/aragon-domain';
+import { resolveServerRpcUrl } from '@/modules/application/utils/proxyRpcUtils/resolveServerRpcUrl';
+import { Network } from '@/shared/api/daoService';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 
-type AragonDomainController = ReturnType<typeof AragonDomain.load>;
+export type AragonDomainController = ReturnType<typeof AragonDomain.load>;
 
 /**
- * Server-side singleton wrapping the Envio-backed Aragon domain controller.
+ * Networks the domain controller can read on-chain data from. Expand as more
+ * networks are indexed by aragon-indexer.
+ */
+const domainRpcNetworks = [Network.ETHEREUM_MAINNET] as const;
+
+/**
+ * Server-side singleton wrapping aragon-domain.
  *
- * The controller is created lazily on first use (not at import time) so a
+ * The domain is created lazily on first use (not at import time) so a
  * missing endpoint surfaces inside the API route's `try/catch` as a clean 500
  * rather than an opaque import-time crash. `apiToken` is optional on `EnvioClient`.
- *
- * Only the methods the app consumes are exposed, keeping the surface explicit.
  */
 class AragonDomainServiceBackend {
-    private controller: AragonDomainController | undefined;
+    private domain: AragonDomainController | undefined;
 
-    getMemberProfileTextRecords: AragonDomainController['getMemberProfileTextRecords'] =
-        (dto) => this.getController().getMemberProfileTextRecords(dto);
-
-    private getController = (): AragonDomainController => {
-        if (this.controller == null) {
+    getDomain = (): AragonDomainController => {
+        if (this.domain == null) {
             const endpoint = process.env.NEXT_SECRET_ENVIO_GRAPHQL_ENDPOINT;
             const apiToken = process.env.NEXT_SECRET_ENVIO_API_TOKEN;
 
@@ -27,12 +31,20 @@ class AragonDomainServiceBackend {
                 throw new Error('Envio endpoint is not set');
             }
 
-            this.controller = AragonDomain.load(
+            const rpcUrls: RpcUrls = Object.fromEntries(
+                domainRpcNetworks.map((network) => [
+                    networkDefinitions[network].id,
+                    resolveServerRpcUrl(network),
+                ]),
+            );
+
+            this.domain = AragonDomain.load(
                 new EnvioClient(endpoint, apiToken),
+                rpcUrls,
             );
         }
 
-        return this.controller;
+        return this.domain;
     };
 }
 
