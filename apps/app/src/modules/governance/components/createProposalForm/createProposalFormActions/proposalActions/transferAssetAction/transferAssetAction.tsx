@@ -96,8 +96,6 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     });
     const isImportPending = isImportedErc20Action && !isTokenError;
 
-    // The token logo is not available on-chain, fetch it from the backend. Best effort:
-    // the backend might not know the token, so on-chain data stays the source of truth.
     const { data: tokenInfo } = useTokenInfo(
         { urlParams: { network: dao!.network, address: action.to } },
         { enabled: disableTokenSelection || isImportedErc20Action },
@@ -232,8 +230,8 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         fieldName,
     ]);
 
-    // The asset list can resolve after the imported action was already initialized with an
-    // empty logo, so patch the asset once the logo is known.
+    // The backend token info can resolve after the imported action was already initialized
+    // with an empty logo, so patch the asset once the logo is known.
     useEffect(() => {
         if (
             !importedTokenLogo ||
