@@ -211,6 +211,9 @@ importers:
       lint-staged:
         specifier: 'catalog:'
         version: 17.0.8
+      skills:
+        specifier: 1.5.20
+        version: 1.5.20
       turbo:
         specifier: 'catalog:'
         version: 2.10.5
@@ -8414,6 +8417,11 @@ packages:
 
   sisteransi@1.0.5:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
+
+  skills@1.5.20:
+    resolution: {integrity: sha512-lPl5KzMfTW+qwHFwc8t6R+wAqmdmSHw1+HWbGdJ/FZYbWLdB34bAZNFWiencM5DVoRaKAgXArmfTWMlNAbl9Gg==}
+    engines: {node: '>=22.20.0'}
+    hasBin: true
 
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
@@ -19152,6 +19160,10 @@ snapshots:
   signal-exit@4.1.0: {}
 
   sisteransi@1.0.5: {}
+
+  skills@1.5.20:
+    dependencies:
+      yaml: 2.9.0
 
   slash@3.0.0: {}
 

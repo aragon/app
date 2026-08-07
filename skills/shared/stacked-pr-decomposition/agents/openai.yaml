@@ -1,0 +1,6 @@
+interface:
+  display_name: "Stacked PR Decomposition"
+  short_description: "Slice risky changes into ordered, mergeable PR layers"
+  default_prompt: "Use $stacked-pr-decomposition to slice this change into ordered mergeable layers with health checks and delegation gates."
+policy:
+  allow_implicit_invocation: true

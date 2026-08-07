@@ -11,7 +11,8 @@
         "test:changed": "turbo run test:changed",
         "test:coverage": "pnpm validate:changesets && pnpm test:release-summary && turbo run test:coverage",
         "test:guardrails": "node --test .agents/shared/hooks/*.test.mjs .claude/shared/hooks/*.test.mjs",
-        "test:hooks": "pnpm test:guardrails",
+        "test:skills": "node --test scripts/sync-skills.test.mjs",
+        "test:hooks": "pnpm test:guardrails && pnpm test:skills",
         "test:release-summary": "node --test '.github/workflows/scripts/*.test.js'",
         "validate:changesets": "node .github/workflows/scripts/validateChangesets.js",
         "guardrails:record": "node .agents/shared/hooks/record-metrics.mjs",
@@ -19,6 +20,8 @@
         "lint": "turbo run lint",
         "lint:check": "turbo run lint:check",
         "type-check": "turbo run type-check",
+        "skills:sync": "node scripts/sync-skills.mjs",
+        "postinstall": "pnpm run skills:sync",
         "prepare": "husky"
     },
     "devDependencies": {
@@ -27,6 +30,7 @@
         "@changesets/cli": "catalog:",
         "husky": "catalog:",
         "lint-staged": "catalog:",
+        "skills": "1.5.20",
         "turbo": "catalog:",
         "ultracite": "catalog:",
         "vercel": "catalog:",
