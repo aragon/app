@@ -1,4 +1,4 @@
-import { crossChainControllerGas } from '../../constants/crossChainControllerGas';
+import { crossChainControllerGas } from '../../../constants/crossChainControllerGas';
 
 export interface IResolveGasLimitParams {
     /**
