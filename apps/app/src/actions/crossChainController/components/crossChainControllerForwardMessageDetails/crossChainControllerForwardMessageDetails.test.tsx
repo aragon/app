@@ -5,7 +5,7 @@ import type { IProposalAction } from '@/modules/governance/api/governanceService
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IRawActionTuple } from '@/modules/governance/types';
 import { forwardMessageActionsAbi } from '@/plugins/crossChainControllerPlugin/constants/crossChainControllerAbi';
-import type { ICrossChainControllerActionCrossChainExecute } from '../../types/crossChainControllerActionCrossChainExecute';
+import type { ICrossChainControllerActionForwardMessage } from '../../types/crossChainControllerActionForwardMessage';
 import { CrossChainControllerActionType } from '../../types/enum/crossChainControllerActionType';
 import {
     CrossChainControllerForwardMessageDetails,
@@ -45,7 +45,7 @@ describe('<CrossChainControllerForwardMessageDetails /> component', () => {
             destinationChainId: number;
             actions: IProposalAction[];
         }>,
-    ): IProposalActionData<ICrossChainControllerActionCrossChainExecute> => {
+    ): IProposalActionData<ICrossChainControllerActionForwardMessage> => {
         const {
             message = encodeMessage([]),
             gasLimit = '3000000',
@@ -54,7 +54,7 @@ describe('<CrossChainControllerForwardMessageDetails /> component', () => {
         } = params ?? {};
 
         return {
-            type: CrossChainControllerActionType.CROSS_CHAIN_EXECUTE,
+            type: CrossChainControllerActionType.CROSS_CHAIN_CONTROLLER_FORWARD_MESSAGE,
             from: '0x0',
             to: '0x1',
             data: '0x',

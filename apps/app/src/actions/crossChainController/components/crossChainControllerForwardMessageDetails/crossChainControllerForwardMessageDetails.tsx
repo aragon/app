@@ -18,7 +18,7 @@ import { forwardMessageActionsAbi } from '@/plugins/crossChainControllerPlugin/c
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { networkUtils } from '@/shared/utils/networkUtils';
-import type { ICrossChainControllerActionCrossChainExecute } from '../../types/crossChainControllerActionCrossChainExecute';
+import type { ICrossChainControllerActionForwardMessage } from '../../types/crossChainControllerActionForwardMessage';
 import { CrossChainControllerNestedActionsList } from '../crossChainControllerNestedActionsList';
 
 export interface ICrossChainControllerForwardMessageDetailsProps
@@ -60,7 +60,7 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
     const { action } = props;
 
     const { inputData } =
-        action as unknown as ICrossChainControllerActionCrossChainExecute;
+        action as unknown as ICrossChainControllerActionForwardMessage;
 
     const { t } = useTranslations();
 
@@ -131,7 +131,7 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
                 helpText={t(
                     'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsHelpText',
                 )}
-                id="crossChainExecuteActions"
+                id="crossChainControllerForwardMessageActions"
                 label={t(
                     'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsLabel',
                 )}
