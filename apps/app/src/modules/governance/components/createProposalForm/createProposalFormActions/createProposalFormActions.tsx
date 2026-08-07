@@ -1,7 +1,7 @@
 import { addressUtils, type ProposalActionComponent } from '@aragon/gov-ui-kit';
 import { useCallback, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useAllowedActions } from '@/modules/governance/api/executeSelectorsService';
+import { useAllAllowedActions } from '@/modules/governance/api/executeSelectorsService';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import { useAllDaoPermissions, useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -75,20 +75,13 @@ export const CreateProposalFormActions: React.FC<
         getArrayControls,
     } = useProposalActionsField();
 
-    const { data: allowedActionsData } = useAllowedActions(
-        {
-            urlParams: { network: dao!.network, pluginAddress },
-            queryParams: { pageSize: 50 },
-        },
-        { enabled: hasConditionalPermissions },
-    );
+    const { data: allowedActions } = useAllAllowedActions({
+        urlParams: { network: dao!.network, pluginAddress },
+        chainId,
+    });
     const { data: daoPermissions } = useAllDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
     });
-
-    const allowedActions = allowedActionsData?.pages.flatMap(
-        (page) => page.data,
-    );
 
     const [isDownloadPinning, setIsDownloadPinning] = useState(false);
     const [hasDownloadPinErrors, setHasDownloadPinErrors] = useState(false);

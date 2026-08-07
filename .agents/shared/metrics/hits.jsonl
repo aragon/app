@@ -157,3 +157,6 @@
 {"ts":"2026-08-04T10:56:30.749Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/domain/pluginSettings.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-08-04T07:16:05.722Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/domain/allowedActionDecoded.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-04T07:16:07.165Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/domain/allowedAction.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-08-04T12:34:00.962Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-04T12:34:05.191Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-08-04T12:34:06.974Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/queries/useAllAllowedActions/useAllAllowedActions.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":7,"adapter":"claude"}

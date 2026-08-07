@@ -3,17 +3,20 @@ import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
 import * as daoService from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
     generateDialogContext,
+    generateReactQueryResultSuccess,
     generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import * as executeSelectorsService from '../../api/executeSelectorsService';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import type { IProposalActionsEditorProps } from '../../components/proposalActionsEditor';
 import * as proposalActionsEditorModule from '../../components/proposalActionsEditor';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import { generateProposalAction } from '../../testUtils';
+import { generateAllowedAction, generateProposalAction } from '../../testUtils';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 import { proposalActionsImportExportUtils } from '../../utils/proposalActionsImportExportUtils';
 import { NestedActionsDialog } from './nestedActionsDialog';
@@ -111,6 +114,9 @@ const ProposalActionsEditorStub: React.FC<IProposalActionsEditorProps> = (
             data-action-dao-ids={JSON.stringify(
                 getValues('actions').map((action) => action.daoId),
             )}
+            data-allowed-action-targets={JSON.stringify(
+                props.allowedActions?.map((action) => action.target),
+            )}
             data-dao-id={props.daoId}
             data-exclude-action-types={JSON.stringify(props.excludeActionTypes)}
             data-testid="actions-editor"
@@ -138,8 +144,19 @@ describe('<NestedActionsDialog /> component', () => {
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
+    const useAllAllowedActionsSpy = jest.spyOn(
+        executeSelectorsService,
+        'useAllAllowedActions',
+    );
 
     beforeEach(() => {
+        useAllAllowedActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: [],
+            }) as unknown as ReturnType<
+                typeof executeSelectorsService.useAllAllowedActions
+            >,
+        );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
@@ -161,13 +178,14 @@ describe('<NestedActionsDialog /> component', () => {
         decodeActionsSpy.mockReset();
         proposalActionsEditorSpy.mockReset();
         logErrorSpy.mockReset();
+        useAllAllowedActionsSpy.mockReset();
     });
 
     const createTestComponent = (
         params?: Partial<INestedActionsDialogParams>,
     ) => {
         const completeParams: INestedActionsDialogParams = {
-            daoId: DAO_ID,
+            hostDaoId: DAO_ID,
             initialActions: [],
             onSubmit: jest.fn(),
             ...params,
@@ -199,6 +217,45 @@ describe('<NestedActionsDialog /> component', () => {
         expect(screen.getByText('0xfirst')).toBeInTheDocument();
         expect(screen.getByText('0xsecond')).toBeInTheDocument();
         expect(decodeActionsSpy).not.toHaveBeenCalled();
+    });
+
+    it('fetches the allowed actions on the plugin network for the chain the actions are composed for', () => {
+        createTestComponent({
+            processPluginAddress: '0xplugin',
+            crossChainNetwork: daoService.Network.BASE_MAINNET,
+        });
+
+        expect(useAllAllowedActionsSpy).toHaveBeenLastCalledWith(
+            {
+                urlParams: { network: DAO.network, pluginAddress: '0xplugin' },
+                chainId: networkDefinitions[daoService.Network.BASE_MAINNET].id,
+            },
+            { enabled: true },
+        );
+    });
+
+    it('forwards the allowed actions of the plugin to the editor', () => {
+        useAllAllowedActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: [generateAllowedAction({ target: '0xallowed' })],
+            }) as unknown as ReturnType<
+                typeof executeSelectorsService.useAllAllowedActions
+            >,
+        );
+
+        createTestComponent({ processPluginAddress: '0xplugin' });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset.allowedActionTargets,
+        ).toEqual(JSON.stringify(['0xallowed']));
+    });
+
+    it('offers every action when no plugin restricts them', () => {
+        createTestComponent();
+
+        expect(
+            screen.getByTestId('actions-editor').dataset.allowedActionTargets,
+        ).toBeUndefined();
     });
 
     it('decodes the initial actions before seeding the form when none of them carry input data', async () => {

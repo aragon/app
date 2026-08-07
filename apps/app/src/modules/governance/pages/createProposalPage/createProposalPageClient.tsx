@@ -73,8 +73,8 @@ export const CreateProposalPageClient: React.FC<
     );
 
     const contextValues = useMemo(
-        () => ({ prepareActions, addPrepareAction }),
-        [prepareActions, addPrepareAction],
+        () => ({ prepareActions, addPrepareAction, processPlugin: plugin }),
+        [prepareActions, addPrepareAction, plugin],
     );
 
     const handleFormSubmit = (values: ICreateProposalFormData) => {

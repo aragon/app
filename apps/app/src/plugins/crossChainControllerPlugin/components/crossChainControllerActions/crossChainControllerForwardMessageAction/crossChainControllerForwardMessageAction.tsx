@@ -17,6 +17,7 @@ import { useFormContext } from 'react-hook-form';
 import { encodeAbiParameters, encodeFunctionData, type Hex } from 'viem';
 import type { IProposalAction } from '@/modules/governance/api/governanceService';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
+import { useCreateProposalFormContext } from '@/modules/governance/components/createProposalForm';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import type { INestedActionsDialogParams } from '@/modules/governance/dialogs/nestedActionsDialog';
 import { useDialogContext } from '@/shared/components/dialogProvider';
@@ -88,6 +89,9 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const { open } = useDialogContext();
     const { setValue } = useFormContext();
     const { chainId: daoChainId } = useDaoChain({ daoId });
+
+    // The nested actions are part of the proposal, so they are restricted by the process creating it.
+    const { processPlugin } = useCreateProposalFormContext();
 
     const actionFieldName = `actions.[${index.toString()}]`;
     useFormField<Record<string, IProposalActionData>, typeof actionFieldName>(
@@ -163,7 +167,9 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         );
 
         const params: INestedActionsDialogParams = {
-            network: destinationNetwork,
+            hostDaoId: daoId,
+            processPluginAddress: processPlugin?.address,
+            crossChainNetwork: destinationNetwork,
             initialActions: nestedActions,
             // Prevent showing nested forward actions.
             excludeActionTypes: [
