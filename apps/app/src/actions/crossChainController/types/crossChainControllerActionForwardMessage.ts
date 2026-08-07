@@ -5,7 +5,7 @@ import type { CrossChainControllerActionType } from './enum/crossChainController
  * Decoded `inputData` for a `forwardMessage` call on the cross-chain controller. Extends the base proposal-action input
  * data with the destination chain and the sub-actions the backend decoded from the `_message` payload.
  */
-export interface ICrossChainControllerActionCrossChainExecuteInputData
+export interface ICrossChainControllerActionForwardMessageInputData
     extends NonNullable<IProposalAction['inputData']> {
     /**
      * Sub-actions carried by the `_message` payload, executed as a batch on the destination chain. Populated only when
@@ -19,14 +19,14 @@ export interface ICrossChainControllerActionCrossChainExecuteInputData
     destinationChainId: number;
 }
 
-export interface ICrossChainControllerActionCrossChainExecute
+export interface ICrossChainControllerActionForwardMessage
     extends Omit<IProposalAction, 'type' | 'inputData'> {
     /**
-     * Discriminator for the cross-chain execute action.
+     * Discriminator for the cross-chain controller forwardMessage action.
      */
-    type: CrossChainControllerActionType.CROSS_CHAIN_EXECUTE;
+    type: CrossChainControllerActionType.CROSS_CHAIN_CONTROLLER_FORWARD_MESSAGE;
     /**
      * Decoded input data.
      */
-    inputData: ICrossChainControllerActionCrossChainExecuteInputData;
+    inputData: ICrossChainControllerActionForwardMessageInputData;
 }

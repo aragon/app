@@ -4,7 +4,8 @@ import { CrossChainControllerActionType } from './types/enum/crossChainControlle
 
 export const initCrossChainControllerActionViews = () => {
     actionViewRegistry.register({
-        actionType: CrossChainControllerActionType.CROSS_CHAIN_EXECUTE,
+        actionType:
+            CrossChainControllerActionType.CROSS_CHAIN_CONTROLLER_FORWARD_MESSAGE,
         componentDetails: CrossChainControllerForwardMessageDetails,
     });
 };
