@@ -42,8 +42,8 @@ export const DecodedAllowedActionsList: React.FC<
                 ),
             ) ?? [];
     const decodedAllowedActionViews = decodedAllowedActions.map((action) => ({
-        contractName: action.decoded.contractName,
-        functionName: action.decoded.functionName,
+        contractName: action.decoded?.contractName,
+        functionName: action.decoded?.functionName,
         id: action.id,
         selector: action.selector,
         target: action.target,

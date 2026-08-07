@@ -155,3 +155,5 @@
 {"ts":"2026-08-03T14:29:17.284Z","tool":"Edit","file":"apps/app/src/actions/core/createProposal/createProposalActionDetails.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":3,"adapter":"claude"}
 {"ts":"2026-08-03T14:29:22.784Z","tool":"Edit","file":"apps/app/src/actions/core/execute/executeActionDetails.tsx","rule":"core-action-decoded-input","bytes":948,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-04T10:56:30.749Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/domain/pluginSettings.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-04T07:16:05.722Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/domain/allowedActionDecoded.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-08-04T07:16:07.165Z","tool":"Edit","file":"apps/app/src/modules/governance/api/executeSelectorsService/domain/allowedAction.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}

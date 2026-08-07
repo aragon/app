@@ -1890,7 +1890,9 @@
           "Transfer": "Transfer"
         },
         "rawCalldataFunction": "Unknown",
-        "removeAllActions": "Remove all actions"
+        "removeAllActions": "Remove all actions",
+        "unknownFunction": "Unknown",
+        "unverifiedContract": "Unverified contract"
       },
       "createExecuteActionsPage": {
         "steps": {
