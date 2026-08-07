@@ -1,4 +1,4 @@
-import { crossChainControllerGas } from '../../constants/crossChainControllerGas';
+import { crossChainControllerGas } from '../../../constants/crossChainControllerGas';
 import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
 
 describe('crossChainControllerGas utils', () => {
