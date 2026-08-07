@@ -4,12 +4,15 @@ import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import * as wagmi from 'wagmi';
+import * as financeService from '@/modules/finance/api/financeService';
+import { generateToken } from '@/modules/finance/testUtils';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import * as useTokenModule from '@/shared/hooks/useToken/useToken';
 import {
     generateDao,
     generateDialogContext,
+    generateReactQueryResultLoading,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import type { IProposalActionData } from '../../../createProposalFormDefinitions';
@@ -18,6 +21,7 @@ import { TransferAssetAction } from './transferAssetAction';
 describe('<TransferAssetAction /> component', () => {
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const useTokenSpy = jest.spyOn(useTokenModule, 'useToken');
+    const useTokenInfoSpy = jest.spyOn(financeService, 'useTokenInfo');
     const useReadContractSpy = jest.spyOn(wagmi, 'useReadContract');
     const useBalanceSpy = jest.spyOn(wagmi, 'useBalance');
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
@@ -86,6 +90,11 @@ describe('<TransferAssetAction /> component', () => {
             isLoading: true,
             isError: false,
         });
+        useTokenInfoSpy.mockReturnValue(
+            generateReactQueryResultLoading() as ReturnType<
+                typeof financeService.useTokenInfo
+            >,
+        );
         useReadContractSpy.mockReturnValue({
             data: BigInt(0),
         } as unknown as wagmi.UseReadContractReturnType);
@@ -98,6 +107,7 @@ describe('<TransferAssetAction /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useTokenSpy.mockReset();
+        useTokenInfoSpy.mockReset();
         useReadContractSpy.mockReset();
         useBalanceSpy.mockReset();
         useDialogContextSpy.mockReset();
@@ -181,6 +191,27 @@ describe('<TransferAssetAction /> component', () => {
         expect(action.data).toEqual(originalData);
         expect(action.asset.token.decimals).toEqual(6);
         expect(action.rawAmount).toBeUndefined();
+    });
+
+    it('sets the token logo fetched from the backend token info', () => {
+        useTokenSpy.mockReturnValue({
+            data: resolvedToken,
+            isLoading: false,
+            isError: false,
+        });
+        useTokenInfoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: generateToken({
+                    address: tokenAddress,
+                    logo: 'usdc-logo.png',
+                }),
+            }),
+        );
+
+        render(createTestComponent(generateImportedAction()));
+
+        const action = getFormValues('actions.0');
+        expect(action.asset.token.logo).toEqual('usdc-logo.png');
     });
 
     it('re-encodes the calldata from user edits when the token query fails for an imported action', async () => {

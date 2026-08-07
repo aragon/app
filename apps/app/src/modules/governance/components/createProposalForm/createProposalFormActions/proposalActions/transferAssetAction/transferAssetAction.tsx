@@ -14,7 +14,10 @@ import {
     zeroAddress,
 } from 'viem';
 import { useBalance, useReadContract } from 'wagmi';
-import type { IAsset } from '@/modules/finance/api/financeService';
+import {
+    type IAsset,
+    useTokenInfo,
+} from '@/modules/finance/api/financeService';
 import {
     type ITransferAssetFormData,
     TransferAssetForm,
@@ -92,6 +95,14 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         enabled: disableTokenSelection || isImportedErc20Action,
     });
     const isImportPending = isImportedErc20Action && !isTokenError;
+
+    // The token logo is not available on-chain, fetch it from the backend. Best effort:
+    // the backend might not know the token, so on-chain data stays the source of truth.
+    const { data: tokenInfo } = useTokenInfo(
+        { urlParams: { network: dao!.network, address: action.to } },
+        { enabled: disableTokenSelection || isImportedErc20Action },
+    );
+    const importedTokenLogo = tokenInfo?.logo ?? '';
     const { data: balance } = useReadContract({
         abi: erc20Abi,
         address: action.to as Hex,
@@ -158,7 +169,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             ...token,
             address: tokenAddress,
             network: dao!.network,
-            logo: '',
+            logo: importedTokenLogo,
             priceUsd: '0',
         };
         const tokenBalance = formatUnits(balance, tokenDecimals);
@@ -171,6 +182,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         balance,
         tokenAddress,
         tokenDecimals,
+        importedTokenLogo,
         setValue,
         fieldName,
         dao,
@@ -190,7 +202,7 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
             ...token,
             address: tokenAddress,
             network: dao!.network,
-            logo: '',
+            logo: importedTokenLogo,
             priceUsd: '0',
         };
 
@@ -214,10 +226,28 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         token,
         action.rawAmount,
         tokenAddress,
+        importedTokenLogo,
         dao,
         setValue,
         fieldName,
     ]);
+
+    // The asset list can resolve after the imported action was already initialized with an
+    // empty logo, so patch the asset once the logo is known.
+    useEffect(() => {
+        if (
+            !importedTokenLogo ||
+            asset == null ||
+            asset.token.logo === importedTokenLogo
+        ) {
+            return;
+        }
+
+        setValue(`${fieldName}.asset`, {
+            ...asset,
+            token: { ...asset.token, logo: importedTokenLogo },
+        });
+    }, [importedTokenLogo, asset, fieldName, setValue]);
 
     // Update asset balance for imported actions. Uploaded and decoded transfer actions have token info, but don't have max available balance for the given DAO.
     useEffect(() => {
