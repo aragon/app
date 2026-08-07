@@ -183,6 +183,34 @@ describe('<TransferAssetAction /> component', () => {
         expect(action.rawAmount).toBeUndefined();
     });
 
+    it('re-encodes the calldata from user edits when the token query fails for an imported action', async () => {
+        useTokenSpy.mockReturnValue({
+            data: null,
+            isLoading: false,
+            isError: true,
+        });
+
+        render(createTestComponent(generateImportedAction()));
+
+        const user = userEvent.setup();
+        const amountInput = screen.getByRole('spinbutton');
+        await user.clear(amountInput);
+        await user.type(amountInput, '7');
+
+        // Decimals could not be fetched, so encoding falls back to the
+        // placeholder 18 decimals — but the calldata must follow the visible
+        // amount instead of silently keeping the uploaded one.
+        const expectedData = encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'transfer',
+            args: [receiverAddress, parseUnits('7', 18)],
+        });
+
+        const action = getFormValues('actions.0');
+        expect(action.amount).toEqual('7');
+        expect(action.data).toEqual(expectedData);
+    });
+
     it('encodes the transfer data for actions composed in the app', async () => {
         // Composer-created action: asset selected, amount typed in by the user after mount.
         const composedAmount = '5';

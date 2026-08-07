@@ -3,7 +3,7 @@ import {
     type IProposalActionComponentProps,
     invariant,
 } from '@aragon/gov-ui-kit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import {
     encodeFunctionData,
@@ -86,14 +86,12 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
     // For imported ERC20 actions, we need to fetch token details to get correct decimals
     const isImportedErc20Action =
         action.rawAmount != null && action.to !== zeroAddress;
-    const [isImportPending, setIsImportPending] = useState(
-        isImportedErc20Action,
-    );
-    const { data: token } = useToken({
+    const { data: token, isError: isTokenError } = useToken({
         address: action.to as Hex,
         chainId,
         enabled: disableTokenSelection || isImportedErc20Action,
     });
+    const isImportPending = isImportedErc20Action && !isTokenError;
     const { data: balance } = useReadContract({
         abi: erc20Abi,
         address: action.to as Hex,
@@ -211,7 +209,6 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
 
         // Clear rawAmount after initialization
         setValue(`${fieldName}.rawAmount`, undefined);
-        setIsImportPending(false);
     }, [
         isImportedErc20Action,
         token,
