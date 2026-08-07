@@ -22,7 +22,7 @@
         }
       },
       "crossChainController": {
-        "crossChainControllerExecuteActionDetails": {
+        "crossChainControllerForwardMessageDetails": {
           "chainTerm": "Destination chain",
           "chainUnknown": "Chain {{chainId}}",
           "gasLimitTerm": "Gas limit",

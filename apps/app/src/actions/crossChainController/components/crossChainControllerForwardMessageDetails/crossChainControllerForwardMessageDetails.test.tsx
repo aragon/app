@@ -8,9 +8,9 @@ import { forwardMessageActionsAbi } from '@/plugins/crossChainControllerPlugin/c
 import type { ICrossChainControllerActionCrossChainExecute } from '../../types/crossChainControllerActionCrossChainExecute';
 import { CrossChainControllerActionType } from '../../types/enum/crossChainControllerActionType';
 import {
-    CrossChainControllerExecuteActionDetails,
-    type ICrossChainControllerExecuteActionDetailsProps,
-} from './crossChainControllerExecuteActionDetails';
+    CrossChainControllerForwardMessageDetails,
+    type ICrossChainControllerForwardMessageDetailsProps,
+} from './crossChainControllerForwardMessageDetails';
 
 jest.mock('../crossChainControllerNestedActionsList', () => ({
     CrossChainControllerNestedActionsList: ({
@@ -28,7 +28,7 @@ jest.mock('../crossChainControllerNestedActionsList', () => ({
     ),
 }));
 
-describe('<CrossChainControllerExecuteActionDetails /> component', () => {
+describe('<CrossChainControllerForwardMessageDetails /> component', () => {
     const encodeMessage = (actions: IRawActionTuple[]): Hex =>
         encodeAbiParameters(forwardMessageActionsAbi, [
             actions.map(({ to, value, data }) => ({
@@ -80,9 +80,9 @@ describe('<CrossChainControllerExecuteActionDetails /> component', () => {
     };
 
     const createTestComponent = (
-        props?: Partial<ICrossChainControllerExecuteActionDetailsProps>,
+        props?: Partial<ICrossChainControllerForwardMessageDetailsProps>,
     ) => {
-        const completeProps: ICrossChainControllerExecuteActionDetailsProps = {
+        const completeProps: ICrossChainControllerForwardMessageDetailsProps = {
             action: buildAction(),
             index: 0,
             chainId: 1,
@@ -91,7 +91,7 @@ describe('<CrossChainControllerExecuteActionDetails /> component', () => {
 
         return (
             <GukModulesProvider>
-                <CrossChainControllerExecuteActionDetails {...completeProps} />
+                <CrossChainControllerForwardMessageDetails {...completeProps} />
             </GukModulesProvider>
         );
     };
@@ -137,7 +137,7 @@ describe('<CrossChainControllerExecuteActionDetails /> component', () => {
 
         expect(
             screen.getByText(
-                'app.actions.crossChainController.crossChainControllerExecuteActionDetails.chainUnknown (chainId=999)',
+                'app.actions.crossChainController.crossChainControllerForwardMessageDetails.chainUnknown (chainId=999)',
             ),
         ).toBeInTheDocument();
     });
@@ -152,7 +152,7 @@ describe('<CrossChainControllerExecuteActionDetails /> component', () => {
         ).not.toBeInTheDocument();
         expect(
             screen.getByText(
-                'app.actions.crossChainController.crossChainControllerExecuteActionDetails.actionsDecodeError',
+                'app.actions.crossChainController.crossChainControllerForwardMessageDetails.actionsDecodeError',
             ),
         ).toBeInTheDocument();
     });
