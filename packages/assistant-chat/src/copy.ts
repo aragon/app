@@ -67,8 +67,16 @@ export const chatCopy = {
         file_limit: `You can attach up to ${assistantLimits.maxFilesPerMessage} files per message.`,
         uploadFailed: 'Upload failed. Please try again.',
         removeFailed: "Couldn't remove the file. Please try again.",
+        // The scanner flagged the file; it was deleted server-side and never reaches the team.
+        maliciousFile: 'Malicious code detected. The file was not attached.',
+        scanUnavailable:
+            "We couldn't scan this file right now. Please try again in a moment.",
     } satisfies Record<
-        FileRejectReason | 'uploadFailed' | 'removeFailed',
+        | FileRejectReason
+        | 'uploadFailed'
+        | 'removeFailed'
+        | 'maliciousFile'
+        | 'scanUnavailable',
         string
     >,
     ticketCard: {

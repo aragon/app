@@ -4,6 +4,7 @@ export type IAssistantStep =
     | 'respond'
     | 'createTicket'
     | 'confirmFile'
+    | 'scanFile'
     | 'removeFile'
     | 'transferFiles'
     | 'cleanupBlobs'

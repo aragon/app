@@ -59,14 +59,28 @@ const toFileDataUrl = (file: File): Promise<string> =>
         reader.readAsDataURL(file);
     });
 
-const toUploadErrorText = (error: unknown): string =>
-    // Service rejections (magic-byte validation, session limits) carry a human-readable message;
-    // anything else (network failures, unexpected shapes) falls back to the generic wording.
-    error instanceof UploadFileError &&
-    error.code !== 'network' &&
-    error.code !== 'internal'
-        ? error.message
-        : chatCopy.fileAlerts.uploadFailed;
+const toUploadErrorText = (error: unknown): string => {
+    if (!(error instanceof UploadFileError)) {
+        return chatCopy.fileAlerts.uploadFailed;
+    }
+
+    // Scan outcomes get our own wording: the service message describes what was detected, which
+    // is neither actionable for the user nor safe to echo verbatim into the chat.
+    if (error.code === 'malicious_file') {
+        return chatCopy.fileAlerts.maliciousFile;
+    }
+
+    if (error.code === 'scan_unavailable') {
+        return chatCopy.fileAlerts.scanUnavailable;
+    }
+
+    // Other service rejections (magic-byte validation, session limits) carry a human-readable
+    // message; anything else (network failures, unexpected shapes) falls back to the generic
+    // wording.
+    return error.code === 'network' || error.code === 'internal'
+        ? chatCopy.fileAlerts.uploadFailed
+        : error.message;
+};
 
 /**
  * assistant-ui attachment adapter over the widget's file endpoints. Files travel out-of-band: the

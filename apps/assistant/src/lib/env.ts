@@ -28,6 +28,23 @@ const parseOptionalNumber = (value?: string): number | undefined => {
     return Number.isNaN(parsed) ? undefined : parsed;
 };
 
+// Only an explicit "true"/"false" overrides the per-environment config; anything else (unset,
+// empty, typo) leaves the checked-in default in place.
+const parseOptionalBoolean = (value?: string): boolean | undefined => {
+    if (value === 'true') {
+        return true;
+    }
+
+    return value === 'false' ? false : undefined;
+};
+
+const malwareEngineModes = ['off', 'optional', 'mandatory'] as const;
+
+const parseEngineMode = (
+    value?: string,
+): (typeof malwareEngineModes)[number] | undefined =>
+    malwareEngineModes.find((mode) => mode === value);
+
 export const env = {
     // ASSISTANT_ENV is set locally through .env.local; on Vercel the runtime only exposes the
     // automatic VERCEL_ENV (production | preview | development), which maps 1:1 onto our values
@@ -52,4 +69,23 @@ export const env = {
         parseOptionalNumber(process.env.ASSISTANT_RATE_LIMIT_RPM),
     rateLimitSessionsPerDay: (): number | undefined =>
         parseOptionalNumber(process.env.ASSISTANT_RATE_LIMIT_SESSIONS_PER_DAY),
+    malwareScanEnabled: (): boolean | undefined =>
+        parseOptionalBoolean(process.env.ASSISTANT_MALWARE_SCAN_ENABLED),
+    malwareScannerUrl: (): string | undefined =>
+        process.env.ASSISTANT_MALWARE_SCANNER_URL || undefined,
+    malwareScanClaudeMode: () =>
+        parseEngineMode(process.env.ASSISTANT_MALWARE_SCAN_CLAUDE),
+    malwareScanVirusTotalMode: () =>
+        parseEngineMode(process.env.ASSISTANT_MALWARE_SCAN_VIRUSTOTAL),
+    // Cloudflare Access service token for the scanner worker; both halves must be present.
+    malwareScannerApiKey: ():
+        | { clientId: string; clientSecret: string }
+        | undefined => {
+        const clientId = process.env.MALWARE_SCANNER_ACCESS_CLIENT_ID;
+        const clientSecret = process.env.MALWARE_SCANNER_ACCESS_CLIENT_SECRET;
+
+        return clientId && clientSecret
+            ? { clientId, clientSecret }
+            : undefined;
+    },
 };
