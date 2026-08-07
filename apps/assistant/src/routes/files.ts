@@ -17,6 +17,7 @@ import {
 } from '../files/blobPath';
 import { validateFile } from '../files/validateFile';
 import type { IAppDependencies } from '../lib/appDependencies';
+import { getConfig } from '../lib/config';
 import { env } from '../lib/env';
 import { observability } from '../lib/observability';
 import type { ISessionFile } from '../lib/sessionStore';
@@ -27,6 +28,8 @@ const errorStatusByCode: Partial<
     file_too_large: 413,
     unsupported_file: 415,
     file_limit: 429,
+    malicious_file: 422,
+    scan_unavailable: 503,
     internal: 500,
 };
 
@@ -263,12 +266,10 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 return context.json(body, status);
             }
 
-            const validated = await validateFile(data, parsedPath.filename);
-
-            if ('error' in validated) {
+            // Releases the slot and deletes the blob of a file we are not going to queue
+            // (best effort on the blob — the cleanup cron sweeps leftovers).
+            const rejectFile = async () => {
                 await sessionStore.releaseFileClaim(sessionId, fileId);
-                // The rejected blob is deleted right away (best effort — the cleanup cron
-                // sweeps leftovers).
                 await deps
                     .getBlobStore()
                     .delete([blobUrl])
@@ -278,6 +279,12 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                             step: 'confirmFile',
                         }),
                     );
+            };
+
+            const validated = await validateFile(data, parsedPath.filename);
+
+            if ('error' in validated) {
+                await rejectFile();
                 const { body, status } = buildError(
                     validated.error,
                     validated.error === 'file_too_large'
@@ -286,6 +293,33 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
                 );
 
                 return context.json(body, status);
+            }
+
+            // Malware scan of the content itself, after the format gate and before the file is
+            // queued: a flagged file is deleted here and never reaches the queue, the ticket or
+            // the support team. A mandatory engine without a verdict blocks too, but as a
+            // retriable error — see the malwareScan config for the per-engine policy.
+            if (getConfig().malwareScan.enabled) {
+                const verdict = await deps.getMalwareScanner().scan({
+                    data,
+                    filename: validated.filename,
+                });
+
+                if (verdict.status !== 'clean') {
+                    await rejectFile();
+                    observability.logStep({
+                        sessionId,
+                        step: 'scanFile',
+                        latencyMs: Date.now() - startTime,
+                    });
+
+                    const { body, status } =
+                        verdict.status === 'malicious'
+                            ? buildError('malicious_file', verdict.reason)
+                            : buildError('scan_unavailable', verdict.reason);
+
+                    return context.json(body, status);
+                }
             }
 
             // Re-attached identical bytes (e.g. the same screenshot uploaded twice) queue as

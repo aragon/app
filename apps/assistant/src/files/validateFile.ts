@@ -77,11 +77,9 @@ export const validateFile = async (
     if (magicType != null) {
         const contentType = allowedMagicTypes[magicType.ext];
 
-        // Everything sniffable but not allowlisted (svg/xml included) is rejected here.
-        // TODO(assistant): automated content moderation hook. This is where a vision-model safety
-        // scan for accepted images (contentType.startsWith('image/')) would slot in before the
-        // file is queued — see the moderation posture in README.md. Not implemented in p4; current
-        // posture is deterrence + reactive review of the private Linear queue.
+        // Everything sniffable but not allowlisted (svg/xml included) is rejected here. Accepted
+        // files then go through the malware scan in /files/confirm (see files.ts); NSFW/illegal
+        // content moderation stays deterrence + reactive review — see README.md.
         return contentType == null
             ? { error: 'unsupported_file' }
             : { data, filename, contentType, size: data.byteLength };
