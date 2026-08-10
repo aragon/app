@@ -1,5 +1,25 @@
 # @aragon/app
 
+## 1.37.0
+
+### Minor Changes
+
+- [#1296](https://github.com/aragon/app/pull/1296) [`e8cfb4b`](https://github.com/aragon/app/commit/e8cfb4bfd98007b370cb295af7737438ddf88965) Thanks [@harryburger](https://github.com/harryburger)! - Show objection voting controls for Alchemix Token Voting: during the objection stage the voting terminal offers the "Object" option only, and the objection status is read on-chain to keep the terminal in sync
+
+- [#1287](https://github.com/aragon/app/pull/1287) [`25b05b5`](https://github.com/aragon/app/commit/25b05b55f5c837902e742ad53828741c7e322acf) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Add the DAO settings permissions page with list and graph views of the DAO's on-chain permissions, filterable by the hide-DAO-grants and hide-governing-body toggles.
+
+- [#1269](https://github.com/aragon/app/pull/1269) [`e0f442f`](https://github.com/aragon/app/commit/e0f442f83751bc823aa6b073810a037866ae82f2) Thanks [@milosh86](https://github.com/milosh86)! - Add a nested actions dialog for composing the action list of actions taking an `Action[]` parameter
+
+- [#1273](https://github.com/aragon/app/pull/1273) [`5d90cc3`](https://github.com/aragon/app/commit/5d90cc3c649e18d51d0db50bc36c262ad405cea1) Thanks [@milosh86](https://github.com/milosh86)! - Enable ActionComposer to work outside of a DAO context by accepting a network prop
+
+- [#1289](https://github.com/aragon/app/pull/1289) [`d67d000`](https://github.com/aragon/app/commit/d67d000d81f467fdfecba87f0b2e6e13e8781b36) Thanks [@evanaronson](https://github.com/evanaronson)! - Remove support for the Peaq network.
+
+### Patch Changes
+
+- [#1301](https://github.com/aragon/app/pull/1301) [`8d75f1c`](https://github.com/aragon/app/commit/8d75f1cade97ec45ad00565a2f20e4c800f3d19b) Thanks [@harryburger](https://github.com/harryburger)! - Fix uploaded transfer actions losing their amount and calldata when the token details are already cached
+
+- [#1304](https://github.com/aragon/app/pull/1304) [`b9e2715`](https://github.com/aragon/app/commit/b9e271572ff65b61c0e9ca237e02e3df2502152a) Thanks [@harryburger](https://github.com/harryburger)! - Show the token logo for uploaded transfer actions and assets added by address
+
 ## 1.36.0
 
 ### Minor Changes
