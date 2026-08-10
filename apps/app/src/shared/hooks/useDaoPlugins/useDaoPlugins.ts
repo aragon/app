@@ -57,6 +57,14 @@ export interface IUseDaoPluginsParams {
      * @default false
      */
     visibleOnly?: boolean;
+    /**
+     * Keeps plugins whose interface type could not be resolved. They are
+     * dropped by default because the app has no UI to render them with. Set
+     * this to `true` ONLY for surfaces describing what is installed on-chain
+     * (permissions, contract versions).
+     * @default false
+     */
+    includeUnsupported?: boolean;
 }
 
 export const pluginGroupFilter: IFilterComponentPlugin<IDaoPlugin> = {
@@ -142,6 +150,7 @@ export const useDaoPlugins = (
         slug,
         hasExecute,
         visibleOnly,
+        includeUnsupported,
     } = params;
 
     const { isEnabled } = useFeatureFlags();
@@ -156,6 +165,7 @@ export const useDaoPlugins = (
         interfaceType,
         slug,
         hasExecute,
+        includeUnsupported,
     });
 
     const daoOverride = daoOverrides?.[daoId];
