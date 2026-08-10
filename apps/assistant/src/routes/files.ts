@@ -300,18 +300,23 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
             // the support team. A mandatory engine without a verdict blocks too, but as a
             // retriable error — see the malwareScan config for the per-engine policy.
             if (getConfig().malwareScan.enabled) {
+                const scanStartTime = Date.now();
                 const verdict = await deps.getMalwareScanner().scan({
                     data,
                     filename: validated.filename,
                 });
 
+                // Every scan is logged, clean ones included: without it a passing scan leaves no
+                // trace and there is no way to tell scanning ran at all from the logs.
+                observability.logStep({
+                    sessionId,
+                    step: 'scanFile',
+                    scanVerdict: verdict.status,
+                    latencyMs: Date.now() - scanStartTime,
+                });
+
                 if (verdict.status !== 'clean') {
                     await rejectFile();
-                    observability.logStep({
-                        sessionId,
-                        step: 'scanFile',
-                        latencyMs: Date.now() - startTime,
-                    });
 
                     const { body, status } =
                         verdict.status === 'malicious'
