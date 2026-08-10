@@ -11,7 +11,7 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import * as CreateProposalProvider from '../createProposalFormProvider';
+import * as useDownloadProposalActionsHook from '../../../hooks/useDownloadProposalActions';
 import {
     CreateProposalFormActions,
     type ICreateProposalFormActionsProps,
@@ -28,9 +28,9 @@ describe('<CreateProposalFormActions /> component', () => {
         'useAllAllowedActions',
     );
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useCreateProposalFormContextSpy = jest.spyOn(
-        CreateProposalProvider,
-        'useCreateProposalFormContext',
+    const useDownloadProposalActionsSpy = jest.spyOn(
+        useDownloadProposalActionsHook,
+        'useDownloadProposalActions',
     );
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
@@ -51,9 +51,10 @@ describe('<CreateProposalFormActions /> component', () => {
             >,
         );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useCreateProposalFormContextSpy.mockReturnValue({
-            prepareActions: {},
-            addPrepareAction: jest.fn(),
+        useDownloadProposalActionsSpy.mockReturnValue({
+            isPinning: false,
+            hasPinErrors: false,
+            handleDownloadActions: jest.fn(),
         });
         getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
     });
@@ -63,7 +64,7 @@ describe('<CreateProposalFormActions /> component', () => {
         useAllDaoPermissionsSpy.mockReset();
         useAllAllowedActionsSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useCreateProposalFormContextSpy.mockReset();
+        useDownloadProposalActionsSpy.mockReset();
         getDaoPluginsSpy.mockReset();
     });
 
