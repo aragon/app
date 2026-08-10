@@ -68,6 +68,30 @@ const mockConfirmRejection = () => {
     ) as unknown as typeof fetch;
 };
 
+// The service accepts the upload and queues the file for the ticket.
+const mockConfirmAccepted = () => {
+    global.fetch = jest.fn((_input: RequestInfo | URL, init?: RequestInit) => {
+        if (init?.method === 'DELETE') {
+            return Promise.resolve(new Response(null, { status: 204 }));
+        }
+
+        return Promise.resolve(
+            new Response(
+                JSON.stringify({
+                    id: 'file-1',
+                    filename: 'screenshot.png',
+                    contentType: 'image/png',
+                    size: 4,
+                }),
+                {
+                    status: 201,
+                    headers: { 'content-type': 'application/json' },
+                },
+            ),
+        );
+    }) as unknown as typeof fetch;
+};
+
 describe('createAttachmentAdapter', () => {
     const originalFetch = global.fetch;
 
@@ -103,5 +127,43 @@ describe('createAttachmentAdapter', () => {
 
         // Still the upload rejection, never the "too many files" alert.
         expect(error?.message).toEqual(chatCopy.fileAlerts.maliciousFile);
+    });
+    it('stays sendable when another attachment of the same message failed', async () => {
+        // The composer sends every attachment concurrently and, when one throws, restores them
+        // all and re-sends. A file that already went must survive that second round: otherwise
+        // the message is blocked forever and `remove` can no longer delete it server-side.
+        mockConfirmAccepted();
+        const adapter = buildAdapter();
+        const { attachment } = await runAdd(adapter, pngFile());
+
+        await expect(adapter.send(attachment)).resolves.toMatchObject({
+            status: { type: 'complete' },
+        });
+
+        await expect(adapter.send(attachment)).resolves.toMatchObject({
+            status: { type: 'complete' },
+        });
+    });
+
+    it('still deletes a sent file server-side when it is removed', async () => {
+        mockConfirmAccepted();
+        const adapter = buildAdapter();
+        const { attachment } = await runAdd(adapter, pngFile());
+        await adapter.send(attachment);
+
+        await adapter.remove(attachment);
+
+        // The DELETE must reach the service: a file dropped from the composer cannot be left in
+        // the session queue, where ticket creation would still attach it.
+        const calls = (global.fetch as jest.Mock).mock.calls.map((call) => ({
+            url: String(call[0]),
+            method: (call[1] as RequestInit | undefined)?.method,
+        }));
+        expect(
+            calls.some(
+                (call) =>
+                    call.method === 'DELETE' && call.url.includes('/files/'),
+            ),
+        ).toBe(true);
     });
 });

@@ -52,6 +52,12 @@ interface IAdapterEntry {
      * a composer slot.
      */
     uploadError?: unknown;
+    /**
+     * Set once the file has ridden along with a message. Kept (rather than dropping the entry) so
+     * a repeated `send` is idempotent: the composer re-sends every attachment when one of them
+     * fails, and a file that already went must not look like one that never uploaded.
+     */
+    sent?: boolean;
 }
 
 const toAttachmentType = (file: File): string =>
@@ -107,7 +113,9 @@ export const createAttachmentAdapter = (
     const usedSlots = (sessionId: string): number =>
         [...entries.values()].filter(
             (entry) =>
-                entry.sessionId === sessionId && entry.uploadError == null,
+                entry.sessionId === sessionId &&
+                entry.uploadError == null &&
+                !entry.sent,
         ).length;
 
     return {
@@ -228,9 +236,12 @@ export const createAttachmentAdapter = (
                 throw new Error(toUploadErrorText(error));
             }
 
-            // The message takes the file with it: the entry no longer occupies a composer slot,
-            // and the server queue (bounded by its own session cap) holds it for the ticket.
-            entries.delete(attachment.id);
+            // The message takes the file with it, so the entry stops occupying a composer slot —
+            // but it is marked rather than dropped: when one attachment of a message fails, the
+            // composer restores them all and re-sends, and a dropped entry would then look like a
+            // file that never uploaded (blocking the message, and letting `remove` skip the
+            // server-side deletion so a removed file still reached the ticket).
+            entry.sent = true;
 
             // The content part exists only for the local transcript: assistant-ui rebuilds the
             // sent message's attachment tiles from it, the chat transport strips file parts from
