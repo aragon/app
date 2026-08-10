@@ -28,7 +28,11 @@ const maxFilenameLength = 120;
 
 export const sanitizeFilename = (raw: string): string => {
     const withoutPath = raw.normalize('NFC').split(/[/\\]/).pop() ?? '';
-    const cleaned = withoutPath.replace(/\p{Cc}/gu, '').trim();
+    // Control chars (Cc) and invisible format chars (Cf) both go: a support engineer reads this
+    // name in the ticket, and a bidi override (U+202E) renders `invoice<RLO>gnp.exe` as
+    // `invoiceexe.png`. Cf also covers zero-width characters used to make two names look
+    // identical. Side effect: emoji joined by ZWJ render as their separate parts.
+    const cleaned = withoutPath.replace(/[\p{Cc}\p{Cf}]/gu, '').trim();
 
     if (cleaned.length === 0 || cleaned === '.' || cleaned === '..') {
         return 'file';
