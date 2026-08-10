@@ -3,6 +3,7 @@
 import {
     AlertInline,
     Avatar,
+    Button,
     DefinitionList,
     formatterUtils,
     InputContainer,
@@ -14,6 +15,7 @@ import { useMemo } from 'react';
 import { decodeAbiParameters, type Hex } from 'viem';
 import type { IProposalActionData } from '@/modules/governance/components/createProposalForm';
 import type { IRawActionTuple } from '@/modules/governance/types';
+import { proposalActionsImportExportUtils } from '@/modules/governance/utils/proposalActionsImportExportUtils';
 import { forwardMessageActionsAbi } from '@/plugins/crossChainControllerPlugin/constants/crossChainControllerAbi';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -94,6 +96,18 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
         { format: NumberFormat.GENERIC_LONG },
     );
 
+    const handleDownloadActions = () => {
+        const fileName =
+            chainId != null
+                ? `cross-chain-${chainId.toString()}-actions.json`
+                : 'cross-chain-actions.json';
+
+        proposalActionsImportExportUtils.downloadActionsAsJSON(
+            messageActions ?? [],
+            fileName,
+        );
+    };
+
     return (
         <div className="flex w-full flex-col gap-y-6">
             <DefinitionList.Container>
@@ -145,11 +159,25 @@ export const CrossChainControllerForwardMessageDetails: React.FC<
                         variant="warning"
                     />
                 ) : (
-                    <CrossChainControllerNestedActionsList
-                        chainId={chainId}
-                        rawActions={actions}
-                        rawTuple={messageActions}
-                    />
+                    <div className="flex flex-col gap-y-4">
+                        <CrossChainControllerNestedActionsList
+                            chainId={chainId}
+                            rawActions={actions}
+                            rawTuple={messageActions}
+                        />
+                        {messageActions.length > 0 && (
+                            <Button
+                                className="self-end"
+                                onClick={handleDownloadActions}
+                                size="md"
+                                variant="tertiary"
+                            >
+                                {t(
+                                    'app.actions.crossChainController.crossChainControllerForwardMessageDetails.downloadActions',
+                                )}
+                            </Button>
+                        )}
+                    </div>
                 )}
             </InputContainer>
         </div>

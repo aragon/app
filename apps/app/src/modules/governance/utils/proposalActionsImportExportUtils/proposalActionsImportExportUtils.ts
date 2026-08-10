@@ -46,6 +46,12 @@ export interface IExportedAction {
     data: string;
 }
 
+/**
+ * Minimal shape an action must have to be exported. Kept narrower than `IProposalAction` so that raw
+ * action tuples (e.g. actions decoded from a cross-chain message payload) can be exported as well.
+ */
+export type IExportableAction = Pick<IProposalAction, 'to' | 'value' | 'data'>;
+
 export interface IImportActionsResult {
     /**
      * Whether the import was successful.
@@ -65,7 +71,7 @@ class ProposalActionsImportExportUtils {
     /**
      * Exports actions to a JSON-serializable format.
      */
-    exportActionsToJSON = (actions: IProposalAction[]): IExportedAction[] =>
+    exportActionsToJSON = (actions: IExportableAction[]): IExportedAction[] =>
         actions.map((action) => ({
             to: action.to,
             value:
@@ -79,7 +85,7 @@ class ProposalActionsImportExportUtils {
      * Downloads actions as a JSON file.
      */
     downloadActionsAsJSON = (
-        actions: IProposalAction[],
+        actions: IExportableAction[],
         filename = 'actions.json',
     ): void => {
         const exportedActions = this.exportActionsToJSON(actions);

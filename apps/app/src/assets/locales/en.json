@@ -28,7 +28,8 @@
           "gasLimitTerm": "Gas limit",
           "actionsLabel": "Actions",
           "actionsHelpText": "The actions that will be executed as a single batch on the destination chain once the message is delivered.",
-          "actionsDecodeError": "The forwarded message could not be decoded into actions. Check the raw calldata of this action before approving it."
+          "actionsDecodeError": "The forwarded message could not be decoded into actions. Check the raw calldata of this action before approving it.",
+          "downloadActions": "Download actions"
         }
       },
       "gaugeRegistrar": {
