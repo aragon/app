@@ -301,10 +301,23 @@ export const buildFilesRoute = (deps: IAppDependencies) =>
             // retriable error — see the malwareScan config for the per-engine policy.
             if (getConfig().malwareScan.enabled) {
                 const scanStartTime = Date.now();
-                const verdict = await deps.getMalwareScanner().scan({
-                    data,
-                    filename: validated.filename,
-                });
+                // An unexpected throw here would skip the rollback below and leave the file's
+                // claim taken, so the user could never re-confirm that upload. Any failure is
+                // downgraded to a retriable verdict instead.
+                const verdict = await deps
+                    .getMalwareScanner()
+                    .scan({ data, filename: validated.filename })
+                    .catch((error: unknown) => {
+                        observability.logError(error, {
+                            sessionId,
+                            step: 'scanFile',
+                        });
+
+                        return {
+                            status: 'unavailable' as const,
+                            reason: 'The file could not be scanned.',
+                        };
+                    });
 
                 // Every scan is logged, clean ones included: without it a passing scan leaves no
                 // trace and there is no way to tell scanning ran at all from the logs.

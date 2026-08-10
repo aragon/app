@@ -364,4 +364,25 @@ describe('files routes', () => {
         expect(deps.malwareScanner.scanCalls).toEqual([]);
         process.env.ASSISTANT_MALWARE_SCAN_ENABLED = undefined;
     });
+    it('releases the claim when the scan throws, so the upload can be retried', async () => {
+        const deps = createTestDependencies(createMockChatModel({}));
+        const blobUrl = buildBlobUrl();
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        deps.malwareScanner.failNextScan = true;
+        const app = buildApp(deps);
+
+        const failed = await confirmUpload(app, { blobUrl });
+
+        expect(failed.status).toEqual(503);
+        const body = (await failed.json()) as IAssistantError;
+        expect(body.error.code).toEqual('scan_unavailable');
+
+        // The claim must not stay taken: a retry of the same blob has to reach the scanner
+        // again rather than bouncing off "already being confirmed" forever.
+        deps.blobStore.blobs.set(blobUrl, pngBytes);
+        const retry = await confirmUpload(app, { blobUrl });
+
+        expect(retry.status).toEqual(201);
+        expect(await deps.sessionStore.listFiles(sessionId)).toHaveLength(1);
+    });
 });

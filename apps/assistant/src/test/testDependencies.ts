@@ -101,14 +101,23 @@ export interface ITestMalwareScanner extends IMalwareScanner {
     scanCalls: Array<{ filename: string; size: number }>;
     // Verdict returned by the next scan; defaults to clean.
     nextVerdict: IScanVerdict;
+    // Makes the next scan reject, standing in for an unexpected failure inside the scanner.
+    failNextScan: boolean;
 }
 
 export const createTestMalwareScanner = (): ITestMalwareScanner => {
     const scanner: ITestMalwareScanner = {
         scanCalls: [],
         nextVerdict: { status: 'clean' },
+        failNextScan: false,
         scan: ({ data, filename }) => {
             scanner.scanCalls.push({ filename, size: data.byteLength });
+
+            if (scanner.failNextScan) {
+                scanner.failNextScan = false;
+
+                return Promise.reject(new Error('Scanner exploded'));
+            }
 
             return Promise.resolve(scanner.nextVerdict);
         },
