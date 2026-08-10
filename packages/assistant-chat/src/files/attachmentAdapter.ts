@@ -46,6 +46,12 @@ interface IAdapterEntry {
      * Server identifier of the queued file once confirmed, used to delete it again.
      */
     serverId?: string;
+    /**
+     * Set when the upload was rejected (validation, malware scan) or failed. The entry is kept
+     * so `send` can refuse to attach a file the server does not hold, but it no longer occupies
+     * a composer slot.
+     */
+    uploadError?: unknown;
 }
 
 const toAttachmentType = (file: File): string =>
@@ -99,8 +105,10 @@ export const createAttachmentAdapter = (
     // Files sitting in the composer: entries are dropped again when their message is sent, so the
     // cap applies per message, not per session.
     const usedSlots = (sessionId: string): number =>
-        [...entries.values()].filter((entry) => entry.sessionId === sessionId)
-            .length;
+        [...entries.values()].filter(
+            (entry) =>
+                entry.sessionId === sessionId && entry.uploadError == null,
+        ).length;
 
     return {
         accept: attachmentAccept,
@@ -143,7 +151,10 @@ export const createAttachmentAdapter = (
                     entry.handle = undefined;
                 })
                 .catch((error: unknown) => {
-                    entries.delete(id);
+                    // Kept (not deleted) so `send` can tell a rejected file apart from one that
+                    // was never picked: the tile stays in the composer showing its error, and the
+                    // message cannot be sent until the user removes it.
+                    entry.uploadError = error;
                     throw error;
                 });
 
@@ -199,9 +210,23 @@ export const createAttachmentAdapter = (
             entries.delete(attachment.id);
         },
         send: async (attachment: PendingAttachment) => {
-            // Sending while the upload is still in flight simply waits for it; a failed upload
-            // keeps the composer intact so the user can remove the broken tile.
-            await entries.get(attachment.id)?.uploadPromise;
+            const entry = entries.get(attachment.id);
+
+            // The server holds bytes only for uploads it accepted. A rejected one (unsupported
+            // type, session limit, malware scan) must never ride along with the message: the
+            // send fails so the user removes the tile first, instead of the transcript showing
+            // an attachment the support team will never receive.
+            if (entry == null) {
+                throw new Error(chatCopy.fileAlerts.uploadFailed);
+            }
+
+            // Sending while the upload is still in flight waits for it; a rejection landing at
+            // this point fails the send for the same reason.
+            try {
+                await entry.uploadPromise;
+            } catch (error) {
+                throw new Error(toUploadErrorText(error));
+            }
 
             // The message takes the file with it: the entry no longer occupies a composer slot,
             // and the server queue (bounded by its own session cap) holds it for the ticket.
