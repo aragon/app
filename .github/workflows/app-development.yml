@@ -41,7 +41,7 @@ jobs:
           set -eo pipefail
           pnpm test:coverage
       - name: Check changeset
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && !startsWith(github.base_ref, 'release/')
         run: pnpm changeset status --since origin/main
 
   deploy:
