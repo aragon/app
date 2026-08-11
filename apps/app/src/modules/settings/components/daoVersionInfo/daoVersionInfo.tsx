@@ -26,11 +26,14 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
         type: ChainEntityType.ADDRESS,
         id: dao.address,
     });
+    // Lists the installed contracts and their versions, so plugins we cannot
+    // classify belong here too — they are still deployed and upgradeable.
     const processPlugins = useDaoPlugins({
         daoId: dao.id,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
         visibleOnly: true,
+        includeUnsupported: true,
     });
 
     return (

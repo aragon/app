@@ -1448,7 +1448,8 @@
           "delegateVotedOverridden": "Voted without your {{amount}} {{symbol}}",
           "options": {
             "alreadyCounted": "Your tokens already count toward {{option}}",
-            "currentVote": "Your current vote"
+            "currentVote": "Your current vote",
+            "objectionOnly": "You can only vote No during the objection phase"
           },
           "position": {
             "overrode": "Voting with {{amount}} {{symbol}} · overrode {{delegate}}",
@@ -3494,10 +3495,6 @@
             "approveYesDescription": ", I approve",
             "label": "Do you want to {{label}} this proposal?",
             "no": "No",
-            "object": "Object",
-            "objectionDescription": ", I object",
-            "objectionHelpText": "During the objection phase you can only vote \"No\" to object to the proposal.",
-            "objectionLabel": "object to",
             "vetoLabel": "veto",
             "vetoNoDescription": ", I don't veto",
             "vetoYesDescription": ", I veto",
@@ -3505,7 +3502,6 @@
           },
           "voteDescription": {
             "approve": "to approve",
-            "objection": "to object",
             "veto": "to veto"
           }
         },

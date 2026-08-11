@@ -50,10 +50,13 @@ export const usePermissionsData = (
     const { isEnabled } = useFeatureFlags();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
+    // Permissions describe what is installed on-chain, so plugins we cannot
+    // classify must still show up here.
     const daoPluginsData = useDaoPlugins({
         daoId,
         includeSubPlugins: true,
         includeLinkedAccounts: true,
+        includeUnsupported: true,
     });
 
     const accounts = useMemo<IPermissionsDataAccount[]>(() => {
