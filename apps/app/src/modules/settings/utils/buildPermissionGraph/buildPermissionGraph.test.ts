@@ -339,6 +339,48 @@ describe('buildPermissionGraph', () => {
         ]);
     });
 
+    it('deduplicates the primary DAO actor across governance bodies by canonical address', () => {
+        const rows = [
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: pluginAddress,
+                where: {
+                    address: pluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Core Governance',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+            buildRow({
+                whoAddress: daoAddress,
+                whereAddress: secondPluginAddress,
+                where: {
+                    address: secondPluginAddress,
+                    interfaceType: 'spp',
+                    label: 'Polling',
+                    layer: 'topLevelPlugin',
+                },
+            }),
+        ];
+
+        const graph = buildPermissionGraph({
+            rows,
+            dao,
+            daoPlugins,
+            accountRefs,
+        });
+
+        const daoNodes = graph.nodes.filter(
+            (node) => node.id === daoAddress.toLowerCase(),
+        );
+        expect(daoNodes).toHaveLength(1);
+        expect(daoNodes[0].kind).toBe('dao');
+        expect(graph.edges.map((edge) => edge.source)).toEqual([
+            daoAddress.toLowerCase(),
+            daoAddress.toLowerCase(),
+        ]);
+    });
+
     it('labels multisig proposal creators as members of the multisig', () => {
         const row = buildRow({
             permissionId: CREATE_PROPOSAL_PERMISSION_ID,
