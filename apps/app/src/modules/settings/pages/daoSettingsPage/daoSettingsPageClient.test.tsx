@@ -4,6 +4,7 @@ import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
@@ -55,15 +56,25 @@ describe('<DaoSettingsPageClient /> component', () => {
 
     const createTestComponent = (
         props?: Partial<IDaoSettingsPageClientProps>,
+        permissionsPageEnabled = true,
     ) => {
         const completeProps: IDaoSettingsPageClientProps = {
             daoId: 'test',
             ...props,
         };
 
+        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
+            {
+                key: 'permissionsPage',
+                name: 'Permissions page',
+                description: 'Controls permissions page entry points.',
+                enabled: permissionsPageEnabled,
+            },
+        ];
+
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider>
+                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
                     <DialogProvider>
                         <DaoSettingsPageClient {...completeProps} />
                     </DialogProvider>
@@ -94,6 +105,14 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
+    });
+
+    it('hides the hierarchy permissions link when the flag is disabled', () => {
+        render(createTestComponent({ isLinkedAccountEnabled: true }, false));
+
+        expect(
+            screen.queryByText(/daoSettingsInfo.permissionsLink/),
+        ).not.toBeInTheDocument();
     });
 
     it('renders the governance processes of the DAO', () => {
