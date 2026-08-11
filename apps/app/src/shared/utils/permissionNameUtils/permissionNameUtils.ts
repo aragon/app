@@ -99,7 +99,7 @@ const permissionNames: string[] = [
     'LOCK_ADMIN',
     'GAUGE_ADMIN',
 
-     // Linked accounts
+    // Linked accounts
     'PARENT_TO_SUB_DAO_ACKNOWLEDGEMENT_PERMISSION_ID',
     'SUB_DAO_TO_PARENT_ACKNOWLEDGEMENT_PERMISSION_ID',
 
