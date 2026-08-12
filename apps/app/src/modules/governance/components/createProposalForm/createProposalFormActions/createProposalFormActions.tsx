@@ -61,10 +61,10 @@ export const CreateProposalFormActions: React.FC<
         getArrayControls,
     } = useProposalActionsField();
 
-    const { data: allowedActions } = useAllAllowedActions({
-        urlParams: { network: dao!.network, pluginAddress },
-        chainId,
-    });
+    const { data: allowedActions } = useAllAllowedActions(
+        { urlParams: { network: dao!.network, pluginAddress }, chainId },
+        { enabled: hasConditionalPermissions },
+    );
     const { data: daoPermissions } = useAllDaoPermissions({
         urlParams: { network: dao!.network, daoAddress: targetDaoAddress },
     });
