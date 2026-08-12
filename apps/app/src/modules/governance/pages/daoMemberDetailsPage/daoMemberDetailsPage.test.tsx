@@ -2,7 +2,11 @@ import type * as ReactQuery from '@tanstack/react-query';
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { daoService, Network } from '@/shared/api/daoService';
+import {
+    daoService,
+    Network,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { memberOptions } from '../../api/governanceService';
@@ -39,7 +43,12 @@ describe('<DaoMemberDetailsPage /> component', () => {
         resolveDaoIdSpy.mockResolvedValue('test-dao-id');
         getDaoSpy.mockResolvedValue(
             generateDao({
-                plugins: [generateDaoPlugin({ isBody: true })],
+                plugins: [
+                    generateDaoPlugin({
+                        interfaceType: PluginInterfaceType.MULTISIG,
+                        isBody: true,
+                    }),
+                ],
             }),
         );
     });
@@ -74,6 +83,7 @@ describe('<DaoMemberDetailsPage /> component', () => {
             plugins: [
                 generateDaoPlugin({
                     address: 'test-plugin-address',
+                    interfaceType: PluginInterfaceType.MULTISIG,
                     isBody: true,
                 }),
             ],

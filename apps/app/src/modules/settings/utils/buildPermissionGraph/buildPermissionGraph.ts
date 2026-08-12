@@ -130,7 +130,11 @@ const resolveGoverningBodyActorNode = (
     context: IResolveNodeContext,
 ): IPermissionGraphNode => {
     const baseNode = resolveNode(row.whoAddress, context, row.who);
-    const id = getGoverningBodyActorNodeId(row);
+    // DAO and linked-DAO actors identify canonically by address, so the same
+    // DAO never duplicates across the governance bodies it holds permissions
+    // on. Every other actor keeps its per-body synthetic id.
+    const isDaoActor = baseNode.kind === 'dao' || baseNode.kind === 'linkedDao';
+    const id = isDaoActor ? baseNode.id : getGoverningBodyActorNodeId(row);
     const isMultisigMembers =
         baseNode.brandId !== PermissionEntityExternalBrandId.SAFE &&
         row.who?.interfaceType?.toLowerCase() === 'multisig';

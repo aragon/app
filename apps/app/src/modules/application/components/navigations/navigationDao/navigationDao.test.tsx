@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import * as NextNavigation from 'next/navigation';
 import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
 import type * as Navigation from '@/shared/components/navigation';
 import {
@@ -105,6 +106,7 @@ describe('<NavigationDao /> component', () => {
         hasSupportedPluginsSpy.mockReturnValue(true);
 
         const plugin = generateDaoPlugin({
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({ id: 'test', plugins: [plugin] });

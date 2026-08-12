@@ -15,6 +15,7 @@ import { ensRecordKeys } from '@/modules/ens';
 import { DaoList } from '@/modules/explore/components/daoList';
 import * as efpService from '@/modules/governance/api/efpService';
 import * as daoService from '@/shared/api/daoService';
+import { PluginInterfaceType } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import {
     generateDao,
@@ -63,7 +64,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         'useEnsProfileRecords',
     );
 
-    const defaultPlugin = generateDaoPlugin({ isBody: true });
+    const defaultPlugin = generateDaoPlugin({
+        interfaceType: PluginInterfaceType.MULTISIG,
+        isBody: true,
+    });
 
     beforeEach(() => {
         useDaoSpy.mockReturnValue(
@@ -128,6 +132,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('fetches and renders the member ens and avatar', () => {
         const plugin = generateDaoPlugin({
             address: 'plugin-address',
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({
@@ -351,6 +356,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     it('passes the correct params to the DaoList component', () => {
         const plugin = generateDaoPlugin({
             address: 'plugin-address',
+            interfaceType: PluginInterfaceType.MULTISIG,
             isBody: true,
         });
         const dao = generateDao({
