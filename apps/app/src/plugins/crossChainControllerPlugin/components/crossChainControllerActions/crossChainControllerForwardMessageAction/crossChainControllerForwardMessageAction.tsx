@@ -39,6 +39,7 @@ import type {
     ICrossChainControllerPlugin,
 } from '../../../types';
 import { CrossChainControllerProposalActionType } from '../../../types';
+import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
 import { GasLimitInput } from './gasLimitInput';
 import { useCrossChainControllerGasLimit } from './useCrossChainControllerGasLimit';
 
@@ -142,6 +143,11 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 required: true,
                 min: crossChainControllerGas.minGasLimit,
                 max: crossChainControllerGas.maxGasLimit,
+                // The masked input accepts the radix character, so a manually typed fraction has to
+                // be rejected here - it is neither a valid gas figure nor encodable as a uint256.
+                validate: (value: string | undefined) =>
+                    crossChainControllerGasUtils.parseGasLimit(value) != null ||
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.notWholeNumber',
             },
             fieldPrefix: actionFieldName,
         },
@@ -230,9 +236,10 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             return;
         }
 
-        // Encodes to zero while the limit is unset. The field is required, so a proposal can never
-        // be created in that state.
-        const encodedGasLimit = BigInt(gasLimit || 0);
+        // Encodes to zero while the limit is unset or not a whole number. The field is required and
+        // rejects fractions, so a proposal can never be created in that state.
+        const encodedGasLimit =
+            crossChainControllerGasUtils.parseGasLimit(gasLimit) ?? BigInt(0);
 
         const newData = encodeFunctionData({
             abi: [forwardMessageAbi],

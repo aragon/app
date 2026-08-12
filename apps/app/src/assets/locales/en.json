@@ -2560,6 +2560,7 @@
             "helpText": "The gas the destination chain may spend running the actions. Calculate it by simulating the actions, or enter it manually. It is fixed when the proposal is created and cannot be changed later, so it is cleared whenever the destination or the actions change.",
             "label": "Destination gas limit",
             "marginReduced": "Simulated successfully. The delivery needs {{requiredGas}} gas, but the lane does not allow the usual safety margin on top, so the limit was set to the maximum the lane accepts.",
+            "notWholeNumber": "Gas is counted in whole units, so the gas limit cannot have decimals.",
             "placeholder": "Calculate or enter a gas limit",
             "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
             "simulated": "Simulated successfully. The delivery needs {{requiredGas}} gas, and a {{bufferPercent}}% safety margin was added on top.",

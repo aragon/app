@@ -290,6 +290,25 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         expect(getGasLimitInput()).toHaveValue('500,000');
     });
 
+    it('rejects a fractional gas limit instead of failing to encode it', async () => {
+        // The masked input accepts the radix character, so a manually typed fraction gets this far.
+        render(createTestComponent(undefined, { gasLimit: '250000.5' }));
+
+        await act(async () => {
+            await form?.trigger();
+        });
+
+        expect(
+            screen.getByText(
+                /crossChainControllerForwardMessageAction.gas.notWholeNumber/,
+            ),
+        ).toBeInTheDocument();
+        // The action stays encodable, with a zero limit the required rule keeps out of a proposal.
+        expect(
+            form?.getValues('actions.[0].inputData.parameters[1].value'),
+        ).toBe('0');
+    });
+
     it('clears the nested actions when the destination chain changes, as they target the previous chain', async () => {
         render(createTestComponent());
 

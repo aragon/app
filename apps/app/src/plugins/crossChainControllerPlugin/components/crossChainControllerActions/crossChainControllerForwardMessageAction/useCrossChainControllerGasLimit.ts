@@ -208,6 +208,11 @@ export const useCrossChainControllerGasLimit = (
             'useCrossChainControllerGasLimit: network and destination must be set to estimate gas.',
         );
 
+        // Every calculation starts from an empty field, so an outcome that yields no usable limit -
+        // an error, a revert, or a requirement above the cap - cannot leave the previous value
+        // behind, looking authoritative and still submittable.
+        onGasLimitChange(undefined);
+
         estimateGasLimit(
             {
                 urlParams: { network: daoNetwork, controllerAddress },
