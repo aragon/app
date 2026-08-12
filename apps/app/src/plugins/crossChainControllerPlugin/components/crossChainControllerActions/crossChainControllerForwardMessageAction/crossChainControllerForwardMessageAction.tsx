@@ -148,8 +148,20 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         },
     );
 
-    const handleDestinationChainChange = (value: string) =>
-        onDestinationChainChange(Number(value));
+    const handleDestinationChainChange = (value: string) => {
+        const newDestinationChainId = Number(value);
+
+        // Guard against re-selecting the current chain, which must not discard the actions.
+        if (newDestinationChainId === destinationChainId) {
+            return;
+        }
+
+        onDestinationChainChange(newDestinationChainId);
+
+        // The nested actions target contracts on the previous destination chain, so they cannot
+        // survive a change of destination. The gas limit is cleared by the estimation hook.
+        onNestedActionsChange([]);
+    };
 
     // The nested actions are executed by the destination chain controller, therefore they are composed
     // for the selected destination network instead of the DAO network.

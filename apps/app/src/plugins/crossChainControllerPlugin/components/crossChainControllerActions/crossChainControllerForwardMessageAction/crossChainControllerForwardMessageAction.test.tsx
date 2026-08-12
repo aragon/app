@@ -39,6 +39,7 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
 
     const controllerAddress = '0x1111111111111111111111111111111111111111';
     const destinationChainId = 8453;
+    const otherDestinationChainId = 42_161;
 
     const nestedAction = {
         to: '0x4444444444444444444444444444444444444444',
@@ -116,6 +117,13 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
                                 '0x3333333333333333333333333333333333333333',
                             remoteAdapter:
                                 '0x5555555555555555555555555555555555555555',
+                        },
+                        {
+                            chainId: otherDestinationChainId,
+                            localAdapter:
+                                '0x6666666666666666666666666666666666666666',
+                            remoteAdapter:
+                                '0x7777777777777777777777777777777777777777',
                         },
                     ],
                 },
@@ -280,5 +288,33 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         render(createTestComponent(undefined, { gasLimit: '500000' }));
 
         expect(getGasLimitInput()).toHaveValue('500,000');
+    });
+
+    it('clears the nested actions when the destination chain changes, as they target the previous chain', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('radio', { name: 'Arbitrum' }));
+
+        await waitFor(() =>
+            expect(form?.getValues('actions.[0].nestedActions')).toEqual([]),
+        );
+        expect(form?.getValues('actions.[0].destinationChainId')).toBe(
+            otherDestinationChainId,
+        );
+        expect(
+            screen.getByText(
+                /crossChainControllerForwardMessageAction.actions.emptyHeading/,
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('keeps the nested actions when the already selected destination chain is selected again', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('radio', { name: 'Base' }));
+
+        expect(form?.getValues('actions.[0].nestedActions')).toEqual([
+            nestedAction,
+        ]);
     });
 });
