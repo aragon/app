@@ -28,7 +28,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { useToken } from '@/shared/hooks/useToken';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     forwardMessageAbi,
@@ -169,16 +168,11 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         ({ chainId }) => chainId === destinationChainId,
     )?.network;
 
-    const destinationLane = lanes.find(
-        ({ chainId }) => chainId === destinationChainId,
-    );
-
     // The messaging fee is paid by the controller on the DAO chain with the fee token set on the
-    // local adapter of the selected lane.
-    const { data: feeToken } = useToken({
-        address: destinationLane?.feeToken,
-        chainId: daoChainId,
-    });
+    // local adapter of the selected lane, which the backend indexes onto the lane.
+    const feeToken = lanes.find(
+        ({ chainId }) => chainId === destinationChainId,
+    )?.token;
 
     const handleOpenActionsDialog = () => {
         invariant(
