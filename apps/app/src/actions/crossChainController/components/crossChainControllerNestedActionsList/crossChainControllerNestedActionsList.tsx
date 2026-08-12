@@ -11,8 +11,8 @@ export interface ICrossChainControllerNestedActionsListProps {
      */
     rawTuple: IRawActionTuple[];
     /**
-     * Decoded sub-actions emitted by the backend. When the length differs from `rawTuple`, raw-calldata stubs are
-     * rendered instead.
+     * Decoded sub-actions emitted by the backend. When they do not describe the same calls as `rawTuple`, raw-calldata
+     * stubs are rendered instead.
      */
     rawActions: IProposalAction[] | undefined;
     /**
