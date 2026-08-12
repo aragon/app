@@ -37,7 +37,8 @@ export interface IExportedAction {
      */
     to: string;
     /**
-     * ETH value to send (in wei).
+     * ETH value to send (in wei). Always a string when exported, since a wei amount does not fit a JS number. A number
+     * is still accepted on import, for files written by other tools.
      */
     value: number | string;
     /**
@@ -69,15 +70,16 @@ export interface IImportActionsResult {
 
 class ProposalActionsImportExportUtils {
     /**
-     * Exports actions to a JSON-serializable format.
+     * Exports actions to a JSON-serializable format. Values are exported as strings: a wei amount does not survive a
+     * JS number (anything above 2^53 wei, i.e. ~0.009 ETH, is silently rounded, and large amounts serialize to
+     * exponential notation), and the import path accepts a decimal string already.
      */
     exportActionsToJSON = (actions: IExportableAction[]): IExportedAction[] =>
         actions.map((action) => ({
             to: action.to,
-            value:
-                typeof action.value === 'bigint'
-                    ? Number(action.value)
-                    : Number(action.value || 0),
+            // Kept verbatim: a string value is already exact, and a bigint (possible at runtime even though the type
+            // says otherwise) is stringified rather than narrowed to a number.
+            value: String(action.value || '0'),
             data: action.data,
         }));
 
