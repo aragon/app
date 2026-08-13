@@ -202,6 +202,52 @@ describe('useCrossChainControllerGasLimit hook', () => {
         expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
     });
 
+    it('ignores an in-flight estimation result once the destination chain changes before it resolves', async () => {
+        let resolveEstimation: (estimation: IGasLimitEstimation) => void = () =>
+            undefined;
+        estimateGasLimitSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveEstimation = resolve;
+            }),
+        );
+
+        const { result, rerender, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+        onGasLimitChange.mockClear();
+
+        rerender({ destinationChainId: 42_161 });
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+        onGasLimitChange.mockClear();
+
+        await act(async () => resolveEstimation(generateEstimation()));
+
+        expect(onGasLimitChange).not.toHaveBeenCalled();
+    });
+
+    it('ignores an in-flight estimation result once the nested actions change before it resolves', async () => {
+        let resolveEstimation: (estimation: IGasLimitEstimation) => void = () =>
+            undefined;
+        estimateGasLimitSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveEstimation = resolve;
+            }),
+        );
+
+        const { result, rerender, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+        onGasLimitChange.mockClear();
+
+        rerender({ nestedActions: [{ ...nestedAction, data: '0xfeedface' }] });
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+        onGasLimitChange.mockClear();
+
+        await act(async () => resolveEstimation(generateEstimation()));
+
+        expect(onGasLimitChange).not.toHaveBeenCalled();
+    });
+
     it('throws when estimating without a resolved network or destination', () => {
         const { result } = renderGasLimitHook({
             destinationChainId: undefined,
