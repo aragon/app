@@ -3,6 +3,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ExecuteSelectorConditionSlot } from './components/executeSelectorConditionSlot';
 import { MembershipConditionSlot } from './components/membershipConditionSlot';
 import { NoConditionSlot } from './components/noConditionSlot';
+import { SppRuleConditionSlot } from './components/sppRuleConditionSlot';
 import { UnrecognizedConditionSlot } from './components/unrecognizedConditionSlot';
 import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot';
 import { initialiseConditionRegistry } from './initConditionRegistry';
@@ -19,6 +20,7 @@ describe('initialiseConditionRegistry', () => {
             component: ExecuteSelectorConditionSlot,
         },
         { pluginId: 'membership', component: MembershipConditionSlot },
+        { pluginId: 'spp-rule', component: SppRuleConditionSlot },
         { pluginId: 'unknown', component: UnrecognizedConditionSlot },
         { pluginId: 'none', component: NoConditionSlot },
     ])('resolves the $pluginId condition component from the slot', ({

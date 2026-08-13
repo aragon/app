@@ -4,6 +4,7 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { ExecuteSelectorConditionSlot } from './components/executeSelectorConditionSlot';
 import { MembershipConditionSlot } from './components/membershipConditionSlot';
 import { NoConditionSlot } from './components/noConditionSlot';
+import { SppRuleConditionSlot } from './components/sppRuleConditionSlot';
 import { UnrecognizedConditionSlot } from './components/unrecognizedConditionSlot';
 import { VotingPowerConditionSlot } from './components/votingPowerConditionSlot';
 import { NO_CONDITION, UNKNOWN_CONDITION } from './utils/conditionTypeUtils';
@@ -34,6 +35,11 @@ export const initialiseConditionRegistry = () => {
             slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
             pluginId: 'membership',
             component: MembershipConditionSlot,
+        })
+        .registerSlotComponent({
+            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
+            pluginId: 'spp-rule',
+            component: SppRuleConditionSlot,
         })
         .registerSlotComponent({
             slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
