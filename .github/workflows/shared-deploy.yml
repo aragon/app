@@ -74,7 +74,7 @@ jobs:
       deploymentUrl: ${{ steps.set-deployment-url.outputs.deploymentUrl }}
     steps:
       - name: Download infra credentials
-        uses: aragon/github-templates/steps/credential-retrieval@7eb535980e228a80c9b80b1781362f7da8d41db2 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
+        uses: aragon/github-templates/steps/credential-retrieval@4992848afd79e5feb5fa4a688674d13e9ed47c22 # https://github.com/aragon/github-templates/commit/4992848afd79e5feb5fa4a688674d13e9ed47c22
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_infra"
@@ -95,7 +95,7 @@ jobs:
         working-directory: ${{ inputs.workspace }}
 
       - name: Setup env file secrets
-        uses: aragon/github-templates/steps/credential-retrieval@7eb535980e228a80c9b80b1781362f7da8d41db2 # https://github.com/aragon/github-templates/commit/a36dc232323f483a457ae3ef46028f3a4ef9f2e6
+        uses: aragon/github-templates/steps/credential-retrieval@4992848afd79e5feb5fa4a688674d13e9ed47c22 # https://github.com/aragon/github-templates/commit/4992848afd79e5feb5fa4a688674d13e9ed47c22
         with:
           op-token: "${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}"
           op-vault: "${{ inputs.vault-prefix }}_${{ inputs.env }}"
@@ -187,10 +187,36 @@ jobs:
           done
           pnpm vercel deploy --prebuilt ${{ env.VERCEL_ARGS }} ${{ inputs.env == 'production' && '--skip-domain' || '' }} "${runtime_args[@]}" --yes --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }} > deployment-url.txt
 
+      # `vercel deploy` writes progress to stderr and the URL to stdout — take the last line so an
+      # extra line can never turn the output into a malformed multi-line entry, and stop here if
+      # there is no URL at all rather than aliasing an empty one below.
       - name: Set output
         id: set-deployment-url
-        run: echo "deploymentUrl=$(cat deployment-url.txt)" >> $GITHUB_OUTPUT
+        run: |
+          url=$(tail -n 1 deployment-url.txt)
+          if [ -z "$url" ]; then
+            echo "::error::vercel deploy printed no deployment URL" >&2
+            exit 1
+          fi
+          echo "deploymentUrl=$url" >> "$GITHUB_OUTPUT"
 
       - name: Set deployment alias
         if: inputs.domain != ''
         run: pnpm vercel alias ${{ steps.set-deployment-url.outputs.deploymentUrl }} ${{ inputs.domain }} --token=${{ env.VERCEL_TOKEN }} --scope ${{ env.VERCEL_SCOPE }}
+
+  # The runner drops a job output whose value contains a masked substring ("Skip output ... since it
+  # may contain secret"), so a successful deploy can still hand callers an empty URL — a broken PR
+  # comment and an E2E run against nothing, both under a green check. Fail the deploy instead.
+  verify-output:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the deployment URL reached the workflow output
+        env:
+          DEPLOYMENT_URL: ${{ needs.deploy.outputs.deploymentUrl }}
+        run: |
+          if [ -z "$DEPLOYMENT_URL" ]; then
+            echo "::error::The deployment succeeded but its URL did not survive into the workflow output. Check the deploy log for mask warnings: a value from the 1Password vault that also appears in the URL scrubs it away." >&2
+            exit 1
+          fi
+          echo "Deployment URL: $DEPLOYMENT_URL"
