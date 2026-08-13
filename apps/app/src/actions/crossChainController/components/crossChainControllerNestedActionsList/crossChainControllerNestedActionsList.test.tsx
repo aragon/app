@@ -14,7 +14,7 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
     );
 
     afterEach(() => {
-        normalizeDefaultActionSpy.mockReset();
+        normalizeDefaultActionSpy.mockClear();
     });
 
     const createTestComponent = (
@@ -82,11 +82,17 @@ describe('<CrossChainControllerNestedActionsList /> component', () => {
     });
 
     it('runs each rendered action through the default normalization function', () => {
-        const rawActions = [generateAction({ to: '0xa' })];
+        const rawActions = [generateAction()];
 
         render(
             createTestComponent({
-                rawTuple: [{ to: '0xa', value: '0', data: '0x' }],
+                rawTuple: [
+                    {
+                        to: '0xa0Ab554dEa45be64F12E3B0085DDC59852eFF9fc',
+                        value: '0',
+                        data: '0xd09de08a',
+                    },
+                ],
                 rawActions,
             }),
         );
