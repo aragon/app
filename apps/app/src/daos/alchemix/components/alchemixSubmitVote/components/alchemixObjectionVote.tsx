@@ -103,6 +103,7 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
             isVeto,
             plugin,
             onSuccess: handleVoteSuccess,
+            onIndexed: refetch,
         };
 
         open(GovernanceDialogId.VOTE, { params });

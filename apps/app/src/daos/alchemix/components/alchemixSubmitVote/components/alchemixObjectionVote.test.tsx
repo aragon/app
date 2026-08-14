@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountHook from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
@@ -259,5 +259,38 @@ describe('<AlchemixObjectionVote /> component', () => {
                 name: /tokenSubmitVote.options.no/,
             }),
         ).toHaveTextContent(/tokenSubmitVote.options.approveNoDescription/);
+    });
+
+    it('refetches objection status on confirmation and again after indexing', async () => {
+        const open = jest.fn();
+        const { refetch } = mockObjectionStatus();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.vote/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('radio', {
+                name: /tokenSubmitVote.options.no/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.submit/,
+            }),
+        );
+
+        const params = open.mock.calls[0][1].params as IVoteDialogParams;
+
+        act(() => params.onSuccess?.());
+        expect(refetch).toHaveBeenCalledTimes(1);
+        expect(params.onIndexed).toEqual(expect.any(Function));
+
+        act(() => params.onIndexed?.());
+        expect(refetch).toHaveBeenCalledTimes(2);
     });
 });
