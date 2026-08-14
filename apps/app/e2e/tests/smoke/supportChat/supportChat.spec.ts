@@ -102,18 +102,16 @@ test.describe('Support chat', () => {
         await page.goto('/');
         await getChatTrigger(page).click();
 
-        // Panel open: accessible title + greeting message + the persistent email escape hatch.
+        // Panel open: accessible title, the subline naming a fresh conversation, and the greeting.
         const panel = getChatPanel(page);
         await expect(panel).toBeVisible();
         await expect(
-            panel.getByRole('heading', { name: 'Aragon Support Assistant' }),
+            panel.getByRole('heading', { name: 'Aragon Assistant' }),
         ).toBeVisible();
+        await expect(panel.getByText('New conversation')).toBeVisible();
         await expect(
-            page.getByText("Hi! Tell us what's going on"),
+            page.getByText('What do you need help with?'),
         ).toBeVisible();
-        await expect(
-            panel.getByRole('link', { name: 'support@aragon.org' }),
-        ).toHaveAttribute('href', supportEmailHref);
 
         // Send a message; the agent streams back the ticket draft for review.
         const composer = page.getByRole('textbox', { name: 'Message' });
@@ -124,20 +122,32 @@ test.describe('Support chat', () => {
             page.getByText('The proposal page crashes on load.').first(),
         ).toBeVisible();
         await expect(
-            page.getByText('Proposal page crashes', { exact: true }),
+            panel.getByRole('heading', { name: 'Proposal page crashes' }),
         ).toBeVisible();
         await expect(
             panel.getByRole('button', { name: 'Dismiss' }),
         ).toBeVisible();
 
+        // The header names the draft, and the escape hatch to a human now sits under the composer.
+        await expect(
+            panel.getByText('Draft: Proposal page crashes'),
+        ).toBeVisible();
+        await expect(
+            panel.getByRole('link', { name: 'Email support' }),
+        ).toHaveAttribute('href', supportEmailHref);
+
         // Approving resumes the stream: the tool executes and the card links to the ticket.
-        // `exact` keeps the match away from other "Create …" buttons of the page.
-        await panel
-            .getByRole('button', { name: 'Create', exact: true })
-            .click();
+        await panel.getByRole('button', { name: 'Create ticket' }).click();
 
         await expect(page.getByText('Request created')).toBeVisible();
-        await expect(page.getByText('SUP-123')).toBeVisible();
+        await expect(
+            panel.getByRole('link', { name: /SUP-123/ }),
+        ).toHaveAttribute('href', 'https://linear.app/aragon/issue/SUP-123');
+
+        // The header follows the ticket from draft to created.
+        await expect(
+            panel.getByText('SUP-123: Proposal page crashes'),
+        ).toBeVisible();
     });
 
     test('hides the chat entry points and keeps the external support link when the flag is disabled', async ({

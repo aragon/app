@@ -16,24 +16,29 @@ const buildContextLine = (appContext?: IAppContext): string => {
         : `\nApp context (for your awareness only — never repeat it back to the user): ${parts}`;
 };
 
-// Metadata of files the user already attached. The model never sees the contents — only that files
-// exist — so it must treat them as received rather than probe the user about them.
-const buildAttachmentLine = (files: { filename: string }[]): string => {
-    if (files.length === 0) {
+// Attachments appear in the conversation as a `[attached: name]` line inside the message that
+// carried them (the bytes stay out-of-band). The model never sees the contents — only that a file
+// arrived — so it must treat it as received rather than probe the user about it.
+const buildAttachmentLine = (hasAttachments: boolean): string => {
+    if (!hasAttachments) {
         return '';
     }
 
-    return `\nThe user has attached ${files.length} file(s) (screenshots, logs, etc.); they travel with the ticket and the support team will read them. Their contents are irrelevant to you and you cannot open them — treat them as safely received. Acknowledge an attachment ONCE, when it first arrives, then never mention it again; never say you "can't see" it, never ask what it shows, and never ask the user to describe, transcribe or re-share it.`;
+    return `\nA line reading "[attached: <name>]" in a user message means the user attached that file right there (screenshots, logs, etc.); it travels with the ticket and the support team will read it. Its contents are irrelevant to you and you cannot open it — treat it as safely received. Acknowledge an attachment ONCE, in your reply to the message that brought it, then never mention it again; never say you "can't see" it, never ask the user to attach it, never ask what it shows, and never ask them to describe, transcribe or re-share it.`;
 };
 
 // The agent's single system prompt: it holds the whole intake conversation, refuses off-topic
 // requests itself (no classifier step) and files tickets through the createLinearTicket tool.
 export const buildAgentSystemPrompt = (params: {
     appContext?: IAppContext;
-    files?: { filename: string }[];
+    hasAttachments?: boolean;
     docsSearchEnabled?: boolean;
 }) => {
-    const { appContext, files = [], docsSearchEnabled = false } = params;
+    const {
+        appContext,
+        hasAttachments = false,
+        docsSearchEnabled = false,
+    } = params;
 
     const docsLine = docsSearchEnabled
         ? '\nYou may use the searchDocs tool to look up Aragon App documentation before deciding whether a question needs a ticket.'
@@ -50,7 +55,7 @@ the user's language, that you can only help with Aragon App feedback, bug report
 requests, and do not file a ticket. You have NO knowledge of how the Aragon App works and you
 never troubleshoot: do not suggest causes, fixes or things to check, and do not answer product
 or how-to questions — warmly offer to file the question for the team
-instead.${buildContextLine(appContext)}${buildAttachmentLine(files)}${docsLine}
+instead.${buildContextLine(appContext)}${buildAttachmentLine(hasAttachments)}${docsLine}
 
 Hold a short, natural conversation — listen and capture, never interrogate. When the user tells
 you something or attaches a file, acknowledge that you have got it. While the story is still
