@@ -33,6 +33,11 @@ export interface IAlchemixObjectionVoteProps {
     isVeto?: boolean;
 }
 
+const disabledOptions: IDisabledVotingOption[] = [
+    { value: VoteOption.YES.toString() },
+    { value: VoteOption.ABSTAIN.toString() },
+];
+
 export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
     props,
 ) => {
@@ -73,15 +78,6 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
         proposal,
         onSuccess: () => setShowOptions(true),
     });
-
-    // Only "No" can be submitted during the objection phase, every other option is disabled with the reason.
-    const disabledOptions: IDisabledVotingOption[] = [
-        VoteOption.YES,
-        VoteOption.ABSTAIN,
-    ].map((option) => ({
-        value: option.toString(),
-        reason: t('app.daos.alchemix.alchemixSubmitVote.options.objectionOnly'),
-    }));
 
     const openTransactionDialog = () => {
         if (plugin == null) {
@@ -176,6 +172,9 @@ export const AlchemixObjectionVote: React.FC<IAlchemixObjectionVoteProps> = (
                 <Card className="border border-neutral-100 p-6 shadow-neutral-sm">
                     <TokenVotingOptions
                         disabledOptions={disabledOptions}
+                        helpText={t(
+                            'app.daos.alchemix.alchemixSubmitVote.options.objectionOnly',
+                        )}
                         isVeto={isVeto}
                         onChange={setSelectedOption}
                         value={selectedOption}
