@@ -70,6 +70,10 @@ export interface IVoteDialogParams<
      * Callback called when the vote transaction has been included in a block.
      */
     onSuccess?: () => void;
+    /**
+     * Callback called when the vote transaction has been indexed.
+     */
+    onIndexed?: () => void;
 }
 
 export interface IVoteDialogProps
@@ -89,8 +93,16 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
     const { address } = useWalletAccount();
     invariant(address != null, 'VoteDialog: user must be connected.');
 
-    const { vote, proposal, isVeto, daoId, plugin, target, onSuccess } =
-        location.params;
+    const {
+        vote,
+        proposal,
+        isVeto,
+        daoId,
+        plugin,
+        target,
+        onSuccess,
+        onIndexed,
+    } = location.params;
 
     const queryClient = useQueryClient();
     const { data: dao } = useDao({ urlParams: { id: daoId } });
@@ -107,10 +119,12 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
 
     // Refresh the vote lists as soon as the vote is indexed so that the submit-vote controls reflect the new vote
     // without waiting for a route refresh or window focus.
-    const handleIndexed = () =>
-        queryClient.invalidateQueries({
+    const handleIndexed = () => {
+        void queryClient.invalidateQueries({
             queryKey: [GovernanceServiceKey.VOTE_LIST],
         });
+        onIndexed?.();
+    };
 
     // Fallback to the parent plugin to display the slug of the parent proposal (if exists)
     const pluginAddress = plugin.parentPlugin ?? plugin.address;

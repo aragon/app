@@ -17,6 +17,10 @@ export interface ITokenVotingOptionsProps {
      */
     onChange: (value?: string) => void;
     /**
+     * Help text displayed beneath the voting question.
+     */
+    helpText?: string;
+    /**
      * Disables the options when set to true.
      */
     disableOptions?: boolean;
@@ -44,6 +48,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
         isVeto,
         value: selectedValue,
         onChange,
+        helpText,
         disableOptions,
         disabledOptions,
     } = props;
@@ -77,6 +82,7 @@ export const TokenVotingOptions: React.FC<ITokenVotingOptionsProps> = (
 
     return (
         <InputContainer
+            helpText={helpText}
             id={id}
             label={t('app.plugins.token.tokenSubmitVote.options.label', {
                 label: isVeto

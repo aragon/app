@@ -1,5 +1,5 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import * as useWalletAccountHook from '@/modules/application/hooks/useWalletAccount';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
@@ -169,7 +169,7 @@ describe('<AlchemixObjectionVote /> component', () => {
         expect(container).toBeEmptyDOMElement();
     });
 
-    it('only enables No and submits a regular objection vote', async () => {
+    it('presents the objection restriction once, only enables No, and submits a regular objection vote', async () => {
         const open = jest.fn();
         useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
 
@@ -181,21 +181,42 @@ describe('<AlchemixObjectionVote /> component', () => {
             }),
         );
 
-        expect(
-            screen.getByRole('radio', { name: /tokenSubmitVote.options.yes/ }),
-        ).toBeDisabled();
-        expect(
-            screen.getByRole('radio', {
-                name: /tokenSubmitVote.options.abstain/,
-            }),
-        ).toBeDisabled();
-        expect(
-            screen.getAllByText(/alchemixSubmitVote.options.objectionOnly/),
-        ).toHaveLength(2);
-
-        await userEvent.click(
-            screen.getByRole('radio', { name: /tokenSubmitVote.options.no/ }),
+        const question = screen.getByText(/tokenSubmitVote.options.label/);
+        const objectionHelpText = screen.getAllByText(
+            /alchemixSubmitVote.options.objectionOnly/,
         );
+        const yesOption = screen.getByRole('radio', {
+            name: /tokenSubmitVote.options.yes/,
+        });
+        const abstainOption = screen.getByRole('radio', {
+            name: /tokenSubmitVote.options.abstain/,
+        });
+        const noOption = screen.getByRole('radio', {
+            name: /tokenSubmitVote.options.no/,
+        });
+        const objectionHelp = objectionHelpText[0];
+
+        expect(objectionHelpText).toHaveLength(1);
+        expect(question.closest('label')).toContainElement(objectionHelp);
+        expect(
+            question.compareDocumentPosition(objectionHelp) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        expect(
+            objectionHelp.compareDocumentPosition(yesOption) &
+                Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy();
+        expect(yesOption).toHaveTextContent(
+            /tokenSubmitVote.options.vetoYesDescription/,
+        );
+        expect(noOption).toHaveTextContent(
+            /tokenSubmitVote.options.vetoNoDescription/,
+        );
+        expect(yesOption).toBeDisabled();
+        expect(abstainOption).toBeDisabled();
+        expect(noOption).toBeEnabled();
+
+        await userEvent.click(noOption);
         await userEvent.click(
             screen.getByRole('button', {
                 name: /tokenSubmitVote.buttons.submit/,
@@ -217,5 +238,59 @@ describe('<AlchemixObjectionVote /> component', () => {
         expect(
             (open.mock.calls[0][1].params as IVoteDialogParams).vote,
         ).not.toHaveProperty('voteType');
+    });
+
+    it('uses the standard approve descriptions in approve mode', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.vote/,
+            }),
+        );
+
+        expect(
+            screen.getByRole('radio', {
+                name: /tokenSubmitVote.options.yes/,
+            }),
+        ).toHaveTextContent(/tokenSubmitVote.options.approveYesDescription/);
+        expect(
+            screen.getByRole('radio', {
+                name: /tokenSubmitVote.options.no/,
+            }),
+        ).toHaveTextContent(/tokenSubmitVote.options.approveNoDescription/);
+    });
+
+    it('refetches objection status on confirmation and again after indexing', async () => {
+        const open = jest.fn();
+        const { refetch } = mockObjectionStatus();
+        useDialogContextSpy.mockReturnValue(generateDialogContext({ open }));
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.vote/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('radio', {
+                name: /tokenSubmitVote.options.no/,
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.submit/,
+            }),
+        );
+
+        const params = open.mock.calls[0][1].params as IVoteDialogParams;
+
+        act(() => params.onSuccess?.());
+        expect(refetch).toHaveBeenCalledTimes(1);
+        expect(params.onIndexed).toEqual(expect.any(Function));
+
+        act(() => params.onIndexed?.());
+        expect(refetch).toHaveBeenCalledTimes(2);
     });
 });
