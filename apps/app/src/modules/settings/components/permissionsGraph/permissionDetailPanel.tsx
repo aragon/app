@@ -9,6 +9,7 @@ import { useDraggablePanel } from './useDraggablePanel';
 
 export interface IPermissionDetailPanelProps {
     chainId?: number;
+    daoId?: string;
     edge: IPermissionGraphEdge;
     network?: IDao['network'];
     nodes: IPermissionGraph['nodes'];
@@ -17,6 +18,7 @@ export interface IPermissionDetailPanelProps {
 
 export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
     chainId,
+    daoId,
     edge,
     network,
     nodes,
@@ -66,6 +68,7 @@ export const PermissionDetailPanel: React.FC<IPermissionDetailPanelProps> = ({
             <PermissionDetailContent
                 chainId={chainId}
                 className="flex flex-col gap-4 overflow-auto p-4"
+                daoId={daoId}
                 network={network}
                 row={row}
                 where={where}

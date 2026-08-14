@@ -1,10 +1,24 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
-import type { IDaoPermissionCondition } from '@/shared/api/daoService';
+import * as useSppGuardModule from '@/plugins/sppPlugin/hooks/useSppPermissionCheckProposalCreation';
+import {
+    type IDaoPermissionCondition,
+    type IDaoPlugin,
+    PluginInterfaceType,
+} from '@/shared/api/daoService';
+import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import { SppRuleConditionSlot } from './sppRuleConditionSlot';
 
+jest.mock('@/plugins/sppPlugin/hooks/useSppPermissionCheckProposalCreation');
+jest.mock('@/shared/hooks/useDaoPlugins');
+
 describe('<SppRuleConditionSlot /> component', () => {
-    const createTestComponent = (props?: Partial<IDaoPermissionCondition>) => (
+    const createTestComponent = (
+        props?: Partial<IDaoPermissionCondition> & {
+            conditionAddress?: string;
+            daoId?: string;
+        },
+    ) => (
         <GukModulesProvider>
             <SppRuleConditionSlot conditionType="spp-rule" {...props} />
         </GukModulesProvider>
@@ -49,5 +63,42 @@ describe('<SppRuleConditionSlot /> component', () => {
         expect(
             screen.getByText(/sppRuleConditionSlot.noRules/),
         ).toBeInTheDocument();
+    });
+
+    it('reuses the friendly proposal-creation eligibility when the SPP process resolves', () => {
+        const conditionAddress = '0xC0Ffee254729296a45a3885639AC7E10F9d54979';
+        const sppProcess = {
+            address: '0xSppProcess',
+            interfaceType: PluginInterfaceType.SPP,
+            proposalCreationConditionAddress: conditionAddress,
+            settings: { stages: [] },
+        } as unknown as IDaoPlugin;
+
+        (useDaoPluginsModule.useDaoPlugins as jest.Mock).mockReturnValue([
+            { meta: sppProcess },
+        ]);
+        (
+            useSppGuardModule.useSppPermissionCheckProposalCreation as jest.Mock
+        ).mockReturnValue({
+            hasPermission: false,
+            isLoading: false,
+            isRestricted: true,
+            settings: [
+                [
+                    {
+                        term: 'Friendly term',
+                        definition: 'Friendly definition',
+                    },
+                ],
+            ],
+        });
+
+        render(createTestComponent({ conditionAddress, daoId: 'dao-test' }));
+
+        expect(screen.getByText('Friendly term')).toBeInTheDocument();
+        expect(screen.getByText('Friendly definition')).toBeInTheDocument();
+        expect(
+            screen.queryByText(/sppRuleConditionSlot.description/),
+        ).not.toBeInTheDocument();
     });
 });
