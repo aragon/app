@@ -1,4 +1,5 @@
 import { invariant, type ProposalActionComponent } from '@aragon/gov-ui-kit';
+import type { IAllowedAction } from '@/modules/governance/api/executeSelectorsService';
 import {
     type Network,
     useAllDaoPermissions,
@@ -6,6 +7,7 @@ import {
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useDownloadProposalActions } from '../../hooks/useDownloadProposalActions';
 import { useProposalActionsField } from '../../hooks/useProposalActionsField';
 import { ActionComposer, actionComposerUtils } from '../actionComposer';
 import type { IProposalActionData } from '../createProposalForm';
@@ -26,6 +28,10 @@ export interface IProposalActionsEditorProps {
      * Action types to hide from the action composer, e.g. to stop an action from being nested into itself.
      */
     excludeActionTypes?: string[];
+    /**
+     * Actions the composer restricts its offering to. Leave undefined to offer every action.
+     */
+    allowedActions?: IAllowedAction[];
 }
 
 /**
@@ -36,7 +42,7 @@ export interface IProposalActionsEditorProps {
 export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
     props,
 ) => {
-    const { daoId, network, excludeActionTypes } = props;
+    const { daoId, network, excludeActionTypes, allowedActions } = props;
 
     invariant(
         daoId != null || network != null,
@@ -56,6 +62,9 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         handleRemoveAllActions,
         getArrayControls,
     } = useProposalActionsField();
+
+    const { isPinning, hasPinErrors, handleDownloadActions } =
+        useDownloadProposalActions({ daoId });
 
     const { data: daoPermissions } = useAllDaoPermissions(
         {
@@ -98,12 +107,16 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
             />
             {showActionComposer ? (
                 <ActionComposer
+                    allowedActions={allowedActions}
                     daoId={daoId}
                     daoPermissions={daoPermissions}
                     excludeActionTypes={excludeActionTypes}
                     hasActions={hasActions}
+                    hasPinErrors={hasPinErrors}
+                    isPinning={isPinning}
                     network={network}
                     onAddAction={handleAddAction}
+                    onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (

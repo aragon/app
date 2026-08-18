@@ -3,17 +3,20 @@ import userEvent from '@testing-library/user-event';
 import { useFormContext } from 'react-hook-form';
 import * as daoService from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
     generateDialogContext,
     generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import type { IAllowedAction } from '../../api/executeSelectorsService';
+import * as executeSelectorsService from '../../api/executeSelectorsService';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import type { IProposalActionsEditorProps } from '../../components/proposalActionsEditor';
 import * as proposalActionsEditorModule from '../../components/proposalActionsEditor';
 import { GovernanceDialogId } from '../../constants/governanceDialogId';
-import { generateProposalAction } from '../../testUtils';
+import { generateAllowedAction, generateProposalAction } from '../../testUtils';
 import { proposalActionPreparationUtils } from '../../utils/proposalActionPreparationUtils';
 import { proposalActionsImportExportUtils } from '../../utils/proposalActionsImportExportUtils';
 import { NestedActionsDialog } from './nestedActionsDialog';
@@ -111,6 +114,9 @@ const ProposalActionsEditorStub: React.FC<IProposalActionsEditorProps> = (
             data-action-dao-ids={JSON.stringify(
                 getValues('actions').map((action) => action.daoId),
             )}
+            data-allowed-action-targets={JSON.stringify(
+                props.allowedActions?.map((action) => action.target),
+            )}
             data-dao-id={props.daoId}
             data-exclude-action-types={JSON.stringify(props.excludeActionTypes)}
             data-testid="actions-editor"
@@ -138,8 +144,24 @@ describe('<NestedActionsDialog /> component', () => {
     );
     const useDaoSpy = jest.spyOn(daoService, 'useDao');
     const logErrorSpy = jest.spyOn(monitoringUtils, 'logError');
+    const useAllAllowedActionsSpy = jest.spyOn(
+        executeSelectorsService,
+        'useAllAllowedActions',
+    );
+
+    // The hook keeps its data undefined until the full allowlist is known, which is also what a
+    // disabled query resolves to.
+    const mockAllowedActions = (data?: IAllowedAction[]) =>
+        useAllAllowedActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccessWithData(
+                data,
+            ) as unknown as ReturnType<
+                typeof executeSelectorsService.useAllAllowedActions
+            >,
+        );
 
     beforeEach(() => {
+        mockAllowedActions();
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
@@ -161,13 +183,14 @@ describe('<NestedActionsDialog /> component', () => {
         decodeActionsSpy.mockReset();
         proposalActionsEditorSpy.mockReset();
         logErrorSpy.mockReset();
+        useAllAllowedActionsSpy.mockReset();
     });
 
     const createTestComponent = (
         params?: Partial<INestedActionsDialogParams>,
     ) => {
         const completeParams: INestedActionsDialogParams = {
-            daoId: DAO_ID,
+            hostDaoId: DAO_ID,
             initialActions: [],
             onSubmit: jest.fn(),
             ...params,
@@ -199,6 +222,54 @@ describe('<NestedActionsDialog /> component', () => {
         expect(screen.getByText('0xfirst')).toBeInTheDocument();
         expect(screen.getByText('0xsecond')).toBeInTheDocument();
         expect(decodeActionsSpy).not.toHaveBeenCalled();
+    });
+
+    it('fetches the allowed actions on the plugin network for the chain the actions are composed for', () => {
+        createTestComponent({
+            processPluginAddress: '0xplugin',
+            crossChainNetwork: daoService.Network.BASE_MAINNET,
+        });
+
+        expect(useAllAllowedActionsSpy).toHaveBeenLastCalledWith(
+            {
+                urlParams: { network: DAO.network, pluginAddress: '0xplugin' },
+                chainId: networkDefinitions[daoService.Network.BASE_MAINNET].id,
+            },
+            { enabled: true },
+        );
+    });
+
+    it('forwards the allowed actions of the plugin to the editor', () => {
+        mockAllowedActions([generateAllowedAction({ target: '0xallowed' })]);
+
+        createTestComponent({ processPluginAddress: '0xplugin' });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset.allowedActionTargets,
+        ).toEqual(JSON.stringify(['0xallowed']));
+    });
+
+    // The composer reads the allowlist on mount and offers every action when it is undefined, so
+    // rendering it early would leave the restricted actions unrestricted.
+    it('hides the editor until the allowed actions of the plugin are resolved', () => {
+        mockAllowedActions(undefined);
+
+        createTestComponent({ processPluginAddress: '0xplugin' });
+
+        expect(screen.queryByTestId('actions-editor')).not.toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'app.governance.nestedActionsDialog.loadingAllowedActions',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('offers every action when no plugin restricts them', () => {
+        createTestComponent();
+
+        expect(
+            screen.getByTestId('actions-editor').dataset.allowedActionTargets,
+        ).toBeUndefined();
     });
 
     it('decodes the initial actions before seeding the form when none of them carry input data', async () => {

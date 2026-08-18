@@ -56,7 +56,9 @@ export interface IActionComposerProps
      */
     hideWalletConnect?: boolean;
     /**
-     * Allowed actions to show instead of default actions.
+     * Allowed actions to show instead of default actions. An empty list restricts the composer to no
+     * action at all, leave it undefined to offer every action. Only read on mount, so it must be
+     * resolved before the composer is rendered.
      */
     allowedActions?: IAllowedAction[];
     /**
@@ -129,6 +131,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
+    // An empty list means nothing is authorized, only an undefined list means unrestricted, so the
+    // callers must leave it undefined when no plugin restricts the actions.
     const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
         allowedActions != null,
     );
