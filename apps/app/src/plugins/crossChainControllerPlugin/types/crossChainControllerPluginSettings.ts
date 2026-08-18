@@ -1,4 +1,5 @@
 import type { Address } from 'viem';
+import type { IToken } from '@/modules/finance/api/financeService';
 import type { IPluginSettings } from '@/shared/api/daoService';
 
 export interface ICrossChainLaneSettings {
@@ -18,6 +19,12 @@ export interface ICrossChainLaneSettings {
      * Fee token address, set on local adapter.
      */
     feeToken?: Address;
+    /**
+     * Metadata of the fee token, indexed by the backend from the `feeToken` address. Undefined when
+     * the lane has no fee token or the token has not been indexed yet. The total supply is not part
+     * of the lane projection.
+     */
+    token?: Omit<IToken, 'totalSupply'>;
 }
 
 export interface ICrossChainControllerPluginSettings extends IPluginSettings {

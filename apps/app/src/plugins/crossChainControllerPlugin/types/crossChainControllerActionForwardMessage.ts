@@ -18,4 +18,10 @@ export interface ICrossChainControllerActionForwardMessage
      * the `_message` parameter of `forwardMessage`.
      */
     nestedActions?: IProposalActionData[];
+    /**
+     * Gas the destination chain may spend executing the message, as a decimal string. Obtained by
+     * simulating the delivery, and cleared whenever the destination or the actions change so a stale
+     * figure can never reach the proposal.
+     */
+    gasLimit?: string;
 }

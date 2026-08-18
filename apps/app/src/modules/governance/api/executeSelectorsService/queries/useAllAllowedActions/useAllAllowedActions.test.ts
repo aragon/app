@@ -82,4 +82,25 @@ describe('useAllAllowedActions query', () => {
             ]),
         );
     });
+
+    // An empty list means "no action is authorized" to the consumers, so a disabled query must not
+    // resolve to one. The network is unset because that is what disables the query in the first place.
+    it('keeps the data undefined when the query is disabled', () => {
+        const { result } = renderHook(
+            () =>
+                useAllAllowedActions(
+                    {
+                        urlParams: {
+                            network: undefined as unknown as Network,
+                            pluginAddress: '',
+                        },
+                    },
+                    { enabled: false },
+                ),
+            { wrapper: ReactQueryWrapper },
+        );
+
+        expect(result.current.data).toBeUndefined();
+        expect(getAllowedActionsSpy).not.toHaveBeenCalled();
+    });
 });
