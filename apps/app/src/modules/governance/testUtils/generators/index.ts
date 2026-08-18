@@ -1,3 +1,4 @@
+export * from './allowedAction';
 export * from './createProposalFormData';
 export * from './member';
 export * from './memberMetrics';

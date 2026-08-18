@@ -66,24 +66,25 @@ describe('<NestedActionsList /> component', () => {
         ...overrides,
     });
 
-    it('renders one item per decoded sub-action when length matches the outer tuple', () => {
+    const firstTarget = '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+    const secondTarget = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+
+    const outerParams = (value: unknown[]) => [
+        { name: '_actions', type: 'tuple[]', value },
+    ];
+
+    it('renders one item per decoded sub-action when they match the outer tuple', () => {
         const rawActions = [
-            generateAction({ type: 'Foo' }),
-            generateAction({ type: 'Bar' }),
+            generateAction({ type: 'Foo', to: firstTarget }),
+            generateAction({ type: 'Bar', to: secondTarget }),
         ];
 
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            { to: '0xa', value: '0', data: '0x' },
-                            { to: '0xb', value: '0', data: '0x' },
-                        ],
-                    },
-                ],
+                outerParams: outerParams([
+                    { to: firstTarget, value: '0', data: '0x' },
+                    { to: secondTarget, value: '0', data: '0x' },
+                ]),
                 rawActions,
             }),
         );
@@ -97,18 +98,12 @@ describe('<NestedActionsList /> component', () => {
     it('falls back to raw-calldata stubs when decoded length disagrees with the outer tuple', () => {
         render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [
-                            { to: '0xa', value: '0', data: '0x' },
-                            { to: '0xb', value: '0', data: '0x' },
-                            { to: '0xc', value: '0', data: '0x' },
-                        ],
-                    },
-                ],
-                rawActions: [generateAction()],
+                outerParams: outerParams([
+                    { to: firstTarget, value: '0', data: '0x' },
+                    { to: secondTarget, value: '0', data: '0x' },
+                    { to: firstTarget, value: '0', data: '0x' },
+                ]),
+                rawActions: [generateAction({ to: firstTarget })],
             }),
         );
 
@@ -119,6 +114,21 @@ describe('<NestedActionsList /> component', () => {
         });
     });
 
+    it('falls back to raw-calldata stubs when a decoded sub-action targets a different address than the tuple', () => {
+        render(
+            createTestComponent({
+                outerParams: outerParams([
+                    { to: firstTarget, value: '0', data: '0x' },
+                ]),
+                rawActions: [generateAction({ type: 'Foo', to: secondTarget })],
+            }),
+        );
+
+        expect(screen.getByTestId('nested-item')).toHaveTextContent(
+            'RAW_CALLDATA',
+        );
+    });
+
     it('renders nothing while the DAO is loading', () => {
         useDaoSpy.mockReturnValue(
             generateReactQueryResultSuccessWithData(
@@ -127,14 +137,10 @@ describe('<NestedActionsList /> component', () => {
         );
         const { container } = render(
             createTestComponent({
-                outerParams: [
-                    {
-                        name: '_actions',
-                        type: 'tuple[]',
-                        value: [{ to: '0xa', value: '0', data: '0x' }],
-                    },
-                ],
-                rawActions: [generateAction()],
+                outerParams: outerParams([
+                    { to: firstTarget, value: '0', data: '0x' },
+                ]),
+                rawActions: [generateAction({ to: firstTarget })],
             }),
         );
         expect(container).toBeEmptyDOMElement();
