@@ -3,10 +3,12 @@
 import { AlertInline, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useDao } from '@/shared/api/daoService';
+import { type Network, useDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
+import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { useAllAllowedActions } from '../../api/executeSelectorsService';
 import type { IProposalActionData } from '../../components/createProposalForm';
 import { CreateProposalFormProvider } from '../../components/createProposalForm';
 import { ProposalActionsEditor } from '../../components/proposalActionsEditor';
@@ -37,17 +39,42 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         'NestedActionsDialog: required parameters must be set.',
     );
 
-    const { daoId, network, initialActions, excludeActionTypes, onSubmit } =
-        location.params;
+    const {
+        hostDaoId,
+        processPluginAddress,
+        crossChainNetwork,
+        initialActions,
+        excludeActionTypes,
+        onSubmit,
+    } = location.params;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
-    const { data: dao } = useDao(
-        { urlParams: { id: daoId ?? '' } },
-        { enabled: daoId != null },
+    const { data: hostDao } = useDao({ urlParams: { id: hostDaoId } });
+
+    const resolvedNetwork = crossChainNetwork ?? hostDao?.network;
+
+    const isActionsRestricted = processPluginAddress != null;
+    const composerChainId =
+        resolvedNetwork != null
+            ? networkDefinitions[resolvedNetwork].id
+            : undefined;
+
+    const { data: allowedActions } = useAllAllowedActions(
+        {
+            urlParams: {
+                network: hostDao?.network as Network,
+                pluginAddress: processPluginAddress ?? '',
+            },
+            chainId: composerChainId,
+        },
+        { enabled: hostDao != null && isActionsRestricted },
     );
 
-    const resolvedNetwork = network ?? dao?.network;
+    // The composer reads the allowlist on mount only and treats an undefined list as "every action is
+    // allowed", therefore it must not be rendered before the allowed actions of the process resolve.
+    const isLoadingAllowedActions =
+        isActionsRestricted && allowedActions == null;
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -89,7 +116,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
             return;
         }
 
-        if (daoId != null && dao == null) {
+        if (hostDao == null) {
             return;
         }
 
@@ -110,22 +137,25 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                             data,
                         })),
                         resolvedNetwork,
-                        dao,
+                        crossChainNetwork ? undefined : hostDao,
                     );
 
                 reset({
-                    actions: daoId
-                        ? decodedActions.map(
+                    actions: crossChainNetwork
+                        ? decodedActions
+                        : decodedActions.map(
                               (action) =>
-                                  ({ ...action, daoId }) as IProposalActionData,
-                          )
-                        : decodedActions,
+                                  ({
+                                      ...action,
+                                      daoId: hostDaoId,
+                                  }) as IProposalActionData,
+                          ),
                 });
             } catch (error) {
                 monitoringUtils.logError(error, {
                     context: {
-                        daoId,
-                        network,
+                        hostDaoId,
+                        crossChainNetwork,
                         message: 'Failed to decode the nested proposal actions',
                     },
                 });
@@ -137,14 +167,16 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
 
         void decodeInitialActions();
     }, [
-        dao,
-        daoId,
-        network,
+        hostDao,
+        hostDaoId,
+        crossChainNetwork,
         resolvedNetwork,
         initialActions,
         requiresDecoding,
         reset,
     ]);
+
+    const isLoadingActions = isDecoding || isLoadingAllowedActions;
 
     const handleClose = () => close(location.id);
 
@@ -170,8 +202,8 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         } catch (error) {
             monitoringUtils.logError(error, {
                 context: {
-                    daoId,
-                    network,
+                    hostDaoId,
+                    crossChainNetwork,
                     message: 'Failed to prepare the nested proposal actions',
                 },
             });
@@ -192,18 +224,21 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                     title={t('app.governance.nestedActionsDialog.title')}
                 />
                 <Dialog.Content className="flex flex-col gap-4 pt-2 pb-6">
-                    {isDecoding ? (
+                    {isLoadingActions ? (
                         <AlertInline
                             message={t(
-                                'app.governance.nestedActionsDialog.decoding',
+                                isDecoding
+                                    ? 'app.governance.nestedActionsDialog.decoding'
+                                    : 'app.governance.nestedActionsDialog.loadingAllowedActions',
                             )}
                             variant="info"
                         />
                     ) : (
                         <ProposalActionsEditor
-                            daoId={daoId}
+                            allowedActions={allowedActions}
+                            daoId={crossChainNetwork ? undefined : hostDaoId}
                             excludeActionTypes={excludeActionTypes}
-                            network={network}
+                            network={crossChainNetwork}
                         />
                     )}
                     {hasDecodeError && (
@@ -226,7 +261,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                 <Dialog.Footer
                     primaryAction={{
                         label: t('app.governance.nestedActionsDialog.save'),
-                        disabled: isDecoding,
+                        disabled: isLoadingActions,
                         isLoading: isPreparing,
                         onClick: handleSave,
                     }}

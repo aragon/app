@@ -26,4 +26,9 @@ export interface IAllowedAction {
      * Whether the action is allowed or not. Should always be `true` for allowed actions.
      */
     isAllowed: true;
+    /**
+     * Chain ID for which given allowed action is relevant. In general, value
+     * should be back-filled, but if not set, consider it as a chain id of the DAO.
+     */
+    chainId?: number;
 }

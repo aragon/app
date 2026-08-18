@@ -5,12 +5,22 @@ import type { IProposalActionData } from '../../components/createProposalForm';
 export interface INestedActionsDialogParams {
     /**
      * ID of the DAO the nested actions are composed for.
+     * Host DAO -> process -> create proposal -> actions (action1, action2WithNstedActions, action 3)
+     * Nested actions could be cross-chain, so it is basically configured for another DAO on another chain.
+     * Host DAO's process can define allowed actions also for other chains.
      */
-    daoId?: string;
+    hostDaoId: string;
     /**
-     * Alternative to `daoId` if the intention is to use component  outside DAO context.
+     * Address of the process plugin restricting the actions that can be composed. When omitted no allowed
+     * actions are fetched and every action is offered by the composer.
      */
-    network?: Network;
+    processPluginAddress?: string;
+    /**
+     * Network the nested actions are composed for, defaults to the network of the DAO. Set it when
+     * the actions are executed on another chain than the DAO, e.g. when they are forwarded to a
+     * cross-chain controller.
+     */
+    crossChainNetwork?: Network;
     /**
      * Actions to seed the isolated dialog form with, used to edit a previously composed selection.
      */

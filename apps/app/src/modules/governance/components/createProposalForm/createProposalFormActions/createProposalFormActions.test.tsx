@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import * as executeSelectorsService from '@/modules/governance/api/executeSelectorsService';
 import * as daoService from '@/shared/api/daoService';
 import * as DialogProvider from '@/shared/components/dialogProvider';
 import {
@@ -10,7 +11,7 @@ import {
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
-import * as CreateProposalProvider from '../createProposalFormProvider';
+import * as useDownloadProposalActionsHook from '../../../hooks/useDownloadProposalActions';
 import {
     CreateProposalFormActions,
     type ICreateProposalFormActionsProps,
@@ -22,10 +23,14 @@ describe('<CreateProposalFormActions /> component', () => {
         daoService,
         'useAllDaoPermissions',
     );
+    const useAllAllowedActionsSpy = jest.spyOn(
+        executeSelectorsService,
+        'useAllAllowedActions',
+    );
     const useDialogContextSpy = jest.spyOn(DialogProvider, 'useDialogContext');
-    const useCreateProposalFormContextSpy = jest.spyOn(
-        CreateProposalProvider,
-        'useCreateProposalFormContext',
+    const useDownloadProposalActionsSpy = jest.spyOn(
+        useDownloadProposalActionsHook,
+        'useDownloadProposalActions',
     );
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
@@ -38,10 +43,18 @@ describe('<CreateProposalFormActions /> component', () => {
                 data: [],
             }) as unknown as ReturnType<typeof daoService.useAllDaoPermissions>,
         );
+        useAllAllowedActionsSpy.mockReturnValue(
+            generateReactQueryResultSuccess({
+                data: [],
+            }) as unknown as ReturnType<
+                typeof executeSelectorsService.useAllAllowedActions
+            >,
+        );
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useCreateProposalFormContextSpy.mockReturnValue({
-            prepareActions: {},
-            addPrepareAction: jest.fn(),
+        useDownloadProposalActionsSpy.mockReturnValue({
+            isPinning: false,
+            hasPinErrors: false,
+            handleDownloadActions: jest.fn(),
         });
         getDaoPluginsSpy.mockReturnValue([generateDaoPlugin()]);
     });
@@ -49,8 +62,9 @@ describe('<CreateProposalFormActions /> component', () => {
     afterEach(() => {
         useDaoSpy.mockReset();
         useAllDaoPermissionsSpy.mockReset();
+        useAllAllowedActionsSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useCreateProposalFormContextSpy.mockReset();
+        useDownloadProposalActionsSpy.mockReset();
         getDaoPluginsSpy.mockReset();
     });
 
