@@ -1,7 +1,9 @@
 'use client';
 
 import {
+    AlertCard,
     AlertInline,
+    addressUtils,
     Button,
     Card,
     CardEmptyState,
@@ -9,6 +11,7 @@ import {
     InputContainer,
     type IProposalActionComponentProps,
     invariant,
+    Link,
     RadioCard,
     RadioGroup,
 } from '@aragon/gov-ui-kit';
@@ -26,49 +29,24 @@ import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
 import { networkUtils } from '@/shared/utils/networkUtils';
+import {
+    forwardMessageAbi,
+    forwardMessageActionsAbi,
+} from '../../../constants/crossChainControllerAbi';
+import { crossChainControllerGas } from '../../../constants/crossChainControllerGas';
 import type {
     ICrossChainControllerActionForwardMessage,
     ICrossChainControllerPlugin,
 } from '../../../types';
 import { CrossChainControllerProposalActionType } from '../../../types';
+import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
+import { GasLimitInput } from './gasLimitInput';
+import { useCrossChainControllerGasLimit } from './useCrossChainControllerGasLimit';
 
 export interface ICrossChainControllerForwardMessageActionProps
     extends IProposalActionComponentProps<
         IProposalActionData<IProposalAction, ICrossChainControllerPlugin>
     > {}
-
-const forwardMessageAbi = {
-    type: 'function',
-    inputs: [
-        {
-            name: '_destinationChainId',
-            internalType: 'uint256',
-            type: 'uint256',
-        },
-        { name: '_gasLimit', internalType: 'uint256', type: 'uint256' },
-        { name: '_message', internalType: 'bytes', type: 'bytes' },
-    ],
-    name: 'forwardMessage',
-    outputs: [{ name: '', internalType: 'bytes32', type: 'bytes32' }],
-    stateMutability: 'nonpayable',
-} as const;
-
-// The `_message` payload is the ABI encoding of the OSx `Action[]` the destination controller hands
-// to its executor.
-const messageAbiParameters = [
-    {
-        name: 'actions',
-        type: 'tuple[]',
-        components: [
-            { name: 'to', type: 'address' },
-            { name: 'value', type: 'uint256' },
-            { name: 'data', type: 'bytes' },
-        ],
-    },
-] as const;
-
-// TODO(APP-1029): expose the gas limit once the product decides between a user input and a quote derived from the destination chain.
-const defaultGasLimit = BigInt(1_000_000);
 
 export const CrossChainControllerForwardMessageAction: React.FC<
     ICrossChainControllerForwardMessageActionProps
@@ -88,7 +66,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue } = useFormContext();
-    const { chainId: daoChainId } = useDaoChain({ daoId });
+    const { chainId: daoChainId, network: daoNetwork } = useDaoChain({ daoId });
 
     // The nested actions are part of the proposal, so they are restricted by the process creating it.
     const { processPlugin } = useCreateProposalFormContext();
@@ -151,14 +129,56 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         fieldPrefix: actionFieldName,
     });
 
-    const handleDestinationChainChange = (value: string) =>
-        onDestinationChainChange(Number(value));
+    const {
+        onChange: onGasLimitChange,
+        value: gasLimit,
+        ...gasLimitField
+    } = useFormField<ICrossChainControllerActionForwardMessage, 'gasLimit'>(
+        'gasLimit',
+        {
+            label: t(
+                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.label',
+            ),
+            rules: {
+                required: true,
+                min: crossChainControllerGas.minGasLimit,
+                max: crossChainControllerGas.maxGasLimit,
+                // The masked input accepts the radix character, so a manually typed fraction has to
+                // be rejected here - it is neither a valid gas figure nor encodable as a uint256.
+                validate: (value: string | undefined) =>
+                    crossChainControllerGasUtils.parseGasLimit(value) != null ||
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.notWholeNumber',
+            },
+            fieldPrefix: actionFieldName,
+        },
+    );
+
+    const handleDestinationChainChange = (value: string) => {
+        const newDestinationChainId = Number(value);
+
+        // Guard against re-selecting the current chain, which must not discard the actions.
+        if (newDestinationChainId === destinationChainId) {
+            return;
+        }
+
+        onDestinationChainChange(newDestinationChainId);
+
+        // The nested actions target contracts on the previous destination chain, so they cannot
+        // survive a change of destination. The gas limit is cleared by the estimation hook.
+        onNestedActionsChange([]);
+    };
 
     // The nested actions are executed by the destination chain controller, therefore they are composed
     // for the selected destination network instead of the DAO network.
     const destinationNetwork = destinationChains.find(
         ({ chainId }) => chainId === destinationChainId,
     )?.network;
+
+    // The messaging fee is paid by the controller on the DAO chain with the fee token set on the
+    // local adapter of the selected lane, which the backend indexes onto the lane.
+    const feeToken = lanes.find(
+        ({ chainId }) => chainId === destinationChainId,
+    )?.token;
 
     const handleOpenActionsDialog = () => {
         invariant(
@@ -186,7 +206,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
 
     const encodedMessage = useMemo(
         () =>
-            encodeAbiParameters(messageAbiParameters, [
+            encodeAbiParameters(forwardMessageActionsAbi, [
                 nestedActions.map(({ to, value, data }) => ({
                     to: to as Hex,
                     value: BigInt(value || 0),
@@ -196,15 +216,35 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         [nestedActions],
     );
 
+    const hasNestedActions = nestedActions.length > 0;
+
+    const {
+        handleEstimateGasLimit,
+        isEstimating,
+        estimationAlert,
+        simulationUrl,
+    } = useCrossChainControllerGasLimit({
+        daoNetwork,
+        controllerAddress: action.meta.address,
+        destinationChainId,
+        nestedActions,
+        onGasLimitChange,
+    });
+
     useEffect(() => {
         if (destinationChainId == null) {
             return;
         }
 
+        // Encodes to zero while the limit is unset or not a whole number. The field is required and
+        // rejects fractions, so a proposal can never be created in that state.
+        const encodedGasLimit =
+            crossChainControllerGasUtils.parseGasLimit(gasLimit) ?? BigInt(0);
+
         const newData = encodeFunctionData({
             abi: [forwardMessageAbi],
             functionName: 'forwardMessage',
-            args: [BigInt(destinationChainId), defaultGasLimit, encodedMessage],
+            args: [BigInt(destinationChainId), encodedGasLimit, encodedMessage],
         });
 
         setValue(`${actionFieldName}.data`, newData);
@@ -214,15 +254,19 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         );
         setValue(
             `${actionFieldName}.inputData.parameters[1].value`,
-            defaultGasLimit.toString(),
+            encodedGasLimit.toString(),
         );
         setValue(
             `${actionFieldName}.inputData.parameters[2].value`,
             encodedMessage,
         );
-    }, [actionFieldName, destinationChainId, encodedMessage, setValue]);
-
-    const hasNestedActions = nestedActions.length > 0;
+    }, [
+        actionFieldName,
+        destinationChainId,
+        encodedMessage,
+        gasLimit,
+        setValue,
+    ]);
 
     return (
         <div className="flex w-full flex-col gap-6">
@@ -312,6 +356,75 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                     />
                 )}
             </InputContainer>
+
+            {hasNestedActions && (
+                <div className="flex flex-col gap-3">
+                    <GasLimitInput
+                        calculateDisabled={destinationChainId == null}
+                        calculateLabel={t(
+                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
+                        )}
+                        helpText={t(
+                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
+                        )}
+                        isCalculating={isEstimating}
+                        max={crossChainControllerGas.maxGasLimit}
+                        min={crossChainControllerGas.minGasLimit}
+                        onCalculate={handleEstimateGasLimit}
+                        onChange={onGasLimitChange}
+                        placeholder={t(
+                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
+                        )}
+                        step={1000}
+                        value={gasLimit ?? ''}
+                        {...gasLimitField}
+                    />
+
+                    {(estimationAlert != null || simulationUrl != null) && (
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                            {estimationAlert != null && (
+                                <AlertInline
+                                    message={estimationAlert.message}
+                                    variant={estimationAlert.variant}
+                                />
+                            )}
+                            {simulationUrl != null && (
+                                <Link
+                                    className="shrink-0"
+                                    href={simulationUrl}
+                                    isExternal={true}
+                                    showUrl={false}
+                                >
+                                    {t(
+                                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
+                                    )}
+                                </Link>
+                            )}
+                        </div>
+                    )}
+                </div>
+            )}
+
+            <AlertCard
+                message={t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.title',
+                )}
+                variant="info"
+            >
+                {t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.description',
+                    {
+                        address: addressUtils.truncateAddress(
+                            action.meta.address,
+                        ),
+                        token:
+                            feeToken?.symbol ??
+                            t(
+                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.defaultToken',
+                            ),
+                    },
+                )}
+            </AlertCard>
         </div>
     );
 };

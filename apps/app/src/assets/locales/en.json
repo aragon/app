@@ -21,6 +21,17 @@
           "actionsHelpText": "The actions that will be executed."
         }
       },
+      "crossChainController": {
+        "crossChainControllerForwardMessageDetails": {
+          "chainTerm": "Destination chain",
+          "chainUnknown": "Chain {{chainId}}",
+          "gasLimitTerm": "Gas limit",
+          "actionsLabel": "Actions",
+          "actionsHelpText": "The actions that will be executed as a single batch on the destination chain once the message is delivered.",
+          "actionsDecodeError": "The forwarded message could not be decoded into actions. Check the raw calldata of this action before approving it.",
+          "downloadActions": "Download actions"
+        }
+      },
       "gaugeRegistrar": {
         "composer": {
           "contractName": "Gauge Registrar",
@@ -2236,6 +2247,7 @@
         "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
         "decoding": "Decoding actions",
         "description": "These actions are executed as a batch by the action you are composing.",
+        "loadingAllowedActions": "Loading the allowed actions",
         "prepareError": "We couldn't prepare the actions. Please try again.",
         "save": "Save actions",
         "title": "Add actions"
@@ -2535,6 +2547,25 @@
             "helpText": "The chain the message is forwarded to. Only chains configured on this cross-chain controller can be selected.",
             "label": "Destination chain",
             "unknown": "Chain {{chainId}}"
+          },
+          "fee": {
+            "defaultToken": "fee tokens",
+            "description": "The cross-chain controller ({{address}}) pays the fee to send the message. Make sure it holds enough {{token}}, otherwise the proposal execution will fail.",
+            "title": "Cross-chain fees are paid by the controller"
+          },
+          "gas": {
+            "calculate": "Calculate",
+            "error": "The gas limit could not be calculated. Try again, or enter a value manually if the problem persists.",
+            "exceedsMax": "The actions need more gas than a single cross-chain message allows ({{maxGasLimit}}). Split them across several forward actions.",
+            "helpText": "The gas the destination chain may spend running the actions. Calculate it by simulating the actions, or enter it manually. It is fixed when the proposal is created and cannot be changed later, so it is cleared whenever the destination or the actions change.",
+            "label": "Destination gas limit",
+            "marginReduced": "Simulated successfully. The delivery needs {{requiredGas}} gas, but the lane does not allow the usual safety margin on top, so the limit was set to the maximum the lane accepts.",
+            "notWholeNumber": "Gas is counted in whole units, so the gas limit cannot have decimals.",
+            "placeholder": "Calculate or enter a gas limit",
+            "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
+            "simulated": "Simulated successfully. The delivery needs {{requiredGas}} gas, and a {{bufferPercent}}% safety margin was added on top.",
+            "unknownReason": "no reason given",
+            "viewSimulation": "View simulation"
           }
         }
       },
