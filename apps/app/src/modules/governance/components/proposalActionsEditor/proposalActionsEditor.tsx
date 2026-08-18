@@ -7,6 +7,7 @@ import {
 } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useDownloadProposalActions } from '../../hooks/useDownloadProposalActions';
 import { useProposalActionsField } from '../../hooks/useProposalActionsField';
 import { ActionComposer, actionComposerUtils } from '../actionComposer';
 import type { IProposalActionData } from '../createProposalForm';
@@ -62,6 +63,9 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
         getArrayControls,
     } = useProposalActionsField();
 
+    const { isPinning, hasPinErrors, handleDownloadActions } =
+        useDownloadProposalActions({ daoId });
+
     const { data: daoPermissions } = useAllDaoPermissions(
         {
             urlParams: {
@@ -108,8 +112,11 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
                     daoPermissions={daoPermissions}
                     excludeActionTypes={excludeActionTypes}
                     hasActions={hasActions}
+                    hasPinErrors={hasPinErrors}
+                    isPinning={isPinning}
                     network={network}
                     onAddAction={handleAddAction}
+                    onDownloadActions={handleDownloadActions}
                     onRemoveAllActions={handleRemoveAllActions}
                 />
             ) : (

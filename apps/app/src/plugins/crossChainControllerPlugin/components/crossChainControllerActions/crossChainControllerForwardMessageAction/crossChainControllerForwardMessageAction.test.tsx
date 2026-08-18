@@ -3,11 +3,11 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
+import { generateToken } from '@/modules/finance/testUtils';
 import * as createProposalForm from '@/modules/governance/components/createProposalForm';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
 import * as useDaoChainHook from '@/shared/hooks/useDaoChain';
-import * as useTokenHook from '@/shared/hooks/useToken';
 import {
     generateDaoPlugin,
     generateDialogContext,
@@ -27,7 +27,6 @@ import {
 describe('<CrossChainControllerForwardMessageAction /> component', () => {
     const useDaoChainSpy = jest.spyOn(useDaoChainHook, 'useDaoChain');
     const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
-    const useTokenSpy = jest.spyOn(useTokenHook, 'useToken');
     const useCreateProposalFormContextSpy = jest.spyOn(
         createProposalForm,
         'useCreateProposalFormContext',
@@ -38,7 +37,9 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
     );
 
     const controllerAddress = '0x1111111111111111111111111111111111111111';
+    const feeTokenAddress = '0x8888888888888888888888888888888888888888';
     const destinationChainId = 8453;
+    const otherDestinationChainId = 42_161;
 
     const nestedAction = {
         to: '0x4444444444444444444444444444444444444444',
@@ -76,11 +77,6 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
             network: Network.ETHEREUM_MAINNET,
         } as unknown as ReturnType<typeof useDaoChainHook.useDaoChain>);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
-        useTokenSpy.mockReturnValue({
-            data: null,
-            isError: false,
-            isLoading: false,
-        });
         useCreateProposalFormContextSpy.mockReturnValue(
             {} as ReturnType<
                 typeof createProposalForm.useCreateProposalFormContext
@@ -93,7 +89,6 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         form = undefined;
         useDaoChainSpy.mockReset();
         useDialogContextSpy.mockReset();
-        useTokenSpy.mockReset();
         useCreateProposalFormContextSpy.mockReset();
         estimateGasLimitSpy.mockReset();
     });
@@ -116,6 +111,19 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
                                 '0x3333333333333333333333333333333333333333',
                             remoteAdapter:
                                 '0x5555555555555555555555555555555555555555',
+                            feeToken: feeTokenAddress,
+                            token: generateToken({
+                                address: feeTokenAddress,
+                                symbol: 'LINK',
+                            }),
+                        },
+                        // The backend leaves the token off the lane when the fee token is unknown.
+                        {
+                            chainId: otherDestinationChainId,
+                            localAdapter:
+                                '0x6666666666666666666666666666666666666666',
+                            remoteAdapter:
+                                '0x7777777777777777777777777777777777777777',
                         },
                     ],
                 },
@@ -280,5 +288,76 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         render(createTestComponent(undefined, { gasLimit: '500000' }));
 
         expect(getGasLimitInput()).toHaveValue('500,000');
+    });
+
+    it('rejects a fractional gas limit instead of failing to encode it', async () => {
+        // The masked input accepts the radix character, so a manually typed fraction gets this far.
+        render(createTestComponent(undefined, { gasLimit: '250000.5' }));
+
+        await act(async () => {
+            await form?.trigger();
+        });
+
+        expect(
+            screen.getByText(
+                /crossChainControllerForwardMessageAction.gas.notWholeNumber/,
+            ),
+        ).toBeInTheDocument();
+        // The action stays encodable, with a zero limit the required rule keeps out of a proposal.
+        expect(
+            form?.getValues('actions.[0].inputData.parameters[1].value'),
+        ).toBe('0');
+    });
+
+    it('clears the nested actions when the destination chain changes, as they target the previous chain', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('radio', { name: 'Arbitrum' }));
+
+        await waitFor(() =>
+            expect(form?.getValues('actions.[0].nestedActions')).toEqual([]),
+        );
+        expect(form?.getValues('actions.[0].destinationChainId')).toBe(
+            otherDestinationChainId,
+        );
+        expect(
+            screen.getByText(
+                /crossChainControllerForwardMessageAction.actions.emptyHeading/,
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('keeps the nested actions when the already selected destination chain is selected again', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('radio', { name: 'Base' }));
+
+        expect(form?.getValues('actions.[0].nestedActions')).toEqual([
+            nestedAction,
+        ]);
+    });
+
+    it('names the fee token of the selected lane, as indexed by the backend', () => {
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                /crossChainControllerForwardMessageAction.fee.description.*token=LINK/,
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('falls back to a generic fee token label when the lane has no indexed token', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(screen.getByRole('radio', { name: 'Arbitrum' }));
+
+        await waitFor(() =>
+            expect(
+                screen.getByText(
+                    /crossChainControllerForwardMessageAction.fee.description.*token=app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.defaultToken/,
+                ),
+            ).toBeInTheDocument(),
+        );
     });
 });

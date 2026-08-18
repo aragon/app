@@ -28,7 +28,6 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useFormField } from '@/shared/hooks/useFormField';
-import { useToken } from '@/shared/hooks/useToken';
 import { networkUtils } from '@/shared/utils/networkUtils';
 import {
     forwardMessageAbi,
@@ -40,6 +39,7 @@ import type {
     ICrossChainControllerPlugin,
 } from '../../../types';
 import { CrossChainControllerProposalActionType } from '../../../types';
+import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
 import { GasLimitInput } from './gasLimitInput';
 import { useCrossChainControllerGasLimit } from './useCrossChainControllerGasLimit';
 
@@ -143,13 +143,30 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 required: true,
                 min: crossChainControllerGas.minGasLimit,
                 max: crossChainControllerGas.maxGasLimit,
+                // The masked input accepts the radix character, so a manually typed fraction has to
+                // be rejected here - it is neither a valid gas figure nor encodable as a uint256.
+                validate: (value: string | undefined) =>
+                    crossChainControllerGasUtils.parseGasLimit(value) != null ||
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.notWholeNumber',
             },
             fieldPrefix: actionFieldName,
         },
     );
 
-    const handleDestinationChainChange = (value: string) =>
-        onDestinationChainChange(Number(value));
+    const handleDestinationChainChange = (value: string) => {
+        const newDestinationChainId = Number(value);
+
+        // Guard against re-selecting the current chain, which must not discard the actions.
+        if (newDestinationChainId === destinationChainId) {
+            return;
+        }
+
+        onDestinationChainChange(newDestinationChainId);
+
+        // The nested actions target contracts on the previous destination chain, so they cannot
+        // survive a change of destination. The gas limit is cleared by the estimation hook.
+        onNestedActionsChange([]);
+    };
 
     // The nested actions are executed by the destination chain controller, therefore they are composed
     // for the selected destination network instead of the DAO network.
@@ -157,16 +174,11 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         ({ chainId }) => chainId === destinationChainId,
     )?.network;
 
-    const destinationLane = lanes.find(
-        ({ chainId }) => chainId === destinationChainId,
-    );
-
     // The messaging fee is paid by the controller on the DAO chain with the fee token set on the
-    // local adapter of the selected lane.
-    const { data: feeToken } = useToken({
-        address: destinationLane?.feeToken,
-        chainId: daoChainId,
-    });
+    // local adapter of the selected lane, which the backend indexes onto the lane.
+    const feeToken = lanes.find(
+        ({ chainId }) => chainId === destinationChainId,
+    )?.token;
 
     const handleOpenActionsDialog = () => {
         invariant(
@@ -224,9 +236,10 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             return;
         }
 
-        // Encodes to zero while the limit is unset. The field is required, so a proposal can never
-        // be created in that state.
-        const encodedGasLimit = BigInt(gasLimit || 0);
+        // Encodes to zero while the limit is unset or not a whole number. The field is required and
+        // rejects fractions, so a proposal can never be created in that state.
+        const encodedGasLimit =
+            crossChainControllerGasUtils.parseGasLimit(gasLimit) ?? BigInt(0);
 
         const newData = encodeFunctionData({
             abi: [forwardMessageAbi],

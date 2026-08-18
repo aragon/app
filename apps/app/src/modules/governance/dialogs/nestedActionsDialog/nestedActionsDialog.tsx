@@ -54,14 +54,13 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
 
     const resolvedNetwork = crossChainNetwork ?? hostDao?.network;
 
-    const shouldFetchAllowedActions =
-        hostDao != null && processPluginAddress != null;
+    const isActionsRestricted = processPluginAddress != null;
     const composerChainId =
         resolvedNetwork != null
             ? networkDefinitions[resolvedNetwork].id
             : undefined;
 
-    const { data: processAllowedActions } = useAllAllowedActions(
+    const { data: allowedActions } = useAllAllowedActions(
         {
             urlParams: {
                 network: hostDao?.network as Network,
@@ -69,14 +68,13 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
             },
             chainId: composerChainId,
         },
-        { enabled: shouldFetchAllowedActions },
+        { enabled: hostDao != null && isActionsRestricted },
     );
 
-    // The composer treats a defined list as "only offer the authorized actions", so it must stay
-    // undefined if we don't fetch actions
-    const allowedActions = shouldFetchAllowedActions
-        ? processAllowedActions
-        : undefined;
+    // The composer reads the allowlist on mount only and treats an undefined list as "every action is
+    // allowed", therefore it must not be rendered before the allowed actions of the process resolve.
+    const isLoadingAllowedActions =
+        isActionsRestricted && allowedActions == null;
 
     const [prepareActions, setPrepareActions] =
         useState<PrepareProposalActionMap>({});
@@ -178,6 +176,8 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
         reset,
     ]);
 
+    const isLoadingActions = isDecoding || isLoadingAllowedActions;
+
     const handleClose = () => close(location.id);
 
     const handleSave = async () => {
@@ -224,10 +224,12 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                     title={t('app.governance.nestedActionsDialog.title')}
                 />
                 <Dialog.Content className="flex flex-col gap-4 pt-2 pb-6">
-                    {isDecoding ? (
+                    {isLoadingActions ? (
                         <AlertInline
                             message={t(
-                                'app.governance.nestedActionsDialog.decoding',
+                                isDecoding
+                                    ? 'app.governance.nestedActionsDialog.decoding'
+                                    : 'app.governance.nestedActionsDialog.loadingAllowedActions',
                             )}
                             variant="info"
                         />
@@ -259,7 +261,7 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                 <Dialog.Footer
                     primaryAction={{
                         label: t('app.governance.nestedActionsDialog.save'),
-                        disabled: isDecoding,
+                        disabled: isLoadingActions,
                         isLoading: isPreparing,
                         onClick: handleSave,
                     }}

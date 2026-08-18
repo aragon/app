@@ -13,12 +13,13 @@ import { ProposalActionsItem } from '../proposalActionsItem';
 export interface INestedActionsListProps {
     /**
      * Decoded input parameters of the outer wrapper action (e.g. `createProposal`/`execute`). Used to read the raw
-     * `_actions` tuple as a fallback when the decoded sub-actions are missing or out of sync.
+     * `_actions` tuple, both to check the decoded sub-actions against and as a fallback when they are missing or out
+     * of sync.
      */
     outerParams: IProposalActionInputDataParameter[];
     /**
-     * Decoded sub-actions emitted by the backend. When the length differs from the raw `_actions` tuple, raw-calldata
-     * stubs are rendered instead.
+     * Decoded sub-actions emitted by the backend. When they do not describe the same calls as the raw `_actions`
+     * tuple, raw-calldata stubs are rendered instead.
      */
     rawActions: IProposalAction[] | undefined;
     /**

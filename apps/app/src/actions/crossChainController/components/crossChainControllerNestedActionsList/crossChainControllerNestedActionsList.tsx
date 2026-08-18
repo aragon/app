@@ -11,8 +11,8 @@ export interface ICrossChainControllerNestedActionsListProps {
      */
     rawTuple: IRawActionTuple[];
     /**
-     * Decoded sub-actions emitted by the backend. When the length differs from `rawTuple`, raw-calldata stubs are
-     * rendered instead.
+     * Decoded sub-actions emitted by the backend. When they do not describe the same calls as `rawTuple`, raw-calldata
+     * stubs are rendered instead.
      */
     rawActions: IProposalAction[] | undefined;
     /**
@@ -23,19 +23,19 @@ export interface ICrossChainControllerNestedActionsListProps {
 
 /**
  * Renders the actions forwarded to another chain by a cross-chain controller message. Unlike `NestedActionsList`,
- * actions are rendered with `ProposalActions.Item` directly, without normalization or a plugin-specific
- * `CustomComponent`: the DAO's own network and installed plugins belong to its home chain, not the destination chain
- * the actions execute on, so resolving a plugin view for them would read the wrong chain's state.
+ * actions are rendered with `ProposalActions.Item` directly and only go through the DAO-agnostic default
+ * normalization, without a plugin-specific `CustomComponent`: the DAO's own network and installed plugins belong to
+ * its home chain, not the destination chain the actions execute on, so resolving a plugin view for them would read
+ * the wrong chain's state.
  */
 export const CrossChainControllerNestedActionsList: React.FC<
     ICrossChainControllerNestedActionsListProps
 > = (props) => {
     const { rawTuple, rawActions, chainId } = props;
 
-    const actions = proposalActionUtils.resolveNestedActions(
-        rawActions,
-        rawTuple,
-    );
+    const actions = proposalActionUtils
+        .resolveNestedActions(rawActions, rawTuple)
+        .map((action) => proposalActionUtils.normalizeDefaultAction(action));
 
     if (actions.length === 0) {
         return null;
