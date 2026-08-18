@@ -106,7 +106,36 @@ describe('useCrossChainControllerGasLimit hook', () => {
                 expect.stringContaining('exceedsMax'),
             ),
         );
-        expect(onGasLimitChange).not.toHaveBeenCalled();
+        // Only the clear that precedes every calculation, never a resolved limit.
+        expect(onGasLimitChange).toHaveBeenCalledTimes(1);
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+    });
+
+    it('clears the previous gas limit before recalculating, so an outcome with no usable limit leaves nothing submittable', async () => {
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+        await waitFor(() =>
+            expect(onGasLimitChange).toHaveBeenCalledWith('296530'),
+        );
+
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({
+                status: GasLimitEstimationStatus.REVERTED,
+                requiredGas: undefined,
+            }),
+        );
+        onGasLimitChange.mockClear();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(result.current.estimationAlert?.message).toEqual(
+                expect.stringContaining('reverted'),
+            ),
+        );
+        expect(onGasLimitChange).toHaveBeenCalledTimes(1);
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
     });
 
     it('reports the revert reason when the actions fail in simulation', async () => {
@@ -171,6 +200,52 @@ describe('useCrossChainControllerGasLimit hook', () => {
         rerender({ nestedActions: [{ ...nestedAction, data: '0xfeedface' }] });
 
         expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+    });
+
+    it('ignores an in-flight estimation result once the destination chain changes before it resolves', async () => {
+        let resolveEstimation: (estimation: IGasLimitEstimation) => void = () =>
+            undefined;
+        estimateGasLimitSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveEstimation = resolve;
+            }),
+        );
+
+        const { result, rerender, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+        onGasLimitChange.mockClear();
+
+        rerender({ destinationChainId: 42_161 });
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+        onGasLimitChange.mockClear();
+
+        await act(async () => resolveEstimation(generateEstimation()));
+
+        expect(onGasLimitChange).not.toHaveBeenCalled();
+    });
+
+    it('ignores an in-flight estimation result once the nested actions change before it resolves', async () => {
+        let resolveEstimation: (estimation: IGasLimitEstimation) => void = () =>
+            undefined;
+        estimateGasLimitSpy.mockReturnValue(
+            new Promise((resolve) => {
+                resolveEstimation = resolve;
+            }),
+        );
+
+        const { result, rerender, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+        onGasLimitChange.mockClear();
+
+        rerender({ nestedActions: [{ ...nestedAction, data: '0xfeedface' }] });
+        expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
+        onGasLimitChange.mockClear();
+
+        await act(async () => resolveEstimation(generateEstimation()));
+
+        expect(onGasLimitChange).not.toHaveBeenCalled();
     });
 
     it('throws when estimating without a resolved network or destination', () => {

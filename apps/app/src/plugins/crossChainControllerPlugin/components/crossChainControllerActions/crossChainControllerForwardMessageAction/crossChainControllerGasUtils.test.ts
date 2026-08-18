@@ -2,6 +2,34 @@ import { crossChainControllerGas } from '../../../constants/crossChainController
 import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
 
 describe('crossChainControllerGas utils', () => {
+    describe('parseGasLimit', () => {
+        it('parses a whole number', () => {
+            expect(
+                crossChainControllerGasUtils.parseGasLimit('250000'),
+            ).toEqual(BigInt(250_000));
+        });
+
+        it.each([
+            '250000.5',
+            '250000.',
+            '2.5e5',
+            '-250000',
+            'abc',
+            '',
+            ' ',
+        ])('rejects %p, which is not a whole number of gas units', (value) => {
+            expect(
+                crossChainControllerGasUtils.parseGasLimit(value),
+            ).toBeUndefined();
+        });
+
+        it('rejects an unset value', () => {
+            expect(
+                crossChainControllerGasUtils.parseGasLimit(),
+            ).toBeUndefined();
+        });
+    });
+
     describe('applyBuffer', () => {
         it('adds the given margin', () => {
             expect(
