@@ -26,7 +26,21 @@ export interface IResolveGasLimitResult {
     exceedsMaxGasLimit: boolean;
 }
 
+// Gas is counted in whole units and the limit is ABI-encoded as a uint256, but the masked input
+// accepts the locale radix character, so a fractional value can reach the field.
+const wholeNumberRegex = /^\d+$/;
+
 class CrossChainControllerGasUtils {
+    /**
+     * Parses a raw gas-limit field value into the number of gas units to encode.
+     * @param value - Raw value of the gas-limit field.
+     * @returns The gas limit, or undefined when the value is empty or not a whole number.
+     */
+    parseGasLimit = (value?: string): bigint | undefined =>
+        value != null && wholeNumberRegex.test(value)
+            ? BigInt(value)
+            : undefined;
+
     /**
      * Adds a safety margin to a gas figure, rounding up.
      * @param gas - The gas to add the margin to.

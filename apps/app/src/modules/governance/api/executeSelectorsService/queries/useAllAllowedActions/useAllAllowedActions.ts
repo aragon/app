@@ -32,7 +32,9 @@ export type IUseAllAllowedActionsParams = Omit<
 
 /**
  * Hook that fetches all allowed actions of a plugin by automatically loading all pages. Only returns
- * the actions relevant for the specified chain when a chain ID is set.
+ * the actions relevant for the specified chain when a chain ID is set. The data stays undefined until
+ * the full set is known, also when the query is disabled, so that an unknown allowlist can be told
+ * apart from an empty one.
  */
 export const useAllAllowedActions = (
     params: IUseAllAllowedActionsParams,
@@ -71,14 +73,18 @@ export const useAllAllowedActions = (
         }
     }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
-    const daoChainId = networkDefinitions[params.urlParams.network].id;
+    // Consumers disable the query while the network they fetch for is unknown, so the network is not
+    // guaranteed to resolve to a chain.
+    const daoChainId = networkDefinitions[params.urlParams.network]?.id;
 
     const allAllowedActions = useMemo(() => {
-        if (isFetchingAll || error) {
+        // A disabled query is neither loading nor holding data, so the loading flag alone cannot
+        // express that the actions are unknown.
+        if (data == null || isFetchingAll || error) {
             return undefined;
         }
 
-        const actions = data?.pages.flatMap((page) => page.data) ?? [];
+        const actions = data.pages.flatMap((page) => page.data);
 
         if (chainId == null) {
             return actions;

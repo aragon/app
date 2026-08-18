@@ -164,7 +164,8 @@ const buildEstimationAlert = (
  *
  * Also clears a previously calculated limit whenever the destination or the actions change: a
  * limit measured for a different payload is worse than none - it looks authoritative and is
- * silently wrong.
+ * silently wrong. The same guard covers the in-flight case: if the subject changes before a
+ * running estimation resolves, its `onSuccess` is ignored instead of writing a stale gas limit.
  */
 export const useCrossChainControllerGasLimit = (
     params: IUseCrossChainControllerGasLimitParams,
@@ -208,6 +209,16 @@ export const useCrossChainControllerGasLimit = (
             'useCrossChainControllerGasLimit: network and destination must be set to estimate gas.',
         );
 
+        // Every calculation starts from an empty field, so an outcome that yields no usable limit -
+        // an error, a revert, or a requirement above the cap - cannot leave the previous value
+        // behind, looking authoritative and still submittable.
+        onGasLimitChange(undefined);
+
+        // Snapshot the subject being estimated: if the destination or actions change before this
+        // request resolves, the effect above updates the ref to the new subject, and the mismatch
+        // tells onSuccess its result no longer describes the current payload.
+        const requestedSubject = estimationSubject;
+
         estimateGasLimit(
             {
                 urlParams: { network: daoNetwork, controllerAddress },
@@ -224,6 +235,10 @@ export const useCrossChainControllerGasLimit = (
                 // The backend only measures. The safety margin, floor and cap on top of that
                 // measurement are a product decision and are applied here.
                 onSuccess: (result) => {
+                    if (requestedSubject !== lastEstimationSubject.current) {
+                        return;
+                    }
+
                     if (
                         result.status !== GasLimitEstimationStatus.SUCCESS ||
                         result.requiredGas == null
