@@ -16,7 +16,7 @@ git worktree remove ../app-design-sync  # afterwards; commits stay in the shared
 All build artifacts stay confined to the worktree and die with it. As a second
 line of defense the app tooling is also shielded from the shims (jest pins
 `next/*` — see the shim bullet in "Slice 3 wiring"), and
-`corepack pnpm --workspace-root run design-sync:build-css -- --clean` removes them from any tree.
+`pnpm --workspace-root run design-sync:build-css -- --clean` removes them from any tree.
 
 ## Re-sync risks (watch-list for the next run)
 
@@ -30,10 +30,10 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - Sync source is THIS repo (`apps/app`), not gov-ui-kit. Decision 2026-07-16: the design system is the app's design layer; gov-ui-kit is a component library it inherits. One project ("Aragon App Design System") holds kit re-exports + app shared components across slices.
 - Slice plan (run-to-completion slices so verified work banks in the anchor): 1) gov-ui-kit core components ✓, 2) gov-ui-kit modules components ✓, 3) app shared components (wizards, dialogs, etc.) — FINAL slice. A design wiki (semantic layer / interaction patterns) is planned by the user but DOES NOT EXIST yet — do not attempt to read or distill it; when it exists, its distilled rules can join conventions.md via a re-sync.
 - Verification hybrid: kit components are graded against the local gov-ui-kit checkout's Storybook renders (`c:\dev\gov-ui-kit`) as ground truth. ONLY valid while the checkout version matches the app's installed `@aragon/gov-ui-kit` (both 2.8.1 as of 2026-07-16) — re-check on every sync. App components have no storybook → absolute rubric.
-- Env: Git Bash resolves Node v23.1.0 (breaks pnpm 11 — no `node:sqlite`); PowerShell has Node 24.14 at `C:\Program Files\nodejs` but no `pnpm` on PATH. Use PowerShell + corepack/npx for pnpm.
+- Env: Git Bash resolves Node v23.1.0 (breaks pnpm 11 — no `node:sqlite`); PowerShell has Node 24.14 at `C:\Program Files\nodejs` but no `pnpm` on PATH. Use PowerShell with a standalone pnpm install (https://pnpm.io/installation) or `npx pnpm`.
 - Existing Claude Design project "Aragon Gov UI Kit — Design System" (owner Selim) is unrelated to this sync — do not touch.
 - **UPSTREAM BUG (report to gov-ui-kit team):** the published package's compiled `build.css` (v2.8.1) is corrupted by its minifier — rules with child selectors got their selector lists wrongly merged with dozens of unrelated utilities (e.g. ~60 `md:*` utilities all give children `border-right: 1px` at ≥768px; ~140 `2xl:*` utilities give `&>:last-child{border-style:none}`). Symptom in previews: stray vertical bars at the right edge of AlertCard/Accordion content. Invisible to the app and Storybook because both compile the kit CSS from source. Any consumer of the precompiled `build.css` is affected.
-- Because of that bug the sync does NOT use `build.css`. `cfg.buildCmd` (`corepack pnpm --workspace-root run design-sync:build-css`) compiles CSS from source with the app's locked Tailwind CLI, mirroring the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + kit `index.css` + `@source` scan of the kit package + the app's `--guk-*` z-index/positioning overrides). Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
+- Because of that bug the sync does NOT use `build.css`. `cfg.buildCmd` (`pnpm --workspace-root run design-sync:build-css`) compiles CSS from source with the app's locked Tailwind CLI, mirroring the app's own wiring in `layoutRoot.css` (`@import tailwindcss` + kit `index.css` + `@source` scan of the kit package + the app's `--guk-*` z-index/positioning overrides). Output is written to `apps/app/node_modules/@aragon/gov-ui-kit/.design-sync-kit-styles.css` because `cfg.cssEntry` is security-bounded to the package dir; the file is regenerated on every sync so reinstalls are harmless.
 - `.design-sync/tailwind-entry.css` imports tailwind via a relative node_modules path (plain `"tailwindcss"` doesn't resolve from `.design-sync/`).
 
 ## Known render warns (triaged legitimate)

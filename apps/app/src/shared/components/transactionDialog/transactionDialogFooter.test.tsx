@@ -91,24 +91,23 @@ describe('<TransactionDialogFooter /> component', () => {
         ).toBeDisabled();
     });
 
-    it.each([
-        { state: 'idle' },
-        { state: 'pending' },
-        { state: 'error' },
-    ])('renders the custom approve label when active step is approve and state is $state', ({
-        state,
-    }) => {
-        const activeStep = {
-            id: TransactionDialogStep.APPROVE,
-            meta: { state },
-        } as ITransactionDialogStep;
-        render(createTestComponent({ activeStep }));
-        expect(
-            screen.getByRole('button', {
-                name: new RegExp(`transactionDialog.footer.approve.${state}`),
-            }),
-        ).toBeInTheDocument();
-    });
+    it.each([{ state: 'idle' }, { state: 'pending' }, { state: 'error' }])(
+        'renders the custom approve label when active step is approve and state is $state',
+        ({ state }) => {
+            const activeStep = {
+                id: TransactionDialogStep.APPROVE,
+                meta: { state },
+            } as ITransactionDialogStep;
+            render(createTestComponent({ activeStep }));
+            expect(
+                screen.getByRole('button', {
+                    name: new RegExp(
+                        `transactionDialog.footer.approve.${state}`,
+                    ),
+                }),
+            ).toBeInTheDocument();
+        },
+    );
 
     it('keeps the cancel button enabled and offers a retry action when the confirm step warns', async () => {
         const confirmAction = jest.fn();

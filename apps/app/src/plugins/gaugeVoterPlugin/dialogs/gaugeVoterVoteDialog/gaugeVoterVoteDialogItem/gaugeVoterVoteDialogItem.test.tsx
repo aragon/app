@@ -40,13 +40,13 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
         { displayShare: 50, expected: '50.00%' },
         { displayShare: 0, expected: '0.00%' },
         { displayShare: 100, expected: '100.00%' },
-    ])('renders the displayShare $displayShare as $expected', ({
-        displayShare,
-        expected,
-    }) => {
-        render(createTestComponent({ displayShare }));
-        expect(screen.getByText(expected)).toBeInTheDocument();
-    });
+    ])(
+        'renders the displayShare $displayShare as $expected',
+        ({ displayShare, expected }) => {
+            render(createTestComponent({ displayShare }));
+            expect(screen.getByText(expected)).toBeInTheDocument();
+        },
+    );
 
     it('hides the share line when displayShare is null', () => {
         render(

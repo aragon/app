@@ -39,15 +39,14 @@ describe('versionComparator Utils', () => {
                 result: false,
             },
             { current: undefined, target: undefined, result: false },
-        ])('returns $result for versions $current and $target', ({
-            current,
-            target,
-            result,
-        }) => {
-            expect(versionComparatorUtils.isLessThan(current, target)).toEqual(
-                result,
-            );
-        });
+        ])(
+            'returns $result for versions $current and $target',
+            ({ current, target, result }) => {
+                expect(
+                    versionComparatorUtils.isLessThan(current, target),
+                ).toEqual(result);
+            },
+        );
     });
 
     describe('isGreaterThan', () => {
@@ -88,15 +87,14 @@ describe('versionComparator Utils', () => {
                 result: false,
             },
             { current: undefined, target: undefined, result: false },
-        ])('returns $result for versions $current and $target', ({
-            current,
-            target,
-            result,
-        }) => {
-            expect(
-                versionComparatorUtils.isGreaterThan(current, target),
-            ).toEqual(result);
-        });
+        ])(
+            'returns $result for versions $current and $target',
+            ({ current, target, result }) => {
+                expect(
+                    versionComparatorUtils.isGreaterThan(current, target),
+                ).toEqual(result);
+            },
+        );
     });
 
     describe('isGreaterOrEqualTo', () => {
@@ -132,15 +130,14 @@ describe('versionComparator Utils', () => {
                 result: false,
             },
             { current: undefined, target: undefined, result: false },
-        ])('returns $result for versions $current and $target', ({
-            current,
-            target,
-            result,
-        }) => {
-            expect(
-                versionComparatorUtils.isGreaterOrEqualTo(current, target),
-            ).toEqual(result);
-        });
+        ])(
+            'returns $result for versions $current and $target',
+            ({ current, target, result }) => {
+                expect(
+                    versionComparatorUtils.isGreaterOrEqualTo(current, target),
+                ).toEqual(result);
+            },
+        );
     });
 
     describe('normaliseComparatorInput', () => {
