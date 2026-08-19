@@ -1,0 +1,1 @@
+export { useMpcRegisterKey } from './useMpcRegisterKey';

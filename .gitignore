@@ -31,6 +31,9 @@ dist/
 # local anvil fork state
 anvil-*
 
+# MPC POC local store
+apps/app/.mpc-poc/
+
 # IDE
 .cursor
 

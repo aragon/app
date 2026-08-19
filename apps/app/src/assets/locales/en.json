@@ -1708,6 +1708,9 @@
           "daos": "Explore",
           "featured": "Featured"
         }
+      },
+      "exploreNav": {
+        "mpcLink": "MPC systems"
       }
     },
     "finance": {
@@ -2382,6 +2385,763 @@
           "info_1": "You can now interact with ",
           "info_2": " on behalf of your DAO. Instead of going to your wallet, transactions will be made available to add as actions to the proposal.",
           "progress": "Listening to dApp"
+        }
+      }
+    },
+    "mpc": {
+      "layoutMpc": {
+        "name": "MPC systems"
+      },
+      "mpcMockBanner": {
+        "title": "POC: mock threshold cryptography",
+        "description": "POC: threshold cryptography is mocked with Shamir 2-of-3; the key is reconstructed in this browser while signing. Replace the provider with a real TSS SDK for production."
+      },
+      "mpcErrorAlert": {
+        "title": "Something went wrong"
+      },
+      "mpcNavigation": {
+        "title": "MPC systems",
+        "poc": "POC",
+        "signedInAs": "Signed in as {{user}}",
+        "logout": "Log out",
+        "login": "Log in"
+      },
+      "mpcAuthGate": {
+        "heading": "Log in to continue",
+        "description": "The MPC systems POC uses a mock username / password login handled by the mock co-signer.",
+        "action": "Go to login"
+      },
+      "mpcSystemCard": {
+        "status": {
+          "initializing": "Initializing",
+          "active": "Active",
+          "deleted": "Deleted"
+        },
+        "noAddress": "No key registered yet",
+        "members": "{{count}} member(s)",
+        "epoch": "epoch {{epoch}}",
+        "provider": "Provider: {{provider}}",
+        "threshold": "2-of-3"
+      },
+      "mpcShareStatus": {
+        "title": "Key shares",
+        "scheme": "POC · mock Shamir 2-of-3",
+        "device": {
+          "term": "Device share",
+          "description": "Encrypted with your signing passphrase and stored in this browser.",
+          "checking": "Checking…",
+          "present": "Present in this browser",
+          "missing": "Missing in this browser"
+        },
+        "server": {
+          "term": "Server share",
+          "description": "Held by the Aragon co-signer, released only for authorized flows.",
+          "epoch": "Epoch {{epoch}}"
+        },
+        "recovery": {
+          "term": "Recovery share",
+          "description": "Shown once at creation / reshare, never stored by the server.",
+          "acknowledged": "Backup confirmed",
+          "pending": "Backup not confirmed"
+        }
+      },
+      "mpcRequestItem": {
+        "type": {
+          "transaction": "Transaction",
+          "message": "Message",
+          "typedData": "Typed data"
+        },
+        "status": {
+          "pending_approval": "Pending approval",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "released": "Share released",
+          "signed": "Signed",
+          "broadcast": "Broadcast",
+          "failed": "Failed"
+        },
+        "approvals": "{{count}}/{{required}} approvals",
+        "createdBy": "by {{user}} · {{date}}",
+        "to": "To {{to}}",
+        "value": "{{value}} ETH",
+        "selector": "Selector {{selector}}",
+        "txHash": "Tx {{hash}}",
+        "signature": "Signature {{signature}}",
+        "error": "Error: {{error}}",
+        "actions": {
+          "sign": "Sign",
+          "review": "Review"
+        }
+      },
+      "mpcRequestList": {
+        "entity": "Requests",
+        "empty": {
+          "heading": "No sign requests yet",
+          "description": "Create a request to sign a transaction, a message or typed data with this system.",
+          "action": "New request"
+        },
+        "error": {
+          "heading": "Unable to load requests",
+          "description": "The mock co-signer did not answer. Try again later."
+        }
+      },
+      "mpcRequestSummary": {
+        "type": "Type",
+        "status": "Status",
+        "requester": "Requester",
+        "chainId": "Chain ID",
+        "to": "To",
+        "value": "Value",
+        "eth": "{{value}} ETH",
+        "data": "Data",
+        "selector": "selector {{selector}}",
+        "noData": "None (plain transfer)",
+        "message": "Message to sign",
+        "typedData": "Typed data (EIP-712)",
+        "policy": "Policy decision",
+        "policyAllowed": "Allowed by policy",
+        "policyRequiresApproval": "Allowed, requires {{count}} approval(s) from other members",
+        "policyDenied": "Denied by policy",
+        "approvals": "Approvals",
+        "noApprovals": "None yet"
+      },
+      "mpcPolicySummary": {
+        "allowedChainIds": "Allowed chains",
+        "recipientAllowlist": "Recipient allowlist",
+        "anyRecipient": "Any recipient",
+        "noRecipient": "No recipient allowed",
+        "maxValuePerTx": "Max value per transaction",
+        "dailyLimit": "Daily limit (24h)",
+        "requireApprovalAbove": "Approval required above",
+        "approvalsRequired": "Approvals required",
+        "allowContractCalls": "Contract calls",
+        "allowMessageSigning": "Message signing",
+        "requireApprovalForMessages": "Message approvals",
+        "noLimit": "No limit",
+        "never": "Never",
+        "eth": "{{value}} ETH",
+        "allowed": "Allowed",
+        "notAllowed": "Not allowed"
+      },
+      "mpcPolicyForm": {
+        "allowedChainIds": {
+          "label": "Allowed chain IDs",
+          "helpText": "Comma separated. Only Sepolia (11155111) is operational in the POC."
+        },
+        "restrictRecipients": {
+          "label": "Restrict recipients",
+          "inlineLabel": "Only allow listed recipients",
+          "helpText": "When enabled, transactions to addresses outside the list are rejected."
+        },
+        "recipientAllowlist": {
+          "label": "Recipient allowlist",
+          "helpText": "One address per line."
+        },
+        "maxValuePerTx": {
+          "label": "Max value per transaction (ETH)",
+          "helpText": "Leave empty for no limit."
+        },
+        "dailyLimit": {
+          "label": "Daily limit (ETH)",
+          "helpText": "Rolling 24h limit on native value. Leave empty for no limit."
+        },
+        "requireApprovalAbove": {
+          "label": "Require approval above (ETH)",
+          "helpText": "Requests above this value need approvals from other members. Leave empty to never require approvals."
+        },
+        "approvalsRequired": {
+          "label": "Approvals required",
+          "helpText": "Number of approvals (from members other than the requester) when approval is needed."
+        },
+        "allowContractCalls": {
+          "label": "Contract calls",
+          "inlineLabel": "Allow transactions with calldata",
+          "helpText": "Disable to only allow plain transfers."
+        },
+        "allowMessageSigning": {
+          "label": "Message signing",
+          "inlineLabel": "Allow signing messages and typed data",
+          "helpText": "EIP-191 personal_sign and EIP-712 typed data."
+        },
+        "requireApprovalForMessages": {
+          "label": "Message approvals",
+          "inlineLabel": "Require approvals for messages and typed data",
+          "helpText": "POC / mock: releasing the server share for any request exposes the full key to the browser, so approvals are the only barrier for off-chain signatures. Requires another owner or approver."
+        },
+        "errors": {
+          "chainIds": "Enter one or more numeric chain IDs.",
+          "addressList": "One of the addresses is invalid.",
+          "amount": "Enter a valid ETH amount.",
+          "approvals": "Enter a number between 0 and 10."
+        }
+      },
+      "mpcActivityList": {
+        "entity": "Activity entries",
+        "actor": "by {{actor}}",
+        "empty": {
+          "heading": "No activity yet",
+          "description": "Every action on this system is logged here."
+        },
+        "error": {
+          "heading": "Unable to load activity",
+          "description": "The mock co-signer did not answer. Try again later."
+        },
+        "type": {
+          "system_created": "System created",
+          "key_registered": "Key registered",
+          "recovery_acknowledged": "Recovery backup confirmed",
+          "policy_updated": "Policy updated",
+          "member_added": "Member added",
+          "member_removed": "Member removed",
+          "request_created": "Request created",
+          "request_approved": "Request approved",
+          "request_rejected": "Request rejected",
+          "share_released": "Server share released",
+          "request_signed": "Request signed",
+          "request_broadcast": "Transaction broadcast",
+          "request_failed": "Request failed",
+          "reshare_completed": "Reshare completed",
+          "recovery_completed": "Recovery completed",
+          "key_exported": "Key exported",
+          "system_deleted": "System deleted"
+        }
+      },
+      "mpcMembersList": {
+        "entity": "Members",
+        "addedAt": "Added {{date}}",
+        "role": {
+          "owner": "Owner",
+          "approver": "Approver",
+          "viewer": "Viewer"
+        },
+        "removeConfirm": "Remove {{user}} from this system?",
+        "actions": {
+          "remove": "Remove",
+          "add": "Add member"
+        },
+        "empty": {
+          "heading": "No members",
+          "description": "Add members to approve requests."
+        },
+        "error": {
+          "heading": "Unable to load members",
+          "description": "The mock co-signer did not answer. Try again later."
+        }
+      },
+      "mpcLoginForm": {
+        "username": {
+          "label": "Username",
+          "placeholder": "alice"
+        },
+        "password": {
+          "label": "Password",
+          "helpText": "At least {{min}} characters. POC mock auth: do not reuse a real password."
+        },
+        "submit": {
+          "login": "Log in",
+          "register": "Create account"
+        },
+        "disclaimer": "POC: credentials are stored (scrypt hashed) by the mock co-signer running inside this app."
+      },
+      "mpcLoginPage": {
+        "title": "MPC systems login",
+        "description": "Log in with the mock account of the POC co-signer to manage MPC systems.",
+        "tabs": {
+          "login": "Log in",
+          "register": "Register"
+        },
+        "login": {
+          "title": "Welcome back",
+          "description": "Use your POC username and password."
+        },
+        "register": {
+          "title": "Create a POC account",
+          "description": "Registration is enabled in local / development environments (MPC_POC_ALLOW_REGISTER)."
+        }
+      },
+      "mpcListPage": {
+        "title": "MPC systems",
+        "action": "Create system",
+        "empty": {
+          "heading": "No MPC systems yet",
+          "description": "Create a 2-of-3 threshold key with signing policies, members and approvals.",
+          "action": "Create system"
+        }
+      },
+      "mpcCreatePage": {
+        "finalStep": "Create system",
+        "submitLabel": "Create system",
+        "submitHelpText": "Saves the initial policy and confirms the recovery backup.",
+        "steps": {
+          "DETAILS": {
+            "name": "Details",
+            "title": "Describe your MPC system",
+            "description": "Name the system and declare the chains it operates on. Only Sepolia is operational in this POC."
+          },
+          "PASSPHRASE": {
+            "name": "Signing passphrase",
+            "title": "Choose a signing passphrase",
+            "description": "The passphrase encrypts the device share in this browser and is required for every signature. It never leaves the browser and cannot be recovered."
+          },
+          "CEREMONY": {
+            "name": "Key ceremony",
+            "title": "Key generation ceremony",
+            "description": "The key is generated and split into 3 shares: device, server (co-signer) and recovery. Save the recovery share now, it is shown only once."
+          },
+          "POLICY": {
+            "name": "Initial policy",
+            "title": "Set the initial signing policy",
+            "description": "Limits, allowlists and approvals enforced by the co-signer before releasing its share."
+          }
+        }
+      },
+      "mpcCreateSystemForm": {
+        "details": {
+          "name": {
+            "label": "Name",
+            "placeholder": "Treasury operations key"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "What is this key used for?"
+          },
+          "chainIds": {
+            "label": "Chain IDs",
+            "helpText": "Comma separated. Only Sepolia (11155111) can broadcast transactions in the POC."
+          },
+          "locked": "The details are locked because the system was already created on the co-signer for the key ceremony. They can be edited later from the system settings."
+        },
+        "passphrase": {
+          "warning": {
+            "title": "The passphrase cannot be recovered",
+            "description": "If you forget it, you will need the recovery share to recover the system. It is never sent to the server."
+          },
+          "passphrase": {
+            "label": "Signing passphrase",
+            "helpText": "At least {{min}} characters."
+          },
+          "confirm": {
+            "label": "Confirm passphrase"
+          },
+          "errors": {
+            "mismatch": "The passphrases do not match."
+          },
+          "locked": "The passphrase is locked because the key ceremony already used it."
+        },
+        "ceremony": {
+          "steps": {
+            "generating": "Generating the key in this browser (POC mock)",
+            "splitting": "Splitting into 3 Shamir shares (2-of-3)",
+            "storing_device_share": "Encrypting and storing the device share",
+            "registering_server_share": "Registering the server share on the co-signer",
+            "done": "Ceremony complete"
+          },
+          "retry": "Retry ceremony",
+          "address": "System address: {{address}}",
+          "alreadyRegistered": {
+            "title": "The key was already registered on the co-signer",
+            "description": "A previous attempt registered the key of this system (address {{address}}) but the recovery share of that attempt is no longer available. Finish the wizard and run a reshare from the system page to obtain a new recovery share."
+          },
+          "acknowledge": {
+            "label": "Recovery share saved"
+          },
+          "errors": {
+            "acknowledge": "Confirm that you saved the recovery share to continue."
+          }
+        },
+        "policy": {
+          "hint": "You can change the policy later from the system settings (owners only)."
+        }
+      },
+      "mpcRecoveryShareCard": {
+        "warning": {
+          "title": "Save the recovery share now",
+          "description": "It is shown only once and the server never stores it. Together with the server share it can recover the key if this browser is lost."
+        },
+        "label": "Recovery share",
+        "download": "Download .txt",
+        "acknowledge": "I have saved the recovery share in a safe place"
+      },
+      "mpcSystemPage": {
+        "header": {
+          "breadcrumb": "MPC systems",
+          "pocTag": "POC",
+          "mockTag": "POC · mock Shamir 2-of-3",
+          "noAddress": "Key not registered",
+          "balance": "{{balance}} ETH",
+          "balanceLoading": "…",
+          "stats": {
+            "balance": "Sepolia balance",
+            "epoch": "Key epoch",
+            "members": "Members"
+          }
+        },
+        "initializing": {
+          "title": "Key ceremony not completed",
+          "description": "This system was created but no key was registered. Delete it from the settings tab and create a new one."
+        },
+        "tabs": {
+          "requests": "Requests",
+          "policy": "Policy",
+          "members": "Members",
+          "activity": "Activity",
+          "settings": "Settings"
+        },
+        "requests": {
+          "title": "Sign requests",
+          "action": "New request",
+          "noDeviceShare": {
+            "title": "Device share missing in this browser",
+            "description": "You can create and approve requests, but signing requires the device share. Owners can recover it with the recovery share from the settings tab."
+          }
+        },
+        "policy": {
+          "title": "Signing policy",
+          "action": "Edit policy"
+        },
+        "members": {
+          "title": "Members"
+        },
+        "activity": {
+          "title": "Activity"
+        },
+        "settings": {
+          "title": "Settings"
+        },
+        "aside": {
+          "recover": "Recover device share"
+        },
+        "notFound": {
+          "heading": "System not found",
+          "description": "The system does not exist or you are not a member.",
+          "action": "Back to MPC systems"
+        }
+      },
+      "mpcSystemSettings": {
+        "details": {
+          "title": "Details",
+          "name": {
+            "label": "Name"
+          },
+          "description": {
+            "label": "Description"
+          },
+          "save": "Save"
+        },
+        "key": {
+          "title": "Key management",
+          "description": "Reshare rotates the shares (new epoch), recover restores a lost device share from the recovery share, export reveals the private key (POC).",
+          "ownerOnly": "Only owners can manage the key.",
+          "reshare": "Reshare",
+          "recover": "Recover",
+          "export": "Export key"
+        },
+        "danger": {
+          "title": "Danger zone",
+          "description": "Deleting the system drops the server share: the key can no longer be used through the co-signer.",
+          "confirm": "Delete this MPC system? The server share will be dropped.",
+          "delete": "Delete system"
+        }
+      },
+      "mpcNewRequestDialog": {
+        "title": "New sign request",
+        "description": "The co-signer evaluates the policy when the request is created.",
+        "type": {
+          "label": "Request type"
+        },
+        "chainNotice": "Transactions are sent on Sepolia (chain {{chainId}}).",
+        "to": {
+          "label": "Recipient"
+        },
+        "value": {
+          "label": "Value (ETH)",
+          "helpText": "Native value in ETH, empty for 0."
+        },
+        "data": {
+          "label": "Calldata",
+          "helpText": "Optional hex calldata for contract calls."
+        },
+        "message": {
+          "label": "Message",
+          "helpText": "Plain text signed with personal_sign (EIP-191).",
+          "placeholder": "gm"
+        },
+        "typedData": {
+          "label": "Typed data JSON",
+          "helpText": "EIP-712 typed data (domain, types, primaryType, message)."
+        },
+        "simulation": {
+          "ok": "Simulation succeeded (gas {{gas}}).",
+          "failed": "Simulation failed: {{error}}"
+        },
+        "errors": {
+          "address": "Enter a valid address.",
+          "amount": "Enter a valid ETH amount.",
+          "data": "Calldata must be hex.",
+          "message": "Enter a message.",
+          "typedData": "Enter valid typed data JSON."
+        },
+        "created": {
+          "title": "Request created",
+          "status": {
+            "pending_approval": {
+              "title": "Pending approval",
+              "description": "The policy requires approvals from other members before the server share is released."
+            },
+            "approved": {
+              "title": "Approved by policy",
+              "description": "The request can be signed now."
+            },
+            "rejected": {
+              "title": "Rejected by policy",
+              "description": "The co-signer denied the request, see the reasons below."
+            },
+            "released": {
+              "title": "Share released",
+              "description": "The server share was released for this request."
+            },
+            "signed": {
+              "title": "Signed",
+              "description": "The request was signed."
+            },
+            "broadcast": {
+              "title": "Broadcast",
+              "description": "The transaction was broadcast."
+            },
+            "failed": {
+              "title": "Failed",
+              "description": "The request failed."
+            }
+          }
+        },
+        "preview": {
+          "title": "Review before creating",
+          "description": "Decoded summary and policy decision computed by the co-signer. Nothing has been created yet.",
+          "status": {
+            "pending_approval": {
+              "title": "Will require approvals",
+              "description": "The policy requires approvals from other members before the server share is released."
+            },
+            "approved": {
+              "title": "Allowed by policy",
+              "description": "The request will be ready to sign right after creation."
+            },
+            "rejected": {
+              "title": "Denied by policy",
+              "description": "The co-signer would deny this request, see the reasons below. Go back and adjust it."
+            },
+            "released": {
+              "title": "Share released",
+              "description": "The server share was released for this request."
+            },
+            "signed": {
+              "title": "Signed",
+              "description": "The request was signed."
+            },
+            "broadcast": {
+              "title": "Broadcast",
+              "description": "The transaction was broadcast."
+            },
+            "failed": {
+              "title": "Failed",
+              "description": "The request failed."
+            }
+          }
+        },
+        "actions": {
+          "review": "Review",
+          "submit": "Create request",
+          "back": "Back",
+          "cancel": "Cancel",
+          "simulate": "Simulate",
+          "close": "Close"
+        }
+      },
+      "mpcSignRequestDialog": {
+        "title": "Sign request",
+        "description": "Review the full payload before signing. Nothing is signed blindly.",
+        "passphrase": {
+          "label": "Signing passphrase",
+          "helpText": "Decrypts the device share in this browser."
+        },
+        "steps": {
+          "unlocking": "Unlocking the device share in this browser",
+          "preparing": "Preparing the transaction (nonce, gas, fees)",
+          "releasing": "Requesting the server share for this request",
+          "signing": "Reconstructing the key and signing in this browser (POC mock)",
+          "completing": "Verifying the signature and broadcasting"
+        },
+        "review": {
+          "title": "Confirm what you are about to sign",
+          "description": "The server share has not been requested yet. Check the digest (and the prepared transaction fields) below: confirming will release the server share for this request and sign.",
+          "hash": "Digest to sign",
+          "hashUnavailable": "Cannot be computed for this payload",
+          "nonce": "Nonce",
+          "gas": "Gas limit",
+          "maxFeePerGas": "Max fee per gas",
+          "maxPriorityFeePerGas": "Max priority fee per gas",
+          "gwei": "{{value}} gwei"
+        },
+        "result": {
+          "broadcast": {
+            "title": "Transaction broadcast on Sepolia"
+          },
+          "signed": {
+            "title": "Signature produced"
+          },
+          "failed": {
+            "title": "The request failed"
+          },
+          "released": {
+            "title": "Share released"
+          },
+          "approved": {
+            "title": "Approved"
+          },
+          "pending_approval": {
+            "title": "Pending approval"
+          },
+          "rejected": {
+            "title": "Rejected"
+          }
+        },
+        "actions": {
+          "review": "Review and continue",
+          "sign": "Confirm and sign",
+          "back": "Back",
+          "retry": "Retry",
+          "cancel": "Cancel",
+          "close": "Close"
+        }
+      },
+      "mpcApproveRequestDialog": {
+        "title": "Review request",
+        "description": "Approve or reject the request. Approvals unlock the release of the server share.",
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject",
+          "close": "Close"
+        }
+      },
+      "mpcReshareDialog": {
+        "title": "Reshare key",
+        "description": "Rotates the three shares without changing the address. The previous server and recovery shares become invalid.",
+        "notice": {
+          "title": "New epoch",
+          "description": "Current epoch {{epoch}} → new epoch {{next}}. A new recovery share will be shown once."
+        },
+        "passphrase": {
+          "label": "Current signing passphrase"
+        },
+        "newPassphrase": {
+          "label": "New signing passphrase",
+          "helpText": "Leave empty to keep the current passphrase."
+        },
+        "confirmPassphrase": {
+          "label": "Confirm new passphrase"
+        },
+        "done": {
+          "title": "Reshare complete (epoch {{epoch}})",
+          "description": "Save the new recovery share, the previous one is no longer valid."
+        },
+        "errors": {
+          "passphraseLength": "The new passphrase is too short.",
+          "passphraseMismatch": "The passphrases do not match.",
+          "acknowledge": "Confirm that you saved the new recovery share."
+        },
+        "actions": {
+          "submit": "Reshare",
+          "cancel": "Cancel",
+          "done": "Done"
+        }
+      },
+      "mpcRecoverDialog": {
+        "title": "Recover device share",
+        "description": "Use the recovery share and the server share to rebuild the key in this browser and create a new device share.",
+        "notice": {
+          "title": "New shares will be generated",
+          "description": "The recovery share must belong to epoch {{epoch}}. After recovery the epoch is incremented and a new recovery share is shown once."
+        },
+        "recoveryShare": {
+          "label": "Recovery share",
+          "helpText": "Paste the content of the downloaded recovery file."
+        },
+        "newPassphrase": {
+          "label": "New signing passphrase",
+          "helpText": "At least {{min}} characters."
+        },
+        "confirmPassphrase": {
+          "label": "Confirm passphrase"
+        },
+        "done": {
+          "title": "Recovery complete (epoch {{epoch}})",
+          "description": "The device share is stored in this browser. Save the new recovery share."
+        },
+        "errors": {
+          "recoveryShare": "Invalid recovery share.",
+          "recoveryShareSystem": "The recovery share belongs to another system.",
+          "passphraseMismatch": "The passphrases do not match.",
+          "acknowledge": "Confirm that you saved the new recovery share."
+        },
+        "actions": {
+          "submit": "Recover",
+          "cancel": "Cancel",
+          "done": "Done"
+        }
+      },
+      "mpcExportKeyDialog": {
+        "title": "Export private key",
+        "description": "Requires the signing passphrase and the recovery share. The export is logged in the activity.",
+        "warning": {
+          "title": "The private key is shown in clear",
+          "description": "Anyone with the key controls the funds. Export only if you understand the risk (POC)."
+        },
+        "passphrase": {
+          "label": "Signing passphrase"
+        },
+        "recoveryShare": {
+          "label": "Recovery share",
+          "helpText": "Must belong to the current epoch."
+        },
+        "result": {
+          "label": "Private key (shown once)",
+          "description": "Copy it now, it will not be shown again."
+        },
+        "errors": {
+          "recoveryShare": "Invalid recovery share.",
+          "recoveryShareEpoch": "The recovery share does not belong to this system / epoch."
+        },
+        "actions": {
+          "submit": "Export",
+          "cancel": "Cancel",
+          "close": "Close"
+        }
+      },
+      "mpcAddMemberDialog": {
+        "title": "Add member",
+        "description": "Members must have a POC account.",
+        "username": {
+          "label": "Username",
+          "placeholder": "bob"
+        },
+        "role": {
+          "label": "Role",
+          "helpText": "Owners manage the system, approvers can create and approve requests, viewers are read-only.",
+          "owner": "Owner",
+          "approver": "Approver",
+          "viewer": "Viewer"
+        },
+        "actions": {
+          "submit": "Add member",
+          "cancel": "Cancel"
+        }
+      },
+      "mpcEditPolicyDialog": {
+        "title": "Edit signing policy",
+        "description": "The policy is enforced by the co-signer on every new request.",
+        "actions": {
+          "submit": "Save policy",
+          "cancel": "Cancel"
         }
       }
     },

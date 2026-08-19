@@ -170,4 +170,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'mpcSystems',
+        name: 'MPC systems (POC)',
+        description:
+            'Enables the MPC systems proof of concept (mock Shamir 2-of-3 co-signer) under /mpc.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
 ];

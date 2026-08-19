@@ -1,0 +1,1 @@
+export { useMpcDeleteSystem } from './useMpcDeleteSystem';

@@ -1,0 +1,1 @@
+export { useMpcLogout } from './useMpcLogout';

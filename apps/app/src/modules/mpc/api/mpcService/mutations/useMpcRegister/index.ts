@@ -1,0 +1,1 @@
+export { useMpcRegister } from './useMpcRegister';

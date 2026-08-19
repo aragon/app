@@ -11,7 +11,9 @@ import { useWalletConnected } from '@/modules/application/hooks/useWalletConnect
 import { useEnsName } from '@/modules/ens';
 import { AragonLogo } from '@/shared/components/aragonLogo';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Navigation } from '@/shared/components/navigation';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useIsMounted } from '@/shared/hooks/useIsMounted';
 
 export const ExploreNav: React.FC = () => {
@@ -27,6 +29,10 @@ export const ExploreNav: React.FC = () => {
             ? { address, name: displayName ?? undefined }
             : undefined;
     const { open } = useDialogContext();
+    const { t } = useTranslations();
+    const { isEnabled } = useFeatureFlags();
+    // POC: MPC systems entry point, only rendered when the feature flag is enabled.
+    const isMpcEnabled = isEnabled('mpcSystems');
 
     const [isPostHero, setIsPostHero] = useState(false);
 
@@ -82,6 +88,14 @@ export const ExploreNav: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-end gap-4 lg:gap-6">
+                {isMpcEnabled && (
+                    <Link
+                        className="text-nowrap font-normal text-neutral-0 text-sm leading-tight underline-offset-4 hover:underline md:text-base"
+                        href="/mpc"
+                    >
+                        {t('app.explore.exploreNav.mpcLink')}
+                    </Link>
+                )}
                 <Wallet onClick={handleWalletClick} user={walletUser} />
             </div>
         </Navigation.Container>

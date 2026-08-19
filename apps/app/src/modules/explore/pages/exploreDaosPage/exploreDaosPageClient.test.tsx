@@ -6,6 +6,7 @@ import { CreateDaoDialogId } from '@/modules/createDao/constants/createDaoDialog
 import * as CmsService from '@/shared/api/cmsService';
 import { Network } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import * as featureFlagsProvider from '@/shared/components/featureFlagsProvider';
 import {
     generateDialogContext,
     generateReactQueryInfiniteResultSuccess,
@@ -32,8 +33,17 @@ describe('<ExploreDaosPageClient /> component', () => {
     );
     const useFeaturedDaosSpy = jest.spyOn(CmsService, 'useFeaturedDaos');
     const trackEventSpy = jest.spyOn(analyticsUtils, 'trackEvent');
+    const useFeatureFlagsSpy = jest.spyOn(
+        featureFlagsProvider,
+        'useFeatureFlags',
+    );
 
     beforeEach(() => {
+        useFeatureFlagsSpy.mockReturnValue({
+            snapshot: [],
+            isEnabled: () => false,
+            setOverride: jest.fn(),
+        });
         useConnectionSpy.mockReturnValue({} as Wagmi.UseConnectionReturnType);
         useDialogContextSpy.mockReturnValue(generateDialogContext());
         useFeaturedDaosSpy.mockReturnValue(
@@ -47,6 +57,7 @@ describe('<ExploreDaosPageClient /> component', () => {
         useDialogContextSpy.mockReset();
         useFeaturedDaosSpy.mockReset();
         trackEventSpy.mockReset();
+        useFeatureFlagsSpy.mockReset();
     });
 
     const createTestComponent = (

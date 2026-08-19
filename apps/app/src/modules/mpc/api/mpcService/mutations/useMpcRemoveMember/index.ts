@@ -1,0 +1,1 @@
+export { useMpcRemoveMember } from './useMpcRemoveMember';

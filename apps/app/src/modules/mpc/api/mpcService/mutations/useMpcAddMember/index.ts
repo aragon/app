@@ -1,0 +1,1 @@
+export { useMpcAddMember } from './useMpcAddMember';

@@ -1,0 +1,1 @@
+export { computeMpcSigningHash } from './mpcSigningHash';

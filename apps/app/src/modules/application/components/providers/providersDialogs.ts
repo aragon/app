@@ -5,6 +5,7 @@ import { capitalFlowDialogsDefinitions } from '@/modules/capitalFlow/constants/c
 import { createDaoDialogsDefinitions } from '@/modules/createDao/constants/createDaoDialogsDefinitions';
 import { financeDialogsDefinitions } from '@/modules/finance/constants/financeDialogsDefinitions';
 import { governanceDialogsDefinitions } from '@/modules/governance/constants/governanceDialogsDefinitions';
+import { mpcDialogsDefinitions } from '@/modules/mpc/constants/mpcDialogsDefinitions';
 import { settingsDialogDefinitions } from '@/modules/settings/constants/settingsDialogDefinitions';
 import { pluginDialogsDefinitions } from '@/plugins';
 import type { IDialogComponentDefinitions } from '@/shared/components/dialogProvider';
@@ -19,4 +20,5 @@ export const providersDialogs: Record<string, IDialogComponentDefinitions> = {
     ...capitalFlowDialogsDefinitions,
     ...actionsDialogsDefinitions,
     ...daosDialogsDefinitions,
+    ...mpcDialogsDefinitions,
 };

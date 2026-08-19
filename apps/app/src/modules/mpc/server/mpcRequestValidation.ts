@@ -1,0 +1,654 @@
+import type { NextRequest } from 'next/server';
+import { type Address, getAddress, type Hex } from 'viem';
+import type {
+    IMpcAddMemberParams,
+    IMpcCompleteRequestParams,
+    IMpcCreateRequestParams,
+    IMpcCreateSystemParams,
+    IMpcLoginParams,
+    IMpcPolicy,
+    IMpcRegisterKeyParams,
+    IMpcReshareParams,
+    IMpcServerShareParams,
+    IMpcServerSharePayload,
+    IMpcSimulateParams,
+    IMpcTransactionPayload,
+    IMpcUpdateSystemParams,
+    MpcMemberRole,
+    MpcProviderId,
+    MpcSharePurpose,
+    MpcSignRequestPayload,
+} from '@/modules/mpc/api/mpcService/domain';
+import { MpcApiError } from './mpcApiError';
+
+/**
+ * Manual request validation for the POC API (no schema library available). Every validator throws a
+ * MpcApiError('validation_error') with a clear message.
+ */
+
+export const MPC_MAX_BODY_BYTES = 64 * 1024;
+export const MPC_CLIENT_HEADER = 'x-mpc-client';
+export const MPC_CLIENT_HEADER_VALUE = 'aragon-app';
+
+const MAX_NAME_LENGTH = 64;
+const MAX_DESCRIPTION_LENGTH = 512;
+const MAX_MESSAGE_LENGTH = 16 * 1024;
+const MAX_TYPED_DATA_LENGTH = 32 * 1024;
+const MAX_CALLDATA_LENGTH = 32 * 1024;
+
+const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/;
+const HEX_REGEX = /^0x([0-9a-fA-F]{2})*$/;
+const WEI_REGEX = /^(0|[1-9][0-9]{0,77})$/;
+
+const PROVIDER_IDS: MpcProviderId[] = ['mock-shamir', 'dfns', 'dynamic'];
+const MEMBER_ROLES: MpcMemberRole[] = ['owner', 'approver', 'viewer'];
+// "export" is intentionally not accepted: the UI exports with the recovery share, releasing B for export would
+// hand the full key to a single owner without co-approval (see README).
+const SHARE_PURPOSES: MpcSharePurpose[] = ['sign', 'reshare', 'recover'];
+
+const validationError = (message: string): MpcApiError =>
+    new MpcApiError('validation_error', message);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value != null && !Array.isArray(value);
+
+export const isAddressString = (value: unknown): value is Address =>
+    typeof value === 'string' && ADDRESS_REGEX.test(value);
+
+export const isHexString = (value: unknown): value is Hex =>
+    typeof value === 'string' && HEX_REGEX.test(value);
+
+export const isWeiString = (value: unknown): value is string =>
+    typeof value === 'string' && WEI_REGEX.test(value);
+
+const requireString = (
+    value: unknown,
+    field: string,
+    options: { min?: number; max: number },
+): string => {
+    if (typeof value !== 'string') {
+        throw validationError(`"${field}" must be a string.`);
+    }
+
+    const trimmed = value.trim();
+    const min = options.min ?? 1;
+
+    if (trimmed.length < min) {
+        throw validationError(`"${field}" is required.`);
+    }
+
+    if (trimmed.length > options.max) {
+        throw validationError(
+            `"${field}" must be at most ${options.max.toString()} characters.`,
+        );
+    }
+
+    return trimmed;
+};
+
+const requireAddress = (value: unknown, field: string): Address => {
+    if (!isAddressString(value)) {
+        throw validationError(`"${field}" must be a valid address.`);
+    }
+
+    return getAddress(value);
+};
+
+const requireHex = (value: unknown, field: string, maxLength: number): Hex => {
+    if (!isHexString(value)) {
+        throw validationError(`"${field}" must be a 0x-prefixed hex string.`);
+    }
+
+    if (value.length > maxLength) {
+        throw validationError(`"${field}" is too large.`);
+    }
+
+    return value;
+};
+
+const requireWei = (value: unknown, field: string): string => {
+    if (!isWeiString(value)) {
+        throw validationError(
+            `"${field}" must be a non-negative integer (wei) as decimal string.`,
+        );
+    }
+
+    return value;
+};
+
+const requireChainId = (value: unknown, field: string): number => {
+    if (typeof value !== 'number' || !Number.isInteger(value) || value <= 0) {
+        throw validationError(`"${field}" must be a positive integer.`);
+    }
+
+    return value;
+};
+
+const requireEnum = <TValue extends string>(
+    value: unknown,
+    field: string,
+    allowed: TValue[],
+): TValue => {
+    if (typeof value !== 'string' || !allowed.includes(value as TValue)) {
+        throw validationError(
+            `"${field}" must be one of: ${allowed.join(', ')}.`,
+        );
+    }
+
+    return value as TValue;
+};
+
+/**
+ * Reads and parses the JSON body enforcing the size limit and the JSON content type.
+ */
+export const readJsonBody = async (
+    request: NextRequest,
+): Promise<Record<string, unknown>> => {
+    const contentType = request.headers.get('content-type') ?? '';
+
+    if (!contentType.toLowerCase().includes('application/json')) {
+        throw validationError('Content-Type must be application/json.');
+    }
+
+    const contentLength = Number(request.headers.get('content-length') ?? '0');
+
+    if (contentLength > MPC_MAX_BODY_BYTES) {
+        throw new MpcApiError(
+            'validation_error',
+            'Request body too large.',
+            413,
+        );
+    }
+
+    const text = await request.text();
+
+    if (Buffer.byteLength(text, 'utf8') > MPC_MAX_BODY_BYTES) {
+        throw new MpcApiError(
+            'validation_error',
+            'Request body too large.',
+            413,
+        );
+    }
+
+    if (text.trim().length === 0) {
+        return {};
+    }
+
+    let parsed: unknown;
+
+    try {
+        parsed = JSON.parse(text);
+    } catch {
+        throw validationError('Request body must be valid JSON.');
+    }
+
+    if (!isRecord(parsed)) {
+        throw validationError('Request body must be a JSON object.');
+    }
+
+    return parsed;
+};
+
+const getRequestHost = (request: NextRequest): string | undefined => {
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const host = forwardedHost ?? request.headers.get('host');
+
+    return host?.split(',')[0]?.trim().toLowerCase();
+};
+
+const getOriginHost = (value: string | null): string | undefined => {
+    if (value == null || value.length === 0) {
+        return undefined;
+    }
+
+    try {
+        return new URL(value).host.toLowerCase();
+    } catch {
+        return undefined;
+    }
+};
+
+/**
+ * CSRF defense in depth for mutations: same-origin check (Origin / Referer host must match the request host, or
+ * Sec-Fetch-Site must be same-origin) and mandatory custom header.
+ */
+export const assertMutationRequest = (request: NextRequest): void => {
+    const clientHeader = request.headers.get(MPC_CLIENT_HEADER);
+
+    if (clientHeader !== MPC_CLIENT_HEADER_VALUE) {
+        throw new MpcApiError(
+            'forbidden',
+            `Missing or invalid ${MPC_CLIENT_HEADER} header.`,
+        );
+    }
+
+    const secFetchSite = request.headers.get('sec-fetch-site');
+
+    if (
+        secFetchSite != null &&
+        secFetchSite !== 'same-origin' &&
+        secFetchSite !== 'none'
+    ) {
+        throw new MpcApiError(
+            'forbidden',
+            'Cross-site requests are not allowed.',
+        );
+    }
+
+    const requestHost = getRequestHost(request);
+    const originHost = getOriginHost(request.headers.get('origin'));
+    const refererHost = getOriginHost(request.headers.get('referer'));
+
+    if (originHost != null) {
+        if (originHost !== requestHost) {
+            throw new MpcApiError('forbidden', 'Origin mismatch.');
+        }
+
+        return;
+    }
+
+    if (refererHost != null) {
+        if (refererHost !== requestHost) {
+            throw new MpcApiError('forbidden', 'Referer mismatch.');
+        }
+
+        return;
+    }
+
+    if (secFetchSite === 'same-origin') {
+        return;
+    }
+
+    throw new MpcApiError(
+        'forbidden',
+        'Unable to verify the request origin (missing Origin / Referer / Sec-Fetch-Site headers).',
+    );
+};
+
+// Body validators
+
+export const validateLoginParams = (
+    body: Record<string, unknown>,
+): IMpcLoginParams => {
+    if (
+        typeof body.username !== 'string' ||
+        typeof body.password !== 'string'
+    ) {
+        throw validationError('"username" and "password" are required.');
+    }
+
+    return { username: body.username, password: body.password };
+};
+
+export const validateCreateSystemParams = (
+    body: Record<string, unknown>,
+): IMpcCreateSystemParams => {
+    const name = requireString(body.name, 'name', { max: MAX_NAME_LENGTH });
+    const description =
+        body.description == null
+            ? undefined
+            : requireString(body.description, 'description', {
+                  min: 0,
+                  max: MAX_DESCRIPTION_LENGTH,
+              });
+
+    if (!Array.isArray(body.chainIds) || body.chainIds.length === 0) {
+        throw validationError('"chainIds" must be a non-empty array.');
+    }
+
+    if (body.chainIds.length > 20) {
+        throw validationError('"chainIds" must have at most 20 entries.');
+    }
+
+    const chainIds = body.chainIds.map((chainId) =>
+        requireChainId(chainId, 'chainIds'),
+    );
+    const providerId = requireEnum(body.providerId, 'providerId', PROVIDER_IDS);
+
+    return {
+        name,
+        description: description === '' ? undefined : description,
+        chainIds: Array.from(new Set(chainIds)),
+        providerId,
+    };
+};
+
+export const validateUpdateSystemParams = (
+    body: Record<string, unknown>,
+): IMpcUpdateSystemParams => {
+    const params: IMpcUpdateSystemParams = {};
+
+    if (body.name != null) {
+        params.name = requireString(body.name, 'name', {
+            max: MAX_NAME_LENGTH,
+        });
+    }
+
+    if (body.description != null) {
+        params.description = requireString(body.description, 'description', {
+            min: 0,
+            max: MAX_DESCRIPTION_LENGTH,
+        });
+    }
+
+    if (params.name == null && params.description == null) {
+        throw validationError('Nothing to update.');
+    }
+
+    return params;
+};
+
+export const validateServerSharePayload = (
+    value: unknown,
+    field = 'serverShare',
+): IMpcServerSharePayload => {
+    if (!isRecord(value)) {
+        throw validationError(`"${field}" must be an object.`);
+    }
+
+    const { index, epoch } = value;
+
+    if (
+        typeof index !== 'number' ||
+        !Number.isInteger(index) ||
+        index < 1 ||
+        index > 3
+    ) {
+        throw validationError(`"${field}.index" must be 1, 2 or 3.`);
+    }
+
+    if (typeof epoch !== 'number' || !Number.isInteger(epoch) || epoch < 1) {
+        throw validationError(`"${field}.epoch" must be a positive integer.`);
+    }
+
+    const shareValue = requireHex(value.value, `${field}.value`, 66);
+
+    if (shareValue.length !== 66) {
+        throw validationError(`"${field}.value" must be a 32-byte hex string.`);
+    }
+
+    return { index, epoch, value: shareValue };
+};
+
+export const validateRegisterKeyParams = (
+    body: Record<string, unknown>,
+): IMpcRegisterKeyParams => {
+    const address = requireAddress(body.address, 'address');
+    const publicKey = requireHex(body.publicKey, 'publicKey', 132);
+
+    if (publicKey.length !== 132 && publicKey.length !== 68) {
+        throw validationError(
+            '"publicKey" must be a 65-byte uncompressed (or 33-byte compressed) public key.',
+        );
+    }
+
+    const serverShare = validateServerSharePayload(body.serverShare);
+
+    if (serverShare.epoch !== 1) {
+        throw validationError(
+            '"serverShare.epoch" must be 1 on key registration.',
+        );
+    }
+
+    return { address, publicKey, serverShare };
+};
+
+export const validateServerShareParams = (
+    body: Record<string, unknown>,
+): IMpcServerShareParams => {
+    const purpose = requireEnum(body.purpose, 'purpose', SHARE_PURPOSES);
+    const requestId =
+        body.requestId == null
+            ? undefined
+            : requireString(body.requestId, 'requestId', { max: 128 });
+
+    if (purpose === 'sign' && requestId == null) {
+        throw validationError(
+            '"requestId" is required when purpose is "sign".',
+        );
+    }
+
+    return { purpose, requestId };
+};
+
+export const validateReshareParams = (
+    body: Record<string, unknown>,
+): IMpcReshareParams => {
+    const serverShare = validateServerSharePayload(body.serverShare);
+    const mode = requireEnum(body.mode, 'mode', [
+        'reshare',
+        'recover',
+    ] as const);
+
+    return { serverShare, mode };
+};
+
+export const validateAddMemberParams = (
+    body: Record<string, unknown>,
+): IMpcAddMemberParams => {
+    const username = requireString(body.username, 'username', { max: 32 });
+    const role = requireEnum(body.role, 'role', MEMBER_ROLES);
+
+    return { username, role };
+};
+
+export const validatePolicyParams = (
+    body: Record<string, unknown>,
+): IMpcPolicy => {
+    if (
+        !Array.isArray(body.allowedChainIds) ||
+        body.allowedChainIds.length === 0
+    ) {
+        throw validationError('"allowedChainIds" must be a non-empty array.');
+    }
+
+    const allowedChainIds = Array.from(
+        new Set(
+            body.allowedChainIds.map((chainId) =>
+                requireChainId(chainId, 'allowedChainIds'),
+            ),
+        ),
+    );
+
+    let recipientAllowlist: Address[] | null = null;
+
+    if (body.recipientAllowlist != null) {
+        if (!Array.isArray(body.recipientAllowlist)) {
+            throw validationError(
+                '"recipientAllowlist" must be an array or null.',
+            );
+        }
+
+        if (body.recipientAllowlist.length > 200) {
+            throw validationError(
+                '"recipientAllowlist" must have at most 200 entries.',
+            );
+        }
+
+        recipientAllowlist = body.recipientAllowlist.map((address) =>
+            requireAddress(address, 'recipientAllowlist'),
+        );
+    }
+
+    const optionalWei = (value: unknown, field: string): string | null =>
+        value == null || value === '' ? null : requireWei(value, field);
+
+    const maxValuePerTxWei = optionalWei(
+        body.maxValuePerTxWei,
+        'maxValuePerTxWei',
+    );
+    const dailyLimitWei = optionalWei(body.dailyLimitWei, 'dailyLimitWei');
+    const requireApprovalAboveWei = optionalWei(
+        body.requireApprovalAboveWei,
+        'requireApprovalAboveWei',
+    );
+
+    const approvalsRequired = body.approvalsRequired ?? 1;
+
+    if (
+        typeof approvalsRequired !== 'number' ||
+        !Number.isInteger(approvalsRequired) ||
+        approvalsRequired < 0 ||
+        approvalsRequired > 10
+    ) {
+        throw validationError(
+            '"approvalsRequired" must be an integer between 0 and 10.',
+        );
+    }
+
+    if (typeof body.allowContractCalls !== 'boolean') {
+        throw validationError('"allowContractCalls" must be a boolean.');
+    }
+
+    if (typeof body.allowMessageSigning !== 'boolean') {
+        throw validationError('"allowMessageSigning" must be a boolean.');
+    }
+
+    if (
+        body.requireApprovalForMessages != null &&
+        typeof body.requireApprovalForMessages !== 'boolean'
+    ) {
+        throw validationError(
+            '"requireApprovalForMessages" must be a boolean when set.',
+        );
+    }
+
+    return {
+        allowedChainIds,
+        recipientAllowlist,
+        maxValuePerTxWei,
+        dailyLimitWei,
+        requireApprovalAboveWei,
+        approvalsRequired,
+        allowContractCalls: body.allowContractCalls,
+        allowMessageSigning: body.allowMessageSigning,
+        requireApprovalForMessages: body.requireApprovalForMessages === true,
+    };
+};
+
+export const validateTransactionPayload = (
+    value: unknown,
+    field = 'transaction',
+): IMpcTransactionPayload => {
+    if (!isRecord(value)) {
+        throw validationError(`"${field}" must be an object.`);
+    }
+
+    const chainId = requireChainId(value.chainId, `${field}.chainId`);
+    const to = requireAddress(value.to, `${field}.to`);
+    const valueWei = requireWei(value.valueWei, `${field}.valueWei`);
+    const data =
+        value.data == null || value.data === ''
+            ? undefined
+            : requireHex(value.data, `${field}.data`, MAX_CALLDATA_LENGTH);
+
+    return { chainId, to, valueWei, data: data === '0x' ? undefined : data };
+};
+
+export const validateCreateRequestParams = (
+    body: Record<string, unknown>,
+): IMpcCreateRequestParams => {
+    if (!isRecord(body.payload)) {
+        throw validationError('"payload" must be an object.');
+    }
+
+    const { payload } = body;
+    const type = requireEnum(payload.type, 'payload.type', [
+        'transaction',
+        'message',
+        'typedData',
+    ] as const);
+
+    let validated: MpcSignRequestPayload;
+
+    if (type === 'transaction') {
+        validated = {
+            type,
+            transaction: validateTransactionPayload(
+                payload.transaction,
+                'payload.transaction',
+            ),
+        };
+    } else if (type === 'message') {
+        if (!isRecord(payload.message)) {
+            throw validationError('"payload.message" must be an object.');
+        }
+
+        const message = requireString(
+            payload.message.message,
+            'payload.message.message',
+            {
+                max: MAX_MESSAGE_LENGTH,
+            },
+        );
+        validated = { type, message: { message } };
+    } else {
+        if (!isRecord(payload.typedData)) {
+            throw validationError('"payload.typedData" must be an object.');
+        }
+
+        const typedDataJson = requireString(
+            payload.typedData.typedDataJson,
+            'payload.typedData.typedDataJson',
+            { max: MAX_TYPED_DATA_LENGTH },
+        );
+
+        let parsed: unknown;
+
+        try {
+            parsed = JSON.parse(typedDataJson);
+        } catch {
+            throw validationError(
+                '"payload.typedData.typedDataJson" must be valid JSON.',
+            );
+        }
+
+        if (
+            !isRecord(parsed) ||
+            !isRecord(parsed.types) ||
+            typeof parsed.primaryType !== 'string' ||
+            !isRecord(parsed.message)
+        ) {
+            throw validationError(
+                '"payload.typedData.typedDataJson" must be an EIP-712 typed data object (types, primaryType, domain, message).',
+            );
+        }
+
+        validated = { type, typedData: { typedDataJson } };
+    }
+
+    if (body.dryRun != null && typeof body.dryRun !== 'boolean') {
+        throw validationError('"dryRun" must be a boolean when set.');
+    }
+
+    return { payload: validated, dryRun: body.dryRun === true };
+};
+
+export const validateCompleteRequestParams = (
+    body: Record<string, unknown>,
+): IMpcCompleteRequestParams => {
+    const signature = requireHex(body.signature, 'signature', 1024);
+    const signedTransaction =
+        body.signedTransaction == null
+            ? undefined
+            : requireHex(
+                  body.signedTransaction,
+                  'signedTransaction',
+                  MAX_CALLDATA_LENGTH * 2,
+              );
+
+    return { signature, signedTransaction };
+};
+
+export const validateSimulateParams = (
+    body: Record<string, unknown>,
+): IMpcSimulateParams => {
+    const transaction = validateTransactionPayload(body, 'body');
+
+    return {
+        chainId: transaction.chainId,
+        to: transaction.to,
+        valueWei: transaction.valueWei,
+        data: transaction.data,
+    };
+};
