@@ -4,6 +4,7 @@ export type IAssistantStep =
     | 'respond'
     | 'createTicket'
     | 'confirmFile'
+    | 'scanFile'
     | 'removeFile'
     | 'transferFiles'
     | 'cleanupBlobs'
@@ -32,6 +33,9 @@ export interface IStepLogEntry {
     // Model stop reason ('stop', 'length', 'tool-calls', …): a 'length' means the reply or the
     // tool arguments were truncated before completing.
     finishReason?: string;
+    // Outcome of the malware scan on a scanFile event: a verdict category, never the reason
+    // text (which describes what was detected in the user's file).
+    scanVerdict?: 'clean' | 'malicious' | 'unavailable';
     // Error name/code only, never a message that could carry user content.
     error?: string;
 }

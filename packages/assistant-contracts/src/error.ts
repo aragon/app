@@ -10,6 +10,10 @@ export const assistantErrorCodeSchema = z.enum([
     'file_too_large',
     'file_limit',
     'unsupported_file',
+    // The malware scan flagged the file: it was deleted and never reaches the ticket queue.
+    'malicious_file',
+    // A mandatory scan engine could not deliver a verdict (outage, timeout): retriable.
+    'scan_unavailable',
     'internal',
 ]);
 

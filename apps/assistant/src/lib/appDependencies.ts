@@ -1,6 +1,7 @@
 import type { Redis } from '@upstash/redis';
 import type { LanguageModel } from 'ai';
 import type { IBlobStore } from '../files/blobStore';
+import type { IMalwareScanner } from '../files/malwareScanner';
 import type { ILinearGateway } from '../linear/linearGateway';
 import type { ISessionStore } from './sessionStore';
 
@@ -14,6 +15,7 @@ export interface IAppDependencies {
     getLinear: () => ILinearGateway;
     getChatModel: () => LanguageModel;
     getBlobStore: () => IBlobStore;
+    getMalwareScanner: () => IMalwareScanner;
 }
 
 export const lazy = <TValue>(factory: () => TValue): (() => TValue) => {

@@ -46,6 +46,18 @@ interface IAdapterEntry {
      * Server identifier of the queued file once confirmed, used to delete it again.
      */
     serverId?: string;
+    /**
+     * Set when the upload was rejected (validation, malware scan) or failed. The entry is kept
+     * so `send` can refuse to attach a file the server does not hold, but it no longer occupies
+     * a composer slot.
+     */
+    uploadError?: unknown;
+    /**
+     * Set once the file has ridden along with a message. Kept (rather than dropping the entry) so
+     * a repeated `send` is idempotent: the composer re-sends every attachment when one of them
+     * fails, and a file that already went must not look like one that never uploaded.
+     */
+    sent?: boolean;
 }
 
 const toAttachmentType = (file: File): string =>
@@ -59,14 +71,28 @@ const toFileDataUrl = (file: File): Promise<string> =>
         reader.readAsDataURL(file);
     });
 
-const toUploadErrorText = (error: unknown): string =>
-    // Service rejections (magic-byte validation, session limits) carry a human-readable message;
-    // anything else (network failures, unexpected shapes) falls back to the generic wording.
-    error instanceof UploadFileError &&
-    error.code !== 'network' &&
-    error.code !== 'internal'
-        ? error.message
-        : chatCopy.fileAlerts.uploadFailed;
+const toUploadErrorText = (error: unknown): string => {
+    if (!(error instanceof UploadFileError)) {
+        return chatCopy.fileAlerts.uploadFailed;
+    }
+
+    // Scan outcomes get our own wording: the service message describes what was detected, which
+    // is neither actionable for the user nor safe to echo verbatim into the chat.
+    if (error.code === 'malicious_file') {
+        return chatCopy.fileAlerts.maliciousFile;
+    }
+
+    if (error.code === 'scan_unavailable') {
+        return chatCopy.fileAlerts.scanUnavailable;
+    }
+
+    // Other service rejections (magic-byte validation, session limits) carry a human-readable
+    // message; anything else (network failures, unexpected shapes) falls back to the generic
+    // wording.
+    return error.code === 'network' || error.code === 'internal'
+        ? chatCopy.fileAlerts.uploadFailed
+        : error.message;
+};
 
 /**
  * assistant-ui attachment adapter over the widget's file endpoints. Files travel out-of-band: the
@@ -85,8 +111,12 @@ export const createAttachmentAdapter = (
     // Files sitting in the composer: entries are dropped again when their message is sent, so the
     // cap applies per message, not per session.
     const usedSlots = (sessionId: string): number =>
-        [...entries.values()].filter((entry) => entry.sessionId === sessionId)
-            .length;
+        [...entries.values()].filter(
+            (entry) =>
+                entry.sessionId === sessionId &&
+                entry.uploadError == null &&
+                !entry.sent,
+        ).length;
 
     return {
         accept: attachmentAccept,
@@ -129,7 +159,10 @@ export const createAttachmentAdapter = (
                     entry.handle = undefined;
                 })
                 .catch((error: unknown) => {
-                    entries.delete(id);
+                    // Kept (not deleted) so `send` can tell a rejected file apart from one that
+                    // was never picked: the tile stays in the composer showing its error, and the
+                    // message cannot be sent until the user removes it.
+                    entry.uploadError = error;
                     throw error;
                 });
 
@@ -185,13 +218,30 @@ export const createAttachmentAdapter = (
             entries.delete(attachment.id);
         },
         send: async (attachment: PendingAttachment) => {
-            // Sending while the upload is still in flight simply waits for it; a failed upload
-            // keeps the composer intact so the user can remove the broken tile.
-            await entries.get(attachment.id)?.uploadPromise;
+            const entry = entries.get(attachment.id);
 
-            // The message takes the file with it: the entry no longer occupies a composer slot,
-            // and the server queue (bounded by its own session cap) holds it for the ticket.
-            entries.delete(attachment.id);
+            // The server holds bytes only for uploads it accepted. A rejected one (unsupported
+            // type, session limit, malware scan) must never ride along with the message: the
+            // send fails so the user removes the tile first, instead of the transcript showing
+            // an attachment the support team will never receive.
+            if (entry == null) {
+                throw new Error(chatCopy.fileAlerts.uploadFailed);
+            }
+
+            // Sending while the upload is still in flight waits for it; a rejection landing at
+            // this point fails the send for the same reason.
+            try {
+                await entry.uploadPromise;
+            } catch (error) {
+                throw new Error(toUploadErrorText(error));
+            }
+
+            // The message takes the file with it, so the entry stops occupying a composer slot —
+            // but it is marked rather than dropped: when one attachment of a message fails, the
+            // composer restores them all and re-sends, and a dropped entry would then look like a
+            // file that never uploaded (blocking the message, and letting `remove` skip the
+            // server-side deletion so a removed file still reached the ticket).
+            entry.sent = true;
 
             // The content part exists only for the local transcript: assistant-ui rebuilds the
             // sent message's attachment tiles from it, the chat transport strips file parts from
