@@ -56,6 +56,11 @@ describe('conditionType Utils', () => {
                 expected: 'ExecuteSelector',
             },
             {
+                description: 'maps spp-rule to SppRule',
+                conditionType: 'spp-rule',
+                expected: 'SPP rule',
+            },
+            {
                 description: 'maps "none" to the empty placeholder',
                 conditionType: 'none',
                 expected: '-',
