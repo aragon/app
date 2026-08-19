@@ -1,5 +1,15 @@
 # @aragon/assistant-chat
 
+## 0.4.0
+
+### Minor Changes
+
+- [#1303](https://github.com/aragon/app/pull/1303) [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on design feedback: the panel header carries the Aragon mark and names the request being drafted or created, the ticket card leads with the ticket title instead of a "Review your request" label, spent drafts collapse into a quiet line, past requests move from the greeting into their own view reached from under the composer, and the mail escape hatch becomes a footnote there. The transcript opens with a time divider, and the navigation trigger withdraws while the panel is open — the panel collapses through its own chevron.
+
+### Patch Changes
+
+- [#1303](https://github.com/aragon/app/pull/1303) [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Send the name and type of an attachment with the conversation (never its bytes), so the assistant can say where a file arrived. The panel header now carries the exact height of the app's navigation bar, so the two bottom borders meet in a line rather than a step, and every control in the widget points at the cursor.
+
 ## 0.3.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @aragon/app
 
+## 1.37.1
+
+### Patch Changes
+
+- [#1303](https://github.com/aragon/app/pull/1303) [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Iterate the support assistant on design feedback: the panel header carries the Aragon mark and names the request being drafted or created, the ticket card leads with the ticket title instead of a "Review your request" label, spent drafts collapse into a quiet line, past requests move from the greeting into their own view reached from under the composer, and the mail escape hatch becomes a footnote there. The transcript opens with a time divider, and the navigation trigger withdraws while the panel is open — the panel collapses through its own chevron.
+
+- [#1312](https://github.com/aragon/app/pull/1312) [`a718058`](https://github.com/aragon/app/commit/a71805829ce8c79367c51d2b08673b18824aa922) Thanks [@harryburger](https://github.com/harryburger)! - Handle plugins with an unresolved interface type consistently: they are now dropped from the plugin list everywhere instead of only from process lookups, so they no longer surface as unselectable entries. The permissions view and contract versions keep showing them, since those describe what is installed on-chain. Contract updates also no longer offer plugins whose interface type cannot be matched to a known repository, which previously crashed the update dialog
+
+- [#1322](https://github.com/aragon/app/pull/1322) [`4399ebc`](https://github.com/aragon/app/commit/4399ebcea692d9ce3c3fbded3539deb88eb204c3) Thanks [@evanaronson](https://github.com/evanaronson)! - Polish Alchemix objection voting and refresh its recorded state after vote indexing.
+
+- Updated dependencies [[`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20), [`acb5001`](https://github.com/aragon/app/commit/acb5001b3153ca47e34e4c718ffd070bf7b25e20)]:
+    - @aragon/assistant-chat@0.4.0
+
 ## 1.37.0
 
 ### Minor Changes

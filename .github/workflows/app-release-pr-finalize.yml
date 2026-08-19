@@ -160,7 +160,7 @@ jobs:
         uses: ./.github/actions/gh-ensure-release
         with:
           tag: ${{ steps.release-tag.outputs.name }}
-          title: Release ${{ steps.release-tag.outputs.name }}
+          title: ${{ steps.release-tag.outputs.name }}
           notes_path: ${{ steps.notes.outputs.path }}
           token: ${{ steps.secrets.outputs.ARABOT_PAT }}
 
