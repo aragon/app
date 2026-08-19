@@ -1,6 +1,8 @@
+import type { PageDTO, TokenVotingMemberDTO } from '@aragon/aragon-domain';
 import { invariant } from '@aragon/gov-ui-kit';
 import { lockToVoteProposalUtils } from '@/plugins/lockToVotePlugin/utils/lockToVoteProposalUtils';
 import { sppProposalUtils } from '@/plugins/sppPlugin/utils/sppProposalUtils';
+import type { ITokenMember } from '@/plugins/tokenPlugin/types';
 import {
     AragonBackendService,
     type IPaginatedResponse,
@@ -9,6 +11,7 @@ import type {
     ICanCreateProposalResult,
     IMemberExistsResult,
 } from '../../types';
+import { tokenVotingMembershipServiceClient } from '../tokenVotingMembershipService';
 import type {
     IMember,
     IProposal,
@@ -24,10 +27,12 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
+    IGetTokenVotingMembershipParams,
     IGetVoteListParams,
 } from './governanceService.api';
 import { collectTokenAddresses } from './utils/collectTokenAddresses';
 import { fetchTokensTotalSupply } from './utils/fetchTokensTotalSupply';
+import { fetchTokenVotingMembership } from './utils/fetchTokenVotingMembership';
 
 class GovernanceService extends AragonBackendService {
     private urls = {
@@ -51,6 +56,21 @@ class GovernanceService extends AragonBackendService {
 
         return result;
     };
+
+    /**
+     * Gets the membership for token-voting plugins.
+     *
+     * This routes between the aragon-domain BFF and the legacy backend
+     * regardless of source. The generic `getMemberList` still serves multisig/admin.
+     */
+    getTokenVotingMembership = (
+        params: IGetTokenVotingMembershipParams,
+    ): Promise<PageDTO<TokenVotingMemberDTO>> =>
+        fetchTokenVotingMembership(
+            params,
+            tokenVotingMembershipServiceClient.getTokenVotingMembership,
+            (legacyParams) => this.getMemberList<ITokenMember>(legacyParams),
+        );
 
     getMember = async <TMember extends IMember = IMember>(
         params: IGetMemberParams,

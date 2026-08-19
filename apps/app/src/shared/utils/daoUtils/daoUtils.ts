@@ -1,4 +1,6 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
+// biome-ignore lint/style/noRestrictedImports: server-safe address check — the gov-ui-kit shim is not callable from RSC code paths; { strict: false } is passed explicitly.
+import { isAddress } from 'viem';
 import {
     daoService,
     type IDao,
@@ -247,6 +249,7 @@ class DaoUtils {
 
     /**
      * Checks whether a plugin belongs to a linked account relative to the given DAO context.
+     * Server safe.
      */
     isLinkedAccountPlugin = (
         plugin: Pick<IDaoPlugin, 'daoAddress'>,
@@ -254,7 +257,15 @@ class DaoUtils {
     ): boolean =>
         plugin.daoAddress != null &&
         dao != null &&
-        !addressUtils.isAddressEqual(plugin.daoAddress, dao.address);
+        !this.isSameAddress(plugin.daoAddress, dao.address);
+
+    /**
+     * Server-safe, case-insensitive address equality.
+     */
+    private isSameAddress = (addressOne: string, addressTwo: string): boolean =>
+        isAddress(addressOne, { strict: false }) &&
+        isAddress(addressTwo, { strict: false }) &&
+        addressOne.toLowerCase() === addressTwo.toLowerCase();
 
     /**
      * Returns the `daoId` that should be used for API calls targeting this plugin.
