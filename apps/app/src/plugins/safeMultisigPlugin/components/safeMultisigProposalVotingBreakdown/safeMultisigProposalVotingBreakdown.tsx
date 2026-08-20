@@ -2,6 +2,7 @@
 
 import {
     addressUtils,
+    Link,
     ProposalVoting,
     ProposalVotingTab,
     Tabs,
@@ -199,6 +200,14 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                         {t(`${translationKey}.partialError`)}
                     </p>
                 )}
+
+                <div className="border-neutral-100 border-t pt-4">
+                    <Link
+                        href={`/safe/${proposal.network}/${addressUtils.getChecksum(body)}`}
+                    >
+                        {t(`${translationKey}.viewSafeAccount`)}
+                    </Link>
+                </div>
             </div>
             {children}
         </ProposalVoting.BreakdownMultisig>

@@ -3183,7 +3183,8 @@
             "competition": "Competing transaction",
             "superseded": "Superseded",
             "youSigned": "You have signed"
-          }
+          },
+          "viewSafeAccount": "View Safe account"
         },
         "safeMultisigSubmitVote": {
           "approve": "Approve proposal",
