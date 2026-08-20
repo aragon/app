@@ -3596,6 +3596,85 @@
         }
       }
     },
+    "safe": {
+      "safeAccountPage": {
+        "aside": {
+          "details": {
+            "address": "Address",
+            "chain": "Chain",
+            "nonce": "Nonce",
+            "threshold": "Threshold",
+            "thresholdValue": "{{threshold}} of {{owners}}",
+            "title": "Details",
+            "unknown": "Unknown",
+            "version": "Version"
+          }
+        },
+        "header": {
+          "description": "A read-only view of this Safe: its owners, signing threshold, contract version, nonce, queued transactions and balances."
+        },
+        "main": {
+          "assets": {
+            "title": "Assets"
+          },
+          "owners": {
+            "title": "Owners"
+          },
+          "pending": {
+            "description": "Transactions waiting to be executed. Transactions below the current nonce can never execute and are not shown.",
+            "title": "Pending transactions"
+          }
+        },
+        "stats": {
+          "nonce": "Nonce",
+          "owners": "Owners",
+          "threshold": "Threshold",
+          "thresholdSuffix": "of {{owners}}"
+        },
+        "unsupportedNetwork": {
+          "description": "Safe does not run a transaction service on {{network}}, so this Safe cannot be read here.",
+          "heading": "Not supported on this network"
+        }
+      },
+      "safeBalanceList": {
+        "empty": {
+          "description": "This Safe does not hold any assets yet.",
+          "heading": "No assets"
+        },
+        "entity": "Assets",
+        "error": {
+          "description": "The balances of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load assets"
+        }
+      },
+      "safeOwnerList": {
+        "empty": {
+          "description": "No owners were reported for this Safe.",
+          "heading": "No owners"
+        },
+        "entity": "Owners",
+        "error": {
+          "description": "The owners of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load owners"
+        }
+      },
+      "safePendingTransactionList": {
+        "empty": {
+          "description": "This Safe has no transactions waiting to be executed.",
+          "heading": "No pending transactions"
+        },
+        "entity": "Transactions",
+        "error": {
+          "description": "The pending transactions of this Safe could not be loaded. Please try again later.",
+          "heading": "Unable to load pending transactions"
+        },
+        "item": {
+          "confirmations": "{{count}} of {{required}} confirmations",
+          "nonce": "Nonce {{nonce}}",
+          "submittedOn": "Submitted {{date}}"
+        }
+      }
+    },
     "settings": {
       "daoPluginInfo": {
         "bodyName": "Body name",
