@@ -4125,6 +4125,135 @@
           }
         }
       }
+    },
+    "workspace": {
+      "createWorkspaceDialog": {
+        "action": {
+          "cancel": "Cancel",
+          "submit": "Create workspace"
+        },
+        "description": "Track the contracts you care about and see who controls them.",
+        "error": "The workspace could not be created. Please try again.",
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. protocol-treasury"
+        },
+        "network": {
+          "label": "Network"
+        },
+        "targets": {
+          "add": "Add target",
+          "duplicate": "This contract is already tracked by the workspace",
+          "label": "Target {{index}}",
+          "placeholder": "Contract address or ENS",
+          "remove": "Remove target"
+        },
+        "title": "New workspace"
+      },
+      "workspaceAccountList": {
+        "empty": {
+          "description": "No account holds a gate on the targets of this workspace.",
+          "heading": "No accounts"
+        },
+        "summary": "Targets {{targets}} · Capabilities {{capabilities}}",
+        "targetSummary": "Capabilities {{capabilities}}"
+      },
+      "workspaceDetailsPage": {
+        "aside": {
+          "signals": {
+            "title": "Findings"
+          },
+          "status": {
+            "network": "Resolved on {{network}}",
+            "title": "Status"
+          }
+        },
+        "breadcrumb": "Workspaces",
+        "error": {
+          "description": "The workspace could not be loaded. Please try again later.",
+          "title": "Unable to load workspace"
+        },
+        "stats": {
+          "accounts": "Accounts",
+          "capabilities": "Capabilities",
+          "gates": "Gates",
+          "targets": "Targets"
+        },
+        "view": {
+          "accounts": "Accounts",
+          "matrix": "Matrix",
+          "targets": "Targets"
+        }
+      },
+      "workspaceGateList": {
+        "holders": "Held by",
+        "inferred": "Inferred",
+        "noHolders": "Nobody holds this gate",
+        "requirement": {
+          "authority": "Authority",
+          "owner": "Owner",
+          "role": "Role"
+        },
+        "selectors": "Capabilities",
+        "summary": "Holders {{holders}} · Capabilities {{capabilities}}"
+      },
+      "workspaceList": {
+        "action": "View workspace",
+        "empty": {
+          "description": "Workspaces you create will be listed here.",
+          "heading": "No workspaces yet"
+        },
+        "summary": "{{network}} · Targets {{targets}} · Created {{created}}"
+      },
+      "workspaceListPage": {
+        "action": "New workspace",
+        "description": "Inspect who controls the contracts you track.",
+        "disconnected": {
+          "action": "New workspace",
+          "description": "Workspaces are listed per creator. Connect your wallet to see yours.",
+          "heading": "Wallet not connected"
+        },
+        "title": "Workspaces"
+      },
+      "workspaceMatrix": {
+        "account": "Account",
+        "noAccess": "–",
+        "tooLarge": {
+          "description": "This workspace has too many accounts or targets to be displayed as a matrix. Use the target or account view instead.",
+          "heading": "Matrix unavailable"
+        }
+      },
+      "workspaceSignals": {
+        "authority": "Targets delegating permissions to an authority contract: {{count}}",
+        "concentration": "One account controls {{share}}% of all capabilities",
+        "external": "Accounts that are not DAOs: {{count}}",
+        "failed": "Targets that could not be processed: {{count}}",
+        "inferred": "Gates inferred instead of read from the contract: {{count}}",
+        "none": "No findings on this workspace.",
+        "pendingOwner": "Targets with an ownership transfer in flight: {{count}}",
+        "unclaimed": "Targets with a gate that nobody holds: {{count}}"
+      },
+      "workspaceStatusTag": {
+        "done": "Done",
+        "failed": "Failed",
+        "notAContract": "Not a contract",
+        "pending": "Pending",
+        "ready": "Ready",
+        "scanning": "Scanning",
+        "undetermined": "Undetermined"
+      },
+      "workspaceTargetList": {
+        "authority": "Authority",
+        "empty": {
+          "description": "This workspace does not track any contract.",
+          "heading": "No targets"
+        },
+        "error": "This target could not be processed",
+        "noGates": "No gates resolved on this target yet.",
+        "owner": "Owner",
+        "pendingOwner": "Pending owner",
+        "summary": "Gates {{gates}} · Capabilities {{capabilities}}"
+      }
     }
   }
 }
