@@ -32,6 +32,11 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
 ) => {
     const { network, address } = props;
 
+    // The Safe transaction service requires a checksummed address. The route passes the raw
+    // address through (the DAO page does the same) and normalisation happens here, client-side,
+    // where gov-ui-kit's facade is bound.
+    const checksummedAddress = addressUtils.getChecksum(address);
+
     const { t } = useTranslations();
     const { buildEntityUrl, networkDefinition } = useDaoChain({ network });
 
@@ -40,7 +45,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
     const isNetworkSupported = safeShortNameFromNetwork(network) != null;
 
     const { data: safeInfo, error: safeInfoError } = useSafeInfo(
-        { urlParams: { network, address } },
+        { urlParams: { network, address: checksummedAddress } },
         { enabled: isNetworkSupported },
     );
 
@@ -48,10 +53,10 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
         !isNetworkSupported ||
         SafeServiceError.isUnsupportedChainError(safeInfoError);
 
-    const truncatedAddress = addressUtils.truncateAddress(address);
+    const truncatedAddress = addressUtils.truncateAddress(checksummedAddress);
     const addressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
-        id: address,
+        id: checksummedAddress,
     });
 
     const header = (

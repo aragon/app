@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation-original';
 import { SafeAccountPage } from '@/modules/safe/pages/safeAccountPage';
 import type { ISafeAccountPageParams } from '@/modules/safe/types';
-import { safeAccountUtils } from '@/modules/safe/utils/safeAccountUtils';
+import { networkUtils } from '@/shared/utils/networkUtils';
 
 interface ISafePageProps {
     /**
@@ -13,13 +13,15 @@ interface ISafePageProps {
 // `next/navigation` is aliased to the app's client-side wrapper, so the server helpers are
 // imported from `next/navigation-original`.
 const SafePage = async (props: ISafePageProps) => {
-    const safeAccount = safeAccountUtils.resolveSafeAccount(await props.params);
+    const { network, address } = await props.params;
 
-    if (safeAccount == null) {
+    // A malformed network is a missing page, never a server error. The address is normalised to
+    // its checksum in the client page, matching how the DAO page resolves its parameters.
+    if (!networkUtils.isValidNetwork(network)) {
         notFound();
     }
 
-    return <SafeAccountPage {...safeAccount} />;
+    return <SafeAccountPage network={network} address={address} />;
 };
 
 export default SafePage;
