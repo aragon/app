@@ -75,6 +75,17 @@ export interface IMpcSignRequestSummary {
      * Whether the transaction has calldata.
      */
     isContractCall?: boolean;
+    /**
+     * Decoded ERC-20 transfer (transfer(address,uint256) calldata): the actual payee and token amount.
+     * Symbol / decimals are resolved from the system policy token limits when configured.
+     */
+    tokenTransfer?: {
+        token: Address;
+        recipient: Address;
+        amountUnits: string;
+        symbol?: string;
+        decimals?: number;
+    };
 }
 
 export interface IMpcApproval {

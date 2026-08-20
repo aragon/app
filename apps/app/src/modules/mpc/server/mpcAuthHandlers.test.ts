@@ -14,8 +14,11 @@ import {
     handleGetSession,
     handleLogin,
     handleRegister,
+    handleTotpSetup,
+    handleTotpVerify,
 } from './mpcAuthHandlers';
 import { getMpcStore } from './mpcStore';
+import { serverCrypto } from './serverCrypto';
 
 jest.mock('server-only', () => ({}));
 jest.mock('@/shared/featureFlags', () => ({
@@ -126,6 +129,76 @@ describe('mpc auth route handlers', () => {
 
         expect(response.status).toEqual(401);
         expect(body.error.code).toEqual('unauthorized');
+    });
+
+    it('enrolls the second factor with the setup + verify flow', async () => {
+        const registerResponse = await handleRegister(
+            buildRequest('/api/mpc/auth/register', {
+                method: 'POST',
+                body: { username: 'bob', password: 'password123' },
+            }),
+            emptyParams,
+        );
+        const cookie = registerResponse.headers
+            .get('set-cookie')!
+            .split(';')[0];
+
+        const setupResponse = await handleTotpSetup(
+            buildRequest('/api/mpc/auth/totp/setup', {
+                method: 'POST',
+                body: {},
+                headers: { cookie },
+            }),
+            emptyParams,
+        );
+        const setupBody = (await setupResponse.json()) as {
+            secret: string;
+            otpauthUri: string;
+        };
+
+        expect(setupResponse.status).toEqual(200);
+        expect(setupBody.secret).toMatch(/^[A-Z2-7]{32}$/);
+        expect(setupBody.otpauthUri).toContain('otpauth://totp/');
+
+        const invalidResponse = await handleTotpVerify(
+            buildRequest('/api/mpc/auth/totp/verify', {
+                method: 'POST',
+                body: { totpCode: '000000' },
+                headers: { cookie },
+            }),
+            emptyParams,
+        );
+        expect(invalidResponse.status).toEqual(401);
+
+        const totpCode = serverCrypto.computeTotp(
+            setupBody.secret,
+            serverCrypto.getTotpStep(),
+        );
+        const verifyResponse = await handleTotpVerify(
+            buildRequest('/api/mpc/auth/totp/verify', {
+                method: 'POST',
+                body: { totpCode },
+                headers: { cookie },
+            }),
+            emptyParams,
+        );
+        const verifyBody = (await verifyResponse.json()) as {
+            totpEnabled: boolean;
+        };
+
+        expect(verifyResponse.status).toEqual(200);
+        expect(verifyBody.totpEnabled).toBeTruthy();
+
+        const sessionResponse = await handleGetSession(
+            buildRequest('/api/mpc/auth/session', {
+                method: 'GET',
+                headers: { cookie },
+            }),
+            emptyParams,
+        );
+        const sessionBody = (await sessionResponse.json()) as IMpcSession;
+
+        expect(sessionBody.user.totpEnabled).toBeTruthy();
     });
 
     it('returns a validation error for invalid credentials format', async () => {

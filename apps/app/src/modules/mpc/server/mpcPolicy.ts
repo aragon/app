@@ -1,8 +1,16 @@
-import { formatEther } from 'viem';
+import {
+    decodeFunctionData,
+    erc20Abi,
+    formatEther,
+    formatUnits,
+    getAddress,
+} from 'viem';
 import type {
     IMpcPolicy,
     IMpcPolicyDecision,
+    IMpcPolicyTokenLimit,
     IMpcSignRequest,
+    IMpcTransactionPayload,
     MpcSignRequestPayload,
 } from '@/modules/mpc/api/mpcService/domain';
 
@@ -37,7 +45,55 @@ export const defaultMpcPolicy = (chainIds: number[]): IMpcPolicy => ({
     // approvals are the only barrier for message / typed data requests. Disabled by default so single-owner
     // systems (no other approver) can still sign; enable it on multi-member systems.
     requireApprovalForMessages: false,
+    tokenLimits: null,
 });
+
+// 4-byte selector of transfer(address,uint256).
+const ERC20_TRANSFER_SELECTOR = '0xa9059cbb';
+
+export interface IMpcDecodedTokenTransfer {
+    token: ReturnType<typeof getAddress>;
+    recipient: ReturnType<typeof getAddress>;
+    amountUnits: string;
+}
+
+/**
+ * Decodes a plain ERC-20 transfer(address,uint256) transaction. Returns undefined for any other calldata
+ * (including transferFrom / approve — the POC token rules only cover direct transfers).
+ */
+export const decodeTokenTransfer = (
+    transaction: IMpcTransactionPayload,
+): IMpcDecodedTokenTransfer | undefined => {
+    if (!transaction.data?.toLowerCase().startsWith(ERC20_TRANSFER_SELECTOR)) {
+        return undefined;
+    }
+
+    try {
+        const { functionName, args } = decodeFunctionData({
+            abi: erc20Abi,
+            data: transaction.data,
+        });
+
+        if (functionName !== 'transfer') {
+            return undefined;
+        }
+
+        const [recipient, amount] = args;
+
+        return {
+            token: getAddress(transaction.to),
+            recipient: getAddress(recipient),
+            amountUnits: amount.toString(),
+        };
+    } catch {
+        return undefined;
+    }
+};
+
+const formatTokenAmount = (
+    amountUnits: bigint,
+    limit: IMpcPolicyTokenLimit,
+): string => `${formatUnits(amountUnits, limit.decimals)} ${limit.symbol}`;
 
 const parseWei = (value: string | null | undefined): bigint | undefined => {
     if (value == null || value === '') {
@@ -114,6 +170,14 @@ export const evaluatePolicy = (
         transaction.data !== '0x' &&
         transaction.data.length > 2;
 
+    // Token rules only apply when the policy configures them: the decoded payee replaces the token contract in
+    // the allowlist check and the per-token limits kick in.
+    const tokenTransfer =
+        policy.tokenLimits != null
+            ? decodeTokenTransfer(transaction)
+            : undefined;
+    const effectiveRecipient = tokenTransfer?.recipient ?? transaction.to;
+
     if (!policy.allowedChainIds.includes(transaction.chainId)) {
         reasons.push(
             `Chain ${transaction.chainId.toString()} is not allowed by the policy.`,
@@ -123,10 +187,47 @@ export const evaluatePolicy = (
     if (
         policy.recipientAllowlist != null &&
         !policy.recipientAllowlist.some(
-            (address) => address.toLowerCase() === transaction.to.toLowerCase(),
+            (address) =>
+                address.toLowerCase() === effectiveRecipient.toLowerCase(),
         )
     ) {
         reasons.push('Recipient is not in the allowlist.');
+    }
+
+    if (tokenTransfer != null) {
+        const tokenLimit = policy.tokenLimits?.find(
+            (limit) =>
+                limit.token.toLowerCase() === tokenTransfer.token.toLowerCase(),
+        );
+        const amount = BigInt(tokenTransfer.amountUnits);
+
+        if (tokenLimit == null) {
+            reasons.push(
+                `Token ${tokenTransfer.token} is not allowed by the policy.`,
+            );
+        } else {
+            const maxAmount = parseWei(tokenLimit.maxAmountUnits);
+
+            if (maxAmount != null && amount > maxAmount) {
+                reasons.push(
+                    `Transfer of ${formatTokenAmount(amount, tokenLimit)} exceeds the per-transfer limit of ${formatTokenAmount(maxAmount, tokenLimit)}.`,
+                );
+            }
+
+            const tokenApprovalThreshold = parseWei(
+                tokenLimit.requireApprovalAboveUnits,
+            );
+
+            if (
+                tokenApprovalThreshold != null &&
+                amount > tokenApprovalThreshold &&
+                policy.approvalsRequired > 0
+            ) {
+                approvalReasons.push(
+                    `Transfer of ${formatTokenAmount(amount, tokenLimit)} is above the approval threshold of ${formatTokenAmount(tokenApprovalThreshold, tokenLimit)}: ${policy.approvalsRequired.toString()} approval(s) required.`,
+                );
+            }
+        }
     }
 
     const maxValuePerTx = parseWei(policy.maxValuePerTxWei);

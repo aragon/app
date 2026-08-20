@@ -23,6 +23,7 @@ export * from './useMpcReshare';
 export * from './useMpcServerShare';
 export * from './useMpcSimulate';
 export * from './useMpcSimulatePolicyFlow';
+export * from './useMpcTotpVerify';
 export * from './useMpcUpdatePolicy';
 export * from './useMpcUpdateRequest';
 export * from './useMpcUpdateSystem';

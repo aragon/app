@@ -1,6 +1,7 @@
 import type {
     IMpcAddMemberParams,
     IMpcAddWorkspaceMemberParams,
+    IMpcApproveRequestParams,
     IMpcCheckPolicyFlowParams,
     IMpcCompleteRequestParams,
     IMpcCreateRequestParams,
@@ -14,6 +15,7 @@ import type {
     IMpcServerShareParams,
     IMpcSimulateParams,
     IMpcSimulatePolicyFlowParams,
+    IMpcTotpVerifyParams,
     IMpcUpdatePolicyParams,
     IMpcUpdateRequestParams,
     IMpcUpdateSystemParams,
@@ -81,6 +83,9 @@ export interface IMpcRegisterServiceParams {
 export interface IMpcLoginServiceParams {
     body: IMpcLoginParams;
 }
+export interface IMpcTotpVerifyServiceParams {
+    body: IMpcTotpVerifyParams;
+}
 
 // Systems
 export interface IMpcCreateSystemServiceParams {
@@ -133,7 +138,10 @@ export interface IMpcCreateRequestServiceParams {
 export interface IMpcRequestActionServiceParams {
     urlParams: IMpcRequestUrlParams;
 }
-export type IMpcApproveRequestServiceParams = IMpcRequestActionServiceParams;
+export interface IMpcApproveRequestServiceParams
+    extends IMpcRequestActionServiceParams {
+    body: IMpcApproveRequestParams;
+}
 export type IMpcRejectRequestServiceParams = IMpcRequestActionServiceParams;
 export type IMpcPrepareRequestServiceParams = IMpcRequestActionServiceParams;
 export interface IMpcUpdateRequestServiceParams {

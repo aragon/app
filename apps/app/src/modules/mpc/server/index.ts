@@ -13,6 +13,7 @@ export * from './mpcSignRequests';
 export * from './mpcStore';
 export * from './mpcSystemHandlers';
 export * from './mpcSystems';
+export * from './mpcTotp';
 export * from './mpcWorkspaceHandlers';
 export * from './mpcWorkspacePolicyEvaluation';
 export * from './mpcWorkspaces';

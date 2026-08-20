@@ -10,6 +10,25 @@ export const MPC_LOGIN_PATH = '/mpc/login';
  * Landing page: the workspaces the account can access.
  */
 export const MPC_LIST_PATH = '/mpc';
+/**
+ * Guided demo: one policy, one transfer, authenticator confirmation.
+ */
+export const MPC_DEMO_PATH = '/mpc/demo';
+
+/**
+ * Token of the demo policy: canonical WETH on Sepolia (wrap Sepolia ETH via the contract's deposit function).
+ */
+export const MPC_DEMO_TOKEN = {
+    address: '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
+    symbol: 'WETH',
+    decimals: 18,
+} as const;
+
+/**
+ * Demo policy: transfers up to 0.5 WETH to the configured recipient; above 0.1 WETH a second member approves.
+ */
+export const MPC_DEMO_TOKEN_MAX_UNITS = '500000000000000000';
+export const MPC_DEMO_TOKEN_APPROVAL_ABOVE_UNITS = '100000000000000000';
 
 /**
  * Minimum length of the signing passphrase (POC: never leaves the browser, cannot be recovered).

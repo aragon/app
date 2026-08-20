@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import type { Address } from 'viem';
+import { type Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
 import type {
     IMpcPolicy,
     IMpcSignRequest,
@@ -217,5 +217,107 @@ describe('evaluatePolicy', () => {
         );
 
         expect(denied.reasons).toHaveLength(3);
+    });
+
+    describe('token limits', () => {
+        const token: Address = '0x3333333333333333333333333333333333333333';
+        const payee = recipient;
+
+        const tokenPolicy: IMpcPolicy = {
+            ...basePolicy,
+            recipientAllowlist: [payee],
+            tokenLimits: [
+                {
+                    token,
+                    symbol: 'WETH',
+                    decimals: 18,
+                    // 0.5 WETH per transfer, second approval above 0.1 WETH.
+                    maxAmountUnits: '500000000000000000',
+                    requireApprovalAboveUnits: '100000000000000000',
+                },
+            ],
+        };
+
+        const transferPayload = (to: Address, amountUnits: bigint) =>
+            txPayload({
+                to: token,
+                valueWei: '0',
+                data: encodeFunctionData({
+                    abi: erc20Abi,
+                    functionName: 'transfer',
+                    args: [to, amountUnits],
+                }),
+            });
+
+        it('applies the allowlist to the decoded payee and allows transfers within the limit', () => {
+            const result = evaluatePolicy(
+                tokenPolicy,
+                transferPayload(payee, parseUnits('0.05', 18)),
+            );
+
+            expect(result.allowed).toBeTruthy();
+            expect(result.requiresApproval).toBeFalsy();
+        });
+
+        it('denies transfers to a payee outside the allowlist', () => {
+            const result = evaluatePolicy(
+                tokenPolicy,
+                transferPayload(other, parseUnits('0.05', 18)),
+            );
+
+            expect(result.allowed).toBeFalsy();
+            expect(result.reasons[0]).toMatch(/allowlist/);
+        });
+
+        it('denies transfers above the per-transfer limit', () => {
+            const result = evaluatePolicy(
+                tokenPolicy,
+                transferPayload(payee, parseUnits('0.6', 18)),
+            );
+
+            expect(result.allowed).toBeFalsy();
+            expect(result.reasons[0]).toMatch(/0.6 WETH/);
+        });
+
+        it('requires approval above the token approval threshold', () => {
+            const result = evaluatePolicy(
+                tokenPolicy,
+                transferPayload(payee, parseUnits('0.3', 18)),
+            );
+
+            expect(result.allowed).toBeTruthy();
+            expect(result.requiresApproval).toBeTruthy();
+            expect(result.reasons[0]).toMatch(/0.3 WETH/);
+        });
+
+        it('denies transfers of tokens not covered by the limits', () => {
+            const payload = txPayload({
+                to: other,
+                valueWei: '0',
+                data: encodeFunctionData({
+                    abi: erc20Abi,
+                    functionName: 'transfer',
+                    args: [payee, parseUnits('0.05', 18)],
+                }),
+            });
+            const result = evaluatePolicy(tokenPolicy, payload);
+
+            expect(result.allowed).toBeFalsy();
+            expect(result.reasons[0]).toMatch(/not allowed/);
+        });
+
+        it('treats token transfers as plain contract calls when no token limits are configured', () => {
+            // Without tokenLimits the allowlist still checks the transaction target (the token contract).
+            const legacyPolicy = {
+                ...basePolicy,
+                recipientAllowlist: [token],
+            };
+            const result = evaluatePolicy(
+                legacyPolicy,
+                transferPayload(other, parseUnits('9', 18)),
+            );
+
+            expect(result.allowed).toBeTruthy();
+        });
     });
 });

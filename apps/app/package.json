@@ -63,6 +63,7 @@
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-hook-form": "catalog:",
+        "react-qr-code": "^2.2.0",
         "react-use-measure": "^2.1.7",
         "recharts": "^3.9.2",
         "require-in-the-middle": "^8.0.1",

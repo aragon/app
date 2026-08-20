@@ -2,10 +2,17 @@ import 'server-only';
 import type {
     IMpcLoginResponse,
     IMpcSessionResponse,
+    IMpcTotpSetupResponse,
+    IMpcTotpVerifyResponse,
 } from '@/modules/mpc/api/mpcService/domain';
-import { jsonOk, noContent, withApi } from './mpcApiUtils';
+import { jsonOk, noContent, withApi, withSession } from './mpcApiUtils';
 import { getRequestMeta, MPC_SESSION_COOKIE, mpcAuth } from './mpcAuth';
-import { readJsonBody, validateLoginParams } from './mpcRequestValidation';
+import {
+    readJsonBody,
+    validateLoginParams,
+    validateTotpVerifyParams,
+} from './mpcRequestValidation';
+import { confirmTotp, setupTotp } from './mpcTotp';
 
 /**
  * Route handlers for /api/mpc/auth/*.
@@ -64,3 +71,23 @@ export const handleGetSession = withApi<Record<string, never>>((request) => {
         jsonOk<IMpcSessionResponse>({ user, expiresAt: session.expiresAt }),
     );
 });
+
+// POST /api/mpc/auth/totp/setup
+export const handleTotpSetup = withSession<Record<string, never>>((ctx) =>
+    Promise.resolve(jsonOk<IMpcTotpSetupResponse>(setupTotp(ctx.user.id))),
+);
+
+// POST /api/mpc/auth/totp/verify
+export const handleTotpVerify = withSession<Record<string, never>>(
+    async (ctx) => {
+        const params = validateTotpVerifyParams(
+            await readJsonBody(ctx.request),
+        );
+        confirmTotp(ctx.user.id, params.totpCode);
+
+        return jsonOk<IMpcTotpVerifyResponse>({
+            ...ctx.user,
+            totpEnabled: true,
+        });
+    },
+);

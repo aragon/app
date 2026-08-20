@@ -82,4 +82,57 @@ describe('serverCrypto', () => {
             expect(serverCrypto.sha256('a')).toHaveLength(64);
         });
     });
+
+    describe('totp', () => {
+        // RFC 6238 appendix B SHA-1 vectors: ASCII secret "12345678901234567890" (base32 below), 8-digit codes
+        // truncated to the 6 last digits (mod 10^6 of the same dynamic binary code).
+        const rfcSecret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ';
+        const rfcVectors: [number, string][] = [
+            [59, '287082'],
+            [1_111_111_109, '081804'],
+            [1_234_567_890, '005924'],
+            [2_000_000_000, '279037'],
+        ];
+
+        it('computes the RFC 6238 reference codes', () => {
+            for (const [timeSeconds, code] of rfcVectors) {
+                const step = Math.floor(timeSeconds / 30);
+                expect(serverCrypto.computeTotp(rfcSecret, step)).toEqual(code);
+            }
+        });
+
+        it('generates base32 secrets', () => {
+            const secret = serverCrypto.generateTotpSecret();
+
+            expect(secret).toMatch(/^[A-Z2-7]{32}$/);
+            expect(serverCrypto.generateTotpSecret()).not.toEqual(secret);
+        });
+
+        it('verifies codes within the step window and rejects others', () => {
+            const timestampMs = 1_234_567_890 * 1000;
+            const step = serverCrypto.getTotpStep(timestampMs);
+
+            expect(
+                serverCrypto.verifyTotp(rfcSecret, '005924', { timestampMs }),
+            ).toEqual(step);
+            // Previous / next steps are accepted with the default ±1 window.
+            expect(
+                serverCrypto.verifyTotp(
+                    rfcSecret,
+                    serverCrypto.computeTotp(rfcSecret, step - 1),
+                    { timestampMs },
+                ),
+            ).toEqual(step - 1);
+            expect(
+                serverCrypto.verifyTotp(
+                    rfcSecret,
+                    serverCrypto.computeTotp(rfcSecret, step + 2),
+                    { timestampMs },
+                ),
+            ).toBeUndefined();
+            expect(
+                serverCrypto.verifyTotp(rfcSecret, '000000', { timestampMs }),
+            ).toBeUndefined();
+        });
+    });
 });

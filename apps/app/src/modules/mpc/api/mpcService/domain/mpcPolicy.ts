@@ -1,6 +1,29 @@
 import type { Address } from 'viem';
 import type { IMpcWorkspacePolicyVerdict } from './mpcWorkspace';
 
+export interface IMpcPolicyTokenLimit {
+    /**
+     * ERC-20 token contract address the limit applies to.
+     */
+    token: Address;
+    /**
+     * Token symbol, used in human readable summaries and policy reasons.
+     */
+    symbol: string;
+    /**
+     * Token decimals, used to format amounts.
+     */
+    decimals: number;
+    /**
+     * Maximum amount per transfer in token min-units (decimal string). Null means no limit.
+     */
+    maxAmountUnits: string | null;
+    /**
+     * Transfers above this amount (min-units, decimal string) need approvals from other members. Null means never.
+     */
+    requireApprovalAboveUnits?: string | null;
+}
+
 export interface IMpcPolicy {
     /**
      * Chain IDs on which the system is allowed to sign transactions.
@@ -39,6 +62,13 @@ export interface IMpcPolicy {
      * Optional (POC extension): defaults to false so single-owner systems can still sign messages.
      */
     requireApprovalForMessages?: boolean;
+    /**
+     * ERC-20 transfer rules (POC extension). When set, transfer(address,uint256) calldata is decoded and the
+     * rules apply to the decoded recipient / amount: transfers of unlisted tokens are denied and the
+     * recipientAllowlist is checked against the actual payee instead of the token contract. Null / undefined
+     * means no token rules (token transfers are plain contract calls).
+     */
+    tokenLimits?: IMpcPolicyTokenLimit[] | null;
 }
 
 export interface IMpcPolicyDecision {

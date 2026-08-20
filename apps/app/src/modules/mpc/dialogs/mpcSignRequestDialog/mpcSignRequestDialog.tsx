@@ -20,6 +20,7 @@ import {
     useMpcCompleteRequest,
     useMpcPrepareTransaction,
     useMpcServerShare,
+    useMpcSession,
 } from '@/modules/mpc/api/mpcService';
 import type {
     IMpcPrepareTransactionResponse,
@@ -28,6 +29,7 @@ import type {
 } from '@/modules/mpc/api/mpcService/domain';
 import { MpcErrorAlert } from '@/modules/mpc/components/mpcErrorAlert';
 import { MpcMockBanner } from '@/modules/mpc/components/mpcMockBanner';
+import { MpcOtpInput } from '@/modules/mpc/components/mpcOtpInput';
 import { MpcPasswordInput } from '@/modules/mpc/components/mpcPasswordInput';
 import { MpcRequestSummary } from '@/modules/mpc/components/mpcRequestSummary';
 import { mpcTransactionExplorerUrl } from '@/modules/mpc/constants/mpcConstants';
@@ -102,6 +104,11 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
     const [review, setReview] = useState<IMpcSignReview>();
     const [result, setResult] = useState<IMpcSignRequest>();
     const [error, setError] = useState<unknown>();
+    const [totpCode, setTotpCode] = useState('');
+
+    // Enrolled users confirm the share release with their authenticator code.
+    const { data: session } = useMpcSession();
+    const requiresTotp = session?.user.totpEnabled === true;
 
     const { control, handleSubmit } = useForm<IMpcSignFormData>({
         mode: 'onTouched',
@@ -177,7 +184,11 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             setActiveStep('releasing');
             const { serverShare } = await releaseServerShare({
                 urlParams: { systemId: system.id },
-                body: { purpose: 'sign', requestId: request.id },
+                body: {
+                    purpose: 'sign',
+                    requestId: request.id,
+                    totpCode: requiresTotp ? totpCode : undefined,
+                },
             });
 
             setActiveStep('signing');
@@ -201,6 +212,8 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             setResult(completed);
         } catch (signError: unknown) {
             setError(signError);
+            // A rejected / spent code must be re-entered before retrying.
+            setTotpCode('');
             // Refresh the list so the request reflects the status stored by the co-signer (released / failed).
             invalidateRequests();
         }
@@ -340,6 +353,7 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
                     ),
                     onClick: onSign,
                     isLoading: isBusy,
+                    disabled: requiresTotp && totpCode.length !== 6,
                 }
               : {
                     label: t(
@@ -389,6 +403,17 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
                     </>
                 )}
                 {isReviewing && renderReview(review)}
+                {isReviewing && requiresTotp && result == null && (
+                    <MpcOtpInput
+                        disabled={isBusy}
+                        helpText={t(
+                            'app.mpc.mpcSignRequestDialog.totp.helpText',
+                        )}
+                        label={t('app.mpc.mpcSignRequestDialog.totp.label')}
+                        onChange={setTotpCode}
+                        value={totpCode}
+                    />
+                )}
                 {(activeStep != null || isReviewing) && (
                     <ul className="flex flex-col gap-2 rounded-xl border border-neutral-100 p-4">
                         {signSteps.map(renderStep)}

@@ -57,6 +57,7 @@ export const toPublicUser = (user: IMpcStoreUser): IMpcUser => ({
     id: user.id,
     username: user.username,
     createdAt: user.createdAt,
+    totpEnabled: user.totp?.secret != null,
 });
 
 export const getRequestMeta = (request: NextRequest): IMpcRequestMeta => {

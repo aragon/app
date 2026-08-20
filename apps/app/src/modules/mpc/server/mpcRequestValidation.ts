@@ -3,6 +3,7 @@ import { type Address, getAddress, type Hex } from 'viem';
 import type {
     IMpcAddMemberParams,
     IMpcAddWorkspaceMemberParams,
+    IMpcApproveRequestParams,
     IMpcCheckPolicyFlowParams,
     IMpcCompleteRequestParams,
     IMpcCreateRequestParams,
@@ -14,6 +15,7 @@ import type {
     IMpcPolicyFlowEdge,
     IMpcPolicyFlowNode,
     IMpcPolicySimContext,
+    IMpcPolicyTokenLimit,
     IMpcRegisterKeyParams,
     IMpcReshareParams,
     IMpcSaveWorkspacePolicyParams,
@@ -21,6 +23,7 @@ import type {
     IMpcServerSharePayload,
     IMpcSimulateParams,
     IMpcSimulatePolicyFlowParams,
+    IMpcTotpVerifyParams,
     IMpcTransactionPayload,
     IMpcUpdateRequestParams,
     IMpcUpdateSystemParams,
@@ -52,6 +55,7 @@ const MAX_CALLDATA_LENGTH = 32 * 1024;
 const ADDRESS_REGEX = /^0x[0-9a-fA-F]{40}$/;
 const HEX_REGEX = /^0x([0-9a-fA-F]{2})*$/;
 const WEI_REGEX = /^(0|[1-9][0-9]{0,77})$/;
+const TOTP_CODE_REGEX = /^\d{6}$/;
 
 const PROVIDER_IDS: MpcProviderId[] = ['mock-shamir', 'dfns', 'dynamic'];
 const MEMBER_ROLES: MpcMemberRole[] = ['owner', 'approver', 'viewer'];
@@ -418,6 +422,18 @@ export const validateRegisterKeyParams = (
     return { address, publicKey, serverShare };
 };
 
+const optionalTotpCode = (value: unknown): string | undefined => {
+    if (value == null) {
+        return undefined;
+    }
+
+    if (typeof value !== 'string' || !TOTP_CODE_REGEX.test(value)) {
+        throw validationError('"totpCode" must be a 6-digit code.');
+    }
+
+    return value;
+};
+
 export const validateServerShareParams = (
     body: Record<string, unknown>,
 ): IMpcServerShareParams => {
@@ -433,7 +449,25 @@ export const validateServerShareParams = (
         );
     }
 
-    return { purpose, requestId };
+    return { purpose, requestId, totpCode: optionalTotpCode(body.totpCode) };
+};
+
+export const validateApproveRequestParams = (
+    body: Record<string, unknown>,
+): IMpcApproveRequestParams => ({
+    totpCode: optionalTotpCode(body.totpCode),
+});
+
+export const validateTotpVerifyParams = (
+    body: Record<string, unknown>,
+): IMpcTotpVerifyParams => {
+    const totpCode = optionalTotpCode(body.totpCode);
+
+    if (totpCode == null) {
+        throw validationError('"totpCode" is required.');
+    }
+
+    return { totpCode };
 };
 
 export const validateReshareParams = (
@@ -538,6 +572,62 @@ export const validatePolicyParams = (
         );
     }
 
+    let tokenLimits: IMpcPolicyTokenLimit[] | null = null;
+
+    if (body.tokenLimits != null) {
+        if (!Array.isArray(body.tokenLimits)) {
+            throw validationError('"tokenLimits" must be an array or null.');
+        }
+
+        if (body.tokenLimits.length > 20) {
+            throw validationError(
+                '"tokenLimits" must have at most 20 entries.',
+            );
+        }
+
+        tokenLimits = body.tokenLimits.map((entry) => {
+            if (!isRecord(entry)) {
+                throw validationError('"tokenLimits" entries must be objects.');
+            }
+
+            const decimals = entry.decimals;
+
+            if (
+                typeof decimals !== 'number' ||
+                !Number.isInteger(decimals) ||
+                decimals < 0 ||
+                decimals > 36
+            ) {
+                throw validationError(
+                    '"tokenLimits[].decimals" must be an integer between 0 and 36.',
+                );
+            }
+
+            return {
+                token: requireAddress(entry.token, 'tokenLimits[].token'),
+                symbol: requireString(entry.symbol, 'tokenLimits[].symbol', {
+                    max: 12,
+                }),
+                decimals,
+                maxAmountUnits:
+                    entry.maxAmountUnits == null || entry.maxAmountUnits === ''
+                        ? null
+                        : requireWei(
+                              entry.maxAmountUnits,
+                              'tokenLimits[].maxAmountUnits',
+                          ),
+                requireApprovalAboveUnits:
+                    entry.requireApprovalAboveUnits == null ||
+                    entry.requireApprovalAboveUnits === ''
+                        ? null
+                        : requireWei(
+                              entry.requireApprovalAboveUnits,
+                              'tokenLimits[].requireApprovalAboveUnits',
+                          ),
+            };
+        });
+    }
+
     return {
         allowedChainIds,
         recipientAllowlist,
@@ -548,6 +638,7 @@ export const validatePolicyParams = (
         allowContractCalls: body.allowContractCalls,
         allowMessageSigning: body.allowMessageSigning,
         requireApprovalForMessages: body.requireApprovalForMessages === true,
+        tokenLimits,
     };
 };
 

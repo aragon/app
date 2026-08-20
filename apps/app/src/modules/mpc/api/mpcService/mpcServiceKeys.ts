@@ -13,6 +13,7 @@ import type {
 
 export enum MpcServiceKey {
     SESSION = 'MPC_SESSION',
+    TOTP_SETUP = 'MPC_TOTP_SETUP',
     SYSTEMS = 'MPC_SYSTEMS',
     SYSTEM = 'MPC_SYSTEM',
     MEMBERS = 'MPC_MEMBERS',
@@ -33,6 +34,7 @@ const PREFIX = 'mpc';
 
 export const mpcServiceKeys = {
     session: () => [PREFIX, MpcServiceKey.SESSION],
+    totpSetup: () => [PREFIX, MpcServiceKey.TOTP_SETUP],
     systems: () => [PREFIX, MpcServiceKey.SYSTEMS],
     system: (params: IMpcGetSystemServiceParams) => [
         PREFIX,

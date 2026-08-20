@@ -31,11 +31,13 @@ const alice = {
     id: 'user-1',
     username: 'alice',
     createdAt: '2026-01-01T00:00:00.000Z',
+    totpEnabled: false,
 };
 const bob = {
     id: 'user-2',
     username: 'bob',
     createdAt: '2026-01-01T00:00:00.000Z',
+    totpEnabled: false,
 };
 
 describe('mpcWorkspaces', () => {

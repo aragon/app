@@ -38,6 +38,25 @@ export type IMpcRegisterParams = IMpcLoginParams;
 export type IMpcLoginResponse = IMpcSession;
 export type IMpcSessionResponse = IMpcSession;
 
+// TOTP second factor (authenticator app)
+export interface IMpcTotpSetupResponse {
+    /**
+     * Base32 secret to enter manually in the authenticator app.
+     */
+    secret: string;
+    /**
+     * otpauth:// URI encoding the secret, rendered as a QR code by the client.
+     */
+    otpauthUri: string;
+}
+export interface IMpcTotpVerifyParams {
+    /**
+     * 6-digit code from the authenticator app confirming the enrollment.
+     */
+    totpCode: string;
+}
+export type IMpcTotpVerifyResponse = IMpcUser;
+
 // Systems
 export interface IMpcCreateSystemParams {
     name: string;
@@ -71,6 +90,10 @@ export interface IMpcServerShareParams {
      * Required when purpose is "sign".
      */
     requestId?: string;
+    /**
+     * 6-digit authenticator code, required when the caller has TOTP enabled.
+     */
+    totpCode?: string;
 }
 export interface IMpcServerShareResponse {
     serverShare: IMpcServerSharePayload;
@@ -117,6 +140,12 @@ export interface IMpcCompleteRequestParams {
 }
 export interface IMpcUpdateRequestParams {
     payload: MpcSignRequestPayload;
+}
+export interface IMpcApproveRequestParams {
+    /**
+     * 6-digit authenticator code, required when the approver has TOTP enabled.
+     */
+    totpCode?: string;
 }
 export type IMpcRequestsResponse = IMpcSignRequest[];
 export type IMpcRequestResponse = IMpcSignRequest;

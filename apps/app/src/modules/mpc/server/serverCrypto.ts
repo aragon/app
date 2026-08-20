@@ -3,6 +3,7 @@ import {
     createCipheriv,
     createDecipheriv,
     createHash,
+    createHmac,
     randomBytes,
     scrypt as scryptCallback,
     timingSafeEqual,
@@ -21,6 +22,13 @@ const SCRYPT_SALT_BYTES = 16;
 
 // scrypt parameters (N=16384, r=8, p=1) as documented in the POC spec.
 const SCRYPT_OPTIONS = { N: 16_384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
+
+// TOTP (RFC 6238, Google Authenticator compatible): HMAC-SHA1, 6 digits, 30-second steps.
+const TOTP_SECRET_BYTES = 20;
+const TOTP_STEP_SECONDS = 30;
+const TOTP_DIGITS = 6;
+
+const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
 
 export interface IMpcEncryptedValue {
     /**
@@ -192,6 +200,118 @@ class ServerCrypto {
      */
     generateServerKey = (): string =>
         randomBytes(AES_KEY_BYTES).toString('hex');
+
+    /**
+     * Generates a random TOTP secret encoded in base32 (RFC 4648), the format authenticator apps expect.
+     */
+    generateTotpSecret = (): string =>
+        this.base32Encode(randomBytes(TOTP_SECRET_BYTES));
+
+    /**
+     * Returns the current TOTP step (30-second counter since the Unix epoch).
+     */
+    getTotpStep = (timestampMs = Date.now()): number =>
+        Math.floor(timestampMs / 1000 / TOTP_STEP_SECONDS);
+
+    /**
+     * Computes the 6-digit TOTP code of a base32 secret for a given step (RFC 6238 over HMAC-SHA1).
+     */
+    computeTotp = (secretBase32: string, step: number): string => {
+        const counter = Buffer.alloc(8);
+        counter.writeBigUInt64BE(BigInt(step));
+
+        const digest = createHmac('sha1', this.base32Decode(secretBase32))
+            .update(counter)
+            .digest();
+
+        const offset = digest.at(-1)! & 0x0f;
+        const binary =
+            ((digest[offset] & 0x7f) << 24) |
+            (digest[offset + 1] << 16) |
+            (digest[offset + 2] << 8) |
+            digest[offset + 3];
+
+        return (binary % 10 ** TOTP_DIGITS)
+            .toString()
+            .padStart(TOTP_DIGITS, '0');
+    };
+
+    /**
+     * Verifies a TOTP code against a base32 secret within the given step window (default ±1 step, i.e. 30 seconds
+     * of clock drift). Returns the matched step so callers can persist it as a replay guard, undefined otherwise.
+     */
+    verifyTotp = (
+        secretBase32: string,
+        code: string,
+        options?: { window?: number; timestampMs?: number },
+    ): number | undefined => {
+        const window = options?.window ?? 1;
+        const currentStep = this.getTotpStep(options?.timestampMs);
+        const providedCode = Buffer.from(code);
+
+        for (let offset = -window; offset <= window; offset++) {
+            const step = currentStep + offset;
+            const expectedCode = Buffer.from(
+                this.computeTotp(secretBase32, step),
+            );
+
+            if (
+                providedCode.length === expectedCode.length &&
+                timingSafeEqual(providedCode, expectedCode)
+            ) {
+                return step;
+            }
+        }
+
+        return undefined;
+    };
+
+    private base32Encode = (data: Buffer): string => {
+        let bits = 0;
+        let value = 0;
+        let output = '';
+
+        for (const byte of data) {
+            value = (value << 8) | byte;
+            bits += 8;
+
+            while (bits >= 5) {
+                output += BASE32_ALPHABET[(value >>> (bits - 5)) & 31];
+                bits -= 5;
+            }
+        }
+
+        if (bits > 0) {
+            output += BASE32_ALPHABET[(value << (5 - bits)) & 31];
+        }
+
+        return output;
+    };
+
+    private base32Decode = (encoded: string): Buffer => {
+        const normalized = encoded.toUpperCase().replace(/=+$/, '');
+        let bits = 0;
+        let value = 0;
+        const output: number[] = [];
+
+        for (const char of normalized) {
+            const index = BASE32_ALPHABET.indexOf(char);
+
+            if (index < 0) {
+                throw new Error('Invalid base32 character in TOTP secret.');
+            }
+
+            value = (value << 5) | index;
+            bits += 5;
+
+            if (bits >= 8) {
+                output.push((value >>> (bits - 8)) & 0xff);
+                bits -= 8;
+            }
+        }
+
+        return Buffer.from(output);
+    };
 
     private deriveScrypt = (password: string, salt: Buffer): Promise<Buffer> =>
         new Promise((resolve, reject) => {

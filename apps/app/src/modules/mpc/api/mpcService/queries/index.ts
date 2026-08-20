@@ -6,6 +6,7 @@ export * from './useMpcRequests';
 export * from './useMpcSession';
 export * from './useMpcSystem';
 export * from './useMpcSystems';
+export * from './useMpcTotpSetup';
 export * from './useMpcWorkspace';
 export * from './useMpcWorkspaceMembers';
 export * from './useMpcWorkspacePolicies';

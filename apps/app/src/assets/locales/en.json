@@ -2513,6 +2513,9 @@
         "recipientAllowlist": "Recipient allowlist",
         "anyRecipient": "Any recipient",
         "noRecipient": "No recipient allowed",
+        "tokenLimits": "Token transfers",
+        "tokenLimit": "Up to {{amount}} {{symbol}} per transfer",
+        "tokenApprovalAbove": "approval above {{amount}} {{symbol}}",
         "maxValuePerTx": "Max value per transaction",
         "dailyLimit": "Daily limit (24h)",
         "requireApprovalAbove": "Approval required above",
@@ -3259,6 +3262,10 @@
           "label": "Signing passphrase",
           "helpText": "Decrypts the device share in this browser."
         },
+        "totp": {
+          "label": "Authenticator code",
+          "helpText": "6-digit code from your authenticator app, required to release the server share."
+        },
         "steps": {
           "unlocking": "Unlocking the device share in this browser",
           "preparing": "Preparing the transaction (nonce, gas, fees)",
@@ -3312,6 +3319,10 @@
       "mpcApproveRequestDialog": {
         "title": "Review request",
         "description": "Approve or reject the request. Approvals unlock the release of the server share.",
+        "totp": {
+          "label": "Authenticator code",
+          "helpText": "6-digit code from your authenticator app, required to approve."
+        },
         "actions": {
           "approve": "Approve",
           "reject": "Reject",
@@ -3498,6 +3509,59 @@
         "error": {
           "heading": "Could not load the members",
           "description": "Try again later."
+        }
+      },
+      "mpcTotpEnrollment": {
+        "title": "Set up two-factor authentication",
+        "description": "Scan the QR code with Google Authenticator (or any TOTP app). From now on, signing and approving transactions requires a code from your phone.",
+        "secretLabel": "Or enter the secret manually",
+        "codeLabel": "Enter the 6-digit code",
+        "codeHelpText": "The current code from your authenticator app confirms the setup.",
+        "codeError": "The code is not valid. Check your authenticator app and try again.",
+        "confirm": "Verify and continue"
+      },
+      "mpcDemoPage": {
+        "title": "MPC account demo",
+        "description": "One account, one policy, one transfer: enter an amount, confirm with your authenticator, and the co-signer releases its key share, verifies the signature and broadcasts on Sepolia.",
+        "login": {
+          "title": "Sign in to start the demo",
+          "description": "The demo needs a co-signer account (username and password) with two-factor authentication.",
+          "action": "Sign in"
+        },
+        "noSystem": {
+          "title": "No MPC account yet",
+          "description": "Create an MPC system first: a 2-of-3 threshold key with a device share in this browser.",
+          "action": "Go to workspaces"
+        },
+        "account": {
+          "tag": "MPC",
+          "gas": "ETH (gas)"
+        },
+        "policy": {
+          "title": "Policy",
+          "rule": "Transfers",
+          "ruleValue": "Up to {{amount}} {{symbol}} to {{recipient}}",
+          "approvals": "Second approval",
+          "approvalsValue": "Required above {{amount}} {{symbol}}",
+          "setupHelp": "Apply the demo policy: transfers of up to {{amount}} {{symbol}} to one recipient, larger amounts need a second member approval.",
+          "recipientLabel": "Recipient address",
+          "apply": "Apply demo policy",
+          "notConfigured": "The owner has not configured the demo policy yet."
+        },
+        "transfer": {
+          "title": "Send {{symbol}}",
+          "description": "The recipient is fixed by the policy ({{recipient}}). The co-signer checks the policy before anything is signed.",
+          "amount": "Amount",
+          "action": "Sign transfer"
+        },
+        "request": {
+          "title": "Latest transfer",
+          "createdBy": "Created by {{username}}",
+          "waitingTitle": "Waiting for approval",
+          "waitingDescription": "{{approvals}}/{{required}} approvals collected. Sign in as another member to approve with their authenticator.",
+          "broadcastTitle": "Broadcast on Sepolia",
+          "sign": "Sign with authenticator",
+          "review": "Review and approve"
         }
       }
     },

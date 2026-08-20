@@ -2,6 +2,7 @@ import 'server-only';
 import {
     type Address,
     formatEther,
+    formatUnits,
     type Hex,
     parseTransaction,
     recoverMessageAddress,
@@ -14,6 +15,7 @@ import type {
     IMpcCompleteRequestParams,
     IMpcCreateRequestParams,
     IMpcMember,
+    IMpcPolicy,
     IMpcPolicyDecision,
     IMpcPrepareTransactionResponse,
     IMpcSignRequest,
@@ -26,7 +28,7 @@ import type {
 import { appendActivity } from './mpcActivity';
 import { MpcApiError } from './mpcApiError';
 import { mpcChain } from './mpcChain';
-import { evaluatePolicy } from './mpcPolicy';
+import { decodeTokenTransfer, evaluatePolicy } from './mpcPolicy';
 import {
     getMpcStore,
     type IMpcStoreData,
@@ -65,6 +67,7 @@ const parseTypedData = (typedDataJson: string): TypedDataDefinition =>
  */
 export const buildRequestSummary = (
     payload: MpcSignRequestPayload,
+    policy?: IMpcPolicy,
 ): IMpcSignRequestSummary => {
     if (payload.type === 'transaction') {
         const { transaction } = payload;
@@ -73,9 +76,34 @@ export const buildRequestSummary = (
         const selector = contractCall
             ? (transaction.data!.slice(0, 10) as Hex)
             : undefined;
-        const label = contractCall
+
+        // Decoded ERC-20 transfers get a human summary of the actual payee and token amount (anti blind-signing).
+        const decodedTransfer = decodeTokenTransfer(transaction);
+        const tokenLimit = policy?.tokenLimits?.find(
+            (limit) =>
+                limit.token.toLowerCase() ===
+                decodedTransfer?.token.toLowerCase(),
+        );
+        const tokenTransfer =
+            decodedTransfer != null
+                ? {
+                      ...decodedTransfer,
+                      symbol: tokenLimit?.symbol,
+                      decimals: tokenLimit?.decimals,
+                  }
+                : undefined;
+
+        let label = contractCall
             ? `Call ${shortAddress(transaction.to)} (${selector!}) with ${value}`
             : `Send ${value} to ${shortAddress(transaction.to)}`;
+
+        if (tokenTransfer != null) {
+            const amount =
+                tokenLimit != null
+                    ? `${formatUnits(BigInt(tokenTransfer.amountUnits), tokenLimit.decimals)} ${tokenLimit.symbol}`
+                    : `${tokenTransfer.amountUnits} units of ${shortAddress(tokenTransfer.token)}`;
+            label = `Send ${amount} to ${shortAddress(tokenTransfer.recipient)}`;
+        }
 
         return {
             label,
@@ -84,6 +112,7 @@ export const buildRequestSummary = (
             valueWei: transaction.valueWei,
             selector,
             isContractCall: contractCall,
+            tokenTransfer,
         };
     }
 
@@ -213,7 +242,7 @@ const buildRequest = (
         systemId: system.id,
         type: params.payload.type,
         payload: params.payload,
-        summary: buildRequestSummary(params.payload),
+        summary: buildRequestSummary(params.payload, system.policy),
         status,
         policyDecision,
         approvals: [],

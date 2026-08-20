@@ -44,6 +44,7 @@ import {
     updatePolicy,
     updateSystem,
 } from './mpcSystems';
+import { requireTotp } from './mpcTotp';
 
 /**
  * Route handlers for /api/mpc/systems/** (except sign requests, see mpcRequestHandlers).
@@ -132,6 +133,8 @@ export const handleServerShare = withSystemRole<IMpcSystemRouteParams>(
         const params = validateServerShareParams(
             await readJsonBody(ctx.request),
         );
+        // Second factor before any key material leaves the co-signer (no-op for users without TOTP enrolled).
+        requireTotp(ctx.user.id, params.totpCode);
         const serverShare = releaseServerShare(
             ctx.system.id,
             ctx.user,

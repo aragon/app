@@ -1,7 +1,7 @@
 'use client';
 
 import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
-import { formatEther } from 'viem';
+import { formatEther, formatUnits } from 'viem';
 import type { IMpcPolicy } from '@/modules/mpc/api/mpcService/domain';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
@@ -52,6 +52,40 @@ export const MpcPolicySummary: React.FC<IMpcPolicySummaryProps> = (props) => {
                     </ul>
                 )}
             </DefinitionList.Item>
+            {policy.tokenLimits != null && policy.tokenLimits.length > 0 && (
+                <DefinitionList.Item
+                    term={t('app.mpc.mpcPolicySummary.tokenLimits')}
+                >
+                    <ul className="flex flex-col gap-1 text-sm">
+                        {policy.tokenLimits.map((limit) => (
+                            <li key={limit.token}>
+                                {limit.maxAmountUnits != null
+                                    ? t('app.mpc.mpcPolicySummary.tokenLimit', {
+                                          amount: formatUnits(
+                                              BigInt(limit.maxAmountUnits),
+                                              limit.decimals,
+                                          ),
+                                          symbol: limit.symbol,
+                                      })
+                                    : limit.symbol}
+                                {limit.requireApprovalAboveUnits != null &&
+                                    ` · ${t(
+                                        'app.mpc.mpcPolicySummary.tokenApprovalAbove',
+                                        {
+                                            amount: formatUnits(
+                                                BigInt(
+                                                    limit.requireApprovalAboveUnits,
+                                                ),
+                                                limit.decimals,
+                                            ),
+                                            symbol: limit.symbol,
+                                        },
+                                    )}`}
+                            </li>
+                        ))}
+                    </ul>
+                </DefinitionList.Item>
+            )}
             <DefinitionList.Item
                 term={t('app.mpc.mpcPolicySummary.maxValuePerTx')}
             >

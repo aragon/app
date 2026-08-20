@@ -15,6 +15,8 @@ import type {
     IMpcSimulateResponse,
     IMpcSystemResponse,
     IMpcSystemsResponse,
+    IMpcTotpSetupResponse,
+    IMpcTotpVerifyResponse,
     IMpcWorkspaceMembersResponse,
     IMpcWorkspacePoliciesResponse,
     IMpcWorkspacePolicyResponse,
@@ -57,6 +59,7 @@ import type {
     IMpcServerShareServiceParams,
     IMpcSimulatePolicyFlowServiceParams,
     IMpcSimulateServiceParams,
+    IMpcTotpVerifyServiceParams,
     IMpcUpdatePolicyServiceParams,
     IMpcUpdateRequestServiceParams,
     IMpcUpdateSystemServiceParams,
@@ -85,6 +88,8 @@ class MpcService extends HttpService {
         login: '/auth/login',
         logout: '/auth/logout',
         session: '/auth/session',
+        totpSetup: '/auth/totp/setup',
+        totpVerify: '/auth/totp/verify',
         systems: '/systems',
         system: '/systems/:systemId',
         key: '/systems/:systemId/key',
@@ -145,6 +150,12 @@ class MpcService extends HttpService {
     logout = () => this.call<null>(this.urls.logout, 'POST');
 
     getSession = () => this.call<IMpcSessionResponse>(this.urls.session, 'GET');
+
+    setupTotp = () =>
+        this.call<IMpcTotpSetupResponse>(this.urls.totpSetup, 'POST');
+
+    verifyTotp = (params: IMpcTotpVerifyServiceParams) =>
+        this.call<IMpcTotpVerifyResponse>(this.urls.totpVerify, 'POST', params);
 
     // Systems
     getSystems = () => this.call<IMpcSystemsResponse>(this.urls.systems, 'GET');

@@ -11,6 +11,7 @@ import {
 } from './mpcApiUtils';
 import {
     readJsonBody,
+    validateApproveRequestParams,
     validateCompleteRequestParams,
     validateCreateRequestParams,
     validateUpdateRequestParams,
@@ -24,6 +25,7 @@ import {
     rejectRequest,
     updateRequest,
 } from './mpcSignRequests';
+import { requireTotp } from './mpcTotp';
 
 /**
  * Route handlers for /api/mpc/systems/[systemId]/requests/**.
@@ -80,12 +82,17 @@ export const handleUpdateRequest = withSystemRole<IRequestRouteParams>(
 // POST /api/mpc/systems/[systemId]/requests/[requestId]/approve
 export const handleApproveRequest = withSystemRole<IRequestRouteParams>(
     ['owner', 'approver'],
-    (ctx, params) =>
-        Promise.resolve(
-            jsonOk<IMpcRequestResponse>(
-                approveRequest(ctx.system.id, params.requestId, ctx.user),
-            ),
-        ),
+    async (ctx, params) => {
+        const body = validateApproveRequestParams(
+            await readJsonBody(ctx.request),
+        );
+        // Approvals are the only real barrier of the mock (see README): protect them with the second factor too.
+        requireTotp(ctx.user.id, body.totpCode);
+
+        return jsonOk<IMpcRequestResponse>(
+            approveRequest(ctx.system.id, params.requestId, ctx.user),
+        );
+    },
 );
 
 // POST /api/mpc/systems/[systemId]/requests/[requestId]/reject

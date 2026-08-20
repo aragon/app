@@ -11,6 +11,11 @@ export interface IMpcUser {
      * Creation timestamp (ISO 8601).
      */
     createdAt: string;
+    /**
+     * Whether the user confirmed a TOTP (authenticator app) enrollment. Once enabled, the code is required to
+     * release the server share and to approve sign requests.
+     */
+    totpEnabled: boolean;
 }
 
 export interface IMpcSession {

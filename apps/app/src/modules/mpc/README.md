@@ -35,6 +35,8 @@ and the pages under `apps/app/src/app/mpc`. The feature is gated behind the `mpc
 | Signature verification + Sepolia broadcast (`server/mpcChain.ts`) | Real (viem `recover*Address`, public Sepolia RPC) |
 | **Threshold signing** (`providers/mockShamirProvider.ts`) | **Mocked**: the key is reconstructed in the browser (device share + released server share) and signs with viem, then wiped |
 | Login | Mocked (username / password against the mock co-signer) |
+| TOTP second factor (`server/mpcTotp.ts`, `server/serverCrypto.ts`) | Real RFC 6238 (Google Authenticator compatible): secret encrypted at rest, ±1 step window, one-time step (replay guard), login-style rate limiting. Required on share release / reshare / recover and on approvals once the user enrolled |
+| ERC-20 token rules (`server/mpcPolicy.ts` `tokenLimits`) | Real: `transfer(address,uint256)` calldata is decoded, the allowlist applies to the actual payee and per-token amount / approval thresholds are enforced |
 | Dfns / Dynamic providers | Stubs throwing `NotImplemented` to show the substitution point |
 
 Every mocked piece is labelled `POC` / `mock` in code comments and in the UI (`MpcMockBanner`, tags).
@@ -69,6 +71,45 @@ Every mocked piece is labelled `POC` / `mock` in code comments and in the UI (`M
   reserve their value against the daily limit; abandoned `released` requests can be rejected to free it.
 - The reconstructed key is always checked against `system.address` before a reshare / recovery uploads a new
   share B or an export shows the key (a wrong recovery share can never overwrite a good server share).
+
+## Two-factor authentication (TOTP)
+
+Registration flows into a mandatory enrollment step (`components/mpcTotpEnrollment`): the co-signer generates
+a base32 secret (`POST /auth/totp/setup`), the client renders it as a QR code (`react-qr-code`) plus the
+secret for manual entry, and the first authenticator code activates it (`POST /auth/totp/verify`). Once
+enrolled (`user.totpEnabled`), the code is required to **release the server share** (sign / reshare / recover)
+and to **approve requests** — entered in the sign / approve dialogs through the 6-box `MpcOtpInput`.
+
+Semantics (`server/mpcTotp.ts`): RFC 6238 over HMAC-SHA1, 30s steps, ±1 step drift window; each accepted step
+is persisted (`lastUsedStep`) so a code is single-use — right after enrolling, the next 30s code is the first
+usable one; failures share the login rate limiting (5 wrong codes lock for 15 minutes). The secret is
+AES-256-GCM encrypted at rest with `MPC_POC_SERVER_KEY`. Users that never enrolled pass through (the UI
+enforces enrollment at registration; pre-existing accounts enroll on their next login).
+
+## Demo (`/mpc/demo`)
+
+A guided one-screen, mobile-first flow: one MPC account, one policy
+(“up to 0.5 WETH to one recipient, above 0.1 WETH a second member approves”), one transfer confirmed with a
+real authenticator. The page reuses the module building blocks (system policy with `tokenLimits`, sign /
+approve dialogs) — nothing demo-specific exists on the server.
+
+Runbook:
+
+1. `pnpm --filter @aragon/app dev`, open `/mpc/demo` → register (scan the QR with Google Authenticator).
+2. Create a workspace and an MPC system (the page links to the existing flows), fund the address: Sepolia ETH
+   from a faucet for gas, then wrap some into WETH (`deposit()` on the WETH contract, e.g. via Etherscan).
+3. On `/mpc/demo`, apply the demo policy (owner only): enter the recipient wallet → the system policy gets the
+   recipient allowlist + the WETH token limit. Token address in `constants/mpcConstants.ts`
+   (`MPC_DEMO_TOKEN`, canonical Sepolia WETH).
+4. Happy path: enter an amount ≤ 0.1 WETH → Sign transfer → policy passes → passphrase + authenticator code →
+   broadcast → Etherscan link (and the incoming transfer on the recipient wallet).
+5. Two members: add a second member (approver) to the system; a transfer above 0.1 WETH stays
+   “Waiting for approval” → log in as the approver (their own authenticator!) → Review and approve + code →
+   log back in as the requester → Sign with authenticator. One on-chain signature in the end — approvals and
+   the second factor live off-chain, the address stays a plain EOA.
+6. Negatives: amount > 0.5 WETH or an edited recipient → `403 policy_denied`, nothing is created; wrong code →
+   the share is not released; the same code twice → rejected (replay guard); 5 wrong codes → 15 min lockout.
+7. Reset: delete `apps/app/.mpc-poc/store.json` (and the browser IndexedDB for the device shares).
 
 ## Running locally
 
@@ -116,15 +157,16 @@ disabled. Every mutation requires the session cookie
 | Method | Route | Who |
 | --- | --- | --- |
 | POST | `/auth/register`, `/auth/login`, `/auth/logout` · GET `/auth/session` | anonymous / session |
+| POST | `/auth/totp/setup` (new pending secret + otpauth URI) · `/auth/totp/verify` `{totpCode}` (activates it) | session |
 | GET, POST | `/systems` | session |
 | GET, PATCH, DELETE | `/systems/[systemId]` | member / owner |
 | POST | `/systems/[systemId]/key` (register key after the ceremony), `/key/acknowledge-recovery` | creator / owner |
-| POST | `/systems/[systemId]/server-share` `{purpose: sign\|reshare\|recover, requestId?}` (`export` rejected) | requester or owner (sign), owner (others) |
+| POST | `/systems/[systemId]/server-share` `{purpose: sign\|reshare\|recover, requestId?, totpCode?}` (`export` rejected; the 6-digit code is mandatory once the caller enrolled TOTP) | requester or owner (sign), owner (others) |
 | POST | `/systems/[systemId]/reshare` `{serverShare, mode: reshare\|recover}` | owner |
 | GET, POST | `/systems/[systemId]/members` · DELETE `/members/[userId]` | member / owner |
 | PUT | `/systems/[systemId]/policy` | owner |
 | GET, POST | `/systems/[systemId]/requests` | member / owner + approver |
-| POST | `/systems/[systemId]/requests/[requestId]/approve` · `/reject` · `/prepare` · `/complete` | see `server/mpcRequestHandlers.ts` |
+| POST | `/systems/[systemId]/requests/[requestId]/approve` `{totpCode?}` (mandatory once the approver enrolled TOTP) · `/reject` · `/prepare` · `/complete` | see `server/mpcRequestHandlers.ts` |
 | GET | `/systems/[systemId]/activity`, `/balance` · POST `/simulate` | member |
 | POST | `/systems/[systemId]/export-authorization` | owner |
 | GET | `/workspaces` · `/workspaces/[workspaceId]` | session (owner, or member of a workspace system) |
@@ -182,9 +224,10 @@ server). Client: `api/mpcService` (`mpcService`, react-query hooks `useMpc*`).
 ## Client structure
 
 - `pages/`: `mpcWorkspacePage` (`/mpc`: default workspace, tabs Systems | Policies), `mpcPolicyEditorPage`
-  (`/mpc/policies/new`, `/mpc/policies/[policyId]`), `mpcLoginPage` (`/mpc/login`), `mpcCreatePage`
-  (`/mpc/create` wizard), `mpcSystemPage` (`/mpc/[systemId]`: header, share status, tabs Requests | Policy
-  (system policy + workspace policies) | Members | Activity | Settings).
+  (`/mpc/policies/new`, `/mpc/policies/[policyId]`), `mpcLoginPage` (`/mpc/login`, includes the TOTP
+  enrollment step), `mpcCreatePage` (`/mpc/create` wizard), `mpcSystemPage` (`/mpc/[systemId]`: header, share
+  status, tabs Requests | Policy (system policy + workspace policies) | Members | Activity | Settings),
+  `mpcDemoPage` (`/mpc/demo`: the guided demo above).
 - `dialogs/`: `mpcNewRequestDialog`, `mpcSignRequestDialog`, `mpcApproveRequestDialog`, `mpcReshareDialog`,
   `mpcRecoverDialog`, `mpcExportKeyDialog`, `mpcAddMemberDialog`, `mpcEditPolicyDialog`
   (registered in `constants/mpcDialogsDefinitions.ts` → `providersDialogs.ts`).
