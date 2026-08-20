@@ -16,14 +16,12 @@ describe('socialHandleUtils', () => {
             expect(socialHandleUtils.isEmail('alice@example.com')).toBe(true);
         });
 
-        it.each([
-            'not-an-email',
-            'a@b',
-            'a b@c.com',
-            '',
-        ])('rejects %p', (value) => {
-            expect(socialHandleUtils.isEmail(value)).toBe(false);
-        });
+        it.each(['not-an-email', 'a@b', 'a b@c.com', ''])(
+            'rejects %p',
+            (value) => {
+                expect(socialHandleUtils.isEmail(value)).toBe(false);
+            },
+        );
     });
 
     describe('isGithubHandle', () => {
@@ -31,15 +29,12 @@ describe('socialHandleUtils', () => {
             expect(socialHandleUtils.isGithubHandle('my-user')).toBe(true);
         });
 
-        it.each([
-            'my-user.name',
-            '-user',
-            'user-',
-            'user/repo',
-            '',
-        ])('rejects %p', (value) => {
-            expect(socialHandleUtils.isGithubHandle(value)).toBe(false);
-        });
+        it.each(['my-user.name', '-user', 'user-', 'user/repo', ''])(
+            'rejects %p',
+            (value) => {
+                expect(socialHandleUtils.isGithubHandle(value)).toBe(false);
+            },
+        );
     });
 
     describe('isTwitterHandle', () => {
@@ -48,14 +43,12 @@ describe('socialHandleUtils', () => {
             expect(socialHandleUtils.isTwitterHandle('@vitalik')).toBe(true);
         });
 
-        it.each([
-            'a'.repeat(16),
-            'foo bar',
-            'foo.bar',
-            '@',
-        ])('rejects %p', (value) => {
-            expect(socialHandleUtils.isTwitterHandle(value)).toBe(false);
-        });
+        it.each(['a'.repeat(16), 'foo bar', 'foo.bar', '@'])(
+            'rejects %p',
+            (value) => {
+                expect(socialHandleUtils.isTwitterHandle(value)).toBe(false);
+            },
+        );
     });
 
     describe('isTelegramHandle', () => {
@@ -64,14 +57,12 @@ describe('socialHandleUtils', () => {
             expect(socialHandleUtils.isTelegramHandle('@durov')).toBe(true);
         });
 
-        it.each([
-            'abc',
-            'a'.repeat(33),
-            'foo.bar',
-            'foo-bar',
-        ])('rejects %p', (value) => {
-            expect(socialHandleUtils.isTelegramHandle(value)).toBe(false);
-        });
+        it.each(['abc', 'a'.repeat(33), 'foo.bar', 'foo-bar'])(
+            'rejects %p',
+            (value) => {
+                expect(socialHandleUtils.isTelegramHandle(value)).toBe(false);
+            },
+        );
     });
 
     describe('isDiscordHandle', () => {

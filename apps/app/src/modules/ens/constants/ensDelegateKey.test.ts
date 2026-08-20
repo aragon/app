@@ -18,20 +18,19 @@ describe('NETWORK_EIP3770_SHORTNAME', () => {
         { network: Network.HEMI_MAINNET, expected: 'hemi' },
         { network: Network.KATANA_MAINNET, expected: 'katana' },
         { network: Network.MONAD_MAINNET, expected: 'monad' },
-    ])('maps mainnet $network to canonical EIP-3770 shortname "$expected"', ({
-        network,
-        expected,
-    }) => {
-        expect(NETWORK_EIP3770_SHORTNAME[network]).toBe(expected);
-    });
+    ])(
+        'maps mainnet $network to canonical EIP-3770 shortname "$expected"',
+        ({ network, expected }) => {
+            expect(NETWORK_EIP3770_SHORTNAME[network]).toBe(expected);
+        },
+    );
 
-    it.each([
-        { network: Network.ETHEREUM_SEPOLIA },
-    ])('maps testnet $network to the generic "test" namespace', ({
-        network,
-    }) => {
-        expect(NETWORK_EIP3770_SHORTNAME[network]).toBe('test');
-    });
+    it.each([{ network: Network.ETHEREUM_SEPOLIA }])(
+        'maps testnet $network to the generic "test" namespace',
+        ({ network }) => {
+            expect(NETWORK_EIP3770_SHORTNAME[network]).toBe('test');
+        },
+    );
 });
 
 describe('buildEnsDelegateKey', () => {
@@ -72,16 +71,16 @@ describe('buildEnsDelegateKey', () => {
         { network: Network.BASE_MAINNET, prefix: 'base' },
         { network: Network.ARBITRUM_MAINNET, prefix: 'arb1' },
         { network: Network.OPTIMISM_MAINNET, prefix: 'oeth' },
-    ])('builds the key with the network shortname for $network', ({
-        network,
-        prefix,
-    }) => {
-        const key = buildEnsDelegateKey({
-            network,
-            tokenAddress: '0x0000000000000000000000000000000000000001',
-        });
-        expect(key).toBe(
-            `${prefix}.0x0000000000000000000000000000000000000001.delegate`,
-        );
-    });
+    ])(
+        'builds the key with the network shortname for $network',
+        ({ network, prefix }) => {
+            const key = buildEnsDelegateKey({
+                network,
+                tokenAddress: '0x0000000000000000000000000000000000000001',
+            });
+            expect(key).toBe(
+                `${prefix}.0x0000000000000000000000000000000000000001.delegate`,
+            );
+        },
+    );
 });

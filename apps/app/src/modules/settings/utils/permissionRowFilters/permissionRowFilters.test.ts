@@ -434,43 +434,42 @@ describe('filterPermissionRows', () => {
             showSubpluginPermissions: true,
             expectedIndexes: [0, 1, 2, 3],
         },
-    ])('applies only the two visible controls ($showDaoPermissions, $showSubpluginPermissions)', ({
-        showDaoPermissions,
-        showSubpluginPermissions,
-        expectedIndexes,
-    }) => {
-        const rows = [
-            buildRow({ whereAddress: daoAddress }),
-            buildRow({
-                whoAddress: daoAddress,
-                whereAddress: targetAddress,
-            }),
-            buildRow({
-                who: subpluginWhere,
-                whoAddress: subpluginAddress,
-                whereAddress: daoAddress,
-            }),
-            buildRow({
-                who: {
-                    address: daoAddress,
-                    label: 'DAO-managed subplugin process',
-                    layer: 'processInternal',
-                },
-                whoAddress: daoAddress,
-                where: subpluginWhere,
-                whereAddress: subpluginAddress,
-            }),
-        ];
+    ])(
+        'applies only the two visible controls ($showDaoPermissions, $showSubpluginPermissions)',
+        ({ showDaoPermissions, showSubpluginPermissions, expectedIndexes }) => {
+            const rows = [
+                buildRow({ whereAddress: daoAddress }),
+                buildRow({
+                    whoAddress: daoAddress,
+                    whereAddress: targetAddress,
+                }),
+                buildRow({
+                    who: subpluginWhere,
+                    whoAddress: subpluginAddress,
+                    whereAddress: daoAddress,
+                }),
+                buildRow({
+                    who: {
+                        address: daoAddress,
+                        label: 'DAO-managed subplugin process',
+                        layer: 'processInternal',
+                    },
+                    whoAddress: daoAddress,
+                    where: subpluginWhere,
+                    whereAddress: subpluginAddress,
+                }),
+            ];
 
-        const result = filterPermissionRows(rows, {
-            activeAccountAddress: daoAddress,
-            daoPlugins: [],
-            showDaoPermissions,
-            showSubpluginPermissions,
-        });
+            const result = filterPermissionRows(rows, {
+                activeAccountAddress: daoAddress,
+                daoPlugins: [],
+                showDaoPermissions,
+                showSubpluginPermissions,
+            });
 
-        expect(result).toEqual(expectedIndexes.map((index) => rows[index]));
-    });
+            expect(result).toEqual(expectedIndexes.map((index) => rows[index]));
+        },
+    );
 });
 
 describe('getPermissionRowToggleAvailability', () => {

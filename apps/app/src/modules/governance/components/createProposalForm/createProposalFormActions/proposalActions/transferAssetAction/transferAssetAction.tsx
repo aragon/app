@@ -155,7 +155,9 @@ export const TransferAssetAction: React.FC<ITransferAssetActionProps> = (
         ? receiver?.address
         : zeroAddress;
 
-    const weiAmount = parseUnits(amount ?? '0', tokenDecimals);
+    // Fall back on empty string too: viem >= 2.55.13 throws InvalidDecimalNumberError on ''
+    // (e.g. when the user clears the amount field).
+    const weiAmount = parseUnits(amount || '0', tokenDecimals);
 
     // Initialize asset field for transferActionLocked case
     useEffect(() => {

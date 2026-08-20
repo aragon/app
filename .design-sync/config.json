@@ -3,7 +3,7 @@
     "shape": "package",
     "pkg": "@aragon/gov-ui-kit",
     "globalName": "GovUiKit",
-    "buildCmd": "corepack pnpm --workspace-root run design-sync:build-css",
+    "buildCmd": "pnpm --workspace-root run design-sync:build-css",
     "readmeHeader": ".design-sync/conventions.md",
     "extraEntries": [
         "../../../../../.design-sync/app-entry.ts"
