@@ -34,10 +34,11 @@ describe('proxySafe utils', () => {
         params: Promise.resolve({ chainId, path }),
     });
 
-    const createTestRequest = (search = '') =>
+    const createTestRequest = (search = '', method = 'GET', body?: unknown) =>
         generateNextRequest({
-            method: 'GET',
+            method,
             nextUrl: { search } as NextURL,
+            json: jest.fn().mockResolvedValue(body),
         });
 
     describe('constructor', () => {
@@ -87,6 +88,84 @@ describe('proxySafe utils', () => {
                 }),
             );
             expect(nextResponseJsonSpy).toHaveBeenCalledWith(parsedResponse);
+        });
+
+        it('forwards an uncached proposal POST body only to the supported Safe endpoint', async () => {
+            const testClass = new ProxySafeUtils();
+            const body = {
+                safeTxHash: `0x${'1'.repeat(64)}`,
+                senderSignature: '0xsignature',
+            };
+            fetchSpy.mockResolvedValue(
+                generateResponse({
+                    status: 201,
+                    json: jest.fn(() => Promise.resolve({})),
+                }),
+            );
+
+            await testClass.request(
+                createTestRequest('', 'POST', body),
+                createTestOptions('1', [
+                    'v1',
+                    'safes',
+                    `0x${'a'.repeat(40)}`,
+                    'multisig-transactions',
+                ]),
+            );
+
+            expect(fetchSpy).toHaveBeenCalledWith(
+                `https://api.safe.global/tx-service/eth/api/v1/safes/0x${'a'.repeat(40)}/multisig-transactions/`,
+                expect.objectContaining({
+                    method: 'POST',
+                    body: JSON.stringify(body),
+                    cache: 'no-store',
+                    credentials: 'omit',
+                    headers: expect.objectContaining({
+                        Authorization: 'Bearer test-safe-key',
+                        'Content-Type': 'application/json',
+                    }) as unknown,
+                }),
+            );
+        });
+
+        it('rejects a POST to an unrelated transaction-service endpoint', async () => {
+            const testClass = new ProxySafeUtils();
+
+            await testClass.request(
+                createTestRequest('', 'POST', {}),
+                createTestOptions('1', ['v1', 'delegates']),
+            );
+
+            expect(fetchSpy).not.toHaveBeenCalled();
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    code: SafeServiceErrorCode.UPSTREAM_ERROR,
+                }),
+                expect.objectContaining({ status: 400 }),
+            );
+        });
+
+        it('preserves a successful empty POST response', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({
+                    status: 201,
+                    text: jest.fn().mockResolvedValue(''),
+                }),
+            );
+
+            const response = await testClass.request(
+                createTestRequest('', 'POST', { signature: '0xsignature' }),
+                createTestOptions('1', [
+                    'v1',
+                    'multisig-transactions',
+                    `0x${'1'.repeat(64)}`,
+                    'confirmations',
+                ]),
+            );
+
+            expect(response.status).toEqual(201);
+            expect(nextResponseJsonSpy).not.toHaveBeenCalled();
         });
 
         it('returns a typed unsupported-chain response for a chain without a transaction service', async () => {

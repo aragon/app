@@ -31,7 +31,12 @@ export interface ISafeMultisigTransaction {
     /**
      * Call type: 0 for `CALL`, 1 for `DELEGATECALL`.
      */
-    operation: number;
+    operation: 0 | 1;
+    safeTxGas: string;
+    baseGas: string;
+    gasPrice: string;
+    gasToken: string;
+    refundReceiver: string;
     /**
      * Owner confirmations collected so far.
      */
@@ -71,6 +76,11 @@ export const isSafeMultisigTransaction = (
     typeof value.value === 'string' &&
     (typeof value.data === 'string' || value.data === null) &&
     (value.operation === 0 || value.operation === 1) &&
+    typeof value.safeTxGas === 'string' &&
+    typeof value.baseGas === 'string' &&
+    typeof value.gasPrice === 'string' &&
+    typeof value.gasToken === 'string' &&
+    typeof value.refundReceiver === 'string' &&
     Array.isArray(value.confirmations) &&
     value.confirmations.every(isSafeConfirmation) &&
     typeof value.confirmationsRequired === 'number' &&

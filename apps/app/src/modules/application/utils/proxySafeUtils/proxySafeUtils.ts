@@ -36,6 +36,9 @@ interface ISafeErrorResponseParams {
     retryAfter?: number;
 }
 
+const safeAddressPattern = /^0x[a-fA-F0-9]{40}$/;
+const safeTransactionHashPattern = /^0x[a-fA-F0-9]{64}$/;
+
 export class ProxySafeUtils {
     constructor() {
         assertServerSafeConfig();
@@ -86,10 +89,21 @@ export class ProxySafeUtils {
         };
 
         try {
-            const result = await fetch(
-                upstreamUrl,
-                this.buildRequestOptions(apiKey),
+            const requestOptions = await this.buildRequestOptions(
+                request,
+                apiKey,
+                path,
             );
+
+            if (requestOptions == null) {
+                return this.errorResponse({
+                    code: SafeServiceErrorCode.UPSTREAM_ERROR,
+                    error: 'Invalid Safe transaction service request',
+                    status: 400,
+                });
+            }
+
+            const result = await fetch(upstreamUrl, requestOptions);
 
             if (result.status === 429) {
                 // Quota exhaustion is expected under load: answer with a typed degraded response
@@ -143,10 +157,17 @@ export class ProxySafeUtils {
                 });
             }
 
+            if (
+                request.method === 'POST' &&
+                [201, 204, 205].includes(result.status)
+            ) {
+                return new NextResponse(null, { status: result.status });
+            }
+
             const parsedResult =
                 await responseUtils.safeJsonParseForResponse(result);
 
-            if (parsedResult == null) {
+            if (parsedResult == null && result.status !== 204) {
                 return this.errorResponse({
                     code: SafeServiceErrorCode.INVALID_RESPONSE,
                     error: 'Invalid JSON response from the Safe transaction service',
@@ -154,7 +175,13 @@ export class ProxySafeUtils {
                 });
             }
 
-            return NextResponse.json(parsedResult);
+            if (parsedResult == null) {
+                return new NextResponse(null, { status: result.status });
+            }
+
+            return result.status === 200
+                ? NextResponse.json(parsedResult)
+                : NextResponse.json(parsedResult, { status: result.status });
         } catch (fetchError) {
             monitoringUtils.logError(fetchError, {
                 context: { errorType: 'fetch_error', ...monitoringContext },
@@ -218,14 +245,76 @@ export class ProxySafeUtils {
      * Builds the upstream request options. No request headers are forwarded: the Safe service
      * needs none of them, and forwarding cookies would leak user data to a third party.
      */
-    private buildRequestOptions = (apiKey: string): RequestInit => ({
-        method: 'GET',
-        headers: {
-            Accept: 'application/json',
-            Authorization: `Bearer ${apiKey}`,
-        },
-        credentials: 'omit',
-    });
+    private buildRequestOptions = async (
+        request: NextRequest,
+        apiKey: string,
+        path: string[],
+    ): Promise<RequestInit | undefined> => {
+        const method = request.method;
+
+        if (method !== 'GET' && method !== 'POST') {
+            return undefined;
+        }
+
+        if (method === 'POST' && !this.isSupportedPostPath(path)) {
+            return undefined;
+        }
+
+        let body: string | undefined;
+
+        if (method === 'POST') {
+            try {
+                const parsedBody: unknown = await request.json();
+
+                if (
+                    parsedBody == null ||
+                    typeof parsedBody !== 'object' ||
+                    Array.isArray(parsedBody)
+                ) {
+                    return undefined;
+                }
+
+                body = JSON.stringify(parsedBody);
+            } catch {
+                return undefined;
+            }
+        }
+
+        return {
+            method,
+            body,
+            cache: 'no-store',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${apiKey}`,
+                ...(method === 'POST'
+                    ? { 'Content-Type': 'application/json' }
+                    : {}),
+            },
+            credentials: 'omit',
+        };
+    };
+
+    /**
+     * POST is intentionally narrower than GET. The proxy API key must not become an authenticated
+     * open relay for unrelated transaction-service mutations.
+     */
+    private isSupportedPostPath = (path: string[]): boolean => {
+        const isProposalPath =
+            path.length === 4 &&
+            path[0] === 'v1' &&
+            path[1] === 'safes' &&
+            safeAddressPattern.test(path[2]) &&
+            path[3] === 'multisig-transactions';
+        const isConfirmationPath =
+            path.length === 4 &&
+            path[0] === 'v1' &&
+            path[1] === 'multisig-transactions' &&
+            safeTransactionHashPattern.test(path[2]) &&
+            path[3] === 'confirmations';
+
+        return isProposalPath || isConfirmationPath;
+    };
 
     private errorResponse = ({
         code,

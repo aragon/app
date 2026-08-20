@@ -1,4 +1,5 @@
 export * from './domain';
+export * from './mutations';
 export * from './queries';
 export { safeService } from './safeService';
 export type * from './safeService.api';

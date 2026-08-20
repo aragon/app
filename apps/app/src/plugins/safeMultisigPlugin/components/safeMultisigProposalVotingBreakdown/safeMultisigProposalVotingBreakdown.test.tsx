@@ -127,10 +127,36 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
 
         expect(
             screen.getByText(
-                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.nonePending',
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.nonePending.veto',
             ),
         ).toBeInTheDocument();
         expect(screen.getByText(state.safeInfo.nonce)).toBeInTheDocument();
         expect(screen.getByText('1.3.0')).toBeInTheDocument();
+    });
+
+    it('renders the indexed settled result with the live Safe threshold', () => {
+        useSafeMultisigBodyStateSpy.mockReturnValue({
+            ...state,
+            safeInfo: generateSafeInfo({
+                threshold: 1,
+                owners: [signer, `0x${'2'.repeat(40)}`],
+            }),
+            pendingReport: undefined,
+            settledResultType: SppProposalType.APPROVAL,
+            signers: [],
+            hasConnectedWalletSigned: false,
+            approvalsAmount: 1,
+            minApprovals: 1,
+            membersCount: 2,
+        });
+
+        render(createTestComponent({ isVeto: false }));
+
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.report.approval.executed',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByText('of 2 members')).toBeInTheDocument();
     });
 });

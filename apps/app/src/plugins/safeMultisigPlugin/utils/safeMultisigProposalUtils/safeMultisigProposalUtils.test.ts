@@ -7,6 +7,21 @@ import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from './safeMultisigProposalUtils';
 
 describe('safeMultisigProposal utils', () => {
+    describe('supportsEip1271Signatures', () => {
+        it.each([
+            { version: '1.4.1', supported: true },
+            { version: '1.4.1+L2', supported: true },
+            { version: '1.5.0', supported: true },
+            { version: '1.3.0', supported: false },
+            { version: '1.1.1', supported: false },
+            { version: null, supported: false },
+        ])('returns $supported for Safe $version', ({ version, supported }) => {
+            expect(
+                safeMultisigProposalUtils.supportsEip1271Signatures(version),
+            ).toEqual(supported);
+        });
+    });
+
     describe('getTransactionState', () => {
         it.each([
             {

@@ -3135,6 +3135,14 @@
         }
       },
       "safeMultisig": {
+        "safeMultisigGovernanceSettings": {
+          "approvalRule": "Approval rule",
+          "owners": "Owners",
+          "threshold": "{{min}} of {{max}} owners",
+          "unknownVersion": "Unknown",
+          "version": "Safe version",
+          "vetoRule": "Veto rule"
+        },
         "safeMultisigProposalVotingBreakdown": {
           "details": {
             "safeNonce": "Safe nonce",
@@ -3148,15 +3156,21 @@
           "partialError": "The pending transaction state could not be refreshed.",
           "report": {
             "approval": {
+              "executed": "Approved and executed",
               "pending": "Approval pending — {{count}} of {{required}}",
               "superseded": "Approval superseded — {{count}} of {{required}}"
             },
             "none": {
+              "executed": "No result executed",
               "pending": "No-result report pending — {{count}} of {{required}}",
               "superseded": "No-result report superseded — {{count}} of {{required}}"
             },
-            "nonePending": "No report pending",
+            "nonePending": {
+              "approval": "No approval submitted yet",
+              "veto": "No veto submitted yet"
+            },
             "veto": {
+              "executed": "Vetoed and executed",
               "pending": "Veto pending — {{count}} of {{required}}",
               "superseded": "Veto superseded — {{count}} of {{required}}"
             }
@@ -3170,6 +3184,20 @@
             "superseded": "Superseded",
             "youSigned": "You have signed"
           }
+        },
+        "safeMultisigSubmitVote": {
+          "approve": "Approve proposal",
+          "approved": "Approved",
+          "error": "The Safe action could not be completed. Try again.",
+          "executeApproval": "Execute approval",
+          "executeVeto": "Execute veto",
+          "gaslessHelp": "Signing is gasless. Gas is only required when the Safe is ready to execute.",
+          "ownerRequired": "Connect an owner wallet for this Safe to continue.",
+          "unknownVersion": "unknown",
+          "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
+          "veto": "Veto proposal",
+          "vetoed": "Vetoed",
+          "waitingForOwners": "Your signature is submitted. Waiting for the remaining Safe owners."
         }
       },
       "spp": {

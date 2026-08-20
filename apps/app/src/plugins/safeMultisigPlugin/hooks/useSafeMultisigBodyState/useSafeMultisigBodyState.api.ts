@@ -1,5 +1,9 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
-import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
+import type {
+    ISppProposal,
+    ISppStage,
+    SppProposalType,
+} from '@/plugins/sppPlugin/types';
 import type { Network } from '@/shared/api/daoService';
 import type {
     ISafeInfo,
@@ -69,6 +73,11 @@ export interface IUseSafeMultisigBodyStateReturn {
      * Report queued for this proposal and stage, live or superseded.
      */
     pendingReport?: ISafeMultisigBodyReport;
+    /**
+     * Indexed SPP result for this body. Once present, it is the only settled-state trigger and the
+     * pending Safe queue is no longer consulted.
+     */
+    settledResultType?: SppProposalType;
     /**
      * Owners that have confirmed the queued report.
      */

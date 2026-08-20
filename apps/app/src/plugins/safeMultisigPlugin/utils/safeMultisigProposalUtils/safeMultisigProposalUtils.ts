@@ -66,6 +66,27 @@ const transactionStateToProposalStatus: Record<
  * same. Deriving on every read is what makes the rule recoverable — no transition is tracked.
  */
 class SafeMultisigProposalUtils {
+    supportsEip1271Signatures = (version: string | null): boolean => {
+        if (version == null) {
+            return false;
+        }
+
+        const [major = 0, minor = 0, patch = 0] = version
+            .split('+')[0]
+            .split('.')
+            .map(Number);
+
+        if (![major, minor, patch].every(Number.isInteger)) {
+            return false;
+        }
+
+        return (
+            major > 1 ||
+            (major === 1 && minor > 4) ||
+            (major === 1 && minor === 4 && patch >= 1)
+        );
+    };
+
     getTransactionState = (
         params: ISafeTransactionLivenessParams,
     ): SafeTransactionState => {

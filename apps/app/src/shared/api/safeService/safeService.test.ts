@@ -77,6 +77,62 @@ describe('safe service', () => {
         expect(result).toEqual(balances);
     });
 
+    it('proposes a signed transaction through the Safe proxy', async () => {
+        const body = {
+            safeTransactionData: {
+                to: '0xTargetAddress',
+                value: '0',
+                data: '0x1234',
+                operation: 0 as const,
+                safeTxGas: '0',
+                baseGas: '0',
+                gasPrice: '0',
+                gasToken: '0xZeroAddress',
+                refundReceiver: '0xZeroAddress',
+                nonce: 3,
+            },
+            safeTxHash: '0xSafeTxHash',
+            senderAddress: '0xSenderAddress',
+            senderSignature: '0xSignature',
+            origin: 'Aragon',
+        };
+
+        await safeService.proposeSafeTransaction({ urlParams, body });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            safeService['basePaths'].proposeSafeTransaction,
+            {
+                urlParams: { chainId: '1', address: '0xSafeAddress' },
+                body,
+            },
+            { method: 'POST' },
+        );
+    });
+
+    it('confirms a transaction through the Safe proxy', async () => {
+        const body = { signature: '0xSignature' };
+
+        await safeService.confirmSafeTransaction({
+            urlParams: {
+                network: Network.ETHEREUM_MAINNET,
+                safeTxHash: '0xSafeTxHash',
+            },
+            body,
+        });
+
+        expect(requestSpy).toHaveBeenCalledWith(
+            safeService['basePaths'].confirmSafeTransaction,
+            {
+                urlParams: {
+                    chainId: '1',
+                    safeTxHash: '0xSafeTxHash',
+                },
+                body,
+            },
+            { method: 'POST' },
+        );
+    });
+
     it('rejects a successful response that does not match the Safe contract', async () => {
         requestSpy.mockResolvedValue({ address: '0xSafeAddress' });
 

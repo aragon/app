@@ -9,9 +9,11 @@ import {
     SafeServiceErrorCode,
 } from './domain';
 import type {
+    IConfirmSafeTransactionParams,
     IGetSafeBalancesParams,
     IGetSafeInfoParams,
     IGetSafePendingTransactionsParams,
+    IProposeSafeTransactionParams,
     ISafeUrlParams,
 } from './safeService.api';
 import { SafeServiceError } from './safeServiceError';
@@ -30,6 +32,10 @@ class SafeService extends HttpService {
         safePendingTransactions:
             '/:chainId/v2/safes/:address/multisig-transactions',
         safeBalances: '/:chainId/v1/safes/:address/balances',
+        proposeSafeTransaction:
+            '/:chainId/v1/safes/:address/multisig-transactions',
+        confirmSafeTransaction:
+            '/:chainId/v1/multisig-transactions/:safeTxHash/confirmations',
     };
 
     constructor() {
@@ -110,6 +116,33 @@ class SafeService extends HttpService {
 
         return response;
     };
+
+    proposeSafeTransaction = async ({
+        urlParams,
+        body,
+    }: IProposeSafeTransactionParams) =>
+        this.request<unknown>(
+            this.basePaths.proposeSafeTransaction,
+            { urlParams: this.buildUrlParams(urlParams), body },
+            { method: 'POST' },
+        );
+
+    confirmSafeTransaction = async ({
+        urlParams,
+        body,
+    }: IConfirmSafeTransactionParams) =>
+        this.request<unknown>(
+            this.basePaths.confirmSafeTransaction,
+            {
+                urlParams: {
+                    chainId:
+                        networkDefinitions[urlParams.network].id.toString(),
+                    safeTxHash: urlParams.safeTxHash,
+                },
+                body,
+            },
+            { method: 'POST' },
+        );
 
     private normalizeSafeInfo = (value: unknown): ISafeInfo | undefined => {
         if (value == null || typeof value !== 'object') {

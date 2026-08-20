@@ -4,6 +4,7 @@ import { keepPreviousData } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
     useSafeInfo,
     useSafePendingTransactions,
@@ -34,6 +35,12 @@ export const useSafeMultisigBodyState = (
     const { address: connectedAddress } = useWalletAccount();
 
     const isNetworkSupported = safeShortNameFromNetwork(network) != null;
+    const bodyResult = sppStageUtils.getBodyResult(
+        proposal,
+        address,
+        stage.stageIndex,
+    );
+    const isSettled = bodyResult != null;
 
     // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
     // transaction that can still execute; otherwise the default focus refetch is enough.
@@ -63,7 +70,7 @@ export const useSafeMultisigBodyState = (
     } = useSafePendingTransactions(
         { urlParams, queryParams: { currentNonce: currentNonce ?? '0' } },
         {
-            enabled: isNetworkSupported && currentNonce != null,
+            enabled: isNetworkSupported && currentNonce != null && !isSettled,
             // The queue is keyed by the nonce it was read against, so keeping the previous page
             // is what lets a transaction that dies while on screen be re-derived as superseded.
             placeholderData: keepPreviousData,
@@ -92,7 +99,7 @@ export const useSafeMultisigBodyState = (
     const { stageIndex } = stage;
 
     const pendingReport = useMemo(() => {
-        if (currentNonce == null) {
+        if (currentNonce == null || isSettled) {
             return undefined;
         }
 
@@ -133,7 +140,14 @@ export const useSafeMultisigBodyState = (
             reports.find(({ state }) => state === SafeTransactionState.LIVE) ??
             reports[0]
         );
-    }, [transactions, currentNonce, pluginAddress, proposalIndex, stageIndex]);
+    }, [
+        transactions,
+        currentNonce,
+        pluginAddress,
+        proposalIndex,
+        stageIndex,
+        isSettled,
+    ]);
 
     const signers =
         pendingReport?.transaction.confirmations.map(({ owner }) => owner) ??
@@ -141,9 +155,10 @@ export const useSafeMultisigBodyState = (
 
     return {
         safeInfo,
-        isLoading: isSafeInfoLoading || isTransactionsLoading,
-        isError: isSafeInfoError || isTransactionsError,
+        isLoading: isSafeInfoLoading || (!isSettled && isTransactionsLoading),
+        isError: isSafeInfoError || (!isSettled && isTransactionsError),
         pendingReport,
+        settledResultType: bodyResult?.resultType,
         signers,
         hasConnectedWalletSigned:
             pendingReport != null &&
@@ -151,7 +166,9 @@ export const useSafeMultisigBodyState = (
                 transaction: pendingReport.transaction,
                 address: connectedAddress,
             }),
-        approvalsAmount: pendingReport?.transaction.confirmations.length ?? 0,
+        approvalsAmount: isSettled
+            ? (safeInfo?.threshold ?? 0)
+            : (pendingReport?.transaction.confirmations.length ?? 0),
         minApprovals:
             pendingReport?.transaction.confirmationsRequired ??
             safeInfo?.threshold ??

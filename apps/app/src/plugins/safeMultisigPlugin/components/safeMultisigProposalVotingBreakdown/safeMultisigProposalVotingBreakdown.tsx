@@ -47,6 +47,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
     const {
         safeInfo,
         pendingReport,
+        settledResultType,
         signers,
         hasConnectedWalletSigned,
         approvalsAmount,
@@ -80,15 +81,21 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         pendingReport?.state === SafeTransactionState.SUPERSEDED;
     const reportStateKey = isSuperseded ? 'superseded' : 'pending';
     const reportLabel =
-        pendingReport == null
-            ? t(`${translationKey}.report.nonePending`)
-            : t(
-                  `${translationKey}.report.${resultTypeKey[pendingReport.report.resultType]}.${reportStateKey}`,
-                  {
-                      count: approvalsAmount,
-                      required: minApprovals,
-                  },
-              );
+        settledResultType != null
+            ? t(
+                  `${translationKey}.report.${resultTypeKey[settledResultType]}.executed`,
+              )
+            : pendingReport == null
+              ? t(
+                    `${translationKey}.report.nonePending.${isVeto ? 'veto' : 'approval'}`,
+                )
+              : t(
+                    `${translationKey}.report.${resultTypeKey[pendingReport.report.resultType]}.${reportStateKey}`,
+                    {
+                        count: approvalsAmount,
+                        required: minApprovals,
+                    },
+                );
 
     return (
         <ProposalVoting.BreakdownMultisig
@@ -131,7 +138,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                     </div>
                 </div>
 
-                <dl className="grid grid-cols-2 gap-3 border-neutral-100 border-t pt-4 md:grid-cols-3">
+                <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-neutral-100 border-t pt-4 md:grid-cols-3">
                     <div className="flex min-w-0 flex-col gap-1">
                         <dt className="text-neutral-500 text-sm">
                             {t(`${translationKey}.details.safeNonce`)}

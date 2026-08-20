@@ -11,6 +11,11 @@ export interface ISafeConfirmation {
      */
     signature: string;
     /**
+     * Transaction-service signature classification. Contract signatures carry a dynamic part and
+     * must be identified before protocol-kit assembles execution bytes.
+     */
+    signatureType?: string;
+    /**
      * ISO date the confirmation was submitted.
      */
     submissionDate: string;
@@ -22,4 +27,6 @@ export const isSafeConfirmation = (
     isRecord(value) &&
     typeof value.owner === 'string' &&
     typeof value.signature === 'string' &&
+    (typeof value.signatureType === 'string' ||
+        value.signatureType === undefined) &&
     typeof value.submissionDate === 'string';
