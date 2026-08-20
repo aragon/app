@@ -16,8 +16,13 @@ class FetchInterceptorUtils {
     ): Promise<Response> => {
         const [url, request] = args;
 
-        const mock = backendApiMocks.find((mock) =>
-            mock.url.test(url as string),
+        // Endpoints sharing a URL across methods (e.g. list and create) need the method to be part
+        // of the match, otherwise the first mock of that URL answers every request.
+        const method = request?.method ?? 'GET';
+        const mock = backendApiMocks.find(
+            (mock) =>
+                mock.url.test(url as string) &&
+                (mock.method == null || mock.method === method),
         );
 
         if (mock == null) {

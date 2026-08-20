@@ -10,6 +10,10 @@ export interface IBackendApiMock {
      */
     type: 'merge' | 'replace';
     /**
+     * HTTP method to mock the response for. The mock applies to every method when not set.
+     */
+    method?: string;
+    /**
      * Mocked response for the given URL.
      */
     data: object;
