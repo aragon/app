@@ -97,7 +97,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             membersCount={membersCount}
             minApprovals={minApprovals}
         >
-            <div className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-4 shadow-neutral-sm md:gap-5 md:px-6 md:py-5">
+            <div className="flex flex-col gap-4 md:gap-5">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <p
                         className={classNames(
