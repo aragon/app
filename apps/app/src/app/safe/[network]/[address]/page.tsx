@@ -21,7 +21,7 @@ const SafePage = async (props: ISafePageProps) => {
         notFound();
     }
 
-    return <SafeAccountPage network={network} address={address} />;
+    return <SafeAccountPage address={address} network={network} />;
 };
 
 export default SafePage;
