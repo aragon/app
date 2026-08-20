@@ -1,6 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { externalPluginId } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogSelect';
+import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';

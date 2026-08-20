@@ -1,1 +1,1 @@
-export { safeBodyPluginId, safeBodyPollInterval } from './safeMultisigPlugin';
+export { safeBodyPluginId, safeBodyPollInterval, externalPluginId } from './safeMultisigPlugin';

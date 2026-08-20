@@ -13,3 +13,10 @@ export const safeBodyPluginId = 'external-safe';
  * does not poll at all — it refreshes on window focus.
  */
 export const safeBodyPollInterval = 15_000;
+
+/**
+ * Plugin id a generic (non-Safe) external body resolves to. Kept beside `safeBodyPluginId` because
+ * both live in the same string namespace and the resolver switches between them; a plain constant
+ * living in a client component would drag react-hook-form into server code.
+ */
+export const externalPluginId = 'external';
