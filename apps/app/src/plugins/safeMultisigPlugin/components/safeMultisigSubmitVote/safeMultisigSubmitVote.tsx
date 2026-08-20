@@ -271,7 +271,11 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         ),
                 );
 
-                if (hasConnectedWalletSigned) {
+                const hasEnoughCollectedSignatures =
+                    collectedSignatures.length >=
+                    transaction.confirmationsRequired;
+
+                if (hasEnoughCollectedSignatures || hasConnectedWalletSigned) {
                     signatures = collectedSignatures;
                 } else {
                     const signature = await protocolKit.signHash(safeTxHash);
