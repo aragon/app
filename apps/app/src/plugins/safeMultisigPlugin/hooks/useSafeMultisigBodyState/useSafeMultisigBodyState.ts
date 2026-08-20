@@ -1,0 +1,160 @@
+'use client';
+
+import { keepPreviousData } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import {
+    useSafeInfo,
+    useSafePendingTransactions,
+} from '@/shared/api/safeService';
+import { safeBodyPollInterval } from '../../constants';
+import { SafeTransactionState } from '../../types';
+import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
+import { safeMultisigTransactionUtils } from '../../utils/safeMultisigTransactionUtils';
+import type {
+    ISafeMultisigBodyReport,
+    IUseSafeMultisigBodyStateParams,
+    IUseSafeMultisigBodyStateReturn,
+} from './useSafeMultisigBodyState.api';
+
+/**
+ * Composes the Safe reads and the pure liveness and correlation rules into the view model of a
+ * Safe body card.
+ *
+ * The reads are wallet-independent: the card is informative to an observer with no wallet
+ * connected, and polling never restarts on connect or account change. Only "you have signed"
+ * depends on the connected account.
+ */
+export const useSafeMultisigBodyState = (
+    params: IUseSafeMultisigBodyStateParams,
+): IUseSafeMultisigBodyStateReturn => {
+    const { network, address, proposal, stage } = params;
+
+    const { address: connectedAddress } = useWalletAccount();
+
+    const isNetworkSupported = safeShortNameFromNetwork(network) != null;
+
+    // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
+    // transaction that can still execute; otherwise the default focus refetch is enough.
+    const [isQueueLive, setIsQueueLive] = useState(false);
+    const refetchInterval = isQueueLive ? safeBodyPollInterval : false;
+
+    const urlParams = useMemo(() => ({ network, address }), [network, address]);
+
+    const {
+        data: safeInfo,
+        isLoading: isSafeInfoLoading,
+        isError: isSafeInfoError,
+    } = useSafeInfo({ urlParams }, { enabled: isNetworkSupported, refetchInterval });
+
+    const currentNonce = safeInfo?.nonce;
+
+    const {
+        data: pendingTransactions,
+        isLoading: isTransactionsLoading,
+        isError: isTransactionsError,
+    } = useSafePendingTransactions(
+        { urlParams, queryParams: { currentNonce: currentNonce ?? '0' } },
+        {
+            enabled: isNetworkSupported && currentNonce != null,
+            // The queue is keyed by the nonce it was read against, so keeping the previous page
+            // is what lets a transaction that dies while on screen be re-derived as superseded.
+            placeholderData: keepPreviousData,
+            refetchInterval,
+        },
+    );
+
+    const transactions = useMemo(
+        () => pendingTransactions?.results ?? [],
+        [pendingTransactions],
+    );
+
+    const liveTransactionCount =
+        currentNonce == null
+            ? 0
+            : safeMultisigProposalUtils.filterLiveTransactions({
+                  transactions,
+                  currentNonce,
+              }).length;
+
+    useEffect(() => {
+        setIsQueueLive(liveTransactionCount > 0);
+    }, [liveTransactionCount]);
+
+    const { pluginAddress, proposalIndex } = proposal;
+    const { stageIndex } = stage;
+
+    const pendingReport = useMemo(() => {
+        if (currentNonce == null) {
+            return undefined;
+        }
+
+        const reports: ISafeMultisigBodyReport[] = [];
+
+        for (const transaction of transactions) {
+            const report =
+                safeMultisigTransactionUtils.findProposalResultReport({
+                    transaction,
+                    pluginAddress,
+                    proposalId: proposalIndex,
+                    stageId: stageIndex,
+                });
+
+            if (report != null) {
+                reports.push({
+                    transaction,
+                    report,
+                    state: safeMultisigProposalUtils.getTransactionState({
+                        transaction,
+                        currentNonce,
+                    }),
+                    status: safeMultisigProposalUtils.getTransactionStatus({
+                        transaction,
+                        currentNonce,
+                    }),
+                    hasNonceCompetition:
+                        safeMultisigProposalUtils.hasNonceCompetition({
+                            transactions,
+                            transaction,
+                        }),
+                });
+            }
+        }
+
+        // A superseded report is only worth showing when nothing executable is left.
+        return (
+            reports.find(({ state }) => state === SafeTransactionState.LIVE) ??
+            reports[0]
+        );
+    }, [
+        transactions,
+        currentNonce,
+        pluginAddress,
+        proposalIndex,
+        stageIndex,
+    ]);
+
+    const signers =
+        pendingReport?.transaction.confirmations.map(({ owner }) => owner) ?? [];
+
+    return {
+        safeInfo,
+        isLoading: isSafeInfoLoading || isTransactionsLoading,
+        isError: isSafeInfoError || isTransactionsError,
+        pendingReport,
+        signers,
+        hasConnectedWalletSigned:
+            pendingReport != null &&
+            safeMultisigProposalUtils.hasAddressConfirmed({
+                transaction: pendingReport.transaction,
+                address: connectedAddress,
+            }),
+        approvalsAmount: pendingReport?.transaction.confirmations.length ?? 0,
+        minApprovals:
+            pendingReport?.transaction.confirmationsRequired ??
+            safeInfo?.threshold ??
+            0,
+        membersCount: safeInfo?.owners.length ?? 0,
+    };
+};

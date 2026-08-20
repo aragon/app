@@ -60,6 +60,9 @@ export const SppVotingTerminalBodyContent: React.FC<
     // vetoing bodies, so derive it from this body rather than the stage.
     const isVeto = sppStageUtils.isVetoBody(plugin);
 
+    const { network } = daoUtils.parseDaoId(daoId);
+    const bodyPluginId = sppStageUtils.getBodyPluginId(plugin, network);
+
     const pluginSettings = isExternalBody
         ? {}
         : (subProposal?.settings ?? plugin.settings);
@@ -74,7 +77,7 @@ export const SppVotingTerminalBodyContent: React.FC<
             pluginAddress: plugin.address,
         },
         slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,
-        pluginId: plugin.interfaceType ?? 'external',
+        pluginId: bodyPluginId,
         fallback: useSppGovernanceSettingsDefault,
     });
 
@@ -83,7 +86,6 @@ export const SppVotingTerminalBodyContent: React.FC<
         address: plugin.address,
         settings,
     });
-    const { network } = daoUtils.parseDaoId(daoId);
 
     const voteListParams = {
         queryParams: {
@@ -116,9 +118,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                         canVote={canVote}
                         Fallback={SppVotingTerminalBodyBreakdownDefault}
                         isVeto={isVeto}
-                        pluginId={
-                            isExternalBody ? 'external' : plugin.interfaceType
-                        }
+                        pluginId={bodyPluginId}
                         proposal={isExternalBody ? proposal : subProposal}
                         slotId={
                             GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_BREAKDOWN
@@ -128,11 +128,6 @@ export const SppVotingTerminalBodyContent: React.FC<
                         <div className="flex flex-col gap-y-4 pt-6 md:pt-8">
                             {canVote && (
                                 <PluginSingleComponent
-                                    brandId={
-                                        isExternalBody
-                                            ? plugin.brandId
-                                            : undefined
-                                    }
                                     daoId={daoId}
                                     externalAddress={
                                         isExternalBody
@@ -141,11 +136,7 @@ export const SppVotingTerminalBodyContent: React.FC<
                                     }
                                     Fallback={SppVotingTerminalBodyVoteDefault}
                                     isVeto={isVeto}
-                                    pluginId={
-                                        isExternalBody
-                                            ? 'external'
-                                            : plugin.interfaceType
-                                    }
+                                    pluginId={bodyPluginId}
                                     proposal={
                                         isExternalBody
                                             ? proposal

@@ -1,16 +1,47 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { externalPluginId } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogSelect';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import type { Network } from '@/shared/api/daoService';
+import {
+    type PluginId,
+    pluginRegistryUtils,
+} from '@/shared/utils/pluginRegistryUtils';
 import {
     type ISppProposal,
     type ISppStage,
     type ISppStagePlugin,
     type ISppSubProposal,
     SppProposalType,
+    VotingBodyBrandIdentity,
 } from '../../types';
 
 class SppStageUtils {
+    /**
+     * Resolves the plugin id a stage body is rendered through. Installed bodies use their own
+     * interface type; external bodies fall back to the generic external id unless they are a Safe
+     * on a chain the Safe transaction service covers, which has its own slot implementations.
+     * Networks without a transaction service therefore keep rendering through the external
+     * fallbacks with no extra branching.
+     */
+    getBodyPluginId = (
+        plugin: ISppStagePlugin,
+        network?: Network,
+    ): PluginId => {
+        if (plugin.interfaceType != null) {
+            return plugin.interfaceType;
+        }
+
+        const isSupportedSafe =
+            plugin.brandId === VotingBodyBrandIdentity.SAFE &&
+            network != null &&
+            safeShortNameFromNetwork(network) != null;
+
+        return isSupportedSafe ? safeBodyPluginId : externalPluginId;
+    };
+
     getStageStatus = (
         proposal: ISppProposal,
         stage: ISppStage,
@@ -268,13 +299,13 @@ class SppStageUtils {
         plugin: ISppStagePlugin,
         stageIndex: number,
     ): boolean => {
-        const { address, interfaceType } = plugin;
+        const { address } = plugin;
         const getSucceededStatus = pluginRegistryUtils.getSlotFunction<
             ISppSubProposal,
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-            pluginId: interfaceType ?? 'external',
+            pluginId: this.getBodyPluginId(plugin),
         });
 
         const subProposal = this.getBodySubProposal(
