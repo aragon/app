@@ -1,8 +1,8 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { externalPluginId } from '@/modules/createDao/dialogs/setupBodyDialog/setupBodyDialogSelect';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import type { Network } from '@/shared/api/daoService';
 import {
@@ -305,7 +305,7 @@ class SppStageUtils {
             boolean
         >({
             slotId: GovernanceSlotId.GOVERNANCE_PROCESS_PROPOSAL_SUCCEEDED,
-            pluginId: this.getBodyPluginId(plugin),
+            pluginId: this.getBodyPluginId(plugin, proposal.network),
         });
 
         const subProposal = this.getBodySubProposal(

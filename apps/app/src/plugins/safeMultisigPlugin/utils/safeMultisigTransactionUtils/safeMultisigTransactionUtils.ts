@@ -65,11 +65,12 @@ const multiSendHeaderLength = 2 + 40 + 64 + 64;
 // Batches nest in theory but never deeply in practice; the cap bounds a hostile payload.
 const maxMultiSendDepth = 4;
 
-const resultTypes = [
-    SppProposalType.NONE,
-    SppProposalType.APPROVAL,
-    SppProposalType.VETO,
-];
+const isSppProposalType = (value: number): value is SppProposalType =>
+    [
+        SppProposalType.NONE,
+        SppProposalType.APPROVAL,
+        SppProposalType.VETO,
+    ].includes(value as SppProposalType);
 
 /**
  * Pure encoding and correlation of SPP result reports carried by Safe transactions.
@@ -89,7 +90,12 @@ class SafeMultisigTransactionUtils {
         return encodeFunctionData({
             abi: sppReportProposalResultAbi,
             functionName: 'reportProposalResult',
-            args: [this.normalizeProposalId(proposalId), stageId, resultType, false],
+            args: [
+                this.normalizeProposalId(proposalId),
+                stageId,
+                resultType,
+                false,
+            ],
         });
     };
 
@@ -137,7 +143,7 @@ class SafeMultisigTransactionUtils {
             typeof stageId !== 'number' ||
             typeof resultType !== 'number' ||
             typeof tryAdvance !== 'boolean' ||
-            !resultTypes.includes(resultType)
+            !isSppProposalType(resultType)
         ) {
             return undefined;
         }
@@ -209,7 +215,9 @@ class SafeMultisigTransactionUtils {
                 16,
             );
             const to = `0x${packed.slice(cursor + 2, cursor + 42)}`;
-            const value = BigInt(`0x${packed.slice(cursor + 42, cursor + 106)}`);
+            const value = BigInt(
+                `0x${packed.slice(cursor + 42, cursor + 106)}`,
+            );
             const dataLength = Number(
                 BigInt(`0x${packed.slice(cursor + 106, cursor + 170)}`),
             );

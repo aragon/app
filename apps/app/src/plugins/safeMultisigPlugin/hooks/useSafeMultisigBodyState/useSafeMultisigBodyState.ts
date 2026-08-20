@@ -1,9 +1,9 @@
 'use client';
 
 import { keepPreviousData } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
-import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import {
     useSafeInfo,
     useSafePendingTransactions,
@@ -38,7 +38,10 @@ export const useSafeMultisigBodyState = (
     // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
     // transaction that can still execute; otherwise the default focus refetch is enough.
     const [isQueueLive, setIsQueueLive] = useState(false);
-    const refetchInterval = isQueueLive ? safeBodyPollInterval : false;
+    const refetchInterval = useCallback(
+        () => (isQueueLive ? safeBodyPollInterval : false),
+        [isQueueLive],
+    );
 
     const urlParams = useMemo(() => ({ network, address }), [network, address]);
 
@@ -46,7 +49,10 @@ export const useSafeMultisigBodyState = (
         data: safeInfo,
         isLoading: isSafeInfoLoading,
         isError: isSafeInfoError,
-    } = useSafeInfo({ urlParams }, { enabled: isNetworkSupported, refetchInterval });
+    } = useSafeInfo(
+        { urlParams },
+        { enabled: isNetworkSupported, refetchInterval },
+    );
 
     const currentNonce = safeInfo?.nonce;
 
@@ -127,16 +133,11 @@ export const useSafeMultisigBodyState = (
             reports.find(({ state }) => state === SafeTransactionState.LIVE) ??
             reports[0]
         );
-    }, [
-        transactions,
-        currentNonce,
-        pluginAddress,
-        proposalIndex,
-        stageIndex,
-    ]);
+    }, [transactions, currentNonce, pluginAddress, proposalIndex, stageIndex]);
 
     const signers =
-        pendingReport?.transaction.confirmations.map(({ owner }) => owner) ?? [];
+        pendingReport?.transaction.confirmations.map(({ owner }) => owner) ??
+        [];
 
     return {
         safeInfo,

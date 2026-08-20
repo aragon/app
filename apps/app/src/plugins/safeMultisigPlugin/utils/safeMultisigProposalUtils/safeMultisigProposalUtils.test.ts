@@ -16,6 +16,7 @@ describe('safeMultisigProposal utils', () => {
                 confirmations: 6,
                 currentNonce: '2289',
                 state: SafeTransactionState.SUPERSEDED,
+                isSuccessful: null,
             },
             {
                 label: 'a transaction on the current nonce',
@@ -24,6 +25,7 @@ describe('safeMultisigProposal utils', () => {
                 confirmations: 1,
                 currentNonce: '2289',
                 state: SafeTransactionState.LIVE,
+                isSuccessful: null,
             },
             {
                 label: 'a transaction queued above the current nonce',
@@ -32,6 +34,7 @@ describe('safeMultisigProposal utils', () => {
                 confirmations: 0,
                 currentNonce: '2289',
                 state: SafeTransactionState.LIVE,
+                isSuccessful: null,
             },
             {
                 label: 'a transaction that reverted onchain but consumed its nonce',
@@ -40,13 +43,21 @@ describe('safeMultisigProposal utils', () => {
                 confirmations: 5,
                 currentNonce: '48',
                 state: SafeTransactionState.EXECUTED,
+                isSuccessful: false,
             },
         ])('classifies $label as $state', (testCase) => {
-            const { nonce, isExecuted, confirmations, currentNonce, state } =
-                testCase;
+            const {
+                nonce,
+                isExecuted,
+                isSuccessful,
+                confirmations,
+                currentNonce,
+                state,
+            } = testCase;
             const transaction = generateSafeMultisigTransaction({
                 nonce,
                 isExecuted,
+                isSuccessful,
                 confirmations: Array.from({ length: confirmations }, () =>
                     generateSafeConfirmation(),
                 ),
@@ -66,22 +77,23 @@ describe('safeMultisigProposal utils', () => {
             { nonce: '10', isExecuted: false, status: ProposalStatus.ACTIVE },
             { nonce: '9', isExecuted: false, status: ProposalStatus.EXPIRED },
             { nonce: '9', isExecuted: true, status: ProposalStatus.EXECUTED },
-        ])(
-            'maps a transaction at nonce $nonce to $status',
-            ({ nonce, isExecuted, status }) => {
-                const transaction = generateSafeMultisigTransaction({
-                    nonce,
-                    isExecuted,
-                });
+        ])('maps a transaction at nonce $nonce to $status', ({
+            nonce,
+            isExecuted,
+            status,
+        }) => {
+            const transaction = generateSafeMultisigTransaction({
+                nonce,
+                isExecuted,
+            });
 
-                expect(
-                    safeMultisigProposalUtils.getTransactionStatus({
-                        transaction,
-                        currentNonce: '10',
-                    }),
-                ).toEqual(status);
-            },
-        );
+            expect(
+                safeMultisigProposalUtils.getTransactionStatus({
+                    transaction,
+                    currentNonce: '10',
+                }),
+            ).toEqual(status);
+        });
     });
 
     describe('filterLiveTransactions', () => {
@@ -166,6 +178,7 @@ describe('safeMultisigProposal utils', () => {
                 nonce: '47',
                 safeTxHash: '0xreverted',
                 isExecuted: true,
+                isSuccessful: false,
             });
             const sibling = generateSafeMultisigTransaction({
                 nonce: '47',
@@ -228,20 +241,21 @@ describe('safeMultisigProposal utils', () => {
             { confirmations: 1, confirmationsRequired: 2, reached: false },
             { confirmations: 2, confirmationsRequired: 2, reached: true },
             { confirmations: 6, confirmationsRequired: 6, reached: true },
-        ])(
-            'returns $reached for $confirmations of $confirmationsRequired confirmations',
-            ({ confirmations, confirmationsRequired, reached }) => {
-                const transaction = generateSafeMultisigTransaction({
-                    confirmationsRequired,
-                    confirmations: Array.from({ length: confirmations }, () =>
-                        generateSafeConfirmation(),
-                    ),
-                });
+        ])('returns $reached for $confirmations of $confirmationsRequired confirmations', ({
+            confirmations,
+            confirmationsRequired,
+            reached,
+        }) => {
+            const transaction = generateSafeMultisigTransaction({
+                confirmationsRequired,
+                confirmations: Array.from({ length: confirmations }, () =>
+                    generateSafeConfirmation(),
+                ),
+            });
 
-                expect(
-                    safeMultisigProposalUtils.isThresholdReached(transaction),
-                ).toEqual(reached);
-            },
-        );
+            expect(
+                safeMultisigProposalUtils.isThresholdReached(transaction),
+            ).toEqual(reached);
+        });
     });
 });

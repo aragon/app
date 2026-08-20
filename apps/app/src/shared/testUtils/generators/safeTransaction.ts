@@ -14,6 +14,7 @@ export const generateSafeTransaction = (
     confirmationsRequired: 1,
     signatures: null,
     isExecuted: false,
+    isSuccessful: null,
     submissionDate: '2026-01-01T00:00:00Z',
     ...transaction,
 });

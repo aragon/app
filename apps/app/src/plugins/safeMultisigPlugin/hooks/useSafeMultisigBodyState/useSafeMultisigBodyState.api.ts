@@ -1,8 +1,14 @@
 import type { ProposalStatus } from '@aragon/gov-ui-kit';
 import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 import type { Network } from '@/shared/api/daoService';
-import type { ISafeInfo, ISafeMultisigTransaction } from '@/shared/api/safeService';
-import type { ISafeProposalResultReport, SafeTransactionState } from '../../types';
+import type {
+    ISafeInfo,
+    ISafeMultisigTransaction,
+} from '@/shared/api/safeService';
+import type {
+    ISafeProposalResultReport,
+    SafeTransactionState,
+} from '../../types';
 
 export interface IUseSafeMultisigBodyStateParams {
     /**

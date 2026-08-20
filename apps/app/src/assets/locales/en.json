@@ -3134,6 +3134,44 @@
           "entity": "Votes"
         }
       },
+      "safeMultisig": {
+        "safeMultisigProposalVotingBreakdown": {
+          "details": {
+            "safeNonce": "Safe nonce",
+            "transactionNonce": "Transaction nonce",
+            "unavailable": "Not available",
+            "unknown": "Unknown",
+            "version": "Safe version"
+          },
+          "error": "Safe state could not be loaded. Try again later.",
+          "loading": "Loading Safe state…",
+          "partialError": "The pending transaction state could not be refreshed.",
+          "report": {
+            "approval": {
+              "pending": "Approval pending — {{count}} of {{required}}",
+              "superseded": "Approval superseded — {{count}} of {{required}}"
+            },
+            "none": {
+              "pending": "No-result report pending — {{count}} of {{required}}",
+              "superseded": "No-result report superseded — {{count}} of {{required}}"
+            },
+            "nonePending": "No report pending",
+            "veto": {
+              "pending": "Veto pending — {{count}} of {{required}}",
+              "superseded": "Veto superseded — {{count}} of {{required}}"
+            }
+          },
+          "signers": {
+            "empty": "No owner has signed this report yet.",
+            "title": "Signers ({{count}})"
+          },
+          "tag": {
+            "competition": "Competing transaction",
+            "superseded": "Superseded",
+            "youSigned": "You have signed"
+          }
+        }
+      },
       "spp": {
         "advanceStageDialog": {
           "button": {

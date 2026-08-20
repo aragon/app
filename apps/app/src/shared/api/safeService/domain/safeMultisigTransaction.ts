@@ -50,6 +50,11 @@ export interface ISafeMultisigTransaction {
      */
     isExecuted: boolean;
     /**
+     * Whether execution succeeded, or null while the transaction has not executed. A failed
+     * execution still consumes the nonce.
+     */
+    isSuccessful: boolean | null;
+    /**
      * ISO date the transaction was submitted.
      */
     submissionDate: string;
@@ -73,4 +78,5 @@ export const isSafeMultisigTransaction = (
     value.confirmationsRequired > 0 &&
     (typeof value.signatures === 'string' || value.signatures === null) &&
     typeof value.isExecuted === 'boolean' &&
+    (typeof value.isSuccessful === 'boolean' || value.isSuccessful === null) &&
     typeof value.submissionDate === 'string';
