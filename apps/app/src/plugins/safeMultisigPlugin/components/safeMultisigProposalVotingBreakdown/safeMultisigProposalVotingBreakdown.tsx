@@ -104,7 +104,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
             membersCount={membersCount}
             minApprovals={minApprovals}
         >
-            <div className="flex flex-col gap-4 md:gap-5">
+            <div className="mt-4 flex flex-col gap-4 md:gap-5">
                 <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <p
                         className={classNames(
