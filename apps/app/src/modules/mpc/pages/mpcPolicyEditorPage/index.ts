@@ -1,0 +1,1 @@
+export { MpcPolicyEditorPage } from './mpcPolicyEditorPage';

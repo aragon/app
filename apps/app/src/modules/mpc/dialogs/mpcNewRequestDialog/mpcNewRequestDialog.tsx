@@ -9,14 +9,16 @@ import {
     invariant,
     Radio,
     RadioGroup,
+    Switch,
     TextArea,
 } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { type Address, type Hex, isHex, parseEther } from 'viem';
+import { type Address, formatEther, type Hex, isHex, parseEther } from 'viem';
 import {
     useMpcCreateRequest,
     useMpcSimulate,
+    useMpcUpdateRequest,
 } from '@/modules/mpc/api/mpcService';
 import type {
     IMpcSignRequest,
@@ -40,7 +42,11 @@ export interface IMpcNewRequestDialogParams {
      */
     system: IMpcSystem;
     /**
-     * Callback called after the request has been created.
+     * Existing (editable) request to modify instead of creating a new one.
+     */
+    request?: IMpcSignRequest;
+    /**
+     * Callback called after the request has been created (or modified).
      */
     onCreated?: (request: IMpcSignRequest) => void;
 }
@@ -55,7 +61,34 @@ interface IMpcNewRequestFormData {
     data: string;
     message: string;
     typedDataJson: string;
+    editable: boolean;
 }
+
+/**
+ * Form values of an existing request (edit mode).
+ */
+const requestToFormData = (
+    request: IMpcSignRequest,
+): IMpcNewRequestFormData => {
+    const { payload } = request;
+
+    return {
+        type: payload.type,
+        to: payload.type === 'transaction' ? payload.transaction.to : '',
+        valueEth:
+            payload.type === 'transaction'
+                ? formatEther(BigInt(payload.transaction.valueWei))
+                : '',
+        data:
+            payload.type === 'transaction'
+                ? (payload.transaction.data ?? '')
+                : '',
+        message: payload.type === 'message' ? payload.message.message : '',
+        typedDataJson:
+            payload.type === 'typedData' ? payload.typedData.typedDataJson : '',
+        editable: request.editable === true,
+    };
+};
 
 const requestTypes: MpcSignRequestType[] = [
     'transaction',
@@ -136,7 +169,8 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
         location.params != null,
         'MpcNewRequestDialog: required parameters must be set.',
     );
-    const { system, onCreated } = location.params;
+    const { system, request: editedRequest, onCreated } = location.params;
+    const isEditMode = editedRequest != null;
 
     const { t } = useTranslations();
     const { close } = useDialogContext();
@@ -149,15 +183,26 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
     const { control, handleSubmit, getValues, trigger } =
         useForm<IMpcNewRequestFormData>({
             mode: 'onTouched',
-            defaultValues: {
-                type: 'transaction',
-                to: '',
-                valueEth: '',
-                data: '',
-                message: '',
-                typedDataJson: '',
-            },
+            defaultValues:
+                editedRequest != null
+                    ? requestToFormData(editedRequest)
+                    : {
+                          type: 'transaction',
+                          to: '',
+                          valueEth: '',
+                          data: '',
+                          message: '',
+                          typedDataJson: '',
+                          editable: false,
+                      },
         });
+    const editableField = useFormField<IMpcNewRequestFormData, 'editable'>(
+        'editable',
+        {
+            control,
+            label: t('app.mpc.mpcNewRequestDialog.editable.label'),
+        },
+    );
 
     const typeField = useFormField<IMpcNewRequestFormData, 'type'>('type', {
         control,
@@ -234,6 +279,12 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
             onCreated?.(request);
         },
     });
+    const updateRequest = useMpcUpdateRequest({
+        onSuccess: (request) => {
+            setCreatedRequest(request);
+            onCreated?.(request);
+        },
+    });
 
     const handleSimulate = async () => {
         const isValid = await trigger(['to', 'valueEth', 'data']);
@@ -263,15 +314,29 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
     );
 
     const onSubmit = handleSubmit((values) =>
-        createRequest.mutate({
-            urlParams: { systemId: system.id },
-            body: { payload: buildPayload(values) },
-        }),
+        editedRequest != null
+            ? updateRequest.mutate({
+                  urlParams: {
+                      systemId: system.id,
+                      requestId: editedRequest.id,
+                  },
+                  body: { payload: buildPayload(values) },
+              })
+            : createRequest.mutate({
+                  urlParams: { systemId: system.id },
+                  body: {
+                      payload: buildPayload(values),
+                      editable: values.editable,
+                  },
+              }),
     );
+    const submitMutation =
+        editedRequest != null ? updateRequest : createRequest;
 
     const handleBack = () => {
         setPreview(undefined);
         createRequest.reset();
+        updateRequest.reset();
     };
 
     if (createdRequest != null) {
@@ -279,7 +344,11 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
             <>
                 <Dialog.Header
                     onClose={handleClose}
-                    title={t('app.mpc.mpcNewRequestDialog.created.title')}
+                    title={t(
+                        isEditMode
+                            ? 'app.mpc.mpcNewRequestDialog.updated.title'
+                            : 'app.mpc.mpcNewRequestDialog.created.title',
+                    )}
                 />
                 <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                     <AlertCard
@@ -335,24 +404,39 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
                                   : 'success'
                         }
                     >
-                        {t(
-                            `app.mpc.mpcNewRequestDialog.preview.status.${preview.status}.description`,
+                        <p>
+                            {t(
+                                `app.mpc.mpcNewRequestDialog.preview.status.${preview.status}.description`,
+                            )}
+                        </p>
+                        {preview.policyDecision.reasons.length > 0 && (
+                            <ul className="mt-2 list-disc pl-5">
+                                {preview.policyDecision.reasons.map(
+                                    (reason) => (
+                                        <li key={reason}>{reason}</li>
+                                    ),
+                                )}
+                            </ul>
                         )}
                     </AlertCard>
                     <MpcRequestSummary request={preview} />
-                    <MpcErrorAlert error={createRequest.error} />
+                    <MpcErrorAlert error={submitMutation.error} />
                 </Dialog.Content>
                 <Dialog.Footer
                     primaryAction={{
-                        label: t('app.mpc.mpcNewRequestDialog.actions.submit'),
+                        label: t(
+                            isEditMode
+                                ? 'app.mpc.mpcNewRequestDialog.actions.update'
+                                : 'app.mpc.mpcNewRequestDialog.actions.submit',
+                        ),
                         onClick: onSubmit,
-                        isLoading: createRequest.isPending,
+                        isLoading: submitMutation.isPending,
                         disabled: isDenied,
                     }}
                     secondaryAction={{
                         label: t('app.mpc.mpcNewRequestDialog.actions.back'),
                         onClick: handleBack,
-                        disabled: createRequest.isPending,
+                        disabled: submitMutation.isPending,
                     }}
                 />
             </>
@@ -362,12 +446,21 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
     return (
         <>
             <Dialog.Header
-                description={t('app.mpc.mpcNewRequestDialog.description')}
+                description={t(
+                    isEditMode
+                        ? 'app.mpc.mpcNewRequestDialog.editDescription'
+                        : 'app.mpc.mpcNewRequestDialog.description',
+                )}
                 onClose={handleClose}
-                title={t('app.mpc.mpcNewRequestDialog.title')}
+                title={t(
+                    isEditMode
+                        ? 'app.mpc.mpcNewRequestDialog.editTitle'
+                        : 'app.mpc.mpcNewRequestDialog.title',
+                )}
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <RadioGroup
+                    disabled={isEditMode}
                     label={typeField.label}
                     onValueChange={typeField.onChange}
                     value={typeField.value}
@@ -466,6 +559,18 @@ export const MpcNewRequestDialog: React.FC<IMpcNewRequestDialogProps> = (
                         )}
                         placeholder='{"domain":{...},"types":{...},"primaryType":"...","message":{...}}'
                         {...typedDataField}
+                    />
+                )}
+                {!isEditMode && (
+                    <Switch
+                        checked={editableField.value}
+                        helpText={t(
+                            'app.mpc.mpcNewRequestDialog.editable.helpText',
+                        )}
+                        inlineLabel={t(
+                            'app.mpc.mpcNewRequestDialog.editable.inlineLabel',
+                        )}
+                        onCheckedChanged={editableField.onChange}
                     />
                 )}
                 <MpcErrorAlert error={previewRequest.error} />

@@ -1,6 +1,14 @@
 import type { Address, Hex } from 'viem';
 import type { IMpcActivity } from './mpcActivity';
 import type { IMpcPolicy } from './mpcPolicy';
+import type {
+    IMpcPolicyCatalog,
+    IMpcPolicyCheckResult,
+    IMpcPolicyExample,
+    IMpcPolicyFlow,
+    IMpcPolicySimContext,
+    IMpcPolicySimResult,
+} from './mpcPolicyFlow';
 import type { IMpcSignRequest, MpcSignRequestPayload } from './mpcSignRequest';
 import type {
     IMpcMember,
@@ -10,6 +18,11 @@ import type {
     MpcProviderId,
 } from './mpcSystem';
 import type { IMpcSession, IMpcUser } from './mpcUser';
+import type {
+    IMpcWorkspace,
+    IMpcWorkspaceMember,
+    IMpcWorkspacePolicy,
+} from './mpcWorkspace';
 
 /**
  * Request / response contracts of the POC MPC co-signer API (route handlers under /api/mpc).
@@ -31,6 +44,10 @@ export interface IMpcCreateSystemParams {
     description?: string;
     chainIds: number[];
     providerId: MpcProviderId;
+    /**
+     * Workspace the system is created in (the caller must be one of its members).
+     */
+    workspaceId: string;
 }
 export interface IMpcUpdateSystemParams {
     name?: string;
@@ -82,6 +99,10 @@ export type IMpcUpdatePolicyParams = IMpcPolicy;
 export interface IMpcCreateRequestParams {
     payload: MpcSignRequestPayload;
     /**
+     * Whether the request may be modified (by the requester or an owner) before it is signed.
+     */
+    editable?: boolean;
+    /**
      * Preview mode (POC extension): the server returns the summary + policy decision the request would get
      * without persisting it (id "preview"). Lets the UI show the decision before the request is created.
      */
@@ -93,6 +114,9 @@ export interface IMpcCompleteRequestParams {
      */
     signature: Hex;
     signedTransaction?: Hex;
+}
+export interface IMpcUpdateRequestParams {
+    payload: MpcSignRequestPayload;
 }
 export type IMpcRequestsResponse = IMpcSignRequest[];
 export type IMpcRequestResponse = IMpcSignRequest;
@@ -134,6 +158,47 @@ export interface IMpcPrepareTransactionResponse {
     gas: string;
     maxFeePerGasWei: string;
     maxPriorityFeePerGasWei: string;
+}
+
+// Workspaces & workspace policies (policy editor)
+export interface IMpcCreateWorkspaceParams {
+    name: string;
+}
+export interface IMpcAddWorkspaceMemberParams {
+    username: string;
+}
+export type IMpcWorkspaceMembersResponse = IMpcWorkspaceMember[];
+export type IMpcWorkspacesResponse = IMpcWorkspace[];
+export type IMpcWorkspaceResponse = IMpcWorkspace;
+export type IMpcWorkspacePoliciesResponse = IMpcWorkspacePolicy[];
+export type IMpcWorkspacePolicyResponse = IMpcWorkspacePolicy;
+export interface IMpcSaveWorkspacePolicyParams {
+    name: string;
+    flow: IMpcPolicyFlow;
+    /**
+     * Whether the policy is enforced (defaults to true on creation).
+     */
+    enabled?: boolean;
+}
+export interface IMpcUpdateWorkspacePolicyParams {
+    name?: string;
+    flow?: IMpcPolicyFlow;
+    enabled?: boolean;
+}
+export interface IMpcCheckPolicyFlowParams {
+    flow: IMpcPolicyFlow;
+}
+export type IMpcCheckPolicyFlowResponse = IMpcPolicyCheckResult;
+export interface IMpcSimulatePolicyFlowParams {
+    flow: IMpcPolicyFlow;
+    context: IMpcPolicySimContext;
+}
+export type IMpcSimulatePolicyFlowResponse = IMpcPolicySimResult;
+export interface IMpcPolicyCatalogResponse extends IMpcPolicyCatalog {
+    /**
+     * Example flows shipped with the engine (unavailable ones use disabled blocks).
+     */
+    examples: IMpcPolicyExample[];
 }
 
 export interface IMpcApiError {

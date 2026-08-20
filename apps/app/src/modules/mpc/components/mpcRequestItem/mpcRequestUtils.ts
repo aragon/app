@@ -45,6 +45,10 @@ export interface IMpcRequestPermissions {
      * The current user can reject the request.
      */
     canReject: boolean;
+    /**
+     * The current user can modify the request (editable request, pending / approved, requester or owner).
+     */
+    canEdit: boolean;
 }
 
 const isPrivileged = (role?: MpcMemberRole) =>
@@ -77,5 +81,11 @@ export const getMpcRequestPermissions = (
             request.status === 'released') &&
         isPrivileged(role);
 
-    return { canSign, canApprove, canReject };
+    const canEdit =
+        request.editable === true &&
+        (request.status === 'pending_approval' ||
+            request.status === 'approved') &&
+        (role === 'owner' || (isRequester && isPrivileged(role)));
+
+    return { canSign, canApprove, canReject, canEdit };
 };

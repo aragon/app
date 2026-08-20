@@ -5,6 +5,7 @@ import { formatEther } from 'viem';
 import type { IMpcSignRequest } from '@/modules/mpc/api/mpcService/domain';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { mpcRequestStatusVariant } from '../mpcRequestItem';
+import { MpcWorkspacePolicyVerdicts } from '../mpcWorkspacePolicyVerdicts';
 
 export interface IMpcRequestSummaryProps {
     /**
@@ -124,6 +125,16 @@ export const MpcRequestSummary: React.FC<IMpcRequestSummaryProps> = (props) => {
                     )}
                 </div>
             </DefinitionList.Item>
+            {policyDecision.workspacePolicies != null &&
+                policyDecision.workspacePolicies.length > 0 && (
+                    <DefinitionList.Item
+                        term={t('app.mpc.mpcRequestSummary.workspacePolicies')}
+                    >
+                        <MpcWorkspacePolicyVerdicts
+                            verdicts={policyDecision.workspacePolicies}
+                        />
+                    </DefinitionList.Item>
+                )}
             {request.approvalsRequired > 0 && (
                 <DefinitionList.Item
                     term={t('app.mpc.mpcRequestSummary.approvals')}

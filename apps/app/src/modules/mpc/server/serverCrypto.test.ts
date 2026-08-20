@@ -33,9 +33,12 @@ describe('serverCrypto', () => {
 
         it('throws when the ciphertext is tampered with', () => {
             const encrypted = serverCrypto.encrypt('secret');
+            // Flip the first byte (always changes it, whatever its value).
+            const firstByte = encrypted.ciphertext.slice(0, 2);
+            const flipped = firstByte === 'ff' ? '00' : 'ff';
             const tampered = {
                 ...encrypted,
-                ciphertext: encrypted.ciphertext.replace(/^../, 'ff'),
+                ciphertext: flipped + encrypted.ciphertext.slice(2),
             };
 
             expect(() => serverCrypto.decrypt(tampered)).toThrow();

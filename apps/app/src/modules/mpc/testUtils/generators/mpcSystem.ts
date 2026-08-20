@@ -8,6 +8,7 @@ export const generateMpcSystem = (
     id: 'system-1',
     name: 'Treasury key',
     description: 'POC system',
+    workspaceId: 'ws_user-1',
     status: 'active',
     providerId: 'mock-shamir',
     address: '0x1234567890123456789012345678901234567890',

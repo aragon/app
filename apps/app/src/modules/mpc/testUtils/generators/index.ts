@@ -4,3 +4,4 @@ export * from './mpcPolicy';
 export * from './mpcSignRequest';
 export * from './mpcSystem';
 export * from './mpcUser';
+export * from './mpcWorkspace';

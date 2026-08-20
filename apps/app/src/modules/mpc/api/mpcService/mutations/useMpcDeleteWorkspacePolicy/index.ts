@@ -1,0 +1,1 @@
+export { useMpcDeleteWorkspacePolicy } from './useMpcDeleteWorkspacePolicy';

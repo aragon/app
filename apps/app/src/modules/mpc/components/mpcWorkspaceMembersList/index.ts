@@ -1,0 +1,1 @@
+export { MpcWorkspaceMembersList } from './mpcWorkspaceMembersList';

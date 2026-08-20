@@ -23,6 +23,7 @@ import {
     type IMpcStoreSystem,
     nowIso,
 } from './mpcStore';
+import { requireWorkspaceMembership } from './mpcWorkspaces';
 import { serverCrypto } from './serverCrypto';
 
 /**
@@ -122,6 +123,12 @@ export const createSystem = (
             id: serverCrypto.randomId(),
             name: params.name,
             description: params.description,
+            // Systems live in a workspace: its policies apply to every request.
+            workspaceId: requireWorkspaceMembership(
+                data,
+                params.workspaceId,
+                user.id,
+            ).id,
             status: 'initializing',
             providerId: params.providerId,
             chainIds: params.chainIds,

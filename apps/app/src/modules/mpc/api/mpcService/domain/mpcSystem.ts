@@ -40,6 +40,10 @@ export interface IMpcSystem {
      */
     description?: string;
     /**
+     * Workspace the system belongs to (the creator's workspace at creation time).
+     */
+    workspaceId: string;
+    /**
      * Status of the system.
      */
     status: MpcSystemStatus;

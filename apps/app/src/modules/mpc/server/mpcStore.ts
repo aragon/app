@@ -11,6 +11,8 @@ import type {
     IMpcActivity,
     IMpcSignRequest,
     IMpcSystem,
+    IMpcWorkspace,
+    IMpcWorkspacePolicy,
 } from '@/modules/mpc/api/mpcService/domain';
 import type { IMpcEncryptedValue } from './serverCrypto';
 
@@ -68,6 +70,8 @@ export interface IMpcStoreData {
     version: 1;
     users: IMpcStoreUser[];
     sessions: IMpcStoreSession[];
+    workspaces: IMpcWorkspace[];
+    workspacePolicies: IMpcWorkspacePolicy[];
     systems: IMpcStoreSystem[];
     signRequests: IMpcSignRequest[];
     activity: IMpcActivity[];
@@ -78,11 +82,90 @@ const emptyStoreData = (): IMpcStoreData => ({
     version: 1,
     users: [],
     sessions: [],
+    workspaces: [],
+    workspacePolicies: [],
     systems: [],
     signRequests: [],
     activity: [],
     loginAttempts: {},
 });
+
+export const MPC_DEFAULT_WORKSPACE_NAME = 'Default workspace';
+
+/**
+ * Returns the legacy default workspace of a user, creating it in the given store data when missing (the caller
+ * persists). Only used by the migration of systems that predate workspaces: new accounts create their
+ * workspaces explicitly.
+ */
+export const ensureDefaultWorkspace = (
+    data: IMpcStoreData,
+    user: { id: string; username?: string },
+): IMpcWorkspace => {
+    const existing = data.workspaces.find(
+        (item) => item.ownerId === user.id && item.isDefault,
+    );
+
+    if (existing != null) {
+        return existing;
+    }
+
+    const now = nowIso();
+    const username =
+        user.username ??
+        data.users.find((item) => item.id === user.id)?.username ??
+        user.id;
+    const workspace: IMpcWorkspace = {
+        // Deterministic id: migrations stay idempotent across processes.
+        id: `ws_${user.id}`,
+        name: MPC_DEFAULT_WORKSPACE_NAME,
+        ownerId: user.id,
+        isDefault: true,
+        members: [{ userId: user.id, username, role: 'owner', addedAt: now }],
+        createdAt: now,
+        updatedAt: now,
+    };
+    data.workspaces.push(workspace);
+
+    return workspace;
+};
+
+/**
+ * Brings data persisted by older POC versions up to date: workspaces get their members list (owner included)
+ * and systems created before workspaces existed join their creator's legacy default workspace.
+ */
+export const migrateStoreData = (data: IMpcStoreData): boolean => {
+    let changed = false;
+
+    for (const workspace of data.workspaces) {
+        const partial = workspace as Partial<IMpcWorkspace>;
+
+        if (partial.members == null) {
+            const owner = data.users.find(
+                (item) => item.id === workspace.ownerId,
+            );
+            workspace.members = [
+                {
+                    userId: workspace.ownerId,
+                    username: owner?.username ?? workspace.ownerId,
+                    role: 'owner',
+                    addedAt: workspace.createdAt,
+                },
+            ];
+            changed = true;
+        }
+    }
+
+    for (const system of data.systems) {
+        if (system.workspaceId == null || system.workspaceId.length === 0) {
+            system.workspaceId = ensureDefaultWorkspace(data, {
+                id: system.createdBy,
+            }).id;
+            changed = true;
+        }
+    }
+
+    return changed;
+};
 
 const GLOBAL_CACHE_KEY = '__mpcPocStore';
 
@@ -115,7 +198,7 @@ export class MpcStore {
         const cache = getGlobalCache();
         cache[this.filePath] ??= this.load();
 
-        return cache[this.filePath];
+        return this.upgrade(cache[this.filePath]);
     };
 
     /**
@@ -146,8 +229,40 @@ export class MpcStore {
 
         const raw = readFileSync(this.filePath, 'utf8');
         const parsed = JSON.parse(raw) as Partial<IMpcStoreData>;
+        const data: IMpcStoreData = {
+            ...emptyStoreData(),
+            ...parsed,
+            version: 1,
+        };
 
-        return { ...emptyStoreData(), ...parsed, version: 1 };
+        if (migrateStoreData(data)) {
+            this.persist(data);
+        }
+
+        return data;
+    };
+
+    /**
+     * Data cached on globalThis may predate a schema change (Next.js HMR keeps the cache across module reloads):
+     * fill the missing collections and migrate in place so a running dev server never sees a partial shape.
+     */
+    private upgrade = (data: IMpcStoreData): IMpcStoreData => {
+        const partial = data as Partial<IMpcStoreData>;
+
+        const needsUpgrade =
+            partial.workspaces == null ||
+            partial.workspacePolicies == null ||
+            partial.workspaces.some(
+                (item) => (item as Partial<IMpcWorkspace>).members == null,
+            );
+
+        if (needsUpgrade) {
+            Object.assign(data, { ...emptyStoreData(), ...partial });
+            migrateStoreData(data);
+            this.persist(data);
+        }
+
+        return data;
     };
 
     private persist = (data: IMpcStoreData): void => {

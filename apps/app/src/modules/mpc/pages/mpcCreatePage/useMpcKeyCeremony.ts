@@ -13,6 +13,10 @@ export interface IMpcKeyCeremonyParams {
     description?: string;
     chainIds: number[];
     passphrase: string;
+    /**
+     * Workspace the system is created in.
+     */
+    workspaceId: string;
 }
 
 export interface IUseMpcKeyCeremonyResult {
@@ -62,6 +66,7 @@ export const useMpcKeyCeremony = (
                             description: params.description,
                             chainIds: params.chainIds,
                             providerId,
+                            workspaceId: params.workspaceId,
                         },
                     });
                     systemIdRef.current = system.id;

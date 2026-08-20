@@ -1,0 +1,1 @@
+export { MpcWorkspaceCard } from './mpcWorkspaceCard';

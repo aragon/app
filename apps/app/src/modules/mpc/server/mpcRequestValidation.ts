@@ -2,19 +2,32 @@ import type { NextRequest } from 'next/server';
 import { type Address, getAddress, type Hex } from 'viem';
 import type {
     IMpcAddMemberParams,
+    IMpcAddWorkspaceMemberParams,
+    IMpcCheckPolicyFlowParams,
     IMpcCompleteRequestParams,
     IMpcCreateRequestParams,
     IMpcCreateSystemParams,
+    IMpcCreateWorkspaceParams,
     IMpcLoginParams,
     IMpcPolicy,
+    IMpcPolicyFlow,
+    IMpcPolicyFlowEdge,
+    IMpcPolicyFlowNode,
+    IMpcPolicySimContext,
     IMpcRegisterKeyParams,
     IMpcReshareParams,
+    IMpcSaveWorkspacePolicyParams,
     IMpcServerShareParams,
     IMpcServerSharePayload,
     IMpcSimulateParams,
+    IMpcSimulatePolicyFlowParams,
     IMpcTransactionPayload,
+    IMpcUpdateRequestParams,
     IMpcUpdateSystemParams,
+    IMpcUpdateWorkspacePolicyParams,
     MpcMemberRole,
+    MpcPolicyFlowBranch,
+    MpcPolicyFlowNodeType,
     MpcProviderId,
     MpcSharePurpose,
     MpcSignRequestPayload,
@@ -119,6 +132,14 @@ const requireWei = (value: unknown, field: string): string => {
 const requireChainId = (value: unknown, field: string): number => {
     if (typeof value !== 'number' || !Number.isInteger(value) || value <= 0) {
         throw validationError(`"${field}" must be a positive integer.`);
+    }
+
+    return value;
+};
+
+const requireBoolean = (value: unknown, field: string): boolean => {
+    if (typeof value !== 'boolean') {
+        throw validationError(`"${field}" must be a boolean.`);
     }
 
     return value;
@@ -304,12 +325,16 @@ export const validateCreateSystemParams = (
         requireChainId(chainId, 'chainIds'),
     );
     const providerId = requireEnum(body.providerId, 'providerId', PROVIDER_IDS);
+    const workspaceId = requireString(body.workspaceId, 'workspaceId', {
+        max: MAX_NAME_LENGTH,
+    });
 
     return {
         name,
         description: description === '' ? undefined : description,
         chainIds: Array.from(new Set(chainIds)),
         providerId,
+        workspaceId,
     };
 };
 
@@ -621,8 +646,41 @@ export const validateCreateRequestParams = (
         throw validationError('"dryRun" must be a boolean when set.');
     }
 
-    return { payload: validated, dryRun: body.dryRun === true };
+    if (body.editable != null && typeof body.editable !== 'boolean') {
+        throw validationError('"editable" must be a boolean when set.');
+    }
+
+    return {
+        payload: validated,
+        dryRun: body.dryRun === true,
+        editable: body.editable === true,
+    };
 };
+
+/**
+ * Body of PUT /requests/[requestId]: the new payload (same shape as the creation payload).
+ */
+export const validateUpdateRequestParams = (
+    body: Record<string, unknown>,
+): IMpcUpdateRequestParams => ({
+    payload: validateCreateRequestParams(body).payload,
+});
+
+// ---- Workspaces ----
+
+export const validateCreateWorkspaceParams = (
+    body: Record<string, unknown>,
+): IMpcCreateWorkspaceParams => ({
+    name: requireString(body.name, 'name', { max: MAX_NAME_LENGTH }),
+});
+
+export const validateAddWorkspaceMemberParams = (
+    body: Record<string, unknown>,
+): IMpcAddWorkspaceMemberParams => ({
+    username: requireString(body.username, 'username', {
+        max: MAX_NAME_LENGTH,
+    }),
+});
 
 export const validateCompleteRequestParams = (
     body: Record<string, unknown>,
@@ -651,4 +709,237 @@ export const validateSimulateParams = (
         valueWei: transaction.valueWei,
         data: transaction.data,
     };
+};
+
+// ---- Workspace policies (policy editor flows) ----
+
+const MAX_FLOW_NODES = 200;
+const MAX_FLOW_ID_LENGTH = 64;
+const FLOW_NODE_TYPES: MpcPolicyFlowNodeType[] = [
+    'trigger',
+    'condition',
+    'action',
+];
+const FLOW_BRANCHES: MpcPolicyFlowBranch[] = ['true', 'false'];
+
+const requireFlowId = (value: unknown, field: string): string => {
+    if (
+        typeof value !== 'string' ||
+        value.length === 0 ||
+        value.length > MAX_FLOW_ID_LENGTH
+    ) {
+        throw validationError(`"${field}" must be a non-empty string.`);
+    }
+
+    return value;
+};
+
+const validateFlowNode = (
+    value: unknown,
+    field: string,
+): IMpcPolicyFlowNode => {
+    if (!isRecord(value)) {
+        throw validationError(`"${field}" must be an object.`);
+    }
+
+    const node: IMpcPolicyFlowNode = {
+        id: requireFlowId(value.id, `${field}.id`),
+        type: requireEnum(value.type, `${field}.type`, FLOW_NODE_TYPES),
+    };
+
+    if (value.template != null) {
+        node.template = requireFlowId(value.template, `${field}.template`);
+    }
+
+    if (value.params != null) {
+        if (!isRecord(value.params)) {
+            throw validationError(`"${field}.params" must be an object.`);
+        }
+
+        node.params = value.params;
+    }
+
+    // Policy blocks reference another policy of the workspace (inlined before the engine sees the flow).
+    if (node.template === 'policy_ref') {
+        if (node.type !== 'action') {
+            throw validationError(
+                `"${field}" policy blocks must be action (leaf) nodes.`,
+            );
+        }
+
+        if (
+            typeof node.params?.policyId !== 'string' ||
+            node.params.policyId.length === 0
+        ) {
+            throw validationError(
+                `"${field}.params.policyId" is required for policy blocks.`,
+            );
+        }
+    }
+
+    return node;
+};
+
+const validateFlowEdge = (
+    value: unknown,
+    field: string,
+): IMpcPolicyFlowEdge => {
+    if (!isRecord(value)) {
+        throw validationError(`"${field}" must be an object.`);
+    }
+
+    const edge: IMpcPolicyFlowEdge = {
+        from: requireFlowId(value.from, `${field}.from`),
+        to: requireFlowId(value.to, `${field}.to`),
+    };
+
+    if (value.branch != null) {
+        edge.branch = requireEnum(
+            value.branch,
+            `${field}.branch`,
+            FLOW_BRANCHES,
+        );
+    }
+
+    return edge;
+};
+
+/**
+ * Structural validation of a policy flow (the semantic validation — known templates, enabled blocks, tree
+ * shape — is done by the policy engine on check / evaluate).
+ */
+export const validatePolicyFlow = (
+    value: unknown,
+    field = 'flow',
+): IMpcPolicyFlow => {
+    if (!isRecord(value)) {
+        throw validationError(`"${field}" must be an object.`);
+    }
+
+    if (
+        typeof value.flowVersion !== 'number' ||
+        !Number.isInteger(value.flowVersion) ||
+        value.flowVersion <= 0
+    ) {
+        throw validationError(
+            `"${field}.flowVersion" must be a positive integer.`,
+        );
+    }
+
+    if (!Array.isArray(value.nodes) || value.nodes.length === 0) {
+        throw validationError(`"${field}.nodes" must be a non-empty array.`);
+    }
+
+    if (value.nodes.length > MAX_FLOW_NODES) {
+        throw validationError(
+            `"${field}.nodes" must have at most ${MAX_FLOW_NODES.toString()} entries.`,
+        );
+    }
+
+    if (!Array.isArray(value.edges)) {
+        throw validationError(`"${field}.edges" must be an array.`);
+    }
+
+    const nodes = value.nodes.map((node, index) =>
+        validateFlowNode(node, `${field}.nodes[${index.toString()}]`),
+    );
+    const edges = value.edges.map((edge, index) =>
+        validateFlowEdge(edge, `${field}.edges[${index.toString()}]`),
+    );
+
+    if (nodes.filter((node) => node.type === 'trigger').length !== 1) {
+        throw validationError(`"${field}" must have exactly one trigger node.`);
+    }
+
+    const ids = new Set(nodes.map((node) => node.id));
+
+    if (ids.size !== nodes.length) {
+        throw validationError(`"${field}.nodes" ids must be unique.`);
+    }
+
+    for (const edge of edges) {
+        if (!ids.has(edge.from) || !ids.has(edge.to)) {
+            throw validationError(
+                `"${field}.edges" reference unknown nodes (${edge.from} -> ${edge.to}).`,
+            );
+        }
+    }
+
+    const flow: IMpcPolicyFlow = {
+        flowVersion: value.flowVersion,
+        nodes,
+        edges,
+    };
+
+    if (typeof value.name === 'string') {
+        flow.name = value.name.slice(0, MAX_NAME_LENGTH);
+    } else if (
+        isRecord(value.name) &&
+        typeof value.name.en === 'string' &&
+        typeof value.name.es === 'string'
+    ) {
+        flow.name = {
+            en: value.name.en.slice(0, MAX_NAME_LENGTH),
+            es: value.name.es.slice(0, MAX_NAME_LENGTH),
+        };
+    }
+
+    return flow;
+};
+
+export const validateSaveWorkspacePolicyParams = (
+    body: Record<string, unknown>,
+): IMpcSaveWorkspacePolicyParams => {
+    const name = requireString(body.name, 'name', { max: MAX_NAME_LENGTH });
+    const flow = validatePolicyFlow(body.flow);
+    const params: IMpcSaveWorkspacePolicyParams = { name, flow };
+
+    if (body.enabled != null) {
+        params.enabled = requireBoolean(body.enabled, 'enabled');
+    }
+
+    return params;
+};
+
+export const validateUpdateWorkspacePolicyParams = (
+    body: Record<string, unknown>,
+): IMpcUpdateWorkspacePolicyParams => {
+    const params: IMpcUpdateWorkspacePolicyParams = {};
+
+    if (body.name != null) {
+        params.name = requireString(body.name, 'name', {
+            max: MAX_NAME_LENGTH,
+        });
+    }
+
+    if (body.flow != null) {
+        params.flow = validatePolicyFlow(body.flow);
+    }
+
+    if (body.enabled != null) {
+        params.enabled = requireBoolean(body.enabled, 'enabled');
+    }
+
+    if (params.name == null && params.flow == null && params.enabled == null) {
+        throw validationError('Nothing to update.');
+    }
+
+    return params;
+};
+
+export const validateCheckPolicyFlowParams = (
+    body: Record<string, unknown>,
+): IMpcCheckPolicyFlowParams => ({ flow: validatePolicyFlow(body.flow) });
+
+export const validateSimulatePolicyFlowParams = (
+    body: Record<string, unknown>,
+): IMpcSimulatePolicyFlowParams => {
+    const flow = validatePolicyFlow(body.flow);
+
+    if (!isRecord(body.context)) {
+        throw validationError('"context" must be an object.');
+    }
+
+    // The engine validates the context strictly (amounts as decimal strings, closed enums, ...).
+    return { flow, context: body.context as unknown as IMpcPolicySimContext };
 };

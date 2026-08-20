@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mpcService } from '@/modules/mpc/api/mpcService';
-import { generateMpcUser } from '@/modules/mpc/testUtils';
+import { generateMpcSession, generateMpcUser } from '@/modules/mpc/testUtils';
 import { ReactQueryWrapper } from '@/shared/testUtils';
 import { type IMpcLoginFormProps, MpcLoginForm } from './mpcLoginForm';
 
@@ -40,10 +40,9 @@ describe('<MpcLoginForm /> component', () => {
     });
 
     it('calls the login mutation with the form values on submit', async () => {
-        const session = {
+        const session = generateMpcSession({
             user: generateMpcUser({ username: 'alice' }),
-            expiresAt: '2026-01-02T00:00:00.000Z',
-        };
+        });
         loginSpy.mockResolvedValue(session);
         const onSuccess = jest.fn();
         render(createTestComponent({ onSuccess }));
@@ -73,10 +72,9 @@ describe('<MpcLoginForm /> component', () => {
     });
 
     it('calls the register mutation when the mode is register', async () => {
-        registerSpy.mockResolvedValue({
-            user: generateMpcUser({ username: 'bob' }),
-            expiresAt: '2026-01-02T00:00:00.000Z',
-        });
+        registerSpy.mockResolvedValue(
+            generateMpcSession({ user: generateMpcUser({ username: 'bob' }) }),
+        );
         render(createTestComponent({ mode: 'register' }));
 
         await userEvent.type(

@@ -4,18 +4,33 @@ import { Page } from '@/shared/components/page';
 import { featureFlags } from '@/shared/featureFlags';
 import { MpcCreatePageClient } from './mpcCreatePageClient';
 
-export interface IMpcCreatePageProps {}
+export interface IMpcCreatePageParams {
+    /**
+     * ID of the workspace the system is created in.
+     */
+    workspaceId: string;
+}
 
-export const MpcCreatePage: React.FC<IMpcCreatePageProps> = async () => {
+export interface IMpcCreatePageProps {
+    /**
+     * Page parameters.
+     */
+    params: Promise<IMpcCreatePageParams>;
+}
+
+export const MpcCreatePage: React.FC<IMpcCreatePageProps> = async (props) => {
+    const { params } = props;
     const isEnabled = await featureFlags.isEnabled('mpcSystems');
 
     if (!isEnabled) {
         notFound();
     }
 
+    const { workspaceId } = await params;
+
     return (
         <Page.Container>
-            <MpcCreatePageClient />
+            <MpcCreatePageClient workspaceId={workspaceId} />
         </Page.Container>
     );
 };

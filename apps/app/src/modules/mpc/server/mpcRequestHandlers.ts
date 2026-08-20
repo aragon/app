@@ -13,6 +13,7 @@ import {
     readJsonBody,
     validateCompleteRequestParams,
     validateCreateRequestParams,
+    validateUpdateRequestParams,
 } from './mpcRequestValidation';
 import {
     approveRequest,
@@ -21,6 +22,7 @@ import {
     listRequests,
     prepareTransaction,
     rejectRequest,
+    updateRequest,
 } from './mpcSignRequests';
 
 /**
@@ -49,8 +51,28 @@ export const handleCreateRequest = withSystemRole<IMpcSystemRouteParams>(
         );
 
         return jsonOk<IMpcRequestResponse>(
-            createRequest(ctx.system, ctx.user, params),
+            await createRequest(ctx.system, ctx.user, params),
             { status: params.dryRun ? 200 : 201 },
+        );
+    },
+);
+
+// PUT /api/mpc/systems/[systemId]/requests/[requestId]
+export const handleUpdateRequest = withSystemRole<IRequestRouteParams>(
+    ['owner', 'approver'],
+    async (ctx, params) => {
+        const body = validateUpdateRequestParams(
+            await readJsonBody(ctx.request),
+        );
+
+        return jsonOk<IMpcRequestResponse>(
+            await updateRequest(
+                ctx.system,
+                ctx.user,
+                ctx.member,
+                params.requestId,
+                body,
+            ),
         );
     },
 );

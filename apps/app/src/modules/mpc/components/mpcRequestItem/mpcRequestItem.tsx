@@ -46,6 +46,10 @@ export interface IMpcRequestItemProps {
      * Callback called on review (approve / reject) click.
      */
     onReviewClick?: (request: IMpcSignRequest) => void;
+    /**
+     * Callback called on edit click (editable requests).
+     */
+    onEditClick?: (request: IMpcSignRequest) => void;
 }
 
 export const MpcRequestItem: React.FC<IMpcRequestItemProps> = (props) => {
@@ -56,15 +60,17 @@ export const MpcRequestItem: React.FC<IMpcRequestItemProps> = (props) => {
         hasDeviceShare,
         onSignClick,
         onReviewClick,
+        onEditClick,
     } = props;
     const { t } = useTranslations();
 
-    const { canSign, canApprove, canReject } = getMpcRequestPermissions({
-        request,
-        role,
-        username,
-        hasDeviceShare,
-    });
+    const { canSign, canApprove, canReject, canEdit } =
+        getMpcRequestPermissions({
+            request,
+            role,
+            username,
+            hasDeviceShare,
+        });
 
     const { summary, policyDecision } = request;
     const value =
@@ -164,7 +170,7 @@ export const MpcRequestItem: React.FC<IMpcRequestItemProps> = (props) => {
                     })}
                 </p>
             )}
-            {(canSign || canApprove || canReject) && (
+            {(canSign || canApprove || canReject || canEdit) && (
                 <div className="flex flex-wrap gap-2">
                     {canSign && (
                         <Button
@@ -183,6 +189,16 @@ export const MpcRequestItem: React.FC<IMpcRequestItemProps> = (props) => {
                             variant="secondary"
                         >
                             {t('app.mpc.mpcRequestItem.actions.review')}
+                        </Button>
+                    )}
+                    {canEdit && (
+                        <Button
+                            iconLeft={IconType.PEN}
+                            onClick={() => onEditClick?.(request)}
+                            size="sm"
+                            variant="tertiary"
+                        >
+                            {t('app.mpc.mpcRequestItem.actions.edit')}
                         </Button>
                     )}
                 </div>

@@ -13,6 +13,7 @@ import { type IMpcResolvedSession, mpcAuth } from './mpcAuth';
 import { assertMutationRequest } from './mpcRequestValidation';
 import type { IMpcStoreSystem } from './mpcStore';
 import { findSystemRecord } from './mpcSystems';
+import { findWorkspaceRecord, isWorkspaceMember } from './mpcWorkspaces';
 
 /**
  * Route handler helpers: typed JSON responses (Cache-Control: no-store) and wrappers resolving the session and
@@ -89,6 +90,27 @@ export interface IMpcSystemRouteParams {
     systemId: string;
 }
 
+/**
+ * Workspace members see the systems of their workspace as viewers without being system members.
+ */
+const implicitViewer = (
+    system: IMpcStoreSystem,
+    user: IMpcUser,
+): IMpcMember | undefined => {
+    const workspace = findWorkspaceRecord(system.workspaceId);
+
+    if (workspace == null || !isWorkspaceMember(workspace, user.id)) {
+        return undefined;
+    }
+
+    return {
+        userId: user.id,
+        username: user.username,
+        role: 'viewer',
+        addedAt: workspace.createdAt,
+    };
+};
+
 const isMutation = (request: NextRequest): boolean =>
     request.method !== 'GET' && request.method !== 'HEAD';
 
@@ -155,7 +177,9 @@ export const withSession =
 
 /**
  * Wraps a route handler requiring an authenticated session and a membership in the system with one of the given
- * roles ("member" accepts any role). Non-members get 404 to avoid leaking system existence.
+ * roles ("member" accepts any role). Members of the system workspace who are not system members get the
+ * implicit "viewer" role (they can see the systems of their workspace). Others get 404 to avoid leaking
+ * system existence.
  */
 export const withSystemRole = <TParams extends IMpcSystemRouteParams>(
     roles: MpcMemberRole[] | 'member',
@@ -163,9 +187,9 @@ export const withSystemRole = <TParams extends IMpcSystemRouteParams>(
 ): MpcRouteHandler<TParams> =>
     withSession<TParams>((ctx, params) => {
         const system = findSystemRecord(params.systemId);
-        const member = system?.members.find(
-            (item) => item.userId === ctx.user.id,
-        );
+        const member =
+            system?.members.find((item) => item.userId === ctx.user.id) ??
+            (system != null ? implicitViewer(system, ctx.user) : undefined);
 
         if (system == null || member == null) {
             throw new MpcApiError('not_found', 'System not found.');

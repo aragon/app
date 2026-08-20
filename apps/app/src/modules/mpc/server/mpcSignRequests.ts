@@ -14,10 +14,12 @@ import type {
     IMpcCompleteRequestParams,
     IMpcCreateRequestParams,
     IMpcMember,
+    IMpcPolicyDecision,
     IMpcPrepareTransactionResponse,
     IMpcSignRequest,
     IMpcSignRequestSummary,
     IMpcTransactionPayload,
+    IMpcUpdateRequestParams,
     IMpcUser,
     MpcSignRequestPayload,
 } from '@/modules/mpc/api/mpcService/domain';
@@ -31,6 +33,10 @@ import {
     type IMpcStoreSystem,
     nowIso,
 } from './mpcStore';
+import {
+    evaluateWorkspacePolicies,
+    type IMpcWorkspacePolicyEvaluation,
+} from './mpcWorkspacePolicyEvaluation';
 import { serverCrypto } from './serverCrypto';
 
 /**
@@ -160,6 +166,7 @@ const buildRequest = (
     actor: IMpcUser,
     params: IMpcCreateRequestParams,
     id: string,
+    workspaceEvaluation: IMpcWorkspacePolicyEvaluation,
 ): IMpcSignRequest => {
     if (system.status !== 'active') {
         throw new MpcApiError('conflict', 'The system has no active key.');
@@ -173,13 +180,22 @@ const buildRequest = (
         throw new MpcApiError('conflict', 'Too many requests for this system.');
     }
 
-    const policyDecision = evaluatePolicy(
+    const systemDecision = evaluatePolicy(
         system.policy,
         params.payload,
         history,
     );
+    const policyDecision = mergePolicyDecisions(
+        systemDecision,
+        workspaceEvaluation,
+    );
     const approvalsRequired = policyDecision.requiresApproval
-        ? system.policy.approvalsRequired
+        ? Math.max(
+              systemDecision.requiresApproval
+                  ? system.policy.approvalsRequired
+                  : 0,
+              workspaceEvaluation.extraApprovals,
+          )
         : 0;
 
     let status: IMpcSignRequest['status'] = 'approved';
@@ -203,6 +219,7 @@ const buildRequest = (
         approvals: [],
         rejections: [],
         approvalsRequired,
+        editable: params.editable === true,
         createdBy: actor.username,
         createdAt: now,
         updatedAt: now,
@@ -212,33 +229,105 @@ const buildRequest = (
     };
 };
 
+/**
+ * Combines the system policy decision with the workspace policies evaluation (fail-closed: any denial denies,
+ * approvals are required when either side asks for them).
+ */
+export const mergePolicyDecisions = (
+    systemDecision: IMpcPolicyDecision,
+    workspaceEvaluation: IMpcWorkspacePolicyEvaluation,
+): IMpcPolicyDecision => {
+    const allowed = systemDecision.allowed && workspaceEvaluation.allowed;
+    const requiresApproval =
+        allowed &&
+        (systemDecision.requiresApproval ||
+            workspaceEvaluation.requiresApproval);
+    const reasons = allowed
+        ? [
+              ...(systemDecision.requiresApproval
+                  ? systemDecision.reasons
+                  : []),
+              ...workspaceEvaluation.approvalReasons,
+          ]
+        : [
+              ...(systemDecision.allowed ? [] : systemDecision.reasons),
+              ...workspaceEvaluation.denyReasons,
+          ];
+
+    return {
+        allowed,
+        requiresApproval,
+        reasons,
+        ...(workspaceEvaluation.verdicts.length > 0
+            ? { workspacePolicies: workspaceEvaluation.verdicts }
+            : {}),
+    };
+};
+
 export const MPC_PREVIEW_REQUEST_ID = 'preview';
 
 /**
  * Creates a sign request (or, with dryRun, previews the summary and policy decision without persisting).
+ * Transaction requests are evaluated against the enabled workspace policies (policy engine): a denied request
+ * is never created (403 policy_denied); the dry run returns the denied preview instead so the UI can explain it.
  */
-export const createRequest = (
+export const createRequest = async (
     system: IMpcStoreSystem,
     actor: IMpcUser,
     params: IMpcCreateRequestParams,
-): IMpcSignRequest => {
+): Promise<IMpcSignRequest> => {
+    const store = getMpcStore();
+    const snapshot = store.read();
+    const workspaceEvaluation = await evaluateWorkspacePolicies(
+        snapshot,
+        system,
+        params.payload,
+        snapshot.signRequests.filter((item) => item.systemId === system.id),
+    );
+
+    // Built against the snapshot first (pure): a denied request never mutates the store.
+    const preview = buildRequest(
+        snapshot,
+        system,
+        actor,
+        params,
+        MPC_PREVIEW_REQUEST_ID,
+        workspaceEvaluation,
+    );
+
     if (params.dryRun) {
-        return buildRequest(
-            getMpcStore().read(),
-            system,
-            actor,
-            params,
-            MPC_PREVIEW_REQUEST_ID,
+        return preview;
+    }
+
+    if (!preview.policyDecision.allowed) {
+        store.update((data) =>
+            appendActivity(data, {
+                systemId: system.id,
+                actor: actor.username,
+                type: 'request_rejected',
+                data: {
+                    type: preview.type,
+                    label: preview.summary.label,
+                    reasons: preview.policyDecision.reasons,
+                    byPolicy: true,
+                },
+            }),
+        );
+
+        throw new MpcApiError(
+            'policy_denied',
+            `The request was not created because it does not comply with the policies: ${preview.policyDecision.reasons.join(' ')}`,
         );
     }
 
-    return getMpcStore().update((data) => {
+    return store.update((data) => {
         const request = buildRequest(
             data,
             system,
             actor,
             params,
             serverCrypto.randomId(),
+            workspaceEvaluation,
         );
         const { status, policyDecision } = request;
 
@@ -254,6 +343,119 @@ export const createRequest = (
                 label: request.summary.label,
                 status,
                 reasons: policyDecision.reasons,
+            },
+        });
+
+        return request;
+    });
+};
+
+const EDITABLE_STATUSES: IMpcSignRequest['status'][] = [
+    'pending_approval',
+    'approved',
+];
+
+/**
+ * Modifies the payload of an editable request (requester or owner) while it is pending / approved: the
+ * policies (system + workspace) are re-evaluated, approvals and rejections are reset and the request goes back
+ * to the status the new payload deserves. A payload that no longer complies is refused (403 policy_denied) and
+ * the request is left untouched.
+ */
+export const updateRequest = async (
+    system: IMpcStoreSystem,
+    actor: IMpcUser,
+    member: IMpcMember,
+    requestId: string,
+    params: IMpcUpdateRequestParams,
+): Promise<IMpcSignRequest> => {
+    const store = getMpcStore();
+    const snapshot = store.read();
+    const current = requireRequestRecord(snapshot, system.id, requestId);
+
+    if (current.editable !== true) {
+        throw new MpcApiError(
+            'conflict',
+            'This request was created as non-editable.',
+        );
+    }
+
+    if (!EDITABLE_STATUSES.includes(current.status)) {
+        throw new MpcApiError(
+            'conflict',
+            'Only pending or approved requests can be modified.',
+        );
+    }
+
+    if (!isRequesterOrOwner(current, actor, member)) {
+        throw new MpcApiError(
+            'forbidden',
+            'Only the requester or an owner can modify the request.',
+        );
+    }
+
+    if (params.payload.type !== current.type) {
+        throw new MpcApiError(
+            'validation_error',
+            'The request type cannot be changed.',
+        );
+    }
+
+    const history = snapshot.signRequests.filter(
+        (item) => item.systemId === system.id && item.id !== requestId,
+    );
+    const workspaceEvaluation = await evaluateWorkspacePolicies(
+        snapshot,
+        system,
+        params.payload,
+        history,
+    );
+    const preview = buildRequest(
+        { ...snapshot, signRequests: history },
+        system,
+        actor,
+        { payload: params.payload, editable: true },
+        MPC_PREVIEW_REQUEST_ID,
+        workspaceEvaluation,
+    );
+
+    if (!preview.policyDecision.allowed) {
+        throw new MpcApiError(
+            'policy_denied',
+            `The request was not modified because the new payload does not comply with the policies: ${preview.policyDecision.reasons.join(' ')}`,
+        );
+    }
+
+    return store.update((data) => {
+        const request = requireRequestRecord(data, system.id, requestId);
+
+        if (!EDITABLE_STATUSES.includes(request.status)) {
+            throw new MpcApiError(
+                'conflict',
+                'Only pending or approved requests can be modified.',
+            );
+        }
+
+        const now = nowIso();
+        request.payload = params.payload;
+        request.summary = preview.summary;
+        request.policyDecision = preview.policyDecision;
+        request.approvalsRequired = preview.approvalsRequired;
+        request.status = preview.status;
+        request.approvals = [];
+        request.rejections = [];
+        request.error = undefined;
+        request.updatedAt = now;
+
+        appendActivity(data, {
+            systemId: system.id,
+            actor: actor.username,
+            type: 'request_updated',
+            data: {
+                requestId: request.id,
+                type: request.type,
+                label: request.summary.label,
+                status: request.status,
+                reasons: request.policyDecision.reasons,
             },
         });
 

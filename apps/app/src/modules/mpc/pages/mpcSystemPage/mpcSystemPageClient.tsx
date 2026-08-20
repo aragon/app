@@ -31,9 +31,11 @@ import { getMpcRequestPermissions } from '@/modules/mpc/components/mpcRequestIte
 import { MpcRequestList } from '@/modules/mpc/components/mpcRequestList';
 import { MpcShareStatus } from '@/modules/mpc/components/mpcShareStatus';
 import { MpcSystemSettings } from '@/modules/mpc/components/mpcSystemSettings';
+import { MpcWorkspacePolicyList } from '@/modules/mpc/components/mpcWorkspacePolicyList';
 import {
     MPC_LIST_PATH,
     mpcAddressExplorerUrl,
+    mpcWorkspacePath,
 } from '@/modules/mpc/constants/mpcConstants';
 import { MpcDialogId } from '@/modules/mpc/constants/mpcDialogId';
 import { useMpcHasDeviceShare } from '@/modules/mpc/hooks/useMpcHasDeviceShare';
@@ -91,6 +93,8 @@ const MpcSystemContent: React.FC<IMpcSystemContentProps> = (props) => {
         open(MpcDialogId.NEW_REQUEST, { params: { system } });
     const handleSignClick = (request: IMpcSignRequest) =>
         open(MpcDialogId.SIGN_REQUEST, { params: { system, request } });
+    const handleEditClick = (request: IMpcSignRequest) =>
+        open(MpcDialogId.NEW_REQUEST, { params: { system, request } });
     const handleReviewClick = (request: IMpcSignRequest) => {
         const { canApprove, canReject } = getMpcRequestPermissions({
             request,
@@ -117,6 +121,10 @@ const MpcSystemContent: React.FC<IMpcSystemContentProps> = (props) => {
                     {
                         label: t('app.mpc.mpcSystemPage.header.breadcrumb'),
                         href: MPC_LIST_PATH,
+                    },
+                    {
+                        label: t('app.mpc.mpcSystemPage.header.workspace'),
+                        href: mpcWorkspacePath(system.workspaceId),
                     },
                     { label: system.name },
                 ]}
@@ -248,6 +256,7 @@ const MpcSystemContent: React.FC<IMpcSystemContentProps> = (props) => {
                                     )}
                                 <MpcRequestList
                                     hasDeviceShare={hasDeviceShare}
+                                    onEditClick={handleEditClick}
                                     onNewRequestClick={
                                         canCreateRequest
                                             ? handleNewRequest
@@ -283,6 +292,30 @@ const MpcSystemContent: React.FC<IMpcSystemContentProps> = (props) => {
                                 title={t('app.mpc.mpcSystemPage.policy.title')}
                             >
                                 <MpcPolicySummary policy={system.policy} />
+                            </Page.MainSection>
+                            <Page.MainSection
+                                action={{
+                                    label: t(
+                                        'app.mpc.mpcSystemPage.workspacePolicies.action',
+                                    ),
+                                    iconLeft: IconType.SETTINGS,
+                                    href: mpcWorkspacePath(
+                                        system.workspaceId,
+                                        'policies',
+                                    ),
+                                }}
+                                className="pt-10"
+                                description={t(
+                                    'app.mpc.mpcSystemPage.workspacePolicies.description',
+                                )}
+                                title={t(
+                                    'app.mpc.mpcSystemPage.workspacePolicies.title',
+                                )}
+                            >
+                                <MpcWorkspacePolicyList
+                                    canManage={false}
+                                    workspaceId={system.workspaceId}
+                                />
                             </Page.MainSection>
                         </Tabs.Content>
                         <Tabs.Content className="pt-6" value="members">

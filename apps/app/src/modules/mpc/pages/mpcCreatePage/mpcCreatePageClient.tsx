@@ -19,8 +19,8 @@ import {
     formDataToPolicy,
 } from '@/modules/mpc/components/mpcPolicyForm';
 import {
-    MPC_CREATE_PATH,
     MPC_SEPOLIA_CHAIN_ID,
+    mpcCreateSystemPath,
     mpcSystemPath,
 } from '@/modules/mpc/constants/mpcConstants';
 import { Page } from '@/shared/components/page';
@@ -32,7 +32,12 @@ import {
 } from './mpcCreatePageDefinitions';
 import { useMpcKeyCeremony } from './useMpcKeyCeremony';
 
-export interface IMpcCreatePageClientProps {}
+export interface IMpcCreatePageClientProps {
+    /**
+     * ID of the workspace the system is created in.
+     */
+    workspaceId: string;
+}
 
 const parseChainIds = (value: string) =>
     value
@@ -65,7 +70,8 @@ const MpcCreateCeremonyContent: React.FC<IMpcCreateCeremonyContentProps> = (
     return <MpcCreateSystemForm.Ceremony onStart={handleStart} state={state} />;
 };
 
-const MpcCreateWizard: React.FC = () => {
+const MpcCreateWizard: React.FC<IMpcCreatePageClientProps> = (props) => {
+    const { workspaceId } = props;
     const { t } = useTranslations();
     const router = useRouter();
 
@@ -86,8 +92,9 @@ const MpcCreateWizard: React.FC = () => {
                         : undefined,
                 chainIds: parseChainIds(values.chainIds),
                 passphrase: values.passphrase,
+                workspaceId,
             }),
-        [runCeremony],
+        [runCeremony, workspaceId],
     );
 
     const handleFormSubmit = async (values: IMpcCreateSystemFormData) => {
@@ -185,10 +192,16 @@ const MpcCreateWizard: React.FC = () => {
     );
 };
 
-export const MpcCreatePageClient: React.FC<IMpcCreatePageClientProps> = () => (
-    <Page.Main fullWidth={true}>
-        <MpcAuthGate redirectTo={MPC_CREATE_PATH}>
-            <MpcCreateWizard />
-        </MpcAuthGate>
-    </Page.Main>
-);
+export const MpcCreatePageClient: React.FC<IMpcCreatePageClientProps> = (
+    props,
+) => {
+    const { workspaceId } = props;
+
+    return (
+        <Page.Main fullWidth={true}>
+            <MpcAuthGate redirectTo={mpcCreateSystemPath(workspaceId)}>
+                <MpcCreateWizard workspaceId={workspaceId} />
+            </MpcAuthGate>
+        </Page.Main>
+    );
+};

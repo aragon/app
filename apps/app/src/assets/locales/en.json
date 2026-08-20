@@ -2400,7 +2400,7 @@
         "title": "Something went wrong"
       },
       "mpcNavigation": {
-        "title": "MPC systems",
+        "title": "MPC workspaces",
         "poc": "POC",
         "signedInAs": "Signed in as {{user}}",
         "logout": "Log out",
@@ -2470,8 +2470,10 @@
         "error": "Error: {{error}}",
         "actions": {
           "sign": "Sign",
-          "review": "Review"
-        }
+          "review": "Review",
+          "edit": "Edit"
+        },
+        "editableTag": "Editable"
       },
       "mpcRequestList": {
         "entity": "Requests",
@@ -2503,7 +2505,8 @@
         "policyRequiresApproval": "Allowed, requires {{count}} approval(s) from other members",
         "policyDenied": "Denied by policy",
         "approvals": "Approvals",
-        "noApprovals": "None yet"
+        "noApprovals": "None yet",
+        "workspacePolicies": "Workspace policies"
       },
       "mpcPolicySummary": {
         "allowedChainIds": "Allowed chains",
@@ -2603,7 +2606,8 @@
           "reshare_completed": "Reshare completed",
           "recovery_completed": "Recovery completed",
           "key_exported": "Key exported",
-          "system_deleted": "System deleted"
+          "system_deleted": "System deleted",
+          "request_updated": "Request modified"
         }
       },
       "mpcMembersList": {
@@ -2659,13 +2663,287 @@
           "description": "Registration is enabled in local / development environments (MPC_POC_ALLOW_REGISTER)."
         }
       },
-      "mpcListPage": {
-        "title": "MPC systems",
-        "action": "Create system",
+      "mpcWorkspacePage": {
+        "breadcrumb": "Workspaces",
+        "ownerTag": "Owner",
+        "memberTag": "Member",
+        "description": "Workspace owned by {{owner}}. Its active transaction policies are enforced on every transaction request of its MPC systems.",
+        "tabs": {
+          "systems": "Systems",
+          "policies": "Policies",
+          "members": "Members"
+        },
+        "systems": {
+          "title": "MPC systems",
+          "description": "2-of-3 threshold keys with signing policies, members and approvals.",
+          "action": "Create system",
+          "empty": {
+            "heading": "No MPC systems yet",
+            "description": "Create a 2-of-3 threshold key in this workspace: signing policies, members and approvals.",
+            "action": "Create system"
+          }
+        },
+        "policies": {
+          "title": "Transaction policies",
+          "description": "Visual decision trees verified by the policy engine. Active policies are checked by the co-signer on every transaction request of the workspace systems: a transaction that does not comply cannot be created.",
+          "action": "New policy"
+        },
+        "members": {
+          "title": "Members",
+          "description": "Accounts that can access this workspace. The owner manages policies and members; members see the systems and the policies."
+        }
+      },
+      "mpcWorkspacePolicyList": {
+        "blocks": "{{conditions}} condition(s) · {{actions}} action(s)",
+        "updatedAt": "updated {{date}}",
+        "verified": "Verified",
+        "verifiedWithWarnings": "Verified · {{count}} warning(s)",
+        "active": "Active",
+        "inactive": "Inactive",
+        "enforce": "Enforce on transactions",
+        "enforcedHint": "Enforced on every transaction request of this workspace.",
+        "notEnforcedHint": "Not enforced.",
+        "edit": "Edit",
+        "view": "View",
+        "delete": "Delete",
+        "deleteConfirm": "Delete the policy \"{{name}}\"? Transactions will no longer be checked against it.",
         "empty": {
-          "heading": "No MPC systems yet",
-          "description": "Create a 2-of-3 threshold key with signing policies, members and approvals.",
-          "action": "Create system"
+          "heading": "No policies yet",
+          "description": "Create a policy in the visual editor: compose conditions and decisions, simulate transactions, verify it formally and activate it.",
+          "descriptionReadOnly": "The workspace owner has not created any policy yet.",
+          "action": "New policy"
+        }
+      },
+      "mpcWorkspacePolicyVerdicts": {
+        "decision": {
+          "approve": "Approve",
+          "escalate": "Escalate",
+          "deny": "Deny",
+          "notify": "Notify"
+        }
+      },
+      "mpcPolicyEditorPage": {
+        "breadcrumb": "Policies",
+        "newTitle": "New policy",
+        "description": "Compose the decision tree, simulate a transaction, run the formal check and save. Only verified policies can be saved; active policies are enforced on every transaction request.",
+        "back": "Back to policies",
+        "newAction": "New policy",
+        "active": "Active",
+        "inactive": "Inactive",
+        "catalogVersion": "Catalog v{{version}}",
+        "engineDown": {
+          "title": "Policy engine not reachable",
+          "description": "The policy editor needs the policy engine (mpc-poc backend: block catalog, formal check and evaluation). Start it with: cd mpc-poc/backend && pnpm dev (port 3311) or set MPC_POLICY_ENGINE_URL."
+        },
+        "descriptionReadOnly": "You are viewing a policy of a workspace you do not own: you can inspect and simulate it, only the workspace owner can change it."
+      },
+      "mpcPolicyEditor": {
+        "yes": "yes",
+        "no": "no",
+        "error": "error",
+        "warning": "warning",
+        "toolbar": {
+          "nameLabel": "Policy name",
+          "namePlaceholder": "Policy name (e.g. Treasury policy v1)",
+          "status": {
+            "unchecked": "Not verified",
+            "checking": "Verifying…",
+            "verified": "Verified",
+            "failed": "Check failed"
+          },
+          "examples": "Load example…",
+          "examplesTitle": "Load an example flow from the policy engine (replaces the canvas)",
+          "exampleN": "Example {{n}}",
+          "exampleUnavailable": " (uses disabled blocks)",
+          "arrange": "Arrange",
+          "arrangeTitle": "Automatically rearranges the blocks so they neither overlap nor cross their connections",
+          "check": "Check",
+          "checking": "Checking…",
+          "checkTitle": "Mathematically verifies the flow: dead branches, collisions and gaps",
+          "save": "Save",
+          "saving": "Saving…",
+          "saveTitle": "Saves the policy in the workspace",
+          "saveDisabledTitle": "Run the check first: only a verified flow with a name can be saved",
+          "export": "Download JSON",
+          "exportTitle": "Downloads the flow as JSON (the same document the policy engine receives)"
+        },
+        "save": {
+          "successTitle": "Policy saved",
+          "successDescription": "The policy is stored in the workspace with its verification result. Activate it from the policies list to enforce it on transactions.",
+          "failed": "Could not save"
+        },
+        "palette": {
+          "conditions": "Conditions",
+          "actions": "Actions",
+          "groupOther": "Other",
+          "deterministic": "deterministic",
+          "effectful": "effectful",
+          "source": {
+            "history": "history",
+            "service": "external service",
+            "chainTime": "block time"
+          },
+          "hint": "Drag a block onto the canvas or click to add it. Conditions have two outputs: {{yes}} (green) and {{no}} (red). Actions are leaves.",
+          "policies": "Your policies",
+          "policiesDescription": "Saved policies of this workspace, usable as blocks: the block delegates the decision to that policy (it is expanded by the co-signer before checking and evaluating)."
+        },
+        "node": {
+          "trigger": "Trigger",
+          "triggerLabel": "Incoming transaction",
+          "condition": "Condition",
+          "externalFact": " · external fact",
+          "action": "Action",
+          "effectful": " · effectful",
+          "branch": "branch {{branch}}",
+          "notApplicable": " · not applicable",
+          "policyRef": "Policy block"
+        },
+        "summary": {
+          "amount": "amount {{op}} {{value}} ETH",
+          "tokenAmount": "amount {{op}} {{value}} units",
+          "kind": "is {{value}}"
+        },
+        "duration": {
+          "none": "no waiting period"
+        },
+        "inspector": {
+          "title": "Selected block",
+          "triggerDescription": "Entry point of the flow: the incoming transaction. It has no parameters.",
+          "delete": "Delete",
+          "techNote": "Technical details",
+          "noParams": "This block has no parameters.",
+          "seconds": " (seconds)",
+          "risk": " · {{risk}} risk"
+        },
+        "risk": {
+          "medium": "medium",
+          "high": "high",
+          "critical": "critical",
+          "variable": "variable"
+        },
+        "enum": {
+          "lt": "< less than",
+          "lte": "≤ less than or equal to",
+          "gte": "≥ greater than or equal to",
+          "gt": "> greater than",
+          "safe": "safe",
+          "suspicious": "suspicious",
+          "malicious": "malicious",
+          "webhook": "webhook",
+          "telegramStub": "Telegram (stub)"
+        },
+        "weekday": {
+          "1": "Monday",
+          "2": "Tuesday",
+          "3": "Wednesday",
+          "4": "Thursday",
+          "5": "Friday",
+          "6": "Saturday",
+          "7": "Sunday"
+        },
+        "sim": {
+          "title": "Simulate transaction",
+          "amount": "Amount / value (ETH)",
+          "amountWei": "= {{wei}} wei",
+          "to": "Action destination (to)",
+          "data": "Calldata (data, hex; 0x = empty)",
+          "operation": "Operation",
+          "whitelisted": "Destination on trusted list",
+          "whitelistedHint": "At enforcement time: the destination is on the system recipient allowlist.",
+          "seenBefore": "Destination seen before",
+          "when": "Date and time (UTC)",
+          "whenHint": "{{day}} · {{hour}}:00 UTC · weekday={{weekday}}",
+          "scanner": "Scanner result (stub)",
+          "run": "Simulate",
+          "running": "Simulating…",
+          "clear": "Clear",
+          "presets": "Presets",
+          "error": "Simulation error",
+          "preset": {
+            "approve": "0.5 ETH · trusted destination",
+            "escalate": "2.5 ETH · unknown destination",
+            "weekend": "2.5 ETH · weekend",
+            "suspicious": "0.2 ETH · suspicious scan",
+            "erc20": "ERC-20 transfer · 5000 USDC",
+            "approveMax": "unlimited approve (uint256.max)"
+          },
+          "chainId": "Chain id (EIP-155)",
+          "dailySpent": "Spent in the last 24 h incl. this tx (ETH)",
+          "dailySpentHint": "History fact: must be ≥ this transaction amount. Empty = only this transaction."
+        },
+        "decision": {
+          "kicker": "Policy decision",
+          "approve": "Approve",
+          "escalate": "Escalate",
+          "deny": "Deny",
+          "notify": "Notify",
+          "approveDetail": "It complies with the policy. The request can be created and signed without additional approvals.",
+          "escalateOne": "Requires 1 additional approval{{delay}}.",
+          "escalateMany": "Requires {{count}} additional approvals{{delay}}.",
+          "escalateDelay": " and a waiting period of {{delay}} before execution",
+          "escalateNoDelay": " (no waiting period)",
+          "denyDefault": "No path reached an action: denied by default (deny is safe). The request could not be created.",
+          "denyExplicit": "The policy rejects this transaction. The request could not be created.",
+          "notifyDetail": "Allowed with an informational notice (advisory only).",
+          "derivedKind": "Derived proposal type: ",
+          "erc20Amount": " · amount {{amount}} units",
+          "unlimited": " · UNLIMITED approval"
+        },
+        "check": {
+          "title": "Formal check",
+          "running": "Checking the flow with the formal engine (Cedar + cvc5)…",
+          "failed": "Could not check",
+          "clean": {
+            "title": "Consistent flow",
+            "description": "No dead branches, no collisions and no gaps. Mathematically verified over the whole domain of transactions (not by sampling). The policy can be saved."
+          },
+          "warnings": {
+            "title": "Consistent, with warnings",
+            "descriptionOne": "No errors (neither dead branches nor collisions). There is 1 gap warning: transactions that fall into the default denial. The policy can be saved.",
+            "descriptionMany": "No errors (neither dead branches nor collisions). There are {{count}} gap warnings: transactions that fall into the default denial. The policy can be saved."
+          },
+          "problems": {
+            "titleOne": "1 problem in the flow",
+            "titleMany": "{{count}} problems in the flow",
+            "description": "The affected nodes are highlighted on the canvas. Fix the errors before saving the policy."
+          },
+          "type": {
+            "dead_branch": "Dead branch",
+            "collision": "Collision",
+            "gap": "Gap",
+            "unconnected": "Unconnected branch"
+          },
+          "message": {
+            "deadBranch": "Dead branch: this path can never be satisfied (contradictory conditions), so the action “{{action}}” is unreachable.",
+            "collision": "Collision: some transactions match two paths with different decisions at once (“{{first}}” and “{{second}}”). The same transaction would receive two decisions.",
+            "unconnected": "This branch is not connected to any action: transactions that reach it fall into the default denial (deny is safe, which is why this is a warning). Connect it to the intended action.",
+            "gap": "Gap: there are valid transactions that reach no action other than deny; they fall into the default denial (deny is safe, which is why this is a warning)."
+          }
+        },
+        "cex": {
+          "title": "Witness transaction (counterexample)",
+          "amount": "Amount",
+          "extreme": " (extreme value)",
+          "whitelisted": "On trusted list",
+          "seenBefore": "Seen before",
+          "day": "Day",
+          "hour": "Hour (UTC)",
+          "scanner": "Scanner",
+          "kind": "Proposal type",
+          "delegatecall": "delegatecall",
+          "tokenApproval": "Spending approval",
+          "unlimited": "Unlimited approval",
+          "erc20Amount": "Token amount (units)",
+          "chainId": "Chain id",
+          "dailySpent": "Spent in 24 h (incl. this tx)",
+          "hasCalldata": "Carries calldata"
+        },
+        "policyRef": {
+          "label": "Policy: {{name}}",
+          "nodeTitle": "Apply policy",
+          "description": "Delegates the decision of this branch to another saved policy of the workspace. The referenced policy is inlined before the formal check and the evaluation; a policy cannot reference itself.",
+          "paramLabel": "Policy",
+          "unknown": "(unknown policy)"
         }
       },
       "mpcCreatePage": {
@@ -2764,7 +3042,7 @@
       },
       "mpcSystemPage": {
         "header": {
-          "breadcrumb": "MPC systems",
+          "breadcrumb": "Workspaces",
           "pocTag": "POC",
           "mockTag": "POC · mock Shamir 2-of-3",
           "noAddress": "Key not registered",
@@ -2774,7 +3052,8 @@
             "balance": "Sepolia balance",
             "epoch": "Key epoch",
             "members": "Members"
-          }
+          },
+          "workspace": "Workspace"
         },
         "initializing": {
           "title": "Key ceremony not completed",
@@ -2815,6 +3094,11 @@
           "heading": "System not found",
           "description": "The system does not exist or you are not a member.",
           "action": "Back to MPC systems"
+        },
+        "workspacePolicies": {
+          "title": "Workspace policies",
+          "description": "Active policies of the workspace are enforced on every transaction request of this system, in addition to the system policy above.",
+          "action": "Manage policies"
         }
       },
       "mpcSystemSettings": {
@@ -2928,7 +3212,7 @@
             },
             "rejected": {
               "title": "Denied by policy",
-              "description": "The co-signer would deny this request, see the reasons below. Go back and adjust it."
+              "description": "The co-signer would deny this request (see the reasons below): it cannot be created. Go back and adjust it."
             },
             "released": {
               "title": "Share released",
@@ -2954,7 +3238,18 @@
           "back": "Back",
           "cancel": "Cancel",
           "simulate": "Simulate",
-          "close": "Close"
+          "close": "Close",
+          "update": "Save changes"
+        },
+        "editTitle": "Modify sign request",
+        "editDescription": "Change the payload of this editable request. The policies are evaluated again and the approvals already collected are reset.",
+        "editable": {
+          "label": "Editable",
+          "inlineLabel": "Allow modifying this request before it is signed",
+          "helpText": "When enabled, the requester or an owner can change the payload while the request is pending or approved; approvals are reset and the policies re-evaluated on every change."
+        },
+        "updated": {
+          "title": "Request modified"
         }
       },
       "mpcSignRequestDialog": {
@@ -3142,6 +3437,67 @@
         "actions": {
           "submit": "Save policy",
           "cancel": "Cancel"
+        }
+      },
+      "mpcWorkspaceListPage": {
+        "title": "Workspaces",
+        "description": "A workspace groups MPC systems, the transaction policies enforced on them and the accounts that can access them. You only see the workspaces you own or were invited to.",
+        "action": "Create workspace",
+        "empty": {
+          "heading": "You have no workspace yet",
+          "description": "Create your first workspace to add MPC systems, invite members and define transaction policies.",
+          "action": "Create workspace"
+        }
+      },
+      "mpcWorkspaceCard": {
+        "owner": "Owner",
+        "member": "Member",
+        "ownedBy": "Owned by {{owner}}",
+        "members": "{{count}} member(s)"
+      },
+      "mpcCreateWorkspaceDialog": {
+        "title": "Create workspace",
+        "description": "Give the workspace a name. You become its owner: you can add MPC systems, invite members and manage its transaction policies.",
+        "name": {
+          "label": "Name",
+          "placeholder": "e.g. Treasury team"
+        },
+        "actions": {
+          "submit": "Create",
+          "cancel": "Cancel"
+        }
+      },
+      "mpcAddWorkspaceMemberDialog": {
+        "title": "Add workspace member",
+        "description": "Members see the workspace, its systems (as viewers) and its policies. The account must already exist on the co-signer.",
+        "username": {
+          "label": "Username",
+          "placeholder": "alice"
+        },
+        "actions": {
+          "submit": "Add member",
+          "cancel": "Cancel"
+        }
+      },
+      "mpcWorkspaceMembersList": {
+        "entity": "member",
+        "addedAt": "Added {{date}}",
+        "role": {
+          "owner": "Owner",
+          "member": "Member"
+        },
+        "actions": {
+          "add": "Add member",
+          "remove": "Remove"
+        },
+        "removeConfirm": "Remove {{user}} from the workspace? They will lose access to its systems and policies (system memberships are kept).",
+        "empty": {
+          "heading": "No members",
+          "description": "The workspace has no members yet."
+        },
+        "error": {
+          "heading": "Could not load the members",
+          "description": "Try again later."
         }
       }
     },

@@ -4,6 +4,11 @@ import type {
     IMpcGetMembersServiceParams,
     IMpcGetRequestsServiceParams,
     IMpcGetSystemServiceParams,
+    IMpcGetWorkspaceMembersServiceParams,
+    IMpcGetWorkspacePoliciesServiceParams,
+    IMpcGetWorkspacePolicyServiceParams,
+    IMpcGetWorkspaceServiceParams,
+    IMpcGetWorkspaceSystemsServiceParams,
 } from './mpcService.api';
 
 export enum MpcServiceKey {
@@ -15,6 +20,13 @@ export enum MpcServiceKey {
     ACTIVITY = 'MPC_ACTIVITY',
     BALANCE = 'MPC_BALANCE',
     DEVICE_SHARE = 'MPC_DEVICE_SHARE',
+    WORKSPACES = 'MPC_WORKSPACES',
+    WORKSPACE = 'MPC_WORKSPACE',
+    WORKSPACE_POLICIES = 'MPC_WORKSPACE_POLICIES',
+    WORKSPACE_POLICY = 'MPC_WORKSPACE_POLICY',
+    WORKSPACE_SYSTEMS = 'MPC_WORKSPACE_SYSTEMS',
+    WORKSPACE_MEMBERS = 'MPC_WORKSPACE_MEMBERS',
+    POLICY_CATALOG = 'MPC_POLICY_CATALOG',
 }
 
 const PREFIX = 'mpc';
@@ -55,6 +67,33 @@ export const mpcServiceKeys = {
         MpcServiceKey.DEVICE_SHARE,
         systemId,
     ],
+    workspaces: () => [PREFIX, MpcServiceKey.WORKSPACES],
+    workspace: (params: IMpcGetWorkspaceServiceParams) => [
+        PREFIX,
+        MpcServiceKey.WORKSPACE,
+        params,
+    ],
+    workspacePolicies: (params: IMpcGetWorkspacePoliciesServiceParams) => [
+        PREFIX,
+        MpcServiceKey.WORKSPACE_POLICIES,
+        params,
+    ],
+    workspacePolicy: (params: IMpcGetWorkspacePolicyServiceParams) => [
+        PREFIX,
+        MpcServiceKey.WORKSPACE_POLICY,
+        params,
+    ],
+    workspaceSystems: (params: IMpcGetWorkspaceSystemsServiceParams) => [
+        PREFIX,
+        MpcServiceKey.WORKSPACE_SYSTEMS,
+        params,
+    ],
+    workspaceMembers: (params: IMpcGetWorkspaceMembersServiceParams) => [
+        PREFIX,
+        MpcServiceKey.WORKSPACE_MEMBERS,
+        params,
+    ],
+    policyCatalog: () => [PREFIX, MpcServiceKey.POLICY_CATALOG],
     /**
      * Prefix keys used by mutations to invalidate every query of a kind (e.g. all systems).
      */

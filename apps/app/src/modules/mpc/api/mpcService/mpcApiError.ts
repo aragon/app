@@ -9,6 +9,8 @@ export type MpcApiErrorCode =
     | 'conflict'
     | 'policy_denied'
     | 'chain_error'
+    | 'policy_engine_error'
+    | 'policy_check_failed'
     | 'internal'
     | 'network_error';
 

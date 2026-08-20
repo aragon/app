@@ -6,6 +6,7 @@ export type MpcActivityType =
     | 'member_added'
     | 'member_removed'
     | 'request_created'
+    | 'request_updated'
     | 'request_approved'
     | 'request_rejected'
     | 'share_released'

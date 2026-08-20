@@ -1,3 +1,3 @@
-import { MpcListPage } from '@/modules/mpc/pages/mpcListPage';
+import { MpcWorkspaceListPage } from '@/modules/mpc/pages/mpcWorkspaceListPage';
 
-export default MpcListPage;
+export default MpcWorkspaceListPage;

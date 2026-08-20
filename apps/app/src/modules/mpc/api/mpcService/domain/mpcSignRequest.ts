@@ -134,6 +134,11 @@ export interface IMpcSignRequest {
      */
     approvalsRequired: number;
     /**
+     * Whether the requester (or an owner) may modify the payload while the request is pending / approved (chosen
+     * at creation). Modifying re-evaluates the policies and resets the approvals. Undefined = false (legacy).
+     */
+    editable?: boolean;
+    /**
      * Username of the requester.
      */
     createdBy: string;

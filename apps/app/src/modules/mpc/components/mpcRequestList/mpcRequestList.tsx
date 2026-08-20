@@ -35,6 +35,10 @@ export interface IMpcRequestListProps {
      */
     onReviewClick?: (request: IMpcSignRequest) => void;
     /**
+     * Callback called on edit click (editable requests).
+     */
+    onEditClick?: (request: IMpcSignRequest) => void;
+    /**
      * Callback called on the empty state action click.
      */
     onNewRequestClick?: () => void;
@@ -48,6 +52,7 @@ export const MpcRequestList: React.FC<IMpcRequestListProps> = (props) => {
         hasDeviceShare,
         onSignClick,
         onReviewClick,
+        onEditClick,
         onNewRequestClick,
     } = props;
     const { t } = useTranslations();
@@ -91,6 +96,7 @@ export const MpcRequestList: React.FC<IMpcRequestListProps> = (props) => {
                     <MpcRequestItem
                         hasDeviceShare={hasDeviceShare}
                         key={request.id}
+                        onEditClick={onEditClick}
                         onReviewClick={onReviewClick}
                         onSignClick={onSignClick}
                         request={request}

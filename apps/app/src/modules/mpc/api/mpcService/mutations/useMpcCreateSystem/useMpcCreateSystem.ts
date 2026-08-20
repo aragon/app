@@ -24,6 +24,11 @@ export const useMpcCreateSystem = (
             void queryClient.invalidateQueries({
                 queryKey: mpcServiceKeys.prefix(MpcServiceKey.SYSTEMS),
             });
+            void queryClient.invalidateQueries({
+                queryKey: mpcServiceKeys.prefix(
+                    MpcServiceKey.WORKSPACE_SYSTEMS,
+                ),
+            });
             return options?.onSuccess?.(data, params, context, mutationContext);
         },
     });

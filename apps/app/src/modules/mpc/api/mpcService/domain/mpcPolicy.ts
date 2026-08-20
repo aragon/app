@@ -1,4 +1,5 @@
 import type { Address } from 'viem';
+import type { IMpcWorkspacePolicyVerdict } from './mpcWorkspace';
 
 export interface IMpcPolicy {
     /**
@@ -53,4 +54,8 @@ export interface IMpcPolicyDecision {
      * Human readable reasons for the decision (deny reasons or approval reasons).
      */
     reasons: string[];
+    /**
+     * Verdict of every enabled workspace policy evaluated for the request (transaction requests only).
+     */
+    workspacePolicies?: IMpcWorkspacePolicyVerdict[];
 }

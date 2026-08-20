@@ -27,6 +27,7 @@ import {
     handleRegisterKey,
     handleServerShare,
 } from './mpcSystemHandlers';
+import { handleCreateWorkspace } from './mpcWorkspaceHandlers';
 
 jest.mock('server-only', () => ({}));
 jest.mock('@/shared/featureFlags', () => ({
@@ -75,6 +76,19 @@ const authenticate = async (username: string): Promise<string> => {
     return response.headers.get('set-cookie')!.split(';')[0];
 };
 
+const createWorkspace = async (cookie: string): Promise<string> => {
+    const response = await handleCreateWorkspace(
+        buildRequest('/api/mpc/workspaces', {
+            method: 'POST',
+            cookie,
+            body: { name: 'Test workspace' },
+        }),
+        params({}),
+    );
+
+    return ((await response.json()) as { id: string }).id;
+};
+
 describe('mpc system route handlers', () => {
     afterAll(() => {
         getMpcStore().reset();
@@ -83,6 +97,7 @@ describe('mpc system route handlers', () => {
 
     it('runs the create -> register key -> request -> release -> complete flow for a message', async () => {
         const cookie = await authenticate('owner');
+        const workspaceId = await createWorkspace(cookie);
         const account = privateKeyToAccount(generatePrivateKey());
 
         const createResponse = await handleCreateSystem(
@@ -93,6 +108,7 @@ describe('mpc system route handlers', () => {
                     name: 'Treasury',
                     chainIds: [11_155_111],
                     providerId: 'mock-shamir',
+                    workspaceId,
                 },
             }),
             params({}),
@@ -323,6 +339,7 @@ describe('mpc system route handlers', () => {
                     name: 'Hidden',
                     chainIds: [11_155_111],
                     providerId: 'mock-shamir',
+                    workspaceId: 'none',
                 },
             }),
             params({}),
@@ -333,6 +350,7 @@ describe('mpc system route handlers', () => {
     it('hides systems from non members and blocks non-owner mutations', async () => {
         const ownerCookie = await authenticate('owner2');
         const otherCookie = await authenticate('other2');
+        const workspaceId = await createWorkspace(ownerCookie);
 
         const system = (await (
             await handleCreateSystem(
@@ -343,6 +361,7 @@ describe('mpc system route handlers', () => {
                         name: 'Private',
                         chainIds: [11_155_111],
                         providerId: 'mock-shamir',
+                        workspaceId,
                     },
                 }),
                 params({}),

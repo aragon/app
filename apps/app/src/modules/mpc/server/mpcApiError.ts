@@ -7,6 +7,8 @@ export type MpcApiErrorCode =
     | 'conflict'
     | 'policy_denied'
     | 'chain_error'
+    | 'policy_engine_error'
+    | 'policy_check_failed'
     | 'internal';
 
 const defaultStatusByCode: Record<MpcApiErrorCode, number> = {
@@ -18,6 +20,8 @@ const defaultStatusByCode: Record<MpcApiErrorCode, number> = {
     conflict: 409,
     policy_denied: 403,
     chain_error: 502,
+    policy_engine_error: 502,
+    policy_check_failed: 422,
     internal: 500,
 };
 
