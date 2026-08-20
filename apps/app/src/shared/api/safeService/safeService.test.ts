@@ -4,6 +4,7 @@ import {
     generateSafeInfo,
     generateSafeTransaction,
 } from '@/shared/testUtils';
+import { apiVersionUtils } from '@/shared/utils/apiVersionUtils';
 import { safeService } from './safeService';
 import { safeServiceKeys } from './safeServiceKeys';
 
@@ -33,17 +34,19 @@ describe('safe service', () => {
     });
 
     it('getSafePendingTransactions filters out transactions that can never execute', async () => {
+        const transaction = generateSafeTransaction({ nonce: '12' });
+        const { from, ...upstreamTransaction } = transaction;
         const transactions = {
             count: 1,
             next: null,
             previous: null,
-            results: [generateSafeTransaction({ nonce: 12 })],
+            results: [{ ...upstreamTransaction, proposer: from }],
         };
         requestSpy.mockResolvedValue(transactions);
 
         const result = await safeService.getSafePendingTransactions({
             urlParams,
-            queryParams: { currentNonce: 12, limit: 10 },
+            queryParams: { currentNonce: '12', limit: 10 },
         });
 
         expect(requestSpy).toHaveBeenCalledWith(
@@ -52,13 +55,13 @@ describe('safe service', () => {
                 urlParams: { chainId: '1', address: '0xSafeAddress' },
                 queryParams: {
                     executed: false,
-                    nonce__gte: 12,
+                    nonce__gte: '12',
                     limit: 10,
                     offset: undefined,
                 },
             },
         );
-        expect(result).toEqual(transactions);
+        expect(result).toEqual({ ...transactions, results: [transaction] });
     });
 
     it('getSafeBalances fetches the balances of the specified safe', async () => {
@@ -74,6 +77,14 @@ describe('safe service', () => {
         expect(result).toEqual(balances);
     });
 
+    it('rejects a successful response that does not match the Safe contract', async () => {
+        requestSpy.mockResolvedValue({ address: '0xSafeAddress' });
+
+        await expect(
+            safeService.getSafeInfo({ urlParams }),
+        ).rejects.toMatchObject({ code: 'invalid-response', status: 502 });
+    });
+
     it('builds query keys that are unique per safe', () => {
         const otherParams = {
             urlParams: { ...urlParams, address: '0xOtherAddress' },
@@ -85,5 +96,10 @@ describe('safe service', () => {
         expect(safeServiceKeys.safeInfo({ urlParams })).not.toEqual(
             safeServiceKeys.safeBalances({ urlParams }),
         );
+        expect(safeServiceKeys.safeInfo({ urlParams })).toEqual([
+            'SAFE_INFO',
+            apiVersionUtils.getApiVersion(),
+            { urlParams },
+        ]);
     });
 });

@@ -1,5 +1,6 @@
 import type { Network } from '../daoService';
 import type { IRequestUrlParams, IRequestUrlQueryParams } from '../httpService';
+import type { ISafeInfo } from './domain';
 
 export interface ISafeUrlParams {
     /**
@@ -19,7 +20,7 @@ export interface IGetSafePendingTransactionsQueryParams {
      * Current nonce of the Safe (`ISafeInfo.nonce`). Transactions below it can never execute, so
      * the filter is what separates a live queue from permanently dead transactions.
      */
-    currentNonce: number;
+    currentNonce: ISafeInfo['nonce'];
     /**
      * Maximum number of transactions to return.
      */

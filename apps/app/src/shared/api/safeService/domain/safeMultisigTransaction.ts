@@ -1,11 +1,13 @@
 import type { ISafeConfirmation } from './safeConfirmation';
+import { isSafeConfirmation } from './safeConfirmation';
+import { isRecord, isUnsignedIntegerString } from './safeDomainUtils';
 
 export interface ISafeMultisigTransaction {
     /**
-     * Nonce the transaction will consume. Safe nonces are strictly sequential, so a transaction
-     * is only live while `nonce >= ISafeInfo.nonce`.
+     * Decimal-string nonce the transaction will consume. Safe nonces are strictly sequential, so
+     * a transaction is only live while `BigInt(nonce) >= BigInt(ISafeInfo.nonce)`.
      */
-    nonce: number;
+    nonce: string;
     /**
      * Hash identifying the transaction within the Safe.
      */
@@ -13,7 +15,7 @@ export interface ISafeMultisigTransaction {
     /**
      * Address that proposed the transaction.
      */
-    from: string;
+    from: string | null;
     /**
      * Target address of the transaction.
      */
@@ -52,3 +54,23 @@ export interface ISafeMultisigTransaction {
      */
     submissionDate: string;
 }
+
+export const isSafeMultisigTransaction = (
+    value: unknown,
+): value is ISafeMultisigTransaction =>
+    isRecord(value) &&
+    isUnsignedIntegerString(value.nonce) &&
+    typeof value.safeTxHash === 'string' &&
+    (typeof value.from === 'string' || value.from === null) &&
+    typeof value.to === 'string' &&
+    typeof value.value === 'string' &&
+    (typeof value.data === 'string' || value.data === null) &&
+    (value.operation === 0 || value.operation === 1) &&
+    Array.isArray(value.confirmations) &&
+    value.confirmations.every(isSafeConfirmation) &&
+    typeof value.confirmationsRequired === 'number' &&
+    Number.isInteger(value.confirmationsRequired) &&
+    value.confirmationsRequired > 0 &&
+    (typeof value.signatures === 'string' || value.signatures === null) &&
+    typeof value.isExecuted === 'boolean' &&
+    typeof value.submissionDate === 'string';

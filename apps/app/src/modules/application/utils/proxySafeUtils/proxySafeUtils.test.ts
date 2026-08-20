@@ -150,6 +150,29 @@ describe('proxySafe utils', () => {
             );
         });
 
+        it('provides a default backoff when a rate limit response omits retry-after', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ ok: false, status: 429 }),
+            );
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1'),
+            );
+
+            expect(nextResponseJsonSpy).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    code: SafeServiceErrorCode.RATE_LIMITED,
+                    retryAfter: 60,
+                }),
+                expect.objectContaining({
+                    status: 429,
+                    headers: { 'Retry-After': '60' },
+                }),
+            );
+        });
+
         it('forwards an upstream not-found as a typed not-found response', async () => {
             const testClass = new ProxySafeUtils();
             fetchSpy.mockResolvedValue(

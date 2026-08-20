@@ -9,6 +9,8 @@ import {
 } from './resolveServerSafeUrl';
 import { safeNetworkFromChainId } from './safeTxServiceNetworks';
 
+const DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 60;
+
 export interface ISafeRequestParams {
     /**
      * Chain-id of the Safe transaction service to forward the request to.
@@ -98,7 +100,7 @@ export class ProxySafeUtils {
                     'Safe transaction service rate limit',
                     {
                         context: {
-                            retryAfter: retryAfter ?? null,
+                            retryAfter,
                             ...monitoringContext,
                         },
                         level: 'warning',
@@ -193,12 +195,23 @@ export class ProxySafeUtils {
         return `/${encodedPath}/`;
     };
 
-    private parseRetryAfter = (response: Response): number | undefined => {
-        const retryAfter = Number(response.headers.get('retry-after'));
+    private parseRetryAfter = (response: Response): number => {
+        const retryAfterHeader = response.headers.get('retry-after');
+        const retryAfterSeconds = Number(retryAfterHeader);
 
-        return Number.isFinite(retryAfter) && retryAfter > 0
-            ? retryAfter
-            : undefined;
+        if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+            return Math.ceil(retryAfterSeconds);
+        }
+
+        if (retryAfterHeader != null) {
+            const retryAt = Date.parse(retryAfterHeader);
+
+            if (Number.isFinite(retryAt) && retryAt > Date.now()) {
+                return Math.ceil((retryAt - Date.now()) / 1000);
+            }
+        }
+
+        return DEFAULT_RATE_LIMIT_BACKOFF_SECONDS;
     };
 
     /**

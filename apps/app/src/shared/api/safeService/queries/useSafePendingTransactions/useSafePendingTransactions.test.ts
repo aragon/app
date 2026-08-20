@@ -20,13 +20,13 @@ describe('useSafePendingTransactions query', () => {
                 network: Network.ETHEREUM_MAINNET,
                 address: '0xSafeAddress',
             },
-            queryParams: { currentNonce: 12 },
+            queryParams: { currentNonce: '12' },
         };
         const transactions = {
             count: 1,
             next: null,
             previous: null,
-            results: [generateSafeTransaction({ nonce: 12 })],
+            results: [generateSafeTransaction({ nonce: '12' })],
         };
         getSafePendingTransactionsSpy.mockResolvedValue(transactions);
 

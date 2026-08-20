@@ -1,3 +1,5 @@
+import { isRecord } from './safeDomainUtils';
+
 export interface ISafeConfirmation {
     /**
      * Checksummed address of the owner that confirmed the transaction.
@@ -13,3 +15,11 @@ export interface ISafeConfirmation {
      */
     submissionDate: string;
 }
+
+export const isSafeConfirmation = (
+    value: unknown,
+): value is ISafeConfirmation =>
+    isRecord(value) &&
+    typeof value.owner === 'string' &&
+    typeof value.signature === 'string' &&
+    typeof value.submissionDate === 'string';

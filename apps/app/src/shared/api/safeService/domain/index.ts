@@ -1,6 +1,19 @@
 export { SafeServiceErrorCode } from './enum';
-export type { ISafeBalance, ISafeBalanceToken } from './safeBalance';
-export type { ISafeConfirmation } from './safeConfirmation';
-export type { ISafeInfo } from './safeInfo';
-export type { ISafeMultisigTransaction } from './safeMultisigTransaction';
-export type { ISafePaginatedResponse } from './safePaginatedResponse';
+export {
+    type ISafeBalance,
+    type ISafeBalanceToken,
+    isSafeBalance,
+} from './safeBalance';
+export {
+    type ISafeConfirmation,
+    isSafeConfirmation,
+} from './safeConfirmation';
+export { type ISafeInfo, isSafeInfo } from './safeInfo';
+export {
+    type ISafeMultisigTransaction,
+    isSafeMultisigTransaction,
+} from './safeMultisigTransaction';
+export {
+    type ISafePaginatedResponse,
+    isSafePaginatedResponse,
+} from './safePaginatedResponse';

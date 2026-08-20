@@ -69,6 +69,10 @@ export const resolveServerSafeApiKey = (): string | undefined => {
  * secret. Used by `proxySafeUtils` to fail fast at server boot in misconfigured deployments.
  */
 export const assertServerSafeConfig = (): void => {
+    if (process.env.NEXT_RUNTIME !== 'nodejs') {
+        return;
+    }
+
     if (process.env.CI === 'true') {
         return;
     }

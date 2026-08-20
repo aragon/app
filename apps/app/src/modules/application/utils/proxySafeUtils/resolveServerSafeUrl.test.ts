@@ -81,5 +81,12 @@ describe('resolveServerSafeUrl', () => {
         it('does not throw when the key is set', () => {
             expect(() => assertServerSafeConfig()).not.toThrow();
         });
+
+        it('does not read or require the key outside the node server runtime', () => {
+            delete process.env.NEXT_RUNTIME;
+            delete process.env.NEXT_SECRET_SAFE_API_KEY;
+
+            expect(() => assertServerSafeConfig()).not.toThrow();
+        });
     });
 });

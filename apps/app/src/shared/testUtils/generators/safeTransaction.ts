@@ -3,7 +3,7 @@ import type { ISafeMultisigTransaction } from '@/shared/api/safeService';
 export const generateSafeTransaction = (
     transaction?: Partial<ISafeMultisigTransaction>,
 ): ISafeMultisigTransaction => ({
-    nonce: 0,
+    nonce: '0',
     safeTxHash: '0xSafeTxHash',
     from: '0xProposerAddress',
     to: '0xTargetAddress',

@@ -1,10 +1,12 @@
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { HttpService } from '../httpService';
-import type {
-    ISafeBalance,
-    ISafeInfo,
-    ISafeMultisigTransaction,
-    ISafePaginatedResponse,
+import type { ISafeInfo, ISafeMultisigTransaction } from './domain';
+import {
+    isSafeBalance,
+    isSafeInfo,
+    isSafeMultisigTransaction,
+    isSafePaginatedResponse,
+    SafeServiceErrorCode,
 } from './domain';
 import type {
     IGetSafeBalancesParams,
@@ -16,8 +18,8 @@ import { SafeServiceError } from './safeServiceError';
 
 /**
  * Reads Safe state through the `/api/safe` proxy route, which injects the Safe API key server-side.
- * The base URL is relative, so these calls run in the browser (or in a route handler on the same
- * origin) — the key is never read here.
+ * The relative base URL sends browser requests to that same-origin route; the key is never read
+ * here.
  *
  * Failures surface as a `SafeServiceError` carrying a `SafeServiceErrorCode`, so an unsupported
  * chain or an exhausted quota stays distinguishable from a genuine error.
@@ -35,9 +37,14 @@ class SafeService extends HttpService {
     }
 
     getSafeInfo = async ({ urlParams }: IGetSafeInfoParams) => {
-        const result = await this.request<ISafeInfo>(this.basePaths.safeInfo, {
+        const response = await this.request<unknown>(this.basePaths.safeInfo, {
             urlParams: this.buildUrlParams(urlParams),
         });
+        const result = this.normalizeSafeInfo(response);
+
+        if (result == null) {
+            return this.throwInvalidResponse('Safe info');
+        }
 
         return result;
     };
@@ -53,28 +60,112 @@ class SafeService extends HttpService {
     }: IGetSafePendingTransactionsParams) => {
         const { currentNonce, limit, offset } = queryParams;
 
-        const result = await this.request<
-            ISafePaginatedResponse<ISafeMultisigTransaction>
-        >(this.basePaths.safePendingTransactions, {
-            urlParams: this.buildUrlParams(urlParams),
-            queryParams: {
-                executed: false,
-                nonce__gte: currentNonce,
-                limit,
-                offset,
+        const response = await this.request<unknown>(
+            this.basePaths.safePendingTransactions,
+            {
+                urlParams: this.buildUrlParams(urlParams),
+                queryParams: {
+                    executed: false,
+                    nonce__gte: currentNonce,
+                    limit,
+                    offset,
+                },
             },
-        });
+        );
 
-        return result;
+        if (
+            !isSafePaginatedResponse(
+                response,
+                (_item: unknown): _item is unknown => true,
+            )
+        ) {
+            return this.throwInvalidResponse('Safe pending transactions');
+        }
+
+        const results: ISafeMultisigTransaction[] = [];
+
+        for (const transaction of response.results) {
+            const normalizedTransaction =
+                this.normalizeSafeMultisigTransaction(transaction);
+
+            if (normalizedTransaction == null) {
+                return this.throwInvalidResponse('Safe pending transactions');
+            }
+
+            results.push(normalizedTransaction);
+        }
+
+        return { ...response, results };
     };
 
     getSafeBalances = async ({ urlParams }: IGetSafeBalancesParams) => {
-        const result = await this.request<ISafeBalance[]>(
+        const response = await this.request<unknown>(
             this.basePaths.safeBalances,
             { urlParams: this.buildUrlParams(urlParams) },
         );
 
-        return result;
+        if (!Array.isArray(response) || !response.every(isSafeBalance)) {
+            return this.throwInvalidResponse('Safe balances');
+        }
+
+        return response;
+    };
+
+    private normalizeSafeInfo = (value: unknown): ISafeInfo | undefined => {
+        if (value == null || typeof value !== 'object') {
+            return undefined;
+        }
+
+        const { nonce, ...safeInfo } = value as Record<string, unknown>;
+
+        if (typeof nonce !== 'string' && typeof nonce !== 'number') {
+            return undefined;
+        }
+
+        const normalized = { ...safeInfo, nonce: String(nonce) };
+
+        return isSafeInfo(normalized) ? normalized : undefined;
+    };
+
+    /**
+     * The transaction service calls the proposing owner `proposer`; the app's Safe domain calls
+     * that address `from`. Normalize at the service boundary so consumers never depend on the
+     * upstream naming, and keep nonces as decimal strings to avoid uint256 precision loss.
+     */
+    private normalizeSafeMultisigTransaction = (
+        value: unknown,
+    ): ISafeMultisigTransaction | undefined => {
+        if (value == null || typeof value !== 'object') {
+            return undefined;
+        }
+
+        const { nonce, proposer, ...transaction } = value as Record<
+            string,
+            unknown
+        >;
+
+        if (
+            (typeof nonce !== 'string' && typeof nonce !== 'number') ||
+            (typeof proposer !== 'string' && proposer !== null)
+        ) {
+            return undefined;
+        }
+
+        const normalized = {
+            ...transaction,
+            nonce: String(nonce),
+            from: proposer,
+        };
+
+        return isSafeMultisigTransaction(normalized) ? normalized : undefined;
+    };
+
+    private throwInvalidResponse = (resource: string): never => {
+        throw new SafeServiceError(
+            SafeServiceErrorCode.INVALID_RESPONSE,
+            `${resource} response did not match the expected contract`,
+            502,
+        );
     };
 
     private buildUrlParams = ({ network, address }: ISafeUrlParams) => ({
