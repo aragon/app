@@ -120,12 +120,32 @@ class SafeService extends HttpService {
     proposeSafeTransaction = async ({
         urlParams,
         body,
-    }: IProposeSafeTransactionParams) =>
-        this.request<unknown>(
+    }: IProposeSafeTransactionParams) => {
+        const {
+            safeTransactionData,
+            safeTxHash,
+            senderAddress,
+            senderSignature,
+            origin,
+        } = body;
+
+        // The transaction service expects the Safe transaction fields flattened at the top level
+        // with its own field names (contractTransactionHash / sender / signature), not the nested
+        // domain shape. Sending the domain shape verbatim is rejected with 422.
+        const wireBody = {
+            ...safeTransactionData,
+            contractTransactionHash: safeTxHash,
+            sender: senderAddress,
+            signature: senderSignature,
+            origin,
+        };
+
+        return this.request<unknown>(
             this.basePaths.proposeSafeTransaction,
-            { urlParams: this.buildUrlParams(urlParams), body },
+            { urlParams: this.buildUrlParams(urlParams), body: wireBody },
             { method: 'POST' },
         );
+    };
 
     confirmSafeTransaction = async ({
         urlParams,

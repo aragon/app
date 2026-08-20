@@ -393,19 +393,18 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             >
                 {t(`${translationKey}.${buttonKey}`)}
             </Button>
-            {!hasSettled && (
-                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                    {hasUnsupportedContractOwner
-                        ? t(`${translationKey}.versionUnsupported`, {
-                              version:
-                                  safeInfo?.version ??
-                                  t(`${translationKey}.unknownVersion`),
-                          })
-                        : isWaitingForOwners
-                          ? t(`${translationKey}.waitingForOwners`)
-                          : t(`${translationKey}.gaslessHelp`)}
-                </p>
-            )}
+            {!hasSettled &&
+                (hasUnsupportedContractOwner || isWaitingForOwners) && (
+                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
+                        {hasUnsupportedContractOwner
+                            ? t(`${translationKey}.versionUnsupported`, {
+                                  version:
+                                      safeInfo?.version ??
+                                      t(`${translationKey}.unknownVersion`),
+                              })
+                            : t(`${translationKey}.waitingForOwners`)}
+                    </p>
+                )}
             {actionError != null && (
                 <p className="text-center text-critical-500 text-sm md:text-left">
                     {actionError}
