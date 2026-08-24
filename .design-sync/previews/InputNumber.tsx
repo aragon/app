@@ -27,6 +27,12 @@ export const PrefixSuffix = () => (
             prefix="ANT"
             value="250"
         />
+        <InputNumber
+            className="w-full"
+            label="Amount to stake"
+            suffix="aUSDC"
+            value="250"
+        />
     </div>
 );
 

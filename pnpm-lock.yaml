@@ -10,8 +10,8 @@ catalogs:
       specifier: ^4.0.63
       version: 4.0.63
     '@aragon/gov-ui-kit':
-      specifier: ^2.9.0
-      version: 2.9.0
+      specifier: ^2.10.0
+      version: 2.10.0
     '@assistant-ui/react':
       specifier: 0.14.27
       version: 0.14.27
@@ -239,7 +239,7 @@ importers:
         version: link:../../packages/assistant-contracts
       '@aragon/gov-ui-kit':
         specifier: 'catalog:'
-        version: 2.9.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76)))
+        version: 2.10.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76)))
       '@dagrejs/dagre':
         specifier: ^3.1.1
         version: 3.1.1
@@ -551,7 +551,7 @@ importers:
     devDependencies:
       '@aragon/gov-ui-kit':
         specifier: 'catalog:'
-        version: 2.9.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@4.4.3))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@4.4.3))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@4.4.3))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3)))
+        version: 2.10.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@4.4.3))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@4.4.3))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@4.4.3))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3)))
       '@biomejs/biome':
         specifier: 'catalog:'
         version: 2.5.8
@@ -702,8 +702,8 @@ packages:
     resolution: {integrity: sha512-KV30X9uSM0vcX1EsbrKoE0DMxe0NsqTlW+2YoOJND2iKHgjnX8SnlZtO5f5HS6MIQkb/ihHUoRe/9Jjnin9uFA==}
     engines: {node: '>=24.13.0', pnpm: '>=11.0.0'}
 
-  '@aragon/gov-ui-kit@2.9.0':
-    resolution: {integrity: sha512-FK49UGdLolVQDSDW2Qmw9YMxeC+xzj52/AJClVsibHLLzpRofXM9zKx3VhaCqehpntyn9iADglx6lQDWdVHB5w==}
+  '@aragon/gov-ui-kit@2.10.0':
+    resolution: {integrity: sha512-6a5xcYHnLVdQDJjt76GFuyKak65iTU71rXI+MnKOUdi9EyIM8Vy1S0XRvp/Bmj+fpffPhKMHcqHEmnNJ2QkzCg==}
     engines: {node: '>=24.16.0', pnpm: '>=11.0.0'}
     peerDependencies:
       '@tailwindcss/typography': ^0.5.0
@@ -9502,7 +9502,7 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@aragon/gov-ui-kit@2.9.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76)))':
+  '@aragon/gov-ui-kit@2.10.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@3.25.76))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@3.25.76))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@3.25.76))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@3.25.76)))':
     dependencies:
       '@radix-ui/react-accordion': 1.2.20(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-alert-dialog': 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -9548,7 +9548,7 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@aragon/gov-ui-kit@2.9.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@4.4.3))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@4.4.3))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@4.4.3))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3)))':
+  '@aragon/gov-ui-kit@2.10.0(@emotion/is-prop-valid@1.4.0)(@floating-ui/dom@1.8.0)(@tailwindcss/typography@0.5.20(tailwindcss@4.3.3))(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react-hook-form@7.85.0(react@19.2.8))(react@19.2.8)(tailwindcss@4.3.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3))(wagmi@3.7.6(@coinbase/wallet-sdk@4.3.6(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(use-sync-external-store@1.6.0(react@19.2.8))(zod@4.4.3))(@safe-global/safe-apps-provider@0.18.6(typescript@5.9.3)(zod@4.4.3))(@safe-global/safe-apps-sdk@9.1.0(typescript@5.9.3)(zod@4.4.3))(@tanstack/query-core@5.101.4)(@tanstack/react-query@5.101.4(react@19.2.8))(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(typescript@5.9.3)(viem@2.55.13(typescript@5.9.3)(zod@4.4.3)))':
     dependencies:
       '@radix-ui/react-accordion': 1.2.20(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-alert-dialog': 1.1.23(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
