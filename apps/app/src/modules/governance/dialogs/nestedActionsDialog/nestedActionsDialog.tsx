@@ -235,7 +235,14 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                         />
                     ) : (
                         <ProposalActionsEditor
-                            allowedActions={allowedActions}
+                            allowedActions={
+                                // rough heuristic to improve UX with 'Only show allowed actions' switch resetting on every
+                                // dialog open
+                                initialActions.length &&
+                                allowedActions?.length === 0
+                                    ? undefined
+                                    : allowedActions
+                            }
                             daoId={crossChainNetwork ? undefined : hostDaoId}
                             excludeActionTypes={excludeActionTypes}
                             network={crossChainNetwork}
@@ -269,6 +276,9 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                         label: t('app.governance.nestedActionsDialog.cancel'),
                         onClick: handleClose,
                     }}
+                    // "Add action" button is also of primary variant and placed just above the "Save actions" button in
+                    // default variant, so it's easy to click the wrong one
+                    variant="wizard"
                 />
             </CreateProposalFormProvider>
         </FormProvider>
