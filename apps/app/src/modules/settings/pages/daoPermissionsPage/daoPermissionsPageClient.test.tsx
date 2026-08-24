@@ -356,35 +356,36 @@ describe('<DaoPermissionsPageClient /> component', () => {
             subpluginDisabled: true,
             isLoading: true,
         },
-    ])('wires toggle availability into the switches for $name', ({
-        rows,
-        daoDisabled,
-        subpluginDisabled,
-        isLoading,
-    }) => {
-        mockFilterParamValues = {
-            permissionsview: 'graph',
-        };
-        permissionsData = {
-            ...permissionsData,
-            isLoading,
-            rows,
-        } as IUsePermissionsDataResult;
+    ])(
+        'wires toggle availability into the switches for $name',
+        ({ rows, daoDisabled, subpluginDisabled, isLoading }) => {
+            mockFilterParamValues = {
+                permissionsview: 'graph',
+            };
+            permissionsData = {
+                ...permissionsData,
+                isLoading,
+                rows,
+            } as IUsePermissionsDataResult;
 
-        render(
-            <GukModulesProvider>
-                <DaoPermissionsPageClient daoId="dao-id" />
-            </GukModulesProvider>,
-        );
+            render(
+                <GukModulesProvider>
+                    <DaoPermissionsPageClient daoId="dao-id" />
+                </GukModulesProvider>,
+            );
 
-        const daoSwitch = screen.getByRole('switch', {
-            name: 'Hide permissions granted to DAO',
-        });
-        const subpluginSwitch = screen.getByRole('switch', {
-            name: 'Hide subplugin permissions',
-        });
+            const daoSwitch = screen.getByRole('switch', {
+                name: 'Hide permissions granted to DAO',
+            });
+            const subpluginSwitch = screen.getByRole('switch', {
+                name: 'Hide subplugin permissions',
+            });
 
-        expect(daoSwitch).toHaveProperty('disabled', daoDisabled);
-        expect(subpluginSwitch).toHaveProperty('disabled', subpluginDisabled);
-    });
+            expect(daoSwitch).toHaveProperty('disabled', daoDisabled);
+            expect(subpluginSwitch).toHaveProperty(
+                'disabled',
+                subpluginDisabled,
+            );
+        },
+    );
 });
