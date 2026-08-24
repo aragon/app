@@ -264,49 +264,52 @@ describe('daoProcessDetailsClient Utils', () => {
             it.each([
                 VotingBodyBrandIdentity.EOA,
                 VotingBodyBrandIdentity.OTHER,
-            ])('preserves %s external bodies without Safe branding', (brandId) => {
-                const externalAddress =
-                    '0x2222222222222222222222222222222222222222';
-                const settings = generateSppPluginSettings({
-                    stages: [
-                        generateSppStage({
-                            plugins: [
-                                generateSppStagePlugin({
-                                    address: externalAddress,
-                                    brandId,
-                                    interfaceType: undefined,
-                                    proposalCreationConditionAddress:
-                                        '0x5555555555555555555555555555555555555555',
-                                }),
-                            ],
-                        }),
-                    ],
-                });
+            ])(
+                'preserves %s external bodies without Safe branding',
+                (brandId) => {
+                    const externalAddress =
+                        '0x2222222222222222222222222222222222222222';
+                    const settings = generateSppPluginSettings({
+                        stages: [
+                            generateSppStage({
+                                plugins: [
+                                    generateSppStagePlugin({
+                                        address: externalAddress,
+                                        brandId,
+                                        interfaceType: undefined,
+                                        proposalCreationConditionAddress:
+                                            '0x5555555555555555555555555555555555555555',
+                                    }),
+                                ],
+                            }),
+                        ],
+                    });
 
-                const mainPlugin = generateDaoPlugin({
-                    isProcess: true,
-                    isBody: false,
-                    settings,
-                });
+                    const mainPlugin = generateDaoPlugin({
+                        isProcess: true,
+                        isBody: false,
+                        settings,
+                    });
 
-                const result =
-                    daoProcessDetailsClientUtils.pluginToProcessFormData(
-                        mainPlugin,
-                        [],
-                    );
+                    const result =
+                        daoProcessDetailsClientUtils.pluginToProcessFormData(
+                            mainPlugin,
+                            [],
+                        );
 
-                expect(result.governanceType).toBe(GovernanceType.ADVANCED);
-                if (result.governanceType === GovernanceType.ADVANCED) {
-                    const body = result.stages[0].bodies[0];
+                    expect(result.governanceType).toBe(GovernanceType.ADVANCED);
+                    if (result.governanceType === GovernanceType.ADVANCED) {
+                        const body = result.stages[0].bodies[0];
 
-                    expect(body.type).toBe(BodyType.EXTERNAL);
-                    if (body.type === BodyType.EXTERNAL) {
-                        expect(body.address).toBe(externalAddress);
-                        expect(body.isSafe).toBe(false);
-                        expect(body.canCreateProposal).toBe(false);
+                        expect(body.type).toBe(BodyType.EXTERNAL);
+                        if (body.type === BodyType.EXTERNAL) {
+                            expect(body.address).toBe(externalAddress);
+                            expect(body.isSafe).toBe(false);
+                            expect(body.canCreateProposal).toBe(false);
+                        }
                     }
-                }
-            });
+                },
+            );
         });
     });
 });

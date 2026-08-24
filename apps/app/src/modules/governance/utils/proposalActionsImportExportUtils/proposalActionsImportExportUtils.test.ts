@@ -18,16 +18,19 @@ describe('proposalActionsImportExportUtils', () => {
             '1234567891234567891',
             '1000000000000000000000',
             '9007199254740993',
-        ])('keeps the wei value %p exact, which a JS number would round', (value) => {
-            const [exported] =
-                proposalActionsImportExportUtils.exportActionsToJSON([
-                    { ...action, value },
-                ]);
+        ])(
+            'keeps the wei value %p exact, which a JS number would round',
+            (value) => {
+                const [exported] =
+                    proposalActionsImportExportUtils.exportActionsToJSON([
+                        { ...action, value },
+                    ]);
 
-            expect(exported.value).toEqual(value);
-            // The downloaded file must not carry a rounded or exponential amount.
-            expect(JSON.stringify(exported.value)).toEqual(`"${value}"`);
-        });
+                expect(exported.value).toEqual(value);
+                // The downloaded file must not carry a rounded or exponential amount.
+                expect(JSON.stringify(exported.value)).toEqual(`"${value}"`);
+            },
+        );
 
         it('stringifies a bigint value instead of narrowing it to a number', () => {
             const value = BigInt('1234567891234567891');

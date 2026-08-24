@@ -128,7 +128,6 @@ describe('<TransferAssetAction /> component', () => {
         );
     };
 
-    // biome-ignore lint/suspicious/noExplicitAny: test probe for form values
     let getFormValues: any;
 
     const Host = (props: { initialAction: Record<string, unknown> }) => {
@@ -321,5 +320,50 @@ describe('<TransferAssetAction /> component', () => {
         expect(action.amount).toEqual(composedAmount);
         expect(action.value).toEqual('0');
         expect(action.to).toEqual(tokenAddress);
+    });
+
+    it('encodes a zero transfer instead of crashing when the amount field is left cleared', async () => {
+        // viem >= 2.55.13 throws InvalidDecimalNumberError on '' in parseUnits, so a cleared
+        // amount field must fall back to 0 — a `?? '0'` fallback misses the empty string.
+        const composedAction = {
+            type: 'TRANSFER',
+            to: tokenAddress,
+            value: BigInt(0),
+            data: '0x',
+            inputData: undefined,
+            receiver: { address: receiverAddress },
+            amount: undefined,
+            asset: {
+                token: {
+                    address: tokenAddress,
+                    network: 'ethereum-mainnet',
+                    symbol: 'TEST',
+                    name: 'Test token',
+                    logo: '',
+                    decimals: 18,
+                    priceUsd: '0',
+                    totalSupply: null,
+                },
+                amount: '100',
+            },
+            daoId: 'dao-test',
+            meta: undefined,
+        };
+
+        render(createTestComponent(composedAction));
+
+        const user = userEvent.setup();
+        const amountInput = screen.getByRole('spinbutton');
+        await user.type(amountInput, '5');
+        await user.clear(amountInput);
+
+        const expectedData = encodeFunctionData({
+            abi: erc20Abi,
+            functionName: 'transfer',
+            args: [receiverAddress, BigInt(0)],
+        });
+
+        const action = getFormValues('actions.0');
+        expect(action.data).toEqual(expectedData);
     });
 });

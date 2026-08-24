@@ -30,11 +30,14 @@ Before setting up the project, ensure you have the following installed:
 
 Follow these steps to get the app running on your machine:
 
-1. Enable Corepack (one-time setup):
+1. Install pnpm (one-time setup, see the [pnpm installation docs](https://pnpm.io/installation)):
 
 ```bash
-corepack enable
+curl -fsSL https://get.pnpm.io/install.sh | sh -
 ```
+
+pnpm manages its own version since v10 and automatically uses the version pinned in the `packageManager` field of the
+root `package.json`, so no Corepack setup is needed.
 
 2. Install the required dependencies by running:
 
@@ -116,7 +119,7 @@ pnpm test
 **Node version issues:**
 
 - pnpm automatically manages Node.js versions
-- If issues persist, ensure Corepack is enabled: `corepack enable`
+- If issues persist, ensure pnpm is up to date: `pnpm self-update`
 
 ## Environments
 
