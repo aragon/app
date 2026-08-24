@@ -1,5 +1,24 @@
 # @aragon/app
 
+## 1.38.0
+
+### Minor Changes
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement details view for decoded cross-chain execute actions
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement CrossChainControllerForwardMessageAction basic action
+
+### Patch Changes
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Handle allowed actions without decoded data by falling back to unverified contract and unknown function labels
+
+- [#1325](https://github.com/aragon/app/pull/1325) [`97a7874`](https://github.com/aragon/app/commit/97a78741d723549324a9c1a1670048ec70f417a4) Thanks [@evanaronson](https://github.com/evanaronson)! - Keep XMAQUINA DAO header content below the navigation bar
+
+- [#1324](https://github.com/aragon/app/pull/1324) [`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (React 19.2.8, Sentry 10.70, viem 2.55.13, wagmi 3.7.6, Reown AppKit 1.8.23, Next.js 16.3) and fix the transfer-asset proposal action crashing when the amount field is cleared — viem now rejects empty strings in parseUnits
+
+- Updated dependencies [[`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0)]:
+    - @aragon/assistant-chat@0.4.1
+
 ## 1.37.1
 
 ### Patch Changes
