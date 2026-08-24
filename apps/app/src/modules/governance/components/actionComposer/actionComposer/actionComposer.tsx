@@ -2,7 +2,6 @@
 
 import {
     AlertInline,
-    addressUtils,
     Button,
     Dropdown,
     IconType,
@@ -10,7 +9,7 @@ import {
     Switch,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
     type IDaoPermission,
     type Network,
@@ -26,6 +25,7 @@ import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySm
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
 import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
+import { useImportedContractAbis } from '../../importedContractAbisProvider';
 import {
     ActionComposerInput,
     type IActionComposerInputItem,
@@ -139,24 +139,10 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isUploadLoading, setIsUploadLoading] = useState(false);
 
-    const [importedContractAbis, setImportedContractAbis] = useState<
-        ISmartContractAbi[]
-    >([]);
-
-    const addImportedContractAbi = useCallback(
-        (abi: ISmartContractAbi) =>
-            setImportedContractAbis((current) => {
-                const alreadyExists = current.some((currentAbi) =>
-                    addressUtils.isAddressEqual(
-                        currentAbi.address,
-                        abi.address,
-                    ),
-                );
-
-                return alreadyExists ? current : [abi, ...current];
-            }),
-        [],
-    );
+    // Kept outside the composer state as the composer unmounts with the dialog hosting it, which
+    // would otherwise drop the imported contracts on every close of the nested actions dialog.
+    const { abis: importedContractAbis, addAbi: addImportedContractAbi } =
+        useImportedContractAbis(resolvedNetwork);
 
     const handleAddAction = () => {
         setUploadError(null);

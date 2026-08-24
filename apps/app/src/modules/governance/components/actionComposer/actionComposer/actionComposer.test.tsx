@@ -7,6 +7,7 @@ import {
     generateDao,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
+import { ImportedContractAbisProvider } from '../../importedContractAbisProvider';
 import type { IActionComposerProps } from './actionComposer';
 import { ActionComposer } from './actionComposer';
 
@@ -33,7 +34,9 @@ describe('ActionComposer', () => {
         return (
             <GukModulesProvider>
                 <DialogProvider>
-                    <ActionComposer {...completeProps} />
+                    <ImportedContractAbisProvider>
+                        <ActionComposer {...completeProps} />
+                    </ImportedContractAbisProvider>
                 </DialogProvider>
             </GukModulesProvider>
         );
