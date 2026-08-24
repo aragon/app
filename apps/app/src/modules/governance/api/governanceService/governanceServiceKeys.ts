@@ -6,6 +6,7 @@ import type {
     IGetProposalActionsParams,
     IGetProposalBySlugParams,
     IGetProposalListParams,
+    IGetTokenVotingMembershipParams,
     IGetVoteListParams,
 } from './governanceService.api';
 
@@ -15,6 +16,7 @@ export enum GovernanceServiceKey {
     PROPOSAL_ACTIONS = 'PROPOSAL_ACTIONS',
     CAN_CREATE_PROPOSAL = 'CAN_CREATE_PROPOSAL',
     MEMBER_LIST = 'MEMBER_LIST',
+    TOKEN_VOTING_MEMBERSHIP = 'TOKEN_VOTING_MEMBERSHIP',
     MEMBER = 'MEMBER',
     MEMBER_EXISTS = 'MEMBER_EXISTS',
     VOTE_LIST = 'VOTE_LIST',
@@ -39,6 +41,10 @@ export const governanceServiceKeys = {
     ],
     memberList: (params: IGetMemberListParams) => [
         GovernanceServiceKey.MEMBER_LIST,
+        params,
+    ],
+    tokenVotingMembership: (params: IGetTokenVotingMembershipParams) => [
+        GovernanceServiceKey.TOKEN_VOTING_MEMBERSHIP,
         params,
     ],
     member: (params: IGetMemberParams) => [GovernanceServiceKey.MEMBER, params],

@@ -26,7 +26,7 @@ import {
 import { networkUtils } from '@/shared/utils/networkUtils';
 import { timeUtils } from '@/test/utils';
 import * as governanceService from '../../api/governanceService';
-import { generateMember, generateMemberMetrics } from '../../testUtils';
+import { generateMember } from '../../testUtils';
 import {
     DaoMemberDetailsPageClient,
     type IDaoMemberDetailsPageClientProps,
@@ -402,7 +402,6 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders fallback of `-` when lastActive is null', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
         useBlockSpy
             .mockReturnValueOnce({
                 data: { timestamp: 3_204_230_420 },
@@ -412,7 +411,10 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
             } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ metrics, lastActive: null }),
+                data: generateMember({
+                    firstActive: 1_723_472_877,
+                    lastActive: null,
+                }),
             }),
         );
 
@@ -441,7 +443,7 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('renders fallback of `-` when firstActivity is null', () => {
+    it('renders fallback of `-` when firstActive is null', () => {
         const lastActive = 1_723_472_877;
         useBlockSpy
             .mockReturnValueOnce({
@@ -461,20 +463,20 @@ describe('<DaoMemberDetailsPageClient /> component', () => {
     });
 
     it('renders the correct first activity date', () => {
-        const metrics = generateMemberMetrics({ firstActivity: 1_723_472_877 });
+        const firstActive = 1_723_472_877;
         useBlockSpy.mockReturnValue({
-            data: { timestamp: metrics.firstActivity },
+            data: { timestamp: firstActive },
         } as unknown as wagmi.UseBlockReturnType);
         useMemberSpy.mockReturnValue(
             generateReactQueryResultSuccess({
-                data: generateMember({ metrics }),
+                data: generateMember({ firstActive }),
             }),
         );
 
         render(createTestComponent());
 
         const firstActivityDate = formatterUtils.formatDate(
-            metrics.firstActivity! * 1000,
+            firstActive * 1000,
             {
                 format: DateFormat.YEAR_MONTH_DAY,
             },

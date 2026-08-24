@@ -67,8 +67,8 @@ catalog:
 minimumReleaseAge: 10080 # cooldown period for new packages in minutes (7 days)
 minimumReleaseAgeExclude:
   # https://pnpm.io/settings#minimumreleaseageexclude
-  - "@aragon/gov-ui-kit"
   - "@aragon/aragon-domain"
+  - "@aragon/gov-ui-kit"
   # Deliberately pinned assistant-ui release train (see the exact pins in the catalog above); the
   # widget needs the just-published versions that carry the ai@7 support, so these exact versions
   # are exempt from the new-package cooldown.
