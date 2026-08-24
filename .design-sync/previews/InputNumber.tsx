@@ -6,8 +6,8 @@ export const Default = () => (
         helpText="How long members can vote on a proposal."
         label="Voting duration"
         min={1}
-        suffix="hours"
-        value="72"
+        suffix="days"
+        value="7"
     />
 );
 
