@@ -17,7 +17,7 @@ catalog:
   "@biomejs/biome": ^2.5.8
   "@changesets/changelog-github": ^0.7.0
   "@changesets/cli": ^2.31.1
-  "@hono/node-server": ^1.19.17
+  "@hono/node-server": ^2.1.1
   "@linear/sdk": ^89.0.0
   "@radix-ui/react-dialog": ^1.1.23
   "@sentry/cli": ^3.6.2
