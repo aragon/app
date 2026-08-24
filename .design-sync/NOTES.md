@@ -20,8 +20,8 @@ line of defense the app tooling is also shielded from the shims (jest pins
 
 ## Re-sync risks (watch-list for the next run)
 
-- **Kit is on 2.10.0 as of APP-1011** (was 2.8.1 when this anchor was last verified). The three upstream kit bugs noted below are fixed in 2.10.0; previews and grades have NOT been re-verified against it yet — that re-sync is pending design-project write access (APP-1084).
-- **Kit version drift:** previews and grades were verified against `@aragon/gov-ui-kit@2.8.1`. On a kit bump, the anchor diff scopes re-verification, but the Storybook-reference claim (local checkout at `c:\dev\gov-ui-kit`) only holds if that checkout matches the installed version.
+- **Kit is on 2.10.0 and the anchor now matches it.** Previews and grades were fully re-verified against `@aragon/gov-ui-kit@2.10.0` on 2026-08-24 and uploaded, so APP-1084's "pending write access" blocker is closed. The three upstream kit bugs noted below are fixed in 2.10.0 and confirmed visually.
+- **Kit version drift:** on the next bump the anchor diff scopes re-verification. There is no Storybook ground truth any more — the old claim rested on a local `gov-ui-kit` checkout at `c:\dev\gov-ui-kit`, which does not exist on this machine; grading is on the absolute rubric. Also re-check `conventions.md`'s emitted-utility names and the app's radix ranges on every bump (both sections below).
 - **CSS is compiled at sync time** by `cfg.buildCmd` from `.design-sync/tailwind-entry.css` — it inlines the app's `--guk-*` overrides copied from `layoutRoot.css`; if the app changes those overrides, re-copy them into the entry file (they do NOT sync automatically).
 - **Tailwind CLI version:** `@tailwindcss/cli` is an `apps/app` devDependency managed by the repo's pnpm lockfile and shared catalog; `build-css.mjs` verifies it matches the app's installed `tailwindcss` version, so update both catalog entries in the same PR as any Tailwind bump.
 - **Dialog/DialogAlert previews** depend on the force-open workaround (frozen-clock + framer-motion); a kit animation refactor may break them silently — check their sheets on any kit bump.
@@ -98,3 +98,60 @@ line of defense the app tooling is also shielded from the shims (jest pins
 - viem's `isAddress` accepts all-lowercase — a checksum-error demo needs a broken mixed-case address.
 - Kit story classes like `max-w-140` aren't in the compiled CSS — use inline styles for such wrappers.
 - Wallet's connected handle is `hidden xl:block` — avatar-only at the 900px capture viewport is the component's own responsive behavior, not a bug.
+
+## macOS environment (2026-08-24 re-sync)
+
+- This sync ran on macOS (Darwin 25.5) from the worktree `~/.herdr/worktrees/app-next/app-1011-app-integration`; earlier NOTES entries describing `c:\dev\app` / Git Bash / PowerShell are Windows-era and no longer apply.
+- Playwright browsers cache on macOS is `~/Library/Caches/ms-playwright`, NOT `~/.cache/ms-playwright` — the skill's `ls ~/.cache/ms-playwright` check reports "nothing cached" even after a successful install.
+- Converter needs `playwright` (not just `@playwright/test`) importable from `.ds-sync/`: `cd .ds-sync && npm i playwright@<version matching the cached chromium build>`. 1.61.1 ↔ chromium-1228 for this run.
+- **`--entry` and `--node-modules` must be ABSOLUTE paths.** A relative `--entry ./dist/index.es.js` resolves against the repo root, not the package dir, and fails with `[NO_DIST]` *plus* a misleading `[DTS_REACT] @types/react not found`. Correct invocation:
+  `node .ds-sync/resync.mjs --config .design-sync/config.json --node-modules "$PWD/apps/app/node_modules" --entry "$PWD/apps/app/node_modules/@aragon/gov-ui-kit/dist/index.es.js" --out ./ds-bundle --remote .design-sync/.cache/remote-sync.json`
+- `.gitignore` was missing `.ds-sync/` and `.design-sync/node_modules`; both added this run.
+- Run `pnpm --workspace-root run design-sync:build-css` AFTER any `pnpm install` — install prunes the `apps/app/node_modules/@` symlink that build-css.mjs creates.
+- `pnpm install` exits non-zero with `ERR_PNPM_PEER_DEP_ISSUES` (missing peer `playwright-core` wanted by `@synthetixio/synpress-cache`) whenever pnpm has to RE-RESOLVE, because `strictPeerDependencies: true`. Pre-existing and unrelated to design-sync; `pnpm i --frozen-lockfile` (what CI runs) skips resolution and passes. node_modules still links correctly — verify resolutions rather than trusting the exit code.
+
+## Kit 2.10.0 verification (2026-08-24)
+
+- Full re-verify done against `@aragon/gov-ui-kit@2.10.0`: 31 verified-by-upload, 81 changed + 1 new re-captured and re-graded, 5 canary spot-checks confirmed. 274/274 cells graded `good`; render check `bad` empty.
+- `AddressOutput` is NEW in 2.10.0 and ships a floor card (no authored preview) — standing offer for a future re-sync.
+- Both upstream fixes are now visually confirmed: `InputNumber` PrefixSuffix renders `ANT 250` / `250 aUSDC` literally (suffix escaping), and `InputNumberMax` Critical shows `1,200` over a 1,000 cap via the `alert` prop (clamping). The earlier wave-1/wave-2 notes about `_USDC` and dropped digits are historical.
+- **Kit 2.10.0 split the app's radix instances — fixed this run.** The kit depends on `@radix-ui/react-dialog@^1.1.23` and `@radix-ui/react-toggle-group@^1.1.19` while the app pinned `^1.1.19` / `^1.1.15`, so pnpm installed two physical copies of each and React context did not cross them. `WizardDetailsDialog` threw `` `DialogTitle` must be used within `Dialog` `` (render check caught it). Fixed by raising the app's ranges to match the kit (catalog `@radix-ui/react-dialog` → `^1.1.23`; `apps/app/package.json` `@radix-ui/react-toggle-group` → `^1.1.19`).
+- **This is a recurring trap, not a one-off.** Two app files import radix primitives the kit does not re-export — `shared/components/wizardDetailsDialog/wizardDetailsDialog.tsx` (`Title`, `Description`) and `plugins/tokenPlugin/.../tokenVotingOptionToggle.tsx` (`ToggleGroupItem`) — because `Dialog.Header`/`Dialog.Content` only take string `title`/`description` and kit `ToggleGroup` has no `.Item`. Every kit bump can silently re-split them. Durable fix is upstream: have gov-ui-kit re-export `Dialog.Title`/`Dialog.Description` (or accept `ReactNode`) and `ToggleGroup.Item`, then delete both direct radix deps from the app. Until then, check the radix ranges on every kit bump.
+- Wallet renders its handle at the configured `viewport: 1360x300`; the older note about avatar-only output applies to the 900px default viewport, not this card.
+- `AutocompleteInput`'s menu/groups only open on interaction, so its `WithGroups` cell renders the closed input — accepted, not a regression.
+- `tokens/` and `guidelines/` come out empty (all tokens live in `_ds_bundle.css`, reachable via `styles.css`); this is expected, not a missing-input bug.
+
+## conventions.md drift found and CORRECTED 2026-08-24
+
+Tailwind v4 only emits utilities its `@source` scan actually sees, so a utility no kit component
+uses is absent from `_ds_bundle.css` and silently does nothing for a design agent — even when the
+underlying token exists. Three names in `conventions.md` were in that state and were corrected this
+run (owner-approved):
+
+- `rounded-2xl` / `rounded-3xl` — utilities NOT emitted, though `--radius-2xl` / `--radius-3xl` tokens
+  exist. Emitted radius utilities: `rounded-none/sm/md/lg/xl/full` (+ `rounded-t/b/tl/br`).
+- `shadow-neutral-lg` — does not exist. Neutral stops at `shadow-neutral{,-sm,-md}`; the large
+  shadows are `shadow-primary-lg` / `shadow-primary-xl`.
+
+**Re-run this check on every kit bump** — the emitted utility set is a function of what the kit's own
+source uses, so it moves silently when the kit changes. Everything else in the file verified: all 42
+named component folders, `FormWrapper` / `enTranslations` / `IconType` / `GukModulesProvider` in the
+bundle text, the colour/spacing/type families, Manrope in `fonts/`, and `--color-*` / `--radius-*` /
+`--guk-*` tokens with `styles.css` importing `_ds_bundle.css`.
+
+## Grading mechanics — two traps that cost a full re-grade this run
+
+- **Verdicts go in `.design-sync/.cache/review/<Name>.grade.json`. NOT `<Name>.json`.** `<Name>.json`
+  is machine-owned capture state (`gradeKey`, `sourceKey`, `cells` as an ARRAY, `pendingGrade`) and is
+  rewritten by every `package-capture.mjs` run. Writing verdicts there looks like it works — the
+  driver even reports `pendingGrade: 0` — and then the next capture silently discards all of them.
+  The grade file's shape is `{"cells": {"<CellName>": {"verdict": "good", "note": "…"}}}`; cell names
+  must equal the capture file's `cells` entries exactly.
+- **Canary picks rotate, so grade the whole churned set, not just the picks.** Each driver run picks 5
+  spot-checks from `verification.canary.churned` (22 components here). A churned component with no
+  grade file lands in `pendingGrade`, and because the picks rotate you chase a new one every run.
+  Break the loop once: capture the whole churned set explicitly —
+  `node .ds-sync/package-capture.mjs --out ./ds-bundle --components <all 22 comma-separated>` —
+  read those sheets and write their grade files. After that every later run reports `pendingGrade: 0`.
+  Grade files are gitignored (`.design-sync/.cache/`), so a fresh clone re-does this; the durable
+  carry-forward is the uploaded `_ds_sync.json`.
