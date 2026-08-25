@@ -117,7 +117,7 @@ class SafeService extends HttpService {
         return response;
     };
 
-    proposeSafeTransaction = async ({
+    proposeSafeTransaction = ({
         urlParams,
         body,
     }: IProposeSafeTransactionParams) => {
