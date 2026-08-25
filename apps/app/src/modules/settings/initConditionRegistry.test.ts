@@ -21,15 +21,15 @@ describe('initialiseConditionRegistry', () => {
         { pluginId: 'membership', component: MembershipConditionSlot },
         { pluginId: 'unknown', component: UnrecognizedConditionSlot },
         { pluginId: 'none', component: NoConditionSlot },
-    ])('resolves the $pluginId condition component from the slot', ({
-        pluginId,
-        component,
-    }) => {
-        const resolved = pluginRegistryUtils.getSlotComponent({
-            slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
-            pluginId,
-        });
+    ])(
+        'resolves the $pluginId condition component from the slot',
+        ({ pluginId, component }) => {
+            const resolved = pluginRegistryUtils.getSlotComponent({
+                slotId: SettingsSlotId.SETTINGS_PERMISSION_CONDITION,
+                pluginId,
+            });
 
-        expect(resolved).toBe(component);
-    });
+            expect(resolved).toBe(component);
+        },
+    );
 });

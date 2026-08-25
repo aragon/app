@@ -128,24 +128,24 @@ describe('<AlchemixObjectionVote /> component', () => {
         expect(check).toHaveBeenCalled();
     });
 
-    it.each([
-        VoteOption.YES,
-        VoteOption.ABSTAIN,
-    ])('renders voted and change-vote controls when the user is recorded with option %s', (voteOption) => {
-        mockObjectionStatus({ voteOption });
-        render(createTestComponent());
+    it.each([VoteOption.YES, VoteOption.ABSTAIN])(
+        'renders voted and change-vote controls when the user is recorded with option %s',
+        (voteOption) => {
+            mockObjectionStatus({ voteOption });
+            render(createTestComponent());
 
-        const submittedButton = screen.getByRole('button', {
-            name: /tokenSubmitVote.buttons.submitted/,
-        });
-        expect(submittedButton).toBeDisabled();
-        expect(submittedButton).not.toHaveAttribute('href');
-        expect(
-            screen.getByRole('button', {
-                name: /tokenSubmitVote.buttons.change.vote/,
-            }),
-        ).toBeInTheDocument();
-    });
+            const submittedButton = screen.getByRole('button', {
+                name: /tokenSubmitVote.buttons.submitted/,
+            });
+            expect(submittedButton).toBeDisabled();
+            expect(submittedButton).not.toHaveAttribute('href');
+            expect(
+                screen.getByRole('button', {
+                    name: /tokenSubmitVote.buttons.change.vote/,
+                }),
+            ).toBeInTheDocument();
+        },
+    );
 
     it('renders only the voted control when the recorded option is No', () => {
         mockObjectionStatus({ voteOption: VoteOption.NO });

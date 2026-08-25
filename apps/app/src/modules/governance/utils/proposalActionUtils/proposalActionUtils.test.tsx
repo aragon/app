@@ -457,18 +457,21 @@ describe('proposalActionUtils', () => {
             },
             { field: 'value', value: '999' },
             { field: 'data', value: '0xfeedface' },
-        ])('falls back to raw stubs when the decoded $field disagrees with the tuple', ({
-            field,
-            value,
-        }) => {
-            const action = generateProposalAction({
-                ...matchingAction,
-                [field]: value,
-            });
+        ])(
+            'falls back to raw stubs when the decoded $field disagrees with the tuple',
+            ({ field, value }) => {
+                const action = generateProposalAction({
+                    ...matchingAction,
+                    [field]: value,
+                });
 
-            expect(
-                proposalActionUtils.resolveNestedActions([action], rawTuple),
-            ).toEqual(expectedStubs);
-        });
+                expect(
+                    proposalActionUtils.resolveNestedActions(
+                        [action],
+                        rawTuple,
+                    ),
+                ).toEqual(expectedStubs);
+            },
+        );
     });
 });

@@ -74,13 +74,5 @@ next-env.d.ts
 ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
-
-# Smithers run store + local pack (ephemeral — never commit)
-smithers.db
-smithers.db-shm
-smithers.db-wal
-.smithers/
-
-# agent scratch files (never commit)
-*.generated.md
-*.generated.txt
+.ds-sync/
+.design-sync/node_modules

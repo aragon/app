@@ -152,24 +152,24 @@ describe('<PermissionsList /> component', () => {
             expectedLabels: ['Members'],
             absentText: undefined,
         },
-    ])('renders $name', ({
-        row,
-        expectedTexts,
-        expectedLabels,
-        absentText,
-    }) => {
-        render(createTestComponent({ rows: [row] }));
+    ])(
+        'renders $name',
+        ({ row, expectedTexts, expectedLabels, absentText }) => {
+            render(createTestComponent({ rows: [row] }));
 
-        for (const text of expectedTexts) {
-            expect(screen.getAllByText(text).length).toBeGreaterThan(0);
-        }
-        for (const label of expectedLabels) {
-            expect(screen.getAllByLabelText(label).length).toBeGreaterThan(0);
-        }
-        if (absentText != null) {
-            expect(screen.queryByText(absentText)).not.toBeInTheDocument();
-        }
-    });
+            for (const text of expectedTexts) {
+                expect(screen.getAllByText(text).length).toBeGreaterThan(0);
+            }
+            for (const label of expectedLabels) {
+                expect(screen.getAllByLabelText(label).length).toBeGreaterThan(
+                    0,
+                );
+            }
+            if (absentText != null) {
+                expect(screen.queryByText(absentText)).not.toBeInTheDocument();
+            }
+        },
+    );
 
     it('renders informational help for the Who and Where headers', () => {
         const rows: IDaoPermission[] = [

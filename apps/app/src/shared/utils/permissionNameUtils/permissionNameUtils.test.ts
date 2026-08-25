@@ -43,14 +43,14 @@ describe('permissionNameUtils', () => {
                     '0x9c81fc3cf68d43a5ff1c09ddb652dc0e85041298a2c6bb91eec4ba1dabf138bb',
                 expected: 'BURN_PERMISSION',
             },
-        ])('maps the known hash $permissionId to "$expected"', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'maps the known hash $permissionId to "$expected"',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
 
         it.each([
             {
@@ -63,14 +63,14 @@ describe('permissionNameUtils', () => {
                     '0xdeadbeef00000000000000000000000000000000000000000000000000001234',
                 expected: '0xdeadbeef…00001234',
             },
-        ])('returns the truncated fallback $expected for the unmapped hash $permissionId', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'returns the truncated fallback $expected for the unmapped hash $permissionId',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
 
         it.each([
             {
@@ -83,14 +83,14 @@ describe('permissionNameUtils', () => {
                     '0xBF04B4486C9663D805744005C3DA000EDA93DE6E3308A4A7A812EB565327B78D',
                 expected: 'EXECUTE_PERMISSION',
             },
-        ])('resolves known hashes case-insensitively for $permissionId', ({
-            permissionId,
-            expected,
-        }) => {
-            expect(permissionNameUtils.getPermissionName(permissionId)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'resolves known hashes case-insensitively for $permissionId',
+            ({ permissionId, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionName(permissionId),
+                ).toEqual(expected);
+            },
+        );
     });
 
     describe('getPermissionDisplayName', () => {
@@ -107,16 +107,16 @@ describe('permissionNameUtils', () => {
                 permissionName: 'SWEEPER_ROLE',
                 expected: 'Sweeper',
             },
-        ])('formats $permissionName for graph display', ({
-            permissionName,
-            expected,
-        }) => {
-            expect(
-                permissionNameUtils.getPermissionDisplayName(
-                    permissionNameUtils.getPermissionId(permissionName),
-                ),
-            ).toEqual(expected);
-        });
+        ])(
+            'formats $permissionName for graph display',
+            ({ permissionName, expected }) => {
+                expect(
+                    permissionNameUtils.getPermissionDisplayName(
+                        permissionNameUtils.getPermissionId(permissionName),
+                    ),
+                ).toEqual(expected);
+            },
+        );
 
         it('keeps unknown permission hashes unchanged', () => {
             const permissionId =
