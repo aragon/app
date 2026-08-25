@@ -130,15 +130,16 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                                         {rule.permissionId}
                                     </span>
                                 </DefinitionList.Item>
-                                {rule.ruleIndexes != null && (
-                                    <DefinitionList.Item
-                                        term={t(
-                                            'app.settings.sppRuleConditionSlot.ruleIndexes',
-                                        )}
-                                    >
-                                        {rule.ruleIndexes.join(', ')}
-                                    </DefinitionList.Item>
-                                )}
+                                {rule.ruleIndexes != null &&
+                                    rule.ruleIndexes.length > 0 && (
+                                        <DefinitionList.Item
+                                            term={t(
+                                                'app.settings.sppRuleConditionSlot.ruleIndexes',
+                                            )}
+                                        >
+                                            {rule.ruleIndexes.join(', ')}
+                                        </DefinitionList.Item>
+                                    )}
                                 {rule.conditionAddress != null &&
                                     rule.conditionAddress !== '' && (
                                         <DefinitionList.Item

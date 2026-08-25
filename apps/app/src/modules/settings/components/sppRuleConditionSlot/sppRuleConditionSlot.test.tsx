@@ -77,6 +77,27 @@ describe('<SppRuleConditionSlot /> component', () => {
             ),
         ).not.toBeInTheDocument();
     });
+    it('does not render empty rule references', () => {
+        render(
+            createTestComponent({
+                rules: [
+                    {
+                        type: 'condition',
+                        operation: 'return',
+                        value: '1234',
+                        permissionId: '0xpermission',
+                        ruleIndexes: [],
+                    },
+                ],
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                /app\.settings\.sppRuleConditionSlot\.ruleIndexes/,
+            ),
+        ).not.toBeInTheDocument();
+    });
 
     it('renders an explicit empty state when the backend returns no rules', () => {
         render(createTestComponent({ rules: [] }));

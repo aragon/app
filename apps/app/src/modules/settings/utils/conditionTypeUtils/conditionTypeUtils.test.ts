@@ -56,7 +56,7 @@ describe('conditionType Utils', () => {
                 expected: 'ExecuteSelector',
             },
             {
-                description: 'maps spp-rule to SppRule',
+                description: 'maps spp-rule to SPP rule',
                 conditionType: 'spp-rule',
                 expected: 'SPP rule',
             },
