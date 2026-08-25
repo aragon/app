@@ -103,7 +103,13 @@ describe('safe service', () => {
             safeService['basePaths'].proposeSafeTransaction,
             {
                 urlParams: { chainId: '1', address: '0xSafeAddress' },
-                body,
+                body: {
+                    ...body.safeTransactionData,
+                    contractTransactionHash: body.safeTxHash,
+                    sender: body.senderAddress,
+                    signature: body.senderSignature,
+                    origin: body.origin,
+                },
             },
             { method: 'POST' },
         );
