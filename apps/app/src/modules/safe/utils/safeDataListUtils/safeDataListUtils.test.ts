@@ -19,13 +19,13 @@ describe('safeDataListUtils', () => {
                 params: { isError: false, isLoading: false },
                 expected: 'idle',
             },
-        ])('returns $expected for isError=$params.isError isLoading=$params.isLoading', ({
-            params,
-            expected,
-        }) => {
-            expect(safeDataListUtils.getDataListState(params)).toEqual(
-                expected,
-            );
-        });
+        ])(
+            'returns $expected for isError=$params.isError isLoading=$params.isLoading',
+            ({ params, expected }) => {
+                expect(safeDataListUtils.getDataListState(params)).toEqual(
+                    expected,
+                );
+            },
+        );
     });
 });

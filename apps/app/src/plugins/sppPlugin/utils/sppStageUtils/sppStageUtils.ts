@@ -1,9 +1,11 @@
 import { addressUtils, ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
-import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import {
+    externalPluginId,
+    safeBodyPluginId,
+} from '@/plugins/safeMultisigPlugin/constants';
 import type { Network } from '@/shared/api/daoService';
 import {
     type PluginId,

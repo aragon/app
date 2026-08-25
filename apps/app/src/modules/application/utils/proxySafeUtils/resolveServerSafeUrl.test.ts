@@ -35,15 +35,15 @@ describe('resolveServerSafeUrl', () => {
         { network: Network.HEMI_MAINNET, shortName: 'hemi' },
         { network: Network.KATANA_MAINNET, shortName: 'katana' },
         { network: Network.MONAD_MAINNET, shortName: 'monad' },
-    ])('resolves the $shortName endpoint for the $network network', ({
-        network,
-        shortName,
-    }) => {
-        expect(resolveServerSafeUrl(network)).toEqual({
-            shortName,
-            baseUrl: `https://api.safe.global/tx-service/${shortName}/api`,
-        });
-    });
+    ])(
+        'resolves the $shortName endpoint for the $network network',
+        ({ network, shortName }) => {
+            expect(resolveServerSafeUrl(network)).toEqual({
+                shortName,
+                baseUrl: `https://api.safe.global/tx-service/${shortName}/api`,
+            });
+        },
+    );
 
     it.each([
         { network: Network.CITREA_MAINNET },

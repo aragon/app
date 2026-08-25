@@ -100,19 +100,22 @@ describe('<SafeAccountPageClient /> component', () => {
     it.each([
         { network: Network.CHILIZ_MAINNET },
         { network: Network.CITREA_MAINNET },
-    ])('renders an unsupported surface and skips the request on $network', ({
-        network,
-    }) => {
-        render(createTestComponent({ network }));
+    ])(
+        'renders an unsupported surface and skips the request on $network',
+        ({ network }) => {
+            render(createTestComponent({ network }));
 
-        expect(
-            screen.getByText(
-                'app.safe.safeAccountPage.unsupportedNetwork.heading',
-            ),
-        ).toBeInTheDocument();
-        expect(screen.queryByTestId('owner-list-mock')).not.toBeInTheDocument();
-        expect(useSafeInfoSpy).toHaveBeenCalledWith(expect.anything(), {
-            enabled: false,
-        });
-    });
+            expect(
+                screen.getByText(
+                    'app.safe.safeAccountPage.unsupportedNetwork.heading',
+                ),
+            ).toBeInTheDocument();
+            expect(
+                screen.queryByTestId('owner-list-mock'),
+            ).not.toBeInTheDocument();
+            expect(useSafeInfoSpy).toHaveBeenCalledWith(expect.anything(), {
+                enabled: false,
+            });
+        },
+    );
 });

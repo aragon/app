@@ -48,20 +48,23 @@ describe('safeMultisigTransaction utils', () => {
             { resultType: SppProposalType.NONE },
             { resultType: SppProposalType.APPROVAL },
             { resultType: SppProposalType.VETO },
-        ])('decodes the governance effect $resultType back from the built calldata', ({
-            resultType,
-        }) => {
-            const data = buildReport({ resultType });
+        ])(
+            'decodes the governance effect $resultType back from the built calldata',
+            ({ resultType }) => {
+                const data = buildReport({ resultType });
 
-            expect(
-                safeMultisigTransactionUtils.decodeProposalResultReport(data),
-            ).toEqual({
-                proposalId: BigInt(proposalId),
-                stageId,
-                resultType,
-                tryAdvance: false,
-            });
-        });
+                expect(
+                    safeMultisigTransactionUtils.decodeProposalResultReport(
+                        data,
+                    ),
+                ).toEqual({
+                    proposalId: BigInt(proposalId),
+                    stageId,
+                    resultType,
+                    tryAdvance: false,
+                });
+            },
+        );
 
         it.each([
             { data: null, label: 'a value transfer' },
@@ -161,28 +164,29 @@ describe('safeMultisigTransaction utils', () => {
         it.each([
             { label: 'string', proposalId: '42' },
             { label: 'bigint', proposalId: BigInt(42) },
-        ])('matches a proposal id given as a $label', ({
-            proposalId: proposalIdParam,
-        }) => {
-            const transaction = generateSafeMultisigTransaction({
-                to: pluginAddress,
-                data: buildReport(),
-            });
+        ])(
+            'matches a proposal id given as a $label',
+            ({ proposalId: proposalIdParam }) => {
+                const transaction = generateSafeMultisigTransaction({
+                    to: pluginAddress,
+                    data: buildReport(),
+                });
 
-            expect(
-                safeMultisigTransactionUtils.findProposalResultReport({
-                    transaction,
-                    pluginAddress,
-                    proposalId: proposalIdParam,
+                expect(
+                    safeMultisigTransactionUtils.findProposalResultReport({
+                        transaction,
+                        pluginAddress,
+                        proposalId: proposalIdParam,
+                        stageId,
+                    }),
+                ).toEqual({
+                    proposalId: BigInt(proposalId),
                     stageId,
-                }),
-            ).toEqual({
-                proposalId: BigInt(proposalId),
-                stageId,
-                resultType: SppProposalType.APPROVAL,
-                tryAdvance: false,
-            });
-        });
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                });
+            },
+        );
 
         it('reports the governance effect of a veto nested in a batch', () => {
             const transaction = generateSafeMultisigTransaction({

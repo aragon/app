@@ -1,7 +1,9 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { DateTime } from 'luxon';
-import { externalPluginId } from '@/plugins/safeMultisigPlugin/constants';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import {
+    externalPluginId,
+    safeBodyPluginId,
+} from '@/plugins/safeMultisigPlugin/constants';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { timeUtils } from '@/test/utils';
