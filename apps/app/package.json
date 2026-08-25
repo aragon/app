@@ -50,7 +50,7 @@
         "@vercel/speed-insights": "^2.0.0",
         "@walletconnect/core": "^2.23.10",
         "@walletconnect/utils": "^2.23.10",
-        "@xyflow/react": "^12.11.2",
+        "@xyflow/react": "^12.11.3",
         "classnames": "catalog:",
         "deepmerge-ts": "^7.1.6",
         "framer-motion": "^12.43.0",
