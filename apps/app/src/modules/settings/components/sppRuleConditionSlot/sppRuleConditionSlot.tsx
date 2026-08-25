@@ -139,18 +139,19 @@ const DecodedRules: React.FC<{ rules: IDaoPermissionCondition['rules'] }> = ({
                                         {rule.ruleIndexes.join(', ')}
                                     </DefinitionList.Item>
                                 )}
-                                {rule.conditionAddress != null && (
-                                    <DefinitionList.Item
-                                        copyValue={rule.conditionAddress}
-                                        term={t(
-                                            'app.settings.sppRuleConditionSlot.conditionAddress',
-                                        )}
-                                    >
-                                        {addressUtils.truncateAddress(
-                                            rule.conditionAddress,
-                                        )}
-                                    </DefinitionList.Item>
-                                )}
+                                {rule.conditionAddress != null &&
+                                    rule.conditionAddress !== '' && (
+                                        <DefinitionList.Item
+                                            copyValue={rule.conditionAddress}
+                                            term={t(
+                                                'app.settings.sppRuleConditionSlot.conditionAddress',
+                                            )}
+                                        >
+                                            {addressUtils.truncateAddress(
+                                                rule.conditionAddress,
+                                            )}
+                                        </DefinitionList.Item>
+                                    )}
                             </DefinitionList.Container>
                         </li>
                     ))}

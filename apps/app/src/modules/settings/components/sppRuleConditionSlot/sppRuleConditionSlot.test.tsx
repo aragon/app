@@ -56,6 +56,27 @@ describe('<SppRuleConditionSlot /> component', () => {
         expect(screen.getByText('1, 2')).toBeInTheDocument();
         expect(screen.getByText('0xC0Ff…4979')).toBeInTheDocument();
     });
+    it('does not render an empty condition address', () => {
+        render(
+            createTestComponent({
+                rules: [
+                    {
+                        type: 'condition',
+                        operation: 'return',
+                        value: '1234',
+                        permissionId: '0xpermission',
+                        conditionAddress: '',
+                    },
+                ],
+            }),
+        );
+
+        expect(
+            screen.queryByText(
+                /app\.settings\.sppRuleConditionSlot\.conditionAddress/,
+            ),
+        ).not.toBeInTheDocument();
+    });
 
     it('renders an explicit empty state when the backend returns no rules', () => {
         render(createTestComponent({ rules: [] }));
