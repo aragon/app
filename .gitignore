@@ -74,3 +74,4 @@ next-env.d.ts
 ds-bundle/
 .design-sync/.cache/
 .design-sync/learnings/
+operating-model/

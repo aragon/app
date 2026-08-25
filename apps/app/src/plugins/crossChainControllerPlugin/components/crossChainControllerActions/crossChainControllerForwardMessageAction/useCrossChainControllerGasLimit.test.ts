@@ -111,6 +111,23 @@ describe('useCrossChainControllerGasLimit hook', () => {
         expect(onGasLimitChange).toHaveBeenCalledWith(undefined);
     });
 
+    it('clamps a buffered estimate to the usable 3,000,000 cap and warns about the reduced margin', async () => {
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({ requiredGas: '2500000' }),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        await waitFor(() =>
+            expect(onGasLimitChange).toHaveBeenCalledWith('3000000'),
+        );
+        expect(result.current.estimationAlert?.message).toEqual(
+            expect.stringContaining('marginReduced'),
+        );
+    });
+
     it('clears the previous gas limit before recalculating, so an outcome with no usable limit leaves nothing submittable', async () => {
         const { result, onGasLimitChange } = renderGasLimitHook();
 
