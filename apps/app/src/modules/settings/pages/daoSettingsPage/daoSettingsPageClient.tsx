@@ -268,17 +268,17 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                 >
                     <DaoVersionInfo dao={dao} />
                     <UpdateDaoContracts dao={dao} />
+                    {isEnabled('permissionsPage') && (
+                        <Button
+                            className="w-full"
+                            href={daoUtils.getDaoUrl(dao, 'permissions')}
+                            size="md"
+                            variant="secondary"
+                        >
+                            {t('app.settings.daoSettingsInfo.permissionsLink')}
+                        </Button>
+                    )}
                 </Page.AsideCard>
-                {isEnabled('permissionsPage') && (
-                    <Button
-                        className="w-full"
-                        href={daoUtils.getDaoUrl(dao, 'permissions')}
-                        size="md"
-                        variant="secondary"
-                    >
-                        {t('app.settings.daoSettingsInfo.permissionsLink')}
-                    </Button>
-                )}
             </Page.Aside>
         </>
     );
