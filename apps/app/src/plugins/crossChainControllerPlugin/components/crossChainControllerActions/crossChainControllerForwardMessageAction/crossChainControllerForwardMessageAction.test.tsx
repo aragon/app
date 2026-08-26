@@ -521,7 +521,7 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
 
         expect(
             screen.getByText(
-                'Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or enter it manually.',
+                'Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or entering it manually.',
             ),
         ).toBeInTheDocument();
         expect(gasLimitInput).toHaveAttribute(
