@@ -1,5 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { IUsePermissionsDataResult } from '@/modules/settings/hooks/usePermissionsData';
+import * as UsePermissionsDataModule from '@/modules/settings/hooks/usePermissionsData';
 import * as DaoService from '@/shared/api/daoService';
 import { type IDaoPermission, Network } from '@/shared/api/daoService';
 import {
@@ -7,14 +9,12 @@ import {
     generateDaoPermission,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import type { IUsePermissionsDataResult } from '../../hooks/usePermissionsData';
-import * as UsePermissionsDataModule from '../../hooks/usePermissionsData';
 import { DaoPermissionsPageClient } from './daoPermissionsPageClient';
 
 let mockGraphRows: IDaoPermission[] | undefined;
 let mockListRows: IDaoPermission[] | undefined;
 
-jest.mock('../../components/permissionsGraph', () => ({
+jest.mock('@/modules/settings/components/permissionsGraph', () => ({
     PermissionsGraph: (props: { rows: IDaoPermission[] }) => {
         mockGraphRows = props.rows;
 
@@ -27,7 +27,7 @@ jest.mock('../../components/permissionsGraph', () => ({
     },
 }));
 
-jest.mock('../../components/permissionsList', () => ({
+jest.mock('@/modules/settings/components/permissionsList', () => ({
     getPermissionRowKey: (row: IDaoPermission) =>
         `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`,
     PermissionsList: (props: { rows: IDaoPermission[] }) => {
