@@ -110,7 +110,7 @@ export const SppReportProposalResultDialog: React.FC<
         >
             <VoteProposalDataListItemStructure
                 proposalId={slug ?? ''}
-                proposalTitle={proposal.title}
+                proposalTitle={proposal.title ?? ''}
                 voteIndicator="yes"
                 voteIndicatorDescription={t(
                     `app.plugins.spp.sppReportProposalResultDialog.voteDescription.${confirmationContext}`,

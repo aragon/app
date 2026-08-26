@@ -56,8 +56,8 @@ export const SppProposalListItem: React.FC<ISppProposalListItemProps> = (
             }}
             status={proposalStatus}
             statusContext={statusContext}
-            summary={summary}
-            title={title}
+            summary={summary ?? ''}
+            title={title ?? ''}
         />
     );
 };

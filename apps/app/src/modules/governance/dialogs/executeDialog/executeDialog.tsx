@@ -110,8 +110,8 @@ export const ExecuteDialog: React.FC<IExecuteDialogProps> = (props) => {
                     id={slug}
                     publisher={{ address: creator.address }}
                     status={proposalCardStatus}
-                    summary={summary}
-                    title={title}
+                    summary={summary ?? ''}
+                    title={title ?? ''}
                 />
             </DataList.Root>
         </TransactionDialog>

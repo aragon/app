@@ -2,6 +2,7 @@
 
 import {
     ActionSimulation,
+    AlertCard,
     addressUtils,
     CardCollapsible,
     ChainEntityType,
@@ -45,6 +46,10 @@ import { ProposalActionsItem } from '../../components/proposalActionsItem';
 import { ProposalVotingTerminal } from '../../components/proposalVotingTerminal';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { proposalActionUtils } from '../../utils/proposalActionUtils';
+import {
+    ProposalMetadataStatus,
+    proposalUtils,
+} from '../../utils/proposalUtils';
 
 export interface IDaoProposalDetailsPageClientProps {
     /**
@@ -214,6 +219,10 @@ export const DaoProposalDetailsPageClient: React.FC<
         variant: proposalStatusToTagVariant[proposalStatus],
     };
 
+    const metadataStatus = proposalUtils.getMetadataStatus(proposal);
+    const hasStandardMetadata =
+        metadataStatus === ProposalMetadataStatus.STANDARD;
+
     const proposalsUrl = daoUtils.getDaoUrl(dao, 'proposals');
     const pageBreadcrumbs = [
         {
@@ -257,11 +266,26 @@ export const DaoProposalDetailsPageClient: React.FC<
             <Page.Header
                 breadcrumbs={pageBreadcrumbs}
                 breadcrumbsTag={statusTag}
-                description={summary}
-                title={title}
+                description={summary ?? undefined}
+                title={title ?? proposalSlug.toUpperCase()}
             />
             <Page.Content>
                 <Page.Main>
+                    {!hasStandardMetadata && (
+                        <AlertCard
+                            message={t(
+                                `app.governance.daoProposalDetailsPage.main.metadataAlert.${metadataStatus}`,
+                            )}
+                            variant="warning"
+                        >
+                            {metadataStatus ===
+                                ProposalMetadataStatus.NON_STANDARD && (
+                                <code className="mt-2 block break-all rounded-lg bg-neutral-50 px-4 py-3 font-mono text-neutral-800 text-sm">
+                                    {proposal.metadataUri}
+                                </code>
+                            )}
+                        </AlertCard>
+                    )}
                     {description && (
                         <Page.MainSection
                             title={t(

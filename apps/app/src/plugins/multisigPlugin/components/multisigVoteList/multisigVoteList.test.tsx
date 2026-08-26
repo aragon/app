@@ -194,10 +194,10 @@ describe('<MultisigVoteList /> component', () => {
 
         expect(
             within(links[0]).getByTestId('proposal-title'),
-        ).toHaveTextContent(votes[0].proposal!.title);
+        ).toHaveTextContent(votes[0].proposal!.title!);
         expect(
             within(links[1]).getByTestId('proposal-title'),
-        ).toHaveTextContent(votes[1].proposal!.title);
+        ).toHaveTextContent(votes[1].proposal!.title!);
 
         expect(screen.getAllByText('approve')).toHaveLength(2);
     });

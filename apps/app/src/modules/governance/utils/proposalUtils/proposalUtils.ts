@@ -3,7 +3,36 @@ import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import type { IProposal } from '../../api/governanceService';
 
+export enum ProposalMetadataStatus {
+    /**
+     * The proposal metadata has been resolved correctly.
+     */
+    STANDARD = 'standard',
+    /**
+     * The onchain metadata is a non-standard string (e.g. plain text instead of an IPFS URI).
+     */
+    NON_STANDARD = 'nonStandard',
+    /**
+     * The proposal has no metadata set.
+     */
+    MISSING = 'missing',
+}
+
 class ProposalUtils {
+    getMetadataStatus = (
+        proposal: Pick<IProposal, 'title' | 'metadataUri'>,
+    ): ProposalMetadataStatus => {
+        const { title, metadataUri } = proposal;
+
+        if (title != null) {
+            return ProposalMetadataStatus.STANDARD;
+        }
+
+        return metadataUri?.trim()
+            ? ProposalMetadataStatus.NON_STANDARD
+            : ProposalMetadataStatus.MISSING;
+    };
+
     getProposalSlug = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,
         dao?: IDao,

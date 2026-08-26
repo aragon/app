@@ -141,8 +141,49 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             urlParams: { slug: proposal.id },
             queryParams: { daoId: 'dao-id' },
         });
-        expect(screen.getByText(proposal.title)).toBeInTheDocument();
-        expect(screen.getByText(proposal.summary)).toBeInTheDocument();
+        expect(screen.getByText(proposal.title!)).toBeInTheDocument();
+        expect(screen.getByText(proposal.summary!)).toBeInTheDocument();
+    });
+
+    it('renders a metadata warning with the raw metadata string when the proposal metadata is non-standard', () => {
+        const metadataUri = 'Proposal to change the settings';
+        const proposal = generateProposal({
+            title: null,
+            summary: null,
+            metadataUri,
+        });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
+        );
+        render(createTestComponent({ proposalSlug: 'ms-22' }));
+
+        expect(
+            screen.getByText(
+                'app.governance.daoProposalDetailsPage.main.metadataAlert.nonStandard',
+            ),
+        ).toBeInTheDocument();
+        expect(screen.getByText(metadataUri)).toBeInTheDocument();
+        expect(
+            screen.getByRole('heading', { name: 'MS-22' }),
+        ).toBeInTheDocument();
+    });
+
+    it('renders a missing-metadata warning when the proposal has no metadata', () => {
+        const proposal = generateProposal({
+            title: null,
+            summary: null,
+            metadataUri: null,
+        });
+        useProposalSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: proposal }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByText(
+                'app.governance.daoProposalDetailsPage.main.metadataAlert.missing',
+            ),
+        ).toBeInTheDocument();
     });
 
     it('renders the proposal page breadcrumbs', () => {

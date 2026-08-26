@@ -98,8 +98,8 @@ export const SppAdvanceStageDialog: React.FC<ISppAdvanceStageDialogProps> = (
                     name: creatorEns ?? undefined,
                 }}
                 status={proposalCardStatus}
-                summary={proposal.summary}
-                title={proposal.title}
+                summary={proposal.summary ?? ''}
+                title={proposal.title ?? ''}
                 type="approvalThreshold"
             />
         </TransactionDialog>

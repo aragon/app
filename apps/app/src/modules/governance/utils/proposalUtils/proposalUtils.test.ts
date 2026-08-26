@@ -1,13 +1,39 @@
 import { generateDao, generateDaoPlugin } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { generateProposal } from '../../testUtils';
-import { proposalUtils } from './proposalUtils';
+import { ProposalMetadataStatus, proposalUtils } from './proposalUtils';
 
 describe('proposalUtils', () => {
     const getDaoPluginsSpy = jest.spyOn(daoUtils, 'getDaoPlugins');
 
     afterEach(() => {
         getDaoPluginsSpy.mockReset();
+    });
+
+    describe('getMetadataStatus', () => {
+        it('returns standard when the proposal title is set', () => {
+            const proposal = generateProposal({ title: 'my-proposal' });
+            const result = proposalUtils.getMetadataStatus(proposal);
+            expect(result).toEqual(ProposalMetadataStatus.STANDARD);
+        });
+
+        it('returns non-standard when the title is not set and the metadata is a raw string', () => {
+            const proposal = generateProposal({
+                title: null,
+                metadataUri: 'Proposal to change the settings',
+            });
+            const result = proposalUtils.getMetadataStatus(proposal);
+            expect(result).toEqual(ProposalMetadataStatus.NON_STANDARD);
+        });
+
+        it.each([null, '', '  '])(
+            'returns missing when the title is not set and the metadata is %s',
+            (metadataUri) => {
+                const proposal = generateProposal({ title: null, metadataUri });
+                const result = proposalUtils.getMetadataStatus(proposal);
+                expect(result).toEqual(ProposalMetadataStatus.MISSING);
+            },
+        );
     });
 
     describe('getProposalSlug', () => {

@@ -90,8 +90,8 @@ describe('<DaoProposalListDefault /> component', () => {
         });
         render(createTestComponent({ initialParams }));
         expect(useProposalListDataSpy).toHaveBeenCalledWith(initialParams);
-        expect(screen.getByText(proposals[0].title)).toBeInTheDocument();
-        expect(screen.getByText(proposals[1].title)).toBeInTheDocument();
+        expect(screen.getByText(proposals[0].title!)).toBeInTheDocument();
+        expect(screen.getByText(proposals[1].title!)).toBeInTheDocument();
         expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 

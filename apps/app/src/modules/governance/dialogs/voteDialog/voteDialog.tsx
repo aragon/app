@@ -161,7 +161,7 @@ export const VoteDialog: React.FC<IVoteDialogProps> = (props) => {
             <VoteProposalDataListItemStructure
                 isVeto={isVeto}
                 proposalId={slug ?? ''}
-                proposalTitle={proposal.title}
+                proposalTitle={proposal.title ?? ''}
                 voteIndicator={vote.label}
                 voteIndicatorDescription={vote.labelDescription}
             />
