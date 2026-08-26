@@ -70,6 +70,16 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     isError: boolean;
     /**
+     * Whether the read failed because the shared Safe API quota is exhausted. A degraded state
+     * rather than a bug: the poll backs off and recovers on its own, so it is rendered separately
+     * from a generic error.
+     */
+    isRateLimited: boolean;
+    /**
+     * Seconds to wait, forwarded from the upstream `Retry-After`. Absent when upstream did not say.
+     */
+    rateLimitedRetryAfter?: number;
+    /**
      * Report queued for this proposal and stage, live or superseded.
      */
     pendingReport?: ISafeMultisigBodyReport;

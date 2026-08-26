@@ -3154,6 +3154,8 @@
           "error": "Safe state could not be loaded. Try again later.",
           "loading": "Loading Safe state…",
           "partialError": "The pending transaction state could not be refreshed.",
+          "rateLimited": "Safe state is temporarily unavailable — the shared Safe API limit was reached. This retries on its own.",
+          "rateLimitedRetry": "Safe state is temporarily unavailable — the shared Safe API limit was reached. Retrying in about {{seconds}} seconds.",
           "report": {
             "approval": {
               "executed": "Approved and executed",
@@ -3192,7 +3194,12 @@
           "error": "The Safe action could not be completed. Try again.",
           "executeApproval": "Execute approval",
           "executeVeto": "Execute veto",
+          "finalizing": "Executed onchain. Waiting for indexing to complete.",
+          "indexingDelayed": "The report executed onchain but is still not indexed. The result will appear once indexing catches up.",
           "ownerRequired": "Connect an owner wallet for this Safe to continue.",
+          "requeueApproval": "Re-queue approval",
+          "requeueVeto": "Re-queue veto",
+          "supersededNotice": "This transaction can no longer execute — another transaction took its Safe nonce. Re-queue to sign a new one.",
           "unknownVersion": "unknown",
           "versionUnsupported": "Contract-owner signatures require Safe v1.4.1 or newer. This Safe is {{version}}.",
           "veto": "Veto proposal",

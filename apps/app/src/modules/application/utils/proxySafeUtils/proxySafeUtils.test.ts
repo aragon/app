@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 
+import { revalidateTag } from 'next/cache';
 import type { NextURL } from 'next/dist/server/web/next-url';
 import { NextResponse } from 'next/server';
 import { SafeServiceErrorCode } from '@/shared/api/safeService/domain';
@@ -9,11 +10,14 @@ import { generateNextRequest, generateResponse } from '@/shared/testUtils';
 import { testLogger } from '@/test/utils';
 import { type ISafeRequestOptions, ProxySafeUtils } from './proxySafeUtils';
 
+jest.mock('next/cache', () => ({ revalidateTag: jest.fn() }));
+
 describe('proxySafe utils', () => {
     const originalProcessEnv = process.env;
 
     const fetchSpy = jest.spyOn(global, 'fetch');
     const nextResponseJsonSpy = jest.spyOn(NextResponse, 'json');
+    const revalidateTagSpy = jest.mocked(revalidateTag);
 
     beforeEach(() => {
         process.env.NEXT_SECRET_SAFE_API_KEY = 'test-safe-key';
@@ -25,6 +29,7 @@ describe('proxySafe utils', () => {
         process.env = { ...originalProcessEnv };
         fetchSpy.mockReset();
         nextResponseJsonSpy.mockReset();
+        revalidateTagSpy.mockReset();
     });
 
     const createTestOptions = (
@@ -166,6 +171,125 @@ describe('proxySafe utils', () => {
 
             expect(response.status).toEqual(201);
             expect(nextResponseJsonSpy).not.toHaveBeenCalled();
+        });
+
+        it('caches a read against a per-safe tag so concurrent viewers share one upstream call', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
+            );
+            const safeAddress = `0x${'a'.repeat(40)}`;
+
+            await testClass.request(
+                createTestRequest(),
+                createTestOptions('1', ['v1', 'safes', safeAddress]),
+            );
+
+            expect(fetchSpy).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.objectContaining({
+                    next: {
+                        revalidate: 10,
+                        tags: ['safe:1', `safe:1:${safeAddress}`],
+                    },
+                }),
+            );
+        });
+
+        it('bypasses the cache for a read marked as needing fresh data', async () => {
+            // The data cache serves stale-while-revalidate, so a cached read hands back a stale
+            // payload synchronously. Nonce allocation bakes the result into an EIP-712 hash that
+            // cannot be changed once signed, so that caller opts out and the proxy must honour it.
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
+            );
+            const request = generateNextRequest({
+                method: 'GET',
+                nextUrl: { search: '' } as NextURL,
+                headers: new Headers({ 'x-safe-fresh-read': '1' }),
+            });
+
+            await testClass.request(
+                request,
+                createTestOptions('1', ['v1', 'safes', `0x${'a'.repeat(40)}`]),
+            );
+
+            const [, options] = fetchSpy.mock.calls[0];
+
+            expect(options).toEqual(
+                expect.objectContaining({ cache: 'no-store' }),
+            );
+            expect(options).not.toHaveProperty('next');
+            // The marker is consumed by the proxy, never forwarded to the transaction service.
+            expect(options?.headers).not.toHaveProperty('x-safe-fresh-read');
+        });
+
+        it('never caches a write', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
+            );
+
+            await testClass.request(
+                createTestRequest('', 'POST', { signature: '0xsignature' }),
+                createTestOptions('1', [
+                    'v1',
+                    'safes',
+                    `0x${'a'.repeat(40)}`,
+                    'multisig-transactions',
+                ]),
+            );
+
+            expect(fetchSpy).toHaveBeenCalledWith(
+                expect.any(String),
+                expect.objectContaining({ cache: 'no-store' }),
+            );
+        });
+
+        it('drops the cached safe state after a successful proposal so the signer sees their own signature', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ json: jest.fn().mockResolvedValue({}) }),
+            );
+            const safeAddress = `0x${'a'.repeat(40)}`;
+
+            await testClass.request(
+                createTestRequest('', 'POST', { nonce: '7' }),
+                createTestOptions('1', [
+                    'v1',
+                    'safes',
+                    safeAddress,
+                    'multisig-transactions',
+                ]),
+            );
+
+            // `expire: 0` rather than a stale-while-revalidate profile: read-your-own-writes.
+            expect(revalidateTagSpy).toHaveBeenCalledWith(
+                `safe:1:${safeAddress}`,
+                {
+                    expire: 0,
+                },
+            );
+        });
+
+        it('does not revalidate when the write failed', async () => {
+            const testClass = new ProxySafeUtils();
+            fetchSpy.mockResolvedValue(
+                generateResponse({ ok: false, status: 422 }),
+            );
+
+            await testClass.request(
+                createTestRequest('', 'POST', { nonce: '7' }),
+                createTestOptions('1', [
+                    'v1',
+                    'safes',
+                    `0x${'a'.repeat(40)}`,
+                    'multisig-transactions',
+                ]),
+            );
+
+            expect(revalidateTagSpy).not.toHaveBeenCalled();
         });
 
         it('returns a typed unsupported-chain response for a chain without a transaction service', async () => {

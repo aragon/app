@@ -41,6 +41,9 @@ export interface IGetSafePendingTransactionsParams
         IGetSafePendingTransactionsQueryParams
     > {}
 
+export interface IGetSafeNextNonceParams
+    extends IRequestUrlParams<ISafeUrlParams> {}
+
 export interface IGetSafeBalancesParams
     extends IRequestUrlParams<ISafeUrlParams> {}
 

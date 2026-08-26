@@ -14,16 +14,23 @@ import {
 import { wagmiConfig } from '@/modules/application/constants/wagmi';
 import { useConnectedWalletGuard } from '@/modules/application/hooks/useConnectedWalletGuard';
 import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
+import { GovernanceServiceKey } from '@/modules/governance/api/governanceService';
 import type { ISppVotingTerminalBodyVoteDefaultProps } from '@/plugins/sppPlugin/components/sppVotingTerminal/components/sppVotingTerminalBodyVoteDefault';
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import {
+    safeService,
     safeServiceKeys,
     useConfirmSafeTransaction,
     useProposeSafeTransaction,
 } from '@/shared/api/safeService';
+import {
+    TransactionType,
+    useTransactionStatus,
+} from '@/shared/api/transactionService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { safeIndexingPollInterval, safeIndexingTimeout } from '../../constants';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
@@ -71,6 +78,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     });
     const [actionError, setActionError] = useState<string>();
     const [isExecuting, setIsExecuting] = useState(false);
+    const [executedHash, setExecutedHash] = useState<Hex>();
+    const [hasIndexingTimedOut, setHasIndexingTimedOut] = useState(false);
 
     useEffect(() => {
         latestConnectedAddress.current = connectedAddress;
@@ -116,6 +125,64 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const hasUnsupportedContractOwner =
         !supportsEip1271Signatures && connectedAccountBytecode != null;
     const hasSettled = settledResultType != null;
+
+    /**
+     * Between a successful execution and the indexer ingesting it, the Safe queue no longer holds
+     * the report (it is executed, so the `executed=false` read drops it) and the indexed body
+     * result does not exist yet. Without holding the action across that window the card falls back
+     * to its idle CTA and invites a duplicate report at the next nonce.
+     *
+     * The hold is bounded: the status endpoint answers `{ isProcessed: false }` for any hash it
+     * cannot attribute, so a stalled indexer looks exactly like a slow one and would otherwise
+     * hold the card forever behind a spinner with no way out.
+     */
+    const isAwaitingIndexing =
+        executedHash != null && !hasSettled && !hasIndexingTimedOut;
+
+    const { data: executedTransactionStatus } = useTransactionStatus(
+        {
+            urlParams: {
+                network: proposal.network,
+                transactionHash: executedHash ?? '',
+            },
+            queryParams: { type: TransactionType.PROPOSAL_REPORT_RESULTS },
+        },
+        {
+            enabled: isAwaitingIndexing,
+            refetchInterval: ({ state }) =>
+                state.data?.isProcessed === true
+                    ? false
+                    : safeIndexingPollInterval,
+        },
+    );
+
+    const isReportIndexed = executedTransactionStatus?.isProcessed === true;
+
+    useEffect(() => {
+        if (!isReportIndexed) {
+            return;
+        }
+
+        void queryClient.invalidateQueries({
+            queryKey: [GovernanceServiceKey.PROPOSAL_BY_SLUG],
+        });
+        void queryClient.invalidateQueries({
+            queryKey: [GovernanceServiceKey.PROPOSAL_LIST],
+        });
+    }, [isReportIndexed, queryClient]);
+
+    useEffect(() => {
+        if (executedHash == null || isReportIndexed) {
+            return;
+        }
+
+        const timeout = setTimeout(
+            () => setHasIndexingTimedOut(true),
+            safeIndexingTimeout,
+        );
+
+        return () => clearTimeout(timeout);
+    }, [executedHash, isReportIndexed]);
 
     const invalidateSafeState = async () => {
         if (safeInfo == null) {
@@ -205,6 +272,16 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             let confirmationsRequired: number;
 
             if (liveReport == null) {
+                // Both the live nonce and the queue are read fresh inside the service, uncached:
+                // the polled `safeInfo` here may lag, and a stale floor allocates a nonce the Safe
+                // has already consumed while a stale queue allocates one another transaction holds.
+                const nextNonce = await safeService.getSafeNextNonce({
+                    urlParams: {
+                        network: proposal.network,
+                        address: externalAddress,
+                    },
+                });
+
                 safeTransaction = await protocolKit.createTransaction({
                     transactions: [
                         {
@@ -214,7 +291,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         },
                     ],
                     onlyCalls: true,
-                    options: { nonce: toSafeNonce(safeInfo.nonce) },
+                    options: { nonce: toSafeNonce(nextNonce) },
                 });
                 const safeTxHash =
                     await protocolKit.getTransactionHash(safeTransaction);
@@ -314,6 +391,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                     value: BigInt(0),
                 });
                 await waitForTransactionReceipt(wagmiConfig, { hash });
+                setExecutedHash(hash);
             }
 
             await invalidateSafeState();
@@ -361,18 +439,38 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     const handleVoteClick = () =>
         checkWalletConnection({ onSuccess: checkOwnershipAndSubmit });
 
-    const actionKey = isVeto ? 'veto' : 'approve';
-    const buttonKey = hasSettled
-        ? isVeto
-            ? 'vetoed'
-            : 'approved'
-        : thresholdReached
-          ? isVeto
-              ? 'executeVeto'
-              : 'executeApproval'
-          : actionKey;
+    const isSuperseded =
+        pendingReport?.state === SafeTransactionState.SUPERSEDED;
     const isWaitingForOwners =
         liveReport != null && hasConnectedWalletSigned && !thresholdReached;
+
+    let buttonKey = isVeto ? 'veto' : 'approve';
+
+    if (hasSettled) {
+        buttonKey = isVeto ? 'vetoed' : 'approved';
+    } else if (isAwaitingIndexing) {
+        buttonKey = 'finalizing';
+    } else if (thresholdReached) {
+        buttonKey = isVeto ? 'executeVeto' : 'executeApproval';
+    } else if (isSuperseded) {
+        buttonKey = isVeto ? 'requeueVeto' : 'requeueApproval';
+    }
+
+    let helperText: string | undefined;
+
+    if (hasUnsupportedContractOwner) {
+        helperText = t(`${translationKey}.versionUnsupported`, {
+            version: safeInfo?.version ?? t(`${translationKey}.unknownVersion`),
+        });
+    } else if (isAwaitingIndexing) {
+        helperText = t(`${translationKey}.finalizing`);
+    } else if (hasIndexingTimedOut && !hasSettled) {
+        helperText = t(`${translationKey}.indexingDelayed`);
+    } else if (isSuperseded) {
+        helperText = t(`${translationKey}.supersededNotice`);
+    } else if (isWaitingForOwners) {
+        helperText = t(`${translationKey}.waitingForOwners`);
+    }
 
     return (
         <div className="flex w-full flex-col gap-3">
@@ -380,31 +478,25 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 className="w-full md:w-fit"
                 disabled={
                     hasSettled ||
+                    isAwaitingIndexing ||
                     isWaitingForOwners ||
                     hasUnsupportedContractOwner ||
                     isContractOwnerCheckLoading ||
                     safeInfo == null
                 }
                 iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
-                isLoading={isExecuting}
+                isLoading={isExecuting || isAwaitingIndexing}
                 onClick={hasSettled ? undefined : handleVoteClick}
                 size="md"
                 variant={hasSettled ? 'secondary' : 'primary'}
             >
                 {t(`${translationKey}.${buttonKey}`)}
             </Button>
-            {!hasSettled &&
-                (hasUnsupportedContractOwner || isWaitingForOwners) && (
-                    <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
-                        {hasUnsupportedContractOwner
-                            ? t(`${translationKey}.versionUnsupported`, {
-                                  version:
-                                      safeInfo?.version ??
-                                      t(`${translationKey}.unknownVersion`),
-                              })
-                            : t(`${translationKey}.waitingForOwners`)}
-                    </p>
-                )}
+            {!hasSettled && helperText != null && (
+                <p className="text-center font-normal text-neutral-500 text-sm leading-normal md:text-left">
+                    {helperText}
+                </p>
+            )}
             {actionError != null && (
                 <p className="text-center text-critical-500 text-sm md:text-left">
                     {actionError}

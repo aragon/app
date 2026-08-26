@@ -1,6 +1,6 @@
 import { ProposalStatus } from '@aragon/gov-ui-kit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as Wagmi from 'wagmi';
 import * as WagmiActions from 'wagmi/actions';
@@ -13,7 +13,9 @@ import {
 import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
+import * as transactionServiceApi from '@/shared/api/transactionService';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
+import { safeIndexingTimeout } from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
     generateSafeConfirmation,
@@ -68,6 +70,14 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         safeServiceApi,
         'useConfirmSafeTransaction',
     );
+    const getSafeNextNonceSpy = jest.spyOn(
+        safeServiceApi.safeService,
+        'getSafeNextNonce',
+    );
+    const useTransactionStatusSpy = jest.spyOn(
+        transactionServiceApi,
+        'useTransactionStatus',
+    );
     const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
     const proposeMutateAsync = jest.fn();
     const confirmMutateAsync = jest.fn();
@@ -76,6 +86,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         safeInfo: generateSafeInfo({ threshold: 1, owners: [owner] }),
         isLoading: false,
         isError: false,
+        isRateLimited: false,
         pendingReport: undefined,
         settledResultType: undefined,
         signers: [],
@@ -114,6 +125,10 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             data: undefined,
             isLoading: false,
         } as ReturnType<typeof Wagmi.useBytecode>);
+        getSafeNextNonceSpy.mockResolvedValue('0');
+        // The report stays unattributed unless a test says otherwise, so the indexing hold is the
+        // default post-execution state rather than a network-dependent one.
+        useTransactionStatusSpy.mockReturnValue({ data: undefined } as never);
     });
 
     afterEach(() => {
@@ -243,7 +258,45 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         ).toBeEnabled();
     });
 
-    it('proposes gaslessly and executes after a threshold-one signature', async () => {
+    it('offers a re-queue when the pending report lost its nonce', () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation({ owner })],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.SUPERSEDED,
+                status: ProposalStatus.EXPIRED,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+        });
+
+        render(createTestComponent());
+
+        // A superseded report has collected signatures but can never execute, so the owner must be
+        // able to sign a replacement rather than being told to wait for the other owners.
+        expect(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.requeueApproval',
+            }),
+        ).toBeEnabled();
+        expect(
+            screen.getByText(
+                'app.plugins.safeMultisig.safeMultisigSubmitVote.supersededNotice',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    const mockThresholdOneExecution = () => {
         const signature = {
             signer: owner,
             data: '0xsignature',
@@ -301,6 +354,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             {} as never,
         );
 
+        return { signature, safeTransaction, protocolKit, protocolKitModule };
+    };
+
+    it('proposes gaslessly and executes after a threshold-one signature', async () => {
+        const { signature, safeTransaction, protocolKit, protocolKitModule } =
+            mockThresholdOneExecution();
+        // The Safe sits at nonce 0; the queue already reaches 6. Signing at the current nonce
+        // would compete with whatever occupies it, so the report must take the next free one.
+        getSafeNextNonceSpy.mockResolvedValue('7');
+
         render(createTestComponent());
         await userEvent.click(
             screen.getByRole('button', {
@@ -319,8 +382,16 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 }),
             );
         });
+        // The service reads the live nonce itself; nothing from the polled body state is passed in,
+        // because a polled value can lag and a stale floor allocates a consumed nonce.
+        expect(getSafeNextNonceSpy).toHaveBeenCalledWith({
+            urlParams: {
+                network: Network.ETHEREUM_SEPOLIA,
+                address: baseState.safeInfo.address,
+            },
+        });
         expect(protocolKit.createTransaction).toHaveBeenCalledWith(
-            expect.objectContaining({ options: { nonce: 0 } }),
+            expect.objectContaining({ options: { nonce: 7 } }),
         );
         expect(protocolKitModule.buildSignatureBytes).toHaveBeenCalledWith([
             signature,
@@ -329,5 +400,69 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             jest.mocked(WagmiActions.sendTransaction).mock.calls[0][1],
         ).toEqual(expect.objectContaining({ data: '0xexecTransaction' }));
         expect(WagmiActions.waitForTransactionReceipt).toHaveBeenCalled();
+    });
+
+    it('holds the action while an executed report is not indexed yet', async () => {
+        mockThresholdOneExecution();
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        );
+
+        // The executed report has left the Safe queue but the indexed body result does not exist
+        // yet. Re-offering the idle CTA here would invite a duplicate report at the next nonce.
+        await waitFor(() => {
+            expect(
+                screen.getByRole('button', {
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.finalizing',
+                }),
+            ).toBeDisabled();
+        });
+    });
+
+    it('releases the hold when the executed report is never indexed', async () => {
+        jest.useFakeTimers();
+
+        try {
+            const user = userEvent.setup({
+                advanceTimers: jest.advanceTimersByTime,
+            });
+            mockThresholdOneExecution();
+
+            render(createTestComponent());
+            await user.click(
+                screen.getByRole('button', {
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                }),
+            );
+            await waitFor(() =>
+                expect(
+                    WagmiActions.waitForTransactionReceipt,
+                ).toHaveBeenCalled(),
+            );
+
+            // A stalled indexer is indistinguishable from a slow one, so the hold must expire
+            // instead of leaving the owner behind a permanent spinner with no way out.
+            await act(async () => {
+                jest.advanceTimersByTime(safeIndexingTimeout);
+                await Promise.resolve();
+            });
+
+            expect(
+                screen.getByRole('button', {
+                    name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+                }),
+            ).toBeEnabled();
+            expect(
+                screen.getByText(
+                    'app.plugins.safeMultisig.safeMultisigSubmitVote.indexingDelayed',
+                ),
+            ).toBeInTheDocument();
+        } finally {
+            jest.useRealTimers();
+        }
     });
 });

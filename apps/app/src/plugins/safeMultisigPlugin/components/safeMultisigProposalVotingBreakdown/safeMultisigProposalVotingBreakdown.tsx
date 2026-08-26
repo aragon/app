@@ -56,7 +56,24 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
         membersCount,
         isLoading,
         isError,
+        isRateLimited,
+        rateLimitedRetryAfter,
     } = bodyState;
+
+    // A rate-limited read is a degraded state, not a bug: the poll backs off and recovers on its
+    // own, so it must not read as a hard failure the user is expected to act on.
+    let placeholderText = t(
+        `${translationKey}.${isError ? 'error' : 'loading'}`,
+    );
+
+    if (isRateLimited) {
+        placeholderText =
+            rateLimitedRetryAfter == null
+                ? t(`${translationKey}.rateLimited`)
+                : t(`${translationKey}.rateLimitedRetry`, {
+                      seconds: rateLimitedRetryAfter,
+                  });
+    }
 
     if (safeInfo == null) {
         return (
@@ -68,9 +85,7 @@ export const SafeMultisigProposalVotingBreakdown: React.FC<
                     )}
                 >
                     <p className="text-neutral-500 text-sm md:text-base">
-                        {t(
-                            `${translationKey}.${isError ? 'error' : 'loading'}`,
-                        )}
+                        {placeholderText}
                     </p>
                 </div>
                 {children}

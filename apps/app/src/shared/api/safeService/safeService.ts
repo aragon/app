@@ -8,10 +8,13 @@ import {
     isSafePaginatedResponse,
     SafeServiceErrorCode,
 } from './domain';
+import { checksumSafeAddress } from './safeAddressUtils';
+import { safeFreshReadHeader } from './safeQueryConfig';
 import type {
     IConfirmSafeTransactionParams,
     IGetSafeBalancesParams,
     IGetSafeInfoParams,
+    IGetSafeNextNonceParams,
     IGetSafePendingTransactionsParams,
     IProposeSafeTransactionParams,
     ISafeUrlParams,
@@ -102,6 +105,82 @@ class SafeService extends HttpService {
         }
 
         return { ...response, results };
+    };
+
+    /**
+     * Resolves the nonce a new transaction must occupy: one past the highest nonce any queued
+     * transaction already holds, floored at the Safe's live onchain nonce.
+     *
+     * Proposing at the current nonce instead makes the new transaction *compete* with whatever
+     * already sits there. Nothing is overwritten in the service — both survive — but executing
+     * either one permanently invalidates the rest, which is how a queued report silently dies.
+     *
+     * Both inputs are read here, fresh, and marked uncacheable. Neither may come from a polled or
+     * cached source: the nonce is bound into the EIP-712 `safeTxHash` and cannot be changed once
+     * signatures exist, so a stale queue allocates a colliding nonce and a stale onchain nonce
+     * allocates an already-consumed one — a transaction born unexecutable.
+     *
+     * The maximum is recomputed rather than trusting row order: the transaction service answers 200
+     * and silently ignores an ordering it does not recognise, so a future rename of the field would
+     * degrade into a wrong nonce instead of an error.
+     */
+    getSafeNextNonce = async ({ urlParams }: IGetSafeNextNonceParams) => {
+        const requestUrlParams = this.buildUrlParams(urlParams);
+        const freshRead = { headers: { [safeFreshReadHeader]: '1' } };
+
+        const [safeInfoResponse, queueResponse] = await Promise.all([
+            this.request<unknown>(
+                this.basePaths.safeInfo,
+                { urlParams: requestUrlParams },
+                freshRead,
+            ),
+            this.request<unknown>(
+                this.basePaths.safePendingTransactions,
+                {
+                    urlParams: requestUrlParams,
+                    queryParams: {
+                        executed: false,
+                        ordering: '-nonce',
+                        limit: 1,
+                    },
+                },
+                freshRead,
+            ),
+        ]);
+
+        const safeInfo = this.normalizeSafeInfo(safeInfoResponse);
+
+        if (safeInfo == null) {
+            return this.throwInvalidResponse('Safe next nonce');
+        }
+
+        if (
+            !isSafePaginatedResponse(
+                queueResponse,
+                (_item: unknown): _item is unknown => true,
+            )
+        ) {
+            return this.throwInvalidResponse('Safe next nonce');
+        }
+
+        let nextNonce = BigInt(safeInfo.nonce);
+
+        for (const transaction of queueResponse.results) {
+            const normalizedTransaction =
+                this.normalizeSafeMultisigTransaction(transaction);
+
+            if (normalizedTransaction == null) {
+                return this.throwInvalidResponse('Safe next nonce');
+            }
+
+            const candidate = BigInt(normalizedTransaction.nonce) + BigInt(1);
+
+            if (candidate > nextNonce) {
+                nextNonce = candidate;
+            }
+        }
+
+        return nextNonce.toString();
     };
 
     getSafeBalances = async ({ urlParams }: IGetSafeBalancesParams) => {
@@ -221,9 +300,14 @@ class SafeService extends HttpService {
         );
     };
 
+    /**
+     * The canonical address form is enforced here as well as in the query keys: an imperative
+     * caller (`getSafeNextNonce`) has no key to go through, and a request built from an
+     * unchecksummed address is answered with 422.
+     */
     private buildUrlParams = ({ network, address }: ISafeUrlParams) => ({
         chainId: networkDefinitions[network].id.toString(),
-        address,
+        address: checksumSafeAddress(address),
     });
 }
 

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { QueryOptions, SharedQueryOptions } from '@/shared/types';
 import type { ISafeInfo } from '../../domain';
+import { safeQueryGcTime } from '../../safeQueryConfig';
 import { safeService } from '../../safeService';
 import type { IGetSafeInfoParams } from '../../safeService.api';
 import { safeServiceKeys } from '../../safeServiceKeys';
@@ -11,6 +12,7 @@ export const safeInfoOptions = (
 ): SharedQueryOptions<ISafeInfo> => ({
     queryKey: safeServiceKeys.safeInfo(params),
     queryFn: () => safeService.getSafeInfo(params),
+    gcTime: safeQueryGcTime,
     ...options,
 });
 

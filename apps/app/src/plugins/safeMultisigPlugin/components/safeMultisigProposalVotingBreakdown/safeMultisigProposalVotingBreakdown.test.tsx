@@ -62,6 +62,7 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
         approvalsAmount: 1,
         minApprovals: 2,
         membersCount: 3,
+        isRateLimited: false,
     } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
 
     beforeEach(() => {
@@ -92,6 +93,43 @@ describe('<SafeMultisigProposalVotingBreakdown /> component', () => {
             </Tabs.Root>
         );
     };
+
+    it.each([
+        {
+            label: 'with the upstream retry window',
+            rateLimitedRetryAfter: 42,
+            expected:
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.rateLimitedRetry (seconds=42)',
+        },
+        {
+            label: 'without a retry window',
+            rateLimitedRetryAfter: undefined,
+            expected:
+                'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.rateLimited',
+        },
+    ])(
+        'renders an exhausted Safe API quota as a degraded state $label',
+        ({ rateLimitedRetryAfter, expected }) => {
+            // A rate-limited read recovers on its own once the poll backs off, so it must not read
+            // as the generic hard failure the user is expected to act on.
+            useSafeMultisigBodyStateSpy.mockReturnValue({
+                ...state,
+                safeInfo: undefined,
+                isError: true,
+                isRateLimited: true,
+                rateLimitedRetryAfter,
+            });
+
+            render(createTestComponent());
+
+            expect(screen.getByText(expected)).toBeInTheDocument();
+            expect(
+                screen.queryByText(
+                    'app.plugins.safeMultisig.safeMultisigProposalVotingBreakdown.error',
+                ),
+            ).not.toBeInTheDocument();
+        },
+    );
 
     it('renders the decoded effect, per-transaction threshold and signer state', () => {
         render(createTestComponent());

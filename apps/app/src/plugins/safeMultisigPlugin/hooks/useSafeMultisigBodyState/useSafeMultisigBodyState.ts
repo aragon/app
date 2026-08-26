@@ -6,6 +6,7 @@ import { useWalletAccount } from '@/modules/application/hooks/useWalletAccount';
 import { safeShortNameFromNetwork } from '@/modules/application/utils/proxySafeUtils/safeTxServiceNetworks';
 import { sppStageUtils } from '@/plugins/sppPlugin/utils/sppStageUtils';
 import {
+    SafeServiceError,
     useSafeInfo,
     useSafePendingTransactions,
 } from '@/shared/api/safeService';
@@ -45,8 +46,22 @@ export const useSafeMultisigBodyState = (
     // An idle body card must cost nothing, so polling only runs while the Safe queue holds a
     // transaction that can still execute; otherwise the default focus refetch is enough.
     const [isQueueLive, setIsQueueLive] = useState(false);
+
+    // A rate-limited read means the shared quota is already exhausted, so the poll must slow down
+    // rather than keep asking at the normal cadence. The upstream `Retry-After` is honoured when it
+    // is longer than the usual interval.
     const refetchInterval = useCallback(
-        () => (isQueueLive ? safeBodyPollInterval : false),
+        ({ state }: { state: { error: unknown } }) => {
+            if (!isQueueLive) {
+                return false;
+            }
+
+            const retryAfter = SafeServiceError.isRateLimitedError(state.error)
+                ? state.error.retryAfter
+                : undefined;
+
+            return Math.max(safeBodyPollInterval, (retryAfter ?? 0) * 1000);
+        },
         [isQueueLive],
     );
 
@@ -56,6 +71,7 @@ export const useSafeMultisigBodyState = (
         data: safeInfo,
         isLoading: isSafeInfoLoading,
         isError: isSafeInfoError,
+        error: safeInfoError,
     } = useSafeInfo(
         { urlParams },
         { enabled: isNetworkSupported, refetchInterval },
@@ -67,6 +83,7 @@ export const useSafeMultisigBodyState = (
         data: pendingTransactions,
         isLoading: isTransactionsLoading,
         isError: isTransactionsError,
+        error: transactionsError,
     } = useSafePendingTransactions(
         { urlParams, queryParams: { currentNonce: currentNonce ?? '0' } },
         {
@@ -76,6 +93,10 @@ export const useSafeMultisigBodyState = (
             placeholderData: keepPreviousData,
             refetchInterval,
         },
+    );
+
+    const rateLimitedError = [safeInfoError, transactionsError].find((error) =>
+        SafeServiceError.isRateLimitedError(error),
     );
 
     const transactions = useMemo(
@@ -157,6 +178,8 @@ export const useSafeMultisigBodyState = (
         safeInfo,
         isLoading: isSafeInfoLoading || (!isSettled && isTransactionsLoading),
         isError: isSafeInfoError || (!isSettled && isTransactionsError),
+        isRateLimited: rateLimitedError != null,
+        rateLimitedRetryAfter: rateLimitedError?.retryAfter,
         pendingReport,
         settledResultType: bodyResult?.resultType,
         signers,

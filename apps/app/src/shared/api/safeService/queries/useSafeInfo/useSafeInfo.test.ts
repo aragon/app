@@ -14,7 +14,7 @@ describe('useSafeInfo query', () => {
     it('fetches the owners and threshold of the specified safe', async () => {
         const urlParams = {
             network: Network.ETHEREUM_MAINNET,
-            address: '0xSafeAddress',
+            address: '0xd84C233A7D1578021d21E39785439bEdDB165F3D',
         };
         const safeInfo = generateSafeInfo({
             owners: ['0xOwnerOne', '0xOwnerTwo'],

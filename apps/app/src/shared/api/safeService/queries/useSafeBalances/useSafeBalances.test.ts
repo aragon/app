@@ -15,7 +15,7 @@ describe('useSafeBalances query', () => {
         const params = {
             urlParams: {
                 network: Network.ETHEREUM_MAINNET,
-                address: '0xSafeAddress',
+                address: '0xd84C233A7D1578021d21E39785439bEdDB165F3D',
             },
         };
         const balances = [generateSafeBalance({ balance: '42' })];

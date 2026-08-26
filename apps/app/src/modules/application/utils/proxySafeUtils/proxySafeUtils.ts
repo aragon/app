@@ -1,5 +1,7 @@
+import { revalidateTag } from 'next/cache';
 import { type NextRequest, NextResponse } from 'next/server';
 import { SafeServiceErrorCode } from '@/shared/api/safeService/domain';
+import { safeFreshReadHeader } from '@/shared/api/safeService/safeQueryConfig';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
 import { responseUtils } from '@/shared/utils/responseUtils';
 import {
@@ -10,6 +12,18 @@ import {
 import { safeNetworkFromChainId } from './safeTxServiceNetworks';
 
 const DEFAULT_RATE_LIMIT_BACKOFF_SECONDS = 60;
+
+/**
+ * How long a Safe read may be served from Next's data cache.
+ *
+ * This is the only place where N concurrent viewers of one Safe collapse into one upstream call:
+ * without it, every viewer's poll is its own request against a single shared, rate-limited API key.
+ *
+ * Deliberately short. The Safe nonce drives liveness derivation, and execution happens onchain —
+ * outside this proxy — so nothing invalidates the cache when the nonce advances. Ten seconds bounds
+ * that staleness, and the post-execution indexing hold already covers the window in the UI.
+ */
+const SAFE_READ_CACHE_SECONDS = 10;
 
 export interface ISafeRequestParams {
     /**
@@ -92,6 +106,7 @@ export class ProxySafeUtils {
             const requestOptions = await this.buildRequestOptions(
                 request,
                 apiKey,
+                chainId,
                 path,
             );
 
@@ -155,6 +170,14 @@ export class ProxySafeUtils {
                     error: `Safe request failed with status ${String(result.status)}`,
                     status: result.status,
                 });
+            }
+
+            // A signer must see their own signature on the next read, so drop the cached Safe
+            // state now rather than serving the pre-signature queue for the rest of its window.
+            if (request.method === 'POST') {
+                for (const tag of this.buildCacheTags(chainId, path)) {
+                    revalidateTag(tag, { expire: 0 });
+                }
             }
 
             if (
@@ -248,6 +271,7 @@ export class ProxySafeUtils {
     private buildRequestOptions = async (
         request: NextRequest,
         apiKey: string,
+        chainId: string,
         path: string[],
     ): Promise<RequestInit | undefined> => {
         const method = request.method;
@@ -280,10 +304,25 @@ export class ProxySafeUtils {
             }
         }
 
+        // Reads are shared across viewers; writes are never cached. A read may also opt out: the
+        // data cache serves stale-while-revalidate, which is fine for display and fatal for nonce
+        // allocation, so that caller marks its reads fresh and the rule is enforced here rather
+        // than trusted. The marker is consumed, never forwarded upstream.
+        const isCacheableRead =
+            method === 'GET' &&
+            request.headers.get(safeFreshReadHeader) == null;
+
         return {
             method,
             body,
-            cache: 'no-store',
+            ...(isCacheableRead
+                ? {
+                      next: {
+                          revalidate: SAFE_READ_CACHE_SECONDS,
+                          tags: this.buildCacheTags(chainId, path),
+                      },
+                  }
+                : { cache: 'no-store' as RequestCache }),
             headers: {
                 Accept: 'application/json',
                 Authorization: `Bearer ${apiKey}`,
@@ -293,6 +332,26 @@ export class ProxySafeUtils {
             },
             credentials: 'omit',
         };
+    };
+
+    /**
+     * Cache tags for a Safe read: one per chain and, when the path names a Safe, one per Safe.
+     *
+     * A proposal POST carries the Safe address and can invalidate precisely. A confirmation POST
+     * does not — its path is keyed by `safeTxHash` — so it falls back to the chain tag and
+     * invalidates every Safe on that chain. Confirmations are human signing actions and therefore
+     * rare, so the occasional extra read is cheaper than threading the address through the
+     * confirmation URL purely to narrow a tag.
+     */
+    private buildCacheTags = (chainId: string, path: string[]): string[] => {
+        const chainTag = `safe:${chainId}`;
+        const address = path[1] === 'safes' ? path[2] : undefined;
+
+        if (address == null || !safeAddressPattern.test(address)) {
+            return [chainTag];
+        }
+
+        return [chainTag, `${chainTag}:${address.toLowerCase()}`];
     };
 
     /**

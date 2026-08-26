@@ -120,7 +120,10 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                     <Page.MainSection
                         title={t('app.safe.safeAccountPage.main.owners.title')}
                     >
-                        <SafeOwnerList address={address} network={network} />
+                        <SafeOwnerList
+                            address={checksummedAddress}
+                            network={network}
+                        />
                     </Page.MainSection>
                     <Page.MainSection
                         description={t(
@@ -129,7 +132,7 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                         title={t('app.safe.safeAccountPage.main.pending.title')}
                     >
                         <SafePendingTransactionList
-                            address={address}
+                            address={checksummedAddress}
                             currentNonce={safeInfo?.nonce}
                             network={network}
                         />
@@ -137,7 +140,10 @@ export const SafeAccountPageClient: React.FC<ISafeAccountPageClientProps> = (
                     <Page.MainSection
                         title={t('app.safe.safeAccountPage.main.assets.title')}
                     >
-                        <SafeBalanceList address={address} network={network} />
+                        <SafeBalanceList
+                            address={checksummedAddress}
+                            network={network}
+                        />
                     </Page.MainSection>
                 </Page.Main>
                 <Page.Aside>

@@ -4,6 +4,7 @@ import type {
     ISafeMultisigTransaction,
     ISafePaginatedResponse,
 } from '../../domain';
+import { safeQueryGcTime } from '../../safeQueryConfig';
 import { safeService } from '../../safeService';
 import type { IGetSafePendingTransactionsParams } from '../../safeService.api';
 import { safeServiceKeys } from '../../safeServiceKeys';
@@ -17,6 +18,7 @@ export const safePendingTransactionsOptions = (
 ): SharedQueryOptions<ISafePendingTransactions> => ({
     queryKey: safeServiceKeys.safePendingTransactions(params),
     queryFn: () => safeService.getSafePendingTransactions(params),
+    gcTime: safeQueryGcTime,
     ...options,
 });
 
