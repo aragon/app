@@ -32,6 +32,12 @@ export interface IProposalActionsEditorProps {
      * Actions the composer restricts its offering to. Leave undefined to offer every action.
      */
     allowedActions?: IAllowedAction[];
+    /**
+     * Initial state of the composer's authorized-actions switch, read on mount only. Restricts
+     * nothing on its own - `allowedActions` does that. Leave undefined to keep the composer's own
+     * default of `allowedActions != null`.
+     */
+    initialOnlyShowAuthorizedActions?: boolean;
 }
 
 /**
@@ -42,7 +48,13 @@ export interface IProposalActionsEditorProps {
 export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
     props,
 ) => {
-    const { daoId, network, excludeActionTypes, allowedActions } = props;
+    const {
+        daoId,
+        network,
+        excludeActionTypes,
+        allowedActions,
+        initialOnlyShowAuthorizedActions,
+    } = props;
 
     invariant(
         daoId != null || network != null,
@@ -113,6 +125,9 @@ export const ProposalActionsEditor: React.FC<IProposalActionsEditorProps> = (
                     excludeActionTypes={excludeActionTypes}
                     hasActions={hasActions}
                     hasPinErrors={hasPinErrors}
+                    initialOnlyShowAuthorizedActions={
+                        initialOnlyShowAuthorizedActions
+                    }
                     isPinning={isPinning}
                     network={network}
                     onAddAction={handleAddAction}

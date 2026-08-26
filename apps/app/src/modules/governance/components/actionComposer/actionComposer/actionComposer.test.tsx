@@ -56,6 +56,52 @@ describe('ActionComposer', () => {
         ).not.toBeInTheDocument();
     });
 
+    it('leaves the authorized-actions switch off when no allowlist restricts the actions', () => {
+        render(createTestComponent());
+
+        expect(screen.getByRole('switch')).not.toBeChecked();
+    });
+
+    it('turns the authorized-actions switch on when an allowlist is given', () => {
+        render(createTestComponent({ allowedActions: [] }));
+
+        expect(screen.getByRole('switch')).toBeChecked();
+    });
+
+    // The switch also gates the import and WalletConnect buttons, so defaulting it on where the
+    // caller cannot afford that takes both away.
+    it('honours an overridden initial switch state and keeps the import buttons reachable', () => {
+        render(
+            createTestComponent({
+                allowedActions: [],
+                initialOnlyShowAuthorizedActions: false,
+            }),
+        );
+
+        expect(screen.getByRole('switch')).not.toBeChecked();
+        expect(
+            screen.getByRole('button', {
+                name: 'app.governance.createProposalForm.actionsImportExport.importButton',
+            }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: /walletConnect/i }),
+        ).toBeInTheDocument();
+    });
+
+    it('hides the import and WalletConnect buttons while the switch is on', () => {
+        render(createTestComponent({ allowedActions: [] }));
+
+        expect(
+            screen.queryByRole('button', {
+                name: 'app.governance.createProposalForm.actionsImportExport.importButton',
+            }),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole('button', { name: /walletConnect/i }),
+        ).not.toBeInTheDocument();
+    });
+
     it('allows spaces while typing in the action search input', async () => {
         const user = userEvent.setup();
         render(createTestComponent());

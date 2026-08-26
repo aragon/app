@@ -235,16 +235,20 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                         />
                     ) : (
                         <ProposalActionsEditor
-                            allowedActions={
-                                // rough heuristic to improve UX with 'Only show allowed actions' switch resetting on every
-                                // dialog open
-                                initialActions.length &&
-                                allowedActions?.length === 0
-                                    ? undefined
-                                    : allowedActions
-                            }
+                            allowedActions={allowedActions}
                             daoId={crossChainNetwork ? undefined : hostDaoId}
                             excludeActionTypes={excludeActionTypes}
+                            initialOnlyShowAuthorizedActions={
+                                // The composer remounts with the dialog, so the switch would come back
+                                // on at every open and hide the actions already being edited. Rough
+                                // heuristic: start it off when nothing is authorized but there is
+                                // something to show. Undefined everywhere else, to keep the
+                                // composer's own default.
+                                initialActions.length > 0 &&
+                                allowedActions?.length === 0
+                                    ? false
+                                    : undefined
+                            }
                             network={crossChainNetwork}
                         />
                     )}
