@@ -26,7 +26,7 @@ describe('proposalUtils', () => {
             expect(result).toEqual(ProposalMetadataStatus.NON_STANDARD);
         });
 
-        it.each([null, '', '  '])(
+        it.each([null, '', '  ', 'ipfs://unresolvable-cid'])(
             'returns missing when the title is not set and the metadata is %s',
             (metadataUri) => {
                 const proposal = generateProposal({ title: null, metadataUri });

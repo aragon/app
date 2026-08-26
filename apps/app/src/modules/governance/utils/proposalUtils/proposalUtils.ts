@@ -13,10 +13,12 @@ export enum ProposalMetadataStatus {
      */
     NON_STANDARD = 'nonStandard',
     /**
-     * The proposal has no metadata set.
+     * The proposal has no metadata set or its metadata cannot be fetched.
      */
     MISSING = 'missing',
 }
+
+const ipfsUriPrefix = 'ipfs://';
 
 class ProposalUtils {
     getMetadataStatus = (
@@ -28,7 +30,11 @@ class ProposalUtils {
             return ProposalMetadataStatus.STANDARD;
         }
 
-        return metadataUri?.trim()
+        const processedUri = metadataUri?.trim();
+
+        // A valid IPFS URI that could not be resolved is treated as missing metadata: only a
+        // string written directly onchain instead of an IPFS URI is a non-standard metadata.
+        return processedUri && !processedUri.startsWith(ipfsUriPrefix)
             ? ProposalMetadataStatus.NON_STANDARD
             : ProposalMetadataStatus.MISSING;
     };
