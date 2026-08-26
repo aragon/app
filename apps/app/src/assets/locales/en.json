@@ -415,6 +415,7 @@
           "assets": "Assets",
           "dashboard": "Dashboard",
           "members": "Members",
+          "permissions": "Permissions",
           "proposals": "Proposals",
           "settings": "Settings",
           "transactions": "Transactions"

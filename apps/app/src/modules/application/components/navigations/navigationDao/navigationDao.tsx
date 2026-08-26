@@ -16,6 +16,7 @@ import { useEnsName } from '@/modules/ens';
 import { useDaoOverrides } from '@/shared/api/cmsService';
 import type { IDao } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
+import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import {
     type INavigationContainerProps,
     Navigation,
@@ -53,6 +54,8 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
     const isMounted = useIsMounted();
     const effectiveIsConnected = isMounted && isConnected && address != null;
     const { open } = useDialogContext();
+    const { isEnabled } = useFeatureFlags();
+    const permissionsPageEnabled = isEnabled('permissionsPage');
 
     const { buildEntityUrl } = useDaoChain({ network: dao.network });
     const addressLink = buildEntityUrl({
@@ -101,6 +104,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         daoWithVisiblePlugins,
                         'page',
                         daoOverride?.navLinksToHide,
+                        permissionsPageEnabled,
                     )}
                 />
                 <div className="flex items-center gap-x-2 lg:gap-x-3">
@@ -120,6 +124,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                     daoWithVisiblePlugins,
                     'dialog',
                     daoOverride?.navLinksToHide,
+                    permissionsPageEnabled,
                 )}
                 onOpenChange={setIsDialogOpen}
                 open={isDialogOpen}

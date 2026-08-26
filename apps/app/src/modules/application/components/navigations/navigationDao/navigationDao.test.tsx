@@ -7,7 +7,9 @@ import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
+import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type * as Navigation from '@/shared/components/navigation';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import {
     generateDao,
     generateDaoPlugin,
@@ -84,10 +86,20 @@ describe('<NavigationDao /> component', () => {
             dao: generateDao(),
             ...props,
         };
+        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
+            {
+                key: 'permissionsPage',
+                name: 'Permissions page',
+                description: 'Controls permissions page entry points.',
+                enabled: true,
+            },
+        ];
 
         return (
             <GukModulesProvider>
-                <NavigationDao {...completeProps} />
+                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                    <NavigationDao {...completeProps} />
+                </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };
@@ -157,6 +169,16 @@ describe('<NavigationDao /> component', () => {
         expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+    it('shows the permissions link in the dao dialog menu', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(
+            screen.getByRole('link', {
+                name: /navigationDao.link.permissions/,
+            }),
+        ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

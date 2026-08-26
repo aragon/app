@@ -12,11 +12,9 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { DaoTypeTag } from '@/shared/components/daoTypeTag';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
-import { daoUtils } from '@/shared/utils/daoUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 
 export interface IDaoHierarchyProps {
@@ -35,14 +33,9 @@ interface IDaoInfoProps {
      * DAO or linked account object.
      */
     dao: IDao | ILinkedAccountSummary;
-    /**
-     * Link to the permissions page. Only set for the main DAO so the entry
-     * renders once.
-     */
-    permissionsHref?: string;
 }
 
-const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
+const DaoInfo: React.FC<IDaoInfoProps> = ({ dao }) => {
     const { t } = useTranslations();
     const { id: chainId } = networkDefinitions[dao.network];
     const { buildEntityUrl } = useBlockExplorer({ chainId });
@@ -139,24 +132,12 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                     </div>
                 </DefinitionList.Item>
             )}
-            {permissionsHref != null && (
-                <DefinitionList.Item
-                    description={t(
-                        'app.settings.daoSettingsInfo.permissionsDescription',
-                    )}
-                    link={{ href: permissionsHref, isExternal: false }}
-                    term={t('app.settings.daoSettingsInfo.permissions')}
-                >
-                    {t('app.settings.daoSettingsInfo.permissionsLink')}
-                </DefinitionList.Item>
-            )}
         </DefinitionList.Container>
     );
 };
 
 export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const { dao, currentDaoId } = props;
-    const { isEnabled } = useFeatureFlags();
 
     const isViewingMainDao = dao.id === currentDaoId;
     const hasLinkedAccounts =
@@ -164,10 +145,6 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
 
     const getDaoAvatar = (d: IDao | ILinkedAccountSummary) =>
         ipfsUtils.cidToSrc(d.avatar);
-
-    const permissionsHref = isEnabled('permissionsPage')
-        ? daoUtils.getDaoUrl(dao, 'settings/permissions')
-        : undefined;
 
     // If viewing main DAO with linked accounts, show accordion structure
     if (isViewingMainDao && hasLinkedAccounts) {
@@ -190,7 +167,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
                         </div>
                     </Accordion.ItemHeader>
                     <Accordion.ItemContent>
-                        <DaoInfo dao={dao} permissionsHref={permissionsHref} />
+                        <DaoInfo dao={dao} />
                     </Accordion.ItemContent>
                 </Accordion.Item>
                 {dao.linkedAccounts?.map((linkedAccount) => (
@@ -225,7 +202,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     // Default: regular view for main DAO without linked accounts or when viewing a linked account
     return (
         <Card className="p-6">
-            <DaoInfo dao={dao} permissionsHref={permissionsHref} />
+            <DaoInfo dao={dao} />
         </Card>
     );
 };

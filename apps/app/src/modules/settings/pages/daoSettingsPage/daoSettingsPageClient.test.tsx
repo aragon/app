@@ -105,11 +105,25 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByText('My Dao Name')).toBeInTheDocument();
         expect(screen.getByText(/daoVersionInfo.osValue/)).toBeInTheDocument();
         expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
+        expect(
+            screen.getByRole('link', {
+                name: /daoSettingsInfo.permissionsLink/,
+            }),
+        ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
+    });
+
+    it('hides the permissions button when the flag is disabled', () => {
+        render(createTestComponent({}, false));
+
+        expect(
+            screen.queryByRole('link', {
+                name: /daoSettingsInfo.permissionsLink/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('hides the hierarchy permissions link when the flag is disabled', () => {
         render(createTestComponent({ isLinkedAccountEnabled: true }, false));
-
         expect(
             screen.queryByText(/daoSettingsInfo.permissionsLink/),
         ).not.toBeInTheDocument();

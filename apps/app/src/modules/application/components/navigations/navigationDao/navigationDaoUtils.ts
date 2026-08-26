@@ -28,10 +28,16 @@ class NavigationDaoUtils {
         dao: IDao,
         context: NavigationDaoContext,
         navLinksToHide: string[] = [],
+        permissionsPageEnabled = false,
     ): INavigationLink[] => {
         const baseUrl = daoUtils.getDaoUrl(dao)!;
 
-        const defaultLinks = this.getDefaultLinks(dao, baseUrl, context);
+        const defaultLinks = this.getDefaultLinks(
+            dao,
+            baseUrl,
+            context,
+            permissionsPageEnabled,
+        );
         const pluginLinks = this.getPluginLinks(dao, baseUrl, context);
 
         const allLinks = [...defaultLinks, ...pluginLinks].sort(
@@ -56,6 +62,7 @@ class NavigationDaoUtils {
         dao: IDao,
         baseUrl: string,
         context: NavigationDaoContext,
+        permissionsPageEnabled: boolean,
     ): INavigationLink[] => {
         const isSupported = daoUtils.hasSupportedPlugins(dao);
         const hasBodyPlugin = daoUtils.hasPluginBody(dao);
@@ -70,6 +77,13 @@ class NavigationDaoUtils {
                 icon: IconType.APP_DASHBOARD,
                 hidden: isPageContext,
                 order: 100,
+            },
+            {
+                label: 'app.application.navigationDao.link.permissions',
+                link: `${baseUrl}/permissions`,
+                icon: IconType.PERSON,
+                hidden: isPageContext || !permissionsPageEnabled,
+                order: 150,
             },
             {
                 label: 'app.application.navigationDao.link.proposals',
