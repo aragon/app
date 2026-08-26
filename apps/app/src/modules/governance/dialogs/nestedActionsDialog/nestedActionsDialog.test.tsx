@@ -1,8 +1,11 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useFormContext } from 'react-hook-form';
+import { useRef } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import en from '@/assets/locales/en.json';
 import * as daoService from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as translationsProvider from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import {
     generateDao,
@@ -10,6 +13,7 @@ import {
     generateReactQueryResultSuccessWithData,
 } from '@/shared/testUtils';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
+import { translationUtils } from '@/shared/utils/translationsUtils';
 import type { IAllowedAction } from '../../api/executeSelectorsService';
 import * as executeSelectorsService from '../../api/executeSelectorsService';
 import type { IProposalActionData } from '../../components/createProposalForm';
@@ -48,6 +52,7 @@ jest.mock('@aragon/gov-ui-kit', () => {
         Footer: (props: {
             primaryAction: {
                 label: string;
+                disabled?: boolean;
                 isLoading?: boolean;
                 onClick?: () => void;
             };
@@ -64,6 +69,7 @@ jest.mock('@aragon/gov-ui-kit', () => {
                 )}
                 <button
                     data-loading={props.primaryAction.isLoading}
+                    disabled={props.primaryAction.disabled}
                     onClick={props.primaryAction.onClick}
                     type="button"
                 >
@@ -82,6 +88,9 @@ const DAO = generateDao({ address: '0xdao' });
 // The utility narrows `data` to `Hex` on its return type, the generated actions type it as `string`.
 type PreparedActions = Awaited<
     ReturnType<typeof proposalActionPreparationUtils.prepareActions>
+>;
+type DecodedActions = Awaited<
+    ReturnType<typeof proposalActionsImportExportUtils.decodeActions>
 >;
 
 // Raw action: no `inputData`, therefore in need of decoding before it can seed the form.
@@ -107,12 +116,38 @@ const generateActionData = (
 const ProposalActionsEditorStub: React.FC<IProposalActionsEditorProps> = (
     props,
 ) => {
-    const { getValues } = useFormContext<{ actions: IProposalActionData[] }>();
+    const { register, setValue } = useFormContext<{
+        actions: IProposalActionData[];
+    }>();
+    const actions =
+        (useWatch({ name: 'actions' }) as IProposalActionData[] | undefined) ??
+        [];
+    const initialActionsRef = useRef(actions);
+
+    // The actual editor registers and validates every action. This focused stub supplies the same
+    // form-level signal, including an intentionally invalid action, while exposing draft edits.
+    register('actions', {
+        validate: (actions) =>
+            actions.every((action) => action.inputData != null),
+    });
+
+    const setDraftActions = (draftActions: IProposalActionData[]) =>
+        setValue('actions', draftActions, {
+            shouldDirty: true,
+            shouldTouch: true,
+            shouldValidate: true,
+        });
+    const draftActions = {
+        empty: [],
+        initial: initialActionsRef.current,
+        invalid: [generateRawActionData({ to: '0xinvalid' })],
+        valid: [generateActionData({ to: '0xchanged' })],
+    } satisfies Record<string, IProposalActionData[]>;
 
     return (
         <div
             data-action-dao-ids={JSON.stringify(
-                getValues('actions').map((action) => action.daoId),
+                actions.map((action) => action.daoId),
             )}
             data-allowed-action-targets={JSON.stringify(
                 props.allowedActions?.map((action) => action.target),
@@ -124,9 +159,24 @@ const ProposalActionsEditorStub: React.FC<IProposalActionsEditorProps> = (
             )}
             data-testid="actions-editor"
         >
-            {getValues('actions').map((action) => (
+            {actions.map((action) => (
                 <span key={action.to}>{action.to}</span>
             ))}
+            <select
+                aria-label="draft action state"
+                onChange={(event) =>
+                    setDraftActions(
+                        draftActions[
+                            event.target.value as keyof typeof draftActions
+                        ],
+                    )
+                }
+            >
+                <option value="initial">initial</option>
+                <option value="valid">valid</option>
+                <option value="invalid">invalid</option>
+                <option value="empty">empty</option>
+            </select>
         </div>
     );
 };
@@ -151,6 +201,7 @@ describe('<NestedActionsDialog /> component', () => {
         executeSelectorsService,
         'useAllAllowedActions',
     );
+    let useTranslationsSpy: jest.SpyInstance | undefined;
 
     // The hook keeps its data undefined until the full allowlist is known, which is also what a
     // disabled query resolves to.
@@ -180,6 +231,8 @@ describe('<NestedActionsDialog /> component', () => {
     });
 
     afterEach(() => {
+        useTranslationsSpy?.mockRestore();
+        useTranslationsSpy = undefined;
         useDialogContextSpy.mockReset();
         useDaoSpy.mockReset();
         prepareActionsSpy.mockReset();
@@ -189,7 +242,7 @@ describe('<NestedActionsDialog /> component', () => {
         useAllAllowedActionsSpy.mockReset();
     });
 
-    const createTestComponent = (
+    const createTestComponent = async (
         params?: Partial<INestedActionsDialogParams>,
     ) => {
         const completeParams: INestedActionsDialogParams = {
@@ -203,19 +256,69 @@ describe('<NestedActionsDialog /> component', () => {
         // re-renders. Returned to let the tests re-render with the very same params.
         const location = { id: 'NESTED_ACTIONS', params: completeParams };
 
+        let renderedComponent: ReturnType<typeof render> | undefined;
+        await act(() => {
+            renderedComponent = render(
+                <NestedActionsDialog location={location} />,
+            );
+            return Promise.resolve();
+        });
+
         return {
-            ...render(<NestedActionsDialog location={location} />),
+            ...renderedComponent!,
             location,
         };
     };
 
-    it('seeds the isolated form with the initial actions and forwards the editor properties', () => {
+    const getSaveButton = () =>
+        screen.getByRole<HTMLButtonElement>('button', {
+            name: 'app.governance.nestedActionsDialog.save',
+        });
+    const setDraftState = (state: 'empty' | 'initial' | 'invalid' | 'valid') =>
+        userEvent.selectOptions(
+            screen.getByRole('combobox', { name: 'draft action state' }),
+            state,
+        );
+
+    it('uses forwarded-actions copy and only header close discards the draft', async () => {
+        const dialogContext = generateDialogContext();
+        const onSubmit = jest.fn();
+        useDialogContextSpy.mockReturnValue(dialogContext);
+        useTranslationsSpy = jest
+            .spyOn(translationsProvider, 'useTranslations')
+            .mockReturnValue({
+                t: translationUtils.t(en),
+            });
+
+        await createTestComponent({ onSubmit });
+
+        expect(
+            screen.getByRole('heading', { name: 'Forwarded actions' }),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByText(
+                'These forwarded actions are executed as a batch within the action you are composing.',
+            ),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', { name: 'Save forwarded actions' }),
+        ).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: 'Cancel' })).toBeNull();
+        await setDraftState('valid');
+        await userEvent.click(screen.getByRole('button', { name: 'close' }));
+        expect(onSubmit).not.toHaveBeenCalled();
+        expect(dialogContext.close).toHaveBeenCalledWith(
+            GovernanceDialogId.NESTED_ACTIONS,
+        );
+    });
+
+    it('seeds the isolated form with the initial actions and forwards the editor properties', async () => {
         const initialActions = [
             generateActionData({ to: '0xfirst' }),
             generateActionData({ to: '0xsecond' }),
         ];
         const excludeActionTypes = ['EXECUTE'];
-        createTestComponent({ initialActions, excludeActionTypes });
+        await createTestComponent({ initialActions, excludeActionTypes });
 
         const editor = screen.getByTestId('actions-editor');
         expect(editor.dataset.daoId).toEqual(DAO_ID);
@@ -227,8 +330,8 @@ describe('<NestedActionsDialog /> component', () => {
         expect(decodeActionsSpy).not.toHaveBeenCalled();
     });
 
-    it('fetches the allowed actions on the plugin network for the chain the actions are composed for', () => {
-        createTestComponent({
+    it('fetches the allowed actions on the plugin network for the chain the actions are composed for', async () => {
+        await createTestComponent({
             processPluginAddress: '0xplugin',
             crossChainNetwork: daoService.Network.BASE_MAINNET,
         });
@@ -242,10 +345,10 @@ describe('<NestedActionsDialog /> component', () => {
         );
     });
 
-    it('forwards the allowed actions of the plugin to the editor', () => {
+    it('forwards the allowed actions of the plugin to the editor', async () => {
         mockAllowedActions([generateAllowedAction({ target: '0xallowed' })]);
 
-        createTestComponent({ processPluginAddress: '0xplugin' });
+        await createTestComponent({ processPluginAddress: '0xplugin' });
 
         expect(
             screen.getByTestId('actions-editor').dataset.allowedActionTargets,
@@ -254,10 +357,10 @@ describe('<NestedActionsDialog /> component', () => {
 
     // The composer reads the allowlist on mount and offers every action when it is undefined, so
     // rendering it early would leave the restricted actions unrestricted.
-    it('hides the editor until the allowed actions of the plugin are resolved', () => {
+    it('hides the editor until the allowed actions of the plugin are resolved', async () => {
         mockAllowedActions(undefined);
 
-        createTestComponent({ processPluginAddress: '0xplugin' });
+        await createTestComponent({ processPluginAddress: '0xplugin' });
 
         expect(screen.queryByTestId('actions-editor')).not.toBeInTheDocument();
         expect(
@@ -267,8 +370,8 @@ describe('<NestedActionsDialog /> component', () => {
         ).toBeInTheDocument();
     });
 
-    it('offers every action when no plugin restricts them', () => {
-        createTestComponent();
+    it('offers every action when no plugin restricts them', async () => {
+        await createTestComponent();
 
         expect(
             screen.getByTestId('actions-editor').dataset.allowedActionTargets,
@@ -333,20 +436,29 @@ describe('<NestedActionsDialog /> component', () => {
             data: '0xcalldata',
         });
         // The decoder resolves to the backend action shape, which carries no `daoId`.
-        decodeActionsSpy.mockResolvedValue([
-            generateProposalAction({ to: '0xdecoded' }),
-        ]);
+        let resolveDecode: (actions: DecodedActions) => void;
+        decodeActionsSpy.mockImplementation(
+            () =>
+                new Promise<DecodedActions>((resolve) => {
+                    resolveDecode = resolve;
+                }),
+        );
 
-        createTestComponent({ initialActions: [rawAction] });
+        await createTestComponent({ initialActions: [rawAction] });
 
         expect(
             screen.getByText('app.governance.nestedActionsDialog.decoding'),
         ).toBeInTheDocument();
+        expect(getSaveButton()).toBeDisabled();
         expect(decodeActionsSpy).toHaveBeenCalledWith(
             [{ to: '0xraw', value: '10', data: '0xcalldata' }],
             DAO.network,
             DAO,
         );
+        await act(() => {
+            resolveDecode!([generateProposalAction({ to: '0xdecoded' })]);
+            return Promise.resolve();
+        });
 
         await waitFor(() =>
             expect(screen.getByText('0xdecoded')).toBeInTheDocument(),
@@ -354,12 +466,17 @@ describe('<NestedActionsDialog /> component', () => {
         expect(
             screen.getByTestId('actions-editor').dataset.actionDaoIds,
         ).toEqual(JSON.stringify([DAO_ID]));
+        expect(getSaveButton()).toBeDisabled();
+        await setDraftState('valid');
+        await waitFor(() => expect(getSaveButton()).not.toBeDisabled());
+        await setDraftState('initial');
+        expect(getSaveButton()).toBeDisabled();
     });
 
     it('keeps the raw actions and displays an error when the decoding fails', async () => {
         decodeActionsSpy.mockRejectedValue(new Error('decode-error'));
 
-        createTestComponent({
+        await createTestComponent({
             initialActions: [generateRawActionData({ to: '0xraw' })],
         });
 
@@ -373,27 +490,63 @@ describe('<NestedActionsDialog /> component', () => {
         expect(screen.getByText('0xraw')).toBeInTheDocument();
     });
 
-    it('prepares the actions, submits them and closes itself on save', async () => {
+    it.each([
+        ['unchanged', [], true, [generateActionData({ to: '0xinitial' })]],
+        ['initially empty', [], true, []],
+        ['empty baseline changed to valid', ['valid'], false, []],
+        ['changed valid', ['valid'], false, [generateActionData()]],
+        ['changed invalid', ['invalid'], true, [generateActionData()]],
+        ['restored', ['valid', 'initial'], true, [generateActionData()]],
+    ] as const)(
+        'sets Save enabled state correctly when the draft is %s',
+        async (_state, edits, isDisabled, initialActions) => {
+            await createTestComponent({
+                initialActions: [...initialActions],
+            });
+
+            for (const edit of edits) {
+                await setDraftState(edit);
+            }
+
+            expect(getSaveButton().disabled).toBe(isDisabled);
+        },
+    );
+
+    it('saves a changed empty draft without adding a dialog-level required rule', async () => {
         const dialogContext = generateDialogContext();
         useDialogContextSpy.mockReturnValue(dialogContext);
+        const onSubmit = jest.fn();
 
-        const initialActions = [generateActionData({ to: '0xfirst' })];
-        const preparedActions = [
-            generateActionData({ to: '0xfirst', data: '0xprepared' }),
-        ];
+        await createTestComponent({
+            initialActions: [generateActionData({ to: '0xinitial' })],
+            onSubmit,
+        });
+        await setDraftState('empty');
+        await waitFor(() => expect(getSaveButton()).not.toBeDisabled());
+        await userEvent.click(getSaveButton());
+
+        expect(onSubmit).toHaveBeenCalledWith([]);
+        expect(dialogContext.close).toHaveBeenCalledWith(
+            GovernanceDialogId.NESTED_ACTIONS,
+        );
+    });
+
+    it('prepares, submits and closes a changed non-empty draft', async () => {
+        const dialogContext = generateDialogContext();
+        const preparedActions = [generateActionData({ to: '0xprepared' })];
+        const onSubmit = jest.fn();
+        useDialogContextSpy.mockReturnValue(dialogContext);
         prepareActionsSpy.mockResolvedValue(preparedActions as PreparedActions);
 
-        const onSubmit = jest.fn();
-        createTestComponent({ initialActions, onSubmit });
-
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.governance.nestedActionsDialog.save',
-            }),
-        );
+        await createTestComponent({
+            initialActions: [generateActionData({ to: '0xinitial' })],
+            onSubmit,
+        });
+        await setDraftState('valid');
+        await userEvent.click(getSaveButton());
 
         expect(prepareActionsSpy).toHaveBeenCalledWith({
-            actions: initialActions,
+            actions: [generateActionData({ to: '0xchanged' })],
             prepareActions: {},
         });
         expect(onSubmit).toHaveBeenCalledWith(preparedActions);
@@ -402,45 +555,29 @@ describe('<NestedActionsDialog /> component', () => {
         );
     });
 
-    it('discards the actions and closes itself on cancel', async () => {
-        const dialogContext = generateDialogContext();
-        useDialogContextSpy.mockReturnValue(dialogContext);
-
-        const onSubmit = jest.fn();
-        createTestComponent({
-            initialActions: [generateActionData()],
-            onSubmit,
-        });
-
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.governance.nestedActionsDialog.cancel',
-            }),
-        );
-
-        expect(prepareActionsSpy).not.toHaveBeenCalled();
-        expect(onSubmit).not.toHaveBeenCalled();
-        expect(dialogContext.close).toHaveBeenCalledWith(
-            GovernanceDialogId.NESTED_ACTIONS,
-        );
-    });
-
     it('keeps itself open and displays an error when the action preparation fails', async () => {
         const dialogContext = generateDialogContext();
         useDialogContextSpy.mockReturnValue(dialogContext);
-        prepareActionsSpy.mockRejectedValue(new Error('pin-error'));
+        let rejectPreparation: (error: Error) => void;
+        prepareActionsSpy.mockImplementation(
+            () =>
+                new Promise<PreparedActions>((_resolve, reject) => {
+                    rejectPreparation = reject;
+                }),
+        );
 
         const onSubmit = jest.fn();
-        createTestComponent({
+        await createTestComponent({
             initialActions: [generateActionData()],
             onSubmit,
         });
 
-        await userEvent.click(
-            screen.getByRole('button', {
-                name: 'app.governance.nestedActionsDialog.save',
-            }),
-        );
+        await setDraftState('valid');
+        await waitFor(() => expect(getSaveButton()).not.toBeDisabled());
+        await userEvent.click(getSaveButton());
+        await waitFor(() => expect(prepareActionsSpy).toHaveBeenCalled());
+        expect(getSaveButton()).toBeDisabled();
+        rejectPreparation!(new Error('pin-error'));
 
         await waitFor(() =>
             expect(

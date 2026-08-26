@@ -96,10 +96,15 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     );
 
     const methods = useForm<INestedActionsFormData>({
-        mode: 'onTouched',
+        mode: 'onChange',
         defaultValues: { actions: initialActions },
     });
-    const { reset, trigger, getValues } = methods;
+    const {
+        reset,
+        trigger,
+        getValues,
+        formState: { isDirty, isValid },
+    } = methods;
 
     const requiresDecoding =
         initialActions.length > 0 &&
@@ -177,6 +182,8 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     ]);
 
     const isLoadingActions = isDecoding || isLoadingAllowedActions;
+    const isSaveDisabled =
+        isLoadingActions || isPreparing || !isDirty || !isValid;
 
     const handleClose = () => close(location.id);
 
@@ -272,16 +279,10 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                 <Dialog.Footer
                     primaryAction={{
                         label: t('app.governance.nestedActionsDialog.save'),
-                        disabled: isLoadingActions,
+                        disabled: isSaveDisabled,
                         isLoading: isPreparing,
                         onClick: handleSave,
                     }}
-                    secondaryAction={{
-                        label: t('app.governance.nestedActionsDialog.cancel'),
-                        onClick: handleClose,
-                    }}
-                    // "Add action" button is also of primary variant and placed just above the "Save actions" button in
-                    // default variant, so it's easy to click the wrong one
                     variant="wizard"
                 />
             </CreateProposalFormProvider>
