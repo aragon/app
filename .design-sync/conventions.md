@@ -25,10 +25,10 @@ Tailwind v4 utilities backed by the kit's design tokens. Style layout glue with 
 | Family | Real values |
 |---|---|
 | Colors | `primary-{50…900}`, `neutral-{0,50,100,200,300,400,500,600,800,900}`, `info/success/warning/critical-{100…900}` — used as `bg-*`, `text-*`, `border-*` (e.g. `bg-neutral-0`, `text-neutral-500`, `border-primary-400`) |
-| Radius | `rounded-md/lg/xl/2xl/3xl/full` (12px = `rounded-xl` is the kit's card radius) |
+| Radius | `rounded-none/sm/md/lg/xl/full` plus side/corner variants (`rounded-t`, `rounded-b`, `rounded-tl`, `rounded-br`). 12px = `rounded-xl` is the kit's card radius. `rounded-2xl`/`rounded-3xl` are **not** emitted — for those two use `style={{ borderRadius: 'var(--radius-2xl)' }}`. |
 | Spacing | standard Tailwind scale (`p-4`, `gap-3`, `space-y-2`…) |
 | Type | `text-xs/sm/base/lg/xl/2xl/3xl`, `font-normal/semibold`; headings via the `Heading` component, not raw classes |
-| Shadows | `shadow-neutral-sm/md/lg`, `shadow-primary`, `shadow-info` … |
+| Shadows | `shadow-none`, `shadow-sm`, `shadow-neutral{,-sm,-md}`, `shadow-primary{,-sm,-lg,-xl}`, `shadow-info{,-md}`, `shadow-success{,-sm,-md}`, `shadow-warning{,-sm,-md}`, `shadow-critical{,-sm,-md}`. There is no `shadow-neutral-lg` — the large shadows are `shadow-primary-lg`/`shadow-primary-xl`. |
 
 Component look is controlled by **props, not classes**: `variant` (e.g. Button `primary|secondary|tertiary|ghost|success|warning|critical`; alerts `info|success|warning|critical`; Tag adds `neutral|primary`), `size` (`sm|md|lg`), state props (`disabled`, `isLoading`). Selection state flows through group parents (`RadioGroup`/`ToggleGroup` `defaultValue`), not per-item `checked`.
 
