@@ -175,6 +175,11 @@ describe('<DaoPermissionsPageClient /> component', () => {
                 <DaoPermissionsPageClient daoId="dao-id" />
             </GukModulesProvider>,
         );
+        expect(
+            screen.queryByRole('link', {
+                name: /app.application.navigationDao.link.dashboard/,
+            }),
+        ).not.toBeInTheDocument();
 
         expect(
             screen.queryByRole('button', { name: 'Granted' }),

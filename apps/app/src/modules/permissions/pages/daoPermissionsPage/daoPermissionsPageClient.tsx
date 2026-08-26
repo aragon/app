@@ -16,7 +16,6 @@ import {
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
-import { daoUtils } from '@/shared/utils/daoUtils';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -164,18 +163,6 @@ export const DaoPermissionsPageClient: React.FC<
         );
     };
 
-    const pageBreadcrumbs = [
-        {
-            href: daoUtils.getDaoUrl(permissionsDao, 'dashboard'),
-            label: t('app.application.navigationDao.link.dashboard'),
-        },
-        {
-            label: t(
-                'app.settings.daoPermissionsPage.header.breadcrumb.permissions',
-            ),
-        },
-    ];
-
     const isListView = view === PermissionsView.LIST;
     const showAccountSelector = accounts.length > 1;
     const showExpandAll = isListView && !isLoading && filteredRows.length > 0;
@@ -183,7 +170,6 @@ export const DaoPermissionsPageClient: React.FC<
     return (
         <>
             <Page.Header
-                breadcrumbs={pageBreadcrumbs}
                 description={t(
                     'app.settings.daoPermissionsPage.header.description',
                 )}
