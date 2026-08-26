@@ -380,8 +380,8 @@ describe('<NestedActionsDialog /> component', () => {
 
     // Forcing the switch on where nothing is authorized would hide the import and WalletConnect
     // buttons too, so the heuristic must not reach past the case it exists for.
-    it('leaves the authorized-actions switch at the composer default when no plugin restricts the actions', () => {
-        createTestComponent({ initialActions: [generateActionData()] });
+    it('leaves the authorized-actions switch at the composer default when no plugin restricts the actions', async () => {
+        await createTestComponent({ initialActions: [generateActionData()] });
 
         expect(
             screen.getByTestId('actions-editor').dataset
@@ -389,10 +389,10 @@ describe('<NestedActionsDialog /> component', () => {
         ).toBeUndefined();
     });
 
-    it('leaves the authorized-actions switch at the composer default when the plugin authorizes actions', () => {
+    it('leaves the authorized-actions switch at the composer default when the plugin authorizes actions', async () => {
         mockAllowedActions([generateAllowedAction({ target: '0xallowed' })]);
 
-        createTestComponent({
+        await createTestComponent({
             processPluginAddress: '0xplugin',
             initialActions: [generateActionData()],
         });
@@ -404,10 +404,10 @@ describe('<NestedActionsDialog /> component', () => {
     });
 
     // The composer remounts with the dialog, so an on switch would hide the actions being edited.
-    it('starts the authorized-actions switch off when nothing is authorized but there are actions to show', () => {
+    it('starts the authorized-actions switch off when nothing is authorized but there are actions to show', async () => {
         mockAllowedActions([]);
 
-        createTestComponent({
+        await createTestComponent({
             processPluginAddress: '0xplugin',
             initialActions: [generateActionData()],
         });
@@ -418,10 +418,10 @@ describe('<NestedActionsDialog /> component', () => {
         ).toEqual('false');
     });
 
-    it('leaves the switch at the composer default when nothing is authorized and there is nothing to show', () => {
+    it('leaves the switch at the composer default when nothing is authorized and there is nothing to show', async () => {
         mockAllowedActions([]);
 
-        createTestComponent({ processPluginAddress: '0xplugin' });
+        await createTestComponent({ processPluginAddress: '0xplugin' });
 
         expect(
             screen.getByTestId('actions-editor').dataset
