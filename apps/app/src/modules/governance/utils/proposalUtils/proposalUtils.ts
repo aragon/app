@@ -1,6 +1,7 @@
 import { addressUtils } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { daoUtils } from '@/shared/utils/daoUtils';
+import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import type { IProposal } from '../../api/governanceService';
 
 export enum ProposalMetadataStatus {
@@ -18,8 +19,6 @@ export enum ProposalMetadataStatus {
     MISSING = 'missing',
 }
 
-const ipfsUriPrefix = 'ipfs://';
-
 class ProposalUtils {
     getMetadataStatus = (
         proposal: Pick<IProposal, 'title' | 'metadataUri'>,
@@ -34,7 +33,7 @@ class ProposalUtils {
 
         // A valid IPFS URI that could not be resolved is treated as missing metadata: only a
         // string written directly onchain instead of an IPFS URI is a non-standard metadata.
-        return processedUri && !processedUri.startsWith(ipfsUriPrefix)
+        return processedUri && !ipfsUtils.isUri(processedUri)
             ? ProposalMetadataStatus.NON_STANDARD
             : ProposalMetadataStatus.MISSING;
     };
