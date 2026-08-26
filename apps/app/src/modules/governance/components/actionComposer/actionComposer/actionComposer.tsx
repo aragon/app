@@ -87,6 +87,14 @@ export interface IActionComposerProps
      * When true, shows retry option in dropdown.
      */
     hasPinErrors?: boolean;
+    /**
+     * Initial state of the authorized-actions switch, read on mount only. The user can toggle the
+     * switch freely afterwards, so this restricts nothing on its own - `allowedActions` is what
+     * narrows the offering. Defaults to `allowedActions != null`; leave it undefined to keep that
+     * default and only set it where the switch state cannot survive, i.e. the nested actions dialog,
+     * which remounts the composer on every open.
+     */
+    initialOnlyShowAuthorizedActions?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -103,6 +111,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onRemoveAllActions,
         isPinning = false,
         hasPinErrors = false,
+        // An empty list means nothing is authorized, only an undefined list means unrestricted, so the
+        // callers must leave it undefined when no plugin restricts the actions.
+        initialOnlyShowAuthorizedActions = allowedActions != null,
     } = props;
 
     invariant(
@@ -131,10 +142,8 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    // An empty list means nothing is authorized, only an undefined list means unrestricted, so the
-    // callers must leave it undefined when no plugin restricts the actions.
     const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
-        allowedActions != null,
+        initialOnlyShowAuthorizedActions,
     );
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isUploadLoading, setIsUploadLoading] = useState(false);

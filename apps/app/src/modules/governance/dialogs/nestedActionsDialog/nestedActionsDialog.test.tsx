@@ -154,6 +154,9 @@ const ProposalActionsEditorStub: React.FC<IProposalActionsEditorProps> = (
             )}
             data-dao-id={props.daoId}
             data-exclude-action-types={JSON.stringify(props.excludeActionTypes)}
+            data-initial-only-show-authorized-actions={JSON.stringify(
+                props.initialOnlyShowAuthorizedActions,
+            )}
             data-testid="actions-editor"
         >
             {actions.map((action) => (
@@ -372,6 +375,57 @@ describe('<NestedActionsDialog /> component', () => {
 
         expect(
             screen.getByTestId('actions-editor').dataset.allowedActionTargets,
+        ).toBeUndefined();
+    });
+
+    // Forcing the switch on where nothing is authorized would hide the import and WalletConnect
+    // buttons too, so the heuristic must not reach past the case it exists for.
+    it('leaves the authorized-actions switch at the composer default when no plugin restricts the actions', () => {
+        createTestComponent({ initialActions: [generateActionData()] });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset
+                .initialOnlyShowAuthorizedActions,
+        ).toBeUndefined();
+    });
+
+    it('leaves the authorized-actions switch at the composer default when the plugin authorizes actions', () => {
+        mockAllowedActions([generateAllowedAction({ target: '0xallowed' })]);
+
+        createTestComponent({
+            processPluginAddress: '0xplugin',
+            initialActions: [generateActionData()],
+        });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset
+                .initialOnlyShowAuthorizedActions,
+        ).toBeUndefined();
+    });
+
+    // The composer remounts with the dialog, so an on switch would hide the actions being edited.
+    it('starts the authorized-actions switch off when nothing is authorized but there are actions to show', () => {
+        mockAllowedActions([]);
+
+        createTestComponent({
+            processPluginAddress: '0xplugin',
+            initialActions: [generateActionData()],
+        });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset
+                .initialOnlyShowAuthorizedActions,
+        ).toEqual('false');
+    });
+
+    it('leaves the switch at the composer default when nothing is authorized and there is nothing to show', () => {
+        mockAllowedActions([]);
+
+        createTestComponent({ processPluginAddress: '0xplugin' });
+
+        expect(
+            screen.getByTestId('actions-editor').dataset
+                .initialOnlyShowAuthorizedActions,
         ).toBeUndefined();
     });
 
