@@ -273,7 +273,7 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                             className="w-full"
                             href={daoUtils.getDaoUrl(dao, 'permissions')}
                             size="md"
-                            variant="secondary"
+                            variant="tertiary"
                         >
                             {t('app.settings.daoSettingsInfo.permissionsLink')}
                         </Button>
