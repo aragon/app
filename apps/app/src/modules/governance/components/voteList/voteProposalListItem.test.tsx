@@ -64,7 +64,7 @@ describe('<VoteProposalListItem /> component', () => {
         );
         render(createTestComponent({ vote }));
         expect(getProposalSlugSpy).toHaveBeenCalledWith(parentProposal, dao);
-        expect(screen.getByText(parentProposal.title!)).toBeInTheDocument();
+        expect(screen.getByText(parentProposal.title)).toBeInTheDocument();
     });
 
     it('renders the child proposal info when parent proposal is not defined', () => {
@@ -75,7 +75,7 @@ describe('<VoteProposalListItem /> component', () => {
             generateReactQueryResultSuccess({ data: dao }),
         );
         render(createTestComponent({ vote }));
-        expect(screen.getByText(proposal.title!)).toBeInTheDocument();
+        expect(screen.getByText(proposal.title)).toBeInTheDocument();
         expect(getProposalSlugSpy).toHaveBeenCalledWith(proposal, dao);
     });
 

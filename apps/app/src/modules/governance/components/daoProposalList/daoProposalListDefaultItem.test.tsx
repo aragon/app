@@ -66,14 +66,14 @@ describe('<DaoProposalListDefaultItem /> component', () => {
             summary: 'proposal-summary',
         });
         render(createTestComponent({ proposal }));
-        expect(screen.getByText(proposal.title!)).toBeInTheDocument();
-        expect(screen.getByText(proposal.summary!)).toBeInTheDocument();
+        expect(screen.getByText(proposal.title)).toBeInTheDocument();
+        expect(screen.getByText(proposal.summary)).toBeInTheDocument();
     });
 
     it('renders a warning when the proposal metadata is a non-standard string', () => {
         const proposal = generateProposal({
-            title: null,
-            summary: null,
+            title: '',
+            summary: '',
             metadataUri: 'raw-metadata-string',
         });
         render(createTestComponent({ proposal }));
@@ -86,8 +86,8 @@ describe('<DaoProposalListDefaultItem /> component', () => {
 
     it('renders a warning when the proposal metadata is missing', () => {
         const proposal = generateProposal({
-            title: null,
-            summary: null,
+            title: '',
+            summary: '',
             metadataUri: null,
         });
         render(createTestComponent({ proposal }));

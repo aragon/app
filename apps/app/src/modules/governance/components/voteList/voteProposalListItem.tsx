@@ -42,7 +42,7 @@ export const VoteProposalListItem: React.FC<IVoteProposalListItemProps> = (
             href={proposalHref}
             key={vote.transactionHash}
             proposalId={slug}
-            proposalTitle={proposal.title ?? ''}
+            proposalTitle={proposal.title}
             voteIndicator={voteIndicator}
         />
     );

@@ -52,7 +52,7 @@ describe('<SppProposalListItem /> component', () => {
     it('renders the SPP proposal', () => {
         const proposal = generateSppProposal({ title: 'SPP Proposal' });
         render(createTestComponent({ proposal }));
-        expect(screen.getByText(proposal.title!)).toBeInTheDocument();
+        expect(screen.getByText(proposal.title)).toBeInTheDocument();
     });
 
     it('sets the correct link for proposal page', () => {

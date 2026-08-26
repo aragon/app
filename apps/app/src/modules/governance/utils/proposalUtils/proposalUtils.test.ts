@@ -19,7 +19,7 @@ describe('proposalUtils', () => {
 
         it('returns non-standard when the title is not set and the metadata is a raw string', () => {
             const proposal = generateProposal({
-                title: null,
+                title: '',
                 metadataUri: 'Proposal to change the settings',
             });
             const result = proposalUtils.getMetadataStatus(proposal);
@@ -29,7 +29,7 @@ describe('proposalUtils', () => {
         it.each([null, '', '  ', 'ipfs://unresolvable-cid'])(
             'returns missing when the title is not set and the metadata is %s',
             (metadataUri) => {
-                const proposal = generateProposal({ title: null, metadataUri });
+                const proposal = generateProposal({ title: '', metadataUri });
                 const result = proposalUtils.getMetadataStatus(proposal);
                 expect(result).toEqual(ProposalMetadataStatus.MISSING);
             },

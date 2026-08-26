@@ -25,15 +25,7 @@ export interface IProposalCreateAction
 
 export interface IProposalCreate<
     TAction extends IProposalCreateAction = IProposalCreateAction,
-> extends Pick<IProposal, 'resources'> {
-    /**
-     * Title of the proposal.
-     */
-    title: string;
-    /**
-     * Short summary of the proposal.
-     */
-    summary: string;
+> extends Pick<IProposal, 'title' | 'summary' | 'resources'> {
     /**
      * Long description of the proposal supporting HTML tags.
      */

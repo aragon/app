@@ -141,15 +141,15 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
             urlParams: { slug: proposal.id },
             queryParams: { daoId: 'dao-id' },
         });
-        expect(screen.getByText(proposal.title!)).toBeInTheDocument();
-        expect(screen.getByText(proposal.summary!)).toBeInTheDocument();
+        expect(screen.getByText(proposal.title)).toBeInTheDocument();
+        expect(screen.getByText(proposal.summary)).toBeInTheDocument();
     });
 
     it('renders a metadata warning with the raw metadata string when the proposal metadata is non-standard', () => {
         const metadataUri = 'Proposal to change the settings';
         const proposal = generateProposal({
-            title: null,
-            summary: null,
+            title: '',
+            summary: '',
             metadataUri,
         });
         useProposalSpy.mockReturnValue(
@@ -170,8 +170,8 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
 
     it('renders a missing-metadata warning when the proposal has no metadata', () => {
         const proposal = generateProposal({
-            title: null,
-            summary: null,
+            title: '',
+            summary: '',
             metadataUri: null,
         });
         useProposalSpy.mockReturnValue(

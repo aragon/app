@@ -22,9 +22,9 @@ export interface IProposal<
      */
     incrementalId: number;
     /**
-     * Title of the proposal. Set to null when the proposal metadata cannot be resolved.
+     * Title of the proposal.
      */
-    title: string | null;
+    title: string;
     /**
      * Network of the proposal.
      */
@@ -34,9 +34,9 @@ export interface IProposal<
      */
     blockTimestamp: number;
     /**
-     * Short summary of the proposal. Set to null when the proposal metadata cannot be resolved.
+     * Short summary of the proposal.
      */
-    summary: string | null;
+    summary: string;
     /**
      * Raw onchain metadata string. Contains an IPFS URI for standard proposals but can hold any
      * string when the metadata is written directly onchain (e.g. by AI agents).

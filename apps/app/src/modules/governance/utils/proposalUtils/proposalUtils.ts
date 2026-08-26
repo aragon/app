@@ -25,7 +25,8 @@ class ProposalUtils {
     ): ProposalMetadataStatus => {
         const { title, metadataUri } = proposal;
 
-        if (title != null) {
+        // The backend leaves the title unset when the proposal metadata cannot be resolved.
+        if (title) {
             return ProposalMetadataStatus.STANDARD;
         }
 

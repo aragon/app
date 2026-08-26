@@ -85,8 +85,8 @@ export const DaoProposalListDefaultItem: React.FC<
                 name: publisherName,
             }}
             status={proposalStatus}
-            summary={summary ?? ''}
-            title={title ?? ''}
+            summary={summary}
+            title={title}
             voted={userVote != null}
         >
             {!hasStandardMetadata && (

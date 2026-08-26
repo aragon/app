@@ -266,8 +266,8 @@ export const DaoProposalDetailsPageClient: React.FC<
             <Page.Header
                 breadcrumbs={pageBreadcrumbs}
                 breadcrumbsTag={statusTag}
-                description={summary ?? undefined}
-                title={title ?? proposalSlug.toUpperCase()}
+                description={hasStandardMetadata ? summary : undefined}
+                title={hasStandardMetadata ? title : proposalSlug.toUpperCase()}
             />
             <Page.Content>
                 <Page.Main>
