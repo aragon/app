@@ -20,7 +20,8 @@ export type FeatureFlagKey =
     | 'existingProposalCreationCondition'
     | 'aragonProfiles'
     | 'supportChat'
-    | 'permissionsPage';
+    | 'permissionsPage'
+    | 'telegramSubscription';
 
 /**
  * Feature flag definition structure.

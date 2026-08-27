@@ -1671,6 +1671,11 @@
           "viewAdmins": "View admins",
           "welcome": "Welcome"
         }
+      },
+      "telegramSubscriptionCard": {
+        "action": "Subscribe on Telegram",
+        "description": "Get notified on Telegram about new proposals and other activity in this DAO.",
+        "title": "Notifications"
       }
     },
     "explore": {
