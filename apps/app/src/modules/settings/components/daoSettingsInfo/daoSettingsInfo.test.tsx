@@ -2,8 +2,6 @@ import type * as GovUiKit from '@aragon/gov-ui-kit';
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
 import { Network } from '@/shared/api/daoService';
-import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
-import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import { generateDao } from '@/shared/testUtils';
 import { ipfsUtils } from '@/shared/utils/ipfsUtils';
 import { DaoSettingsInfo, type IDaoSettingsInfoProps } from './daoSettingsInfo';
@@ -16,29 +14,15 @@ jest.mock('@aragon/gov-ui-kit', () => ({
 }));
 
 describe('<DaoSettingsInfo /> component', () => {
-    const createTestComponent = (
-        props?: Partial<IDaoSettingsInfoProps>,
-        permissionsPageEnabled = true,
-    ) => {
+    const createTestComponent = (props?: Partial<IDaoSettingsInfoProps>) => {
         const completeProps: IDaoSettingsInfoProps = {
             dao: generateDao(),
             ...props,
         };
 
-        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
-            {
-                key: 'permissionsPage',
-                name: 'Permissions page',
-                description: 'Controls permissions page entry points.',
-                enabled: permissionsPageEnabled,
-            },
-        ];
-
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
-                    <DaoSettingsInfo {...completeProps} />
-                </FeatureFlagsProvider>
+                <DaoSettingsInfo {...completeProps} />
             </GukModulesProvider>
         );
     };
@@ -91,16 +75,8 @@ describe('<DaoSettingsInfo /> component', () => {
             }),
         ).toHaveAttribute(
             'href',
-            '/dao/ethereum-mainnet/somedao.dao.eth/settings/permissions',
+            '/dao/ethereum-mainnet/somedao.dao.eth/permissions',
         );
-    });
-
-    it('does not render the permissions link when the flag is disabled', () => {
-        render(createTestComponent(undefined, false));
-
-        expect(
-            screen.queryByText(/daoSettingsInfo.permissionsLink/),
-        ).not.toBeInTheDocument();
     });
 
     it('renders the correct definition values of the dao', () => {
