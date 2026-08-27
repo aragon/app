@@ -14,6 +14,7 @@ import * as daoService from '@/shared/api/daoService';
 import { Network } from '@/shared/api/daoService';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
+import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as useAdminStatusModule from '@/shared/hooks/useAdminStatus';
 import * as useDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
@@ -110,6 +111,7 @@ describe('<DaoDashboardPageClient /> component', () => {
 
     const createTestComponent = (
         props?: Partial<IDaoDashboardPageClientProps>,
+        permissionsPageEnabled = true,
     ) => {
         const completeProps: IDaoDashboardPageClientProps = {
             daoId: 'dao-id',
@@ -117,14 +119,53 @@ describe('<DaoDashboardPageClient /> component', () => {
             ...props,
         };
 
+        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
+            {
+                key: 'permissionsPage',
+                name: 'Permissions page',
+                description: 'Controls permissions page entry points.',
+                enabled: permissionsPageEnabled,
+            },
+        ];
+
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider>
+                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
                     <DaoDashboardPageClient {...completeProps} />
                 </FeatureFlagsProvider>
             </GukModulesProvider>
         );
     };
+
+    it('renders a permissions link on the contract aside card', () => {
+        const dao = generateDao({
+            ens: 'somedao.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('link', {
+                name: /daoSettingsInfo.permissionsLink/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/dao/ethereum-mainnet/somedao.dao.eth/permissions',
+        );
+    });
+
+    it('hides the permissions link when the flag is disabled', () => {
+        render(createTestComponent(undefined, false));
+
+        expect(
+            screen.queryByRole('link', {
+                name: /daoSettingsInfo.permissionsLink/,
+            }),
+        ).not.toBeInTheDocument();
+    });
 
     it('fetches and renders the dao name, description and avatar', () => {
         const daoId = 'test-id';

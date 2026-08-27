@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, IconType } from '@aragon/gov-ui-kit';
+import { IconType } from '@aragon/gov-ui-kit';
 import { useRouter } from 'next/navigation';
 import { GovernanceDialogId } from '@/modules/governance/constants/governanceDialogId';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
@@ -15,7 +15,6 @@ import {
     useDaoPolicies,
 } from '@/shared/api/daoService';
 import { useDialogContext } from '@/shared/components/dialogProvider';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { PolicyDataListItem } from '@/shared/components/policyDataListItem';
 import { ProcessDataListItem } from '@/shared/components/processDataListItem';
@@ -55,7 +54,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const router = useRouter();
-    const { isEnabled } = useFeatureFlags();
 
     const daoParams = { urlParams: { id: daoId } };
     const { data: dao } = useDao(daoParams);
@@ -268,16 +266,6 @@ export const DaoSettingsPageClient: React.FC<IDaoSettingsPageClientProps> = (
                 >
                     <DaoVersionInfo dao={dao} />
                     <UpdateDaoContracts dao={dao} />
-                    {isEnabled('permissionsPage') && (
-                        <Button
-                            className="w-full"
-                            href={daoUtils.getDaoUrl(dao, 'permissions')}
-                            size="md"
-                            variant="tertiary"
-                        >
-                            {t('app.settings.daoSettingsInfo.permissionsLink')}
-                        </Button>
-                    )}
                 </Page.AsideCard>
             </Page.Aside>
         </>
