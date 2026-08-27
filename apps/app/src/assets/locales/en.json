@@ -1620,6 +1620,7 @@
             "chain": "Chain",
             "ens": "ENS",
             "launched": "Launched",
+            "permissions": "View permissions",
             "title": "Contract"
           },
           "links": "Resources"

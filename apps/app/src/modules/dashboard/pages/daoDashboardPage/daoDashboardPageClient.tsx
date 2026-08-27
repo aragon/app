@@ -7,6 +7,7 @@ import {
     DateFormat,
     DefinitionList,
     formatterUtils,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import {
@@ -163,11 +164,12 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             <Button
                                 className="w-full"
                                 href={daoUtils.getDaoUrl(dao, 'permissions')}
+                                iconRight={IconType.CHEVRON_RIGHT}
                                 size="md"
                                 variant="tertiary"
                             >
                                 {t(
-                                    'app.settings.daoSettingsInfo.permissionsLink',
+                                    'app.dashboard.daoDashboardPage.aside.details.permissions',
                                 )}
                             </Button>
                         )}

@@ -149,7 +149,7 @@ describe('<DaoDashboardPageClient /> component', () => {
 
         expect(
             screen.getByRole('link', {
-                name: /daoSettingsInfo.permissionsLink/,
+                name: /daoDashboardPage.aside.details.permissions/,
             }),
         ).toHaveAttribute(
             'href',
@@ -162,7 +162,7 @@ describe('<DaoDashboardPageClient /> component', () => {
 
         expect(
             screen.queryByRole('link', {
-                name: /daoSettingsInfo.permissionsLink/,
+                name: /daoDashboardPage.aside.details.permissions/,
             }),
         ).not.toBeInTheDocument();
     });
