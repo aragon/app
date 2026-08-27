@@ -1,5 +1,36 @@
 # @aragon/app
 
+## 1.38.0
+
+### Minor Changes
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement details view for decoded cross-chain execute actions
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Implement CrossChainControllerForwardMessageAction basic action
+
+### Patch Changes
+
+- [#1335](https://github.com/aragon/app/pull/1335) [`4369f1b`](https://github.com/aragon/app/commit/4369f1b46433d4f54af6c07054f02285b4c1a355) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Upgrade `@aragon/gov-ui-kit` to 2.10.0. Number inputs now clamp an out-of-range value to `max` instead of dropping the digit that breached it, `prefix` and `suffix` render literally rather than mangling token characters, and the stray borders on `AlertCard` and `Accordion` are gone. Also fixes the create-DAO, create-process and create-policy detail dialogs, which crashed with "`DialogTitle` must be used within `Dialog`" whenever the app and the kit resolved separate radix instances.
+
+- [#1292](https://github.com/aragon/app/pull/1292) [`3936d70`](https://github.com/aragon/app/commit/3936d709043fea73f3181b1467d5d40456dad58f) Thanks [@milosh86](https://github.com/milosh86)! - Handle allowed actions without decoded data by falling back to unverified contract and unknown function labels
+
+- [#1325](https://github.com/aragon/app/pull/1325) [`97a7874`](https://github.com/aragon/app/commit/97a78741d723549324a9c1a1670048ec70f417a4) Thanks [@evanaronson](https://github.com/evanaronson)! - Keep XMAQUINA DAO header content below the navigation bar
+
+- [#1338](https://github.com/aragon/app/pull/1338) [`9cfec44`](https://github.com/aragon/app/commit/9cfec44a2cada763b9b260d7e1a1e63dcd95ebaf) Thanks [@evanaronson](https://github.com/evanaronson)! - Restore the standard card padding around duration controls in Token Voting and Lock-to-Vote governance setup
+
+- [#1327](https://github.com/aragon/app/pull/1327) [`28ddbc6`](https://github.com/aragon/app/commit/28ddbc6e427d84c47f7c73168a5b8634d8f63783) Thanks [@milosh86](https://github.com/milosh86)! - Polish forwarded-action composition and gas-estimation UX for cross-chain proposals
+
+- [#1324](https://github.com/aragon/app/pull/1324) [`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0) Thanks [@tyhonchik](https://github.com/tyhonchik)! - Update dependencies (React 19.2.8, Sentry 10.70, viem 2.55.13, wagmi 3.7.6, Reown AppKit 1.8.23, Next.js 16.3) and fix the transfer-asset proposal action crashing when the amount field is cleared — viem now rejects empty strings in parseUnits
+
+- [#1341](https://github.com/aragon/app/pull/1341) [`069777f`](https://github.com/aragon/app/commit/069777fb78ac617cf3930f2ceaf510215f23a146) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Move DAO Permissions to its own top-level route and expose it from the DAO navigation menu, the dashboard contract card and the settings account card. Removes the `permissionsPage` feature flag, so the page and its entry points are now enabled in every environment. Upgrades `@aragon/gov-ui-kit` to 2.11.0 for the Permissions navigation icon.
+
+- [#1327](https://github.com/aragon/app/pull/1327) [`28ddbc6`](https://github.com/aragon/app/commit/28ddbc6e427d84c47f7c73168a5b8634d8f63783) Thanks [@milosh86](https://github.com/milosh86)! - Keep contracts imported in the action composer available after the nested actions dialog is closed
+
+- [#1321](https://github.com/aragon/app/pull/1321) [`0ed50ed`](https://github.com/aragon/app/commit/0ed50ed4dc81b4addf9ef3f23624ee1eb6febec4) Thanks [@thekidnamedkd](https://github.com/thekidnamedkd)! - Render normalized SPP rule conditions in permission details and preserve backend-enriched DAO actors as DAO nodes in the permissions graph.
+
+- Updated dependencies [[`c92a3c9`](https://github.com/aragon/app/commit/c92a3c912d24c50f57cf97b2f75acf156c2da7c0)]:
+    - @aragon/assistant-chat@0.4.1
+
 ## 1.37.1
 
 ### Patch Changes
