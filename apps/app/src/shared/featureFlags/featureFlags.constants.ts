@@ -159,18 +159,6 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
         },
     },
     {
-        key: 'permissionsPage',
-        name: 'Permissions page',
-        description:
-            'Enables the DAO settings permissions subpage and its entry points. Kept off in staging/production until the APP-953 backend is available.',
-        defaultValue: false,
-        environments: {
-            local: true,
-            development: true,
-            preview: true,
-        },
-    },
-    {
         key: 'telegramSubscription',
         name: 'Telegram subscription',
         description:
