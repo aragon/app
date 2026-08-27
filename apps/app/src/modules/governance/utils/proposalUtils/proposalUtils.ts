@@ -39,6 +39,15 @@ class ProposalUtils {
             : ProposalMetadataStatus.MISSING;
     };
 
+    /**
+     * Returns the proposal title, falling back to the proposal slug when the metadata
+     * cannot be resolved so the proposal always stays identifiable in the UI.
+     */
+    getDisplayTitle = (
+        proposal: Pick<IProposal, 'title'>,
+        proposalSlug: string,
+    ): string => proposal.title || proposalSlug.toUpperCase();
+
     getProposalSlug = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,
         dao?: IDao,

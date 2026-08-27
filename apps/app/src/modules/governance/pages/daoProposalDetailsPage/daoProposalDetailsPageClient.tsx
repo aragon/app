@@ -169,7 +169,6 @@ export const DaoProposalDetailsPageClient: React.FC<
         creator,
         transactionHash,
         summary,
-        title,
         description,
         resources,
     } = proposal;
@@ -266,8 +265,8 @@ export const DaoProposalDetailsPageClient: React.FC<
             <Page.Header
                 breadcrumbs={pageBreadcrumbs}
                 breadcrumbsTag={statusTag}
-                description={hasStandardMetadata ? summary : undefined}
-                title={hasStandardMetadata ? title : proposalSlug.toUpperCase()}
+                description={summary || undefined}
+                title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
             />
             <Page.Content>
                 <Page.Main>

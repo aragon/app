@@ -98,6 +98,12 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         ).toBeInTheDocument();
     });
 
+    it('falls back to the proposal slug as title when the metadata is not resolved', () => {
+        const proposal = generateProposal({ title: '', summary: '' });
+        render(createTestComponent({ proposal, proposalSlug: 'admin-2' }));
+        expect(screen.getByText('ADMIN-2')).toBeInTheDocument();
+    });
+
     it('uses the plugin slot-function to process the proposal status', () => {
         const status = ProposalStatus.EXECUTABLE;
         useSlotSingleFunctionSpy.mockReturnValue(status);

@@ -36,6 +36,20 @@ describe('proposalUtils', () => {
         );
     });
 
+    describe('getDisplayTitle', () => {
+        it('returns the proposal title when set', () => {
+            const proposal = generateProposal({ title: 'my-proposal' });
+            const result = proposalUtils.getDisplayTitle(proposal, 'admin-1');
+            expect(result).toEqual('my-proposal');
+        });
+
+        it('falls back to the uppercased proposal slug when the title is not set', () => {
+            const proposal = generateProposal({ title: '' });
+            const result = proposalUtils.getDisplayTitle(proposal, 'admin-1');
+            expect(result).toEqual('ADMIN-1');
+        });
+    });
+
     describe('getProposalSlug', () => {
         it('returns undefined when plugin is not found', () => {
             getDaoPluginsSpy.mockReturnValue(undefined);

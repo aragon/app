@@ -42,7 +42,6 @@ export const DaoProposalListDefaultItem: React.FC<
 
     const {
         id,
-        title,
         summary,
         executed,
         endDate,
@@ -86,7 +85,7 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
-            title={title}
+            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
             voted={userVote != null}
         >
             {!hasStandardMetadata && (
