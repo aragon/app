@@ -29,7 +29,7 @@ export const LinkedAccountInfo: React.FC<ILinkedAccountInfoProps> = (props) => {
                 {networkDefinitions[network].name}
             </DefinitionList.Item>
             <DefinitionList.Item
-                link={{ href: pluginAddressLink, isOnchainEntity: true }}
+                link={{ isOnchainEntity: true }}
                 term={t('app.finance.linkedAccountInfo.pluginAddress')}
             >
                 <AddressOutput

@@ -127,10 +127,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                link={{
-                                    href: daoAddressLink,
-                                    isOnchainEntity: true,
-                                }}
+                                link={{ isOnchainEntity: true }}
                                 term={t(
                                     'app.dashboard.daoDashboardPage.aside.details.address',
                                 )}

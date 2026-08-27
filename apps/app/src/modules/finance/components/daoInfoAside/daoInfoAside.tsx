@@ -74,10 +74,7 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                         {networkDefinitions[resolvedNetwork].name}
                     </DefinitionList.Item>
                     <DefinitionList.Item
-                        link={{
-                            href: pluginAddressLink,
-                            isOnchainEntity: true,
-                        }}
+                        link={{ isOnchainEntity: true }}
                         term={t(
                             'app.finance.transactionLinkedAccountInfo.address',
                         )}

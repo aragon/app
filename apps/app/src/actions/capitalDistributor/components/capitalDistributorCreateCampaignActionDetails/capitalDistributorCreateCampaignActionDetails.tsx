@@ -187,7 +187,7 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ href: payoutTokenLink, isOnchainEntity: true }}
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.assetTerm',
                 )}

@@ -118,11 +118,7 @@ export const PermissionNodeDetailPanel: React.FC<
                         </DefinitionList.Item>
                         {!isSentinelAddress && (
                             <DefinitionList.Item
-                                link={{
-                                    href: explorerUrl,
-                                    isExternal: true,
-                                    isOnchainEntity: true,
-                                }}
+                                link={{ isOnchainEntity: true }}
                                 term={t(
                                     'app.settings.daoPermissionsPage.graphView.detail.address',
                                 )}

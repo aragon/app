@@ -129,14 +129,7 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                 {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
                         description={targetName}
-                        link={{
-                            href: buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: targetAddress,
-                            }),
-                            isExternal: true,
-                            isOnchainEntity: true,
-                        }}
+                        link={{ isOnchainEntity: true }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
                         <AddressOutput

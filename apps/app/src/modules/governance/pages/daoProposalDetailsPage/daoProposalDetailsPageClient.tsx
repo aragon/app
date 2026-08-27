@@ -376,10 +376,7 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                link={{
-                                    href: creatorLink,
-                                    isOnchainEntity: true,
-                                }}
+                                link={{ isOnchainEntity: true }}
                                 term={t(
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',
                                 )}

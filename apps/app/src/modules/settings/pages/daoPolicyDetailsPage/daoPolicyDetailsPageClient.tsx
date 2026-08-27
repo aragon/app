@@ -135,11 +135,7 @@ export const DaoPolicyDetailsPageClient: React.FC<
                                             link={
                                                 setting.link ??
                                                 (addressLink != null
-                                                    ? {
-                                                          href: addressLink,
-                                                          isExternal: true,
-                                                          isOnchainEntity: true,
-                                                      }
+                                                    ? { isOnchainEntity: true }
                                                     : undefined)
                                             }
                                             term={setting.term}

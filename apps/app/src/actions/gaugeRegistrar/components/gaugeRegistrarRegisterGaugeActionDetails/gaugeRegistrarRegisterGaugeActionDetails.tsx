@@ -114,7 +114,7 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ href: qiTokenAddressLink, isOnchainEntity: true }}
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.qiTokenTerm',
                 )}
@@ -134,10 +134,7 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                     : 'Borrow'}
             </DefinitionList.Item>
             <DefinitionList.Item
-                link={{
-                    href: rewardControllerAddressLink,
-                    isOnchainEntity: true,
-                }}
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.rewardControllerTerm',
                 )}

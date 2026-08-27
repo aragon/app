@@ -43,11 +43,7 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<
         <div className="flex flex-col gap-y-4">
             <DefinitionList.Container>
                 <DefinitionList.Item
-                    link={{
-                        href: gaugeAddressLink,
-                        isExternal: true,
-                        isOnchainEntity: true,
-                    }}
+                    link={{ isOnchainEntity: true }}
                     term={t(
                         'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract',
                     )}

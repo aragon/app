@@ -34,11 +34,7 @@ export const UnrecognizedConditionSlot: React.FC<
                 <DefinitionList.Item
                     link={
                         conditionUrl != null
-                            ? {
-                                  href: conditionUrl,
-                                  isExternal: true,
-                                  isOnchainEntity: true,
-                              }
+                            ? { isOnchainEntity: true }
                             : undefined
                     }
                     term={t('app.settings.permissionsList.details.condition')}

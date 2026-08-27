@@ -66,7 +66,7 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ href: bodyAddressLink, isOnchainEntity: true }}
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.createDao.createProcessForm.governance.bodyField.default.address',
                 )}

@@ -120,11 +120,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                 {/* Plugin address */}
                 <DefinitionList.Item
                     description={`${policyName} v${policy.release}.${policy.build}`}
-                    link={{
-                        href: pluginLink,
-                        isExternal: true,
-                        isOnchainEntity: true,
-                    }}
+                    link={{ isOnchainEntity: true }}
                     term={t('app.settings.daoPolicyDetailsInfo.pluginAddress')}
                 >
                     <AddressOutput address={policy.address} href={pluginLink} />
@@ -134,14 +130,7 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                 {policy.daoAddress && (
                     <DefinitionList.Item
                         description={targetName}
-                        link={{
-                            href: buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: policy.daoAddress,
-                            }),
-                            isExternal: true,
-                            isOnchainEntity: true,
-                        }}
+                        link={{ isOnchainEntity: true }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
                         <AddressOutput

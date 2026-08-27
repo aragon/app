@@ -49,7 +49,7 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                     </p>
                 </DefinitionList.Item>
                 <DefinitionList.Item
-                    link={{ href: daoAddressLink, isOnchainEntity: true }}
+                    link={{ isOnchainEntity: true }}
                     term={t('app.finance.financeDetailsList.vaultAddress')}
                 >
                     <AddressOutput address={address} href={daoAddressLink} />

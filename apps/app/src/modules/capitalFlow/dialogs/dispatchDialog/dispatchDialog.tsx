@@ -179,10 +179,7 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 description={typeName}
-                                link={{
-                                    href: policyAddressLink,
-                                    isOnchainEntity: true,
-                                }}
+                                link={{ isOnchainEntity: true }}
                                 term={t(
                                     'app.capitalFlow.dispatchDialog.routerAddress',
                                 )}

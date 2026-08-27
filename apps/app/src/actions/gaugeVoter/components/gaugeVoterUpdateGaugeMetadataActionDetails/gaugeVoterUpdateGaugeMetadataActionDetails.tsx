@@ -47,7 +47,7 @@ export const GaugeVoterUpdateGaugeMetadataActionDetails: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                link={{ href: gaugeAddressLink, isOnchainEntity: true }}
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionDetails.gaugeAddressTerm',
                 )}

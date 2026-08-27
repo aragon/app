@@ -69,15 +69,7 @@ export const VotingPowerConditionSlot: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                link={
-                    tokenUrl != null
-                        ? {
-                              href: tokenUrl,
-                              isExternal: true,
-                              isOnchainEntity: true,
-                          }
-                        : undefined
-                }
+                link={tokenUrl != null ? { isOnchainEntity: true } : undefined}
                 term={t('app.settings.votingPowerConditionSlot.token')}
             >
                 {tokenAddress != null ? (

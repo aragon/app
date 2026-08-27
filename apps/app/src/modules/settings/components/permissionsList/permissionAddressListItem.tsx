@@ -27,11 +27,7 @@ export const PermissionAddressListItem: React.FC<
     return (
         <DefinitionList.Item
             description={description}
-            link={{
-                href: explorerUrl,
-                isExternal: true,
-                isOnchainEntity: true,
-            }}
+            link={{ isOnchainEntity: true }}
             term={term}
         >
             <AddressOutput address={address} href={explorerUrl} />

@@ -293,10 +293,7 @@ export const DaoMemberDetailsPageClient: React.FC<
                     >
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                link={{
-                                    href: addressUrl,
-                                    isOnchainEntity: true,
-                                }}
+                                link={{ isOnchainEntity: true }}
                                 term={t(
                                     'app.governance.daoMemberDetailsPage.aside.details.address',
                                 )}

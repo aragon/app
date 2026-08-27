@@ -62,14 +62,7 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
                         description={targetName}
-                        link={{
-                            href: buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: targetAddress,
-                            }),
-                            isExternal: true,
-                            isOnchainEntity: true,
-                        }}
+                        link={{ isOnchainEntity: true }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
                         <AddressOutput

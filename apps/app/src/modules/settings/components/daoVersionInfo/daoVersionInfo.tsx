@@ -42,11 +42,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                 description={t('app.settings.daoVersionInfo.osValue', {
                     version: dao.version,
                 })}
-                link={{
-                    href: daoLink,
-                    isExternal: false,
-                    isOnchainEntity: true,
-                }}
+                link={{ isOnchainEntity: true }}
                 term={t('app.settings.daoVersionInfo.osLabel')}
             >
                 <AddressOutput
@@ -66,13 +62,7 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                         },
                     )}
                     key={plugin.uniqueId}
-                    link={{
-                        href: buildEntityUrl({
-                            type: ChainEntityType.ADDRESS,
-                            id: plugin.meta.address,
-                        }),
-                        isOnchainEntity: true,
-                    }}
+                    link={{ isOnchainEntity: true }}
                     term={daoUtils.getPluginName(plugin.meta)}
                 >
                     <AddressOutput
