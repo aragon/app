@@ -377,7 +377,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 >
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-col gap-3 md:flex-row md:items-center">
-                            <div className="w-full max-w-60">
+                            <div className="w-full md:max-w-60">
                                 <InputNumber
                                     id={`${actionFieldName}.gasLimit`}
                                     max={crossChainControllerGas.maxGasLimit}
