@@ -81,7 +81,7 @@ class NavigationDaoUtils {
             {
                 label: 'app.application.navigationDao.link.permissions',
                 link: `${baseUrl}/permissions`,
-                icon: IconType.PERSON,
+                icon: IconType.APP_PERMISSIONS,
                 hidden: isPageContext || !permissionsPageEnabled,
                 order: 150,
             },
