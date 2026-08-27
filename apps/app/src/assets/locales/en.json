@@ -2550,7 +2550,8 @@
           },
           "fee": {
             "defaultToken": "fee tokens",
-            "description": "The cross-chain controller ({{address}}) pays the fee to send the message. Make sure it holds enough {{token}}, otherwise the proposal execution will fail.",
+            "descriptionPrefix": "The cross-chain controller (",
+            "descriptionSuffix": ") pays the fee to send the message. Make sure it holds enough {{token}}, otherwise the proposal execution will fail.",
             "title": "Cross-chain fees are paid by the controller"
           },
           "gas": {

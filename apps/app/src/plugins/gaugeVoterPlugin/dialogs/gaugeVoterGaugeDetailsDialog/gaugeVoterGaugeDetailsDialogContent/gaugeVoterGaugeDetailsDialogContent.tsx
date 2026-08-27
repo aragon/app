@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DefinitionList,
     Tag,
@@ -43,13 +43,19 @@ export const GaugeVoterGaugeDetailsDialogContent: React.FC<
         <div className="flex flex-col gap-y-4">
             <DefinitionList.Container>
                 <DefinitionList.Item
-                    copyValue={gauge.address}
-                    link={{ href: gaugeAddressLink, isExternal: true }}
+                    link={{
+                        href: gaugeAddressLink,
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t(
                         'app.plugins.gaugeVoter.gaugeVoterGaugeDetailsDialog.content.contract',
                     )}
                 >
-                    {addressUtils.truncateAddress(gauge.address)}
+                    <AddressOutput
+                        address={gauge.address}
+                        href={gaugeAddressLink}
+                    />
                 </DefinitionList.Item>
                 {gauge.links &&
                     gauge.links.length > 0 &&

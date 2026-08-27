@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DateFormat,
     DefinitionList,
@@ -75,7 +75,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         adminPlugin != null && nonAdminProcessPlugins.length === 0;
 
     const daoEns = daoUtils.getDaoEns(dao);
-    const truncatedAddress = addressUtils.truncateAddress(dao.address);
 
     const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
         format: DateFormat.YEAR_MONTH,
@@ -128,13 +127,18 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                copyValue={dao.address}
-                                link={{ href: daoAddressLink }}
+                                link={{
+                                    href: daoAddressLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.dashboard.daoDashboardPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                <AddressOutput
+                                    address={dao.address}
+                                    href={daoAddressLink}
+                                />
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item

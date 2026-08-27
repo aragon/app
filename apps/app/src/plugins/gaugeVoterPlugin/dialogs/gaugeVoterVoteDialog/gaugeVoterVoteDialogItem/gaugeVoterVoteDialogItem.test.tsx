@@ -87,7 +87,11 @@ describe('<GaugeVoterVoteDialogItem /> component', () => {
         const onRemove = jest.fn();
         render(createTestComponent({ onRemove }));
         const closeButtons = screen.getAllByRole('button');
-        await userEvent.click(closeButtons[0]);
+        const closeButton = closeButtons.at(-1);
+        if (closeButton == null) {
+            throw new Error('Close button not rendered');
+        }
+        await userEvent.click(closeButton);
         expect(onRemove).toHaveBeenCalledWith(
             '0x1234567890123456789012345678901234567890',
         );

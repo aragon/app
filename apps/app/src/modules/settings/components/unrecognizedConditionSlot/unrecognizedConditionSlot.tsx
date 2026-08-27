@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DefinitionList,
     useBlockExplorer,
@@ -32,17 +32,25 @@ export const UnrecognizedConditionSlot: React.FC<
         <div data-testid="unrecognized-condition">
             <DefinitionList.Container>
                 <DefinitionList.Item
-                    copyValue={conditionAddress}
                     link={
                         conditionUrl != null
-                            ? { href: conditionUrl, isExternal: true }
+                            ? {
+                                  href: conditionUrl,
+                                  isExternal: true,
+                                  isOnchainEntity: true,
+                              }
                             : undefined
                     }
                     term={t('app.settings.permissionsList.details.condition')}
                 >
-                    {conditionAddress != null
-                        ? addressUtils.truncateAddress(conditionAddress)
-                        : '-'}
+                    {conditionAddress != null ? (
+                        <AddressOutput
+                            address={conditionAddress}
+                            href={conditionUrl}
+                        />
+                    ) : (
+                        '-'
+                    )}
                 </DefinitionList.Item>
             </DefinitionList.Container>
         </div>

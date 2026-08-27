@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DefinitionList,
 } from '@aragon/gov-ui-kit';
@@ -39,18 +39,24 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                copyValue={dao.address}
                 description={t('app.settings.daoVersionInfo.osValue', {
                     version: dao.version,
                 })}
-                link={{ href: daoLink, isExternal: false }}
+                link={{
+                    href: daoLink,
+                    isExternal: false,
+                    isOnchainEntity: true,
+                }}
                 term={t('app.settings.daoVersionInfo.osLabel')}
             >
-                {addressUtils.truncateAddress(dao.address)}
+                <AddressOutput
+                    address={dao.address}
+                    href={daoLink}
+                    isExternal={false}
+                />
             </DefinitionList.Item>
             {processPlugins?.map((plugin) => (
                 <DefinitionList.Item
-                    copyValue={plugin.meta.address}
                     description={t(
                         'app.settings.daoVersionInfo.governanceValue',
                         {
@@ -65,10 +71,17 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                             type: ChainEntityType.ADDRESS,
                             id: plugin.meta.address,
                         }),
+                        isOnchainEntity: true,
                     }}
                     term={daoUtils.getPluginName(plugin.meta)}
                 >
-                    {addressUtils.truncateAddress(plugin.meta.address)}
+                    <AddressOutput
+                        address={plugin.meta.address}
+                        href={buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: plugin.meta.address,
+                        })}
+                    />
                 </DefinitionList.Item>
             ))}
         </DefinitionList.Container>

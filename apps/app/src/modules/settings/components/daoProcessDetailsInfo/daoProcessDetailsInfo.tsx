@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     Button,
     ChainEntityType,
     DefinitionList,
@@ -128,7 +128,6 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                 {/* Target */}
                 {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
-                        copyValue={targetAddress}
                         description={targetName}
                         link={{
                             href: buildEntityUrl({
@@ -136,10 +135,17 @@ export const DaoProcessDetailsInfo: React.FC<IDaoProcessDetailsInfoProps> = (
                                 id: targetAddress,
                             }),
                             isExternal: true,
+                            isOnchainEntity: true,
                         }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
-                        {addressUtils.truncateAddress(targetAddress)}
+                        <AddressOutput
+                            address={targetAddress}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: targetAddress,
+                            })}
+                        />
                     </DefinitionList.Item>
                 )}
 

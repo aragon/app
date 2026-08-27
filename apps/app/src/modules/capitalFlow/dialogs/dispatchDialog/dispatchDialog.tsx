@@ -1,4 +1,5 @@
 import {
+    AddressOutput,
     addressUtils,
     Button,
     Card,
@@ -123,6 +124,11 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
         ? `${baseTypeName} (${t(`app.capitalFlow.dispatchDialog.modelType.${modelType}`)})`
         : baseTypeName;
 
+    const policyAddressLink = buildEntityUrl({
+        type: ChainEntityType.ADDRESS,
+        id: policy.address,
+    });
+
     const shouldShowDropdown =
         tenderlySupport &&
         policy.strategy.type === PolicyStrategyType.MULTI_DISPATCH;
@@ -172,19 +178,19 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
 
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                copyValue={policy.address}
                                 description={typeName}
                                 link={{
-                                    href: buildEntityUrl({
-                                        type: ChainEntityType.ADDRESS,
-                                        id: policy.address,
-                                    }),
+                                    href: policyAddressLink,
+                                    isOnchainEntity: true,
                                 }}
                                 term={t(
                                     'app.capitalFlow.dispatchDialog.routerAddress',
                                 )}
                             >
-                                {addressUtils.truncateAddress(policy.address)}
+                                <AddressOutput
+                                    address={policy.address}
+                                    href={policyAddressLink}
+                                />
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Card>

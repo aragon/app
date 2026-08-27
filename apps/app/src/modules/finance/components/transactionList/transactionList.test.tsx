@@ -325,7 +325,7 @@ describe('<TransactionList.Default /> component', () => {
         await user.click(screen.getByText('0 ABC'));
         expect(onTransactionClick).not.toHaveBeenCalled();
 
-        await user.click(screen.getByText('Executed'));
+        await user.click(screen.getByRole('link', { name: /Executed/ }));
         expect(onTransactionClick).toHaveBeenCalledWith(executionTransaction);
     });
 

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     Avatar,
     addressUtils,
     ChainEntityType,
@@ -186,15 +187,20 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                copyValue={payoutTokenAddress}
-                link={{ href: payoutTokenLink }}
+                link={{ href: payoutTokenLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.assetTerm',
                 )}
             >
-                {tokenSymbol
-                    ? `${tokenSymbol} (${addressUtils.truncateAddress(payoutTokenAddress)})`
-                    : addressUtils.truncateAddress(payoutTokenAddress)}
+                <AddressOutput
+                    address={payoutTokenAddress}
+                    href={payoutTokenLink}
+                    label={
+                        tokenSymbol
+                            ? `${tokenSymbol} (${addressUtils.truncateAddress(payoutTokenAddress)})`
+                            : undefined
+                    }
+                />
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(

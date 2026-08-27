@@ -1,4 +1,5 @@
 import {
+    AddressOutput,
     Avatar,
     addressUtils,
     Button,
@@ -108,8 +109,6 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
               })
             : null;
 
-    const truncatedAddress = addressUtils.truncateAddress(gauge.address);
-
     const handleActionClick = (event: React.MouseEvent) => {
         event.stopPropagation();
         if (isVoted || isUserVotesLoading) {
@@ -161,10 +160,17 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                 />
                 <div className="flex min-w-0 flex-1 flex-col gap-1">
                     <p className="truncate text-base text-neutral-800 md:text-lg">
-                        {gaugeName}
+                        <AddressOutput
+                            address={gauge.address}
+                            hasInteractiveAncestor={true}
+                            label={gauge.name ?? undefined}
+                        />
                     </p>
                     <p className="truncate text-neutral-500 text-sm">
-                        {truncatedAddress}
+                        <AddressOutput
+                            address={gauge.address}
+                            hasInteractiveAncestor={true}
+                        />
                     </p>
                 </div>
             </div>

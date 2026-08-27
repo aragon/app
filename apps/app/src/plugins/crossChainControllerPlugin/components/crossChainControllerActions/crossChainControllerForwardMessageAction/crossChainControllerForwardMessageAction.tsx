@@ -1,9 +1,9 @@
 'use client';
 
 import {
+    AddressOutput,
     AlertCard,
     AlertInline,
-    addressUtils,
     Button,
     Card,
     CardEmptyState,
@@ -412,11 +412,12 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 variant="info"
             >
                 {t(
-                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.description',
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.descriptionPrefix',
+                )}
+                <AddressOutput address={action.meta.address} />
+                {t(
+                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.descriptionSuffix',
                     {
-                        address: addressUtils.truncateAddress(
-                            action.meta.address,
-                        ),
                         token:
                             feeToken?.symbol ??
                             t(

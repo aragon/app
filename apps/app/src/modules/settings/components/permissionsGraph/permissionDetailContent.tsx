@@ -35,7 +35,7 @@ const toDetailsEntity = (
     detail?: IPermissionDetailEntity,
 ): IPermissionDetailsEntity => ({
     address,
-    label: detail?.label ?? addressUtils.truncateAddress(address),
+    label: detail?.label,
     isSentinel: isSentinelAddress(address),
     detailName: detail?.label,
 });

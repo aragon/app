@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DefinitionList,
 } from '@aragon/gov-ui-kit';
@@ -66,12 +66,12 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ href: bodyAddressLink }}
+                link={{ href: bodyAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.createDao.createProcessForm.governance.bodyField.default.address',
                 )}
             >
-                {addressUtils.truncateAddress(body.address)}
+                <AddressOutput address={body.address} href={bodyAddressLink} />
             </DefinitionList.Item>
             {createProcessFormUtils.isBodySafe(body) && (
                 <DefinitionList.Item

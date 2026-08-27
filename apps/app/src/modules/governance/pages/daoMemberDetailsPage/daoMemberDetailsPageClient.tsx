@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     addressUtils,
     ChainEntityType,
     DateFormat,
@@ -236,7 +237,13 @@ export const DaoMemberDetailsPageClient: React.FC<
                 }
                 breadcrumbs={pageBreadcrumbs}
                 description={ensRecords?.description ?? undefined}
-                title={memberName}
+                title={
+                    <AddressOutput
+                        address={address}
+                        copy={false}
+                        label={displayName ?? undefined}
+                    />
+                }
             />
             <Page.Content>
                 <Page.Main>
@@ -286,13 +293,18 @@ export const DaoMemberDetailsPageClient: React.FC<
                     >
                         <DefinitionList.Container>
                             <DefinitionList.Item
-                                copyValue={address}
-                                link={{ href: addressUrl }}
+                                link={{
+                                    href: addressUrl,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoMemberDetailsPage.aside.details.address',
                                 )}
                             >
-                                {truncatedAddress}
+                                <AddressOutput
+                                    address={address}
+                                    href={addressUrl}
+                                />
                             </DefinitionList.Item>
                             {ensName && addressUrl && (
                                 <DefinitionList.Item

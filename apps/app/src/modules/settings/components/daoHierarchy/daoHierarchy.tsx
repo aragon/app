@@ -1,13 +1,11 @@
 import {
     Accordion,
-    addressUtils,
+    AddressOutput,
     Card,
     ChainEntityType,
-    Clipboard,
     Collapsible,
     DaoAvatar,
     DefinitionList,
-    Link,
     useBlockExplorer,
 } from '@aragon/gov-ui-kit';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
@@ -68,17 +66,14 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                     term={t('app.settings.daoSettingsInfo.ens')}
                 >
                     <div className="flex flex-col gap-1">
-                        <Clipboard copyValue={dao.address}>
-                            <Link
-                                href={buildEntityUrl({
-                                    type: ChainEntityType.ADDRESS,
-                                    id: dao.address,
-                                })}
-                                isExternal={true}
-                            >
-                                {dao.ens}
-                            </Link>
-                        </Clipboard>
+                        <AddressOutput
+                            address={dao.address}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: dao.address,
+                            })}
+                            label={dao.ens ?? undefined}
+                        />
                         <p className="font-normal text-neutral-400 text-sm leading-tight">
                             {t('app.settings.daoSettingsInfo.notChangeable')}
                         </p>
@@ -89,17 +84,13 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
                     term={t('app.settings.daoSettingsInfo.address')}
                 >
                     <div className="flex flex-col gap-1">
-                        <Clipboard copyValue={dao.address}>
-                            <Link
-                                href={buildEntityUrl({
-                                    type: ChainEntityType.ADDRESS,
-                                    id: dao.address,
-                                })}
-                                isExternal={true}
-                            >
-                                {addressUtils.truncateAddress(dao.address)}
-                            </Link>
-                        </Clipboard>
+                        <AddressOutput
+                            address={dao.address}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: dao.address,
+                            })}
+                        />
                         <p className="font-normal text-neutral-400 text-sm leading-tight">
                             {t('app.settings.daoSettingsInfo.notChangeable')}
                         </p>

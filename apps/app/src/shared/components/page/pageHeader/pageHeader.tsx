@@ -10,7 +10,8 @@ import { Container } from '../../container';
 import { useTranslations } from '../../translationsProvider';
 import { type IPageHeaderStat, PageHeaderStat } from './pageHeaderStat';
 
-export interface IPageHeaderProps extends ComponentProps<'header'> {
+export interface IPageHeaderProps
+    extends Omit<ComponentProps<'header'>, 'title'> {
     /**
      * Optional breadcrumbs for navigation.
      */
@@ -20,9 +21,10 @@ export interface IPageHeaderProps extends ComponentProps<'header'> {
      */
     breadcrumbsTag?: IBreadcrumbsProps['tag'];
     /**
-     * Title of the page.
+     * Title of the page. Accepts a node so that rendered values such as an
+     * `AddressOutput` can be used as the page title.
      */
-    title?: string;
+    title?: ReactNode;
     /**
      * Description of the page.
      */

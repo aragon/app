@@ -1,4 +1,5 @@
 import {
+    AddressOutput,
     addressUtils,
     ChainEntityType,
     DefinitionList,
@@ -25,12 +26,15 @@ export const PermissionAddressListItem: React.FC<
 
     return (
         <DefinitionList.Item
-            copyValue={address}
             description={description}
-            link={{ href: explorerUrl, isExternal: true }}
+            link={{
+                href: explorerUrl,
+                isExternal: true,
+                isOnchainEntity: true,
+            }}
             term={term}
         >
-            {truncatedAddress}
+            <AddressOutput address={address} href={explorerUrl} />
         </DefinitionList.Item>
     );
 };

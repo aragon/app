@@ -8,7 +8,7 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.63
-  "@aragon/gov-ui-kit": ^2.10.0
+  "@aragon/gov-ui-kit": ^2.11.2
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.14.27

@@ -1,7 +1,7 @@
 'use client';
 
 import {
-    addressUtils,
+    AddressOutput,
     ChainEntityType,
     DefinitionList,
 } from '@aragon/gov-ui-kit';
@@ -29,11 +29,13 @@ export const LinkedAccountInfo: React.FC<ILinkedAccountInfoProps> = (props) => {
                 {networkDefinitions[network].name}
             </DefinitionList.Item>
             <DefinitionList.Item
-                copyValue={plugin.address}
-                link={{ href: pluginAddressLink }}
+                link={{ href: pluginAddressLink, isOnchainEntity: true }}
                 term={t('app.finance.linkedAccountInfo.pluginAddress')}
             >
-                {addressUtils.truncateAddress(plugin.address)}
+                <AddressOutput
+                    address={plugin.address}
+                    href={pluginAddressLink}
+                />
             </DefinitionList.Item>
             {plugin.description && (
                 <DefinitionList.Item

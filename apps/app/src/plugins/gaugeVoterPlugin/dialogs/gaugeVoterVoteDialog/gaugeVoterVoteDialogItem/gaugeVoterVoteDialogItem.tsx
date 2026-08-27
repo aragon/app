@@ -1,4 +1,5 @@
 import {
+    AddressOutput,
     Avatar,
     addressUtils,
     Button,
@@ -100,10 +101,13 @@ export const GaugeVoterVoteDialogItem: React.FC<
                 )}
                 <div className="flex min-w-0 flex-1 flex-col">
                     <span className="truncate text-base text-neutral-800">
-                        {displayGaugeName}
+                        <AddressOutput
+                            address={gaugeAddress}
+                            label={gaugeName ?? undefined}
+                        />
                     </span>
                     <span className="truncate text-neutral-500 text-sm">
-                        {addressUtils.truncateAddress(gaugeAddress)}
+                        <AddressOutput address={gaugeAddress} />
                     </span>
                 </div>
                 <Button

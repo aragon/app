@@ -1,5 +1,5 @@
 import {
-    addressUtils,
+    AddressOutput,
     Button,
     ChainEntityType,
     DateFormat,
@@ -119,18 +119,20 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
 
                 {/* Plugin address */}
                 <DefinitionList.Item
-                    copyValue={policy.address}
                     description={`${policyName} v${policy.release}.${policy.build}`}
-                    link={{ href: pluginLink, isExternal: true }}
+                    link={{
+                        href: pluginLink,
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoPolicyDetailsInfo.pluginAddress')}
                 >
-                    {addressUtils.truncateAddress(policy.address)}
+                    <AddressOutput address={policy.address} href={pluginLink} />
                 </DefinitionList.Item>
 
                 {/* Target */}
                 {policy.daoAddress && (
                     <DefinitionList.Item
-                        copyValue={policy.daoAddress}
                         description={targetName}
                         link={{
                             href: buildEntityUrl({
@@ -138,10 +140,17 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                                 id: policy.daoAddress,
                             }),
                             isExternal: true,
+                            isOnchainEntity: true,
                         }}
                         term={t('app.settings.daoPolicyDetailsInfo.target')}
                     >
-                        {addressUtils.truncateAddress(policy.daoAddress)}
+                        <AddressOutput
+                            address={policy.daoAddress}
+                            href={buildEntityUrl({
+                                type: ChainEntityType.ADDRESS,
+                                id: policy.daoAddress,
+                            })}
+                        />
                     </DefinitionList.Item>
                 )}
 

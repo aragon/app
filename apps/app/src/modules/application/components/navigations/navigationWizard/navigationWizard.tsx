@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     addressUtils,
     DaoAvatar,
     Icon,
@@ -128,9 +129,11 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                     </p>
                     {displayDao != null && (
                         <div className="flex items-center gap-x-2">
-                            <p className="truncate text-nowrap text-neutral-500 text-sm leading-tight">
-                                {displayDaoName}
-                            </p>
+                            <AddressOutput
+                                address={displayDao.address}
+                                className="truncate text-nowrap text-neutral-500 text-sm leading-tight"
+                                label={displayDao.name?.trim() || undefined}
+                            />
                             <DaoAvatar
                                 name={displayDaoName}
                                 size="sm"

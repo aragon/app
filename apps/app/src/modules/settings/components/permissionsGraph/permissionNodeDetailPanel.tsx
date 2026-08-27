@@ -1,6 +1,7 @@
 'use client';
 
 import {
+    AddressOutput,
     AlertCard,
     addressUtils,
     Button,
@@ -37,6 +38,13 @@ export const PermissionNodeDetailPanel: React.FC<
         ANY_ADDR,
     );
 
+    // Unresolved nodes are labelled with their own truncated address, so that
+    // case renders as an address instead of a name. The panel header is the
+    // drag handle and the address row below owns the copy control, so the
+    // reveal stays passive here.
+    const isAddressLabel =
+        addressUtils.truncateAddress(node.address) === node.label;
+
     const explorerUrl = isSentinelAddress
         ? undefined
         : buildEntityUrl({
@@ -56,9 +64,17 @@ export const PermissionNodeDetailPanel: React.FC<
             >
                 <div className="flex min-w-0 flex-col gap-1">
                     <div className="flex min-w-0 items-center gap-2">
-                        <p className="truncate font-medium text-neutral-900">
-                            {node.label}
-                        </p>
+                        {isAddressLabel ? (
+                            <AddressOutput
+                                address={node.address}
+                                className="truncate font-medium text-neutral-900"
+                                hasInteractiveAncestor={true}
+                            />
+                        ) : (
+                            <p className="truncate font-medium text-neutral-900">
+                                {node.label}
+                            </p>
+                        )}
                         {node.tag != null && (
                             <Tag label={node.tag} variant="primary" />
                         )}
@@ -102,13 +118,19 @@ export const PermissionNodeDetailPanel: React.FC<
                         </DefinitionList.Item>
                         {!isSentinelAddress && (
                             <DefinitionList.Item
-                                copyValue={node.address}
-                                link={{ href: explorerUrl, isExternal: true }}
+                                link={{
+                                    href: explorerUrl,
+                                    isExternal: true,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.settings.daoPermissionsPage.graphView.detail.address',
                                 )}
                             >
-                                {addressUtils.truncateAddress(node.address)}
+                                <AddressOutput
+                                    address={node.address}
+                                    href={explorerUrl}
+                                />
                             </DefinitionList.Item>
                         )}
                     </DefinitionList.Container>
