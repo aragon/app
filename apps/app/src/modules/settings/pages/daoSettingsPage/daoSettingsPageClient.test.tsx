@@ -4,7 +4,6 @@ import * as DaoService from '@/shared/api/daoService';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import { DialogProvider } from '@/shared/components/dialogProvider';
 import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
-import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import * as UseDaoPluginsModule from '@/shared/hooks/useDaoPlugins';
 import {
     generateDao,
@@ -56,25 +55,15 @@ describe('<DaoSettingsPageClient /> component', () => {
 
     const createTestComponent = (
         props?: Partial<IDaoSettingsPageClientProps>,
-        permissionsPageEnabled = true,
     ) => {
         const completeProps: IDaoSettingsPageClientProps = {
             daoId: 'test',
             ...props,
         };
 
-        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
-            {
-                key: 'permissionsPage',
-                name: 'Permissions page',
-                description: 'Controls permissions page entry points.',
-                enabled: permissionsPageEnabled,
-            },
-        ];
-
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
+                <FeatureFlagsProvider>
                     <DialogProvider>
                         <DaoSettingsPageClient {...completeProps} />
                     </DialogProvider>
@@ -107,12 +96,12 @@ describe('<DaoSettingsPageClient /> component', () => {
         expect(screen.getByTestId('update-dao-contracts')).toBeInTheDocument();
     });
 
-    it('hides the hierarchy permissions link when the flag is disabled', () => {
-        render(createTestComponent({ isLinkedAccountEnabled: true }, false));
+    it('renders the hierarchy permissions link', () => {
+        render(createTestComponent({ isLinkedAccountEnabled: true }));
 
         expect(
-            screen.queryByText(/daoSettingsInfo.permissionsLink/),
-        ).not.toBeInTheDocument();
+            screen.getByText(/daoSettingsInfo.permissionsLink/),
+        ).toBeInTheDocument();
     });
 
     it('renders the governance processes of the DAO', () => {

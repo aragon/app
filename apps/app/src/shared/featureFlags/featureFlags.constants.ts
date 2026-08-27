@@ -158,16 +158,4 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
-    {
-        key: 'permissionsPage',
-        name: 'Permissions page',
-        description:
-            'Enables the DAO permissions page and its entry points. Kept off in staging/production until the APP-953 backend is available.',
-        defaultValue: false,
-        environments: {
-            local: true,
-            development: true,
-            preview: true,
-        },
-    },
 ];

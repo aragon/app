@@ -8,7 +8,6 @@ import {
     Tag,
 } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -26,7 +25,6 @@ export interface IDaoSettingsInfoProps {
 export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
     const { dao } = props;
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
 
     const daoAvatar = ipfsUtils.cidToSrc(dao.avatar);
 
@@ -112,20 +110,18 @@ export const DaoSettingsInfo: React.FC<IDaoSettingsInfoProps> = (props) => {
                         </div>
                     </DefinitionList.Item>
                 )}
-                {isEnabled('permissionsPage') && (
-                    <DefinitionList.Item
-                        description={t(
-                            'app.settings.daoSettingsInfo.permissionsDescription',
-                        )}
-                        link={{
-                            href: daoUtils.getDaoUrl(dao, 'permissions'),
-                            isExternal: false,
-                        }}
-                        term={t('app.settings.daoSettingsInfo.permissions')}
-                    >
-                        {t('app.settings.daoSettingsInfo.permissionsLink')}
-                    </DefinitionList.Item>
-                )}
+                <DefinitionList.Item
+                    description={t(
+                        'app.settings.daoSettingsInfo.permissionsDescription',
+                    )}
+                    link={{
+                        href: daoUtils.getDaoUrl(dao, 'permissions'),
+                        isExternal: false,
+                    }}
+                    term={t('app.settings.daoSettingsInfo.permissions')}
+                >
+                    {t('app.settings.daoSettingsInfo.permissionsLink')}
+                </DefinitionList.Item>
             </DefinitionList.Container>
         </Card>
     );

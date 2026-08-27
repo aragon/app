@@ -7,9 +7,7 @@ import * as wagmi from 'wagmi';
 import * as UseWalletConnected from '@/modules/application/hooks/useWalletConnected';
 import { PluginInterfaceType } from '@/shared/api/daoService';
 import * as useDialogContext from '@/shared/components/dialogProvider';
-import { FeatureFlagsProvider } from '@/shared/components/featureFlagsProvider';
 import type * as Navigation from '@/shared/components/navigation';
-import type { FeatureFlagSnapshot } from '@/shared/featureFlags';
 import {
     generateDao,
     generateDaoPlugin,
@@ -83,28 +81,16 @@ describe('<NavigationDao /> component', () => {
         useConnectionSpy.mockReset();
         useWalletConnectedSpy.mockReset();
     });
-    const createTestComponent = (
-        props?: Partial<INavigationDaoProps>,
-        permissionsPageEnabled = true,
-    ) => {
+
+    const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
         const completeProps: INavigationDaoProps = {
             dao: generateDao(),
             ...props,
         };
-        const featureFlagsSnapshot: FeatureFlagSnapshot[] = [
-            {
-                key: 'permissionsPage',
-                name: 'Permissions page',
-                description: 'Controls permissions page entry points.',
-                enabled: permissionsPageEnabled,
-            },
-        ];
 
         return (
             <GukModulesProvider>
-                <FeatureFlagsProvider initialSnapshot={featureFlagsSnapshot}>
-                    <NavigationDao {...completeProps} />
-                </FeatureFlagsProvider>
+                <NavigationDao {...completeProps} />
             </GukModulesProvider>
         );
     };
@@ -175,6 +161,7 @@ describe('<NavigationDao /> component', () => {
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
+
     it('shows the permissions link in the dao dialog menu', async () => {
         render(createTestComponent());
         await userEvent.click(screen.getByTestId('nav-trigger-mock'));
@@ -185,16 +172,6 @@ describe('<NavigationDao /> component', () => {
             }),
         ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
         expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
-    });
-    it('hides the permissions link when the flag is disabled', async () => {
-        render(createTestComponent(undefined, false));
-        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
-
-        expect(
-            screen.queryByRole('link', {
-                name: /navigationDao.link.permissions/,
-            }),
-        ).not.toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

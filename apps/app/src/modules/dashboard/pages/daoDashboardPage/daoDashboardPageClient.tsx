@@ -15,7 +15,6 @@ import {
     PluginInterfaceType,
     useDao,
 } from '@/shared/api/daoService';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { Page } from '@/shared/components/page';
 import { PluginSingleComponent } from '@/shared/components/pluginSingleComponent';
 import { ResourceLink } from '@/shared/components/resourceLink';
@@ -50,7 +49,6 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const { daoId, featuredDelegates } = props;
 
     const { t } = useTranslations();
-    const { isEnabled } = useFeatureFlags();
 
     const { data: dao } = useDao({ urlParams: { id: daoId } });
 
@@ -160,19 +158,17 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 {daoLaunchedAt}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
-                        {isEnabled('permissionsPage') && (
-                            <Button
-                                className="w-full"
-                                href={daoUtils.getDaoUrl(dao, 'permissions')}
-                                iconRight={IconType.CHEVRON_RIGHT}
-                                size="md"
-                                variant="tertiary"
-                            >
-                                {t(
-                                    'app.dashboard.daoDashboardPage.aside.details.permissions',
-                                )}
-                            </Button>
-                        )}
+                        <Button
+                            className="w-full"
+                            href={daoUtils.getDaoUrl(dao, 'permissions')}
+                            iconRight={IconType.CHEVRON_RIGHT}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.dashboard.daoDashboardPage.aside.details.permissions',
+                            )}
+                        </Button>
                     </Page.AsideCard>
                     {dao.links.length > 0 && (
                         <Page.AsideCard
