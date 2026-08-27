@@ -83,8 +83,10 @@ describe('<NavigationDao /> component', () => {
         useConnectionSpy.mockReset();
         useWalletConnectedSpy.mockReset();
     });
-
-    const createTestComponent = (props?: Partial<INavigationDaoProps>) => {
+    const createTestComponent = (
+        props?: Partial<INavigationDaoProps>,
+        permissionsPageEnabled = true,
+    ) => {
         const completeProps: INavigationDaoProps = {
             dao: generateDao(),
             ...props,
@@ -94,7 +96,7 @@ describe('<NavigationDao /> component', () => {
                 key: 'permissionsPage',
                 name: 'Permissions page',
                 description: 'Controls permissions page entry points.',
-                enabled: true,
+                enabled: permissionsPageEnabled,
             },
         ];
 
@@ -183,6 +185,16 @@ describe('<NavigationDao /> component', () => {
             }),
         ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
         expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
+    });
+    it('hides the permissions link when the flag is disabled', async () => {
+        render(createTestComponent(undefined, false));
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(
+            screen.queryByRole('link', {
+                name: /navigationDao.link.permissions/,
+            }),
+        ).not.toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

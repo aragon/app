@@ -1,4 +1,6 @@
+import { notFound } from 'next/navigation-original';
 import { Page } from '@/shared/components/page';
+import { featureFlags } from '@/shared/featureFlags';
 import type { IDaoPageParams } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { networkUtils } from '@/shared/utils/networkUtils';
@@ -16,6 +18,9 @@ export const DaoPermissionsPage: React.FC<IDaoPermissionsPageProps> = async (
 ) => {
     const { params } = props;
     const daoPageParams = await params;
+    if (!(await featureFlags.isEnabled('permissionsPage'))) {
+        notFound();
+    }
 
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         // invalid network handled in DAO layout

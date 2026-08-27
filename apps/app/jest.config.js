@@ -25,6 +25,7 @@ const config = {
         // under src/. Pin next imports to the app's real package so tests are
         // unaffected by the shims' presence.
         '^next$': '<rootDir>/node_modules/next',
+        '^next/navigation-original$': '<rootDir>/node_modules/next/navigation',
         '^next/(.*)$': '<rootDir>/node_modules/next/$1',
         // Package only exposes a `module` field (no `main`/`exports`), which Jest's
         // Node-style resolver doesn't understand unlike bundlers (webpack/Next.js).
