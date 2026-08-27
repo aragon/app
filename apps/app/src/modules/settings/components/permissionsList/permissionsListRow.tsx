@@ -21,6 +21,7 @@ export interface IPermissionsListRowProps {
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[];
     accounts: IPermissionAccountRef[];
     chainId?: number;
+    daoId?: string;
     network?: Network;
 }
 
@@ -29,7 +30,8 @@ type PermissionCardTab = 'details' | 'condition';
 export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
     props,
 ) => {
-    const { row, rowKey, daoPlugins, accounts, chainId, network } = props;
+    const { row, rowKey, daoPlugins, accounts, chainId, daoId, network } =
+        props;
     const { t } = useTranslations();
     const [activeTab, setActiveTab] = useState<PermissionCardTab>('details');
     const resolveOptions = { daoPlugins, accounts };
@@ -100,6 +102,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                 ) : (
                     <PermissionCondition
                         chainId={chainId}
+                        daoId={daoId}
                         network={network}
                         row={row}
                     />
@@ -147,6 +150,7 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
                                     </p>
                                     <PermissionCondition
                                         chainId={chainId}
+                                        daoId={daoId}
                                         network={network}
                                         row={row}
                                     />
