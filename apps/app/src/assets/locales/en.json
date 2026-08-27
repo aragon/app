@@ -2243,14 +2243,13 @@
         "namePlugin": "{{plugin}}: Create proposal"
       },
       "nestedActionsDialog": {
-        "cancel": "Cancel",
         "decodeError": "We couldn't decode some of the actions. Please review them before saving.",
         "decoding": "Decoding actions",
-        "description": "These actions are executed as a batch by the action you are composing.",
+        "description": "These forwarded actions are executed as a batch on the destination chain.",
         "loadingAllowedActions": "Loading the allowed actions",
         "prepareError": "We couldn't prepare the actions. Please try again.",
-        "save": "Save actions",
-        "title": "Add actions"
+        "save": "Save forwarded actions",
+        "title": "Forwarded actions"
       },
       "permissionCheckDialog": {
         "a11y": {
@@ -2533,37 +2532,39 @@
         },
         "crossChainControllerForwardMessageAction": {
           "actions": {
-            "add": "Add actions",
-            "edit": "Edit actions",
-            "emptyDescription": "Compose the actions the destination chain executes when the message is delivered.",
-            "emptyHeading": "No actions added",
-            "helpText": "These actions are executed as a single batch on the destination chain. If one of them fails, none of them are applied.",
-            "label": "Actions",
-            "selected": "{{count}} action selected",
-            "selectedPlural": "{{count}} actions selected"
+            "add": "Forwarded actions",
+            "edit": "Edit forwarded actions",
+            "emptyHeading": "No forwarded actions added",
+            "helpText": "These actions are executed as a single batch on the destination chain. If any of them fail then none will be executed.",
+            "label": "Forwarded actions",
+            "mandatory": "Forwarded actions are mandatory.",
+            "selected": "{{count}} forwarded action added",
+            "selectedPlural": "{{count}} forwarded actions added"
           },
           "chain": {
             "empty": "This cross-chain controller has no other chain configured, so there is no destination to forward a message to.",
-            "helpText": "The chain the message is forwarded to. Only chains configured on this cross-chain controller can be selected.",
+            "helpText": "This is the chain the actions will be forwarded to and executed on. Only chains configured on the controller contract can be selected.",
             "label": "Destination chain",
             "unknown": "Chain {{chainId}}"
           },
           "fee": {
-            "defaultToken": "fee tokens",
-            "description": "The cross-chain controller ({{address}}) pays the fee to send the message. Make sure it holds enough {{token}}, otherwise the proposal execution will fail.",
+            "defaultToken": "native assets",
+            "description": "pays the fee to send the message. For this proposal execution to succeed, it will need to have enough {{token}}.",
+            "descriptionStart": "The controller contract",
             "title": "Cross-chain fees are paid by the controller"
           },
           "gas": {
-            "calculate": "Calculate",
+            "calculate": "Estimate gas",
             "error": "The gas limit could not be calculated. Try again, or enter a value manually if the problem persists.",
             "exceedsMax": "The actions need more gas than a single cross-chain message allows ({{maxGasLimit}}). Split them across several forward actions.",
-            "helpText": "The gas the destination chain may spend running the actions. Calculate it by simulating the actions, or enter it manually. It is fixed when the proposal is created and cannot be changed later, so it is cleared whenever the destination or the actions change.",
+            "helpText": "Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or entering it manually.",
             "label": "Destination gas limit",
             "marginReduced": "Simulated successfully. The delivery needs {{requiredGas}} gas, but the lane does not allow the usual safety margin on top, so the limit was set to the maximum the lane accepts.",
+            "minimumApplied": "The simulated transaction cost {{requiredGas}} gas, but the minimum gas accepted by the controller is {{minGasLimit}}.",
             "notWholeNumber": "Gas is counted in whole units, so the gas limit cannot have decimals.",
-            "placeholder": "Calculate or enter a gas limit",
+            "placeholder": "Enter a gas limit",
             "reverted": "The actions failed when simulated on the destination chain, so no gas limit could be measured: {{reason}}",
-            "simulated": "Simulated successfully. The delivery needs {{requiredGas}} gas, and a {{bufferPercent}}% safety margin was added on top.",
+            "simulated": "The simulated transaction cost {{requiredGas}} gas, so we recommend an additional {{bufferPercent}}% margin at a total of {{totalGas}} to ensure it is successful.",
             "unknownReason": "no reason given",
             "viewSimulation": "View simulation"
           }
