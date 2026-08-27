@@ -3739,6 +3739,17 @@
         "true": "True",
         "false": "False"
       },
+      "sppRuleConditionSlot": {
+        "description": "The SPP rule condition combines these rules to determine whether the permission is granted.",
+        "rule": "Rule",
+        "type": "Type",
+        "operation": "Operation",
+        "value": "Value",
+        "permissionId": "Permission ID",
+        "ruleIndexes": "Rule references",
+        "conditionAddress": "Condition address",
+        "noRules": "No rules returned"
+      },
       "daoPolicyDetailsPage": {
         "error": {
           "action": "Explore settings",

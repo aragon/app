@@ -16,6 +16,7 @@ export interface IPermissionsListProps {
     accountRefs: IPermissionAccountRef[];
     daoPlugins?: IFilterComponentPlugin<IDaoPlugin>[];
     chainId?: number;
+    daoId?: string;
     isLoading: boolean;
     expandedRows: string[];
     onExpandedRowsChange: (rows: string[]) => void;
@@ -33,6 +34,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
         accountRefs,
         daoPlugins,
         chainId,
+        daoId,
         isLoading,
         expandedRows,
         onExpandedRowsChange,
@@ -84,6 +86,7 @@ export const PermissionsList: React.FC<IPermissionsListProps> = (props) => {
                     <PermissionsListRow
                         accounts={accountRefs}
                         chainId={chainId}
+                        daoId={daoId}
                         daoPlugins={daoPlugins}
                         key={getPermissionRowKey(row)}
                         network={row.network}

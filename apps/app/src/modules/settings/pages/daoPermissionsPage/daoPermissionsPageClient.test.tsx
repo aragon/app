@@ -217,7 +217,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         );
     });
 
-    it('hides the list expand control below the desktop breakpoint', () => {
+    it('renders the list expand control below the list, not in the view toolbar', () => {
         mockFilterParamValues = { permissionsview: 'list' };
 
         render(
@@ -226,10 +226,13 @@ describe('<DaoPermissionsPageClient /> component', () => {
             </GukModulesProvider>,
         );
 
-        expect(screen.getByRole('button', { name: 'Expand all' })).toHaveClass(
-            'hidden',
-            'md:inline-flex',
-        );
+        // Rendered bottom-right of the list, not hidden on desktop like the
+        // old toolbar control.
+        const expandButton = screen.getByRole('button', {
+            name: 'Expand all',
+        });
+        expect(expandButton).toBeInTheDocument();
+        expect(expandButton).not.toHaveClass('hidden');
     });
 
     it('shows noisy permission groups when hide switches are off', () => {
