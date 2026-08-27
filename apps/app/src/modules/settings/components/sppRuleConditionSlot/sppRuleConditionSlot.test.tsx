@@ -1,5 +1,6 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import { useState } from 'react';
 import * as useSppGuardModule from '@/plugins/sppPlugin/hooks/useSppPermissionCheckProposalCreation';
 import {
     type IDaoPermissionCondition,
@@ -142,5 +143,69 @@ describe('<SppRuleConditionSlot /> component', () => {
         expect(
             screen.queryByText(/sppRuleConditionSlot.description/),
         ).not.toBeInTheDocument();
+    });
+
+    it('remounts the eligibility subtree when another permission resolves a different SPP process', () => {
+        const conditionA = '0xAAAAee254729296a45a3885639AC7E10F9d54979';
+        const conditionB = '0xBBBBee254729296a45a3885639AC7E10F9d54979';
+        const buildProcess = (
+            address: string,
+            proposalCreationConditionAddress: string,
+            bodyCount: number,
+        ) =>
+            ({
+                address,
+                interfaceType: PluginInterfaceType.SPP,
+                proposalCreationConditionAddress,
+                settings: { stages: Array.from({ length: bodyCount }) },
+            }) as unknown as IDaoPlugin;
+
+        (useDaoPluginsModule.useDaoPlugins as jest.Mock).mockReturnValue([
+            { meta: buildProcess('0xProcessA', conditionA, 1) },
+            { meta: buildProcess('0xProcessB', conditionB, 3) },
+        ]);
+
+        // Mirrors the real guard hook, which calls one hook per stage body, so
+        // the hook count varies with the resolved process.
+        (
+            useSppGuardModule.useSppPermissionCheckProposalCreation as jest.Mock
+        ).mockImplementation(
+            ({
+                plugin,
+            }: {
+                plugin: { address: string; settings: { stages: unknown[] } };
+            }) => {
+                for (const _body of plugin.settings.stages) {
+                    // biome-ignore lint/correctness/useHookAtTopLevel: mirrors the guard hook, whose hook count varies per stage body
+                    useState(undefined);
+                }
+
+                return {
+                    hasPermission: false,
+                    isLoading: false,
+                    isRestricted: true,
+                    settings: [
+                        [{ term: 'Process', definition: plugin.address }],
+                    ],
+                };
+            },
+        );
+
+        const { rerender } = render(
+            createTestComponent({
+                conditionAddress: conditionA,
+                daoId: 'dao-test',
+            }),
+        );
+        expect(screen.getByText('0xProcessA')).toBeInTheDocument();
+
+        rerender(
+            createTestComponent({
+                conditionAddress: conditionB,
+                daoId: 'dao-test',
+            }),
+        );
+
+        expect(screen.getByText('0xProcessB')).toBeInTheDocument();
     });
 });

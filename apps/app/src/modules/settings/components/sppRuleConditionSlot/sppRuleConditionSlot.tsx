@@ -190,7 +190,18 @@ const SppProcessResolver: React.FC<ISppProcessResolverProps> = ({
         // Filtered to interfaceType SPP above, so its settings are the SPP
         // plugin settings the proposal-creation guard reads.
         const plugin = sppProcess as IDaoPlugin<ISppPluginSettings>;
-        return <SppFriendlyCondition daoId={daoId} plugin={plugin} />;
+
+        // The guard hook calls one hook per stage body, so its hook count is a
+        // function of this plugin. Key by address so a different process
+        // remounts instead of re-rendering this instance with a different hook
+        // count, which React rejects.
+        return (
+            <SppFriendlyCondition
+                daoId={daoId}
+                key={plugin.address}
+                plugin={plugin}
+            />
+        );
     }
 
     return <DecodedRules rules={rules} />;
