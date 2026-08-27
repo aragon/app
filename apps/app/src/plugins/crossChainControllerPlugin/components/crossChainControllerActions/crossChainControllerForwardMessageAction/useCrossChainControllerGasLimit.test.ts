@@ -90,6 +90,9 @@ describe('useCrossChainControllerGasLimit hook', () => {
         await waitFor(() =>
             expect(onGasLimitChange).toHaveBeenCalledWith('296530'),
         );
+        expect(result.current.estimationAlert?.message).toEqual(
+            expect.stringContaining('simulated'),
+        );
     });
 
     it('does not resolve a gas limit when the requirement alone exceeds the cap', async () => {
@@ -125,6 +128,25 @@ describe('useCrossChainControllerGasLimit hook', () => {
         );
         expect(result.current.estimationAlert?.message).toEqual(
             expect.stringContaining('marginReduced'),
+        );
+    });
+
+    it('names the controller minimum instead of a recommended margin when the buffered estimate falls below the floor', async () => {
+        estimateGasLimitSpy.mockResolvedValue(
+            generateEstimation({ requiredGas: '140160' }),
+        );
+
+        const { result, onGasLimitChange } = renderGasLimitHook();
+
+        act(() => result.current.handleEstimateGasLimit());
+
+        // 140,160 x 1.3 = 182,208, below the 200,000 floor, so the floor sets the limit and a
+        // recommended-margin total would not be the number the field holds.
+        await waitFor(() =>
+            expect(onGasLimitChange).toHaveBeenCalledWith('200000'),
+        );
+        expect(result.current.estimationAlert?.message).toEqual(
+            expect.stringContaining('minimumApplied'),
         );
     });
 

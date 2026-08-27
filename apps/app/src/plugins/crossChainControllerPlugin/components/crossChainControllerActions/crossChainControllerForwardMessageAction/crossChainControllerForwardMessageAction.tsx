@@ -141,6 +141,8 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const {
         onChange: onGasLimitChange,
         value: gasLimit,
+        alert: gasLimitAlert,
+        label: gasLimitLabel,
         ...gasLimitField
     } = useFormField<ICrossChainControllerActionForwardMessage, 'gasLimit'>(
         'gasLimit',
@@ -364,58 +366,73 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             </InputContainer>
 
             {hasNestedActions && (
-                <div className="flex flex-col gap-3">
-                    <InputNumber
-                        helpText={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
-                        )}
-                        max={crossChainControllerGas.maxGasLimit}
-                        min={crossChainControllerGas.minGasLimit}
-                        onChange={onGasLimitChange}
-                        placeholder={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
-                        )}
-                        step={1000}
-                        value={gasLimit ?? ''}
-                        {...gasLimitField}
-                    />
-                    <Button
-                        disabled={destinationChainId == null}
-                        iconLeft={IconType.RELOAD}
-                        isLoading={isEstimating}
-                        onClick={handleEstimateGasLimit}
-                        size="md"
-                        type="button"
-                        variant="secondary"
-                    >
-                        {t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
-                        )}
-                    </Button>
-
-                    {(estimationAlert != null || simulationUrl != null) && (
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                            {estimationAlert != null && (
-                                <AlertInline
-                                    message={estimationAlert.message}
-                                    variant={estimationAlert.variant}
-                                />
-                            )}
-                            {simulationUrl != null && (
-                                <Link
-                                    className="shrink-0"
-                                    href={simulationUrl}
-                                    isExternal={true}
-                                    showUrl={false}
-                                >
-                                    {t(
-                                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
-                                    )}
-                                </Link>
-                            )}
-                        </div>
+                <InputContainer
+                    alert={gasLimitAlert}
+                    helpText={t(
+                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
                     )}
-                </div>
+                    id={`${actionFieldName}.gasLimit`}
+                    label={gasLimitLabel}
+                    useCustomWrapper={true}
+                >
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                            <div className="w-full md:max-w-60">
+                                <InputNumber
+                                    id={`${actionFieldName}.gasLimit`}
+                                    max={crossChainControllerGas.maxGasLimit}
+                                    min={crossChainControllerGas.minGasLimit}
+                                    onChange={onGasLimitChange}
+                                    placeholder={t(
+                                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
+                                    )}
+                                    step={1000}
+                                    value={gasLimit ?? ''}
+                                    {...gasLimitField}
+                                />
+                            </div>
+                            <Button
+                                className="text-nowrap"
+                                disabled={destinationChainId == null}
+                                iconLeft={IconType.RELOAD}
+                                isLoading={isEstimating}
+                                onClick={handleEstimateGasLimit}
+                                size="md"
+                                type="button"
+                                variant="secondary"
+                            >
+                                {t(
+                                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
+                                )}
+                            </Button>
+                        </div>
+
+                        {gasLimitAlert == null &&
+                            (estimationAlert != null ||
+                                simulationUrl != null) && (
+                                <div className="flex flex-wrap items-center gap-3">
+                                    {estimationAlert != null && (
+                                        <AlertInline
+                                            message={estimationAlert.message}
+                                            variant={estimationAlert.variant}
+                                        />
+                                    )}
+                                    {simulationUrl != null && (
+                                        <Link
+                                            className="shrink-0"
+                                            href={simulationUrl}
+                                            isExternal={true}
+                                            showUrl={false}
+                                        >
+                                            {t(
+                                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
+                                            )}
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+                    </div>
+                </InputContainer>
             )}
 
             <AlertCard

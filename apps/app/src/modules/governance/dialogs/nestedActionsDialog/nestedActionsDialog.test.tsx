@@ -297,7 +297,7 @@ describe('<NestedActionsDialog /> component', () => {
         ).toBeInTheDocument();
         expect(
             screen.getByText(
-                'These forwarded actions are executed as a batch within the action you are composing.',
+                'These forwarded actions are executed as a batch on the destination chain.',
             ),
         ).toBeInTheDocument();
         expect(
