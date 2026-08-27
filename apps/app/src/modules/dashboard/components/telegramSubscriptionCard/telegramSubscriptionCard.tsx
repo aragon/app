@@ -44,7 +44,7 @@ export const TelegramSubscriptionCard: React.FC<
             <Button
                 className="w-full"
                 href={subscribeUrl}
-                iconRight={IconType.LINK_EXTERNAL}
+                iconLeft={IconType.SOCIAL_TELEGRAM}
                 size="md"
                 target="_blank"
                 variant="secondary"

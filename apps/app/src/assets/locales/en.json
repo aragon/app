@@ -1673,8 +1673,8 @@
         }
       },
       "telegramSubscriptionCard": {
-        "action": "Subscribe on Telegram",
-        "description": "Get notified on Telegram about new proposals and other activity in this DAO.",
+        "action": "Subscribe",
+        "description": "Get notified on Telegram about new proposals and other activity.",
         "title": "Notifications"
       }
     },

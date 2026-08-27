@@ -2,4 +2,4 @@
 "@aragon/app": minor
 ---
 
-Add a Telegram subscription card to the DAO dashboard aside
+Add a Telegram notifications card to the DAO dashboard and proposals asides
