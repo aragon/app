@@ -2117,8 +2117,8 @@
         },
         "groupTab": "All proposals",
         "metadataAlert": {
-          "missing": "Metadata is missing",
-          "nonStandard": "Unexpected metadata format"
+          "missing": "Proposal metadata is missing",
+          "nonStandard": "Unexpected proposal metadata format"
         }
       },
       "daoProposalsPage": {
