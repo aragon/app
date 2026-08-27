@@ -96,10 +96,15 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     );
 
     const methods = useForm<INestedActionsFormData>({
-        mode: 'onTouched',
+        mode: 'onChange',
         defaultValues: { actions: initialActions },
     });
-    const { reset, trigger, getValues } = methods;
+    const {
+        reset,
+        trigger,
+        getValues,
+        formState: { isDirty, isValid },
+    } = methods;
 
     const requiresDecoding =
         initialActions.length > 0 &&
@@ -177,6 +182,8 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
     ]);
 
     const isLoadingActions = isDecoding || isLoadingAllowedActions;
+    const isSaveDisabled =
+        isLoadingActions || isPreparing || !isDirty || !isValid;
 
     const handleClose = () => close(location.id);
 
@@ -238,6 +245,17 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                             allowedActions={allowedActions}
                             daoId={crossChainNetwork ? undefined : hostDaoId}
                             excludeActionTypes={excludeActionTypes}
+                            initialOnlyShowAuthorizedActions={
+                                // The composer remounts with the dialog, so the switch would come back
+                                // on at every open and hide the actions already being edited. Rough
+                                // heuristic: start it off when nothing is authorized but there is
+                                // something to show. Undefined everywhere else, to keep the
+                                // composer's own default.
+                                initialActions.length > 0 &&
+                                allowedActions?.length === 0
+                                    ? false
+                                    : undefined
+                            }
                             network={crossChainNetwork}
                         />
                     )}
@@ -261,14 +279,11 @@ export const NestedActionsDialog: React.FC<INestedActionsDialogProps> = (
                 <Dialog.Footer
                     primaryAction={{
                         label: t('app.governance.nestedActionsDialog.save'),
-                        disabled: isLoadingActions,
+                        disabled: isSaveDisabled,
                         isLoading: isPreparing,
                         onClick: handleSave,
                     }}
-                    secondaryAction={{
-                        label: t('app.governance.nestedActionsDialog.cancel'),
-                        onClick: handleClose,
-                    }}
+                    variant="wizard"
                 />
             </CreateProposalFormProvider>
         </FormProvider>

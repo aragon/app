@@ -2,7 +2,6 @@
 
 import {
     AlertInline,
-    addressUtils,
     Button,
     Dropdown,
     IconType,
@@ -10,7 +9,7 @@ import {
     Switch,
 } from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
     type IDaoPermission,
     type Network,
@@ -26,6 +25,7 @@ import type { IVerifySmartContractDialogParams } from '../../../dialogs/verifySm
 import type { IWalletConnectActionDialogParams } from '../../../dialogs/walletConnectActionDialog';
 import { proposalActionsImportExportUtils } from '../../../utils/proposalActionsImportExportUtils';
 import type { IProposalActionData } from '../../createProposalForm';
+import { useImportedContractAbis } from '../../importedContractAbisProvider';
 import {
     ActionComposerInput,
     type IActionComposerInputItem,
@@ -87,6 +87,14 @@ export interface IActionComposerProps
      * When true, shows retry option in dropdown.
      */
     hasPinErrors?: boolean;
+    /**
+     * Initial state of the authorized-actions switch, read on mount only. The user can toggle the
+     * switch freely afterwards, so this restricts nothing on its own - `allowedActions` is what
+     * narrows the offering. Defaults to `allowedActions != null`; leave it undefined to keep that
+     * default and only set it where the switch state cannot survive, i.e. the nested actions dialog,
+     * which remounts the composer on every open.
+     */
+    initialOnlyShowAuthorizedActions?: boolean;
 }
 
 export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
@@ -103,6 +111,9 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
         onRemoveAllActions,
         isPinning = false,
         hasPinErrors = false,
+        // An empty list means nothing is authorized, only an undefined list means unrestricted, so the
+        // callers must leave it undefined when no plugin restricts the actions.
+        initialOnlyShowAuthorizedActions = allowedActions != null,
     } = props;
 
     invariant(
@@ -131,32 +142,16 @@ export const ActionComposer: React.FC<IActionComposerProps> = (props) => {
     const fileUploadInputRef = useRef<HTMLInputElement | null>(null);
 
     const [displayActionComposer, setDisplayActionComposer] = useState(false);
-    // An empty list means nothing is authorized, only an undefined list means unrestricted, so the
-    // callers must leave it undefined when no plugin restricts the actions.
     const [onlyShowAuthorizedActions, setOnlyShowAuthorizedActions] = useState(
-        allowedActions != null,
+        initialOnlyShowAuthorizedActions,
     );
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [isUploadLoading, setIsUploadLoading] = useState(false);
 
-    const [importedContractAbis, setImportedContractAbis] = useState<
-        ISmartContractAbi[]
-    >([]);
-
-    const addImportedContractAbi = useCallback(
-        (abi: ISmartContractAbi) =>
-            setImportedContractAbis((current) => {
-                const alreadyExists = current.some((currentAbi) =>
-                    addressUtils.isAddressEqual(
-                        currentAbi.address,
-                        abi.address,
-                    ),
-                );
-
-                return alreadyExists ? current : [abi, ...current];
-            }),
-        [],
-    );
+    // Kept outside the composer state as the composer unmounts with the dialog hosting it, which
+    // would otherwise drop the imported contracts on every close of the nested actions dialog.
+    const { abis: importedContractAbis, addAbi: addImportedContractAbi } =
+        useImportedContractAbis(resolvedNetwork);
 
     const handleAddAction = () => {
         setUploadError(null);
