@@ -8,12 +8,14 @@ import { UnrecognizedConditionSlot } from '../unrecognizedConditionSlot';
 
 export interface IPermissionConditionProps {
     chainId?: number;
+    daoId?: string;
     network?: Network;
     row: IDaoPermission;
 }
 
 export const PermissionCondition: React.FC<IPermissionConditionProps> = ({
     chainId,
+    daoId,
     network,
     row,
 }) => {
@@ -23,6 +25,7 @@ export const PermissionCondition: React.FC<IPermissionConditionProps> = ({
         <PluginSingleComponent
             chainId={chainId}
             conditionAddress={address}
+            daoId={daoId}
             Fallback={UnrecognizedConditionSlot}
             network={network}
             pluginAddress={row.whoAddress}

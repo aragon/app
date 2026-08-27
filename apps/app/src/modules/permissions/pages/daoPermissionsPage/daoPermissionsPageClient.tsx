@@ -213,23 +213,6 @@ export const DaoPermissionsPageClient: React.FC<
                                         value={PermissionsView.GRAPH}
                                     />
                                 </ToggleGroup>
-                                {showExpandAll && (
-                                    <Button
-                                        className="hidden md:inline-flex"
-                                        onClick={handleToggleAll}
-                                        responsiveSize={{ md: 'md' }}
-                                        size="sm"
-                                        variant="tertiary"
-                                    >
-                                        {allExpanded
-                                            ? t(
-                                                  'app.settings.permissionsList.collapseAll',
-                                              )
-                                            : t(
-                                                  'app.settings.permissionsList.expandAll',
-                                              )}
-                                    </Button>
-                                )}
                             </div>
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
                                 <div className="flex items-center gap-1">
@@ -276,6 +259,7 @@ export const DaoPermissionsPageClient: React.FC<
                             <PermissionsList
                                 accountRefs={accountRefs}
                                 chainId={chainId}
+                                daoId={daoId}
                                 daoPlugins={daoPlugins}
                                 expandedRows={expandedRows}
                                 isLoading={isLoading}
@@ -291,6 +275,24 @@ export const DaoPermissionsPageClient: React.FC<
                                 isLoading={isLoading}
                                 rows={filteredRows}
                             />
+                        )}
+                        {isListView && showExpandAll && (
+                            <div className="flex justify-end">
+                                <Button
+                                    onClick={handleToggleAll}
+                                    responsiveSize={{ md: 'md' }}
+                                    size="sm"
+                                    variant="tertiary"
+                                >
+                                    {allExpanded
+                                        ? t(
+                                              'app.settings.permissionsList.collapseAll',
+                                          )
+                                        : t(
+                                              'app.settings.permissionsList.expandAll',
+                                          )}
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </Page.Main>
