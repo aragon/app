@@ -1673,6 +1673,11 @@
           "viewAdmins": "View admins",
           "welcome": "Welcome"
         }
+      },
+      "telegramSubscriptionCard": {
+        "action": "Subscribe",
+        "description": "Get notified on Telegram about new proposals and other activity.",
+        "title": "Notifications"
       }
     },
     "explore": {

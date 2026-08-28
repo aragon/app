@@ -25,6 +25,12 @@ jest.mock('@/modules/settings/components/daoPluginInfo', () => ({
     DaoPluginInfo: () => <div data-testid="plugin-info-mock" />,
 }));
 
+jest.mock('@/modules/dashboard/components/telegramSubscriptionCard', () => ({
+    TelegramSubscriptionCard: () => (
+        <div data-testid="telegram-subscription-mock" />
+    ),
+}));
+
 jest.mock('next/navigation', () => ({
     useRouter: jest.fn(),
     useSearchParams: jest.fn(() => new URLSearchParams()),
@@ -89,6 +95,9 @@ describe('<DaoProposalsPageClient /> component', () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId('proposal-list-mock')).toBeInTheDocument();
         expect(screen.getByTestId('plugin-info-mock')).toBeInTheDocument();
+        expect(
+            screen.getByTestId('telegram-subscription-mock'),
+        ).toBeInTheDocument();
     });
 
     it('renders the create proposal button with the correct link and label', () => {

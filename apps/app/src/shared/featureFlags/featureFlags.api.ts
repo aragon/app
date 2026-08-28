@@ -19,7 +19,8 @@ export type FeatureFlagKey =
     | 'enableAllPlugins'
     | 'existingProposalCreationCondition'
     | 'aragonProfiles'
-    | 'supportChat';
+    | 'supportChat'
+    | 'telegramSubscription';
 
 /**
  * Feature flag definition structure.

@@ -158,4 +158,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'telegramSubscription',
+        name: 'Telegram subscription',
+        description:
+            'Enables the Telegram subscription card on the DAO dashboard aside, linking to the notification bot.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
 ];

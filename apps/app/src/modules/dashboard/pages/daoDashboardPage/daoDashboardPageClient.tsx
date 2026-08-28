@@ -27,6 +27,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
 import { DashboardOnboarded } from '../../components/dashboardOnboarded';
 import { DashboardOnboarding } from '../../components/dashboardOnboarding';
+import { TelegramSubscriptionCard } from '../../components/telegramSubscriptionCard';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
 export interface IDaoDashboardPageClientProps {
@@ -187,6 +188,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             ))}
                         </Page.AsideCard>
                     )}
+                    <TelegramSubscriptionCard daoId={dao.id} />
                 </Page.Aside>
             </Page.Content>
         </>
