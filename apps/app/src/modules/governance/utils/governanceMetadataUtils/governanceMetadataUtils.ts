@@ -30,7 +30,9 @@ class GovernanceMetadataUtils {
                 queryParams: { daoId },
             });
 
-            const title = `${proposalSlug}: ${proposal.title}`;
+            const title = proposal.title
+                ? `${proposalSlug}: ${proposal.title}`
+                : proposalSlug;
             const description = proposal.summary;
             const dao = await daoService.getDao({ urlParams: { id: daoId } });
             const siteName = `${dao.name} | Governed on Aragon`;

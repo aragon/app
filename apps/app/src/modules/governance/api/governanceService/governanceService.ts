@@ -99,7 +99,10 @@ class GovernanceService extends AragonBackendService {
         return {
             ...result,
             data: result.data.map((proposal) =>
-                this.attachTotalSupply(proposal, tokensTotalSupply),
+                this.attachTotalSupply(
+                    this.normalizeMetadata(proposal),
+                    tokensTotalSupply,
+                ),
             ),
         };
     };
@@ -118,7 +121,33 @@ class GovernanceService extends AragonBackendService {
                 ? {}
                 : await fetchTokensTotalSupply(proposal.network, addresses);
 
-        return this.attachTotalSupply(proposal, tokensTotalSupply);
+        return this.attachTotalSupply(
+            this.normalizeMetadata(proposal),
+            tokensTotalSupply,
+        );
+    };
+
+    // The backend leaves title and summary unset when the proposal metadata cannot be resolved,
+    // normalize them here so the rest of the app can rely on them being strings.
+    private normalizeMetadata = <TProposal extends IProposal>(
+        proposal: TProposal,
+    ): TProposal => {
+        const normalized = {
+            ...proposal,
+            title: proposal.title ?? '',
+            summary: proposal.summary ?? '',
+        };
+
+        if (sppProposalUtils.isSppProposal(normalized)) {
+            return {
+                ...normalized,
+                subProposals: normalized.subProposals.map((subProposal) =>
+                    this.normalizeMetadata(subProposal),
+                ),
+            };
+        }
+
+        return normalized;
     };
 
     private attachTotalSupply = <TProposal extends IProposal>(
@@ -175,7 +204,21 @@ class GovernanceService extends AragonBackendService {
             params,
         );
 
-        return result;
+        return {
+            ...result,
+            data: result.data.map((vote) => ({
+                ...vote,
+                proposal: vote.proposal
+                    ? this.normalizeMetadata(vote.proposal)
+                    : undefined,
+                parentProposal: vote.parentProposal
+                    ? {
+                          ...vote.parentProposal,
+                          title: vote.parentProposal.title ?? '',
+                      }
+                    : undefined,
+            })),
+        };
     };
 }
 

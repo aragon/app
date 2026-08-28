@@ -70,6 +70,40 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         expect(screen.getByText(proposal.summary)).toBeInTheDocument();
     });
 
+    it('renders a warning when the proposal metadata is a non-standard string', () => {
+        const proposal = generateProposal({
+            title: '',
+            summary: '',
+            metadataUri: 'raw-metadata-string',
+        });
+        render(createTestComponent({ proposal }));
+        expect(
+            screen.getByText(
+                'app.governance.daoProposalList.metadataAlert.nonStandard',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('renders a warning when the proposal metadata is missing', () => {
+        const proposal = generateProposal({
+            title: '',
+            summary: '',
+            metadataUri: null,
+        });
+        render(createTestComponent({ proposal }));
+        expect(
+            screen.getByText(
+                'app.governance.daoProposalList.metadataAlert.missing',
+            ),
+        ).toBeInTheDocument();
+    });
+
+    it('falls back to the proposal slug as title when the metadata is not resolved', () => {
+        const proposal = generateProposal({ title: '', summary: '' });
+        render(createTestComponent({ proposal, proposalSlug: 'admin-2' }));
+        expect(screen.getByText('ADMIN-2')).toBeInTheDocument();
+    });
+
     it('uses the plugin slot-function to process the proposal status', () => {
         const status = ProposalStatus.EXECUTABLE;
         useSlotSingleFunctionSpy.mockReturnValue(status);

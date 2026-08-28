@@ -192,3 +192,12 @@
 {"ts":"2026-08-24T19:53:11.102Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/queries/useDao.test.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-24T19:53:11.102Z","tool":"Edit","file":"apps/app/src/shared/api/daoService/queries/useDao.test.ts","rule":"test-scope-and-selectors","bytes":2794,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-24T19:56:25.220Z","tool":"Write","file":".agents/shared/skills/rules/test-scope-and-selectors.md","rule":"rule-authoring","bytes":2672,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-08-27T19:04:12.988Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/domain/proposal.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":4,"adapter":"claude"}
+{"ts":"2026-08-27T19:04:14.422Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/domain/proposal.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-08-27T19:05:10.533Z","tool":"Edit","file":"apps/app/src/modules/governance/utils/governanceMetadataUtils/governanceMetadataUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-27T19:11:51.985Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/domain/proposal.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":8,"adapter":"claude"}
+{"ts":"2026-08-27T19:11:54.026Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/domain/proposal.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":1,"adapter":"claude"}
+{"ts":"2026-08-27T19:12:01.370Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/governanceService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-08-27T19:12:05.555Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/governanceService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":3,"adapter":"claude"}
+{"ts":"2026-08-27T19:12:08.000Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/governanceService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
+{"ts":"2026-08-27T19:12:23.402Z","tool":"Edit","file":"apps/app/src/modules/governance/utils/governanceMetadataUtils/governanceMetadataUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}

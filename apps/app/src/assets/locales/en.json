@@ -2105,6 +2105,10 @@
             "readLess": "Read less",
             "readMore": "Read more"
           },
+          "metadataAlert": {
+            "missing": "Proposal metadata is missing",
+            "nonStandard": "Unexpected proposal metadata format"
+          },
           "voting": "Voting"
         }
       },
@@ -2118,7 +2122,11 @@
           "description": "There was an error loading the DAO proposals. Try again later.",
           "title": "Error loading proposals"
         },
-        "groupTab": "All proposals"
+        "groupTab": "All proposals",
+        "metadataAlert": {
+          "missing": "Proposal metadata is missing",
+          "nonStandard": "Unexpected proposal metadata format"
+        }
       },
       "daoProposalsPage": {
         "aside": {

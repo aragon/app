@@ -1,12 +1,20 @@
-import { ProposalDataListItem, type ProposalStatus } from '@aragon/gov-ui-kit';
+import {
+    AlertInline,
+    ProposalDataListItem,
+    type ProposalStatus,
+} from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
 import type { IProposal } from '@/modules/governance/api/governanceService';
 import type { IDao } from '@/shared/api/daoService';
+import { useTranslations } from '@/shared/components/translationsProvider';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { GovernanceSlotId } from '../../constants/moduleSlots';
 import { useUserVote } from '../../hooks/useUserVote';
-import { proposalUtils } from '../../utils/proposalUtils';
+import {
+    ProposalMetadataStatus,
+    proposalUtils,
+} from '../../utils/proposalUtils';
 
 export interface IDaoProposalListDefaultItemProps<
     TProposal extends IProposal = IProposal,
@@ -30,9 +38,10 @@ export const DaoProposalListDefaultItem: React.FC<
 > = (props) => {
     const { proposal, dao, proposalSlug } = props;
 
+    const { t } = useTranslations();
+
     const {
         id,
-        title,
         summary,
         executed,
         endDate,
@@ -58,6 +67,10 @@ export const DaoProposalListDefaultItem: React.FC<
     const { data: publisherEnsName } = useEnsName(creator.address);
     const publisherName = publisherEnsName ?? undefined;
 
+    const metadataStatus = proposalUtils.getMetadataStatus(proposal);
+    const hasStandardMetadata =
+        metadataStatus === ProposalMetadataStatus.STANDARD;
+
     return (
         <ProposalDataListItem.Structure
             className="min-w-0"
@@ -72,8 +85,17 @@ export const DaoProposalListDefaultItem: React.FC<
             }}
             status={proposalStatus}
             summary={summary}
-            title={title}
+            title={proposalUtils.getDisplayTitle(proposal, proposalSlug)}
             voted={userVote != null}
-        />
+        >
+            {!hasStandardMetadata && (
+                <AlertInline
+                    message={t(
+                        `app.governance.daoProposalList.metadataAlert.${metadataStatus}`,
+                    )}
+                    variant="warning"
+                />
+            )}
+        </ProposalDataListItem.Structure>
     );
 };

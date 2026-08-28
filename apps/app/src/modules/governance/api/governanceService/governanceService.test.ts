@@ -15,6 +15,7 @@ import {
     generateProposal,
     generateVote,
 } from '../../testUtils';
+import type { IProposal, IVote } from './domain';
 import { governanceService } from './governanceService';
 import * as fetchTokensTotalSupplyHelpers from './utils/fetchTokensTotalSupply';
 
@@ -311,6 +312,52 @@ describe('governance service', () => {
         expect(result.tokensTotalSupply).toBeUndefined();
     });
 
+    it('getProposalBySlug normalizes unset title and summary to empty strings', async () => {
+        const proposal = {
+            ...generateProposal({ id: '004' }),
+            title: null,
+            summary: null,
+        } as unknown as IProposal;
+        const proposalParams = {
+            urlParams: { slug: '004' },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+
+        const result =
+            await governanceService.getProposalBySlug(proposalParams);
+
+        expect(result.title).toEqual('');
+        expect(result.summary).toEqual('');
+    });
+
+    it('getProposalBySlug normalizes the metadata of SPP sub-proposals', async () => {
+        const subProposal = {
+            ...generateMultisigProposal({ id: 'sub-multisig' }),
+            stageIndex: 0,
+            title: null,
+            summary: null,
+        } as unknown as ISppProposal['subProposals'][number];
+        const proposal = generateSppProposal({
+            id: '005',
+            pluginInterfaceType: PluginInterfaceType.SPP,
+            subProposals: [subProposal],
+        });
+        const proposalParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+
+        const result =
+            await governanceService.getProposalBySlug<ISppProposal>(
+                proposalParams,
+            );
+
+        expect(result.subProposals[0].title).toEqual('');
+        expect(result.subProposals[0].summary).toEqual('');
+    });
+
     it('getCanCreateProposal fetches if the member can create a proposal on the specified plugin', async () => {
         const canCreateProposal = true;
         const params = {
@@ -332,10 +379,12 @@ describe('governance service', () => {
     });
 
     it('getVoteList fetches the votes of a specific proposal', async () => {
-        const votes = [
-            generateVote({ transactionHash: '0' }),
-            generateVote({ transactionHash: '1' }),
-        ];
+        const votes = generatePaginatedResponse({
+            data: [
+                generateVote({ transactionHash: '0' }),
+                generateVote({ transactionHash: '1' }),
+            ],
+        });
         const params = {
             queryParams: {
                 proposalId: 'proposal-id',
@@ -352,5 +401,42 @@ describe('governance service', () => {
             params,
         );
         expect(result).toEqual(votes);
+    });
+
+    it('getVoteList normalizes the metadata of the proposals attached to the votes', async () => {
+        const proposal = {
+            ...generateProposal({ id: '0' }),
+            title: null,
+            summary: null,
+        } as unknown as IProposal;
+        const parentProposal = {
+            id: '1',
+            pluginAddress: '0x123',
+            incrementalId: 1,
+            title: null,
+        } as unknown as IVote['parentProposal'];
+        const votes = generatePaginatedResponse({
+            data: [
+                generateVote({
+                    transactionHash: '0',
+                    proposal,
+                    parentProposal,
+                }),
+            ],
+        });
+        const params = {
+            queryParams: {
+                proposalId: 'proposal-id',
+                pluginAddress: '0x123',
+                network: Network.BASE_MAINNET,
+            },
+        };
+
+        requestSpy.mockResolvedValue(votes);
+        const result = await governanceService.getVoteList(params);
+
+        expect(result.data[0].proposal?.title).toEqual('');
+        expect(result.data[0].proposal?.summary).toEqual('');
+        expect(result.data[0].parentProposal?.title).toEqual('');
     });
 });
