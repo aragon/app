@@ -1,8 +1,4 @@
-import {
-    AddressOutput,
-    ChainEntityType,
-    DefinitionList,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -42,14 +38,14 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                 description={t('app.settings.daoVersionInfo.osValue', {
                     version: dao.version,
                 })}
-                link={{ isOnchainEntity: true }}
+                link={{
+                    href: daoLink,
+                    isExternal: false,
+                    isOnchainEntity: true,
+                }}
                 term={t('app.settings.daoVersionInfo.osLabel')}
             >
-                <AddressOutput
-                    address={dao.address}
-                    href={daoLink}
-                    isExternal={false}
-                />
+                {dao.address}
             </DefinitionList.Item>
             {processPlugins?.map((plugin) => (
                 <DefinitionList.Item
@@ -62,16 +58,16 @@ export const DaoVersionInfo: React.FC<IDaoVersionInfoProps> = (props) => {
                         },
                     )}
                     key={plugin.uniqueId}
-                    link={{ isOnchainEntity: true }}
-                    term={daoUtils.getPluginName(plugin.meta)}
-                >
-                    <AddressOutput
-                        address={plugin.meta.address}
-                        href={buildEntityUrl({
+                    link={{
+                        href: buildEntityUrl({
                             type: ChainEntityType.ADDRESS,
                             id: plugin.meta.address,
-                        })}
-                    />
+                        }),
+                        isOnchainEntity: true,
+                    }}
+                    term={daoUtils.getPluginName(plugin.meta)}
+                >
+                    {plugin.meta.address}
                 </DefinitionList.Item>
             ))}
         </DefinitionList.Container>

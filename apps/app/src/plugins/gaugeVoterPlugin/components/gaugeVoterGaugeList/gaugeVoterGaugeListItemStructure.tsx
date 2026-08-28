@@ -162,15 +162,12 @@ export const GaugeVoterGaugeListItemStructure: React.FC<
                     <p className="truncate text-base text-neutral-800 md:text-lg">
                         <AddressOutput
                             address={gauge.address}
-                            hasInteractiveAncestor={true}
+                            copy={false}
                             label={gauge.name ?? undefined}
                         />
                     </p>
                     <p className="truncate text-neutral-500 text-sm">
-                        <AddressOutput
-                            address={gauge.address}
-                            hasInteractiveAncestor={true}
-                        />
+                        <AddressOutput address={gauge.address} />
                     </p>
                 </div>
             </div>

@@ -18,17 +18,7 @@ export const PermissionEntityCell: React.FC<IPermissionEntityCellProps> = ({
     entity,
 }) => (
     <span className="flex min-w-0 items-center gap-2 text-neutral-800">
-        {/* Unresolved entities are labelled with their own truncated address,
-            so that case renders as an address instead of a name. */}
-        {entity.label === addressUtils.truncateAddress(entity.address) ? (
-            <AddressOutput
-                address={entity.address}
-                className="truncate"
-                hasInteractiveAncestor={true}
-            />
-        ) : (
-            <span className="truncate">{entity.label}</span>
-        )}
+        <AddressOutput address={entity.address} label={entity.label} />
         {entity.type === 'dao' && (
             <DaoAvatar name={entity.label} size="sm" src={entity.avatarSrc} />
         )}

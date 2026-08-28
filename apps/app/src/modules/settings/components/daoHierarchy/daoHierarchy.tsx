@@ -1,6 +1,5 @@
 import {
     Accordion,
-    AddressOutput,
     Card,
     ChainEntityType,
     Collapsible,
@@ -62,38 +61,38 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
             </DefinitionList.Item>
             {hasEns ? (
                 <DefinitionList.Item
+                    copyValue={dao.address}
+                    description={t(
+                        'app.settings.daoSettingsInfo.notChangeable',
+                    )}
+                    link={{
+                        href: buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: dao.address,
+                        }),
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoSettingsInfo.ens')}
                 >
-                    <div className="flex flex-col gap-1">
-                        <AddressOutput
-                            address={dao.address}
-                            href={buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: dao.address,
-                            })}
-                            label={dao.ens ?? undefined}
-                        />
-                        <p className="font-normal text-neutral-400 text-sm leading-tight">
-                            {t('app.settings.daoSettingsInfo.notChangeable')}
-                        </p>
-                    </div>
+                    {dao.ens}
                 </DefinitionList.Item>
             ) : (
                 <DefinitionList.Item
+                    description={t(
+                        'app.settings.daoSettingsInfo.notChangeable',
+                    )}
+                    link={{
+                        href: buildEntityUrl({
+                            type: ChainEntityType.ADDRESS,
+                            id: dao.address,
+                        }),
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoSettingsInfo.address')}
                 >
-                    <div className="flex flex-col gap-1">
-                        <AddressOutput
-                            address={dao.address}
-                            href={buildEntityUrl({
-                                type: ChainEntityType.ADDRESS,
-                                id: dao.address,
-                            })}
-                        />
-                        <p className="font-normal text-neutral-400 text-sm leading-tight">
-                            {t('app.settings.daoSettingsInfo.notChangeable')}
-                        </p>
-                    </div>
+                    {dao.address}
                 </DefinitionList.Item>
             )}
             {dao.description && (

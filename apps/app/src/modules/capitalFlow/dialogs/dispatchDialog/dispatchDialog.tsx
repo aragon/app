@@ -1,5 +1,4 @@
 import {
-    AddressOutput,
     addressUtils,
     Button,
     Card,
@@ -179,15 +178,15 @@ export const DispatchDialog: React.FC<IDispatchDialogProps> = (props) => {
                         <DefinitionList.Container>
                             <DefinitionList.Item
                                 description={typeName}
-                                link={{ isOnchainEntity: true }}
+                                link={{
+                                    href: policyAddressLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.capitalFlow.dispatchDialog.routerAddress',
                                 )}
                             >
-                                <AddressOutput
-                                    address={policy.address}
-                                    href={policyAddressLink}
-                                />
+                                {policy.address}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
                     </Card>

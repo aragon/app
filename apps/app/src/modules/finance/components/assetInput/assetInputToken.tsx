@@ -25,7 +25,6 @@ export const AssetInputToken: React.FC<IAssetInputTokenProps> = (props) => {
             {token ? (
                 <AddressOutput
                     address={token.address}
-                    hasInteractiveAncestor={true}
                     label={token.symbol || undefined}
                 />
             ) : (

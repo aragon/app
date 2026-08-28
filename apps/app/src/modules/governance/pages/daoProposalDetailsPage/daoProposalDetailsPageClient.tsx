@@ -2,7 +2,6 @@
 
 import {
     ActionSimulation,
-    AddressOutput,
     CardCollapsible,
     ChainEntityType,
     DateFormat,
@@ -376,16 +375,20 @@ export const DaoProposalDetailsPageClient: React.FC<
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                link={{ isOnchainEntity: true }}
+                                copyValue={
+                                    creatorEnsName != null
+                                        ? creator.address
+                                        : undefined
+                                }
+                                link={{
+                                    href: creatorLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.governance.daoProposalDetailsPage.aside.details.creator',
                                 )}
                             >
-                                <AddressOutput
-                                    address={creator.address}
-                                    href={creatorLink}
-                                    label={creatorEnsName ?? undefined}
-                                />
+                                {creatorEnsName ?? creator.address}
                             </DefinitionList.Item>
                             <DefinitionList.Item
                                 link={{

@@ -1,11 +1,9 @@
 'use client';
 
 import {
-    AddressOutput,
     Avatar,
     addressUtils,
     ChainEntityType,
-    Clipboard,
     DateFormat,
     DefinitionList,
     formatterUtils,
@@ -187,20 +185,13 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                copyValue={tokenSymbol ? payoutTokenAddress : undefined}
+                link={{ href: payoutTokenLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.assetTerm',
                 )}
             >
-                <AddressOutput
-                    address={payoutTokenAddress}
-                    href={payoutTokenLink}
-                    label={
-                        tokenSymbol
-                            ? `${tokenSymbol} (${addressUtils.truncateAddress(payoutTokenAddress)})`
-                            : undefined
-                    }
-                />
+                {tokenSymbol ?? payoutTokenAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
@@ -210,13 +201,12 @@ export const CapitalDistributorCreateCampaignActionDetails: React.FC<
                 {t(payoutTypeKey)}
             </DefinitionList.Item>
             <DefinitionList.Item
+                link={{ isOnchainEntity: true }}
                 term={t(
                     'app.actions.capitalDistributor.capitalDistributorCreateCampaignActionDetails.merkleRootTerm',
                 )}
             >
-                <Clipboard copyValue={merkleRoot}>
-                    {addressUtils.truncateHash(merkleRoot)}
-                </Clipboard>
+                {merkleRoot}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(

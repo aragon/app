@@ -1,4 +1,8 @@
-import { AddressOutput, DaoAvatar } from '@aragon/gov-ui-kit';
+import {
+    AddressOutput,
+    DaoAvatar,
+    InteractiveAncestorContext,
+} from '@aragon/gov-ui-kit';
 import classNames from 'classnames';
 import type { ComponentProps } from 'react';
 import type { IDao } from '@/shared/api/daoService';
@@ -28,15 +32,15 @@ export const NavigationDaoHome: React.FC<INavigationDaoHome> = (props) => {
 
     return (
         <button className={buttonClassName} {...otherProps}>
-            <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
-            <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
-                <AddressOutput
-                    address={dao.address}
-                    className="truncate"
-                    hasInteractiveAncestor={true}
-                    label={daoName || undefined}
-                />
-            </p>
+            <InteractiveAncestorContext.Provider value={true}>
+                <DaoAvatar name={daoDisplayName} size="lg" src={daoAvatar} />
+                <p className="hidden truncate font-normal text-base text-neutral-800 leading-tight md:block">
+                    <AddressOutput
+                        address={dao.address}
+                        label={daoName || undefined}
+                    />
+                </p>
+            </InteractiveAncestorContext.Provider>
         </button>
     );
 };

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     Avatar,
     ChainEntityType,
     DefinitionList,
@@ -47,12 +46,12 @@ export const GaugeVoterUpdateGaugeMetadataActionDetails: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                link={{ href: gaugeAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeVoter.gaugeVoterUpdateGaugeMetadataActionDetails.gaugeAddressTerm',
                 )}
             >
-                <AddressOutput address={gaugeAddress} href={gaugeAddressLink} />
+                {gaugeAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(

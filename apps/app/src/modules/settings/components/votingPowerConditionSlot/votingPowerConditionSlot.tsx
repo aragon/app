@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     addressUtils,
     ChainEntityType,
     DefinitionList,
@@ -69,14 +68,18 @@ export const VotingPowerConditionSlot: React.FC<
     return (
         <DefinitionList.Container>
             <DefinitionList.Item
-                link={tokenUrl != null ? { isOnchainEntity: true } : undefined}
+                link={
+                    tokenUrl != null
+                        ? {
+                              href: tokenUrl,
+                              isExternal: true,
+                              isOnchainEntity: true,
+                          }
+                        : undefined
+                }
                 term={t('app.settings.votingPowerConditionSlot.token')}
             >
-                {tokenAddress != null ? (
-                    <AddressOutput address={tokenAddress} href={tokenUrl} />
-                ) : (
-                    EMPTY_VALUE
-                )}
+                {tokenAddress ?? EMPTY_VALUE}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t('app.settings.votingPowerConditionSlot.minVotingPower')}

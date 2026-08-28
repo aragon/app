@@ -1,5 +1,4 @@
 import {
-    AddressOutput,
     Button,
     ChainEntityType,
     DefinitionList,
@@ -63,16 +62,17 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 {hasLinkedAccounts && targetAddress != null && (
                     <DefinitionList.Item
                         description={targetName}
-                        link={{ isOnchainEntity: true }}
-                        term={t('app.settings.daoPolicyDetailsInfo.target')}
-                    >
-                        <AddressOutput
-                            address={targetAddress}
-                            href={buildEntityUrl({
+                        link={{
+                            href: buildEntityUrl({
                                 type: ChainEntityType.ADDRESS,
                                 id: targetAddress,
-                            })}
-                        />
+                            }),
+                            isExternal: true,
+                            isOnchainEntity: true,
+                        }}
+                        term={t('app.settings.daoPolicyDetailsInfo.target')}
+                    >
+                        {targetAddress}
                     </DefinitionList.Item>
                 )}
 

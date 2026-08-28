@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     Avatar,
     ChainEntityType,
     DefinitionList,
@@ -114,15 +113,12 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                link={{ href: qiTokenAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.qiTokenTerm',
                 )}
             >
-                <AddressOutput
-                    address={qiTokenAddress}
-                    href={qiTokenAddressLink}
-                />
+                {qiTokenAddress}
             </DefinitionList.Item>
             <DefinitionList.Item
                 term={t(
@@ -134,15 +130,15 @@ export const GaugeRegistrarRegisterGaugeActionDetails: React.FC<
                     : 'Borrow'}
             </DefinitionList.Item>
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                link={{
+                    href: rewardControllerAddressLink,
+                    isOnchainEntity: true,
+                }}
                 term={t(
                     'app.actions.gaugeRegistrar.gaugeRegistrarRegisterGaugeActionDetails.rewardControllerTerm',
                 )}
             >
-                <AddressOutput
-                    address={rewardControllerAddress}
-                    href={rewardControllerAddressLink}
-                />
+                {rewardControllerAddress}
             </DefinitionList.Item>
         </DefinitionList.Container>
     );

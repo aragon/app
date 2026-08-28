@@ -1,5 +1,4 @@
 import {
-    AddressOutput,
     Button,
     ChainEntityType,
     DateFormat,
@@ -120,26 +119,31 @@ export const DaoPolicyDetailsInfo: React.FC<IDaoPolicyDetailsInfoProps> = (
                 {/* Plugin address */}
                 <DefinitionList.Item
                     description={`${policyName} v${policy.release}.${policy.build}`}
-                    link={{ isOnchainEntity: true }}
+                    link={{
+                        href: pluginLink,
+                        isExternal: true,
+                        isOnchainEntity: true,
+                    }}
                     term={t('app.settings.daoPolicyDetailsInfo.pluginAddress')}
                 >
-                    <AddressOutput address={policy.address} href={pluginLink} />
+                    {policy.address}
                 </DefinitionList.Item>
 
                 {/* Target */}
                 {policy.daoAddress && (
                     <DefinitionList.Item
                         description={targetName}
-                        link={{ isOnchainEntity: true }}
-                        term={t('app.settings.daoPolicyDetailsInfo.target')}
-                    >
-                        <AddressOutput
-                            address={policy.daoAddress}
-                            href={buildEntityUrl({
+                        link={{
+                            href: buildEntityUrl({
                                 type: ChainEntityType.ADDRESS,
                                 id: policy.daoAddress,
-                            })}
-                        />
+                            }),
+                            isExternal: true,
+                            isOnchainEntity: true,
+                        }}
+                        term={t('app.settings.daoPolicyDetailsInfo.target')}
+                    >
+                        {policy.daoAddress}
                     </DefinitionList.Item>
                 )}
 

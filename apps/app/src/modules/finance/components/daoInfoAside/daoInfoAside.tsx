@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     Button,
     ChainEntityType,
     Collapsible,
@@ -74,15 +73,15 @@ export const DaoInfoAside: React.FC<IDaoInfoAsideProps> = (props) => {
                         {networkDefinitions[resolvedNetwork].name}
                     </DefinitionList.Item>
                     <DefinitionList.Item
-                        link={{ isOnchainEntity: true }}
+                        link={{
+                            href: pluginAddressLink,
+                            isOnchainEntity: true,
+                        }}
                         term={t(
                             'app.finance.transactionLinkedAccountInfo.address',
                         )}
                     >
-                        <AddressOutput
-                            address={resolvedAddress}
-                            href={pluginAddressLink}
-                        />
+                        {resolvedAddress}
                     </DefinitionList.Item>
                 </DefinitionList.Container>
 

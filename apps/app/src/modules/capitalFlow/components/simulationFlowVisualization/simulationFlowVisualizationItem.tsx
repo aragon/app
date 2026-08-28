@@ -103,6 +103,7 @@ const ItemAddress: React.FC<IItemAddressProps> = ({
                 address={item.address}
                 className="w-fit"
                 href={addressHref}
+                isExternal={true}
                 label={item.ens ?? undefined}
             />
         )}

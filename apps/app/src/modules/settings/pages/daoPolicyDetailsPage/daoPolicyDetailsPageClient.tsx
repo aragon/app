@@ -1,9 +1,7 @@
 'use client';
 
 import {
-    AddressOutput,
     AvatarIcon,
-    addressUtils,
     Card,
     ChainEntityType,
     DataList,
@@ -130,32 +128,28 @@ export const DaoPolicyDetailsPageClient: React.FC<
 
                                     return (
                                         <DefinitionList.Item
+                                            copyValue={setting.copyValue}
                                             description={setting.description}
                                             key={setting.term}
                                             link={
-                                                setting.link ??
-                                                (addressLink != null
-                                                    ? { isOnchainEntity: true }
-                                                    : undefined)
+                                                addressLink != null
+                                                    ? {
+                                                          ...setting.link,
+                                                          href:
+                                                              setting.link
+                                                                  ?.href ??
+                                                              addressLink,
+                                                          isExternal:
+                                                              setting.link
+                                                                  ?.isExternal ??
+                                                              true,
+                                                          isOnchainEntity: true,
+                                                      }
+                                                    : setting.link
                                             }
                                             term={setting.term}
                                         >
-                                            {setting.address != null ? (
-                                                <AddressOutput
-                                                    address={setting.address}
-                                                    href={addressLink}
-                                                    label={
-                                                        setting.value ===
-                                                        addressUtils.truncateAddress(
-                                                            setting.address,
-                                                        )
-                                                            ? undefined
-                                                            : setting.value
-                                                    }
-                                                />
-                                            ) : (
-                                                setting.value
-                                            )}
+                                            {setting.value}
                                         </DefinitionList.Item>
                                     );
                                 })}

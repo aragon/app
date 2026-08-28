@@ -1,9 +1,4 @@
-import {
-    AddressOutput,
-    DaoAvatar,
-    formatterUtils,
-    NumberFormat,
-} from '@aragon/gov-ui-kit';
+import { DaoAvatar, formatterUtils, NumberFormat } from '@aragon/gov-ui-kit';
 import { useDaoProposalsCount } from '@/modules/governance/hooks/useDaoProposalsCount';
 import type { IDao } from '@/shared/api/daoService';
 import { Page } from '@/shared/components/page';
@@ -63,13 +58,7 @@ export const DashboardDefaultHeader: React.FC<IDashboardDefaultHeaderProps> = (
             }
             description={dao.description}
             stats={stats}
-            title={
-                <AddressOutput
-                    address={dao.address}
-                    copy={false}
-                    label={dao.name?.trim() || undefined}
-                />
-            }
+            title={dao.name?.trim() || dao.address}
         />
     );
 };

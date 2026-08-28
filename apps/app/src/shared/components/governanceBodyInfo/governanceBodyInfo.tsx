@@ -54,11 +54,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
             <div className="flex w-full items-center justify-between">
                 <p className="flex items-center gap-2 text-base text-neutral-800 leading-tight md:text-lg">
                     {address != null ? (
-                        <AddressOutput
-                            address={address}
-                            hasInteractiveAncestor={true}
-                            label={bodyName}
-                        />
+                        <AddressOutput address={address} label={bodyName} />
                     ) : (
                         bodyName
                     )}
@@ -66,10 +62,7 @@ export const GovernanceBodyInfo: React.FC<IGovernanceBodyInfoProps> = (
                 </p>
                 {address && name != null && name !== '' && (
                     <p className="text-base text-neutral-500 leading-tight md:text-lg">
-                        <AddressOutput
-                            address={address}
-                            hasInteractiveAncestor={true}
-                        />
+                        <AddressOutput address={address} />
                     </p>
                 )}
             </div>

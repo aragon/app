@@ -1,8 +1,4 @@
-import {
-    AddressOutput,
-    ChainEntityType,
-    DefinitionList,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import type { ISetupBodyForm } from '@/modules/createDao/dialogs/setupBodyDialog';
 import { useEnsName } from '@/modules/ens';
 import { useDao } from '@/shared/api/daoService';
@@ -57,7 +53,11 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
             />
             {ensName != null && (
                 <DefinitionList.Item
-                    link={{ href: bodyAddressLink }}
+                    copyValue={body.address}
+                    link={{
+                        href: bodyAddressLink,
+                        isOnchainEntity: true,
+                    }}
                     term={t(
                         'app.createDao.createProcessForm.governance.bodyField.default.ens',
                     )}
@@ -66,12 +66,12 @@ export const GovernanceBodiesFieldItemDefault: React.FC<
                 </DefinitionList.Item>
             )}
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                link={{ href: bodyAddressLink, isOnchainEntity: true }}
                 term={t(
                     'app.createDao.createProcessForm.governance.bodyField.default.address',
                 )}
             >
-                <AddressOutput address={body.address} href={bodyAddressLink} />
+                {body.address}
             </DefinitionList.Item>
             {createProcessFormUtils.isBodySafe(body) && (
                 <DefinitionList.Item

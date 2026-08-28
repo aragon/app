@@ -131,7 +131,8 @@ export const NavigationWizard: React.FC<INavigationWizardProps> = (props) => {
                         <div className="flex items-center gap-x-2">
                             <AddressOutput
                                 address={displayDao.address}
-                                className="truncate text-nowrap text-neutral-500 text-sm leading-tight"
+                                className="text-nowrap text-neutral-500 text-sm leading-tight"
+                                copy={false}
                                 label={displayDao.name?.trim() || undefined}
                             />
                             <DaoAvatar

@@ -1,10 +1,6 @@
 'use client';
 
-import {
-    AddressOutput,
-    ChainEntityType,
-    DefinitionList,
-} from '@aragon/gov-ui-kit';
+import { ChainEntityType, DefinitionList } from '@aragon/gov-ui-kit';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
@@ -29,13 +25,13 @@ export const LinkedAccountInfo: React.FC<ILinkedAccountInfoProps> = (props) => {
                 {networkDefinitions[network].name}
             </DefinitionList.Item>
             <DefinitionList.Item
-                link={{ isOnchainEntity: true }}
+                link={{
+                    href: pluginAddressLink,
+                    isOnchainEntity: true,
+                }}
                 term={t('app.finance.linkedAccountInfo.pluginAddress')}
             >
-                <AddressOutput
-                    address={plugin.address}
-                    href={pluginAddressLink}
-                />
+                {plugin.address}
             </DefinitionList.Item>
             {plugin.description && (
                 <DefinitionList.Item

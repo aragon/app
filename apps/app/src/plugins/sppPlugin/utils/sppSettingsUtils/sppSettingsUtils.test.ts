@@ -33,7 +33,7 @@ describe('sppSettings utils', () => {
             const address = '0x87654321';
             const name = 'My Plugin A';
             const url = 'https://etherscan.io/address/0x123';
-            const link = { href: url };
+            const link = { href: url, isOnchainEntity: true };
             const result = sppSettingsUtils.parseDefaultSettings({
                 address,
                 name,
@@ -44,6 +44,7 @@ describe('sppSettings utils', () => {
             expect(result).toEqual([
                 {
                     term: 'app.plugins.spp.sppGovernanceSettings.default.name',
+                    copyValue: address,
                     definition: name,
                     link,
                 },
@@ -59,7 +60,7 @@ describe('sppSettings utils', () => {
             const address = '0x12345678';
             const name = undefined;
             const url = 'https://polygonscan.com/address/0x456';
-            const link = { href: url };
+            const link = { href: url, isOnchainEntity: true };
             const result = sppSettingsUtils.parseDefaultSettings({
                 address,
                 name,

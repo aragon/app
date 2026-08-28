@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     Button,
     ChainEntityType,
     DateFormat,
@@ -130,20 +129,23 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 </p>
                             </DefinitionList.Item>
                             <DefinitionList.Item
-                                link={{ isOnchainEntity: true }}
+                                link={{
+                                    href: daoAddressLink,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.dashboard.daoDashboardPage.aside.details.address',
                                 )}
                             >
-                                <AddressOutput
-                                    address={dao.address}
-                                    href={daoAddressLink}
-                                />
+                                {dao.address}
                             </DefinitionList.Item>
                             {daoEns != null && (
                                 <DefinitionList.Item
-                                    copyValue={daoEns}
-                                    link={{ href: daoAddressLink }}
+                                    copyValue={dao.address}
+                                    link={{
+                                        href: daoAddressLink,
+                                        isOnchainEntity: true,
+                                    }}
                                     term={t(
                                         'app.dashboard.daoDashboardPage.aside.details.ens',
                                     )}

@@ -136,6 +136,7 @@ export const NavigationDao: React.FC<INavigationDaoProps> = (props) => {
                         <AddressOutput
                             address={dao.address}
                             className="w-full text-neutral-500 text-sm sm:text-base"
+                            copy={false}
                             href={addressLink}
                             isExternal={true}
                         />

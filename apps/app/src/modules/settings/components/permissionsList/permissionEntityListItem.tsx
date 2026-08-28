@@ -1,4 +1,4 @@
-import { AddressOutput, DefinitionList } from '@aragon/gov-ui-kit';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import type { IPermissionEntity } from '../../utils/permissionEntityUtils';
 import { PermissionAddressListItem } from './permissionAddressListItem';
 
@@ -29,13 +29,13 @@ export const PermissionEntityListItem: React.FC<
         // same string, so a description line would duplicate the primary.
         // Without that label the raw sentinel address is what shows, so it
         // renders as an address and owns its own copy control.
-        return entity.label != null ? (
-            <DefinitionList.Item copyValue={entity.address} term={term}>
-                {entity.label}
-            </DefinitionList.Item>
-        ) : (
-            <DefinitionList.Item term={term}>
-                <AddressOutput address={entity.address} />
+        return (
+            <DefinitionList.Item
+                copyValue={entity.label != null ? entity.address : undefined}
+                link={{ isOnchainEntity: true }}
+                term={term}
+            >
+                {entity.label ?? entity.address}
             </DefinitionList.Item>
         );
     }

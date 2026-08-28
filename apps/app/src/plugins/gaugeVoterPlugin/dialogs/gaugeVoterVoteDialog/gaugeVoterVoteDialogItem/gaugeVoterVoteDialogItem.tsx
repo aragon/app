@@ -88,8 +88,8 @@ export const GaugeVoterVoteDialogItem: React.FC<
         weight > BigInt(0) && displayVotes && displayVotes !== '0';
 
     return (
-        <DataList.Item className="flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
-            <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pb-4 md:border-b-0 md:border-none md:pb-0">
+        <DataList.Item className="relative flex flex-col gap-4 rounded-xl border border-neutral-100 bg-neutral-0 p-4 md:flex-row md:items-center md:justify-between">
+            <div className="b-0 flex flex-1 items-center gap-3 border-neutral-100 border-b pr-10 pb-4 md:border-b-0 md:border-none md:pr-0 md:pb-0">
                 {gaugeAvatar && (
                     <Avatar
                         alt={displayGaugeName}
@@ -103,6 +103,7 @@ export const GaugeVoterVoteDialogItem: React.FC<
                     <span className="truncate text-base text-neutral-800">
                         <AddressOutput
                             address={gaugeAddress}
+                            copy={false}
                             label={gaugeName ?? undefined}
                         />
                     </span>
@@ -110,13 +111,6 @@ export const GaugeVoterVoteDialogItem: React.FC<
                         <AddressOutput address={gaugeAddress} />
                     </span>
                 </div>
-                <Button
-                    className="md:hidden"
-                    iconLeft={IconType.CLOSE}
-                    onClick={() => onRemove(gaugeAddress)}
-                    size="sm"
-                    variant="tertiary"
-                />
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:self-end">
                 <div className="flex flex-col items-end md:w-32">
@@ -155,7 +149,8 @@ export const GaugeVoterVoteDialogItem: React.FC<
                 />
 
                 <Button
-                    className="hidden md:inline-flex"
+                    aria-label="Remove gauge"
+                    className="absolute top-4 right-4 md:static md:inline-flex"
                     iconLeft={IconType.CLOSE}
                     onClick={() => onRemove(gaugeAddress)}
                     size="sm"

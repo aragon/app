@@ -1,10 +1,4 @@
-import {
-    AddressOutput,
-    Avatar,
-    addressUtils,
-    DaoAvatar,
-    Tag,
-} from '@aragon/gov-ui-kit';
+import { AddressOutput, Avatar, DaoAvatar, Tag } from '@aragon/gov-ui-kit';
 import type { NodeProps } from '@xyflow/react';
 import classNames from 'classnames';
 import { PermissionEntityExternalBrandId } from '@/shared/api/daoService';
@@ -72,11 +66,6 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
         kind === 'actor' && address.toLowerCase() === ANY_ADDR.toLowerCase();
     const isSelected = selectionRole != null || active === true;
     const subtitleKey = getPermissionNodeTypeKey(data);
-    // Unresolved entities are labelled with their own truncated address, so
-    // that case renders as an address. The node card owns the click, so the
-    // reveal stays passive and the copy control defaults away.
-    const isAddressLabel = label === addressUtils.truncateAddress(address);
-
     return (
         <div
             className={classNames(
@@ -101,17 +90,11 @@ export const PermissionGraphNode: React.FC<NodeProps<IPermissionFlowNode>> = ({
             >
                 <PermissionGraphHandles />
                 <div className="flex min-w-0 flex-col gap-0.5">
-                    {isAddressLabel ? (
-                        <AddressOutput
-                            address={address}
-                            className="truncate text-neutral-800"
-                            hasInteractiveAncestor={true}
-                        />
-                    ) : (
-                        <span className="truncate text-neutral-800">
-                            {label}
-                        </span>
-                    )}
+                    <AddressOutput
+                        address={address}
+                        className="text-neutral-800"
+                        label={label}
+                    />
                     <span className="truncate text-neutral-500 text-sm">
                         {t(subtitleKey)}
                     </span>

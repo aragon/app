@@ -67,8 +67,8 @@ export const PermissionNodeDetailPanel: React.FC<
                         {isAddressLabel ? (
                             <AddressOutput
                                 address={node.address}
-                                className="truncate font-medium text-neutral-900"
-                                hasInteractiveAncestor={true}
+                                className="font-medium text-neutral-900"
+                                copy={false}
                             />
                         ) : (
                             <p className="truncate font-medium text-neutral-900">
@@ -118,15 +118,16 @@ export const PermissionNodeDetailPanel: React.FC<
                         </DefinitionList.Item>
                         {!isSentinelAddress && (
                             <DefinitionList.Item
-                                link={{ isOnchainEntity: true }}
+                                link={{
+                                    href: explorerUrl,
+                                    isExternal: true,
+                                    isOnchainEntity: true,
+                                }}
                                 term={t(
                                     'app.settings.daoPermissionsPage.graphView.detail.address',
                                 )}
                             >
-                                <AddressOutput
-                                    address={node.address}
-                                    href={explorerUrl}
-                                />
+                                {node.address}
                             </DefinitionList.Item>
                         )}
                     </DefinitionList.Container>

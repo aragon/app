@@ -1,5 +1,4 @@
 import {
-    addressUtils,
     ChainEntityType,
     DateFormat,
     formatterUtils,
@@ -71,9 +70,12 @@ export const useDaoPluginInfo = (
                 release,
                 build,
             }),
-            link: { href: pluginLink, isExternal: true },
-            copyValue: address,
-            definition: addressUtils.truncateAddress(address),
+            link: {
+                href: pluginLink,
+                isExternal: true,
+                isOnchainEntity: true,
+            },
+            definition: address,
         },
         {
             term: t('app.shared.daoPluginInfo.launchedAt'),

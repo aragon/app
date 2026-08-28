@@ -1,4 +1,4 @@
-import { addressUtils, DefinitionList } from '@aragon/gov-ui-kit';
+import { DefinitionList } from '@aragon/gov-ui-kit';
 import type { IDaoPermission } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { permissionNameUtils } from '@/shared/utils/permissionNameUtils';
@@ -43,11 +43,11 @@ export const PermissionDetailsList: React.FC<IPermissionDetailsListProps> = (
                 term={t('app.settings.permissionsList.details.where')}
             />
             <DefinitionList.Item
-                copyValue={row.permissionId}
                 description={permissionName}
+                link={{ isOnchainEntity: true }}
                 term={t('app.settings.permissionsList.details.permission')}
             >
-                {addressUtils.truncateHash(row.permissionId)}
+                {row.permissionId}
             </DefinitionList.Item>
             {hasCondition ? (
                 <PermissionAddressListItem

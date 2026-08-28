@@ -1,4 +1,9 @@
-import { Accordion, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
+import {
+    Accordion,
+    InteractiveAncestorContext,
+    Toggle,
+    ToggleGroup,
+} from '@aragon/gov-ui-kit';
 import { useState } from 'react';
 import type {
     IDaoPermission,
@@ -110,20 +115,22 @@ export const PermissionsListRow: React.FC<IPermissionsListRowProps> = (
             </div>
             <Accordion.Item className="hidden md:block" value={rowKey}>
                 <Accordion.ItemHeader>
-                    <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
-                        <div className="min-w-0">
-                            <PermissionEntityCell entity={who} />
+                    <InteractiveAncestorContext.Provider value={true}>
+                        <div className="grid w-full grid-cols-4 items-center gap-4 text-left">
+                            <div className="min-w-0">
+                                <PermissionEntityCell entity={who} />
+                            </div>
+                            <div className="min-w-0">
+                                <PermissionEntityCell entity={where} />
+                            </div>
+                            <span className="block min-w-0 truncate font-mono text-neutral-800">
+                                {permissionName}
+                            </span>
+                            <span className="block min-w-0 truncate text-neutral-800">
+                                {conditionLabel}
+                            </span>
                         </div>
-                        <div className="min-w-0">
-                            <PermissionEntityCell entity={where} />
-                        </div>
-                        <span className="block min-w-0 truncate font-mono text-neutral-800">
-                            {permissionName}
-                        </span>
-                        <span className="block min-w-0 truncate text-neutral-800">
-                            {conditionLabel}
-                        </span>
-                    </div>
+                    </InteractiveAncestorContext.Provider>
                 </Accordion.ItemHeader>
                 <Accordion.ItemContent>
                     <div className="flex flex-col gap-6 md:flex-row md:gap-8">

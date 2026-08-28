@@ -1,5 +1,4 @@
 import {
-    AddressOutput,
     Button,
     ChainEntityType,
     DefinitionList,
@@ -49,15 +48,15 @@ export const FinanceDetailsList: React.FC<IFinanceDetailsListProps> = (
                     </p>
                 </DefinitionList.Item>
                 <DefinitionList.Item
-                    link={{ isOnchainEntity: true }}
+                    link={{ href: daoAddressLink, isOnchainEntity: true }}
                     term={t('app.finance.financeDetailsList.vaultAddress')}
                 >
-                    <AddressOutput address={address} href={daoAddressLink} />
+                    {address}
                 </DefinitionList.Item>
                 {daoEns && (
                     <DefinitionList.Item
-                        copyValue={daoEns}
-                        link={{ href: daoAddressLink }}
+                        copyValue={address}
+                        link={{ href: daoAddressLink, isOnchainEntity: true }}
                         term={t('app.finance.financeDetailsList.vaultEns')}
                     >
                         {daoEns}

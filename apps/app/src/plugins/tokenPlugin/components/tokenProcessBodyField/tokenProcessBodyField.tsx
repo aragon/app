@@ -1,7 +1,6 @@
 'use client';
 
 import {
-    AddressOutput,
     ChainEntityType,
     DefinitionList,
     formatterUtils,
@@ -131,7 +130,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
             : undefined;
 
     const tokenProps = {
-        link: { isOnchainEntity: true },
+        link: { href: tokenLink, isOnchainEntity: true },
         description: tokenDescription,
     };
 
@@ -164,7 +163,7 @@ export const TokenProcessBodyField = (props: ITokenProcessBodyFieldProps) => {
                 term={t('app.plugins.token.tokenProcessBodyField.tokenTerm')}
                 {...tokenProps}
             >
-                <AddressOutput address={tokenAddress} href={tokenLink} />
+                {tokenAddress}
             </DefinitionList.Item>
             {numberOfMembers! > 0 && (
                 <DefinitionList.Item

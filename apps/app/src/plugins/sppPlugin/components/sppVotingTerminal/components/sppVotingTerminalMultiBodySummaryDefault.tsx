@@ -44,11 +44,7 @@ export const SppVotingTerminalMultiBodySummaryDefault: React.FC<
 
     return (
         <p className="font-normal text-base text-neutral-800 leading-tight md:text-lg">
-            <AddressOutput
-                address={body}
-                hasInteractiveAncestor={true}
-                label={ensName ?? undefined}
-            />
+            <AddressOutput address={body} label={ensName ?? undefined} />
             {showStatus && (
                 <span className={classNames(style, 'lowercase')}>
                     {' '}
