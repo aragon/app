@@ -1,18 +1,26 @@
-import { GukModulesProvider } from '@aragon/gov-ui-kit';
+import {
+    addressUtils,
+    ChainEntityType,
+    GukModulesProvider,
+    IconType,
+} from '@aragon/gov-ui-kit';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form';
+import en from '@/assets/locales/en.json';
 import { generateToken } from '@/modules/finance/testUtils';
 import * as createProposalForm from '@/modules/governance/components/createProposalForm';
 import { Network, PluginInterfaceType } from '@/shared/api/daoService';
 import * as dialogProvider from '@/shared/components/dialogProvider';
+import * as translationsProvider from '@/shared/components/translationsProvider';
 import * as useDaoChainHook from '@/shared/hooks/useDaoChain';
 import {
     generateDaoPlugin,
     generateDialogContext,
     ReactQueryWrapper,
 } from '@/shared/testUtils';
+import { translationUtils } from '@/shared/utils/translationsUtils';
 import {
     crossChainControllerService,
     GasLimitEstimationStatus,
@@ -50,6 +58,7 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
     // The component drives every value through the form, so tests need a handle on it to simulate
     // the nested-actions dialog writing a new action list.
     let form: UseFormReturn | undefined;
+    let englishTranslationsSpy: jest.SpyInstance | undefined;
 
     const FormHarness: React.FC<{
         children?: ReactNode;
@@ -86,6 +95,8 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
     });
 
     afterEach(() => {
+        englishTranslationsSpy?.mockRestore();
+        englishTranslationsSpy = undefined;
         form = undefined;
         useDaoChainSpy.mockReset();
         useDialogContextSpy.mockReset();
@@ -170,6 +181,14 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
                 name: /crossChainControllerForwardMessageAction.gas.calculate/,
             }),
         );
+
+    const useEnglishTranslations = () => {
+        englishTranslationsSpy = jest
+            .spyOn(translationsProvider, 'useTranslations')
+            .mockReturnValue({
+                t: translationUtils.t(en),
+            });
+    };
 
     it('leaves the gas limit empty until it is calculated, instead of defaulting it to the minimum', () => {
         render(createTestComponent());
@@ -284,10 +303,83 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         await waitFor(() => expect(getGasLimitInput()).toHaveValue(''));
     });
 
-    it('keeps a restored gas limit on mount', () => {
-        render(createTestComponent(undefined, { gasLimit: '500000' }));
+    it('accepts and encodes a restored gas limit above 999,999', async () => {
+        render(createTestComponent(undefined, { gasLimit: '1000000' }));
 
-        expect(getGasLimitInput()).toHaveValue('500,000');
+        await act(async () => {
+            await form?.trigger();
+        });
+
+        expect(getGasLimitInput()).toHaveValue('1,000,000');
+        expect(
+            screen.queryByText(/app.shared.formField.error.max/),
+        ).not.toBeInTheDocument();
+        expect(
+            form?.getValues('actions.[0].inputData.parameters[1].value'),
+        ).toBe('1000000');
+    });
+
+    it('accepts the exact cap and keeps over-cap keystrokes safe', async () => {
+        render(createTestComponent());
+
+        const gasLimitInput = getGasLimitInput();
+        await userEvent.type(gasLimitInput, '3000000');
+
+        await act(async () => {
+            expect(await form?.trigger()).toBe(true);
+        });
+
+        expect(gasLimitInput).toHaveValue('3,000,000');
+        expect(
+            form?.getValues('actions.[0].inputData.parameters[1].value'),
+        ).toBe('3000000');
+
+        await userEvent.clear(gasLimitInput);
+        await userEvent.type(gasLimitInput, '3000001');
+
+        await act(async () => {
+            expect(await form?.trigger()).toBe(true);
+        });
+
+        const encodedKeystrokeValue = form?.getValues(
+            'actions.[0].inputData.parameters[1].value',
+        );
+        expect(BigInt(encodedKeystrokeValue)).toBeLessThanOrEqual(
+            BigInt(3_000_000),
+        );
+    });
+
+    it('keeps pasted over-cap values safe', async () => {
+        render(createTestComponent());
+
+        const gasLimitInput = getGasLimitInput();
+        await userEvent.click(gasLimitInput);
+        await userEvent.paste('3000001');
+
+        await act(async () => {
+            expect(await form?.trigger()).toBe(true);
+        });
+
+        expect(
+            BigInt(
+                form?.getValues('actions.[0].inputData.parameters[1].value'),
+            ),
+        ).toBeLessThanOrEqual(BigInt(3_000_000));
+    });
+
+    it('blocks an over-cap restored or programmatic form value through max validation', async () => {
+        render(createTestComponent());
+
+        await act(async () => {
+            form?.setValue('actions.[0].gasLimit', '3000001', {
+                shouldValidate: true,
+            });
+            expect(await form?.trigger()).toBe(false);
+        });
+
+        expect(form?.getFieldState('actions.[0].gasLimit').error).toMatchObject(
+            { type: 'max' },
+        );
     });
 
     it('rejects a fractional gas limit instead of failing to encode it', async () => {
@@ -335,6 +427,114 @@ describe('<CrossChainControllerForwardMessageAction /> component', () => {
         expect(form?.getValues('actions.[0].nestedActions')).toEqual([
             nestedAction,
         ]);
+    });
+
+    it('presents and validates forwarded actions with the required empty and populated affordances', async () => {
+        useEnglishTranslations();
+        render(createTestComponent());
+
+        expect(screen.getByText('Forwarded actions')).toBeInTheDocument();
+        expect(
+            screen.getByText('1 forwarded action added'),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: 'Edit forwarded actions',
+            }),
+        ).toContainElement(screen.getByTestId(IconType.PEN));
+
+        act(() =>
+            form?.setValue('actions.[0].nestedActions', [
+                nestedAction,
+                { ...nestedAction, data: '0xfeedface' },
+            ]),
+        );
+        expect(
+            screen.getByText('2 forwarded actions added'),
+        ).toBeInTheDocument();
+
+        act(() => form?.setValue('actions.[0].nestedActions', []));
+        expect(
+            screen.getByText('No forwarded actions added'),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId('SMART_CONTRACT')).toBeInTheDocument();
+        expect(
+            screen.queryByText(
+                'Compose the actions the destination chain executes when the message is delivered.',
+            ),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByRole('button', {
+                name: 'Forwarded actions',
+            }),
+        ).toContainElement(screen.getByTestId(IconType.PLUS));
+
+        await act(async () => {
+            await form?.trigger();
+        });
+        expect(
+            screen.getByText('Forwarded actions are mandatory.'),
+        ).toBeInTheDocument();
+    });
+
+    it('links the controller fee notice to the origin explorer and names the configured fee asset', () => {
+        const controllerExplorerUrl = `https://origin.example/address/${controllerAddress}`;
+        const buildEntityUrl = jest.fn(() => controllerExplorerUrl);
+
+        useEnglishTranslations();
+        useDaoChainSpy.mockReturnValue({
+            buildEntityUrl,
+            chainId: 1,
+            network: Network.ETHEREUM_MAINNET,
+        } as unknown as ReturnType<typeof useDaoChainHook.useDaoChain>);
+        render(createTestComponent());
+
+        const controllerLink = screen.getByRole('link', {
+            name: addressUtils.truncateAddress(controllerAddress),
+        });
+        expect(useDaoChainSpy).toHaveBeenCalledWith({ daoId: 'dao-id' });
+        expect(buildEntityUrl).toHaveBeenCalledWith({
+            type: ChainEntityType.ADDRESS,
+            id: controllerAddress,
+        });
+        expect(screen.getByRole('alert')).toHaveTextContent(
+            `The controller contract ${addressUtils.truncateAddress(controllerAddress)} pays the fee to send the message. For this proposal execution to succeed, it will need to have enough LINK.`,
+        );
+        expect(controllerLink).toHaveAttribute('href', controllerExplorerUrl);
+        expect(controllerLink).toHaveAttribute('target', '_blank');
+        expect(controllerLink).toContainElement(
+            screen.getByTestId(IconType.LINK_EXTERNAL),
+        );
+    });
+
+    it('presents an accessible manual gas input and a separate estimate action', async () => {
+        useEnglishTranslations();
+
+        render(createTestComponent());
+
+        const gasLimitInput = screen.getByRole('textbox', {
+            name: /^Destination gas limit/,
+        });
+        const estimateGas = screen.getByRole('button', {
+            name: 'Estimate gas',
+        });
+
+        expect(
+            screen.getByText(
+                'Set the amount of gas the destination chain will be able to spend to execute the forwarded actions on this proposal. You can estimate it by simulating the actions or entering it manually.',
+            ),
+        ).toBeInTheDocument();
+        expect(gasLimitInput).toHaveAttribute(
+            'placeholder',
+            'Enter a gas limit',
+        );
+        expect(estimateGas).toContainElement(
+            screen.getByTestId(IconType.RELOAD),
+        );
+
+        await userEvent.click(estimateGas);
+
+        expect(estimateGasLimitSpy).toHaveBeenCalled();
     });
 
     it('names the fee token of the selected lane, as indexed by the backend', () => {

@@ -78,6 +78,22 @@ const resolveNode = (
         };
     }
 
+    if (enrichedEntity?.layer === 'dao') {
+        const label =
+            enrichedEntity.label == null ||
+            enrichedEntity.label === 'Unknown address'
+                ? addressUtils.truncateAddress(enrichedEntity.address)
+                : enrichedEntity.label;
+
+        return {
+            id,
+            kind: 'linkedDao',
+            label,
+            avatarSrc: enrichedEntity.avatarSrc,
+            address,
+        };
+    }
+
     const entity = permissionEntityUtils.resolvePermissionEntity(address, {
         daoPlugins,
         accounts: accountRefs,

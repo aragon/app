@@ -7,8 +7,10 @@ import {
     Button,
     Card,
     CardEmptyState,
+    ChainEntityType,
     IconType,
     InputContainer,
+    InputNumber,
     type IProposalActionComponentProps,
     invariant,
     Link,
@@ -40,7 +42,6 @@ import type {
 } from '../../../types';
 import { CrossChainControllerProposalActionType } from '../../../types';
 import { crossChainControllerGasUtils } from './crossChainControllerGasUtils';
-import { GasLimitInput } from './gasLimitInput';
 import { useCrossChainControllerGasLimit } from './useCrossChainControllerGasLimit';
 
 export interface ICrossChainControllerForwardMessageActionProps
@@ -66,7 +67,11 @@ export const CrossChainControllerForwardMessageAction: React.FC<
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const { setValue } = useFormContext();
-    const { chainId: daoChainId, network: daoNetwork } = useDaoChain({ daoId });
+    const {
+        buildEntityUrl,
+        chainId: daoChainId,
+        network: daoNetwork,
+    } = useDaoChain({ daoId });
 
     // The nested actions are part of the proposal, so they are restricted by the process creating it.
     const { processPlugin } = useCreateProposalFormContext();
@@ -125,13 +130,19 @@ export const CrossChainControllerForwardMessageAction: React.FC<
         label: t(
             'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.label',
         ),
-        rules: { validate: (value) => value != null && value.length > 0 },
+        rules: {
+            validate: (value) =>
+                (value != null && value.length > 0) ||
+                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.mandatory',
+        },
         fieldPrefix: actionFieldName,
     });
 
     const {
         onChange: onGasLimitChange,
         value: gasLimit,
+        alert: gasLimitAlert,
+        label: gasLimitLabel,
         ...gasLimitField
     } = useFormField<ICrossChainControllerActionForwardMessage, 'gasLimit'>(
         'gasLimit',
@@ -324,7 +335,7 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                         </p>
                         <Button
                             disabled={destinationNetwork == null}
-                            iconLeft={IconType.SETTINGS}
+                            iconLeft={IconType.PEN}
                             onClick={handleOpenActionsDialog}
                             size="md"
                             variant="secondary"
@@ -337,14 +348,11 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 ) : (
                     <CardEmptyState
                         className="border border-neutral-100"
-                        description={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.emptyDescription',
-                        )}
                         heading={t(
                             'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.emptyHeading',
                         )}
                         isStacked={false}
-                        objectIllustration={{ object: 'ACTION' }}
+                        objectIllustration={{ object: 'SMART_CONTRACT' }}
                         secondaryButton={{
                             label: t(
                                 'app.plugins.crossChainController.crossChainControllerForwardMessageAction.actions.add',
@@ -358,51 +366,73 @@ export const CrossChainControllerForwardMessageAction: React.FC<
             </InputContainer>
 
             {hasNestedActions && (
-                <div className="flex flex-col gap-3">
-                    <GasLimitInput
-                        calculateDisabled={destinationChainId == null}
-                        calculateLabel={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
-                        )}
-                        helpText={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
-                        )}
-                        isCalculating={isEstimating}
-                        max={crossChainControllerGas.maxGasLimit}
-                        min={crossChainControllerGas.minGasLimit}
-                        onCalculate={handleEstimateGasLimit}
-                        onChange={onGasLimitChange}
-                        placeholder={t(
-                            'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
-                        )}
-                        step={1000}
-                        value={gasLimit ?? ''}
-                        {...gasLimitField}
-                    />
-
-                    {(estimationAlert != null || simulationUrl != null) && (
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                            {estimationAlert != null && (
-                                <AlertInline
-                                    message={estimationAlert.message}
-                                    variant={estimationAlert.variant}
-                                />
-                            )}
-                            {simulationUrl != null && (
-                                <Link
-                                    className="shrink-0"
-                                    href={simulationUrl}
-                                    isExternal={true}
-                                    showUrl={false}
-                                >
-                                    {t(
-                                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
-                                    )}
-                                </Link>
-                            )}
-                        </div>
+                <InputContainer
+                    alert={gasLimitAlert}
+                    helpText={t(
+                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.helpText',
                     )}
-                </div>
+                    id={`${actionFieldName}.gasLimit`}
+                    label={gasLimitLabel}
+                    useCustomWrapper={true}
+                >
+                    <div className="flex flex-col gap-3">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                            <div className="w-full md:max-w-60">
+                                <InputNumber
+                                    id={`${actionFieldName}.gasLimit`}
+                                    max={crossChainControllerGas.maxGasLimit}
+                                    min={crossChainControllerGas.minGasLimit}
+                                    onChange={onGasLimitChange}
+                                    placeholder={t(
+                                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.placeholder',
+                                    )}
+                                    step={1000}
+                                    value={gasLimit ?? ''}
+                                    {...gasLimitField}
+                                />
+                            </div>
+                            <Button
+                                className="text-nowrap"
+                                disabled={destinationChainId == null}
+                                iconLeft={IconType.RELOAD}
+                                isLoading={isEstimating}
+                                onClick={handleEstimateGasLimit}
+                                size="md"
+                                type="button"
+                                variant="secondary"
+                            >
+                                {t(
+                                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.calculate',
+                                )}
+                            </Button>
+                        </div>
+
+                        {gasLimitAlert == null &&
+                            (estimationAlert != null ||
+                                simulationUrl != null) && (
+                                <div className="flex flex-wrap items-center gap-3">
+                                    {estimationAlert != null && (
+                                        <AlertInline
+                                            message={estimationAlert.message}
+                                            variant={estimationAlert.variant}
+                                        />
+                                    )}
+                                    {simulationUrl != null && (
+                                        <Link
+                                            className="shrink-0"
+                                            href={simulationUrl}
+                                            isExternal={true}
+                                            showUrl={false}
+                                        >
+                                            {t(
+                                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.gas.viewSimulation',
+                                            )}
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
+                    </div>
+                </InputContainer>
             )}
 
             <AlertCard
@@ -411,19 +441,31 @@ export const CrossChainControllerForwardMessageAction: React.FC<
                 )}
                 variant="info"
             >
-                {t(
-                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.description',
-                    {
-                        address: addressUtils.truncateAddress(
-                            action.meta.address,
-                        ),
-                        token:
-                            feeToken?.symbol ??
-                            t(
-                                'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.defaultToken',
-                            ),
-                    },
-                )}
+                <div>
+                    {t(
+                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.descriptionStart',
+                    )}{' '}
+                    <Link
+                        href={buildEntityUrl?.({
+                            type: ChainEntityType.ADDRESS,
+                            id: action.meta.address,
+                        })}
+                        isExternal={true}
+                        showUrl={false}
+                    >
+                        {addressUtils.truncateAddress(action.meta.address)}
+                    </Link>{' '}
+                    {t(
+                        'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.description',
+                        {
+                            token:
+                                feeToken?.symbol ??
+                                t(
+                                    'app.plugins.crossChainController.crossChainControllerForwardMessageAction.fee.defaultToken',
+                                ),
+                        },
+                    )}
+                </div>
             </AlertCard>
         </div>
     );

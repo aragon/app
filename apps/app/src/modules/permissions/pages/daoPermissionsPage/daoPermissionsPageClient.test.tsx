@@ -1,5 +1,7 @@
 import { GukModulesProvider } from '@aragon/gov-ui-kit';
 import { render, screen } from '@testing-library/react';
+import type { IUsePermissionsDataResult } from '@/modules/settings/hooks/usePermissionsData';
+import * as UsePermissionsDataModule from '@/modules/settings/hooks/usePermissionsData';
 import * as DaoService from '@/shared/api/daoService';
 import { type IDaoPermission, Network } from '@/shared/api/daoService';
 import {
@@ -7,14 +9,12 @@ import {
     generateDaoPermission,
     generateReactQueryResultSuccess,
 } from '@/shared/testUtils';
-import type { IUsePermissionsDataResult } from '../../hooks/usePermissionsData';
-import * as UsePermissionsDataModule from '../../hooks/usePermissionsData';
 import { DaoPermissionsPageClient } from './daoPermissionsPageClient';
 
 let mockGraphRows: IDaoPermission[] | undefined;
 let mockListRows: IDaoPermission[] | undefined;
 
-jest.mock('../../components/permissionsGraph', () => ({
+jest.mock('@/modules/settings/components/permissionsGraph', () => ({
     PermissionsGraph: (props: { rows: IDaoPermission[] }) => {
         mockGraphRows = props.rows;
 
@@ -27,7 +27,7 @@ jest.mock('../../components/permissionsGraph', () => ({
     },
 }));
 
-jest.mock('../../components/permissionsList', () => ({
+jest.mock('@/modules/settings/components/permissionsList', () => ({
     getPermissionRowKey: (row: IDaoPermission) =>
         `${row.permissionId}-${row.whoAddress}-${row.whereAddress}`,
     PermissionsList: (props: { rows: IDaoPermission[] }) => {
@@ -175,6 +175,11 @@ describe('<DaoPermissionsPageClient /> component', () => {
                 <DaoPermissionsPageClient daoId="dao-id" />
             </GukModulesProvider>,
         );
+        expect(
+            screen.queryByRole('link', {
+                name: /app.application.navigationDao.link.dashboard/,
+            }),
+        ).not.toBeInTheDocument();
 
         expect(
             screen.queryByRole('button', { name: 'Granted' }),
@@ -217,7 +222,7 @@ describe('<DaoPermissionsPageClient /> component', () => {
         );
     });
 
-    it('hides the list expand control below the desktop breakpoint', () => {
+    it('renders the list expand control below the list, not in the view toolbar', () => {
         mockFilterParamValues = { permissionsview: 'list' };
 
         render(
@@ -226,10 +231,13 @@ describe('<DaoPermissionsPageClient /> component', () => {
             </GukModulesProvider>,
         );
 
-        expect(screen.getByRole('button', { name: 'Expand all' })).toHaveClass(
-            'hidden',
-            'md:inline-flex',
-        );
+        // Rendered bottom-right of the list, not hidden on desktop like the
+        // old toolbar control.
+        const expandButton = screen.getByRole('button', {
+            name: 'Expand all',
+        });
+        expect(expandButton).toBeInTheDocument();
+        expect(expandButton).not.toHaveClass('hidden');
     });
 
     it('shows noisy permission groups when hide switches are off', () => {

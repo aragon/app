@@ -12,7 +12,6 @@ import {
 } from '@aragon/gov-ui-kit';
 import type { IDao, ILinkedAccountSummary } from '@/shared/api/daoService';
 import { DaoTypeTag } from '@/shared/components/daoTypeTag';
-import { useFeatureFlags } from '@/shared/components/featureFlagsProvider';
 import { ResourceLink } from '@/shared/components/resourceLink';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { networkDefinitions } from '@/shared/constants/networkDefinitions';
@@ -156,7 +155,6 @@ const DaoInfo: React.FC<IDaoInfoProps> = ({ dao, permissionsHref }) => {
 
 export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const { dao, currentDaoId } = props;
-    const { isEnabled } = useFeatureFlags();
 
     const isViewingMainDao = dao.id === currentDaoId;
     const hasLinkedAccounts =
@@ -165,9 +163,7 @@ export const DaoHierarchy: React.FC<IDaoHierarchyProps> = (props) => {
     const getDaoAvatar = (d: IDao | ILinkedAccountSummary) =>
         ipfsUtils.cidToSrc(d.avatar);
 
-    const permissionsHref = isEnabled('permissionsPage')
-        ? daoUtils.getDaoUrl(dao, 'settings/permissions')
-        : undefined;
+    const permissionsHref = daoUtils.getDaoUrl(dao, 'permissions');
 
     // If viewing main DAO with linked accounts, show accordion structure
     if (isViewingMainDao && hasLinkedAccounts) {

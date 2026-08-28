@@ -16,7 +16,6 @@ export const DaoPermissionsPage: React.FC<IDaoPermissionsPageProps> = async (
 ) => {
     const { params } = props;
     const daoPageParams = await params;
-
     if (!networkUtils.isValidNetwork(daoPageParams.network)) {
         // invalid network handled in DAO layout
         return null;
