@@ -322,10 +322,12 @@ describe('<TransactionList.Default /> component', () => {
 
         render(createTestComponent({ onTransactionClick }));
 
-        await user.click(screen.getByText('0 ABC'));
+        // The data-list item renders its content inside a pointer-events-none
+        // wrapper, the click target is the overlay link labelled by that content.
+        await user.click(screen.getByRole('link', { name: /0 ABC/ }));
         expect(onTransactionClick).not.toHaveBeenCalled();
 
-        await user.click(screen.getByText('Executed'));
+        await user.click(screen.getByRole('link', { name: /Executed/ }));
         expect(onTransactionClick).toHaveBeenCalledWith(executionTransaction);
     });
 

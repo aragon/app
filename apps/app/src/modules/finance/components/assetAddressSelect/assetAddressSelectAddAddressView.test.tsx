@@ -155,7 +155,9 @@ describe('<AssetAddressSelectAddAddressView /> component', () => {
             screen.getByRole('searchbox'),
             '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
         );
-        await user.click(screen.getByText('Wrapped stETH'));
+        // The data-list item renders its content inside a pointer-events-none
+        // wrapper, the click target is the overlay button labelled by that content.
+        await user.click(screen.getByRole('button', { name: /Wrapped stETH/ }));
 
         expect(onAssetClick).toHaveBeenCalledWith(
             expect.objectContaining({
