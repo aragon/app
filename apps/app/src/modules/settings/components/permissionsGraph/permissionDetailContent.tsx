@@ -18,6 +18,7 @@ interface IPermissionDetailEntity {
 export interface IPermissionDetailContentProps {
     chainId?: number;
     className?: string;
+    daoId?: string;
     network?: IDao['network'];
     row: IDaoPermission;
     who?: IPermissionDetailEntity;
@@ -42,7 +43,7 @@ const toDetailsEntity = (
 
 export const PermissionDetailContent: React.FC<
     IPermissionDetailContentProps
-> = ({ chainId, className, network, row, who, where }) => {
+> = ({ chainId, className, daoId, network, row, who, where }) => {
     const { t } = useTranslations();
     const [activeTab, setActiveTab] =
         useState<PermissionDetailsTab>('permission');
@@ -95,6 +96,7 @@ export const PermissionDetailContent: React.FC<
             ) : (
                 <PermissionCondition
                     chainId={chainId}
+                    daoId={daoId}
                     network={network}
                     row={row}
                 />

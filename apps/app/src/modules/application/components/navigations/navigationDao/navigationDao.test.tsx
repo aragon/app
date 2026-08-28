@@ -28,6 +28,9 @@ jest.mock('@aragon/gov-ui-kit', () => ({
             {props.user ? props.user.address : 'connect-mock'}
         </button>
     ),
+    Icon: (props: { icon: string }) => (
+        <span data-testid={`icon-${props.icon}`} />
+    ),
 }));
 
 jest.mock('../../supportChat', () => ({
@@ -157,6 +160,18 @@ describe('<NavigationDao /> component', () => {
         expect(triggerButton.className).toContain('md:hidden');
         await userEvent.click(triggerButton);
         expect(screen.getByRole('dialog')).toBeInTheDocument();
+    });
+
+    it('shows the permissions link in the dao dialog menu', async () => {
+        render(createTestComponent());
+        await userEvent.click(screen.getByTestId('nav-trigger-mock'));
+
+        expect(
+            screen.getByRole('link', {
+                name: /navigationDao.link.permissions/,
+            }),
+        ).toHaveAttribute('href', '/dao/ethereum-mainnet/1234/permissions');
+        expect(screen.getByTestId('icon-APP_PERMISSIONS')).toBeInTheDocument();
     });
 
     it('renders a connect button opening the connect-wallet dialog', async () => {

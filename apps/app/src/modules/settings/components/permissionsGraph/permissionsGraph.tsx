@@ -147,6 +147,7 @@ export const PermissionsGraph: React.FC<IPermissionsGraphProps> = (props) => {
             {selectedEdge != null && (
                 <PermissionDetailPanel
                     chainId={networkDefinitions[dao.network].id}
+                    daoId={dao.id}
                     edge={selectedEdge}
                     network={dao.network}
                     nodes={graph.nodes}

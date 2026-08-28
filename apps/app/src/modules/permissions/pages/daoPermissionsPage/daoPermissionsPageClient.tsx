@@ -2,21 +2,20 @@
 
 import { Button, Switch, Toggle, ToggleGroup } from '@aragon/gov-ui-kit';
 import { useMemo, useState } from 'react';
-import { Page } from '@/shared/components/page';
-import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
-import { daoUtils } from '@/shared/utils/daoUtils';
-import { PermissionInfoTooltip } from '../../components/permissionInfoTooltip';
-import { PermissionsGraph } from '../../components/permissionsGraph';
+import { PermissionInfoTooltip } from '@/modules/settings/components/permissionInfoTooltip';
+import { PermissionsGraph } from '@/modules/settings/components/permissionsGraph';
 import {
     getPermissionRowKey,
     PermissionsList,
-} from '../../components/permissionsList';
-import { usePermissionsData } from '../../hooks/usePermissionsData';
+} from '@/modules/settings/components/permissionsList';
+import { usePermissionsData } from '@/modules/settings/hooks/usePermissionsData';
 import {
     filterPermissionRows,
     getPermissionRowToggleAvailability,
-} from '../../utils/permissionRowFilters';
+} from '@/modules/settings/utils/permissionRowFilters';
+import { Page } from '@/shared/components/page';
+import { useTranslations } from '@/shared/components/translationsProvider';
+import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 
 export interface IDaoPermissionsPageClientProps {
     /**
@@ -164,20 +163,6 @@ export const DaoPermissionsPageClient: React.FC<
         );
     };
 
-    const pageBreadcrumbs = [
-        {
-            href: daoUtils.getDaoUrl(permissionsDao, 'settings'),
-            label: t(
-                'app.settings.daoPermissionsPage.header.breadcrumb.settings',
-            ),
-        },
-        {
-            label: t(
-                'app.settings.daoPermissionsPage.header.breadcrumb.permissions',
-            ),
-        },
-    ];
-
     const isListView = view === PermissionsView.LIST;
     const showAccountSelector = accounts.length > 1;
     const showExpandAll = isListView && !isLoading && filteredRows.length > 0;
@@ -185,7 +170,6 @@ export const DaoPermissionsPageClient: React.FC<
     return (
         <>
             <Page.Header
-                breadcrumbs={pageBreadcrumbs}
                 description={t(
                     'app.settings.daoPermissionsPage.header.description',
                 )}
@@ -229,23 +213,6 @@ export const DaoPermissionsPageClient: React.FC<
                                         value={PermissionsView.GRAPH}
                                     />
                                 </ToggleGroup>
-                                {showExpandAll && (
-                                    <Button
-                                        className="hidden md:inline-flex"
-                                        onClick={handleToggleAll}
-                                        responsiveSize={{ md: 'md' }}
-                                        size="sm"
-                                        variant="tertiary"
-                                    >
-                                        {allExpanded
-                                            ? t(
-                                                  'app.settings.permissionsList.collapseAll',
-                                              )
-                                            : t(
-                                                  'app.settings.permissionsList.expandAll',
-                                              )}
-                                    </Button>
-                                )}
                             </div>
                             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-neutral-700 text-sm md:justify-end">
                                 <div className="flex items-center gap-1">
@@ -292,6 +259,7 @@ export const DaoPermissionsPageClient: React.FC<
                             <PermissionsList
                                 accountRefs={accountRefs}
                                 chainId={chainId}
+                                daoId={daoId}
                                 daoPlugins={daoPlugins}
                                 expandedRows={expandedRows}
                                 isLoading={isLoading}
@@ -307,6 +275,24 @@ export const DaoPermissionsPageClient: React.FC<
                                 isLoading={isLoading}
                                 rows={filteredRows}
                             />
+                        )}
+                        {isListView && showExpandAll && (
+                            <div className="flex justify-end">
+                                <Button
+                                    onClick={handleToggleAll}
+                                    responsiveSize={{ md: 'md' }}
+                                    size="sm"
+                                    variant="tertiary"
+                                >
+                                    {allExpanded
+                                        ? t(
+                                              'app.settings.permissionsList.collapseAll',
+                                          )
+                                        : t(
+                                              'app.settings.permissionsList.expandAll',
+                                          )}
+                                </Button>
+                            </div>
                         )}
                     </div>
                 </Page.Main>

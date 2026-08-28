@@ -9,6 +9,16 @@ describe('crossChainControllerGas utils', () => {
             ).toEqual(BigInt(250_000));
         });
 
+        it('parses whole-number manual entries above 999,999 and records the 3,000,000 policy cap', () => {
+            expect(crossChainControllerGas.maxGasLimit).toBe(3_000_000);
+            expect(
+                crossChainControllerGasUtils.parseGasLimit('1000000'),
+            ).toEqual(BigInt(1_000_000));
+            expect(
+                crossChainControllerGasUtils.parseGasLimit('3000000'),
+            ).toEqual(BigInt(3_000_000));
+        });
+
         it.each(['250000.5', '250000.', '2.5e5', '-250000', 'abc', '', ' '])(
             'rejects %p, which is not a whole number of gas units',
             (value) => {
@@ -100,6 +110,18 @@ describe('crossChainControllerGas utils', () => {
             });
 
             expect(gasLimit).toBeGreaterThanOrEqual(requiredGas);
+        });
+
+        it('keeps the exact cap usable when its buffer cannot fit', () => {
+            const result = crossChainControllerGasUtils.resolveGasLimit({
+                requiredGas: BigInt(maxGasLimit),
+            });
+
+            expect(result).toEqual({
+                gasLimit: BigInt(maxGasLimit),
+                isMarginReduced: true,
+                exceedsMaxGasLimit: false,
+            });
         });
 
         it('flags an unfixable requirement when it exceeds the cap on its own, before any margin', () => {

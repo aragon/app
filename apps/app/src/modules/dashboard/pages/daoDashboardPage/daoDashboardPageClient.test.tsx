@@ -126,6 +126,26 @@ describe('<DaoDashboardPageClient /> component', () => {
         );
     };
 
+    it('renders a permissions link on the contract aside card', () => {
+        const dao = generateDao({
+            ens: 'somedao.dao.eth',
+            network: Network.ETHEREUM_MAINNET,
+        });
+        useDaoSpy.mockReturnValue(
+            generateReactQueryResultSuccess({ data: dao }),
+        );
+        render(createTestComponent());
+
+        expect(
+            screen.getByRole('link', {
+                name: /daoDashboardPage.aside.details.permissions/,
+            }),
+        ).toHaveAttribute(
+            'href',
+            '/dao/ethereum-mainnet/somedao.dao.eth/permissions',
+        );
+    });
+
     it('fetches and renders the dao name, description and avatar', () => {
         const daoId = 'test-id';
         const dao = generateDao({

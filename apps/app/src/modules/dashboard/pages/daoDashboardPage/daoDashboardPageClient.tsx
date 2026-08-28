@@ -2,10 +2,12 @@
 
 import {
     AddressOutput,
+    Button,
     ChainEntityType,
     DateFormat,
     DefinitionList,
     formatterUtils,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import type { IFeaturedDelegates } from '@/shared/api/cmsService';
 import {
@@ -25,6 +27,7 @@ import { daoUtils } from '@/shared/utils/daoUtils';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
 import { DashboardOnboarded } from '../../components/dashboardOnboarded';
 import { DashboardOnboarding } from '../../components/dashboardOnboarding';
+import { TelegramSubscriptionCard } from '../../components/telegramSubscriptionCard';
 import { DashboardDaoSlotId } from '../../constants/moduleDaoSlots';
 
 export interface IDaoDashboardPageClientProps {
@@ -157,6 +160,17 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                                 {daoLaunchedAt}
                             </DefinitionList.Item>
                         </DefinitionList.Container>
+                        <Button
+                            className="w-full"
+                            href={daoUtils.getDaoUrl(dao, 'permissions')}
+                            iconRight={IconType.CHEVRON_RIGHT}
+                            size="md"
+                            variant="tertiary"
+                        >
+                            {t(
+                                'app.dashboard.daoDashboardPage.aside.details.permissions',
+                            )}
+                        </Button>
                     </Page.AsideCard>
                     {dao.links.length > 0 && (
                         <Page.AsideCard
@@ -175,6 +189,7 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
                             ))}
                         </Page.AsideCard>
                     )}
+                    <TelegramSubscriptionCard daoId={dao.id} />
                 </Page.Aside>
             </Page.Content>
         </>

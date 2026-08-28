@@ -3,6 +3,7 @@ import {
     Button,
     ChainEntityType,
     DefinitionList,
+    IconType,
 } from '@aragon/gov-ui-kit';
 import { useDao } from '@/shared/api/daoService';
 import { useTranslations } from '@/shared/components/translationsProvider';
@@ -94,7 +95,11 @@ export const DaoPluginInfo: React.FC<IDaoPlugInfoProps> = (props) => {
                 ))}
             </DefinitionList.Container>
             {!plugin.isSubPlugin && plugin.isProcess && (
-                <Button href={processLink} variant="tertiary">
+                <Button
+                    href={processLink}
+                    iconRight={IconType.CHEVRON_RIGHT}
+                    variant="tertiary"
+                >
                     {t('app.settings.daoPluginInfo.viewProcess')}
                 </Button>
             )}

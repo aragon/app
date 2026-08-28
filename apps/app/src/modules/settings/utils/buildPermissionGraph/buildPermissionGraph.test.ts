@@ -129,6 +129,61 @@ describe('buildPermissionGraph', () => {
         );
     });
 
+    it('preserves an enriched external DAO as a linked DAO node', () => {
+        const externalDaoAddress = '0x2222222222222222222222222222222222222222';
+        const graph = buildPermissionGraph({
+            rows: [
+                buildRow({
+                    whoAddress: externalDaoAddress,
+                    who: {
+                        address: externalDaoAddress,
+                        avatarSrc: 'https://external-dao.png',
+                        label: 'External DAO',
+                        layer: 'dao',
+                    },
+                }),
+            ],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find(
+                (node) => node.id === externalDaoAddress.toLowerCase(),
+            ),
+        ).toMatchObject({
+            kind: 'linkedDao',
+            label: 'External DAO',
+            avatarSrc: 'https://external-dao.png',
+        });
+    });
+    it('falls back to the address for an unresolved external DAO', () => {
+        const externalDaoAddress = '0x3333333333333333333333333333333333333333';
+        const graph = buildPermissionGraph({
+            rows: [
+                buildRow({
+                    whoAddress: externalDaoAddress,
+                    who: {
+                        address: externalDaoAddress,
+                        label: 'Unknown address',
+                        layer: 'dao',
+                    },
+                }),
+            ],
+            dao,
+            accountRefs,
+        });
+
+        expect(
+            graph.nodes.find(
+                (node) => node.id === externalDaoAddress.toLowerCase(),
+            ),
+        ).toMatchObject({
+            kind: 'linkedDao',
+            label: '0x3333…3333',
+        });
+    });
+
     it.each([
         {
             name: 'uses backend entity metadata without installed plugin lookup',

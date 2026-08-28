@@ -12,6 +12,7 @@ import {
 } from '@/shared/testUtils';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import * as useDownloadProposalActionsHook from '../../../hooks/useDownloadProposalActions';
+import { ImportedContractAbisProvider } from '../../importedContractAbisProvider';
 import {
     CreateProposalFormActions,
     type ICreateProposalFormActionsProps,
@@ -80,7 +81,9 @@ describe('<CreateProposalFormActions /> component', () => {
         return (
             <GukModulesProvider>
                 <FormWrapper>
-                    <CreateProposalFormActions {...completeProps} />
+                    <ImportedContractAbisProvider>
+                        <CreateProposalFormActions {...completeProps} />
+                    </ImportedContractAbisProvider>
                 </FormWrapper>
             </GukModulesProvider>
         );
