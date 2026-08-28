@@ -21,3 +21,4 @@ Check the project specific processes and guidelines below:
 - [Releases](./projectDocs/releases.md)
 - [Slot Integration Guide](./slots/overview.md)
 - [Testing](./projectDocs/testing.md)
+- [Workspace Architecture (research)](./projectDocs/workspaceArchitecture.md)
