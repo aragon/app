@@ -30,11 +30,9 @@ export class ExplorePage extends BasePage {
     readonly ctaHeading = () =>
         this.page.getByRole('heading', { name: 'Getting started' });
 
+    // Scoped to the explore DAOs section (`exploreDaosSectionId`) because the data-list card
+    // renders its content next to the link instead of inside it, so the card link cannot be
+    // told apart from the CTA card links by its own content.
     readonly daoCards = () =>
-        this.page
-            .getByRole('main')
-            .getByRole('link')
-            .filter({
-                has: this.page.getByRole('heading'),
-            });
+        this.page.locator('#explore-daos-section').getByRole('link');
 }
