@@ -7,7 +7,7 @@ export interface ILinearGateway {
         title: string;
         description: string;
         labelName: string;
-    }): Promise<{ issueId: string; identifier: string; url: string }>;
+    }): Promise<{ issueId: string; identifier: string }>;
     uploadFile(input: {
         filename: string;
         contentType: string;
@@ -57,7 +57,6 @@ export const createLinearGateway = (): ILinearGateway => {
             return {
                 issueId: issue.id,
                 identifier: issue.identifier,
-                url: issue.url,
             };
         },
         uploadFile: async ({ filename, contentType, size, data }) => {

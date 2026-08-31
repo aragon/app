@@ -11,6 +11,7 @@ import {
     ThreadPrimitive,
     useAuiState,
 } from '@assistant-ui/react';
+import classNames from 'classnames';
 import { useEffect, useRef } from 'react';
 import { chatCopy, supportEmailHref } from '../../copy';
 import { useRequestHistory } from '../../requests';
@@ -85,11 +86,7 @@ export const Thread: React.FC<IThreadProps> = (props) => {
                     </div>
 
                     <ThreadPrimitive.ViewportFooter className="sticky bottom-0 flex flex-col gap-3 overflow-visible rounded-t-(--composer-radius) bg-neutral-0 pb-4 md:pb-6">
-                        <AuiIf
-                            condition={(state) =>
-                                isNewChatView(state) && state.composer.isEmpty
-                            }
-                        >
+                        <AuiIf condition={isNewChatView}>
                             <ThreadSuggestions />
                         </AuiIf>
                         <Composer isOpen={isOpen} />
@@ -211,36 +208,52 @@ const PastRequestsLink: React.FC<IPastRequestsLinkProps> = (props) => {
 };
 
 const EmailEscalation: React.FC = () => (
-    <p className="text-center text-neutral-400 text-xs">
-        {`${chatCopy.composer.escalationPrompt} `}
+    <p className="flex items-center justify-center gap-1 text-center text-neutral-400 text-xs">
+        {chatCopy.composer.escalationPrompt}
+        {/* Styled after the gov-ui-kit Link (its own type scale is too large for this caption
+            line): the app's plain link look, opening in a new tab so the chat stays put. */}
         <a
-            className="text-primary-400 underline underline-offset-2"
+            className="focus-ring-primary inline-flex items-center gap-0.5 rounded-md text-primary-400 hover:text-primary-500 active:text-primary-700"
             href={supportEmailHref}
+            rel="noopener noreferrer"
+            target="_blank"
         >
             {chatCopy.composer.escalationLink}
+            <Icon icon={IconType.LINK_EXTERNAL} size="sm" />
         </a>
     </p>
 );
 
-const ThreadSuggestions: React.FC = () => (
-    <div className="flex w-full flex-wrap items-center justify-center gap-2 px-4">
-        {chatCopy.welcome.suggestions.map((suggestion) => (
-            <ThreadPrimitive.Suggestion
-                asChild={true}
-                key={suggestion.label}
-                prompt={suggestion.message}
-                send={true}
-            >
-                <button
-                    className="focus-ring-primary cursor-pointer whitespace-nowrap rounded-full border border-neutral-100 px-3.5 py-1.5 text-neutral-800 text-sm transition-colors hover:bg-neutral-50"
-                    type="button"
+const ThreadSuggestions: React.FC = () => {
+    // Typing retires the suggestions, but through visibility only: unmounting them would change
+    // the footer height and bounce the welcome text around on every first/last character.
+    const isComposerEmpty = useAuiState((state) => state.composer.isEmpty);
+
+    return (
+        <div
+            className={classNames(
+                'flex w-full flex-wrap items-center justify-center gap-2 px-4',
+                !isComposerEmpty && 'invisible',
+            )}
+        >
+            {chatCopy.welcome.suggestions.map((suggestion) => (
+                <ThreadPrimitive.Suggestion
+                    asChild={true}
+                    key={suggestion.label}
+                    prompt={suggestion.message}
+                    send={true}
                 >
-                    {suggestion.label}
-                </button>
-            </ThreadPrimitive.Suggestion>
-        ))}
-    </div>
-);
+                    <button
+                        className="focus-ring-primary cursor-pointer whitespace-nowrap rounded-full border border-neutral-100 px-3.5 py-1.5 text-neutral-800 text-sm transition-colors hover:bg-neutral-50"
+                        type="button"
+                    >
+                        {suggestion.label}
+                    </button>
+                </ThreadPrimitive.Suggestion>
+            ))}
+        </div>
+    );
+};
 
 interface IComposerProps {
     /**

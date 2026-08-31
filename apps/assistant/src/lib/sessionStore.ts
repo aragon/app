@@ -185,7 +185,7 @@ export const createSessionStore = (redis: Redis): ISessionStore => {
             const stored = JSON.parse(value) as IStoredTicket;
 
             return stored.status === 'created'
-                ? { identifier: stored.identifier, url: stored.url }
+                ? { identifier: stored.identifier }
                 : null;
         },
         listFiles: async (sessionId) => {

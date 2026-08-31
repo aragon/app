@@ -150,7 +150,6 @@ export const createSessionTicket = async (
 
         const ticket: ICreateTicketToolOutput = {
             identifier: issue.identifier,
-            url: issue.url,
         };
         await sessionStore.storeTicket(sessionId, toolCallId, ticket);
         await cleanupSessionFiles(deps, sessionId, files);
