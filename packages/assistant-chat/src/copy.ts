@@ -94,7 +94,6 @@ export const chatCopy = {
         successTitle: 'Request created',
         contactUpdates:
             'If you left a way to reach you, the team will follow up there.',
-        viewTicket: 'View request',
         errorTitle: "We couldn't create your request",
         errorFallback: 'Nothing was lost. Check your connection and try again.',
         retry: 'Retry',

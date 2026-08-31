@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 const storageKey = 'aragon-assistant:requests';
 
-// The history is a lightweight convenience (deep links to past requests), not a source of
+// The history is a lightweight convenience (the references of past requests), not a source of
 // truth: it is capped, device-local and dropped silently when localStorage is unavailable.
+// Entries stored before the Linear URL was dropped still parse — unknown keys are stripped.
 const maxEntries = 20;
 
 const requestHistoryEntrySchema = z.object({
     identifier: z.string(),
-    url: z.string(),
     summary: z.string(),
     createdAt: z.string(),
 });

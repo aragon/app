@@ -14,8 +14,9 @@ const formatCreatedAt = (createdAt: string): string => {
 };
 
 // The requests filed from this device, as a view of their own reached from the link under the
-// composer. The entries deep-link to the created ticket — the conversations themselves are not
-// restorable, they live for the length of a session.
+// composer. The entries carry the reference to quote when following up — they deliberately do not
+// link out (the tickets live in a Linear workspace the user has no access to), and the
+// conversations themselves are not restorable, they live for the length of a session.
 export const ChatRequestHistory: React.FC = () => {
     const requestHistory = useRequestHistory();
 
@@ -30,12 +31,9 @@ export const ChatRequestHistory: React.FC = () => {
     return (
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain p-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {requestHistory.map((entry) => (
-                <a
-                    className="flex flex-none items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral transition-colors hover:border-neutral-200 hover:bg-neutral-50"
-                    href={entry.url}
+                <div
+                    className="flex flex-none items-center gap-3 rounded-xl border border-neutral-100 bg-neutral-0 px-4 py-3 shadow-neutral"
                     key={entry.identifier}
-                    rel="noreferrer"
-                    target="_blank"
                 >
                     <Tag label={entry.identifier} variant="primary" />
                     <span className="min-w-0 flex-1 truncate text-neutral-800 text-sm">
@@ -44,7 +42,7 @@ export const ChatRequestHistory: React.FC = () => {
                     <span className="flex-none text-neutral-400 text-sm">
                         {formatCreatedAt(entry.createdAt)}
                     </span>
-                </a>
+                </div>
             ))}
         </div>
     );
