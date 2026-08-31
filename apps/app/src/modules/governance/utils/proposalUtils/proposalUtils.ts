@@ -42,11 +42,14 @@ class ProposalUtils {
     /**
      * Returns the proposal title, falling back to the proposal slug when the metadata
      * cannot be resolved so the proposal always stays identifiable in the UI.
+     * The slug is optional because `getProposalSlug` cannot build one when the
+     * proposal's plugin does not resolve (uninstalled or unsupported plugin): an
+     * untitled proposal then renders without a title instead of crashing.
      */
     getDisplayTitle = (
         proposal: Pick<IProposal, 'title'>,
-        proposalSlug: string,
-    ): string => proposal.title || proposalSlug.toUpperCase();
+        proposalSlug?: string,
+    ): string => proposal.title || (proposalSlug?.toUpperCase() ?? '');
 
     getProposalSlug = (
         proposal: Pick<IProposal, 'incrementalId' | 'pluginAddress'>,

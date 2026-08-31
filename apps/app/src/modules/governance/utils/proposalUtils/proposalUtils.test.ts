@@ -48,6 +48,18 @@ describe('proposalUtils', () => {
             const result = proposalUtils.getDisplayTitle(proposal, 'admin-1');
             expect(result).toEqual('ADMIN-1');
         });
+
+        it('returns an empty title when neither the title nor the slug are set', () => {
+            const proposal = generateProposal({ title: '' });
+            expect(proposalUtils.getDisplayTitle(proposal)).toEqual('');
+        });
+
+        it('returns the proposal title when the slug is not set', () => {
+            const proposal = generateProposal({ title: 'my-proposal' });
+            expect(proposalUtils.getDisplayTitle(proposal)).toEqual(
+                'my-proposal',
+            );
+        });
     });
 
     describe('getProposalSlug', () => {

@@ -202,3 +202,4 @@
 {"ts":"2026-08-27T19:12:08.000Z","tool":"Edit","file":"apps/app/src/modules/governance/api/governanceService/governanceService.ts","rule":"query-and-cache","bytes":2385,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-27T19:12:23.402Z","tool":"Edit","file":"apps/app/src/modules/governance/utils/governanceMetadataUtils/governanceMetadataUtils.ts","rule":"error-and-monitoring","bytes":2525,"elapsed_ms":2,"adapter":"claude"}
 {"ts":"2026-08-31T10:21:08.940Z","tool":"Edit","file":"apps/app/src/shared/utils/daoUtils/daoUtils.ts","rule":"plugin-visibility","bytes":3517,"elapsed_ms":6,"adapter":"claude"}
+{"ts":"2026-08-31T11:12:12.662Z","tool":"Edit","file":"apps/app/src/modules/governance/utils/proposalUtils/proposalUtils.test.ts","rule":"test-scope-and-selectors","bytes":1727,"elapsed_ms":4,"adapter":"claude"}
