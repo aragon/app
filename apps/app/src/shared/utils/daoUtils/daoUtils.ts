@@ -82,13 +82,17 @@ class DaoUtils {
     };
 
     /**
-     * Checks if the backend could resolve the interface type of the plugin.
-     * Deliberately based on the interface type and not on the plugin registry:
-     * the registry is populated on demand, so a registry lookup here would
-     * report every plugin as unsupported during server rendering.
+     * Checks if the backend could resolve the interface type of the plugin and
+     * did not flag it as unsupported (e.g. installed outside the standard OSx
+     * flow). Deliberately based on those backend fields and not on the plugin
+     * registry: the registry is populated on demand, so a registry lookup here
+     * would report every plugin as unsupported during server rendering.
      */
-    isSupportedPlugin = (plugin: Pick<IDaoPlugin, 'interfaceType'>): boolean =>
-        plugin.interfaceType !== PluginInterfaceType.UNKNOWN;
+    isSupportedPlugin = (
+        plugin: Pick<IDaoPlugin, 'interfaceType' | 'isSupported'>,
+    ): boolean =>
+        plugin.interfaceType !== PluginInterfaceType.UNKNOWN &&
+        plugin.isSupported !== false;
 
     getDaoEns = (dao?: IDao): string | undefined =>
         dao?.ens != null && dao.ens !== '' ? dao.ens : undefined;
