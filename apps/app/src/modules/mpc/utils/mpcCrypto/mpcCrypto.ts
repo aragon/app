@@ -1,7 +1,8 @@
 import type { Hex } from 'viem';
 
 /**
- * POC / mock client crypto helpers (WebCrypto): passphrase derived AES-GCM encryption for the device share.
+ * POC / mock client crypto helpers (WebCrypto): secret derived AES-GCM encryption for the device share.
+ * The secret is the per-browser device key (see utils/deviceKey), never a user-provided value.
  */
 
 export interface IEncryptedPayload {
@@ -70,23 +71,23 @@ export const randomHex = (bytes: number): Hex => {
 };
 
 /**
- * Derives an AES-GCM 256 key from a passphrase using PBKDF2-SHA256.
+ * Derives an AES-GCM 256 key from a secret using PBKDF2-SHA256.
  */
-export const deriveKeyFromPassphrase = async (
-    passphrase: string,
+export const deriveKeyFromSecret = async (
+    secret: string,
     salt: Uint8Array,
     iterations: number = MPC_PBKDF2_ITERATIONS,
 ): Promise<CryptoKey> => {
     const { subtle } = getCrypto();
-    const passphraseBytes = new TextEncoder().encode(passphrase);
+    const secretBytes = new TextEncoder().encode(secret);
     const baseKey = await subtle.importKey(
         'raw',
-        passphraseBytes,
+        secretBytes,
         'PBKDF2',
         false,
         ['deriveKey'],
     );
-    passphraseBytes.fill(0);
+    secretBytes.fill(0);
 
     return subtle.deriveKey(
         {
@@ -103,16 +104,16 @@ export const deriveKeyFromPassphrase = async (
 };
 
 /**
- * Encrypts a hex plaintext with a key derived from the passphrase (random salt and iv).
+ * Encrypts a hex plaintext with a key derived from the secret (random salt and iv).
  */
-export const encryptWithPassphrase = async (
+export const encryptWithSecret = async (
     plaintextHex: Hex,
-    passphrase: string,
+    secret: string,
 ): Promise<IEncryptedPayload> => {
     const { subtle } = getCrypto();
     const salt = hexToBytes(randomHex(SALT_BYTES));
     const iv = hexToBytes(randomHex(IV_BYTES));
-    const key = await deriveKeyFromPassphrase(passphrase, salt);
+    const key = await deriveKeyFromSecret(secret, salt);
     const plaintext = hexToBytes(plaintextHex);
     const ciphertext = await subtle.encrypt(
         { name: 'AES-GCM', iv: iv as BufferSource },
@@ -129,16 +130,16 @@ export const encryptWithPassphrase = async (
 };
 
 /**
- * Decrypts a payload produced by encryptWithPassphrase. Throws on wrong passphrase / tampered data.
+ * Decrypts a payload produced by encryptWithSecret. Throws on wrong secret / tampered data.
  */
-export const decryptWithPassphrase = async (
+export const decryptWithSecret = async (
     payload: IEncryptedPayload,
-    passphrase: string,
+    secret: string,
 ): Promise<Hex> => {
     const { subtle } = getCrypto();
     const salt = hexToBytes(payload.salt);
     const iv = hexToBytes(payload.iv);
-    const key = await deriveKeyFromPassphrase(passphrase, salt);
+    const key = await deriveKeyFromSecret(secret, salt);
 
     let plaintext: ArrayBuffer;
 
@@ -149,7 +150,7 @@ export const decryptWithPassphrase = async (
             hexToBytes(payload.ciphertext) as BufferSource,
         );
     } catch {
-        throw new Error('mpcCrypto: decryption failed (wrong passphrase?)');
+        throw new Error('mpcCrypto: decryption failed (wrong device key?)');
     }
 
     const bytes = new Uint8Array(plaintext);
@@ -163,7 +164,7 @@ export const mpcCrypto = {
     randomHex,
     bytesToHex,
     hexToBytes,
-    deriveKeyFromPassphrase,
-    encryptWithPassphrase,
-    decryptWithPassphrase,
+    deriveKeyFromSecret,
+    encryptWithSecret,
+    decryptWithSecret,
 };

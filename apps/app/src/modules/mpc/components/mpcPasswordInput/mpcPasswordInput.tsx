@@ -8,7 +8,7 @@ export interface IMpcPasswordInputProps extends IInputTextProps {}
 const passwordInputProps = { type: 'password' } as unknown as IInputTextProps;
 
 /**
- * InputText rendered as a password field (passphrases / mock passwords never displayed in clear).
+ * InputText rendered as a password field (mock login passwords never displayed in clear).
  */
 export const MpcPasswordInput: React.FC<IMpcPasswordInputProps> = (props) => (
     <InputText {...passwordInputProps} {...props} />

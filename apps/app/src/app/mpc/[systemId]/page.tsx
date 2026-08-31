@@ -1,3 +1,3 @@
-import { MpcSystemPage } from '@/modules/mpc/pages/mpcSystemPage';
+import { MpcDemoPage } from '@/modules/mpc/pages/mpcDemoPage';
 
-export default MpcSystemPage;
+export default MpcDemoPage;

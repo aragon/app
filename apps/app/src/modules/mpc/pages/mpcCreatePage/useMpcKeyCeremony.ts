@@ -12,7 +12,6 @@ export interface IMpcKeyCeremonyParams {
     name: string;
     description?: string;
     chainIds: number[];
-    passphrase: string;
     /**
      * Workspace the system is created in.
      */
@@ -100,7 +99,6 @@ export const useMpcKeyCeremony = (
                 hasAttemptedRef.current = true;
                 const result = await provider.createKey({
                     systemId,
-                    passphrase: params.passphrase,
                     onProgress: (step) =>
                         setState((current) => ({ ...current, step })),
                     registerServerShare: async ({

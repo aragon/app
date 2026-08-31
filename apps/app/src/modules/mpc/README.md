@@ -4,9 +4,12 @@ Proof of concept of a new "system" type in the Aragon app: an **MPC system** is 
 (device share, server / co-signer share, recovery share) with signing policies, members and approvals,
 sign requests (transactions, messages, EIP-712 typed data) and an activity log.
 
-After login the account lands on its **workspaces** (`/mpc`): workspaces are created explicitly (an account
+After login the account lands on its **workspaces** (`/mpc`). The workspace is the top-level entity: it
+holds the **accounts** — DAO, Safe and MPC (DAO / Safe are POC placeholders, only MPC accounts operate) —
+plus the transaction policies and the members. Workspaces are created explicitly (an account
 with none only sees the "Create workspace" option), have an **owner and members** (add / remove), group the
-**MPC systems** (created inside a workspace; workspace members see them as implicit viewers) and hold the
+**MPC systems** (created inside a workspace; workspace members see them as implicit viewers; opening one
+lands on the guided transaction creator at `/mpc/[systemId]`, management at `/mpc/[systemId]/manage`) and hold the
 **workspace transaction policies** — decision-tree flows authored in the visual **policy editor**
 (`/mpc/workspaces/[workspaceId]/policies/new`, `.../policies/[policyId]`), formally verified by the **policy
 engine** (the `mpc-poc` backend) and enforced by the co-signer on every transaction request of the workspace
@@ -44,23 +47,23 @@ Every mocked piece is labelled `POC` / `mock` in code comments and in the UI (`M
 ## Trust model of the mock
 
 - **Generation**: in the browser (`viem.generatePrivateKey`) → Shamir 2-of-3 →
-    - share A (device, index 1): AES-GCM encrypted with a key derived from the **signing passphrase**
-      (PBKDF2, random salt), stored under the `systemId` in IndexedDB;
+    - share A (device, index 1): AES-GCM encrypted with a key derived from the **per-browser device key**
+      (random, kept in localStorage; PBKDF2, random salt), stored under the `systemId` in IndexedDB;
     - share B (server, index 2): sent over TLS to the co-signer, encrypted at rest with `MPC_POC_SERVER_KEY`;
     - share C (recovery, index 3): shown **once** (`aragon-mpc-recovery:v1:<systemId>:<epoch>:<index>:<hex>`,
       copy + `.txt` download), never stored by the server; the user confirms the backup.
 - **Signing**: a member creates a request → the server authenticates the session, evaluates the policy and
   may require approvals from other members → once `approved`, the requester (or an owner) asks
   `POST /server-share {purpose:'sign', requestId}`; the server releases share B bound to that request
-  (status `released`, activity `share_released`) → the browser decrypts share A with the passphrase,
+  (status `released`, activity `share_released`) → the browser decrypts share A with the device key,
   recombines, signs (`signTransaction` / `signMessage` / `signTypedData`), wipes the key and sends the
   signature to `POST /requests/[id]/complete`, which verifies the signer address and, for transactions,
   broadcasts on Sepolia and stores the hash.
 - **Reshare** (owner): share A + released share B → reconstruct → new polynomial → new share B (epoch + 1)
   uploaded, new share A stored, new share C shown once. The previous server share is invalidated.
-- **Recovery** (owner, lost browser): share C + released share B → reconstruct → re-split as a reshare with a
-  new passphrase.
-- **Export** (owner): passphrase + share C → private key shown once; the export is logged in the activity.
+- **Recovery** (owner, lost browser): share C + released share B → reconstruct → re-split as a reshare (the
+  new share A is encrypted with the device key of the new browser).
+- **Export** (owner): share A + share C → private key shown once; the export is logged in the activity.
   The server never releases share B for export (`purpose: 'export'` is rejected).
 - Aragon (server) can **never** sign alone: it holds 1 of 3 shares. Honest limitation: the browser sees the
   full key during signing; a real TSS provider avoids this.
@@ -86,7 +89,7 @@ usable one; failures share the login rate limiting (5 wrong codes lock for 15 mi
 AES-256-GCM encrypted at rest with `MPC_POC_SERVER_KEY`. Users that never enrolled pass through (the UI
 enforces enrollment at registration; pre-existing accounts enroll on their next login).
 
-## Demo (`/mpc/demo`)
+## Demo (`/mpc/[systemId]`)
 
 A guided one-screen, mobile-first flow: one MPC account, one policy
 (“up to 0.5 WETH to one recipient, above 0.1 WETH a second member approves”), one transfer confirmed with a
@@ -95,13 +98,15 @@ approve dialogs) — nothing demo-specific exists on the server.
 
 Runbook:
 
-1. `pnpm --filter @aragon/app dev`, open `/mpc/demo` → register (scan the QR with Google Authenticator).
+1. `pnpm --filter @aragon/app dev`, open `/mpc` → register (scan the QR with Google Authenticator).
+   Opening an MPC account from its workspace lands on the guided transaction creator.
 2. Create a workspace and an MPC system (the page links to the existing flows), fund the address: Sepolia ETH
-   from a faucet for gas, then wrap some into WETH (`deposit()` on the WETH contract, e.g. via Etherscan).
-3. On `/mpc/demo`, apply the demo policy (owner only): enter the recipient wallet → the system policy gets the
+   from a faucet for gas, then wrap some into WETH (`deposit()` on the WETH9 contract, e.g. via Etherscan,
+   or a Uniswap swap).
+3. On the account page (`/mpc/[systemId]`), apply the demo policy (owner only): enter the recipient wallet → the system policy gets the
    recipient allowlist + the WETH token limit. Token address in `constants/mpcConstants.ts`
-   (`MPC_DEMO_TOKEN`, canonical Sepolia WETH).
-4. Happy path: enter an amount ≤ 0.1 WETH → Sign transfer → policy passes → passphrase + authenticator code →
+   (`MPC_DEMO_TOKEN`, Sepolia WETH9 `0x7b79…E7f9` — the contract Uniswap uses).
+4. Happy path: enter an amount ≤ 0.1 WETH → Sign transfer → policy passes → authenticator code →
    broadcast → Etherscan link (and the incoming transfer on the recipient wallet).
 5. Two members: add a second member (approver) to the system; a transfer above 0.1 WETH stays
    “Waiting for approval” → log in as the approver (their own authenticator!) → Review and approve + code →
@@ -118,8 +123,8 @@ pnpm --filter @aragon/app dev
 ```
 
 Open <http://localhost:3000/mpc> (the `mpcSystems` flag is on in `local`). Register a POC account on
-`/mpc/login` — you land in your default workspace — create a system (`/mpc/create`, 4-step wizard: details →
-signing passphrase → key ceremony with downloadable recovery share → initial policy), fund the address on
+`/mpc/login` — you land on your workspaces — create a system (`/mpc/create`, 3-step wizard: details →
+key ceremony with downloadable recovery share → initial policy), fund the address on
 Sepolia and create / sign requests from `/mpc/[systemId]`.
 
 The **policy editor** and the enforcement of workspace policies need the **policy engine** (the `mpc-poc`
@@ -223,11 +228,11 @@ server). Client: `api/mpcService` (`mpcService`, react-query hooks `useMpc*`).
 
 ## Client structure
 
-- `pages/`: `mpcWorkspacePage` (`/mpc`: default workspace, tabs Systems | Policies), `mpcPolicyEditorPage`
+- `pages/`: `mpcWorkspacePage` (`/mpc/workspaces/[workspaceId]`: workspace, tabs Systems | Policies), `mpcPolicyEditorPage`
   (`/mpc/policies/new`, `/mpc/policies/[policyId]`), `mpcLoginPage` (`/mpc/login`, includes the TOTP
-  enrollment step), `mpcCreatePage` (`/mpc/create` wizard), `mpcSystemPage` (`/mpc/[systemId]`: header, share
+  enrollment step), `mpcCreatePage` (`/mpc/create` wizard), `mpcSystemPage` (`/mpc/[systemId]/manage`: header, share
   status, tabs Requests | Policy (system policy + workspace policies) | Members | Activity | Settings),
-  `mpcDemoPage` (`/mpc/demo`: the guided demo above).
+  `mpcDemoPage` (`/mpc/[systemId]`: the guided transaction creator above, landing page of an MPC account).
 - `dialogs/`: `mpcNewRequestDialog`, `mpcSignRequestDialog`, `mpcApproveRequestDialog`, `mpcReshareDialog`,
   `mpcRecoverDialog`, `mpcExportKeyDialog`, `mpcAddMemberDialog`, `mpcEditPolicyDialog`
   (registered in `constants/mpcDialogsDefinitions.ts` → `providersDialogs.ts`).

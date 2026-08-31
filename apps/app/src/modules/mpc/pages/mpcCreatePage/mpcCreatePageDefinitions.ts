@@ -2,7 +2,6 @@ import type { IWizardStepperStep } from '@/shared/components/wizards/wizard';
 
 export enum MpcCreateWizardStep {
     DETAILS = 'DETAILS',
-    PASSPHRASE = 'PASSPHRASE',
     CEREMONY = 'CEREMONY',
     POLICY = 'POLICY',
 }
@@ -16,22 +15,15 @@ export const mpcCreateWizardSteps: IWizardStepperStep[] = [
         },
     },
     {
-        id: MpcCreateWizardStep.PASSPHRASE,
-        order: 1,
-        meta: {
-            name: `app.mpc.mpcCreatePage.steps.${MpcCreateWizardStep.PASSPHRASE}.name`,
-        },
-    },
-    {
         id: MpcCreateWizardStep.CEREMONY,
-        order: 2,
+        order: 1,
         meta: {
             name: `app.mpc.mpcCreatePage.steps.${MpcCreateWizardStep.CEREMONY}.name`,
         },
     },
     {
         id: MpcCreateWizardStep.POLICY,
-        order: 3,
+        order: 2,
         meta: {
             name: `app.mpc.mpcCreatePage.steps.${MpcCreateWizardStep.POLICY}.name`,
         },

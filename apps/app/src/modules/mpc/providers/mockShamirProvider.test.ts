@@ -23,14 +23,12 @@ describe('mockShamirProvider', () => {
     });
 
     const systemId = 'system-1';
-    const passphrase = 'correct horse battery staple';
 
     it('creates a key, stores the device share and signs a message recoverable to the address', async () => {
         const steps: MpcCeremonyStep[] = [];
         const registerServerShare = jest.fn(() => Promise.resolve());
         const created = await mockShamirProvider.createKey({
             systemId,
-            passphrase,
             onProgress: (step) => steps.push(step),
             registerServerShare,
         });
@@ -61,7 +59,6 @@ describe('mockShamirProvider', () => {
         const request = generateMpcSignRequest({ systemId });
         const { signature, signedTransaction } = await mockShamirProvider.sign({
             systemId,
-            passphrase,
             request,
             serverShare: created.serverShare,
         });
@@ -74,10 +71,7 @@ describe('mockShamirProvider', () => {
     }, 30_000);
 
     it('signs a prepared transaction', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
+        const created = await mockShamirProvider.createKey({ systemId });
         const request = generateMpcSignRequest({
             systemId,
             type: 'transaction',
@@ -92,7 +86,6 @@ describe('mockShamirProvider', () => {
         });
         const { signedTransaction } = await mockShamirProvider.sign({
             systemId,
-            passphrase,
             request,
             serverShare: created.serverShare,
             preparedTransaction: {
@@ -113,37 +106,16 @@ describe('mockShamirProvider', () => {
         expect(recovered).toBe(created.address);
     }, 30_000);
 
-    it('fails to sign with a wrong passphrase', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
-        await expect(
-            mockShamirProvider.sign({
-                systemId,
-                passphrase: 'wrong',
-                request: generateMpcSignRequest({ systemId }),
-                serverShare: created.serverShare,
-            }),
-        ).rejects.toThrow();
-    }, 30_000);
-
     it('reshares, recovers and exports the same key', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
+        const created = await mockShamirProvider.createKey({ systemId });
         const exported = await mockShamirProvider.exportKey({
             systemId,
-            passphrase,
             recoveryShare: created.recoveryShare,
         });
         expect(exported).toMatch(/^0x[0-9a-f]{64}$/);
 
         const reshared = await mockShamirProvider.reshare({
             systemId,
-            passphrase,
-            newPassphrase: 'new-pass',
             serverShare: created.serverShare,
         });
         expect(reshared.serverShare.epoch).toBe(2);
@@ -151,52 +123,40 @@ describe('mockShamirProvider', () => {
         expect(
             await mockShamirProvider.exportKey({
                 systemId,
-                passphrase: 'new-pass',
                 serverShare: reshared.serverShare,
             }),
         ).toBe(exported);
 
-        // Device lost: recover with recovery + server share.
+        // Device lost: recover with recovery + server share (clearing the storage also discards the device key).
         localStorage.clear();
         const recovered = await mockShamirProvider.recover({
             systemId,
             recoveryShare: reshared.recoveryShare,
             serverShare: reshared.serverShare,
-            newPassphrase: 'recovered-pass',
         });
         expect(recovered.serverShare.epoch).toBe(3);
         expect(
             await mockShamirProvider.exportKey({
                 systemId,
-                passphrase: 'recovered-pass',
                 serverShare: recovered.serverShare,
             }),
         ).toBe(exported);
     }, 60_000);
 
-    it('verifies the device share and passphrase without releasing anything', async () => {
+    it('verifies the device share without releasing anything', async () => {
         await expect(
-            mockShamirProvider.verifyDeviceShare({ systemId, passphrase }),
+            mockShamirProvider.verifyDeviceShare({ systemId }),
         ).rejects.toThrow(/no device share/);
 
-        await mockShamirProvider.createKey({ systemId, passphrase });
+        await mockShamirProvider.createKey({ systemId });
 
         await expect(
-            mockShamirProvider.verifyDeviceShare({ systemId, passphrase }),
+            mockShamirProvider.verifyDeviceShare({ systemId }),
         ).resolves.toBeUndefined();
-        await expect(
-            mockShamirProvider.verifyDeviceShare({
-                systemId,
-                passphrase: 'wrong',
-            }),
-        ).rejects.toThrow();
     }, 30_000);
 
     it('keeps the current device share when the reshare upload fails', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
+        const created = await mockShamirProvider.createKey({ systemId });
         const before = await loadDeviceShare(systemId);
         const uploadServerShare = jest.fn(() =>
             Promise.reject(new Error('network')),
@@ -205,7 +165,6 @@ describe('mockShamirProvider', () => {
         await expect(
             mockShamirProvider.reshare({
                 systemId,
-                passphrase,
                 serverShare: created.serverShare,
                 expectedAddress: created.address,
                 uploadServerShare,
@@ -213,12 +172,11 @@ describe('mockShamirProvider', () => {
         ).rejects.toThrow('network');
 
         expect(uploadServerShare).toHaveBeenCalledTimes(1);
-        // Device share unchanged (still epoch 1, still decryptable with the same passphrase).
+        // Device share unchanged (still epoch 1, still decryptable with the device key).
         expect(await loadDeviceShare(systemId)).toEqual(before);
         await expect(
             mockShamirProvider.exportKey({
                 systemId,
-                passphrase,
                 serverShare: created.serverShare,
                 expectedAddress: created.address,
             }),
@@ -228,7 +186,6 @@ describe('mockShamirProvider', () => {
         const uploaded: number[] = [];
         const reshared = await mockShamirProvider.reshare({
             systemId,
-            passphrase,
             serverShare: created.serverShare,
             expectedAddress: created.address,
             uploadServerShare: async (share) => {
@@ -242,17 +199,13 @@ describe('mockShamirProvider', () => {
     }, 60_000);
 
     it('refuses to reshare, recover or export when the reconstructed key does not match the address', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
+        const created = await mockShamirProvider.createKey({ systemId });
         const wrongAddress = privateKeyToAccount(generatePrivateKey()).address;
         const uploadServerShare = jest.fn(() => Promise.resolve());
 
         await expect(
             mockShamirProvider.reshare({
                 systemId,
-                passphrase,
                 serverShare: created.serverShare,
                 expectedAddress: wrongAddress,
                 uploadServerShare,
@@ -269,7 +222,6 @@ describe('mockShamirProvider', () => {
                     value: `0x${'22'.repeat(32)}`,
                 },
                 serverShare: created.serverShare,
-                newPassphrase: 'other-pass',
                 expectedAddress: created.address,
                 uploadServerShare,
             }),
@@ -280,7 +232,6 @@ describe('mockShamirProvider', () => {
         await expect(
             mockShamirProvider.exportKey({
                 systemId,
-                passphrase,
                 recoveryShare: created.recoveryShare,
                 expectedAddress: wrongAddress,
             }),
@@ -288,14 +239,10 @@ describe('mockShamirProvider', () => {
     }, 60_000);
 
     it('rejects shares from different epochs', async () => {
-        const created = await mockShamirProvider.createKey({
-            systemId,
-            passphrase,
-        });
+        const created = await mockShamirProvider.createKey({ systemId });
         await expect(
             mockShamirProvider.sign({
                 systemId,
-                passphrase,
                 request: generateMpcSignRequest({ systemId }),
                 serverShare: { ...created.serverShare, epoch: 2 },
             }),

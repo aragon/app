@@ -10,14 +10,15 @@ import type {
     IMpcServerSharePayload,
     IMpcSignRequest,
 } from '@/modules/mpc/api/mpcService/domain';
+import { getDeviceKey } from '@/modules/mpc/utils/deviceKey';
 import {
     hasDeviceShare as hasStoredDeviceShare,
     loadDeviceShare,
     saveDeviceShare,
 } from '@/modules/mpc/utils/deviceShareStorage';
 import {
-    decryptWithPassphrase,
-    encryptWithPassphrase,
+    decryptWithSecret,
+    encryptWithSecret,
 } from '@/modules/mpc/utils/mpcCrypto';
 import {
     type IMpcRecoveryShare,
@@ -48,7 +49,7 @@ import type {
  * POC / mock provider: Shamir 2-of-3 over the secp256k1 order.
  *
  * Trust model (see modules/mpc/README.md):
- * - share A (index 1): device, AES-GCM encrypted with a passphrase-derived key, stored in IndexedDB;
+ * - share A (index 1): device, AES-GCM encrypted with the per-browser device key, stored in IndexedDB;
  * - share B (index 2): co-signer (Aragon server), released only for authorized flows;
  * - share C (index 3): recovery, shown once and never stored.
  * The private key is reconstructed in the browser only for the duration of a signature. A real TSS provider
@@ -99,12 +100,11 @@ const splitPrivateKey = (
 const storeDeviceShare = async (
     systemId: string,
     deviceShare: IShamirShare,
-    passphrase: string,
     epoch: number,
 ): Promise<void> => {
-    const encrypted = await encryptWithPassphrase(
+    const encrypted = await encryptWithSecret(
         shareToHex(deviceShare),
-        passphrase,
+        getDeviceKey(),
     );
     await saveDeviceShare({
         systemId,
@@ -116,7 +116,6 @@ const storeDeviceShare = async (
 
 const loadDecryptedDeviceShare = async (
     systemId: string,
-    passphrase: string,
 ): Promise<{ share: IShamirShare; epoch: number }> => {
     const record = await loadDeviceShare(systemId);
 
@@ -124,7 +123,7 @@ const loadDecryptedDeviceShare = async (
         throw new Error('mockShamirProvider: no device share on this browser');
     }
 
-    const value = await decryptWithPassphrase(record, passphrase);
+    const value = await decryptWithSecret(record, getDeviceKey());
 
     return {
         share: hexToShare(DEVICE_SHARE_INDEX, value),
@@ -233,7 +232,7 @@ const validateEpochs = (...shares: Array<{ epoch: number }>) => {
 const createKey = async (
     params: IMpcCreateKeyParams,
 ): Promise<IMpcCreateKeyResult> => {
-    const { systemId, passphrase, onProgress, registerServerShare } = params;
+    const { systemId, onProgress, registerServerShare } = params;
     const epoch = 1;
 
     onProgress?.('generating');
@@ -247,7 +246,7 @@ const createKey = async (
     const split = splitPrivateKey(privateKey, systemId, epoch);
 
     onProgress?.('storing_device_share');
-    await storeDeviceShare(systemId, split.deviceShare, passphrase, epoch);
+    await storeDeviceShare(systemId, split.deviceShare, epoch);
 
     if (registerServerShare != null) {
         onProgress?.('registering_server_share');
@@ -273,14 +272,13 @@ const createKey = async (
 const verifyDeviceShare = async (
     params: IMpcVerifyDeviceShareParams,
 ): Promise<void> => {
-    // Decrypts and discards the share: throws when missing or when the passphrase is wrong.
-    await loadDecryptedDeviceShare(params.systemId, params.passphrase);
+    // Decrypts and discards the share: throws when missing or not decryptable with the device key.
+    await loadDecryptedDeviceShare(params.systemId);
 };
 
 const sign = async (params: IMpcSignParams): Promise<IMpcSignResult> => {
-    const { systemId, passphrase, request, serverShare, preparedTransaction } =
-        params;
-    const device = await loadDecryptedDeviceShare(systemId, passphrase);
+    const { systemId, request, serverShare, preparedTransaction } = params;
+    const device = await loadDecryptedDeviceShare(systemId);
     validateEpochs(device, serverShare);
 
     const privateKey = reconstructPrivateKey([
@@ -295,7 +293,6 @@ const resplit = async (
     systemId: string,
     privateKey: Hex,
     epoch: number,
-    passphrase: string,
     uploadServerShare?: MpcUploadServerShare,
 ): Promise<IMpcReshareResult> => {
     const split = splitPrivateKey(privateKey, systemId, epoch);
@@ -303,7 +300,7 @@ const resplit = async (
     // The co-signer must accept the new share B first: if the upload fails the device keeps its current share
     // (same epoch as the server) instead of ending up one epoch ahead.
     await uploadServerShare?.(split.serverShare);
-    await storeDeviceShare(systemId, split.deviceShare, passphrase, epoch);
+    await storeDeviceShare(systemId, split.deviceShare, epoch);
 
     return {
         serverShare: split.serverShare,
@@ -315,15 +312,9 @@ const resplit = async (
 const reshare = async (
     params: IMpcReshareParams,
 ): Promise<IMpcReshareResult> => {
-    const {
-        systemId,
-        passphrase,
-        newPassphrase,
-        serverShare,
-        expectedAddress,
-        uploadServerShare,
-    } = params;
-    const device = await loadDecryptedDeviceShare(systemId, passphrase);
+    const { systemId, serverShare, expectedAddress, uploadServerShare } =
+        params;
+    const device = await loadDecryptedDeviceShare(systemId);
     validateEpochs(device, serverShare);
 
     const privateKey = reconstructPrivateKey(
@@ -335,7 +326,6 @@ const reshare = async (
         systemId,
         privateKey,
         serverShare.epoch + 1,
-        newPassphrase ?? passphrase,
         uploadServerShare,
     );
 };
@@ -347,7 +337,6 @@ const recover = async (
         systemId,
         recoveryShare,
         serverShare,
-        newPassphrase,
         expectedAddress,
         uploadServerShare,
     } = params;
@@ -366,19 +355,12 @@ const recover = async (
         systemId,
         privateKey,
         serverShare.epoch + 1,
-        newPassphrase,
         uploadServerShare,
     );
 };
 
 const exportKey = async (params: IMpcExportKeyParams): Promise<Hex> => {
-    const {
-        systemId,
-        passphrase,
-        recoveryShare,
-        serverShare,
-        expectedAddress,
-    } = params;
+    const { systemId, recoveryShare, serverShare, expectedAddress } = params;
     const secondShare = recoveryShare ?? serverShare;
 
     if (secondShare == null) {
@@ -387,7 +369,7 @@ const exportKey = async (params: IMpcExportKeyParams): Promise<Hex> => {
         );
     }
 
-    const device = await loadDecryptedDeviceShare(systemId, passphrase);
+    const device = await loadDecryptedDeviceShare(systemId);
     validateEpochs(device, secondShare);
 
     return reconstructPrivateKey(

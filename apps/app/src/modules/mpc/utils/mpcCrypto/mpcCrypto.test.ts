@@ -1,9 +1,9 @@
 import { setupWebCrypto } from '@/modules/mpc/testUtils/setupWebCrypto';
 import {
     bytesToHex,
-    decryptWithPassphrase,
-    deriveKeyFromPassphrase,
-    encryptWithPassphrase,
+    decryptWithSecret,
+    deriveKeyFromSecret,
+    encryptWithSecret,
     hexToBytes,
     randomHex,
 } from './mpcCrypto';
@@ -29,28 +29,28 @@ describe('mpcCrypto utils', () => {
         expect(Array.from(hexToBytes(hex))).toEqual([0, 1, 255, 16]);
     });
 
-    it('derives an AES-GCM key from a passphrase', async () => {
-        const key = await deriveKeyFromPassphrase(
-            'passphrase',
+    it('derives an AES-GCM key from a secret', async () => {
+        const key = await deriveKeyFromSecret(
+            'secret',
             hexToBytes(randomHex(16)),
             1000,
         );
         expect(key.algorithm).toEqual({ name: 'AES-GCM', length: 256 });
     });
 
-    it('encrypts and decrypts with the same passphrase', async () => {
-        const encrypted = await encryptWithPassphrase(plaintext, 'secret-pass');
+    it('encrypts and decrypts with the same secret', async () => {
+        const encrypted = await encryptWithSecret(plaintext, 'secret-key');
         expect(encrypted.salt).toMatch(/^0x[0-9a-f]{32}$/);
         expect(encrypted.iv).toMatch(/^0x[0-9a-f]{24}$/);
         expect(encrypted.ciphertext).not.toEqual(plaintext);
-        const decrypted = await decryptWithPassphrase(encrypted, 'secret-pass');
+        const decrypted = await decryptWithSecret(encrypted, 'secret-key');
         expect(decrypted).toBe(plaintext);
     }, 20_000);
 
-    it('fails to decrypt with a wrong passphrase', async () => {
-        const encrypted = await encryptWithPassphrase(plaintext, 'secret-pass');
+    it('fails to decrypt with a wrong secret', async () => {
+        const encrypted = await encryptWithSecret(plaintext, 'secret-key');
         await expect(
-            decryptWithPassphrase(encrypted, 'wrong-pass'),
+            decryptWithSecret(encrypted, 'wrong-key'),
         ).rejects.toThrow();
     }, 20_000);
 });

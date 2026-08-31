@@ -14,14 +14,6 @@ export interface IMpcCreateSystemFormData {
      */
     chainIds: string;
     /**
-     * Signing passphrase (never leaves the browser, encrypts the device share).
-     */
-    passphrase: string;
-    /**
-     * Passphrase confirmation.
-     */
-    confirmPassphrase: string;
-    /**
      * Whether the user confirmed having stored the recovery share.
      */
     recoveryAcknowledged: boolean;

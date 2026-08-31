@@ -6,6 +6,7 @@ import {
     Spinner,
     StateSkeletonBar,
     Tabs,
+    Tag,
 } from '@aragon/gov-ui-kit';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -39,7 +40,24 @@ export interface IMpcWorkspacePageClientProps {
     workspaceId: string;
 }
 
-const tabs: MpcWorkspaceTab[] = ['systems', 'policies', 'members'];
+const tabs: MpcWorkspaceTab[] = ['accounts', 'policies', 'members'];
+
+/**
+ * POC placeholder for the account types the workspace will hold next to the MPC accounts (DAO, Safe).
+ */
+const MpcAccountPlaceholder: React.FC<{
+    label: string;
+    description: string;
+    tag: string;
+}> = ({ label, description, tag }) => (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-neutral-100 border-dashed p-4">
+        <div className="flex flex-col gap-1">
+            <span className="text-neutral-800">{label}</span>
+            <span className="text-neutral-500 text-sm">{description}</span>
+        </div>
+        <Tag label={tag} variant="neutral" />
+    </div>
+);
 
 const MpcWorkspaceSystems: React.FC<{ workspace: IMpcWorkspace }> = ({
     workspace,
@@ -106,7 +124,7 @@ const MpcWorkspaceContent: React.FC<IMpcWorkspacePageClientProps> = (props) => {
     const activeTab: MpcWorkspaceTab =
         tabParam === 'policies' || tabParam === 'members'
             ? tabParam
-            : 'systems';
+            : 'accounts';
 
     if (isLoading) {
         return (
@@ -166,19 +184,47 @@ const MpcWorkspaceContent: React.FC<IMpcWorkspacePageClientProps> = (props) => {
                         />
                     ))}
                 </Tabs.List>
-                <Tabs.Content className="pt-6" value="systems">
+                <Tabs.Content className="pt-6" value="accounts">
                     <Page.MainSection
                         action={{
-                            label: t('app.mpc.mpcWorkspacePage.systems.action'),
+                            label: t(
+                                'app.mpc.mpcWorkspacePage.accounts.action',
+                            ),
                             iconLeft: IconType.PLUS,
                             href: mpcCreateSystemPath(workspace.id),
                         }}
                         description={t(
-                            'app.mpc.mpcWorkspacePage.systems.description',
+                            'app.mpc.mpcWorkspacePage.accounts.description',
                         )}
-                        title={t('app.mpc.mpcWorkspacePage.systems.title')}
+                        title={t('app.mpc.mpcWorkspacePage.accounts.title')}
                     >
-                        <MpcWorkspaceSystems workspace={workspace} />
+                        <div className="flex flex-col gap-4">
+                            <MpcWorkspaceSystems workspace={workspace} />
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <MpcAccountPlaceholder
+                                    description={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.dao.description',
+                                    )}
+                                    label={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.dao.label',
+                                    )}
+                                    tag={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.soon',
+                                    )}
+                                />
+                                <MpcAccountPlaceholder
+                                    description={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.safe.description',
+                                    )}
+                                    label={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.safe.label',
+                                    )}
+                                    tag={t(
+                                        'app.mpc.mpcWorkspacePage.accounts.soon',
+                                    )}
+                                />
+                            </div>
+                        </div>
                     </Page.MainSection>
                 </Tabs.Content>
                 <Tabs.Content className="pt-6" value="policies">

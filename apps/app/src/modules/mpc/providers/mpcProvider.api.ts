@@ -25,10 +25,6 @@ export interface IMpcRegisterServerShareParams {
 
 export interface IMpcCreateKeyParams {
     systemId: string;
-    /**
-     * Signing passphrase used to encrypt the device share (never leaves the browser).
-     */
-    passphrase: string;
     onProgress?: (step: MpcCeremonyStep) => void;
     /**
      * Optional callback used to register the server share on the co-signer during the ceremony (the provider
@@ -63,7 +59,6 @@ export interface IMpcCreateKeyResult {
 
 export interface IMpcSignParams {
     systemId: string;
-    passphrase: string;
     request: IMpcSignRequest;
     /**
      * Server share released by the co-signer for this request.
@@ -77,7 +72,6 @@ export interface IMpcSignParams {
 
 export interface IMpcVerifyDeviceShareParams {
     systemId: string;
-    passphrase: string;
 }
 
 export interface IMpcSignResult {
@@ -101,11 +95,6 @@ export type MpcUploadServerShare = (
 
 export interface IMpcReshareParams {
     systemId: string;
-    passphrase: string;
-    /**
-     * New signing passphrase, defaults to the current one.
-     */
-    newPassphrase?: string;
     serverShare: IMpcServerSharePayload;
     /**
      * Address of the system: the reconstructed key is verified against it before anything is stored / uploaded.
@@ -131,7 +120,6 @@ export interface IMpcRecoverParams {
     systemId: string;
     recoveryShare: IMpcRecoveryShare;
     serverShare: IMpcServerSharePayload;
-    newPassphrase: string;
     /**
      * Address of the system: the reconstructed key is verified against it before anything is stored / uploaded.
      */
@@ -144,7 +132,6 @@ export interface IMpcRecoverParams {
 
 export interface IMpcExportKeyParams {
     systemId: string;
-    passphrase: string;
     /**
      * Either the recovery share or a server share is required as second share (the UI only uses the recovery
      * share: the co-signer never releases its share for export).
@@ -167,8 +154,8 @@ export interface IMpcProviderAdapter {
     isMock: boolean;
     createKey: (params: IMpcCreateKeyParams) => Promise<IMpcCreateKeyResult>;
     /**
-     * Verifies that the device share is present in this browser and can be unlocked with the passphrase (throws
-     * otherwise). Called before asking the co-signer to release its share so a typo never burns a release.
+     * Verifies that the device share is present in this browser and can be decrypted with the device key (throws
+     * otherwise). Called before asking the co-signer to release its share so a missing share never burns a release.
      */
     verifyDeviceShare: (params: IMpcVerifyDeviceShareParams) => Promise<void>;
     sign: (params: IMpcSignParams) => Promise<IMpcSignResult>;

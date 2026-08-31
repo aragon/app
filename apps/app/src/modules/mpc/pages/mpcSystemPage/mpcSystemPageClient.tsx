@@ -35,6 +35,7 @@ import { MpcWorkspacePolicyList } from '@/modules/mpc/components/mpcWorkspacePol
 import {
     MPC_LIST_PATH,
     mpcAddressExplorerUrl,
+    mpcSystemPath,
     mpcWorkspacePath,
 } from '@/modules/mpc/constants/mpcConstants';
 import { MpcDialogId } from '@/modules/mpc/constants/mpcDialogId';
@@ -126,7 +127,11 @@ const MpcSystemContent: React.FC<IMpcSystemContentProps> = (props) => {
                         label: t('app.mpc.mpcSystemPage.header.workspace'),
                         href: mpcWorkspacePath(system.workspaceId),
                     },
-                    { label: system.name },
+                    {
+                        label: system.name,
+                        href: mpcSystemPath(system.id),
+                    },
+                    { label: t('app.mpc.mpcSystemPage.header.manage') },
                 ]}
                 breadcrumbsTag={{
                     label: t('app.mpc.mpcSystemPage.header.pocTag'),

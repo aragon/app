@@ -28,7 +28,7 @@ import {
     useMpcBalance,
     useMpcCreateRequest,
     useMpcRequests,
-    useMpcSystems,
+    useMpcSystem,
     useMpcUpdatePolicy,
 } from '@/modules/mpc/api/mpcService';
 import type {
@@ -42,7 +42,6 @@ import {
     mpcRequestStatusVariant,
 } from '@/modules/mpc/components/mpcRequestItem';
 import {
-    MPC_DEMO_PATH,
     MPC_DEMO_TOKEN,
     MPC_DEMO_TOKEN_APPROVAL_ABOVE_UNITS,
     MPC_DEMO_TOKEN_MAX_UNITS,
@@ -50,7 +49,10 @@ import {
     MPC_LOGIN_PATH,
     MPC_SEPOLIA_CHAIN_ID,
     mpcAddressExplorerUrl,
+    mpcSystemManagePath,
+    mpcSystemPath,
     mpcTransactionExplorerUrl,
+    mpcWorkspacePath,
 } from '@/modules/mpc/constants/mpcConstants';
 import { MpcDialogId } from '@/modules/mpc/constants/mpcDialogId';
 import { useMpcHasDeviceShare } from '@/modules/mpc/hooks/useMpcHasDeviceShare';
@@ -59,7 +61,12 @@ import { useDialogContext } from '@/shared/components/dialogProvider';
 import { Page } from '@/shared/components/page';
 import { useTranslations } from '@/shared/components/translationsProvider';
 
-export interface IMpcDemoPageClientProps {}
+export interface IMpcDemoPageClientProps {
+    /**
+     * ID of the MPC account (system) the transaction creator operates on.
+     */
+    systemId: string;
+}
 
 const shortAddress = (address: string) =>
     `${address.slice(0, 6)}…${address.slice(-4)}`;
@@ -76,22 +83,8 @@ const getDemoTokenLimit = (system: IMpcSystem) =>
             limit.token.toLowerCase() === MPC_DEMO_TOKEN.address.toLowerCase(),
     );
 
-/**
- * The demo runs on one system: prefer an active system already carrying the demo policy, fall back to any
- * active system of the account.
- */
-const getDemoSystem = (systems?: IMpcSystem[]) => {
-    const activeSystems = systems?.filter(
-        (system) => system.status === 'active',
-    );
-
-    return (
-        activeSystems?.find((system) => getDemoTokenLimit(system) != null) ??
-        activeSystems?.[0]
-    );
-};
-
-export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
+export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = (props) => {
+    const { systemId } = props;
     const { t } = useTranslations();
     const { open } = useDialogContext();
     const {
@@ -100,23 +93,23 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
         isLoading: isSessionLoading,
     } = useMpcSessionGuard();
 
-    const { data: systems, isLoading: areSystemsLoading } = useMpcSystems({
-        enabled: isAuthenticated,
-    });
-    const system = getDemoSystem(systems);
-    const systemId = system?.id ?? '';
+    const { data: system, isLoading: isSystemLoading } = useMpcSystem(
+        { urlParams: { systemId } },
+        { enabled: isAuthenticated },
+    );
 
     const { hasDeviceShare } = useMpcHasDeviceShare(
         systemId,
         system?.providerId,
     );
+    const isActive = system?.status === 'active';
     const { data: balance } = useMpcBalance(
         { urlParams: { systemId } },
-        { enabled: system != null, refetchInterval: 30_000 },
+        { enabled: isActive, refetchInterval: 30_000 },
     );
     const { data: requests } = useMpcRequests(
         { urlParams: { systemId } },
-        { enabled: system != null, refetchInterval: 10_000 },
+        { enabled: isActive, refetchInterval: 10_000 },
     );
     const { data: tokenBalance } = useReadContract({
         abi: erc20Abi,
@@ -147,6 +140,13 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
     const latestRequest = requests?.find(
         (request) => request.type === 'transaction',
     );
+
+    // A transfer above the on-chain balance reverts at gas estimation: block it before a request is created.
+    const exceedsBalance =
+        tokenBalance != null &&
+        amount.length > 0 &&
+        Number(amount) >
+            Number(formatUnits(tokenBalance, MPC_DEMO_TOKEN.decimals));
 
     const handleApplyPolicy = () => {
         if (system == null || !addressUtils.isAddress(recipientInput)) {
@@ -242,7 +242,7 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
         }
     };
 
-    if (isSessionLoading || (isAuthenticated && areSystemsLoading)) {
+    if (isSessionLoading || (isAuthenticated && isSystemLoading)) {
         return (
             <Page.Main fullWidth={true}>
                 <div className="flex justify-center py-20">
@@ -261,7 +261,7 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
                     objectIllustration={{ object: 'LABELS' }}
                     primaryButton={{
                         label: t('app.mpc.mpcDemoPage.login.action'),
-                        href: `${MPC_LOGIN_PATH}?redirect=${MPC_DEMO_PATH}`,
+                        href: `${MPC_LOGIN_PATH}?redirect=${mpcSystemPath(systemId)}`,
                     }}
                 />
             </Page.Main>
@@ -272,12 +272,29 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
         return (
             <Page.Main fullWidth={true} title={t('app.mpc.mpcDemoPage.title')}>
                 <CardEmptyState
-                    description={t('app.mpc.mpcDemoPage.noSystem.description')}
-                    heading={t('app.mpc.mpcDemoPage.noSystem.title')}
+                    description={t('app.mpc.mpcDemoPage.notFound.description')}
+                    heading={t('app.mpc.mpcDemoPage.notFound.title')}
                     objectIllustration={{ object: 'WALLET' }}
                     primaryButton={{
-                        label: t('app.mpc.mpcDemoPage.noSystem.action'),
+                        label: t('app.mpc.mpcDemoPage.notFound.action'),
                         href: MPC_LIST_PATH,
+                    }}
+                />
+            </Page.Main>
+        );
+    }
+
+    // The key ceremony is not finished: the account cannot transact yet.
+    if (!isActive) {
+        return (
+            <Page.Main fullWidth={true} title={system.name}>
+                <CardEmptyState
+                    description={t('app.mpc.mpcDemoPage.notActive.description')}
+                    heading={t('app.mpc.mpcDemoPage.notActive.title')}
+                    objectIllustration={{ object: 'SECURITY' }}
+                    primaryButton={{
+                        label: t('app.mpc.mpcDemoPage.notActive.action'),
+                        href: mpcSystemManagePath(system.id),
                     }}
                 />
             </Page.Main>
@@ -298,9 +315,25 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
         (requestPermissions.canSign || requestPermissions.canApprove);
 
     return (
-        <Page.Main fullWidth={true} title={t('app.mpc.mpcDemoPage.title')}>
+        <Page.Main fullWidth={true} title={system.name}>
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 md:gap-6">
                 <MpcMockBanner />
+                <div className="flex items-center justify-between gap-2">
+                    <Button
+                        href={mpcWorkspacePath(system.workspaceId)}
+                        size="sm"
+                        variant="tertiary"
+                    >
+                        {t('app.mpc.mpcDemoPage.links.workspace')}
+                    </Button>
+                    <Button
+                        href={mpcSystemManagePath(system.id)}
+                        size="sm"
+                        variant="tertiary"
+                    >
+                        {t('app.mpc.mpcDemoPage.links.manage')}
+                    </Button>
+                </div>
                 <p className="text-neutral-500">
                     {t('app.mpc.mpcDemoPage.description')}
                 </p>
@@ -446,6 +479,19 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
                             })}
                         </p>
                         <InputNumber
+                            alert={
+                                exceedsBalance
+                                    ? {
+                                          message: t(
+                                              'app.mpc.mpcDemoPage.transfer.insufficientBalance',
+                                              {
+                                                  symbol: MPC_DEMO_TOKEN.symbol,
+                                              },
+                                          ),
+                                          variant: 'critical',
+                                      }
+                                    : undefined
+                            }
                             label={t('app.mpc.mpcDemoPage.transfer.amount')}
                             min={0}
                             onChange={(value) => setAmount(value ?? '')}
@@ -456,7 +502,9 @@ export const MpcDemoPageClient: React.FC<IMpcDemoPageClientProps> = () => {
                         <div>
                             <Button
                                 disabled={
-                                    amount.length === 0 || Number(amount) <= 0
+                                    amount.length === 0 ||
+                                    Number(amount) <= 0 ||
+                                    exceedsBalance
                                 }
                                 isLoading={createRequest.isPending}
                                 onClick={handleTransfer}

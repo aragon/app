@@ -7,13 +7,13 @@ import {
     useMpcAcknowledgeRecovery,
     useMpcReshare,
     useMpcServerShare,
+    useMpcSession,
 } from '@/modules/mpc/api/mpcService';
 import type { IMpcSystem } from '@/modules/mpc/api/mpcService/domain';
 import { MpcErrorAlert } from '@/modules/mpc/components/mpcErrorAlert';
 import { MpcMockBanner } from '@/modules/mpc/components/mpcMockBanner';
-import { MpcPasswordInput } from '@/modules/mpc/components/mpcPasswordInput';
+import { MpcOtpInput } from '@/modules/mpc/components/mpcOtpInput';
 import { MpcRecoveryShareCard } from '@/modules/mpc/components/mpcRecoveryShareCard';
-import { MPC_PASSPHRASE_MIN_LENGTH } from '@/modules/mpc/constants/mpcConstants';
 import { useMpcHasDeviceShare } from '@/modules/mpc/hooks/useMpcHasDeviceShare';
 import { useMpcProvider } from '@/modules/mpc/hooks/useMpcProvider';
 import { parseRecoveryShare } from '@/modules/mpc/utils/recoveryShare';
@@ -36,8 +36,6 @@ export interface IMpcRecoverDialogProps
 
 interface IMpcRecoverFormData {
     recoveryShare: string;
-    newPassphrase: string;
-    confirmPassphrase: string;
 }
 
 export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
@@ -64,14 +62,15 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
     const [showAckError, setShowAckError] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<unknown>();
+    const [totpCode, setTotpCode] = useState('');
 
-    const { control, handleSubmit, getValues } = useForm<IMpcRecoverFormData>({
+    // Enrolled users confirm the share release with their authenticator code.
+    const { data: session } = useMpcSession();
+    const requiresTotp = session?.user.totpEnabled === true;
+
+    const { control, handleSubmit } = useForm<IMpcRecoverFormData>({
         mode: 'onTouched',
-        defaultValues: {
-            recoveryShare: '',
-            newPassphrase: '',
-            confirmPassphrase: '',
-        },
+        defaultValues: { recoveryShare: '' },
     });
 
     const validateRecoveryShare = (value: string) => {
@@ -97,37 +96,13 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
         rules: { required: true, validate: validateRecoveryShare },
         trimOnBlur: true,
     });
-    const newPassphraseField = useFormField<
-        IMpcRecoverFormData,
-        'newPassphrase'
-    >('newPassphrase', {
-        control,
-        label: t('app.mpc.mpcRecoverDialog.newPassphrase.label'),
-        rules: { required: true, minLength: MPC_PASSPHRASE_MIN_LENGTH },
-        sanitizeMode: 'none',
-    });
-    const confirmField = useFormField<IMpcRecoverFormData, 'confirmPassphrase'>(
-        'confirmPassphrase',
-        {
-            control,
-            label: t('app.mpc.mpcRecoverDialog.confirmPassphrase.label'),
-            rules: {
-                required: true,
-                validate: (value) =>
-                    value === getValues('newPassphrase')
-                        ? true
-                        : 'app.mpc.mpcRecoverDialog.errors.passphraseMismatch',
-            },
-            sanitizeMode: 'none',
-        },
-    );
 
     const { mutateAsync: releaseServerShare } = useMpcServerShare();
     const { mutateAsync: reshare } = useMpcReshare();
     const { mutate: acknowledgeRecovery, isPending: isAcknowledging } =
         useMpcAcknowledgeRecovery({ onSuccess: handleClose });
 
-    const onSubmit = handleSubmit(async ({ recoveryShare, newPassphrase }) => {
+    const onSubmit = handleSubmit(async ({ recoveryShare }) => {
         setIsProcessing(true);
         setError(undefined);
         try {
@@ -137,7 +112,10 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
             });
             const { serverShare } = await releaseServerShare({
                 urlParams: { systemId: system.id },
-                body: { purpose: 'recover' },
+                body: {
+                    purpose: 'recover',
+                    totpCode: requiresTotp ? totpCode : undefined,
+                },
             });
             // POC / mock: recovery share + server share → reconstruct (verified against the system address) →
             // re-split (new epoch); the new server share is uploaded first and the device share stored only once
@@ -147,7 +125,6 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
                 systemId: system.id,
                 recoveryShare: parsedRecoveryShare,
                 serverShare,
-                newPassphrase,
                 expectedAddress: system.address,
                 uploadServerShare: async (newServerShare) => {
                     const updated = await reshare({
@@ -162,6 +139,8 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
             refreshDeviceShare();
         } catch (recoverError: unknown) {
             setError(recoverError);
+            // A rejected / spent code must be re-entered before retrying.
+            setTotpCode('');
         } finally {
             setIsProcessing(false);
         }
@@ -201,18 +180,17 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
                             placeholder="aragon-mpc-recovery:v1:..."
                             {...recoveryShareField}
                         />
-                        <MpcPasswordInput
-                            autoComplete="new-password"
-                            helpText={t(
-                                'app.mpc.mpcRecoverDialog.newPassphrase.helpText',
-                                { min: MPC_PASSPHRASE_MIN_LENGTH },
-                            )}
-                            {...newPassphraseField}
-                        />
-                        <MpcPasswordInput
-                            autoComplete="new-password"
-                            {...confirmField}
-                        />
+                        {requiresTotp && (
+                            <MpcOtpInput
+                                disabled={isProcessing}
+                                helpText={t(
+                                    'app.mpc.mpcRecoverDialog.totp.helpText',
+                                )}
+                                label={t('app.mpc.mpcRecoverDialog.totp.label')}
+                                onChange={setTotpCode}
+                                value={totpCode}
+                            />
+                        )}
                         <MpcErrorAlert error={error} />
                     </>
                 ) : (
@@ -250,6 +228,7 @@ export const MpcRecoverDialog: React.FC<IMpcRecoverDialogProps> = (props) => {
                               ),
                               onClick: onSubmit,
                               isLoading: isProcessing,
+                              disabled: requiresTotp && totpCode.length !== 6,
                           }
                         : {
                               label: t('app.mpc.mpcRecoverDialog.actions.done'),

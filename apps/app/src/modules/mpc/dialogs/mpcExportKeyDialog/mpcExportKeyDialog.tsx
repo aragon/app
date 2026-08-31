@@ -14,7 +14,6 @@ import { useMpcExportAuthorization } from '@/modules/mpc/api/mpcService';
 import type { IMpcSystem } from '@/modules/mpc/api/mpcService/domain';
 import { MpcErrorAlert } from '@/modules/mpc/components/mpcErrorAlert';
 import { MpcMockBanner } from '@/modules/mpc/components/mpcMockBanner';
-import { MpcPasswordInput } from '@/modules/mpc/components/mpcPasswordInput';
 import { useMpcProvider } from '@/modules/mpc/hooks/useMpcProvider';
 import { parseRecoveryShare } from '@/modules/mpc/utils/recoveryShare';
 import {
@@ -35,7 +34,6 @@ export interface IMpcExportKeyDialogProps
     extends IDialogComponentProps<IMpcExportKeyDialogParams> {}
 
 interface IMpcExportKeyFormData {
-    passphrase: string;
     recoveryShare: string;
 }
 
@@ -60,7 +58,7 @@ export const MpcExportKeyDialog: React.FC<IMpcExportKeyDialogProps> = (
 
     const { control, handleSubmit } = useForm<IMpcExportKeyFormData>({
         mode: 'onTouched',
-        defaultValues: { passphrase: '', recoveryShare: '' },
+        defaultValues: { recoveryShare: '' },
     });
 
     const validateRecoveryShare = (value: string) => {
@@ -78,15 +76,6 @@ export const MpcExportKeyDialog: React.FC<IMpcExportKeyDialogProps> = (
         }
     };
 
-    const passphraseField = useFormField<IMpcExportKeyFormData, 'passphrase'>(
-        'passphrase',
-        {
-            control,
-            label: t('app.mpc.mpcExportKeyDialog.passphrase.label'),
-            rules: { required: true },
-            sanitizeMode: 'none',
-        },
-    );
     const recoveryShareField = useFormField<
         IMpcExportKeyFormData,
         'recoveryShare'
@@ -99,7 +88,7 @@ export const MpcExportKeyDialog: React.FC<IMpcExportKeyDialogProps> = (
 
     const { mutateAsync: authorizeExport } = useMpcExportAuthorization();
 
-    const onSubmit = handleSubmit(async ({ passphrase, recoveryShare }) => {
+    const onSubmit = handleSubmit(async ({ recoveryShare }) => {
         setIsProcessing(true);
         setError(undefined);
         try {
@@ -110,7 +99,6 @@ export const MpcExportKeyDialog: React.FC<IMpcExportKeyDialogProps> = (
             // POC / mock: device share + recovery share reconstruct the key locally, the server only logs the export.
             const key = await provider.exportKey({
                 systemId: system.id,
-                passphrase,
                 recoveryShare: parsedRecoveryShare,
                 expectedAddress: system.address,
             });
@@ -140,10 +128,6 @@ export const MpcExportKeyDialog: React.FC<IMpcExportKeyDialogProps> = (
                 </AlertCard>
                 {privateKey == null ? (
                     <>
-                        <MpcPasswordInput
-                            autoComplete="off"
-                            {...passphraseField}
-                        />
                         <TextArea
                             helpText={t(
                                 'app.mpc.mpcExportKeyDialog.recoveryShare.helpText',

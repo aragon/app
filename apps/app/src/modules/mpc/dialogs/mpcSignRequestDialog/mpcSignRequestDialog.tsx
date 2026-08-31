@@ -12,7 +12,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { formatGwei, type Hex } from 'viem';
 import {
     MpcApiError,
@@ -30,7 +29,6 @@ import type {
 import { MpcErrorAlert } from '@/modules/mpc/components/mpcErrorAlert';
 import { MpcMockBanner } from '@/modules/mpc/components/mpcMockBanner';
 import { MpcOtpInput } from '@/modules/mpc/components/mpcOtpInput';
-import { MpcPasswordInput } from '@/modules/mpc/components/mpcPasswordInput';
 import { MpcRequestSummary } from '@/modules/mpc/components/mpcRequestSummary';
 import { mpcTransactionExplorerUrl } from '@/modules/mpc/constants/mpcConstants';
 import { useMpcProvider } from '@/modules/mpc/hooks/useMpcProvider';
@@ -40,7 +38,6 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface IMpcSignRequestDialogParams {
     /**
@@ -55,10 +52,6 @@ export interface IMpcSignRequestDialogParams {
 
 export interface IMpcSignRequestDialogProps
     extends IDialogComponentProps<IMpcSignRequestDialogParams> {}
-
-interface IMpcSignFormData {
-    passphrase: string;
-}
 
 /**
  * Review data computed before the server share is requested: the digest that will be signed and, for
@@ -110,20 +103,6 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
     const { data: session } = useMpcSession();
     const requiresTotp = session?.user.totpEnabled === true;
 
-    const { control, handleSubmit } = useForm<IMpcSignFormData>({
-        mode: 'onTouched',
-        defaultValues: { passphrase: '' },
-    });
-    const passphraseField = useFormField<IMpcSignFormData, 'passphrase'>(
-        'passphrase',
-        {
-            control,
-            label: t('app.mpc.mpcSignRequestDialog.passphrase.label'),
-            rules: { required: true },
-            sanitizeMode: 'none',
-        },
-    );
-
     const { mutateAsync: releaseServerShare } = useMpcServerShare();
     const { mutateAsync: prepareTransaction } = useMpcPrepareTransaction();
     const { mutateAsync: completeRequest } = useMpcCompleteRequest();
@@ -145,17 +124,14 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             }),
         });
 
-    // Phase 1: unlock the device share locally and prepare the transaction (nothing is released yet), then show
+    // Phase 1: check the device share locally and prepare the transaction (nothing is released yet), then show
     // the digest / prepared fields for confirmation.
-    const onReview = handleSubmit(async ({ passphrase }) => {
+    const onReview = async () => {
         setError(undefined);
 
         try {
             setActiveStep('unlocking');
-            await provider.verifyDeviceShare({
-                systemId: system.id,
-                passphrase,
-            });
+            await provider.verifyDeviceShare({ systemId: system.id });
 
             let preparedTransaction: IMpcPrepareTransactionResponse | undefined;
             if (isTransaction) {
@@ -173,10 +149,10 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
         } catch (reviewError: unknown) {
             setError(reviewError);
         }
-    });
+    };
 
     // Phase 2: release the server share bound to the request, sign in the browser and complete.
-    const onSign = handleSubmit(async ({ passphrase }) => {
+    const onSign = async () => {
         const urlParams = { systemId: system.id, requestId: request.id };
         setError(undefined);
 
@@ -195,7 +171,6 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             // POC / mock: the key is reconstructed in the browser only inside provider.sign.
             const signed = await provider.sign({
                 systemId: system.id,
-                passphrase,
                 request,
                 serverShare,
                 preparedTransaction: review?.preparedTransaction,
@@ -217,7 +192,7 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             // Refresh the list so the request reflects the status stored by the co-signer (released / failed).
             invalidateRequests();
         }
-    });
+    };
 
     const handleBack = () => {
         setReview(undefined);
@@ -389,19 +364,7 @@ export const MpcSignRequestDialog: React.FC<IMpcSignRequestDialogProps> = (
             />
             <Dialog.Content className="flex flex-col gap-6 px-6 pt-4 pb-6">
                 <MpcRequestSummary request={result ?? request} />
-                {result == null && !isReviewing && (
-                    <>
-                        <MpcMockBanner />
-                        <MpcPasswordInput
-                            autoComplete="off"
-                            disabled={isBusy}
-                            helpText={t(
-                                'app.mpc.mpcSignRequestDialog.passphrase.helpText',
-                            )}
-                            {...passphraseField}
-                        />
-                    </>
-                )}
+                {result == null && !isReviewing && <MpcMockBanner />}
                 {isReviewing && renderReview(review)}
                 {isReviewing && requiresTotp && result == null && (
                     <MpcOtpInput

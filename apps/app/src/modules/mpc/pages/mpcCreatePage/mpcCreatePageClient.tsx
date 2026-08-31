@@ -56,7 +56,7 @@ interface IMpcCreateCeremonyContentProps {
     onStart: (values: IMpcCreateSystemFormData) => void;
 }
 
-// Rendered inside the wizard FormProvider: reads the collected values (name, passphrase, ...) to start the ceremony.
+// Rendered inside the wizard FormProvider: reads the collected values (name, chains, ...) to start the ceremony.
 const MpcCreateCeremonyContent: React.FC<IMpcCreateCeremonyContentProps> = (
     props,
 ) => {
@@ -91,7 +91,6 @@ const MpcCreateWizard: React.FC<IMpcCreatePageClientProps> = (props) => {
                         ? values.description.trim()
                         : undefined,
                 chainIds: parseChainIds(values.chainIds),
-                passphrase: values.passphrase,
                 workspaceId,
             }),
         [runCeremony, workspaceId],
@@ -130,8 +129,7 @@ const MpcCreateWizard: React.FC<IMpcCreatePageClientProps> = (props) => {
         [t],
     );
 
-    const [detailsStep, passphraseStep, ceremonyStep, policyStep] =
-        mpcCreateWizardSteps;
+    const [detailsStep, ceremonyStep, policyStep] = mpcCreateWizardSteps;
     const isCeremonyDone = ceremonyState.status === 'done';
     // Details are sent to the co-signer when the ceremony starts: lock them afterwards.
     const isCeremonyStarted = ceremonyState.systemId != null;
@@ -147,8 +145,6 @@ const MpcCreateWizard: React.FC<IMpcCreatePageClientProps> = (props) => {
                 name: '',
                 description: '',
                 chainIds: MPC_SEPOLIA_CHAIN_ID.toString(),
-                passphrase: '',
-                confirmPassphrase: '',
                 recoveryAcknowledged: false,
                 policy: defaultMpcPolicyFormData(),
             }}
@@ -163,12 +159,6 @@ const MpcCreateWizard: React.FC<IMpcCreatePageClientProps> = (props) => {
                 {...detailsStep}
             >
                 <MpcCreateSystemForm.Details disabled={isCeremonyStarted} />
-            </WizardPage.Step>
-            <WizardPage.Step
-                {...stepTexts(MpcCreateWizardStep.PASSPHRASE)}
-                {...passphraseStep}
-            >
-                <MpcCreateSystemForm.Passphrase disabled={isCeremonyDone} />
             </WizardPage.Step>
             <WizardPage.Step
                 {...stepTexts(MpcCreateWizardStep.CEREMONY)}

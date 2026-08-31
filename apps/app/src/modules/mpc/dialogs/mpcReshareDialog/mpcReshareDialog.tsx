@@ -2,18 +2,17 @@
 
 import { AlertCard, Dialog, invariant } from '@aragon/gov-ui-kit';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import {
     useMpcAcknowledgeRecovery,
     useMpcReshare,
     useMpcServerShare,
+    useMpcSession,
 } from '@/modules/mpc/api/mpcService';
 import type { IMpcSystem } from '@/modules/mpc/api/mpcService/domain';
 import { MpcErrorAlert } from '@/modules/mpc/components/mpcErrorAlert';
 import { MpcMockBanner } from '@/modules/mpc/components/mpcMockBanner';
-import { MpcPasswordInput } from '@/modules/mpc/components/mpcPasswordInput';
+import { MpcOtpInput } from '@/modules/mpc/components/mpcOtpInput';
 import { MpcRecoveryShareCard } from '@/modules/mpc/components/mpcRecoveryShareCard';
-import { MPC_PASSPHRASE_MIN_LENGTH } from '@/modules/mpc/constants/mpcConstants';
 import { useMpcHasDeviceShare } from '@/modules/mpc/hooks/useMpcHasDeviceShare';
 import { useMpcProvider } from '@/modules/mpc/hooks/useMpcProvider';
 import {
@@ -21,7 +20,6 @@ import {
     useDialogContext,
 } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
-import { useFormField } from '@/shared/hooks/useFormField';
 
 export interface IMpcReshareDialogParams {
     /**
@@ -32,12 +30,6 @@ export interface IMpcReshareDialogParams {
 
 export interface IMpcReshareDialogProps
     extends IDialogComponentProps<IMpcReshareDialogParams> {}
-
-interface IMpcReshareFormData {
-    passphrase: string;
-    newPassphrase: string;
-    confirmPassphrase: string;
-}
 
 export const MpcReshareDialog: React.FC<IMpcReshareDialogProps> = (props) => {
     const { location } = props;
@@ -63,74 +55,33 @@ export const MpcReshareDialog: React.FC<IMpcReshareDialogProps> = (props) => {
     const [showAckError, setShowAckError] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState<unknown>();
+    const [totpCode, setTotpCode] = useState('');
 
-    const { control, handleSubmit, getValues } = useForm<IMpcReshareFormData>({
-        mode: 'onTouched',
-        defaultValues: {
-            passphrase: '',
-            newPassphrase: '',
-            confirmPassphrase: '',
-        },
-    });
-    const passphraseField = useFormField<IMpcReshareFormData, 'passphrase'>(
-        'passphrase',
-        {
-            control,
-            label: t('app.mpc.mpcReshareDialog.passphrase.label'),
-            rules: { required: true },
-            sanitizeMode: 'none',
-        },
-    );
-    const newPassphraseField = useFormField<
-        IMpcReshareFormData,
-        'newPassphrase'
-    >('newPassphrase', {
-        control,
-        label: t('app.mpc.mpcReshareDialog.newPassphrase.label'),
-        rules: {
-            validate: (value) =>
-                value.length === 0 || value.length >= MPC_PASSPHRASE_MIN_LENGTH
-                    ? true
-                    : 'app.mpc.mpcReshareDialog.errors.passphraseLength',
-        },
-        sanitizeMode: 'none',
-    });
-    const confirmField = useFormField<IMpcReshareFormData, 'confirmPassphrase'>(
-        'confirmPassphrase',
-        {
-            control,
-            label: t('app.mpc.mpcReshareDialog.confirmPassphrase.label'),
-            rules: {
-                validate: (value) =>
-                    value === getValues('newPassphrase')
-                        ? true
-                        : 'app.mpc.mpcReshareDialog.errors.passphraseMismatch',
-            },
-            sanitizeMode: 'none',
-        },
-    );
+    // Enrolled users confirm the share release with their authenticator code.
+    const { data: session } = useMpcSession();
+    const requiresTotp = session?.user.totpEnabled === true;
 
     const { mutateAsync: releaseServerShare } = useMpcServerShare();
     const { mutateAsync: reshare } = useMpcReshare();
     const { mutate: acknowledgeRecovery, isPending: isAcknowledging } =
         useMpcAcknowledgeRecovery({ onSuccess: handleClose });
 
-    const onSubmit = handleSubmit(async ({ passphrase, newPassphrase }) => {
+    const onSubmit = async () => {
         setIsProcessing(true);
         setError(undefined);
         try {
             const { serverShare } = await releaseServerShare({
                 urlParams: { systemId: system.id },
-                body: { purpose: 'reshare' },
+                body: {
+                    purpose: 'reshare',
+                    totpCode: requiresTotp ? totpCode : undefined,
+                },
             });
             // POC / mock: reconstruct (verified against the system address) + re-split in the browser; the new
             // server share is uploaded first and the new device share is stored only once the co-signer accepted it.
             let updatedEpoch: number | undefined;
             const result = await provider.reshare({
                 systemId: system.id,
-                passphrase,
-                newPassphrase:
-                    newPassphrase.length > 0 ? newPassphrase : undefined,
                 serverShare,
                 expectedAddress: system.address,
                 uploadServerShare: async (newServerShare) => {
@@ -146,10 +97,12 @@ export const MpcReshareDialog: React.FC<IMpcReshareDialogProps> = (props) => {
             refreshDeviceShare();
         } catch (reshareError: unknown) {
             setError(reshareError);
+            // A rejected / spent code must be re-entered before retrying.
+            setTotpCode('');
         } finally {
             setIsProcessing(false);
         }
-    });
+    };
 
     const handleDone = () => {
         if (!acknowledged) {
@@ -179,23 +132,17 @@ export const MpcReshareDialog: React.FC<IMpcReshareDialogProps> = (props) => {
                                 next: system.epoch + 1,
                             })}
                         </AlertCard>
-                        <MpcPasswordInput
-                            autoComplete="off"
-                            {...passphraseField}
-                        />
-                        <MpcPasswordInput
-                            autoComplete="new-password"
-                            helpText={t(
-                                'app.mpc.mpcReshareDialog.newPassphrase.helpText',
-                            )}
-                            isOptional={true}
-                            {...newPassphraseField}
-                        />
-                        <MpcPasswordInput
-                            autoComplete="new-password"
-                            isOptional={true}
-                            {...confirmField}
-                        />
+                        {requiresTotp && (
+                            <MpcOtpInput
+                                disabled={isProcessing}
+                                helpText={t(
+                                    'app.mpc.mpcReshareDialog.totp.helpText',
+                                )}
+                                label={t('app.mpc.mpcReshareDialog.totp.label')}
+                                onChange={setTotpCode}
+                                value={totpCode}
+                            />
+                        )}
                         <MpcErrorAlert error={error} />
                     </>
                 ) : (
@@ -233,6 +180,7 @@ export const MpcReshareDialog: React.FC<IMpcReshareDialogProps> = (props) => {
                               ),
                               onClick: onSubmit,
                               isLoading: isProcessing,
+                              disabled: requiresTotp && totpCode.length !== 6,
                           }
                         : {
                               label: t('app.mpc.mpcReshareDialog.actions.done'),

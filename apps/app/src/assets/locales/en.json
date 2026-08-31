@@ -2428,7 +2428,7 @@
         "scheme": "POC · mock Shamir 2-of-3",
         "device": {
           "term": "Device share",
-          "description": "Encrypted with your signing passphrase and stored in this browser.",
+          "description": "Encrypted with a key kept in this browser.",
           "checking": "Checking…",
           "present": "Present in this browser",
           "missing": "Missing in this browser"
@@ -2672,9 +2672,23 @@
         "memberTag": "Member",
         "description": "Workspace owned by {{owner}}. Its active transaction policies are enforced on every transaction request of its MPC systems.",
         "tabs": {
-          "systems": "Systems",
+          "accounts": "Accounts",
           "policies": "Policies",
           "members": "Members"
+        },
+        "accounts": {
+          "title": "Accounts",
+          "description": "DAO, Safe and MPC accounts held by the workspace. Only MPC accounts operate in this POC; an MPC account opens the guided transaction creator.",
+          "action": "New MPC account",
+          "dao": {
+            "label": "DAO",
+            "description": "On-chain governance and treasury of the workspace."
+          },
+          "safe": {
+            "label": "Safe account",
+            "description": "Safe multisig account of the workspace."
+          },
+          "soon": "Soon"
         },
         "systems": {
           "title": "MPC systems",
@@ -2959,11 +2973,6 @@
             "title": "Describe your MPC system",
             "description": "Name the system and declare the chains it operates on. Only Sepolia is operational in this POC."
           },
-          "PASSPHRASE": {
-            "name": "Signing passphrase",
-            "title": "Choose a signing passphrase",
-            "description": "The passphrase encrypts the device share in this browser and is required for every signature. It never leaves the browser and cannot be recovered."
-          },
           "CEREMONY": {
             "name": "Key ceremony",
             "title": "Key generation ceremony",
@@ -2991,23 +3000,6 @@
             "helpText": "Comma separated. Only Sepolia (11155111) can broadcast transactions in the POC."
           },
           "locked": "The details are locked because the system was already created on the co-signer for the key ceremony. They can be edited later from the system settings."
-        },
-        "passphrase": {
-          "warning": {
-            "title": "The passphrase cannot be recovered",
-            "description": "If you forget it, you will need the recovery share to recover the system. It is never sent to the server."
-          },
-          "passphrase": {
-            "label": "Signing passphrase",
-            "helpText": "At least {{min}} characters."
-          },
-          "confirm": {
-            "label": "Confirm passphrase"
-          },
-          "errors": {
-            "mismatch": "The passphrases do not match."
-          },
-          "locked": "The passphrase is locked because the key ceremony already used it."
         },
         "ceremony": {
           "steps": {
@@ -3056,7 +3048,8 @@
             "epoch": "Key epoch",
             "members": "Members"
           },
-          "workspace": "Workspace"
+          "workspace": "Workspace",
+          "manage": "Manage"
         },
         "initializing": {
           "title": "Key ceremony not completed",
@@ -3258,16 +3251,12 @@
       "mpcSignRequestDialog": {
         "title": "Sign request",
         "description": "Review the full payload before signing. Nothing is signed blindly.",
-        "passphrase": {
-          "label": "Signing passphrase",
-          "helpText": "Decrypts the device share in this browser."
-        },
         "totp": {
           "label": "Authenticator code",
           "helpText": "6-digit code from your authenticator app, required to release the server share."
         },
         "steps": {
-          "unlocking": "Unlocking the device share in this browser",
+          "unlocking": "Checking the device share in this browser",
           "preparing": "Preparing the transaction (nonce, gas, fees)",
           "releasing": "Requesting the server share for this request",
           "signing": "Reconstructing the key and signing in this browser (POC mock)",
@@ -3336,29 +3325,21 @@
           "title": "New epoch",
           "description": "Current epoch {{epoch}} → new epoch {{next}}. A new recovery share will be shown once."
         },
-        "passphrase": {
-          "label": "Current signing passphrase"
-        },
-        "newPassphrase": {
-          "label": "New signing passphrase",
-          "helpText": "Leave empty to keep the current passphrase."
-        },
-        "confirmPassphrase": {
-          "label": "Confirm new passphrase"
-        },
         "done": {
           "title": "Reshare complete (epoch {{epoch}})",
           "description": "Save the new recovery share, the previous one is no longer valid."
         },
         "errors": {
-          "passphraseLength": "The new passphrase is too short.",
-          "passphraseMismatch": "The passphrases do not match.",
           "acknowledge": "Confirm that you saved the new recovery share."
         },
         "actions": {
           "submit": "Reshare",
           "cancel": "Cancel",
           "done": "Done"
+        },
+        "totp": {
+          "label": "Authenticator code",
+          "helpText": "6-digit code from your authenticator app, required to release the server share."
         }
       },
       "mpcRecoverDialog": {
@@ -3372,13 +3353,6 @@
           "label": "Recovery share",
           "helpText": "Paste the content of the downloaded recovery file."
         },
-        "newPassphrase": {
-          "label": "New signing passphrase",
-          "helpText": "At least {{min}} characters."
-        },
-        "confirmPassphrase": {
-          "label": "Confirm passphrase"
-        },
         "done": {
           "title": "Recovery complete (epoch {{epoch}})",
           "description": "The device share is stored in this browser. Save the new recovery share."
@@ -3386,24 +3360,24 @@
         "errors": {
           "recoveryShare": "Invalid recovery share.",
           "recoveryShareSystem": "The recovery share belongs to another system.",
-          "passphraseMismatch": "The passphrases do not match.",
           "acknowledge": "Confirm that you saved the new recovery share."
         },
         "actions": {
           "submit": "Recover",
           "cancel": "Cancel",
           "done": "Done"
+        },
+        "totp": {
+          "label": "Authenticator code",
+          "helpText": "6-digit code from your authenticator app, required to release the server share."
         }
       },
       "mpcExportKeyDialog": {
         "title": "Export private key",
-        "description": "Requires the signing passphrase and the recovery share. The export is logged in the activity.",
+        "description": "Requires the device share in this browser and the recovery share. The export is logged in the activity.",
         "warning": {
           "title": "The private key is shown in clear",
           "description": "Anyone with the key controls the funds. Export only if you understand the risk (POC)."
-        },
-        "passphrase": {
-          "label": "Signing passphrase"
         },
         "recoveryShare": {
           "label": "Recovery share",
@@ -3521,17 +3495,12 @@
         "confirm": "Verify and continue"
       },
       "mpcDemoPage": {
-        "title": "MPC account demo",
+        "title": "MPC account",
         "description": "One account, one policy, one transfer: enter an amount, confirm with your authenticator, and the co-signer releases its key share, verifies the signature and broadcasts on Sepolia.",
         "login": {
           "title": "Sign in to start the demo",
           "description": "The demo needs a co-signer account (username and password) with two-factor authentication.",
           "action": "Sign in"
-        },
-        "noSystem": {
-          "title": "No MPC account yet",
-          "description": "Create an MPC system first: a 2-of-3 threshold key with a device share in this browser.",
-          "action": "Go to workspaces"
         },
         "account": {
           "tag": "MPC",
@@ -3552,7 +3521,8 @@
           "title": "Send {{symbol}}",
           "description": "The recipient is fixed by the policy ({{recipient}}). The co-signer checks the policy before anything is signed.",
           "amount": "Amount",
-          "action": "Sign transfer"
+          "action": "Sign transfer",
+          "insufficientBalance": "The account does not hold that much {{symbol}}: the transfer would revert on-chain."
         },
         "request": {
           "title": "Latest transfer",
@@ -3562,6 +3532,20 @@
           "broadcastTitle": "Broadcast on Sepolia",
           "sign": "Sign with authenticator",
           "review": "Review and approve"
+        },
+        "notFound": {
+          "title": "MPC account not found",
+          "description": "The account does not exist or you are not one of its members.",
+          "action": "Go to workspaces"
+        },
+        "notActive": {
+          "title": "The key ceremony is not finished",
+          "description": "The account has no registered key yet: finish the setup from the management view first.",
+          "action": "Manage account"
+        },
+        "links": {
+          "workspace": "Workspace",
+          "manage": "Manage account"
         }
       }
     },
