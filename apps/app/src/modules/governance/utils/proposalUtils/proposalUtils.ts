@@ -25,8 +25,7 @@ class ProposalUtils {
     ): ProposalMetadataStatus => {
         const { title, description, metadataUri } = proposal;
 
-        // The backend leaves both fields unset when the proposal metadata cannot be resolved;
-        // a proposal with only one of them still has usable metadata.
+        // The backend leaves both fields unset when the proposal metadata cannot be resolved.
         if (title || description) {
             return ProposalMetadataStatus.STANDARD;
         }
