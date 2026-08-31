@@ -76,7 +76,7 @@ class NavigationDaoUtils {
                 link: `${baseUrl}/permissions`,
                 icon: IconType.APP_PERMISSIONS,
                 hidden: isPageContext,
-                order: 150,
+                order: 550,
             },
             {
                 label: 'app.application.navigationDao.link.proposals',
