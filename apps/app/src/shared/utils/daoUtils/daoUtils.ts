@@ -74,9 +74,18 @@ class DaoUtils {
         dao?.plugins?.some((p) => p.isBody && this.isSupportedPlugin(p)) ??
         false;
 
+    /**
+     * Checks if the DAO has at least one plugin the app can render. Plugins the
+     * backend cannot resolve or flags as unsupported are dropped first, so this
+     * stays in sync with what `getDaoPlugins` returns — otherwise sections and
+     * navigation items would be rendered for a DAO with no usable plugin.
+     * Client-side only: the plugin registry is populated on demand.
+     */
     hasSupportedPlugins = (dao?: IDao): boolean => {
         const pluginIds =
-            dao?.plugins?.map(({ interfaceType }) => interfaceType) ?? [];
+            dao?.plugins
+                ?.filter((plugin) => this.isSupportedPlugin(plugin))
+                .map(({ interfaceType }) => interfaceType) ?? [];
 
         return pluginRegistryUtils.listContainsRegisteredPlugins(pluginIds);
     };
