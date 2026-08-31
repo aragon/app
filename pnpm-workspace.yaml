@@ -8,7 +8,7 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.63
-  "@aragon/gov-ui-kit": ^2.11.0
+  "@aragon/gov-ui-kit": ^2.11.2
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.14.27
@@ -24,24 +24,24 @@ catalog:
   "@sentry/hono": ^10.70.0
   "@sentry/node": ^10.70.0
   "@sentry/profiling-node": ^10.70.0
-  "@tailwindcss/cli": 4.3.2
+  "@tailwindcss/cli": 4.3.3
   "@tailwindcss/typography": ^0.5.20
   "@tanstack/react-query": ^5.101.4
   "@testing-library/dom": ^10.4.1
   "@testing-library/jest-dom": ^6.9.1
   "@testing-library/react": ^16.3.2
-  "@testing-library/user-event": ^14.6.3
+  "@testing-library/user-event": ^14.6.6
   "@types/jest": ^30.0.0
   "@types/node": ^24.13.3
   "@types/react": ^19.2.18
-  "@types/react-dom": ^19.2.4
+  "@types/react-dom": ^19.2.5
   "@upstash/ratelimit": ^2.0.8
   "@upstash/redis": ^1.38.2
   "@vercel/blob": ^2.8.0
   ai: ^7.0.60
   classnames: ^2.5.1
   cross-env: ^10.1.0
-  file-type: ^22.0.1
+  file-type: ^22.0.2
   hono: ^4.13.1
   husky: ^9.1.7
   jest: ^30.4.2
@@ -50,7 +50,7 @@ catalog:
   react: ^19.2.8
   react-dom: ^19.2.8
   react-dropzone: ^15.0.0
-  react-hook-form: ^7.85.0
+  react-hook-form: ^7.86.0
   tailwindcss: ^4.3.3
   ts-jest: ^29.4.12
   tsup: ^8.5.1
