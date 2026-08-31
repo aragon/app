@@ -16,7 +16,7 @@ catalog:
   "@assistant-ui/react-markdown": 0.14.6
   "@biomejs/biome": ^2.5.8
   "@changesets/changelog-github": ^0.7.0
-  "@changesets/cli": ^2.31.1
+  "@changesets/cli": ^3.0.1
   "@hono/node-server": ^1.19.17
   "@linear/sdk": ^89.0.0
   "@radix-ui/react-dialog": ^1.1.23
