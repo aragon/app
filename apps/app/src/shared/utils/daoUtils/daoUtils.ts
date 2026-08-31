@@ -48,11 +48,13 @@ export interface IGetDaoPluginsParams {
      */
     hasExecute?: boolean;
     /**
-     * Keeps plugins whose interface type could not be resolved. They are
-     * dropped by default because the app has no UI to render them with. Set
-     * this to `true` ONLY for surfaces describing what is installed on-chain
-     * (permissions, contract versions), where omitting a contract would give a
-     * wrong picture of the DAO.
+     * Keeps plugins the app cannot govern with: those whose interface type could
+     * not be resolved, and those the backend flags as unsupported (`isSupported:
+     * false`, e.g. installed outside the standard OSx flow). They are dropped by
+     * default because the app has no UI to render them with. Set this to `true`
+     * ONLY for surfaces describing what is installed on-chain (permissions,
+     * contract versions), where omitting a contract would give a wrong picture
+     * of the DAO.
      * @default false
      */
     includeUnsupported?: boolean;

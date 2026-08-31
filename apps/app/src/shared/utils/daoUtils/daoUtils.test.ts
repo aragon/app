@@ -651,6 +651,47 @@ describe('dao utils', () => {
             ).toEqual(plugins);
         });
 
+        it('drops plugins flagged as unsupported by the backend by default', () => {
+            const plugins = [
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isSupported: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao)).toEqual([plugins[1]]);
+        });
+
+        it('keeps plugins when the backend does not set the isSupported flag', () => {
+            const plugins = [
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isSupported: undefined,
+                }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(daoUtils.getDaoPlugins(dao)).toEqual(plugins);
+        });
+
+        it('keeps plugins flagged as unsupported when includeUnsupported is true', () => {
+            const plugins = [
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.MULTISIG,
+                    isSupported: false,
+                }),
+                generateDaoPlugin({
+                    interfaceType: PluginInterfaceType.TOKEN_VOTING,
+                }),
+            ];
+            const dao = generateDao({ plugins });
+            expect(
+                daoUtils.getDaoPlugins(dao, { includeUnsupported: true }),
+            ).toEqual(plugins);
+        });
+
         it('drops unknown plugins for every plugin type, not only processes', () => {
             const plugins = [
                 generateDaoPlugin({
