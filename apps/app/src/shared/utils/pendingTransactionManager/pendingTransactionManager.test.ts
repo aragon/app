@@ -394,6 +394,7 @@ describe('pendingTransactionManager', () => {
         });
 
         it('looks the receipt up on the chain the transaction was broadcast to', () => {
+            // biome-ignore lint/correctness/noUnusedInstantiation: the hydration side effect of the constructor is the behavior under test.
             new PendingTransactionManager();
 
             expect(getReceiptSpy).toHaveBeenCalledWith(expect.anything(), {

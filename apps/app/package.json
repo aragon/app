@@ -1,32 +1,46 @@
 {
     "name": "@aragon/app",
     "version": "1.38.0",
-    "description": "Human-centered DAO infrastructure",
-    "author": "Aragon Association",
-    "homepage": "https://github.com/aragon/app#readme",
     "private": true,
+    "description": "Human-centered DAO infrastructure",
+    "keywords": [
+        "aragon",
+        "dao",
+        "react",
+        "nextjs",
+        "tailwind"
+    ],
+    "homepage": "https://github.com/aragon/app#readme",
+    "bugs": {
+        "url": "https://github.com/aragon/app/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aragon/app.git"
+    },
     "license": "GPL-3.0",
+    "author": "Aragon Association",
     "scripts": {
-        "dev": "cross-env pnpm run setup local && next dev",
         "build": "NODE_OPTIONS=--max-old-space-size=6144 next build",
         "build:analyze": "next experimental-analyze",
-        "start": "next start",
-        "test": "jest",
-        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
-        "test:watch": "jest --watch",
-        "test:coverage": "jest --coverage",
-        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
-        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
-        "type-check": "tsc --noEmit",
-        "setup": "./scripts/setupEnv.sh",
+        "dev": "cross-env pnpm run setup local && next dev",
         "e2e": "playwright test --config e2e/playwright.config.ts",
-        "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
-        "e2e:smoke": "playwright test --config e2e/playwright.config.ts e2e/tests/smoke",
         "e2e:bv": "playwright test --config e2e/playwright.bv.config.ts e2e/tests/bv/treasuryWithdrawal.spec.ts",
         "e2e:bv:stg": "E2E_BASE_URL=${E2E_BASE_URL:-https://stg.app.aragon.org} playwright test --config e2e/playwright.bv.config.ts e2e/tests/bv/treasuryWithdrawal.spec.ts",
         "e2e:bv:wallet-cache": "pnpm exec synpress e2e/setup --force && node e2e/scripts/syncWalletSetupCache.mjs",
+        "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts",
         "e2e:install": "playwright install --with-deps chromium",
-        "e2e:codegen": "playwright codegen --config e2e/playwright.config.ts"
+        "e2e:smoke": "playwright test --config e2e/playwright.config.ts e2e/tests/smoke",
+        "e2e:ui": "playwright test --config e2e/playwright.config.ts --ui",
+        "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true",
+        "lint:check": "biome check --no-errors-on-unmatched --files-ignore-unknown=true",
+        "setup": "./scripts/setupEnv.sh",
+        "start": "next start",
+        "test": "jest",
+        "test:changed": "jest --ci --passWithNoTests --changedSince=\"$(git merge-base HEAD origin/main 2>/dev/null || echo main)\"",
+        "test:coverage": "jest --coverage",
+        "test:watch": "jest --watch",
+        "type-check": "tsc --noEmit"
     },
     "dependencies": {
         "@aragon/aragon-domain": "^0.3.1",
@@ -42,23 +56,23 @@
         "@reown/appkit": "^1.8.23",
         "@reown/appkit-adapter-wagmi": "^1.8.23",
         "@reown/walletkit": "^1.5.6",
-        "@sentry/core": "^10.70.0",
-        "@sentry/nextjs": "^10.70.0",
+        "@sentry/core": "^10.71.0",
+        "@sentry/nextjs": "^10.71.0",
         "@tanstack/react-query": "catalog:",
-        "@tanstack/react-query-devtools": "^5.101.4",
+        "@tanstack/react-query-devtools": "^5.102.3",
         "@vercel/analytics": "^2.0.1",
         "@vercel/speed-insights": "^2.0.0",
         "@walletconnect/core": "^2.23.10",
         "@walletconnect/utils": "^2.23.10",
-        "@xyflow/react": "^12.11.2",
+        "@xyflow/react": "^12.11.3",
         "classnames": "catalog:",
-        "deepmerge-ts": "^7.1.6",
+        "deepmerge-ts": "^8.0.2",
         "framer-motion": "^12.43.0",
         "import-in-the-middle": "^3.3.3",
-        "isomorphic-dompurify": "^3.22.0",
+        "isomorphic-dompurify": "^3.23.0",
         "jsdom": "^29.1.1",
         "luxon": "^3.7.2",
-        "next": "^16.3.0",
+        "next": "^16.3.2",
         "nextjs-toploader": "^3.9.17",
         "react": "catalog:",
         "react-dom": "catalog:",
@@ -84,7 +98,7 @@
         "@testing-library/react": "catalog:",
         "@testing-library/user-event": "catalog:",
         "@types/jest": "catalog:",
-        "@types/luxon": "^3.7.4",
+        "@types/luxon": "^3.7.5",
         "@types/node": "catalog:",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
@@ -104,20 +118,6 @@
         "ultracite": "catalog:",
         "webpack": "^5.109.2"
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/aragon/app.git"
-    },
-    "bugs": {
-        "url": "https://github.com/aragon/app/issues"
-    },
-    "keywords": [
-        "aragon",
-        "dao",
-        "react",
-        "nextjs",
-        "tailwind"
-    ],
     "engines": {
         "node": ">=24.16.0"
     }
