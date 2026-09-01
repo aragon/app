@@ -29,6 +29,7 @@ import { ResourceLink } from '@/shared/components/resourceLink';
 import { SafeDocumentParser } from '@/shared/components/SafeDocumentParser';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { useSlotSingleFunction } from '@/shared/hooks/useSlotSingleFunction';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import {
@@ -135,6 +136,10 @@ export const DaoProposalDetailsPageClient: React.FC<
 
     const { data: creatorEnsName } = useEnsName(proposal?.creator.address);
 
+    // Dates are formatted in the viewer's timezone while the server renders in UTC —
+    // render them only after mount to avoid a hydration mismatch.
+    const isMounted = useIsMounted();
+
     if (proposal == null || dao == null) {
         return null;
     }
@@ -194,12 +199,11 @@ export const DaoProposalDetailsPageClient: React.FC<
         proposalActions,
         dao,
     );
-    const formattedCreationDate = formatterUtils.formatDate(
-        blockTimestamp * 1000,
-        {
-            format: DateFormat.YEAR_MONTH_DAY,
-        },
-    );
+    const formattedCreationDate = isMounted
+        ? formatterUtils.formatDate(blockTimestamp * 1000, {
+              format: DateFormat.YEAR_MONTH_DAY,
+          })
+        : '-';
 
     const creatorName =
         creatorEnsName ?? addressUtils.truncateAddress(creator.address);

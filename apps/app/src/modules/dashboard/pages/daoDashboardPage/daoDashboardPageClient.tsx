@@ -22,6 +22,7 @@ import { useTranslations } from '@/shared/components/translationsProvider';
 import { useAdminStatus } from '@/shared/hooks/useAdminStatus';
 import { useDaoChain } from '@/shared/hooks/useDaoChain';
 import { useDaoPlugins } from '@/shared/hooks/useDaoPlugins';
+import { useIsMounted } from '@/shared/hooks/useIsMounted';
 import { PluginType } from '@/shared/types';
 import { daoUtils } from '@/shared/utils/daoUtils';
 import { DashboardDefaultHeader } from '../../components/dashboardDefaultHeader';
@@ -66,6 +67,10 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
         useDaoPlugins({ daoId, type: PluginType.PROCESS, visibleOnly: true }) ??
         [];
 
+    // Dates are formatted in the viewer's timezone while the server renders in UTC —
+    // render them only after mount to avoid a hydration mismatch.
+    const isMounted = useIsMounted();
+
     if (dao == null) {
         return null;
     }
@@ -80,9 +85,11 @@ export const DaoDashboardPageClient: React.FC<IDaoDashboardPageClientProps> = (
     const daoEns = daoUtils.getDaoEns(dao);
     const truncatedAddress = addressUtils.truncateAddress(dao.address);
 
-    const daoLaunchedAt = formatterUtils.formatDate(dao.blockTimestamp * 1000, {
-        format: DateFormat.YEAR_MONTH,
-    });
+    const daoLaunchedAt = isMounted
+        ? formatterUtils.formatDate(dao.blockTimestamp * 1000, {
+              format: DateFormat.YEAR_MONTH,
+          })
+        : '-';
 
     const daoAddressLink = buildEntityUrl({
         type: ChainEntityType.ADDRESS,
