@@ -159,10 +159,23 @@ class GovernanceService extends AragonBackendService {
         }
 
         if (sppProposalUtils.isSppProposal(proposal)) {
+            // SPP evaluates a body through the STAGE plugin's interface type (see
+            // sppStageUtils.isBodySucceeded), so a sub-proposal needs the supply enrichment
+            // when either itself or its stage body is lock-to-vote — the backend does not
+            // guarantee the two interface types agree.
+            const lockToVoteBodies = new Set(
+                proposal.settings.stages.flatMap((stage) =>
+                    stage.plugins
+                        .filter(lockToVoteProposalUtils.isLockToVoteStagePlugin)
+                        .map((plugin) => plugin.address.toLowerCase()),
+                ),
+            );
+
             return {
                 ...proposal,
                 subProposals: proposal.subProposals.map((sub) =>
-                    lockToVoteProposalUtils.isLockToVoteProposal(sub)
+                    lockToVoteProposalUtils.isLockToVoteProposal(sub) ||
+                    lockToVoteBodies.has(sub.pluginAddress.toLowerCase())
                         ? { ...sub, tokensTotalSupply }
                         : sub,
                 ),

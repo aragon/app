@@ -237,6 +237,7 @@ describe('governance service', () => {
         const multisigSub = {
             ...generateMultisigProposal({
                 id: 'sub-multisig',
+                pluginAddress: '0x456',
                 pluginInterfaceType: PluginInterfaceType.MULTISIG,
             }),
             stageIndex: 0,
@@ -291,6 +292,63 @@ describe('governance service', () => {
             (decoratedMultisigSub as { tokensTotalSupply?: unknown })
                 .tokensTotalSupply,
         ).toBeUndefined();
+    });
+
+    it('getProposalBySlug enriches a sub-proposal of a lock-to-vote stage body even when its own interface type disagrees', async () => {
+        const tokenAddress = '0xCcCc';
+        const bodyAddress = '0xBodyLtv';
+        // SPP dispatches by the stage plugin's interface type, so a sub-proposal whose own
+        // pluginInterfaceType is inconsistent must still receive the supply enrichment.
+        const mismatchedSub = {
+            ...generateProposal({
+                id: 'sub-mismatched',
+                pluginAddress: bodyAddress,
+                pluginInterfaceType: PluginInterfaceType.MULTISIG,
+            }),
+            stageIndex: 0,
+        };
+        const proposal = generateSppProposal({
+            id: '004',
+            network: Network.ETHEREUM_MAINNET,
+            pluginInterfaceType: PluginInterfaceType.SPP,
+            settings: generateSppPluginSettings({
+                stages: [
+                    generateSppStage({
+                        plugins: [
+                            generateLockToVoteStagePlugin({
+                                address: bodyAddress.toUpperCase(),
+                                settings: generateLockToVotePluginSettings({
+                                    token: generateLockToVotePluginSettingsToken(
+                                        { address: tokenAddress },
+                                    ),
+                                }),
+                            }),
+                        ],
+                    }),
+                ],
+            }),
+            subProposals: [mismatchedSub],
+        });
+        const proposalParams = {
+            urlParams: { slug: proposal.id },
+            queryParams: { daoId: 'test-id' },
+        };
+        requestSpy.mockResolvedValue(proposal);
+        fetchTokensTotalSupplySpy.mockResolvedValue({
+            [tokenAddress.toLowerCase()]: '5000',
+        });
+
+        const result =
+            await governanceService.getProposalBySlug<ISppProposal>(
+                proposalParams,
+            );
+
+        const [decoratedSub] = result.subProposals;
+        expect(
+            (decoratedSub as unknown as ILockToVoteProposal).tokensTotalSupply,
+        ).toEqual({
+            [tokenAddress.toLowerCase()]: '5000',
+        });
     });
 
     it('getProposalBySlug leaves non-LTV non-SPP proposals untouched', async () => {
