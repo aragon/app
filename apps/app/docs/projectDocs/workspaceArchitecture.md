@@ -21,7 +21,7 @@ The Workspace page should look exactly like today's DAO page while aggregating a
 | Assets | account | all accounts aggregated, or filtered to one |
 | Transactions | account | same as assets |
 | Members | **body** | one filter per body of each DAO, plus one per Safe account |
-| Proposals | **process** | one filter per process of each DAO, plus one per Safe account, plus an aggregated paginated "All proposals" |
+| Proposals | **process** | one filter per process of each DAO, plus one per Safe account. Whether there is a single aggregated "All proposals" across account types, or separate per-type lists ("All DAO proposals" / "Pending Safe transactions"), is Decision 5 |
 
 ## Locked V1 constraints
 
@@ -248,46 +248,116 @@ page (`/dao/<network>/<daoAddress>/proposals/<slug>`), where the slug is `${plug
 - Cross-chain workspaces mean a workspace-scoped proposal URL must carry the network, since an
   `(address, slug)` pair is no longer unique.
 
-## Decision 5 — Safe proposals
+## Decision 5 — Safe proposals: unified feed or segregated lists?
 
-Established facts:
+This is now two questions. The first is the more consequential and was previously assumed away.
 
-- Pending Safe transactions exist **only** in the Safe Transaction Service and cannot be derived from chain
-  events. Executed ones **can** (`ExecutionSuccess`, `SafeMultiSigTransaction`).
-- The service uses **limit/offset pagination** — the same scheme as Aragon's backend
-  (`ModelUtils.paginateAndSort`). Pending transactions come from
+### 5a. Should Safe transactions be modelled as proposals at all?
+
+| Option | Assessment |
+| --- | --- |
+| **S1. Segregated, account-type-specific lists** | **Recommended.** The workspace proposals page hosts distinct lists — "All DAO proposals" (indexed, aggregated across DAO accounts) and "Pending Safe transactions" (live, per Safe or merged across Safes). Nothing is forced into a shared shape |
+| **S2. Unified feed — Safe transactions normalised into `IProposal`** | Preserves a single chronological "everything" view, at the cost of a lossy mapping, schema pollution and the whole heterogeneous-merge problem (see 5b) |
+
+**The existing frontend architecture already supports S1 at essentially no cost.** This is the decisive
+practical point:
+
+- `IFilterComponentPlugin.renderContent?` exists and is documented as *"When set, renders this node instead of
+  the slot-based plugin component. Use for synthetic (non-plugin) tabs that don't have a registered slot
+  component."*
+- `IPluginFilterComponentProps.slotId` is **optional**: *"Required when using slot-based rendering; omit when all
+  plugins provide their own renderContent."*
+- There is a live precedent already shipping: the members page appends a synthetic `featuredDelegatesTab` whose
+  `renderContent` renders `FeaturedDelegatesList`, a component entirely unlike the normal member list.
+
+So heterogeneous tabs — where each tab renders a different component against a different data source — are a
+first-class capability of the filter machinery, not a workaround.
+
+Better still, combined with **A3 (Safe as a synthetic plugin)** the proposals page needs *no change at all*.
+`daoProposalList` already renders `PluginFilterComponent` with `slotId: GOVERNANCE_DAO_PROPOSAL_LIST` and
+`plugins` from `useDaoPluginFilterUrlParam({ type: PROCESS, includeLinkedAccounts: true })`. A `safe` plugin is
+picked up as a process automatically, and the slot resolves **per plugin id** — so the Safe plugin registers its
+own list component and its tab renders Safe-specific UI. The tab appears because the plugin exists; the content
+differs because slots resolve by plugin. That is precisely what the slot system is for.
+
+#### Why this is principled, not a workaround
+
+Applying the same test to each domain shows proposals is the *only* one that fails it:
+
+| Domain | Mapping quality | Source | Verdict |
+| --- | --- | --- | --- |
+| Assets | A balance is a balance; Safe native/ERC20 balances are shape-identical | Indexable | **Unify** |
+| Transactions | A transfer is a transfer; the crawler is already address-generic | Indexable | **Unify** |
+| Members | Safe owners are an equal-weight address list; `threshold` maps onto multisig `minApprovals` | Indexable | **Unify** |
+| Proposals | **Lossy** — see below | **Partly unindexable** | **Segregate** |
+
+Proposals is the only domain where the mapping loses information *and* one source cannot be indexed. Fields with
+no `IProposal` analogue: `safeTxHash`, nonce ordering, nonce collisions and replacement/"rejection" transactions,
+`operation`/delegatecall, `confirmationsRequired` captured at proposal time, off-chain signatures held only by
+the service versus on-chain `approveHash`, module transactions, and the state where a queued transaction becomes
+permanently un-executable. Under S2 each of these becomes either a lossy omission or a Safe-only optional field
+on the shared `Proposal` schema — and every existing DAO proposal consumer, status derivation and voting slot
+then has to tolerate it.
+
+#### What S1 costs
+
+- **No single chronological view across account types.** A workspace with a DAO and a Safe has no one list
+  showing everything. This is a genuine regression against the original "All proposals aggregating all
+  processes" intent, and should be an explicit product acceptance rather than an oversight.
+- **Two mental models on one page.** Arguably a feature: "Pending Safe transactions" is more honest than
+  presenting a Safe transaction as a proposal.
+- **More UI surface** — a Safe list item, detail view and approval flow. Largely unavoidable regardless, since
+  the DAO voting UI does not fit Safe approvals.
+- **The group tab needs a rule.** Today `buildFilterPlugins` prepends a `pluginGroupFilter` ("all") tab that
+  aggregates. Under S1 that tab must mean "all **DAO** proposals", so it should aggregate only plugins whose data
+  is indexed — i.e. exclude `interfaceType: 'safe'`. Small, targeted change with a clear invariant: **the group
+  tab aggregates indexed sources only.**
+
+#### Recovering most of the unified view cheaply
+
+Segregation does not preclude a cross-account overview; it only removes the *paginated* one. A bounded,
+**unpaginated** "needs your attention" summary — items awaiting the connected wallet's signature or vote across
+every account — delivers most of the value, because the actionable-by-me set is small on both sides. No shared
+sort key, no merged pagination, no approximate counts.
+
+#### S1 preserves optionality; S2 does not
+
+If S1 ships and a unified feed is later wanted, it can be added as an additional view. If S2 ships and the
+mapping proves lossy, the damage is in the `Proposal` schema and every consumer of it. **Segregation is the
+reversible choice**, which matters most while the Safe semantics are least understood.
+
+### 5b. How is each list sourced?
+
+Established facts about the external service:
+
+- Pending Safe transactions exist **only** in the Safe Transaction Service; executed ones **can** be derived from
+  chain events (`ExecutionSuccess`, `SafeMultiSigTransaction`).
+- The service uses **limit/offset pagination**, the same scheme as Aragon's backend. Pending comes from
   `GET /v1/safes/{address}/multisig-transactions/?executed=false`; `queued=true` (default) includes
   `nonce >= current nonce`.
-- **Unauthenticated use is 2 RPS and 5,000 requests/month**; production requires a paid API key, which cannot
-  ship to a browser, so **the backend must proxy**. With multi-chain workspaces the quota scales with
-  (accounts × chains), which strengthens the case for caching.
-- The service has known ordering defects in `all-transactions` (nonce not used as a secondary sort).
+- **Unauthenticated use is 2 RPS and 5,000 requests/month**; production needs a paid API key, which cannot ship
+  to a browser — **the backend must proxy**. Quota scales with (Safes × chains).
+- The service has known ordering defects in `all-transactions`.
 
-| Option | Pros | Cons |
-| --- | --- | --- |
-| **P1. Backend merge per request** | Single client contract; centralised caching; key stays server-side | p99 tied to Safe's API; an offset merge over-fetches `offset+limit` from both sources at every page, growing with depth; quota burn per user request |
-| **P2. Frontend merge** | — | **Not viable at production scale**: cannot hold the API key, 2 RPS unauthenticated, breaks pagination and counts. Acceptable only for a single-source per-Safe tab |
-| **P3. Shadow-index the pending queue (poll + cache in Mongo)** | **Everything existing works unchanged** — the `$in` aggregation, offset pagination, sort keys, counts | Staleness on new transactions and signatures; polling cost scales with (Safes × chains × frequency) against the quota |
-| **P4. Hybrid: index history, live-fetch the bounded pending set** | **Recommended** — see below | Counts approximate on page 1; a pathologically deep queue breaks the bounded assumption; needs the backend proxy |
+**Under S1 the Safe list has a single source, which is what makes sourcing easy.** The options collapse:
 
-### Why P4
+| Option | Assessment |
+| --- | --- |
+| **S1-a. Serve the whole Safe list live from the service, using its native pagination** | **Recommended for V1.** One source means the service's own limit/offset works directly — no merge, no synthetic cursor, and **no Safe proposal indexing in V1 at all.** This is a substantial scope cut. Tradeoff: quota and latency, mitigated by a backend cache keyed per (safe, chain, page) with a short TTL |
+| **S1-b. Live pending + indexed executed history** | Better at scale and removes deep-history quota risk, but reintroduces a two-source merge *within* the Safe list — the very problem S1 exists to avoid. Worth doing later if history depth becomes a real cost |
+| **S1-c. Shadow-index everything, serve entirely from Mongo** | Most robust and cheapest to read, but accepts staleness on new transactions and signatures, and needs polling per (safe × chain) |
 
-The two sets have opposite shapes. The pending queue is **bounded and small** — exactly the transactions with
-`nonce >= currentNonce`, typically tens of items. History is large but **on-chain and therefore indexable**.
+If **S2** were chosen instead, the earlier recommendation stands as the least-bad shape: index executed Safe
+transactions as `Proposal` rows so they join the `accountKey` `$in` aggregation, fetch the bounded pending set
+live and whole, and merge it at the **head** of page 1 only — so the live set never spans a page boundary and
+pages 2+ stay a single Mongo query. That works, but it is strictly more machinery than S1 needs, and it still
+requires the lossy mapping.
 
-So: index executed Safe transactions from chain events as `Proposal` rows, where they join the `accountKey`
-`$in` aggregation natively; fetch the pending set **live and whole** (one request per Safe per chain, no
-pagination) and merge it at the **head** of the list, page 1 only.
+#### Multi-Safe workspaces
 
-This removes merged-offset pagination entirely — the live set never spans a page boundary, so pages 2+ remain a
-single Mongo query with stable ordering. Safe API usage becomes one bounded, cacheable call per Safe per chain
-per TTL, and **P3 then becomes an optimisation of that same fetch** rather than a separate architecture.
-Mitigate the deep-queue case with a cap plus a "view in Safe" link.
-
-Safe-specific fields with no Aragon analogue still need modelling: `safeTxHash`, `nonce` ordering and
-collisions, replacement/"rejection" transactions, `operation`/delegatecall, off-chain signatures held only by
-the service versus on-chain `approveHash`, module transactions, and the fact that a queued transaction can
-become permanently un-executable.
+If a workspace holds several Safes, an aggregate "All pending Safe transactions" tab is cheap under S1: each
+Safe's pending set is bounded, so N bounded sets merge in memory with no pagination. That is a much smaller
+problem than merging with an indexed source, and it does not need a shared sort key beyond a timestamp.
 
 ## Recommended composite for V1
 
@@ -298,9 +368,10 @@ Because Safe and create/edit are both in V1, there is no DAO-only validation pha
 | **Workspace core** | `Workspace` collection (W3) with account refs `{type, network, address, metadata?}`; wallet-signature-verified writes authorised against `getOwners()` / DAO permissions (W4's model); workspace metadata mirroring DAO metadata |
 | **Aggregation re-key** | Denormalised indexed `accountKey` (K2) on `Proposal`, `Asset`, `Transaction`, `PluginMember` + backfill; sort keys moved to `blockTimestamp` with a new transaction index; fix the silent parent-only collapse |
 | **Account layer** | `accountType` discriminator on `Dao` (A1) + synthetic `safe` plugin with `isBody`/`isProcess` (A3); audit every existing `Dao` query for the discriminator |
-| **Safe indexing** | Safe rows in `Dao` per chain → assets/transfers free via `daoAddressCache`; owners + threshold → `PluginMember` + settings, normalised to the multisig shape; executed Safe transactions → `Proposal` rows; action decoding incl. MultiSend batches |
-| **Safe live data** | Backend-proxied Safe Transaction Service client with API key, per-chain base URLs, caching and quota control; pending queue merged at the head (P4) |
-| **Frontend** | `/workspace/…` route tree (F2) reusing the existing filter/tab machinery, re-sourced from the workspace; DAO account tabs expand to include child DAOs; network-aware proposal URLs |
+| **Safe indexing** | Safe rows in `Dao` per chain → assets/transfers free via `daoAddressCache`; owners + threshold → `PluginMember` + settings, normalised to the multisig shape; action decoding incl. MultiSend batches. **Under S1, executed Safe transactions do not become `Proposal` rows — no Safe proposal indexing in V1** |
+| **Safe live data** | Backend-proxied Safe Transaction Service client with API key, per-chain base URLs, caching and quota control. Under S1-a this client serves the whole Safe list with the service's native pagination |
+| **Frontend** | `/workspace/…` route tree (F2) reusing the existing filter/tab machinery, re-sourced from the workspace; DAO account tabs expand to include child DAOs; network-aware proposal URLs. Under S1 the Safe tab is a plugin-registered slot component, so `daoProposalList` itself needs no change beyond the group-tab rule |
+| **Cross-account overview** | Optional bounded, unpaginated "needs your attention" summary across all accounts — recovers most of the unified-feed value without merged pagination |
 | **Deferred** | Retire `linkedAccounts` once workspaces carry the same cases; optionally revisit an on-chain registry |
 
 ### Prerequisites, whichever options win
@@ -319,10 +390,11 @@ Because Safe and create/edit are both in V1, there is no DAO-only validation pha
 2. **Who may edit a workspace**, precisely: any Safe owner, a threshold of them, any DAO permission holder? And
    may an account be added without its consent, given the on-chain handshake is being dropped?
 3. **Is a cached pending Safe queue acceptable** (staleness window) or must it be strictly live?
-4. **Does "All proposals" need exact total counts**, or is an approximate count on page 1 acceptable?
-5. **Chains supported at launch**, and what happens when a user adds an account on an unindexed chain?
-6. **Must existing `/dao/…` URLs keep working indefinitely**, or is a redirect acceptable?
-7. **Can the same account belong to several workspaces?** This affects uniqueness constraints and caching.
+4. **Is losing the single chronological "all proposals" view across account types acceptable** (Decision 5, S1)? If a unified feed is a hard product requirement, S2 plus the head-merge design is the fallback — at the cost of a lossy mapping into `Proposal`.
+5. **Should a multi-Safe workspace get one aggregate "All pending Safe transactions" tab, or one tab per Safe?** Both are cheap under S1.
+6. **Chains supported at launch**, and what happens when a user adds an account on an unindexed chain?
+7. **Must existing `/dao/…` URLs keep working indefinitely**, or is a redirect acceptable?
+8. **Can the same account belong to several workspaces?** This affects uniqueness constraints and caching.
 
 ## Appendix — verified reference points
 
@@ -333,6 +405,9 @@ Because Safe and create/edit are both in V1, there is no DAO-only validation pha
 | `PluginType.BODY \| PROCESS` | `apps/app/src/shared/types/enum/pluginType.ts` |
 | Account filter tabs | `apps/app/src/shared/hooks/useDaoFilterUrlParam/` |
 | Body/process filter tabs | `apps/app/src/shared/hooks/useDaoPlugins/`, `useDaoPluginFilterUrlParam/` |
+| Heterogeneous tabs (`renderContent`, optional `slotId`) | `apps/app/src/shared/components/pluginFilterComponent/pluginFilterComponent.api.tsx` |
+| Live synthetic-tab precedent | `apps/app/src/modules/governance/pages/daoMembersPage/daoMembersPageClient.tsx` (`featuredDelegatesTab`) |
+| Proposals page tab wiring | `apps/app/src/modules/governance/components/daoProposalList/daoProposalList.tsx` |
 | Composite id convention (`network-address`) | `apps/app/src/shared/utils/daoUtils/daoUtils.ts` (`resolveDaoId`, `parseDaoId`, `resolvePluginDaoId`) |
 | Proposal slug and URL | `apps/app/src/modules/governance/utils/proposalUtils/proposalUtils.ts` |
 | Safe brand identity enum | `apps/app/src/shared/api/daoService/domain/enum/permissionEntity.ts` |
