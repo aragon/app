@@ -28,8 +28,6 @@ class TranslationsUtils {
                                 >
                             )[key];
                         }
-
-                        return;
                     },
                     translations,
                 );
