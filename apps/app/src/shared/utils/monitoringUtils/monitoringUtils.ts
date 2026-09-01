@@ -73,6 +73,25 @@ class MonitoringUtils {
         'replacement transaction underpriced', // Wallet has a stuck same-nonce transaction; user-resolvable
         "session topic doesn't exist", // WalletConnect: stale session
         'No matching key. session topic', // WalletConnect: stale session
+        'Failed to disconnect', // AppKit: disconnect with an already-gone wallet session
+    ];
+
+    /**
+     * Noise injected by the user's environment rather than our code or their actions:
+     * in-app-browser scripts, conflicting wallet extensions, private-mode storage,
+     * aborted streaming responses and deploy skew. Routed exactly like expected user
+     * behaviour: kept for investigation, tagged `expected`, demoted to info, out of alerts.
+     */
+    private environmentNoisePatterns = [
+        // WKWebView in-app-browser scripts JSON.stringify-ing cyclic host objects. The Chrome
+        // variant names the property (see the `__reactFiber` drop pattern); Safari's generic
+        // text is kept-but-demoted so a genuine cyclic bug of ours stays searchable.
+        'cannot serialize cyclic structures',
+        "'get' on proxy: property 'removeListener'", // Two wallet extensions fighting over window.ethereum
+        "Failed to execute 'removeChild'", // Extensions/Google Translate mutating the DOM behind React
+        "Can't find variable: indexedDB", // Private mode / restricted WebView storage
+        'Failed to find Server Action', // Deploy skew: the client bundle is older/newer than the server
+        'The destination stream closed early', // Client aborted the streaming response mid-render
     ];
 
     /**
@@ -208,6 +227,9 @@ class MonitoringUtils {
                 message.includes(pattern),
             ) ||
             this.nonActionableExternalPatterns.some((pattern) =>
+                message.includes(pattern),
+            ) ||
+            this.environmentNoisePatterns.some((pattern) =>
                 message.includes(pattern),
             ) ||
             this.hasExpectedProviderErrorCode(hint, event)
