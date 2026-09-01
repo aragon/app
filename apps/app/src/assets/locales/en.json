@@ -1268,6 +1268,13 @@
         }
       },
       "createProcessPage": {
+        "error": {
+          "action": "View settings",
+          "notFound": {
+            "description": "We couldn't find the governance process you're looking for.",
+            "title": "Process not found"
+          }
+        },
         "finalStep": "Publish process",
         "steps": {
           "METADATA": {
@@ -1976,6 +1983,13 @@
         }
       },
       "createProposalPage": {
+        "error": {
+          "action": "Explore proposals",
+          "notFound": {
+            "description": "We couldn't find the governance process you're looking for.",
+            "title": "Process not found"
+          }
+        },
         "finalStep": "Publish proposal",
         "steps": {
           "ACTIONS": {
