@@ -28,9 +28,11 @@ export interface IDaoProposalListDefaultItemProps<
      */
     proposal: TProposal;
     /**
-     * Slug of the proposal.
+     * Slug of the proposal. Undefined when the proposal's plugin cannot be
+     * resolved on the DAO (uninstalled or unsupported plugin), in which case the
+     * item renders without a link.
      */
-    proposalSlug: string;
+    proposalSlug?: string;
 }
 
 export const DaoProposalListDefaultItem: React.FC<

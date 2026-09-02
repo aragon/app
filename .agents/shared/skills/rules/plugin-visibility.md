@@ -1,6 +1,6 @@
 ---
 name: plugin-visibility
-description: Two filters sit on the plugin list — CMS visibility (opt-in, presentation-only) and unknown interface type (opt-out, applied by default). Never filter a list you then look up by address/slug/type.
+description: Two filters sit on the plugin list — CMS visibility (opt-in, presentation-only) and app support (opt-out, applied by default). Never filter a list you then look up by address/slug/type.
 globs: apps/app/src/shared/hooks/useDaoPlugins/**, apps/app/src/shared/utils/daoVisibilityUtils/**, apps/app/src/shared/utils/daoUtils/**, apps/app/src/plugins/*/hooks/*NormalizeActions/**, apps/app/src/modules/governance/dialogs/selectPluginDialog/**
 kind: rule
 ---
@@ -12,13 +12,14 @@ Two independent filters sit on the plugin list, and their defaults point in **op
 | Axis | Flag | Default | Why |
 | --- | --- | --- | --- |
 | CMS hidden (`pluginsToHide`) | `visibleOnly: true` | off — list is complete | A hidden plugin still works; only its presentation is suppressed, so lookups must resolve it. |
-| Unknown interface type | `includeUnsupported: true` | **on — unknowns are dropped** | The app has no UI to render an unclassified plugin with, so it is never a valid target. |
+| Not supported by the app | `includeUnsupported: true` | **on — unsupported plugins are dropped** | The app has no UI to render an unclassified plugin with, so it is never a valid target. |
 
 ## Canon
 
 - `src/shared/hooks/useDaoPlugins/useDaoPlugins.ts` — `visibleOnly?: boolean` gates `filterHiddenPlugins`. Default `false` = full canonical list.
 - `src/shared/utils/daoVisibilityUtils/daoVisibilityUtils.ts` — the only place that removes hidden plugins.
-- `src/shared/utils/daoUtils/daoUtils.ts` — `isSupportedPlugin` is the single predicate for the unknown axis, and `getDaoPlugins` applies it unless `includeUnsupported` is set. Deliberately an interface-type check, never a plugin-registry lookup: the registry populates on demand, so a registry check would mark every plugin unsupported during server rendering.
+- `src/shared/utils/daoUtils/daoUtils.ts` — `isSupportedPlugin` is the single predicate for the support axis, and `getDaoPlugins` applies it unless `includeUnsupported` is set. Two backend fields feed it: an unresolved `interfaceType` (`UNKNOWN`), and `isSupported: false`, which the backend sets for a plugin installed outside the standard OSx flow (APP-1113 — such a DAO's proposals failed to load because the app accepted the plugin as a governance target). `isSupported` is optional and only `false` counts: an absent flag means supported, so older API responses keep working. Deliberately a check on those fields, never a plugin-registry lookup: the registry populates on demand, so a registry check would mark every plugin unsupported during server rendering.
+- Any DAO-level "does this DAO have plugins" predicate must route through `isSupportedPlugin` — `hasPluginBody` and `hasSupportedPlugins` both do. Skipping it lets nav items and dashboard sections render for a DAO whose only plugin `getDaoPlugins` drops, so the nav link bounces the user straight back with a redirect.
 
 ## The invariant
 
@@ -39,6 +40,8 @@ if (plugin == null) {
     return action; // render the raw action instead of crashing
 }
 ```
+
+Anything derived from a resolved plugin inherits that `undefined`. `proposalUtils.getProposalSlug` returns `undefined` when the proposal's plugin does not resolve, so every prop built from the slug (`proposalSlug`, `href`, `id`) must be typed optional and read with `?.` — a list item for such a proposal renders unlinked instead of throwing.
 
 ## Server Components & navigation
 
