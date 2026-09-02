@@ -1384,9 +1384,6 @@
           }
         },
         "select": {
-          "disabled": {
-            "label": "By request"
-          },
           "external": {
             "description": "Add any address as a body, such as a Safe or Governor",
             "label": "Any address"
@@ -3034,7 +3031,7 @@
         },
         "meta": {
           "setup": {
-            "description": "Majority voting with locked ERC20 tokens",
+            "description": "Voting requires locking non-governance ERC20 tokens",
             "name": "Lock to vote"
           }
         },

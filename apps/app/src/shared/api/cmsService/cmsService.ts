@@ -5,7 +5,6 @@ import type {
     IFeaturedDao,
     IFeaturedDelegates,
     ISanctionedAddressesResult,
-    IWhitelistedAddresses,
 } from './domain';
 
 class CmsService extends HttpService {
@@ -23,7 +22,6 @@ class CmsService extends HttpService {
         daoOverrides: '/main/dao-overrides.json',
         featuredDaos: '/main/featured-daos.json',
         featuredDelegates: '/main/featured-delegates.json',
-        whitelistedAddresses: '/main/whitelisted-addresses.json',
         sanctionedAddresses: '/main/sanctioned-addresses.json',
         featureFlags: '/main/feature-flags.json',
     };
@@ -52,14 +50,6 @@ class CmsService extends HttpService {
         } catch {
             return [];
         }
-    };
-
-    getWhitelistedAddresses = async (): Promise<IWhitelistedAddresses> => {
-        const result = await this.request<IWhitelistedAddresses>(
-            this.urls.whitelistedAddresses,
-        );
-
-        return result;
     };
 
     getSanctionedAddresses = async (): Promise<ISanctionedAddressesResult> => {
