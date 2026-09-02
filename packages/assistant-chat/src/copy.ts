@@ -111,5 +111,7 @@ export const chatCopy = {
         sessionLimit: `You've reached today's limit for new support chats. Email ${supportEmail} to open a new ticket.`,
         upstreamRateLimited:
             'The assistant is handling a lot of requests right now. Please try again in a minute.',
+        timeout:
+            'The assistant took too long to answer. Nothing was lost — send your message again.',
     },
 } as const;
