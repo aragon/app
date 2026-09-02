@@ -17,12 +17,22 @@ import {
     type UIMessageStreamWriter,
 } from 'ai';
 import { Hono } from 'hono';
-import { chatTimeoutMs, getChatProviderOptions } from '../chat/models';
+import {
+    isModelContentChunk,
+    streamFirstRespondingModel,
+} from '../chat/modelFailover';
+import {
+    chatTimeoutMs,
+    firstContentTimeoutMs,
+    getChatModels,
+    getChatProviderOptions,
+} from '../chat/models';
 import { buildAgentSystemPrompt } from '../chat/prompts/agentPrompt';
 import {
     tokenBudgetMessage,
     turnLimitMessage,
 } from '../chat/prompts/fixedMessages';
+import { buildTimeoutErrorTransform } from '../chat/timeoutErrorStream';
 import { buildCreateLinearTicketTool } from '../chat/tools/createLinearTicket';
 import { buildFlagOffTopicTool } from '../chat/tools/flagOffTopic';
 import { searchDocsTool } from '../chat/tools/searchDocs';
@@ -184,74 +194,118 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 writer.write({ type: 'start' });
 
                 const startTime = Date.now();
-                const result = streamText({
-                    model: deps.getChatModel(),
-                    providerOptions: getChatProviderOptions(),
-                    abortSignal: AbortSignal.timeout(chatTimeoutMs),
-                    maxOutputTokens: assistantLimits.maxOutputTokens,
-                    // Draft → tool → post-approval summary all happen within a bounded step count.
-                    stopWhen: stepCountIs(5),
-                    system: buildAgentSystemPrompt({
-                        appContext,
-                        hasAttachments: hasAttachments(messages),
-                        docsSearchEnabled,
-                    }),
+                // Held rather than inlined: the abort chunk the cancellation produces is
+                // indistinguishable from the one a client-side Stop produces, and only this
+                // signal firing makes it a failure worth reporting.
+                const timeoutSignal = AbortSignal.timeout(chatTimeoutMs);
+                const modelMessages = await convertToModelMessages(uiMessages, {
                     // ignoreIncompleteToolCalls drops tool parts the composer's Stop left in
                     // `input-streaming`/`input-available`: replayed as-is they would convert
                     // to a tool call without a response and fail every following model call.
-                    messages: await convertToModelMessages(uiMessages, {
-                        ignoreIncompleteToolCalls: true,
-                    }),
-                    tools: {
-                        [createTicketToolName]: buildCreateLinearTicketTool({
-                            deps,
-                            sessionId,
-                            appContext,
-                            messages,
-                        }),
-                        // Auto-approved (absent from toolApproval): records off-topic attempts
-                        // for analytics; the model calls it before declining.
-                        flagOffTopic: buildFlagOffTopicTool(sessionId),
-                        ...(docsSearchEnabled
-                            ? { searchDocs: searchDocsTool }
-                            : {}),
-                    },
-                    // Ticket creation is gated behind an explicit user approval of the draft; the
-                    // widget resumes the stream once the user presses Create.
-                    toolApproval: {
-                        [createTicketToolName]: () => 'user-approval',
-                    },
-                    onFinish: async ({ usage, finalStep }) => {
-                        await sessionStore.addTokens(
-                            sessionId,
-                            usage.totalTokens ?? 0,
-                        );
+                    ignoreIncompleteToolCalls: true,
+                });
+
+                // The turn runs on the first model that actually starts answering: the Gateway
+                // only fails a call over when it errors, and the stall we see never does.
+                const modelStream = await streamFirstRespondingModel({
+                    models: getChatModels(),
+                    firstContentTimeoutMs,
+                    signal: timeoutSignal,
+                    isContent: isModelContentChunk,
+                    onFailover: ({ from, to }) => {
+                        // The abandoned attempt may have classified an error on its way out;
+                        // it says nothing about the model now serving the turn.
+                        respondErrorPayload = undefined;
                         observability.logStep({
                             sessionId,
                             step: 'respond',
-                            // The model that actually answered: under a Gateway fallback this
-                            // differs from the requested model, keeping degradation visible.
-                            model: finalStep.response.modelId,
+                            model: from,
                             latencyMs: Date.now() - startTime,
-                            tokensIn: usage.inputTokens,
-                            tokensOut: usage.outputTokens,
-                            finishReason: finalStep.finishReason,
+                            failoverTo: to,
                         });
                     },
+                    start: ({ model, abortSignal, remainingModels }) =>
+                        toUIMessageStream({
+                            sendStart: false,
+                            onError: (error) => {
+                                respondErrorPayload = JSON.stringify(
+                                    buildStreamError(error),
+                                );
+
+                                return respondErrorPayload;
+                            },
+                            stream: streamText({
+                                model: deps.getChatModel(model),
+                                providerOptions:
+                                    getChatProviderOptions(remainingModels),
+                                abortSignal,
+                                maxOutputTokens:
+                                    assistantLimits.maxOutputTokens,
+                                // Draft → tool → post-approval summary all happen within a bounded step count.
+                                stopWhen: stepCountIs(5),
+                                system: buildAgentSystemPrompt({
+                                    appContext,
+                                    hasAttachments: hasAttachments(messages),
+                                    docsSearchEnabled,
+                                }),
+                                messages: modelMessages,
+                                tools: {
+                                    [createTicketToolName]:
+                                        buildCreateLinearTicketTool({
+                                            deps,
+                                            sessionId,
+                                            appContext,
+                                            messages,
+                                        }),
+                                    // Auto-approved (absent from toolApproval): records off-topic attempts
+                                    // for analytics; the model calls it before declining.
+                                    flagOffTopic:
+                                        buildFlagOffTopicTool(sessionId),
+                                    ...(docsSearchEnabled
+                                        ? { searchDocs: searchDocsTool }
+                                        : {}),
+                                },
+                                // Ticket creation is gated behind an explicit user approval of the draft; the
+                                // widget resumes the stream once the user presses Create.
+                                toolApproval: {
+                                    [createTicketToolName]: () =>
+                                        'user-approval',
+                                },
+                                onFinish: async ({ usage, finalStep }) => {
+                                    await sessionStore.addTokens(
+                                        sessionId,
+                                        usage.totalTokens ?? 0,
+                                    );
+                                    observability.logStep({
+                                        sessionId,
+                                        step: 'respond',
+                                        // The model that actually answered: under a Gateway fallback this
+                                        // differs from the requested model, keeping degradation visible.
+                                        model: finalStep.response.modelId,
+                                        latencyMs: Date.now() - startTime,
+                                        tokensIn: usage.inputTokens,
+                                        tokensOut: usage.outputTokens,
+                                        finishReason: finalStep.finishReason,
+                                    });
+                                },
+                            }).stream,
+                        }),
                 });
 
                 writer.merge(
-                    toUIMessageStream({
-                        stream: result.stream,
-                        sendStart: false,
-                        onError: (error) => {
-                            respondErrorPayload = JSON.stringify(
-                                buildStreamError(error),
-                            );
-
-                            return respondErrorPayload;
-                        },
-                    }),
+                    modelStream.pipeThrough(
+                        buildTimeoutErrorTransform({
+                            sessionId,
+                            timeoutSignal,
+                            onTimeout: () => {
+                                // Same reasoning as the stream onError below: the turn produced
+                                // no reply, so the retry must not count twice.
+                                if (!isResume) {
+                                    void sessionStore.decrementTurns(sessionId);
+                                }
+                            },
+                        }),
+                    ),
                 );
             },
             onError: (error) => {

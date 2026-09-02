@@ -34,6 +34,9 @@ export interface IStepLogEntry {
     finishReason?: string;
     // Error name/code only, never a message that could carry user content.
     error?: string;
+    // Set when a model stayed silent past its deadline and the turn moved on: the id of the model
+    // it moved to. `model` then names the one that stalled, and `latencyMs` how long it was given.
+    failoverTo?: string;
 }
 
 export interface IErrorLogContext {
