@@ -21,7 +21,7 @@ describe('useTransactionListData hook', () => {
     });
 
     it('fetches and returns the data needed to display the transaction list', () => {
-        const transactions = [generateTransaction({ id: '0' })];
+        const transactions = [generateTransaction()];
         const transactionsMetadata = generatePaginatedResponseMetadata({
             pageSize: 20,
             totalRecords: transactions.length,

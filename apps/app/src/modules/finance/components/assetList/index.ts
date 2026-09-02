@@ -8,4 +8,6 @@ export const AssetList = {
 
 export type { IAssetListContainerProps } from './assetListContainer';
 export type { IAssetListDefaultProps } from './assetListDefault';
+export type { IAssetListItemProps } from './assetListItem';
+export { AssetListItem } from './assetListItem';
 export { assetListFilterParam };

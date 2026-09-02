@@ -38,9 +38,18 @@ export interface ITransactionBase {
      */
     transactionHash: `0x${string}`;
     /**
-     * The id of the transaction.
+     * Index of the transaction inside its block. Together with `logIndex` and `actionIndex` it uniquely identifies a
+     * transaction within a block, which is the only way to identify transfers as the backend returns no `id` for them.
      */
-    id: string;
+    transactionIndex?: number;
+    /**
+     * Index of the log the transaction was decoded from, within its block.
+     */
+    logIndex?: number;
+    /**
+     * Index of the action the transaction was decoded from, when it originates from a bundled action.
+     */
+    actionIndex?: number | null;
 }
 
 export interface ITransactionTransfer extends ITransactionBase {
@@ -59,6 +68,11 @@ export interface ITransactionTransfer extends ITransactionBase {
 }
 
 export interface ITransactionExecution extends ITransactionBase {
+    /**
+     * The id of the execution transaction. Only execution transactions carry an id; the backend returns none for
+     * transfers, which is why this lives here rather than on {@link ITransactionBase}.
+     */
+    id: string;
     /**
      * Execution transaction side.
      */

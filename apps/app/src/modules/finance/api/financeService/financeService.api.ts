@@ -1,4 +1,7 @@
-import type { IPaginatedRequest } from '@/shared/api/aragonBackendService';
+import type {
+    IOrderedRequest,
+    IPaginatedRequest,
+} from '@/shared/api/aragonBackendService';
 import type { Network } from '@/shared/api/daoService';
 import type {
     IRequestQueryParams,
@@ -6,7 +9,9 @@ import type {
 } from '@/shared/api/httpService';
 import type { TransactionTransferSide } from './domain';
 
-export interface IGetAssetListQueryParams extends IPaginatedRequest {
+export interface IGetAssetListQueryParams
+    extends IPaginatedRequest,
+        IOrderedRequest {
     /**
      * DAO ID to fetch assets (format: {network}-{address}).
      * When querying the parent DAO, returns aggregated data for parent + all linked accounts.
@@ -23,7 +28,9 @@ export interface IGetAssetListQueryParams extends IPaginatedRequest {
 export interface IGetAssetListParams
     extends IRequestQueryParams<IGetAssetListQueryParams> {}
 
-export interface IGetTransactionListQueryParams extends IPaginatedRequest {
+export interface IGetTransactionListQueryParams
+    extends IPaginatedRequest,
+        IOrderedRequest {
     /**
      * ID of the DAO to fetch transactions from (format: {network}-{address}).
      * When querying the parent DAO, returns aggregated data for parent + all linked accounts.

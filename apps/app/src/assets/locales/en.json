@@ -403,6 +403,14 @@
           }
         }
       },
+      "layoutWorkspace": {
+        "error": {
+          "notFound": {
+            "description": "We couldn't find the workspace you're looking for.",
+            "title": "Workspace not found"
+          }
+        }
+      },
       "navigationDao": {
         "a11y": {
           "description": "This dialog provides key DAO details and links to governance, treasury, and community pages",
@@ -418,6 +426,17 @@
           "permissions": "Permissions",
           "proposals": "Proposals",
           "settings": "Settings",
+          "transactions": "Transactions"
+        }
+      },
+      "navigationWorkspace": {
+        "a11y": {
+          "description": "This dialog provides key workspace details and links to its assets and transactions pages",
+          "title": "Workspace navigation menu"
+        },
+        "accounts": "{{count}} accounts",
+        "link": {
+          "assets": "Assets",
           "transactions": "Transactions"
         }
       },
@@ -4150,6 +4169,29 @@
               "title": "Missing data"
             }
           }
+        }
+      }
+    },
+    "workspace": {
+      "workspaceAccountFilter": {
+        "option": {
+          "allAccounts": "All accounts"
+        }
+      },
+      "workspaceAssetsPage": {
+        "main": {
+          "title": "Assets"
+        }
+      },
+      "workspaceFilterAsideCard": {
+        "summary": {
+          "assets": "All assets",
+          "transactions": "All accounts"
+        }
+      },
+      "workspaceTransactionsPage": {
+        "main": {
+          "title": "Transactions"
         }
       }
     }

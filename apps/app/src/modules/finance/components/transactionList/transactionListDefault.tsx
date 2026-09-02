@@ -33,7 +33,7 @@ import { useFilterUrlParam } from '@/shared/hooks/useFilterUrlParam';
 import { dataListUtils } from '@/shared/utils/dataListUtils';
 import { TransactionListItem } from './transactionListItem';
 
-enum TransactionListTypeFilter {
+export enum TransactionListTypeFilter {
     ALL = 'all',
     EXECUTIONS = 'executions',
     RECEIVED = 'received',
@@ -42,9 +42,14 @@ enum TransactionListTypeFilter {
 
 export const transactionListTypeFilterParam = 'transactiontype';
 
-const transactionListTypeFilters = Object.values(TransactionListTypeFilter);
+export const transactionListTypeFilters = Object.values(
+    TransactionListTypeFilter,
+);
 
-const typeQueryParams: Record<
+/**
+ * Query parameters applied by each transaction type filter.
+ */
+export const transactionListTypeQueryParams: Record<
     TransactionListTypeFilter,
     Pick<IGetTransactionListQueryParams, 'side' | 'type'>
 > = {
@@ -121,7 +126,7 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         ...initialParams,
         queryParams: {
             ...initialParams.queryParams,
-            ...typeQueryParams[filter],
+            ...transactionListTypeQueryParams[filter],
             pageSize: 1,
         },
     });
@@ -194,7 +199,9 @@ export const TransactionListDefault: React.FC<ITransactionListDefaultProps> = (
         ...initialParams,
         queryParams: {
             ...initialParams.queryParams,
-            ...typeQueryParams[activeTypeFilter as TransactionListTypeFilter],
+            ...transactionListTypeQueryParams[
+                activeTypeFilter as TransactionListTypeFilter
+            ],
         },
     };
 

@@ -15,7 +15,6 @@ const transactionBase = {
     toAddress: '0x0000000000000000000000000000000000000000',
     value: '0',
     transactionHash: '0x0000000000000000000000000000000000000000' as const,
-    id: '0',
 };
 
 export type TransactionGeneratorExecution = Partial<ITransactionExecution> & {
@@ -36,6 +35,8 @@ export function generateTransaction(
     if (transaction.side === TransactionSide.EXECUTION) {
         return {
             ...transactionBase,
+            // Only execution transactions carry an id, the backend returns none for transfers.
+            id: '0',
             source: 'router',
             actionCount: 1,
             ...transaction,
