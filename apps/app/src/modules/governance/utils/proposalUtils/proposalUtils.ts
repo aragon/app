@@ -21,12 +21,12 @@ export enum ProposalMetadataStatus {
 
 class ProposalUtils {
     getMetadataStatus = (
-        proposal: Pick<IProposal, 'title' | 'metadataUri'>,
+        proposal: Pick<IProposal, 'title' | 'description' | 'metadataUri'>,
     ): ProposalMetadataStatus => {
-        const { title, metadataUri } = proposal;
+        const { title, description, metadataUri } = proposal;
 
-        // The backend leaves the title unset when the proposal metadata cannot be resolved.
-        if (title) {
+        // The backend leaves both fields unset when the proposal metadata cannot be resolved.
+        if (title || description) {
             return ProposalMetadataStatus.STANDARD;
         }
 

@@ -12,14 +12,27 @@ describe('proposalUtils', () => {
 
     describe('getMetadataStatus', () => {
         it('returns standard when the proposal title is set', () => {
-            const proposal = generateProposal({ title: 'my-proposal' });
+            const proposal = generateProposal({
+                title: 'my-proposal',
+                description: '',
+            });
             const result = proposalUtils.getMetadataStatus(proposal);
             expect(result).toEqual(ProposalMetadataStatus.STANDARD);
         });
 
-        it('returns non-standard when the title is not set and the metadata is a raw string', () => {
+        it('returns standard when only the proposal description is set', () => {
             const proposal = generateProposal({
                 title: '',
+                description: 'my-description',
+            });
+            const result = proposalUtils.getMetadataStatus(proposal);
+            expect(result).toEqual(ProposalMetadataStatus.STANDARD);
+        });
+
+        it('returns non-standard when title and description are not set and the metadata is a raw string', () => {
+            const proposal = generateProposal({
+                title: '',
+                description: '',
                 metadataUri: 'Proposal to change the settings',
             });
             const result = proposalUtils.getMetadataStatus(proposal);
@@ -27,9 +40,13 @@ describe('proposalUtils', () => {
         });
 
         it.each([null, '', '  ', 'ipfs://unresolvable-cid'])(
-            'returns missing when the title is not set and the metadata is %s',
+            'returns missing when title and description are not set and the metadata is %s',
             (metadataUri) => {
-                const proposal = generateProposal({ title: '', metadataUri });
+                const proposal = generateProposal({
+                    title: '',
+                    description: '',
+                    metadataUri,
+                });
                 const result = proposalUtils.getMetadataStatus(proposal);
                 expect(result).toEqual(ProposalMetadataStatus.MISSING);
             },

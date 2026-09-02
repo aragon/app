@@ -150,6 +150,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposal = generateProposal({
             title: '',
             summary: '',
+            description: '',
             metadataUri,
         });
         useProposalSpy.mockReturnValue(
@@ -172,6 +173,7 @@ describe('<DaoProposalDetailsPageClient /> component', () => {
         const proposal = generateProposal({
             title: '',
             summary: '',
+            description: '',
             metadataUri: null,
         });
         useProposalSpy.mockReturnValue(

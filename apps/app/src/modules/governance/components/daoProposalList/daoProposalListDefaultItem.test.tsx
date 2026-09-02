@@ -74,6 +74,7 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         const proposal = generateProposal({
             title: '',
             summary: '',
+            description: '',
             metadataUri: 'raw-metadata-string',
         });
         render(createTestComponent({ proposal }));
@@ -88,6 +89,7 @@ describe('<DaoProposalListDefaultItem /> component', () => {
         const proposal = generateProposal({
             title: '',
             summary: '',
+            description: '',
             metadataUri: null,
         });
         render(createTestComponent({ proposal }));
