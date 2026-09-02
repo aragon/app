@@ -437,6 +437,7 @@
         "accounts": "{{count}} accounts",
         "link": {
           "assets": "Assets",
+          "members": "Members",
           "transactions": "Transactions"
         }
       },
@@ -4187,6 +4188,15 @@
         "summary": {
           "assets": "All assets",
           "transactions": "All accounts"
+        }
+      },
+      "workspaceMembersPage": {
+        "empty": "None of the accounts in this workspace has a governance body.",
+        "featuredDelegates": {
+          "tab": "Featured delegates"
+        },
+        "main": {
+          "title": "Members"
         }
       },
       "workspaceTransactionsPage": {

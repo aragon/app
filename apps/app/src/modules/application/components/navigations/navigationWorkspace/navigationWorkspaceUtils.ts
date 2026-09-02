@@ -32,6 +32,13 @@ class NavigationWorkspaceUtils {
 
         return [
             {
+                label: 'app.application.navigationWorkspace.link.members',
+                link: `${baseUrl}/members`,
+                icon: IconType.APP_MEMBERS,
+                lgHidden: isDialogContext,
+                order: 300,
+            },
+            {
                 label: 'app.application.navigationWorkspace.link.assets',
                 link: `${baseUrl}/assets`,
                 icon: IconType.APP_ASSETS,

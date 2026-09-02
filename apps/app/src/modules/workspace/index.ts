@@ -1,4 +1,8 @@
 export * from './api/workspaceFinanceService';
 export * from './api/workspaceService';
-export { workspaceAccountFilterParam } from './constants/workspaceFilterParam';
+export {
+    workspaceAccountFilterParam,
+    workspaceBodyFilterParam,
+} from './constants/workspaceFilterParam';
 export { workspaceMocks } from './constants/workspaceMocks';
+export * from './utils/workspaceBodyUtils';

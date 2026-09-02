@@ -33,10 +33,10 @@ class PluginSortUtils {
      *
      * Does not mutate the input array.
      */
-    sortByDisplayOrder = (
-        plugins: IFilterComponentPlugin<IDaoPlugin>[],
+    sortByDisplayOrder = <TPlugin extends IFilterComponentPlugin<IDaoPlugin>>(
+        plugins: TPlugin[],
         params?: ISortPluginsByDisplayOrderParams,
-    ): IFilterComponentPlugin<IDaoPlugin>[] => {
+    ): TPlugin[] => {
         const { rootDaoAddress, typePriority = defaultTypePriority } =
             params ?? {};
 

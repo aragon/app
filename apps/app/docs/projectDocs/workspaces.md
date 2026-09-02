@@ -104,9 +104,14 @@ Safe account should be another first-class type of an account in our system, in 
 
 ## Implementation status
 
-The Assets and Transactions pages are built for workspaces of multiple **DAO** accounts (Safe accounts still out of
-scope), on the existing backend with no API changes: `/workspace/{workspaceId}/assets` and
-`/workspace/{workspaceId}/transactions`, against a mocked workspace registry.
+Built for workspaces of multiple **DAO** accounts (Safe accounts still out of scope), on the existing backend with no
+API changes, against a mocked workspace registry:
 
-Implementation notes, the verified backend constraints and the full decision log:
-[`workspaceFinancePages.md`](./workspaceFinancePages.md).
+| Page | Route | Notes |
+| --- | --- | --- |
+| Assets | `/workspace/{workspaceId}/assets` | [`workspaceFinancePages.md`](./workspaceFinancePages.md) |
+| Transactions | `/workspace/{workspaceId}/transactions` | [`workspaceFinancePages.md`](./workspaceFinancePages.md) |
+| Members | `/workspace/{workspaceId}/members` | [`workspaceMembersPage.md`](./workspaceMembersPage.md) |
+
+Not built yet: dashboard, proposals, settings, permissions, a workspace-scoped member details page, workspace
+creation/editing, and any Safe account support.
