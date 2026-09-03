@@ -8,12 +8,7 @@ packages:
 # the full test fan-out and expect releases of every affected workspace.
 catalog:
   "@ai-sdk/react": ^4.0.82
-  # gov-ui-kit: pinned EXACT and held at 2.11.0 — 2.11.1 restructured DataListItem into an
-  # overlay link and reworked the address row, which Evan rejected on #1347 ("this is a bad UI
-  # kit release"), and that PR was closed rather than merged. 2.11.2 (npm-only, no GitHub
-  # release) only patches the overflow half of it, so a range would resolve straight back into
-  # the rejected DOM. Move by hand once the kit ships a release the app has signed off on.
-  "@aragon/gov-ui-kit": 2.11.0
+  "@aragon/gov-ui-kit": 2.11.3
   # assistant-ui: pinned EXACT — @assistant-ui/react-ai-sdk bumps the `ai` major in patch
   # releases, so these move only by hand together with a re-check of the ai/@ai-sdk versions.
   "@assistant-ui/react": 0.14.27
