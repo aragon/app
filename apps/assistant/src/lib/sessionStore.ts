@@ -44,61 +44,70 @@ type IStoredTicket =
 
 export interface ISessionStore {
     // --- Turn and token budgets ---
-    getTurns(sessionId: string): Promise<number>;
-    incrementTurns(sessionId: string): Promise<number>;
+    getTurns: (sessionId: string) => Promise<number>;
+    incrementTurns: (sessionId: string) => Promise<number>;
     // Refunds a turn after an upstream failure: the user got no reply, so the retry must not
     // count double against the turn budget.
-    decrementTurns(sessionId: string): Promise<number>;
-    addTokens(sessionId: string, count: number): Promise<number>;
-    getTokens(sessionId: string): Promise<number>;
+    decrementTurns: (sessionId: string) => Promise<number>;
+    addTokens: (sessionId: string, count: number) => Promise<number>;
+    getTokens: (sessionId: string) => Promise<number>;
 
     // --- Ticket lifecycle (up to maxIssuesPerSession per session) ---
     // Count of reserved ticket slots (created tickets plus creations in flight).
-    getTicketCount(sessionId: string): Promise<number>;
+    getTicketCount: (sessionId: string) => Promise<number>;
     // Atomically reserves a ticket slot and returns the resulting count. The INCRBY reply is
     // exact under concurrency, so the caller enforces the cap without a read-then-act race: on
     // an over-cap result it releases its own reservation — concurrent creations of distinct
     // tool calls cannot oversubscribe the session.
-    reserveTicketSlot(sessionId: string): Promise<number>;
+    reserveTicketSlot: (sessionId: string) => Promise<number>;
     // Releases a reservation after an over-cap result or a failed creation so the slot frees up.
-    releaseTicketSlot(sessionId: string): Promise<void>;
+    releaseTicketSlot: (sessionId: string) => Promise<void>;
     // Atomically claims a single tool call's ticket slot; false when its creation is already in
     // flight or done. Keyed by the tool call id, so distinct calls never block each other and a
     // replay of the same call is deduplicated. The claim expires on its own.
-    claimTicket(sessionId: string, toolCallId: string): Promise<boolean>;
+    claimTicket: (sessionId: string, toolCallId: string) => Promise<boolean>;
     // Releases the claim after a failed creation so a retry of the same tool call can succeed.
-    releaseTicketClaim(sessionId: string, toolCallId: string): Promise<void>;
+    releaseTicketClaim: (
+        sessionId: string,
+        toolCallId: string,
+    ) => Promise<void>;
     // Records the created ticket (overwriting the claim); its slot was already reserved by
     // reserveTicketSlot before the creation started.
-    storeTicket(
+    storeTicket: (
         sessionId: string,
         toolCallId: string,
         ticket: ICreateTicketToolOutput,
-    ): Promise<void>;
+    ) => Promise<void>;
     // The created ticket for a tool call, or null while it is only claimed / unknown — used to
     // return the same result on an idempotent replay.
-    getTicket(
+    getTicket: (
         sessionId: string,
         toolCallId: string,
-    ): Promise<ICreateTicketToolOutput | null>;
+    ) => Promise<ICreateTicketToolOutput | null>;
 
     // --- File queue ---
-    listFiles(sessionId: string): Promise<ISessionFile[]>;
-    getFile(sessionId: string, fileId: string): Promise<ISessionFile | null>;
+    listFiles: (sessionId: string) => Promise<ISessionFile[]>;
+    getFile: (
+        sessionId: string,
+        fileId: string,
+    ) => Promise<ISessionFile | null>;
     // Atomically claims the confirm of a single file; false when its confirm is in flight.
     // Closes the duplicate-confirm race: the same blob cannot be queued twice.
-    claimFile(sessionId: string, fileId: string): Promise<boolean>;
+    claimFile: (sessionId: string, fileId: string) => Promise<boolean>;
     // Releases the claim after a failed confirm so a retry of the same file can succeed.
-    releaseFileClaim(sessionId: string, fileId: string): Promise<void>;
+    releaseFileClaim: (sessionId: string, fileId: string) => Promise<void>;
     // Appends the file and returns the resulting queue length. The length is the atomic reply
     // of a single RPUSH, so the caller enforces the per-session cap exactly: on an over-cap
     // result it removes its own entry (removeFile) — concurrent adds cannot oversubscribe.
-    addFile(sessionId: string, file: ISessionFile): Promise<number>;
+    addFile: (sessionId: string, file: ISessionFile) => Promise<number>;
     // Removes the file and its claim; returns the removed file (the caller deletes the blob)
     // or null when the id is unknown. Of two concurrent removals only one gets the file.
-    removeFile(sessionId: string, fileId: string): Promise<ISessionFile | null>;
+    removeFile: (
+        sessionId: string,
+        fileId: string,
+    ) => Promise<ISessionFile | null>;
     // Drops the whole file queue, after the files moved into the ticket.
-    clearFiles(sessionId: string): Promise<void>;
+    clearFiles: (sessionId: string) => Promise<void>;
 }
 
 // Expects a client with automatic deserialization DISABLED: every stored value below is an

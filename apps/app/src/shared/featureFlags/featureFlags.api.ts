@@ -95,5 +95,5 @@ export interface IFeatureFlagsProvider {
      * perspective. Any per-request details (cookies, headers, etc.) must be
      * resolved inside this method.
      */
-    loadOverrides(): Promise<FeatureFlagOverrides>;
+    loadOverrides: () => Promise<FeatureFlagOverrides>;
 }

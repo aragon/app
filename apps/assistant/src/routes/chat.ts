@@ -175,6 +175,20 @@ export const buildChatRoute = (deps: IAppDependencies) => {
         // only receives an anonymized wrapper and reuses the classified payload so both emitted
         // error parts agree.
         let respondErrorPayload: string | undefined;
+        let turnRefunded = false;
+
+        // A failed turn produced no reply, so a retry must not count double against the turn
+        // budget — refund it (fire and forget, refusal paths never reach here). Resumes were never
+        // counted, so there is nothing to refund. Both error handlers funnel through the guard:
+        // model-stream errors surface only in the nested handler (the AI SDK converts them to
+        // error parts before they reach the outer onError), execute-level failures only in the
+        // outer one.
+        const refundTurn = () => {
+            if (!isResume && !turnRefunded) {
+                turnRefunded = true;
+                void sessionStore.decrementTurns(sessionId);
+            }
+        };
 
         const stream = createUIMessageStream({
             originalMessages: uiMessages,
@@ -245,6 +259,11 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                         stream: result.stream,
                         sendStart: false,
                         onError: (error) => {
+                            observability.logError(error, {
+                                sessionId,
+                                step: 'respond',
+                            });
+                            refundTurn();
                             respondErrorPayload = JSON.stringify(
                                 buildStreamError(error),
                             );
@@ -255,13 +274,15 @@ export const buildChatRoute = (deps: IAppDependencies) => {
                 );
             },
             onError: (error) => {
-                observability.logError(error, { sessionId, step: 'respond' });
-                // The turn produced no reply, so the retry must not count double against the
-                // turn budget — refund it (fire and forget, refusal paths never reach here).
-                // Resumes were never counted, so there is nothing to refund.
-                if (!isResume) {
-                    void sessionStore.decrementTurns(sessionId);
+                // A recorded payload means the nested handler already logged the original error;
+                // log here only for failures that happened outside the model stream.
+                if (respondErrorPayload == null) {
+                    observability.logError(error, {
+                        sessionId,
+                        step: 'respond',
+                    });
                 }
+                refundTurn();
 
                 return (
                     respondErrorPayload ??

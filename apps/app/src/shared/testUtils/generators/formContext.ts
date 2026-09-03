@@ -25,6 +25,7 @@ export const generateFormContext = (
 ): UseFormReturn => ({
     watch: jest.fn(),
     getValues: jest.fn(),
+    getErrors: jest.fn(),
     getFieldState: jest.fn(),
     setError: jest.fn(),
     clearErrors: jest.fn(),
