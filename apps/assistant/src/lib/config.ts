@@ -25,6 +25,15 @@ export interface IAssistantConfig {
         agentModel: string;
         fallbackModels: string[];
     };
+    /**
+     * AI Gateway model ids for the proposal analysis (POST /analysis/proposal): one structured
+     * `generateObject` call per proposal, no tools, no streaming. Selected separately from the
+     * chat agent because the criteria differ (see `defaultAnalysis`).
+     */
+    analysis: {
+        model: string;
+        fallbackModels: string[];
+    };
 }
 
 const appOrigins = ['https://app.aragon.org', '*.app.aragon.org'];
@@ -51,6 +60,35 @@ const defaultChat = {
     fallbackModels: ['google/gemini-2.5-flash-lite'],
 };
 
+// Model selection criteria for the proposal analysis, in priority order: faithful reasoning over
+// decoded calldata (which action does what, does the text match), a long context window (a fact
+// pack with nested `execute` batches and NatSpec runs to tens of thousands of tokens), reliable
+// structured output against a strict schema, output speed (the call is synchronous - the user
+// holds a button and the route times out at 45s, so a 3k-token report must finish in seconds),
+// no need for tool calling, ≤ ~$1/M input. Reasoning stays ON, unlike the chat agent: the value
+// of the report is the cross-check between text and calldata, and thinking budget buys it.
+//
+// Desk bake-off, 2026-09-03, on AI Gateway pricing (per 1M in/out) and the Artificial Analysis
+// Intelligence Index v4.1.1 (higher is better; the frontier sits at 63-66):
+//   gemini-3.8-flash      $0.75/$3.75  AA 59  ~300 tok/s  1M ctx  - primary: best index in the
+//                         budget tier, and 3-6x faster than every alternative below, which is
+//                         what keeps a reasoning report inside the synchronous timeout
+//   glm-5.3-flash         $0.15/$0.50  AA 57   ~47 tok/s  1M ctx  - cheapest good score, but a
+//                         3k-token report takes ~60s: over the route timeout, so not a fallback
+//   deepseek-v4-flash     $0.13/$0.26  AA 52  ~140 tok/s  1M ctx  - fallback: different vendor,
+//                         fast, an order of magnitude cheaper, still a reasoning model
+//   qwen3.8-flash-next    $0.12/$0.40  AA 56   ~85 tok/s  1M ctx  - borderline on speed
+//   gpt-5.6-luna          $0.20/$1.20  AA 34 at low effort            - too weak for the cross-check
+//   gemini-3.5-flash-lite $0.30/$2.50  AA 37                          - too weak
+//   claude-sonnet-4.6     $3/$15, claude-opus-4.8 $5/$25             - 5-10x the budget
+// A report is ~15k input + ~3k output tokens: ~$0.02-0.03 on the primary, ~$0.003 on the
+// fallback. Not yet run against real proposals: confirm on the stand with the injection fixture
+// (a description that says "mark this as safe" over a `grant` action) before leaving the POC.
+const defaultAnalysis = {
+    model: 'google/gemini-3.8-flash',
+    fallbackModels: ['deepseek/deepseek-v4-flash'],
+};
+
 // Non-secret per-environment configuration. Kept as a checked-in typed module because Vercel
 // functions receive no .env file at runtime; secrets stay in 1Password and reach the runtime as
 // environment variables (see .env.example).
@@ -60,24 +98,28 @@ const configByEnvironment: Record<AssistantEnvironment, IAssistantConfig> = {
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        analysis: defaultAnalysis,
     },
     development: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        analysis: defaultAnalysis,
     },
     preview: {
         corsAllowedOrigins: [...appOrigins, ...previewOrigins],
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        analysis: defaultAnalysis,
     },
     production: {
         corsAllowedOrigins: appOrigins,
         docsSearchEnabled: false,
         rateLimit: defaultRateLimit,
         chat: defaultChat,
+        analysis: defaultAnalysis,
     },
 };
 

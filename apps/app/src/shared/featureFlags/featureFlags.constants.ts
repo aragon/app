@@ -158,4 +158,16 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
             preview: true,
         },
     },
+    {
+        key: 'aiProposalAnalysis',
+        name: 'AI proposal analysis',
+        description:
+            'Enables the AI analysis card on the proposal details aside: a button that asks the backend for a written report on what the proposal actions do. The backend only serves DAOs from its allowlist.',
+        defaultValue: false,
+        environments: {
+            local: true,
+            development: true,
+            preview: true,
+        },
+    },
 ];

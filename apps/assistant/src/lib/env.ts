@@ -28,6 +28,11 @@ const parseOptionalNumber = (value?: string): number | undefined => {
     return Number.isNaN(parsed) ? undefined : parsed;
 };
 
+// Shared with the Aragon backend's `AI_ANALYSIS_ASSISTANT_SECRET` default. Only ever accepted
+// outside production; replace with a real 1Password secret when the analysis leaves the proof of
+// concept.
+export const analysisApiSecretPocDefault = 'poc-analysis-secret';
+
 export const env = {
     // ASSISTANT_ENV is set locally through .env.local; on Vercel the runtime only exposes the
     // automatic VERCEL_ENV (production | preview | development), which maps 1:1 onto our values
@@ -48,6 +53,20 @@ export const env = {
     blobReadWriteToken: (): string | undefined =>
         process.env.BLOB_READ_WRITE_TOKEN || undefined,
     cronSecret: (): string | undefined => process.env.CRON_SECRET || undefined,
+    // Bearer secret of the server-to-server proposal-analysis endpoint (/analysis/*); the Aragon
+    // backend holds the same value. Outside production an unset variable falls back to the
+    // proof-of-concept value below (the backend's default too), so a dev or preview deployment
+    // works before the secret exists in 1Password. In production unset means the endpoint refuses
+    // every request.
+    analysisApiSecret: (): string | undefined => {
+        const configured = process.env.ANALYSIS_API_SECRET || undefined;
+
+        if (configured != null || env.environment() === 'production') {
+            return configured;
+        }
+
+        return analysisApiSecretPocDefault;
+    },
     rateLimitRpm: (): number | undefined =>
         parseOptionalNumber(process.env.ASSISTANT_RATE_LIMIT_RPM),
     rateLimitSessionsPerDay: (): number | undefined =>

@@ -6,6 +6,7 @@ export * from './proposal';
 export * from './proposalAction';
 export * from './proposalActionUpdateMetadata';
 export * from './proposalActionWithdrawToken';
+export * from './proposalAnalysis';
 export * from './proposalCreate';
 export * from './simulationResult';
 export * from './smartContractAbi';

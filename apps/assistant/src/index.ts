@@ -4,6 +4,7 @@ import { sentry } from '@sentry/hono/node';
 import { Redis } from '@upstash/redis';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { getAnalysisModel } from './analysis/models';
 import { getChatModel } from './chat/models';
 import { createVercelBlobStore } from './files/blobStore';
 import { type IAppDependencies, lazy } from './lib/appDependencies';
@@ -12,6 +13,7 @@ import { resolveCorsOrigin } from './lib/cors';
 import { buildRateLimitMiddleware } from './lib/rateLimit';
 import { createSessionStore } from './lib/sessionStore';
 import { createLinearGateway } from './linear/linearGateway';
+import { buildAnalysisRoute } from './routes/analysis';
 import { buildChatRoute } from './routes/chat';
 import { buildFilesRoute } from './routes/files';
 import { healthRoute } from './routes/health';
@@ -31,6 +33,7 @@ const buildDefaultDependencies = (): IAppDependencies => {
         getSessionStore: lazy(() => createSessionStore(getRedis())),
         getLinear: lazy(() => createLinearGateway()),
         getChatModel,
+        getAnalysisModel,
         getBlobStore: lazy(() => createVercelBlobStore()),
     };
 };
@@ -70,6 +73,9 @@ export const createApp = (overrides?: Partial<IAppDependencies>) => {
     app.route('/files', buildFilesRoute(deps));
     // Cron-only maintenance endpoints; authenticated by CRON_SECRET, not rate limited.
     app.route('/internal', buildInternalRoute(deps));
+    // Server-to-server proposal analysis for the Aragon backend; authenticated by
+    // ANALYSIS_API_SECRET, not rate limited (the per-IP limiter would only throttle our backend).
+    app.route('/analysis', buildAnalysisRoute(deps));
 
     return app;
 };

@@ -105,6 +105,8 @@ export interface ITestDependencies extends IAppDependencies {
 
 export const createTestDependencies = (
     chatModel: LanguageModel,
+    // Defaults to the chat mock: suites that never touch /analysis need no second model.
+    analysisModel: LanguageModel = chatModel,
 ): ITestDependencies => {
     const redis = createMockRedis();
     const sessionStore = createSessionStore(asRedis(redis));
@@ -120,6 +122,7 @@ export const createTestDependencies = (
         getSessionStore: () => sessionStore,
         getLinear: () => linear,
         getChatModel: () => chatModel,
+        getAnalysisModel: () => analysisModel,
         getBlobStore: () => blobStore,
     };
 };
