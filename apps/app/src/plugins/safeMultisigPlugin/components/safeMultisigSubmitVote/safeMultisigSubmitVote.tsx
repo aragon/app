@@ -4,6 +4,7 @@ import {
     AlertInline,
     addressUtils,
     Button,
+    Dropdown,
     IconType,
 } from '@aragon/gov-ui-kit';
 import { useQueryClient } from '@tanstack/react-query';
@@ -111,8 +112,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         settledResultType,
         isStale,
         isExecutableNow,
+        isCurrentNonceFree,
         transactionsAhead,
-        isStageCurrent,
         canStillAffectOutcome,
     } = bodyState;
 
@@ -141,6 +142,18 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             ? liveReport.transaction.confirmations.length + 1 >=
               liveReport.transaction.confirmationsRequired
             : safeInfo != null && safeInfo.threshold <= 1);
+
+    /**
+     * Whether execution can actually follow the confirmation. Reaching the threshold is not enough:
+     * a Safe executes in strict nonce order, so a transaction sitting behind another is signed and
+     * waiting, and attempting it would pay gas for a revert.
+     *
+     * An existing report answers for itself; a report that does not exist yet lands on the lowest
+     * free nonce, so it is executable only when the current one is unoccupied.
+     */
+    const canBundleExecution =
+        willCompleteThreshold &&
+        (liveReport != null ? isExecutableNow : isCurrentNonceFree);
     const supportsEip1271Signatures =
         safeMultisigProposalUtils.supportsEip1271Signatures(
             safeInfo?.version ?? null,
@@ -239,7 +252,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         ]);
     };
 
-    const submitReport = async () => {
+    const submitReport = async (bundleExecution: boolean) => {
         const ownerAddress = latestConnectedAddress.current;
 
         if (safeInfo == null || ownerAddress == null) {
@@ -302,6 +315,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             let safeTransaction;
             let signatures;
             let confirmationsRequired: number;
+            let landsOnCurrentNonce: boolean;
 
             if (liveReport == null) {
                 // Both the live nonce and the queue are read fresh inside the service, uncached:
@@ -313,6 +327,16 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                         address: externalAddress,
                     },
                 });
+
+                /**
+                 * The read that allocates also reports the live nonce, so this is the authoritative
+                 * answer to whether the new transaction can execute immediately. The polled state
+                 * behind `canBundleExecution` may lag it, and paying gas for a guaranteed revert is
+                 * worse than deferring execution.
+                 */
+                landsOnCurrentNonce =
+                    BigInt(nextNonce.nextNonce) ===
+                    BigInt(nextNonce.currentNonce);
 
                 safeTransaction = await protocolKit.createTransaction({
                     transactions: [
@@ -327,7 +351,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 });
                 const safeTxHash =
                     await protocolKit.getTransactionHash(safeTransaction);
-                const signature = await protocolKit.signHash(safeTxHash);
+                /**
+                 * Sign the EIP-712 `SafeTx` struct, not the bare hash. Both produce a signature the
+                 * Safe accepts, but hashing offchain asks the owner to approve an opaque 32-byte
+                 * blob, which wallets flag as blind signing. Typed data shows them the target, value
+                 * and nonce they are actually authorising.
+                 */
+                const signature =
+                    await protocolKit.signTypedData(safeTransaction);
 
                 await proposeTransaction({
                     urlParams: {
@@ -387,7 +418,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 if (hasEnoughCollectedSignatures || hasConnectedWalletSigned) {
                     signatures = collectedSignatures;
                 } else {
-                    const signature = await protocolKit.signHash(safeTxHash);
+                    const signature =
+                        await protocolKit.signTypedData(safeTransaction);
                     await confirmTransaction({
                         urlParams: {
                             network: proposal.network,
@@ -399,9 +431,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 }
 
                 confirmationsRequired = transaction.confirmationsRequired;
+                landsOnCurrentNonce = isExecutableNow;
             }
 
-            if (signatures.length >= confirmationsRequired) {
+            if (
+                bundleExecution &&
+                landsOnCurrentNonce &&
+                signatures.length >= confirmationsRequired
+            ) {
                 for (const signature of signatures) {
                     safeTransaction.addSignature(signature);
                 }
@@ -441,7 +478,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         }
     };
 
-    const checkOwnershipAndSubmit = () => {
+    const checkOwnershipAndSubmit = (bundleExecution: boolean) => {
         const ownerAddress = latestConnectedAddress.current;
         const isOwner =
             ownerAddress != null &&
@@ -465,7 +502,8 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             return;
         }
 
-        const runSubmit = () => withNetworkSwitch(() => void submitReport());
+        const runSubmit = () =>
+            withNetworkSwitch(() => void submitReport(bundleExecution));
 
         // Executing is an onchain transaction the wallet already prices and describes. Only the
         // offchain signature gets the confirmation step, whose whole claim is that it costs nothing.
@@ -482,14 +520,21 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 network: proposal.network,
                 isVeto,
                 nonce: liveReport?.transaction.nonce,
-                willExecute: willCompleteThreshold,
+                willExecute: canBundleExecution && bundleExecution,
                 onConfirm: runSubmit,
             },
         });
     };
 
-    const handleVoteClick = () =>
-        checkWalletConnection({ onSuccess: checkOwnershipAndSubmit });
+    /**
+     * Bundling is the default: when the confirmation completes the threshold there is nothing left
+     * to wait for, so executing in the same flow saves a second visit. `Approve only` opts out and
+     * leaves the fully-signed transaction in the queue for any owner to execute.
+     */
+    const handleVoteClick = (bundleExecution = true) =>
+        checkWalletConnection({
+            onSuccess: () => checkOwnershipAndSubmit(bundleExecution),
+        });
 
     const isSuperseded =
         pendingReport?.state === SafeTransactionState.SUPERSEDED;
@@ -513,7 +558,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
     // process and someone else's permission.
     let buttonKey = isVeto ? 'veto' : 'approve';
 
-    if (willCompleteThreshold) {
+    if (canBundleExecution) {
         buttonKey = isVeto ? 'vetoAndExecute' : 'approveAndExecute';
     }
 
@@ -534,7 +579,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             version: safeInfo?.version ?? t(`${translationKey}.unknownVersion`),
         });
     } else if (isAwaitingIndexing) {
-        helperText = t(`${translationKey}.finalizing`);
+        helperText = t(`${translationKey}.awaitingIndexing`);
     } else if (hasIndexingTimedOut && !hasSettled) {
         helperText = t(`${translationKey}.indexingDelayed`);
     } else if (thresholdReached && !hasSettled) {
@@ -611,6 +656,14 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
         });
     }
 
+    const isActionDisabled =
+        hasSettled ||
+        isAwaitingIndexing ||
+        isWaitingForOwners ||
+        isQueuedBehindNonce ||
+        hasUnsupportedContractOwner ||
+        isContractOwnerCheckLoading ||
+        safeInfo == null;
     return (
         <div className="flex w-full flex-col gap-3">
             {alerts.map((alert) => (
@@ -626,23 +679,46 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
                 <div className="flex flex-col gap-3 md:flex-row">
                     <Button
                         className="w-full md:w-fit"
-                        disabled={
-                            hasSettled ||
-                            isAwaitingIndexing ||
-                            isWaitingForOwners ||
-                            isQueuedBehindNonce ||
-                            hasUnsupportedContractOwner ||
-                            isContractOwnerCheckLoading ||
-                            safeInfo == null
-                        }
+                        disabled={isActionDisabled}
                         iconLeft={hasSettled ? IconType.CHECKMARK : undefined}
                         isLoading={isExecuting || isAwaitingIndexing}
-                        onClick={hasSettled ? undefined : handleVoteClick}
+                        onClick={
+                            hasSettled ? undefined : () => handleVoteClick(true)
+                        }
                         size="md"
                         variant={hasSettled ? 'secondary' : 'primary'}
                     >
                         {t(`${translationKey}.${buttonKey}`)}
                     </Button>
+                    {/* Bundling is a convenience, not a requirement: the signature and the
+                        execution are separate acts, so an owner who only wants to authorise can
+                        leave the gas to whoever executes. Offered only when execution would
+                        actually follow - otherwise there is nothing to opt out of. */}
+                    {canBundleExecution && (
+                        <Dropdown.Container
+                            align="end"
+                            constrainContentWidth={false}
+                            customTrigger={
+                                <Button
+                                    aria-label={t(
+                                        `${translationKey}.moreActions`,
+                                    )}
+                                    disabled={isActionDisabled}
+                                    iconLeft={IconType.CHEVRON_DOWN}
+                                    size="md"
+                                    variant="primary"
+                                />
+                            }
+                        >
+                            <Dropdown.Item
+                                onClick={() => handleVoteClick(false)}
+                            >
+                                {t(
+                                    `${translationKey}.${isVeto ? 'vetoOnly' : 'approveOnly'}`,
+                                )}
+                            </Dropdown.Item>
+                        </Dropdown.Container>
+                    )}
                     {isStale && (
                         <Button
                             className="w-full md:w-fit"

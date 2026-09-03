@@ -145,6 +145,24 @@ describe('useSafeMultisigBodyState hook', () => {
         expect(result.current.transactionsAhead).toEqual(2);
     });
 
+    it('reports the current nonce free when nothing in the queue holds it', () => {
+        // Allocation hands out the lowest free slot, so a report proposed now would land on the
+        // current nonce and execute as soon as it reaches threshold.
+        mockQueuedTransaction('8');
+
+        const { result } = renderState();
+
+        expect(result.current.isCurrentNonceFree).toBe(true);
+    });
+
+    it('reports the current nonce taken when the queue occupies it', () => {
+        mockQueuedTransaction('6');
+
+        const { result } = renderState();
+
+        expect(result.current.isCurrentNonceFree).toBe(false);
+    });
+
     it('keeps watching the queue on a reportable stage even once a result is indexed', () => {
         // A Safe transaction never expires and a verdict has no deadline, so a queued transaction
         // can still execute and overwrite the recorded result.

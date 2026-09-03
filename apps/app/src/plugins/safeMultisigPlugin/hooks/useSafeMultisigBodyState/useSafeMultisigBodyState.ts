@@ -209,6 +209,19 @@ export const useSafeMultisigBodyState = (
             ? 0
             : BigInt(reportNonce) - BigInt(currentNonce);
 
+    /**
+     * Whether nothing in the queue holds the Safe's current nonce. Allocation hands out the lowest
+     * free slot, so an empty current nonce is the one case where a newly proposed report executes
+     * the moment it reaches threshold. `isExecutableNow` cannot answer this: it needs a report to
+     * already exist.
+     */
+    const isCurrentNonceFree =
+        currentNonce != null &&
+        !transactions.some(
+            ({ nonce, isExecuted }) =>
+                !isExecuted && BigInt(nonce) === BigInt(currentNonce),
+        );
+
     return {
         safeInfo,
         isLoading:
@@ -225,6 +238,7 @@ export const useSafeMultisigBodyState = (
             pendingReport != null &&
             !pendingReport.transaction.isExecuted &&
             nonceGap === BigInt(0),
+        isCurrentNonceFree,
         transactionsAhead: nonceGap > BigInt(0) ? Number(nonceGap) : 0,
         signers,
         hasConnectedWalletSigned:

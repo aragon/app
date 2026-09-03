@@ -116,6 +116,12 @@ export interface IUseSafeMultisigBodyStateReturn {
      */
     isExecutableNow: boolean;
     /**
+     * Whether the Safe's current nonce is unoccupied, so a report proposed now would land on it and
+     * be executable as soon as it reaches threshold. Distinct from `isExecutableNow`, which
+     * describes a report that already exists.
+     */
+    isCurrentNonceFree: boolean;
+    /**
      * Safe transactions that must clear before the queued report can execute.
      *
      * Their contents are deliberately not interpreted: a Safe is a universal account, so what sits

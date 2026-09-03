@@ -624,7 +624,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             getTransactionHash: jest
                 .fn()
                 .mockResolvedValue(`0x${'1'.repeat(64)}`),
-            signHash: jest.fn().mockResolvedValue(signature),
+            signTypedData: jest.fn().mockResolvedValue(signature),
             getEncodedTransaction: jest
                 .fn()
                 .mockResolvedValue('0xexecTransaction'),
@@ -659,11 +659,11 @@ describe('<SafeMultisigSubmitVote /> component', () => {
     it('proposes gaslessly and executes after a threshold-one signature', async () => {
         const { signature, safeTransaction, protocolKit, protocolKitModule } =
             mockThresholdOneExecution();
-        // The Safe sits at nonce 6 and the queue already occupies it, so the backend resolves the
-        // next free nonce to 7. Signing at the current nonce would compete with what is there.
+        // The Safe sits at nonce 6 with that slot free, so the report lands on it and can execute
+        // in the same flow.
         getSafeNextNonceSpy.mockResolvedValue(
             generateSafeNextNonceResponse({
-                nextNonce: '7',
+                nextNonce: '6',
                 currentNonce: '6',
             }),
         );
@@ -695,7 +695,7 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             },
         });
         expect(protocolKit.createTransaction).toHaveBeenCalledWith(
-            expect.objectContaining({ options: { nonce: 7 } }),
+            expect.objectContaining({ options: { nonce: 6 } }),
         );
         expect(protocolKitModule.buildSignatureBytes).toHaveBeenCalledWith([
             signature,
@@ -704,6 +704,85 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             jest.mocked(WagmiActions.sendTransaction).mock.calls[0][1],
         ).toEqual(expect.objectContaining({ data: '0xexecTransaction' }));
         expect(WagmiActions.waitForTransactionReceipt).toHaveBeenCalled();
+    });
+
+    it('proposes without executing when the allocated nonce sits behind the queue', async () => {
+        const { signature, safeTransaction } = mockThresholdOneExecution();
+        // Something else holds nonce 6, so the report is allocated 7. A Safe executes in strict
+        // nonce order, so executing now would pay gas for a revert.
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '7',
+                currentNonce: '6',
+            }),
+        );
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        await waitFor(() => {
+            expect(proposeMutateAsync).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    body: expect.objectContaining({
+                        safeTransactionData: safeTransaction.data,
+                        senderSignature: signature.data,
+                    }),
+                }),
+            );
+        });
+        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
+    });
+
+    it('signs without executing when the owner chooses to approve only', async () => {
+        mockThresholdOneExecution();
+        getSafeNextNonceSpy.mockResolvedValue(
+            generateSafeNextNonceResponse({
+                nextNonce: '6',
+                currentNonce: '6',
+            }),
+        );
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.moreActions',
+            }),
+        );
+        await userEvent.click(
+            screen.getByRole('menuitem', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveOnly',
+            }),
+        );
+
+        // The signature is still collected and the transaction is left fully signed in the queue -
+        // only the gas-paying half is declined.
+        await waitFor(() => {
+            expect(proposeMutateAsync).toHaveBeenCalled();
+        });
+        expect(WagmiActions.sendTransaction).not.toHaveBeenCalled();
+    });
+
+    it('signs the EIP-712 transaction rather than a bare hash', async () => {
+        const { protocolKit, safeTransaction } = mockThresholdOneExecution();
+
+        render(createTestComponent());
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approveAndExecute',
+            }),
+        );
+
+        // Signing the struct is what lets the wallet show the target, value and nonce. Hashing
+        // offchain and signing the digest asks the owner to approve an opaque blob instead.
+        await waitFor(() => {
+            expect(protocolKit.signTypedData).toHaveBeenCalledWith(
+                safeTransaction,
+            );
+        });
     });
 
     it('holds the action while an executed report is not indexed yet', async () => {
