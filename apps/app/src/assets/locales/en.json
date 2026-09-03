@@ -3220,6 +3220,16 @@
           },
           "viewSafeAccount": "View Safe account"
         },
+        "safeMultisigProposalVotingSummary": {
+          "approvalLabel": "approvals",
+          "approved": "approved",
+          "notApproved": "did not approve",
+          "notVetoed": "did not veto",
+          "ownerCount": "of {{count}} owners",
+          "replaced": "replaced",
+          "vetoLabel": "veto",
+          "vetoed": "vetoed"
+        },
         "safeMultisigSubmitVote": {
           "approve": "Approve proposal",
           "approved": "Approved",
