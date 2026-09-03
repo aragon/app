@@ -151,13 +151,27 @@ export const SppVotingTerminalBodyContent: React.FC<
                             {children}
                         </div>
                     </PluginSingleComponent>
-                    {processedSubProposal && (
+                    {/* An indexed sub-proposal has indexed votes; a body without one can still have
+                        its own notion of votes, so the slot answers for it. Nothing registered means
+                        no votes to show, and the tab-policy slot has already hidden the tab. */}
+                    {processedSubProposal != null ? (
                         <ProposalVoting.Votes>
                             <VoteList
                                 daoId={daoId}
                                 initialParams={voteListParams}
                                 isVeto={isVeto}
                                 pluginAddress={plugin.address}
+                            />
+                        </ProposalVoting.Votes>
+                    ) : (
+                        <ProposalVoting.Votes>
+                            <PluginSingleComponent
+                                body={plugin.address}
+                                isVeto={isVeto}
+                                pluginId={bodyPluginId}
+                                proposal={proposal}
+                                slotId={GovernanceSlotId.GOVERNANCE_VOTE_LIST}
+                                stage={stage}
                             />
                         </ProposalVoting.Votes>
                     )}

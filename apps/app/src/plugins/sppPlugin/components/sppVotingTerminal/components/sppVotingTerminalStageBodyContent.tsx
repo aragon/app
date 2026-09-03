@@ -4,8 +4,9 @@ import {
     ProposalVotingTab,
 } from '@aragon/gov-ui-kit';
 import { useEnsName } from '@/modules/ens';
-import { safeBodyPluginId } from '@/plugins/safeMultisigPlugin/constants';
+import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { brandedExternals } from '@/plugins/sppPlugin/constants/sppPluginBrandedExternals';
+import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import type { ISppProposal, ISppStage, ISppStagePlugin } from '../../../types';
 import { sppStageUtils } from '../../../utils/sppStageUtils';
 import { SppStageStatus } from './sppStageStatus';
@@ -47,11 +48,19 @@ export const SppVotingTerminalStageBodyContent: React.FC<
 
     const isExternalPlugin = plugin.interfaceType == null;
 
-    // A Safe body has no indexed sub-proposal, so the generic external body has no votes to show.
-    // The Safe implementation builds the tab from live Safe confirmations instead, so it keeps it.
-    const hasSafeBodyVotes =
-        sppStageUtils.getBodyPluginId(plugin, proposal.network) ===
-        safeBodyPluginId;
+    // The tab set is a per-body-type policy, so it is asked of the registry rather than branched on
+    // here. Nothing registered means the generic external fallback, which has no indexed
+    // sub-proposal and so no votes to show.
+    const getHiddenTabs = pluginRegistryUtils.getSlotFunction<
+        undefined,
+        ProposalVotingTab[]
+    >({
+        slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
+        pluginId: sppStageUtils.getBodyPluginId(plugin, proposal.network),
+    });
+    const hideTabs =
+        getHiddenTabs?.(undefined) ??
+        (isExternalPlugin ? hiddenExternalTabs : undefined);
     const defaultName =
         pluginEns ?? addressUtils.truncateAddress(plugin.address);
     const pluginName =
@@ -63,11 +72,7 @@ export const SppVotingTerminalStageBodyContent: React.FC<
                 isExternalPlugin ? brandedExternals[plugin.brandId] : undefined
             }
             bodyId={plugin.address}
-            hideTabs={
-                isExternalPlugin && !hasSafeBodyVotes
-                    ? hiddenExternalTabs
-                    : undefined
-            }
+            hideTabs={hideTabs}
             key={plugin.address}
             name={pluginName}
             status={status}

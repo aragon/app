@@ -1,5 +1,6 @@
 export {
     externalPluginId,
+    safeBodyHiddenTabs,
     safeBodyPluginId,
     safeBodyPollInterval,
     safeIndexingPollInterval,

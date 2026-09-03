@@ -4,7 +4,8 @@ import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
-import { safeBodyPluginId } from './constants';
+import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
+import { safeBodyHiddenTabs, safeBodyPluginId } from './constants';
 import { useSafeMultisigGovernanceSettings } from './hooks/useSafeMultisigGovernanceSettings';
 
 export const initialiseSafeMultisigPlugin = () => {
@@ -23,6 +24,16 @@ export const initialiseSafeMultisigPlugin = () => {
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
             pluginId: safeBodyPluginId,
             component: SafeMultisigSubmitVote,
+        })
+        .registerSlotComponent({
+            slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
+            pluginId: safeBodyPluginId,
+            component: SafeMultisigVoteList,
+        })
+        .registerSlotFunction({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
+            pluginId: safeBodyPluginId,
+            function: () => safeBodyHiddenTabs,
         })
         .registerSlotFunction({
             slotId: SettingsSlotId.SETTINGS_GOVERNANCE_SETTINGS_HOOK,

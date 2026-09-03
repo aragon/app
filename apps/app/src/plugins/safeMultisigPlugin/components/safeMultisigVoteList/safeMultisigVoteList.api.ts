@@ -1,24 +1,20 @@
-import type { Network } from '@/shared/api/daoService';
+import type { ISppProposal, ISppStage } from '@/plugins/sppPlugin/types';
 
 export interface ISafeMultisigVoteListProps {
     /**
-     * Network the Safe is deployed on.
+     * Parent process proposal the body reports a result for.
      */
-    network: Network;
+    proposal: ISppProposal;
     /**
-     * Owners that have confirmed the queued report.
+     * Address of the Safe acting as the body.
      */
-    signers: string[];
+    body: string;
+    /**
+     * Stage the body is set up on.
+     */
+    stage: ISppStage;
     /**
      * Defines if the body vetoes rather than approves.
      */
-    isVeto: boolean;
-    /**
-     * Whether the Safe reads are still loading.
-     */
-    isLoading: boolean;
-    /**
-     * Whether the Safe state could not be read.
-     */
-    isError: boolean;
+    isVeto?: boolean;
 }

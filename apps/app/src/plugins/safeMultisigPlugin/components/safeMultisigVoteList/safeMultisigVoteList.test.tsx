@@ -3,7 +3,13 @@ import { render, screen } from '@testing-library/react';
 import * as walletAccountApi from '@/modules/application/hooks/useWalletAccount';
 import type { IUseEnsNameReturn } from '@/modules/ens';
 import * as ensModule from '@/modules/ens';
+import {
+    generateSppProposal,
+    generateSppStage,
+} from '@/plugins/sppPlugin/testUtils';
 import { Network } from '@/shared/api/daoService';
+import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
+import { generateSafeInfo } from '../../testUtils';
 import { SafeMultisigVoteList } from './safeMultisigVoteList';
 import type { ISafeMultisigVoteListProps } from './safeMultisigVoteList.api';
 
@@ -17,6 +23,23 @@ describe('<SafeMultisigVoteList /> component', () => {
     );
     const useEnsNameSpy = jest.spyOn(ensModule, 'useEnsName');
     const useEnsAvatarSpy = jest.spyOn(ensModule, 'useEnsAvatar');
+    const useSafeBodyStateSpy = jest.spyOn(
+        safeBodyStateApi,
+        'useSafeMultisigBodyState',
+    );
+
+    const bodyState = {
+        safeInfo: generateSafeInfo({ owners: [viewer, otherOwner] }),
+        isLoading: false,
+        isError: false,
+        signers: [otherOwner, viewer],
+        hasConnectedWalletSigned: true,
+        approvalsAmount: 2,
+        minApprovals: 2,
+        membersCount: 2,
+        isRateLimited: false,
+        isStale: false,
+    } satisfies safeBodyStateApi.IUseSafeMultisigBodyStateReturn;
 
     const unresolved = {
         data: null,
@@ -30,6 +53,7 @@ describe('<SafeMultisigVoteList /> component', () => {
             isConnecting: false,
             isReconnecting: false,
         });
+        useSafeBodyStateSpy.mockReturnValue(bodyState);
         useEnsNameSpy.mockReturnValue(unresolved);
         useEnsAvatarSpy.mockReturnValue(
             unresolved as unknown as ReturnType<typeof ensModule.useEnsAvatar>,
@@ -40,17 +64,20 @@ describe('<SafeMultisigVoteList /> component', () => {
         useWalletAccountSpy.mockReset();
         useEnsNameSpy.mockReset();
         useEnsAvatarSpy.mockReset();
+        useSafeBodyStateSpy.mockReset();
     });
 
     const createTestComponent = (
         props?: Partial<ISafeMultisigVoteListProps>,
     ) => {
         const completeProps: ISafeMultisigVoteListProps = {
-            network: Network.ETHEREUM_MAINNET,
-            signers: [otherOwner, viewer],
+            proposal: generateSppProposal({
+                network: Network.ETHEREUM_MAINNET,
+                proposalIndex: '42',
+            }),
+            body: '0x0000000000000000000000000000000000000001',
+            stage: generateSppStage({ stageIndex: 1 }),
             isVeto: false,
-            isLoading: false,
-            isError: false,
             ...props,
         };
 
@@ -74,7 +101,9 @@ describe('<SafeMultisigVoteList /> component', () => {
     });
 
     it('states no signatures rather than an empty list when nothing is collected', () => {
-        render(createTestComponent({ signers: [] }));
+        useSafeBodyStateSpy.mockReturnValue({ ...bodyState, signers: [] });
+
+        render(createTestComponent());
 
         expect(
             screen.getByText(
@@ -84,7 +113,13 @@ describe('<SafeMultisigVoteList /> component', () => {
     });
 
     it('separates an unreadable Safe from a body nobody has signed', () => {
-        render(createTestComponent({ signers: [], isError: true }));
+        useSafeBodyStateSpy.mockReturnValue({
+            ...bodyState,
+            signers: [],
+            isError: true,
+        });
+
+        render(createTestComponent());
 
         expect(
             screen.getByText(

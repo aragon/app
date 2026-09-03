@@ -1,3 +1,4 @@
+import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { Network } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
@@ -8,6 +9,7 @@ import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
+import { SafeMultisigVoteList } from './components/safeMultisigVoteList';
 import { SafeMultisigPluginDialogId } from './constants';
 import { initialiseSafeMultisigPlugin } from './index';
 
@@ -36,6 +38,10 @@ describe('safeMultisigPlugin registrations', () => {
             slotId: GovernanceSlotId.GOVERNANCE_SUBMIT_VOTE,
             component: SafeMultisigSubmitVote,
         },
+        {
+            slotId: GovernanceSlotId.GOVERNANCE_VOTE_LIST,
+            component: SafeMultisigVoteList,
+        },
     ])(
         'serves $slotId for a Safe body on a supported network',
         ({ slotId, component }) => {
@@ -49,6 +55,23 @@ describe('safeMultisigPlugin registrations', () => {
             ).toEqual(component);
         },
     );
+
+    // The Votes tab exists for a Safe body only because this function answers for it; unregistered,
+    // the shared chrome falls back to hiding Votes and the tab silently disappears.
+    it('keeps the Votes tab for a Safe body through the tab-policy slot', () => {
+        const getHiddenTabs = pluginRegistryUtils.getSlotFunction<
+            undefined,
+            ProposalVotingTab[]
+        >({
+            slotId: GovernanceSlotId.GOVERNANCE_PROPOSAL_VOTING_HIDDEN_TABS,
+            pluginId: sppStageUtils.getBodyPluginId(
+                safeBody,
+                Network.ETHEREUM_SEPOLIA,
+            ),
+        });
+
+        expect(getHiddenTabs?.(undefined)).toEqual([]);
+    });
 
     it('leaves a Safe on an unserved network to the external fallbacks', () => {
         const pluginId = sppStageUtils.getBodyPluginId(

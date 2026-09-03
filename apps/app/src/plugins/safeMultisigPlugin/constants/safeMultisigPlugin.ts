@@ -1,3 +1,5 @@
+import type { ProposalVotingTab } from '@aragon/gov-ui-kit';
+
 /**
  * Plugin id an external Safe body resolves to. `PluginId` and `PluginInterfaceType` share one
  * string namespace, so the id is namespaced under the existing `external` id rather than a bare
@@ -38,3 +40,10 @@ export const safeIndexingTimeout = 60_000;
  * living in a client component would drag react-hook-form into server code.
  */
 export const externalPluginId = 'external';
+
+/**
+ * Tabs a Safe body hides. A Safe builds its Votes tab from live Safe confirmations rather than an
+ * indexed sub-proposal, so unlike the generic external body it hides nothing. Registered as a slot
+ * function so the shared process chrome never needs to know a Safe exists.
+ */
+export const safeBodyHiddenTabs: ProposalVotingTab[] = [];
