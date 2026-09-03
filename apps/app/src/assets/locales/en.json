@@ -3162,6 +3162,27 @@
         }
       },
       "safeMultisig": {
+        "safeMultisigConfirmSignatureDialog": {
+          "approval": {
+            "action": "Approve",
+            "description": "Your signature is added to the Safe transaction that reports this body's approval. It takes effect once enough owners have signed.",
+            "title": "Approve proposal"
+          },
+          "cancel": "Cancel",
+          "details": {
+            "network": "Network",
+            "nonce": "Safe nonce",
+            "proposal": "Proposal",
+            "safe": "Safe",
+            "signingAs": "Signing as"
+          },
+          "gasless": "Signing costs no gas. Aragon submits your signature to the Safe for you.",
+          "veto": {
+            "action": "Veto",
+            "description": "Your signature is added to the Safe transaction that reports this body's veto. It takes effect once enough owners have signed.",
+            "title": "Veto proposal"
+          }
+        },
         "safeMultisigGovernanceSettings": {
           "approvalRule": "Approval rule",
           "owners": "Owners",

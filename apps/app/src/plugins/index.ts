@@ -10,6 +10,7 @@ import { lockToVotePluginDialogsDefinitions } from './lockToVotePlugin/constants
 import { initialiseMultisigPlugin } from './multisigPlugin';
 import { multisigPluginDialogsDefinitions } from './multisigPlugin/constants/multisigPluginDialogsDefinitions';
 import { initialiseSafeMultisigPlugin } from './safeMultisigPlugin';
+import { safeMultisigPluginDialogsDefinitions } from './safeMultisigPlugin/constants/safeMultisigPluginDialogsDefinitions';
 import { initialiseSppPlugin } from './sppPlugin';
 import { sppPluginDialogsDefinitions } from './sppPlugin/constants/sppPluginDialogsDefinitions';
 import { initialiseTokenPlugin } from './tokenPlugin';
@@ -33,6 +34,7 @@ export const pluginDialogsDefinitions = {
     ...lockToVotePluginDialogsDefinitions,
     ...multisigPluginDialogsDefinitions,
     ...sppPluginDialogsDefinitions,
+    ...safeMultisigPluginDialogsDefinitions,
     ...tokenPluginDialogsDefinitions,
     ...gaugeVoterPluginDialogsDefinitions,
 };

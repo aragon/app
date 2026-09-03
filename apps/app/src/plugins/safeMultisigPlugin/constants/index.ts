@@ -5,3 +5,4 @@ export {
     safeIndexingPollInterval,
     safeIndexingTimeout,
 } from './safeMultisigPlugin';
+export { SafeMultisigPluginDialogId } from './safeMultisigPluginDialogId';

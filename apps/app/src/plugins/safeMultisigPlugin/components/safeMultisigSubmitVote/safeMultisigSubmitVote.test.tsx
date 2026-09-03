@@ -14,9 +14,16 @@ import { SppProposalType } from '@/plugins/sppPlugin/types';
 import { Network } from '@/shared/api/daoService';
 import * as safeServiceApi from '@/shared/api/safeService';
 import * as transactionServiceApi from '@/shared/api/transactionService';
+import * as dialogProvider from '@/shared/components/dialogProvider';
 import * as networkSwitchApi from '@/shared/hooks/useNetworkSwitch';
-import { generateSafeNextNonceResponse } from '@/shared/testUtils';
-import { safeIndexingTimeout } from '../../constants';
+import {
+    generateDialogContext,
+    generateSafeNextNonceResponse,
+} from '@/shared/testUtils';
+import {
+    SafeMultisigPluginDialogId,
+    safeIndexingTimeout,
+} from '../../constants';
 import * as safeBodyStateApi from '../../hooks/useSafeMultisigBodyState';
 import {
     generateSafeConfirmation,
@@ -79,6 +86,8 @@ describe('<SafeMultisigSubmitVote /> component', () => {
         transactionServiceApi,
         'useTransactionStatus',
     );
+    const dialogOpen = jest.fn();
+    const useDialogContextSpy = jest.spyOn(dialogProvider, 'useDialogContext');
     const useBytecodeSpy = jest.spyOn(Wagmi, 'useBytecode');
     const proposeMutateAsync = jest.fn();
     const confirmMutateAsync = jest.fn();
@@ -117,6 +126,17 @@ describe('<SafeMultisigSubmitVote /> component', () => {
             withNetworkSwitch: (callback) => callback(),
         });
         useSafeBodyStateSpy.mockReturnValue(baseState);
+        // Standing in for the owner confirming the dialog, so the tests below exercise the signing
+        // path rather than stopping at the confirmation step.
+        dialogOpen.mockImplementation((_id, options) => {
+            const params = options?.params as
+                | { onConfirm?: () => void }
+                | undefined;
+            params?.onConfirm?.();
+        });
+        useDialogContextSpy.mockReturnValue(
+            generateDialogContext({ open: dialogOpen }),
+        );
         useProposeSpy.mockReturnValue({
             mutateAsync: proposeMutateAsync,
         } as never);
@@ -263,6 +283,62 @@ describe('<SafeMultisigSubmitVote /> component', () => {
                 name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
             }),
         ).toBeEnabled();
+    });
+
+    it('confirms the governance effect before producing a signature', async () => {
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.approve',
+            }),
+        );
+
+        expect(dialogOpen).toHaveBeenCalledWith(
+            SafeMultisigPluginDialogId.CONFIRM_SIGNATURE,
+            expect.objectContaining({
+                params: expect.objectContaining({
+                    isVeto: false,
+                    safeAddress: baseState.safeInfo.address,
+                    signerAddress: owner,
+                }),
+            }),
+        );
+    });
+
+    it('sends execution straight to the wallet, which already prices the transaction', async () => {
+        useSafeBodyStateSpy.mockReturnValue({
+            ...baseState,
+            pendingReport: {
+                transaction: generateSafeMultisigTransaction({
+                    nonce: '0',
+                    confirmationsRequired: 1,
+                    confirmations: [generateSafeConfirmation({ owner })],
+                }),
+                report: {
+                    proposalId: BigInt(1),
+                    stageId: 1,
+                    resultType: SppProposalType.APPROVAL,
+                    tryAdvance: false,
+                },
+                state: SafeTransactionState.LIVE,
+                status: ProposalStatus.ACTIVE,
+                hasNonceCompetition: false,
+            },
+            hasConnectedWalletSigned: true,
+            approvalsAmount: 1,
+        });
+
+        render(createTestComponent());
+
+        await userEvent.click(
+            screen.getByRole('button', {
+                name: 'app.plugins.safeMultisig.safeMultisigSubmitVote.executeApproval',
+            }),
+        );
+
+        // A gasless-signature confirmation in front of a gas-paying transaction would be a lie.
+        expect(dialogOpen).not.toHaveBeenCalled();
     });
 
     it('offers a re-queue when the pending report lost its nonce', () => {

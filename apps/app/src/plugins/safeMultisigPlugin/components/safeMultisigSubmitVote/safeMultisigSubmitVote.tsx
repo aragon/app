@@ -32,10 +32,15 @@ import {
     TransactionType,
     useTransactionStatus,
 } from '@/shared/api/transactionService';
+import { useDialogContext } from '@/shared/components/dialogProvider';
 import { useTranslations } from '@/shared/components/translationsProvider';
 import { useNetworkSwitch } from '@/shared/hooks/useNetworkSwitch';
 import { monitoringUtils } from '@/shared/utils/monitoringUtils';
-import { safeIndexingPollInterval, safeIndexingTimeout } from '../../constants';
+import {
+    SafeMultisigPluginDialogId,
+    safeIndexingPollInterval,
+    safeIndexingTimeout,
+} from '../../constants';
 import { useSafeMultisigBodyState } from '../../hooks/useSafeMultisigBodyState';
 import { SafeTransactionState } from '../../types';
 import { safeMultisigProposalUtils } from '../../utils/safeMultisigProposalUtils';
@@ -74,6 +79,7 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
 ) => {
     const { proposal, externalAddress, stage, isVeto } = props;
     const { t } = useTranslations();
+    const { open } = useDialogContext();
     const queryClient = useQueryClient();
     const { address: connectedAddress } = useWalletAccount();
     const latestConnectedAddress = useRef(connectedAddress);
@@ -438,7 +444,26 @@ export const SafeMultisigSubmitVote: React.FC<ISafeMultisigSubmitVoteProps> = (
             return;
         }
 
-        withNetworkSwitch(() => void submitReport());
+        const runSubmit = () => withNetworkSwitch(() => void submitReport());
+
+        // Executing is an onchain transaction the wallet already prices and describes. Only the
+        // offchain signature gets the confirmation step, whose whole claim is that it costs nothing.
+        if (thresholdReached) {
+            runSubmit();
+            return;
+        }
+
+        open(SafeMultisigPluginDialogId.CONFIRM_SIGNATURE, {
+            params: {
+                proposalTitle: proposal.title,
+                safeAddress: externalAddress,
+                signerAddress: ownerAddress,
+                network: proposal.network,
+                isVeto,
+                nonce: liveReport?.transaction.nonce,
+                onConfirm: runSubmit,
+            },
+        });
     };
 
     const handleVoteClick = () =>

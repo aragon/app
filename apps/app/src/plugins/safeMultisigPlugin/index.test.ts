@@ -1,12 +1,14 @@
 import { GovernanceSlotId } from '@/modules/governance/constants/moduleSlots';
 import { Network } from '@/shared/api/daoService';
 import { pluginRegistryUtils } from '@/shared/utils/pluginRegistryUtils';
+import { pluginDialogsDefinitions } from '../index';
 import { generateSppStagePlugin } from '../sppPlugin/testUtils';
 import { VotingBodyBrandIdentity } from '../sppPlugin/types';
 import { sppStageUtils } from '../sppPlugin/utils/sppStageUtils';
 import { SafeMultisigProposalVotingBreakdown } from './components/safeMultisigProposalVotingBreakdown';
 import { SafeMultisigProposalVotingSummary } from './components/safeMultisigProposalVotingSummary';
 import { SafeMultisigSubmitVote } from './components/safeMultisigSubmitVote';
+import { SafeMultisigPluginDialogId } from './constants';
 import { initialiseSafeMultisigPlugin } from './index';
 
 describe('safeMultisigPlugin registrations', () => {
@@ -60,5 +62,15 @@ describe('safeMultisigPlugin registrations', () => {
                 pluginId,
             }),
         ).toBeUndefined();
+    });
+
+    // Definitions that never reach the merged registry leave `open()` resolving to nothing, with no
+    // error to notice: the button simply does nothing.
+    it('reaches the merged plugin dialog registry', () => {
+        expect(
+            pluginDialogsDefinitions[
+                SafeMultisigPluginDialogId.CONFIRM_SIGNATURE
+            ],
+        ).toBeDefined();
     });
 });
